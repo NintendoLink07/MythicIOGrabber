@@ -1,0 +1,26 @@
+{
+    "Lua.diagnostics.globals": [
+        "SlashCmdList",
+        "UISpecialFrames",
+        "CreateFramePoolCollection",
+        "CreateFontStringPool",
+        "CreateTexturePool",
+        "HIGH",
+        "RaiderIO",
+        "queueUpTime",
+        "LFGListFrame",
+        "LFGListPVEStub",
+        "PVEFrame",
+        "PVEFrameCloseButton",
+        "PVEFrameTab1",
+        "PVEFrameTab2",
+        "PVEFrameTab3",
+        "SettingsPanel",
+        "WorldFrame"
+    ],
+    "Lua.diagnostics.disable": [
+        "undefined-field",
+        "inject-field",
+        "param-type-mismatch"
+    ]
+}

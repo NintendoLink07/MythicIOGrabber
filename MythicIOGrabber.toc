@@ -1,0 +1,14 @@
+## Interface: 100017
+## Title: Mythic IO Grabber
+## Notes: Detailed raider io output of applicants
+## Version: 0.6.5
+## Dependencies: 
+## SavedVariables: SavedOptionSettings
+## SavedVariablesPerCharacter: QueueUpTime
+
+MythicIOGrabber.lua
+Settings.lua
+UtilFunctions.lua
+PersistentData.lua
+FrameManagement.lua
+UI.lua
