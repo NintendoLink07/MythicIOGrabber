@@ -22,14 +22,13 @@ end
 
 miog.createMainFrame = function()
 	miog.mainFrame:SetSize(LFGListFrame:GetWidth() + 5, LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
-	miog.mainFrame.expanded = false
 	miog.mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	miog.mainFrame:AdjustPointsOffset(-5, -PVEFrame.TitleContainer:GetHeight()-1)
-	miog.mainFrame:RegisterForDrag("LeftButton")
 	miog.mainFrame:SetMovable(true)
 	miog.mainFrame:SetFrameStrata("HIGH")
 	miog.mainFrame:EnableMouse(true)
 	miog.mainFrame:RegisterForDrag("LeftButton")
+	miog.mainFrame.expanded = false
 	miog.mainFrame:Hide()
 
 	_G[miog.mainFrame:GetName()] = miog.mainFrame
