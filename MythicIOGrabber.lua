@@ -2,8 +2,6 @@ local addonName, miog = ...
 
 local isReloadingUI = false
 
-local abc = 1
-
 local addonApplicantList = {}
 local detailExpandedList = {}
 
