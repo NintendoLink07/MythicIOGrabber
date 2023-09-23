@@ -1,5 +1,7 @@
 local addonName, miog = ...
 
+print("WTF")
+
 miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "InsetFrameTemplate")
 
 local function insertPointsIntoTable(frame)
