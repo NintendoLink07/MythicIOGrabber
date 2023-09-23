@@ -540,18 +540,14 @@ miog.checkApplicantList = function(needRefresh, needSort)
 		if(applicantData) then
 			local hasAllApplicantData = true
 
-			local fullName, assignedRole, dungeonScore
-
 			for i = 1, applicantData.numMembers, 1 do
-				fullName = C_LFGList.GetApplicantMemberInfo(applicantID, i)
-
-				if(fullName == nil) then
+				if(C_LFGList.GetApplicantMemberInfo(applicantID, i) == nil) then
 					hasAllApplicantData = false
 					break
 				end
 			end
 
-			fullName, _, _, _, _, _, _, _, _, assignedRole, _, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
+			local _, _, _, _, _, _, _, _, _, assignedRole, _, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
 
 			if(hasAllApplicantData) then
 				if(assignedRole == "DAMAGER" and miog.F.SHOW_DPS or assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS) then
@@ -670,6 +666,7 @@ local function refreshSpecIcons()
 		for _, scrollTarget in LFGListFrame.SearchPanel.ScrollBox:EnumerateFrames() do
 
 			local resultID = scrollTarget.resultID
+
 			if(resultID) then
 				local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 
@@ -804,8 +801,7 @@ miog.OnEvent = function(self, event, ...)
 
 		hooksecurefunc("LFGListSearchEntry_Update", refreshSpecIcons)
 
-	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --NEW LISTING
-		--print(event, ...)
+	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
 
 		local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 		local activityInfo
@@ -834,23 +830,16 @@ miog.OnEvent = function(self, event, ...)
 				if(miog.F.WEEKLY_AFFIX == nil) then
 					miog.getAffixes()
 				end
-			else --DECLINE SOMEONE, WHY LOL
-				--print("XD")
-				--queueUpTime = GetTimePreciseSec()
-				--queueTimer = C_Timer.NewTicker(1, timeInQueue)
-
-				--checkApplicantList(true)
-
-				--miog.mainFrame:Show()
+			--else DECLINE SOMEONE, WHY HERE THOUGH LOL
 
 			end
 		else
-			if(... == true) then
+			if(... == true) then --NEW LISTING
 				miog.F.IS_LIST_SORTED = false
 				QueueUpTime = GetTimePreciseSec()
 				refreshFunction()
 
-			elseif(... == false) then
+			elseif(... == false) then --RELOAD OR SETTINGS EDIT
 				QueueUpTime = QueueUpTime > 0 and QueueUpTime or GetTimePreciseSec()
 				miog.checkApplicantList(true, true)
 
@@ -859,13 +848,10 @@ miog.OnEvent = function(self, event, ...)
 			queueTimer = C_Timer.NewTicker(1, timeInQueue)
 			miog.mainFrame:Show()
 		end
-		local settingText = miog.mainFrame.settingScrollFrame.settingContainer.settingString:GetText()
 
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then --ONE APPLICANT
-		--print(event, ...)
 
 		local applicantData = C_LFGList.GetApplicantInfo(...)
-		local fullName = C_LFGList.GetApplicantMemberInfo(..., 1)
 
 		if(applicantData) then
 			if(applicantData.applicationStatus ~= "applied") then
@@ -873,8 +859,6 @@ miog.OnEvent = function(self, event, ...)
 					if(addonApplicantList[...]["frame"]) then
 						local status = applicantData.applicationStatus
 						local frame = addonApplicantList[...]["frame"]
-
-						--print("APP-STATUS: ", ..., applicantData.applicationStatus)
 
 						if(status == "invited") then
 							changeApplicantStatus(..., frame, "INVITED", "FFFFFF00")
@@ -912,11 +896,8 @@ miog.OnEvent = function(self, event, ...)
 				addonApplicantList[...]["appStatus"] = "canBeRemoved"
 			end
 		end
-
-		--print("APP-STATUS: ", ..., applicantData.applicationStatus)
 		
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
-		--print(event, ...)
 
 		local newEntry, withData = ...
 
@@ -934,8 +915,6 @@ miog.OnEvent = function(self, event, ...)
 			miog.checkApplicantList(true, true)
 
 		end
-    elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
-		--refreshSpecIcons()
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
         miog.F.AFFIX_UPDATE_COUNTER = miog.F.AFFIX_UPDATE_COUNTER + 1
         
