@@ -55,7 +55,7 @@ miog.createMainFrame = function()
 
 	local titleString = miog.persistentFontStringPool:Acquire()
 	titleString:SetFont(miog.fonts["libMono"], 14, "OUTLINE")
-	titleString:SetPoint("LEFT", titleBar, "LEFT", miog.C.PADDING_OFFSET*1, -1)
+	titleString:SetPoint("LEFT", titleBar, "LEFT", 4, -1)
 	titleString:SetParent(titleBar)
 	titleString:SetJustifyH("LEFT")
 	titleString:SetJustifyV("CENTER")
@@ -141,9 +141,8 @@ miog.createMainFrame = function()
 	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", 0, 0)
 	infoPanel:SetHeight(95)
 	infoPanel:SetParent(miog.mainFrame)
-	--miog.createFrameBorder(infoPanel)
-	infoPanel:Show()
 	miog.createFrameBorder(infoPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	infoPanel:Show()
 	miog.mainFrame.infoPanel = infoPanel
 
 	local infoPanelBackgroundTexture = miog.persistentTexturePool:Acquire()
@@ -203,7 +202,7 @@ miog.createMainFrame = function()
 
 	local settingString = miog.persistentFontStringPool:Acquire()
 	settingString:SetFont(miog.fonts["libMono"], miog.C.SETTING_FONT_SIZE, "THICK")
-	settingString:SetPoint("TOPLEFT", settingContainer, "TOPLEFT", miog.C.PADDING_OFFSET*1, -miog.C.PADDING_OFFSET*2)
+	settingString:SetPoint("TOPLEFT", settingContainer, "TOPLEFT", 4, -miog.C.PADDING_OFFSET*2)
 	--settingString:SetPoint("BOTTOMRIGHT", settingContainer, "BOTTOMRIGHT", -miog.C.PADDING_OFFSET*3, -miog.C.PADDING_OFFSET*3)
 	settingString:SetWidth(settingContainer:GetWidth() - miog.C.PADDING_OFFSET*3)
 	settingString:SetParent(settingContainer)
@@ -345,19 +344,6 @@ miog.createMainFrame = function()
 		
 	end)
 	browseGroups:Show()
-	
-	local delistButton = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
-	delistButton:SetText("Delist")
-	delistButton:SetSize(LFGListFrame.ApplicationViewer.RemoveEntryButton:GetSize())
-	delistButton:SetPoint("LEFT", browseGroups, "RIGHT", 0, 0)
-	delistButton:SetParent(miog.mainFrame.footerBar)
-	delistButton:RegisterForClicks("LeftButtonDown")
-	delistButton:SetScript("OnClick", function(self, leftButton)
-
-		C_LFGList.RemoveListing()
-		
-	end)
-	delistButton:Show()
 
 	local editButton = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
 	editButton:SetText("Edit")
@@ -373,6 +359,19 @@ miog.createMainFrame = function()
 		
 	end)
 	editButton:Show()
+	
+	local delistButton = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
+	delistButton:SetText("Delist")
+	delistButton:SetSize(LFGListFrame.ApplicationViewer.RemoveEntryButton:GetSize())
+	delistButton:SetPoint("RIGHT", editButton, "LEFT", 0, 0)
+	delistButton:SetParent(miog.mainFrame.footerBar)
+	delistButton:RegisterForClicks("LeftButtonDown")
+	delistButton:SetScript("OnClick", function(self, leftButton)
+
+		C_LFGList.RemoveListing()
+		
+	end)
+	delistButton:Show()
 
 	local mainScrollFrame = miog.persistentFramePool:Acquire("BackdropTemplate, ScrollFrameTemplate")
 	mainScrollFrame:SetParent(miog.mainFrame)

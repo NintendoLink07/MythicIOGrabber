@@ -54,7 +54,7 @@ end
 miog.createFrameBorder = function(frame, oThickness, oR, oG, oB, oA)
 	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
 
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness} )
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=miog.F.PX_SIZE_1()*thickness} )
 	frame:SetBackdropColor(0.1, 0.1 , 0.1, 0) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, a) -- border color
 end
@@ -62,15 +62,15 @@ end
 miog.createTopBottomLines = function(frame, oThickness, oR, oG, oB, oA)
 	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
 
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=0, right=0, top=-miog.F.PX_SIZE_1, bottom=-miog.F.PX_SIZE_1}} )
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=0, right=0, top=-miog.F.PX_SIZE_1(), bottom=-miog.F.PX_SIZE_1()}} )
 	frame:SetBackdropColor(r, g , b, a) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
 end
 
 miog.createLeftRightLines = function(frame, oThickness, oR, oG, oB, oA)
 	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
-	
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1, top=0, bottom=0}} )
+
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1(), top=0, bottom=0}} )
 	frame:SetBackdropColor(r, g , b, a) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
 end

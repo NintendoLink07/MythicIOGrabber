@@ -791,12 +791,10 @@ miog.OnEvent = function(self, event, ...)
 	elseif(event == "PLAYER_LOGIN") then
 		miog.F.AFFIX_UPDATE_COUNTER = 0
 
-		--miog.releaseAllPersistentPools()
-
         C_MythicPlus.RequestMapInfo()
 
 		LFGListFrame.ApplicationViewer:Hide()
-		hooksecurefunc("LFGListFrame_SetActivePanel", function(self, panel) 
+		hooksecurefunc("LFGListFrame_SetActivePanel", function(selfFrame, panel)
 			if(panel == LFGListFrame.ApplicationViewer) then
 				LFGListFrame.ApplicationViewer:Hide()
 				miog.mainFrame:Show()
@@ -804,11 +802,14 @@ miog.OnEvent = function(self, event, ...)
 				miog.mainFrame:Hide()
 			end
 		end)
+		LFGListFrame:HookScript("OnShow", function(selfFrame) if(selfFrame.activePanel == LFGListFrame.ApplicationViewer) then miog.mainFrame:Show() end end)
 
 		hooksecurefunc("LFGListSearchEntry_Update", refreshSpecIcons)
 
 		if(LFGListFrame.ApplicationViewer.Inset.Bg:GetTexture()) then
 			miog.mainFrame.backgroundTexture:Show()
+			miog.mainFrame.infoPanel.backgroundTexture:SetPoint("TOPLEFT", miog.mainFrame.infoPanel, "TOPLEFT", 0, -1)
+			miog.mainFrame.infoPanel.backgroundTexture:SetPoint("BOTTOMRIGHT", miog.mainFrame.infoPanel, "BOTTOMRIGHT", 0 , 1)
 		else
 			miog.mainFrame.infoPanel.backgroundTexture:SetPoint("TOPLEFT", miog.mainFrame.infoPanel, "TOPLEFT", 1, -1)
 			miog.mainFrame.infoPanel.backgroundTexture:SetPoint("BOTTOMRIGHT", miog.mainFrame.infoPanel, "BOTTOMRIGHT", -1 , 1)
