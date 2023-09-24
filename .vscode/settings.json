@@ -1,0 +1,25 @@
+{
+    "Lua.diagnostics.globals": [
+        "CreateFramePoolCollection",
+        "CreateFontStringPool",
+        "CreateTexturePool",
+        "LFGListFrame",
+        "LFGListPVEStub",
+        "PVEFrame",
+        "UISpecialFrames",
+        "PVEFrameTab1",
+        "PVEFrameCloseButton",
+        "LFGListEntryCreation_SetEditMode",
+        "LFGListFrame_SetActivePanel",
+        "SettingsPanel",
+        "LFGListSearchPanel_SetCategory",
+        "LFGListSearchPanel_DoSearch",
+        "SlashCmdList",
+        "WorldFrame",
+        "RaiderIO"
+    ],
+    "Lua.diagnostics.disable": [
+        "inject-field",
+        "param-type-mismatch"
+    ]
+}
