@@ -414,8 +414,6 @@ local function createEntryFrame(applicantID, debug)
 						if(dungeonProfile) then
 							local textureString
 
-							print("test")
-
 							for _, icon in pairs(miog.dungeonIcons) do
 								if(dungeonProfile[dngIndex].dungeon.name == icon[1]) then
 									textureString = icon[2]
