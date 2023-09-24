@@ -19,7 +19,7 @@ If you have way too much money:<picture>
 </picture>
 
 ## General interface
-![Screenshot 2023-09-24 190806](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/3a228095-ef52-4a15-926d-0d4a4f977f8b)
+![Screenshot 2023-09-24 190806](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/33d78cd8-90ce-4375-9bd6-04c7aac2bda9)
 
 ### Blizzard applicant data
 The data Blizzard gives me that I display in the standard view are (in order):
@@ -31,33 +31,32 @@ The data Blizzard gives me that I display in the standard view are (in order):
 6. Item level
 7. If the applicant is a friend of yours
    
-![Screenshot 2023-09-24 191805](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/a92ac146-cff9-4e4b-99ea-6b2427655336)
+![Screenshot 2023-09-24 191805](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/56112352-aba2-4fd4-b92e-ba27d0e4ed80)
 
 Also shows if there's no raider.io installed, since it improves the experience immensely.
 If raider.io is installed BUT there's no data about the applicant (they've done no keys this season) then it shows the "No raider.io data" string.
 
-![Screenshot 2023-09-24 195747](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/27f02f8e-aaf0-4049-a99b-5ff14c443952)
-
+![Screenshot 2023-09-24 195747](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/ca1e27f3-3c89-441e-abdb-de7857f72c56)
 
 The tank/healer/dps buttons are for filtering:<br>
 You don't wanna see the tanks/dps 'cause you're looking for a heal first? Uncheck tank & dps and check heal!
 
-![FILTERED_OUT_HEALER](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/9828a5ec-95da-4c50-802d-4f7e9789bf46)
-
+![FILTERED_OUT_HEALER](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/39ddeb48-b7f8-44cc-b507-0de30313da28)
 
 ## Raider.io integration
-If you have Raider.IO installed it even includes all the data about your applicant: their highest keys of both week in the respective dungeons and the amount of +5, +10, +15 or +20's they've done.<br><br>
-![Screenshot 2023-09-24 191828](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/333ce2a1-b7ee-49f5-8937-b0c165fd9975)
+If you have Raider.IO installed it even includes all the data about your applicant: their highest keys of both week in the respective dungeons and the amount of +5, +10, +15 or +20's they've done.
+
+![Screenshot 2023-09-24 191828](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/41d5f965-2e47-4aad-b5cf-ce5cf5d20b77)
 
 ## Other options
 
 - You can click the downwards arrow in the title bar to extend the applicant viewer (the default one was too small for me)
 - If you click the refresh button left from the close button you refresh the current view of the applicants AND enable auto sorting, if it's enable in the interface options.
 
-![SORTING](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/4e098ffc-43ec-4bf6-8baf-4f96670574f3)
+![SORTING](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/887236e5-d4b8-4e9d-aec6-720c4daad932)
   
 - In the interface options there are just some general improvements to the LFG frame in general:<br><br>
-	![Screenshot 2023-09-24 193413](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/2c0b3fb2-6da2-46f1-a3da-52cb6a5449d4)<br>
+	![Screenshot 2023-09-24 193413](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/9ea30f6b-a31b-4149-9eda-32af095d25e5)<br>
 	1. Shows the specs of the groups in your group browser so you never have to manually check if there's a Survival Hunter in the group :)
   	2. Always keeps the groups in your group browser in the right order(e.g. there's a group with one Holy Paladin, so it will show: 1. Empty Tank spot, Holy Paladin, Empty DPS spot, Empty DPS spot, Empty DPS spot
   	3. Enables sorting of the applicants after you refresh manually atleast once.
