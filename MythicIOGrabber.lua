@@ -409,8 +409,7 @@ local function createEntryFrame(applicantID, debug)
 						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex]
 						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex]
 						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex]
-						local starTexture = CreateTextureMarkup("Interface/Addons/MythicIOGrabber/res/star_256.png", 256, 256, 10, 10, 0, 1, 0, 1)
-					
+						local starTexture = CreateSimpleTextureMarkup("Interface/Addons/MythicIOGrabber/res/star_256.png", 8, 8)
 
 						if(dungeonProfile) then
 							local textureString
@@ -430,33 +429,22 @@ local function createEntryFrame(applicantID, debug)
 							dungeonIconTexture:Show()
 
 							local dungeonNameShort = dungeonProfile[dngIndex].dungeon.shortName
-							local insertStringDungeon = string.sub("   ", 1, 5-string.len(dungeonNameShort))
-							local tf1String = dungeonNameShort .. ":" .. insertStringDungeon
 
-							local insertStringPrimary = string.sub("  ", 1, 3-primaryDungeonChests)
-
-							if(primaryDungeonChests >= 1) then
-								tf1String = tf1String .. WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, primaryDungeonChests), miog.C.GREEN_COLOR) .. insertStringPrimary
-								
-							elseif(primaryDungeonChests == 0) then
-								tf1String = tf1String .. WrapTextInColorCode(primaryDungeonLevel, miog.C.RED_COLOR) .. insertStringPrimary .. " "
-							end
-
-							if(secondaryDungeonChests >= 1) then
-								tf1String = tf1String .. WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, secondaryDungeonChests), miog.C.GREEN_SECONDARY_COLOR)
-
-							elseif(secondaryDungeonChests == 0) then
-								tf1String = tf1String .. WrapTextInColorCode(secondaryDungeonLevel, miog.C.RED_SECONDARY_COLOR) .. " "
-							end
-
-							local textLineLeftFontString = miog.createFontString(tf1String, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
 							textLineLeftFontString:SetSpacing(2)
 							textLineLeftFontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
 
+							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.31)
+							primaryString:SetSpacing(2)
+							primaryString:SetPoint("LEFT", textLineLeftFontString, "RIGHT", 0, 0)
+
+							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.31)
+							secondaryString:SetSpacing(2)
+							secondaryString:SetPoint("LEFT", primaryString, "RIGHT", 0, 0)
 						end
 					else
 						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)					
+						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
 					end
 				else -- If RaiderIO is not installed
 					if(dngIndex == 1) then

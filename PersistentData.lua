@@ -69,10 +69,7 @@ miog.dungeonIcons = {
 }
 
 miog.fonts = {
-	arialn = "Fonts/ARIALN.TTF",
-	firaMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\FiraMono-Medium.ttf",
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
-	jetBrainsMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\JetBrainsMono-Light.ttf",
 }
 
 miog.classTable = {

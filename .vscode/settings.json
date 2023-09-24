@@ -16,6 +16,7 @@
         "LFGListSearchPanel_DoSearch",
         "SlashCmdList",
         "WorldFrame",
+        "CreateSimpleTextureMarkup",
         "RaiderIO"
     ],
     "Lua.diagnostics.disable": [

@@ -100,10 +100,10 @@ miog.createFontString = function(text, parent, fontSize, width, height)
 	textLineFontString:SetJustifyH("LEFT")
 	textLineFontString:SetText(text)
 
-	if(width == nil and height == nil) then
-		textLineFontString:SetSize(parent:GetWidth(), parent:GetHeight())
-	else
-		textLineFontString:SetSize(width, height)
+	if(width ~= nil) then
+		textLineFontString:SetWidth(width)
+	elseif(height ~= nil) then
+		textLineFontString:SetHeight(height)
 	end
 
 	textLineFontString:SetParent(parent)
