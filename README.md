@@ -19,7 +19,7 @@ If you have way too much money:<picture>
 </picture>
 
 ## General interface
-<br>
+![Screenshot 2023-09-24 190806](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/3a228095-ef52-4a15-926d-0d4a4f977f8b)
 
 ### Blizzard applicant data
 The data Blizzard gives me that I display in the standard view are (in order):
