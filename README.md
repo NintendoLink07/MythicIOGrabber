@@ -9,10 +9,17 @@ I also included some stuff I've always wanted to see:
 3. the group data, so I know if my min rating or min ilvl are set too low
 4. generally just show every option in a visual manner, either via text or icons
 
-The addon SHOULD scale with all UIScales or resolutions but let me know if it doesn't / what exactly doesn't scale how it should
+The addon SHOULD scale with all UIScales or resolutions but let me know if it doesn't / what exactly doesn't scale how it should.<br>
+
+Curseforge site: <br>
+If you have way too much money:<picture>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=NZUR27TPC86TE">
+  <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif">
+  </a>
+</picture>
 
 ## General interface
-![Screenshot 2023-09-24 190806](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/93fe5a64-e558-4031-8922-c1d5d36db0aa)<br>
+<br>
 
 ### Blizzard applicant data
 The data Blizzard gives me that I display in the standard view are (in order):
