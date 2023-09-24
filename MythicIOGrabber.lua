@@ -40,18 +40,18 @@ local function createEntryFrame(applicantID, debug)
 	if(not latestApplicantFrame) then
 		applicantsFrame:SetPoint("TOP", miog.mainFrame.mainScrollFrame.mainContainer, "TOP", 0, 0)
 	else
-		applicantsFrame:SetPoint("TOPLEFT", latestApplicantFrame, "BOTTOMLEFT", 0, -3)
+		applicantsFrame:SetPoint("TOPLEFT", latestApplicantFrame, "BOTTOMLEFT", 0, 3*-PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1))
 	end
 
 	applicantsFrame:SetParent(miog.mainFrame.mainScrollFrame.mainContainer)
 	applicantsFrame.entryFrames = {}
 	applicantsFrame.applicantID = applicantID
 	applicantsFrame:Show()
-	miog.createFrameBorder(applicantsFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
+	miog.createFrameBorder(applicantsFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
 
-	local sizeIncrease = miog.C.ENTRY_FRAME_SIZE * applicantData.numMembers + 2 + applicantData.numMembers
+	local sizeIncrease = miog.C.ENTRY_FRAME_SIZE * applicantData.numMembers + applicantData.numMembers * miog.F.PX_SIZE_1() + 1
 	
-	applicantsFrame:SetSize(miog.mainFrame.mainScrollFrame:GetWidth() - 4, sizeIncrease)
+	applicantsFrame:SetSize(miog.mainFrame.mainScrollFrame:GetWidth(), sizeIncrease)
 
 	for index = 1, applicantData.numMembers, 1 do
 		local fullName, englishClassName, _, _, ilvl, honor, tank, healer, damager, assignedRole, friend, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, index)
@@ -82,10 +82,10 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame:SetSize(applicantsFrame:GetWidth()-2, miog.C.ENTRY_FRAME_SIZE)
 
 			if(not latestEntryFrame) then
-				entryFrame:SetPoint("TOP", applicantsFrame, "TOP", 0, -1)
+				entryFrame:SetPoint("TOP", applicantsFrame, "TOP", 0, -PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1))
 			else
 				if(index > 1) then
-					entryFrame:SetPoint("TOP", applicantsFrame.entryFrames[index-1], "BOTTOM", 0, -1)
+					entryFrame:SetPoint("TOP", applicantsFrame.entryFrames[index-1], "BOTTOM", 0, -PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1))
 				end
 			end
 
@@ -285,6 +285,7 @@ local function createEntryFrame(applicantID, debug)
 
 			local scoreString = miog.createFontString(coloredSubName, entryFrame, 12, entryFrame:GetWidth()*0.11, 10)
 			scoreString:SetPoint("LEFT", roleTexture, "RIGHT", 3, 0)
+			scoreString:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
 			
 			local mythicKeystoneProfile
 			local dungeonProfile
@@ -303,7 +304,6 @@ local function createEntryFrame(applicantID, debug)
 						end
 					end
 					
-					scoreString:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
 				end
 			end
 
@@ -404,65 +404,66 @@ local function createEntryFrame(applicantID, debug)
 							)
 							textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -1, 1, 1)
 						end
-					end
 
-					local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex]
-					local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex]
-					local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex]
-					local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex]
-					local starTexture = CreateTextureMarkup("Interface/Addons/MythicIOGrabber/res/star_256.png", 256, 256, 10, 10, 0, 1, 0, 1)
+						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex]
+						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex]
+						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex]
+						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex]
+						local starTexture = CreateTextureMarkup("Interface/Addons/MythicIOGrabber/res/star_256.png", 256, 256, 10, 10, 0, 1, 0, 1)
+					
 
-					if(dungeonProfile) then
-						local textureString
+						if(dungeonProfile) then
+							local textureString
 
-						for _, icon in pairs(miog.dungeonIcons) do
-							if(dungeonProfile[dngIndex].dungeon.name == icon[1]) then
-								textureString = icon[2]
+							for _, icon in pairs(miog.dungeonIcons) do
+								if(dungeonProfile[dngIndex].dungeon.name == icon[1]) then
+									textureString = icon[2]
+								end
 							end
+
+							local dungeonIconTexture = miog.temporaryTexturePool:Acquire()
+							dungeonIconTexture:SetTexture(textureString)
+							dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT", 0, 0)
+							dungeonIconTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+							dungeonIconTexture:SetParent(textLineLeft)
+							dungeonIconTexture:SetDrawLayer("OVERLAY")
+							dungeonIconTexture:Show()
+
+							local dungeonNameShort = dungeonProfile[dngIndex].dungeon.shortName
+							local insertStringDungeon = string.sub("   ", 1, 5-string.len(dungeonNameShort))
+							local tf1String = dungeonNameShort .. ":" .. insertStringDungeon
+
+							local insertStringPrimary = string.sub("  ", 1, 3-primaryDungeonChests)
+
+							if(primaryDungeonChests >= 1) then
+								tf1String = tf1String .. WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, primaryDungeonChests), miog.C.GREEN_COLOR) .. insertStringPrimary
+								
+							elseif(primaryDungeonChests == 0) then
+								tf1String = tf1String .. WrapTextInColorCode(primaryDungeonLevel, miog.C.RED_COLOR) .. insertStringPrimary .. " "
+							end
+
+							if(secondaryDungeonChests >= 1) then
+								tf1String = tf1String .. WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, secondaryDungeonChests), miog.C.GREEN_SECONDARY_COLOR)
+
+							elseif(secondaryDungeonChests == 0) then
+								tf1String = tf1String .. WrapTextInColorCode(secondaryDungeonLevel, miog.C.RED_SECONDARY_COLOR) .. " "
+							end
+
+							local textLineLeftFontString = miog.createFontString(tf1String, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+							textLineLeftFontString:SetSpacing(2)
+							textLineLeftFontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
+
 						end
-
-						local dungeonIconTexture = miog.temporaryTexturePool:Acquire()
-						dungeonIconTexture:SetTexture(textureString)
-						dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT", 0, 0)
-						dungeonIconTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-						dungeonIconTexture:SetParent(textLineLeft)
-						dungeonIconTexture:SetDrawLayer("OVERLAY")
-						dungeonIconTexture:Show()
-
-						local dungeonNameShort = dungeonProfile[dngIndex].dungeon.shortName
-						local insertStringDungeon = string.sub("   ", 1, 5-string.len(dungeonNameShort))
-						local tf1String = dungeonNameShort .. ":" .. insertStringDungeon
-
-						local insertStringPrimary = string.sub("  ", 1, 3-primaryDungeonChests)
-
-						if(primaryDungeonChests >= 1) then
-							tf1String = tf1String .. WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, primaryDungeonChests), miog.C.GREEN_COLOR) .. insertStringPrimary
-							
-						elseif(primaryDungeonChests == 0) then
-							tf1String = tf1String .. WrapTextInColorCode(primaryDungeonLevel, miog.C.RED_COLOR) .. insertStringPrimary .. " "
-						end
-
-						if(secondaryDungeonChests >= 1) then
-							tf1String = tf1String .. WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, secondaryDungeonChests), miog.C.GREEN_SECONDARY_COLOR)
-
-						elseif(secondaryDungeonChests == 0) then
-							tf1String = tf1String .. WrapTextInColorCode(secondaryDungeonLevel, miog.C.RED_SECONDARY_COLOR) .. " "
-						end
-
-						local textLineLeftFontString = miog.createFontString(tf1String, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-						textLineLeftFontString:SetSpacing(2)
-						textLineLeftFontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
-
+					else
+						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)					
 					end
 				else -- If RaiderIO is not installed
 					if(dngIndex == 1) then
 						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
 						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
 
-						textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
-
-						scoreString:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
+						--scoreString:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
 					end
 				end
 			end
@@ -786,21 +787,32 @@ end
 
 miog.OnEvent = function(self, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
-		miog.relocateBlizzardElements()
 		miog.releaseAllTemporaryPools()
-
 	elseif(event == "PLAYER_LOGIN") then
 		miog.F.AFFIX_UPDATE_COUNTER = 0
 
+		--miog.releaseAllPersistentPools()
+
         C_MythicPlus.RequestMapInfo()
 
-		miog.createMainFrame()
-		
-		LFGListFrame.ApplicationViewer:HookScript("OnHide", function() miog.mainFrame:Hide() end)
-		LFGListFrame.ApplicationViewer:HookScript("OnShow", function() miog.mainFrame:Show() end)
+		LFGListFrame.ApplicationViewer:Hide()
+		hooksecurefunc("LFGListFrame_SetActivePanel", function(self, panel) 
+			if(panel == LFGListFrame.ApplicationViewer) then
+				LFGListFrame.ApplicationViewer:Hide()
+				miog.mainFrame:Show()
+			else
+				miog.mainFrame:Hide()
+			end
+		end)
 
 		hooksecurefunc("LFGListSearchEntry_Update", refreshSpecIcons)
 
+		if(LFGListFrame.ApplicationViewer.Inset.Bg:GetTexture()) then
+			miog.mainFrame.backgroundTexture:Show()
+		else
+			miog.mainFrame.infoPanel.backgroundTexture:SetPoint("TOPLEFT", miog.mainFrame.infoPanel, "TOPLEFT", 1, -1)
+			miog.mainFrame.infoPanel.backgroundTexture:SetPoint("BOTTOMRIGHT", miog.mainFrame.infoPanel, "BOTTOMRIGHT", -1 , 1)
+		end
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
 
 		local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
@@ -923,6 +935,12 @@ miog.OnEvent = function(self, event, ...)
         elseif(miog.F.AFFIX_UPDATE_COUNTER == 2) then
 			miog.getAffixes()
         end
+	elseif(event == "ADDON_LOADED") then
+		local addon = ...
+
+		if(addon == "RaiderIO") then
+			miog.mainFrame.statusBar.rioLoaded:Hide()
+		end
 	end
 end
 

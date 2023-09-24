@@ -1,8 +1,6 @@
 local addonName, miog = ...
 
-print("WTF")
-
-miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "InsetFrameTemplate")
+miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "BackdropTemplate")
 
 local function insertPointsIntoTable(frame)
 	local table = {}
@@ -21,18 +19,27 @@ local function insertPointsIntoFrame(frame, table)
 end
 
 miog.createMainFrame = function()
-	miog.mainFrame:SetSize(LFGListFrame:GetWidth() + 5, LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
+	miog.mainFrame:SetSize(LFGListFrame:GetWidth() + 2, LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
 	miog.mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
-	miog.mainFrame:AdjustPointsOffset(-5, -PVEFrame.TitleContainer:GetHeight()-1)
+	miog.mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight()-2)
 	miog.mainFrame:SetMovable(true)
 	miog.mainFrame:SetFrameStrata("HIGH")
 	miog.mainFrame:EnableMouse(true)
 	miog.mainFrame:RegisterForDrag("LeftButton")
 	miog.mainFrame.expanded = false
 	miog.mainFrame:Hide()
-
+	
 	_G[miog.mainFrame:GetName()] = miog.mainFrame
 	tinsert(UISpecialFrames, miog.mainFrame:GetName())
+
+	local mainFrameBackgroundTexture = miog.persistentTexturePool:Acquire()
+	mainFrameBackgroundTexture:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT")
+	mainFrameBackgroundTexture:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT")
+	mainFrameBackgroundTexture:SetParent(miog.mainFrame)
+	mainFrameBackgroundTexture:SetDrawLayer("BACKGROUND")
+	mainFrameBackgroundTexture:SetTexture(985877)
+	mainFrameBackgroundTexture:SetTexCoord(0, 0.3215, 0.133, 0.4605)
+	miog.mainFrame.backgroundTexture = mainFrameBackgroundTexture
 
     local pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
 
@@ -41,7 +48,6 @@ miog.createMainFrame = function()
 	titleBar:SetPoint("BOTTOMRIGHT", miog.mainFrame, "TOPRIGHT", 0, -25)
 	titleBar:SetParent(miog.mainFrame)
 	titleBar:SetFrameStrata("DIALOG")
-	--miog.createFrameBorder(titleBar)
 	titleBar:Show()
 	miog.mainFrame.titleBar = titleBar
 
@@ -49,7 +55,7 @@ miog.createMainFrame = function()
 
 	local titleString = miog.persistentFontStringPool:Acquire()
 	titleString:SetFont(miog.fonts["libMono"], 14, "OUTLINE")
-	titleString:SetPoint("LEFT", titleBar, "LEFT", miog.C.PADDING_OFFSET*2, -miog.C.PADDING_OFFSET)
+	titleString:SetPoint("LEFT", titleBar, "LEFT", miog.C.PADDING_OFFSET*1, -1)
 	titleString:SetParent(titleBar)
 	titleString:SetJustifyH("LEFT")
 	titleString:SetJustifyV("CENTER")
@@ -63,28 +69,19 @@ miog.createMainFrame = function()
 		CreateTextureMarkup(2173920, 56, 56, titleBar:GetHeight(), titleBar:GetHeight(), 0, 1, 0, 1)
 	)
 	faction:SetJustifyH("RIGHT")
-	faction:SetPoint("RIGHT", titleBar, "RIGHT", -1, -2)
+	faction:SetPoint("RIGHT", titleBar, "RIGHT", -1, -1)
 	faction:SetSize(titleBar:GetHeight()*2, titleBar:GetHeight())
 	faction:SetParent(titleBar)
 	faction:Show()
 	miog.mainFrame.titleBar.faction = faction
 
-	local affixes = miog.persistentFontStringPool:Acquire()
-	affixes:SetFont(miog.fonts["libMono"], 22, "OUTLINE")
-	affixes:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", -2, -3)
-	affixes:SetParent(titleBar)
-	affixes:SetText(miog.getAffixes())
-	affixes:Show()
-	miog.mainFrame.affixes = affixes
-
 	local resetButton = miog.persistentFramePool:Acquire("BigRedRefreshButtonTemplate")
 	resetButton:ClearAllPoints()
-	resetButton:SetSize(PVEFrameCloseButton:GetHeight() or titleBar:GetHeight(), PVEFrameCloseButton:GetHeight() or titleBar:GetHeight(), 1, 1)
-	resetButton:SetPoint("RIGHT", PVEFrameCloseButton, "LEFT", -1, 0)
+	resetButton:SetSize(PVEFrameCloseButton:GetHeight(), PVEFrameCloseButton:GetHeight())
+	resetButton:SetPoint("RIGHT", PVEFrameCloseButton, "LEFT", -1, 1)
 	resetButton:SetParent(titleBar)
 	resetButton:SetScript("OnClick",
 		function()
-			--miog.checkApplicantList(true, true)
 			C_LFGList.RefreshApplicants()
 		end
 	)
@@ -130,8 +127,6 @@ miog.createMainFrame = function()
 	end)
 	end)
 
-	--hooksecurefunc(C_LFGList, "Search", function(...) local cat, filt1, filt2, languages = ... DevTools_Dump(languages) end)
-
 	expandDownwardsButton:Show()
 	miog.mainFrame.expandDownwardsButton = expandDownwardsButton
 
@@ -141,10 +136,39 @@ miog.createMainFrame = function()
 	voiceChat:SetParent(titleBar)
 	miog.mainFrame.titleBar.voiceChat = voiceChat
 
+	local infoPanel = miog.persistentFramePool:Acquire("BackdropTemplate")
+	infoPanel:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 0)
+	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", 0, 0)
+	infoPanel:SetHeight(95)
+	infoPanel:SetParent(miog.mainFrame)
+	--miog.createFrameBorder(infoPanel)
+	infoPanel:Show()
+	miog.createFrameBorder(infoPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	miog.mainFrame.infoPanel = infoPanel
+
+	local infoPanelBackgroundTexture = miog.persistentTexturePool:Acquire()
+	infoPanelBackgroundTexture:SetPoint("TOPLEFT", infoPanel, "TOPLEFT")
+	infoPanelBackgroundTexture:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT")
+	infoPanelBackgroundTexture:SetParent(infoPanel)
+	infoPanelBackgroundTexture:SetTexture(LFGListFrame.ApplicationViewer.InfoBackground:GetTexture())
+	infoPanelBackgroundTexture:SetDrawLayer("BORDER")
+	infoPanelBackgroundTexture:SetTexCoord(0.05, 0.3215, 0.04, 0.128)
+	infoPanelBackgroundTexture:Show()
+	miog.mainFrame.infoPanel.backgroundTexture = infoPanelBackgroundTexture
+
+	local affixes = miog.persistentFontStringPool:Acquire()
+	affixes:SetFont(miog.fonts["libMono"], 22, "OUTLINE")
+	affixes:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -2, -3)
+	affixes:SetParent(infoPanel)
+	affixes:SetText(miog.getAffixes())
+	affixes:Show()
+	miog.mainFrame.affixes = affixes
+
 	local settingScrollFrame = miog.persistentFramePool:Acquire("BackdropTemplate, ScrollFrameTemplate")
-	settingScrollFrame:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, -5)
-	settingScrollFrame:SetPoint("BOTTOMRIGHT", titleBar, "BOTTOMRIGHT", -affixes:GetWidth(), -70)
-	settingScrollFrame:SetParent(miog.mainFrame)
+	settingScrollFrame:SetPoint("TOPLEFT",  infoPanel, "TOPLEFT", 0, 0)
+	settingScrollFrame:SetPoint("TOPRIGHT", affixes, "TOPLEFT", 0, 0)
+	settingScrollFrame:SetHeight(infoPanel:GetHeight()*0.72)
+	settingScrollFrame:SetParent(infoPanel)
 	settingScrollFrame.ScrollBar:Hide()
 	settingScrollFrame:Show()
 	settingScrollFrame:SetMouseMotionEnabled(true)
@@ -172,7 +196,6 @@ miog.createMainFrame = function()
 	settingContainer:SetFrameStrata("FULLSCREEN")
 	settingContainer:SetParent(settingScrollFrame)
 	settingContainer:Show()
-	--miog.createFrameBorder(settingContainer)
 
 
 	settingScrollFrame:SetScrollChild(settingContainer)
@@ -180,13 +203,13 @@ miog.createMainFrame = function()
 
 	local settingString = miog.persistentFontStringPool:Acquire()
 	settingString:SetFont(miog.fonts["libMono"], miog.C.SETTING_FONT_SIZE, "THICK")
-	settingString:SetPoint("TOPLEFT", settingContainer, "TOPLEFT", miog.C.PADDING_OFFSET*3, -miog.C.PADDING_OFFSET)
+	settingString:SetPoint("TOPLEFT", settingContainer, "TOPLEFT", miog.C.PADDING_OFFSET*1, -miog.C.PADDING_OFFSET*2)
 	--settingString:SetPoint("BOTTOMRIGHT", settingContainer, "BOTTOMRIGHT", -miog.C.PADDING_OFFSET*3, -miog.C.PADDING_OFFSET*3)
 	settingString:SetWidth(settingContainer:GetWidth() - miog.C.PADDING_OFFSET*3)
 	settingString:SetParent(settingContainer)
 	settingString:SetJustifyV("TOP")
 	settingString:SetJustifyH("LEFT")
-	settingString:SetSpacing(3.1)
+	settingString:SetSpacing(3)
 	settingString:SetWordWrap(true)
 	settingString:SetNonSpaceWrap(true)
 	settingString:Show()
@@ -194,7 +217,8 @@ miog.createMainFrame = function()
 
 	local statusBar = miog.persistentFramePool:Acquire("BackdropTemplate")
 	statusBar:SetPoint("TOPLEFT", settingScrollFrame, "BOTTOMLEFT", 0, 0)
-	statusBar:SetPoint("BOTTOMRIGHT", settingScrollFrame, "BOTTOMRIGHT", 5, -25)
+	statusBar:SetPoint("TOPRIGHT", affixes, "BOTTOMRIGHT", 0, 0)
+	statusBar:SetHeight(infoPanel:GetHeight()*0.28)
 	statusBar:SetParent(miog.mainFrame)
 	statusBar:SetFrameStrata("DIALOG")
 	--createFrameBorder(statusBar)
@@ -204,26 +228,24 @@ miog.createMainFrame = function()
 
 	local timerString = miog.persistentFontStringPool:Acquire()
 	timerString:SetFont(miog.fonts["libMono"], 18, "OUTLINE")
-	timerString:SetPoint("LEFT", statusBar, "LEFT", miog.C.PADDING_OFFSET*2, 0)
+	timerString:SetPoint("LEFT", statusBar, "LEFT", miog.C.PADDING_OFFSET*1, 0)
 	timerString:SetParent(statusBar)
 	timerString:SetJustifyV("CENTER")
 	timerString:Show()
 	miog.mainFrame.statusBar.timerString = timerString
 
-	if not(IsAddOnLoaded("RaiderIO")) then
-		local rioLoaded = miog.persistentFontStringPool:Acquire()
-		rioLoaded:SetFont(miog.fonts["libMono"], 18, "OUTLINE")
-		rioLoaded:SetPoint("TOPLEFT", timerString, "TOPRIGHT", 5, 0)
-		rioLoaded:SetParent(statusBar)
-		rioLoaded:SetJustifyH("LEFT")
-		rioLoaded:SetText(WrapTextInColorCode("NO RAIDER IO", miog.C.RED_COLOR))
-		rioLoaded:Show()
-		miog.mainFrame.statusBar.rioLoaded = rioLoaded
-	end
+	local rioLoaded = miog.persistentFontStringPool:Acquire()
+	rioLoaded:SetFont(miog.fonts["libMono"], 18, "OUTLINE")
+	rioLoaded:SetPoint("TOPLEFT", timerString, "TOPRIGHT", 5, 0)
+	rioLoaded:SetParent(statusBar)
+	rioLoaded:SetJustifyH("LEFT")
+	rioLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.C.RED_COLOR))
+	rioLoaded:Show()
+	miog.mainFrame.statusBar.rioLoaded = rioLoaded
 
 	local showDPSButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
 	showDPSButton:SetParent(statusBar)
-	showDPSButton:SetPoint("BOTTOMRIGHT", statusBar, "BOTTOMRIGHT", 0, 0)
+	showDPSButton:SetPoint("RIGHT", statusBar, "RIGHT", -miog.C.ENTRY_FRAME_SIZE + 4, 0)
 	showDPSButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
 	showDPSButton:RegisterForClicks("LeftButtonDown")
 	showDPSButton:SetChecked(true)
@@ -296,15 +318,68 @@ miog.createMainFrame = function()
 	footerBar:SetPoint("TOPLEFT", miog.mainFrame, "BOTTOMLEFT", 0, 25)
 	footerBar:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
 	footerBar:SetParent(miog.mainFrame)
+	footerBar:Show()
 
 	miog.mainFrame.footerBar = footerBar
 
+	local browseGroups = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
+	browseGroups:SetText("Browse Groups")
+	browseGroups:SetSize(LFGListFrame.ApplicationViewer.BrowseGroupsButton:GetSize())
+	browseGroups:SetPoint("TOPLEFT", miog.mainFrame.footerBar, "TOPLEFT", 0, 0)
+	browseGroups:SetParent(miog.mainFrame.footerBar)
+	browseGroups:RegisterForClicks("LeftButtonDown")
+	browseGroups:SetScript("OnClick", function(self, leftButton)
+
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+		local baseFilters = LFGListFrame.baseFilters;
+		local searchPanel = LFGListFrame.SearchPanel;
+		local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+		if(activeEntryInfo) then
+			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID);
+			if(activityInfo) then
+				LFGListSearchPanel_SetCategory(searchPanel, activityInfo.categoryID, activityInfo.filters, baseFilters);
+				LFGListFrame_SetActivePanel(LFGListFrame, searchPanel);
+				LFGListSearchPanel_DoSearch(searchPanel);
+			end
+		end
+		
+	end)
+	browseGroups:Show()
+	
+	local delistButton = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
+	delistButton:SetText("Delist")
+	delistButton:SetSize(LFGListFrame.ApplicationViewer.RemoveEntryButton:GetSize())
+	delistButton:SetPoint("LEFT", browseGroups, "RIGHT", 0, 0)
+	delistButton:SetParent(miog.mainFrame.footerBar)
+	delistButton:RegisterForClicks("LeftButtonDown")
+	delistButton:SetScript("OnClick", function(self, leftButton)
+
+		C_LFGList.RemoveListing()
+		
+	end)
+	delistButton:Show()
+
+	local editButton = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
+	editButton:SetText("Edit")
+	editButton:SetSize(LFGListFrame.ApplicationViewer.EditButton:GetSize())
+	editButton:SetPoint("RIGHT", footerBar, "RIGHT", 0, 0)
+	editButton:SetParent(miog.mainFrame.footerBar)
+	editButton:RegisterForClicks("LeftButtonDown")
+	editButton:SetScript("OnClick", function(self, leftButton)
+
+		local entryCreation = LFGListFrame.EntryCreation;
+		LFGListEntryCreation_SetEditMode(entryCreation, true);
+		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation);
+		
+	end)
+	editButton:Show()
+
 	local mainScrollFrame = miog.persistentFramePool:Acquire("BackdropTemplate, ScrollFrameTemplate")
 	mainScrollFrame:SetParent(miog.mainFrame)
-	mainScrollFrame:SetPoint("TOPLEFT", miog.mainFrame.statusBar, "BOTTOMLEFT", 0, 0)
+	mainScrollFrame:SetPoint("TOPLEFT", miog.mainFrame.infoPanel, "BOTTOMLEFT", 0, -2*miog.F.PX_SIZE_1())
 	mainScrollFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
 
-	--mainScrollFrame.ScrollBar:Hide()
+	mainScrollFrame.ScrollBar:AdjustPointsOffset(-4, 0)
 	mainScrollFrame:Show()
 
 	miog.mainFrame.mainScrollFrame = mainScrollFrame
@@ -370,46 +445,15 @@ miog.createMainFrame = function()
 		buttonText:SetText(setting.title)
 		buttonText:Show()
 	end
-
-    miog.relocateBlizzardElements()
+	
+	miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
+	miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
+	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
+	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+	miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+	miog.mainFrame:RegisterEvent("ADDON_LOADED")
+	miog.mainFrame:SetScript("OnEvent", miog.OnEvent)
 end
 
-miog.relocateBlizzardElements = function()
-	local browseGroups = LFGListFrame.ApplicationViewer.BrowseGroupsButton
-	browseGroups:ClearAllPoints()
-	browseGroups:SetParent(miog.mainFrame)
-	browseGroups:SetPoint("TOPLEFT", miog.mainFrame.footerBar, "TOPLEFT", 0, 0)
-
-	miog.mainFrame.footerBar.browseGroups = browseGroups
-
-	local delistButton = LFGListFrame.ApplicationViewer.RemoveEntryButton
-	delistButton:ClearAllPoints()
-	delistButton:SetParent(miog.mainFrame)
-	delistButton:SetPoint("LEFT", miog.mainFrame.footerBar.browseGroups, "RIGHT", 0, 0)
-	
-	miog.mainFrame.footerBar.delistButton = delistButton
-
-	local editButton = LFGListFrame.ApplicationViewer.EditButton
-	editButton:ClearAllPoints()
-	editButton:SetParent(miog.mainFrame)
-	editButton:SetPoint("LEFT", miog.mainFrame.footerBar.delistButton, "RIGHT", 0, 0)
-
-	miog.mainFrame.footerBar.editButton = editButton
-	
-	local infoBackground = LFGListFrame.ApplicationViewer.InfoBackground
-	infoBackground:ClearAllPoints()
-	infoBackground:SetDrawLayer("BACKGROUND")
-	infoBackground:SetParent(miog.mainFrame.settingScrollFrame)
-	infoBackground:SetWidth(miog.mainFrame.titleBar:GetWidth())
-	infoBackground:SetPoint("TOP", miog.mainFrame.titleBar, "BOTTOM", 0, 0)
-
-	miog.mainFrame.statusBar.infoBackground = infoBackground
-end
-
-miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
-miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
-miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
-miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
-miog.mainFrame:SetScript("OnEvent", miog.OnEvent)
+miog.createMainFrame()

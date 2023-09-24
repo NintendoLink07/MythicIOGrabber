@@ -26,6 +26,8 @@ miog.C = {
     RED_SECONDARY_COLOR = "99FF2222",
 
     BACKGROUND_COLOR = "FF18191A",
+    BACKGROUND_COLOR_2 = "FF2A2B3C",
+    BACKGROUND_COLOR_3 = "FF3C3D4E",
     CARD_COLOR = "FF242526",
     HOVER_COLOR = "FF3A3B3C",
     PRIMARY_TEXT_COLOR = "FFE4E6EB",
@@ -35,6 +37,7 @@ miog.C = {
 miog.F = {
     FACTION_ICON_SIZE = 0,
     UI_SCALE = C_CVar.GetCVar("uiScale"),
+	PX_SIZE_1 = function() return PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1) end,
     WEEKLY_AFFIX = "",
     IS_LIST_SORTED = false,
     SHOW_TANKS = true,

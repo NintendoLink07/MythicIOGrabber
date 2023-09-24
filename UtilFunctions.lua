@@ -6,9 +6,10 @@ miog.getAffixes = function()
 	local affixString = ""
 
 	if(affixIDs) then
+		local sizeWH = miog.mainFrame.infoPanel:GetHeight()/4*miog.F.UI_SCALE
 		for k, _ in pairs(affixIDs) do
 			local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixIDs[k].id)
-			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C._AFFIX_FONT_SIZE, miog.C._AFFIX_FONT_SIZE, 0, 1, 0, 1) .. "\n"
+			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, sizeWH, sizeWH, 0, 1, 0, 1) .. "\n"
 		end
 
 		miog.F.WEEKLY_AFFIX = affixIDs[1].id
@@ -26,14 +27,52 @@ miog.sortTableForRoleAndClass = function(tbl)
 	end)
 end
 
-miog.createFrameBorder = function(frame, thickness, r, g, b, a)
-	if(not thickness and not r and not g and not b and not a) then
-		thickness, r, g, b, a = 1, random(0, 1), random(0, 1), random(0, 1), 1
+local function checkFrameBorderArguments(thickness, r, g, b, a)
+	if(not thickness) then
+		thickness = 1
 	end
 
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness } )
-	frame:SetBackdropColor(0.1, 0.1 ,0.1 , 0) -- main area color
+	if(not r) then
+		r = random(0, 1)
+	end
+
+	if(not g) then
+		g = random(0, 1)
+	end
+
+	if(not b) then
+		b = random(0, 1)
+	end
+
+	if(not a) then
+		a = 1
+	end
+
+	return thickness, r, g, b, a
+end
+
+miog.createFrameBorder = function(frame, oThickness, oR, oG, oB, oA)
+	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
+
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness} )
+	frame:SetBackdropColor(0.1, 0.1 , 0.1, 0) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, a) -- border color
+end
+
+miog.createTopBottomLines = function(frame, oThickness, oR, oG, oB, oA)
+	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
+
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=0, right=0, top=-miog.F.PX_SIZE_1, bottom=-miog.F.PX_SIZE_1}} )
+	frame:SetBackdropColor(r, g , b, a) -- main area color
+	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
+end
+
+miog.createLeftRightLines = function(frame, oThickness, oR, oG, oB, oA)
+	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
+	
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1, top=0, bottom=0}} )
+	frame:SetBackdropColor(r, g , b, a) -- main area color
+	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
 end
 
 miog.simpleSplit = function(tempString, delimiter)

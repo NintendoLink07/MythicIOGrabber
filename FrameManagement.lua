@@ -18,12 +18,10 @@ end
 
 miog.persistentFramePool = CreateFramePoolCollection()
 miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "BackdropTemplate", resetPersistentFrames)
-miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "DefaultPanelTemplate", resetPersistentFrames)
-miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "ChatConfigBorderBoxTemplate", resetPersistentFrames)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelCloseButton", resetPersistentFrames)
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "BigRedRefreshButtonTemplate", resetPersistentFrames)
 miog.persistentFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetPersistentFrames)
 miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "BackdropTemplate, ScrollFrameTemplate", resetPersistentFrames)
+miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelButtonTemplate", resetPersistentFrames)
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate", resetPersistentFrames)
 
 miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, "GameTooltipText", resetPersistentFontStrings)
@@ -76,11 +74,9 @@ end
 
 miog.temporaryFramePool = CreateFramePoolCollection()
 miog.temporaryFramePool:CreatePoolIfNeeded("Frame", nil, "BackdropTemplate", resetTemporaryFrames)
-miog.temporaryFramePool:CreatePoolIfNeeded("Frame", nil, "ThinBorderTemplate", resetTemporaryFrames)
 miog.temporaryFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "ScrollFrameTemplate", resetTemporaryFrames)
 miog.temporaryFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate, BackdropTemplate", resetTemporaryFrames)
 miog.temporaryFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetTemporaryFrames)
-miog.temporaryFramePool:CreatePoolIfNeeded("GameTooltip", nil, "GameTooltipTemplate", resetTemporaryFrames)
 miog.temporaryFramePool:CreatePoolIfNeeded("EditBox", nil, "InputBoxTemplate", resetTemporaryFrames)
 
 miog.temporaryFontStringPool = CreateFontStringPool(miog.temporaryFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, "GameTooltipText", resetTemporaryFontStrings)
@@ -90,6 +86,12 @@ miog.releaseAllTemporaryPools = function()
 	miog.temporaryFramePool:ReleaseAll()
 	miog.temporaryFontStringPool:ReleaseAll()
 	miog.temporaryTexturePool:ReleaseAll()
+end
+
+miog.releaseAllPersistentPools = function()
+	miog.persistentFramePool:ReleaseAll()
+	miog.persistentFontStringPool:ReleaseAll()
+	miog.persistentTexturePool:ReleaseAll()
 end
 
 miog.createFontString = function(text, parent, fontSize, width, height)
