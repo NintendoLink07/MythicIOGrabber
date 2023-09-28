@@ -380,15 +380,6 @@ local function createEntryFrame(applicantID, debug)
 						textLineRightFontString = miog.createFontString(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()), textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
 					end
 				end
-
-				if(textLineRightFontString) then
-					if(dngIndex == 1) then
-						textLineRightFontString:SetJustifyV("TOP")
-						textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -4)
-					else
-						textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1)
-					end
-				end
 				
 				if(profile) then --If Raider.IO is installed
 					if(mythicKeystoneProfile) then
@@ -402,7 +393,7 @@ local function createEntryFrame(applicantID, debug)
 								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
 								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
 							)
-							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1, 1, 1)
+							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, 0)
 						end
 
 						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or 0
@@ -430,15 +421,15 @@ local function createEntryFrame(applicantID, debug)
 
 							local dungeonNameShort = dungeonProfile[dngIndex].dungeon.shortName
 
-							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.25)
+							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.25, 10)
 							textLineLeftFontString:SetSpacing(2)
 							textLineLeftFontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
 
-							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, 3), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.30)
+							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, 3), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.29, 10)
 							primaryString:SetSpacing(2)
 							primaryString:SetPoint("LEFT", textLineLeftFontString, "RIGHT", 0, 0)
 
-							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, 3), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.30)
+							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, 3), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.29, 10)
 							secondaryString:SetSpacing(2)
 							secondaryString:SetPoint("LEFT", primaryString, "RIGHT", 0, 0)
 						end
@@ -450,9 +441,21 @@ local function createEntryFrame(applicantID, debug)
 					if(dngIndex == 1) then
 						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
 						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
+						
 
 						--scoreString:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
 					end
+				end
+				
+				if(textLineRightFontString) then
+					if(dngIndex == 1) then
+						textLineRightFontString:SetJustifyV("TOP")
+						textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -4)
+					else
+						textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1)
+						textLineRightFontString:SetSize(textLineRight:GetSize())
+					end
+					
 				end
 			end
 		end
