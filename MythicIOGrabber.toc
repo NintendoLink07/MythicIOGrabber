@@ -1,7 +1,7 @@
 ## Interface: 100017
 ## Title: Mythic IO Grabber
 ## Notes: Detailed raider io output of applicants
-## Version: 0.7.1
+## Version: 0.7.2
 ## Dependencies: 
 ## SavedVariables: SavedOptionSettings
 ## SavedVariablesPerCharacter: QueueUpTime
