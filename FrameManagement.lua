@@ -60,7 +60,6 @@ local function resetTemporaryFontStrings(_, childFontString)
 	childFontString:ClearAllPoints()
 	childFontString:SetSpacing(2)
 	childFontString:SetDrawLayer("BACKGROUND")
-	childFontString:SetJustifyH("LEFT")
 	childFontString:SetJustifyV("CENTER")
 end
 
@@ -97,7 +96,6 @@ end
 miog.createFontString = function(text, parent, fontSize, width, height)
 	local textLineFontString = miog.temporaryFontStringPool:Acquire()
 	textLineFontString:SetFont(miog.fonts["libMono"], fontSize, "OUTLINE")
-	textLineFontString:SetJustifyH("LEFT")
 	textLineFontString:SetText(text)
 
 	if(width ~= nil) then

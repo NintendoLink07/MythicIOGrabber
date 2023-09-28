@@ -32,6 +32,10 @@ miog.C = {
     HOVER_COLOR = "FF3A3B3C",
     PRIMARY_TEXT_COLOR = "FFE4E6EB",
     SECONDARY_TEXT_COLOR = "FFB0B3B8",
+
+	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/star_256.png:8:8|t",
+	UTF_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/starUTF_512.png:8:8|t",
+	STAR_TEXTURE = "⋆"
 }
 
 miog.F = {

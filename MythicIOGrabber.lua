@@ -349,8 +349,86 @@ local function createEntryFrame(applicantID, debug)
 					offBackgroundColor:SetColorTexture(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
 					offBackgroundColor:Show()
 				end
-
+				
 				local textLineRightFontString
+
+				if(profile) then --If Raider.IO is installed
+					if(mythicKeystoneProfile) then
+						if(dngIndex == 6) then
+							textLineRightFontString = miog.createFontString("", textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
+							textLineRightFontString:SetText(
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
+							)
+							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, 0)
+						end
+
+						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or 0
+						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or 0
+						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or 0
+						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or 0
+
+						if(dungeonProfile) then
+							local textureString
+
+							for _, icon in pairs(miog.dungeonIcons) do
+								if(dungeonProfile[dngIndex].dungeon.name == icon[1]) then
+									textureString = icon[2]
+								end
+							end
+
+							local dungeonIconTexture = miog.temporaryTexturePool:Acquire()
+							dungeonIconTexture:SetTexture(textureString)
+							dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT")
+							dungeonIconTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+							dungeonIconTexture:SetParent(textLineLeft)
+							dungeonIconTexture:SetDrawLayer("OVERLAY")
+							dungeonIconTexture:Show()
+
+							local dungeonNameFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
+							dungeonNameFrame:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
+							dungeonNameFrame:SetSize(textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
+							dungeonNameFrame:SetParent(textLineLeft)
+							dungeonNameFrame:Show()
+
+							local dungeonString = miog.createFontString(dungeonProfile[dngIndex].dungeon.shortName .. ":", textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+							dungeonString:SetPoint("LEFT", dungeonNameFrame, "LEFT")
+							dungeonString:SetSize(dungeonNameFrame:GetSize())
+
+							local primaryFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
+							primaryFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
+							primaryFrame:SetSize(textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
+							primaryFrame:SetParent(textLineLeft)
+							primaryFrame:Show()
+
+							local primaryText = WrapTextInColorCode(primaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+							local primaryString = miog.createFontString(primaryText, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+							primaryString:SetPoint("LEFT", primaryFrame, "LEFT")
+							primaryString:SetSize(primaryFrame:GetSize())
+
+							local secondaryFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
+							secondaryFrame:SetPoint("LEFT", primaryFrame, "RIGHT")
+							secondaryFrame:SetSize(textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
+							secondaryFrame:SetParent(textLineLeft)
+							secondaryFrame:Show()
+
+							local secondaryText = WrapTextInColorCode(secondaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+							local secondaryString = miog.createFontString(secondaryText, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.32, textLineLeft:GetHeight())
+							secondaryString:SetPoint("LEFT", secondaryFrame, "LEFT")
+							secondaryString:SetSize(secondaryFrame:GetSize())
+						end
+					else
+						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
+					end
+				else -- If RaiderIO is not installed
+					if(dngIndex == 1) then
+						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
+					end
+				end
 				
 				if(dngIndex == 1) then
 					textLineRight:SetSize(textLineRight:GetWidth(), miog.C.FULL_SIZE*0.75)
@@ -378,69 +456,6 @@ local function createEntryFrame(applicantID, debug)
 						textLineRightFontString = miog.createFontString(WrapTextInColorCode("Main: " .. (profile.mythicKeystoneProfile.mainCurrentScore or 0), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()), textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
 					else
 						textLineRightFontString = miog.createFontString(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()), textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
-					end
-				end
-				
-				if(profile) then --If Raider.IO is installed
-					if(mythicKeystoneProfile) then
-
-						if(dngIndex == 1) then
-						elseif(dngIndex == 6) then
-							textLineRightFontString = miog.createFontString("", textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
-							textLineRightFontString:SetText(
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
-							)
-							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, 0)
-						end
-
-						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or 0
-						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or 0
-						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or 0
-						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or 0
-						local starTexture = CreateSimpleTextureMarkup("Interface/Addons/MythicIOGrabber/res/star_256.png", 8, 8)
-
-						if(dungeonProfile) then
-							local textureString
-
-							for _, icon in pairs(miog.dungeonIcons) do
-								if(dungeonProfile[dngIndex].dungeon.name == icon[1]) then
-									textureString = icon[2]
-								end
-							end
-
-							local dungeonIconTexture = miog.temporaryTexturePool:Acquire()
-							dungeonIconTexture:SetTexture(textureString)
-							dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT")
-							dungeonIconTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-							dungeonIconTexture:SetParent(textLineLeft)
-							dungeonIconTexture:SetDrawLayer("OVERLAY")
-							dungeonIconTexture:Show()
-
-							local dungeonNameShort = dungeonProfile[dngIndex].dungeon.shortName
-
-							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.25, 10)
-							textLineLeftFontString:SetSpacing(2)
-							textLineLeftFontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
-
-							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.29, 10)
-							primaryString:SetSpacing(2)
-							primaryString:SetPoint("LEFT", textLineLeftFontString, "RIGHT")
-
-							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.29, 10)
-							secondaryString:SetSpacing(2)
-							secondaryString:SetPoint("LEFT", primaryString, "RIGHT")
-						end
-					else
-						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
-					end
-				else -- If RaiderIO is not installed
-					if(dngIndex == 1) then
-						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
 					end
 				end
 				
