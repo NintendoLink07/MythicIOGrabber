@@ -38,7 +38,7 @@ local function createEntryFrame(applicantID, debug)
 	local applicantsFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
 
 	if(not latestApplicantFrame) then
-		applicantsFrame:SetPoint("TOP", miog.mainFrame.mainScrollFrame.mainContainer, "TOP", 0, 0)
+		applicantsFrame:SetPoint("TOP", miog.mainFrame.mainScrollFrame.mainContainer, "TOP")
 	else
 		applicantsFrame:SetPoint("TOPLEFT", latestApplicantFrame, "BOTTOMLEFT", 0, 3*-PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1))
 	end
@@ -133,7 +133,7 @@ local function createEntryFrame(applicantID, debug)
 			
 			local dataFrameGeneralInfo = miog.temporaryFramePool:Acquire("BackdropTemplate")
 			dataFrameGeneralInfo:SetSize(entryFrame:GetWidth()*0.48, miog.C.FULL_SIZE)
-			dataFrameGeneralInfo:SetPoint("TOPLEFT", dataFrameDungeons, "TOPRIGHT", 0, 0)
+			dataFrameGeneralInfo:SetPoint("TOPLEFT", dataFrameDungeons, "TOPRIGHT")
 			dataFrameGeneralInfo:SetFrameStrata("HIGH")
 			dataFrameGeneralInfo:SetParent(entryFrame)
 
@@ -172,7 +172,7 @@ local function createEntryFrame(applicantID, debug)
 				applicantsFrame.declineButton:SetParent(entryFrame)
 				applicantsFrame.declineButton:SetSize(miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
 
-				applicantsFrame.declineButton:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT", 0, 0)
+				applicantsFrame.declineButton:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT")
 				applicantsFrame.declineButton:RegisterForClicks("LeftButtonDown")
 				applicantsFrame.declineButton:SetScript("OnClick", function(self, button)
 
@@ -199,7 +199,7 @@ local function createEntryFrame(applicantID, debug)
 				applicantsFrame.inviteButton:SetText(CreateTextureMarkup(136814, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE/2, miog.C.APPLICANT_BUTTON_SIZE/2, 0.1, 0.85, 0.1, 0.95))
 				applicantsFrame.inviteButton:SetParent(entryFrame)
 				applicantsFrame.inviteButton:SetSize(miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
-				applicantsFrame.inviteButton:SetPoint("TOPRIGHT", applicantsFrame.declineButton, "TOPLEFT", 0, 0)
+				applicantsFrame.inviteButton:SetPoint("TOPRIGHT", applicantsFrame.declineButton, "TOPLEFT")
 				applicantsFrame.inviteButton:RegisterForClicks("LeftButtonDown")
 				applicantsFrame.inviteButton:SetScript("OnClick", function(self, button)
 					C_LFGList.InviteApplicant(applicantID)
@@ -216,7 +216,7 @@ local function createEntryFrame(applicantID, debug)
 				local groupIcon = miog.temporaryTexturePool:Acquire()
 				groupIcon:SetTexture(134148)
 				groupIcon:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-				groupIcon:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT", 0, 0)
+				groupIcon:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT")
 				groupIcon:SetTexCoord(0, 0.95, 0.05, 1)
 				groupIcon:SetDrawLayer("OVERLAY")
 				groupIcon:SetParent(entryFrame)
@@ -237,7 +237,7 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame.statusString.backgroundColor:SetParent(entryFrame)
 			entryFrame.statusString.backgroundColor:SetDrawLayer("OVERLAY")
 			entryFrame.statusString.backgroundColor:SetSize(entryFrame:GetSize())
-			entryFrame.statusString.backgroundColor:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, 0)
+			entryFrame.statusString.backgroundColor:SetPoint("TOPLEFT", entryFrame, "TOPLEFT")
 			entryFrame.statusString.backgroundColor:SetColorTexture(0.1, 0.1, 0.1, 0.7)
 			entryFrame.statusString.backgroundColor:Hide()
 
@@ -246,7 +246,7 @@ local function createEntryFrame(applicantID, debug)
 
 			local nameString = miog.createFontString(coloredSubName, entryFrame, 11, entryFrame:GetWidth()*0.28, miog.C.ENTRY_FRAME_SIZE)
 			nameString:SetMouseMotionEnabled(true)
-			nameString:SetPoint("LEFT", detailsButton, "RIGHT", 0, 0)
+			nameString:SetPoint("LEFT", detailsButton, "RIGHT")
 			nameString:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(entryFrame, "ANCHOR_CURSOR")
 				GameTooltip:SetText(fullName)
@@ -327,7 +327,7 @@ local function createEntryFrame(applicantID, debug)
 
 			local friendTexture = miog.temporaryTexturePool:Acquire()
 			friendTexture:SetDrawLayer("OVERLAY")
-			friendTexture:SetPoint("LEFT", ilvlString, "RIGHT", 0, 0)
+			friendTexture:SetPoint("LEFT", ilvlString, "RIGHT")
 			friendTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 			friendTexture:SetTexture(648207)
 			friendTexture:SetParent(entryFrame)
@@ -344,7 +344,7 @@ local function createEntryFrame(applicantID, debug)
 					local offBackgroundColor = miog.temporaryTexturePool:Acquire()
 					offBackgroundColor:SetParent(textLineLeft)
 					offBackgroundColor:SetSize(entryFrame:GetWidth() - 1, textLineLeft:GetHeight())
-					offBackgroundColor:SetPoint("TOPLEFT", textLineLeft, "TOPLEFT", 0, 0)
+					offBackgroundColor:SetPoint("TOPLEFT", textLineLeft, "TOPLEFT")
 					
 					offBackgroundColor:SetColorTexture(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
 					offBackgroundColor:Show()
@@ -380,15 +380,6 @@ local function createEntryFrame(applicantID, debug)
 						textLineRightFontString = miog.createFontString(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()), textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
 					end
 				end
-
-				if(textLineRightFontString) then
-					if(dngIndex == 1) then
-						textLineRightFontString:SetJustifyV("TOP")
-						textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -4)
-					else
-						textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1)
-					end
-				end
 				
 				if(profile) then --If Raider.IO is installed
 					if(mythicKeystoneProfile) then
@@ -402,7 +393,7 @@ local function createEntryFrame(applicantID, debug)
 								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
 								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
 							)
-							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1, 1, 1)
+							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, 0)
 						end
 
 						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or 0
@@ -422,7 +413,7 @@ local function createEntryFrame(applicantID, debug)
 
 							local dungeonIconTexture = miog.temporaryTexturePool:Acquire()
 							dungeonIconTexture:SetTexture(textureString)
-							dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT", 0, 0)
+							dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT")
 							dungeonIconTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 							dungeonIconTexture:SetParent(textLineLeft)
 							dungeonIconTexture:SetDrawLayer("OVERLAY")
@@ -430,17 +421,17 @@ local function createEntryFrame(applicantID, debug)
 
 							local dungeonNameShort = dungeonProfile[dngIndex].dungeon.shortName
 
-							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.25)
+							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.25, 10)
 							textLineLeftFontString:SetSpacing(2)
 							textLineLeftFontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
 
-							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, 3), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.30)
+							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, 3), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.29, 10)
 							primaryString:SetSpacing(2)
-							primaryString:SetPoint("LEFT", textLineLeftFontString, "RIGHT", 0, 0)
+							primaryString:SetPoint("LEFT", textLineLeftFontString, "RIGHT")
 
-							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, 3), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.30)
+							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, 3), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.29, 10)
 							secondaryString:SetSpacing(2)
-							secondaryString:SetPoint("LEFT", primaryString, "RIGHT", 0, 0)
+							secondaryString:SetPoint("LEFT", primaryString, "RIGHT")
 						end
 					else
 						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
@@ -450,9 +441,18 @@ local function createEntryFrame(applicantID, debug)
 					if(dngIndex == 1) then
 						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
 						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
-
-						--scoreString:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
 					end
+				end
+				
+				if(textLineRightFontString) then
+					if(dngIndex == 1) then
+						textLineRightFontString:SetJustifyV("TOP")
+						textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -4)
+					else
+						textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1)
+						textLineRightFontString:SetSize(textLineRight:GetSize())
+					end
+					
 				end
 			end
 		end
