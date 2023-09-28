@@ -96,6 +96,7 @@ end
 miog.createFontString = function(text, parent, fontSize, width, height)
 	local textLineFontString = miog.temporaryFontStringPool:Acquire()
 	textLineFontString:SetFont(miog.fonts["libMono"], fontSize, "OUTLINE")
+	textLineFontString:SetJustifyH("LEFT")
 	textLineFontString:SetText(text)
 
 	if(width ~= nil) then
@@ -118,4 +119,49 @@ miog.createTextLine = function(anchor, index)
 	textLine:Show()
 
 	return textLine
+end
+
+miog.createBaseFrame = function(type, template, parent, width, height)
+	local frame
+
+	if(type == "persistent") then
+		frame = miog.persistentFramePool:Acquire(template)
+	elseif(type == "temporary") then
+		frame = miog.temporaryFramePool:Acquire(template)
+	end
+
+	frame:SetParent(parent)
+	frame:SetWidth(width)
+	frame:SetHeight(height)
+	frame:Show()
+
+	return frame
+end
+
+miog.createBaseTexture = function(type, texturePath, parent, width, height, layer)
+	local texture
+
+	if(type == "persistent") then
+		texture = miog.persistentTexturePool:Acquire()
+	elseif(type == "temporary") then
+		texture = miog.temporaryTexturePool:Acquire()
+	end
+
+	texture:SetDrawLayer(layer or "OVERLAY")
+	texture:SetParent(parent)
+	
+	if(width ~= nil) then
+		texture:SetWidth(width)
+	end
+	if(height ~= nil) then
+		texture:SetHeight(height)
+	end
+
+	if(texture ~= nil) then
+		texture:SetTexture(texturePath)
+	end
+
+	texture:Show()
+
+	return texture
 end

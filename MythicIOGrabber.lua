@@ -25,7 +25,6 @@ local function refreshFunction()
 	latestApplicantFrame = nil
 
 	addonApplicantList = {}
-	detailExpandedList = {}
 end
 
 local function createEntryFrame(applicantID, debug)
@@ -35,23 +34,17 @@ local function createEntryFrame(applicantID, debug)
 		applicantData = {applicantID = applicantID, applicationStatus = "applied", numMembers = random(1, 4), isNew = true, comment = "Heiho, heiho, wir sind vergnügt und froh. Johei, johei, die Arbeit ist vorbei.", displayOrderID = 1}
 	end
 
-	local applicantsFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
+	local applicantsFrame = miog.createBaseFrame("temporary", "BackdropTemplate", miog.mainFrame.mainScrollFrame.mainContainer, miog.mainFrame.mainScrollFrame:GetWidth(), miog.C.ENTRY_FRAME_SIZE * applicantData.numMembers + applicantData.numMembers * miog.F.PX_SIZE_1() + 1)
+	applicantsFrame.entryFrames = {}
+	applicantsFrame.applicantID = applicantID
+
+	miog.createFrameBorder(applicantsFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
 
 	if(not latestApplicantFrame) then
 		applicantsFrame:SetPoint("TOP", miog.mainFrame.mainScrollFrame.mainContainer, "TOP")
 	else
 		applicantsFrame:SetPoint("TOPLEFT", latestApplicantFrame, "BOTTOMLEFT", 0, 3*-PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1))
 	end
-
-	applicantsFrame:SetParent(miog.mainFrame.mainScrollFrame.mainContainer)
-	applicantsFrame.entryFrames = {}
-	applicantsFrame.applicantID = applicantID
-	applicantsFrame:Show()
-	miog.createFrameBorder(applicantsFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
-
-	local sizeIncrease = miog.C.ENTRY_FRAME_SIZE * applicantData.numMembers + applicantData.numMembers * miog.F.PX_SIZE_1() + 1
-	
-	applicantsFrame:SetSize(miog.mainFrame.mainScrollFrame:GetWidth(), sizeIncrease)
 
 	for index = 1, applicantData.numMembers, 1 do
 		local fullName, englishClassName, _, _, ilvl, honor, tank, healer, damager, assignedRole, friend, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, index)
@@ -78,8 +71,8 @@ local function createEntryFrame(applicantID, debug)
 
 			local result = miog.simpleSplit(fullName, "-")
 
-			local entryFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
-			entryFrame:SetSize(applicantsFrame:GetWidth()-2, miog.C.ENTRY_FRAME_SIZE)
+			local entryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", applicantsFrame, applicantsFrame:GetWidth()-2, miog.C.ENTRY_FRAME_SIZE)
+			entryFrame.active = false
 
 			if(not latestEntryFrame) then
 				entryFrame:SetPoint("TOP", applicantsFrame, "TOP", 0, -PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1))
@@ -91,15 +84,12 @@ local function createEntryFrame(applicantID, debug)
 
 			applicantsFrame.entryFrames[index] = entryFrame
 
-			entryFrame.linkBox = miog.temporaryFramePool:Acquire("InputBoxTemplate")
-			entryFrame.linkBox:SetParent(WorldFrame)
+			entryFrame.linkBox = miog.createBaseFrame("temporary", "InputBoxTemplate", WorldFrame, 250, 20)
 			entryFrame.linkBox:SetFont(miog.fonts["libMono"], 7, "OUTLINE")
-			entryFrame.linkBox:SetSize(250, 20)
 			entryFrame.linkBox:SetPoint("CENTER")
 			entryFrame.linkBox:SetAutoFocus(true)
 			entryFrame.linkBox:SetScript("OnKeyDown", function(editBoxSelf, key) if(key == "ESCAPE") then entryFrame.linkBox:Hide() entryFrame.linkBox:ClearFocus() end end)
-
-			entryFrame:SetParent(applicantsFrame)
+			entryFrame.linkBox:Hide()
 			entryFrame:SetScript("OnMouseDown", function(self, button)
 				if(button == "RightButton") then
 					local link = "https://raider.io/characters/" .. profile.region .. "/" .. profile.realm .. "/" .. profile.name
@@ -112,7 +102,6 @@ local function createEntryFrame(applicantID, debug)
 					entryFrame.linkBox:SetAutoFocus(false)
 				end
 			end)
-			entryFrame.active = false
 
 			local entryFrame_BackgroundTexture = miog.temporaryTexturePool:Acquire()
 			entryFrame_BackgroundTexture:SetParent(entryFrame)
@@ -120,27 +109,21 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame_BackgroundTexture:SetDrawLayer("BACKGROUND")
 			entryFrame_BackgroundTexture:SetColorTexture(CreateColorFromHexString(miog.C.CARD_COLOR):GetRGBA())
 			entryFrame_BackgroundTexture:Show()
-	
-			entryFrame:Show()
 
 			latestEntryFrame = entryFrame
 			
-			local dataFrameDungeons = miog.temporaryFramePool:Acquire("BackdropTemplate")
-			dataFrameDungeons:SetSize(entryFrame:GetWidth()*0.52, miog.C.FULL_SIZE)
+			local dataFrameDungeons = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame, entryFrame:GetWidth()*0.52, miog.C.FULL_SIZE)
 			dataFrameDungeons:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, -miog.C.ENTRY_FRAME_SIZE - 2)
 			dataFrameDungeons:SetFrameStrata("HIGH")
-			dataFrameDungeons:SetParent(entryFrame)
+			dataFrameDungeons:Hide()
 			
-			local dataFrameGeneralInfo = miog.temporaryFramePool:Acquire("BackdropTemplate")
-			dataFrameGeneralInfo:SetSize(entryFrame:GetWidth()*0.48, miog.C.FULL_SIZE)
+			local dataFrameGeneralInfo = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame, entryFrame:GetWidth()*0.48, miog.C.FULL_SIZE)
 			dataFrameGeneralInfo:SetPoint("TOPLEFT", dataFrameDungeons, "TOPRIGHT")
 			dataFrameGeneralInfo:SetFrameStrata("HIGH")
-			dataFrameGeneralInfo:SetParent(entryFrame)
+			dataFrameGeneralInfo:Hide()
 
-			local detailsButton = miog.temporaryFramePool:Acquire("UICheckButtonTemplate")
-			detailsButton:SetParent(entryFrame)
+			local detailsButton = miog.createBaseFrame("temporary", "UICheckButtonTemplate", entryFrame, miog.C.ENTRY_FRAME_SIZE + 2, miog.C.ENTRY_FRAME_SIZE + 2)
 			detailsButton:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, 1)
-			detailsButton:SetSize(miog.C.ENTRY_FRAME_SIZE + 2, miog.C.ENTRY_FRAME_SIZE + 2)
 			detailsButton:RegisterForClicks("LeftButtonDown")
 			detailsButton:SetScript("OnClick", function(self, button, down)
 				dataFrameDungeons:SetShown(not dataFrameDungeons:IsVisible())
@@ -160,22 +143,18 @@ local function createEntryFrame(applicantID, debug)
 			end)
 
 			if(detailExpandedList[applicantID]) then
-				detailsButton:SetChecked(detailExpandedList[applicantID])
+				--detailsButton:SetChecked(detailExpandedList[applicantID])
+				detailsButton:Click()
 			end
 
-			detailsButton:Show()
-
 			local allowedToInvite = C_PartyInfo.CanInvite()
+			
 			if(index == 1 and allowedToInvite or index == 1 and debug) then
-				applicantsFrame.declineButton = miog.temporaryFramePool:Acquire("UIButtonTemplate, BackdropTemplate")
+				applicantsFrame.declineButton = miog.createBaseFrame("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
 				applicantsFrame.declineButton:SetText(CreateTextureMarkup(136813, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE/2, miog.C.APPLICANT_BUTTON_SIZE/2, 0.1, 0.85, 0.15, 0.85))
-				applicantsFrame.declineButton:SetParent(entryFrame)
-				applicantsFrame.declineButton:SetSize(miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
-
 				applicantsFrame.declineButton:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT")
 				applicantsFrame.declineButton:RegisterForClicks("LeftButtonDown")
 				applicantsFrame.declineButton:SetScript("OnClick", function(self, button)
-
 					if(addonApplicantList[applicantID]["creationStatus"] == "added") then
 
 						addonApplicantList[applicantID]["creationStatus"] = "canBeRemoved"
@@ -193,12 +172,8 @@ local function createEntryFrame(applicantID, debug)
 					declineButtonFontString:SetFont(miog.fonts["libMono"], miog.C.ENTRY_FRAME_SIZE, "OUTLINE")
 				end
 
-				applicantsFrame.declineButton:Show()
-
-				applicantsFrame.inviteButton = miog.temporaryFramePool:Acquire("UIButtonTemplate, BackdropTemplate")
+				applicantsFrame.inviteButton = miog.createBaseFrame("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
 				applicantsFrame.inviteButton:SetText(CreateTextureMarkup(136814, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE/2, miog.C.APPLICANT_BUTTON_SIZE/2, 0.1, 0.85, 0.1, 0.95))
-				applicantsFrame.inviteButton:SetParent(entryFrame)
-				applicantsFrame.inviteButton:SetSize(miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
 				applicantsFrame.inviteButton:SetPoint("TOPRIGHT", applicantsFrame.declineButton, "TOPLEFT")
 				applicantsFrame.inviteButton:RegisterForClicks("LeftButtonDown")
 				applicantsFrame.inviteButton:SetScript("OnClick", function(self, button)
@@ -210,33 +185,24 @@ local function createEntryFrame(applicantID, debug)
 					inviteButtonFontString:SetFont(miog.fonts["libMono"], miog.C.ENTRY_FRAME_SIZE, "OUTLINE")
 				end
 
-				applicantsFrame.inviteButton:Show()
-
 			elseif(index > 1) then
-				local groupIcon = miog.temporaryTexturePool:Acquire()
-				groupIcon:SetTexture(134148)
-				groupIcon:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+				local groupIcon = miog.createBaseTexture("temporary", 134148, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 				groupIcon:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT")
 				groupIcon:SetTexCoord(0, 0.95, 0.05, 1)
-				groupIcon:SetDrawLayer("OVERLAY")
-				groupIcon:SetParent(entryFrame)
-				groupIcon:Show()
+
 			elseif(not allowedToInvite) then
 				miog.mainFrame.mainScrollFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
+
 			end
 
-			entryFrame.statusString = miog.createFontString("", entryFrame, 12)
-			entryFrame.statusString:SetFont(miog.fonts["libMono"], miog.C.ENTRY_FRAME_SIZE, "OUTLINE")
+			entryFrame.statusString = miog.createFontString("", entryFrame, miog.C.ENTRY_FRAME_SIZE)
 			entryFrame.statusString:SetJustifyH("CENTER")
 			entryFrame.statusString:SetJustifyV("CENTER")
 			entryFrame.statusString:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, -1)
 			entryFrame.statusString:SetDrawLayer("OVERLAY")
 			entryFrame.statusString:Hide()
 
-			entryFrame.statusString.backgroundColor = miog.temporaryTexturePool:Acquire()
-			entryFrame.statusString.backgroundColor:SetParent(entryFrame)
-			entryFrame.statusString.backgroundColor:SetDrawLayer("OVERLAY")
-			entryFrame.statusString.backgroundColor:SetSize(entryFrame:GetSize())
+			entryFrame.statusString.backgroundColor = miog.createBaseTexture("temporary", nil, entryFrame, entryFrame:GetSize())
 			entryFrame.statusString.backgroundColor:SetPoint("TOPLEFT", entryFrame, "TOPLEFT")
 			entryFrame.statusString.backgroundColor:SetColorTexture(0.1, 0.1, 0.1, 0.7)
 			entryFrame.statusString.backgroundColor:Hide()
@@ -256,24 +222,15 @@ local function createEntryFrame(applicantID, debug)
 				GameTooltip:Hide()
 			end)
 
-			local commentTexture = miog.temporaryTexturePool:Acquire()
-			commentTexture:SetDrawLayer("OVERLAY")
+			local commentTexture = miog.createBaseTexture("temporary", 1505953, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 			commentTexture:SetPoint("LEFT", nameString, "RIGHT", 3, 0)
-			commentTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-			commentTexture:SetTexture(1505953)
-			commentTexture:SetParent(entryFrame)
 			
-			if(applicantData.comment ~= "") then
-				commentTexture:Show()
+			if(applicantData.comment == "") then
+				commentTexture:Hide()
 			end
 
-			local roleTexture = miog.temporaryTexturePool:Acquire()
-			roleTexture:SetDrawLayer("OVERLAY")
+			local roleTexture = miog.createBaseTexture("temporary", 2202478, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 			roleTexture:SetPoint("LEFT", commentTexture, "RIGHT", 3, 0)
-			roleTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-			roleTexture:SetTexture(2202478)
-			roleTexture:SetParent(entryFrame)
-			roleTexture:Show()
 
 			if(assignedRole == "DAMAGER") then
 				roleTexture:SetTexCoord(0, 0.25, 0, 1)
@@ -325,12 +282,8 @@ local function createEntryFrame(applicantID, debug)
 			local ilvlString = miog.createFontString(miog.round(ilvl, 1), entryFrame, 12, entryFrame:GetWidth()*0.135, 10)
 			ilvlString:SetPoint("LEFT", keyString, "RIGHT", 3, 0)
 
-			local friendTexture = miog.temporaryTexturePool:Acquire()
-			friendTexture:SetDrawLayer("OVERLAY")
+			local friendTexture = miog.createBaseTexture("temporary", 648207, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 			friendTexture:SetPoint("LEFT", ilvlString, "RIGHT")
-			friendTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-			friendTexture:SetTexture(648207)
-			friendTexture:SetParent(entryFrame)
 			friendTexture:SetShown(friend or false)
 
 			for dngIndex = 1, 8, 1 do
@@ -341,13 +294,9 @@ local function createEntryFrame(applicantID, debug)
 				local textLineRight = miog.createTextLine(dataFrameGeneralInfo, dngIndex)
 
 				if(remainder == 1) then
-					local offBackgroundColor = miog.temporaryTexturePool:Acquire()
-					offBackgroundColor:SetParent(textLineLeft)
-					offBackgroundColor:SetSize(entryFrame:GetWidth() - 1, textLineLeft:GetHeight())
+					local offBackgroundColor = miog.createBaseTexture("temporary", nil, textLineLeft, entryFrame:GetWidth() - 1, textLineLeft:GetHeight(), "BACKGROUND")
 					offBackgroundColor:SetPoint("TOPLEFT", textLineLeft, "TOPLEFT")
-					
 					offBackgroundColor:SetColorTexture(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
-					offBackgroundColor:Show()
 				end
 				
 				local textLineRightFontString
@@ -379,43 +328,29 @@ local function createEntryFrame(applicantID, debug)
 								end
 							end
 
-							local dungeonIconTexture = miog.temporaryTexturePool:Acquire()
-							dungeonIconTexture:SetTexture(textureString)
+							local dungeonIconTexture = miog.createBaseTexture("temporary", textureString, textLineLeft, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 							dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT")
-							dungeonIconTexture:SetSize(miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-							dungeonIconTexture:SetParent(textLineLeft)
-							dungeonIconTexture:SetDrawLayer("OVERLAY")
-							dungeonIconTexture:Show()
 
-							local dungeonNameFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
+							local dungeonNameFrame = miog.createBaseFrame("temporary", "BackdropTemplate", textLineLeft, textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
 							dungeonNameFrame:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
-							dungeonNameFrame:SetSize(textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
-							dungeonNameFrame:SetParent(textLineLeft)
-							dungeonNameFrame:Show()
 
 							local dungeonString = miog.createFontString(dungeonProfile[dngIndex].dungeon.shortName .. ":", textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
 							dungeonString:SetPoint("LEFT", dungeonNameFrame, "LEFT")
 							dungeonString:SetSize(dungeonNameFrame:GetSize())
 
-							local primaryFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
+							local primaryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", textLineLeft, textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
 							primaryFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
-							primaryFrame:SetSize(textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
-							primaryFrame:SetParent(textLineLeft)
-							primaryFrame:Show()
 
-							local primaryText = WrapTextInColorCode(primaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+							local primaryText = WrapTextInColorCode(primaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, debug and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
 							local primaryString = miog.createFontString(primaryText, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
 							primaryString:SetPoint("LEFT", primaryFrame, "LEFT")
 							primaryString:SetSize(primaryFrame:GetSize())
 
-							local secondaryFrame = miog.temporaryFramePool:Acquire("BackdropTemplate")
+							local secondaryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", textLineLeft, textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
 							secondaryFrame:SetPoint("LEFT", primaryFrame, "RIGHT")
-							secondaryFrame:SetSize(textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
-							secondaryFrame:SetParent(textLineLeft)
-							secondaryFrame:Show()
 
-							local secondaryText = WrapTextInColorCode(secondaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
-							local secondaryString = miog.createFontString(secondaryText, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.32, textLineLeft:GetHeight())
+							local secondaryText = WrapTextInColorCode(secondaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, debug and 3 or secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+							local secondaryString = miog.createFontString(secondaryText, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
 							secondaryString:SetPoint("LEFT", secondaryFrame, "LEFT")
 							secondaryString:SetSize(secondaryFrame:GetSize())
 						end
@@ -854,6 +789,7 @@ miog.OnEvent = function(self, event, ...)
 
 			end
 		else
+			detailExpandedList = {}
 			if(... == true) then --NEW LISTING
 				miog.F.IS_LIST_SORTED = false
 				QueueUpTime = GetTimePreciseSec()
