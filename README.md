@@ -11,7 +11,7 @@ I also included some stuff I've always wanted to see:
 
 The addon SHOULD scale with all UIScales or resolutions but let me know if it doesn't / what exactly doesn't scale how it should.<br>
 
-Curseforge site: <br>
+CurseForge site: [Mythic IO Grabber on CurseForge](https://legacy.curseforge.com/wow/addons/mythic-io-grabber)<br>
 If you have way too much money:<picture>
   <a href="https://www.paypal.com/donate/?hosted_button_id=NZUR27TPC86TE">
   <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif">
