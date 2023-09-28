@@ -386,7 +386,7 @@ local function createEntryFrame(applicantID, debug)
 						textLineRightFontString:SetJustifyV("TOP")
 						textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -4)
 					else
-						textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -1)
+						textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1)
 					end
 				end
 				
@@ -397,18 +397,18 @@ local function createEntryFrame(applicantID, debug)
 						elseif(dngIndex == 6) then
 							textLineRightFontString = miog.createFontString("", textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
 							textLineRightFontString:SetText(
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or 0, _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or 0, _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or 0, _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or 0, _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
+								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
 							)
-							textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -1, 1, 1)
+							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1, 1, 1)
 						end
 
-						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex]
-						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex]
-						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex]
-						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex]
+						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or 0
+						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or 0
+						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or 0
+						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or 0
 						local starTexture = CreateSimpleTextureMarkup("Interface/Addons/MythicIOGrabber/res/star_256.png", 8, 8)
 
 						if(dungeonProfile) then
@@ -430,15 +430,15 @@ local function createEntryFrame(applicantID, debug)
 
 							local dungeonNameShort = dungeonProfile[dngIndex].dungeon.shortName
 
-							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
+							local textLineLeftFontString = miog.createFontString(dungeonNameShort .. ":" .. string.sub("   ", 1, 5-string.len(dungeonNameShort)), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.25)
 							textLineLeftFontString:SetSpacing(2)
 							textLineLeftFontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
 
-							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.31)
+							local primaryString = miog.createFontString(WrapTextInColorCode(primaryDungeonLevel .. string.rep(starTexture, 3), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.30)
 							primaryString:SetSpacing(2)
 							primaryString:SetPoint("LEFT", textLineLeftFontString, "RIGHT", 0, 0)
 
-							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.31)
+							local secondaryString = miog.createFontString(WrapTextInColorCode(secondaryDungeonLevel .. string.rep(starTexture, 3), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE, textLineLeft:GetWidth()*0.30)
 							secondaryString:SetSpacing(2)
 							secondaryString:SetPoint("LEFT", primaryString, "RIGHT", 0, 0)
 						end
@@ -691,36 +691,40 @@ local function refreshSpecIcons()
 					end
 
 					local emptyMembers = {}
-					for k,v in pairs(C_LFGList.GetSearchResultMemberCounts(resultID)) do
+					local memberCount = C_LFGList.GetSearchResultMemberCounts(resultID)
 
-						if(string.find(k, "REMAINING")) then
-							if(v > 0) then
-								if(string.find(k, "TANK")) then
-									for index = 1, v, 1 do
-										table.insert(emptyMembers, {
-											role = "TANK",
-											class = "21",
-											icon = 5171843,
-											iconCoords = miog.iconCoords.tankCoords,
-										})
-									end
-								elseif(string.find(k, "HEALER")) then
-									for index = 1, v, 1 do
-										table.insert(emptyMembers, {
-											role = "HEALER",
-											class = "22",
-											icon = 5171843,
-											iconCoords = miog.iconCoords.healerCoords,
-										})
-									end
-								elseif(string.find(k, "DAMAGER")) then
-									for index = 1, v, 1 do
-										table.insert(emptyMembers, {
-											role = "DAMAGER",
-											class = "23",
-											icon = 5171843,
-											iconCoords = miog.iconCoords.dpsCoords,
-										})
+					if(memberCount) then
+						for k,v in pairs(memberCount) do
+
+							if(string.find(k, "REMAINING")) then
+								if(v > 0) then
+									if(string.find(k, "TANK")) then
+										for index = 1, v, 1 do
+											table.insert(emptyMembers, {
+												role = "TANK",
+												class = "21",
+												icon = 5171843,
+												iconCoords = miog.iconCoords.tankCoords,
+											})
+										end
+									elseif(string.find(k, "HEALER")) then
+										for index = 1, v, 1 do
+											table.insert(emptyMembers, {
+												role = "HEALER",
+												class = "22",
+												icon = 5171843,
+												iconCoords = miog.iconCoords.healerCoords,
+											})
+										end
+									elseif(string.find(k, "DAMAGER")) then
+										for index = 1, v, 1 do
+											table.insert(emptyMembers, {
+												role = "DAMAGER",
+												class = "23",
+												icon = 5171843,
+												iconCoords = miog.iconCoords.dpsCoords,
+											})
+										end
 									end
 								end
 							end
