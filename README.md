@@ -1,5 +1,6 @@
 # MythicIOGrabber
 
+
 MythicIOGrabber is a standalone addon which shows applicants to your group in a organized and extensive way.<br>
 Created this addon because I hate to manually look up all applicants on raider.io, having to wait for their site to respond, sift through non condensed information, then tab back into the game.
 
@@ -13,7 +14,7 @@ The addon SHOULD scale with all UIScales or resolutions but let me know if it do
 
 CurseForge site: [Mythic IO Grabber on CurseForge](https://legacy.curseforge.com/wow/addons/mythic-io-grabber)<br>
 If you have way too much money:<picture>
-  <a href="https://www.paypal.com/donate/?hosted_button_id=NZUR27TPC86TE">
+  <a href="https://www.paypal.com/donate/?hosted_button_id=G3X525EXQGJCE">
   <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif">
   </a>
 </picture>
