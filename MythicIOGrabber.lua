@@ -46,12 +46,13 @@ local function createEntryFrame(applicantID, debug)
 		applicantsFrame:SetPoint("TOPLEFT", latestApplicantFrame, "BOTTOMLEFT", 0, 3*-PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1))
 	end
 
+	local activityID = C_LFGList.GetActiveEntryInfo().activityID
+
 	for index = 1, applicantData.numMembers, 1 do
 		local fullName, englishClassName, _, _, ilvl, honor, tank, healer, damager, assignedRole, friend, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, index)
 
 		if(fullName or debug) then
 			local bestDungeonScoreForListing
-			local profile
 
 			if(debug) then
 				local name, realm = UnitFullName("player")
@@ -66,10 +67,31 @@ local function createEntryFrame(applicantID, debug)
 				friend = true
 				bestDungeonScoreForListing = {finishedSuccess = true, bestRunLevel = 99, mapName = "Big Dick Land"}
 			else
-				bestDungeonScoreForListing = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, index, C_LFGList.GetActiveEntryInfo().activityID)
+				bestDungeonScoreForListing = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, index, activityID)
 			end
 
 			local result = miog.simpleSplit(fullName, "-")
+
+			local profile
+			local mythicKeystoneProfile
+			local dungeonProfile
+			
+			if(IsAddOnLoaded("RaiderIO")) then
+				profile = RaiderIO.GetProfile(result[1], result[2], miog.C.REGIONS[GetCurrentRegion()])
+				
+				if(profile ~= nil) then
+					mythicKeystoneProfile = profile.mythicKeystoneProfile
+
+					if(mythicKeystoneProfile ~= nil) then
+						dungeonProfile = mythicKeystoneProfile.sortedDungeons
+
+						if(dungeonProfile ~= nil) then
+							table.sort(dungeonProfile, function(k1, k2) return k1.dungeon.index < k2.dungeon.index end)
+						end
+					end
+					
+				end
+			end
 
 			local entryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", applicantsFrame, applicantsFrame:GetWidth()-2, miog.C.ENTRY_FRAME_SIZE)
 			entryFrame.active = false
@@ -92,7 +114,7 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame.linkBox:Hide()
 			entryFrame:SetScript("OnMouseDown", function(self, button)
 				if(button == "RightButton") then
-					local link = "https://raider.io/characters/" .. profile.region .. "/" .. profile.realm .. "/" .. profile.name
+					local link = "https://raider.io/characters/" .. miog.C.REGIONS[GetCurrentRegion()] .. "/" .. result[2] .. "/" .. result[1]
 
 					entryFrame.linkBox:SetAutoFocus(true)
 					entryFrame.linkBox:SetText(link)
@@ -115,12 +137,18 @@ local function createEntryFrame(applicantID, debug)
 			local dataFrameDungeons = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame, entryFrame:GetWidth()*0.52, miog.C.FULL_SIZE)
 			dataFrameDungeons:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, -miog.C.ENTRY_FRAME_SIZE - 2)
 			dataFrameDungeons:SetFrameStrata("HIGH")
+			dataFrameDungeons.textLines = {}
 			dataFrameDungeons:Hide()
+
+			entryFrame.progress = dataFrameDungeons
 			
 			local dataFrameGeneralInfo = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame, entryFrame:GetWidth()*0.48, miog.C.FULL_SIZE)
 			dataFrameGeneralInfo:SetPoint("TOPLEFT", dataFrameDungeons, "TOPRIGHT")
 			dataFrameGeneralInfo:SetFrameStrata("HIGH")
+			dataFrameGeneralInfo.textLines = {}
 			dataFrameGeneralInfo:Hide()
+
+			entryFrame.info = dataFrameGeneralInfo
 
 			local detailsButton = miog.createBaseFrame("temporary", "UICheckButtonTemplate", entryFrame, miog.C.ENTRY_FRAME_SIZE + 2, miog.C.ENTRY_FRAME_SIZE + 2)
 			detailsButton:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, 1)
@@ -198,7 +226,7 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame.statusString = miog.createFontString("", entryFrame, miog.C.ENTRY_FRAME_SIZE)
 			entryFrame.statusString:SetJustifyH("CENTER")
 			entryFrame.statusString:SetJustifyV("CENTER")
-			entryFrame.statusString:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, -1)
+			entryFrame.statusString:SetPoint("TOP", entryFrame, "TOP", 0, -1)
 			entryFrame.statusString:SetDrawLayer("OVERLAY")
 			entryFrame.statusString:Hide()
 
@@ -240,170 +268,386 @@ local function createEntryFrame(applicantID, debug)
 				roleTexture:SetTexCoord(0.5, 0.75, 0, 1)
 			end
 
-			local scoreString = miog.createFontString(coloredSubName, entryFrame, 12, entryFrame:GetWidth()*0.11, 10)
-			scoreString:SetPoint("LEFT", roleTexture, "RIGHT", 3, 0)
-			scoreString:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
+			local primaryIndicator = miog.createFontString("", entryFrame, 12, miog.F.LISTED_CATEGORY_ID == 2 and entryFrame:GetWidth()*0.12 or entryFrame:GetWidth()*0.10, 10)
+			primaryIndicator:SetPoint("LEFT", roleTexture, "RIGHT", 3, 0)
+
+			local secondaryIndicator = miog.createFontString("", entryFrame, 12, miog.F.LISTED_CATEGORY_ID == 2 and entryFrame:GetWidth()*0.06 or entryFrame:GetWidth()*0.08, 10)
+			secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 3, 0)
 			
-			local mythicKeystoneProfile
-			local dungeonProfile
-			
-			if(IsAddOnLoaded("RaiderIO")) then
-				profile = RaiderIO.GetProfile(result[1], result[2])
+			if(miog.F.LISTED_CATEGORY_ID == 2) then
+				miog.mainFrame.affixes:Show()
+				primaryIndicator:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
 				
-				if(profile ~= nil) then
-					mythicKeystoneProfile = profile.mythicKeystoneProfile
+				local highestKeyForDungeon
 
-					if(mythicKeystoneProfile ~= nil) then
-						dungeonProfile = mythicKeystoneProfile.sortedDungeons
-
-						if(dungeonProfile ~= nil) then
-							table.sort(dungeonProfile, function(k1, k2) return k1.dungeon.index < k2.dungeon.index end)
-						end
+				if(bestDungeonScoreForListing) then
+					if(bestDungeonScoreForListing.finishedSuccess == true) then
+						highestKeyForDungeon = WrapTextInColorCode(tostring(bestDungeonScoreForListing.bestRunLevel), miog.C.GREEN_COLOR)
+					elseif(bestDungeonScoreForListing.finishedSuccess == false) then
+						highestKeyForDungeon = WrapTextInColorCode(tostring(bestDungeonScoreForListing.bestRunLevel), miog.C.RED_COLOR)
 					end
-					
+				else
+					highestKeyForDungeon = WrapTextInColorCode(tostring(0), miog.C.RED_COLOR)
 				end
-			end
 
-			local timedApplyingDungeon
-	
-			if(bestDungeonScoreForListing) then
-				if(bestDungeonScoreForListing.finishedSuccess == true) then
-					timedApplyingDungeon = WrapTextInColorCode(tostring(bestDungeonScoreForListing.bestRunLevel), miog.C.GREEN_COLOR)
-				elseif(bestDungeonScoreForListing.finishedSuccess == false) then
-					timedApplyingDungeon = WrapTextInColorCode(tostring(bestDungeonScoreForListing.bestRunLevel), miog.C.RED_COLOR)
+				secondaryIndicator:SetText(highestKeyForDungeon)
+			elseif(miog.F.LISTED_CATEGORY_ID == 3) then
+				if(profile) then
+					if(profile.raidProfile) then
+						for i = 1, 2, 1 do
+							if(profile.raidProfile.sortedProgress[i] and not profile.raidProfile.sortedProgress[i].isMainProgress) then
+								local highestDifficulty = profile.raidProfile.sortedProgress[i].progress.difficulty
+								local difficulty = miog.C.DIFFICULTY[highestDifficulty]
+								local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount -- 9   8
+								local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
+
+								local progressString = WrapTextInColorCode(kills .. "/" .. bossCount, difficulty.color:GenerateHexColor())
+
+								if(i == 1) then
+									primaryIndicator:SetText(progressString)
+								else
+									secondaryIndicator:SetText(progressString)
+								end
+							else
+								if(i == 1) then
+									primaryIndicator:SetText("0/9")
+								else
+									secondaryIndicator:SetText("0/9")
+								end
+							end
+						end
+					else
+						primaryIndicator:SetText(WrapTextInColorCode("---", miog.C.RED_COLOR))
+						secondaryIndicator:SetText(WrapTextInColorCode("---", miog.C.RED_COLOR))
+					end
+				else
+					primaryIndicator:SetText("0/9")
+					secondaryIndicator:SetText("0/9")
 				end
-			else
-				timedApplyingDungeon = WrapTextInColorCode(tostring(0), miog.C.RED_COLOR)
-			end
+			elseif(miog.F.LISTED_CATEGORY_ID == 4 or miog.F.LISTED_CATEGORY_ID == 7 or miog.F.LISTED_CATEGORY_ID == 8 or miog.F.LISTED_CATEGORY_ID == 9) then
+				local pvpRatingInfo
+				if(debug) then
+					pvpRatingInfo = {
+						bracket = "2v2",
+						rating = 3000,
+						activityName = "XD",
+						tier = "Elite X"
+					}
+				else
+					pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, index, activityID)
+				end
+				primaryIndicator:SetText(WrapTextInColorCode(tostring(pvpRatingInfo.rating), C_ChallengeMode.GetDungeonScoreRarityColor(pvpRatingInfo.rating):GenerateHexColor()))
 
-			local keyString = miog.createFontString(timedApplyingDungeon, entryFrame, 12, entryFrame:GetWidth()*0.06, 10)
-			keyString:SetPoint("LEFT", scoreString, "RIGHT", 3, 0)
+				local tierResult = miog.simpleSplit(pvpRatingInfo.tier, " ")
+				print(strsub(tierResult[1], 0, 2) .. "" .. tierResult[2])
+				secondaryIndicator:SetText(strsub(tierResult[1], 0, 2) .. "" .. tierResult[2])
+			end
 			
 			local ilvlString = miog.createFontString(miog.round(ilvl, 1), entryFrame, 12, entryFrame:GetWidth()*0.135, 10)
-			ilvlString:SetPoint("LEFT", keyString, "RIGHT", 3, 0)
+			ilvlString:SetPoint("LEFT", secondaryIndicator, "RIGHT", 3, 0)
 
 			local friendTexture = miog.createBaseTexture("temporary", 648207, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
 			friendTexture:SetPoint("LEFT", ilvlString, "RIGHT")
 			friendTexture:SetShown(friend or false)
 
-			for dngIndex = 1, 8, 1 do
-				
-				local remainder = math.fmod(dngIndex, 2)
+			for lineIndex = 1, 8, 1 do
+				local remainder = math.fmod(lineIndex, 2)
 
-				local textLineLeft = miog.createTextLine(dataFrameDungeons, dngIndex)
-				local textLineRight = miog.createTextLine(dataFrameGeneralInfo, dngIndex)
+				entryFrame.progress.textLines[lineIndex] = miog.createTextLine(entryFrame.progress, lineIndex)
+				entryFrame.progress.textLines[lineIndex].fontString = miog.createFontString("", entryFrame.progress.textLines[lineIndex], miog.C.TEXT_LINE_FONT_SIZE)
+				entryFrame.progress.textLines[lineIndex].fontString:SetPoint("LEFT", entryFrame.progress.textLines[lineIndex], "LEFT")
+				entryFrame.progress.textLines[lineIndex].fontString:SetSize(entryFrame.progress.textLines[lineIndex]:GetSize())
+				entryFrame.progress.textLines[lineIndex].fontString = entryFrame.progress.textLines[lineIndex].fontString
+
+				entryFrame.info.textLines[lineIndex] = miog.createTextLine(entryFrame.info, lineIndex)
+				entryFrame.info.textLines[lineIndex].fontString = miog.createFontString("", entryFrame.info.textLines[lineIndex], miog.C.TEXT_LINE_FONT_SIZE)
+				entryFrame.info.textLines[lineIndex].fontString:SetPoint("LEFT", entryFrame.info.textLines[lineIndex], "LEFT")
+				entryFrame.info.textLines[lineIndex].fontString:SetSize(entryFrame.info.textLines[lineIndex]:GetSize())
+				entryFrame.info.textLines[lineIndex].fontString = entryFrame.info.textLines[lineIndex].fontString
 
 				if(remainder == 1) then
-					local offBackgroundColor = miog.createBaseTexture("temporary", nil, textLineLeft, entryFrame:GetWidth() - 1, textLineLeft:GetHeight(), "BACKGROUND")
-					offBackgroundColor:SetPoint("TOPLEFT", textLineLeft, "TOPLEFT")
+					local offBackgroundColor = miog.createBaseTexture("temporary", nil, entryFrame.progress.textLines[lineIndex], entryFrame:GetWidth() - 1, entryFrame.progress.textLines[lineIndex]:GetHeight(), "BACKGROUND")
+					offBackgroundColor:SetPoint("TOPLEFT", entryFrame.progress.textLines[lineIndex], "TOPLEFT")
 					offBackgroundColor:SetColorTexture(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
 				end
-				
-				local textLineRightFontString
 
-				if(profile) then --If Raider.IO is installed
-					if(mythicKeystoneProfile) then
-						if(dngIndex == 6) then
-							textLineRightFontString = miog.createFontString("", textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
-							textLineRightFontString:SetText(
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
-								WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
-							)
-							textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, 0)
+				if(lineIndex == 1) then
+					entryFrame.info.textLines[lineIndex].fontString:SetJustifyV("TOP")
+					entryFrame.info.textLines[lineIndex].fontString:SetPoint("TOPLEFT", entryFrame.info.textLines[lineIndex], "TOPLEFT", 2, -1)
+				else
+					entryFrame.info.textLines[lineIndex].fontString:SetPoint("LEFT", entryFrame.info.textLines[lineIndex], "LEFT", 2, -1)
+					entryFrame.info.textLines[lineIndex].fontString:SetSize(entryFrame.info.textLines[lineIndex]:GetSize())
+				end
+
+				entryFrame.progress.textLines[lineIndex] = entryFrame.progress.textLines[lineIndex]
+				entryFrame.info.textLines[lineIndex] = entryFrame.info.textLines[lineIndex]
+			end
+
+			entryFrame.info.textLines[1]:SetSize(entryFrame.info.textLines[1]:GetWidth(), miog.C.FULL_SIZE*0.75)
+			entryFrame.info.textLines[1].fontString:AdjustPointsOffset(0, -5)
+			entryFrame.info.textLines[1].fontString:SetText(_G["COMMENTS_COLON"] .. " " .. applicantData.comment)
+			entryFrame.info.textLines[1].fontString:SetSize(entryFrame.info.textLines[1]:GetSize())
+			entryFrame.info.textLines[1].fontString:SetWordWrap(true)
+			entryFrame.info.textLines[1].fontString:SetSpacing(miog.C.ENTRY_FRAME_SIZE - miog.C.TEXT_LINE_FONT_SIZE)
+
+			entryFrame.info.textLines[7].fontString:SetText(_G["LFG_TOOLTIP_ROLES"])
+
+			if(tank == true) then
+				entryFrame.info.textLines[7].fontString:SetText(entryFrame.info.textLines[7].fontString:GetText() .. CreateTextureMarkup(2202478, 256, 64, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE, 0.5, 0.75, 0, 1))
+			end
+			if(healer == true) then
+				entryFrame.info.textLines[7].fontString:SetText(entryFrame.info.textLines[7].fontString:GetText() .. CreateTextureMarkup(2202478, 256, 64, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE, 0.25, 0.5, 0, 1))
+			end
+			if(damager == true) then
+				entryFrame.info.textLines[7].fontString:SetText(entryFrame.info.textLines[7].fontString:GetText() .. CreateTextureMarkup(2202478, 256, 64, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE, 0, 0.25, 0, 1))
+			end
+
+			if(profile) then --If Raider.IO is installed
+				if(miog.F.LISTED_CATEGORY_ID == 2) then
+					if(profile.mythicKeystoneProfile) then
+						for lineIndex = 1, #profile.mythicKeystoneProfile.dungeons, 1 do
+							local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[lineIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[lineIndex] or 0
+							local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[lineIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[lineIndex] or 0
+							local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[lineIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[lineIndex] or 0
+							local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[lineIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[lineIndex] or 0
+
+							if(dungeonProfile) then
+								local textureString
+
+								for _, icon in pairs(miog.dungeonIcons) do
+									if(dungeonProfile[lineIndex].dungeon.name == icon[1]) then
+										textureString = icon[2]
+									end
+								end
+
+								local dungeonIconTexture = miog.createBaseTexture("temporary", textureString, entryFrame.progress.textLines[lineIndex], miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+								dungeonIconTexture:SetPoint("LEFT", entryFrame.progress.textLines[lineIndex], "LEFT")
+
+								local dungeonNameFrame = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame.progress.textLines[lineIndex], entryFrame.progress.textLines[lineIndex]:GetWidth()*0.30, entryFrame.progress.textLines[lineIndex]:GetHeight())
+								dungeonNameFrame:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
+
+								local dungeonString = miog.createFontString(dungeonProfile[lineIndex].dungeon.shortName .. ":", entryFrame.progress.textLines[lineIndex], miog.C.TEXT_LINE_FONT_SIZE)
+								dungeonString:SetPoint("LEFT", dungeonNameFrame, "LEFT")
+								dungeonString:SetSize(dungeonNameFrame:GetSize())
+
+								local primaryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame.progress.textLines[lineIndex], entryFrame.progress.textLines[lineIndex]:GetWidth()*0.30, entryFrame.progress.textLines[lineIndex]:GetHeight())
+								primaryFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
+
+								local primaryText = WrapTextInColorCode(primaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, debug and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+								local primaryString = miog.createFontString(primaryText, entryFrame.progress.textLines[lineIndex], miog.C.TEXT_LINE_FONT_SIZE)
+								primaryString:SetPoint("LEFT", primaryFrame, "LEFT")
+								primaryString:SetSize(primaryFrame:GetSize())
+
+								local secondaryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame.progress.textLines[lineIndex], entryFrame.progress.textLines[lineIndex]:GetWidth()*0.30, entryFrame.progress.textLines[lineIndex]:GetHeight())
+								secondaryFrame:SetPoint("LEFT", primaryFrame, "RIGHT")
+
+								local secondaryText = WrapTextInColorCode(secondaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, debug and 3 or secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+								local secondaryString = miog.createFontString(secondaryText, entryFrame.progress.textLines[lineIndex], miog.C.TEXT_LINE_FONT_SIZE)
+								secondaryString:SetPoint("LEFT", secondaryFrame, "LEFT")
+								secondaryString:SetSize(secondaryFrame:GetSize())
+							end
+
+							if(lineIndex == 6) then
+								entryFrame.progress.textLines[lineIndex].fontString:SetText(
+									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
+									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
+									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
+									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
+								)
+								entryFrame.progress.textLines[lineIndex].fontString:SetPoint("LEFT", entryFrame.info.textLines[lineIndex], "LEFT", 2, 0)
+
+							elseif(lineIndex == 8) then
+								if(profile.mythicKeystoneProfile.mainCurrentScore) then
+									if(profile.mythicKeystoneProfile.mainCurrentScore > 0) then
+										entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main: " .. (profile.mythicKeystoneProfile.mainCurrentScore or 0), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+									else
+										entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
+									end
+								else
+									entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main Score N/A", _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+								end
+							end
+						end
+					else
+						entryFrame.progress.textLines[1].fontString:SetText(WrapTextInColorCode("NO M+ DATA", "FFFF0000"))
+						entryFrame.progress.textLines[1].fontString:SetPoint("LEFT", entryFrame.progress.textLines[1], "LEFT", 2, 0)
+					end
+				elseif(miog.F.LISTED_CATEGORY_ID == 3) then
+					if(profile.raidProfile) then
+
+						local lineIndex = 1
+
+						local ordinal = nil
+
+						for raidIndex, raidProgressInfo in ipairs(profile.raidProfile.progress) do
+
+							local bossCount = raidProgressInfo.raid.bossCount -- 9   8
+							local difficulty = miog.C.DIFFICULTY[raidProgressInfo.difficulty]
+							local progressCount = raidProgressInfo.progressCount or 0
+
+							if(raidProgressInfo.raid.ordinal ~= ordinal) then
+
+								ordinal = raidProgressInfo.raid.ordinal
+								local textureString = miog.RAID_ICONS[raidProgressInfo.raid.shortName][bossCount + 1] --ATSC   VOTI
+
+								local progressString =  WrapTextInColorCode(difficulty.singleChar .. ": " .. progressCount .. "/" .. bossCount, difficulty.color:GenerateHexColor())
+
+								local dungeonIconTexture = miog.createBaseTexture("temporary", textureString, entryFrame.progress.textLines[lineIndex], miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+								dungeonIconTexture:SetPoint("LEFT", entryFrame.progress.textLines[lineIndex], "LEFT")
+								
+								entryFrame.progress.textLines[lineIndex].fontString:SetText(progressString)
+								entryFrame.progress.textLines[lineIndex].fontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
+								
+								entryFrame.progress.textLines[lineIndex+1]:SetHeight(miog.C.ENTRY_FRAME_SIZE * 1.5)
+								entryFrame.progress.textLines[lineIndex+1].textures = {}
+
+								local desaturated = true
+
+								for i = 1, bossCount, 1 do
+									local bossFrame = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame.progress.textLines[lineIndex+1], entryFrame.progress.textLines[lineIndex+1]:GetHeight() - 2, entryFrame.progress.textLines[lineIndex+1]:GetHeight() - 2)
+									bossFrame:SetPoint(
+									entryFrame.progress.textLines[lineIndex+1].textures[i-5] and "TOPLEFT" or "LEFT", 
+									entryFrame.progress.textLines[lineIndex+1].textures[i-5] or entryFrame.progress.textLines[lineIndex+1].textures[i-1] or entryFrame.progress.textLines[lineIndex+1],
+									entryFrame.progress.textLines[lineIndex+1].textures[i-5] and "BOTTOMLEFT" or entryFrame.progress.textLines[lineIndex+1].textures[i-1] and "RIGHT" or "LEFT", (i > 1 and i < 6) and 2 or 0, i > 5 and - 2 or 0)
+
+									local kills = raidProgressInfo.killsPerBoss[i]
+
+									if(kills > 0) then
+										desaturated = false
+										miog.createFrameBorder(bossFrame, 2, difficulty.color:GetRGBA())
+									end
+
+									local bossTexture = miog.createBaseTexture("temporary", miog.RAID_ICONS[raidProgressInfo.raid.shortName][i], entryFrame.progress.textLines[lineIndex+1])
+									bossTexture:SetPoint("TOPLEFT", bossFrame, "TOPLEFT")
+									bossTexture:SetSize(bossFrame:GetSize())
+									bossTexture:SetDesaturated(desaturated)
+
+									bossFrame.texture = bossTexture
+
+									entryFrame.progress.textLines[lineIndex+1].textures[i] = bossFrame
+								end
+							else
+								local progressString =  WrapTextInColorCode(difficulty.singleChar .. ": " .. progressCount .. "/" .. bossCount, difficulty.color:GenerateHexColor())
+								entryFrame.progress.textLines[lineIndex].fontString:SetText(entryFrame.progress.textLines[lineIndex].fontString:GetText() .. " | " .. progressString)
+
+								for i = 1, bossCount, 1 do
+									local prevKills = profile.raidProfile.progress[raidIndex-1].killsPerBoss[i]
+
+									if(prevKills == 0) then
+										local kills = raidProgressInfo.killsPerBoss[i]
+
+										if(kills > 0) then
+											miog.createFrameBorder(entryFrame.progress.textLines[lineIndex+1].textures[i], 2, difficulty.color:GetRGBA())
+											entryFrame.progress.textLines[lineIndex+1].textures[i].texture:SetDesaturated(false)
+										end
+									end
+								end
+
+								lineIndex = lineIndex + 4
+							end
+							
+							if(raidIndex == 3 and profile.raidProfile.previousProgress[2]) then
+								difficulty = miog.C.DIFFICULTY[profile.raidProfile.previousProgress[2].difficulty]
+								progressCount = profile.raidProfile.previousProgress[2].progressCount
+
+								local progressString =  WrapTextInColorCode(difficulty.singleChar .. ": " .. progressCount .. "/" .. bossCount, difficulty.color:GenerateHexColor())
+								entryFrame.progress.textLines[lineIndex].fontString:SetText(entryFrame.progress.textLines[lineIndex].fontString:GetText() .. " | " .. progressString)
+							end
 						end
 
-						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or 0
-						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or 0
-						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeons[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeons[dngIndex] or 0
-						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[dngIndex] or miog.F.WEEKLY_AFFIX == 10 and profile.mythicKeystoneProfile.tyrannicalDungeonUpgrades[dngIndex] or 0
+						
+						if(profile.raidProfile.mainProgress) then
+							local mainProgressText = ""
 
-						if(dungeonProfile) then
-							local textureString
+							for _, raidProgressInfo in ipairs(profile.raidProfile.mainProgress) do
+								local difficulty = miog.C.DIFFICULTY[raidProgressInfo.difficulty]
+								mainProgressText = mainProgressText .. WrapTextInColorCode(difficulty.singleChar .. ": " .. raidProgressInfo.progressCount .. "/" .. raidProgressInfo.raid.bossCount, difficulty.color:GenerateHexColor()) .. " "
+							end
+							
+							entryFrame.info.textLines[8].fontString:SetText(WrapTextInColorCode("Main: " .. mainProgressText, _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+						else
+							entryFrame.info.textLines[8].fontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
+						end
 
-							for _, icon in pairs(miog.dungeonIcons) do
-								if(dungeonProfile[dngIndex].dungeon.name == icon[1]) then
-									textureString = icon[2]
+						--[[for raidIndex = 1, profile.raidProfile.raidProgress[2].raid.ordinal or profile.raidProfile.raidProgress[1].raid.ordinal, 1 do
+							local lineIndex = raidIndex*raidIndex+(raidIndex-1) -- 1 2 3 4  5 6 7 8
+							local arrayAccessID = raidIndex+raidIndex-1 -- 1  3  5
+							local bossCount = profile.raidProfile.sortedProgress[arrayAccessID].progress.raid.bossCount -- 9   8
+
+							local textureString = miog.RAID_ICONS[profile.raidProfile.sortedProgress[arrayAccessID].progress.raid.shortName][bossCount + 1] --ATSC   VOTI
+							local highestDifficulty = profile.raidProfile.sortedProgress[arrayAccessID].progress.difficulty
+
+							local dungeonIconTexture = miog.createBaseTexture("temporary", textureString, entryFrame.progress.textLines[lineIndex], miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+							dungeonIconTexture:SetPoint("LEFT", entryFrame.progress.textLines[lineIndex], "LEFT")
+
+							local progressString = ""
+
+							for difficultyIndex = arrayAccessID, arrayAccessID + 1, 1 do
+								if(profile.raidProfile.sortedProgress[difficultyIndex] and profile.raidProfile.sortedProgress[difficultyIndex].progress.killsPerBoss) then
+									local difficulty = miog.C.DIFFICULTY[profile.raidProfile.sortedProgress[difficultyIndex].progress.difficulty]
+									local kills = profile.raidProfile.sortedProgress[difficultyIndex].progress.progressCount or 0
+
+									progressString =  progressString .. WrapTextInColorCode(difficulty.singleChar .. ": " .. kills .. "/" .. bossCount, difficulty.color:GenerateHexColor()) ..
+										((difficultyIndex == arrayAccessID and profile.raidProfile.sortedProgress[difficultyIndex+1].progress.killsPerBoss) and " | " or "")
 								end
 							end
 
-							local dungeonIconTexture = miog.createBaseTexture("temporary", textureString, textLineLeft, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-							dungeonIconTexture:SetPoint("LEFT", textLineLeft, "LEFT")
+							entryFrame.progress.textLines[lineIndex].fontString:SetText(progressString)
+							entryFrame.progress.textLines[lineIndex].fontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
+							
+							entryFrame.progress.textLines[lineIndex+1]:SetHeight(miog.C.ENTRY_FRAME_SIZE * 1.5)
+							entryFrame.progress.textLines[lineIndex+1].textures = {}
 
-							local dungeonNameFrame = miog.createBaseFrame("temporary", "BackdropTemplate", textLineLeft, textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
-							dungeonNameFrame:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
+							local desaturated = true
 
-							local dungeonString = miog.createFontString(dungeonProfile[dngIndex].dungeon.shortName .. ":", textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-							dungeonString:SetPoint("LEFT", dungeonNameFrame, "LEFT")
-							dungeonString:SetSize(dungeonNameFrame:GetSize())
+							for i = 1, bossCount, 1 do
+								local bossFrame = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame.progress.textLines[lineIndex+1], entryFrame.progress.textLines[lineIndex+1]:GetHeight() - 2, entryFrame.progress.textLines[lineIndex+1]:GetHeight() - 2)
+								bossFrame:SetPoint(
+									entryFrame.progress.textLines[lineIndex+1].textures[i-5] and "TOPLEFT" or "LEFT", 
+									entryFrame.progress.textLines[lineIndex+1].textures[i-5] or entryFrame.progress.textLines[lineIndex+1].textures[i-1] or entryFrame.progress.textLines[lineIndex+1],
+									entryFrame.progress.textLines[lineIndex+1].textures[i-5] and "BOTTOMLEFT" or entryFrame.progress.textLines[lineIndex+1].textures[i-1] and "RIGHT" or "LEFT", (i > 1 and i < 6) and 2 or 0, i > 5 and - 2 or 0)
 
-							local primaryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", textLineLeft, textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
-							primaryFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
+								if(profile.raidProfile.sortedProgress[arrayAccessID]) then
+									if(profile.raidProfile.sortedProgress[arrayAccessID].progress.killsPerBoss) then
+										if(profile.raidProfile.sortedProgress[arrayAccessID].progress.killsPerBoss[i] > 0) then
+											desaturated = false
+											miog.createFrameBorder(bossFrame, 3, miog.C.DIFFICULTY[highestDifficulty].color:GetRGBA())
+										elseif(profile.raidProfile.sortedProgress[arrayAccessID+1]) then
+											if(profile.raidProfile.sortedProgress[arrayAccessID+1].progress.killsPerBoss) then
+												if(profile.raidProfile.sortedProgress[arrayAccessID+1].progress.killsPerBoss[i] > 0) then
+													desaturated = false
+													miog.createFrameBorder(bossFrame, 3, miog.C.DIFFICULTY[highestDifficulty-1].color:GetRGBA())
+												end
+											end
+										end
+									end
+								end
 
-							local primaryText = WrapTextInColorCode(primaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, debug and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
-							local primaryString = miog.createFontString(primaryText, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-							primaryString:SetPoint("LEFT", primaryFrame, "LEFT")
-							primaryString:SetSize(primaryFrame:GetSize())
+								local bossTexture = miog.createBaseTexture("temporary", miog.RAID_ICONS[profile.raidProfile.sortedProgress[arrayAccessID].progress.raid.shortName][i], entryFrame.progress.textLines[lineIndex+1])
+								bossTexture:SetPoint("TOPLEFT", bossFrame, "TOPLEFT")
+								bossTexture:SetSize(bossFrame:GetSize())
+								bossTexture:SetDesaturated(desaturated)
 
-							local secondaryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", textLineLeft, textLineLeft:GetWidth()*0.30, textLineLeft:GetHeight())
-							secondaryFrame:SetPoint("LEFT", primaryFrame, "RIGHT")
-
-							local secondaryText = WrapTextInColorCode(secondaryDungeonLevel .. string.rep(miog.C.RIO_STAR_TEXTURE, debug and 3 or secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
-							local secondaryString = miog.createFontString(secondaryText, textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-							secondaryString:SetPoint("LEFT", secondaryFrame, "LEFT")
-							secondaryString:SetSize(secondaryFrame:GetSize())
-						end
+								entryFrame.progress.textLines[lineIndex+1].textures[i] = bossTexture
+							end
+						
+							if(profile.raidProfile.sortedProgress[raidIndex]) then
+								if(profile.raidProfile.sortedProgress[raidIndex].isMainProgress) then
+									local s = WrapTextInColorCode(difficulty.singleChar .. ": " .. kills .. "/" .. bossCount, difficulty.color:GenerateHexColor())
+									entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main: " .. (profile.mythicKeystoneProfile.mainCurrentScore or 0), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+								else
+									entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
+								end
+							end
+						end]]
 					else
-						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
-					end
-				else -- If RaiderIO is not installed
-					if(dngIndex == 1) then
-						local textLineLeftFontString = miog.createFontString(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"), textLineLeft, miog.C.TEXT_LINE_FONT_SIZE)
-						textLineLeftFontString:SetPoint("LEFT", textLineLeft, "LEFT", 2, 0)
+						entryFrame.progress.textLines[1].fontString:SetText(WrapTextInColorCode("NO RAIDING DATA", "FFFF0000"))
+						entryFrame.progress.textLines[1].fontString:SetPoint("LEFT", entryFrame.progress.textLines[1], "LEFT", 2, 0)
 					end
 				end
-				
-				if(dngIndex == 1) then
-					textLineRight:SetSize(textLineRight:GetWidth(), miog.C.FULL_SIZE*0.75)
-
-					textLineRightFontString = miog.createFontString(_G["COMMENTS_COLON"] .. " " .. applicantData.comment, textLineRight,  miog.C.TEXT_LINE_FONT_SIZE)
-					textLineRightFontString:SetSize(textLineRight:GetWidth()-1, textLineRight:GetHeight())
-					textLineRightFontString:SetWordWrap(true)
-					textLineRightFontString:SetSpacing(textLineRightFontString:GetHeight()/16)
-
-				elseif(dngIndex == 7) then
-					textLineRightFontString = miog.createFontString(_G["LFG_TOOLTIP_ROLES"], textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
-
-					if(tank == true) then
-						textLineRightFontString:SetText(textLineRightFontString:GetText() .. CreateTextureMarkup(2202478, 256, 64, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE, 0.5, 0.75, 0, 1))
-					end
-					if(healer == true) then
-						textLineRightFontString:SetText(textLineRightFontString:GetText() .. CreateTextureMarkup(2202478, 256, 64, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE, 0.25, 0.5, 0, 1))
-					end
-					if(damager == true) then
-						textLineRightFontString:SetText(textLineRightFontString:GetText() .. CreateTextureMarkup(2202478, 256, 64, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE, 0, 0.25, 0, 1))
-					end
-
-				elseif(dngIndex == 8) then
-					if(profile and profile.mythicKeystoneProfile and (profile.mythicKeystoneProfile.mainCurrentScore or 0) > 0) then
-						textLineRightFontString = miog.createFontString(WrapTextInColorCode("Main: " .. (profile.mythicKeystoneProfile.mainCurrentScore or 0), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()), textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
-					else
-						textLineRightFontString = miog.createFontString(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()), textLineRight, miog.C.TEXT_LINE_FONT_SIZE)
-					end
-				end
-				
-				if(textLineRightFontString) then
-					if(dngIndex == 1) then
-						textLineRightFontString:SetJustifyV("TOP")
-						textLineRightFontString:SetPoint("TOPLEFT", textLineRight, "TOPLEFT", 2, -4)
-					else
-						textLineRightFontString:SetPoint("LEFT", textLineRight, "LEFT", 2, -1)
-						textLineRightFontString:SetSize(textLineRight:GetSize())
-					end
-					
-				end
+			else -- If RaiderIO is not installed
+					entryFrame.progress.textLines[1].fontString:SetText(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"))
+					entryFrame.progress.textLines[1].fontString:SetPoint("LEFT", entryFrame.progress.textLines[1], "LEFT", 2, 0)
 			end
 		end
 	end
@@ -764,6 +1008,8 @@ miog.OnEvent = function(self, event, ...)
 		if(C_LFGList.HasActiveEntryInfo() ==  true) then
 			activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
 
+			miog.F.LISTED_CATEGORY_ID = activityInfo.categoryID
+
 			miog.mainFrame.settingScrollFrame.settingContainer.settingString:SetHeight(2500)
 			miog.mainFrame.settingScrollFrame.settingContainer.settingString:SetText(setUpSettingString(activeEntryInfo, activityInfo))
 			miog.mainFrame.settingScrollFrame.settingContainer.settingString:SetHeight(miog.mainFrame.settingScrollFrame.settingContainer.settingString:GetStringHeight())
@@ -835,13 +1081,13 @@ miog.OnEvent = function(self, event, ...)
 							changeApplicantStatus(..., frame, "INVITE DECLINED", "FFFF0000")
 				
 						elseif(status == "declined") then
-							changeApplicantStatus(..., frame, "DECLINED_WITH_APP_ID", "FFFF0000")
+							changeApplicantStatus(..., frame, "DECLINED", "FFFF0000")
 
 						elseif(status == "declined_full") then
-							changeApplicantStatus(..., frame, "DECLINED_FULL_WITH_APP_ID", "FFFF0000")
+							changeApplicantStatus(..., frame, "DECLINED", "FFFF0000")
 				
 						elseif(status == "declined_delisted") then
-							changeApplicantStatus(..., frame, "DECLINED_DELISTED", "FFFF0000")
+							changeApplicantStatus(..., frame, "DECLINED", "FFFF0000")
 						
 						end
 					end
@@ -890,7 +1136,8 @@ end
 
 SLASH_MIOG1 = '/miog'
 local function handler(msg, editBox)
-	if(msg == "new") then
+	local command, rest = msg:match("^(%S*)%s*(.-)$")
+	if(command == "new") then
 		if(IsInGroup()) then
 			PVEFrame:Show()
 			LFGListFrame:Show()

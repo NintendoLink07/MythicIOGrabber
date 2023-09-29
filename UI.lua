@@ -160,7 +160,6 @@ miog.createMainFrame = function()
 	affixes:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -2, -3)
 	affixes:SetParent(infoPanel)
 	affixes:SetText(miog.getAffixes())
-	affixes:Show()
 	miog.mainFrame.affixes = affixes
 
 	local settingScrollFrame = miog.persistentFramePool:Acquire("BackdropTemplate, ScrollFrameTemplate")

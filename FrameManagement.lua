@@ -69,6 +69,7 @@ local function resetTemporaryTextures(_, childTexture)
 	childTexture:SetDrawLayer("BACKGROUND")
 	childTexture:SetTexture(nil)
 	childTexture:SetTexCoord(0, 1, 0, 1)
+	childTexture:SetDesaturated(false)
 end
 
 miog.temporaryFramePool = CreateFramePoolCollection()

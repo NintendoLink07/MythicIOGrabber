@@ -35,7 +35,21 @@ miog.C = {
 
 	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/star_256.png:8:8|t",
 	UTF_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/starUTF_512.png:8:8|t",
-	STAR_TEXTURE = "⋆"
+	STAR_TEXTURE = "⋆",
+
+	DIFFICULTY = {
+		[3] = {singleChar = "M", description = _G["PLAYER_DIFFICULTY6"], color = _G["ITEM_QUALITY_COLORS"][4].color},
+		[2] = {singleChar = "H", description = _G["PLAYER_DIFFICULTY2"], color = _G["ITEM_QUALITY_COLORS"][3].color},
+		[1] = {singleChar = "N", description = _G["PLAYER_DIFFICULTY1"], color = _G["ITEM_QUALITY_COLORS"][2].color},
+	},
+
+	REGIONS = {
+		[1]	= "us",
+		[2]	= "kr",
+		[3]	= "eu",
+		[4] = "tw",
+		[5] = "cn",
+ 	}
 }
 
 miog.F = {
@@ -47,7 +61,8 @@ miog.F = {
     SHOW_TANKS = true,
     SHOW_HEALERS = true,
     SHOW_DPS = true,
-	AFFIX_UPDATE_COUNTER = 0
+	AFFIX_UPDATE_COUNTER = 0,
+	LISTED_CATEGORY_ID = 0,
 }
 
 miog.dungeonIcons = {
@@ -70,6 +85,32 @@ miog.dungeonIcons = {
 	n = {"Neltharus", "interface/lfgframe/lfgicon-neltharus"},
 	ulot = {"Uldaman: Legacy of Tyr", "interface/lfgframe/lfgicon-uldaman-legacyoftyr"},
 	nl = {"Neltharion's Lair", "interface/lfgframe/lfgicon-neltharionslair"},
+}
+
+miog.RAID_ICONS = {
+	["ATSC"] = {
+		"interface/icons/inv_achievement_raiddragon_kazzara",
+		"interface/icons/inv_achievement_raiddragon_amalgamationchamber",
+		"interface/icons/inv_achievement_raiddragon_forgottenexperiments",
+		"interface/icons/inv_achievement_raiddragon_zaqaliassault",
+		"interface/icons/inv_achievement_raiddragon_rashok",
+		"interface/icons/inv_achievement_raiddragon_zskarn",
+		"interface/icons/inv_achievement_raiddragon_magmorax",
+		"interface/icons/inv_achievement_raiddragon_neltharion",
+		"interface/icons/inv_achievement_raiddragon_sarkareth",
+		"interface/lfgframe/lfgicon-aberrus",
+	},
+	["VOTI"] = {
+		"interface/icons/achievement_raidprimalist_eranog",
+		"interface/icons/achievement_raidprimalist_terros",
+		"interface/icons/achievement_raidprimalist_council",
+		"interface/icons/achievement_raidprimalist_sennarth",
+		"interface/icons/achievement_raidprimalist_windelemental",
+		"interface/icons/achievement_raidprimalist_kurog",
+		"interface/icons/achievement_raidprimalist_diurna",
+		"interface/icons/achievement_raidprimalist_raszageth",
+		"interface/lfgframe/lfgicon-vaultoftheincarnates",
+	},
 }
 
 miog.fonts = {
