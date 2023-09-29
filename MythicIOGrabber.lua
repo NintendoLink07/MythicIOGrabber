@@ -339,7 +339,6 @@ local function createEntryFrame(applicantID, debug)
 				primaryIndicator:SetText(WrapTextInColorCode(tostring(pvpRatingInfo.rating), C_ChallengeMode.GetDungeonScoreRarityColor(pvpRatingInfo.rating):GenerateHexColor()))
 
 				local tierResult = miog.simpleSplit(pvpRatingInfo.tier, " ")
-				print(strsub(tierResult[1], 0, 2) .. "" .. tierResult[2])
 				secondaryIndicator:SetText(strsub(tierResult[1], 0, 2) .. "" .. tierResult[2])
 			end
 			
