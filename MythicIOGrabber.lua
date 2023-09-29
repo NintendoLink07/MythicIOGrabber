@@ -171,7 +171,6 @@ local function createEntryFrame(applicantID, debug)
 			end)
 
 			if(detailExpandedList[applicantID]) then
-				--detailsButton:SetChecked(detailExpandedList[applicantID])
 				detailsButton:Click()
 			end
 
@@ -298,7 +297,7 @@ local function createEntryFrame(applicantID, debug)
 							if(profile.raidProfile.sortedProgress[i] and not profile.raidProfile.sortedProgress[i].isMainProgress) then
 								local highestDifficulty = profile.raidProfile.sortedProgress[i].progress.difficulty
 								local difficulty = miog.C.DIFFICULTY[highestDifficulty]
-								local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount -- 9   8
+								local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
 								local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
 
 								local progressString = WrapTextInColorCode(kills .. "/" .. bossCount, difficulty.color:GenerateHexColor())
@@ -480,14 +479,14 @@ local function createEntryFrame(applicantID, debug)
 
 						for raidIndex, raidProgressInfo in ipairs(profile.raidProfile.progress) do
 
-							local bossCount = raidProgressInfo.raid.bossCount -- 9   8
+							local bossCount = raidProgressInfo.raid.bossCount
 							local difficulty = miog.C.DIFFICULTY[raidProgressInfo.difficulty]
 							local progressCount = raidProgressInfo.progressCount or 0
 
 							if(raidProgressInfo.raid.ordinal ~= ordinal) then
 
 								ordinal = raidProgressInfo.raid.ordinal
-								local textureString = miog.RAID_ICONS[raidProgressInfo.raid.shortName][bossCount + 1] --ATSC   VOTI
+								local textureString = miog.RAID_ICONS[raidProgressInfo.raid.shortName][bossCount + 1]
 
 								local progressString =  WrapTextInColorCode(difficulty.singleChar .. ": " .. progressCount .. "/" .. bossCount, difficulty.color:GenerateHexColor())
 
@@ -567,78 +566,6 @@ local function createEntryFrame(applicantID, debug)
 						else
 							entryFrame.info.textLines[8].fontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
 						end
-
-						--[[for raidIndex = 1, profile.raidProfile.raidProgress[2].raid.ordinal or profile.raidProfile.raidProgress[1].raid.ordinal, 1 do
-							local lineIndex = raidIndex*raidIndex+(raidIndex-1) -- 1 2 3 4  5 6 7 8
-							local arrayAccessID = raidIndex+raidIndex-1 -- 1  3  5
-							local bossCount = profile.raidProfile.sortedProgress[arrayAccessID].progress.raid.bossCount -- 9   8
-
-							local textureString = miog.RAID_ICONS[profile.raidProfile.sortedProgress[arrayAccessID].progress.raid.shortName][bossCount + 1] --ATSC   VOTI
-							local highestDifficulty = profile.raidProfile.sortedProgress[arrayAccessID].progress.difficulty
-
-							local dungeonIconTexture = miog.createBaseTexture("temporary", textureString, entryFrame.progress.textLines[lineIndex], miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-							dungeonIconTexture:SetPoint("LEFT", entryFrame.progress.textLines[lineIndex], "LEFT")
-
-							local progressString = ""
-
-							for difficultyIndex = arrayAccessID, arrayAccessID + 1, 1 do
-								if(profile.raidProfile.sortedProgress[difficultyIndex] and profile.raidProfile.sortedProgress[difficultyIndex].progress.killsPerBoss) then
-									local difficulty = miog.C.DIFFICULTY[profile.raidProfile.sortedProgress[difficultyIndex].progress.difficulty]
-									local kills = profile.raidProfile.sortedProgress[difficultyIndex].progress.progressCount or 0
-
-									progressString =  progressString .. WrapTextInColorCode(difficulty.singleChar .. ": " .. kills .. "/" .. bossCount, difficulty.color:GenerateHexColor()) ..
-										((difficultyIndex == arrayAccessID and profile.raidProfile.sortedProgress[difficultyIndex+1].progress.killsPerBoss) and " | " or "")
-								end
-							end
-
-							entryFrame.progress.textLines[lineIndex].fontString:SetText(progressString)
-							entryFrame.progress.textLines[lineIndex].fontString:SetPoint("LEFT", dungeonIconTexture, "RIGHT", 2, 0)
-							
-							entryFrame.progress.textLines[lineIndex+1]:SetHeight(miog.C.ENTRY_FRAME_SIZE * 1.5)
-							entryFrame.progress.textLines[lineIndex+1].textures = {}
-
-							local desaturated = true
-
-							for i = 1, bossCount, 1 do
-								local bossFrame = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame.progress.textLines[lineIndex+1], entryFrame.progress.textLines[lineIndex+1]:GetHeight() - 2, entryFrame.progress.textLines[lineIndex+1]:GetHeight() - 2)
-								bossFrame:SetPoint(
-									entryFrame.progress.textLines[lineIndex+1].textures[i-5] and "TOPLEFT" or "LEFT", 
-									entryFrame.progress.textLines[lineIndex+1].textures[i-5] or entryFrame.progress.textLines[lineIndex+1].textures[i-1] or entryFrame.progress.textLines[lineIndex+1],
-									entryFrame.progress.textLines[lineIndex+1].textures[i-5] and "BOTTOMLEFT" or entryFrame.progress.textLines[lineIndex+1].textures[i-1] and "RIGHT" or "LEFT", (i > 1 and i < 6) and 2 or 0, i > 5 and - 2 or 0)
-
-								if(profile.raidProfile.sortedProgress[arrayAccessID]) then
-									if(profile.raidProfile.sortedProgress[arrayAccessID].progress.killsPerBoss) then
-										if(profile.raidProfile.sortedProgress[arrayAccessID].progress.killsPerBoss[i] > 0) then
-											desaturated = false
-											miog.createFrameBorder(bossFrame, 3, miog.C.DIFFICULTY[highestDifficulty].color:GetRGBA())
-										elseif(profile.raidProfile.sortedProgress[arrayAccessID+1]) then
-											if(profile.raidProfile.sortedProgress[arrayAccessID+1].progress.killsPerBoss) then
-												if(profile.raidProfile.sortedProgress[arrayAccessID+1].progress.killsPerBoss[i] > 0) then
-													desaturated = false
-													miog.createFrameBorder(bossFrame, 3, miog.C.DIFFICULTY[highestDifficulty-1].color:GetRGBA())
-												end
-											end
-										end
-									end
-								end
-
-								local bossTexture = miog.createBaseTexture("temporary", miog.RAID_ICONS[profile.raidProfile.sortedProgress[arrayAccessID].progress.raid.shortName][i], entryFrame.progress.textLines[lineIndex+1])
-								bossTexture:SetPoint("TOPLEFT", bossFrame, "TOPLEFT")
-								bossTexture:SetSize(bossFrame:GetSize())
-								bossTexture:SetDesaturated(desaturated)
-
-								entryFrame.progress.textLines[lineIndex+1].textures[i] = bossTexture
-							end
-						
-							if(profile.raidProfile.sortedProgress[raidIndex]) then
-								if(profile.raidProfile.sortedProgress[raidIndex].isMainProgress) then
-									local s = WrapTextInColorCode(difficulty.singleChar .. ": " .. kills .. "/" .. bossCount, difficulty.color:GenerateHexColor())
-									entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main: " .. (profile.mythicKeystoneProfile.mainCurrentScore or 0), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
-								else
-									entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
-								end
-							end
-						end]]
 					else
 						entryFrame.progress.textLines[1].fontString:SetText(WrapTextInColorCode("NO RAIDING DATA", "FFFF0000"))
 						entryFrame.progress.textLines[1].fontString:SetPoint("LEFT", entryFrame.progress.textLines[1], "LEFT", 2, 0)
