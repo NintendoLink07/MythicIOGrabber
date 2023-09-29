@@ -1,4 +1,4 @@
-## Interface: 100017
+## Interface: 100107
 ## Title: Mythic IO Grabber
 ## Notes: Detailed raider io output of applicants
 ## Version: 0.8.2
