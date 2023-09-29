@@ -33,7 +33,7 @@ The data Blizzard gives me that I display in the standard view are (in order):
    
 ![Screenshot 2023-09-24 191805](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/56112352-aba2-4fd4-b92e-ba27d0e4ed80)
 
-Also shows if there's no raider.io installed, since it improves the experience immensely.
+Also shows if there's no raider.io installed, since it improves the experience immensely. <br>
 If raider.io is installed BUT there's no data about the applicant (they've done no keys this season) then it shows the "No raider.io data" string.
 
 ![Screenshot 2023-09-24 195747](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/ca1e27f3-3c89-441e-abdb-de7857f72c56)
@@ -44,9 +44,20 @@ You don't wanna see the tanks/dps 'cause you're looking for a heal first? Unchec
 ![FILTERED_OUT_HEALER](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/39ddeb48-b7f8-44cc-b507-0de30313da28)
 
 ## Raider.io integration
-If you have Raider.IO installed it even includes all the data about your applicant: their highest keys of both week in the respective dungeons and the amount of +5, +10, +15 or +20's they've done.
+If you have Raider.IO installed it even includes:
+- Dungeons:
+	- Their highest keys of both week in the respective dungeons
+	- The amount of +5, +10, +15 or +20's they've done
+ 	- If it's their main char or if not: what their main's score is
+
+- Raids:
+	- Current tier data: the 2 highest difficulties, e.g. if you've done 1/9 M, 9/9 HC and 9/9 N it would show 1/9M and 9/9HC data
+	- Previous tier data: accurate boss kills can only be counted for the highest difficulty done, how many bosses you killed are again depending on your 2 highest difficulties
+ 	- If it's their main char or if not: what their main's progress is
 
 ![Screenshot 2023-09-24 191828](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/41d5f965-2e47-4aad-b5cf-ce5cf5d20b77)
+![Screenshot 2023-09-29 225519](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/7bccdb50-b8c8-4097-a98e-6045eb3d16c3)
+
 
 ## Other options
 
@@ -57,7 +68,7 @@ If you have Raider.IO installed it even includes all the data about your applica
   
 - In the interface options there are just some general improvements to the LFG frame in general:<br><br>
 	![Screenshot 2023-09-24 193413](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/9ea30f6b-a31b-4149-9eda-32af095d25e5)<br>
-	1. Shows the specs of the groups in your group browser so you never have to manually check if there's a Survival Hunter in the group :)
-  	2. Always keeps the groups in your group browser in the right order(e.g. there's a group with one Holy Paladin, so it will show: 1. Empty Tank spot, Holy Paladin, Empty DPS spot, Empty DPS spot, Empty DPS spot
-  	3. Enables sorting of the applicants after you refresh manually atleast once.
+	- Shows the specs of the groups in your group browser so you never have to manually check if there's a Survival Hunter in the group :)
+	- Always keeps the groups in your group browser in the right order(e.g. there's a group with one Holy Paladin, so it will show: 1. Empty Tank spot, Holy Paladin, Empty DPS spot, Empty DPS spot, Empty DPS spot
+	- Enables sorting of the applicants after you refresh manually atleast once.
   	   Sorts always start when you've either declined someone or you pressed the refresh buttons. This way it won't sort the moment you wanted to invite someone else and you missclick.
