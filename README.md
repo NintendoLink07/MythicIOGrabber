@@ -1,7 +1,8 @@
 # MythicIOGrabber
 
 
-MythicIOGrabber is a standalone addon which shows applicants to your group in a organized and extensive way.<br>
+This is a companion addon which shows you the applicants for your group finder listing in a clear but expanded view.<br>
+With the Raider.IO addon it expands the functionality of this addon massively and shows you additional stats of the applicants.<br><br>
 Created this addon because I hate to manually look up all applicants on raider.io, having to wait for their site to respond, sift through non condensed information, then tab back into the game.
 
 I also included some stuff I've always wanted to see: 
