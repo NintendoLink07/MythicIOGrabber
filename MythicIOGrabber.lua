@@ -444,27 +444,24 @@ local function createEntryFrame(applicantID, debug)
 								secondaryString:SetPoint("LEFT", secondaryFrame, "LEFT")
 								secondaryString:SetSize(secondaryFrame:GetSize())
 							end
+						end
 
-							if(lineIndex == 6) then
-								entryFrame.progress.textLines[lineIndex].fontString:SetText(
-									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
-									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
-									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
-									WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
-								)
-								entryFrame.progress.textLines[lineIndex].fontString:SetPoint("LEFT", entryFrame.info.textLines[lineIndex], "LEFT", 2, 0)
+						entryFrame.progress.textLines[6].fontString:SetText(
+							WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
+							WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
+							WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
+							WrapTextInColorCode(profile.mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
+						)
+						entryFrame.progress.textLines[6].fontString:SetPoint("LEFT", entryFrame.info.textLines[6], "LEFT", 2, 0)
 
-							elseif(lineIndex == 8) then
-								if(profile.mythicKeystoneProfile.mainCurrentScore) then
-									if(profile.mythicKeystoneProfile.mainCurrentScore > 0) then
-										entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main: " .. (profile.mythicKeystoneProfile.mainCurrentScore or 0), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
-									else
-										entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
-									end
-								else
-									entryFrame.info.textLines[lineIndex].fontString:SetText(WrapTextInColorCode("Main Score N/A", _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
-								end
+						if(profile.mythicKeystoneProfile.mainCurrentScore) then
+							if(profile.mythicKeystoneProfile.mainCurrentScore > 0) then
+								entryFrame.info.textLines[8].fontString:SetText(WrapTextInColorCode("Main: " .. (profile.mythicKeystoneProfile.mainCurrentScore), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+							else
+								entryFrame.info.textLines[8].fontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
 							end
+						else
+							entryFrame.info.textLines[8].fontString:SetText(WrapTextInColorCode("Main Score N/A", _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
 						end
 					else
 						entryFrame.progress.textLines[1].fontString:SetText(WrapTextInColorCode("NO M+ DATA", "FFFF0000"))

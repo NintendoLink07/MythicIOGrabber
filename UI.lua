@@ -22,10 +22,7 @@ miog.createMainFrame = function()
 	miog.mainFrame:SetSize(LFGListFrame:GetWidth() + 2, LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
 	miog.mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	miog.mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight()-2)
-	miog.mainFrame:SetMovable(true)
 	miog.mainFrame:SetFrameStrata("HIGH")
-	miog.mainFrame:EnableMouse(true)
-	miog.mainFrame:RegisterForDrag("LeftButton")
 	miog.mainFrame.expanded = false
 	miog.mainFrame:Hide()
 	
@@ -195,16 +192,15 @@ miog.createMainFrame = function()
 	settingContainer:SetParent(settingScrollFrame)
 	settingContainer:Show()
 
-
 	settingScrollFrame:SetScrollChild(settingContainer)
 	miog.mainFrame.settingScrollFrame.settingContainer = settingContainer
 
 	local settingString = miog.persistentFontStringPool:Acquire()
 	settingString:SetFont(miog.fonts["libMono"], miog.C.SETTING_FONT_SIZE, "THICK")
 	settingString:SetPoint("TOPLEFT", settingContainer, "TOPLEFT", 4, -miog.C.PADDING_OFFSET*2)
-	--settingString:SetPoint("BOTTOMRIGHT", settingContainer, "BOTTOMRIGHT", -miog.C.PADDING_OFFSET*3, -miog.C.PADDING_OFFSET*3)
 	settingString:SetWidth(settingContainer:GetWidth() - miog.C.PADDING_OFFSET*3)
 	settingString:SetParent(settingContainer)
+	settingString:SetDrawLayer("ARTWORK")
 	settingString:SetJustifyV("TOP")
 	settingString:SetJustifyH("LEFT")
 	settingString:SetSpacing(3)
