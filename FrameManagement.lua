@@ -30,7 +30,7 @@ miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire(
 local function resetTemporaryFrames(_, childFrame)
     childFrame:Hide()
 	childFrame:ClearAllPoints()
-	childFrame:SetFrameStrata("LOW")
+	childFrame:SetFrameStrata("MEDIUM")
 
 	local typeOfFrame = childFrame:GetObjectType()
 
@@ -62,6 +62,7 @@ local function resetTemporaryFontStrings(_, childFontString)
 	childFontString:SetSpacing(2)
 	childFontString:SetDrawLayer("BACKGROUND")
 	childFontString:SetJustifyV("CENTER")
+	childFontString:SetText("")
 end
 
 local function resetTemporaryTextures(_, childTexture)
@@ -84,43 +85,15 @@ miog.temporaryFontStringPool = CreateFontStringPool(miog.temporaryFramePool:Acqu
 miog.temporaryTexturePool = CreateTexturePool(miog.temporaryFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTemporaryTextures)
 
 miog.releaseAllTemporaryPools = function()
-	miog.temporaryFramePool:ReleaseAll()
-	miog.temporaryFontStringPool:ReleaseAll()
 	miog.temporaryTexturePool:ReleaseAll()
+	miog.temporaryFontStringPool:ReleaseAll()
+	miog.temporaryFramePool:ReleaseAll()
 end
 
 miog.releaseAllPersistentPools = function()
-	miog.persistentFramePool:ReleaseAll()
-	miog.persistentFontStringPool:ReleaseAll()
 	miog.persistentTexturePool:ReleaseAll()
-end
-
-miog.createFontString = function(text, parent, fontSize, width, height)
-	local textLineFontString = miog.temporaryFontStringPool:Acquire()
-	textLineFontString:SetFont(miog.fonts["libMono"], fontSize, "OUTLINE")
-	textLineFontString:SetJustifyH("LEFT")
-	textLineFontString:SetText(text)
-
-	if(width ~= nil) then
-		textLineFontString:SetWidth(width)
-	elseif(height ~= nil) then
-		textLineFontString:SetHeight(height)
-	end
-
-	textLineFontString:SetParent(parent)
-	textLineFontString:Show()
-
-	return textLineFontString
-end
-
-miog.createTextLine = function(anchor, index)
-	local textLine = miog.temporaryFramePool:Acquire("BackdropTemplate")
-	textLine:SetSize(anchor:GetWidth(), miog.C.ENTRY_FRAME_SIZE)
-	textLine:SetPoint("TOPLEFT", anchor, "TOPLEFT", 0, (-miog.C.ENTRY_FRAME_SIZE*(index-1)))
-	textLine:SetParent(anchor)
-	textLine:Show()
-
-	return textLine
+	miog.persistentFontStringPool:ReleaseAll()
+	miog.persistentFramePool:ReleaseAll()
 end
 
 miog.createBaseFrame = function(type, template, parent, width, height)
@@ -180,13 +153,17 @@ miog.createFrameWithFontStringAttached = function (type, template, parent, width
 	end
 
 	frame:SetParent(parent)
-	frame:SetWidth(width)
-	frame:SetHeight(height)
+
+	if(width and height) then
+		frame:SetWidth(width)
+		frame:SetHeight(height)
+	end
 	frame:Show()
 
 	fontString:SetFont(miog.fonts["libMono"], miog.C.TEXT_LINE_FONT_SIZE, "OUTLINE")
 	fontString:SetPoint("LEFT", frame, "LEFT")
 	fontString:SetJustifyH("LEFT")
+	fontString:SetJustifyV("CENTER")
 	fontString:SetSize(frame:GetSize())
 	fontString:SetParent(frame)
 	fontString:Show()

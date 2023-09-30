@@ -45,7 +45,7 @@ miog.createMainFrame = function()
 	titleBar:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT", 0, 0)
 	titleBar:SetPoint("BOTTOMRIGHT", miog.mainFrame, "TOPRIGHT", 0, -25)
 	titleBar:SetParent(miog.mainFrame)
-	titleBar:SetFrameStrata("DIALOG")
+	--titleBar:SetFrameStrata("DIALOG")
 	titleBar:Show()
 	miog.mainFrame.titleBar = titleBar
 
@@ -157,7 +157,7 @@ miog.createMainFrame = function()
 	affixes:SetFont(miog.fonts["libMono"], 22, "OUTLINE")
 	affixes:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -2, -3)
 	affixes:SetParent(infoPanel)
-	affixes:SetDrawLayer("BORDER")
+	affixes:SetDrawLayer("ARTWORK")
 	affixes:SetText(miog.getAffixes())
 	miog.mainFrame.affixes = affixes
 
@@ -190,7 +190,7 @@ miog.createMainFrame = function()
 	local settingContainer = miog.persistentFramePool:Acquire("BackdropTemplate")
 	settingContainer:SetSize(settingScrollFrame:GetWidth(), settingScrollFrame:GetHeight())
 	settingContainer:SetPoint("TOP", settingScrollFrame, "TOP", 0, 0)
-	settingContainer:SetFrameStrata("DIALOG")
+	--settingContainer:SetFrameStrata("DIALOG")
 	settingContainer:SetParent(settingScrollFrame)
 	settingContainer:Show()
 
@@ -216,7 +216,7 @@ miog.createMainFrame = function()
 	statusBar:SetPoint("TOPRIGHT", affixes, "BOTTOMRIGHT", 0, 0)
 	statusBar:SetHeight(infoPanel:GetHeight()*0.28)
 	statusBar:SetParent(miog.mainFrame)
-	statusBar:SetFrameStrata("DIALOG")
+	--statusBar:SetFrameStrata("DIALOG")
 	statusBar:Show()
 
 	miog.mainFrame.statusBar = statusBar
@@ -281,7 +281,7 @@ miog.createMainFrame = function()
 
 	for i = 1, 3, 1 do
 		local roleTexture = miog.persistentTexturePool:Acquire()
-		roleTexture:SetDrawLayer("OVERLAY")
+		roleTexture:SetDrawLayer("ARTWORK")
 		roleTexture:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.9, miog.C.ENTRY_FRAME_SIZE * 0.9)
 		roleTexture:SetTexture(2202478)
 		roleTexture:SetParent(settingScrollFrame)
@@ -314,7 +314,7 @@ miog.createMainFrame = function()
 	autoSortButton:Show()
 
 	local autoSortIcon = miog.persistentTexturePool:Acquire()
-	autoSortIcon:SetDrawLayer("OVERLAY")
+	autoSortIcon:SetDrawLayer("ARTWORK")
 	autoSortIcon:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.9, miog.C.ENTRY_FRAME_SIZE * 0.9)
 	autoSortIcon:SetTexture(423814)
 	autoSortIcon:SetPoint("LEFT", autoSortButton, "RIGHT", -4, 0)

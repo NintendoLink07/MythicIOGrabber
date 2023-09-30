@@ -1,9 +1,9 @@
 ## Interface: 100107
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
-## IconTexture: Interface\AddOns\MythicIOGrabber\res\logo_noText_1024.png
+## IconTexture: Interface\AddOns\MythicIOGrabber\res\logo_noText_256.png
 ## Notes: Detailed raider io output of applicants
-## Version: 0.8.8b
+## Version: 0.8.9
 ## SavedVariables: SavedOptionSettings
 ## SavedVariablesPerCharacter: QueueUpTime
 
