@@ -243,7 +243,7 @@ local function createEntryFrame(applicantID, debug)
 				groupIcon:SetTexCoord(0, 0.95, 0.05, 1)
 			end
 
-			--[[entryFrame.statusString = miog.createFontString("", entryFrame, miog.C.ENTRY_FRAME_SIZE)
+			entryFrame.statusString = miog.createFontString("", entryFrame, miog.C.ENTRY_FRAME_SIZE)
 			entryFrame.statusString:SetJustifyH("CENTER")
 			entryFrame.statusString:SetJustifyV("CENTER")
 			entryFrame.statusString:SetSize(entryFrame:GetSize())
@@ -254,25 +254,26 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame.statusString.backgroundColor = miog.createBaseTexture("temporary", nil, entryFrame, entryFrame:GetSize())
 			entryFrame.statusString.backgroundColor:SetPoint("TOPLEFT", entryFrame, "TOPLEFT")
 			entryFrame.statusString.backgroundColor:SetColorTexture(0.1, 0.1, 0.1, 0.7)
-			entryFrame.statusString.backgroundColor:Hide()]]
+			entryFrame.statusString.backgroundColor:Hide()
 
 			local shortName = strsub(result[1], 0, 20)
 			local coloredSubName = WrapTextInColorCode(shortName, select(4, GetClassColor(englishClassName)))
 
-			local nameString = miog.createFontString(coloredSubName, entryFrame, 11, entryFrame:GetWidth()*0.28, miog.C.ENTRY_FRAME_SIZE) --28%
-			nameString:SetMouseMotionEnabled(true)
-			nameString:SetPoint("LEFT", detailsButton, "RIGHT")
-			nameString:SetScript("OnEnter", function(self)
+			local nameFrame = miog.createFrameWithFontStringAttached("temporary", "BackdropTemplate", entryFrame, entryFrame:GetWidth()*0.28, miog.C.ENTRY_FRAME_SIZE)
+			nameFrame.fontString:SetText(coloredSubName)
+			nameFrame:SetMouseMotionEnabled(true)
+			nameFrame:SetPoint("LEFT", detailsButton, "RIGHT")
+			nameFrame:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(entryFrame, "ANCHOR_CURSOR")
 				GameTooltip:SetText(fullName)
 				GameTooltip:Show()
 			end)
-			nameString:SetScript("OnLeave", function(self)
+			nameFrame:SetScript("OnLeave", function(self)
 				GameTooltip:Hide()
 			end)
 
 			local commentTexture = miog.createBaseTexture("temporary", 1505953, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-			commentTexture:SetPoint("LEFT", nameString, "RIGHT", 3, 0)
+			commentTexture:SetPoint("LEFT", nameFrame, "RIGHT", 3, 0)
 			
 			if(applicantData.comment == "") then
 				commentTexture:Hide()

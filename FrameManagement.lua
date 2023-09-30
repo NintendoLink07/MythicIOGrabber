@@ -167,3 +167,31 @@ miog.createBaseTexture = function(type, texturePath, parent, width, height, laye
 
 	return texture
 end
+
+miog.createFrameWithFontStringAttached = function (type, template, parent, width, height)
+	local frame, fontString
+
+	if(type == "persistent") then
+		frame = miog.persistentFramePool:Acquire(template)
+		fontString = miog.persistentFontStringPool:Acquire()
+	elseif(type == "temporary") then
+		frame = miog.temporaryFramePool:Acquire(template)
+		fontString = miog.temporaryFontStringPool:Acquire()
+	end
+
+	frame:SetParent(parent)
+	frame:SetWidth(width)
+	frame:SetHeight(height)
+	frame:Show()
+
+	fontString:SetFont(miog.fonts["libMono"], miog.C.TEXT_LINE_FONT_SIZE, "OUTLINE")
+	fontString:SetPoint("LEFT", frame, "LEFT")
+	fontString:SetJustifyH("LEFT")
+	fontString:SetSize(frame:GetSize())
+	fontString:SetParent(frame)
+	fontString:Show()
+
+	frame.fontString = fontString
+
+	return frame
+end
