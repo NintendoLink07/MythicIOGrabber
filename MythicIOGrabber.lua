@@ -163,7 +163,7 @@ local function createEntryFrame(applicantID, debug)
 
 			entryFrame.info = dataFrameGeneralInfo
 
-			local detailsButton = miog.createBaseFrame("temporary", "UICheckButtonTemplate", entryFrame, miog.C.ENTRY_FRAME_SIZE + 2, miog.C.ENTRY_FRAME_SIZE + 2) -- 6-10%
+			local detailsButton = miog.createBaseFrame("temporary", "UICheckButtonTemplate", entryFrame, miog.C.ENTRY_FRAME_SIZE + 2, miog.C.ENTRY_FRAME_SIZE + 2)
 			detailsButton:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, 0)
 			detailsButton:RegisterForClicks("LeftButtonDown")
 			detailsButton:SetFrameStrata("DIALOG")
@@ -238,8 +238,6 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame.statusFrame.fontString:SetJustifyH("CENTER")
 			entryFrame.statusFrame.fontString:SetPoint("TOP", entryFrame.statusFrame, "TOP", 0, -5)
 			entryFrame.statusFrame.fontString:SetJustifyV("TOP")
-
-			--changeApplicantStatus(applicantID, applicantsFrame, "FUCKIN HELL", "FFFF0000")
 
 			local shortName = strsub(result[1], 0, 20)
 			local coloredSubName = WrapTextInColorCode(shortName, select(4, GetClassColor(englishClassName)))

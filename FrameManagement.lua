@@ -8,12 +8,14 @@ end
 local function resetPersistentFontStrings(_, childFontString)
     childFontString:Hide()
 	childFontString:ClearAllPoints()
+	childFontString:SetDrawLayer("ARTWORK")
 end
 
 local function resetPersistentTextures(_, childTexture)
     childTexture:Hide()
 	childTexture:ClearAllPoints()
 	childTexture:SetTexture(nil)
+	childTexture:SetDrawLayer("ARTWORK")
 end
 
 miog.persistentFramePool = CreateFramePoolCollection()

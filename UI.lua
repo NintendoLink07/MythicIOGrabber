@@ -45,7 +45,6 @@ miog.createMainFrame = function()
 	titleBar:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT", 0, 0)
 	titleBar:SetPoint("BOTTOMRIGHT", miog.mainFrame, "TOPRIGHT", 0, -25)
 	titleBar:SetParent(miog.mainFrame)
-	--titleBar:SetFrameStrata("DIALOG")
 	titleBar:Show()
 	miog.mainFrame.titleBar = titleBar
 
@@ -157,7 +156,6 @@ miog.createMainFrame = function()
 	affixes:SetFont(miog.fonts["libMono"], 22, "OUTLINE")
 	affixes:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -2, -3)
 	affixes:SetParent(infoPanel)
-	affixes:SetDrawLayer("ARTWORK")
 	affixes:SetText(miog.getAffixes())
 	miog.mainFrame.affixes = affixes
 
@@ -190,7 +188,6 @@ miog.createMainFrame = function()
 	local settingContainer = miog.persistentFramePool:Acquire("BackdropTemplate")
 	settingContainer:SetSize(settingScrollFrame:GetWidth(), settingScrollFrame:GetHeight())
 	settingContainer:SetPoint("TOP", settingScrollFrame, "TOP", 0, 0)
-	--settingContainer:SetFrameStrata("DIALOG")
 	settingContainer:SetParent(settingScrollFrame)
 	settingContainer:Show()
 
@@ -202,7 +199,6 @@ miog.createMainFrame = function()
 	settingString:SetPoint("TOPLEFT", settingContainer, "TOPLEFT", 4, -miog.C.PADDING_OFFSET*2)
 	settingString:SetWidth(settingContainer:GetWidth() - miog.C.PADDING_OFFSET*3)
 	settingString:SetParent(settingContainer)
-	settingString:SetDrawLayer("ARTWORK")
 	settingString:SetJustifyV("TOP")
 	settingString:SetJustifyH("LEFT")
 	settingString:SetSpacing(3)
@@ -216,7 +212,6 @@ miog.createMainFrame = function()
 	statusBar:SetPoint("TOPRIGHT", affixes, "BOTTOMRIGHT", 0, 0)
 	statusBar:SetHeight(infoPanel:GetHeight()*0.28)
 	statusBar:SetParent(miog.mainFrame)
-	--statusBar:SetFrameStrata("DIALOG")
 	statusBar:Show()
 
 	miog.mainFrame.statusBar = statusBar
@@ -385,8 +380,6 @@ miog.createMainFrame = function()
 	mainScrollFrame:SetParent(miog.mainFrame)
 	mainScrollFrame:SetPoint("TOPLEFT", miog.mainFrame.infoPanel, "BOTTOMLEFT", 0, -2*miog.F.PX_SIZE_1())
 	mainScrollFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
-
-	--mainScrollFrame.ScrollBar:AdjustPointsOffset(-4, 0)
 	mainScrollFrame:Show()
 
 	miog.mainFrame.mainScrollFrame = mainScrollFrame
