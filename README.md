@@ -41,9 +41,10 @@ If raider.io is installed BUT there's no data about the applicant (they've done 
 ![Screenshot 2023-09-24 195747](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/ca1e27f3-3c89-441e-abdb-de7857f72c56)
 
 The tank/healer/dps buttons are for filtering:<br>
-You don't wanna see the tanks/dps 'cause you're looking for a heal first? Uncheck tank & dps and check heal!
+You don't wanna see the tanks/dps 'cause you're looking for a heal first? Uncheck tank & dps and check heal!<br>
+The arrows button is for the auto sorting feature. If enabled and you either press the refresh button in the title bar or you decline an applicant it automatically sorts Tank>Heal>DPS.
 
-![FILTERED_OUT_HEALER](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/39ddeb48-b7f8-44cc-b507-0de30313da28)
+![image](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/bcb6052b-0550-4937-bf5b-262a794a656e)
 
 ## Raider.io integration
 If you have Raider.IO installed it even includes:
@@ -69,8 +70,6 @@ If you have Raider.IO installed it even includes:
 ![SORTING](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/887236e5-d4b8-4e9d-aec6-720c4daad932)
   
 - In the interface options there are just some general improvements to the LFG frame in general:<br><br>
-	![Screenshot 2023-09-24 193413](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/9ea30f6b-a31b-4149-9eda-32af095d25e5)<br>
+	![image](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/442be8cc-af46-4d36-b0d5-2b1c36c8a91e)<br>
 	- Shows the specs of the groups in your group browser so you never have to manually check if there's a Survival Hunter in the group :)
 	- Always keeps the groups in your group browser in the right order(e.g. there's a group with one Holy Paladin, so it will show: 1. Empty Tank spot, Holy Paladin, Empty DPS spot, Empty DPS spot, Empty DPS spot
-	- Enables sorting of the applicants after you refresh manually atleast once.
-  	   Sorts always start when you've either declined someone or you pressed the refresh buttons. This way it won't sort the moment you wanted to invite someone else and you missclick.
