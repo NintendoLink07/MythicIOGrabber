@@ -10,13 +10,17 @@ local function compareSettings()
 	return true
 end
 
+miog.saveCurrentSettings = function()
+	SavedOptionSettings = miog.defaultOptionSettings
+end
+
 miog.loadSettings = function()
     miog.defaultOptionSettings = {
 		{
 			key = "showActualSpecIcons",
 			type = "checkbox",
 			title = "Find a group: Show actual spec icons in the queue simulator.\n(When turned off a /reload will occur.)",
-			value = true
+			value = false
 		},
 		{
 			key = "fillUpEmptySpaces",
@@ -36,10 +40,10 @@ miog.loadSettings = function()
 		if(compareSettings()) then
 			miog.defaultOptionSettings = SavedOptionSettings
 		else
-			SavedOptionSettings = miog.defaultOptionSettings
+			miog.saveCurrentSettings()
 		end
 	else
-		SavedOptionSettings = miog.defaultOptionSettings
+		miog.saveCurrentSettings()
 	end
 
 	return miog.defaultOptionSettings

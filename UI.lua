@@ -304,6 +304,8 @@ miog.createMainFrame = function()
 	autoSortButton:SetScript("OnClick", function(self, leftButton)
 		miog.defaultOptionSettings[3].value = autoSortButton:GetChecked()
 
+		miog.saveCurrentSettings()
+
 		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 	end)
 	autoSortButton:Show()
@@ -429,7 +431,7 @@ miog.createMainFrame = function()
 				setting.value = not setting.value
 				button:SetChecked(setting.value)
 
-				SavedOptionSettings = miog.defaultOptionSettings
+				miog.saveCurrentSettings()
 
 				if(setting.key == "showActualSpecIcons" and setting.value == false) then
 					C_UI.Reload()
