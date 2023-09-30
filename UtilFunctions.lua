@@ -3,21 +3,22 @@ local addonName, miog = ...
 miog.getAffixes = function()
 	local affixIDs = C_MythicPlus.GetCurrentAffixes()
 
-	local affixString = ""
-
 	if(affixIDs) then
-		local sizeWH = miog.mainFrame.infoPanel:GetHeight()/4*miog.F.UI_SCALE
-		for k, _ in pairs(affixIDs) do
-			local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixIDs[k].id)
+		local sizeWH = miog.mainFrame.affixes:GetWidth()*miog.F.UI_SCALE
+
+		local affixString = ""
+
+		for _, affix in pairs(affixIDs) do
+			local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
 			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, sizeWH, sizeWH, 0, 1, 0, 1) .. "\n"
 		end
 
 		miog.F.WEEKLY_AFFIX = affixIDs[1].id
 
-		return affixString
+		miog.mainFrame.affixes:SetText(affixString)
+	else
+		return nil
 	end
-
-	return nil
 end
 
 miog.sortTableForRoleAndClass = function(tbl)

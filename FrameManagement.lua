@@ -3,6 +3,8 @@ local addonName, miog = ...
 local function resetPersistentFrames(_, childFrame)
     childFrame:Hide()
 	childFrame:ClearAllPoints()
+	childFrame:SetFrameStrata("MEDIUM")
+	
 end
 
 local function resetPersistentFontStrings(_, childFontString)
@@ -31,7 +33,6 @@ miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire(
 
 local function resetTemporaryFrames(_, childFrame)
     childFrame:Hide()
-	childFrame:ClearAllPoints()
 	childFrame:SetFrameStrata("MEDIUM")
 
 	local typeOfFrame = childFrame:GetObjectType()
@@ -55,25 +56,29 @@ local function resetTemporaryFrames(_, childFrame)
 		childFrame.entryFrames = {}
 		childFrame.statusString = nil
 		childFrame.active = false
+		childFrame:SetScript("OnEnter", nil)
+		childFrame:SetScript("OnLeave", nil)
 	end
+	
+	childFrame:ClearAllPoints()
 end
 
 local function resetTemporaryFontStrings(_, childFontString)
     childFontString:Hide()
-	childFontString:ClearAllPoints()
 	childFontString:SetSpacing(2)
 	childFontString:SetDrawLayer("BACKGROUND")
 	childFontString:SetJustifyV("CENTER")
 	childFontString:SetText("")
+	childFontString:ClearAllPoints()
 end
 
 local function resetTemporaryTextures(_, childTexture)
     childTexture:Hide()
-	childTexture:ClearAllPoints()
 	childTexture:SetDrawLayer("BACKGROUND")
 	childTexture:SetTexture(nil)
 	childTexture:SetTexCoord(0, 1, 0, 1)
 	childTexture:SetDesaturated(false)
+	childTexture:ClearAllPoints()
 end
 
 miog.temporaryFramePool = CreateFramePoolCollection()

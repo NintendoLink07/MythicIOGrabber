@@ -193,10 +193,12 @@ local function createEntryFrame(applicantID, debug)
 			local allowedToInvite = C_PartyInfo.CanInvite()
 			
 			if(index == 1 and allowedToInvite or index == 1 and debug) then
-				applicantsFrame.declineButton = miog.createFrameWithFontStringAttached("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE - 4, miog.C.APPLICANT_BUTTON_SIZE - 4)
+				applicantsFrame.declineButton = miog.createBaseFrame("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE - 2, miog.C.APPLICANT_BUTTON_SIZE - 2)
+				applicantsFrame.declineButton:SetText(CreateTextureMarkup(136813, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, applicantsFrame.declineButton:GetWidth(), applicantsFrame.declineButton:GetHeight(), 0.1, 0.845, 0.15, 0.85))
+				applicantsFrame.declineButton:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT", 0, -2)
 				applicantsFrame.declineButton:SetFrameStrata("DIALOG")
-				applicantsFrame.declineButton:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT", 0, -3)
 				applicantsFrame.declineButton:RegisterForClicks("LeftButtonDown")
+				applicantsFrame.declineButton:GetFontString():SetFont(miog.fonts["libMono"], miog.C.APPLICANT_BUTTON_SIZE/2, "OUTLINE")
 				applicantsFrame.declineButton:SetScript("OnClick", function(self, button)
 					if(addonApplicantList[applicantID]["creationStatus"] == "added") then
 
@@ -208,19 +210,16 @@ local function createEntryFrame(applicantID, debug)
 						miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 					end
 				end)
-				applicantsFrame.declineButton.fontString:SetText(CreateTextureMarkup(136813, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, applicantsFrame.declineButton:GetWidth(), applicantsFrame.declineButton:GetHeight(), 0.1, 0.85, 0.15, 0.85))
-				applicantsFrame.declineButton.fontString:SetPoint("CENTER", applicantsFrame.declineButton, "CENTER")
 
-
-				applicantsFrame.inviteButton = miog.createFrameWithFontStringAttached("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE - 4, miog.C.APPLICANT_BUTTON_SIZE - 4)
+				applicantsFrame.inviteButton = miog.createBaseFrame("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE - 2, miog.C.APPLICANT_BUTTON_SIZE - 2)
 				applicantsFrame.inviteButton:SetFrameStrata("DIALOG")
 				applicantsFrame.inviteButton:SetPoint("RIGHT", applicantsFrame.declineButton, "LEFT")
 				applicantsFrame.inviteButton:RegisterForClicks("LeftButtonDown")
 				applicantsFrame.inviteButton:SetScript("OnClick", function(self, button)
 					C_LFGList.InviteApplicant(applicantID)
 				end)
-				applicantsFrame.inviteButton.fontString:SetText(CreateTextureMarkup(136814, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, applicantsFrame.declineButton:GetWidth(), applicantsFrame.declineButton:GetHeight(), 0.1, 0.85, 0.1, 0.95))
-				applicantsFrame.inviteButton.fontString:SetPoint("CENTER", applicantsFrame.inviteButton, "CENTER", 0, -2)
+				applicantsFrame.inviteButton:SetText(CreateTextureMarkup(136814, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, applicantsFrame.inviteButton:GetWidth(), applicantsFrame.inviteButton:GetHeight(), 0.1, 0.85, 0.1, 0.90))
+				applicantsFrame.inviteButton:GetFontString():SetFont(miog.fonts["libMono"], 10, "OUTLINE")
 
 			elseif(not allowedToInvite) then
 				miog.mainFrame.mainScrollFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
@@ -869,9 +868,7 @@ miog.OnEvent = function(self, event, ...)
 		miog.releaseAllTemporaryPools()
 	elseif(event == "PLAYER_LOGIN") then
 
-		miog.F.AFFIX_UPDATE_COUNTER = 0
-
-        C_MythicPlus.RequestMapInfo()
+		C_MythicPlus.RequestCurrentAffixes()
 
 		LFGListFrame.ApplicationViewer:Hide()
 		hooksecurefunc("LFGListFrame_SetActivePanel", function(selfFrame, panel)
@@ -1018,11 +1015,8 @@ miog.OnEvent = function(self, event, ...)
 
 		end
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
-        miog.F.AFFIX_UPDATE_COUNTER = miog.F.AFFIX_UPDATE_COUNTER + 1
-        
-		if(miog.F.AFFIX_UPDATE_COUNTER == 1) then
-			C_MythicPlus.GetCurrentAffixes()
-        elseif(miog.F.AFFIX_UPDATE_COUNTER == 2) then
+		if(not miog.F.WEEKLY_AFFIX) then
+			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 			miog.getAffixes()
         end
 	elseif(event == "ADDON_LOADED") then
