@@ -27,6 +27,26 @@ local function refreshFunction()
 	addonApplicantList = {}
 end
 
+local function changeApplicantStatus(applicantID, frame, string, color)
+	if(frame.inviteButton) then
+		frame.inviteButton:Disable()
+	end
+
+	for _, entryFrame in pairs(frame.entryFrames) do
+		entryFrame.statusString:Show()
+		entryFrame.statusString.backgroundColor:Show()
+		entryFrame.statusString:SetText(WrapTextInColorCode(string, color))
+	end
+
+	detailExpandedList[applicantID] = nil
+
+	if(string == "INVITED") then
+		addonApplicantList[applicantID]["creationStatus"] = "invited"
+	else
+		addonApplicantList[applicantID]["creationStatus"] = "canBeRemoved"
+	end
+end
+
 local function createEntryFrame(applicantID, debug)
 	local applicantData = C_LFGList.GetApplicantInfo(applicantID)
 
@@ -125,18 +145,14 @@ local function createEntryFrame(applicantID, debug)
 				end
 			end)
 
-			local entryFrame_BackgroundTexture = miog.temporaryTexturePool:Acquire()
-			entryFrame_BackgroundTexture:SetParent(entryFrame)
-			entryFrame_BackgroundTexture:SetAllPoints()
-			entryFrame_BackgroundTexture:SetDrawLayer("BACKGROUND")
-			entryFrame_BackgroundTexture:SetColorTexture(CreateColorFromHexString(miog.C.CARD_COLOR):GetRGBA())
-			entryFrame_BackgroundTexture:Show()
+			entryFrame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false} )
+			entryFrame:SetBackdropColor(CreateColorFromHexString(miog.C.CARD_COLOR):GetRGBA())
 
 			latestEntryFrame = entryFrame
 			
 			local dataFrameDungeons = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame, entryFrame:GetWidth()*0.52, miog.C.FULL_SIZE)
 			dataFrameDungeons:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, -miog.C.ENTRY_FRAME_SIZE - 2)
-			dataFrameDungeons:SetFrameStrata("HIGH")
+			--dataFrameDungeons:SetFrameStrata("HIGH")
 			dataFrameDungeons.textLines = {}
 			dataFrameDungeons:Hide()
 
@@ -144,7 +160,7 @@ local function createEntryFrame(applicantID, debug)
 			
 			local dataFrameGeneralInfo = miog.createBaseFrame("temporary", "BackdropTemplate", entryFrame, entryFrame:GetWidth()*0.48, miog.C.FULL_SIZE)
 			dataFrameGeneralInfo:SetPoint("TOPLEFT", dataFrameDungeons, "TOPRIGHT")
-			dataFrameGeneralInfo:SetFrameStrata("HIGH")
+			--dataFrameGeneralInfo:SetFrameStrata("HIGH")
 			dataFrameGeneralInfo.textLines = {}
 			dataFrameGeneralInfo:Hide()
 
@@ -153,14 +169,17 @@ local function createEntryFrame(applicantID, debug)
 			local detailsButton = miog.createBaseFrame("temporary", "UICheckButtonTemplate", entryFrame, miog.C.ENTRY_FRAME_SIZE + 2, miog.C.ENTRY_FRAME_SIZE + 2)
 			detailsButton:SetPoint("TOPLEFT", entryFrame, "TOPLEFT", 0, 1)
 			detailsButton:RegisterForClicks("LeftButtonDown")
+			detailsButton:SetFrameStrata("DIALOG")
 			detailsButton:SetScript("OnClick", function(self, button, down)
-				dataFrameDungeons:SetShown(not dataFrameDungeons:IsVisible())
-				dataFrameGeneralInfo:SetShown(not dataFrameGeneralInfo:IsVisible())
 
 				if(entryFrame.active == true) then
+					entryFrame.progress:Hide()
+					entryFrame.info:Hide()
 					entryFrame:SetSize(entryFrame:GetWidth(), miog.C.ENTRY_FRAME_SIZE)
 					applicantsFrame:SetSize(applicantsFrame:GetWidth(), applicantsFrame:GetHeight() - miog.C.FULL_SIZE - 2)
 				else
+					entryFrame.progress:Show()
+					entryFrame.info:Show()
 					entryFrame:SetSize(entryFrame:GetWidth(), miog.C.ENTRY_FRAME_SIZE + miog.C.FULL_SIZE + 2)
 					applicantsFrame:SetSize(applicantsFrame:GetWidth(), applicantsFrame:GetHeight() + miog.C.FULL_SIZE + 2)
 				end
@@ -180,6 +199,7 @@ local function createEntryFrame(applicantID, debug)
 				applicantsFrame.declineButton = miog.createBaseFrame("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
 				applicantsFrame.declineButton:SetText(CreateTextureMarkup(136813, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE/2, miog.C.APPLICANT_BUTTON_SIZE/2, 0.1, 0.85, 0.15, 0.85))
 				applicantsFrame.declineButton:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT")
+				applicantsFrame.declineButton:SetFrameStrata("DIALOG")
 				applicantsFrame.declineButton:RegisterForClicks("LeftButtonDown")
 				applicantsFrame.declineButton:SetScript("OnClick", function(self, button)
 					if(addonApplicantList[applicantID]["creationStatus"] == "added") then
@@ -189,7 +209,7 @@ local function createEntryFrame(applicantID, debug)
 						C_LFGList.DeclineApplicant(applicantID)
 
 					elseif(addonApplicantList[applicantID]["creationStatus"] == "canBeRemoved") then
-						miog.checkApplicantList(true, miog.F.IS_LIST_SORTED)
+						miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 					end
 
 				end)
@@ -202,6 +222,7 @@ local function createEntryFrame(applicantID, debug)
 				applicantsFrame.inviteButton = miog.createBaseFrame("temporary", "UIButtonTemplate, BackdropTemplate", entryFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
 				applicantsFrame.inviteButton:SetText(CreateTextureMarkup(136814, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE/2, miog.C.APPLICANT_BUTTON_SIZE/2, 0.1, 0.85, 0.1, 0.95))
 				applicantsFrame.inviteButton:SetPoint("TOPRIGHT", applicantsFrame.declineButton, "TOPLEFT")
+				applicantsFrame.inviteButton:SetFrameStrata("DIALOG")
 				applicantsFrame.inviteButton:RegisterForClicks("LeftButtonDown")
 				applicantsFrame.inviteButton:SetScript("OnClick", function(self, button)
 					C_LFGList.InviteApplicant(applicantID)
@@ -211,20 +232,21 @@ local function createEntryFrame(applicantID, debug)
 				if(inviteButtonFontString) then
 					inviteButtonFontString:SetFont(miog.fonts["libMono"], miog.C.ENTRY_FRAME_SIZE, "OUTLINE")
 				end
-
-			elseif(index > 1) then
-				local groupIcon = miog.createBaseTexture("temporary", 134148, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
-				groupIcon:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT")
-				groupIcon:SetTexCoord(0, 0.95, 0.05, 1)
-
 			elseif(not allowedToInvite) then
 				miog.mainFrame.mainScrollFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
 
 			end
 
-			entryFrame.statusString = miog.createFontString("", entryFrame, miog.C.ENTRY_FRAME_SIZE)
+			if(index > 1) then
+				local groupIcon = miog.createBaseTexture("temporary", 134148, entryFrame, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+				groupIcon:SetPoint("TOPRIGHT", entryFrame, "TOPRIGHT")
+				groupIcon:SetTexCoord(0, 0.95, 0.05, 1)
+			end
+
+			--[[entryFrame.statusString = miog.createFontString("", entryFrame, miog.C.ENTRY_FRAME_SIZE)
 			entryFrame.statusString:SetJustifyH("CENTER")
 			entryFrame.statusString:SetJustifyV("CENTER")
+			entryFrame.statusString:SetSize(entryFrame:GetSize())
 			entryFrame.statusString:SetPoint("TOP", entryFrame, "TOP", 0, -1)
 			entryFrame.statusString:SetDrawLayer("OVERLAY")
 			entryFrame.statusString:Hide()
@@ -232,12 +254,12 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame.statusString.backgroundColor = miog.createBaseTexture("temporary", nil, entryFrame, entryFrame:GetSize())
 			entryFrame.statusString.backgroundColor:SetPoint("TOPLEFT", entryFrame, "TOPLEFT")
 			entryFrame.statusString.backgroundColor:SetColorTexture(0.1, 0.1, 0.1, 0.7)
-			entryFrame.statusString.backgroundColor:Hide()
+			entryFrame.statusString.backgroundColor:Hide()]]
 
 			local shortName = strsub(result[1], 0, 20)
 			local coloredSubName = WrapTextInColorCode(shortName, select(4, GetClassColor(englishClassName)))
 
-			local nameString = miog.createFontString(coloredSubName, entryFrame, 11, entryFrame:GetWidth()*0.28, miog.C.ENTRY_FRAME_SIZE)
+			local nameString = miog.createFontString(coloredSubName, entryFrame, 11, entryFrame:GetWidth()*0.28, miog.C.ENTRY_FRAME_SIZE) --28%
 			nameString:SetMouseMotionEnabled(true)
 			nameString:SetPoint("LEFT", detailsButton, "RIGHT")
 			nameString:SetScript("OnEnter", function(self)
@@ -274,7 +296,6 @@ local function createEntryFrame(applicantID, debug)
 			secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 3, 0)
 			
 			if(miog.F.LISTED_CATEGORY_ID == 2) then
-				miog.mainFrame.affixes:Show()
 				primaryIndicator:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
 				
 				local highestKeyForDungeon
@@ -364,9 +385,11 @@ local function createEntryFrame(applicantID, debug)
 				entryFrame.info.textLines[lineIndex].fontString = entryFrame.info.textLines[lineIndex].fontString
 
 				if(remainder == 1) then
-					local offBackgroundColor = miog.createBaseTexture("temporary", nil, entryFrame.progress.textLines[lineIndex], entryFrame:GetWidth() - 1, entryFrame.progress.textLines[lineIndex]:GetHeight(), "BACKGROUND")
-					offBackgroundColor:SetPoint("TOPLEFT", entryFrame.progress.textLines[lineIndex], "TOPLEFT")
-					offBackgroundColor:SetColorTexture(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
+					entryFrame.progress.textLines[lineIndex]:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false} )
+					entryFrame.progress.textLines[lineIndex]:SetBackdropColor(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
+					
+					entryFrame.info.textLines[lineIndex]:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false} )
+					entryFrame.info.textLines[lineIndex]:SetBackdropColor(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
 				end
 
 				if(lineIndex == 1) then
@@ -381,10 +404,9 @@ local function createEntryFrame(applicantID, debug)
 				entryFrame.info.textLines[lineIndex] = entryFrame.info.textLines[lineIndex]
 			end
 
-			entryFrame.info.textLines[1]:SetSize(entryFrame.info.textLines[1]:GetWidth(), miog.C.FULL_SIZE*0.75)
 			entryFrame.info.textLines[1].fontString:AdjustPointsOffset(0, -5)
 			entryFrame.info.textLines[1].fontString:SetText(_G["COMMENTS_COLON"] .. " " .. applicantData.comment)
-			entryFrame.info.textLines[1].fontString:SetSize(entryFrame.info.textLines[1]:GetSize())
+			entryFrame.info.textLines[1].fontString:SetSize(entryFrame.info.textLines[1]:GetWidth(), miog.C.FULL_SIZE*0.75)
 			entryFrame.info.textLines[1].fontString:SetWordWrap(true)
 			entryFrame.info.textLines[1].fontString:SetSpacing(miog.C.ENTRY_FRAME_SIZE - miog.C.TEXT_LINE_FONT_SIZE)
 
@@ -581,26 +603,6 @@ local function createEntryFrame(applicantID, debug)
 	latestApplicantFrame = applicantsFrame
 end
 
-local function changeApplicantStatus(applicantID, frame, string, color)
-	if(frame.inviteButton) then
-		frame.inviteButton:Disable()
-	end
-
-	for _, entryFrame in pairs(frame.entryFrames) do
-		entryFrame.statusString:Show()
-		entryFrame.statusString.backgroundColor:Show()
-		entryFrame.statusString:SetText(WrapTextInColorCode(string, color))
-	end
-
-	detailExpandedList[applicantID] = nil
-
-	if(not string == "INVITED") then
-		addonApplicantList[applicantID]["creationStatus"] = "canBeRemoved"
-	else
-		addonApplicantList[applicantID]["creationStatus"] = "invited"
-	end
-end
-
 local function iterateThroughList(list, orderedFor)
 	if(orderedFor == "score") then
 		table.sort(list, function (k1, k2) return k1["scoreNumber"] > k2["scoreNumber"] end)
@@ -657,8 +659,7 @@ miog.checkApplicantList = function(needRefresh, needSort)
 
 			if(hasAllApplicantData) then
 				if(assignedRole == "DAMAGER" and miog.F.SHOW_DPS or assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS) then
-					if(needSort and miog.defaultOptionSettings[3].value) then
-						miog.F.IS_LIST_SORTED = true
+					if(needSort) then
 
 						local scoreNumber = dungeonScore
 
@@ -679,7 +680,7 @@ miog.checkApplicantList = function(needRefresh, needSort)
 		end
 	end
 
-	if(needSort and miog.defaultOptionSettings[3].value) then
+	if(needSort) then
 		iterateThroughList(tankList, "score")
 		iterateThroughList(healerList, "score")
 		iterateThroughList(dpsList, "score")
@@ -898,6 +899,7 @@ miog.OnEvent = function(self, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
 		miog.releaseAllTemporaryPools()
 	elseif(event == "PLAYER_LOGIN") then
+
 		miog.F.AFFIX_UPDATE_COUNTER = 0
 
         C_MythicPlus.RequestMapInfo()
@@ -933,6 +935,12 @@ miog.OnEvent = function(self, event, ...)
 
 			miog.F.LISTED_CATEGORY_ID = activityInfo.categoryID
 
+			if(miog.F.LISTED_CATEGORY_ID == 2) then
+				miog.mainFrame.affixes:Show()
+			else
+				miog.mainFrame.affixes:Hide()
+			end
+
 			miog.mainFrame.settingScrollFrame.settingContainer.settingString:SetHeight(2500)
 			miog.mainFrame.settingScrollFrame.settingContainer.settingString:SetText(setUpSettingString(activeEntryInfo, activityInfo))
 			miog.mainFrame.settingScrollFrame.settingContainer.settingString:SetHeight(miog.mainFrame.settingScrollFrame.settingContainer.settingString:GetStringHeight())
@@ -960,7 +968,6 @@ miog.OnEvent = function(self, event, ...)
 		else
 			detailExpandedList = {}
 			if(... == true) then --NEW LISTING
-				miog.F.IS_LIST_SORTED = false
 				QueueUpTime = GetTimePreciseSec()
 				refreshFunction()
 
@@ -1034,7 +1041,7 @@ miog.OnEvent = function(self, event, ...)
 			miog.checkApplicantList(not allowedToInvite, not allowedToInvite)
 
 		elseif(newEntry == false and withData == false) then --DECLINED APPLICANT
-			miog.checkApplicantList(true, not allowedToInvite)
+			miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 
 		elseif(not newEntry and not withData) then --REFRESH APP LIST
 			miog.checkApplicantList(true, true)

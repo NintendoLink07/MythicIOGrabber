@@ -21,8 +21,9 @@ end
 miog.createMainFrame = function()
 	miog.mainFrame:SetSize(LFGListFrame:GetWidth() + 2, LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
 	miog.mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
+	miog.mainFrame:SetMovable(true)
 	miog.mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight()-2)
-	miog.mainFrame:SetFrameStrata("HIGH")
+	miog.mainFrame:SetFrameStrata("DIALOG")
 	miog.mainFrame.expanded = false
 	miog.mainFrame:Hide()
 	
@@ -147,7 +148,7 @@ miog.createMainFrame = function()
 	infoPanelBackgroundTexture:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT")
 	infoPanelBackgroundTexture:SetParent(infoPanel)
 	infoPanelBackgroundTexture:SetTexture(LFGListFrame.ApplicationViewer.InfoBackground:GetTexture())
-	infoPanelBackgroundTexture:SetDrawLayer("BORDER")
+	infoPanelBackgroundTexture:SetDrawLayer("BACKGROUND")
 	infoPanelBackgroundTexture:SetTexCoord(0.05, 0.3215, 0.04, 0.128)
 	infoPanelBackgroundTexture:Show()
 	miog.mainFrame.infoPanel.backgroundTexture = infoPanelBackgroundTexture
@@ -156,6 +157,7 @@ miog.createMainFrame = function()
 	affixes:SetFont(miog.fonts["libMono"], 22, "OUTLINE")
 	affixes:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -2, -3)
 	affixes:SetParent(infoPanel)
+	affixes:SetDrawLayer("BORDER")
 	affixes:SetText(miog.getAffixes())
 	miog.mainFrame.affixes = affixes
 
@@ -188,7 +190,7 @@ miog.createMainFrame = function()
 	local settingContainer = miog.persistentFramePool:Acquire("BackdropTemplate")
 	settingContainer:SetSize(settingScrollFrame:GetWidth(), settingScrollFrame:GetHeight())
 	settingContainer:SetPoint("TOP", settingScrollFrame, "TOP", 0, 0)
-	settingContainer:SetFrameStrata("FULLSCREEN")
+	settingContainer:SetFrameStrata("DIALOG")
 	settingContainer:SetParent(settingScrollFrame)
 	settingContainer:Show()
 
@@ -215,7 +217,6 @@ miog.createMainFrame = function()
 	statusBar:SetHeight(infoPanel:GetHeight()*0.28)
 	statusBar:SetParent(miog.mainFrame)
 	statusBar:SetFrameStrata("DIALOG")
-	--createFrameBorder(statusBar)
 	statusBar:Show()
 
 	miog.mainFrame.statusBar = statusBar
@@ -227,15 +228,17 @@ miog.createMainFrame = function()
 	timerString:SetJustifyV("CENTER")
 	timerString:Show()
 	miog.mainFrame.statusBar.timerString = timerString
-
-	local rioLoaded = miog.persistentFontStringPool:Acquire()
-	rioLoaded:SetFont(miog.fonts["libMono"], 18, "OUTLINE")
-	rioLoaded:SetPoint("TOPLEFT", timerString, "TOPRIGHT", 5, 0)
-	rioLoaded:SetParent(statusBar)
-	rioLoaded:SetJustifyH("LEFT")
-	rioLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.C.RED_COLOR))
-	rioLoaded:Show()
-	miog.mainFrame.statusBar.rioLoaded = rioLoaded
+			
+	if(not IsAddOnLoaded("RaiderIO")) then
+		local rioLoaded = miog.persistentFontStringPool:Acquire()
+		rioLoaded:SetFont(miog.fonts["libMono"], 18, "OUTLINE")
+		rioLoaded:SetPoint("TOPLEFT", timerString, "TOPRIGHT", 5, 0)
+		rioLoaded:SetParent(statusBar)
+		rioLoaded:SetJustifyH("LEFT")
+		rioLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.C.RED_COLOR))
+		rioLoaded:Show()
+		miog.mainFrame.statusBar.rioLoaded = rioLoaded
+	end
 
 	local showDPSButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
 	showDPSButton:SetParent(statusBar)
@@ -246,7 +249,7 @@ miog.createMainFrame = function()
 	showDPSButton:SetScript("OnClick", function(self, leftButton)
 		miog.F.SHOW_DPS = not miog.F.SHOW_DPS
 
-		miog.checkApplicantList(true, miog.F.IS_LIST_SORTED)
+		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 	end)
 	showDPSButton:Show()
 	
@@ -259,7 +262,7 @@ miog.createMainFrame = function()
 	showHealersButton:SetScript("OnClick", function(self, leftButton)
 		miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
 
-		miog.checkApplicantList(true, miog.F.IS_LIST_SORTED)
+		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 	end)
 	showHealersButton:Show()
 	
@@ -272,7 +275,7 @@ miog.createMainFrame = function()
 	showTanksButton:SetScript("OnClick", function(self, leftButton)
 		miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
 
-		miog.checkApplicantList(true, miog.F.IS_LIST_SORTED)
+		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 	end)
 	showTanksButton:Show()
 
@@ -297,16 +300,26 @@ miog.createMainFrame = function()
 		roleTexture:Show()
 	end
 
-	--[[
+	local autoSortButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
+	autoSortButton:SetParent(statusBar)
+	autoSortButton:SetPoint("RIGHT", showTanksButton, "LEFT", -miog.C.ENTRY_FRAME_SIZE, 0)
+	autoSortButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
+	autoSortButton:RegisterForClicks("LeftButtonDown")
+	autoSortButton:SetChecked(true)
+	autoSortButton:SetScript("OnClick", function(self, leftButton)
+		miog.defaultOptionSettings[3].value = autoSortButton:GetChecked()
 
-2175177	interface/encounterjournal/dungeonjournaltierbackgrounds1.blp		
-2175180	interface/encounterjournal/dungeonjournaltierbackgrounds2.blp		
-2175183	interface/encounterjournal/dungeonjournaltierbackgrounds3.blp		
-2175186	interface/encounterjournal/dungeonjournaltierbackgrounds4.blp
-3054898	interface/auctionframe/auctionhousebackgrounds.blp
-4748832	interface/covenantrenown/dragonflightmajorfactionsexpeditionbackground.blp
+		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
+	end)
+	autoSortButton:Show()
 
-	]]
+	local autoSortIcon = miog.persistentTexturePool:Acquire()
+	autoSortIcon:SetDrawLayer("OVERLAY")
+	autoSortIcon:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.9, miog.C.ENTRY_FRAME_SIZE * 0.9)
+	autoSortIcon:SetTexture(423814)
+	autoSortIcon:SetPoint("LEFT", autoSortButton, "RIGHT", -4, 0)
+	autoSortIcon:SetParent(settingScrollFrame)
+	autoSortIcon:Show()
 
 	local footerBar = miog.persistentFramePool:Acquire("BackdropTemplate")
 	footerBar:SetPoint("TOPLEFT", miog.mainFrame, "BOTTOMLEFT", 0, 25)
@@ -373,7 +386,7 @@ miog.createMainFrame = function()
 	mainScrollFrame:SetPoint("TOPLEFT", miog.mainFrame.infoPanel, "BOTTOMLEFT", 0, -2*miog.F.PX_SIZE_1())
 	mainScrollFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
 
-	mainScrollFrame.ScrollBar:AdjustPointsOffset(-4, 0)
+	--mainScrollFrame.ScrollBar:AdjustPointsOffset(-4, 0)
 	mainScrollFrame:Show()
 
 	miog.mainFrame.mainScrollFrame = mainScrollFrame
@@ -412,42 +425,44 @@ miog.createMainFrame = function()
 	title:Show()
 
 	for index, setting in ipairs(miog.loadSettings()) do
-		local button = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
-		button:SetParent(optionsScrollChild)
-		button:SetPoint("TOPLEFT", optionsScrollChild, "TOPLEFT", 0, -miog.C.ENTRY_FRAME_SIZE*2 * index)
-		button:SetSize(miog.C.ENTRY_FRAME_SIZE * 2, miog.C.ENTRY_FRAME_SIZE * 2)
-		button:RegisterForClicks("LeftButtonDown")
-		button:SetChecked(setting.value)
-		button:SetScript("OnClick", function(self, leftButton, down)
-			setting.value = not setting.value
+		if(setting.type == "checkbox") then
+			local button = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
+			button:SetParent(optionsScrollChild)
+			button:SetPoint("TOPLEFT", optionsScrollChild, "TOPLEFT", 0, -miog.C.ENTRY_FRAME_SIZE*2 * index)
+			button:SetSize(miog.C.ENTRY_FRAME_SIZE * 2, miog.C.ENTRY_FRAME_SIZE * 2)
+			button:RegisterForClicks("LeftButtonDown")
 			button:SetChecked(setting.value)
+			button:SetScript("OnClick", function(self, leftButton, down)
+				setting.value = not setting.value
+				button:SetChecked(setting.value)
 
-			SavedOptionSettings = miog.defaultOptionSettings
+				SavedOptionSettings = miog.defaultOptionSettings
 
-			if(setting.key == "showActualSpecIcons" and setting.value == false) then
-				C_UI.Reload()
-			end
+				if(setting.key == "showActualSpecIcons" and setting.value == false) then
+					C_UI.Reload()
+				end
 
-		end)
-		button:Show()
+			end)
+			button:Show()
 
-		local buttonText = miog.persistentFontStringPool:Acquire()
-		buttonText:SetParent(button)
-		buttonText:SetPoint("LEFT", button, "RIGHT", 10, 0)
-		buttonText:SetWordWrap(true)
-		buttonText:SetNonSpaceWrap(true)
-		buttonText:SetText(setting.title)
-		buttonText:Show()
+			local buttonText = miog.persistentFontStringPool:Acquire()
+			buttonText:SetParent(button)
+			buttonText:SetPoint("LEFT", button, "RIGHT", 10, 0)
+			buttonText:SetWordWrap(true)
+			buttonText:SetNonSpaceWrap(true)
+			buttonText:SetText(setting.title)
+			buttonText:Show()
+		end
 	end
-	
-	miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
-	miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
-	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
-	miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
-	miog.mainFrame:RegisterEvent("ADDON_LOADED")
-	miog.mainFrame:SetScript("OnEvent", miog.OnEvent)
 end
+
+miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
+miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
+miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
+miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+miog.mainFrame:RegisterEvent("ADDON_LOADED")
+miog.mainFrame:SetScript("OnEvent", miog.OnEvent)
 
 miog.createMainFrame()

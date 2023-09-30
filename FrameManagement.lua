@@ -39,6 +39,7 @@ local function resetTemporaryFrames(_, childFrame)
 		childFrame:SetScript("OnClick", nil)
 
 	elseif(typeOfFrame == "CheckButton") then
+		childFrame:Enable()
 		childFrame:SetChecked(false)
 
 	elseif(typeOfFrame == "EditBox") then
@@ -114,7 +115,7 @@ end
 
 miog.createTextLine = function(anchor, index)
 	local textLine = miog.temporaryFramePool:Acquire("BackdropTemplate")
-	textLine:SetSize(anchor:GetWidth(), miog.C.ENTRY_FRAME_SIZE, 1, 1)
+	textLine:SetSize(anchor:GetWidth(), miog.C.ENTRY_FRAME_SIZE)
 	textLine:SetPoint("TOPLEFT", anchor, "TOPLEFT", 0, (-miog.C.ENTRY_FRAME_SIZE*(index-1)))
 	textLine:SetParent(anchor)
 	textLine:Show()

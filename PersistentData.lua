@@ -57,12 +57,12 @@ miog.F = {
     UI_SCALE = C_CVar.GetCVar("uiScale"),
 	PX_SIZE_1 = function() return PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1) end,
     WEEKLY_AFFIX = "",
-    IS_LIST_SORTED = false,
     SHOW_TANKS = true,
     SHOW_HEALERS = true,
     SHOW_DPS = true,
 	AFFIX_UPDATE_COUNTER = 0,
 	LISTED_CATEGORY_ID = 0,
+	AUTO_SORT_ENABLED = nil
 }
 
 miog.dungeonIcons = {

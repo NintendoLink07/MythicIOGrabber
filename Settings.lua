@@ -25,8 +25,8 @@ miog.loadSettings = function()
 			value = false
 		},
 		{
-			key = "enableSortDuringRefresh",
-			type = "checkbox",
+			key = "autoSortEnabled",
+			type = "variable",
 			title = "Start a group: Enable sorting of applicants when manually refreshed - Tank > Heal > DPS",
 			value = true
 		},
