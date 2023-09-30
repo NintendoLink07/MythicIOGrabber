@@ -113,6 +113,7 @@ local function createEntryFrame(applicantID, debug)
 			end
 
 			local entryFrame = miog.createBaseFrame("temporary", "BackdropTemplate", applicantsFrame, applicantsFrame:GetWidth()-2, miog.C.ENTRY_FRAME_SIZE)
+			entryFrame:SetFrameStrata("DIALOG")
 			entryFrame.active = false
 
 			if(not latestEntryFrame) then
