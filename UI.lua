@@ -49,15 +49,6 @@ miog.createMainFrame = function()
 
 	miog.F.FACTION_ICON_SIZE = titleBar:GetHeight() - 2
 
-	local titleString = miog.persistentFontStringPool:Acquire()
-	titleString:SetFont(miog.fonts["libMono"], 14, "OUTLINE")
-	titleString:SetPoint("LEFT", titleBar, "LEFT", 4, -1)
-	titleString:SetParent(titleBar)
-	titleString:SetJustifyH("LEFT")
-	titleString:SetJustifyV("CENTER")
-	titleString:Show()
-	miog.mainFrame.titleBar.titleString = titleString
-
 	local faction = miog.persistentFontStringPool:Acquire()
 	faction:SetFont(miog.fonts["libMono"], 10, "OUTLINE")
 	faction:SetText(
@@ -79,6 +70,25 @@ miog.createMainFrame = function()
 	groupMemberListing:SetPoint("RIGHT", faction, "LEFT", 0, 0)
 	groupMemberListing:SetParent(titleBar)
 	groupMemberListing:Show()
+
+	local titleString = miog.persistentFontStringPool:Acquire()
+	titleString:SetFont(miog.fonts["libMono"], 14, "OUTLINE")
+	titleString:SetPoint("TOPLEFT", titleBar, "TOPLEFT", 5, -5)
+	titleString:SetPoint("BOTTOMRIGHT", groupMemberListing, "BOTTOMLEFT")
+	titleString:SetParent(titleBar)
+	titleString:SetJustifyH("LEFT")
+	--titleString:SetJustifyV("CENTER")
+	titleString:Show()
+	titleString:SetMouseMotionEnabled(true)
+	titleString:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(titleBar, "ANCHOR_CURSOR")
+		GameTooltip:SetText(titleString:GetText())
+		GameTooltip:Show()
+	end)
+	titleString:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	miog.mainFrame.titleBar.titleString = titleString
 
 	miog.mainFrame.titleBar.groupMemberListing = groupMemberListing
 
@@ -302,25 +312,25 @@ miog.createMainFrame = function()
 
 		local showRoleButtonText = miog.persistentFontStringPool:Acquire()
 		showRoleButtonText:SetFont(miog.fonts["libMono"], 16, "OUTLINE")
-		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 0, 0)
+		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 0, -1)
 		showRoleButtonText:SetJustifyV("CENTER")
 		showRoleButtonText:SetText("0")
 
 		if(i == 1) then
-			roleTexture:SetPoint("LEFT", showTanksButton, "RIGHT", -4, 0)
-			roleTexture:SetTexCoord(0.52, 0.75, 0.03, 0.97)
+			roleTexture:SetPoint("LEFT", showTanksButton, "RIGHT", -2, 0)
+			roleTexture:SetTexCoord(0.546, 0.758, 0.061, 0.906)
 
 			showRoleButtonText:SetParent(showTanksButton)
 			showTanksButton.text = showRoleButtonText
 		elseif(i == 2) then
-			roleTexture:SetPoint("LEFT", showHealersButton, "RIGHT", -4, 0)
-			roleTexture:SetTexCoord(0.27, 0.5, 0.03, 0.97)
+			roleTexture:SetPoint("LEFT", showHealersButton, "RIGHT", -2, 0)
+			roleTexture:SetTexCoord(0.281, 0.492, 0.061, 0.906)
 
 			showRoleButtonText:SetParent(showHealersButton)
 			showHealersButton.text = showRoleButtonText
 		elseif(i == 3) then
-			roleTexture:SetPoint("LEFT", showDPSButton, "RIGHT", -4, 0)
-			roleTexture:SetTexCoord(0.02, 0.25, 0.03, 0.97)
+			roleTexture:SetPoint("LEFT", showDPSButton, "RIGHT", -2, 0)
+			roleTexture:SetTexCoord(0.022, 0.234, 0.061, 0.906)
 
 			showRoleButtonText:SetParent(showDPSButton)
 			showDPSButton.text = showRoleButtonText
@@ -346,7 +356,7 @@ miog.createMainFrame = function()
 
 	local autoSortIcon = miog.persistentTexturePool:Acquire()
 	autoSortIcon:SetDrawLayer("ARTWORK")
-	autoSortIcon:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.9, miog.C.ENTRY_FRAME_SIZE * 0.9)
+	autoSortIcon:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.8, miog.C.ENTRY_FRAME_SIZE * 0.8)
 	autoSortIcon:SetTexture(423814)
 	autoSortIcon:SetPoint("LEFT", autoSortButton, "RIGHT", -4, 0)
 	autoSortIcon:SetParent(settingScrollFrame)

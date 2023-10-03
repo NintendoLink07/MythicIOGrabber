@@ -669,7 +669,7 @@ miog.checkApplicantList = function(needRefresh, needSort)
 				elseif(assignedRole == "TANK") then
 					miog.F.APPLIED_NUM_OF_TANKS = miog.F.APPLIED_NUM_OF_TANKS + 1
 					miog.mainFrame.statusBar.showTanksButton.text:SetText(miog.F.APPLIED_NUM_OF_TANKS)
-					
+
 				end
 
 				if(assignedRole == "DAMAGER" and miog.F.SHOW_DPS or assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS) then

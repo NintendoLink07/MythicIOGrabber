@@ -28,10 +28,7 @@ miog.sortTableForRoleAndClass = function(tbl)
 	end)
 end
 
-local function checkFrameBorderArguments(thickness, r, g, b, a)
-	if(not thickness) then
-		thickness = 1
-	end
+local function checkFrameBorderArguments(r, g, b, a)
 
 	if(not r) then
 		r = random(0, 1)
@@ -49,29 +46,29 @@ local function checkFrameBorderArguments(thickness, r, g, b, a)
 		a = 1
 	end
 
-	return thickness, r, g, b, a
+	return r, g, b, a
 end
 
-miog.createFrameBorder = function(frame, oThickness, oR, oG, oB, oA)
-	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
+miog.createFrameBorder = function(frame, thickness, oR, oG, oB, oA)
+	local r, g, b, a = checkFrameBorderArguments(oR, oG, oB, oA)
 
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness+miog.F.PX_SIZE_1()} )
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness or miog.F.PX_SIZE_1()} )
 	frame:SetBackdropColor(0.1, 0.1 , 0.1, 0) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, a) -- border color
 end
 
-miog.createTopBottomLines = function(frame, oThickness, oR, oG, oB, oA)
-	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
+miog.createTopBottomLines = function(frame, thickness, oR, oG, oB, oA)
+	local r, g, b, a = checkFrameBorderArguments(oR, oG, oB, oA)
 
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=0, right=0, top=-miog.F.PX_SIZE_1(), bottom=-miog.F.PX_SIZE_1()}} )
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness or miog.F.PX_SIZE_1(), insets={left=0, right=0, top=-miog.F.PX_SIZE_1(), bottom=-miog.F.PX_SIZE_1()}} )
 	frame:SetBackdropColor(r, g , b, a) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
 end
 
-miog.createLeftRightLines = function(frame, oThickness, oR, oG, oB, oA)
-	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
+miog.createLeftRightLines = function(frame, thickness, oR, oG, oB, oA)
+	local r, g, b, a = checkFrameBorderArguments(oR, oG, oB, oA)
 
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1(), top=0, bottom=0}} )
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness or miog.F.PX_SIZE_1(), insets={left=-1, right=-miog.F.PX_SIZE_1(), top=0, bottom=0}} )
 	frame:SetBackdropColor(r, g , b, a) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
 end
