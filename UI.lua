@@ -1,6 +1,6 @@
 local addonName, miog = ...
 
-miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "BackdropTemplate")
+miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "BackdropTemplate") ---@class Frame
 
 local function insertPointsIntoTable(frame)
 	local table = {}
@@ -71,6 +71,17 @@ miog.createMainFrame = function()
 	faction:Show()
 	miog.mainFrame.titleBar.faction = faction
 
+	local groupMemberListing = miog.persistentFontStringPool:Acquire()
+	groupMemberListing:SetFont(miog.fonts["libMono"], 16, "OUTLINE")
+	groupMemberListing:SetText("0/0/0")
+	groupMemberListing:SetJustifyH("RIGHT")
+	groupMemberListing:SetJustifyV("CENTER")
+	groupMemberListing:SetPoint("RIGHT", faction, "LEFT", 0, 0)
+	groupMemberListing:SetParent(titleBar)
+	groupMemberListing:Show()
+
+	miog.mainFrame.titleBar.groupMemberListing = groupMemberListing
+
 	local resetButton = miog.persistentFramePool:Acquire("BigRedRefreshButtonTemplate")
 	resetButton:ClearAllPoints()
 	resetButton:SetSize(PVEFrameCloseButton:GetHeight(), PVEFrameCloseButton:GetHeight())
@@ -93,7 +104,7 @@ miog.createMainFrame = function()
 	expandDownwardsButton:SetPushedTexture(293769)
 
 	expandDownwardsButton:RegisterForClicks("LeftButtonDown")
-	expandDownwardsButton:SetScript("OnClick", function(self, button, down)
+	expandDownwardsButton:SetScript("OnClick", function()
 		miog.mainFrame.expanded = not miog.mainFrame.expanded
 
 		if(miog.mainFrame.expanded) then
@@ -166,7 +177,7 @@ miog.createMainFrame = function()
 	settingScrollFrame.ScrollBar:Hide()
 	settingScrollFrame:Show()
 	settingScrollFrame:SetMouseMotionEnabled(true)
-	settingScrollFrame:SetScript("OnEnter", function(self)
+	settingScrollFrame:SetScript("OnEnter", function()
 		GameTooltip:SetOwner(settingScrollFrame, "ANCHOR_CURSOR")
 
 		local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
@@ -179,7 +190,7 @@ miog.createMainFrame = function()
 
 		GameTooltip:Show()
 	end)
-	settingScrollFrame:SetScript("OnLeave", function(self)
+	settingScrollFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
 	end)
 	miog.mainFrame.settingScrollFrame = settingScrollFrame
@@ -240,12 +251,15 @@ miog.createMainFrame = function()
 	showDPSButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
 	showDPSButton:RegisterForClicks("LeftButtonDown")
 	showDPSButton:SetChecked(true)
-	showDPSButton:SetScript("OnClick", function(self, leftButton)
+	showDPSButton:SetScript("OnClick", function()
 		miog.F.SHOW_DPS = not miog.F.SHOW_DPS
+		miog.mainFrame.statusBar.showDPSButton.text:SetShown(not miog.F.SHOW_DPS)
 
 		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 	end)
 	showDPSButton:Show()
+
+	miog.mainFrame.statusBar.showDPSButton = showDPSButton
 	
 	local showHealersButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
 	showHealersButton:SetParent(statusBar)
@@ -253,12 +267,15 @@ miog.createMainFrame = function()
 	showHealersButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
 	showHealersButton:RegisterForClicks("LeftButtonDown")
 	showHealersButton:SetChecked(true)
-	showHealersButton:SetScript("OnClick", function(self, leftButton)
+	showHealersButton:SetScript("OnClick", function()
 		miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
+		miog.mainFrame.statusBar.showHealersButton.text:SetShown(not miog.F.SHOW_HEALERS)
 
 		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 	end)
 	showHealersButton:Show()
+
+	miog.mainFrame.statusBar.showHealersButton = showHealersButton
 	
 	local showTanksButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
 	showTanksButton:SetParent(statusBar)
@@ -266,29 +283,47 @@ miog.createMainFrame = function()
 	showTanksButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
 	showTanksButton:RegisterForClicks("LeftButtonDown")
 	showTanksButton:SetChecked(true)
-	showTanksButton:SetScript("OnClick", function(self, leftButton)
+	showTanksButton:SetScript("OnClick", function()
 		miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
+		miog.mainFrame.statusBar.showTanksButton.text:SetShown(not miog.F.SHOW_TANKS)
 
 		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
 	end)
 	showTanksButton:Show()
+
+	miog.mainFrame.statusBar.showTanksButton = showTanksButton
 
 	for i = 1, 3, 1 do
 		local roleTexture = miog.persistentTexturePool:Acquire()
 		roleTexture:SetDrawLayer("ARTWORK")
 		roleTexture:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.9, miog.C.ENTRY_FRAME_SIZE * 0.9)
 		roleTexture:SetTexture(2202478)
-		roleTexture:SetParent(settingScrollFrame)
+		roleTexture:SetParent(statusBar)
+
+		local showRoleButtonText = miog.persistentFontStringPool:Acquire()
+		showRoleButtonText:SetFont(miog.fonts["libMono"], 16, "OUTLINE")
+		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 0, 0)
+		showRoleButtonText:SetJustifyV("CENTER")
+		showRoleButtonText:SetText("0")
 
 		if(i == 1) then
 			roleTexture:SetPoint("LEFT", showTanksButton, "RIGHT", -4, 0)
 			roleTexture:SetTexCoord(0.52, 0.75, 0.03, 0.97)
+
+			showRoleButtonText:SetParent(showTanksButton)
+			showTanksButton.text = showRoleButtonText
 		elseif(i == 2) then
 			roleTexture:SetPoint("LEFT", showHealersButton, "RIGHT", -4, 0)
 			roleTexture:SetTexCoord(0.27, 0.5, 0.03, 0.97)
+
+			showRoleButtonText:SetParent(showHealersButton)
+			showHealersButton.text = showRoleButtonText
 		elseif(i == 3) then
 			roleTexture:SetPoint("LEFT", showDPSButton, "RIGHT", -4, 0)
 			roleTexture:SetTexCoord(0.02, 0.25, 0.03, 0.97)
+
+			showRoleButtonText:SetParent(showDPSButton)
+			showDPSButton.text = showRoleButtonText
 		end
 
 		roleTexture:Show()
@@ -300,7 +335,7 @@ miog.createMainFrame = function()
 	autoSortButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
 	autoSortButton:RegisterForClicks("LeftButtonDown")
 	autoSortButton:SetChecked(true)
-	autoSortButton:SetScript("OnClick", function(self, leftButton)
+	autoSortButton:SetScript("OnClick", function()
 		miog.defaultOptionSettings[3].value = autoSortButton:GetChecked()
 
 		miog.saveCurrentSettings()
@@ -331,7 +366,7 @@ miog.createMainFrame = function()
 	browseGroups:SetPoint("TOPLEFT", miog.mainFrame.footerBar, "TOPLEFT", 0, 0)
 	browseGroups:SetParent(miog.mainFrame.footerBar)
 	browseGroups:RegisterForClicks("LeftButtonDown")
-	browseGroups:SetScript("OnClick", function(self, leftButton)
+	browseGroups:SetScript("OnClick", function()
 
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 		local baseFilters = LFGListFrame.baseFilters;
@@ -355,7 +390,7 @@ miog.createMainFrame = function()
 	editButton:SetPoint("RIGHT", footerBar, "RIGHT", 0, 0)
 	editButton:SetParent(miog.mainFrame.footerBar)
 	editButton:RegisterForClicks("LeftButtonDown")
-	editButton:SetScript("OnClick", function(self, leftButton)
+	editButton:SetScript("OnClick", function()
 
 		local entryCreation = LFGListFrame.EntryCreation;
 		LFGListEntryCreation_SetEditMode(entryCreation, true);
@@ -370,7 +405,7 @@ miog.createMainFrame = function()
 	delistButton:SetPoint("RIGHT", editButton, "LEFT", 0, 0)
 	delistButton:SetParent(miog.mainFrame.footerBar)
 	delistButton:RegisterForClicks("LeftButtonDown")
-	delistButton:SetScript("OnClick", function(self, leftButton)
+	delistButton:SetScript("OnClick", function()
 
 		C_LFGList.RemoveListing()
 		
@@ -426,7 +461,7 @@ miog.createMainFrame = function()
 			button:SetSize(miog.C.ENTRY_FRAME_SIZE * 2, miog.C.ENTRY_FRAME_SIZE * 2)
 			button:RegisterForClicks("LeftButtonDown")
 			button:SetChecked(setting.value)
-			button:SetScript("OnClick", function(self, leftButton, down)
+			button:SetScript("OnClick", function()
 				setting.value = not setting.value
 				button:SetChecked(setting.value)
 
@@ -457,6 +492,7 @@ miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
 miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
 miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
 miog.mainFrame:RegisterEvent("ADDON_LOADED")
+miog.mainFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 miog.mainFrame:SetScript("OnEvent", miog.OnEvent)
 
 miog.createMainFrame()

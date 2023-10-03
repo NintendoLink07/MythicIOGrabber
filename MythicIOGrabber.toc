@@ -3,7 +3,7 @@
 ## Author: Rhany-Ravencrest
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\logo_noText_256.png
 ## Notes: Detailed raider io output of applicants
-## Version: 0.9.1
+## Version: 0.9.3
 ## SavedVariables: SavedOptionSettings
 ## SavedVariablesPerCharacter: QueueUpTime
 

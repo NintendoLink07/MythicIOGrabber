@@ -61,7 +61,11 @@ miog.F = {
     SHOW_HEALERS = true,
     SHOW_DPS = true,
 	LISTED_CATEGORY_ID = 0,
-	AUTO_SORT_ENABLED = nil
+	AUTO_SORT_ENABLED = nil,
+
+	APPLIED_NUM_OF_TANKS = 0,
+	APPLIED_NUM_OF_HEALERS = 0,
+	APPLIED_NUM_OF_DPS = 0,
 }
 
 miog.dungeonIcons = {

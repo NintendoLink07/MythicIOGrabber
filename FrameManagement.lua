@@ -87,6 +87,7 @@ miog.temporaryFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "ScrollFrameTempl
 miog.temporaryFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate, BackdropTemplate", resetTemporaryFrames)
 miog.temporaryFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetTemporaryFrames)
 miog.temporaryFramePool:CreatePoolIfNeeded("EditBox", nil, "InputBoxTemplate", resetTemporaryFrames)
+miog.temporaryFramePool:CreatePoolIfNeeded("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetTemporaryFrames)
 
 miog.temporaryFontStringPool = CreateFontStringPool(miog.temporaryFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, "GameTooltipText", resetTemporaryFontStrings)
 miog.temporaryTexturePool = CreateTexturePool(miog.temporaryFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTemporaryTextures)
@@ -113,8 +114,18 @@ miog.createBaseFrame = function(type, template, parent, width, height)
 	end
 
 	frame:SetParent(parent)
-	frame:SetWidth(width)
-	frame:SetHeight(height)
+	
+	if(width and height) then
+		frame:SetSize(width, height)
+
+	elseif(width and not height) then
+		frame:SetWidth(width)
+
+	elseif(height and not width) then
+		frame:SetHeight(height)
+
+	end
+
 	frame:Show()
 
 	return frame
@@ -162,16 +173,23 @@ miog.createFrameWithFontStringAttached = function (type, template, parent, width
 	frame:SetParent(parent)
 
 	if(width and height) then
+		frame:SetSize(width, height)
+
+	elseif(width and not height) then
 		frame:SetWidth(width)
+
+	elseif(height and not width) then
 		frame:SetHeight(height)
+
 	end
+
 	frame:Show()
 
 	fontString:SetFont(miog.fonts["libMono"], miog.C.TEXT_LINE_FONT_SIZE, "OUTLINE")
 	fontString:SetPoint("LEFT", frame, "LEFT")
 	fontString:SetJustifyH("LEFT")
 	fontString:SetJustifyV("CENTER")
-	fontString:SetSize(frame:GetSize())
+	fontString:SetSize(width or 0, height or 0)
 	fontString:SetParent(frame)
 	fontString:Show()
 

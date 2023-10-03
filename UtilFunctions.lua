@@ -55,7 +55,7 @@ end
 miog.createFrameBorder = function(frame, oThickness, oR, oG, oB, oA)
 	local thickness, r, g, b, a = checkFrameBorderArguments(oThickness, oR, oG, oB, oA)
 
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=miog.F.PX_SIZE_1()*thickness} )
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness+miog.F.PX_SIZE_1()} )
 	frame:SetBackdropColor(0.1, 0.1 , 0.1, 0) -- main area color
 	frame:SetBackdropBorderColor(r, g, b, a) -- border color
 end
