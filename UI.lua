@@ -28,7 +28,6 @@ miog.createMainFrame = function()
 	miog.mainFrame:Hide()
 	
 	_G[miog.mainFrame:GetName()] = miog.mainFrame
-	tinsert(UISpecialFrames, miog.mainFrame:GetName())
 
 	local mainFrameBackgroundTexture = miog.persistentTexturePool:Acquire()
 	mainFrameBackgroundTexture:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT")
