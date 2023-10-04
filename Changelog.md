@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning].
 ## [0.9.4] - 2023-10-04
 
 
+## [0.9.3b] - 2023-10-04
+
+
+### Fixed
+
+- Re-enabled status string (was a bit wonky before)
+
+
 ## [0.9.3] - 2023-10-03
 
 ### Added 
