@@ -252,9 +252,7 @@ local function createEntryFrame(applicantID, debug)
 			entryFrame.statusFrame.fontString:SetJustifyH("CENTER")
 			entryFrame.statusFrame.fontString:SetPoint("TOP", entryFrame.statusFrame, "TOP", 0, -5)
 			entryFrame.statusFrame.fontString:SetJustifyV("TOP")
-			entryFrame.statusFrame.fontString:Hide()
-
-			--changeApplicantStatus(applicantID, applicantsFrame, "FUCK YE",)
+			entryFrame.statusFrame.fontString:Show()
 
 			local shortName = strsub(result[1], 0, 20)
 			local coloredSubName = WrapTextInColorCode(shortName, select(4, GetClassColor(englishClassName)))
