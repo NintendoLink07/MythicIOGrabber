@@ -238,13 +238,13 @@ local function addApplicantToPanel(applicantID)
 
 
 			if(assignedRole == "DAMAGER") then
-				roleFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/dpsSuperSmallIcon.png")
+				roleFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/dpsSuperSmallIcon.png")
 
 			elseif(assignedRole == "HEALER") then
-				roleFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/healerSuperSmallIcon.png")
+				roleFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/healerSuperSmallIcon.png")
 
 			elseif(assignedRole == "TANK") then
-				roleFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/tankSuperSmallIcon.png")
+				roleFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/tankSuperSmallIcon.png")
 
 			end
 
@@ -393,7 +393,7 @@ local function addApplicantToPanel(applicantID)
 
 			if(applicantIndex == 1 and allowedToInvite or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
 				local declineButton = miog.createBasicFrame("fleeting", "IconButtonTemplate", basicInformationPanel, basicInformationPanel.maximumHeight, basicInformationPanel.maximumHeight)
-				declineButton.icon = miog.C.STANDARD_FILE_PATH .. "/xSmallIcon.png"
+				declineButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
 				declineButton.iconSize = basicInformationPanel.maximumHeight - 4
 				declineButton:OnLoad()
 				declineButton:SetPoint("RIGHT", basicInformationPanel, "RIGHT", 0, 0)
@@ -415,7 +415,7 @@ local function addApplicantToPanel(applicantID)
 				applicantMemberFrame.basicInformationPanel.declineButton = declineButton
 
 				local inviteButton = miog.createBasicFrame("fleeting", "IconButtonTemplate", basicInformationPanel, basicInformationPanel.maximumHeight, basicInformationPanel.maximumHeight)
-				inviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/checkmarkSmallIcon.png"
+				inviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
 				inviteButton.iconSize = basicInformationPanel.maximumHeight - 4
 				inviteButton:SetFrameStrata("DIALOG")
 				inviteButton:OnLoad()
@@ -1256,16 +1256,16 @@ local function updateRoster()
 
 		if(#miog.F.CURRENT_GROUP_INFO < 5) then
 			if(groupCount["TANK"] < 1) then
-				miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO + 1] = {guid = "empty", unitID = "empty", name = "afk", class = "NONE", role = "TANK", specIcon = miog.C.STANDARD_FILE_PATH .. "/empty.png"}
+				miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO + 1] = {guid = "empty", unitID = "empty", name = "afk", class = "NONE", role = "TANK", specIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
 			end
 
 			if(groupCount["HEALER"] < 1 and #miog.F.CURRENT_GROUP_INFO < 5) then
-				miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO + 1] = {guid = "empty", unitID = "empty", name = "afk", class = "NONE", role = "HEALER", specIcon = miog.C.STANDARD_FILE_PATH .. "/empty.png"}
+				miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO + 1] = {guid = "empty", unitID = "empty", name = "afk", class = "NONE", role = "HEALER", specIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
 			end
 
 			for i = 1, 3 - groupCount["DAMAGER"], 1 do
 				if(groupCount["DAMAGER"] < 3 and #miog.F.CURRENT_GROUP_INFO < 5) then
-					miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO + 1] = {guid = "empty", unitID = "empty"..i, name = "afk", class = "NONE", role = "DAMAGER", specIcon = miog.C.STANDARD_FILE_PATH .. "/empty.png"}
+					miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO + 1] = {guid = "empty", unitID = "empty"..i, name = "afk", class = "NONE", role = "DAMAGER", specIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
 				end
 			end
 		end
@@ -1284,7 +1284,7 @@ local function updateRoster()
 
 		lastIcon = nil
 		
-		if(miog.F.IS_IN_DEBUG_MODE) then
+		--[[if(miog.F.IS_IN_DEBUG_MODE) then
 			for _, groupMember in ipairs(miog.F.CURRENT_GROUP_INFO) do
 				local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", WorldFrame, miog.mainFrame.titleBar.factionIconSize, miog.mainFrame.titleBar.factionIconSize, "texture", groupMember.specIcon)
 				classIconFrame:SetPoint("TOPLEFT", lastIcon or WorldFrame, lastIcon and "TOPRIGHT" or "TOPLEFT")
@@ -1293,7 +1293,7 @@ local function updateRoster()
 
 				lastIcon = classIconFrame
 			end
-		end
+		end]]
 
 		miog.mainFrame.titleBar.groupMemberListing:MarkDirty()
 	end
@@ -1409,11 +1409,11 @@ miog.OnEvent = function(_, event, ...)
 				miog.mainFrame.infoPanel.affixFrame:Show()
 				miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[11]
 					
-				miog.F.CURRENT_DIFFICULTY = miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1]
+				miog.F.CURRENT_DIFFICULTY = miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DIFFICULTY
 
 			else
 				if(activityInfo.categoryID == 1) then --Questing
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[1]
+					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[13]
 
 				elseif(activityInfo.categoryID == 3) then --Raids
 					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[2]
@@ -1422,6 +1422,9 @@ miog.OnEvent = function(_, event, ...)
 
 				elseif(activityInfo.categoryID == 4) then --Arenas
 					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[4]
+
+				elseif(activityInfo.categoryID == 5) then --Scenario
+					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[17]
 
 				elseif(activityInfo.categoryID == 6) then --Custom
 					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[12]
@@ -1434,6 +1437,12 @@ miog.OnEvent = function(_, event, ...)
 
 				elseif(activityInfo.categoryID == 9) then --Rated Battlegrounds
 					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[14]
+
+				elseif(activityInfo.categoryID == 111) then --Island Expeditions
+					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[1]
+
+				elseif(activityInfo.categoryID == 113) then --Torghast ... LOL
+					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[15]
 					
 				end
 

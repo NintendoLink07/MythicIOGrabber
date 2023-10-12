@@ -35,8 +35,6 @@ miog.F = {
 	CURRENT_DIFFICULTY = 0
 }
 
-
-
 --CONSTANTS
 miog.C = {
     --
@@ -93,10 +91,10 @@ miog.C = {
 
 	--PATH / TEXTURES FILES
 	STANDARD_FILE_PATH = "Interface/Addons/MythicIOGrabber/res",
-	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/star_64.png:8:8|t",
-	TANK_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/tankSuperSmallIcon.png:20:20|t",
-	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/healerSuperSmallIcon.png:20:20|t",
-	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/dpsSuperSmallIcon.png:20:20|t",
+	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/star_64.png:8:8|t",
+	TANK_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/tankSuperSmallIcon.png:20:20|t",
+	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerSuperSmallIcon.png:20:20|t",
+	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/dpsSuperSmallIcon.png:20:20|t",
 	STAR_TEXTURE = "⋆",
 }
 
@@ -127,30 +125,6 @@ miog.DIFFICULT_NAMES_TO_ID = {
 		["Normal"] = {14, 2, 30},
 		["Heroic"] = {15, 2, 30},
 		["Mythic"] = {16, 2, 20},
-	},
-	[4] = { --ARENA
-
-	},
-	[5] = { --QUESTING
-
-	},
-	[6] = { --QUESTING
-
-	},
-	[7] = { --QUESTING
-
-	},
-	[8] = { --QUESTING
-
-	},
-	[9] = { --QUESTING
-
-	},
-	[111] = { --QUESTING
-
-	},
-	[113] = { --QUESTING
-
 	},
 }
 
@@ -284,7 +258,7 @@ miog.PLAYSTYLE_STRINGS = {
 }
 
 miog.BACKGROUNDS = {
-	[1] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --QUESTING
+	[1] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
 	[2] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/2ndGOAT_1024.png", --RAID
 	--[3] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/antorus_1024.png",
 	[4] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena1_1024.png", --ARENA
@@ -292,14 +266,14 @@ miog.BACKGROUNDS = {
 	[6] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena3_1024.png", --SKIRMISH
 	--[7] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/daddyD_1024.png",
 	--[8] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/itsOK_1024.png",
-	--[9] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/riseMountains_1024.png", --RBG'S
+	--[9] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/riseMountains_1024.png", 
 	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
 	[11] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool1_1024.png", --DUNGEONS
 	[12] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool2_1024.png", --CUSTOM GROUPS
-	--[13] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool3_1024.png",
-	[14] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/swords_1024.png",
-	--[15] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png",
+	[13] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool3_1024.png", --QUESTING
+	[14] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/swords_1024.png", --RBG'S
+	[15] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
 	--[16] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vanilla_1024.png",
-	--[17] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/wetSandLand_1024.png",
+	[17] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/wetSandLand_1024.png", --SCENARIO
 	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_1024.png" --BASE
 }

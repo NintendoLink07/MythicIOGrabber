@@ -25,33 +25,31 @@ local function compareSettings(defaultOptions, savedSettings)
 	end
 end
 
-local function alternativeCreationInfo()
-
+--https://github.com/0xbs/premade-groups-filter/commit/e31067e0ec1d1345dabc3de4c9282cc33c9aa18c courtesy of PGF
+---@diagnostic disable-next-line: duplicate-set-field --overwriting Blizzard function
+C_LFGList.GetPlaystyleString = function(playstyle, activityInfo)
+    if not ( activityInfo and playstyle and playstyle ~= 0
+            and C_LFGList.GetLfgCategoryInfo(activityInfo.categoryID).showPlaystyleDropdown ) then
+        return nil
+    end
+    local globalStringPrefix
+    if activityInfo.isMythicPlusActivity then
+        globalStringPrefix = "GROUP_FINDER_PVE_PLAYSTYLE"
+    elseif activityInfo.isRatedPvpActivity then
+        globalStringPrefix = "GROUP_FINDER_PVP_PLAYSTYLE"
+    elseif activityInfo.isCurrentRaidActivity then
+        globalStringPrefix = "GROUP_FINDER_PVE_RAID_PLAYSTYLE"
+    elseif activityInfo.isMythicActivity then
+        globalStringPrefix = "GROUP_FINDER_PVE_MYTHICZERO_PLAYSTYLE"
+    end
+    return globalStringPrefix and _G[globalStringPrefix .. tostring(playstyle)] or nil
 end
 
-local function keepGroupCreationInfo(self)
-	--Clear selections
-	self.selectedGroup = nil;
-	self.selectedActivity = nil;
-	self.selectedFilters = nil;
-	self.selectedCategory = nil;
-	self.selectedPlaystyle = nil;
+LFGListEntryCreation_SetTitleFromActivityInfo = function(_) end
 
-	--Reset widgets
-	self.ItemLevel.CheckButton:SetChecked(false);
-	self.ItemLevel.EditBox:SetText("");
-	self.PvpItemLevel.CheckButton:SetChecked(false);
-	self.PvpItemLevel.EditBox:SetText("");
-	self.PVPRating.CheckButton:SetChecked(false);
-	self.PVPRating.EditBox:SetText("");
-	self.MythicPlusRating.CheckButton:SetChecked(false);
-	self.MythicPlusRating.EditBox:SetText("");
-	self.VoiceChat.CheckButton:SetChecked(false);
-	--self.VoiceChat.EditBox:SetText(""); -- Can't actually call that, illegal according to Blizzard LOL; not worth going through code for that I guess
-	self.PrivateGroup.CheckButton:SetChecked(false);
-	self.CrossFactionGroup.CheckButton:SetChecked(false);
 
-	self.ActivityFinder:Hide();
+local function alternativeCreationInfo(self)
+
 end
 
 local function keepSignUpNote(self, resultID)

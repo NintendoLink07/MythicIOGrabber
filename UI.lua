@@ -399,7 +399,7 @@ miog.createMainFrame = function()
 		roleTexture.text = showRoleButtonText
 
 		if(i == 3) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/dpsSuperSmallIcon.png")
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/dpsSuperSmallIcon.png")
 
 			toggleRoleButton:SetScript("OnClick", function()
 				miog.F.SHOW_DPS = not miog.F.SHOW_DPS
@@ -409,7 +409,7 @@ miog.createMainFrame = function()
 			end)
 
 		elseif(i == 2) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/healerSuperSmallIcon.png")
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/healerSuperSmallIcon.png")
 
 			toggleRoleButton:SetScript("OnClick", function()
 				miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
@@ -419,7 +419,7 @@ miog.createMainFrame = function()
 			end)
 
 		elseif(i == 1) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/tankSuperSmallIcon.png")
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/tankSuperSmallIcon.png")
 
 			toggleRoleButton:SetScript("OnClick", function()
 				miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
