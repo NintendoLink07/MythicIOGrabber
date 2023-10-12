@@ -220,7 +220,6 @@ miog.loadSettings = function()
 	if(MIOG_SavedSettings["lastActiveSortingMethods"] and MIOG_SavedSettings["lastActiveSortingMethods"]["value"]) then
 		for sortKey, row in pairs(MIOG_SavedSettings["lastActiveSortingMethods"]["value"]) do
 			if(row.active == true) then
-				--DevTools_Dump(MIOG_SavedSettings["lastActiveSortingMethods"]["value"][currentCategory])
 				local active = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["active"]
 				local currentLayer = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentLayer"]
 				local currentState = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentState"]

@@ -722,16 +722,6 @@ local function addApplicantToPanel(applicantID)
 									EncounterJournal_OpenJournal(miog.F.CURRENT_DIFFICULTY, instanceID, encounterID, nil, nil, nil)
 
 								end)
-								bossFrame:SetMouseMotionEnabled(true)
-								bossFrame:SetScript("OnEnter", function()
-									print("ENTER")
-									raidPanel.numberPanel:Show()
-
-								end)
-								bossFrame:SetScript("OnLeave", function()
-									raidPanel.numberPanel:Hide()
-
-								end)
 
 								local kills = raidProgressInfo.killsPerBoss[i]
 
