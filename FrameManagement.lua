@@ -23,10 +23,11 @@ local function resetFrame(_, childFrame)
 	elseif(typeOfFrame == "CheckButton") then
 		childFrame:Enable()
 		childFrame:SetChecked(false)
-		childFrame:SetScript("OnClick", nil)
+		--childFrame:SetScript("OnClick", nil)
 
 	elseif(typeOfFrame == "EditBox") then
 		childFrame:ClearFocus()
+		childFrame:SetScript("OnKeyDown", nil)
 
 	elseif(typeOfFrame == "Frame") then
 		childFrame:ClearBackdrop()
@@ -45,6 +46,9 @@ local function resetFrame(_, childFrame)
 		childFrame.rows = nil
 		childFrame.memberFrames = nil
 		childFrame.textureRows = nil
+		childFrame:SetMouseClickEnabled(false)
+		childFrame:SetScript("OnEnter", nil)
+		childFrame:SetScript("OnLeave", nil)
 
 		childFrame:SetScript("OnMouseDown", nil)
 	end
@@ -54,7 +58,7 @@ end
 
 local function resetFontString(_, childFontString)
     childFontString:Hide()
-	childFontString:SetDrawLayer("OVERLAY")
+	childFontString:SetDrawLayer("OVERLAY", -8)
 	childFontString:SetText("")
 	childFontString:SetJustifyH("LEFT")
 	childFontString:SetJustifyV("MIDDLE")
@@ -65,7 +69,7 @@ end
 
 local function resetTexture(_, childTexture)
 	childTexture:Hide()
-	childTexture:SetDrawLayer("BACKGROUND")
+	childTexture:SetDrawLayer("BACKGROUND", -8)
 	childTexture:SetTexture(nil)
 	childTexture:SetTexCoord(0, 1, 0, 1)
 	childTexture:SetDesaturated(false)
@@ -211,7 +215,6 @@ miog.createBasicFrame = function (type, template, parent, width, height, addOn, 
 
 		end
 
-		texture:SetDrawLayer("BACKGROUND", -8)
 		texture:SetParent(frame)
 		texture:Show()
 
@@ -230,7 +233,6 @@ miog.createBasicFrame = function (type, template, parent, width, height, addOn, 
 
 		end
 
-		texture:SetDrawLayer("BACKGROUND", -8)
 		texture:SetParent(frame)
 		texture:Show()
 

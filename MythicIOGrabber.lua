@@ -588,7 +588,7 @@ local function addApplicantToPanel(applicantID)
 							local dungeonIconFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 2, miog.C.APPLICANT_MEMBER_HEIGHT - 2, "texture", textureString)
 							dungeonIconFrame:SetPoint("LEFT", mythicPlusPanel.rows[rowIndex], "LEFT")
 							dungeonIconFrame:SetMouseClickEnabled(true)
-							dungeonIconFrame:SetFrameStrata("DIALOG")
+							dungeonIconFrame:SetFrameStrata("FULLSCREEN")
 							dungeonIconFrame:SetScript("OnMouseDown", function()
 								local instanceID = C_EncounterJournal.GetInstanceForGameMap(dungeonProfile[rowIndex].dungeon.instance_map_id)
 
@@ -720,6 +720,16 @@ local function addApplicantToPanel(applicantID)
 									local _, _, encounterID = EJ_GetEncounterInfoByIndex(i, instanceID)
 									--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
 									EncounterJournal_OpenJournal(miog.F.CURRENT_DIFFICULTY, instanceID, encounterID, nil, nil, nil)
+
+								end)
+								bossFrame:SetMouseMotionEnabled(true)
+								bossFrame:SetScript("OnEnter", function()
+									print("ENTER")
+									raidPanel.numberPanel:Show()
+
+								end)
+								bossFrame:SetScript("OnLeave", function()
+									raidPanel.numberPanel:Hide()
 
 								end)
 
