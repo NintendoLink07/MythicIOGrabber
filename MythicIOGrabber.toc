@@ -1,11 +1,12 @@
 ## Interface: 100107
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
-## IconTexture: Interface\AddOns\MythicIOGrabber\res\logo_noText_256.png
+## IconTexture: Interface\AddOns\MythicIOGrabber\res\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 0.9.3b
-## SavedVariables: SavedOptionSettings
-## SavedVariablesPerCharacter: QueueUpTime
+## Version: 1.0.0
+## SavedVariables: MIOG_SavedSettings
+## SavedVariablesPerCharacter: MIOG_QueueUpTime
+## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
 
 ## X-Curse-Project-ID: 916354
 ## X-Website: https://github.com/NintendoLink07/MythicIOGrabber
@@ -16,3 +17,4 @@ UtilFunctions.lua
 PersistentData.lua
 FrameManagement.lua
 UI.lua
+TripleStateButton.lua

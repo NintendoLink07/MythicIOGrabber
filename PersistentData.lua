@@ -1,21 +1,61 @@
 local addonName, miog = ...
 
+--CHANGING VARIABLES
+miog.F = {
+	UI_SCALE = C_CVar.GetCVar("uiScale") or UIParent:GetEffectiveScale(),
+    FACTION_ICON_SIZE = 0,
+    WEEKLY_AFFIX = nil,
+    SHOW_TANKS = true,
+    SHOW_HEALERS = true,
+    SHOW_DPS = true,
+	LISTED_CATEGORY_ID = 0,
+	AUTO_SORT_ENABLED = nil,
+
+	APPLIED_NUM_OF_TANKS = 0,
+	APPLIED_NUM_OF_HEALERS = 0,
+	APPLIED_NUM_OF_DPS = 0,
+	NUM_OF_GROUP_MEMBERS = 0,
+
+	CURRENT_GROUP_INFO = {},
+	IS_RAIDERIO_LOADED = false,
+	IS_IN_DEBUG_MODE = false,
+	
+	INSPECT_QUEUE = {},
+	CURRENTLY_INSPECTING = false,
+
+	SORT_METHODS = {
+		["role"] = {active = false, currentLayer = 0},
+		["score"] = {active = false, currentLayer = 0},
+		["keylevel"] = {active = false, currentLayer = 0},
+		["ilvl"] = {active = false, currentLayer = 0},
+	},
+
+	CURRENTLY_ACTIVE_SORTING_METHODS = 0,
+
+	CURRENT_DIFFICULTY = 0
+}
+
+
+
 --CONSTANTS
 miog.C = {
     --
     --- FRAME SIZES
     --
     FULL_SIZE = 160,
-    ENTRY_FRAME_SIZE = 20,
+    APPLICANT_MEMBER_HEIGHT = 20,
     APPLICANT_BUTTON_SIZE = 20,
-    PADDING_OFFSET = 3,
 
     --
     --- FONT SIZES
     --
-    TEXT_LINE_FONT_SIZE = 12,
-    SETTING_FONT_SIZE = 12,
-    AFFIX_FONT_SIZE = 12,
+	TITLE_FONT_SIZE = 14,
+	ACTIVITY_NAME_FONT_SIZE = 13,
+	LISTING_COMMENT_FONT_SIZE = 12,
+	LISTING_INFO_FONT_SIZE = 14,
+	AFFIX_TEXTURE_FONT_SIZE = 12, --always weird, gotta change that
+	APPLICANT_MEMBER_FONT_SIZE = 11,
+	TEXT_ROW_FONT_SIZE = 11,
     
     --
     -- COLORS
@@ -26,16 +66,13 @@ miog.C = {
     RED_SECONDARY_COLOR = "99FF2222",
 
     BACKGROUND_COLOR = "FF18191A",
-    BACKGROUND_COLOR_2 = "FF2A2B3C",
+    BACKGROUND_COLOR_2 = "FF2A2B2C",
     BACKGROUND_COLOR_3 = "FF3C3D4E",
     CARD_COLOR = "FF242526",
     HOVER_COLOR = "FF3A3B3C",
     PRIMARY_TEXT_COLOR = "FFE4E6EB",
     SECONDARY_TEXT_COLOR = "FFB0B3B8",
 
-	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/star_256.png:8:8|t",
-	UTF_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/starUTF_512.png:8:8|t",
-	STAR_TEXTURE = "⋆",
 
 	DIFFICULTY = {
 		[3] = {singleChar = "M", description = _G["PLAYER_DIFFICULTY6"], color = _G["ITEM_QUALITY_COLORS"][4].color},
@@ -49,94 +86,172 @@ miog.C = {
 		[3]	= "eu",
 		[4] = "tw",
 		[5] = "cn",
- 	}
+ 	},
+
+	STANDARD_PADDING = 4,
+
+
+	--PATH / TEXTURES FILES
+	STANDARD_FILE_PATH = "Interface/Addons/MythicIOGrabber/res",
+	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/star_64.png:8:8|t",
+	TANK_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/tankSuperSmallIcon.png:20:20|t",
+	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/healerSuperSmallIcon.png:20:20|t",
+	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/dpsSuperSmallIcon.png:20:20|t",
+	STAR_TEXTURE = "⋆",
 }
 
-miog.F = {
-    FACTION_ICON_SIZE = 0,
-    UI_SCALE = C_CVar.GetCVar("uiScale"),
-	PX_SIZE_1 = function() return PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1) end,
-    WEEKLY_AFFIX = nil,
-    SHOW_TANKS = true,
-    SHOW_HEALERS = true,
-    SHOW_DPS = true,
-	LISTED_CATEGORY_ID = 0,
-	AUTO_SORT_ENABLED = nil,
+miog.DIFFICULT_NAMES_TO_ID = {
+	--category id to further divide
 
-	APPLIED_NUM_OF_TANKS = 0,
-	APPLIED_NUM_OF_HEALERS = 0,
-	APPLIED_NUM_OF_DPS = 0,
+	[1] = { --QUESTING
+
+	},
+	[2] = { --DUNGEON
+		["Normal"] = {1, 1, 5,},
+		["Heroic"] = {2, 1, 5},
+		["Timewalking"] = {24, 1, 5},
+		["Mythic"] = {23, 1, 5},
+		["Mythic+"] = {8, 1, 5},
+		["Event"] = {19, 1, 5},
+	},
+	[3] = { --RAID
+		["World Bosses"] = {172, 0, 40},
+		["10 Player"] = {3, 2, 10},
+		["10 Player Heroic"] = {5, 2, 10},
+		["25 Player"] = {4, 2, 10},
+		["25 Player Heroic"] = {6, 2, 10},
+		["40 Player"] = {9, 2, 10},
+		["Looking For Raid"] = {17, 2, 10},
+		["Timewalking"] = {33, 2, 10},
+		["Event"] = {18, 2, 40},
+		["Normal"] = {14, 2, 30},
+		["Heroic"] = {15, 2, 30},
+		["Mythic"] = {16, 2, 20},
+	},
+	[4] = { --ARENA
+
+	},
+	[5] = { --QUESTING
+
+	},
+	[6] = { --QUESTING
+
+	},
+	[7] = { --QUESTING
+
+	},
+	[8] = { --QUESTING
+
+	},
+	[9] = { --QUESTING
+
+	},
+	[111] = { --QUESTING
+
+	},
+	[113] = { --QUESTING
+
+	},
 }
 
-miog.dungeonIcons = {
-    --DF S1
-	rlp = {"Ruby Life Pools", "interface/lfgframe/lfgicon-lifepools"},
-	no = {"The Nokhud Offensive", "interface/lfgframe/lfgicon-centaurplains"},
-	av = {"The Azure Vault", "interface/lfgframe/lfgicon-arcanevaults"},
-	aa = {"Algeth'ar Academy", "interface/lfgframe/lfgicon-theacademy"},
-	sbg = {"Shadowmoon Burial Grounds", "interface/lfgframe/lfgicon-shadowmoonburialgrounds"},
-	cos = {"Algeth'ar Academy", "interface/lfgframe/lfgicon-courtofstars"},
-	totjs = {"Algeth'ar Academy", "interface/lfgframe/lfgicon-templeofthejadeserpent"},
-	hov = {"Algeth'ar Academy", "interface/lfgframe/lfgicon-hallsofvalor"},
+miog.DUNGEON_ICONS = {
+	--CATACLYSM
+	[643] = "interface/lfgframe/lfgicon-throneofthetides",
+	[657] = "interface/lfgframe/lfgicon-thevortexpinnacle",
 
-    --DF S2
-	fh = {"Freehold", "interface/lfgframe/lfgicon-freehold"},
-	u = {"The Underrot", "interface/lfgframe/lfgicon-theunderrot"},
-	hoi = {"Halls of Infusion", "interface/lfgframe/lfgicon-hallsofinfusion"},
-	bh = {"Brackenhide Hollow", "interface/lfgframe/lfgicon-brackenhidehollow"},
-	vp = {"The Vortex Pinnacle", "interface/lfgframe/lfgicon-thevortexpinnacle"},
-	n = {"Neltharus", "interface/lfgframe/lfgicon-neltharus"},
-	ulot = {"Uldaman: Legacy of Tyr", "interface/lfgframe/lfgicon-uldaman-legacyoftyr"},
-	nl = {"Neltharion's Lair", "interface/lfgframe/lfgicon-neltharionslair"},
+	--MISTS OF PANDARIA
+	[960] = "interface/lfgframe/lfgicon-templeofthejadeserpent",
+
+	--WARLORDS OF DRAENOR
+	[1176] = "interface/lfgframe/lfgicon-shadowmoonburialgrounds",
+	[1279] = "interface/lfgframe/lfgicon-everbloom",
+
+	--LEGION
+	[1458] = "interface/lfgframe/lfgicon-neltharionslair",
+	[1466] = "interface/lfgframe/lfgicon-darkheartthicket",
+	[1477] = "interface/lfgframe/lfgicon-hallsofvalor",
+	[1571] = "interface/lfgframe/lfgicon-courtofstars",
+	[1501] = "interface/lfgframe/lfgicon-blackrookhold",
+
+	--BATTLE FOR AZEROTH
+	[1754] = "interface/lfgframe/lfgicon-freehold",
+	[1763] = "interface/lfgframe/lfgicon-ataldazar",
+	[1841] = "interface/lfgframe/lfgicon-theunderrot",
+	[1862] = "interface/lfgframe/lfgicon-waycrestmanor",
+
+	--SHADOWLANDS
+
+	--DRAGONFLIGHT
+	[2451] = "interface/lfgframe/lfgicon-uldaman-legacyoftyr",
+	[2515] = "interface/lfgframe/lfgicon-arcanevaults",
+	[2516] = "interface/lfgframe/lfgicon-centaurplains",
+	[2519] = "interface/lfgframe/lfgicon-neltharus",
+	[2520] = "interface/lfgframe/lfgicon-brackenhidehollow",
+	[2521] = "interface/lfgframe/lfgicon-lifepools",
+	[2526] = "interface/lfgframe/lfgicon-theacademy",
+	[2527] = "interface/lfgframe/lfgicon-hallsofinfusion",
+	[2579] = "interface/lfgframe/lfgicon-dawnoftheinfinite",
 }
 
 miog.RAID_ICONS = {
-	["ATSC"] = {
-		"interface/icons/inv_achievement_raiddragon_kazzara",
-		"interface/icons/inv_achievement_raiddragon_amalgamationchamber",
-		"interface/icons/inv_achievement_raiddragon_forgottenexperiments",
-		"interface/icons/inv_achievement_raiddragon_zaqaliassault",
-		"interface/icons/inv_achievement_raiddragon_rashok",
-		"interface/icons/inv_achievement_raiddragon_zskarn",
-		"interface/icons/inv_achievement_raiddragon_magmorax",
-		"interface/icons/inv_achievement_raiddragon_neltharion",
-		"interface/icons/inv_achievement_raiddragon_sarkareth",
-		"interface/lfgframe/lfgicon-aberrus",
+	[2549] = { --interface/icons/inv_achievement_raidemeralddream
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png",
 	},
-	["VOTI"] = {
-		"interface/icons/achievement_raidprimalist_eranog",
-		"interface/icons/achievement_raidprimalist_terros",
-		"interface/icons/achievement_raidprimalist_council",
-		"interface/icons/achievement_raidprimalist_sennarth",
-		"interface/icons/achievement_raidprimalist_windelemental",
-		"interface/icons/achievement_raidprimalist_kurog",
-		"interface/icons/achievement_raidprimalist_diurna",
-		"interface/icons/achievement_raidprimalist_raszageth",
-		"interface/lfgframe/lfgicon-vaultoftheincarnates",
+	[2569] = { -- interface/icons/inv_achievement_raiddragon
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/chamber.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/experiment.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/assault.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashok.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/zskarn.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png",
+	},
+	[2522] = { --interface/icons/achievement_raidprimalist
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png",
 	},
 }
 
-miog.fonts = {
+miog.FONTS = {
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
 }
 
-miog.classTable = {
-	["WARRIOR"] = 1,
-	["PALADIN"] = 2,
-	["HUNTER"] = 3,
-	["ROGUE"] = 4,
-	["PRIEST"] = 5,
-	["DEATHKNIGHT"] = 6,
-	["SHAMAN"] = 7,
-	["MAGE"] = 8,
-	["WARLOCK"] = 9,
-	["MONK"] = 10,
-	["DRUID"] = 11,
-	["DEMONHUNTER"] = 12,
-	["EVOKER"] = 13,
+miog.CLASSES = {
+	["WARRIOR"] = 		{index = 1, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png"},
+	["PALADIN"] = 		{index = 2, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png"},
+	["HUNTER"] = 		{index = 3, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter.png"},
+	["ROGUE"] = 		{index = 4, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue.png"},
+	["PRIEST"] = 		{index = 5, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest.png"},
+	["DEATHKNIGHT"] = 	{index = 6, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight.png"},
+	["SHAMAN"] = 		{index = 7, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman.png"},
+	["MAGE"] = 			{index = 8, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage.png"},
+	["WARLOCK"] =		{index = 9, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock.png"},
+	["MONK"] = 			{index = 10, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk.png"},
+	["DRUID"] =			{index = 11, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png"},
+	["DEMONHUNTER"] = 	{index = 12, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png"},
+	["EVOKER"] = 		{index = 13, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png"},
 }
 
-miog.searchLanguages = {
+miog.SEARCH_LANGUAGES = {
 	itIT=true,
 	ruRU=true,
 	frFR=true,
@@ -144,13 +259,13 @@ miog.searchLanguages = {
 	deDE=true,
 }
 
-miog.iconCoords = {
+miog.ICON_COORDINATES = {
     tankCoords = {0.76, 0.8725, 0.255, 0.367},
     healerCoords = {0.13, 0.2425, 0.255, 0.3675},
     dpsCoords = {0.003, 0.1155, 0.381, 0.4935},
 }
 
-miog.playStyleStrings = {
+miog.PLAYSTYLE_STRINGS = {
 	["mZero1"] = "Standard",
 	["mZero2"] = "Learning/Progression",
 	["mZero3"] = "Quick Clear",
@@ -166,4 +281,25 @@ miog.playStyleStrings = {
 	["pvp1"] = "Earn Conquest",
 	["pvp2"] = "Learning",
 	["pvp3"] = "Increase Rating"
+}
+
+miog.BACKGROUNDS = {
+	[1] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --QUESTING
+	[2] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/2ndGOAT_1024.png", --RAID
+	--[3] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/antorus_1024.png",
+	[4] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena1_1024.png", --ARENA
+	[5] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena2_1024.png", --BATTLEGROUNDS
+	[6] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena3_1024.png", --SKIRMISH
+	--[7] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/daddyD_1024.png",
+	--[8] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/itsOK_1024.png",
+	--[9] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/riseMountains_1024.png", --RBG'S
+	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
+	[11] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool1_1024.png", --DUNGEONS
+	[12] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool2_1024.png", --CUSTOM GROUPS
+	--[13] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool3_1024.png",
+	[14] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/swords_1024.png",
+	--[15] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png",
+	--[16] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vanilla_1024.png",
+	--[17] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/wetSandLand_1024.png",
+	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_1024.png" --BASE
 }

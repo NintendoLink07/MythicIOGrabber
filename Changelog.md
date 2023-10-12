@@ -7,14 +7,59 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
-## [1.0.0] - 2023-10-??
+## [1.0.0] - 2023-10-11
+
+
+### Added
+
+- Interface options setting: (Experimental) Your message when applying to groups will be saved between multiple applications (but not between reloads, atleast for now).
+
+- Interface options setting: (Experimental) Your settings when forming a group will be saved between reloads (but not between reloads, atleast for now).
+
+- When having fewer than 5 players in your party the specs of your party members will be visible in the title bar.
+Will probably do a raid version with an expandable small window or something like that but it's somewhat limited by 1. size constraints and 2. Blizzard only doing 6 inspect requests at a time.
+This feature might still be a bit wonky, it's the next item to completely finish over the next two weeks, mostly edges cases though.
+
+- Implemented Dragonflight Season 3 dungeons in advance.
+
+- Implemented Dragonflight The Emerald Dreamway raid in advance.
+
+- New sorting methods: you can sort by role, score, keylevel or ilvl. 
+Up to 2 sorting methods can be active at a time, e.g. you sort first by role (indicated by the little number on the bottom left side of the button when you click it) and then for score.
+
+- Many tooltips explaining the new features.
+
+- When you set a rating / ilvl limit and an applicant has a premade that is under the rating threshold the rating / ilvl of that applicant will be colored red for easier visibility.
+
+- Clicking on the dungeon / raid / -boss icon in the detailed panel now takes you to the Encounter Journal page for that dungeon / raid with the currently chosen difficulty (Normal, oldschool 25 HC, M+, etc.)
+Not sure if I got all edge cases (probably not). Just shoot me a message somewhere if you find one.
+
 
 ### Changed
 
-- Full UI rewrite, updated to more modern WoW UI standards
+- Full UI rewrite, updated to more modern WoW UI code standards.
+
+- Saves settings now properly and doesn't refresh user set options when Addon is updated.
+
+- Updated all the icons for a more modern look.
+
+- AI upscaled all the background images, now there's also a different one for each category(dungeon, raid/raid legacy, arena, arena skirmish, etc.).
+
+- Instead of a wall of text of your group creation setting it now shows icons for each category.
+
+- Instead of 2 seperate detailed panels for M+ and raid both are now a tab button in the detailed window! Standard is M+ in Dungeon category, Raid in raid category and every other category will have M+ as standard.
 
 
-## [0.9.4] - 2023-10-04
+### Fixed
+
+- Many many UI bugs, shifting text/icons, buttons not visible/clickable, text cut off, etc.
+
+
+### Removed
+
+- Made the "Show actual specs" and "Order group" options unavailable, since they were resource hogging a lot since Blizzard only renders the groups that are currently visible. So the addon would have to update the specs EACH SCROLL / GROUP UPDATE.
+From my testing: going from 300fps to 180fps when you refresh or scroll. Currently not worth it and definitely not what I intended.
+
 
 
 ## [0.9.3b] - 2023-10-04
@@ -188,7 +233,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v0.9.3b...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.3b
 [0.9.3b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.3b
 [0.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.3
 [0.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.1

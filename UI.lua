@@ -18,366 +18,559 @@ local function insertPointsIntoFrame(frame, table)
 	end
 end
 
+local pveFrameTab1_Point = nil
+
+local function positionTab1ToMainFrame()
+	miog.mainFrame:SetHeight(miog.mainFrame.extendedHeight)
+	PVEFrameTab1:SetParent(miog.mainFrame)
+	PVEFrameTab1:ClearAllPoints()
+	PVEFrameTab1:SetPoint("TOPLEFT", miog.mainFrame, "BOTTOMLEFT", 0, 0)
+
+	PVEFrameTab1:SetWidth(PVEFrameTab1:GetWidth() - 2)
+	PVEFrameTab2:SetWidth(PVEFrameTab2:GetWidth() - 2)
+	PVEFrameTab3:SetWidth(PVEFrameTab3:GetWidth() - 2)
+
+end
+
+local function positionTab1PVEFrame()
+	miog.mainFrame:SetHeight(miog.mainFrame.standardHeight)
+	PVEFrameTab1:SetParent(PVEFrame)
+	PVEFrameTab1:ClearAllPoints()
+	insertPointsIntoFrame(PVEFrameTab1, pveFrameTab1_Point)
+
+	PVEFrameTab1:SetWidth(PVEFrameTab1:GetWidth() + 2)
+	PVEFrameTab2:SetWidth(PVEFrameTab2:GetWidth() + 2)
+	PVEFrameTab3:SetWidth(PVEFrameTab3:GetWidth() + 2)
+
+end
+
 miog.createMainFrame = function()
-	miog.mainFrame:SetSize(LFGListFrame:GetWidth() + 2, LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
-	miog.mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
-	miog.mainFrame:SetMovable(true)
-	miog.mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight()-2)
-	miog.mainFrame:SetFrameStrata("DIALOG")
-	miog.mainFrame.expanded = false
-	miog.mainFrame:Hide()
-	
-	_G[miog.mainFrame:GetName()] = miog.mainFrame
 
-	local mainFrameBackgroundTexture = miog.persistentTexturePool:Acquire()
-	mainFrameBackgroundTexture:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT")
-	mainFrameBackgroundTexture:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT")
-	mainFrameBackgroundTexture:SetParent(miog.mainFrame)
-	mainFrameBackgroundTexture:SetDrawLayer("BACKGROUND")
-	mainFrameBackgroundTexture:SetTexture(985877)
-	mainFrameBackgroundTexture:SetTexCoord(0, 0.3215, 0.133, 0.4605)
-	miog.mainFrame.backgroundTexture = mainFrameBackgroundTexture
+	local mainFrame = miog.mainFrame ---@class Frame
+    pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
 
-    local pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
+	mainFrame:SetSize((LFGListFrame:GetWidth() + 2), (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5))
+	mainFrame.standardHeight = mainFrame:GetHeight()
+	mainFrame.extendedHeight = mainFrame.standardHeight * 1.5
+	mainFrame:SetScale(1)
+	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
+	mainFrame:SetFrameStrata("DIALOG")
+	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight())
 
-	local titleBar = miog.persistentFramePool:Acquire("BackdropTemplate")
-	titleBar:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT", 0, 0)
-	titleBar:SetPoint("BOTTOMRIGHT", miog.mainFrame, "TOPRIGHT", 0, -25)
-	titleBar:SetParent(miog.mainFrame)
-	titleBar:Show()
-	miog.mainFrame.titleBar = titleBar
+	miog.createFrameBorder(mainFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	miog.F.FACTION_ICON_SIZE = titleBar:GetHeight() - 2
+	mainFrame:HookScript("OnShow", function()
+		if(MIOG_SavedSettings["frameExtended"].value) then
+			positionTab1ToMainFrame()
 
-	local faction = miog.persistentFontStringPool:Acquire()
-	faction:SetFont(miog.fonts["libMono"], 10, "OUTLINE")
-	faction:SetText(
-		CreateTextureMarkup(2173919, 56, 56, titleBar:GetHeight(), titleBar:GetHeight(), 0, 1, 0, 1)..
-		CreateTextureMarkup(2173920, 56, 56, titleBar:GetHeight(), titleBar:GetHeight(), 0, 1, 0, 1)
-	)
-	faction:SetJustifyH("RIGHT")
-	faction:SetPoint("RIGHT", titleBar, "RIGHT", -1, -1)
-	faction:SetSize(titleBar:GetHeight()*2, titleBar:GetHeight())
-	faction:SetParent(titleBar)
-	faction:Show()
-	miog.mainFrame.titleBar.faction = faction
-
-	local groupMemberListing = miog.persistentFontStringPool:Acquire()
-	groupMemberListing:SetFont(miog.fonts["libMono"], 16, "OUTLINE")
-	groupMemberListing:SetText("0/0/0")
-	groupMemberListing:SetJustifyH("RIGHT")
-	groupMemberListing:SetJustifyV("CENTER")
-	groupMemberListing:SetPoint("RIGHT", faction, "LEFT", 0, 0)
-	groupMemberListing:SetParent(titleBar)
-	groupMemberListing:Show()
-
-	local titleString = miog.persistentFontStringPool:Acquire()
-	titleString:SetFont(miog.fonts["libMono"], 14, "OUTLINE")
-	titleString:SetPoint("TOPLEFT", titleBar, "TOPLEFT", 5, -5)
-	titleString:SetPoint("BOTTOMRIGHT", groupMemberListing, "BOTTOMLEFT")
-	titleString:SetParent(titleBar)
-	titleString:SetJustifyH("LEFT")
-	--titleString:SetJustifyV("CENTER")
-	titleString:Show()
-	titleString:SetMouseMotionEnabled(true)
-	titleString:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(titleBar, "ANCHOR_CURSOR")
-		GameTooltip:SetText(titleString:GetText())
-		GameTooltip:Show()
-	end)
-	titleString:SetScript("OnLeave", function()
-		GameTooltip:Hide()
-	end)
-	miog.mainFrame.titleBar.titleString = titleString
-
-	miog.mainFrame.titleBar.groupMemberListing = groupMemberListing
-
-	local resetButton = miog.persistentFramePool:Acquire("BigRedRefreshButtonTemplate")
-	resetButton:ClearAllPoints()
-	resetButton:SetSize(PVEFrameCloseButton:GetHeight(), PVEFrameCloseButton:GetHeight())
-	resetButton:SetPoint("RIGHT", PVEFrameCloseButton, "LEFT", -1, 1)
-	resetButton:SetParent(titleBar)
-	resetButton:SetScript("OnClick",
-		function()
-			C_LFGList.RefreshApplicants()
 		end
-	)
-	resetButton:Show()
-	miog.mainFrame.resetButton = resetButton
+	
+	end)
+	mainFrame:HookScript("OnHide", function()
+		positionTab1PVEFrame()
 
-	local expandDownwardsButton = miog.persistentFramePool:Acquire("UIButtonTemplate")
-	expandDownwardsButton:SetParent(titleBar)
-	expandDownwardsButton:SetSize(miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
-	expandDownwardsButton:SetPoint("RIGHT", resetButton, "LEFT", 0, -expandDownwardsButton:GetHeight()/4)
+	end)
+	_G[mainFrame:GetName()] = mainFrame
 
+	local backdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, nil, "texture", miog.BACKGROUNDS[18])
+	backdropFrame:SetPoint("TOPLEFT", mainFrame, "TOPLEFT")
+	backdropFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT")
+
+	mainFrame.backdropFrame = backdropFrame
+
+	local openSettingsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
+	openSettingsButton:SetPoint("RIGHT", PVEFrameCloseButton, "LEFT", 0, 0)
+	openSettingsButton:SetNormalTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/settingGear.png")
+	openSettingsButton:RegisterForClicks("LeftButtonDown")
+	openSettingsButton:SetScript("OnClick", function()
+		InterfaceOptionsFrame_OpenToCategory(interfaceOptionsPanel)
+	end)
+
+	local expandDownwardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
+	expandDownwardsButton:SetPoint("RIGHT", openSettingsButton, "LEFT", 0, -expandDownwardsButton:GetHeight()/4)
 	expandDownwardsButton:SetNormalTexture(293770)
 	expandDownwardsButton:SetPushedTexture(293769)
+	expandDownwardsButton:SetDisabledTexture(293768)
 
 	expandDownwardsButton:RegisterForClicks("LeftButtonDown")
 	expandDownwardsButton:SetScript("OnClick", function()
-		miog.mainFrame.expanded = not miog.mainFrame.expanded
 
-		if(miog.mainFrame.expanded) then
-			miog.mainFrame:SetSize(miog.mainFrame:GetWidth(), miog.mainFrame:GetHeight() * 1.5)
-			PVEFrameTab1:ClearAllPoints()
-			PVEFrameTab1:SetWidth(PVEFrameTab1:GetWidth()-2)
-			PVEFrameTab1:SetPoint("TOPLEFT", miog.mainFrame, "BOTTOMLEFT", 0, 0)
+		MIOG_SavedSettings["frameExtended"].value = not MIOG_SavedSettings["frameExtended"].value
 
-		elseif(not miog.mainFrame.expanded) then
-			miog.mainFrame:SetSize(miog.mainFrame:GetWidth(), miog.mainFrame:GetHeight() / 1.5)
-			PVEFrameTab1:ClearAllPoints()
-			PVEFrameTab1:SetWidth(PVEFrameTab1:GetWidth()+2)
-			insertPointsIntoFrame(PVEFrameTab1, pveFrameTab1_Point)
+		if(MIOG_SavedSettings["frameExtended"].value) then
+			positionTab1ToMainFrame()
+
+		elseif(not MIOG_SavedSettings["frameExtended"].value) then
+			positionTab1PVEFrame()
 
 		end
-
-		
-	miog.mainFrame:HookScript("OnShow", function()
-		PVEFrameTab1:ClearAllPoints()
-		PVEFrameTab1:SetWidth(PVEFrameTab1:GetWidth()-2)
-		PVEFrameTab1:SetPoint("TOPLEFT", miog.mainFrame, "BOTTOMLEFT", 0, 0)
-	end)
-	miog.mainFrame:HookScript("OnHide", function()
-		PVEFrameTab1:ClearAllPoints()
-		PVEFrameTab1:SetWidth(PVEFrameTab1:GetWidth()+2)
-		insertPointsIntoFrame(PVEFrameTab1, pveFrameTab1_Point)
-	end)
 	end)
 
-	expandDownwardsButton:Show()
-	miog.mainFrame.expandDownwardsButton = expandDownwardsButton
+	mainFrame.expandDownwardsButton = expandDownwardsButton
+	
+	local raiderIOAddonIsLoadedFrame = miog.createBasicFontString("persistent", 16, mainFrame)
+	raiderIOAddonIsLoadedFrame:SetPoint("RIGHT", openSettingsButton, "LEFT", - 5 - expandDownwardsButton:GetWidth(), 0)
+	raiderIOAddonIsLoadedFrame:SetJustifyH("RIGHT")
+	raiderIOAddonIsLoadedFrame:SetText(WrapTextInColorCode("NO R.IO", miog.C.RED_COLOR))
+	raiderIOAddonIsLoadedFrame:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
-	local voiceChat = LFGListFrame.ApplicationViewer.VoiceChatFrame
-	voiceChat:ClearAllPoints()
-	voiceChat:SetPoint("RIGHT", faction, "LEFT", -2, 0)
-	voiceChat:SetParent(titleBar)
-	miog.mainFrame.titleBar.voiceChat = voiceChat
+	miog.mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
 
-	local infoPanel = miog.persistentFramePool:Acquire("BackdropTemplate")
-	infoPanel:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 0)
-	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", 0, 0)
-	infoPanel:SetHeight(95)
-	infoPanel:SetParent(miog.mainFrame)
-	miog.createFrameBorder(infoPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	infoPanel:Show()
-	miog.mainFrame.infoPanel = infoPanel
+	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, mainFrame:GetHeight()*0.06)
+	titleBar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 0, 0)
+	titleBar:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", 0, 0)
+	miog.createFrameBorder(titleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	local infoPanelBackgroundTexture = miog.persistentTexturePool:Acquire()
-	infoPanelBackgroundTexture:SetPoint("TOPLEFT", infoPanel, "TOPLEFT")
-	infoPanelBackgroundTexture:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT")
-	infoPanelBackgroundTexture:SetParent(infoPanel)
-	infoPanelBackgroundTexture:SetTexture(LFGListFrame.ApplicationViewer.InfoBackground:GetTexture())
-	infoPanelBackgroundTexture:SetDrawLayer("BACKGROUND")
-	infoPanelBackgroundTexture:SetTexCoord(0.05, 0.3215, 0.04, 0.128)
-	infoPanelBackgroundTexture:Show()
-	miog.mainFrame.infoPanel.backgroundTexture = infoPanelBackgroundTexture
+	titleBar.factionIconSize = titleBar:GetHeight() - 4
+	mainFrame.titleBar = titleBar
 
-	local affixes = miog.persistentFontStringPool:Acquire()
-	affixes:SetFont(miog.fonts["libMono"], 22, "OUTLINE")
-	affixes:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -2, -3)
-	affixes:SetWidth(infoPanel:GetWidth()*0.075)
-	affixes:SetParent(infoPanel)
-	miog.mainFrame.affixes = affixes
-
-	local settingScrollFrame = miog.persistentFramePool:Acquire("BackdropTemplate, ScrollFrameTemplate")
-	settingScrollFrame:SetPoint("TOPLEFT",  infoPanel, "TOPLEFT")
-	settingScrollFrame:SetWidth(infoPanel:GetWidth()*0.925)
-	settingScrollFrame:SetHeight(infoPanel:GetHeight()*0.72)
-	settingScrollFrame:SetParent(infoPanel)
-	settingScrollFrame.ScrollBar:Hide()
-	settingScrollFrame:Show()
-	settingScrollFrame:SetMouseMotionEnabled(true)
-	settingScrollFrame:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(settingScrollFrame, "ANCHOR_CURSOR")
-
-		local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
-		if(activeEntryInfo) then
-			if(activeEntryInfo.comment) then
-				GameTooltip:SetText(activeEntryInfo.comment)
-			end
+	local titleStringFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar:GetWidth()*0.6, titleBar:GetHeight(), "fontstring", miog.C.TITLE_FONT_SIZE)
+	titleStringFrame:SetPoint("LEFT", titleBar, "LEFT")
+	titleStringFrame:SetMouseMotionEnabled(true)
+	titleStringFrame:SetScript("OnEnter", function()
+		if(titleStringFrame.FontString:IsTruncated()) then
+			GameTooltip:SetOwner(titleStringFrame, "ANCHOR_CURSOR")
+			GameTooltip:SetText(titleStringFrame.FontString:GetText())
+			GameTooltip:Show()
 		end
-
-
-		GameTooltip:Show()
 	end)
-	settingScrollFrame:SetScript("OnLeave", function()
+	titleStringFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
 	end)
-	miog.mainFrame.settingScrollFrame = settingScrollFrame
+	titleStringFrame.FontString:AdjustPointsOffset(miog.C.STANDARD_PADDING, -1)
+	titleStringFrame.FontString:SetText("")
 
-	local settingContainer = miog.persistentFramePool:Acquire("BackdropTemplate")
-	settingContainer:SetSize(settingScrollFrame:GetWidth(), settingScrollFrame:GetHeight())
-	settingContainer:SetPoint("TOP", settingScrollFrame, "TOP", 0, 0)
-	settingContainer:SetParent(settingScrollFrame)
-	settingContainer:Show()
-
-	settingScrollFrame:SetScrollChild(settingContainer)
-	miog.mainFrame.settingScrollFrame.settingContainer = settingContainer
-
-	local settingString = miog.persistentFontStringPool:Acquire()
-	settingString:SetFont(miog.fonts["libMono"], miog.C.SETTING_FONT_SIZE, "THICK")
-	settingString:SetPoint("TOPLEFT", settingContainer, "TOPLEFT", 4, -miog.C.PADDING_OFFSET*2)
-	settingString:SetWidth(settingContainer:GetWidth() - miog.C.PADDING_OFFSET*3)
-	settingString:SetParent(settingContainer)
-	settingString:SetJustifyV("TOP")
-	settingString:SetJustifyH("LEFT")
-	settingString:SetSpacing(3)
-	settingString:SetWordWrap(true)
-	settingString:SetNonSpaceWrap(true)
-	settingString:Show()
-	miog.mainFrame.settingScrollFrame.settingContainer.settingString = settingString
-
-	local statusBar = miog.persistentFramePool:Acquire("BackdropTemplate")
-	statusBar:SetPoint("TOPLEFT", settingScrollFrame, "BOTTOMLEFT", 0, 0)
-	statusBar:SetPoint("TOPRIGHT", affixes, "BOTTOMRIGHT", 0, 0)
-	statusBar:SetHeight(infoPanel:GetHeight()*0.28)
-	statusBar:SetParent(miog.mainFrame)
-	statusBar:Show()
-
-	miog.mainFrame.statusBar = statusBar
-
-	local timerString = miog.persistentFontStringPool:Acquire()
-	timerString:SetFont(miog.fonts["libMono"], 18, "OUTLINE")
-	timerString:SetPoint("LEFT", statusBar, "LEFT", miog.C.PADDING_OFFSET*1, 0)
-	timerString:SetParent(statusBar)
-	timerString:SetJustifyV("CENTER")
-	timerString:Show()
-	miog.mainFrame.statusBar.timerString = timerString
-			
-	if(not IsAddOnLoaded("RaiderIO")) then
-		local rioLoaded = miog.persistentFontStringPool:Acquire()
-		rioLoaded:SetFont(miog.fonts["libMono"], 18, "OUTLINE")
-		rioLoaded:SetPoint("TOPLEFT", timerString, "TOPRIGHT", 5, 0)
-		rioLoaded:SetParent(statusBar)
-		rioLoaded:SetJustifyH("LEFT")
-		rioLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.C.RED_COLOR))
-		rioLoaded:Show()
-		miog.mainFrame.statusBar.rioLoaded = rioLoaded
-	end
-
-	local showDPSButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
-	showDPSButton:SetParent(statusBar)
-	showDPSButton:SetPoint("RIGHT", statusBar, "RIGHT", -miog.C.ENTRY_FRAME_SIZE + 4, 0)
-	showDPSButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
-	showDPSButton:RegisterForClicks("LeftButtonDown")
-	showDPSButton:SetChecked(true)
-	showDPSButton:SetScript("OnClick", function()
-		miog.F.SHOW_DPS = not miog.F.SHOW_DPS
-		miog.mainFrame.statusBar.showDPSButton.text:SetShown(not miog.F.SHOW_DPS)
-
-		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
-	end)
-	showDPSButton:Show()
-
-	miog.mainFrame.statusBar.showDPSButton = showDPSButton
+	titleBar.titleStringFrame = titleStringFrame
 	
-	local showHealersButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
-	showHealersButton:SetParent(statusBar)
-	showHealersButton:SetPoint("RIGHT", showDPSButton, "LEFT", -miog.C.ENTRY_FRAME_SIZE, 0)
-	showHealersButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
-	showHealersButton:RegisterForClicks("LeftButtonDown")
-	showHealersButton:SetChecked(true)
-	showHealersButton:SetScript("OnClick", function()
-		miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
-		miog.mainFrame.statusBar.showHealersButton.text:SetShown(not miog.F.SHOW_HEALERS)
+	local factionFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar.factionIconSize, titleBar.factionIconSize, "texture", 2437241)
+	factionFrame:SetPoint("RIGHT", titleBar, "RIGHT", -1, 0)
 
-		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
-	end)
-	showHealersButton:Show()
+	titleBar.factionFrame = factionFrame
 
-	miog.mainFrame.statusBar.showHealersButton = showHealersButton
+	local groupMemberListing = miog.createBasicFrame("persistent", "ResizeLayoutFrame, BackdropTemplate", titleBar)
+	groupMemberListing.fixedHeight = 20
+	groupMemberListing.minimumWidth = 20
+	groupMemberListing:SetPoint("RIGHT", factionFrame, "LEFT", 0, -1)
+
+	titleBar.groupMemberListing = groupMemberListing
+
+	local groupMemberListingText = miog.createBasicFontString("persistent", 16, groupMemberListing)
+	groupMemberListingText:SetPoint("RIGHT", groupMemberListing, "RIGHT")
+	groupMemberListingText:SetText("0/0/0")
+	groupMemberListingText:SetJustifyH("RIGHT")
+	groupMemberListing:MarkDirty()
+
+	groupMemberListing.FontString = groupMemberListingText
+
+	local infoPanel = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame)
+	infoPanel:SetHeight(mainFrame:GetHeight()*0.19)
+	infoPanel:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 1)
+	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", 0, 1)
+
+	infoPanel.backdropInfo = {
+		bgFile=miog.BACKGROUNDS[16],
+		tileSize=miog.C.APPLICANT_MEMBER_HEIGHT,
+		tile=false,
+		edgeSize=2,
+		insets={left=1, right=1}
+	}
+
+	infoPanel:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	infoPanel:ApplyBackdrop()
+
+	mainFrame.infoPanel = infoPanel
+
+	local infoPanelDarkenFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel)
+	infoPanelDarkenFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT", 0, 0)
+	infoPanelDarkenFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT", 0, 0)
+	infoPanelDarkenFrame:SetFrameStrata("DIALOG")
+	infoPanelDarkenFrame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false, edgeSize=1} )
+	infoPanelDarkenFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.3)
+
+	local activityNameFontString = miog.persistentHeaderFontStringPool:Acquire()
+	activityNameFontString:SetFont(miog.FONTS["libMono"], miog.C.ACTIVITY_NAME_FONT_SIZE, "OUTLINE")
+	activityNameFontString:SetPoint("TOPLEFT", infoPanel, "TOPLEFT", miog.C.STANDARD_PADDING, -miog.C.STANDARD_PADDING)
+	activityNameFontString:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -miog.C.STANDARD_PADDING, -miog.C.STANDARD_PADDING)
+	activityNameFontString:SetJustifyH("LEFT")
+	activityNameFontString:SetParent(infoPanel)
+	activityNameFontString:SetWordWrap(true)
+	activityNameFontString:SetText("ActivityName")
+	activityNameFontString:SetTextColor(1, 0.8, 0, 1)
+	activityNameFontString:Show()
+
+	infoPanel.activityNameFrame = activityNameFontString
+
+	local commentScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", infoPanel)
+	commentScrollFrame:SetPoint("TOPLEFT", activityNameFontString, "BOTTOMLEFT", 0, -miog.C.STANDARD_PADDING*2)
+	commentScrollFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT", -miog.C.STANDARD_PADDING, miog.C.STANDARD_PADDING)
+	commentScrollFrame.ScrollBar:Hide()
+
+	local commentFrame = miog.createBasicFrame("persistent", "BackdropTemplate", commentScrollFrame, commentScrollFrame:GetWidth(), commentScrollFrame:GetHeight(), "fontstring", miog.C.LISTING_COMMENT_FONT_SIZE)
+	commentFrame.FontString:SetWidth(commentFrame:GetWidth())
+	commentFrame.FontString:SetJustifyV("TOP")
+	commentFrame.FontString:SetPoint("TOPLEFT", commentFrame, "TOPLEFT")
+	commentFrame.FontString:SetPoint("BOTTOMRIGHT", commentFrame, "BOTTOMRIGHT")
+	commentFrame.FontString:SetText("")
+	commentFrame.FontString:SetSpacing(5)
+	commentFrame.FontString:SetNonSpaceWrap(true)
+	commentFrame.FontString:SetWordWrap(true)
+	commentScrollFrame:SetScrollChild(commentFrame)
+
+	infoPanel.commentFrame = commentFrame
 	
-	local showTanksButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
-	showTanksButton:SetParent(statusBar)
-	showTanksButton:SetPoint("RIGHT", showHealersButton, "LEFT", -miog.C.ENTRY_FRAME_SIZE, 0)
-	showTanksButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
-	showTanksButton:RegisterForClicks("LeftButtonDown")
-	showTanksButton:SetChecked(true)
-	showTanksButton:SetScript("OnClick", function()
-		miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
-		miog.mainFrame.statusBar.showTanksButton.text:SetShown(not miog.F.SHOW_TANKS)
+	local listingSettingPanel = miog.createBasicFrame("persistent", "ResizeLayoutFrame, BackdropTemplate", infoPanel)
+	listingSettingPanel:SetPoint("TOPLEFT", infoPanel, "BOTTOMLEFT")
+	listingSettingPanel:SetPoint("TOPRIGHT", infoPanel, "BOTTOMRIGHT")
+	listingSettingPanel:SetHeight(titleBar:GetHeight())
 
-		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
+	miog.createFrameBorder(listingSettingPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	mainFrame.listingSettingPanel = listingSettingPanel
+
+	local privateGroupFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.04, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/questionMark_Grey.png")
+	privateGroupFrame:SetPoint("LEFT", listingSettingPanel, "LEFT", 0, 0)
+	privateGroupFrame.active = false
+	privateGroupFrame.Texture:ClearAllPoints()
+	privateGroupFrame.Texture:SetPoint("CENTER")
+	privateGroupFrame.Texture:SetWidth(privateGroupFrame:GetWidth() - 4)
+	privateGroupFrame.Texture:SetScale(0.75)
+	privateGroupFrame:SetMouseMotionEnabled(true)
+	privateGroupFrame:SetScript("OnEnter", function()
+		if(privateGroupFrame.active == true) then
+			GameTooltip:SetOwner(privateGroupFrame, "ANCHOR_CURSOR")
+			GameTooltip:SetText("Group listing is set to private")
+			GameTooltip:Show()
+		end
 	end)
-	showTanksButton:Show()
+	privateGroupFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	listingSettingPanel.privateGroupFrame = privateGroupFrame
+	miog.createFrameBorder(privateGroupFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	
+	local voiceChatFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.06, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
+	voiceChatFrame.fixedHeight = listingSettingPanel:GetHeight()
+	voiceChatFrame.maximumWidth = listingSettingPanel:GetWidth()*0.15
+	voiceChatFrame.tooltipText = ""
+	voiceChatFrame.Texture:ClearAllPoints()
+	voiceChatFrame.Texture:SetHeight(listingSettingPanel:GetHeight())
+	voiceChatFrame.Texture:SetWidth(listingSettingPanel:GetHeight())
+	voiceChatFrame.Texture:SetPoint("CENTER")
+	voiceChatFrame.Texture:SetScale(0.7)
+	voiceChatFrame:SetPoint("LEFT", privateGroupFrame, "RIGHT")
+	listingSettingPanel.voiceChatFrame = voiceChatFrame
+	miog.createFrameBorder(voiceChatFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	miog.mainFrame.statusBar.showTanksButton = showTanksButton
+	voiceChatFrame:SetMouseMotionEnabled(true)
+	voiceChatFrame:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(voiceChatFrame, "ANCHOR_CURSOR")
+		GameTooltip:SetText(voiceChatFrame.tooltipText)
+		GameTooltip:Show()
+	end)
+	voiceChatFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	
+
+	local playstyleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.07, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/book.png")
+	playstyleFrame.Texture:ClearAllPoints()
+	playstyleFrame.Texture:SetPoint("CENTER", playstyleFrame, "CENTER", 1, 0)
+	playstyleFrame:SetPoint("LEFT", voiceChatFrame, "RIGHT")
+	playstyleFrame.tooltipText = ""
+	playstyleFrame:SetMouseMotionEnabled(true)
+	playstyleFrame:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(playstyleFrame, "ANCHOR_CURSOR")
+		GameTooltip:SetText(playstyleFrame.tooltipText)
+		GameTooltip:Show()
+	end)
+	playstyleFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	listingSettingPanel.playstyleFrame = playstyleFrame
+	miog.createFrameBorder(playstyleFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	local ratingFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/skull.png")
+	ratingFrame.Texture:SetWidth(listingSettingPanel:GetHeight())
+	ratingFrame.Texture:SetScale(0.85)
+	ratingFrame:SetPoint("LEFT", playstyleFrame, "RIGHT")
+	ratingFrame.tooltipText = ""
+	ratingFrame:SetMouseMotionEnabled(true)
+	ratingFrame:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(ratingFrame, "ANCHOR_CURSOR")
+		GameTooltip:SetText(ratingFrame.tooltipText)
+		GameTooltip:Show()
+	end)
+	ratingFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	listingSettingPanel.ratingFrame = ratingFrame
+	miog.createFrameBorder(ratingFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	local ratingString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, ratingFrame)
+	ratingString:SetPoint("TOPLEFT", ratingFrame.Texture, "TOPRIGHT", 0, 0)
+	ratingString:SetPoint("BOTTOMRIGHT", ratingFrame, "BOTTOMRIGHT", 0, 0)
+	ratingString:SetJustifyH("CENTER")
+	ratingString:SetText("3333")
+	ratingFrame.FontString = ratingString
+
+	local itemLevelFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.17, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/itemsacks.png")
+	itemLevelFrame.Texture:SetWidth(listingSettingPanel:GetHeight())
+	itemLevelFrame.Texture:SetScale(0.85)
+	itemLevelFrame:SetPoint("LEFT", ratingFrame, "RIGHT")
+	itemLevelFrame.tooltipText = ""
+	itemLevelFrame:SetMouseMotionEnabled(true)
+	itemLevelFrame:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(itemLevelFrame, "ANCHOR_CURSOR")
+		GameTooltip:SetText(itemLevelFrame.tooltipText)
+		GameTooltip:Show()
+	end)
+	itemLevelFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	listingSettingPanel.itemLevelFrame = itemLevelFrame
+	miog.createFrameBorder(itemLevelFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	local itemLevelString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, itemLevelFrame)
+	itemLevelString:SetPoint("TOPLEFT", itemLevelFrame.Texture, "TOPRIGHT", 0, 0)
+	itemLevelString:SetPoint("BOTTOMRIGHT", itemLevelFrame, "BOTTOMRIGHT", 0, 0)
+	itemLevelString:SetJustifyH("CENTER")
+	itemLevelString:SetText("444")
+	itemLevelFrame.FontString = itemLevelString
+
+	local affixFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "fontstring", miog.C.AFFIX_TEXTURE_FONT_SIZE)
+	affixFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT")
+	affixFrame.tooltipText = ""
+	affixFrame:SetMouseMotionEnabled(true)
+	affixFrame:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(affixFrame, "ANCHOR_CURSOR")
+		GameTooltip:SetText(affixFrame.tooltipText)
+		GameTooltip:Show()
+	end)
+	affixFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	affixFrame.FontString:SetJustifyH("CENTER")
+	affixFrame.FontString:ClearAllPoints()
+	affixFrame.FontString:SetPoint("CENTER", affixFrame, "CENTER", 1, 0)
+	miog.createFrameBorder(affixFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	infoPanel.affixFrame = affixFrame
+
+	local timerFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.25, listingSettingPanel:GetHeight(), "fontstring", miog.C.LISTING_INFO_FONT_SIZE, "0:00:00")
+	timerFrame.FontString:ClearAllPoints()
+	timerFrame.FontString:SetPoint("CENTER", timerFrame, "CENTER", 0, -1)
+	timerFrame:SetPoint("TOPLEFT", affixFrame, "TOPRIGHT")
+	timerFrame:SetPoint("BOTTOMRIGHT", listingSettingPanel, "BOTTOMRIGHT")
+	timerFrame.FontString:SetJustifyH("CENTER")
+	infoPanel.timerFrame = timerFrame
+	miog.createFrameBorder(timerFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	listingSettingPanel:MarkDirty()
+
+	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT)
+	buttonPanel:SetPoint("TOPLEFT", listingSettingPanel, "BOTTOMLEFT", 0, -1)
+	buttonPanel:SetPoint("TOPRIGHT", listingSettingPanel, "BOTTOMRIGHT", 0, -1)
+	buttonPanel.RoleTextures = {}
+	buttonPanel.RoleButtons = {}
+
+	mainFrame.buttonPanel = buttonPanel
 
 	for i = 1, 3, 1 do
-		local roleTexture = miog.persistentTexturePool:Acquire()
-		roleTexture:SetDrawLayer("ARTWORK")
-		roleTexture:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.9, miog.C.ENTRY_FRAME_SIZE * 0.9)
-		roleTexture:SetTexture(2202478)
-		roleTexture:SetParent(statusBar)
+		local toggleRoleButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight())
+		toggleRoleButton:SetNormalAtlas("checkbox-minimal")
+		toggleRoleButton:SetPushedAtlas("checkbox-minimal")
+		toggleRoleButton:SetCheckedTexture("checkmark-minimal")
+		toggleRoleButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+		toggleRoleButton:SetPoint("LEFT", buttonPanel.RoleTextures[i-1] or buttonPanel, buttonPanel.RoleTextures[i-1] and "RIGHT" or "LEFT", buttonPanel.RoleTextures[i-1] and 5 or 1, 0)
+		toggleRoleButton:RegisterForClicks("LeftButtonDown")
+		toggleRoleButton:SetChecked(true)
 
-		local showRoleButtonText = miog.persistentFontStringPool:Acquire()
-		showRoleButtonText:SetFont(miog.fonts["libMono"], 16, "OUTLINE")
+		local roleTexture = miog.createBasicTexture("persistent", nil, buttonPanel, buttonPanel:GetHeight() - 3, buttonPanel:GetHeight() - 3, "ARTWORK")
+		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
+
+		local showRoleButtonText = miog.persistentNormalFontStringPool:Acquire()
+		showRoleButtonText:SetFont(miog.FONTS["libMono"], 16, "OUTLINE")
 		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 0, -1)
+		showRoleButtonText:SetParent(buttonPanel)
 		showRoleButtonText:SetJustifyV("CENTER")
 		showRoleButtonText:SetText("0")
 
-		if(i == 1) then
-			roleTexture:SetPoint("LEFT", showTanksButton, "RIGHT", -2, 0)
-			roleTexture:SetTexCoord(0.546, 0.758, 0.061, 0.906)
+		roleTexture.text = showRoleButtonText
 
-			showRoleButtonText:SetParent(showTanksButton)
-			showTanksButton.text = showRoleButtonText
+		if(i == 3) then
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/dpsSuperSmallIcon.png")
+
+			toggleRoleButton:SetScript("OnClick", function()
+				miog.F.SHOW_DPS = not miog.F.SHOW_DPS
+				showRoleButtonText:SetShown(not miog.F.SHOW_DPS)
+	
+				miog.checkApplicantList(true)
+			end)
+
 		elseif(i == 2) then
-			roleTexture:SetPoint("LEFT", showHealersButton, "RIGHT", -2, 0)
-			roleTexture:SetTexCoord(0.281, 0.492, 0.061, 0.906)
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/healerSuperSmallIcon.png")
 
-			showRoleButtonText:SetParent(showHealersButton)
-			showHealersButton.text = showRoleButtonText
-		elseif(i == 3) then
-			roleTexture:SetPoint("LEFT", showDPSButton, "RIGHT", -2, 0)
-			roleTexture:SetTexCoord(0.022, 0.234, 0.061, 0.906)
+			toggleRoleButton:SetScript("OnClick", function()
+				miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
+				showRoleButtonText:SetShown(not miog.F.SHOW_HEALERS)
+	
+				miog.checkApplicantList(true)
+			end)
 
-			showRoleButtonText:SetParent(showDPSButton)
-			showDPSButton.text = showRoleButtonText
+		elseif(i == 1) then
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/tankSuperSmallIcon.png")
+
+			toggleRoleButton:SetScript("OnClick", function()
+				miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
+				showRoleButtonText:SetShown(not miog.F.SHOW_TANKS)
+	
+				miog.checkApplicantList(true)
+			end)
+
 		end
 
-		roleTexture:Show()
+		buttonPanel.RoleButtons[i] = toggleRoleButton
+		buttonPanel.RoleTextures[i] = roleTexture
 	end
 
-	local autoSortButton = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
-	autoSortButton:SetParent(statusBar)
-	autoSortButton:SetPoint("RIGHT", showTanksButton, "LEFT", -miog.C.ENTRY_FRAME_SIZE, 0)
-	autoSortButton:SetSize(miog.C.ENTRY_FRAME_SIZE * 1.2, miog.C.ENTRY_FRAME_SIZE * 1.2)
-	autoSortButton:RegisterForClicks("LeftButtonDown")
-	autoSortButton:SetChecked(true)
-	autoSortButton:SetScript("OnClick", function()
-		miog.defaultOptionSettings[3].value = autoSortButton:GetChecked()
+	miog.sortByCategoryButtons = {}
 
-		miog.saveCurrentSettings()
+	for i = 1, 4, 1 do
 
-		miog.checkApplicantList(true, miog.defaultOptionSettings[3].value)
-	end)
-	autoSortButton:Show()
+		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight()), TripleStateButtonMixin)
+		sortByCategoryButton:OnLoad()
+		sortByCategoryButton:SetTexturesForBaseState("hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
+		sortByCategoryButton:SetTexturesForState1("hud-MainMenuBar-arrowdown-up", "hud-MainMenuBar-arrowdown-down", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
+		sortByCategoryButton:SetTexturesForState2("hud-MainMenuBar-arrowup-up", "hud-MainMenuBar-arrowup-down", "hud-MainMenuBar-arrowup-highlight", "hud-MainMenuBar-arrowup-disabled")
+		sortByCategoryButton:SetStateName(0, "None")
+		sortByCategoryButton:SetStateName(1, "Descending")
+		sortByCategoryButton:SetStateName(2, "Ascending")
+		sortByCategoryButton:SetState(false)
+		sortByCategoryButton:SetMouseMotionEnabled(true)
+		sortByCategoryButton:SetScript("OnEnter", function()
+			GameTooltip:SetOwner(sortByCategoryButton, "ANCHOR_CURSOR")
+			GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+			GameTooltip:Show()
+		end)
+		sortByCategoryButton:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
 
-	local autoSortIcon = miog.persistentTexturePool:Acquire()
-	autoSortIcon:SetDrawLayer("ARTWORK")
-	autoSortIcon:SetSize(miog.C.ENTRY_FRAME_SIZE * 0.8, miog.C.ENTRY_FRAME_SIZE * 0.8)
-	autoSortIcon:SetTexture(423814)
-	autoSortIcon:SetPoint("LEFT", autoSortButton, "RIGHT", -4, 0)
-	autoSortIcon:SetParent(settingScrollFrame)
-	autoSortIcon:Show()
+		local sortByCategoryButtonString = miog.createBasicFontString("persistent", 9, sortByCategoryButton)
+		sortByCategoryButtonString:ClearAllPoints()
+		sortByCategoryButtonString:SetPoint("BOTTOMLEFT", sortByCategoryButton, "BOTTOMLEFT")
 
-	local footerBar = miog.persistentFramePool:Acquire("BackdropTemplate")
-	footerBar:SetPoint("TOPLEFT", miog.mainFrame, "BOTTOMLEFT", 0, 25)
-	footerBar:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
-	footerBar:SetParent(miog.mainFrame)
-	footerBar:Show()
+		sortByCategoryButton.FontString = sortByCategoryButtonString
 
-	miog.mainFrame.footerBar = footerBar
+		local currentCategory = ""
 
-	local browseGroups = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
-	browseGroups:SetText("Browse Groups")
-	browseGroups:SetSize(LFGListFrame.ApplicationViewer.BrowseGroupsButton:GetSize())
-	browseGroups:SetPoint("TOPLEFT", miog.mainFrame.footerBar, "TOPLEFT", 0, 0)
-	browseGroups:SetParent(miog.mainFrame.footerBar)
-	browseGroups:RegisterForClicks("LeftButtonDown")
-	browseGroups:SetScript("OnClick", function()
+		if(i == 1) then
+			currentCategory = "role"
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.40, 0)
 
+		elseif(i == 2) then
+			currentCategory = "score"
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.495, 0)
+
+		elseif(i == 3) then
+			currentCategory = "keylevel"
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.605, 0)
+
+		elseif(i == 4) then
+			currentCategory = "ilvl"
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.72, 0)
+
+		end
+
+		sortByCategoryButton:SetScript("OnClick", function()
+			local activeState = sortByCategoryButton:GetActiveState()
+
+			if(activeState == 0 and miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2) then
+				--TO 1
+				miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
+
+				miog.F.SORT_METHODS[currentCategory].active = true
+				miog.F.SORT_METHODS[currentCategory].currentLayer = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS
+
+				sortByCategoryButton.FontString:SetText(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS)
+
+			elseif(activeState == 1) then
+				--TO 2
+
+
+			elseif(activeState == 2) then
+				--RESET TO 0
+				miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
+
+				miog.F.SORT_METHODS[currentCategory].active = false
+				miog.F.SORT_METHODS[currentCategory].currentLayer = 0
+
+				sortByCategoryButton.FontString:SetText("")
+
+				for k, v in pairs(miog.F.SORT_METHODS) do
+					if(v.currentLayer == 2) then
+						v.currentLayer = 1
+						miog.sortByCategoryButtons[k].FontString:SetText(1)
+						miog.F.SORT_METHODS[k].currentLayer = 1
+						MIOG_SavedSettings["lastActiveSortingMethods"]["value"][k].currentLayer = 1
+					end
+				end
+			end
+			
+			if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
+				sortByCategoryButton:AdvanceState()
+				
+				miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
+
+				MIOG_SavedSettings["lastActiveSortingMethods"]["value"][currentCategory] = miog.F.SORT_METHODS[currentCategory]
+
+				if(GameTooltip:GetOwner() == sortByCategoryButton) then
+					GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+				end
+			end
+
+			miog.checkApplicantList(true)
+
+		end)
+
+		miog.sortByCategoryButtons[currentCategory] = sortByCategoryButton
+
+	end
+
+	local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate, BackdropTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight())
+	resetButton.iconAtlas = "UI-RefreshButton"
+	resetButton.iconSize = buttonPanel:GetHeight()
+	resetButton:OnLoad()
+	resetButton:SetPoint("RIGHT", buttonPanel, "RIGHT", -2, 0)
+	resetButton:SetScript("OnClick",
+		function()
+			C_LFGList.RefreshApplicants()
+		
+			miog.mainFrame.applicantPanel:SetVerticalScroll(0)
+		end
+	)
+
+	mainFrame.buttonPanel.resetButton = resetButton
+
+	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
+	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
+	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrame:GetHeight()*0.06)
+
+	miog.footerBar = footerBar
+
+	local divider = miog.createBasicTexture("persistent", nil, mainFrame, footerBar:GetWidth() + 30, 2, "ARTWORK")
+	divider:SetAtlas("UI-LFG-DividerLine")
+	divider:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, -1)
+
+	mainFrame.divider = divider
+
+	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar)
+	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")
+	browseGroupsButton:SetText("Browse Groups")
+	browseGroupsButton:FitToText()
+	browseGroupsButton:RegisterForClicks("LeftButtonDown")
+	browseGroupsButton:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 		local baseFilters = LFGListFrame.baseFilters;
 		local searchPanel = LFGListFrame.SearchPanel;
@@ -390,119 +583,59 @@ miog.createMainFrame = function()
 				LFGListSearchPanel_DoSearch(searchPanel);
 			end
 		end
-		
 	end)
-	browseGroups:Show()
 
-	local editButton = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
+	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar)
+	editButton:SetPoint("RIGHT", footerBar, "RIGHT")
 	editButton:SetText("Edit")
-	editButton:SetSize(LFGListFrame.ApplicationViewer.EditButton:GetSize())
-	editButton:SetPoint("RIGHT", footerBar, "RIGHT", 0, 0)
-	editButton:SetParent(miog.mainFrame.footerBar)
+	editButton:FitToText()
 	editButton:RegisterForClicks("LeftButtonDown")
 	editButton:SetScript("OnClick", function()
-
 		local entryCreation = LFGListFrame.EntryCreation;
 		LFGListEntryCreation_SetEditMode(entryCreation, true);
 		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation);
-		
 	end)
-	editButton:Show()
-	
-	local delistButton = miog.persistentFramePool:Acquire("UIPanelButtonTemplate")
+
+	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar)
+	delistButton:SetPoint("RIGHT", editButton, "LEFT")
 	delistButton:SetText("Delist")
-	delistButton:SetSize(LFGListFrame.ApplicationViewer.RemoveEntryButton:GetSize())
-	delistButton:SetPoint("RIGHT", editButton, "LEFT", 0, 0)
-	delistButton:SetParent(miog.mainFrame.footerBar)
+	delistButton:FitToText()
 	delistButton:RegisterForClicks("LeftButtonDown")
 	delistButton:SetScript("OnClick", function()
-
 		C_LFGList.RemoveListing()
-		
 	end)
-	delistButton:Show()
 
-	local mainScrollFrame = miog.persistentFramePool:Acquire("BackdropTemplate, ScrollFrameTemplate")
-	mainScrollFrame:SetParent(miog.mainFrame)
-	mainScrollFrame:SetPoint("TOPLEFT", miog.mainFrame.infoPanel, "BOTTOMLEFT", 0, -2*miog.F.PX_SIZE_1())
-	mainScrollFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
-	mainScrollFrame:Show()
+	local applicantPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", titleBar)
+	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 0, -1)
+	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, -1)
+	mainFrame.applicantPanel = applicantPanel
 
-	miog.mainFrame.mainScrollFrame = mainScrollFrame
+	local applicantPanelContainer = miog.createBasicFrame("persistent", "ResizeLayoutFrame, BackdropTemplate", applicantPanel)
+	applicantPanelContainer.fixedWidth = applicantPanel:GetWidth()
+	applicantPanelContainer:SetPoint("TOPLEFT", applicantPanel, "TOPLEFT")
+	applicantPanelContainer:MarkDirty()
+	applicantPanel.container = applicantPanelContainer
 
-	local mainContainer = miog.persistentFramePool:Acquire("BackdropTemplate")
-	mainContainer:SetSize(miog.mainFrame.mainScrollFrame:GetWidth(), miog.mainFrame.mainScrollFrame:GetHeight())
-	mainContainer:SetPoint("TOP", miog.mainFrame.mainScrollFrame, "TOP", 0, 0)
-	mainContainer:SetParent(miog.mainFrame.mainScrollFrame)
-	mainContainer:Show()
+	applicantPanel:SetScrollChild(applicantPanelContainer)
 
-	miog.mainFrame.mainScrollFrame.mainContainer = mainContainer
-
-	miog.mainFrame.mainScrollFrame:SetScrollChild(miog.mainFrame.mainScrollFrame.mainContainer)
-
-	local optionsFrame = miog.persistentFramePool:Acquire("BackdropTemplate")
-	optionsFrame.name = "Mythic IO Grabber"
----@diagnostic disable-next-line: undefined-global --DEPRECATED
-	InterfaceOptions_AddCategory(optionsFrame)
 	
-	local optionScrollFrame = miog.persistentFramePool:Acquire("BackdropTemplate, ScrollFrameTemplate")
-	optionScrollFrame:SetParent(optionsFrame)
-	optionScrollFrame:SetPoint("TOPLEFT", 3, -4)
-	optionScrollFrame:SetPoint("BOTTOMRIGHT", -27, 4)
-	optionScrollFrame:Show()
+	miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
+	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
+	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+	miog.mainFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+	miog.mainFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+	miog.mainFrame:RegisterEvent("GROUP_JOINED")
+	miog.mainFrame:RegisterEvent("GROUP_LEFT")
+	miog.mainFrame:RegisterEvent("INSPECT_READY")
 
-	local optionsScrollChild = miog.persistentFramePool:Acquire("BackdropTemplate")
-	optionScrollFrame:SetScrollChild(optionsScrollChild)
-	optionsScrollChild:SetWidth(SettingsPanel.Container:GetWidth()-18)
-	optionsScrollChild:SetHeight(1)
-	optionsScrollChild:Show()
-
-	local title = miog.persistentFontStringPool:Acquire()
-	title:SetParent(optionsScrollChild)
-	title:SetPoint("TOP", optionsScrollChild, "TOP", 0, 0)
-	title:SetText("Mythic IO Grabber")
-	title:Show()
-
-	for index, setting in ipairs(miog.loadSettings()) do
-		if(setting.type == "checkbox") then
-			local button = miog.persistentFramePool:Acquire("UICheckButtonTemplate")
-			button:SetParent(optionsScrollChild)
-			button:SetPoint("TOPLEFT", optionsScrollChild, "TOPLEFT", 0, -miog.C.ENTRY_FRAME_SIZE*2 * index)
-			button:SetSize(miog.C.ENTRY_FRAME_SIZE * 2, miog.C.ENTRY_FRAME_SIZE * 2)
-			button:RegisterForClicks("LeftButtonDown")
-			button:SetChecked(setting.value)
-			button:SetScript("OnClick", function()
-				setting.value = not setting.value
-				button:SetChecked(setting.value)
-
-				miog.saveCurrentSettings()
-
-				if(setting.key == "showActualSpecIcons" and setting.value == false) then
-					C_UI.Reload()
-				end
-
-			end)
-			button:Show()
-
-			local buttonText = miog.persistentFontStringPool:Acquire()
-			buttonText:SetParent(button)
-			buttonText:SetPoint("LEFT", button, "RIGHT", 10, 0)
-			buttonText:SetWordWrap(true)
-			buttonText:SetNonSpaceWrap(true)
-			buttonText:SetText(setting.title)
-			buttonText:Show()
-		end
-	end
+	--Load encounter journal and overwrite OnOpen function, original function has no function except spitting out errors
+	--Haven't found a reason to not overwrite it
+	EncounterJournal_LoadUI()
+	C_EncounterJournal.OnOpen = miog.dummyFunction
 end
 
 miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
-miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
-miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
 miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
 miog.mainFrame:RegisterEvent("ADDON_LOADED")
-miog.mainFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 miog.mainFrame:SetScript("OnEvent", miog.OnEvent)
-
-miog.createMainFrame()
