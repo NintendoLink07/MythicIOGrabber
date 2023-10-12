@@ -3,7 +3,7 @@
 ## Author: Rhany-Ravencrest
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 1.0.0
+## Version: 1.0.0a
 ## SavedVariables: MIOG_SavedSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
