@@ -4,6 +4,9 @@ This addon replaces the standard application viewer with a much more detailed ve
 It shows you the applicants for your group finder listing in a clear but more extensive way.<br>
 With the Raider.IO addon it expands the functionality of this addon massively and shows you Raider.IO M+ and raid stats of the applicants.<br>
 
+CurseForge site: [MythicIOGrabber on CurseForge](https://www.curseforge.com/wow/addons/mythic-io-grabber)<br>
+If you have way too much money: <a href="https://www.paypal.com/donate/?hosted_button_id=G3X525EXQGJCE"> <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"> </a>
+
 ![Screenshot 2023-10-14 153105](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/ba1e5cab-a7b5-4871-ab37-12f6a18a27ec)
 
 ## Addon features
