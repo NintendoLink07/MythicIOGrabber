@@ -6,8 +6,10 @@ miog.setAffixes = function()
 	if(affixIDs) then
 		local affixString = ""
 
-		for index, affix in pairs(affixIDs) do
+		for index, affix in ipairs(affixIDs) do
+
 			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
+
 			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, 0, 1, 0, 1)
 			miog.mainFrame.infoPanel.affixFrame.tooltipText = miog.mainFrame.infoPanel.affixFrame.tooltipText .. name .. (index < #affixIDs and ", " or "")
 		end
@@ -32,49 +34,25 @@ miog.sortTableForRoleAndClass = function(tbl)
 	end)
 end
 
-local function checkFrameBorderArguments(r, g, b, a)
+miog.createFrameBorder = function(frame, thickness, r, g, b, a)
 
-	if(not r) then
-		r = random(0, 1)
-	end
-
-	if(not g) then
-		g = random(0, 1)
-	end
-
-	if(not b) then
-		b = random(0, 1)
-	end
-
-	if(not a) then
-		a = 1
-	end
-
-	return r, g, b, a
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
+	frame:SetBackdropColor(0, 0 , 0, 0) -- main area color
+	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- border color
 end
 
-miog.createFrameBorder = function(frame, thickness, oR, oG, oB, oA)
-	local r, g, b, a = checkFrameBorderArguments(oR, oG, oB, oA)
-
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness and thickness} )
-	frame:SetBackdropColor(0.1, 0.1 , 0.1, 0) -- main area color
-	frame:SetBackdropBorderColor(r, g, b, a) -- border color
-end
-
-miog.createTopBottomLines = function(frame, thickness, oR, oG, oB, oA)
-	local r, g, b, a = checkFrameBorderArguments(oR, oG, oB, oA)
+miog.createTopBottomLines = function(frame, thickness, r, g, b, a)
 
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=0, right=0, top=-miog.F.PX_SIZE_1(), bottom=-miog.F.PX_SIZE_1()}} )
-	frame:SetBackdropColor(r, g , b, a) -- main area color
-	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
+	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color
+	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 0) -- border color
 end
 
-miog.createLeftRightLines = function(frame, thickness, oR, oG, oB, oA)
-	local r, g, b, a = checkFrameBorderArguments(oR, oG, oB, oA)
+miog.createLeftRightLines = function(frame, thickness, r, g, b, a)
 
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1(), top=0, bottom=0}} )
-	frame:SetBackdropColor(r, g , b, a) -- main area color
-	frame:SetBackdropBorderColor(r, g, b, 0) -- border color
+	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color
+	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 0) -- border color
 end
 
 miog.simpleSplit = function(tempString, delimiter)
@@ -125,19 +103,38 @@ miog.changeDrawLayer = function(regionType, oldDrawLayer, newDrawLayer, ...)
 	end
 end
 
-miog.addHoverTooltip = function(frame, text)
-	frame:SetMouseMotionEnabled(true)
-	frame:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(frame, "ANCHOR_CURSOR")
-		print("---"..text)
-		GameTooltip:SetText(text)
-		GameTooltip:Show()
-	end)
-	frame:SetScript("OnLeave", function()
-		GameTooltip:Hide()
-	end)
-end
-
 miog.dummyFunction = function()
 	-- empty function for overwriting useless Blizzard functions
+end
+
+miog.generateRaidWeightsTable = function(bossNumber)
+	local table = {
+		[3] = (bossNumber - 1) * 10,
+		[2] = (bossNumber - 1),
+		[1] = bossNumber * 0.1
+	}
+
+	return table
+end
+
+miog.romanNumeralsDecoder = function(number) -- https://stackoverflow.com/questions/72291577/a-better-way-on-improving-my-roman-numeral-decoder
+    local numeralMap = {I = 1, V = 5, X = 10, L = 50, C = 100, D = 500, M = 1000}
+    local currentNumber = 0
+
+    for i = 1, #number - 1 do
+        local letter = number:sub(i, i)
+        local letter_p = number:sub(i + 1, i + 1)
+
+        if (numeralMap[letter] < numeralMap[letter_p]) then
+            currentNumber = currentNumber - numeralMap[letter]
+			
+        else
+            currentNumber = currentNumber + numeralMap[letter]
+
+        end
+    end
+
+    currentNumber = currentNumber + numeralMap[number:sub(-1)]
+	
+    return currentNumber
 end

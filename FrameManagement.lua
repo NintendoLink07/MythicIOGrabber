@@ -18,12 +18,10 @@ local function resetFrame(_, childFrame)
 
 	if(typeOfFrame == "Button") then
 		childFrame:Enable()
-		--childFrame:SetScript("OnClick", nil)
 
 	elseif(typeOfFrame == "CheckButton") then
 		childFrame:Enable()
 		childFrame:SetChecked(false)
-		--childFrame:SetScript("OnClick", nil)
 
 	elseif(typeOfFrame == "EditBox") then
 		childFrame:ClearFocus()
@@ -49,7 +47,6 @@ local function resetFrame(_, childFrame)
 		childFrame:SetMouseClickEnabled(false)
 		childFrame:SetScript("OnEnter", nil)
 		childFrame:SetScript("OnLeave", nil)
-
 		childFrame:SetScript("OnMouseDown", nil)
 	end
 	
@@ -160,42 +157,18 @@ miog.createBasicFrame = function (type, template, parent, width, height, addOn, 
 
 	frame.template = template
 	frame:SetParent(parent)
-
-	if(width and height) then
-		frame:SetSize(width, height)
-
-	elseif(width and not height) then
-		frame:SetWidth(width)
-
-	elseif(height and not width) then
-		frame:SetHeight(height)
-
-	end
+	frame:SetSize(width or 0, height or 0)
 
 	frame:Show()
 
-
 	if(addOn == "fontstring") then
 		fontString:SetFont(miog.FONTS["libMono"], addOnInfo or 16, "OUTLINE")
-		--fontString:SetPoint("CENTER", frame, "CENTER", 0, -1)
 		fontString:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -1)
 		fontString:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 		fontString:SetJustifyH("LEFT")
 		fontString:SetText(addOnInfo2 or "")
 
-		if(width and height) then
-			fontString:SetSize(width, height)
-	
-		elseif(width and not height) then
-			fontString:SetWidth(width)
-	
-		elseif(height and not width) then
-			fontString:SetHeight(height)
-
-		elseif(not height and not width) then
-			fontString:SetWidth(fontString:GetStringWidth())
-			fontString:SetHeight(fontString:GetStringHeight())
-		end
+		fontString:SetSize(width or fontString:GetStringWidth() or 0, height or fontString:GetStringHeight() or 0)
 
 		fontString:SetParent(frame)
 		fontString:Show()
@@ -241,17 +214,7 @@ miog.createBasicFrame = function (type, template, parent, width, height, addOn, 
 		fontString:SetFont(miog.FONTS["libMono"], addOnInfo2 or 16, "OUTLINE")
 		fontString:SetPoint("LEFT", texture, "RIGHT", 0, -1)
 		fontString:SetJustifyH("LEFT")
-
-		if(width and height) then
-			fontString:SetSize(width, height)
-	
-		elseif(width and not height) then
-			fontString:SetWidth(width)
-	
-		elseif(height and not width) then
-			fontString:SetHeight(height)
-
-		end
+		fontString:SetSize(width or fontString:GetStringWidth() or 0, height or fontString:GetStringHeight() or 0)
 
 		fontString:SetParent(frame)
 		fontString:Show()
@@ -274,20 +237,7 @@ miog.createBasicFontString = function(type, fontSize, parent, width, height, tex
 	fontString:SetFont(miog.FONTS["libMono"], fontSize or 16, "OUTLINE")
 	fontString:SetJustifyH("LEFT")
 	fontString:SetText(text or "")
-
-	if(width and height) then
-		fontString:SetSize(width, height)
-
-	elseif(width and not height) then
-		fontString:SetWidth(width)
-
-	elseif(height and not width) then
-		fontString:SetHeight(height)
-
-	elseif(not height and not width) then
-		fontString:SetWidth(fontString:GetStringWidth())
-		fontString:SetHeight(fontString:GetStringHeight())
-	end
+	fontString:SetSize(width or fontString:GetStringWidth() or 0, height or fontString:GetStringHeight() or 0)
 
 	fontString:SetParent(parent)
 	fontString:Show()
@@ -307,16 +257,17 @@ miog.createBasicTexture = function(type, texturePath, parent, width, height, lay
 	texture:SetDrawLayer(layer or "OVERLAY")
 	texture:SetParent(parent)
 	
-	if(width ~= nil) then
-		texture:SetWidth(width)
-	end
-	if(height ~= nil) then
-		texture:SetHeight(height)
+	if(width == nil and height == nil) then
+		texture:SetPoint("TOPLEFT", parent, "TOPLEFT", 1, -1)
+		texture:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -1, 1)
+
+	else
+		texture:SetPoint("LEFT", parent, "LEFT", 0, 0)
+		texture:SetSize(width or 0, height or 0)
+
 	end
 
-	if(texture ~= nil) then
-		texture:SetTexture(texturePath)
-	end
+	texture:SetTexture(texturePath)
 
 	texture:Show()
 

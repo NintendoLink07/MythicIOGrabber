@@ -83,7 +83,7 @@ miog.createMainFrame = function()
 	openSettingsButton:SetNormalTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/settingGear.png")
 	openSettingsButton:RegisterForClicks("LeftButtonDown")
 	openSettingsButton:SetScript("OnClick", function()
-		InterfaceOptionsFrame_OpenToCategory(interfaceOptionsPanel)
+		InterfaceOptionsFrame_OpenToCategory(miog.interfaceOptionsPanel)
 	end)
 
 	local expandDownwardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
@@ -434,7 +434,7 @@ miog.createMainFrame = function()
 		buttonPanel.RoleTextures[i] = roleTexture
 	end
 
-	miog.sortByCategoryButtons = {}
+	buttonPanel.sortByCategoryButtons = {}
 
 	for i = 1, 4, 1 do
 
@@ -470,11 +470,11 @@ miog.createMainFrame = function()
 			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.40, 0)
 
 		elseif(i == 2) then
-			currentCategory = "score"
+			currentCategory = "primary"
 			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.495, 0)
 
 		elseif(i == 3) then
-			currentCategory = "keylevel"
+			currentCategory = "secondary"
 			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.605, 0)
 
 		elseif(i == 4) then
@@ -511,7 +511,7 @@ miog.createMainFrame = function()
 				for k, v in pairs(miog.F.SORT_METHODS) do
 					if(v.currentLayer == 2) then
 						v.currentLayer = 1
-						miog.sortByCategoryButtons[k].FontString:SetText(1)
+						buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
 						miog.F.SORT_METHODS[k].currentLayer = 1
 						MIOG_SavedSettings["lastActiveSortingMethods"]["value"][k].currentLayer = 1
 					end
@@ -534,7 +534,7 @@ miog.createMainFrame = function()
 
 		end)
 
-		miog.sortByCategoryButtons[currentCategory] = sortByCategoryButton
+		buttonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
 
 	end
 
@@ -565,7 +565,7 @@ miog.createMainFrame = function()
 
 	mainFrame.divider = divider
 
-	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar)
+	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")
 	browseGroupsButton:SetText("Browse Groups")
 	browseGroupsButton:FitToText()
@@ -585,7 +585,7 @@ miog.createMainFrame = function()
 		end
 	end)
 
-	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar)
+	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	editButton:SetPoint("RIGHT", footerBar, "RIGHT")
 	editButton:SetText("Edit")
 	editButton:FitToText()
@@ -596,7 +596,7 @@ miog.createMainFrame = function()
 		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation);
 	end)
 
-	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar)
+	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	delistButton:SetPoint("RIGHT", editButton, "LEFT")
 	delistButton:SetText("Delist")
 	delistButton:FitToText()

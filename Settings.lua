@@ -2,7 +2,6 @@ local addonName, miog = ...
 
 MIOG_SavedSettings = MIOG_SavedSettings
 
-local interfaceOptionsPanel = nil
 local clearSignUpNote = LFGListApplicationDialog_Show
 local clearEntryCreation = LFGListEntryCreation_Clear
 
@@ -83,6 +82,11 @@ miog.loadSettings = function()
 			["title"] = "Find a group: Show actual spec icons in the queue simulator.\n|cFFFF0000(When turned off a /reload will occur.)|r",
 			["value"] = false,
 		},
+		["disableBackgroundImages"] = {
+			["type"] = "checkbox", --Not optimized, too much taint
+			["title"] = "Hide the background image and some background colors (mainly for ElvUI users)",
+			["value"] = false,
+		},
 		["fillUpEmptySpaces"] = {
 			["type"] = "hiddenSetting", --Not optimized, too much taint
 			["title"] = "Find a group: When showing the spec icons - fill up empty spaces in the listed group, so it will always be correctly order: 1 Tank, 1 Heal, 3 DPS.\n|cFFFF0000(When turned off a /reload will occur.)|r",
@@ -116,17 +120,18 @@ miog.loadSettings = function()
 		compareSettings(miog.defaultOptionSettings, MIOG_SavedSettings)
 	end
 	
-	
 	MIOG_SavedSettings["datestamp"] = {
 		["type"] = "interal",
 		["title"] = "Datestamp of last setting save",
 		["value"] = date("%d/%m/%y %H:%M:%S")
 	}
 
-	interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
+	local interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
 	interfaceOptionsPanel.name = "Mythic IO Grabber"
 ---@diagnostic disable-next-line: undefined-global --DEPRECATED
 	InterfaceOptions_AddCategory(interfaceOptionsPanel)
+
+	miog.interfaceOptionsPanel = interfaceOptionsPanel
 
 	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "fontstring", 20)
 	titleFrame:SetPoint("TOP", interfaceOptionsPanel, "TOP", 0, 0)
@@ -155,9 +160,7 @@ miog.loadSettings = function()
 			optionButton:RegisterForClicks("LeftButtonDown")
 			optionButton:SetChecked(setting["value"])
 
-			if(key or setting["key"] == "showActualSpecIcons") then
-
-				--hooksecurefunc("LFGListSearchEntry_Update", miog.refreshSpecIcons)
+			if(setting["key"] == "showActualSpecIcons") then
 
 				optionButton:SetScript("OnClick", function()
 					setting["value"] = not setting["value"]
@@ -167,7 +170,7 @@ miog.loadSettings = function()
 					end
 				end)
 
-			elseif(key or setting["key"] == "fillUpEmptySpaces") then
+			elseif(setting["key"] == "fillUpEmptySpaces") then
 
 				optionButton:SetScript("OnClick", function()
 					setting["value"] = not setting["value"]
@@ -177,7 +180,7 @@ miog.loadSettings = function()
 					end
 				end)
 
-			elseif(key or setting["key"] == "keepSignUpNote") then
+			elseif(setting["key"] == "keepSignUpNote") then
 
 				optionButton:SetScript("OnClick", function()
 					setting["value"] = not setting["value"]
@@ -190,16 +193,31 @@ miog.loadSettings = function()
 
 					end
 				end)
-			elseif(key or setting["key"] == "keepInfoFromGroupCreation") then
+			elseif(setting["key"] == "keepInfoFromGroupCreation") then
 
 				optionButton:SetScript("OnClick", function()
 					setting["value"] = not setting["value"]
 
 					if(setting["value"] == true) then
-						LFGListEntryCreation_Clear = keepGroupCreationInfo
+						LFGListEntryCreation_Clear = alternativeCreationInfo
 					else
 						LFGListEntryCreation_Clear = clearEntryCreation
 
+					end
+				end)
+			elseif(setting["key"] == "disableBackgroundImages") then
+
+				optionButton:SetScript("OnClick", function()
+					setting["value"] = not setting["value"]
+
+					miog.mainFrame.backdropFrame:SetShown(not setting["value"])
+
+					if(setting["value"] == false) then
+						miog.mainFrame.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+					else
+						miog.mainFrame.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
+					
 					end
 				end)
 			end
@@ -219,19 +237,22 @@ miog.loadSettings = function()
 
 	if(MIOG_SavedSettings["lastActiveSortingMethods"] and MIOG_SavedSettings["lastActiveSortingMethods"]["value"]) then
 		for sortKey, row in pairs(MIOG_SavedSettings["lastActiveSortingMethods"]["value"]) do
-			if(row.active == true) then
-				local active = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["active"]
-				local currentLayer = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentLayer"]
-				local currentState = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentState"]
-		
-				miog.sortByCategoryButtons[sortKey]:SetState(active, currentState)
-		
-				miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
-				miog.F.SORT_METHODS[sortKey].active = true
-				miog.F.SORT_METHODS[sortKey].currentLayer = currentLayer
-				miog.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
-			else
-				miog.sortByCategoryButtons[sortKey]:SetState(false)
+			
+			if(miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]) then
+				if(row.active == true) then
+					local active = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["active"]
+					local currentLayer = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentLayer"]
+					local currentState = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentState"]
+			
+					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]:SetState(active, currentState)
+			
+					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
+					miog.F.SORT_METHODS[sortKey].active = true
+					miog.F.SORT_METHODS[sortKey].currentLayer = currentLayer
+					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
+				else
+					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+				end
 			end
 		end
 	else
@@ -248,6 +269,16 @@ miog.loadSettings = function()
 		LFGListEntryCreation_Clear = alternativeCreationInfo
 	else
 		LFGListEntryCreation_Clear = clearEntryCreation
+	end
+
+	if(MIOG_SavedSettings["disableBackgroundImages"] and MIOG_SavedSettings["disableBackgroundImages"]["value"] ==  true) then
+		miog.mainFrame.backdropFrame:SetShown(false)
+		miog.mainFrame.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
+
+	else
+		miog.mainFrame.backdropFrame:SetShown(true)
+		miog.mainFrame.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	
 	end
 end
 

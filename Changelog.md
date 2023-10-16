@@ -7,8 +7,38 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
-## [1.0.0 / 1.0.0a] - 2023-10-13
 
+## [1.0.6] - 2023-10-16
+
+Yes, the weird errors currently popping up with this (and many other) addons are not my fault
+More infos: https://github.com/Stanzilla/WoWUIBugs/issues/483
+
+## Added
+
+- Both PVP rating sorting and raid progress sorting is now implemented!
+PVP rating functions basically the same like M+ rating.
+Raid progress compares first the difficulty of the applicant leaders: Mythic > Heroic > Normal.
+If they're the same difficulty it compares the progress itself.
+
+- Interface option added to hide the background image and some background colors (mainly for ElvUI users or players with semi-transparent interface frames)
+
+- Added performance test slash commands, generally just for internal use (not recommend for anything other than testing how long it takes to compute 1000 applicants)
+
+
+## Fixed
+
+- Listing of group members in the title bar is now fixed, forgot to change the cap of party members back to 5
+- New logic for displaying the raid data, should be much more acurate now.
+- Clicking the settings wheel should now open the actual settings
+- Multiple layering issues fixed
+
+## Changed
+
+- Improved the logic and code flow, which leads to increased performance
+Before (more prominent on slower computer) you'd get a longer freeze after a reload when you had a big applicant list, time to compute the list was cut down by approximately 40-45%
+
+
+## [1.0.0 / 1.0.0a] - 2023-10-13
 
 ### Added
 
@@ -63,7 +93,6 @@ From my testing: going from 300fps to 180fps when you refresh or scroll. Current
 
 
 ## [0.9.3b] - 2023-10-04
-
 
 ### Fixed
 
@@ -233,8 +262,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.3b
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.0.5...HEAD
+[1.0.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.5
+[1.0.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.0a
 [0.9.3b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.3b
 [0.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.3
 [0.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.1

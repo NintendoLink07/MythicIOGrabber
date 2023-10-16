@@ -1,42 +1,16 @@
 local addonName, miog = ...
 
---CHANGING VARIABLES
-miog.F = {
-	UI_SCALE = C_CVar.GetCVar("uiScale") or UIParent:GetEffectiveScale(),
-    FACTION_ICON_SIZE = 0,
-    WEEKLY_AFFIX = nil,
-    SHOW_TANKS = true,
-    SHOW_HEALERS = true,
-    SHOW_DPS = true,
-	LISTED_CATEGORY_ID = 0,
-	AUTO_SORT_ENABLED = nil,
-
-	APPLIED_NUM_OF_TANKS = 0,
-	APPLIED_NUM_OF_HEALERS = 0,
-	APPLIED_NUM_OF_DPS = 0,
-	NUM_OF_GROUP_MEMBERS = 0,
-
-	CURRENT_GROUP_INFO = {},
-	IS_RAIDERIO_LOADED = false,
-	IS_IN_DEBUG_MODE = false,
-	
-	INSPECT_QUEUE = {},
-	CURRENTLY_INSPECTING = false,
-
-	SORT_METHODS = {
-		["role"] = {active = false, currentLayer = 0},
-		["score"] = {active = false, currentLayer = 0},
-		["keylevel"] = {active = false, currentLayer = 0},
-		["ilvl"] = {active = false, currentLayer = 0},
-	},
-
-	CURRENTLY_ACTIVE_SORTING_METHODS = 0,
-
-	CURRENT_DIFFICULTY = 0
-}
-
 --CONSTANTS
 miog.C = {
+	
+	BLIZZARD_LOCALE_GLOBAL_STRING = {
+		["COMMENTS_COLON"] = _G["COMMENTS_COLON"],
+		["ITEM_QUALITY_COLORS"] = _G["ITEM_QUALITY_COLORS"],
+		["LFG_TOOLTIP_ROLES"] = _G["LFG_TOOLTIP_ROLES"],
+
+	},
+
+
     --
     --- FRAME SIZES
     --
@@ -76,6 +50,8 @@ miog.C = {
 		[3] = {singleChar = "M", description = _G["PLAYER_DIFFICULTY6"], color = _G["ITEM_QUALITY_COLORS"][4].color},
 		[2] = {singleChar = "H", description = _G["PLAYER_DIFFICULTY2"], color = _G["ITEM_QUALITY_COLORS"][3].color},
 		[1] = {singleChar = "N", description = _G["PLAYER_DIFFICULTY1"], color = _G["ITEM_QUALITY_COLORS"][2].color},
+		[0] = {singleChar = "LFG", description = _G["PLAYER_DIFFICULTY3"], color = _G["ITEM_QUALITY_COLORS"][1].color},
+		[-1] = {singleChar = "O", description = "Last tier / No tier", color = _G["ITEM_QUALITY_COLORS"][0].color},
 	},
 
 	REGIONS = {
@@ -96,6 +72,53 @@ miog.C = {
 	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerSuperSmallIcon.png:20:20|t",
 	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/dpsSuperSmallIcon.png:20:20|t",
 	STAR_TEXTURE = "⋆",
+
+	MOST_BOSSES = 0,
+}
+
+
+--CHANGING VARIABLES
+miog.F = {
+	UI_SCALE = C_CVar.GetCVar("uiScale") or UIParent:GetEffectiveScale(),
+    FACTION_ICON_SIZE = 0,
+    WEEKLY_AFFIX = nil,
+    SHOW_TANKS = true,
+    SHOW_HEALERS = true,
+    SHOW_DPS = true,
+	LISTED_CATEGORY_ID = 0,
+	AUTO_SORT_ENABLED = nil,
+
+	APPLIED_NUM_OF_TANKS = 0,
+	APPLIED_NUM_OF_HEALERS = 0,
+	APPLIED_NUM_OF_DPS = 0,
+	NUM_OF_GROUP_MEMBERS = 0,
+
+	CURRENT_GROUP_INFO = {},
+	IS_RAIDERIO_LOADED = false,
+	IS_IN_DEBUG_MODE = false,
+	
+	INSPECT_QUEUE = {},
+	CURRENTLY_INSPECTING = false,
+
+	SORT_METHODS = {
+		["role"] = {active = false, currentLayer = 0},
+		["primary"] = {active = false, currentLayer = 0},
+		["secondary"] = {active = false, currentLayer = 0},
+		["ilvl"] = {active = false, currentLayer = 0},
+	},
+
+	CURRENTLY_ACTIVE_SORTING_METHODS = 0,
+
+	CURRENT_DIFFICULTY = 0,
+
+	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
+}
+
+miog.BLANK_BACKGROUND_INFO = {
+	bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+	tileSize = miog.C.APPLICANT_MEMBER_HEIGHT,
+	tile = false,
+	edgeSize = 1
 }
 
 miog.DIFFICULT_NAMES_TO_ID = {
@@ -204,6 +227,10 @@ miog.RAID_ICONS = {
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png",
 	},
 }
+
+for _, value in pairs(miog.RAID_ICONS) do
+	miog.C.MOST_BOSSES = #value-1 > miog.C.MOST_BOSSES and #value-1 or miog.C.MOST_BOSSES
+end
 
 miog.FONTS = {
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
