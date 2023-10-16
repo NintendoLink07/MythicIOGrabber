@@ -641,7 +641,7 @@ local function addApplicantToPanel(applicantID)
 			generalInfoPanel.rows[1].FontString:SetJustifyV("TOP")
 			generalInfoPanel.rows[1].FontString:SetPoint("TOPLEFT", generalInfoPanel.rows[1], "TOPLEFT", 0, -5)
 			generalInfoPanel.rows[1].FontString:SetPoint("BOTTOMRIGHT", generalInfoPanel.rows[5], "BOTTOMRIGHT", 0, 0)
-			generalInfoPanel.rows[1].FontString:SetText(commentString .. " " .. applicantData.comment)
+			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. applicantData.comment)
 			generalInfoPanel.rows[1].FontString:SetWordWrap(true)
 			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 			
