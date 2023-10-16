@@ -1,75 +1,88 @@
 # MythicIOGrabber
 
+This addon replaces the standard application viewer with a much more detailed version.<br>
+It shows you the applicants for your group finder listing in a clear but more extensive way.<br>
+With the Raider.IO addon it expands the functionality of this addon massively and shows you Raider.IO M+ and raid stats of the applicants.<br>
 
-This is a companion addon which shows you the applicants for your group finder listing in a clear but expanded view.<br>
-With the Raider.IO addon it expands the functionality of this addon massively and shows you additional stats of the applicants.<br><br>
-Created this addon because I hate to manually look up all applicants on raider.io, having to wait for their site to respond, sift through non condensed information, then tab back into the game.
+CurseForge site: [MythicIOGrabber on CurseForge](https://www.curseforge.com/wow/addons/mythic-io-grabber)<br>
+If you have way too much money: <a href="https://www.paypal.com/donate/?hosted_button_id=G3X525EXQGJCE"> <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"> </a>
 
-I also included some stuff I've always wanted to see: 
-1. a timer for how long I've been in queue
-2. the current affixes
-3. the group data, so I know if my min rating or min ilvl are set too low
-4. generally just show every option in a visual manner, either via text or icons
+![Screenshot 2023-10-14 153105](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/ba1e5cab-a7b5-4871-ab37-12f6a18a27ec)
 
-The addon SHOULD scale with all UIScales or resolutions but let me know if it doesn't / what exactly doesn't scale how it should.<br>
+## Addon features
+In order from left to right, top to bottom (:star: is different or completely new):
 
-CurseForge site: [Mythic IO Grabber on CurseForge](https://legacy.curseforge.com/wow/addons/mythic-io-grabber)<br>
-If you have way too much money:<picture>
-  <a href="https://www.paypal.com/donate/?hosted_button_id=G3X525EXQGJCE">
-  <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif">
-  </a>
-</picture>
+### Settings
+- :star: No r.io text: if you have no Raider.IO installed or it is currently disabled it shows you a warning in the title container of the parent frame (Dungeons & Raids)
+- :star: Expand: the frame height increases by 50% since I find the standard application viewer way too small when you have more than 10 applicants
+- Setting button to access the interface options quickly
 
-## General interface
-![Screenshot 2023-09-24 190806](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/33d78cd8-90ce-4375-9bd6-04c7aac2bda9)
+### Information Panel
+![Screenshot 2023-10-14 153004](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/30286e83-a349-4477-a51a-f27832bf278e)
 
-### Blizzard applicant data
-The data Blizzard gives me that I display in the standard view are (in order):
-1. Name (hoverable to show the name with realm, e.g. Rhany-Ravencrest)
-2. If there's a comment
-3. the applicant's role of choice (e.g. if you play a Druid and you set it to dps only)
-4. Dungeon Score
-5. Highest key for the dungeon you've listed
-6. Item level
-7. If the applicant is a friend of yours
-   
-![Screenshot 2023-09-24 191805](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/56112352-aba2-4fd4-b92e-ba27d0e4ed80)
-
-Also shows if there's no raider.io installed, since it improves the experience immensely. <br>
-If raider.io is installed BUT there's no data about the applicant (they've done no keys this season) then it shows the "No raider.io data" string.
-
-![Screenshot 2023-09-24 195747](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/ca1e27f3-3c89-441e-abdb-de7857f72c56)
-
-The tank/healer/dps buttons are for filtering:<br>
-You don't wanna see the tanks/dps 'cause you're looking for a heal first? Uncheck tank & dps and check heal!<br>
-The arrows button is for the auto sorting feature. If enabled and you either press the refresh button in the title bar or you decline an applicant it automatically sorts Tank>Heal>DPS.
-
-![image](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/bcb6052b-0550-4937-bf5b-262a794a656e)
-
-## Raider.io integration
-If you have Raider.IO installed it even includes:
-- Dungeons:
-	- Their highest keys of both week in the respective dungeons
-	- The amount of +5, +10, +15 or +20's they've done
- 	- If it's their main char or if not: what their main's score is
-
-- Raids:
-	- Current tier data: the 2 highest difficulties, e.g. if you've done 1/9 M, 9/9 HC and 9/9 N it would show 1/9M and 9/9HC data
-	- Previous tier data: accurate boss kills can only be counted for the highest difficulty done, how many bosses you killed are again depending on your 2 highest difficulties
- 	- If it's their main char or if not: what their main's progress is
-
-![Screenshot 2023-09-24 191828](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/41d5f965-2e47-4aad-b5cf-ce5cf5d20b77)
-![Screenshot 2023-09-29 225519](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/7bccdb50-b8c8-4097-a98e-6045eb3d16c3)
+Information shown while your group is listed:<br>
+- Title
+- :star: Group composition:
+	- Under or at 5 members: current group with specs they're currently in
+	- Over 5 members: shows the number of tanks/healers/dps in the standard way: 2/4/14
+- :star: Listed for cross faction or just your faction
+- Activity name (Dungeon/raid, what difficulty, etc.)
+- :star: Description: If too long it's scrollable
+- :star: Exclamation mark/point: If your group is set to private it glows
+- :star: Voice Chat: always shows an icon, either normal or stricken through, hovering over it shows the info you've added
+- :star: Playstyle: Hovering over it shows the current playstyle you've chosen (Completion, Beat timer, standard, etc.)
+- :star: Rating threshold: For both PvE or PvP
+- :star: Itemlevel threshold
+- :star: Current affixes: hovering of the frames shows a tooltip with the affix names
+- :star: Queue timer: timer for how long you've been in queue (saves between reloads and relogs for the same group)
 
 
-## Other options
+### Filtering and sorting:
+- :star: Tank/Healer/DPS filter: Filters out the applicant leaders (and their premades!)<br>
+![Screenshot 2023-10-14 153615](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/0b1633b8-7820-43b6-89a1-e6bd86109bb6)
+- :star: Sort for role, dungeon score / pvp rating / raid progress, highest key done or ilvl: You can have 2 methods active at a time, most useful way is probably sort 1. for role and 2. for score/rating/progress
+- You can sort ascending or descending, e.g. if you wanna list the tanks with the lowest key done first you'd do 1. descending role and 2. ascending highest key<br>
+![Screenshot 2023-10-14 153621](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/6b4e6c70-2286-4d68-8fa4-2c2fed7b4899)
+- Manual refresh button
 
-- You can click the downwards arrow in the title bar to extend the applicant viewer (the default one was too small for me)
-- If you click the refresh button left from the close button you refresh the current view of the applicants AND enable auto sorting, if it's enable in the interface options.
 
-![SORTING](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/887236e5-d4b8-4e9d-aec6-720c4daad932)
-  
-- In the interface options there are just some general improvements to the LFG frame in general:<br><br>
-	![image](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/442be8cc-af46-4d36-b0d5-2b1c36c8a91e)<br>
-	- Shows the specs of the groups in your group browser so you never have to manually check if there's a Survival Hunter in the group :)
-	- Always keeps the groups in your group browser in the right order(e.g. there's a group with one Holy Paladin, so it will show: 1. Empty Tank spot, Holy Paladin, Empty DPS spot, Empty DPS spot, Empty DPS spot
+### Applicant information:
+#### Standard panel
+- :star: Extend (arrow down button): Opens the detailed view
+- :star: Name: Class colored, if too long it has a tooltip with full name
+- :star: Comment (letter icon): If they have entered a comment with their application
+- :star: Role
+- :star: Dungeon score / raid progress / PVP rating: colored with the standard Blizzard colors or bright red if they're under the rating threshold you've set.
+	- Shows (depending on the category your group is listed in) their dungeon score, raid progress or pvp rating
+- :star: Highest key done / pvp tier / raid progress for your listed dungeon, green if in time, red if not in time
+	- Shows (depending on the category your group is listed in) their highest key done for your listed dungeon, raid progress of their 2nd highest tier or PVP tier they're in (Combatant II, Rival I, Elite, etc.)
+- :star: Item level: White if no ilvl threshold set / over the threshold, red otherwise
+- :star: Friend: Only shows up if they're a friend of yours- Accept/Decline buttons
+- :star: Turquoise circle: When they're a premade of someone else (they're grouped together anyway but this makes it more clear)
+
+
+#### Detailed panel:
+- :star: Buttons to show either M+ or raid data
+- :star: Left side (Raider.IO data):
+	- :star: Mythic+
+		- All current season dungeons: icons are clickable and open up the journal for that specific dungeon
+		- Shows the applicants' individual dungeons highest keys done, green if in time, red otherwise.
+		- Keys on the left are always for the current weekly affix (Tyr/Fort), right side is the other one
+	- :star: Raid
+		- The 2 highest difficulties, where they've completed atleast 1 encounter, Mythic>Heroic>Normal.
+	    	- Not displaying LFR data for the moment
+ - :star: Current and last tier raid: icons are clickable and open up the journal for that specific raid
+ - :star: All raid bosses ordered from left to right, top to bottom and for the "only M+" players: numbered!
+ - :star: All bosses icons are clickable and open up the journal for that specific boss
+ - :star: Icons have a colored border for the difficulty they've completed the encounter
+
+- :star: Right side (General info):
+
+- :star: Comment: if they've entered a comment it will display here
+- :star: (With Raider.IO) Depending on the current view (M+ or Raid) it will show if it's their main char in those areas or if not it will show the score / progress of their main
+- :star: Roles: shows their current and alternative roles they can play (if they applied with them too)
+- :star: (With Raider.IO) Key count: number of +5, +10, +15 and +20 keys they've done
+
+### Interface option settings:
+- :star: Keep the comment you've entered when applying to another group in the group finder
+- :star: Keep the settings you've entered when creating your group
