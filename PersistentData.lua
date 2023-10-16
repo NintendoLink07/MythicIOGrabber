@@ -2,15 +2,6 @@ local addonName, miog = ...
 
 --CONSTANTS
 miog.C = {
-	
-	BLIZZARD_LOCALE_GLOBAL_STRING = {
-		["COMMENTS_COLON"] = _G["COMMENTS_COLON"],
-		["ITEM_QUALITY_COLORS"] = _G["ITEM_QUALITY_COLORS"],
-		["LFG_TOOLTIP_ROLES"] = _G["LFG_TOOLTIP_ROLES"],
-
-	},
-
-
     --
     --- FRAME SIZES
     --
@@ -45,7 +36,6 @@ miog.C = {
     PRIMARY_TEXT_COLOR = "FFE4E6EB",
     SECONDARY_TEXT_COLOR = "FFB0B3B8",
 
-
 	DIFFICULTY = {
 		[3] = {singleChar = "M", description = _G["PLAYER_DIFFICULTY6"], color = _G["ITEM_QUALITY_COLORS"][4].color},
 		[2] = {singleChar = "H", description = _G["PLAYER_DIFFICULTY2"], color = _G["ITEM_QUALITY_COLORS"][3].color},
@@ -64,7 +54,6 @@ miog.C = {
 
 	STANDARD_PADDING = 4,
 
-
 	--PATH / TEXTURES FILES
 	STANDARD_FILE_PATH = "Interface/Addons/MythicIOGrabber/res",
 	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/star_64.png:8:8|t",
@@ -73,7 +62,6 @@ miog.C = {
 	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/dpsSuperSmallIcon.png:20:20|t",
 	STAR_TEXTURE = "⋆",
 
-	MOST_BOSSES = 0,
 }
 
 
@@ -96,6 +84,8 @@ miog.F = {
 	CURRENT_GROUP_INFO = {},
 	IS_RAIDERIO_LOADED = false,
 	IS_IN_DEBUG_MODE = false,
+
+	MOST_BOSSES = 0,
 	
 	INSPECT_QUEUE = {},
 	CURRENTLY_INSPECTING = false,
@@ -229,7 +219,7 @@ miog.RAID_ICONS = {
 }
 
 for _, value in pairs(miog.RAID_ICONS) do
-	miog.C.MOST_BOSSES = #value-1 > miog.C.MOST_BOSSES and #value-1 or miog.C.MOST_BOSSES
+	miog.F.MOST_BOSSES = #value-1 > miog.F.MOST_BOSSES and #value-1 or miog.F.MOST_BOSSES
 end
 
 miog.FONTS = {

@@ -78,9 +78,9 @@ miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "BackdropTemplate", re
 miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "VerticalLayoutFrame, BackdropTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", resetFrame)
+
 miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "ScrollFrameTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "BackdropTemplate, ScrollFrameTemplate", resetFrame)
-
 miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "HeaderSortButtonTemplate", resetFrame)
 
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
@@ -91,6 +91,7 @@ miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "RefreshButtonTemplat
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate, BackdropTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UICheckButtonTemplate, ResizeLayoutFrame", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate", resetFrame)
+
 miog.persistentFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("CheckButton", nil, "IconButtonTemplate", resetFrame)
 
@@ -111,6 +112,7 @@ miog.fleetingFramePool:CreatePoolIfNeeded("EditBox", nil, "InputBoxTemplate", re
 miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "IconButtonTemplate", resetFrame)
 miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelButtonTemplate", resetFrame)
 miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelButtonTemplate, ResizeLayoutFrame", resetFrame)
+
 miog.fleetingFramePool:CreatePoolIfNeeded("CheckButton", nil, "UIButtonTemplate", resetFrame)
 miog.fleetingFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
 miog.fleetingFramePool:CreatePoolIfNeeded("CheckButton", nil, "MaximizeMinimizeButtonFrameTemplate", resetFrame)
@@ -124,7 +126,6 @@ miog.releaseAllFleetingWidgets = function()
 	miog.fleetingNormalFontStringPool:ReleaseAll()
 	miog.fleetingTexturePool:ReleaseAll()
 end
-
 
 miog.raidRosterFramePool = CreateFramePool("Frame", nil, "BackdropTemplate", resetFrame)
 miog.raidRosterFontStringPool = CreateFontStringPool(miog.raidRosterFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
@@ -155,7 +156,6 @@ miog.createBasicFrame = function (type, template, parent, width, height, addOn, 
 		texture = miog.raidRosterTexturePool:Acquire()
 	end
 
-	frame.template = template
 	frame:SetParent(parent)
 	frame:SetSize(width or 0, height or 0)
 

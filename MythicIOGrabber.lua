@@ -20,8 +20,6 @@ local tostring = tostring
 
 local queueTimer
 
-
-
 local function refreshFunction()
 	miog.releaseAllFleetingWidgets()
 
@@ -209,7 +207,7 @@ local function addApplicantToPanel(applicantID)
 							difficulty = 0,
 							progress = 0,
 							bossCount = 0,
-							parsedString = "0/"..miog.C.MOST_BOSSES
+							parsedString = "0/"..miog.F.MOST_BOSSES
 						}
 						
 						raidData[2] = {
@@ -217,7 +215,7 @@ local function addApplicantToPanel(applicantID)
 							difficulty = 0,
 							progress = 0,
 							bossCount = 0,
-							parsedString = "0/"..miog.C.MOST_BOSSES
+							parsedString = "0/"..miog.F.MOST_BOSSES
 						}
 
 					end
@@ -227,7 +225,7 @@ local function addApplicantToPanel(applicantID)
 						difficulty = 0,
 						progress = 0,
 						bossCount = 0,
-						parsedString = "0/"..miog.C.MOST_BOSSES
+						parsedString = "0/"..miog.F.MOST_BOSSES
 					}
 					
 					raidData[2] = {
@@ -235,7 +233,7 @@ local function addApplicantToPanel(applicantID)
 						difficulty = 0,
 						progress = 0,
 						bossCount = 0,
-						parsedString = "0/"..miog.C.MOST_BOSSES
+						parsedString = "0/"..miog.F.MOST_BOSSES
 					}
 
 				end
@@ -566,7 +564,7 @@ local function addApplicantToPanel(applicantID)
 			end)
 			tabPanel.raidTabButton = raidTabButton
 
-			local raidPanel = miog.createBasicFrame("fleeting", "BackdropTemplate", detailedInformationPanel, detailedInformationPanelWidth, (miog.C.MOST_BOSSES) * 20)
+			local raidPanel = miog.createBasicFrame("fleeting", "BackdropTemplate", detailedInformationPanel, detailedInformationPanelWidth, (miog.F.MOST_BOSSES) * 20)
 			raidPanel:SetPoint("TOPLEFT", tabPanel, "BOTTOMLEFT")
 			tabPanel.raidPanel = raidPanel
 			raidPanel:SetShown(miog.F.LISTED_CATEGORY_ID == 3 and true)
@@ -587,7 +585,7 @@ local function addApplicantToPanel(applicantID)
 			local raidPanelWidth = raidPanel:GetWidth()
 			local generalWidth = generalInfoPanel:GetWidth()
 
-			for rowIndex = 1, miog.C.MOST_BOSSES, 1 do
+			for rowIndex = 1, miog.F.MOST_BOSSES, 1 do
 				local remainder = fmod(rowIndex, 2)
 
 				local textRowFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", detailedInformationPanel)
@@ -643,7 +641,7 @@ local function addApplicantToPanel(applicantID)
 			generalInfoPanel.rows[1].FontString:SetJustifyV("TOP")
 			generalInfoPanel.rows[1].FontString:SetPoint("TOPLEFT", generalInfoPanel.rows[1], "TOPLEFT", 0, -5)
 			generalInfoPanel.rows[1].FontString:SetPoint("BOTTOMRIGHT", generalInfoPanel.rows[5], "BOTTOMRIGHT", 0, 0)
-			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. applicantData.comment)
+			generalInfoPanel.rows[1].FontString:SetText(commentString .. " " .. applicantData.comment)
 			generalInfoPanel.rows[1].FontString:SetWordWrap(true)
 			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 			
@@ -992,7 +990,7 @@ miog.checkApplicantList = function(needRefresh)
 											difficulty = 0,
 											progress = 0,
 											bossCount = 0,
-											parsedString = "0/"..miog.C.MOST_BOSSES
+											parsedString = "0/"..miog.F.MOST_BOSSES
 										}
 		
 									end
@@ -1003,7 +1001,7 @@ miog.checkApplicantList = function(needRefresh)
 									difficulty = 0,
 									progress = 0,
 									bossCount = 0,
-									parsedString = "0/"..miog.C.MOST_BOSSES
+									parsedString = "0/"..miog.F.MOST_BOSSES
 								}
 								
 								raidData[2] = {
@@ -1011,7 +1009,7 @@ miog.checkApplicantList = function(needRefresh)
 									difficulty = 0,
 									progress = 0,
 									bossCount = 0,
-									parsedString = "0/"..miog.C.MOST_BOSSES
+									parsedString = "0/"..miog.F.MOST_BOSSES
 								}
 		
 							end
@@ -1021,7 +1019,7 @@ miog.checkApplicantList = function(needRefresh)
 								difficulty = 0,
 								progress = 0,
 								bossCount = 0,
-								parsedString = "0/"..miog.C.MOST_BOSSES
+								parsedString = "0/"..miog.F.MOST_BOSSES
 							}
 							
 							raidData[2] = {
@@ -1029,7 +1027,7 @@ miog.checkApplicantList = function(needRefresh)
 								difficulty = 0,
 								progress = 0,
 								bossCount = 0,
-								parsedString = "0/"..miog.C.MOST_BOSSES
+								parsedString = "0/"..miog.F.MOST_BOSSES
 							}
 		
 						end
@@ -1941,7 +1939,6 @@ local function handler(msg, editBox)
 			local endTime = GetTimePreciseSec()
 
 			currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
-			--print("Printing " .. debugCounterOfIndiAppli .." applicants took " .. currentAverageExecuteTime[#currentAverageExecuteTime])
 
 			index = index + 1
 
