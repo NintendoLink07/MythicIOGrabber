@@ -13,11 +13,11 @@ local function compareSettings(defaultOptions, savedSettings)
 				savedSettings[key][k] = v
 			end
 		else
-			if(savedSettings[key]["title"] ~= optionEntry["title"]) then
-				savedSettings[key]["title"] = optionEntry["title"]
+			if(savedSettings[key].title ~= optionEntry.title) then
+				savedSettings[key].title = optionEntry.title
 
-			elseif(savedSettings[key]["type"] ~= optionEntry["type"]) then
-				savedSettings[key]["type"] = optionEntry["type"]
+			elseif(savedSettings[key].type ~= optionEntry.type) then
+				savedSettings[key].type = optionEntry.type
 
 			end
 		end
@@ -66,52 +66,54 @@ local function sortSettingsAlphabetically()
 	local sortedTable = {}
 
 	for keyString, setting in pairs(MIOG_SavedSettings) do
-		setting["key"] = keyString
+		setting.key = keyString
 		table.insert(sortedTable, setting)
 	end
 
-	table.sort(sortedTable, function(k1, k2) return (k1["title"] or "") < (k2["title"] or "") end)
+	table.sort(sortedTable, function(k1, k2) return (k1.title or "") < (k2.title or "") end)
 
 	return sortedTable
 end
 
 miog.loadSettings = function()
     miog.defaultOptionSettings = {
-		["showActualSpecIcons"] = {
-			["type"] = "hiddenSetting", --Not optimized, too much taint
-			["title"] = "Find a group: Show actual spec icons in the queue simulator.\n|cFFFF0000(When turned off a /reload will occur.)|r",
-			["value"] = false,
+		showActualSpecIcons = {
+			type = "hiddenSetting", --Not optimized, too much taint
+			title = "Find a group: Show actual spec icons in the queue simulator.\n|cFFFF0000(When turned off a /reload will occur.)|r",
+			value = false,
 		},
-		["disableBackgroundImages"] = {
-			["type"] = "checkbox", --Not optimized, too much taint
-			["title"] = "Hide the background image and some background colors (mainly for ElvUI users)",
-			["value"] = false,
+		disableBackgroundImages = {
+			type = "checkbox", --Not optimized, too much taint
+			title = "Hide the background image and some background colors (mainly for ElvUI users)",
+			value = false,
 		},
-		["fillUpEmptySpaces"] = {
-			["type"] = "hiddenSetting", --Not optimized, too much taint
-			["title"] = "Find a group: When showing the spec icons - fill up empty spaces in the listed group, so it will always be correctly order: 1 Tank, 1 Heal, 3 DPS.\n|cFFFF0000(When turned off a /reload will occur.)|r",
-			["value"] = false,
+		fillUpEmptySpaces = {
+			type = "hiddenSetting", --Not optimized, too much taint
+			title = "Find a group: When showing the spec icons - fill up empty spaces in the listed group, so it will always be correctly order: 1 Tank, 1 Heal, 3 DPS.\n|cFFFF0000(When turned off a /reload will occur.)|r",
+			value = false,
 		},
-		["frameExtended"] = {
-			["type"] = "variable",
-			["title"] = "Extend the mainframe",
-			["value"] = false,
+		frameExtended = {
+			type = "variable",
+			title = "Extend the mainframe",
+			value = false,
 		},
-		["keepSignUpNote"] = {
-			["type"] = "checkbox",
-			["title"] = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up note",
-			["value"] = true,
+		keepSignUpNote = {
+			type = "checkbox",
+			title = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up note",
+			value = true,
 		},
-		["keepInfoFromGroupCreation"] = {
-			["type"] = "checkbox",
-			["title"] = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields",
-			["value"] = true,
+		keepInfoFromGroupCreation = {
+			type = "checkbox",
+			title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields",
+			value = true,
 		},
-		["lastActiveSortingMethods"] = {
-			["type"] = "variable",
-			["title"] = "Last active sorting methods",
+		lastActiveSortingMethods = {
+			type = "variable",
+			title = "Last active sorting methods",
 		}
 	}
+
+	-- REFACTOR STRING TO VAR
 
 	if(not MIOG_SavedSettings) then
 		MIOG_SavedSettings = miog.defaultOptionSettings
@@ -120,10 +122,10 @@ miog.loadSettings = function()
 		compareSettings(miog.defaultOptionSettings, MIOG_SavedSettings)
 	end
 	
-	MIOG_SavedSettings["datestamp"] = {
-		["type"] = "interal",
-		["title"] = "Datestamp of last setting save",
-		["value"] = date("%d/%m/%y %H:%M:%S")
+	MIOG_SavedSettings.datestamp = {
+		type = "interal",
+		title = "Datestamp of last setting save",
+		value = date("%d/%m/%y %H:%M:%S")
 	}
 
 	local interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
@@ -133,7 +135,7 @@ miog.loadSettings = function()
 
 	miog.interfaceOptionsPanel = interfaceOptionsPanel
 
-	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "fontstring", 20)
+	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "FontString", 20)
 	titleFrame:SetPoint("TOP", interfaceOptionsPanel, "TOP", 0, 0)
 	titleFrame.FontString:SetText("Mythic IO Grabber")
 	titleFrame.FontString:SetJustifyH("CENTER")
@@ -154,38 +156,42 @@ miog.loadSettings = function()
 	local lastOptionButton = nil
 
 	for key, setting in pairs(sortedTable or MIOG_SavedSettings) do
-		if(setting["type"] == "checkbox") then
-			local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.ENTRY_FRAME_SIZE, miog.C.ENTRY_FRAME_SIZE)
+		if(setting.type == "checkbox") then
+			local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+			optionButton:SetNormalAtlas("checkbox-minimal")
+			optionButton:SetPushedAtlas("checkbox-minimal")
+			optionButton:SetCheckedTexture("checkmark-minimal")
+			optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 			optionButton:SetPoint("TOPLEFT", lastOptionButton or optionPanelContainer, lastOptionButton and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
 			optionButton:RegisterForClicks("LeftButtonDown")
-			optionButton:SetChecked(setting["value"])
+			optionButton:SetChecked(setting.value)
 
-			if(setting["key"] == "showActualSpecIcons") then
+			if(setting.key == "showActualSpecIcons") then
 
 				optionButton:SetScript("OnClick", function()
-					setting["value"] = not setting["value"]
+					setting.value = not setting.value
 
-					if(setting["value"] == false) then
+					if(setting.value == false) then
 						C_UI.Reload()
 					end
 				end)
 
-			elseif(setting["key"] == "fillUpEmptySpaces") then
+			elseif(setting.key == "fillUpEmptySpaces") then
 
 				optionButton:SetScript("OnClick", function()
-					setting["value"] = not setting["value"]
+					setting.value = not setting.value
 
-					if(setting["value"] == false) then
+					if(setting.value == false) then
 						C_UI.Reload()
 					end
 				end)
 
-			elseif(setting["key"] == "keepSignUpNote") then
+			elseif(setting.key == "keepSignUpNote") then
 
 				optionButton:SetScript("OnClick", function()
-					setting["value"] = not setting["value"]
+					setting.value = not setting.value
 
-					if(setting["value"] == true) then
+					if(setting.value == true) then
 						LFGListApplicationDialog_Show = keepSignUpNote
 
 					else
@@ -193,26 +199,26 @@ miog.loadSettings = function()
 
 					end
 				end)
-			elseif(setting["key"] == "keepInfoFromGroupCreation") then
+			elseif(setting.key == "keepInfoFromGroupCreation") then
 
 				optionButton:SetScript("OnClick", function()
-					setting["value"] = not setting["value"]
+					setting.value = not setting.value
 
-					if(setting["value"] == true) then
+					if(setting.value == true) then
 						LFGListEntryCreation_Clear = alternativeCreationInfo
 					else
 						LFGListEntryCreation_Clear = clearEntryCreation
 
 					end
 				end)
-			elseif(setting["key"] == "disableBackgroundImages") then
+			elseif(setting.key == "disableBackgroundImages") then
 
 				optionButton:SetScript("OnClick", function()
-					setting["value"] = not setting["value"]
+					setting.value = not setting.value
 
-					miog.mainFrame.backdropFrame:SetShown(not setting["value"])
+					miog.mainFrame.backdropFrame:SetShown(not setting.value)
 
-					if(setting["value"] == false) then
+					if(setting.value == false) then
 						miog.mainFrame.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 					else
@@ -225,7 +231,7 @@ miog.loadSettings = function()
 			local optionButtonString = miog.createBasicFontString("persistent", 12, optionButton)
 			optionButtonString:SetWidth(optionPanelContainer:GetWidth() - optionButton:GetWidth() - 15)
 			optionButtonString:SetPoint("LEFT", optionButton, "RIGHT", 10, 0)
-			optionButtonString:SetText(setting["title"])
+			optionButtonString:SetText(setting.title)
 
 			optionButtonString:SetWordWrap(true)
 			optionButtonString:SetNonSpaceWrap(true)
@@ -235,14 +241,14 @@ miog.loadSettings = function()
 
 	end
 
-	if(MIOG_SavedSettings["lastActiveSortingMethods"] and MIOG_SavedSettings["lastActiveSortingMethods"]["value"]) then
-		for sortKey, row in pairs(MIOG_SavedSettings["lastActiveSortingMethods"]["value"]) do
+	if(MIOG_SavedSettings.lastActiveSortingMethods and MIOG_SavedSettings.lastActiveSortingMethods.value) then
+		for sortKey, row in pairs(MIOG_SavedSettings.lastActiveSortingMethods.value) do
 			
 			if(miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]) then
 				if(row.active == true) then
-					local active = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["active"]
-					local currentLayer = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentLayer"]
-					local currentState = MIOG_SavedSettings["lastActiveSortingMethods"]["value"][sortKey]["currentState"]
+					local active = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].active
+					local currentLayer = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentLayer
+					local currentState = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentState
 			
 					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]:SetState(active, currentState)
 			
@@ -256,22 +262,22 @@ miog.loadSettings = function()
 			end
 		end
 	else
-		MIOG_SavedSettings["lastActiveSortingMethods"]["value"] = {}
+		MIOG_SavedSettings.lastActiveSortingMethods.value = {}
 	end
 
-	if(MIOG_SavedSettings["keepSignUpNote"] and MIOG_SavedSettings["keepSignUpNote"]["value"] ==  true) then
+	if(MIOG_SavedSettings.keepSignUpNote and MIOG_SavedSettings.keepSignUpNote.value ==  true) then
 		LFGListApplicationDialog_Show = keepSignUpNote
 	else
 		LFGListApplicationDialog_Show = clearSignUpNote
 	end
 
-	if(MIOG_SavedSettings["keepInfoFromGroupCreation"] and MIOG_SavedSettings["keepInfoFromGroupCreation"]["value"] ==  true) then
+	if(MIOG_SavedSettings.keepInfoFromGroupCreation and MIOG_SavedSettings.keepInfoFromGroupCreation.value ==  true) then
 		LFGListEntryCreation_Clear = alternativeCreationInfo
 	else
 		LFGListEntryCreation_Clear = clearEntryCreation
 	end
 
-	if(MIOG_SavedSettings["disableBackgroundImages"] and MIOG_SavedSettings["disableBackgroundImages"]["value"] ==  true) then
+	if(MIOG_SavedSettings.disableBackgroundImages and MIOG_SavedSettings.disableBackgroundImages.value ==  true) then
 		miog.mainFrame.backdropFrame:SetShown(false)
 		miog.mainFrame.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
 

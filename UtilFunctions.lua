@@ -138,3 +138,19 @@ miog.romanNumeralsDecoder = function(number) -- https://stackoverflow.com/questi
 	
     return currentNumber
 end
+
+---------
+-- DEBUG
+--------- 
+
+miog.debugGetTestTier = function(rating)
+	local newRank
+
+	for _,v in ipairs(miog.DEBUG_TIER_TABLE) do
+		if(rating >= v[1]) then
+			newRank = v[2]
+		end
+	end
+
+	return newRank
+end

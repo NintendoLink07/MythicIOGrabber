@@ -60,11 +60,10 @@ miog.createMainFrame = function()
 	miog.createFrameBorder(mainFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	mainFrame:HookScript("OnShow", function()
-		if(MIOG_SavedSettings["frameExtended"].value) then
+		if(MIOG_SavedSettings.frameExtended.value) then
 			positionTab1ToMainFrame()
 
 		end
-	
 	end)
 	mainFrame:HookScript("OnHide", function()
 		positionTab1PVEFrame()
@@ -72,7 +71,7 @@ miog.createMainFrame = function()
 	end)
 	_G[mainFrame:GetName()] = mainFrame
 
-	local backdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, nil, "texture", miog.BACKGROUNDS[18])
+	local backdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, nil, "Texture", miog.BACKGROUNDS[18])
 	backdropFrame:SetPoint("TOPLEFT", mainFrame, "TOPLEFT")
 	backdropFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT")
 
@@ -95,12 +94,12 @@ miog.createMainFrame = function()
 	expandDownwardsButton:RegisterForClicks("LeftButtonDown")
 	expandDownwardsButton:SetScript("OnClick", function()
 
-		MIOG_SavedSettings["frameExtended"].value = not MIOG_SavedSettings["frameExtended"].value
+		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
 
-		if(MIOG_SavedSettings["frameExtended"].value) then
+		if(MIOG_SavedSettings.frameExtended.value) then
 			positionTab1ToMainFrame()
 
-		elseif(not MIOG_SavedSettings["frameExtended"].value) then
+		elseif(not MIOG_SavedSettings.frameExtended.value) then
 			positionTab1PVEFrame()
 
 		end
@@ -111,7 +110,7 @@ miog.createMainFrame = function()
 	local raiderIOAddonIsLoadedFrame = miog.createBasicFontString("persistent", 16, mainFrame)
 	raiderIOAddonIsLoadedFrame:SetPoint("RIGHT", openSettingsButton, "LEFT", - 5 - expandDownwardsButton:GetWidth(), 0)
 	raiderIOAddonIsLoadedFrame:SetJustifyH("RIGHT")
-	raiderIOAddonIsLoadedFrame:SetText(WrapTextInColorCode("NO R.IO", miog.C.RED_COLOR))
+	raiderIOAddonIsLoadedFrame:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	raiderIOAddonIsLoadedFrame:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
 	miog.mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
@@ -124,7 +123,7 @@ miog.createMainFrame = function()
 	titleBar.factionIconSize = titleBar:GetHeight() - 4
 	mainFrame.titleBar = titleBar
 
-	local titleStringFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar:GetWidth()*0.6, titleBar:GetHeight(), "fontstring", miog.C.TITLE_FONT_SIZE)
+	local titleStringFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar:GetWidth()*0.6, titleBar:GetHeight(), "FontString", miog.C.TITLE_FONT_SIZE)
 	titleStringFrame:SetPoint("LEFT", titleBar, "LEFT")
 	titleStringFrame:SetMouseMotionEnabled(true)
 	titleStringFrame:SetScript("OnEnter", function()
@@ -142,7 +141,7 @@ miog.createMainFrame = function()
 
 	titleBar.titleStringFrame = titleStringFrame
 	
-	local factionFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar.factionIconSize, titleBar.factionIconSize, "texture", 2437241)
+	local factionFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar.factionIconSize, titleBar.factionIconSize, "Texture", 2437241)
 	factionFrame:SetPoint("RIGHT", titleBar, "RIGHT", -1, 0)
 
 	titleBar.factionFrame = factionFrame
@@ -187,7 +186,7 @@ miog.createMainFrame = function()
 	infoPanelDarkenFrame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false, edgeSize=1} )
 	infoPanelDarkenFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.3)
 
-	local activityNameFontString = miog.persistentHeaderFontStringPool:Acquire()
+	local activityNameFontString = infoPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
 	activityNameFontString:SetFont(miog.FONTS["libMono"], miog.C.ACTIVITY_NAME_FONT_SIZE, "OUTLINE")
 	activityNameFontString:SetPoint("TOPLEFT", infoPanel, "TOPLEFT", miog.C.STANDARD_PADDING, -miog.C.STANDARD_PADDING)
 	activityNameFontString:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -miog.C.STANDARD_PADDING, -miog.C.STANDARD_PADDING)
@@ -205,7 +204,7 @@ miog.createMainFrame = function()
 	commentScrollFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT", -miog.C.STANDARD_PADDING, miog.C.STANDARD_PADDING)
 	commentScrollFrame.ScrollBar:Hide()
 
-	local commentFrame = miog.createBasicFrame("persistent", "BackdropTemplate", commentScrollFrame, commentScrollFrame:GetWidth(), commentScrollFrame:GetHeight(), "fontstring", miog.C.LISTING_COMMENT_FONT_SIZE)
+	local commentFrame = miog.createBasicFrame("persistent", "BackdropTemplate", commentScrollFrame, commentScrollFrame:GetWidth(), commentScrollFrame:GetHeight(), "FontString", miog.C.LISTING_COMMENT_FONT_SIZE)
 	commentFrame.FontString:SetWidth(commentFrame:GetWidth())
 	commentFrame.FontString:SetJustifyV("TOP")
 	commentFrame.FontString:SetPoint("TOPLEFT", commentFrame, "TOPLEFT")
@@ -228,7 +227,7 @@ miog.createMainFrame = function()
 
 	mainFrame.listingSettingPanel = listingSettingPanel
 
-	local privateGroupFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.04, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/questionMark_Grey.png")
+	local privateGroupFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.04, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/questionMark_Grey.png")
 	privateGroupFrame:SetPoint("LEFT", listingSettingPanel, "LEFT", 0, 0)
 	privateGroupFrame.active = false
 	privateGroupFrame.Texture:ClearAllPoints()
@@ -249,7 +248,7 @@ miog.createMainFrame = function()
 	listingSettingPanel.privateGroupFrame = privateGroupFrame
 	miog.createFrameBorder(privateGroupFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	
-	local voiceChatFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.06, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
+	local voiceChatFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.06, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
 	voiceChatFrame.fixedHeight = listingSettingPanel:GetHeight()
 	voiceChatFrame.maximumWidth = listingSettingPanel:GetWidth()*0.15
 	voiceChatFrame.tooltipText = ""
@@ -273,7 +272,7 @@ miog.createMainFrame = function()
 	end)
 	
 
-	local playstyleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.07, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/book.png")
+	local playstyleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.07, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/book.png")
 	playstyleFrame.Texture:ClearAllPoints()
 	playstyleFrame.Texture:SetPoint("CENTER", playstyleFrame, "CENTER", 1, 0)
 	playstyleFrame:SetPoint("LEFT", voiceChatFrame, "RIGHT")
@@ -290,7 +289,7 @@ miog.createMainFrame = function()
 	listingSettingPanel.playstyleFrame = playstyleFrame
 	miog.createFrameBorder(playstyleFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	local ratingFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/skull.png")
+	local ratingFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/skull.png")
 	ratingFrame.Texture:SetWidth(listingSettingPanel:GetHeight())
 	ratingFrame.Texture:SetScale(0.85)
 	ratingFrame:SetPoint("LEFT", playstyleFrame, "RIGHT")
@@ -314,7 +313,7 @@ miog.createMainFrame = function()
 	ratingString:SetText("3333")
 	ratingFrame.FontString = ratingString
 
-	local itemLevelFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.17, listingSettingPanel:GetHeight(), "texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/itemsacks.png")
+	local itemLevelFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.17, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/itemsacks.png")
 	itemLevelFrame.Texture:SetWidth(listingSettingPanel:GetHeight())
 	itemLevelFrame.Texture:SetScale(0.85)
 	itemLevelFrame:SetPoint("LEFT", ratingFrame, "RIGHT")
@@ -338,7 +337,7 @@ miog.createMainFrame = function()
 	itemLevelString:SetText("444")
 	itemLevelFrame.FontString = itemLevelString
 
-	local affixFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "fontstring", miog.C.AFFIX_TEXTURE_FONT_SIZE)
+	local affixFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "FontString", miog.C.AFFIX_TEXTURE_FONT_SIZE)
 	affixFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT")
 	affixFrame.tooltipText = ""
 	affixFrame:SetMouseMotionEnabled(true)
@@ -357,7 +356,7 @@ miog.createMainFrame = function()
 
 	infoPanel.affixFrame = affixFrame
 
-	local timerFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.25, listingSettingPanel:GetHeight(), "fontstring", miog.C.LISTING_INFO_FONT_SIZE, "0:00:00")
+	local timerFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.25, listingSettingPanel:GetHeight(), "FontString", miog.C.LISTING_INFO_FONT_SIZE, "0:00:00")
 	timerFrame.FontString:ClearAllPoints()
 	timerFrame.FontString:SetPoint("CENTER", timerFrame, "CENTER", 0, -1)
 	timerFrame:SetPoint("TOPLEFT", affixFrame, "TOPRIGHT")
@@ -365,6 +364,8 @@ miog.createMainFrame = function()
 	timerFrame.FontString:SetJustifyH("CENTER")
 	infoPanel.timerFrame = timerFrame
 	miog.createFrameBorder(timerFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	--DevTools_Dump(miog.ITEM_QUALITY_COLORS)
 
 	listingSettingPanel:MarkDirty()
 
@@ -389,10 +390,9 @@ miog.createMainFrame = function()
 		local roleTexture = miog.createBasicTexture("persistent", nil, buttonPanel, buttonPanel:GetHeight() - 3, buttonPanel:GetHeight() - 3, "ARTWORK")
 		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
 
-		local showRoleButtonText = miog.persistentNormalFontStringPool:Acquire()
-		showRoleButtonText:SetFont(miog.FONTS["libMono"], 16, "OUTLINE")
+		local showRoleButtonText = miog.createBasicFontString("persistent", 16, buttonPanel)
+		showRoleButtonText:Hide()
 		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 0, -1)
-		showRoleButtonText:SetParent(buttonPanel)
 		showRoleButtonText:SetJustifyV("CENTER")
 		showRoleButtonText:SetText("0")
 
@@ -438,7 +438,7 @@ miog.createMainFrame = function()
 
 	for i = 1, 4, 1 do
 
-		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight()), TripleStateButtonMixin)
+		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight()), TripleStateButtonMixin)
 		sortByCategoryButton:OnLoad()
 		sortByCategoryButton:SetTexturesForBaseState("hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
 		sortByCategoryButton:SetTexturesForState1("hud-MainMenuBar-arrowdown-up", "hud-MainMenuBar-arrowdown-down", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
@@ -446,15 +446,18 @@ miog.createMainFrame = function()
 		sortByCategoryButton:SetStateName(0, "None")
 		sortByCategoryButton:SetStateName(1, "Descending")
 		sortByCategoryButton:SetStateName(2, "Ascending")
+		sortByCategoryButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 		sortByCategoryButton:SetState(false)
 		sortByCategoryButton:SetMouseMotionEnabled(true)
 		sortByCategoryButton:SetScript("OnEnter", function()
 			GameTooltip:SetOwner(sortByCategoryButton, "ANCHOR_CURSOR")
 			GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
 			GameTooltip:Show()
+
 		end)
 		sortByCategoryButton:SetScript("OnLeave", function()
 			GameTooltip:Hide()
+
 		end)
 
 		local sortByCategoryButtonString = miog.createBasicFontString("persistent", 9, sortByCategoryButton)
@@ -483,62 +486,98 @@ miog.createMainFrame = function()
 
 		end
 
-		sortByCategoryButton:SetScript("OnClick", function()
+		sortByCategoryButton:SetScript("OnClick", function(_, button)
 			local activeState = sortByCategoryButton:GetActiveState()
+			
+			if(button == "LeftButton") then
 
-			if(activeState == 0 and miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2) then
-				--TO 1
-				miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
+				if(activeState == 0 and miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2) then
+					--TO 1
+					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
 
-				miog.F.SORT_METHODS[currentCategory].active = true
-				miog.F.SORT_METHODS[currentCategory].currentLayer = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS
+					miog.F.SORT_METHODS[currentCategory].active = true
+					miog.F.SORT_METHODS[currentCategory].currentLayer = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS
 
-				sortByCategoryButton.FontString:SetText(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS)
+					sortByCategoryButton.FontString:SetText(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS)
 
-			elseif(activeState == 1) then
-				--TO 2
+				elseif(activeState == 1) then
+					--TO 2
 
 
-			elseif(activeState == 2) then
-				--RESET TO 0
-				miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
+				elseif(activeState == 2) then
+					--RESET TO 0
+					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
 
-				miog.F.SORT_METHODS[currentCategory].active = false
-				miog.F.SORT_METHODS[currentCategory].currentLayer = 0
+					miog.F.SORT_METHODS[currentCategory].active = false
+					miog.F.SORT_METHODS[currentCategory].currentLayer = 0
 
-				sortByCategoryButton.FontString:SetText("")
+					sortByCategoryButton.FontString:SetText("")
 
-				for k, v in pairs(miog.F.SORT_METHODS) do
-					if(v.currentLayer == 2) then
-						v.currentLayer = 1
-						buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
-						miog.F.SORT_METHODS[k].currentLayer = 1
-						MIOG_SavedSettings["lastActiveSortingMethods"]["value"][k].currentLayer = 1
+					for k, v in pairs(miog.F.SORT_METHODS) do
+						if(v.currentLayer == 2) then
+							v.currentLayer = 1
+							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
+							miog.F.SORT_METHODS[k].currentLayer = 1
+							MIOG_SavedSettings.lastActiveSortingMethods.value[k].currentLayer = 1
+						end
 					end
 				end
-			end
-			
-			if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
-				sortByCategoryButton:AdvanceState()
 				
-				miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
+				if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
+					sortByCategoryButton:AdvanceState()
+					
+					miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
 
-				MIOG_SavedSettings["lastActiveSortingMethods"]["value"][currentCategory] = miog.F.SORT_METHODS[currentCategory]
+					MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
 
-				if(GameTooltip:GetOwner() == sortByCategoryButton) then
-					GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+					if(GameTooltip:GetOwner() == sortByCategoryButton) then
+						GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+					end
+				end
+
+				miog.checkApplicantList(true)
+			elseif(button == "RightButton") then
+				if(activeState == (1 or 2)) then
+					
+					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
+
+					miog.F.SORT_METHODS[currentCategory].active = false
+					miog.F.SORT_METHODS[currentCategory].currentLayer = 0
+
+					sortByCategoryButton.FontString:SetText("")
+
+					for k, v in pairs(miog.F.SORT_METHODS) do
+						if(v.currentLayer == 2) then
+							v.currentLayer = 1
+							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
+							miog.F.SORT_METHODS[k].currentLayer = 1
+							MIOG_SavedSettings.lastActiveSortingMethods.value[k].currentLayer = 1
+						end
+					end
+					
+					sortByCategoryButton:SetState(false)
+				
+					if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
+						
+						miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
+
+						MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
+
+						if(GameTooltip:GetOwner() == sortByCategoryButton) then
+							GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+						end
+					end
+
+					miog.checkApplicantList(true)
 				end
 			end
-
-			miog.checkApplicantList(true)
-
 		end)
 
 		buttonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
 
 	end
 
-	local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate, BackdropTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight())
+	local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight())
 	resetButton.iconAtlas = "UI-RefreshButton"
 	resetButton.iconSize = buttonPanel:GetHeight()
 	resetButton:OnLoad()
@@ -618,7 +657,6 @@ miog.createMainFrame = function()
 
 	applicantPanel:SetScrollChild(applicantPanelContainer)
 
-	
 	miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
 	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
 	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
@@ -632,6 +670,12 @@ miog.createMainFrame = function()
 	--Haven't found a reason to not overwrite it
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
+
+	if(RaiderIO_ExportButton) then
+		RaiderIO_ExportButton:ClearAllPoints()
+		RaiderIO_ExportButton:SetPoint("LEFT", browseGroupsButton, "RIGHT", 5, 0)
+		RaiderIO_ExportButton:SetParent(footerBar)
+	end
 end
 
 miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")

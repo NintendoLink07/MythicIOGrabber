@@ -3,6 +3,7 @@ local addonName, miog = ...
 local function resetFrame(_, childFrame)
     childFrame:Hide()
 	childFrame:SetFrameStrata("LOW")
+	childFrame:SetParent()
 
 	childFrame.fixedHeight = nil
 	childFrame.fixedWidth = nil
@@ -76,54 +77,33 @@ end
 miog.persistentFramePool = CreateFramePoolCollection()
 miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "BackdropTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "VerticalLayoutFrame, BackdropTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", resetFrame)
-
 miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "ScrollFrameTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "BackdropTemplate, ScrollFrameTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "HeaderSortButtonTemplate", resetFrame)
-
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate, ResizeLayoutFrame", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelButtonTemplate, ResizeLayoutFrame", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "IconButtonTemplate, BackdropTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "RefreshButtonTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate, BackdropTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UICheckButtonTemplate, ResizeLayoutFrame", resetFrame)
+miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "IconButtonTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate", resetFrame)
-
+miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("CheckButton", nil, "IconButtonTemplate", resetFrame)
 
 miog.persistentHeaderFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameFontHighlightLarge", resetFontString)
-miog.persistentNormalFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
+
+miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 
 miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
 
+
 miog.fleetingFramePool = CreateFramePoolCollection()
 miog.fleetingFramePool:CreatePoolIfNeeded("Frame", nil, "BackdropTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Frame", nil, "TabSystemTemplate, BackdropTemplate", resetFrame)
 miog.fleetingFramePool:CreatePoolIfNeeded("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Frame", nil, "VerticalLayoutFrame, BackdropTemplate", resetFrame)
-
 miog.fleetingFramePool:CreatePoolIfNeeded("EditBox", nil, "InputBoxTemplate", resetFrame)
-
 miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "IconButtonTemplate", resetFrame)
+miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate", resetFrame)
 miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelButtonTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelButtonTemplate, ResizeLayoutFrame", resetFrame)
 
-miog.fleetingFramePool:CreatePoolIfNeeded("CheckButton", nil, "UIButtonTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("CheckButton", nil, "MaximizeMinimizeButtonFrameTemplate", resetFrame)
-
-miog.fleetingNormalFontStringPool = CreateFontStringPool(miog.fleetingFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
-
+miog.fleetingFontStringPool = CreateFontStringPool(miog.fleetingFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 miog.fleetingTexturePool = CreateTexturePool(miog.fleetingFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
 
 miog.releaseAllFleetingWidgets = function()
 	miog.fleetingFramePool:ReleaseAll()
-	miog.fleetingNormalFontStringPool:ReleaseAll()
+	miog.fleetingFontStringPool:ReleaseAll()
 	miog.fleetingTexturePool:ReleaseAll()
 end
 
@@ -137,102 +117,8 @@ miog.releaseRaidRosterPool = function()
 	miog.raidRosterTexturePool:ReleaseAll()
 end
 
-miog.createBasicFrame = function (type, template, parent, width, height, addOn, addOnInfo, addOnInfo2)
-	local frame, fontString, texture
-
-	if(type == "persistent") then
-		frame = miog.persistentFramePool:Acquire(template)
-		fontString = miog.persistentNormalFontStringPool:Acquire()
-		texture = miog.persistentTexturePool:Acquire()
-
-	elseif(type == "fleeting") then
-		frame = miog.fleetingFramePool:Acquire(template)
-		fontString = miog.fleetingNormalFontStringPool:Acquire()
-		texture = miog.fleetingTexturePool:Acquire()
-
-	elseif(type == "raidRoster") then
-		frame = miog.raidRosterFramePool:Acquire(template)
-		fontString = miog.raidRosterFontStringPool:Acquire()
-		texture = miog.raidRosterTexturePool:Acquire()
-	end
-
-	frame:SetParent(parent)
-	frame:SetSize(width or 0, height or 0)
-
-	frame:Show()
-
-	if(addOn == "fontstring") then
-		fontString:SetFont(miog.FONTS["libMono"], addOnInfo or 16, "OUTLINE")
-		fontString:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -1)
-		fontString:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
-		fontString:SetJustifyH("LEFT")
-		fontString:SetText(addOnInfo2 or "")
-
-		fontString:SetSize(width or fontString:GetStringWidth() or 0, height or fontString:GetStringHeight() or 0)
-
-		fontString:SetParent(frame)
-		fontString:Show()
-
-		frame.FontString = fontString
-
-	elseif(addOn == "texture") then
-		texture:SetTexture(addOnInfo)
-
-		if(width == nil and height == nil) then
-			texture:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
-			texture:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
-
-		else
-			texture:SetPoint("LEFT", frame, "LEFT", 0, 0)
-			texture:SetSize(width or 0, height or 0)
-
-		end
-
-		texture:SetParent(frame)
-		texture:Show()
-
-		frame.Texture = texture
-
-	elseif(addOn == "texture/fontstring") then
-		texture:SetTexture(addOnInfo)
-
-		if(width == nil and height == nil) then
-			texture:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
-			texture:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
-
-		else
-			texture:SetPoint("LEFT", frame, "LEFT", 0, 0)
-			texture:SetSize(width or 0, height or 0)
-
-		end
-
-		texture:SetParent(frame)
-		texture:Show()
-
-		frame.Texture = texture
-
-		fontString:SetFont(miog.FONTS["libMono"], addOnInfo2 or 16, "OUTLINE")
-		fontString:SetPoint("LEFT", texture, "RIGHT", 0, -1)
-		fontString:SetJustifyH("LEFT")
-		fontString:SetSize(width or fontString:GetStringWidth() or 0, height or fontString:GetStringHeight() or 0)
-
-		fontString:SetParent(frame)
-		fontString:Show()
-
-		frame.FontString = fontString
-	end
-
-	return frame
-end
-
-miog.createBasicFontString = function(type, fontSize, parent, width, height, text)
-	local fontString
-
-	if(type == "persistent") then
-		fontString = miog.persistentNormalFontStringPool:Acquire()
-	elseif(type == "fleeting") then
-		fontString = miog.fleetingNormalFontStringPool:Acquire()
-	end
+local createBasicFontString = function(type, fontSize, parent, width, height, text)
+	local fontString = miog[type.."FontStringPool"]:Acquire()
 
 	fontString:SetFont(miog.FONTS["libMono"], fontSize or 16, "OUTLINE")
 	fontString:SetJustifyH("LEFT")
@@ -245,16 +131,11 @@ miog.createBasicFontString = function(type, fontSize, parent, width, height, tex
 	return fontString
 end
 
-miog.createBasicTexture = function(type, texturePath, parent, width, height, layer)
-	local texture
+miog.createBasicFontString = createBasicFontString
 
-	if(type == "persistent") then
-		texture = miog.persistentTexturePool:Acquire()
-	elseif(type == "fleeting") then
-		texture = miog.fleetingTexturePool:Acquire()
-	end
+local createBasicTexture = function(type, texturePath, parent, width, height, layer)
+	local texture = miog[type.."TexturePool"]:Acquire()
 
-	texture:SetDrawLayer(layer or "OVERLAY")
 	texture:SetParent(parent)
 	
 	if(width == nil and height == nil) then
@@ -272,4 +153,31 @@ miog.createBasicTexture = function(type, texturePath, parent, width, height, lay
 	texture:Show()
 
 	return texture
+end
+
+miog.createBasicTexture = createBasicTexture
+
+miog.createBasicFrame = function (type, template, parent, width, height, addOn, addOnInfo, addOnInfo2)
+	local frame = miog[type.."FramePool"]:Acquire(template)
+
+	frame:SetParent(parent)
+	frame:SetSize(width or 0, height or 0)
+	frame:Show()
+
+	if(addOn == "FontString") then
+
+		local fontString = createBasicFontString(type, addOnInfo, frame, width, height, addOnInfo2)
+		fontString:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -1)
+		fontString:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
+
+		frame.FontString = fontString
+
+	elseif(addOn == "Texture") then
+
+		local texture = createBasicTexture(type, addOnInfo, frame, width, height, addOnInfo2)
+
+		frame.Texture = texture
+	end
+
+	return frame
 end

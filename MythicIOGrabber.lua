@@ -8,14 +8,13 @@ local applicantFramePadding = 6
 
 local debugLFGList = {}
 local debugApplicantIDList = {}
-local debugCounterOfIndiAppli = 0
 local currentAverageExecuteTime = {}
 local debugTimer = nil
 
 local getRioProfile
 local fmod = math.fmod
 local rep = string.rep
-local sub = strsub
+local wticc = WrapTextInColorCode
 local tostring = tostring
 
 local queueTimer
@@ -28,7 +27,6 @@ local function refreshFunction()
 	addonApplicantList = {}
 	debugLFGList = {}
 	debugApplicantIDList = {}
-	debugCounterOfIndiAppli = 0
 
 	miog.F.APPLIED_NUM_OF_DPS = 0
 	miog.F.APPLIED_NUM_OF_HEALERS = 0
@@ -49,13 +47,13 @@ local function changeApplicantStatus(applicantID, frame, string, color)
 
 	for _, memberFrame in pairs(frame.memberFrames) do
 		memberFrame.statusFrame:Show()
-		memberFrame.statusFrame.FontString:SetText(WrapTextInColorCode(string, color))
+		memberFrame.statusFrame.FontString:SetText(wticc(string, color))
 	end
 
 	if(string == "INVITED") then
-		addonApplicantList[applicantID]["creationStatus"] = "invited"
+		addonApplicantList[applicantID].creationStatus = "invited"
 	else
-		addonApplicantList[applicantID]["creationStatus"] = "canBeRemoved"
+		addonApplicantList[applicantID].creationStatus = "canBeRemoved"
 	end
 end
 
@@ -82,7 +80,7 @@ local function sortApplicantList(applicant1, applicant2)
 			end
 		
 			if(applicant1[key] == applicant2[key]) then
-				return firstState == 1 and applicant1["index"] > applicant2["index"] or firstState == 2 and applicant1["index"] < applicant2["index"]
+				return firstState == 1 and applicant1.index > applicant2.index or firstState == 2 and applicant1.index < applicant2.index
 
 			elseif(applicant1[key] ~= applicant2[key]) then
 				return firstState == 1 and applicant1[key] > applicant2[key] or firstState == 2 and applicant1[key] < applicant2[key]
@@ -93,7 +91,7 @@ local function sortApplicantList(applicant1, applicant2)
 
 	end
 	
-	return applicant1["index"] > applicant2["index"]
+	return applicant1.index > applicant2.index
 
 end
 
@@ -128,13 +126,10 @@ local function addApplicantToPanel(applicantID)
 			
 			-- fullName, englishClassName, localizedClassName, level, ilvl, honorLevel, tank, healer, damager, assignedRole, friend, dungeonScore, pvpIlvl
 			local fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _
-			local dungeonData, pvpData
-			local raidData = {[1] = {true, true, true, true, true,}, [2] = {true, true, true, true, true,}}
-
-			local weightsTable
+			local dungeonData, pvpData, rioProfile
 			
 			if(miog.F.IS_IN_DEBUG_MODE) then
-				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, dungeonData, raidData, pvpData = unpack(applicantData.applicantMemberList[applicantIndex])
+				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, dungeonData, _, pvpData, rioProfile = unpack(applicantData.applicantMemberList[applicantIndex])
 
 			else
 				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _ = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -148,7 +143,13 @@ local function addApplicantToPanel(applicantID)
 			local profile, mythicKeystoneProfile, dungeonProfile, raidProfile
 
 			if(miog.F.IS_RAIDERIO_LOADED) then
-				profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
+				if(not miog.F.IS_IN_DEBUG_MODE) then
+					profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
+
+				else
+					profile = getRioProfile(unpack(rioProfile))
+
+				end
 				
 				if(profile ~= nil) then
 					mythicKeystoneProfile = profile.mythicKeystoneProfile
@@ -164,81 +165,6 @@ local function addApplicantToPanel(applicantID)
 				end
 			end
 
-			if(not miog.F.IS_IN_DEBUG_MODE) then
-				if(profile) then
-					if(profile.raidProfile) then
-						for i = 1, 2, 1 do
-							if(profile.raidProfile.sortedProgress[i] and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-								if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal == 1) then
-
-									local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-									local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
-									
-									weightsTable = weightsTable or miog.generateRaidWeightsTable(bossCount)
-
-									raidData[i] = {
-										ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-										difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-										progress = kills,
-										bossCount = bossCount,
-										parsedString = kills .. "/" .. bossCount
-									}
-
-								elseif(profile.raidProfile.sortedProgress[i].progress.raid.ordinal == 2) then
-
-									local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-									local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
-
-									raidData[i] = {
-										ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-										difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-										progress = kills,
-										bossCount = bossCount,
-										parsedString = kills .. "/" .. bossCount
-									}
-
-								end
-							end
-						end
-
-					else
-						raidData[1] = {
-							ordinal = 1,
-							difficulty = 0,
-							progress = 0,
-							bossCount = 0,
-							parsedString = "0/"..miog.F.MOST_BOSSES
-						}
-						
-						raidData[2] = {
-							ordinal = 1,
-							difficulty = 0,
-							progress = 0,
-							bossCount = 0,
-							parsedString = "0/"..miog.F.MOST_BOSSES
-						}
-
-					end
-				else
-					raidData[1] = {
-						ordinal = 1,
-						difficulty = 0,
-						progress = 0,
-						bossCount = 0,
-						parsedString = "0/"..miog.F.MOST_BOSSES
-					}
-					
-					raidData[2] = {
-						ordinal = 1,
-						difficulty = 0,
-						progress = 0,
-						bossCount = 0,
-						parsedString = "0/"..miog.F.MOST_BOSSES
-					}
-
-				end
-			end
-
 			local applicantMemberFrame = miog.createBasicFrame("fleeting", "ResizeLayoutFrame, BackdropTemplate", applicantFrame)
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.minimumHeight = 20
@@ -248,7 +174,7 @@ local function addApplicantToPanel(applicantID)
 			applicantMemberFrame:SetBackdropBorderColor(0, 0, 0, 0)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
 			
-			local applicantMemberStatusFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", applicantFrame, nil, nil, "fontstring")
+			local applicantMemberStatusFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", applicantFrame, nil, nil, "FontString")
 			applicantMemberStatusFrame:Hide()
 			applicantMemberStatusFrame:SetPoint("TOPLEFT", applicantMemberFrame, "TOPLEFT", 0, 0)
 			applicantMemberStatusFrame:SetPoint("BOTTOMRIGHT", applicantMemberFrame, "BOTTOMRIGHT", 0, 0)
@@ -283,35 +209,33 @@ local function addApplicantToPanel(applicantID)
 			
 			if(expandedFrameList[applicantID][applicantIndex]) then
 				expandFrameButton:AdvanceState()
-				expandFrameButton:SetChecked(true)
-
-			else
-				expandFrameButton:SetChecked(false)
 
 			end
 
 			expandFrameButton:RegisterForClicks("LeftButtonDown")
 			expandFrameButton:SetScript("OnClick", function()
-				expandFrameButton:AdvanceState()
-				expandedFrameList[applicantID][applicantIndex] = not applicantMemberFrame.detailedInformationPanel:IsVisible()
+				if(applicantMemberFrame.detailedInformationPanel) then
+					expandFrameButton:AdvanceState()
+					expandedFrameList[applicantID][applicantIndex] = not applicantMemberFrame.detailedInformationPanel:IsVisible()
 
-				applicantMemberFrame.detailedInformationPanel:SetShown(not applicantMemberFrame.detailedInformationPanel:IsVisible())
+					applicantMemberFrame.detailedInformationPanel:SetShown(not applicantMemberFrame.detailedInformationPanel:IsVisible())
 
-				applicantFrame:MarkDirty()
+					applicantFrame:MarkDirty()
+				end
 
 			end)
 			basicInformationPanel.expandButton = expandFrameButton
 
-			local shortName = sub(nameTable[1], 0, 20)
-			local coloredSubName = fullName == "Rhany-Ravencrest" and WrapTextInColorCode(shortName, _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()) or WrapTextInColorCode(shortName, select(4, GetClassColor(englishClassName)))
+			local shortName = strsub(nameTable[1], 0, 20)
+			local coloredSubName = fullName == "Rhany-Ravencrest" and wticc(shortName, miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(shortName, select(4, GetClassColor(englishClassName)))
 
-			local nameFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "fontstring", miog.C.APPLICANT_MEMBER_FONT_SIZE)
+			local nameFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", miog.C.APPLICANT_MEMBER_FONT_SIZE)
 			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 3, 0)
 			nameFrame:SetFrameStrata("DIALOG")
 			nameFrame.FontString:SetText(coloredSubName)
 			nameFrame:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
-					local link = "https://raider.io/characters/" .. miog.C.CURRENT_REGION .. "/" .. nameTable[2] .. "/" .. nameTable[1]
+					local link = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
 					nameFrame.linkBox:SetAutoFocus(true)
 					nameFrame.linkBox:SetText(link)
@@ -342,9 +266,12 @@ local function addApplicantToPanel(applicantID)
 
 			end)
 
-			nameFrame.linkBox = miog.createBasicFrame("fleeting", "InputBoxTemplate", WorldFrame, 250, miog.C.APPLICANT_MEMBER_HEIGHT)
-			nameFrame.linkBox:SetFont(miog.FONTS["libMono"], 7, "OUTLINE")
-			nameFrame.linkBox:SetPoint("CENTER")
+			--nameFrame.linkBox = miog.createBasicFrame("fleeting", "InputBoxTemplate", WorldFrame, 250, miog.C.APPLICANT_MEMBER_HEIGHT)
+			nameFrame.linkBox = miog.createBasicFrame("fleeting", "InputBoxTemplate", applicantMemberFrame, nil, miog.C.APPLICANT_MEMBER_HEIGHT)
+			nameFrame.linkBox:SetFont(miog.FONTS["libMono"], miog.C.APPLICANT_MEMBER_FONT_SIZE, "OUTLINE")
+			nameFrame.linkBox:SetFrameStrata("FULLSCREEN")
+			nameFrame.linkBox:SetPoint("TOPLEFT", applicantMemberStatusFrame, "TOPLEFT", 5, 0)
+			nameFrame.linkBox:SetPoint("TOPRIGHT", applicantMemberStatusFrame, "TOPRIGHT", -1, 0)
 			nameFrame.linkBox:SetAutoFocus(true)
 			nameFrame.linkBox:SetScript("OnKeyDown", function(_, key)
 				if(key == "ESCAPE") then
@@ -377,67 +304,6 @@ local function addApplicantToPanel(applicantID)
 			secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 1, 0)
 			secondaryIndicator:SetJustifyH("CENTER")
 
-			if(miog.F.LISTED_CATEGORY_ID == 2) then
-
-				local reqScore = C_LFGList:HasActiveEntryInfo() and C_LFGList:GetActiveEntryInfo().requiredDungeonScore or 0
-				local highestKeyForDungeon
-
-				if(reqScore > dungeonScore) then
-					primaryIndicator:SetText("|cFFFF0000" .. dungeonScore .. "|r")
-
-				else
-					primaryIndicator:SetText(WrapTextInColorCode(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
-
-				end
-
-				if(dungeonData) then
-					if(dungeonData.finishedSuccess == true) then
-						highestKeyForDungeon = WrapTextInColorCode(tostring(dungeonData.bestRunLevel), miog.C.GREEN_COLOR)
-
-					elseif(dungeonData.finishedSuccess == false) then
-						highestKeyForDungeon = WrapTextInColorCode(tostring(dungeonData.bestRunLevel), miog.C.RED_COLOR)
-
-					end
-				else
-					highestKeyForDungeon = WrapTextInColorCode(tostring(0), miog.C.RED_COLOR)
-
-				end
-
-				secondaryIndicator:SetText(highestKeyForDungeon)
-
-			elseif(miog.F.LISTED_CATEGORY_ID == 3) then
-
-				for i = 1, 2, 1 do
-					local currentIndicator = i == 1 and primaryIndicator or i == 2 and secondaryIndicator
-
-					if(currentIndicator) then
-						if(raidData[i].ordinal == 1) then
-
-							if(raidData[i].progress == 0) then
-								currentIndicator:SetText(WrapTextInColorCode(raidData[i].parsedString, miog.C.RED_COLOR))
-								
-							else
-								local difficulty = miog.C.DIFFICULTY[raidData[i].difficulty]
-								currentIndicator:SetText(WrapTextInColorCode(raidData[i].parsedString, difficulty.color:GenerateHexColor()))
-			
-							end
-						else
-							local difficulty = miog.C.DIFFICULTY[-1]
-							currentIndicator:SetText(WrapTextInColorCode(raidData[i].parsedString, difficulty.color:GenerateHexColor()))
-						
-						end
-					end
-				
-				end
-
-			elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
-				primaryIndicator:SetText(WrapTextInColorCode(tostring(pvpData.rating), C_ChallengeMode.GetDungeonScoreRarityColor(pvpData.rating):GenerateHexColor()))
-
-				local tierResult = miog.simpleSplit(pvpData.tier, " ")
-				secondaryIndicator:SetText(sub(tierResult[1], 0, 2) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
-
-			end
-
 			local itemLevelFrame = miog.createBasicFontString("fleeting", miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.13, basicInformationPanel.maximumHeight)
 			itemLevelFrame:SetPoint("LEFT", secondaryIndicator, "RIGHT", 1, 0)
 			itemLevelFrame:SetJustifyH("CENTER")
@@ -445,7 +311,7 @@ local function addApplicantToPanel(applicantID)
 			local reqIlvl = C_LFGList:HasActiveEntryInfo() and C_LFGList:GetActiveEntryInfo().requiredItemLevel or 0
 
 			if(reqIlvl > ilvl) then
-				itemLevelFrame:SetText("|cFFFF0000" .. miog.round(ilvl, 1) .. "|r")
+				itemLevelFrame:SetText(wticc(miog.round(ilvl, 1), miog.CLRSCC["red"]))
 
 			else
 				itemLevelFrame:SetText(miog.round(ilvl, 1))
@@ -486,12 +352,12 @@ local function addApplicantToPanel(applicantID)
 				declineButton:SetFrameStrata("DIALOG")
 				declineButton:RegisterForClicks("LeftButtonDown")
 				declineButton:SetScript("OnClick", function()
-					if(addonApplicantList[applicantID]["creationStatus"] == "added") then
-						addonApplicantList[applicantID]["creationStatus"] = "canBeRemoved"
-						addonApplicantList[applicantID]["appStatus"] = "declined"
+					if(addonApplicantList[applicantID].creationStatus == "added") then
+						addonApplicantList[applicantID].creationStatus = "canBeRemoved"
+						addonApplicantList[applicantID].appStatus = "declined"
 						C_LFGList.DeclineApplicant(applicantID)
 
-					elseif(addonApplicantList[applicantID]["creationStatus"] == "canBeRemoved") then
+					elseif(addonApplicantList[applicantID].creationStatus == "canBeRemoved") then
 						miog.checkApplicantList(true)
 
 					end
@@ -519,7 +385,7 @@ local function addApplicantToPanel(applicantID)
 			detailedInformationPanel:SetWidth(basicInformationPanel.fixedWidth)
 
 			detailedInformationPanel:SetPoint("TOPLEFT", basicInformationPanel, "BOTTOMLEFT", 0, 1)
-			detailedInformationPanel:SetShown(expandFrameButton:GetChecked())
+			detailedInformationPanel:SetShown(expandFrameButton:GetActiveState() > 0 and true or false)
 			local detailedInformationPanelWidth = detailedInformationPanel:GetWidth() * 0.5
 
 			applicantMemberFrame.detailedInformationPanel = detailedInformationPanel
@@ -606,29 +472,29 @@ local function addApplicantToPanel(applicantID)
 
 				tabPanel.textRows[rowIndex] = textRowFrame
 
-				local textRowRaid = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, raidPanelWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "fontstring", miog.C.TEXT_ROW_FONT_SIZE)
+				local textRowRaid = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, raidPanelWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", miog.C.TEXT_ROW_FONT_SIZE)
 				textRowRaid:SetPoint("LEFT", tabPanel.textRows[rowIndex], "LEFT")
 				raidPanel.rows[rowIndex] = textRowRaid
 
 				if(rowIndex < 9) then
 
-					local textRowMythicPlus = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, mPlusWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "fontstring", miog.C.TEXT_ROW_FONT_SIZE)
+					local textRowMythicPlus = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, mPlusWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", miog.C.TEXT_ROW_FONT_SIZE)
 					textRowMythicPlus:SetPoint("LEFT", tabPanel.textRows[rowIndex], "LEFT")
 					mythicPlusPanel.rows[rowIndex] = textRowMythicPlus
 
-					local textRowGeneralInfo = miog.createBasicFrame("fleeting", "BackdropTemplate", generalInfoPanel, generalWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "fontstring", miog.C.TEXT_ROW_FONT_SIZE)
+					local textRowGeneralInfo = miog.createBasicFrame("fleeting", "BackdropTemplate", generalInfoPanel, generalWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", miog.C.TEXT_ROW_FONT_SIZE)
 					textRowGeneralInfo.FontString:SetJustifyH("CENTER")
 					textRowGeneralInfo:SetPoint("LEFT", tabPanel.textRows[rowIndex], "LEFT", generalWidth, 0)
 					generalInfoPanel.rows[rowIndex] = textRowGeneralInfo
 
 					if(rowIndex == 6) then
 	
-						local addRowMythicPlus = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, mPlusWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "fontstring", miog.C.TEXT_ROW_FONT_SIZE)
+						local addRowMythicPlus = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, mPlusWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", miog.C.TEXT_ROW_FONT_SIZE)
 						addRowMythicPlus.FontString:SetJustifyH("CENTER")
 						addRowMythicPlus:SetPoint("LEFT", textRowGeneralInfo, "LEFT")
 						mythicPlusPanel.rows[15] = addRowMythicPlus
 		
-						local addRowRaid = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, raidPanelWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "fontstring", miog.C.TEXT_ROW_FONT_SIZE)
+						local addRowRaid = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, raidPanelWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", miog.C.TEXT_ROW_FONT_SIZE)
 						addRowRaid.FontString:SetJustifyH("CENTER")
 						addRowRaid:SetPoint("LEFT", textRowGeneralInfo, "LEFT")
 						raidPanel.rows[15] = addRowRaid
@@ -646,9 +512,55 @@ local function addApplicantToPanel(applicantID)
 			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 			
 			generalInfoPanel.rows[7].FontString:SetText(_G["LFG_TOOLTIP_ROLES"] .. ((tank == true and miog.C.TANK_TEXTURE) or (healer == true and miog.C.HEALER_TEXTURE) or (damager == true and miog.C.DPS_TEXTURE)))
-			
+
+			applicantMemberFrame:MarkDirty()
+			applicantFrame:MarkDirty()
+
+			if(miog.F.LISTED_CATEGORY_ID == 2) then
+				if(dungeonScore > 0) then
+					local reqScore = C_LFGList:HasActiveEntryInfo() and C_LFGList:GetActiveEntryInfo().requiredDungeonScore or 0
+					local highestKeyForDungeon
+
+					if(reqScore > dungeonScore) then
+						primaryIndicator:SetText(wticc(dungeonScore, miog.CLRSCC["red"]))
+
+					else
+						primaryIndicator:SetText(wticc(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
+
+					end
+
+					if(dungeonData) then
+						if(dungeonData.finishedSuccess == true) then
+							highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.C.GREEN_COLOR)
+
+						elseif(dungeonData.finishedSuccess == false) then
+							highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.CLRSCC["red"])
+
+						end
+					else
+						highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
+
+					end
+
+					secondaryIndicator:SetText(highestKeyForDungeon)
+				else
+					local difficulty = miog.C.DIFFICULTY[-1] -- NO DATA
+					primaryIndicator:SetText(wticc("0", difficulty.color))
+					secondaryIndicator:SetText(wticc("0", difficulty.color))
+
+				end
+
+			elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
+				primaryIndicator:SetText(wticc(tostring(pvpData.rating), C_ChallengeMode.GetDungeonScoreRarityColor(pvpData.rating):GenerateHexColor()))
+
+				local tierResult = miog.simpleSplit(pvpData.tier, " ")
+				secondaryIndicator:SetText(strsub(tierResult[1], 0, 2) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+
+			end
+
 			if(profile) then
 				if(mythicKeystoneProfile and mythicKeystoneProfile.currentScore > 0) then
+
 					local rowWidth = mythicPlusPanel.rows[1]:GetWidth()
 				
 					for rowIndex = 1, #mythicKeystoneProfile.dungeons, 1 do
@@ -660,7 +572,7 @@ local function addApplicantToPanel(applicantID)
 
 							local textureString = miog.DUNGEON_ICONS[dungeonProfile[rowIndex].dungeon.instance_map_id]
 
-							local dungeonIconFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 2, miog.C.APPLICANT_MEMBER_HEIGHT - 2, "texture", textureString)
+							local dungeonIconFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 2, miog.C.APPLICANT_MEMBER_HEIGHT - 2, "Texture", textureString)
 							dungeonIconFrame:SetPoint("LEFT", mythicPlusPanel.rows[rowIndex], "LEFT")
 							dungeonIconFrame:SetMouseClickEnabled(true)
 							dungeonIconFrame:SetFrameStrata("FULLSCREEN")
@@ -676,12 +588,12 @@ local function addApplicantToPanel(applicantID)
 							dungeonNameFrame:SetPoint("LEFT", dungeonIconFrame, "RIGHT", 1, 0)
 
 							local primaryAffixScoreFrame = miog.createBasicFontString("fleeting", miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.30, miog.C.APPLICANT_MEMBER_HEIGHT)
-							local primaryText = WrapTextInColorCode(primaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+							local primaryText = wticc(primaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.CLRSCC["red"] or "0")
 							primaryAffixScoreFrame:SetText(primaryText)
 							primaryAffixScoreFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
 
 							local secondaryAffixScoreFrame = miog.createBasicFontString("fleeting", miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.30, miog.C.APPLICANT_MEMBER_HEIGHT)
-							local secondaryText = WrapTextInColorCode(secondaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.C.RED_COLOR or "0")
+							local secondaryText = wticc(secondaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.CLRSCC["red"] or "0")
 							secondaryAffixScoreFrame:SetText(secondaryText)
 							secondaryAffixScoreFrame:SetPoint("LEFT", primaryAffixScoreFrame, "RIGHT")
 						end
@@ -689,22 +601,22 @@ local function addApplicantToPanel(applicantID)
 
 					if(mythicKeystoneProfile.mainCurrentScore) then
 						if(mythicKeystoneProfile.mainCurrentScore > 0) then
-							mythicPlusPanel.rows[15].FontString:SetText(WrapTextInColorCode("Main: " .. (mythicKeystoneProfile.mainCurrentScore), _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+							mythicPlusPanel.rows[15].FontString:SetText(wticc("Main: " .. (mythicKeystoneProfile.mainCurrentScore), miog.ITEM_QUALITY_COLORS[6].pureHex))
 						else
-							mythicPlusPanel.rows[15].FontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
+							mythicPlusPanel.rows[15].FontString:SetText(wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex))
 						end
 					else
-						mythicPlusPanel.rows[15].FontString:SetText(WrapTextInColorCode("Main Score N/A", _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+						mythicPlusPanel.rows[15].FontString:SetText(wticc("Main Score N/A", miog.ITEM_QUALITY_COLORS[6].pureHex))
 					end
 
 					generalInfoPanel.rows[8].FontString:SetText(
-						WrapTextInColorCode(mythicKeystoneProfile.keystoneFivePlus or "0", _G["ITEM_QUALITY_COLORS"][2].color:GenerateHexColor()) .. " - " ..
-						WrapTextInColorCode(mythicKeystoneProfile.keystoneTenPlus or "0", _G["ITEM_QUALITY_COLORS"][3].color:GenerateHexColor()) .. " - " ..
-						WrapTextInColorCode(mythicKeystoneProfile.keystoneFifteenPlus or "0", _G["ITEM_QUALITY_COLORS"][4].color:GenerateHexColor()) .. " - " ..
-						WrapTextInColorCode(mythicKeystoneProfile.keystoneTwentyPlus or "0", _G["ITEM_QUALITY_COLORS"][5].color:GenerateHexColor())
+						wticc(mythicKeystoneProfile.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
+						wticc(mythicKeystoneProfile.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
+						wticc(mythicKeystoneProfile.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
+						wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
 					)
 				else
-					mythicPlusPanel.rows[1].FontString:SetText(WrapTextInColorCode("NO M+ DATA", "FFFF0000"))
+					mythicPlusPanel.rows[1].FontString:SetText(wticc("NO M+ DATA", miog.CLRSCC["red"]))
 					mythicPlusPanel.rows[1].FontString:SetPoint("LEFT", mythicPlusPanel.rows[1], "LEFT", 2, 0)
 				end
 
@@ -722,27 +634,40 @@ local function addApplicantToPanel(applicantID)
 					local mainProgressText = ""
 					local halfRowWidth = raidPanel.rows[1]:GetWidth() * 0.5
 
-					raidPanel.textureRows = {true, true}
+					local raidIndex = 0
 
+					raidPanel.textureRows = {}
 
 					for _, sortedProgress in ipairs(raidProfile.sortedProgress) do
 						
+						local currentOrdinal = sortedProgress.progress.raid.ordinal
+						local progressCount = sortedProgress.progress.progressCount
+						local difficultyData = miog.C.DIFFICULTY[sortedProgress.progress.difficulty]
+						local bossCount = sortedProgress.progress.raid.bossCount
+						local panelProgressString = wticc(difficultyData.shortName .. ":" .. progressCount .. "/" .. bossCount, difficultyData.color)
+						local basicProgressString = wticc(progressCount .. "/" .. bossCount, currentOrdinal == 1 and difficultyData.color or miog.C.DIFFICULTY[0].color)
 						if(sortedProgress.isMainProgress ~= true) then
 
-							local currentOrdinal = sortedProgress.progress.raid.ordinal
-							local progressCount = sortedProgress.progress.progressCount
-							local difficultyData = miog.C.DIFFICULTY[sortedProgress.progress.difficulty]
-							local bossCount = sortedProgress.progress.raid.bossCount
-							local progressString = WrapTextInColorCode(difficultyData.singleChar .. ":" .. progressCount .. "/" .. bossCount, difficultyData.color:GenerateHexColor())
-							
 							if(currentOrdinal ~= lastOrdinal) then
+								
+								if(miog.F.LISTED_CATEGORY_ID == 3) then
+									if(primaryIndicator:GetText() ~= nil and secondaryIndicator:GetText() == nil) then
+										secondaryIndicator:SetText(basicProgressString) -- ACTUAL PROGRESS
+									end
+
+									if(primaryIndicator:GetText() == nil) then
+										primaryIndicator:SetText(basicProgressString) -- ACTUAL PROGRESS
+									end
+								end
+
 								local raidShortName = sortedProgress.progress.raid.shortName
 
 								local mapID = sortedProgress.progress.raid.mapId
 								local textureString = miog.RAID_ICONS[mapID][bossCount + 1]
 								local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 								
-								raidPanel.textureRows[currentOrdinal] = {true, true, true, true}
+								raidIndex = raidIndex + 1
+								raidPanel.textureRows[raidIndex] = {}
 
 								currentLowerDifficultyFrame = nil
 								lowerDifficultyNumber = nil
@@ -752,7 +677,7 @@ local function addApplicantToPanel(applicantID)
 
 								lastColumn = raidColumn
 
-								local raidIconFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, "texture", textureString)
+								local raidIconFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, "Texture", textureString)
 								raidIconFrame:SetPoint("TOPLEFT", raidColumn, "TOPLEFT", 0, 0)
 								raidIconFrame:SetMouseClickEnabled(true)
 								raidIconFrame:SetFrameStrata("DIALOG")
@@ -767,30 +692,28 @@ local function addApplicantToPanel(applicantID)
 								raidNameString:SetText(raidShortName .. ":")
 
 								higherDifficultyNumber = sortedProgress.progress.difficulty
-								difficultyData = miog.C.DIFFICULTY[higherDifficultyNumber]
 
 								currentHigherDifficultyFrame = miog.createBasicFontString("fleeting", miog.C.TEXT_ROW_FONT_SIZE,  raidPanel, lastColumn:GetWidth()*0.48, miog.C.APPLICANT_MEMBER_HEIGHT)
-								currentHigherDifficultyFrame:SetText(progressString)
+								currentHigherDifficultyFrame:SetText(panelProgressString)
 								currentHigherDifficultyFrame:SetPoint("TOPLEFT", raidIconFrame, "BOTTOMLEFT")
-
 
 								for i = 1, ceil(bossCount * 0.5), 1 do
 									local currentBossRow = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, halfRowWidth, miog.C.APPLICANT_MEMBER_HEIGHT * 1.4)
-									currentBossRow:SetPoint("TOPLEFT", raidPanel.textureRows[currentOrdinal-1] and raidPanel.textureRows[currentOrdinal-1][i] or raidPanel.textureRows[currentOrdinal][i-1] or raidPanel.rows[i+2], raidPanel.textureRows[currentOrdinal-1] and "TOPRIGHT" or raidPanel.textureRows[currentOrdinal][i-1] and "BOTTOMLEFT" or "TOPLEFT")
-									raidPanel.textureRows[currentOrdinal][i] = currentBossRow
-									raidPanel.textureRows[currentOrdinal][i].bossFrames = {}
+									currentBossRow:SetPoint("TOPLEFT", raidPanel.textureRows[raidIndex-1] and raidPanel.textureRows[raidIndex-1][i] or raidPanel.textureRows[raidIndex][i-1] or raidPanel.rows[i+2], raidPanel.textureRows[raidIndex-1] and "TOPRIGHT" or raidPanel.textureRows[raidIndex][i-1] and "BOTTOMLEFT" or "TOPLEFT")
+									raidPanel.textureRows[raidIndex][i] = currentBossRow
+									raidPanel.textureRows[raidIndex][i].bossFrames = {}
 
 								end
 
 								for i = 1, bossCount, 1 do
 									local currentRow = ceil(i * 0.5)
 
-									local index = #raidPanel.textureRows[currentOrdinal][currentRow].bossFrames + 1
+									local index = #raidPanel.textureRows[raidIndex][currentRow].bossFrames + 1
 
-									local bossFrameWH = raidPanel.textureRows[currentOrdinal][currentRow]:GetHeight() - 2
+									local bossFrameWH = raidPanel.textureRows[raidIndex][currentRow]:GetHeight() - 2
 									
 									local bossFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", raidPanel, bossFrameWH, bossFrameWH)
-									bossFrame:SetPoint("TOPLEFT", index == 2 and raidPanel.textureRows[currentOrdinal][currentRow].bossFrames[index-1] or raidPanel.textureRows[currentOrdinal][currentRow], index == 2 and "TOPRIGHT" or "TOPLEFT", index == 2 and 2 or 0, 0)
+									bossFrame:SetPoint("TOPLEFT", index == 2 and raidPanel.textureRows[raidIndex][currentRow].bossFrames[index-1] or raidPanel.textureRows[raidIndex][currentRow], index == 2 and "TOPRIGHT" or "TOPLEFT", index == 2 and 2 or 0, 0)
 									bossFrame:SetMouseClickEnabled(true)
 									bossFrame:SetFrameStrata("DIALOG")
 									bossFrame:SetScript("OnMouseDown", function()
@@ -801,6 +724,7 @@ local function addApplicantToPanel(applicantID)
 									end)
 		
 									local bossFrameTexture = miog.createBasicTexture("fleeting", miog.RAID_ICONS[sortedProgress.progress.raid.mapId][i], bossFrame, bossFrameWH - 2, bossFrameWH - 2)
+									bossFrameTexture:SetDrawLayer("ARTWORK")
 									bossFrameTexture:SetPoint("TOPLEFT", bossFrame, "TOPLEFT", 1, -1)
 
 									if(sortedProgress.progress.killsPerBoss) then
@@ -809,7 +733,7 @@ local function addApplicantToPanel(applicantID)
 
 										if(numberOfBossKills > 0) then
 											desaturated = false
-											miog.createFrameBorder(bossFrame, 1, difficultyData.color:GetRGBA())
+											miog.createFrameBorder(bossFrame, 1, miog.ITEM_QUALITY_COLORS[higherDifficultyNumber+1].color:GetRGBA())
 
 										elseif(numberOfBossKills == 0) then
 											desaturated = true
@@ -825,7 +749,7 @@ local function addApplicantToPanel(applicantID)
 									bossNumber:SetPoint("TOPLEFT", bossFrame, "TOPLEFT")
 									bossNumber:SetText(i)
 
-									raidPanel.textureRows[currentOrdinal][currentRow].bossFrames[index] = bossFrame
+									raidPanel.textureRows[raidIndex][currentRow].bossFrames[index] = bossFrame
 									
 								end
 
@@ -834,13 +758,17 @@ local function addApplicantToPanel(applicantID)
 
 								if(lowerDifficultyNumber ~= higherDifficultyNumber) then
 
-									difficultyData = miog.C.DIFFICULTY[lowerDifficultyNumber]
+									if(miog.F.LISTED_CATEGORY_ID == 3) then
+										if(secondaryIndicator:GetText() == nil) then
+											secondaryIndicator:SetText(basicProgressString) -- ACTUAL PROGRESS
+										end
+									end
 
 									currentLowerDifficultyFrame = miog.createBasicFontString("fleeting", miog.C.TEXT_ROW_FONT_SIZE,  raidPanel, lastColumn:GetWidth()*0.48, miog.C.APPLICANT_MEMBER_HEIGHT)
-									currentLowerDifficultyFrame:SetText(progressString)
+									currentLowerDifficultyFrame:SetText(panelProgressString)
 									currentLowerDifficultyFrame:SetPoint("TOPLEFT", currentHigherDifficultyFrame, "TOPRIGHT")
 
-									for rowNumber, textureRow in ipairs(raidPanel.textureRows[currentOrdinal]) do
+									for rowNumber, textureRow in ipairs(raidPanel.textureRows[raidIndex]) do
 										for bossIndex, bossFrame in pairs(textureRow.bossFrames) do
 											local index = bossIndex == 1 and rowNumber * 2 - 1 or bossIndex == 2 and rowNumber * 2
 											local kills = sortedProgress.progress.killsPerBoss and sortedProgress.progress.killsPerBoss[index] or 0
@@ -850,7 +778,7 @@ local function addApplicantToPanel(applicantID)
 											if(sortedProgress.progress.killsPerBoss) then
 												if(kills > 0 and bossFrame.Texture:IsDesaturated() == true) then
 													desaturated = false
-													miog.createFrameBorder(bossFrame, 1, difficultyData.color:GetRGBA())
+													miog.createFrameBorder(bossFrame, 1, miog.ITEM_QUALITY_COLORS[lowerDifficultyNumber+1].color:GetRGBA())
 													bossFrame.Texture:SetDesaturated(desaturated)
 												end
 
@@ -858,7 +786,7 @@ local function addApplicantToPanel(applicantID)
 												if(progressCount == bossCount) then
 													if(bossFrame.Texture:IsDesaturated() == true) then
 														desaturated = false
-														miog.createFrameBorder(bossFrame, 1, difficultyData.color:GetRGBA())
+														miog.createFrameBorder(bossFrame, 1, miog.ITEM_QUALITY_COLORS[lowerDifficultyNumber+1].color:GetRGBA())
 														bossFrame.Texture:SetDesaturated(desaturated)
 													end
 
@@ -873,46 +801,80 @@ local function addApplicantToPanel(applicantID)
 							lastOrdinal = currentOrdinal
 						else
 							local difficulty = miog.C.DIFFICULTY[sortedProgress.progress.difficulty]
-							mainProgressText = mainProgressText .. WrapTextInColorCode(difficulty.singleChar .. ":" .. sortedProgress.progress.progressCount .. "/" .. sortedProgress.progress.raid.bossCount, difficulty.color:GenerateHexColor()) .. " "
+							mainProgressText = mainProgressText .. wticc(difficulty.shortName .. ":" .. sortedProgress.progress.progressCount .. "/" .. sortedProgress.progress.raid.bossCount, difficulty.color) .. " "
+
+							if(miog.F.LISTED_CATEGORY_ID == 3) then
+								if(primaryIndicator:GetText() == nil) then
+									primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+								end
+
+								if(secondaryIndicator:GetText() == nil) then
+									secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+								end
+							end
 						
 						end
 
 					end
 
 					if(mainProgressText ~= "") then
-						raidPanel.rows[15].FontString:SetText(WrapTextInColorCode("Main: " .. mainProgressText, _G["ITEM_QUALITY_COLORS"][6].color:GenerateHexColor()))
+						raidPanel.rows[15].FontString:SetText(wticc("Main: " .. mainProgressText, miog.ITEM_QUALITY_COLORS[6].pureHex))
 
 					else
-						raidPanel.rows[15].FontString:SetText(WrapTextInColorCode("Main Char", _G["ITEM_QUALITY_COLORS"][7].color:GenerateHexColor()))
+						raidPanel.rows[15].FontString:SetText(wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex))
 						
 					end
 
+					if(miog.F.LISTED_CATEGORY_ID == 3) then
+						if(primaryIndicator:GetText() == nil) then
+							primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+						end
+
+						if(secondaryIndicator:GetText() == nil) then
+							secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+						end
+					end
+
 				else
-					raidPanel.rows[1].FontString:SetText(WrapTextInColorCode("NO RAIDING DATA", "FFFF0000"))
+					raidPanel.rows[1].FontString:SetText(wticc("NO RAIDING DATA", miog.CLRSCC["red"]))
 					raidPanel.rows[1].FontString:SetPoint("LEFT", raidPanel.rows[1], "LEFT", 2, 0)
+
+					if(miog.F.LISTED_CATEGORY_ID == 3) then
+						local difficulty = miog.C.DIFFICULTY[-1] -- NO DATA
+						primaryIndicator:SetText(wticc("0/0", difficulty.color))
+						secondaryIndicator:SetText(wticc("0/0", difficulty.color))
+					end
 
 				end
 				
 			else -- If RaiderIO is not installed
-				mythicPlusPanel.rows[1].FontString:SetText(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"))
+				mythicPlusPanel.rows[1].FontString:SetText(wticc("NO RAIDER.IO DATA", miog.CLRSCC["red"]))
 				mythicPlusPanel.rows[1].FontString:SetPoint("LEFT", generalInfoPanel.rows[1], "LEFT", 2, 0)
 
-				raidPanel.rows[1].FontString:SetText(WrapTextInColorCode("NO RAIDER.IO DATA", "FFFF0000"))
+				raidPanel.rows[1].FontString:SetText(wticc("NO RAIDER.IO DATA", miog.CLRSCC["red"]))
 				raidPanel.rows[1].FontString:SetPoint("LEFT", generalInfoPanel.rows[1], "LEFT", 2, 0)
+
+				local difficulty = miog.C.DIFFICULTY[-1] -- NO DATA
+
+				if(miog.F.LISTED_CATEGORY_ID == 3) then
+					primaryIndicator:SetText(wticc("0/0", difficulty.color))
+					secondaryIndicator:SetText(wticc("0/0", difficulty.color))
+
+				end
 
 			end
 
 			basicInformationPanel:MarkDirty()
+			detailedInformationPanel:MarkDirty()
 			applicantMemberFrame:MarkDirty()
-
-			debugCounterOfIndiAppli = debugCounterOfIndiAppli + 1
+			applicantFrame:MarkDirty()
 
 		end
 
 		applicantFrame:MarkDirty()
 		lastApplicantFrame = applicantFrame
-		addonApplicantList[applicantID]["frame"] = applicantFrame
-		addonApplicantList[applicantID]["creationStatus"] = "added"
+		addonApplicantList[applicantID].frame = applicantFrame
+		addonApplicantList[applicantID].creationStatus = "added"
 
 	end
 end
@@ -948,18 +910,21 @@ miog.checkApplicantList = function(needRefresh)
 				local fullName, ilvl, assignedRole, dungeonScore, primary, secondary
 				local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
 				local weightsTable
+				local nameTable
 
 				if(miog.F.IS_IN_DEBUG_MODE ==  false) then
 					fullName, _, _, _, ilvl, _, _, _, _, assignedRole, _, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
 					
+
 					if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
 						primary = dungeonScore
 						secondary = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 					elseif(miog.F.LISTED_CATEGORY_ID == 3) then
+						nameTable = miog.simpleSplit(fullName, "-")
+						
 						local profile
 						local raidData = {[1] = {true, true, true, true, true,}, [2] = {true, true, true, true, true}}
-						local nameTable = miog.simpleSplit(fullName, "-")
 
 						if(miog.F.IS_RAIDERIO_LOADED) then
 							profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
@@ -1048,15 +1013,84 @@ miog.checkApplicantList = function(needRefresh)
 
 					ilvl = applicantData.applicantMemberList[1][1]
 					assignedRole = applicantData.applicantMemberList[1][10]
+					local profile = getRioProfile(unpack(applicantData.applicantMemberList[1][17]))
 					
 					if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
+						applicantData.applicantMemberList[1][12] = profile and profile.mythicKeystoneProfile.currentScore or applicantData.applicantMemberList[1][12]
 						primary = applicantData.applicantMemberList[1][12]
+
 						secondary = applicantData.applicantMemberList[1][14].bestRunLevel
 
 					elseif(miog.F.LISTED_CATEGORY_ID == 3) then
-						local raidData = applicantData.applicantMemberList[1][15]
-						
-						weightsTable = weightsTable or miog.generateRaidWeightsTable(raidData[1].bossCount)
+						local raidData = {[1] = {true, true, true, true, true,}, [2] = {true, true, true, true, true}}
+
+		
+						if(profile) then
+							if(profile.raidProfile) then
+		
+								for i = 1, 2, 1 do
+									if(profile.raidProfile.sortedProgress[i] and not profile.raidProfile.sortedProgress[i].isMainProgress) then
+		
+										local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
+										local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
+
+										weightsTable = weightsTable or miog.generateRaidWeightsTable(bossCount)
+		
+										raidData[i] = {
+											ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
+											difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
+											progress = profile.raidProfile.sortedProgress[i].progress.progressCount or 0,
+											bossCount = bossCount,
+											parsedString = kills .. "/" .. bossCount
+										}
+		
+									else
+										raidData[i] = {
+											ordinal = 0,
+											difficulty = 0,
+											progress = 0,
+											bossCount = 0,
+											parsedString = "0/"..miog.F.MOST_BOSSES
+										}
+		
+									end
+								end
+							else
+								raidData[1] = {
+									ordinal = 0,
+									difficulty = 0,
+									progress = 0,
+									bossCount = 0,
+									parsedString = "0/"..miog.F.MOST_BOSSES
+								}
+								
+								raidData[2] = {
+									ordinal = 0,
+									difficulty = 0,
+									progress = 0,
+									bossCount = 0,
+									parsedString = "0/"..miog.F.MOST_BOSSES
+								}
+		
+							end
+						else
+							raidData[1] = {
+								ordinal = 0,
+								difficulty = 0,
+								progress = 0,
+								bossCount = 0,
+								parsedString = "0/"..miog.F.MOST_BOSSES
+							}
+							
+							raidData[2] = {
+								ordinal = 0,
+								difficulty = 0,
+								progress = 0,
+								bossCount = 0,
+								parsedString = "0/"..miog.F.MOST_BOSSES
+							}
+		
+						end
 
 						primary = raidData[1].bossCount > 0 and raidData[1].progress / raidData[1].bossCount + (raidData[1].ordinal == 1 and weightsTable[raidData[1].difficulty] or 0) or 0
 						secondary = raidData[2].bossCount > 0 and raidData[2].progress / raidData[2].bossCount + (raidData[2].ordinal == 1 and weightsTable[raidData[2].difficulty] or 0) or 0
@@ -1083,7 +1117,7 @@ miog.checkApplicantList = function(needRefresh)
 				end
 
 				if(assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS or assignedRole == "DAMAGER" and miog.F.SHOW_DPS) then
-					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {["index"] = applicantID, ["role"] = assignedRole, ["primary"] = primary, ["secondary"] = secondary, ["ilvl"] = ilvl}
+					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {index = applicantID, role = assignedRole, primary = primary, secondary = secondary, ilvl = ilvl}
 
 				end
 			end
@@ -1094,19 +1128,15 @@ miog.checkApplicantList = function(needRefresh)
 		table.sort(unsortedMainApplicantsList, sortApplicantList)
 
 		for _, listEntry in ipairs(unsortedMainApplicantsList) do
-			local applicantData = miog.F.IS_IN_DEBUG_MODE and debugLFGList[listEntry["index"]] or C_LFGList.GetApplicantInfo(listEntry["index"])
+			local applicantData = miog.F.IS_IN_DEBUG_MODE and debugLFGList[listEntry.index] or C_LFGList.GetApplicantInfo(listEntry.index)
 
-			if(applicantData.applicationStatus == "applied" and addonApplicantList[listEntry["index"]] == nil) then
-				addonApplicantList[listEntry["index"]] = {
-					["creationStatus"] = "inProgress",
-					["appStatus"] = applicantData.applicationStatus,
-					["frame"] = nil,
+			if(applicantData.applicationStatus == "applied" and addonApplicantList[listEntry.index] == nil) then
+				addonApplicantList[listEntry.index] = {
+					creationStatus = "inProgress",
+					appStatus = applicantData.applicationStatus,
+					frame = nil,
 				}
-				addApplicantToPanel(listEntry["index"])
-
-			--elseif(applicantData.applicationStatus == "applied" and addonApplicantList[listEntry["index"]] ~= nil ) then
-				
-			--elseif(applicantData.applicationStatus ~= "applied") then
+				addApplicantToPanel(listEntry.index)
 			end
 		end
 	end
@@ -1130,57 +1160,29 @@ local function createFullEntries(iterations)
 			applicantMemberList = {}
 		}
 
-		local roleTable = {
-			"TANK",
-			"HEALER",
-			"DAMAGER"
-		}
-
-		local tierTable = {
-			[1] = {0, "N/A",},
-			[2] = {1000, "Combatant I",},
-			[3] = {1200, "Combatant II",},
-			[4] = {1400, "Challenger I",},
-			[5] = {1600, "Challenger II",},
-			[6] = {1800, "Rival I",},
-			[7] = {2000, "Rival II",},
-			[8] = {2100, "Duelist",},
-			[9] = {2400, "Elite",},
-			[10] = {2700, "Legend",},
-			[11] = {3000, "Gladiator",},
-		}
-
-		local function getTestTier(rating)
-			local newRank
-
-			for _,v in ipairs(tierTable) do
-				if(rating >= v[1]) then
-					newRank = v[2]
-				end
-			end
-
-			return newRank
-		end
-
 		local name, realm = UnitFullName("player")
 
 		for memberIndex = 1, debugLFGList[applicantID].numMembers, 1 do
 			local rating = random(1, 4000)
+			rating = 0
 			local progress1, progress2 = random(1, 9), random(1, 9)
 			local diff = random(1, 3)
 			local ordinal = random(1, 2)
 
+			local rioProfile = miog.DEBUG_RAIDER_IO_PROFILES[random(1, #miog.DEBUG_RAIDER_IO_PROFILES)]
+			local classInfo = C_CreatureInfo.GetClassInfo(random(1, 13))
+
 			debugLFGList[applicantID].applicantMemberList[memberIndex] = {
-				[1] = name .. "-" .. realm,
-				[2] = UnitClassBase("player"),
-				[3] = UnitClass("player"),
+				[1] = rioProfile[1] .. "-" .. rioProfile[2],
+				[2] = classInfo.classFile, --ENG
+				[3] = classInfo.className, --GER
 				[4] = UnitLevel("player"),
-				[5] = random(400, 450) + 0.5,
+				[5] = random(0, 450) + 0.5,
 				[6] = UnitHonorLevel("player"),
 				[7] = false,
 				[8] = false,
 				[9] = true,
-				[10] = roleTable[random(#roleTable)],
+				[10] = miog.DEBUG_ROLE_TABLE[random(1, 3)],
 				[11] = true,
 				[12] = rating,
 				[13] = random(400, 450) + 0.5,
@@ -1201,7 +1203,8 @@ local function createFullEntries(iterations)
 						parsedString = progress2 .. "/9"
 					}
 				},
-				[16] = {bracket = "", rating = rating, activityName = "XD", tier = getTestTier(rating)}
+				[16] = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
+				[17] = rioProfile
 			}
 		
 		end
@@ -1419,7 +1422,7 @@ local function updateRoster()
 		local lastIcon = nil
 
 		for _, groupMember in ipairs(miog.F.CURRENT_GROUP_INFO) do
-			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.titleBar.groupMemberListing, miog.mainFrame.titleBar.factionIconSize, miog.mainFrame.titleBar.factionIconSize, "texture", groupMember.specIcon)
+			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.titleBar.groupMemberListing, miog.mainFrame.titleBar.factionIconSize, miog.mainFrame.titleBar.factionIconSize, "Texture", groupMember.specIcon)
 			classIconFrame:SetPoint("LEFT", lastIcon or miog.mainFrame.titleBar.groupMemberListing, lastIcon and "RIGHT" or "LEFT")
 			classIconFrame:SetFrameStrata("DIALOG")
 
@@ -1428,23 +1431,19 @@ local function updateRoster()
 
 		lastIcon = nil
 		
-		--[[if(miog.F.IS_IN_DEBUG_MODE) then
+		if(miog.F.IS_IN_DEBUG_MODE) then
 			for _, groupMember in ipairs(miog.F.CURRENT_GROUP_INFO) do
-				local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", WorldFrame, miog.mainFrame.titleBar.factionIconSize, miog.mainFrame.titleBar.factionIconSize, "texture", groupMember.specIcon)
+				local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", WorldFrame, miog.mainFrame.titleBar.factionIconSize, miog.mainFrame.titleBar.factionIconSize, "Texture", groupMember.specIcon)
 				classIconFrame:SetPoint("TOPLEFT", lastIcon or WorldFrame, lastIcon and "TOPRIGHT" or "TOPLEFT")
 				classIconFrame:SetFrameStrata("DIALOG")
 				miog.createFrameBorder(classIconFrame, 1)
 
 				lastIcon = classIconFrame
 			end
-		end]]
+		end
 
 		miog.mainFrame.titleBar.groupMemberListing:MarkDirty()
 	end
-end
-
-local function getPlayerSpec()
-	
 end
 
 local function requestInspectDataFromFullGroup()
@@ -1452,15 +1451,15 @@ local function requestInspectDataFromFullGroup()
 
 	local unitID, name, class, role, specID
 
-	for groupIndex = 1, inPartyOrRaid == "party" and miog.F.NUM_OF_GROUP_MEMBERS-1 or miog.F.NUM_OF_GROUP_MEMBERS, 1 do
-		unitID = inPartyOrRaid..groupIndex
-		name, class, role = UnitName(unitID), UnitClassBase(unitID), UnitGroupRolesAssigned(unitID)
+	for groupIndex = 1, miog.F.NUM_OF_GROUP_MEMBERS, 1 do
+		unitID = inPartyOrRaid..groupIndex == "party"..miog.F.NUM_OF_GROUP_MEMBERS and "player" or inPartyOrRaid..groupIndex
 		specID = GetInspectSpecialization(unitID)
+		name, class, role = UnitName(unitID), UnitClassBase(unitID), unitID == "player" and (GetSpecializationRoleByID(specID) or UnitGroupRolesAssigned("player")) or UnitGroupRolesAssigned(unitID)
 
 		if(specID == 0 or specID == nil) then
 
 			if(miog.F.INSPECT_QUEUE[UnitGUID(unitID)] == nil) then -- CHECK IF GUID ISNT IN ARRAY
-				miog.F.INSPECT_QUEUE[UnitGUID(unitID)] = {[1] = false, [2] = unitID, [3] = 0, [4] = name, [5] = class, [6] = role} -- SET GUID TO FALSE -> NO DATA AVAILABLE
+				miog.F.INSPECT_QUEUE[UnitGUID(unitID)] = {[1] = false, [2] = unitID, [3] = 0, [4] = name, [5] = class or "NONE", [6] = role or ""} -- SET GUID TO FALSE -> NO DATA AVAILABLE
 
 				if(miog.F.CURRENTLY_INSPECTING == false) then
 					miog.F.CURRENTLY_INSPECTING = true
@@ -1470,36 +1469,12 @@ local function requestInspectDataFromFullGroup()
 				end
 			end
 		else
-			miog.F.INSPECT_QUEUE[UnitGUID(unitID)] = {[1] = true, [2] = unitID, [3] = specID, [4] = name, [5] = class, [6] = role} -- SET GUID TO FALSE -> NO DATA AVAILABLE
+			miog.F.INSPECT_QUEUE[UnitGUID(unitID)] = {[1] = true, [2] = unitID, [3] = specID, [4] = name, [5] = class or "NONE", [6] = role or ""}
 			updateRoster()
 
 		end
 	end
-
-	if(inPartyOrRaid == "party" or inPartyOrRaid == "player") then -- In a raid you are part of the raid roster, in a party you are NOT part of the party roster
-		specID = GetInspectSpecialization("player")
-		name, class, role = UnitName("player"), UnitClassBase("player"), GetSpecializationRoleByID(specID) or UnitGroupRolesAssigned("player")
-
-		if(specID == 0 or specID == nil) then
-
-			if(miog.F.INSPECT_QUEUE[UnitGUID("player")] == nil) then -- CHECK IF GUID ISNT IN ARRAY
-
-				miog.F.INSPECT_QUEUE[UnitGUID("player")] = {[1] = false, [2] = "player", [3] = 0, [4] = name, [5] = class, [6] = role} -- SET GUID TO FALSE -> NO DATA AVAILABLE
-
-				if(miog.F.CURRENTLY_INSPECTING == false) then
-					miog.F.CURRENTLY_INSPECTING = true
-
-					NotifyInspect("player")
-
-				end
-
-			end
-		else
-			miog.F.INSPECT_QUEUE[UnitGUID("player")] = {[1] = true, [2] = "player", [3] = specID, [4] = name, [5] = class, [6] = role} -- SET GUID TO FALSE -> NO DATA AVAILABLE
-			updateRoster()
-
-		end
-	end
+	
 end
 
 miog.OnEvent = function(_, event, ...)
@@ -1538,7 +1513,7 @@ miog.OnEvent = function(_, event, ...)
 
 			miog.F.LISTED_CATEGORY_ID = activityInfo.categoryID
 
-			miog.mainFrame.buttonPanel.sortByCategoryButtons["secondary"]:Enable()
+			miog.mainFrame.buttonPanel.sortByCategoryButtons.secondary:Enable()
 
 			if(activityInfo.categoryID == 2) then --Dungeons
 				miog.mainFrame.infoPanel.affixFrame:Show()
@@ -1730,9 +1705,9 @@ miog.OnEvent = function(_, event, ...)
 		if(applicantData) then
 			if(applicantData.applicationStatus ~= "applied") then
 				if(addonApplicantList[...]) then
-					if(addonApplicantList[...]["frame"]) then
+					if(addonApplicantList[...].frame) then
 						local status = applicantData.applicationStatus
-						local frame = addonApplicantList[...]["frame"]
+						local frame = addonApplicantList[...].frame
 
 						if(status == "invited") then
 							changeApplicantStatus(..., frame, "INVITED", "FFFFFF00")
@@ -1750,16 +1725,16 @@ miog.OnEvent = function(_, event, ...)
 							changeApplicantStatus(..., frame, "INVITE ACCEPTED", "FF00FF00")
 				
 						elseif(status == "invitedeclined") then
-							changeApplicantStatus(..., frame, "INVITE DECLINED", "FFFF0000")
+							changeApplicantStatus(..., frame, "INVITE DECLINED", miog.CLRSCC["red"])
 				
 						elseif(status == "declined") then
-							changeApplicantStatus(..., frame, "DECLINED", "FFFF0000")
+							changeApplicantStatus(..., frame, "DECLINED", miog.CLRSCC["red"])
 
 						elseif(status == "declined_full") then
-							changeApplicantStatus(..., frame, "DECLINED", "FFFF0000")
+							changeApplicantStatus(..., frame, "DECLINED", miog.CLRSCC["red"])
 				
 						elseif(status == "declined_delisted") then
-							changeApplicantStatus(..., frame, "DECLINED", "FFFF0000")
+							changeApplicantStatus(..., frame, "DECLINED", miog.CLRSCC["red"])
 						
 						end
 					end
@@ -1767,7 +1742,7 @@ miog.OnEvent = function(_, event, ...)
 			end
 		else
 			if(addonApplicantList[...]) then
-				addonApplicantList[...]["appStatus"] = "canBeRemoved"
+				addonApplicantList[...].appStatus = "canBeRemoved"
 			end
 		end
 		
@@ -1914,12 +1889,11 @@ local function handler(msg, editBox)
 			LFGListPVEStub:Show()
 			LFGListFrame.ApplicationViewer:Show()
 
-			createFullEntries(5)
+			createFullEntries(10)
 
 			miog.mainFrame:Show()
-		else
-			--createFullEntries(3)
 		end
+
 	elseif(command == "debugoff") then
 		print("Debug mode off - Normal applicant mode")
 		miog.F.IS_IN_DEBUG_MODE = false
@@ -1930,11 +1904,14 @@ local function handler(msg, editBox)
 		print("Debug mode on - No standard applicants coming through")
 
 		local index = 1
+		local tickRate = 0.2
+		local numberOfEntries = 33
+		local testLength = (tonumber(rest) or 10) / tickRate -- in seconds
 
-		debugTimer = C_Timer.NewTicker(0.2, function(self)
+		debugTimer = C_Timer.NewTicker(tickRate, function(self)
 			local startTime = GetTimePreciseSec()
 
-			createFullEntries(33)
+			createFullEntries(numberOfEntries)
 			
 			local endTime = GetTimePreciseSec()
 
@@ -1942,7 +1919,7 @@ local function handler(msg, editBox)
 
 			index = index + 1
 
-			if(index == 60) then
+			if(index == testLength) then
 				self:Cancel()
 
 				local avg = 0
