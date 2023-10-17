@@ -117,28 +117,6 @@ miog.generateRaidWeightsTable = function(bossNumber)
 	return table
 end
 
-miog.romanNumeralsDecoder = function(number) -- https://stackoverflow.com/questions/72291577/a-better-way-on-improving-my-roman-numeral-decoder
-    local numeralMap = {I = 1, V = 5, X = 10, L = 50, C = 100, D = 500, M = 1000}
-    local currentNumber = 0
-
-    for i = 1, #number - 1 do
-        local letter = number:sub(i, i)
-        local letter_p = number:sub(i + 1, i + 1)
-
-        if (numeralMap[letter] < numeralMap[letter_p]) then
-            currentNumber = currentNumber - numeralMap[letter]
-			
-        else
-            currentNumber = currentNumber + numeralMap[letter]
-
-        end
-    end
-
-    currentNumber = currentNumber + numeralMap[number:sub(-1)]
-	
-    return currentNumber
-end
-
 ---------
 -- DEBUG
 --------- 

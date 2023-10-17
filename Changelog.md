@@ -8,17 +8,28 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 
 
+## [1.1.0] - 2023-10-17
+
+
+### Fixed
+
+- Minor code changes, more a version push since I forgot that I uploaded a 10.2.0 version 2 weeks ago and nobody got any updates of this addon, LOL
+- Kinda fixed the "keep creation info" function, still experimental though
+
+
+
 ## [1.0.9] - 2023-10-17
 
 
 ### Added
 
 - The info panel background will not be generic anymore for anything DF S2 and onwards
-All DF raids and S2/S3 dungeons will have their respective loading screen (cropped and upscale, if needed) shown as the info panel background
+All DF raids and S2/S3 dungeons will have their respective loading screen (cropped and upscaled, if needed) shown as the info panel background
 
 ### Fixed
 
 - Fixed activity title layer, font should be way brighter now
+
 
 
 ## [1.0.8] - 2023-10-17

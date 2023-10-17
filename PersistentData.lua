@@ -6,7 +6,7 @@ for _, colorElement in pairs(miog.ITEM_QUALITY_COLORS) do
 	colorElement.pureHex = string.sub(colorElement.hex, 3)
 end
 
-miog.CLRSCC = {
+miog.CLRSCC = { -- from clrs.cc
 	["navy"] = "FF001F3F",
 	["blue"] = "FF0074D9",
 	["aqua"] = "FF7FDBFF",
@@ -90,7 +90,6 @@ miog.C = {
 	STAR_TEXTURE = "⋆",
 
 }
-
 
 --CHANGING VARIABLES
 miog.F = {

@@ -46,9 +46,30 @@ end
 
 LFGListEntryCreation_SetTitleFromActivityInfo = function(_) end
 
+local function keepInfoFromGroupCreation(self)
+	--Clear selections
+	self.selectedGroup = nil;
+	self.selectedActivity = nil;
+	self.selectedFilters = nil;
+	self.selectedCategory = nil;
+	self.selectedPlaystyle = nil;
 
-local function alternativeCreationInfo(self)
+	--Reset widgets
+	--C_LFGList.ClearCreationTextFields();
+	--self.ItemLevel.CheckButton:SetChecked(false);
+	--self.ItemLevel.EditBox:SetText("");
+	--self.PvpItemLevel.CheckButton:SetChecked(false);
+	--self.PvpItemLevel.EditBox:SetText("");
+	--self.PVPRating.CheckButton:SetChecked(false);
+	--self.PVPRating.EditBox:SetText("");
+	--self.MythicPlusRating.CheckButton:SetChecked(false);
+	--self.MythicPlusRating.EditBox:SetText("");
+	--self.VoiceChat.CheckButton:SetChecked(false);
+	--self.VoiceChat.EditBox:SetText(""); --Cleared in ClearCreationTextFields
+	--self.PrivateGroup.CheckButton:SetChecked(false);
+	--self.CrossFactionGroup.CheckButton:SetChecked(false);
 
+	self.ActivityFinder:Hide();
 end
 
 local function keepSignUpNote(self, resultID)
@@ -83,7 +104,7 @@ miog.loadSettings = function()
 			value = false,
 		},
 		disableBackgroundImages = {
-			type = "checkbox", --Not optimized, too much taint
+			type = "checkbox",
 			title = "Hide the background image and some background colors (mainly for ElvUI users)",
 			value = false,
 		},
@@ -113,11 +134,8 @@ miog.loadSettings = function()
 		}
 	}
 
-	-- REFACTOR STRING TO VAR
-
 	if(not MIOG_SavedSettings) then
 		MIOG_SavedSettings = miog.defaultOptionSettings
-		--MIOG_SavedSettings = {}
 	else
 		compareSettings(miog.defaultOptionSettings, MIOG_SavedSettings)
 	end
@@ -155,7 +173,7 @@ miog.loadSettings = function()
 
 	local lastOptionButton = nil
 
-	for key, setting in pairs(sortedTable or MIOG_SavedSettings) do
+	for _, setting in pairs(sortedTable or MIOG_SavedSettings) do
 		if(setting.type == "checkbox") then
 			local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
 			optionButton:SetNormalAtlas("checkbox-minimal")
@@ -205,7 +223,7 @@ miog.loadSettings = function()
 					setting.value = not setting.value
 
 					if(setting.value == true) then
-						LFGListEntryCreation_Clear = alternativeCreationInfo
+						LFGListEntryCreation_Clear = keepInfoFromGroupCreation
 					else
 						LFGListEntryCreation_Clear = clearEntryCreation
 
@@ -272,7 +290,7 @@ miog.loadSettings = function()
 	end
 
 	if(MIOG_SavedSettings.keepInfoFromGroupCreation and MIOG_SavedSettings.keepInfoFromGroupCreation.value ==  true) then
-		LFGListEntryCreation_Clear = alternativeCreationInfo
+		LFGListEntryCreation_Clear = keepInfoFromGroupCreation
 	else
 		LFGListEntryCreation_Clear = clearEntryCreation
 	end

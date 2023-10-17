@@ -1011,7 +1011,7 @@ miog.checkApplicantList = function(needRefresh)
 
 					--1 fullName, 2 englishClassName, 3 localizedClassName, 4 level, 5 ilvl, 6 honorLevel, 7 tank, 8 healer, 9 damager, 10 assignedRole, 11 friend, 12 dungeonScore, 13 pvpIlvl, 14 dungeonData, 15 raidData, 16pvpData
 
-					ilvl = applicantData.applicantMemberList[1][1]
+					ilvl = applicantData.applicantMemberList[1][5]
 					assignedRole = applicantData.applicantMemberList[1][10]
 					local profile = getRioProfile(unpack(applicantData.applicantMemberList[1][17]))
 					
@@ -1492,6 +1492,7 @@ miog.OnEvent = function(_, event, ...)
 		C_MythicPlus.RequestCurrentAffixes()
 
 		LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.mainFrame:Show() end)
+		--LFGListFrame.ApplicationViewer = miog.mainFrame
 
 		hooksecurefunc("LFGListFrame_SetActivePanel", function(selfFrame, panel)
 			if(panel == LFGListFrame.ApplicationViewer) then
@@ -1889,7 +1890,7 @@ local function handler(msg, editBox)
 			LFGListPVEStub:Show()
 			LFGListFrame.ApplicationViewer:Show()
 
-			createFullEntries(10)
+			createFullEntries(9)
 
 			miog.mainFrame:Show()
 		end
