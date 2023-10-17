@@ -83,7 +83,6 @@ miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate", r
 miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
 miog.persistentFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
 
-miog.persistentHeaderFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameFontHighlightLarge", resetFontString)
 
 miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 

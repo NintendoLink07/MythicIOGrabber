@@ -322,48 +322,41 @@ miog.BACKGROUNDS = {
 	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_1024.png" --BASE
 }
 
+miog.GROUP_ACTIVITY_BACKGROUNDS = {
+	--CATACLYSM
+	[54] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/throneofthetides.png",
+	[59] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vortexpinnacle.png",
 
----------
--- DEBUG
---------- 
+	--WARLORDS OF DRAENOR
+	[11] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/everbloom.png",
 
+	--LEGION
+	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/darkheartthicket.png",
+	[115] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/neltharionslair.png",
+	[118] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/blackrookhold.png",
 
-miog.DEBUG_ROLE_TABLE = {
-	"TANK",
-	"HEALER",
-	"DAMAGER"
-}
+	--BATTLE FOR AZEROTH
+	[137] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/ataldazar.png",
+	[138] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/underrot.png",
+	[142] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/freehold.png",
+	[145] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/waycrestmanor.png",
 
-miog.DEBUG_TIER_TABLE = {
-	[1] = {0, "N/A",},
-	[2] = {1000, "Combatant I",},
-	[3] = {1200, "Combatant II",},
-	[4] = {1400, "Challenger I",},
-	[5] = {1600, "Challenger II",},
-	[6] = {1800, "Rival I",},
-	[7] = {2000, "Rival II",},
-	[8] = {2100, "Duelist",},
-	[9] = {2400, "Elite",},
-	[10] = {2700, "Legend",},
-	[11] = {3000, "Gladiator",},
-}
+	--DRAGONFLIGHT
+	[302] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/algetharacademy.png",
+	[303] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/brackenhidehollow.png",
+	[304] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/hallsofinfusion.png",
+	[305] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/neltharus.png",
+	[306] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/rubylifepools.png",
+	[307] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/azurevault.png",
+	[308] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/nokhudoffensive.png",
+	[309] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/uldamanlegacyoftyr.png",
+	[315] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png",
+	[316] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png",
+	[317] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png",
 
-miog.DEBUG_RAIDER_IO_PROFILES = {
-	[1] = {"Holyypits", "TwistingNether", "eu"},
-	[2] = {"Sicatrice", "Hyjal", "eu"},
-	[3] = {"Bloo", "Drak'thul", "eu"},
-	[4] = {"Razarok", "Draenor", "eu"},
-	[5] = {"Facerollmon", "Draenor", "eu"},
-	[6] = {"Amrul", "Hyjal", "eu"},
-	[7] = {"Gripples", "Blackhand", "eu"},
-	[8] = {"Lineal", "Ysondre", "eu"},
-	[9] = {"Trioshaman", "Blackmoore", "eu"},
-	[10] = {"Tuctuc", "Dalaran", "eu"},
-	[11] = {"Panomanixme", "Suramar", "eu"},
-	[12] = {"Dreana", "Ghostlands", "eu"},
-	[13] = {"Drjay", "Ragnaros", "eu"},
-	[14] = {"Rhany", "Ravencrest", "eu"},
-	[15] = {"Пофанудру", "Ревущийфьорд", "eu"},
+	[310] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vaultoftheincarnates.png",
+	[313] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/aberrus.png",
+	[319] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/amirdrassil.png",
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms
@@ -1403,4 +1396,47 @@ miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms
 	["黑锋哨站"] = "ebon-watch",
 	["黑龙军团"] = "black-dragonflight",
 	["龙骨平原"] = "dragonblight",
+}
+
+---------
+-- DEBUG
+--------- 
+
+
+miog.DEBUG_ROLE_TABLE = {
+	"TANK",
+	"HEALER",
+	"DAMAGER"
+}
+
+miog.DEBUG_TIER_TABLE = {
+	[1] = {0, "N/A",},
+	[2] = {1000, "Combatant I",},
+	[3] = {1200, "Combatant II",},
+	[4] = {1400, "Challenger I",},
+	[5] = {1600, "Challenger II",},
+	[6] = {1800, "Rival I",},
+	[7] = {2000, "Rival II",},
+	[8] = {2100, "Duelist",},
+	[9] = {2400, "Elite",},
+	[10] = {2700, "Legend",},
+	[11] = {3000, "Gladiator",},
+}
+
+miog.DEBUG_RAIDER_IO_PROFILES = {
+	[1] = {"Holyypits", "TwistingNether", "eu"},
+	[2] = {"Sicatrice", "Hyjal", "eu"},
+	[3] = {"Bloo", "Drak'thul", "eu"},
+	[4] = {"Razarok", "Draenor", "eu"},
+	[5] = {"Facerollmon", "Draenor", "eu"},
+	[6] = {"Amrul", "Hyjal", "eu"},
+	[7] = {"Gripples", "Blackhand", "eu"},
+	[8] = {"Lineal", "Ysondre", "eu"},
+	[9] = {"Trioshaman", "Blackmoore", "eu"},
+	[10] = {"Tuctuc", "Dalaran", "eu"},
+	[11] = {"Panomanixme", "Suramar", "eu"},
+	[12] = {"Dreana", "Ghostlands", "eu"},
+	[13] = {"Drjay", "Ragnaros", "eu"},
+	[14] = {"Rhany", "Ravencrest", "eu"},
+	[15] = {"Пофанудру", "Ревущийфьорд", "eu"},
 }

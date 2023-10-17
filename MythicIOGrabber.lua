@@ -1517,49 +1517,49 @@ miog.OnEvent = function(_, event, ...)
 
 			if(activityInfo.categoryID == 2) then --Dungeons
 				miog.mainFrame.infoPanel.affixFrame:Show()
-				miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[11]
+				miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[11]
 					
 				miog.F.CURRENT_DIFFICULTY = miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DIFFICULTY
 
 			else
 				if(activityInfo.categoryID == 1) then --Questing
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[13]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[13]
 
 				elseif(activityInfo.categoryID == 3) then --Raids
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[2]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[2]
 					
 					miog.F.CURRENT_DIFFICULTY = miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DIFFICULTY
 
 				elseif(activityInfo.categoryID == 4) then --Arenas
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[4]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[4]
 
 				elseif(activityInfo.categoryID == 5) then --Scenario
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[17]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[17]
 
 				elseif(activityInfo.categoryID == 6) then --Custom
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[12]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[12]
 
 				elseif(activityInfo.categoryID == 7) then --Skirmishes
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[6]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[6]
 
 				elseif(activityInfo.categoryID == 8) then --Battlegrounds
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[5]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[5]
 
 				elseif(activityInfo.categoryID == 9) then --Rated Battlegrounds
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[14]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[14]
 
 				elseif(activityInfo.categoryID == 111) then --Island Expeditions
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[1]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[1]
 
 				elseif(activityInfo.categoryID == 113) then --Torghast ... LOL
-					miog.mainFrame.infoPanel.backdropInfo.bgFile = miog.BACKGROUNDS[15]
+					miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[15]
 					
 				end
 
 				miog.mainFrame.infoPanel.affixFrame:Hide()
 			end
 
-			miog.mainFrame.infoPanel:ApplyBackdrop()
+			miog.mainFrame.infoPanelBackdropFrame:ApplyBackdrop()
 
 			miog.mainFrame.titleBar.titleStringFrame.FontString:SetText(activeEntryInfo.name)
 			miog.mainFrame.infoPanel.activityNameFrame:SetText(activityInfo.fullName)

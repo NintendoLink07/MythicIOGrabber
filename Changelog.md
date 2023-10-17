@@ -8,13 +8,26 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 
 
+## [1.0.9] - 2023-10-17
+
+
+### Added
+
+- The info panel background will not be generic anymore for anything DF S2 and onwards
+All DF raids and S2/S3 dungeons will have their respective loading screen (cropped and upscale, if needed) shown as the info panel background
+
+### Fixed
+
+- Fixed activity title layer, font should be way brighter now
+
+
 ## [1.0.8] - 2023-10-17
 
 Yes, the weird errors currently popping up with this (and many other) addons are not my fault
 More infos: https://github.com/Stanzilla/WoWUIBugs/issues/483
 
 
-## Added
+### Added
 
 - Both PVP rating sorting and raid progress sorting is now implemented!
 PVP rating functions basically the same like M+ rating.
@@ -27,7 +40,7 @@ If they're the same difficulty it compares the progress itself.
 - More color coding for raid progress. In addition to Mythic, Heroic and Normal there are now Last tier and No tier.
 - Right click on the sort buttons now resets them to their off state
 
-## Fixed
+### Fixed
 
 - Listing of group members in the title bar is now fixed, forgot to change the cap of party members back to 5
 - New logic for displaying the raid data, should be much more acurate now.
@@ -35,7 +48,7 @@ If they're the same difficulty it compares the progress itself.
 - Multiple layering issues fixed
 
 
-## Changed
+### Changed
 
 - Improved the logic and code flow, which leads to increased performance
 Before (more prominent on slower computer) you'd get a longer freeze after a reload when you had a big applicant list, time to compute the list was cut down by approximately 50-55%.
@@ -266,7 +279,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.0.8...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.0.9...HEAD
+[1.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.9
 [1.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.8
 [1.0.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.0a
 [0.9.3b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/0.9.3b

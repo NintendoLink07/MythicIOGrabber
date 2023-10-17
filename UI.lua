@@ -72,6 +72,7 @@ miog.createMainFrame = function()
 	_G[mainFrame:GetName()] = mainFrame
 
 	local backdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, nil, "Texture", miog.BACKGROUNDS[18])
+	backdropFrame:SetFrameStrata("HIGH")
 	backdropFrame:SetPoint("TOPLEFT", mainFrame, "TOPLEFT")
 	backdropFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT")
 
@@ -166,7 +167,13 @@ miog.createMainFrame = function()
 	infoPanel:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 1)
 	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", 0, 1)
 
-	infoPanel.backdropInfo = {
+	mainFrame.infoPanel = infoPanel
+
+	local infoPanelBackdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, nil, nil)
+	infoPanelBackdropFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT")
+	infoPanelBackdropFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT")
+	infoPanelBackdropFrame:SetFrameStrata("HIGH", 0)
+	infoPanelBackdropFrame.backdropInfo = {
 		bgFile=miog.BACKGROUNDS[16],
 		tileSize=miog.C.APPLICANT_MEMBER_HEIGHT,
 		tile=false,
@@ -174,17 +181,18 @@ miog.createMainFrame = function()
 		insets={left=1, right=1}
 	}
 
-	infoPanel:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	infoPanel:ApplyBackdrop()
+	infoPanelBackdropFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	infoPanelBackdropFrame:ApplyBackdrop()
 
-	mainFrame.infoPanel = infoPanel
+	mainFrame.infoPanelBackdropFrame = infoPanelBackdropFrame
 
 	local infoPanelDarkenFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel)
 	infoPanelDarkenFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT", 0, 0)
 	infoPanelDarkenFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT", 0, 0)
-	infoPanelDarkenFrame:SetFrameStrata("DIALOG")
+	infoPanelDarkenFrame:SetFrameStrata("HIGH", 1)
 	infoPanelDarkenFrame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false, edgeSize=1} )
-	infoPanelDarkenFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.3)
+	infoPanelDarkenFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.4)
+	--infoPanelDarkenFrame:Hide()
 
 	local activityNameFontString = infoPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
 	activityNameFontString:SetFont(miog.FONTS["libMono"], miog.C.ACTIVITY_NAME_FONT_SIZE, "OUTLINE")
@@ -365,8 +373,6 @@ miog.createMainFrame = function()
 	infoPanel.timerFrame = timerFrame
 	miog.createFrameBorder(timerFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	--DevTools_Dump(miog.ITEM_QUALITY_COLORS)
-
 	listingSettingPanel:MarkDirty()
 
 	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT)
@@ -488,7 +494,7 @@ miog.createMainFrame = function()
 
 		sortByCategoryButton:SetScript("OnClick", function(_, button)
 			local activeState = sortByCategoryButton:GetActiveState()
-			
+
 			if(button == "LeftButton") then
 
 				if(activeState == 0 and miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2) then
