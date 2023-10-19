@@ -655,10 +655,10 @@ miog.createMainFrame = function()
 	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, -1)
 	mainFrame.applicantPanel = applicantPanel
 
-	local applicantPanelContainer = miog.createBasicFrame("persistent", "ResizeLayoutFrame, BackdropTemplate", applicantPanel)
-	applicantPanelContainer.fixedWidth = applicantPanel:GetWidth()
+	local applicantPanelContainer = miog.createBasicFrame("persistent", "BackdropTemplate", applicantPanel)
+	applicantPanelContainer:SetSize(applicantPanel:GetWidth(), 1)
 	applicantPanelContainer:SetPoint("TOPLEFT", applicantPanel, "TOPLEFT")
-	applicantPanelContainer:MarkDirty()
+	--applicantPanelContainer:MarkDirty()
 	applicantPanel.container = applicantPanelContainer
 
 	applicantPanel:SetScrollChild(applicantPanelContainer)

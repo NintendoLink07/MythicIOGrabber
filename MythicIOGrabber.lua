@@ -36,7 +36,7 @@ local function refreshFunction()
 	miog.mainFrame.buttonPanel.RoleTextures[2].text:SetText(miog.F.APPLIED_NUM_OF_HEALERS)
 	miog.mainFrame.buttonPanel.RoleTextures[3].text:SetText(miog.F.APPLIED_NUM_OF_DPS)
 
-	miog.mainFrame.applicantPanel.container:MarkDirty()
+	--miog.mainFrame.applicantPanel.container:MarkDirty()
 
 end
 
@@ -108,19 +108,13 @@ local function sortApplicantList(applicant1, applicant2)
 
 	end
 	
-	return applicant1.index > applicant2.index
+	return applicant1.index < applicant2.index
 
 end
 
 local function addApplicantToPanel(applicantID)
 
-	local applicantData
-
-	if(miog.F.IS_IN_DEBUG_MODE) then
-		applicantData = debugLFGList[applicantID]
-	else
-		applicantData = C_LFGList.GetApplicantInfo(applicantID)
-	end
+	local applicantData = debugLFGList[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
 
 	if(applicantData) then
 		local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
@@ -146,7 +140,7 @@ local function addApplicantToPanel(applicantID)
 			local dungeonData, pvpData, rioProfile
 			
 			if(miog.F.IS_IN_DEBUG_MODE) then
-				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, dungeonData, _, pvpData, rioProfile = unpack(applicantData.applicantMemberList[applicantIndex])
+				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, dungeonData, _, pvpData, rioProfile = unpack(debugLFGList[applicantID].applicantMemberList[applicantIndex])
 
 			else
 				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _ = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -371,7 +365,6 @@ local function addApplicantToPanel(applicantID)
 				declineButton:SetScript("OnClick", function()
 					if(addonApplicantList[applicantID].creationStatus == "added") then
 						addonApplicantList[applicantID].creationStatus = "canBeRemoved"
-						addonApplicantList[applicantID].appStatus = "declined"
 						C_LFGList.DeclineApplicant(applicantID)
 
 					elseif(addonApplicantList[applicantID].creationStatus == "canBeRemoved") then
@@ -379,7 +372,7 @@ local function addApplicantToPanel(applicantID)
 
 					end
 
-					miog.mainFrame.applicantPanel.container:MarkDirty()
+					--miog.mainFrame.applicantPanel.container:MarkDirty()
 				end)
 				applicantMemberFrame.basicInformationPanel.declineButton = declineButton
 
@@ -894,6 +887,7 @@ local function addApplicantToPanel(applicantID)
 		addonApplicantList[applicantID].creationStatus = "added"
 
 	end
+
 end
 
 miog.checkApplicantList = function(needRefresh)
@@ -910,251 +904,185 @@ miog.checkApplicantList = function(needRefresh)
 
 		local applicantData = miog.F.IS_IN_DEBUG_MODE and debugLFGList[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
 
-		if(applicantData) then
-			local hasAllApplicantData = true
+		if(applicantData and applicantData.displayOrderID > 0) then
 
-			if(not miog.F.IS_IN_DEBUG_MODE) then
-				for i = 1, applicantData.numMembers, 1 do
-					if(C_LFGList.GetApplicantMemberInfo(applicantID, i) == nil) then
-						hasAllApplicantData = false
-						break
+				local fullName, ilvl, assignedRole, dungeonScore, primarySort, secondarySort
+				local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
+				local profile
+
+				fullName, _, _, _, ilvl, _, _, _, _, assignedRole, _, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
+
+				if(miog.F.IS_RAIDERIO_LOADED) then
+					if(not miog.F.IS_IN_DEBUG_MODE) then
+						local nameTable = miog.simpleSplit(fullName, "-")
+						profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
+
+					else
+						ilvl = debugLFGList[applicantID].applicantMemberList[1][5]
+						assignedRole = debugLFGList[applicantID].applicantMemberList[1][10]
+						profile = getRioProfile(unpack(debugLFGList[applicantID].applicantMemberList[1][17]))
+						debugLFGList[applicantID].applicantMemberList[1][12] = profile and profile.mythicKeystoneProfile.currentScore or debugLFGList[applicantID].applicantMemberList[1][12]
+
 					end
 				end
-			end
 
-			if(hasAllApplicantData) then
+				if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
+					if(not miog.F.IS_IN_DEBUG_MODE) then
+						primarySort = dungeonScore
+						secondarySort = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
-				local fullName, ilvl, assignedRole, dungeonScore, primary, secondary
-				local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
-				local weightsTable
-				local nameTable
+					else
+						primarySort = debugLFGList[applicantID].applicantMemberList[1][12]
+						secondarySort = debugLFGList[applicantID].applicantMemberList[1][14].bestRunLevel
 
-				if(miog.F.IS_IN_DEBUG_MODE ==  false) then
-					fullName, _, _, _, ilvl, _, _, _, _, assignedRole, _, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
-					
+					end
 
-					if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
-						primary = dungeonScore
-						secondary = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
+				elseif(miog.F.LISTED_CATEGORY_ID == 3) then
+					local raidData = {}
+					local weightsTable
 
-					elseif(miog.F.LISTED_CATEGORY_ID == 3) then
-						nameTable = miog.simpleSplit(fullName, "-")
-						
-						local profile
-						local raidData = {[1] = {true, true, true, true, true,}, [2] = {true, true, true, true, true}}
+					if(profile) then
+						if(profile.raidProfile) then
+							local lastDifficulty = nil
+							local lastOrdinal = nil
 
-						if(miog.F.IS_RAIDERIO_LOADED) then
-							profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
-						end
-		
-						if(profile) then
-							if(profile.raidProfile) then
-		
-								for i = 1, 2, 1 do
-									if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal == 1 and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-		
+							for i = 1, #profile.raidProfile.sortedProgress, 1 do
+								if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
+									if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
 										local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
 										local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
 
-										weightsTable = weightsTable or miog.generateRaidWeightsTable(bossCount)
-		
-										raidData[i] = {
+										weightsTable = miog.generateRaidWeightsTable(bossCount)
+
+										raidData[#raidData+1] = {
 											ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
 											difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-											progress = profile.raidProfile.sortedProgress[i].progress.progressCount or 0,
+											progress = kills,
 											bossCount = bossCount,
 											parsedString = kills .. "/" .. bossCount
 										}
-		
-									else
-										raidData[i] = {
-											ordinal = 0,
-											difficulty = 0,
-											progress = 0,
-											bossCount = 0,
-											parsedString = "0/"..miog.F.MOST_BOSSES
-										}
-		
+
+										if(#raidData == 2) then
+											break
+										end
 									end
+
+									lastOrdinal = raidData[i] and raidData[i].ordinal
+									lastDifficulty = raidData[i] and raidData[i].difficulty
+
+								else
 								end
-							else
-								raidData[1] = {
-									ordinal = 0,
-									difficulty = 0,
-									progress = 0,
-									bossCount = 0,
-									parsedString = "0/"..miog.F.MOST_BOSSES
-								}
-								
-								raidData[2] = {
-									ordinal = 0,
-									difficulty = 0,
-									progress = 0,
-									bossCount = 0,
-									parsedString = "0/"..miog.F.MOST_BOSSES
-								}
-		
 							end
 						else
 							raidData[1] = {
 								ordinal = 0,
-								difficulty = 0,
+								difficulty = -1,
 								progress = 0,
 								bossCount = 0,
-								parsedString = "0/"..miog.F.MOST_BOSSES
+								parsedString = "0/0"
 							}
 							
 							raidData[2] = {
 								ordinal = 0,
-								difficulty = 0,
+								difficulty = -1,
 								progress = 0,
 								bossCount = 0,
-								parsedString = "0/"..miog.F.MOST_BOSSES
+								parsedString = "0/0"
 							}
-		
+
+
 						end
+					else
+						raidData[1] = {
+							ordinal = 0,
+							difficulty = -1,
+							progress = 0,
+							bossCount = 0,
+							parsedString = "0/0"
+						}
+						
+						raidData[2] = {
+							ordinal = 0,
+							difficulty = -1,
+							progress = 0,
+							bossCount = 0,
+							parsedString = "0/0"
+						}
 
-						primary = raidData[1].bossCount > 0 and raidData[1].progress / raidData[1].bossCount + (raidData[1].ordinal == 1 and weightsTable[raidData[1].difficulty] or 0) or 0
-						secondary = raidData[2].bossCount > 0 and raidData[2].progress / raidData[2].bossCount + (raidData[2].ordinal == 1 and weightsTable[raidData[2].difficulty] or 0) or 0
+					end
 
-					elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
+					for i = 1, 2, 1 do
+						if(not raidData[i]) then
+							raidData[i] = {
+								ordinal = 0,
+								difficulty = -1,
+								progress = 0,
+								bossCount = 0,
+								parsedString = "0/0"
+							}
+						end
+					end
+
+					primarySort = raidData[1].bossCount > 0 and raidData[1].progress / raidData[1].bossCount + (raidData[1].ordinal == 1 and weightsTable[raidData[1].difficulty] or 0) or 0
+					secondarySort = raidData[2].bossCount > 0 and raidData[2].progress / raidData[2].bossCount + (raidData[2].ordinal == 1 and weightsTable[raidData[2].difficulty] or 0) or 0
+				
+				elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
+					if(not miog.F.IS_IN_DEBUG_MODE) then
 						local pvpInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activityID)
 
-						primary = pvpInfo.rating
-						secondary = pvpInfo.rating
-					end
+						primarySort = pvpInfo.rating
+						secondarySort = pvpInfo.rating
 
-				else
-
-					--1 fullName, 2 englishClassName, 3 localizedClassName, 4 level, 5 ilvl, 6 honorLevel, 7 tank, 8 healer, 9 damager, 10 assignedRole, 11 friend, 12 dungeonScore, 13 pvpIlvl, 14 dungeonData, 15 raidData, 16pvpData
-
-					ilvl = applicantData.applicantMemberList[1][5]
-					assignedRole = applicantData.applicantMemberList[1][10]
-					local profile = getRioProfile(unpack(applicantData.applicantMemberList[1][17]))
-					
-					if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
-						applicantData.applicantMemberList[1][12] = profile and profile.mythicKeystoneProfile.currentScore or applicantData.applicantMemberList[1][12]
-						primary = applicantData.applicantMemberList[1][12]
-
-						secondary = applicantData.applicantMemberList[1][14].bestRunLevel
-
-					elseif(miog.F.LISTED_CATEGORY_ID == 3) then
-						local raidData = {[1] = {true, true, true, true, true,}, [2] = {true, true, true, true, true}}
-
-		
-						if(profile) then
-							if(profile.raidProfile) then
-		
-								for i = 1, 2, 1 do
-									if(profile.raidProfile.sortedProgress[i] and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-		
-										local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-										local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
-
-										weightsTable = weightsTable or miog.generateRaidWeightsTable(bossCount)
-		
-										raidData[i] = {
-											ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-											difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-											progress = profile.raidProfile.sortedProgress[i].progress.progressCount or 0,
-											bossCount = bossCount,
-											parsedString = kills .. "/" .. bossCount
-										}
-		
-									else
-										raidData[i] = {
-											ordinal = 0,
-											difficulty = 0,
-											progress = 0,
-											bossCount = 0,
-											parsedString = "0/"..miog.F.MOST_BOSSES
-										}
-		
-									end
-								end
-							else
-								raidData[1] = {
-									ordinal = 0,
-									difficulty = 0,
-									progress = 0,
-									bossCount = 0,
-									parsedString = "0/"..miog.F.MOST_BOSSES
-								}
-								
-								raidData[2] = {
-									ordinal = 0,
-									difficulty = 0,
-									progress = 0,
-									bossCount = 0,
-									parsedString = "0/"..miog.F.MOST_BOSSES
-								}
-		
-							end
-						else
-							raidData[1] = {
-								ordinal = 0,
-								difficulty = 0,
-								progress = 0,
-								bossCount = 0,
-								parsedString = "0/"..miog.F.MOST_BOSSES
-							}
-							
-							raidData[2] = {
-								ordinal = 0,
-								difficulty = 0,
-								progress = 0,
-								bossCount = 0,
-								parsedString = "0/"..miog.F.MOST_BOSSES
-							}
-		
-						end
-
-						primary = raidData[1].bossCount > 0 and raidData[1].progress / raidData[1].bossCount + (raidData[1].ordinal == 1 and weightsTable[raidData[1].difficulty] or 0) or 0
-						secondary = raidData[2].bossCount > 0 and raidData[2].progress / raidData[2].bossCount + (raidData[2].ordinal == 1 and weightsTable[raidData[2].difficulty] or 0) or 0
-
-					elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
-						primary = applicantData.applicantMemberList[1][16].rating
-						secondary = applicantData.applicantMemberList[1][16].rating
+					else
+						primarySort = debugLFGList[applicantID].applicantMemberList[1][16].rating
+						secondarySort = debugLFGList[applicantID].applicantMemberList[1][16].rating
 
 					end
+
 				end
 
 				if(assignedRole == "TANK") then
 					miog.F.APPLIED_NUM_OF_TANKS = miog.F.APPLIED_NUM_OF_TANKS + 1
-					miog.mainFrame.buttonPanel.RoleTextures[1].text:SetText(miog.F.APPLIED_NUM_OF_TANKS)
 
 				elseif(assignedRole == "HEALER") then
 					miog.F.APPLIED_NUM_OF_HEALERS = miog.F.APPLIED_NUM_OF_HEALERS + 1
-					miog.mainFrame.buttonPanel.RoleTextures[2].text:SetText(miog.F.APPLIED_NUM_OF_HEALERS)
 
 				elseif(assignedRole == "DAMAGER") then
 					miog.F.APPLIED_NUM_OF_DPS = miog.F.APPLIED_NUM_OF_DPS + 1
-					miog.mainFrame.buttonPanel.RoleTextures[3].text:SetText(miog.F.APPLIED_NUM_OF_DPS)
-	
+
 				end
 
 				if(assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS or assignedRole == "DAMAGER" and miog.F.SHOW_DPS) then
-					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {index = applicantID, role = assignedRole, primary = primary, secondary = secondary, ilvl = ilvl}
+					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {
+						index = applicantID,
+						role = assignedRole,
+						primary = primarySort,
+						secondary = secondarySort,
+						ilvl = ilvl
+					}
 
 				end
-			end
+			--end
 		end
 	end
+
+	miog.mainFrame.buttonPanel.RoleTextures[1].text:SetText(miog.F.APPLIED_NUM_OF_TANKS)
+	miog.mainFrame.buttonPanel.RoleTextures[2].text:SetText(miog.F.APPLIED_NUM_OF_HEALERS)
+	miog.mainFrame.buttonPanel.RoleTextures[3].text:SetText(miog.F.APPLIED_NUM_OF_DPS)
 
 	if(unsortedMainApplicantsList[1]) then
 		table.sort(unsortedMainApplicantsList, sortApplicantList)
 
 		for _, listEntry in ipairs(unsortedMainApplicantsList) do
-			local applicantData = miog.F.IS_IN_DEBUG_MODE and debugLFGList[listEntry.index] or C_LFGList.GetApplicantInfo(listEntry.index)
-
-			if(applicantData.applicationStatus == "applied" and addonApplicantList[listEntry.index] == nil) then
+			if(addonApplicantList[listEntry.index] == nil) then
 				addonApplicantList[listEntry.index] = {
 					creationStatus = "inProgress",
-					appStatus = applicantData.applicationStatus,
 					frame = nil,
 				}
+
 				addApplicantToPanel(listEntry.index)
 			end
+
 		end
 	end
 end
@@ -1722,14 +1650,13 @@ miog.OnEvent = function(_, event, ...)
 
 		if(applicantData) then
 			if(applicantData.applicationStatus ~= "applied") then
-				if(addonApplicantList[...]) then
+				if(addonApplicantList[...] and addonApplicantList[...].creationStatus == "added") then
 					updateApplicantStatus(..., applicantData.applicationStatus)
 					
 				end
-			end
-		else
-			if(addonApplicantList[...]) then
-				addonApplicantList[...].appStatus = "canBeRemoved"
+			elseif(applicantData.applicationStatus == "applied" and applicantData.displayOrderID > 0) then
+				miog.checkApplicantList(false)
+
 			end
 		end
 
@@ -1737,15 +1664,12 @@ miog.OnEvent = function(_, event, ...)
 
 		local newEntry, withData = ...
 
-		local allowedToInvite = C_PartyInfo.CanInvite()
-
 		if(newEntry == true and withData == false) then --NEW APPLICANT WITHOUT DATA
 
 		elseif(newEntry == true and withData == true) then --NEW APPLICANT WITH DATA
-			miog.checkApplicantList(false)
 
 		elseif(newEntry == false and withData == false) then --DECLINED APPLICANT
-			miog.checkApplicantList(allowedToInvite)
+			miog.checkApplicantList(true)
 
 		elseif(not newEntry and not withData) then --REFRESH APP LIST
 			miog.checkApplicantList(true)
