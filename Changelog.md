@@ -13,9 +13,8 @@ and this project adheres to [Semantic Versioning].
 
 ### Changed
 
-- Small logic rewrite, takes 45% less time to compute the applicant list, from 0.32ms for 33 applicants to 0.17ms for 33 applicants
+- Small logic rewrite, takes less time to compute the applicant list, from 0.32ms for 33 applicants to 0.18ms for 33 applicants
 Really only relevant when /reloading or entering an instance, depending on the size of the applicant list it could take a good 2-3 secs to compute everything
-
 
 
 ## [1.1.0] - 2023-10-17

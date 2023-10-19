@@ -314,24 +314,24 @@ miog.PLAYSTYLE_STRINGS = {
 }
 
 miog.BACKGROUNDS = {
-	[1] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
-	[2] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/2ndGOAT_1024.png", --RAID
-	--[3] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/antorus_1024.png",
+	[1] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool3_1024.png", --QUESTING
+	[2] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool1_1024.png", --DUNGEONS
+	[3] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/2ndGOAT_1024.png", --RAID
 	[4] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena1_1024.png", --ARENA
-	[5] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena2_1024.png", --BATTLEGROUNDS
-	[6] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena3_1024.png", --SKIRMISH
-	--[7] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/daddyD_1024.png",
-	--[8] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/itsOK_1024.png",
-	--[9] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/riseMountains_1024.png", 
+	[5] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/wetSandLand_1024.png", --SCENARIO
+	[6] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool2_1024.png", --CUSTOM GROUPS
+	[7] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena3_1024.png", --SKIRMISH
+	[8] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena2_1024.png", --BATTLEGROUNDS
+	[9] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/swords_1024.png", --RBG'S
 	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
-	[11] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool1_1024.png", --DUNGEONS
-	[12] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool2_1024.png", --CUSTOM GROUPS
-	[13] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool3_1024.png", --QUESTING
-	[14] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/swords_1024.png", --RBG'S
-	[15] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
-	--[16] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vanilla_1024.png",
-	[17] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/wetSandLand_1024.png", --SCENARIO
-	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_1024.png" --BASE
+	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_1024.png", --BASE
+	[111] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
+	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
+	--[101] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/antorus_1024.png",
+	--[102] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/daddyD_1024.png",
+	--[103] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/itsOK_1024.png",
+	--[104] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/riseMountains_1024.png", 
+	--[105] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vanilla_1024.png",
 }
 
 miog.GROUP_ACTIVITY_BACKGROUNDS = {

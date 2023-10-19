@@ -98,19 +98,9 @@ end
 
 miog.loadSettings = function()
     miog.defaultOptionSettings = {
-		showActualSpecIcons = {
-			type = "hiddenSetting", --Not optimized, too much taint
-			title = "Find a group: Show actual spec icons in the queue simulator.\n|cFFFF0000(When turned off a /reload will occur.)|r",
-			value = false,
-		},
 		disableBackgroundImages = {
 			type = "checkbox",
 			title = "Hide the background image and some background colors (mainly for ElvUI users)",
-			value = false,
-		},
-		fillUpEmptySpaces = {
-			type = "hiddenSetting", --Not optimized, too much taint
-			title = "Find a group: When showing the spec icons - fill up empty spaces in the listed group, so it will always be correctly order: 1 Tank, 1 Heal, 3 DPS.\n|cFFFF0000(When turned off a /reload will occur.)|r",
 			value = false,
 		},
 		frameExtended = {
@@ -184,27 +174,7 @@ miog.loadSettings = function()
 			optionButton:RegisterForClicks("LeftButtonDown")
 			optionButton:SetChecked(setting.value)
 
-			if(setting.key == "showActualSpecIcons") then
-
-				optionButton:SetScript("OnClick", function()
-					setting.value = not setting.value
-
-					if(setting.value == false) then
-						C_UI.Reload()
-					end
-				end)
-
-			elseif(setting.key == "fillUpEmptySpaces") then
-
-				optionButton:SetScript("OnClick", function()
-					setting.value = not setting.value
-
-					if(setting.value == false) then
-						C_UI.Reload()
-					end
-				end)
-
-			elseif(setting.key == "keepSignUpNote") then
+			if(setting.key == "keepSignUpNote") then
 
 				optionButton:SetScript("OnClick", function()
 					setting.value = not setting.value

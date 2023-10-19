@@ -3,7 +3,6 @@ local addonName, miog = ...
 local function resetFrame(_, childFrame)
     childFrame:Hide()
 	childFrame:SetFrameStrata("LOW")
-	childFrame:SetParent()
 
 	childFrame.fixedHeight = nil
 	childFrame.fixedWidth = nil
@@ -52,6 +51,7 @@ local function resetFrame(_, childFrame)
 	end
 	
 	childFrame:ClearAllPoints()
+	childFrame:SetParent()
 end
 
 local function resetFontString(_, childFontString)
@@ -60,9 +60,10 @@ local function resetFontString(_, childFontString)
 	childFontString:SetText("")
 	childFontString:SetJustifyH("LEFT")
 	childFontString:SetJustifyV("MIDDLE")
-	childFontString:ClearAllPoints()
 	childFontString:SetWordWrap(false)
 	childFontString:SetSpacing(0)
+	childFontString:ClearAllPoints()
+	childFontString:SetParent()
 end
 
 local function resetTexture(_, childTexture)
@@ -72,6 +73,7 @@ local function resetTexture(_, childTexture)
 	childTexture:SetTexCoord(0, 1, 0, 1)
 	childTexture:SetDesaturated(false)
 	childTexture:ClearAllPoints()
+	childTexture:SetParent()
 end
 
 miog.persistentFramePool = CreateFramePoolCollection()
