@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 
 
+## [1.1.1] - 2023-10-19
+
+
+### Changed
+
+- Small logic rewrite, takes 45% less time to compute the applicant list, from 0.32ms for 33 applicants to 0.17ms for 33 applicants
+Really only relevant when /reloading or entering an instance, depending on the size of the applicant list it could take a good 2-3 secs to compute everything
+
+
+
 ## [1.1.0] - 2023-10-17
 
 
@@ -290,7 +300,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.1
 [1.1.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.0
 [1.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.9
 [1.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.8
