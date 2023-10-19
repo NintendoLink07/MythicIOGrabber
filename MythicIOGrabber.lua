@@ -57,6 +57,23 @@ local function changeApplicantStatus(applicantID, frame, string, color)
 	end
 end
 
+local function updateApplicantStatus(applicantID, applicantStatus)
+	local currentApplicant = addonApplicantList[applicantID]
+	if(currentApplicant.frame) then
+		if(currentApplicant.frame.inviteButton) then
+			currentApplicant.frame.inviteButton:Disable()
+		end
+
+		for _, memberFrame in pairs(currentApplicant.frame.memberFrames) do
+			memberFrame.statusFrame:Show()
+			memberFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[applicantStatus].statusString, miog.APPLICANT_STATUS_INFO[applicantStatus].color))
+
+		end
+
+		currentApplicant.creationStatus = applicantStatus == "invited" and "invited" or "canBeRemoved"
+	end
+end
+
 local function sortApplicantList(applicant1, applicant2)
 
 	for key, tableElement in pairs(miog.F.SORT_METHODS) do
