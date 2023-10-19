@@ -1723,39 +1723,8 @@ miog.OnEvent = function(_, event, ...)
 		if(applicantData) then
 			if(applicantData.applicationStatus ~= "applied") then
 				if(addonApplicantList[...]) then
-					if(addonApplicantList[...].frame) then
-						local status = applicantData.applicationStatus
-						local frame = addonApplicantList[...].frame
-
-						if(status == "invited") then
-							changeApplicantStatus(..., frame, "INVITED", "FFFFFF00")
-				
-						elseif(status == "failed") then
-							changeApplicantStatus(..., frame, "FAILED", "FFFF009D")
-				
-						elseif(status == "cancelled") then
-							changeApplicantStatus(..., frame, "CANCELLED", "FFFFA600")
-				
-						elseif(status == "timedout") then
-							changeApplicantStatus(..., frame, "TIMEOUT", "FF8400FF")
-				
-						elseif(status == "inviteaccepted") then
-							changeApplicantStatus(..., frame, "INVITE ACCEPTED", "FF00FF00")
-				
-						elseif(status == "invitedeclined") then
-							changeApplicantStatus(..., frame, "INVITE DECLINED", miog.CLRSCC["red"])
-				
-						elseif(status == "declined") then
-							changeApplicantStatus(..., frame, "DECLINED", miog.CLRSCC["red"])
-
-						elseif(status == "declined_full") then
-							changeApplicantStatus(..., frame, "DECLINED", miog.CLRSCC["red"])
-				
-						elseif(status == "declined_delisted") then
-							changeApplicantStatus(..., frame, "DECLINED", miog.CLRSCC["red"])
-						
-						end
-					end
+					updateApplicantStatus(..., applicantData.applicationStatus)
+					
 				end
 			end
 		else
@@ -1763,7 +1732,7 @@ miog.OnEvent = function(_, event, ...)
 				addonApplicantList[...].appStatus = "canBeRemoved"
 			end
 		end
-		
+
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
 
 		local newEntry, withData = ...
