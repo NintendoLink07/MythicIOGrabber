@@ -26,6 +26,19 @@ miog.CLRSCC = { -- from clrs.cc
 	["white"] = "FFFFFFFF",
 }
 
+miog.APPLICANT_STATUS_INFO = {
+	["invited"] = {statusString = "INVITED", color = "FFFFFF00"},
+	["failed"] = {statusString = "FAILED", color = "FFFF009D"},
+	["cancelled"] = {statusString = "CANCELLED", color = "FFFFA600"},
+	["timedout"] = {statusString = "TIME OUT", color = "FF8400FF"},
+	["inviteaccepted"] = {statusString = "INVITE ACCEPTED", color = "FF00FF00"},
+	["invitedeclined"] = {statusString = "INVITE DECLINED", color = "FFFFFF00"},
+	["declined"] = {statusString = "DECLINED", color = miog.CLRSCC["red"]},
+	["declined_full"] = {statusString = "FULL DECLINE", color = miog.CLRSCC["red"]},
+	["declined_delisted"] = {statusString = "DELISTED", color = miog.CLRSCC["red"]},
+	["debug"] = {statusString = "GONE BABY", color = miog.CLRSCC["red"]},
+}
+
 --CONSTANTS
 miog.C = {
     --
