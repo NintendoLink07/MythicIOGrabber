@@ -144,7 +144,7 @@ local createBasicTexture = function(type, texturePath, parent, width, height, la
 		texture:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -1, 1)
 
 	else
-		texture:SetPoint("LEFT", parent, "LEFT", 0, 0)
+		texture:SetPoint("CENTER", parent, "CENTER")
 		texture:SetSize(width or 0, height or 0)
 
 	end

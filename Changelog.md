@@ -7,19 +7,27 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Next up
+
+- Since all relevant Season 3 data and functions are implemented, I'll do a full logic rewrite next.
+In WoW's lua engine you should spent the least amount of time when executing code, since it's somewhat single threaded only.
+And while 0.14 ms for 33 applicants isn't bad it's far from what is doable (did smaller tests this week, average compute times for 50 applicants + premades can go as low as 0.01-0.03 ms)
+
+
 
 ## [1.1.3] - 2023-10-21
 
 ### Added
 
 - As soon as 10.2 is out all applicants will have a spec icon right besides their role icon!
-The logic is already implemented, as soon as 10.2 is live the addon can capture the data.
-- M+ score colors now get calculated with a custom function, more colors inbetween instead of green, blue, purple, orange
+The logic is already implemented, as soon as 10.2 is live the addon can request the data.
+- M+ score colors now get calculated with a custom function, more colors inbetween instead of just green, blue, purple, orange
 
 ### Changed
 
-- Logic rewrite, now it takes less time to compute the applicant list, from 0.32ms for 33 applicants to 0.14ms for 33 applicants
+- Small logic rewrite, now it takes less time to compute the applicant list, from 0.32ms for 33 applicants to 0.14ms for 33 applicants
 Really only relevant when /reloading or entering an instance, depending on the size of the applicant list it could take a good 2-3 secs to compute everything (100+ applicants, usually on wednesdays or patch drops)
+
 
 
 ## [1.1.0] - 2023-10-17
@@ -297,7 +305,7 @@ Basically just the rating for the bracket and the tier they're currently in
 ## [0.0.1] - 2023-08-24
 
 <!-- Links -->
-[keep a changelog]: https://keepachangelog.com/en/1.0.0/
+[keep a changelog]: https://keepachangelog.com/en/1.1.0/
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->

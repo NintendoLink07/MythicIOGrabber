@@ -299,6 +299,8 @@ miog.createMainFrame = function()
 	local ratingFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/skull.png")
 	ratingFrame.Texture:SetWidth(listingSettingPanel:GetHeight())
 	ratingFrame.Texture:SetScale(0.85)
+	ratingFrame.Texture:ClearAllPoints()
+	ratingFrame.Texture:SetPoint("LEFT", ratingFrame, "LEFT")
 	ratingFrame:SetPoint("LEFT", playstyleFrame, "RIGHT")
 	ratingFrame.tooltipText = ""
 	ratingFrame:SetMouseMotionEnabled(true)
@@ -323,6 +325,8 @@ miog.createMainFrame = function()
 	local itemLevelFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.17, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/itemsacks.png")
 	itemLevelFrame.Texture:SetWidth(listingSettingPanel:GetHeight())
 	itemLevelFrame.Texture:SetScale(0.85)
+	itemLevelFrame.Texture:ClearAllPoints()
+	itemLevelFrame.Texture:SetPoint("LEFT", itemLevelFrame, "LEFT")
 	itemLevelFrame:SetPoint("LEFT", ratingFrame, "RIGHT")
 	itemLevelFrame.tooltipText = ""
 	itemLevelFrame:SetMouseMotionEnabled(true)
@@ -345,7 +349,7 @@ miog.createMainFrame = function()
 	itemLevelFrame.FontString = itemLevelString
 
 	local affixFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "FontString", miog.C.AFFIX_TEXTURE_FONT_SIZE)
-	affixFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT")
+	affixFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 0, -1)
 	affixFrame.tooltipText = ""
 	affixFrame:SetMouseMotionEnabled(true)
 	affixFrame:SetScript("OnEnter", function()
@@ -595,13 +599,13 @@ miog.createMainFrame = function()
 		end
 	)
 
-	mainFrame.buttonPanel.resetButton = resetButton
+	buttonPanel.resetButton = resetButton
 
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
 	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
 	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrame:GetHeight()*0.06)
 
-	miog.footerBar = footerBar
+	mainFrame.footerBar = footerBar
 
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")

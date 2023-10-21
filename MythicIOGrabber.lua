@@ -31,7 +31,7 @@ local function refreshFunction()
 	miog.F.APPLIED_NUM_OF_DPS = 0
 	miog.F.APPLIED_NUM_OF_HEALERS = 0
 	miog.F.APPLIED_NUM_OF_TANKS = 0
-
+	
 	miog.mainFrame.buttonPanel.RoleTextures[1].text:SetText(miog.F.APPLIED_NUM_OF_TANKS)
 	miog.mainFrame.buttonPanel.RoleTextures[2].text:SetText(miog.F.APPLIED_NUM_OF_HEALERS)
 	miog.mainFrame.buttonPanel.RoleTextures[3].text:SetText(miog.F.APPLIED_NUM_OF_DPS)
@@ -223,13 +223,12 @@ local function addApplicantToPanel(applicantID)
 			local coloredSubName = fullName == "Rhany-Ravencrest" and wticc(nameTable[1], miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(nameTable[1], select(4, GetClassColor(englishClassName)))
 
 			local nameFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", miog.C.APPLICANT_MEMBER_FONT_SIZE)
-			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 0, 0)
+			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 0, -1)
 			nameFrame:SetFrameStrata("DIALOG")
 			nameFrame.FontString:SetText(coloredSubName)
 			nameFrame:SetMouseMotionEnabled(true)
 			nameFrame:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
-					print(nameTable[2], miog.REALM_LOCAL_NAMES[nameTable[2]])
 					local link = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
 					nameFrame.linkBox:SetAutoFocus(true)
@@ -285,7 +284,7 @@ local function addApplicantToPanel(applicantID)
 
 			if(specID) then
 				specFrame = miog.createBasicTexture("fleeting", miog.SPECIALIZATIONS[specID].icon, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
-				specFrame:SetPoint("LEFT", nameFrame, "RIGHT", 3, 0)
+				specFrame:SetPoint("LEFT", nameFrame, "RIGHT", 3, 1)
 				specFrame:SetDrawLayer("ARTWORK")
 			else
 				nameFrame:SetWidth(nameFrame:GetWidth() + basicInformationPanel.maximumHeight)
@@ -300,7 +299,7 @@ local function addApplicantToPanel(applicantID)
 			)
 
 			local primaryIndicator = miog.createBasicFontString("fleeting", miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.11, basicInformationPanel.maximumHeight)
-			primaryIndicator:SetPoint("LEFT", roleFrame, "RIGHT", 5, 0)
+			primaryIndicator:SetPoint("LEFT", roleFrame, "RIGHT", 5, -1)
 			primaryIndicator:SetJustifyH("CENTER")
 
 			local secondaryIndicator = miog.createBasicFontString("fleeting", miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.11, basicInformationPanel.maximumHeight)
@@ -311,9 +310,7 @@ local function addApplicantToPanel(applicantID)
 			itemLevelFrame:SetPoint("LEFT", secondaryIndicator, "RIGHT", 1, 0)
 			itemLevelFrame:SetJustifyH("CENTER")
 
-			local reqIlvl = C_LFGList:HasActiveEntryInfo() and C_LFGList:GetActiveEntryInfo().requiredItemLevel or 0
-
-			if(reqIlvl > ilvl) then
+			if(miog.F.REQUIRED_ILVL > ilvl) then
 				itemLevelFrame:SetText(wticc(miog.round(ilvl, 1), miog.CLRSCC["red"]))
 
 			else
@@ -323,7 +320,7 @@ local function addApplicantToPanel(applicantID)
 
 			if(friend) then
 				local friendFrame = miog.createBasicTexture("fleeting", miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
-				friendFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 3, 0)
+				friendFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 3, 1)
 				friendFrame:SetDrawLayer("OVERLAY")
 				friendFrame:SetMouseMotionEnabled(true)
 				friendFrame:SetScript("OnEnter", function()
@@ -519,10 +516,9 @@ local function addApplicantToPanel(applicantID)
 
 			if(miog.F.LISTED_CATEGORY_ID == 2) then
 				if(dungeonScore > 0) then
-					local reqScore = C_LFGList:HasActiveEntryInfo() and C_LFGList:GetActiveEntryInfo().requiredDungeonScore or 0
 					local highestKeyForDungeon
 
-					if(reqScore > dungeonScore) then
+					if(miog.F.REQUIRED_RATING > dungeonScore) then
 						primaryIndicator:SetText(wticc(dungeonScore, miog.CLRSCC["red"]))
 
 					else
@@ -804,16 +800,6 @@ local function addApplicantToPanel(applicantID)
 							local difficulty = miog.C.DIFFICULTY[sortedProgress.progress.difficulty]
 							mainProgressText = mainProgressText .. wticc(difficulty.shortName .. ":" .. sortedProgress.progress.progressCount .. "/" .. sortedProgress.progress.raid.bossCount, difficulty.color) .. " "
 
-							if(miog.F.LISTED_CATEGORY_ID == 3) then
-								if(primaryIndicator:GetText() == nil) then
-									primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
-								end
-
-								if(secondaryIndicator:GetText() == nil) then
-									secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
-								end
-							end
-						
 						end
 
 					end
@@ -826,25 +812,9 @@ local function addApplicantToPanel(applicantID)
 						
 					end
 
-					if(miog.F.LISTED_CATEGORY_ID == 3) then
-						if(primaryIndicator:GetText() == nil) then
-							primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
-						end
-
-						if(secondaryIndicator:GetText() == nil) then
-							secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
-						end
-					end
-
 				else
 					raidPanel.rows[1].FontString:SetText(wticc("NO RAIDING DATA", miog.CLRSCC["red"]))
 					raidPanel.rows[1].FontString:SetPoint("LEFT", raidPanel.rows[1], "LEFT", 2, 0)
-
-					if(miog.F.LISTED_CATEGORY_ID == 3) then
-						local difficulty = miog.C.DIFFICULTY[-1] -- NO DATA
-						primaryIndicator:SetText(wticc("0/0", difficulty.color))
-						secondaryIndicator:SetText(wticc("0/0", difficulty.color))
-					end
 
 				end
 				
@@ -855,14 +825,16 @@ local function addApplicantToPanel(applicantID)
 				raidPanel.rows[1].FontString:SetText(wticc("NO RAIDER.IO DATA", miog.CLRSCC["red"]))
 				raidPanel.rows[1].FontString:SetPoint("LEFT", generalInfoPanel.rows[1], "LEFT", 2, 0)
 
-				local difficulty = miog.C.DIFFICULTY[-1] -- NO DATA
+			end
 
-				if(miog.F.LISTED_CATEGORY_ID == 3) then
-					primaryIndicator:SetText(wticc("0/0", difficulty.color))
-					secondaryIndicator:SetText(wticc("0/0", difficulty.color))
-
+			if(miog.F.LISTED_CATEGORY_ID == 3) then
+				if(primaryIndicator:GetText() == nil) then
+					primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
 				end
 
+				if(secondaryIndicator:GetText() == nil) then
+					secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+				end
 			end
 
 			basicInformationPanel:MarkDirty()
@@ -1007,6 +979,7 @@ miog.checkApplicantList = function(needRefresh)
 			end
 
 			if(assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS or assignedRole == "DAMAGER" and miog.F.SHOW_DPS) then
+
 				unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {
 					index = applicantID,
 					role = assignedRole,
@@ -1122,6 +1095,7 @@ local function createFullEntries(iterations)
 	local endTime = GetTimePreciseSec()
 
 	currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
+
 end
 
 local function updateRoster()
@@ -1270,12 +1244,12 @@ end
 
 local function checkIfCanInvite()
 	if(UnitIsGroupLeader("player")) then
-		miog.footerBar:Show()
-		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.footerBar, "TOPRIGHT", 0, 0)
+		miog.mainFrame.footerBar:Show()
+		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
 		miog.F.CAN_INVITE = C_PartyInfo.CanInvite()
 
 	else
-		miog.footerBar:Hide()
+		miog.mainFrame.footerBar:Hide()
 		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
 		miog.F.CAN_INVITE = C_PartyInfo.CanInvite()
 
@@ -1360,10 +1334,12 @@ miog.OnEvent = function(_, event, ...)
 
 				miog.mainFrame.listingSettingPanel.ratingFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (activeEntryInfo.requiredDungeonScore and "/infoIcons/skull.png" or activeEntryInfo.requiredPvpRating and "/infoIcons/spear.png"))
 
+				miog.F.REQUIRED_RATING = activeEntryInfo.requiredDungeonScore or activeEntryInfo.requiredPvpRating
+
 			else
 				miog.mainFrame.listingSettingPanel.ratingFrame.FontString:SetText("----")
 				miog.mainFrame.listingSettingPanel.ratingFrame.tooltipText = ""
-			
+				miog.F.REQUIRED_RATING = 0
 			end
 
 			if(activeEntryInfo.requiredItemLevel > 0) then
@@ -1375,6 +1351,8 @@ miog.OnEvent = function(_, event, ...)
 				miog.mainFrame.listingSettingPanel.itemLevelFrame.tooltipText = ""
 
 			end
+
+			miog.F.REQUIRED_ILVL = activeEntryInfo.requiredItemLevel
 
 			if(activeEntryInfo.voiceChat ~= "") then
 				LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
