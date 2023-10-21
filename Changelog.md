@@ -8,17 +8,21 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 
 
-## [1.1.1] - 2023-10-19
+## [1.1.3] - 2023-10-21
 
+### Added
+
+- As soon as 10.2 is out all applicants will have a spec icon right besides their role icon!
+The logic is already implemented, as soon as 10.2 is live the addon can capture the data.
+- M+ score colors now get calculated with a custom function, more colors inbetween instead of green, blue, purple, orange
 
 ### Changed
 
-- Small logic rewrite, takes less time to compute the applicant list, from 0.32ms for 33 applicants to 0.18ms for 33 applicants
-Really only relevant when /reloading or entering an instance, depending on the size of the applicant list it could take a good 2-3 secs to compute everything
+- Logic rewrite, now it takes less time to compute the applicant list, from 0.32ms for 33 applicants to 0.14ms for 33 applicants
+Really only relevant when /reloading or entering an instance, depending on the size of the applicant list it could take a good 2-3 secs to compute everything (100+ applicants, usually on wednesdays or patch drops)
 
 
 ## [1.1.0] - 2023-10-17
-
 
 ### Fixed
 
@@ -28,7 +32,6 @@ Really only relevant when /reloading or entering an instance, depending on the s
 
 
 ## [1.0.9] - 2023-10-17
-
 
 ### Added
 
@@ -45,7 +48,6 @@ All DF raids and S2/S3 dungeons will have their respective loading screen (cropp
 
 Yes, the weird errors currently popping up with this (and many other) addons are not my fault
 More infos: https://github.com/Stanzilla/WoWUIBugs/issues/483
-
 
 ### Added
 
@@ -299,8 +301,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.1.1...HEAD
-[1.1.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.1
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/v1.1.3...HEAD
+[1.1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.3
 [1.1.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.0
 [1.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.9
 [1.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.8

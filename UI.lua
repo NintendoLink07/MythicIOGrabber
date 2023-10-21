@@ -52,7 +52,7 @@ miog.createMainFrame = function()
 	mainFrame:SetSize((LFGListFrame:GetWidth() + 2), (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5))
 	mainFrame.standardHeight = mainFrame:GetHeight()
 	mainFrame.extendedHeight = mainFrame.standardHeight * 1.5
-	mainFrame:SetScale(1)
+	--mainFrame:SetScale(1.5)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	mainFrame:SetFrameStrata("DIALOG")
 	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight())
@@ -278,7 +278,6 @@ miog.createMainFrame = function()
 	voiceChatFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
 	end)
-	
 
 	local playstyleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.07, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/book.png")
 	playstyleFrame.Texture:ClearAllPoints()
@@ -476,19 +475,19 @@ miog.createMainFrame = function()
 
 		if(i == 1) then
 			currentCategory = "role"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.40, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.39, 0)
 
 		elseif(i == 2) then
 			currentCategory = "primary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.495, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.485, 0)
 
 		elseif(i == 3) then
 			currentCategory = "secondary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.605, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.60, 0)
 
 		elseif(i == 4) then
 			currentCategory = "ilvl"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.72, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.715, 0)
 
 		end
 
@@ -603,12 +602,6 @@ miog.createMainFrame = function()
 	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrame:GetHeight()*0.06)
 
 	miog.footerBar = footerBar
-
-	local divider = miog.createBasicTexture("persistent", nil, mainFrame, footerBar:GetWidth() + 30, 2, "ARTWORK")
-	divider:SetAtlas("UI-LFG-DividerLine")
-	divider:SetPoint("BOTTOM", mainFrame, "BOTTOM", 0, -1)
-
-	mainFrame.divider = divider
 
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")

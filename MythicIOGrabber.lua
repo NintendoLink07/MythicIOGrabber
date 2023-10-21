@@ -118,15 +118,15 @@ local function addApplicantToPanel(applicantID)
 
 		for applicantIndex = 1, applicantData.numMembers, 1 do
 			
-			-- fullName, englishClassName, localizedClassName, level, ilvl, honorLevel, tank, healer, damager, assignedRole, friend, dungeonScore, pvpIlvl
-			local fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _
+			-- fullName, englishClassName, localizedClassName, level, ilvl, honorLevel, tank, healer, damager, assignedRole, friend, dungeonScore, pvpIlvl, factionGroup, raceID, specID
+			local fullName, englishClassName, ilvl, tank, healer, damager, assignedRole, friend, dungeonScore, specID -- specID is new in 10.2
 			local dungeonData, pvpData, rioProfile
 			
 			if(miog.F.IS_IN_DEBUG_MODE) then
-				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, dungeonData, _, pvpData, rioProfile = unpack(debugLFGList[applicantID].applicantMemberList[applicantIndex])
+				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, _, _, specID, dungeonData, _, pvpData, rioProfile = unpack(debugLFGList[applicantID].applicantMemberList[applicantIndex])
 
 			else
-				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _ = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
+				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, _, _, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
 				dungeonData = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, applicantIndex, activityID)
 				pvpData = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, applicantIndex, activityID)
 
@@ -220,15 +220,16 @@ local function addApplicantToPanel(applicantID)
 			end)
 			basicInformationPanel.expandButton = expandFrameButton
 
-			local shortName = strsub(nameTable[1], 0, 20)
-			local coloredSubName = fullName == "Rhany-Ravencrest" and wticc(shortName, miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(shortName, select(4, GetClassColor(englishClassName)))
+			local coloredSubName = fullName == "Rhany-Ravencrest" and wticc(nameTable[1], miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(nameTable[1], select(4, GetClassColor(englishClassName)))
 
 			local nameFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", miog.C.APPLICANT_MEMBER_FONT_SIZE)
-			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 3, 0)
+			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 0, 0)
 			nameFrame:SetFrameStrata("DIALOG")
 			nameFrame.FontString:SetText(coloredSubName)
+			nameFrame:SetMouseMotionEnabled(true)
 			nameFrame:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
+					print(nameTable[2], miog.REALM_LOCAL_NAMES[nameTable[2]])
 					local link = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
 					nameFrame.linkBox:SetAutoFocus(true)
@@ -240,7 +241,6 @@ local function addApplicantToPanel(applicantID)
 
 				end
 			end)
-			nameFrame:SetMouseMotionEnabled(true)
 			nameFrame:SetScript("OnEnter", function()
 				if(nameFrame.FontString:IsTruncated()) then
 					GameTooltip:SetOwner(nameFrame, "ANCHOR_CURSOR")
@@ -267,7 +267,7 @@ local function addApplicantToPanel(applicantID)
 			nameFrame.linkBox:SetPoint("TOPRIGHT", applicantMemberStatusFrame, "TOPRIGHT", -1, 0)
 			nameFrame.linkBox:SetAutoFocus(true)
 			nameFrame.linkBox:SetScript("OnKeyDown", function(_, key)
-				if(key == "ESCAPE") then
+				if(key == "ESCAPE" or key == "ENTER") then
 					nameFrame.linkBox:Hide()
 					nameFrame.linkBox:ClearFocus()
 
@@ -275,25 +275,35 @@ local function addApplicantToPanel(applicantID)
 			end)
 			nameFrame.linkBox:Hide()
 
-			local commentFrame = miog.createBasicTexture("fleeting", 136459, basicInformationPanel, basicInformationPanel.maximumHeight, basicInformationPanel.maximumHeight)
-			commentFrame:SetPoint("LEFT", nameFrame, "RIGHT", 0, 0)
-			
-			if(applicantData.comment == "") then
-				commentFrame:Hide()
+			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
+				local commentFrame = miog.createBasicTexture("fleeting", 136459, basicInformationPanel, basicInformationPanel.maximumHeight - 10, basicInformationPanel.maximumHeight - 10)
+				commentFrame:ClearAllPoints()
+				commentFrame:SetPoint("BOTTOMRIGHT", expandFrameButton, "BOTTOMRIGHT", 0, 0)
+			end
+
+			local specFrame
+
+			if(specID) then
+				specFrame = miog.createBasicTexture("fleeting", miog.SPECIALIZATIONS[specID].icon, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
+				specFrame:SetPoint("LEFT", nameFrame, "RIGHT", 3, 0)
+				specFrame:SetDrawLayer("ARTWORK")
+			else
+				nameFrame:SetWidth(nameFrame:GetWidth() + basicInformationPanel.maximumHeight)
 			end
 	
-			local roleFrame = miog.createBasicTexture("fleeting", 136459, basicInformationPanel, basicInformationPanel.maximumHeight - 1, basicInformationPanel.maximumHeight - 1)
-			roleFrame:SetPoint("LEFT", commentFrame, "RIGHT", 1, 0)
-			roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH ..
-			((assignedRole == "TANK" and "/infoIcons/tankSuperSmallIcon.png") or
-			(assignedRole == "HEALER" and "/infoIcons/healerSuperSmallIcon.png") or
-			(assignedRole == "DAMAGER" and "/infoIcons/dpsSuperSmallIcon.png")))
+			local roleFrame = miog.createBasicTexture("fleeting", nil, basicInformationPanel, basicInformationPanel.maximumHeight - 1, basicInformationPanel.maximumHeight - 1)
+			roleFrame:SetPoint("LEFT", specFrame or nameFrame, "RIGHT", 1, 0)
+			roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH ..(
+				(assignedRole == "TANK" and "/infoIcons/tankSuperSmallIcon.png") or
+				(assignedRole == "HEALER" and "/infoIcons/healerSuperSmallIcon.png") or
+				(assignedRole == "DAMAGER" and "/infoIcons/dpsSuperSmallIcon.png"))
+			)
 
 			local primaryIndicator = miog.createBasicFontString("fleeting", miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.11, basicInformationPanel.maximumHeight)
 			primaryIndicator:SetPoint("LEFT", roleFrame, "RIGHT", 5, 0)
 			primaryIndicator:SetJustifyH("CENTER")
 
-			local secondaryIndicator = miog.createBasicFontString("fleeting", miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.1, basicInformationPanel.maximumHeight)
+			local secondaryIndicator = miog.createBasicFontString("fleeting", miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.11, basicInformationPanel.maximumHeight)
 			secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 1, 0)
 			secondaryIndicator:SetJustifyH("CENTER")
 
@@ -311,21 +321,22 @@ local function addApplicantToPanel(applicantID)
 
 			end
 
-			local friendFrame = miog.createBasicTexture("fleeting", miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
-			friendFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 3, 0)
-			friendFrame:SetDrawLayer("OVERLAY")
-			friendFrame:SetShown(friend or false)
-			friendFrame:SetMouseMotionEnabled(true)
-			friendFrame:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(friendFrame, "ANCHOR_CURSOR")
-				GameTooltip:SetText("On your friendlist")
-				GameTooltip:Show()
+			if(friend) then
+				local friendFrame = miog.createBasicTexture("fleeting", miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
+				friendFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 3, 0)
+				friendFrame:SetDrawLayer("OVERLAY")
+				friendFrame:SetMouseMotionEnabled(true)
+				friendFrame:SetScript("OnEnter", function()
+					GameTooltip:SetOwner(friendFrame, "ANCHOR_CURSOR")
+					GameTooltip:SetText("On your friendlist")
+					GameTooltip:Show()
 
-			end)
-			friendFrame:SetScript("OnLeave", function()
-				GameTooltip:Hide()
+				end)
+				friendFrame:SetScript("OnLeave", function()
+					GameTooltip:Hide()
 
-			end)
+				end)
+			end
 
 			if(applicantIndex > 1) then
 				local groupFrame = miog.createBasicTexture("fleeting", miog.C.STANDARD_FILE_PATH .. "/infoIcons/link.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
@@ -334,9 +345,7 @@ local function addApplicantToPanel(applicantID)
 				groupFrame:SetPoint("TOPRIGHT", basicInformationPanel, "TOPRIGHT", -1, -1)
 			end
 
-			local allowedToInvite = C_PartyInfo.CanInvite()
-
-			if(applicantIndex == 1 and allowedToInvite or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
+			if(applicantIndex == 1 and miog.F.CAN_INVITE or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
 				local declineButton = miog.createBasicFrame("fleeting", "IconButtonTemplate", basicInformationPanel, basicInformationPanel.maximumHeight, basicInformationPanel.maximumHeight)
 				declineButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
 				declineButton.iconSize = basicInformationPanel.maximumHeight - 4
@@ -353,8 +362,6 @@ local function addApplicantToPanel(applicantID)
 						miog.checkApplicantList(true)
 
 					end
-
-					--miog.mainFrame.applicantPanel.container:MarkDirty()
 				end)
 				applicantMemberFrame.basicInformationPanel.declineButton = declineButton
 
@@ -453,14 +460,16 @@ local function addApplicantToPanel(applicantID)
 				if(remainder == 1) then
 					textRowFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
 					textRowFrame:SetBackdropColor(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
+
 				else
 					textRowFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
 					textRowFrame:SetBackdropColor(CreateColorFromHexString(miog.C.CARD_COLOR):GetRGBA())
+
 				end
 
-				local divider = miog.createBasicTexture("fleeting", nil, textRowFrame, textRowFrame:GetWidth(), 2, "BORDER")
+				local divider = miog.createBasicTexture("fleeting", nil, textRowFrame, textRowFrame:GetWidth(), 1, "BORDER")
 				divider:SetAtlas("UI-LFG-DividerLine")
-				divider:SetPoint("BOTTOM", textRowFrame, "BOTTOM", 0, -1)
+				divider:SetPoint("BOTTOM", textRowFrame, "BOTTOM", 0, 0)
 
 				tabPanel.textRows[rowIndex] = textRowFrame
 
@@ -469,7 +478,6 @@ local function addApplicantToPanel(applicantID)
 				raidPanel.rows[rowIndex] = textRowRaid
 
 				if(rowIndex < 9) then
-
 					local textRowMythicPlus = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, mPlusWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", miog.C.TEXT_ROW_FONT_SIZE)
 					textRowMythicPlus:SetPoint("LEFT", tabPanel.textRows[rowIndex], "LEFT")
 					mythicPlusPanel.rows[rowIndex] = textRowMythicPlus
@@ -480,7 +488,7 @@ local function addApplicantToPanel(applicantID)
 					generalInfoPanel.rows[rowIndex] = textRowGeneralInfo
 
 					if(rowIndex == 6) then
-	
+
 						local addRowMythicPlus = miog.createBasicFrame("fleeting", "BackdropTemplate", mythicPlusPanel, mPlusWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", miog.C.TEXT_ROW_FONT_SIZE)
 						addRowMythicPlus.FontString:SetJustifyH("CENTER")
 						addRowMythicPlus:SetPoint("LEFT", textRowGeneralInfo, "LEFT")
@@ -490,6 +498,7 @@ local function addApplicantToPanel(applicantID)
 						addRowRaid.FontString:SetJustifyH("CENTER")
 						addRowRaid:SetPoint("LEFT", textRowGeneralInfo, "LEFT")
 						raidPanel.rows[15] = addRowRaid
+
 					end
 				else
 					textRowFrame:SetParent(raidPanel)
@@ -499,7 +508,7 @@ local function addApplicantToPanel(applicantID)
 			generalInfoPanel.rows[1].FontString:SetJustifyV("TOP")
 			generalInfoPanel.rows[1].FontString:SetPoint("TOPLEFT", generalInfoPanel.rows[1], "TOPLEFT", 0, -5)
 			generalInfoPanel.rows[1].FontString:SetPoint("BOTTOMRIGHT", generalInfoPanel.rows[5], "BOTTOMRIGHT", 0, 0)
-			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. applicantData.comment)
+			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
 			generalInfoPanel.rows[1].FontString:SetWordWrap(true)
 			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 			
@@ -517,7 +526,8 @@ local function addApplicantToPanel(applicantID)
 						primaryIndicator:SetText(wticc(dungeonScore, miog.CLRSCC["red"]))
 
 					else
-						primaryIndicator:SetText(wticc(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
+						--primaryIndicator:SetText(wticc(tostring(dungeonScore), C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore):GenerateHexColor()))
+						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForScore(dungeonScore):GenerateHexColor()))
 
 					end
 
@@ -543,7 +553,7 @@ local function addApplicantToPanel(applicantID)
 				end
 
 			elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
-				primaryIndicator:SetText(wticc(tostring(pvpData.rating), C_ChallengeMode.GetDungeonScoreRarityColor(pvpData.rating):GenerateHexColor()))
+				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForScore(pvpData.rating):GenerateHexColor()))
 
 				local tierResult = miog.simpleSplit(pvpData.tier, " ")
 				secondaryIndicator:SetText(strsub(tierResult[1], 0, 2) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
@@ -593,7 +603,7 @@ local function addApplicantToPanel(applicantID)
 
 					if(mythicKeystoneProfile.mainCurrentScore) then
 						if(mythicKeystoneProfile.mainCurrentScore > 0) then
-							mythicPlusPanel.rows[15].FontString:SetText(wticc("Main: " .. (mythicKeystoneProfile.mainCurrentScore), miog.ITEM_QUALITY_COLORS[6].pureHex))
+							mythicPlusPanel.rows[15].FontString:SetText(wticc("Main: " .. (mythicKeystoneProfile.mainCurrentScore), miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()))
 						else
 							mythicPlusPanel.rows[15].FontString:SetText(wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex))
 						end
@@ -901,7 +911,7 @@ miog.checkApplicantList = function(needRefresh)
 					profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
 
 				else
-					profile = getRioProfile(unpack(debugLFGList[applicantID].applicantMemberList[1][17]))
+					profile = getRioProfile(unpack(debugLFGList[applicantID].applicantMemberList[1][20]))
 
 				end
 			end
@@ -914,7 +924,7 @@ miog.checkApplicantList = function(needRefresh)
 				else
 					debugLFGList[applicantID].applicantMemberList[1][12] = profile and profile.mythicKeystoneProfile.currentScore or debugLFGList[applicantID].applicantMemberList[1][12]
 					primarySort = debugLFGList[applicantID].applicantMemberList[1][12]
-					secondarySort = debugLFGList[applicantID].applicantMemberList[1][14].bestRunLevel
+					secondarySort = debugLFGList[applicantID].applicantMemberList[1][17].bestRunLevel
 
 				end
 
@@ -978,8 +988,8 @@ miog.checkApplicantList = function(needRefresh)
 					secondarySort = pvpInfo.rating
 
 				else
-					primarySort = debugLFGList[applicantID].applicantMemberList[1][16].rating
-					secondarySort = debugLFGList[applicantID].applicantMemberList[1][16].rating
+					primarySort = debugLFGList[applicantID].applicantMemberList[1][19].rating
+					secondarySort = debugLFGList[applicantID].applicantMemberList[1][19].rating
 
 				end
 
@@ -1043,7 +1053,7 @@ local function createFullEntries(iterations)
 			applicationStatus = "applied",
 			numMembers = 1,
 			isNew = true,
-			comment = "Heiho, heiho, wir sind vergnügt und froh. Johei, johei, die Arbeit ist vorbei.",
+			--comment = "Heiho, heiho, wir sind vergnügt und froh. Johei, johei, die Arbeit ist vorbei.",
 			displayOrderID = 1,
 			applicantMemberList = {}
 		}
@@ -1058,10 +1068,13 @@ local function createFullEntries(iterations)
 			local ordinal = random(1, 2)
 
 			local rioProfile = miog.DEBUG_RAIDER_IO_PROFILES[random(1, #miog.DEBUG_RAIDER_IO_PROFILES)]
-			local classInfo = C_CreatureInfo.GetClassInfo(random(1, 13)) or {"WARLOCK", "Warlock"}
+
+			local classID = random(1, 13)
+			local classInfo = C_CreatureInfo.GetClassInfo(classID) or {"WARLOCK", "Warlock"}
+			local specID = miog.CLASSES[classInfo.classFile].specs[random(1, #miog.CLASSES[classInfo.classFile].specs)]
 
 			debugLFGList[applicantID].applicantMemberList[memberIndex] = {
-				[1] = rioProfile[1] or name .. "-" .. rioProfile[2] or realm,
+				[1] = (rioProfile[1] or name) .. "-" .. (rioProfile[2] or realm),
 				[2] = classInfo.classFile, --ENG
 				[3] = classInfo.className, --GER
 				[4] = UnitLevel("player"),
@@ -1070,12 +1083,15 @@ local function createFullEntries(iterations)
 				[7] = false,
 				[8] = false,
 				[9] = true,
-				[10] = miog.DEBUG_ROLE_TABLE[random(1, 3)],
-				[11] = true,
+				[10] = select(5, GetSpecializationInfoByID(specID)),
+				--[11] = true,
 				[12] = rating,
 				[13] = random(400, 450) + 0.5,
-				[14] = {finishedSuccess = true, bestRunLevel = random(20, 35), mapName = "Big Dick Land"},
-				[15] = {
+				[14] = "Alliance",
+				[15] = 1,
+				[16] = specID,
+				[17] = {finishedSuccess = true, bestRunLevel = random(20, 35), mapName = "Big Dick Land"},
+				[18] = {
 					[1] = {
 						ordinal = ordinal,
 						difficulty = diff,
@@ -1091,15 +1107,21 @@ local function createFullEntries(iterations)
 						parsedString = progress2 .. "/9"
 					}
 				},
-				[16] = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
-				[17] = rioProfile
+				[19] = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
+				[20] = rioProfile
 			}
 		
 		end
 
 	end
 
+	local startTime = GetTimePreciseSec()
+
 	miog.checkApplicantList(false)
+			
+	local endTime = GetTimePreciseSec()
+
+	currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
 end
 
 local function updateRoster()
@@ -1141,6 +1163,12 @@ local function updateRoster()
 			local name = inspectQueueMember[4]
 			local specID = inspectQueueMember[3]
 			local _, _, _, icon, backupRole = GetSpecializationInfoByID(specID)
+			local specIcon
+
+			if(specID ~= nil and specID ~= 0) then
+				specIcon = miog.SPECIALIZATIONS[specID].icon
+			end
+
 			local role = inspectQueueMember[6] or backupRole or "NONE"
 
 			local unitID = guid == UnitGUID("player") and "player" or inPartyOrRaid .. index
@@ -1152,7 +1180,7 @@ local function updateRoster()
 				inspectQueueMember[1] = true
 				groupCount[role] = groupCount[role] + 1
 
-				miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO+1] = {guid = guid, unitID = unitID, name = name, class = class, role = role, specIcon = icon or miog.CLASSES[class].icon}
+				miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO+1] = {guid = guid, unitID = unitID, name = name, class = class, role = role, specIcon = specIcon or icon or miog.CLASSES[class].icon}
 
 				if(inPartyOrRaid == "raid" or inPartyOrRaid == "party" and guid ~= UnitGUID("player")) then
 					index = index + 1
@@ -1184,7 +1212,7 @@ local function updateRoster()
 		local lastIcon = nil
 
 		for _, groupMember in ipairs(miog.F.CURRENT_GROUP_INFO) do
-			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.titleBar.groupMemberListing, miog.mainFrame.titleBar.factionIconSize, miog.mainFrame.titleBar.factionIconSize, "Texture", groupMember.specIcon)
+			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.titleBar.groupMemberListing, miog.mainFrame.titleBar.factionIconSize - 2, miog.mainFrame.titleBar.factionIconSize - 2, "Texture", groupMember.specIcon)
 			classIconFrame:SetPoint("LEFT", lastIcon or miog.mainFrame.titleBar.groupMemberListing, lastIcon and "RIGHT" or "LEFT")
 			classIconFrame:SetFrameStrata("DIALOG")
 
@@ -1237,6 +1265,21 @@ local function requestInspectDataFromFullGroup()
 		end
 	end
 	
+end
+
+
+local function checkIfCanInvite()
+	if(UnitIsGroupLeader("player")) then
+		miog.footerBar:Show()
+		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.footerBar, "TOPRIGHT", 0, 0)
+		miog.F.CAN_INVITE = C_PartyInfo.CanInvite()
+
+	else
+		miog.footerBar:Hide()
+		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
+		miog.F.CAN_INVITE = C_PartyInfo.CanInvite()
+
+	end
 end
 
 miog.OnEvent = function(_, event, ...)
@@ -1407,7 +1450,7 @@ miog.OnEvent = function(_, event, ...)
 
 			end)
 			miog.mainFrame:Show()
-			
+
 		end
 
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then --ONE APPLICANT
@@ -1432,7 +1475,7 @@ miog.OnEvent = function(_, event, ...)
 			miog.checkApplicantList(false)
 
 		elseif(newEntry == false and withData == false) then --DECLINED APPLICANT
-			miog.checkApplicantList(true)
+			miog.checkApplicantList(miog.F.CAN_INVITE)
 
 		elseif(not newEntry and not withData) then --REFRESH APP LIST
 			miog.checkApplicantList(true)
@@ -1462,15 +1505,7 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "GROUP_JOINED") then
 		miog.F.INSPECT_QUEUE = {}
 
-		if(UnitIsGroupLeader("player")) then
-			miog.footerBar:Show()
-			miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.footerBar, "TOPRIGHT", 0, 0)
-
-		else
-			miog.footerBar:Hide()
-			miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
-
-		end
+		checkIfCanInvite()
 
 	elseif(event == "GROUP_LEFT") then
 		miog.F.INSPECT_QUEUE = {}
@@ -1481,30 +1516,15 @@ miog.OnEvent = function(_, event, ...)
 		updateRoster()
 
 	elseif(event == "PARTY_LEADER_CHANGED") then
-		if(UnitIsGroupLeader("player")) then
-			miog.footerBar:Show()
-			miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.footerBar, "TOPRIGHT", 0, 0)
-
-		else
-			miog.footerBar:Hide()
-			miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
-
-		end
+		checkIfCanInvite()
 
 	elseif(event == "GROUP_ROSTER_UPDATE") then
+		checkIfCanInvite()
+
 		miog.F.NUM_OF_GROUP_MEMBERS = GetNumGroupMembers()
 
 		requestInspectDataFromFullGroup()
 
-		if(UnitIsGroupLeader("player")) then
-			miog.footerBar:Show()
-			miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.footerBar, "TOPRIGHT", 0, 0)
-
-		else
-			miog.footerBar:Hide()
-			miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
-
-		end
 
 	elseif(event == "INSPECT_READY") then
 
@@ -1585,13 +1605,8 @@ local function handler(msg, editBox)
 		local testLength = (tonumber(rest) or 10) / tickRate -- in seconds
 
 		debugTimer = C_Timer.NewTicker(tickRate, function(self)
-			local startTime = GetTimePreciseSec()
 
 			createFullEntries(numberOfEntries)
-			
-			local endTime = GetTimePreciseSec()
-
-			currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
 
 			print(currentAverageExecuteTime[#currentAverageExecuteTime])
 

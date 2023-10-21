@@ -149,6 +149,10 @@ local createBasicTexture = function(type, texturePath, parent, width, height, la
 
 	end
 
+	if(layer) then
+		texture:SetDrawLayer(layer)
+	end
+
 	texture:SetTexture(texturePath)
 
 	texture:Show()
@@ -175,7 +179,7 @@ miog.createBasicFrame = function (type, template, parent, width, height, addOn, 
 
 	elseif(addOn == "Texture") then
 
-		local texture = createBasicTexture(type, addOnInfo, frame, width, height, addOnInfo2)
+		local texture = createBasicTexture(type, addOnInfo, frame, width, height)
 
 		frame.Texture = texture
 	end

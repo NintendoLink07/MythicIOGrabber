@@ -137,7 +137,7 @@ miog.F = {
 	},
 
 	CURRENTLY_ACTIVE_SORTING_METHODS = 0,
-
+	CAN_INVITE = false,
 	CURRENT_DIFFICULTY = 0,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
@@ -266,19 +266,73 @@ miog.FONTS = {
 }
 
 miog.CLASSES = {
-	["WARRIOR"] = 		{index = 1, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png"},
-	["PALADIN"] = 		{index = 2, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png"},
-	["HUNTER"] = 		{index = 3, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter.png"},
-	["ROGUE"] = 		{index = 4, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue.png"},
-	["PRIEST"] = 		{index = 5, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest.png"},
-	["DEATHKNIGHT"] = 	{index = 6, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight.png"},
-	["SHAMAN"] = 		{index = 7, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman.png"},
-	["MAGE"] = 			{index = 8, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage.png"},
-	["WARLOCK"] =		{index = 9, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock.png"},
-	["MONK"] = 			{index = 10, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk.png"},
-	["DRUID"] =			{index = 11, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png"},
-	["DEMONHUNTER"] = 	{index = 12, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png"},
-	["EVOKER"] = 		{index = 13, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png"},
+	["WARRIOR"] = 		{index = 1, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png", specs = {[1] = 71, [2] = 72, [3] = 73}},
+	["PALADIN"] = 		{index = 2, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png", specs = {[1] = 65, [2] = 66, [3] = 67}},
+	["HUNTER"] = 		{index = 3, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter.png", specs = {[1] = 253, [2] = 254, [3] = 255}},
+	["ROGUE"] = 		{index = 4, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue.png", specs = {[1] = 259, [2] = 260, [3] = 261}},
+	["PRIEST"] = 		{index = 5, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest.png", specs = {[1] = 256, [2] = 257, [3] = 258}},
+	["DEATHKNIGHT"] = 	{index = 6, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight.png", specs = {[1] = 250, [2] = 251, [3] = 252}},
+	["SHAMAN"] = 		{index = 7, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman.png", specs = {[1] = 262, [2] = 263, [3] = 264}},
+	["MAGE"] = 			{index = 8, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage.png", specs = {[1] = 62, [2] = 63, [3] = 64}},
+	["WARLOCK"] =		{index = 9, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock.png", specs = {[1] = 265, [2] = 266, [3] = 265}},
+	["MONK"] = 			{index = 10, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk.png", specs = {[1] = 267, [2] = 269, [3] = 270}},
+	["DRUID"] =			{index = 11, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png", specs = {[1] = 102, [2] = 103, [3] = 104, [4] = 105}},
+	["DEMONHUNTER"] = 	{index = 12, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", specs = {[1] = 577, [2] = 581}},
+	["EVOKER"] = 		{index = 13, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", specs = {[1] = 1467, [2] = 1468, [3] = 1473}},
+}
+
+miog.SPECIALIZATIONS = {
+	[62] = {name = "Arcane", class = miog.CLASSES["MAGE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane.png"},
+	[63] = {name = "Fire", class = miog.CLASSES["MAGE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fire.png"},
+	[64] = {name = "Frost", class = miog.CLASSES["MAGE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/frostMage.png"},
+
+	[65] = {name = "Holy", class = miog.CLASSES["PALADIN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/holyPala.png"},
+	[66] = {name = "Protection", class = miog.CLASSES["PALADIN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/protPala.png"},
+	[67] = {name = "Retribution", class = miog.CLASSES["PALADIN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/retribution.png"},
+
+	[71] = {name = "Arms", class = miog.CLASSES["WARRIOR"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arms.png"},
+	[72] = {name = "Fury", class = miog.CLASSES["WARRIOR"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fury.png"},
+	[73] = {name = "Protection", class = miog.CLASSES["WARRIOR"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/protWarr.png"},
+
+	[102] = {name = "Balance", class = miog.CLASSES["DRUID"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/balance.png"},
+	[103] = {name = "Feral", class = miog.CLASSES["DRUID"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/feral.png"},
+	[104] = {name = "Guardian", class = miog.CLASSES["DRUID"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/guardian.png"},
+	[105] = {name = "Restoration", class = miog.CLASSES["DRUID"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/restoDruid.png"},
+
+	[250] = {name = "Blood", class = miog.CLASSES["DEATHKNIGHT"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/blood.png"},
+	[251] = {name = "Frost", class = miog.CLASSES["DEATHKNIGHT"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/frostDK.png"},
+	[252] = {name = "Unholy", class = miog.CLASSES["DEATHKNIGHT"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/unholy.png"},
+
+	[253] = {name = "Beast Mastery", class = miog.CLASSES["HUNTER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/beastmastery.png"},
+	[254] = {name = "Marksmanship", class = miog.CLASSES["HUNTER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/marksmanship.png"},
+	[255] = {name = "Survival", class = miog.CLASSES["HUNTER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/survival.png"},
+
+	[256] = {name = "Discipline", class = miog.CLASSES["PRIEST"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/discipline.png"},
+	[257] = {name = "Holy", class = miog.CLASSES["PRIEST"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/holyPriest.png"},
+	[258] = {name = "Shadow", class = miog.CLASSES["PRIEST"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/shadow.png"},
+
+	[259] = {name = "Assassination", class = miog.CLASSES["ROGUE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/assassination.png"},
+	[260] = {name = "Outlaw", class = miog.CLASSES["ROGUE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/outlaw.png"},
+	[261] = {name = "Subtlety", class = miog.CLASSES["ROGUE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/subtlety.png"},
+
+	[262] = {name = "Elemental", class = miog.CLASSES["SHAMAN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/elemental.png"},
+	[263] = {name = "Enhancement", class = miog.CLASSES["SHAMAN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/enhancement.png"},
+	[264] = {name = "Restoration", class = miog.CLASSES["SHAMAN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/restoShaman.png"},
+
+	[265] = {name = "Affliction", class = miog.CLASSES["WARLOCK"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/affliction.png"},
+	[266] = {name = "Demonology", class = miog.CLASSES["WARLOCK"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/demonology.png"},
+	[267] = {name = "Destruction", class = miog.CLASSES["WARLOCK"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/destruction.png"},
+
+	[268] = {name = "Brewmaster", class = miog.CLASSES["MONK"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/brewmaster.png"},
+	[269] = {name = "Mistweaver", class = miog.CLASSES["MONK"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/mistweaver.png"},
+	[270] = {name = "Windwalker", class = miog.CLASSES["MONK"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/windwalker.png"},
+
+	[577] = {name = "Havoc", class = miog.CLASSES["DEMONHUNTER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/havoc.png"},
+	[581] = {name = "Vengeance", class = miog.CLASSES["DEMONHUNTER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/vengeance.png"},
+
+	[1467] = {name = "Devastation", class = miog.CLASSES["EVOKER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/devastation.png"},
+	[1468] = {name = "Preservation", class = miog.CLASSES["EVOKER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/preservation.png"},
+	[1473] = {name = "Augmentation", class = miog.CLASSES["EVOKER"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/augmentation.png"},
 }
 
 miog.SEARCH_LANGUAGES = {
@@ -293,6 +347,16 @@ miog.ICON_COORDINATES = {
     tankCoords = {0.76, 0.8725, 0.255, 0.367},
     healerCoords = {0.13, 0.2425, 0.255, 0.3675},
     dpsCoords = {0.003, 0.1155, 0.381, 0.4935},
+}
+
+miog.COLOR_BREAKPOINTS = {
+	[0] = {breakpoint = 0, hex = "ff9d9d9d", r = 0.62, g = 0.62, b = 0.62},
+	[1] = {breakpoint = 600, hex = "ffffffff", r = 1, g = 1, b = 1},
+	[2] = {breakpoint = 1200, hex = "ff1eff00", r = 0.12, g = 1, b = 0},
+	[3] = {breakpoint = 1800, hex = "ff0070dd", r = 0, g = 0.44, b = 0.87},
+	[4] = {breakpoint = 2400, hex = "ffa335ee", r = 0.64, g = 0.21, b = 0.93},
+	[5] = {breakpoint = 3000, hex = "ffff8000", r = 1, g = 0.5, b = 0},
+	[6] = {breakpoint = 3600, hex = "ffe6cc80", r = 0.9, g = 0.8, b = 0.5},
 }
 
 miog.PLAYSTYLE_STRINGS = {
@@ -1421,6 +1485,13 @@ miog.DEBUG_ROLE_TABLE = {
 	"DAMAGER"
 }
 
+miog.DEBUG_SPEC_TABLE = {
+}
+
+for k, _ in pairs(miog.SPECIALIZATIONS) do 
+	miog.DEBUG_SPEC_TABLE[#miog.DEBUG_SPEC_TABLE+1] = k
+end
+
 miog.DEBUG_TIER_TABLE = {
 	[1] = {0, "N/A",},
 	[2] = {1000, "Combatant I",},
@@ -1449,6 +1520,7 @@ miog.DEBUG_RAIDER_IO_PROFILES = {
 	[11] = {"Panomanixme", "Suramar", "eu"},
 	[12] = {"Dreana", "Ghostlands", "eu"},
 	[13] = {"Drjay", "Ragnaros", "eu"},
-	[14] = {"Rhany", "Ravencrest", "eu"},
-	[15] = {"Пофанудру", "Ревущийфьорд", "eu"},
+	[14] = {"Пофанудру", "Ревущийфьорд", "eu"},
+	[15] = {"Rhany", "Ravencrest", "eu"},
+	[16] = {"Viegoavery", "Kazzak", "eu"},
 }
