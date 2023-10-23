@@ -118,32 +118,28 @@ local function addApplicantToPanel(applicantID)
 		for applicantIndex = 1, applicantData.numMembers, 1 do
 			
 			-- fullName, englishClassName, localizedClassName, level, ilvl, honorLevel, tank, healer, damager, assignedRole, friend, dungeonScore, pvpIlvl, factionGroup, raceID, specID
-			local fullName, englishClassName, ilvl, tank, healer, damager, assignedRole, friend, dungeonScore, specID -- specID is new in 10.2
+			local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID -- specID is new in 10.2
 			local dungeonData, pvpData, rioProfile
 			
 			if(miog.F.IS_IN_DEBUG_MODE) then
-				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, _, _, specID, dungeonData, _, pvpData, rioProfile = unpack(frameSystem[applicantID].applicantMemberList[applicantIndex])
+				name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, dungeonData, pvpData = debugGetApplicantMemberInfo(applicantID, applicantIndex)
+				print(2, assignedRole)
+
 
 			else
-				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, _, _, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
+				name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
 				dungeonData = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, applicantIndex, activityID)
 				pvpData = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, applicantIndex, activityID)
 
 			end
 
-			local nameTable = miog.simpleSplit(fullName, "-")
+			local nameTable = miog.simpleSplit(name, "-")
 			
 			local profile, mythicKeystoneProfile, dungeonProfile, raidProfile
 
 			if(miog.F.IS_RAIDERIO_LOADED) then
-				if(not miog.F.IS_IN_DEBUG_MODE) then
-					profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
+				profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
 
-				else
-					profile = getRioProfile(unpack(rioProfile))
-
-				end
-				
 				if(profile ~= nil) then
 					mythicKeystoneProfile = profile.mythicKeystoneProfile
 					raidProfile = profile.raidProfile
