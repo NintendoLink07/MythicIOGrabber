@@ -6,7 +6,7 @@ local expandedFrameList = {}
 local lastApplicantFrame
 local applicantFramePadding = 6
 
-local debugLFGList = {}
+local frameSystem = {}
 local debugApplicantIDList = {}
 local currentAverageExecuteTime = {}
 local debugTimer = nil
@@ -25,7 +25,6 @@ local function refreshFunction()
 	lastApplicantFrame = nil
 
 	addonApplicantList = {}
-	debugLFGList = {}
 	debugApplicantIDList = {}
 
 	miog.F.APPLIED_NUM_OF_DPS = 0
@@ -96,7 +95,7 @@ end
 
 local function addApplicantToPanel(applicantID)
 
-	local applicantData = debugLFGList[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
+	local applicantData = frameSystem[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
 
 	if(applicantData) then
 		local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
@@ -123,7 +122,7 @@ local function addApplicantToPanel(applicantID)
 			local dungeonData, pvpData, rioProfile
 			
 			if(miog.F.IS_IN_DEBUG_MODE) then
-				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, _, _, specID, dungeonData, _, pvpData, rioProfile = unpack(debugLFGList[applicantID].applicantMemberList[applicantIndex])
+				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, _, _, specID, dungeonData, _, pvpData, rioProfile = unpack(frameSystem[applicantID].applicantMemberList[applicantIndex])
 
 			else
 				fullName, englishClassName, _, _, ilvl, _, tank, healer, damager, assignedRole, friend, dungeonScore, _, _, _, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -861,7 +860,7 @@ miog.checkApplicantList = function(needRefresh)
 
 	for _, applicantID in ipairs(miog.F.IS_IN_DEBUG_MODE and debugApplicantIDList or C_LFGList:GetApplicants()) do
 
-		local applicantData = miog.F.IS_IN_DEBUG_MODE and debugLFGList[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
+		local applicantData = miog.F.IS_IN_DEBUG_MODE and frameSystem[applicantID].applicantData or C_LFGList.GetApplicantInfo(applicantID)
 
 		if(applicantData and applicantData.displayOrderID > 0) then
 			local fullName, ilvl, assignedRole, dungeonScore, primarySort, secondarySort
@@ -872,8 +871,8 @@ miog.checkApplicantList = function(needRefresh)
 				fullName, _, _, _, ilvl, _, _, _, _, assignedRole, _, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
 				
 			else
-				ilvl = debugLFGList[applicantID].applicantMemberList[1][5]
-				assignedRole = debugLFGList[applicantID].applicantMemberList[1][10]
+				ilvl = frameSystem[applicantID].applicantMemberList[1][5]
+				assignedRole = frameSystem[applicantID].applicantMemberList[1][10]
 
 			end
 
@@ -883,7 +882,7 @@ miog.checkApplicantList = function(needRefresh)
 					profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
 
 				else
-					profile = getRioProfile(unpack(debugLFGList[applicantID].applicantMemberList[1][20]))
+					profile = getRioProfile(unpack(frameSystem[applicantID].applicantMemberList[1][20]))
 
 				end
 			end
@@ -894,9 +893,9 @@ miog.checkApplicantList = function(needRefresh)
 					secondarySort = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 				else
-					debugLFGList[applicantID].applicantMemberList[1][12] = profile and profile.mythicKeystoneProfile.currentScore or debugLFGList[applicantID].applicantMemberList[1][12]
-					primarySort = debugLFGList[applicantID].applicantMemberList[1][12]
-					secondarySort = debugLFGList[applicantID].applicantMemberList[1][17].bestRunLevel
+					frameSystem[applicantID].applicantMemberList[1][12] = profile and profile.mythicKeystoneProfile.currentScore or frameSystem[applicantID].applicantMemberList[1][12]
+					primarySort = frameSystem[applicantID].applicantMemberList[1][12]
+					secondarySort = frameSystem[applicantID].applicantMemberList[1][17].bestRunLevel
 
 				end
 
@@ -960,8 +959,8 @@ miog.checkApplicantList = function(needRefresh)
 					secondarySort = pvpInfo.rating
 
 				else
-					primarySort = debugLFGList[applicantID].applicantMemberList[1][19].rating
-					secondarySort = debugLFGList[applicantID].applicantMemberList[1][19].rating
+					primarySort = frameSystem[applicantID].applicantMemberList[1][19].rating
+					secondarySort = frameSystem[applicantID].applicantMemberList[1][19].rating
 
 				end
 
@@ -1021,24 +1020,26 @@ local function createFullEntries(iterations)
 
 		debugApplicantIDList[index] = applicantID
 
-		debugLFGList[applicantID] = {
-			applicantID = applicantID,
-			applicationStatus = "applied",
-			numMembers = 1,
-			isNew = true,
-			--comment = "Heiho, heiho, wir sind vergnügt und froh. Johei, johei, die Arbeit ist vorbei.",
-			displayOrderID = 1,
-			applicantMemberList = {}
+		frameSystem[applicantID] = frameSystem[applicantID] or {
+			applicantData = {
+				applicantID = applicantID,
+				applicationStatus = "applied",
+				numMembers = 1,
+				isNew = true,
+				comment = "Heiho, heiho, wir sind vergnügt und froh. Johei, johei, die Arbeit ist vorbei.",
+				displayOrderID = 1,
+			},
+			applicantMemberList = {},
+			frame = nil,
+			dataAvailable = false,
+			sortData = {}
 		}
 
 		local name, realm = UnitFullName("player")
 
-		for memberIndex = 1, debugLFGList[applicantID].numMembers, 1 do
+		for memberIndex = 1, frameSystem[applicantID].applicantData.numMembers, 1 do
 			local rating = random(1, 4000)
 			rating = 0
-			local progress1, progress2 = random(1, 9), random(1, 9)
-			local diff = random(1, 3)
-			local ordinal = random(1, 2)
 
 			local rioProfile = miog.DEBUG_RAIDER_IO_PROFILES[random(1, #miog.DEBUG_RAIDER_IO_PROFILES)]
 
@@ -1046,42 +1047,25 @@ local function createFullEntries(iterations)
 			local classInfo = C_CreatureInfo.GetClassInfo(classID) or {"WARLOCK", "Warlock"}
 			local specID = miog.CLASSES[classInfo.classFile].specs[random(1, #miog.CLASSES[classInfo.classFile].specs)]
 
-			debugLFGList[applicantID].applicantMemberList[memberIndex] = {
-				[1] = (rioProfile[1] or name) .. "-" .. (rioProfile[2] or realm),
-				[2] = classInfo.classFile, --ENG
-				[3] = classInfo.className, --GER
-				[4] = UnitLevel("player"),
-				[5] = random(0, 450) + 0.5,
-				[6] = UnitHonorLevel("player"),
-				[7] = false,
-				[8] = false,
-				[9] = true,
-				[10] = select(5, GetSpecializationInfoByID(specID)),
-				--[11] = true,
-				[12] = rating,
-				[13] = random(400, 450) + 0.5,
-				[14] = "Alliance",
-				[15] = 1,
-				[16] = specID,
-				[17] = {finishedSuccess = true, bestRunLevel = random(20, 35), mapName = "Big Dick Land"},
-				[18] = {
-					[1] = {
-						ordinal = ordinal,
-						difficulty = diff,
-						progress = progress1,
-						bossCount = 9,
-						parsedString = progress1 .. "/9"
-					},
-					[2] = {
-						ordinal = random(ordinal, ordinal+1),
-						difficulty = diff,
-						progress = progress2,
-						bossCount = 9,
-						parsedString = progress2 .. "/9"
-					}
-				},
-				[19] = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
-				[20] = rioProfile
+			frameSystem[applicantID].applicantMemberList[memberIndex] = {
+				name = (rioProfile[1] or name) .. "-" .. (rioProfile[2] or realm),
+				class = classInfo.classFile, --ENG
+				localizedClass = classInfo.className, --GER
+				level = UnitLevel("player"),
+				itemLevel = random(0, 450) + 0.5,
+				honorLevel = UnitHonorLevel("player"),
+				tank = false,
+				healer = false,
+				damage = true,
+				assignedRole = select(5, GetSpecializationInfoByID(specID)),
+				relationship = true,
+				dungeonScore = 0,
+				pvpItemLevel = random(400, 450) + 0.5,
+				factionGroup = "Alliance",
+				raceID = 0,
+				specID = specID,
+				bestDungeonScoreForListing = {finishedSuccess = true, bestRunLevel = random(20, 35), mapName = "Big Dick Land"},
+				pvpRatingInfo = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
 			}
 		
 		end
