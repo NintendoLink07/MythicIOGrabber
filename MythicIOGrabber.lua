@@ -95,7 +95,7 @@ end
 
 local function addApplicantToPanel(applicantID)
 
-	local applicantData = frameSystem[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
+	local applicantData = frameSystem[applicantID].applicantData or C_LFGList.GetApplicantInfo(applicantID)
 
 	if(applicantData) then
 		local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
@@ -859,135 +859,105 @@ miog.checkApplicantList = function(needRefresh)
 	local unsortedMainApplicantsList = {}
 
 	for _, applicantID in ipairs(miog.F.IS_IN_DEBUG_MODE and debugApplicantIDList or C_LFGList:GetApplicants()) do
+		local applicantMemberInfo = miog.F.IS_IN_DEBUG_MODE and frameSystem[applicantID].applicantMemberList[1] or {C_LFGList.GetApplicantMemberInfo(applicantID, 1)}
+		local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
+		local profile, primarySortAttribute, secondarySortAttribute
 
-		local applicantData = miog.F.IS_IN_DEBUG_MODE and frameSystem[applicantID].applicantData or C_LFGList.GetApplicantInfo(applicantID)
+		if(miog.F.IS_RAIDERIO_LOADED) then
+			local nameTable = miog.simpleSplit(applicantMemberInfo.name, "-")
+			profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
 
-		if(applicantData and applicantData.displayOrderID > 0) then
-			local fullName, ilvl, assignedRole, dungeonScore, primarySort, secondarySort
-			local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
-			local profile
+		end
 
-			if(not miog.F.IS_IN_DEBUG_MODE) then
-				fullName, _, _, _, ilvl, _, _, _, _, assignedRole, _, dungeonScore = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
-				
-			else
-				ilvl = frameSystem[applicantID].applicantMemberList[1][5]
-				assignedRole = frameSystem[applicantID].applicantMemberList[1][10]
-
+		if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
+			if(miog.F.IS_IN_DEBUG_MODE and profile) then
+				applicantMemberInfo.dungeonScore = profile.mythicKeystoneProfile.currentScore
 			end
+			
+			primarySortAttribute = applicantMemberInfo.dungeonScore
+			secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and applicantMemberInfo.bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
-			if(miog.F.IS_RAIDERIO_LOADED) then
-				if(not miog.F.IS_IN_DEBUG_MODE) then
-					local nameTable = miog.simpleSplit(fullName, "-")
-					profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
+		elseif(miog.F.LISTED_CATEGORY_ID == 3) then
+			local raidData = {}
+			local weightsTable
 
-				else
-					profile = getRioProfile(unpack(frameSystem[applicantID].applicantMemberList[1][20]))
+			if(profile) then
+				if(profile.raidProfile) then
+					local lastDifficulty = nil
+					local lastOrdinal = nil
 
-				end
-			end
+					for i = 1, #profile.raidProfile.sortedProgress, 1 do
+						if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
+							if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
+								local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
+								local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
 
-			if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
-				if(not miog.F.IS_IN_DEBUG_MODE) then
-					primarySort = dungeonScore
-					secondarySort = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
+								weightsTable = miog.generateRaidWeightsTable(bossCount)
 
-				else
-					frameSystem[applicantID].applicantMemberList[1][12] = profile and profile.mythicKeystoneProfile.currentScore or frameSystem[applicantID].applicantMemberList[1][12]
-					primarySort = frameSystem[applicantID].applicantMemberList[1][12]
-					secondarySort = frameSystem[applicantID].applicantMemberList[1][17].bestRunLevel
+								raidData[#raidData+1] = {
+									ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
+									difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
+									progress = kills,
+									bossCount = bossCount,
+									parsedString = kills .. "/" .. bossCount
+								}
 
-				end
-
-			elseif(miog.F.LISTED_CATEGORY_ID == 3) then
-				local raidData = {}
-				local weightsTable
-
-				if(profile) then
-					if(profile.raidProfile) then
-						local lastDifficulty = nil
-						local lastOrdinal = nil
-
-						for i = 1, #profile.raidProfile.sortedProgress, 1 do
-							if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-								if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
-									local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-									local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
-
-									weightsTable = miog.generateRaidWeightsTable(bossCount)
-
-									raidData[#raidData+1] = {
-										ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-										difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-										progress = kills,
-										bossCount = bossCount,
-										parsedString = kills .. "/" .. bossCount
-									}
-
-									if(#raidData == 2) then
-										break
-									end
+								if(#raidData == 2) then
+									break
 								end
-
-								lastOrdinal = raidData[i] and raidData[i].ordinal
-								lastDifficulty = raidData[i] and raidData[i].difficulty
 							end
+
+							lastOrdinal = raidData[i] and raidData[i].ordinal
+							lastDifficulty = raidData[i] and raidData[i].difficulty
 						end
 					end
 				end
+			end
 
-				for i = 1, 2, 1 do
-					if(not raidData[i]) then
-						raidData[i] = {
-							ordinal = 0,
-							difficulty = -1,
-							progress = 0,
-							bossCount = 0,
-							parsedString = "0/0"
-						}
-					end
+			for i = 1, 2, 1 do
+				if(not raidData[i]) then
+					raidData[i] = {
+						ordinal = 0,
+						difficulty = -1,
+						progress = 0,
+						bossCount = 0,
+						parsedString = "0/0"
+					}
 				end
-
-				primarySort = raidData[1].bossCount > 0 and raidData[1].progress / raidData[1].bossCount + (raidData[1].ordinal == 1 and weightsTable[raidData[1].difficulty] or 0) or 0
-				secondarySort = raidData[2].bossCount > 0 and raidData[2].progress / raidData[2].bossCount + (raidData[2].ordinal == 1 and weightsTable[raidData[2].difficulty] or 0) or 0
-			
-			elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
-				if(not miog.F.IS_IN_DEBUG_MODE) then
-					local pvpInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activityID)
-
-					primarySort = pvpInfo.rating
-					secondarySort = pvpInfo.rating
-
-				else
-					primarySort = frameSystem[applicantID].applicantMemberList[1][19].rating
-					secondarySort = frameSystem[applicantID].applicantMemberList[1][19].rating
-
-				end
-
 			end
 
-			if(assignedRole == "TANK") then
-				miog.F.APPLIED_NUM_OF_TANKS = miog.F.APPLIED_NUM_OF_TANKS + 1
+			primarySortAttribute = raidData[1].bossCount > 0 and raidData[1].progress / raidData[1].bossCount + (raidData[1].ordinal == 1 and weightsTable[raidData[1].difficulty] or 0) or 0
+			secondarySortAttribute = raidData[2].bossCount > 0 and raidData[2].progress / raidData[2].bossCount + (raidData[2].ordinal == 1 and weightsTable[raidData[2].difficulty] or 0) or 0
+		
+		elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
+			local pvpInfo = miog.F.IS_IN_DEBUG_MODE and applicantMemberInfo.pvpRatingInfo or C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activityID)
 
-			elseif(assignedRole == "HEALER") then
-				miog.F.APPLIED_NUM_OF_HEALERS = miog.F.APPLIED_NUM_OF_HEALERS + 1
+			primarySortAttribute = pvpInfo.rating
+			secondarySortAttribute = pvpInfo.rating
 
-			elseif(assignedRole == "DAMAGER") then
-				miog.F.APPLIED_NUM_OF_DPS = miog.F.APPLIED_NUM_OF_DPS + 1
+		end
+		
+		if(applicantMemberInfo.assignedRole == "TANK") then
+			miog.F.APPLIED_NUM_OF_TANKS = miog.F.APPLIED_NUM_OF_TANKS + 1
 
-			end
+		elseif(applicantMemberInfo.assignedRole == "HEALER") then
+			miog.F.APPLIED_NUM_OF_HEALERS = miog.F.APPLIED_NUM_OF_HEALERS + 1
 
-			if(assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS or assignedRole == "DAMAGER" and miog.F.SHOW_DPS) then
+		elseif(applicantMemberInfo.assignedRole == "DAMAGER") then
+			miog.F.APPLIED_NUM_OF_DPS = miog.F.APPLIED_NUM_OF_DPS + 1
 
-				unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {
-					index = applicantID,
-					role = assignedRole,
-					primary = primarySort,
-					secondary = secondarySort,
-					ilvl = ilvl
-				}
+		end
 
-			end
+		if(applicantMemberInfo.assignedRole == "TANK" and miog.F.SHOW_TANKS or applicantMemberInfo.assignedRole == "HEALER" and miog.F.SHOW_HEALERS or applicantMemberInfo.assignedRole == "DAMAGER" and miog.F.SHOW_DPS) then
+
+			unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {
+				index = applicantID,
+				role = applicantMemberInfo.assignedRole,
+				primary = primarySortAttribute,
+				secondary = secondarySortAttribute,
+				ilvl = applicantMemberInfo.itemLevel
+			}
+
 		end
 	end
 
