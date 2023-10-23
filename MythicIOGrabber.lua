@@ -37,6 +37,11 @@ local function refreshFunction()
 
 end
 
+local function debugGetApplicantMemberInfo(applicantID, index)
+	local a = frameSystem[applicantID].applicantMemberList[index]
+	return a.name, a.class, a.localizedClass, a.level, a.itemLevel, a.honorLevel, a.tank, a.healer, a.damage, a.assignedRole, a.relationship, a.dungeonScore, a.pvpItemLevel, a.factionGroup, a.raceID, a.specID, a.bestDungeonScoreForListing, a.pvpRatingInfo
+end
+
 local function updateApplicantStatus(applicantID, applicantStatus)
 	local currentApplicant = addonApplicantList[applicantID]
 
@@ -104,11 +109,11 @@ local function addApplicantToPanel(applicantID)
 
 		local applicantMemberPadding = 2
 		local applicantFrame = miog.createBasicFrame("fleeting", "ResizeLayoutFrame, BackdropTemplate", miog.mainFrame.applicantPanel.container)
+		applicantFrame:SetPoint("TOP", lastApplicantFrame or miog.mainFrame.applicantPanel.container, lastApplicantFrame and "BOTTOM" or "TOP", 0, lastApplicantFrame and -applicantFramePadding or 0)
 		applicantFrame.fixedWidth = miog.mainFrame.applicantPanel:GetWidth() - 2
 		applicantFrame.minimumHeight = applicantData.numMembers * miog.C.APPLICANT_MEMBER_HEIGHT + applicantMemberPadding * (applicantData.numMembers-1) + 2
 		applicantFrame.heightPadding = 1
 		applicantFrame.memberFrames = {}
-		applicantFrame:SetPoint("TOP", lastApplicantFrame or miog.mainFrame.applicantPanel.container, lastApplicantFrame and "BOTTOM" or "TOP", 0, lastApplicantFrame and -applicantFramePadding or 0)
 		addonApplicantList[applicantID].frame = applicantFrame
 
 		miog.mainFrame.applicantPanel.container.lastApplicantFrame = applicantFrame
@@ -123,8 +128,6 @@ local function addApplicantToPanel(applicantID)
 			
 			if(miog.F.IS_IN_DEBUG_MODE) then
 				name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, dungeonData, pvpData = debugGetApplicantMemberInfo(applicantID, applicantIndex)
-				print(2, assignedRole)
-
 
 			else
 				name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -215,7 +218,7 @@ local function addApplicantToPanel(applicantID)
 			end)
 			basicInformationPanel.expandButton = expandFrameButton
 
-			local coloredSubName = fullName == "Rhany-Ravencrest" and wticc(nameTable[1], miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(nameTable[1], select(4, GetClassColor(englishClassName)))
+			local coloredSubName = name == "Rhany-Ravencrest" and wticc(nameTable[1], miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(nameTable[1], select(4, GetClassColor(class)))
 
 			local nameFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", miog.C.APPLICANT_MEMBER_FONT_SIZE)
 			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 0, -1)
@@ -241,7 +244,7 @@ local function addApplicantToPanel(applicantID)
 					GameTooltip:SetText(nameFrame.FontString:GetText())
 					GameTooltip:Show()
 
-				elseif(fullName == "Rhany-Ravencrest") then
+				elseif(name == "Rhany-Ravencrest") then
 					GameTooltip:SetOwner(nameFrame, "ANCHOR_CURSOR")
 					GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
 					GameTooltip:Show()
@@ -305,15 +308,15 @@ local function addApplicantToPanel(applicantID)
 			itemLevelFrame:SetPoint("LEFT", secondaryIndicator, "RIGHT", 1, 0)
 			itemLevelFrame:SetJustifyH("CENTER")
 
-			if(miog.F.REQUIRED_ILVL > ilvl) then
-				itemLevelFrame:SetText(wticc(miog.round(ilvl, 1), miog.CLRSCC["red"]))
+			if(miog.F.REQUIRED_ILVL > itemLevel) then
+				itemLevelFrame:SetText(wticc(miog.round(itemLevel, 1), miog.CLRSCC["red"]))
 
 			else
-				itemLevelFrame:SetText(miog.round(ilvl, 1))
+				itemLevelFrame:SetText(miog.round(itemLevel, 1))
 
 			end
 
-			if(friend) then
+			if(relationship) then
 				local friendFrame = miog.createBasicTexture("fleeting", miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
 				friendFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 3, 1)
 				friendFrame:SetDrawLayer("OVERLAY")

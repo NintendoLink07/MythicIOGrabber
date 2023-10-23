@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
-### Next up
 
-- Since all relevant Season 3 data and functions are implemented, I'll do a full logic rewrite next.
-In WoW's lua engine you should spent the least amount of time when executing code, since it's somewhat single threaded only.
-And while 0.14 ms for 33 applicants isn't bad it's far from what is doable (did smaller tests this week, average compute times for 50 applicants + premades can go as low as 0.01-0.03 ms)
+
+## [1.1.4] - 2023-10-23
+
+### Changed
+
+- Compute time down from ~0.14ms per 33 applicants to ~0.12ms per 33 applicants
 
 
 
@@ -309,7 +311,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.1.3...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.1.4...HEAD
+[1.1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.4
 [1.1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.3
 [1.1.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.0
 [1.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.0.9
