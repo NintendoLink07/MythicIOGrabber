@@ -140,7 +140,6 @@ miog.F = {
 	},
 
 	CURRENTLY_ACTIVE_SORTING_METHODS = 0,
-	CAN_INVITE = false,
 	CURRENT_DIFFICULTY = 0,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
@@ -270,7 +269,7 @@ miog.FONTS = {
 
 miog.CLASSES = {
 	["WARRIOR"] = 		{index = 1, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png", specs = {[1] = 71, [2] = 72, [3] = 73}},
-	["PALADIN"] = 		{index = 2, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png", specs = {[1] = 65, [2] = 66, [3] = 67}},
+	["PALADIN"] = 		{index = 2, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png", specs = {[1] = 65, [2] = 66, [3] = 70}},
 	["HUNTER"] = 		{index = 3, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter.png", specs = {[1] = 253, [2] = 254, [3] = 255}},
 	["ROGUE"] = 		{index = 4, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue.png", specs = {[1] = 259, [2] = 260, [3] = 261}},
 	["PRIEST"] = 		{index = 5, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest.png", specs = {[1] = 256, [2] = 257, [3] = 258}},
@@ -291,7 +290,7 @@ miog.SPECIALIZATIONS = {
 
 	[65] = {name = "Holy", class = miog.CLASSES["PALADIN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/holyPala.png"},
 	[66] = {name = "Protection", class = miog.CLASSES["PALADIN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/protPala.png"},
-	[67] = {name = "Retribution", class = miog.CLASSES["PALADIN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/retribution.png"},
+	[70] = {name = "Retribution", class = miog.CLASSES["PALADIN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/retribution.png"},
 
 	[71] = {name = "Arms", class = miog.CLASSES["WARRIOR"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arms.png"},
 	[72] = {name = "Fury", class = miog.CLASSES["WARRIOR"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fury.png"},

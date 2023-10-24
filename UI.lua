@@ -408,7 +408,7 @@ miog.createMainFrame = function()
 		roleTexture.text = showRoleButtonText
 
 		if(i == 3) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/dpsSuperSmallIcon.png")
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
 
 			toggleRoleButton:SetScript("OnClick", function()
 				miog.F.SHOW_DPS = not miog.F.SHOW_DPS
@@ -418,7 +418,7 @@ miog.createMainFrame = function()
 			end)
 
 		elseif(i == 2) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/healerSuperSmallIcon.png")
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png")
 
 			toggleRoleButton:SetScript("OnClick", function()
 				miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
@@ -428,7 +428,7 @@ miog.createMainFrame = function()
 			end)
 
 		elseif(i == 1) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/tankSuperSmallIcon.png")
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png")
 
 			toggleRoleButton:SetScript("OnClick", function()
 				miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
@@ -546,7 +546,7 @@ miog.createMainFrame = function()
 
 				miog.checkApplicantList(true)
 			elseif(button == "RightButton") then
-				if(activeState == (1 or 2)) then
+				if(activeState == 1 or activeState == 2) then
 					
 					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
 

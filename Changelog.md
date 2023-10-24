@@ -9,11 +9,16 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [1.1.4] - 2023-10-23
+## [1.1.4] - 2023-10-24
 
 ### Changed
 
-- Compute time down from ~0.14ms per 33 applicants to ~0.12ms per 33 applicants
+- Compute time down from ~0.14ms per 33 applicants to ~0.125ms per 33 applicants
+
+### Fixed
+
+- Fixed a problem where the invite / decline buttons where no longer visible after a reload
+- Fixed a problem where Ret paladins would bug out the UI
 
 
 
