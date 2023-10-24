@@ -22,16 +22,16 @@ local tostring = tostring
 
 local queueTimer
 
-local function refreshFunction()
-	miog.releaseAllFleetingWidgets()
-
-	lastApplicantFrame = nil
-
-	addonApplicantList = {}
-
+local function resetArrays()
+	debugAllApplicants = {}
 	debugApplicantMemberInfo = {}
 	debugApplicantData = {}
-	debugAllApplicants = {}
+end
+
+local function refreshFunction()
+	miog.releaseAllFleetingWidgets()
+	lastApplicantFrame = nil
+	addonApplicantList = {}
 
 	miog.F.APPLIED_NUM_OF_DPS = 0
 	miog.F.APPLIED_NUM_OF_HEALERS = 0
@@ -228,7 +228,6 @@ local function addApplicantToPanel(applicantID)
 			nameFrame:SetMouseMotionEnabled(true)
 			nameFrame:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
-					print(nameTable[2], miog.REALM_LOCAL_NAMES[nameTable[2]])
 					local link = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
 					nameFrame.linkBox:SetAutoFocus(true)
@@ -350,12 +349,25 @@ local function addApplicantToPanel(applicantID)
 				declineButton:SetFrameStrata("DIALOG")
 				declineButton:RegisterForClicks("LeftButtonDown")
 				declineButton:SetScript("OnClick", function()
+
 					if(addonApplicantList[applicantID].creationStatus == "added") then
-						addonApplicantList[applicantID].creationStatus = "canBeRemoved"
+						--addonApplicantList[applicantID].creationStatus = "canBeRemoved"
+						addonApplicantList[applicantID] = nil
 						C_LFGList.DeclineApplicant(applicantID)
+						
+						if(miog.F.IS_IN_DEBUG_MODE) then
+							debugApplicantData[applicantID] = nil
+							miog.checkApplicantList(C_PartyInfo.CanInvite())
+						end
 
 					elseif(addonApplicantList[applicantID].creationStatus == "canBeRemoved") then
+						addonApplicantList[applicantID] = nil
 						miog.checkApplicantList(true)
+						
+						if(miog.F.IS_IN_DEBUG_MODE) then
+							debugApplicantData[applicantID] = nil
+							miog.checkApplicantList(C_PartyInfo.CanInvite())
+						end
 
 					end
 				end)
@@ -1038,6 +1050,7 @@ end
 
 local function createFullEntries(iterations)
 	refreshFunction()
+	resetArrays()
 
 	for index = 1, iterations, 1 do
 		local applicantID = random(1000, 9999)
@@ -1569,6 +1582,7 @@ local function handler(msg, editBox)
 		print("Debug mode off - Normal applicant mode")
 		miog.F.IS_IN_DEBUG_MODE = false
 		refreshFunction()
+		resetArrays()
 	
 	elseif(command == "perfstart") then
 		miog.F.IS_IN_DEBUG_MODE = true
@@ -1602,6 +1616,7 @@ local function handler(msg, editBox)
 				print("Debug mode off - Normal applicant mode")
 				miog.F.IS_IN_DEBUG_MODE = false
 				refreshFunction()
+				resetArrays()
 			end
 		end)
 
@@ -1621,6 +1636,7 @@ local function handler(msg, editBox)
 		print("Debug mode off - Normal applicant mode")
 		miog.F.IS_IN_DEBUG_MODE = false
 		refreshFunction()
+		resetArrays()
 
 	else
 		miog.mainFrame:Show()
