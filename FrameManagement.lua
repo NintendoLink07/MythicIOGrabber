@@ -1,23 +1,32 @@
 local addonName, miog = ...
 
-local function resetFrame(_, childFrame)
+local function resetFrame(pool, childFrame)
     childFrame:Hide()
 	childFrame:SetFrameStrata("LOW")
 
-	childFrame.fixedHeight = nil
-	childFrame.fixedWidth = nil
-	childFrame.minimumHeight = nil
-	childFrame.minimumWidth = nil
-	childFrame.maximumHeight = nil
-	childFrame.maximumWidth = nil
-	childFrame.icon = nil
-	childFrame.iconSize = nil
-	childFrame.iconAtlas = nil
+	local poolTemplate = pool:GetTemplate()
+
+	--if(string.find(poolTemplate, "BackdropTemplate")) then
+		
+	--elseif(string.find(poolTemplate, "IconButtonTemplate")) then
+
+	--elseif(string.find(poolTemplate, "ResizeLayoutFrame") or string.find(poolTemplate, "VerticalLayoutFrame") or string.find(poolTemplate, "HorizontalLayoutFrame")) then
+		childFrame.fixedHeight = nil
+		childFrame.fixedWidth = nil
+		childFrame.minimumHeight = nil
+		childFrame.minimumWidth = nil
+		childFrame.maximumHeight = nil
+		childFrame.maximumWidth = nil
+
+	--end
 
 	local typeOfFrame = childFrame:GetObjectType()
 
 	if(typeOfFrame == "Button") then
 		childFrame:Enable()
+		childFrame.icon = nil
+		childFrame.iconSize = nil
+		childFrame.iconAtlas = nil
 
 	elseif(typeOfFrame == "CheckButton") then
 		childFrame:Enable()
@@ -72,35 +81,38 @@ local function resetTexture(_, childTexture)
 	childTexture:SetTexture(nil)
 	childTexture:SetTexCoord(0, 1, 0, 1)
 	childTexture:SetDesaturated(false)
+	childTexture:SetMouseClickEnabled(true)
+	childTexture:SetScript("OnMouseDown", nil)
 	childTexture:ClearAllPoints()
 	childTexture:SetParent()
 end
 
 miog.persistentFramePool = CreateFramePoolCollection()
-miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "BackdropTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("ScrollFrame", nil, "ScrollFrameTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "IconButtonTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
-miog.persistentFramePool:CreatePoolIfNeeded("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
-
+miog.persistentFramePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("ScrollFrame", nil, "ScrollFrameTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Button", nil, "IconButtonTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
 
 miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 
 miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
 
-
 miog.fleetingFramePool = CreateFramePoolCollection()
-miog.fleetingFramePool:CreatePoolIfNeeded("Frame", nil, "BackdropTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("EditBox", nil, "InputBoxTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "IconButtonTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "UIButtonTemplate", resetFrame)
-miog.fleetingFramePool:CreatePoolIfNeeded("Button", nil, "UIPanelButtonTemplate", resetFrame)
+miog.fleetingFramePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", resetFrame):SetResetDisallowedIfNew()
+miog.fleetingFramePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame):SetResetDisallowedIfNew()
+miog.fleetingFramePool:GetOrCreatePool("EditBox", nil, "InputBoxTemplate", resetFrame):SetResetDisallowedIfNew()
+miog.fleetingFramePool:GetOrCreatePool("Button", nil, "IconButtonTemplate", resetFrame):SetResetDisallowedIfNew()
+miog.fleetingFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", resetFrame):SetResetDisallowedIfNew()
+miog.fleetingFramePool:GetOrCreatePool("Button", nil, "UIPanelButtonTemplate", resetFrame):SetResetDisallowedIfNew()
 
 miog.fleetingFontStringPool = CreateFontStringPool(miog.fleetingFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
+miog.fleetingFontStringPool:SetResetDisallowedIfNew()
+
 miog.fleetingTexturePool = CreateTexturePool(miog.fleetingFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
+miog.fleetingTexturePool:SetResetDisallowedIfNew()
 
 miog.releaseAllFleetingWidgets = function()
 	miog.fleetingFramePool:ReleaseAll()

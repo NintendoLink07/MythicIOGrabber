@@ -125,14 +125,11 @@ miog.dummyFunction = function()
 	-- empty function for overwriting useless Blizzard functions
 end
 
-miog.generateRaidWeightsTable = function(bossNumber)
-	local table = {
-		[3] = (bossNumber - 1) * 10,
-		[2] = (bossNumber - 1),
-		[1] = bossNumber * 0.1
-	}
-
-	return table
+miog.shuffleNumberTable = function(table)
+	for i = 1, #table - 1 do
+		local j = math.random(i, #table)
+		table[i], table[j] = table[j], table[i]
+	end
 end
 
 ---------

@@ -652,6 +652,8 @@ miog.createMainFrame = function()
 	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, -1)
 	mainFrame.applicantPanel = applicantPanel
 
+	miog.C.MAIN_WIDTH = applicantPanel:GetWidth()
+
 	local applicantPanelContainer = miog.createBasicFrame("persistent", "BackdropTemplate", applicantPanel)
 	applicantPanelContainer:SetSize(applicantPanel:GetWidth(), 1)
 	applicantPanelContainer:SetPoint("TOPLEFT", applicantPanel, "TOPLEFT")
@@ -669,10 +671,9 @@ miog.createMainFrame = function()
 	miog.mainFrame:RegisterEvent("GROUP_LEFT")
 	miog.mainFrame:RegisterEvent("INSPECT_READY")
 
-	--Load encounter journal and overwrite OnOpen function, original function has no function except spitting out errors
-	--Haven't found a reason to not overwrite it
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
+	EJ_SelectInstance(1208)
 
 	if(RaiderIO_ExportButton) then
 		RaiderIO_ExportButton:ClearAllPoints()

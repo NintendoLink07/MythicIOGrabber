@@ -3,7 +3,9 @@ local addonName, miog = ...
 miog.ITEM_QUALITY_COLORS = _G["ITEM_QUALITY_COLORS"]
 
 for _, colorElement in pairs(miog.ITEM_QUALITY_COLORS) do
-	colorElement.pureHex = string.sub(colorElement.hex, 3)
+	colorElement.pureHex = colorElement.color:GenerateHexColor()
+	colorElement.desaturatedRGB = {colorElement.r * 0.65, colorElement.g * 0.65, colorElement.b * 0.65}
+	colorElement.desaturatedHex = CreateColor(unpack(colorElement.desaturatedRGB)):GenerateHexColor()
 end
 
 miog.CLRSCC = { -- from clrs.cc
@@ -48,6 +50,7 @@ miog.C = {
     APPLICANT_MEMBER_HEIGHT = 20,
     APPLICANT_BUTTON_SIZE = 20,
 	INTERFACE_OPTION_BUTTON_SIZE = 20,
+	MAIN_WIDTH = 0,
 
     --
     --- FONT SIZES
@@ -77,11 +80,11 @@ miog.C = {
     SECONDARY_TEXT_COLOR = "FFB0B3B8",
 
 	DIFFICULTY = {
-		[3] = {shortName = "M", description = _G["PLAYER_DIFFICULTY6"], color = miog.ITEM_QUALITY_COLORS[4].pureHex},
-		[2] = {shortName = "H", description = _G["PLAYER_DIFFICULTY2"], color = miog.ITEM_QUALITY_COLORS[3].pureHex},
-		[1] = {shortName = "N", description = _G["PLAYER_DIFFICULTY1"], color = miog.ITEM_QUALITY_COLORS[2].pureHex},
-		[0] = {shortName = "LT", description = "Last tier", color = miog.ITEM_QUALITY_COLORS[0].pureHex},
-		[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222"},
+		[3] = {shortName = "M", description = _G["PLAYER_DIFFICULTY6"], color = miog.ITEM_QUALITY_COLORS[4].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[4].desaturatedHex},
+		[2] = {shortName = "H", description = _G["PLAYER_DIFFICULTY2"], color = miog.ITEM_QUALITY_COLORS[3].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[3].desaturatedHex},
+		[1] = {shortName = "N", description = _G["PLAYER_DIFFICULTY1"], color = miog.ITEM_QUALITY_COLORS[2].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[2].desaturatedHex},
+		[0] = {shortName = "LT", description = "Last tier", color = miog.ITEM_QUALITY_COLORS[0].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[0].desaturatedHex},
+		[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222", desaturated = "ffe93838"},
 	},
 
 	REGIONS = {
@@ -97,9 +100,9 @@ miog.C = {
 	--PATH / TEXTURES FILES
 	STANDARD_FILE_PATH = "Interface/Addons/MythicIOGrabber/res",
 	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/star_64.png:8:8|t",
-	TANK_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/tankSuperSmallIcon.png:20:20|t",
-	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerSuperSmallIcon.png:20:20|t",
-	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/dpsSuperSmallIcon.png:20:20|t",
+	TANK_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/tankIcon.png:20:20|t",
+	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png:20:20|t",
+	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:20:20|t",
 	STAR_TEXTURE = "⋆",
 
 }
@@ -131,6 +134,7 @@ miog.F = {
 	
 	INSPECT_QUEUE = {},
 	CURRENTLY_INSPECTING = false,
+	ACTIVE_ENTRY_INFO = nil,
 
 	SORT_METHODS = {
 		role = {active = false, currentLayer = 0},
@@ -140,7 +144,8 @@ miog.F = {
 	},
 
 	CURRENTLY_ACTIVE_SORTING_METHODS = 0,
-	CURRENT_DIFFICULTY = 0,
+	CURRENT_DUNGEON_DIFFICULTY = 0,
+	CURRENT_RAID_DIFFICULTY = 0,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
 }
@@ -262,6 +267,19 @@ miog.RAID_ICONS = {
 for _, value in pairs(miog.RAID_ICONS) do
 	miog.F.MOST_BOSSES = #value-1 > miog.F.MOST_BOSSES and #value-1 or miog.F.MOST_BOSSES
 end
+
+miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
+	[1] = { --CURRENT TIER
+		[3] = miog.F.MOST_BOSSES * 100000 + miog.F.MOST_BOSSES,
+		[2] = miog.F.MOST_BOSSES * 10000 + miog.F.MOST_BOSSES,
+		[1] = miog.F.MOST_BOSSES * 1000 + miog.F.MOST_BOSSES,
+	},
+	[2] = { --LAST TIER
+		[3] = miog.F.MOST_BOSSES * 100 + miog.F.MOST_BOSSES,
+		[2] = miog.F.MOST_BOSSES * 10 + miog.F.MOST_BOSSES,
+		[1] = miog.F.MOST_BOSSES * 1 + miog.F.MOST_BOSSES,
+	}
+}
 
 miog.FONTS = {
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
@@ -1480,7 +1498,6 @@ miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms
 -- DEBUG
 --------- 
 
-
 miog.DEBUG_ROLE_TABLE = {
 	"TANK",
 	"HEALER",
@@ -1524,5 +1541,43 @@ miog.DEBUG_RAIDER_IO_PROFILES = {
 	[13] = {"Drjay", "Ragnaros", "eu"},
 	[14] = {"Пофанудру", "Ревущийфьорд", "eu"},
 	[15] = {"Rhany", "Ravencrest", "eu"},
-	[16] = {"Viegoavery", "Kazzak", "eu"},
+	[16] = {"Amesiella", "Blackrock", "eu"},
+	[17] = {"Pangnam", "Blackrock", "eu"},
+	[18] = {"Ikaris", "Draenor", "eu"},
+	[19] = {"Kiiwwievoker", "Draenor", "eu"},
+	[20] = {"Chuhlo", "Eredar", "eu"},
+	[21] = {"Pøggers", "Eredar", "eu"},
+	[22] = {"Viegoavery", "Kazzak", "eu"},
+
+	[23] = {"Dungztshaman", "아즈샤라", "kr"},
+	[24] = {"개솔희희", "아즈샤라", "kr"},
+	[25] = {"권카우", "아즈샤라", "kr"},
+	[26] = {"기픈물", "아즈샤라", "kr"},
+	[27] = {"Mopreme", "세나리우스", "kr"},
+	[28] = {"Sensory", "세나리우스", "kr"},
+	[29] = {"푸르른빛", "세나리우스", "kr"},
+
+	[30] = {"Jldoom", "阿薩斯", "tw"},
+	[31] = {"Passiøn", "阿薩斯", "tw"},
+	[32] = {"優質上進青年", "阿薩斯", "tw"},
+	[33] = {"嚣张的李二狗", "阿薩斯", "tw"},
+	[34] = {"Shaon", "亞雷戈斯", "tw"},
+	[35] = {"帕拉西", "亞雷戈斯", "tw"},
+	[36] = {"暮光路路", "亞雷戈斯", "tw"},
+
+	[37] = {"Drewmaage", "Illidan", "us"},
+	[38] = {"Cheezeadin", "Mal'Ganis", "us"},
+	[39] = {"Qwynn", "Trollbane", "us"},
+	[40] = {"Rainbowzy", "Illidan", "us"},
+	[41] = {"Beesindatrap", "Area52", "us"},
+	[42] = {"Ephesus", "Area52", "us"},
+	[43] = {"Gummieshark", "Area52", "us"},
+
+	[44] = {"Grangeese", "Silvermoon", "eu"},
+	[45] = {"Holyquarttet", "Silvermoon", "eu"},
+	[46] = {"Iceyshards", "Silvermoon", "eu"},
+	[47] = {"Chlight", "Ysondre", "eu"},
+	[48] = {"Emedrion", "TwistingNether", "eu"},
+	[49] = {"Maradenlock", "TwistingNether", "eu"},
+	[50] = {"Mingudh", "TwistingNether", "eu"},
 }
