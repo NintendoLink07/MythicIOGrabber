@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 
 
-## [1.1.8] - 2023-10-28
+## [1.1.7] - 2023-10-28
 
 ### Upcoming
 
@@ -355,8 +355,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.1.8...HEAD
-[1.1.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.8
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.1.7...HEAD
+[1.1.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.7
 [1.1.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.5
 [1.1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.4
 [1.1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.3
