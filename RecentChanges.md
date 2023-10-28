@@ -1,4 +1,4 @@
-## [1.1.7] - 2023-10-28
+## [1.1.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.7) - 2023-10-28
 
 ### Upcoming
 
