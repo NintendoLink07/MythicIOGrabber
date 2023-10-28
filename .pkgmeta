@@ -1,1 +1,3 @@
-manual-changelog:    filename: RecentChanges.txt    markup-type: markdown
+manual-changelog:
+  filename: RecentChanges.md
+  markup-type: markdown
