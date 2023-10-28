@@ -1,4 +1,4 @@
-## [1.1.7] - 2023-10-28
+## (1.1.7)[https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.7] - 2023-10-28
 
 ### Upcoming
 
@@ -26,3 +26,4 @@ If you experience anything odd at all just open up an issue or /w me ingame.
 
 - Possible roles of the applicant should now show up again in the detailed view
 - Edge cases of applicants reappearing from memory, even when already declined
+
