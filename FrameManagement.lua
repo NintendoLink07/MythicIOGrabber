@@ -90,6 +90,7 @@ end
 miog.persistentFramePool = CreateFramePoolCollection()
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Frame", nil, "GridLayoutFrame, BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("ScrollFrame", nil, "ScrollFrameTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "IconButtonTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", resetFrame)

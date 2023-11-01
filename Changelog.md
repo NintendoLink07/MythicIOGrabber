@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [1.2.0] - 2023-11-01
+
+### Added
+
+- For the users who mainly raid: there's now a class list on the left side of the main window.
+Updates on every invited member (between members there's always a 1.8 second delay, otherwise Blizzard hard throttles).
+Classes in the group are saturated and have a number indicating how many of the class are already in the group.
+Hovering over the icon reveals which specs of those classes are in your group.
+- Added square icons for the new class panel
+
+### Changed
+
+- Logic for requesting party/raid data improved, shouldn't be throttled anymore
+- Logic for inviting/declining applicants improved, except for a few edge cases (which I can't test on my own) it should be muuuch better and more reliable
+
+
+### Fixed
+
+- Fixed spec table for 10.2
+
+
+
 
 ## [1.1.7] - 2023-10-28
 

@@ -7,7 +7,7 @@ This is going to be the next bigger update I guess.
 The next update will probably release the first week in November and for that week and the 1st week of 10.2 I'll heavily update the addon.
 After that I'm gonna grind M+ for title so expect less updates (will probably code inbetween dungeons and release a new version when enough changes happened)
 
-Also: I changed from a 5800X3D to a 7800X3D, so performance leaks will be less obvious to me.
+Also: I changed from a 5800X3D to a 7800X3D, so performance leaks will be less obvious to me.<br>
 If you experience anything odd at all just open up an issue or /w me ingame.<br>
 
 

@@ -1,16 +1,18 @@
 local addonName, miog = ...
 
-local currentlyShownApplicants = {}
 local expandedFrameList = {}
 
 local lastApplicantFrame
 local applicantFramePadding = 6
 
-local dataSystem = {}
+--local inspectData = {}
 
-local debugApplicantMemberInfo = {}
-local debugApplicantData = {}
-local debugAllApplicants = {}
+local groupSystem = {}
+groupSystem.groupMember = {}
+
+local applicantSystem = {}
+applicantSystem.applicantMember = {}
+
 local currentAverageExecuteTime = {}
 local debugTimer = nil
 
@@ -24,16 +26,18 @@ local CreateColorFromHexString = CreateColorFromHexString
 local queueTimer
 
 local function resetArrays()
-	debugAllApplicants = {}
-	debugApplicantMemberInfo = {}
-	debugApplicantData = {}
+	miog.DEBUG_APPLICANT_DATA = {}
+	miog.DEBUG_APPLICANT_MEMBER_INFO = {}
 end
 
 local function refreshFunction()
 	miog.releaseAllFleetingWidgets()
 
+	for k,v in pairs(applicantSystem.applicantMember) do
+		v.activeFrame = nil
+	end
+
 	lastApplicantFrame = nil
-	currentlyShownApplicants = {}
 
 	miog.F.APPLIED_NUM_OF_DPS = 0
 	miog.F.APPLIED_NUM_OF_HEALERS = 0
@@ -46,7 +50,33 @@ local function refreshFunction()
 end
 
 local function updateApplicantStatus(applicantID, applicantStatus)
-	local currentApplicant = currentlyShownApplicants[applicantID]
+	local currentApplicant = applicantSystem.applicantMember[applicantID]
+
+	if(currentApplicant and currentApplicant.activeFrame) then
+
+		for _, memberFrame in pairs(currentApplicant.activeFrame.memberFrames) do
+			memberFrame.statusFrame:Show()
+			memberFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[applicantStatus].statusString, miog.APPLICANT_STATUS_INFO[applicantStatus].color))
+
+			if(memberFrame.basicInformationPanel.inviteButton) then
+				memberFrame.basicInformationPanel.inviteButton:Disable()
+	
+			end
+		end
+
+		if(applicantStatus == "invited") then
+			currentApplicant.status = "pendingInvite"
+
+		else
+			currentApplicant.status = "removable"
+			currentApplicant.activeFrame = nil
+
+		end
+	end
+end
+
+--[[local function updateApplicantStatus(applicantID, applicantStatus)
+	local currentApplicant = applicantSystem.applicantMember[applicantID]
 
 	if(currentApplicant and currentApplicant.frame) then
 		if(currentApplicant.frame.inviteButton) then
@@ -61,7 +91,7 @@ local function updateApplicantStatus(applicantID, applicantStatus)
 
 		currentApplicant.creationStatus = applicantStatus == "invited" and "invited" or "canBeRemoved"
 	end
-end
+end]]
 
 local function sortApplicantList(applicant1, applicant2)
 
@@ -103,7 +133,7 @@ end
 
 local function addApplicantToPanel(applicantID)
 
-	local applicantData = miog.F.IS_IN_DEBUG_MODE and debugApplicantData[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
+	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
 	if(applicantData) then
 		local activityID = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.activityID or 0
@@ -117,7 +147,7 @@ local function addApplicantToPanel(applicantID)
 		applicantFrame.heightPadding = 1
 		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + applicantMemberPadding)
 		applicantFrame.memberFrames = {}
-		currentlyShownApplicants[applicantID].frame = applicantFrame
+		applicantSystem.applicantMember[applicantID].activeFrame = applicantFrame
 
 		miog.createFrameBorder(applicantFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
 
@@ -127,7 +157,7 @@ local function addApplicantToPanel(applicantID)
 			local dungeonData, pvpData, rioProfile
 			
 			if(miog.F.IS_IN_DEBUG_MODE) then
-				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, _, specID, dungeonData, pvpData = unpack(debugApplicantMemberInfo[applicantID][applicantIndex])
+				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, _, specID, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
 
 			else
 				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, _, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -270,8 +300,6 @@ local function addApplicantToPanel(applicantID)
 			end)
 			nameFrame.linkBox:Hide()
 
-			--updateApplicantStatus(applicantID, "debug")
-
 			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
 				local commentFrame = miog.createBasicTexture("fleeting", 136459, basicInformationPanel, basicInformationPanel.maximumHeight - 10, basicInformationPanel.maximumHeight - 10)
 				commentFrame:ClearAllPoints()
@@ -348,22 +376,25 @@ local function addApplicantToPanel(applicantID)
 				declineButton:SetFrameStrata("DIALOG")
 				declineButton:RegisterForClicks("LeftButtonUp")
 				declineButton:SetScript("OnClick", function()
-					--print(currentlyShownApplicants[applicantID].creationStatus)
+					print(applicantSystem.applicantMember[applicantID].status)
 
-					if(currentlyShownApplicants[applicantID].creationStatus == "added") then
-						--currentlyShownApplicants[applicantID] = nil
-						C_LFGList.DeclineApplicant(applicantID)
+					if(applicantSystem.applicantMember[applicantID].status == "fullyAdded") then
 						
-						if(miog.F.IS_IN_DEBUG_MODE) then
-							debugApplicantData[applicantID] = nil
-							miog.checkApplicantList(true)
+						if(not miog.F.IS_IN_DEBUG_MODE) then
+							C_LFGList.DeclineApplicant(applicantID)
+
+						else
+							miog.debug_DeclineApplicant(applicantID)
+
 						end
 
-					elseif(currentlyShownApplicants[applicantID].creationStatus == "canBeRemoved") then
-						miog.checkApplicantList(true)
-						
-						if(miog.F.IS_IN_DEBUG_MODE) then
-							debugApplicantData[applicantID] = nil
+					elseif(applicantSystem.applicantMember[applicantID].status == "removable") then
+						if(not miog.F.IS_IN_DEBUG_MODE) then
+							miog.checkApplicantList(true)
+
+						else
+							miog.debug_DeclineApplicant(applicantID)
+
 						end
 
 					end
@@ -382,7 +413,7 @@ local function addApplicantToPanel(applicantID)
 
 					if(miog.F.IS_IN_DEBUG_MODE) then
 						updateApplicantStatus(applicantID, "debug")
-						debugApplicantData[applicantID] = nil
+						--debugApplicantData[applicantID] = nil
 					end
 
 				end)
@@ -532,7 +563,7 @@ local function addApplicantToPanel(applicantID)
 					local highestKeyForDungeon
 
 					if(reqScore > dungeonScore) then
-						primaryIndicator:SetText(wticc(dungeonScore, miog.CLRSCC["red"]))
+						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC["red"]))
 
 					else
 						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForScore(dungeonScore):GenerateHexColor()))
@@ -889,9 +920,11 @@ local function addApplicantToPanel(applicantID)
 
 		applicantFrame:MarkDirty()
 		lastApplicantFrame = applicantFrame
-		currentlyShownApplicants[applicantID].creationStatus = "added"
+		applicantSystem.applicantMember[applicantID].status = "fullyAdded"
 
 	end
+
+	--updateApplicantStatus(applicantID, "debug")
 	
 end
 
@@ -903,24 +936,24 @@ miog.checkApplicantList = function(needRefresh)
 
 	local unsortedMainApplicantsList = {}
 
-	for _, applicantID in pairs(miog.F.IS_IN_DEBUG_MODE and debugAllApplicants or C_LFGList:GetApplicants()) do
+	local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList:GetApplicants()
 
-		if(currentlyShownApplicants[applicantID] == nil) then
-			local applicantData = miog.F.IS_IN_DEBUG_MODE and debugApplicantData[applicantID] or C_LFGList.GetApplicantInfo(applicantID)
+	for _, applicantID in pairs(currentApplicants) do
 
-			if(applicantData and applicantData.applicationStatus == "applied" and applicantData.displayOrderID > 0) then
+		if(applicantSystem.applicantMember[applicantID]) then
+			if(applicantSystem.applicantMember[applicantID].saveData == nil) then
+				local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
-				local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, bestDungeonScoreForListing, pvpRatingInfo
-				
-				if(miog.F.IS_IN_DEBUG_MODE) then
-					name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = unpack(debugApplicantMemberInfo[applicantID][1])
-				else
-					name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
-				end
+				if(applicantData and applicantData.applicationStatus == "applied" and applicantData.displayOrderID > 0) then
 
-				--print(name, applicantData.applicationStatus, applicantData.pendingApplicationStatus)
+					local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, bestDungeonScoreForListing, pvpRatingInfo
+					
+					if(miog.F.IS_IN_DEBUG_MODE) then
+						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, 1)
+					else
+						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
+					end
 
-				if(not dataSystem[applicantID]) then
 					local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
 					local profile, primarySortAttribute, secondarySortAttribute
 
@@ -996,25 +1029,26 @@ miog.checkApplicantList = function(needRefresh)
 
 					end
 
-					if(assignedRole == "TANK" and miog.F.SHOW_TANKS or assignedRole == "HEALER" and miog.F.SHOW_HEALERS or assignedRole == "DAMAGER" and miog.F.SHOW_DPS) then
-						unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = {
-							name = name,
-							index = applicantID,
-							role = assignedRole,
-							primary = primarySortAttribute,
-							secondary = secondarySortAttribute,
-							ilvl = itemLevel
-						}
-
-						dataSystem[applicantID] = unsortedMainApplicantsList[#unsortedMainApplicantsList]
-
-					end
-				else
-					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = dataSystem[applicantID]
+					applicantSystem.applicantMember[applicantID].saveData = {
+						name = name,
+						index = applicantID,
+						role = assignedRole,
+						primary = primarySortAttribute,
+						secondary = secondarySortAttribute,
+						ilvl = itemLevel
+					}
 
 				end
+
+			else
+				--print("FOUND DATA FOR STUFFS")
+
 			end
 
+			if(applicantSystem.applicantMember[applicantID].activeFrame == nil) then
+				unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].saveData
+
+			end
 		end
 	end
 
@@ -1022,52 +1056,21 @@ miog.checkApplicantList = function(needRefresh)
 		table.sort(unsortedMainApplicantsList, sortApplicantList)
 
 		for _, listEntry in ipairs(unsortedMainApplicantsList) do
-			if(currentlyShownApplicants[listEntry.index] == nil) then
 									
-				if(listEntry.role == "TANK") then
-					miog.F.APPLIED_NUM_OF_TANKS = miog.F.APPLIED_NUM_OF_TANKS + 1
+			if(listEntry.role == "TANK") then
+				miog.F.APPLIED_NUM_OF_TANKS = miog.F.APPLIED_NUM_OF_TANKS + 1
 
-				elseif(listEntry.role == "HEALER") then
-					miog.F.APPLIED_NUM_OF_HEALERS = miog.F.APPLIED_NUM_OF_HEALERS + 1
+			elseif(listEntry.role == "HEALER") then
+				miog.F.APPLIED_NUM_OF_HEALERS = miog.F.APPLIED_NUM_OF_HEALERS + 1
 
-				elseif(listEntry.role == "DAMAGER") then
-					miog.F.APPLIED_NUM_OF_DPS = miog.F.APPLIED_NUM_OF_DPS + 1
+			elseif(listEntry.role == "DAMAGER") then
+				miog.F.APPLIED_NUM_OF_DPS = miog.F.APPLIED_NUM_OF_DPS + 1
 
-				end
+			end
 
-				currentlyShownApplicants[listEntry.index] = {
-					creationStatus = "inProgress",
-					frame = nil,
-				}
+			if(listEntry.role == "TANK" and miog.F.SHOW_TANKS or listEntry.role == "HEALER" and miog.F.SHOW_HEALERS or listEntry.role == "DAMAGER" and miog.F.SHOW_DPS) then
+				applicantSystem.applicantMember[listEntry.index].status = "inProgress"
 				addApplicantToPanel(listEntry.index)
-			
-				
-				--CONCEPT, SAVE FRAMES
-				--WAYYYYYY TOO EXPENSIVE ATM, per 33 applicants ~2500 frames, stacking per reset..
-
-				--local startTime = GetTimePreciseSec()
-
-				--[[if(currentFrames[listEntry.index]) then
-					local applicantFrame = currentFrames[listEntry.index]
-					--print("USE FRAME")
-
-					--applicantFrame.memberFrames[1].nameFrame.FontString:SetText("USED")
-					--applicantFrame:ClearAllPoints()
-					--applicantFrame:Show()
-					--applicantFrame:SetPoint("TOP", lastApplicantFrame or miog.mainFrame.applicantPanel.container, lastApplicantFrame and "BOTTOM" or "TOP", 0, lastApplicantFrame and -applicantFramePadding or 0)
-					--applicantFrame:MarkDirty()
-
-					--lastApplicantFrame = applicantFrame
-
-					--currentlyShownApplicants[listEntry.index].frame = applicantFrame
-					--currentlyShownApplicants[listEntry.index].creationStatus = "added"
-
-				else
-					--print("CREATE FRAME")
-					addApplicantToPanel(listEntry.index)
-
-				end]]
-
 			end
 		end
 
@@ -1089,10 +1092,9 @@ local function createFullEntries(iterations)
 	miog.shuffleNumberTable(numbers)
 
 	for index = 1, iterations, 1 do
-		local applicantID = #debugAllApplicants
-		debugAllApplicants[#debugAllApplicants+1] = applicantID
+		local applicantID = random(1000, 9999)
 
-		debugApplicantData[applicantID] = {
+		miog.DEBUG_APPLICANT_DATA[applicantID] = {
 			applicantID = applicantID,
 			applicationStatus = "applied",
 			numMembers = 1,
@@ -1101,9 +1103,15 @@ local function createFullEntries(iterations)
 			displayOrderID = 1,
 		}
 
-		debugApplicantMemberInfo[applicantID] = {}
+		applicantSystem.applicantMember[applicantID] = {
+			activeFrame = nil,
+			saveData = nil,
+			status = "dataAvailable",
+		}
 
-		for memberIndex = 1, debugApplicantData[applicantID].numMembers, 1 do
+		miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID] = {}
+
+		for memberIndex = 1, miog.DEBUG_APPLICANT_DATA[applicantID].numMembers, 1 do
 			local rating = random(1, 4000)
 			rating = 0
 
@@ -1112,9 +1120,12 @@ local function createFullEntries(iterations)
 
 			local classID = random(1, 13)
 			local classInfo = C_CreatureInfo.GetClassInfo(classID) or {"WARLOCK", "Warlock"}
-			local specID = miog.CLASSES[classInfo.classFile].specs[random(1, #miog.CLASSES[classInfo.classFile].specs)]
+			
+			local specID = miog.CLASSES[classID].specs[random(1, #miog.CLASSES[classID].specs)]
 
-			debugApplicantMemberInfo[applicantID][memberIndex] = {
+			--local specID = miog.CLASSES[classInfo.classFile].specs[random(1, #miog.CLASSES[classInfo.classFile].specs)]
+
+			miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID][memberIndex] = {
 				[1] = debugProfile[1] .. "-" .. debugProfile[2],
 				[2]  = classInfo.classFile, --ENG
 				[3]  = classInfo.className, --GER
@@ -1145,7 +1156,204 @@ local function createFullEntries(iterations)
 	currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
 end
 
-local function updateRoster()
+local function updateAddonRoster()
+	local inPartyOrRaid = UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "player"
+	
+	local groupCount = {
+		["TANK"] = 0,
+		["HEALER"] = 0,
+		["DAMAGER"] = 0,
+		["NONE"] = 0
+	}
+	
+	miog.releaseRaidRosterPool()
+
+	local indexedGroup = {}
+	local classesInGroup = {}
+	local index = 1
+	local specTable = {}
+
+	for key, groupMember in pairs(groupSystem.groupMember) do
+		if(groupMember.dataAvailable == true) then
+			local guid = key
+			local classID = groupMember.classID
+			local role = groupMember.role
+			print(role)
+
+			--local unitID1 = groupMember.unitID
+			--local name = groupMember.name
+			--local specID = groupMember.specID
+			--local specIcon = miog.SPECIALIZATIONS[specID].icon
+
+			local unitID = guid == UnitGUID("player") and "player" or inPartyOrRaid .. index
+
+			local unitInPartyOrRaid = UnitInRaid(unitID) or UnitInParty(unitID) or guid == UnitGUID("player") or inPartyOrRaid == "player" and true or false
+
+			if(unitInPartyOrRaid and role ~= "NONE") then
+				if(groupCount[role]) then
+					groupCount[role] = groupCount[role] + 1
+				end
+
+				specTable[groupMember.specID] = specTable[groupMember.specID] and specTable[groupMember.specID] + 1 or 1
+
+				classesInGroup[classID] = classesInGroup[classID] and classesInGroup[classID] + 1 or 1
+				indexedGroup[#indexedGroup+1] = groupMember
+
+				--ONLY USED IN PARTY MODE
+				indexedGroup[#indexedGroup].unitID = unitID
+
+				if(inPartyOrRaid == "raid" or inPartyOrRaid == "party" and guid ~= UnitGUID("player")) then
+					index = index + 1
+
+				end
+
+			else
+				--inspectQueueMember = nil
+
+			end
+		end
+	end
+
+	local counter = 1
+
+	for classID, classEntry in ipairs(miog.CLASSES) do
+		if(classesInGroup[classID]) then
+			local classFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.classPanel, 25, 25, "Texture", classEntry.icon)
+			classFrame:SetPoint("TOP", miog.mainFrame.classPanel.classFrames[counter - 1] or miog.mainFrame.classPanel, miog.mainFrame.classPanel.classFrames[counter - 1] and "BOTTOM" or "TOP", 0, -5)
+			classFrame.layoutIndex = counter
+
+			local specPanel = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.classPanel)
+			specPanel:Hide()
+
+			local lastSpecFrame = nil
+
+			for _, v in ipairs(classEntry.specs) do
+				if(specTable[v]) then
+					local specFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", specPanel, 20, 20, "Texture", miog.SPECIALIZATIONS[v].squaredIcon)
+					specFrame:SetPoint("RIGHT", lastSpecFrame or classFrame, "LEFT", -5, 0)
+
+					local specFrameFontString = miog.createBasicFontString("raidRoster", 14, specFrame)
+					specFrameFontString:SetPoint("CENTER", specFrame, "CENTER", 0, -1)
+					specFrameFontString:SetJustifyH("CENTER")
+					specFrameFontString:SetText(specTable[v])
+					specFrame.FontString = specFrameFontString
+
+					lastSpecFrame = specFrame
+				end
+
+			end
+
+			classFrame:SetMouseMotionEnabled(true)
+			classFrame:SetScript("OnEnter", function()
+				specPanel:Show()
+
+			end)
+			classFrame:SetScript("OnLeave", function()
+				specPanel:Hide()
+
+			end)
+
+			local classFrameFontString = miog.createBasicFontString("raidRoster", 20, classFrame)
+			classFrameFontString:SetPoint("CENTER", classFrame, "CENTER", 0, -1)
+			classFrameFontString:SetJustifyH("CENTER")
+			classFrameFontString:SetText(classesInGroup[classID])
+			classFrame.FontString = classFrameFontString
+
+			local rPerc, gPerc, bPerc = GetClassColor(classEntry.name)
+			miog.createFrameBorder(classFrame, 1, rPerc, gPerc, bPerc, 1)
+			
+			miog.mainFrame.classPanel.classFrames[counter] = classFrame
+
+			counter = counter + 1
+		end
+	
+		miog.mainFrame.classPanel:MarkDirty()
+	end
+
+	for i = 1, #miog.CLASSES, 1 do
+		if(not classesInGroup[i]) then
+			local classFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.classPanel, 25, 25, "Texture", miog.CLASSES[i].icon)
+			classFrame:SetPoint("TOP", miog.mainFrame.classPanel.classFrames[counter - 1] or miog.mainFrame.classPanel, miog.mainFrame.classPanel.classFrames[counter - 1] and "BOTTOM" or "TOP", 0, -5)
+			classFrame.layoutIndex = counter
+			classFrame.Texture:SetDesaturated(true)
+
+			miog.createFrameBorder(classFrame, 1, 0, 0, 0, 1)
+			
+			miog.mainFrame.classPanel.classFrames[counter] = classFrame
+
+			counter = counter + 1
+
+		end
+	
+		miog.mainFrame.classPanel:MarkDirty()
+	end
+	
+	miog.mainFrame.classPanel:MarkDirty()
+
+	miog.mainFrame.titleBar.groupMemberListing.FontString:SetText("")
+
+	if(#indexedGroup < 5) then
+		if(groupCount["TANK"] < 1) then
+			indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty", name = "afk", classID = 20, role = "TANK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+		end
+
+		if(groupCount["HEALER"] < 1 and #indexedGroup < 5) then
+			indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty", name = "afk", classID = 21, role = "HEALER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+		end
+
+		for i = 1, 3 - groupCount["DAMAGER"], 1 do
+			if(groupCount["DAMAGER"] < 3 and #indexedGroup < 5) then
+				indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty"..i, name = "afk", classID = 22, role = "DAMAGER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+			end
+		end
+	end
+
+	table.sort(indexedGroup, function(a, b)
+		if a.role ~= b.role then
+			return b.role < a.role
+		end
+		
+		return a.classID < b.classID
+	end)
+
+	local lastIcon
+
+	if(miog.F.NUM_OF_GROUP_MEMBERS < 6) then
+		lastIcon = nil
+
+		for _, groupMember in ipairs(indexedGroup) do
+			local specIcon = groupMember.icon or miog.SPECIALIZATIONS[groupMember.specID].squaredIcon
+			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.titleBar.groupMemberListing, miog.mainFrame.titleBar.factionIconSize - 2, miog.mainFrame.titleBar.factionIconSize - 2, "Texture", specIcon)
+			classIconFrame:SetPoint("LEFT", lastIcon or miog.mainFrame.titleBar.groupMemberListing, lastIcon and "RIGHT" or "LEFT")
+			classIconFrame:SetFrameStrata("DIALOG")
+
+			lastIcon = classIconFrame
+
+		end
+	else
+		miog.mainFrame.titleBar.groupMemberListing.FontString:SetText(groupCount["TANK"] .. "/" .. groupCount["HEALER"] .. "/" .. groupCount["DAMAGER"])
+
+	end
+	
+	if(miog.F.IS_IN_DEBUG_MODE) then
+		lastIcon = nil
+		for _, groupMember in ipairs(indexedGroup) do
+			local specIcon = groupMember.icon or miog.SPECIALIZATIONS[groupMember.specID].icon
+			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", WorldFrame, miog.mainFrame.titleBar.factionIconSize - 2, miog.mainFrame.titleBar.factionIconSize - 2, "Texture", specIcon)
+			classIconFrame:SetPoint("TOPLEFT", lastIcon or WorldFrame, lastIcon and "TOPRIGHT" or "TOPLEFT")
+			classIconFrame:SetFrameStrata("DIALOG")
+
+			lastIcon = classIconFrame
+		end
+	end
+
+	miog.mainFrame.titleBar.groupMemberListing:MarkDirty()
+
+	print("ROSTER UPDATED")
+
+end
+
+--[[local function updateRoster()
 	miog.F.CURRENT_GROUP_INFO = {}
 
 	local inPartyOrRaid = UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "player"
@@ -1158,6 +1366,84 @@ local function updateRoster()
 	}
 
 	miog.releaseRaidRosterPool()
+
+	local index = 1
+	local classesInGroup = {}
+
+	for key, inspectQueueMember in pairs(miog.F.INSPECT_QUEUE) do
+		local guid = key
+
+		---@diagnostic disable-next-line: unbalanced-assignments
+		local class, classID = inspectQueueMember[5] or UnitClassBase(inspectQueueMember[2])
+
+		if(classID == nil) then
+			classID = select(2, UnitClassBase(inspectQueueMember[2]))
+
+		end
+
+		local name = inspectQueueMember[4]
+		local specID = inspectQueueMember[3]
+		local _, _, _, icon, backupRole = GetSpecializationInfoByID(specID)
+		local specIcon
+
+		if(specID ~= nil and specID ~= 0) then
+			specIcon = miog.SPECIALIZATIONS[specID].icon
+		end
+
+		local role = inspectQueueMember[6] or backupRole or "NONE"
+
+		local unitID = guid == UnitGUID("player") and "player" or inPartyOrRaid .. index
+
+		local unitInPartyOrRaid = UnitInRaid(unitID) or UnitInParty(unitID) or guid == UnitGUID("player") or inPartyOrRaid == "player" and true or false
+
+		if(unitInPartyOrRaid and inspectQueueMember[1] == true) then
+
+			inspectQueueMember[1] = true
+			groupCount[role] = groupCount[role] + 1
+
+			classesInGroup[classID] = classesInGroup[classID] and classesInGroup[classID] + 1 or 1
+
+			miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO + 1] = {guid = guid, unitID = unitID, name = name, class = class, role = role, specIcon = specIcon or icon or miog.CLASSES[classID].icon}
+
+			if(inPartyOrRaid == "raid" or inPartyOrRaid == "party" and guid ~= UnitGUID("player")) then
+				index = index + 1
+
+			end
+
+		else
+			inspectQueueMember = nil
+
+		end
+	end
+
+	--DevTools_Dump(classesInGroup)
+
+	local counter = 1
+
+	for i = 1, #miog.CLASSES, 1 do
+		if(classesInGroup[i]) then
+			local classFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.mainFrame.classPanel, 25, 25, "Texture", miog.CLASSES[i].icon)
+			classFrame:SetPoint("TOP", miog.mainFrame.classPanel.classFrames[counter - 1] or miog.mainFrame.classPanel, miog.mainFrame.classPanel.classFrames[counter - 1] and "BOTTOM" or "TOP", 0, -5)
+			classFrame.layoutIndex = counter
+
+			local classFrameFontString = miog.createBasicFontString("persistent", 20, classFrame)
+			classFrameFontString:SetPoint("CENTER", classFrame, "CENTER", 0, -1)
+			classFrameFontString:SetJustifyH("CENTER")
+			classFrameFontString:SetText(classesInGroup[i])
+
+			classFrame.FontString = classFrameFontString
+
+			local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[i].name)
+			miog.createFrameBorder(classFrame, 2, rPerc, gPerc, bPerc, 1)
+			
+			miog.mainFrame.classPanel.classFrames[counter] = classFrame
+
+			counter = counter + 1
+		end
+	end
+	
+	miog.mainFrame.classPanel:MarkDirty()
+
 
 	if(miog.F.NUM_OF_GROUP_MEMBERS > 5) then
 
@@ -1175,42 +1461,6 @@ local function updateRoster()
 
 	else
 		miog.mainFrame.titleBar.groupMemberListing.FontString:SetText("")
-		
-		local index = 1
-
-		for key, inspectQueueMember in pairs(miog.F.INSPECT_QUEUE) do
-			local guid = key
-			local class = inspectQueueMember[5] or UnitClassBase(inspectQueueMember[2])
-			local name = inspectQueueMember[4]
-			local specID = inspectQueueMember[3]
-			local _, _, _, icon, backupRole = GetSpecializationInfoByID(specID)
-			local specIcon
-
-			if(specID ~= nil and specID ~= 0) then
-				specIcon = miog.SPECIALIZATIONS[specID].icon
-			end
-
-			local role = inspectQueueMember[6] or backupRole or "NONE"
-
-			local unitID = guid == UnitGUID("player") and "player" or inPartyOrRaid .. index
-
-			local unitInPartyOrRaid = UnitInRaid(unitID) or UnitInParty(unitID) or guid == UnitGUID("player") or inPartyOrRaid == "player" and true or false
-
-			if(unitInPartyOrRaid and inspectQueueMember[1] == true) then
-
-				inspectQueueMember[1] = true
-				groupCount[role] = groupCount[role] + 1
-
-				miog.F.CURRENT_GROUP_INFO[#miog.F.CURRENT_GROUP_INFO+1] = {guid = guid, unitID = unitID, name = name, class = class, role = role, specIcon = specIcon or icon or miog.CLASSES[class].icon}
-
-				if(inPartyOrRaid == "raid" or inPartyOrRaid == "party" and guid ~= UnitGUID("player")) then
-					index = index + 1
-
-				end
-			else
-				inspectQueueMember = nil
-			end
-		end
 
 		if(#miog.F.CURRENT_GROUP_INFO < 5) then
 			if(groupCount["TANK"] < 1) then
@@ -1286,7 +1536,7 @@ local function requestInspectDataFromFullGroup()
 		end
 	end
 	
-end
+end]]
 
 
 local function checkIfCanInvite()
@@ -1301,15 +1551,79 @@ local function checkIfCanInvite()
 	end
 end
 
+local inspectRoutine
+local rosterUpdate = false
+
+local function getInspectDataForGroup()
+	rosterUpdate = false
+
+	local inPartyOrRaid = UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "player"
+
+	local unitID, name, classID, specID, guid
+
+	for groupIndex = 1, miog.F.NUM_OF_GROUP_MEMBERS, 1 do
+		unitID = inPartyOrRaid..groupIndex == "party"..miog.F.NUM_OF_GROUP_MEMBERS and "player" or inPartyOrRaid..groupIndex
+		guid = UnitGUID(unitID) or ""
+
+		if(not groupSystem.groupMember[guid]) then
+			name = UnitName(unitID)
+			classID = select(2, UnitClassBase(unitID))
+
+			groupSystem.groupMember[guid] = {
+				dataAvailable = false,
+				unitID = unitID,
+				name = name,
+				classID = classID
+			}
+
+			if(CanInspect(unitID) and UnitIsConnected(unitID)) then
+				miog.F.CURRENTLY_INSPECTING = true
+				print("NOTIFY FOR "..name)
+				NotifyInspect(unitID)
+				coroutine.yield(inspectRoutine)
+				
+				groupSystem.groupMember[guid].dataAvailable = true
+				groupSystem.groupMember[guid].specID = GetInspectSpecialization(unitID)
+				groupSystem.groupMember[guid].role = unitID == "player" and (GetSpecializationRoleByID(groupSystem.groupMember[guid].specID)) or select(5, GetSpecializationInfoByID(groupSystem.groupMember[guid].specID))
+				
+				print(name .. " DONE")
+			else
+				-- CAN'T INSPECT, EITHER DISTANCE, WEIRD HORDE/ALLIANCE STUFF OR OFFLINE
+			end
+		end
+
+		updateAddonRoster()
+	end
+
+	if(rosterUpdate) then
+		if(miog.F.NUM_OF_GROUP_MEMBERS > 0) then
+			inspectRoutine = coroutine.create(getInspectDataForGroup)
+			print(coroutine.resume(inspectRoutine))
+		end
+
+	else
+		miog.F.CURRENTLY_INSPECTING = false
+		print("DONE")
+	end
+end
+
+local lastInspectTime = 0
+
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
+		inspectRoutine = coroutine.create(getInspectDataForGroup)
+
 		miog.releaseAllFleetingWidgets()
 		miog.loadSettings()
 		miog.F.NUM_OF_GROUP_MEMBERS = GetNumGroupMembers()
 		
-		miog.F.INSPECT_QUEUE = {}
+		--miog.F.INSPECT_QUEUE = {}
 
-		requestInspectDataFromFullGroup()
+		--requestInspectDataFromFullGroup()
+
+		if(miog.F.NUM_OF_GROUP_MEMBERS > 0) then
+			print(coroutine.resume(inspectRoutine))
+		end
 
 	elseif(event == "PLAYER_LOGIN") then
 		miog.createMainFrame()
@@ -1330,7 +1644,6 @@ miog.OnEvent = function(_, event, ...)
 
 
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
-
 		miog.F.ACTIVE_ENTRY_INFO = C_LFGList.GetActiveEntryInfo()
 		local activityInfo
 
@@ -1449,6 +1762,7 @@ miog.OnEvent = function(_, event, ...)
 			end
 		else
 			refreshFunction()
+			miog.checkApplicantList(true)
 
 			if(... == true) then --NEW LISTING
 				MIOG_QueueUpTime = GetTimePreciseSec()
@@ -1458,7 +1772,6 @@ miog.OnEvent = function(_, event, ...)
 
 			elseif(... == false) then --RELOAD OR SETTINGS EDIT
 				MIOG_QueueUpTime = (MIOG_QueueUpTime and MIOG_QueueUpTime > 0) and MIOG_QueueUpTime or GetTimePreciseSec()
-				miog.checkApplicantList(true)
 
 			end
 
@@ -1475,37 +1788,37 @@ miog.OnEvent = function(_, event, ...)
 
 		local applicantData = C_LFGList.GetApplicantInfo(...)
 
-		--[[if(applicantData) then
-			DevTools_Dump(applicantData)
-			if(applicantData.applicationStatus ~= "applied") then
-				if(currentlyShownApplicants[...] and currentlyShownApplicants[...].creationStatus == "added") then
-					--currentlyShownApplicants[applicantID] = nil
-					updateApplicantStatus(..., applicantData.applicationStatus)
-					
-				end
-			elseif(applicantData.pendingApplicationStatus == "declined") then
-				print(..., "declined")
-
-			end
-		end]]
-
 		if(applicantData) then
 			if(applicantData.applicationStatus == "applied") then
-
 				if(applicantData.displayOrderID > 0) then --APPLICANT WITH DATA
 					if(applicantData.pendingApplicationStatus == nil) then--NEW APPLICANT WITH DATA 
 						--print(... .. " APPLICANT NEW")
 						--print("NEW")
 						--miog.checkApplicantList(C_PartyInfo.CanInvite())
+
+						applicantSystem.applicantMember[...] = {
+							activeFrame = nil,
+							saveData = nil,
+							status = "dataAvailable",
+						}
+						
 						miog.checkApplicantList(false)
 
 					elseif(applicantData.pendingApplicationStatus == "declined") then
 						--print(... .. " APPLICANT DECLINE - CLICKED")
+						applicantSystem.applicantMember[...].activeFrame = nil
 
 					else
 						--print(... .. " APPLICANT IDK" .. applicantData.pendingApplicationStatus)
 
 					end
+
+				elseif(applicantData.displayOrderID == 0) then
+					applicantSystem.applicantMember[...] = {
+						activeFrame = nil,
+						saveData = nil,
+						status = "noDataAvailable",
+					}
 
 				end
 			else --STATUS TRIGGERED BY APPLICANT
@@ -1561,32 +1874,70 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "GROUP_JOINED") then
-		miog.F.INSPECT_QUEUE = {}
+		--miog.F.INSPECT_QUEUE = {}
 
 		checkIfCanInvite()
 
 	elseif(event == "GROUP_LEFT") then
-		miog.F.INSPECT_QUEUE = {}
+		--miog.F.INSPECT_QUEUE = {}
 		
 		miog.F.NUM_OF_GROUP_MEMBERS = GetNumGroupMembers()
 
-		requestInspectDataFromFullGroup()
-		updateRoster()
+		--requestInspectDataFromFullGroup()
+		--updateRoster()
 
 	elseif(event == "PARTY_LEADER_CHANGED") then
 		checkIfCanInvite()
 
 	elseif(event == "GROUP_ROSTER_UPDATE") then
+		rosterUpdate = true
+
 		checkIfCanInvite()
 
 		miog.F.NUM_OF_GROUP_MEMBERS = GetNumGroupMembers()
 
-		requestInspectDataFromFullGroup()
+		--requestInspectDataFromFullGroup()
 
+		if(coroutine.status(inspectRoutine) == "dead") then
+			inspectRoutine = coroutine.create(getInspectDataForGroup)
+
+		elseif(coroutine.status(inspectRoutine) == "suspended") then
+			--coroutine.resume(inspectRoutine)
+
+		else
+		
+		end
+	
+		if(not miog.F.CURRENTLY_INSPECTING) then
+			print(coroutine.resume(inspectRoutine))
+		end
 
 	elseif(event == "INSPECT_READY") then
+		print("INSPECT DATA READY FOR", ...)
 
-		if(miog.F.INSPECT_QUEUE[...]) then
+		groupSystem.groupMember[...].dataAvailable = true
+		ClearInspectPlayer()
+
+		if(miog.F.NUM_OF_GROUP_MEMBERS < 6) then
+			print(coroutine.resume(inspectRoutine))
+
+		else
+			--[[local delay = GetTimePreciseSec() - lastInspectTime
+			print(delay)
+			C_Timer.After(delay > 2 and 0 or 2, function() coroutine.resume(inspectRoutine) end)
+
+			]]
+
+			local delay = GetTimePreciseSec() - lastInspectTime
+
+			print("LAST: "..delay)
+
+			C_Timer.After(delay >= 1.5 and 1.5 or ((1.5 - delay) < 0 and 0 or 1.5 - delay), function() print(coroutine.resume(inspectRoutine)) end)
+
+			lastInspectTime = GetTimePreciseSec()
+		end
+
+		--[[if(miog.F.INSPECT_QUEUE[...]) then
 			miog.F.INSPECT_QUEUE[...][1] = true
 
 			local specID = GetInspectSpecialization(miog.F.INSPECT_QUEUE[...][2])
@@ -1621,7 +1972,7 @@ miog.OnEvent = function(_, event, ...)
 			end
 
 			updateRoster()
-		end
+		end]]
 	end
 end
 
@@ -1647,6 +1998,11 @@ local function handler(msg, editBox)
 
 			miog.mainFrame:Show()
 		end
+
+	elseif(command == "debugon") then
+		miog.F.IS_IN_DEBUG_MODE = true
+		print("Debug mode on - No standard applicants coming through")
+
 
 	elseif(command == "debugoff") then
 		print("Debug mode off - Normal applicant mode")

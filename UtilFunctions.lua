@@ -22,18 +22,6 @@ miog.setAffixes = function()
 	end
 end
 
-
-
-miog.sortTableForRoleAndClass = function(tbl)
-	table.sort(tbl, function(a, b)
-		if a.role ~= b.role then
-			return b.role < a.role
-		end
-		
-		return a.class < b.class
-	end)
-end
-
 miog.createFrameBorder = function(frame, thickness, r, g, b, a)
 
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
@@ -146,4 +134,40 @@ miog.debugGetTestTier = function(rating)
 	end
 
 	return newRank
+end
+
+miog.debug_InviteApplicant = function(applicantID)
+
+end
+
+miog.debug_DeclineApplicant = function(applicantID)
+	miog.DEBUG_APPLICANT_DATA[applicantID] = nil
+	miog.checkApplicantList(true)
+
+end
+
+miog.debug_GetApplicants = function()
+	local allApplicantsTable = {}
+
+	local counter = 1
+
+	for k, _ in pairs(miog.DEBUG_APPLICANT_DATA) do
+		allApplicantsTable[counter] = k
+
+		counter = counter + 1
+
+	end
+
+	return allApplicantsTable
+
+end
+
+miog.debug_GetApplicantInfo = function(applicantID)
+	return miog.DEBUG_APPLICANT_DATA[applicantID]
+
+end
+
+miog.debug_GetApplicantMemberInfo = function(applicantID, index)
+	return unpack(miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID][index])
+
 end

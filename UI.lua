@@ -116,6 +116,40 @@ miog.createMainFrame = function()
 
 	miog.mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
 
+	local classPanel = miog.createBasicFrame("persistent", "GridLayoutFrame, BackdropTemplate", mainFrame)
+	classPanel:SetPoint("TOPRIGHT", mainFrame, "TOPLEFT", -1, 0)
+	classPanel.childYPadding = 5
+	classPanel.isHorizontal = true
+	classPanel.stride = 1
+	classPanel.layoutFramesGoingUp = false
+	classPanel.fixedWidth = 28
+
+	mainFrame.classPanel = classPanel
+
+	classPanel.classFrames = {}
+		
+	classPanel:MarkDirty()
+	--[[local counter = 1
+
+	for k, v in ipairs(miog.CLASSES) do
+		local classFrame = miog.createBasicFrame("persistent", "BackdropTemplate", miog.mainFrame.classPanel, miog.mainFrame.classPanel:GetWidth(), miog.mainFrame.classPanel:GetWidth(), "Texture", v.icon)
+		classFrame:SetPoint("TOP", miog.mainFrame.classPanel.classFrames[counter - 1] or miog.mainFrame.classPanel, miog.mainFrame.classPanel.classFrames[counter - 1] and "BOTTOM" or "TOP", 0, -5)
+
+		local classFrameFontString = miog.createBasicFontString("persistent", 20, classFrame)
+		classFrameFontString:SetPoint("CENTER", classFrame, "CENTER", 0, -1)
+		classFrameFontString:SetJustifyH("CENTER")
+		classFrameFontString:SetText(0)
+
+		classFrame.FontString = classFrameFontString
+
+		local rPerc, gPerc, bPerc = GetClassColor(v.name)
+		miog.createFrameBorder(classFrame, 2, rPerc, gPerc, bPerc, 1)
+		
+		miog.mainFrame.classPanel.classFrames[k] = classFrame
+
+		counter = counter + 1
+	end]]
+
 	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, mainFrame:GetHeight()*0.06)
 	titleBar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 0, 0)
 	titleBar:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", 0, 0)
@@ -150,12 +184,12 @@ miog.createMainFrame = function()
 	local groupMemberListing = miog.createBasicFrame("persistent", "ResizeLayoutFrame, BackdropTemplate", titleBar)
 	groupMemberListing.fixedHeight = 20
 	groupMemberListing.minimumWidth = 20
-	groupMemberListing:SetPoint("RIGHT", factionFrame, "LEFT", 0, -1)
+	groupMemberListing:SetPoint("RIGHT", factionFrame, "LEFT", 0, 0)
 
 	titleBar.groupMemberListing = groupMemberListing
 
 	local groupMemberListingText = miog.createBasicFontString("persistent", 16, groupMemberListing)
-	groupMemberListingText:SetPoint("RIGHT", groupMemberListing, "RIGHT")
+	groupMemberListingText:SetPoint("RIGHT", groupMemberListing, "RIGHT", 0, -1)
 	groupMemberListingText:SetText("0/0/0")
 	groupMemberListingText:SetJustifyH("RIGHT")
 	groupMemberListing:MarkDirty()
@@ -210,7 +244,7 @@ miog.createMainFrame = function()
 	local commentScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", infoPanel)
 	commentScrollFrame:SetPoint("TOPLEFT", activityNameFontString, "BOTTOMLEFT", 0, -miog.C.STANDARD_PADDING*2)
 	commentScrollFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT", -miog.C.STANDARD_PADDING, miog.C.STANDARD_PADDING)
-	commentScrollFrame.ScrollBar:Hide()
+	--commentScrollFrame.ScrollBar:Hide()
 
 	local commentFrame = miog.createBasicFrame("persistent", "BackdropTemplate", commentScrollFrame, commentScrollFrame:GetWidth(), commentScrollFrame:GetHeight(), "FontString", miog.C.LISTING_COMMENT_FONT_SIZE)
 	commentFrame.FontString:SetWidth(commentFrame:GetWidth())
@@ -349,7 +383,7 @@ miog.createMainFrame = function()
 	itemLevelFrame.FontString = itemLevelString
 
 	local affixFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, listingSettingPanel:GetWidth()*0.2, listingSettingPanel:GetHeight(), "FontString", miog.C.AFFIX_TEXTURE_FONT_SIZE)
-	affixFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 0, -1)
+	affixFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 0, 0)
 	affixFrame.tooltipText = ""
 	affixFrame:SetMouseMotionEnabled(true)
 	affixFrame:SetScript("OnEnter", function()
@@ -362,7 +396,7 @@ miog.createMainFrame = function()
 	end)
 	affixFrame.FontString:SetJustifyH("CENTER")
 	affixFrame.FontString:ClearAllPoints()
-	affixFrame.FontString:SetPoint("CENTER", affixFrame, "CENTER", 1, 0)
+	affixFrame.FontString:SetPoint("CENTER", affixFrame, "CENTER", 1, -1)
 	miog.createFrameBorder(affixFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	infoPanel.affixFrame = affixFrame
@@ -648,8 +682,8 @@ miog.createMainFrame = function()
 	end)
 
 	local applicantPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", titleBar)
-	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 0, -1)
-	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, -1)
+	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 0, 0)
+	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, 0)
 	mainFrame.applicantPanel = applicantPanel
 
 	miog.C.MAIN_WIDTH = applicantPanel:GetWidth()
