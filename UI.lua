@@ -71,7 +71,10 @@ miog.createMainFrame = function()
 	end)
 	_G[mainFrame:GetName()] = mainFrame
 
-	local backdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, nil, "Texture", miog.BACKGROUNDS[18])
+	local backdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, nil, "Texture")
+	backdropFrame.Texture:SetVertTile(true)
+	backdropFrame.Texture:SetHorizTile(true)
+	backdropFrame.Texture:SetTexture(miog.BACKGROUNDS[18])
 	backdropFrame:SetFrameStrata("HIGH")
 	backdropFrame:SetPoint("TOPLEFT", mainFrame, "TOPLEFT")
 	backdropFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT")
@@ -116,39 +119,80 @@ miog.createMainFrame = function()
 
 	miog.mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
 
-	local classPanel = miog.createBasicFrame("persistent", "GridLayoutFrame, BackdropTemplate", mainFrame)
-	classPanel:SetPoint("TOPRIGHT", mainFrame, "TOPLEFT", -1, 0)
-	classPanel.childYPadding = 5
-	classPanel.isHorizontal = true
-	classPanel.stride = 1
-	classPanel.layoutFramesGoingUp = false
+	local classPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", mainFrame)
+	classPanel:SetPoint("TOPRIGHT", mainFrame, "TOPLEFT", -1, -1)
+	--classPanel.childYPadding = 5
+	--classPanel.isHorizontal = true
+	--classPanel.stride = 1
+	--classPanel.layoutFramesGoingUp = false
+	--classPanel.spacing = 5
 	classPanel.fixedWidth = 28
 
 	mainFrame.classPanel = classPanel
 
 	classPanel.classFrames = {}
+	
+	for classID, classEntry in ipairs(miog.CLASSES) do
+		local classFrame = miog.createBasicFrame("persistent", "BackdropTemplate", classPanel, 25, 25, "Texture", classEntry.icon)
+		classPanel.classFrames[classID] = classFrame
+		classFrame.bottomPadding = 5
 		
-	classPanel:MarkDirty()
-	--[[local counter = 1
-
-	for k, v in ipairs(miog.CLASSES) do
-		local classFrame = miog.createBasicFrame("persistent", "BackdropTemplate", miog.mainFrame.classPanel, miog.mainFrame.classPanel:GetWidth(), miog.mainFrame.classPanel:GetWidth(), "Texture", v.icon)
-		classFrame:SetPoint("TOP", miog.mainFrame.classPanel.classFrames[counter - 1] or miog.mainFrame.classPanel, miog.mainFrame.classPanel.classFrames[counter - 1] and "BOTTOM" or "TOP", 0, -5)
-
 		local classFrameFontString = miog.createBasicFontString("persistent", 20, classFrame)
 		classFrameFontString:SetPoint("CENTER", classFrame, "CENTER", 0, -1)
 		classFrameFontString:SetJustifyH("CENTER")
-		classFrameFontString:SetText(0)
-
 		classFrame.FontString = classFrameFontString
 
-		local rPerc, gPerc, bPerc = GetClassColor(v.name)
-		miog.createFrameBorder(classFrame, 2, rPerc, gPerc, bPerc, 1)
-		
-		miog.mainFrame.classPanel.classFrames[k] = classFrame
+		local specPanel = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", classFrame)
+		specPanel:SetPoint("RIGHT", classFrame, "LEFT", -5, 0)
+		--specPanel.childXPadding = 5
+		--specPanel.isHorizontal = false
+		--specPanel.stride = 1
+		--specPanel.layoutFramesGoingRight = false
+		specPanel.fixedHeight = 25
+		--specPanel.spacing = 5
+		specPanel.specFrames = {}
+		--specPanel.align = "center"
+		specPanel:Hide()
+		classFrame.specPanel = specPanel
 
-		counter = counter + 1
-	end]]
+		local specCounter = 1 
+
+		for _, specID in ipairs(classEntry.specs) do
+			local specFrame = miog.createBasicFrame("persistent", "BackdropTemplate", specPanel, 25, 25, "Texture", miog.SPECIALIZATIONS[specID].squaredIcon)
+			specFrame.layoutIndex = specCounter
+			specFrame.leftPadding = 5
+			miog.createFrameBorder(specFrame, 1, 0, 0, 0, 1)
+
+			local specFrameFontString = miog.createBasicFontString("persistent", miog.C.SPEC_PANEL_FONT_SIZE, specFrame)
+			specFrameFontString:SetPoint("CENTER", specFrame, "CENTER", 0, -1)
+			specFrameFontString:SetJustifyH("CENTER")
+			specFrame.FontString = specFrameFontString
+
+			specPanel.specFrames[specID] = specFrame
+
+			specCounter = specCounter + 1
+		end
+
+		specPanel:MarkDirty()
+
+		classFrame:SetScript("OnEnter", function()
+			specPanel:Show()
+
+		end)
+		classFrame:SetScript("OnLeave", function()
+			specPanel:Hide()
+
+		end)
+	end
+
+	classPanel:MarkDirty()
+
+	local inspectProgressText = miog.createBasicFontString("persistent", miog.C.CLASS_PANEL_FONT_SIZE, classPanel)
+	inspectProgressText:SetPoint("TOPRIGHT", classPanel, "TOPLEFT", 0, -8)
+	inspectProgressText:SetText("0/40")
+	inspectProgressText:SetJustifyH("RIGHT")
+
+	classPanel.progressText = inspectProgressText
 
 	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, mainFrame:GetHeight()*0.06)
 	titleBar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 0, 0)
@@ -181,10 +225,10 @@ miog.createMainFrame = function()
 
 	titleBar.factionFrame = factionFrame
 
-	local groupMemberListing = miog.createBasicFrame("persistent", "ResizeLayoutFrame, BackdropTemplate", titleBar)
+	local groupMemberListing = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", titleBar)
 	groupMemberListing.fixedHeight = 20
 	groupMemberListing.minimumWidth = 20
-	groupMemberListing:SetPoint("RIGHT", factionFrame, "LEFT", 0, 0)
+	groupMemberListing:SetPoint("RIGHT", factionFrame, "LEFT", 0, -1)
 
 	titleBar.groupMemberListing = groupMemberListing
 
@@ -704,6 +748,7 @@ miog.createMainFrame = function()
 	miog.mainFrame:RegisterEvent("GROUP_JOINED")
 	miog.mainFrame:RegisterEvent("GROUP_LEFT")
 	miog.mainFrame:RegisterEvent("INSPECT_READY")
+	miog.mainFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction

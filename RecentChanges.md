@@ -1,28 +1,21 @@
-## [1.1.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.7) - 2023-10-28
-
-### Upcoming
-
-- The whole accept/decline thing is still wonky, since I try to keep the applicants in memory so the addon doesnt compute the full list every time shit happens.
-This is going to be the next bigger update I guess.
-The next update will probably release the first week in November and for that week and the 1st week of 10.2 I'll heavily update the addon.
-After that I'm gonna grind M+ for title so expect less updates (will probably code inbetween dungeons and release a new version when enough changes happened)
-
-Also: I changed from a 5800X3D to a 7800X3D, so performance leaks will be less obvious to me.<br>
-If you experience anything odd at all just open up an issue or /w me ingame.<br>
-
+## [1.2.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.0) - 2023-11-02
 
 ### Added
 
-- Desaturated colors for last tier added, makes it more obvious who had 7/8M and who had 7/8N last tier<br>
+- For the users who mainly raid: there's now a class list on the left side of the main window.
+Updates on every invited member (between members there's always atleast a 1.5 second delay, otherwise Blizzard hard throttles the inspect data requests).
+Classes that are currently in the group are saturated and have a number indicating how many of the class are already in the group.
+Hovering over the icon reveals which specs of those classes are in your group.
+- Text indicator next to the class panel 
+- Added square icons for the new class panel
 
 
 ### Changed
 
-- Compute time down to ~0.11 ms per 33 applicants on the first run, every refresh or re-apply takes now only ~0.08ms
-- Invite/decline logic changed, should be more accurate now (some edge cases where you couldn't invite, decline or both)<br>
+- Logic for requesting party/raid data improved, shouldn't be throttled anymore
+- Logic for inviting/declining applicants improved, except for a few edge cases (which I can't test on my own) it should be muuuch better and more reliable
 
 
 ### Fixed
 
-- Possible roles of the applicant should now show up again in the detailed view
-- Edge cases of applicants reappearing from memory, even when already declined<br>
+- Fixed spec table for 10.2 <br>

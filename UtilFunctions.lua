@@ -22,6 +22,10 @@ miog.setAffixes = function()
 	end
 end
 
+miog.checkLFGState = function()
+	return UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "solo"
+end
+
 miog.createFrameBorder = function(frame, thickness, r, g, b, a)
 
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
@@ -82,6 +86,18 @@ miog.secondsToClock = function(stringSeconds)
 	end
 end
 
+miog.checkIfCanInvite = function()
+	if(UnitIsGroupLeader("player")) then
+		miog.mainFrame.footerBar:Show()
+		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
+
+	else
+		miog.mainFrame.footerBar:Hide()
+		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
+
+	end
+end
+
 miog.changeDrawLayer = function(regionType, oldDrawLayer, newDrawLayer, ...)
 	for index = 1, select('#', ...) do
 		local region = select(index, ...)
@@ -117,6 +133,13 @@ miog.shuffleNumberTable = function(table)
 	for i = 1, #table - 1 do
 		local j = math.random(i, #table)
 		table[i], table[j] = table[j], table[i]
+	end
+end
+
+miog.handleCoroutineReturn = function(coroutineReturn)
+	if(coroutineReturn[1] == false) then
+		print("ERROR: " .. coroutineReturn[2])
+
 	end
 end
 

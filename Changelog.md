@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
-## [1.2.0] - 2023-11-01
+## [1.2.0] - 2023-11-04
 
 ### Added
 
-- For the users who mainly raid: there's now a class list on the left side of the main window.
-Updates on every invited member (between members there's always a 1.8 second delay, otherwise Blizzard hard throttles).
-Classes in the group are saturated and have a number indicating how many of the class are already in the group.
+- For the users who mainly raid: a class list on the left side of the main window.
+Updates on every invited member (between members there's always atleast a 1.5 second delay, otherwise Blizzard hard throttles the inspect data requests).
+Classes that are currently in the group are color saturated and have a number indicating how many of the class are already in the group.
+Sorted by number of members of that class (e.g. 3 Warriors > 2 Rogues)
 Hovering over the icon reveals which specs of those classes are in your group.
-- Added square icons for the new class panel
+
 
 ### Changed
 
@@ -26,7 +27,6 @@ Hovering over the icon reveals which specs of those classes are in your group.
 ### Fixed
 
 - Fixed spec table for 10.2
-
 
 
 
@@ -377,7 +377,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.1.7...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.0
 [1.1.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.7
 [1.1.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.5
 [1.1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.4

@@ -4,21 +4,14 @@ local function resetFrame(pool, childFrame)
     childFrame:Hide()
 	childFrame:SetFrameStrata("LOW")
 
-	local poolTemplate = pool:GetTemplate()
-
-	--if(string.find(poolTemplate, "BackdropTemplate")) then
-		
-	--elseif(string.find(poolTemplate, "IconButtonTemplate")) then
-
-	--elseif(string.find(poolTemplate, "ResizeLayoutFrame") or string.find(poolTemplate, "VerticalLayoutFrame") or string.find(poolTemplate, "HorizontalLayoutFrame")) then
-		childFrame.fixedHeight = nil
-		childFrame.fixedWidth = nil
-		childFrame.minimumHeight = nil
-		childFrame.minimumWidth = nil
-		childFrame.maximumHeight = nil
-		childFrame.maximumWidth = nil
-
-	--end
+	childFrame.fixedHeight = nil
+	childFrame.fixedWidth = nil
+	childFrame.minimumHeight = nil
+	childFrame.minimumWidth = nil
+	childFrame.maximumHeight = nil
+	childFrame.maximumWidth = nil
+	childFrame.bottomPadding = nil
+	childFrame.leftPadding = nil
 
 	local typeOfFrame = childFrame:GetObjectType()
 
@@ -90,6 +83,8 @@ end
 miog.persistentFramePool = CreateFramePoolCollection()
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Frame", nil, "VerticalLayoutFrame, BackdropTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "GridLayoutFrame, BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("ScrollFrame", nil, "ScrollFrameTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "IconButtonTemplate", resetFrame)

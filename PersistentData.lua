@@ -43,6 +43,13 @@ miog.APPLICANT_STATUS_INFO = {
 
 --CONSTANTS
 miog.C = {
+	-- 1.5 seconds seems to be the internal throttle of the inspect function / Blizzard's inspect data provider.
+	-- 1.4 locks up the inspects after a maximum of ~15 inspects.
+	-- First 6 inspects are not affected by this throttle.
+	-- I have played around with many different delays or different request "sets" (e.g. every 3 seconds 2 applicants, every 5 seconds 4 applicants) but nothing seems to work as well as: if number of members < 6 all instantly, otherwise every 1.5 seconds
+	BLIZZARD_INSPECT_THROTTLE = 1.6,
+
+
     --
     --- FRAME SIZES
     --
@@ -55,6 +62,8 @@ miog.C = {
     --
     --- FONT SIZES
     --
+	CLASS_PANEL_FONT_SIZE = 16,
+	SPEC_PANEL_FONT_SIZE = 14,
 	TITLE_FONT_SIZE = 14,
 	ACTIVITY_NAME_FONT_SIZE = 13,
 	LISTING_COMMENT_FONT_SIZE = 12,
@@ -126,13 +135,11 @@ miog.F = {
 	REQUIRED_RATING = 0,
 	REQUIRED_ILVL = 0,
 
-	CURRENT_GROUP_INFO = {},
 	IS_RAIDERIO_LOADED = false,
 	IS_IN_DEBUG_MODE = false,
 
 	MOST_BOSSES = 0,
 	
-	INSPECT_QUEUE = {},
 	CURRENTLY_INSPECTING = false,
 	ACTIVE_ENTRY_INFO = nil,
 
@@ -147,7 +154,7 @@ miog.F = {
 	CURRENT_DUNGEON_DIFFICULTY = 0,
 	CURRENT_RAID_DIFFICULTY = 0,
 
-	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
+	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],
 }
 
 miog.BLANK_BACKGROUND_INFO = {
@@ -230,10 +237,10 @@ miog.RAID_ICONS = {
 	[2549] = { --interface/icons/inv_achievement_raidemeralddream
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png",
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png",
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png",
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png",
+		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png",
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png",
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png",
 		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png",
@@ -285,21 +292,28 @@ miog.FONTS = {
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
 }
 
---[[miog.CLASSES = {
-	["WARRIOR"] = 		{index = 1, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png", specs = {[1] = 71, [2] = 72, [3] = 73}},
-	["PALADIN"] = 		{index = 2, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png", specs = {[1] = 65, [2] = 66, [3] = 70}},
-	["HUNTER"] = 		{index = 3, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter.png", specs = {[1] = 253, [2] = 254, [3] = 255}},
-	["ROGUE"] = 		{index = 4, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue.png", specs = {[1] = 259, [2] = 260, [3] = 261}},
-	["PRIEST"] = 		{index = 5, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest.png", specs = {[1] = 256, [2] = 257, [3] = 258}},
-	["DEATHKNIGHT"] = 	{index = 6, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight.png", specs = {[1] = 250, [2] = 251, [3] = 252}},
-	["SHAMAN"] = 		{index = 7, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman.png", specs = {[1] = 262, [2] = 263, [3] = 264}},
-	["MAGE"] = 			{index = 8, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage.png", specs = {[1] = 62, [2] = 63, [3] = 64}},
-	["WARLOCK"] =		{index = 9, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock.png", specs = {[1] = 265, [2] = 266, [3] = 265}},
-	["MONK"] = 			{index = 10, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk.png", specs = {[1] = 267, [2] = 269, [3] = 270}},
-	["DRUID"] =			{index = 11, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png", specs = {[1] = 102, [2] = 103, [3] = 104, [4] = 105}},
-	["DEMONHUNTER"] = 	{index = 12, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", specs = {[1] = 577, [2] = 581}},
-	["EVOKER"] = 		{index = 13, icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", specs = {[1] = 1467, [2] = 1468, [3] = 1473}},
-}]]
+miog.ROSTER_INFO = {
+	["RAID"] = {
+		MAX_SIZE = 40,
+	}
+}
+
+miog.CLASSFILE_TO_ID = {
+	["WARRIOR"] = 1,
+	["PALADIN"] = 2,
+	["HUNTER"] = 3,
+	["ROGUE"] = 4,
+	["PRIEST"] = 5,
+	["DEATHKNIGHT"] = 6,
+	["SHAMAN"] = 7,
+	["MAGE"] = 8,
+	["WARLOCK"] = 9,
+	["MONK"] = 10,
+	["DRUID"] = 11,
+	["DEMONHUNTER"] = 12,
+	["EVOKER"] = 13,
+	["DUMMY"] = 20,
+}
 
 miog.CLASSES = {
 	[1] = 	{name = "WARRIOR", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png", specs = {[1] = 71, [2] = 72, [3] = 73}},
@@ -315,6 +329,7 @@ miog.CLASSES = {
 	[11] =	{name = "DRUID", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png", specs = {[1] = 102, [2] = 103, [3] = 104, [4] = 105}},
 	[12] = 	{name = "DEMONHUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", specs = {[1] = 577, [2] = 581}},
 	[13] = 	{name = "EVOKER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", specs = {[1] = 1467, [2] = 1468, [3] = 1473}},
+	[20] = 	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
 }
 
 miog.SPECIALIZATIONS = {
@@ -424,7 +439,7 @@ miog.BACKGROUNDS = {
 	[8] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena2_1024.png", --BATTLEGROUNDS
 	[9] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/swords_1024.png", --RBG'S
 	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
-	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_1024.png", --BASE
+	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_tin_1024.png", --BASE
 	[111] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
 	--[101] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/antorus_1024.png",
