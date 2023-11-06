@@ -116,6 +116,15 @@ miog.C = {
 
 }
 
+miog.MPLUS_SEASONS = {
+	-- Dragonflight
+	[9] = "S1",
+	[10] = "S2",
+	[11] = "S3",
+	[12] = "S4",
+
+}
+
 --CHANGING VARIABLES
 miog.F = {
 	UI_SCALE = C_CVar.GetCVar("uiScale") or UIParent:GetEffectiveScale(),
@@ -155,6 +164,8 @@ miog.F = {
 	CURRENT_RAID_DIFFICULTY = 0,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],
+	CURRENT_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()],
+	PREVIOUS_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1],
 }
 
 miog.BLANK_BACKGROUND_INFO = {
@@ -290,12 +301,6 @@ miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
 
 miog.FONTS = {
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
-}
-
-miog.ROSTER_INFO = {
-	["RAID"] = {
-		MAX_SIZE = 40,
-	}
 }
 
 miog.CLASSFILE_TO_ID = {
@@ -439,14 +444,9 @@ miog.BACKGROUNDS = {
 	[8] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/arena2_1024.png", --BATTLEGROUNDS
 	[9] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/swords_1024.png", --RBG'S
 	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
-	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_tin_1024.png", --BASE
+	[18] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/lfg-background_tall_1024.png", --BASE
 	[111] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
-	--[101] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/antorus_1024.png",
-	--[102] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/daddyD_1024.png",
-	--[103] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/itsOK_1024.png",
-	--[104] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/riseMountains_1024.png", 
-	--[105] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vanilla_1024.png",
 }
 
 miog.GROUP_ACTIVITY_BACKGROUNDS = {

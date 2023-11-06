@@ -76,6 +76,7 @@ local function resetTexture(_, childTexture)
 	childTexture:SetDesaturated(false)
 	childTexture:SetMouseClickEnabled(true)
 	childTexture:SetScript("OnMouseDown", nil)
+	childTexture:SetScript("OnEnter", nil)
 	childTexture:ClearAllPoints()
 	childTexture:SetParent()
 end

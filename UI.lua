@@ -120,7 +120,7 @@ miog.createMainFrame = function()
 	miog.mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
 
 	local classPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", mainFrame)
-	classPanel:SetPoint("TOPRIGHT", mainFrame, "TOPLEFT", -1, -1)
+	classPanel:SetPoint("TOPRIGHT", mainFrame, "TOPLEFT", -1, -2)
 	--classPanel.childYPadding = 5
 	--classPanel.isHorizontal = true
 	--classPanel.stride = 1
@@ -188,7 +188,7 @@ miog.createMainFrame = function()
 	classPanel:MarkDirty()
 
 	local inspectProgressText = miog.createBasicFontString("persistent", miog.C.CLASS_PANEL_FONT_SIZE, classPanel)
-	inspectProgressText:SetPoint("TOPRIGHT", classPanel, "TOPLEFT", 0, -8)
+	inspectProgressText:SetPoint("TOPRIGHT", classPanel, "TOPLEFT", -5, -5)
 	inspectProgressText:SetText("0/40")
 	inspectProgressText:SetJustifyH("RIGHT")
 
@@ -456,16 +456,18 @@ miog.createMainFrame = function()
 
 	listingSettingPanel:MarkDirty()
 
-	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT)
-	buttonPanel:SetPoint("TOPLEFT", listingSettingPanel, "BOTTOMLEFT", 0, -1)
-	buttonPanel:SetPoint("TOPRIGHT", listingSettingPanel, "BOTTOMRIGHT", 0, -1)
+	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT + 2)
+	buttonPanel:SetPoint("TOPLEFT", listingSettingPanel, "BOTTOMLEFT", 0, 1)
+	buttonPanel:SetPoint("TOPRIGHT", listingSettingPanel, "BOTTOMRIGHT", 0, 1)
 	buttonPanel.RoleTextures = {}
 	buttonPanel.RoleButtons = {}
+	miog.createFrameBorder(buttonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	buttonPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	mainFrame.buttonPanel = buttonPanel
 
 	for i = 1, 3, 1 do
-		local toggleRoleButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight())
+		local toggleRoleButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
 		toggleRoleButton:SetNormalAtlas("checkbox-minimal")
 		toggleRoleButton:SetPushedAtlas("checkbox-minimal")
 		toggleRoleButton:SetCheckedTexture("checkmark-minimal")
@@ -474,7 +476,7 @@ miog.createMainFrame = function()
 		toggleRoleButton:RegisterForClicks("LeftButtonDown")
 		toggleRoleButton:SetChecked(true)
 
-		local roleTexture = miog.createBasicTexture("persistent", nil, buttonPanel, buttonPanel:GetHeight() - 3, buttonPanel:GetHeight() - 3, "ARTWORK")
+		local roleTexture = miog.createBasicTexture("persistent", nil, buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
 		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
 
 		local showRoleButtonText = miog.createBasicFontString("persistent", 16, buttonPanel)
@@ -525,7 +527,7 @@ miog.createMainFrame = function()
 
 	for i = 1, 4, 1 do
 
-		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight()), TripleStateButtonMixin)
+		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), TripleStateButtonMixin)
 		sortByCategoryButton:OnLoad()
 		sortByCategoryButton:SetTexturesForBaseState("hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
 		sortByCategoryButton:SetTexturesForState1("hud-MainMenuBar-arrowdown-up", "hud-MainMenuBar-arrowdown-down", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
@@ -557,19 +559,19 @@ miog.createMainFrame = function()
 
 		if(i == 1) then
 			currentCategory = "role"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.39, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 132, 0)
 
 		elseif(i == 2) then
 			currentCategory = "primary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.485, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 164, 0)
 
 		elseif(i == 3) then
 			currentCategory = "secondary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.60, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 203, 0)
 
 		elseif(i == 4) then
 			currentCategory = "ilvl"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth()*0.715, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 243, 0)
 
 		end
 
@@ -664,9 +666,9 @@ miog.createMainFrame = function()
 
 	end
 
-	local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate", buttonPanel, buttonPanel:GetHeight(), buttonPanel:GetHeight())
+	local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
 	resetButton.iconAtlas = "UI-RefreshButton"
-	resetButton.iconSize = buttonPanel:GetHeight()
+	resetButton.iconSize = miog.C.APPLICANT_MEMBER_HEIGHT
 	resetButton:OnLoad()
 	resetButton:SetPoint("RIGHT", buttonPanel, "RIGHT", -2, 0)
 	resetButton:SetScript("OnClick",
@@ -682,6 +684,8 @@ miog.createMainFrame = function()
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
 	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
 	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrame:GetHeight()*0.06)
+	miog.createFrameBorder(footerBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	footerBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	mainFrame.footerBar = footerBar
 

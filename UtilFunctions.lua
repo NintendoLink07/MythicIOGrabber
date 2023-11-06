@@ -120,6 +120,7 @@ miog.createCustomColorForScore = function(score)
 		
 		return CreateColor(0.9, 0.8, 0.5)
 	else
+		print("RETURN RED")
 		return miog.CLRSCC["red"]
 
 	end
