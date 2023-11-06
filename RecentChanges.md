@@ -22,7 +22,13 @@ If it not the main char it will show the mains current score and the last season
 - Logic for inviting/declining applicants improved, except for a few edge cases (which I can't test on my own) it should be muuuch better and more reliable, will be tested more during Season 3
 - Deleted some old background files to lower the addon size
 
+
 ### Fixed
 
 - Fixed spec table for 10.2
-- Fixed that some textures where keeping the hover / click events that were on them previously<br>
+- Fixed that some textures where keeping the hover / click events that were on them previously
+
+
+### Known Issues
+
+- 5 man (or less) group: the ordering of the group sometimes bugs out, so it's not Tank>Heal>3DPS but something different (have seen Tank>DPS>Heal>2DPS and Tank>DPS>DPS>Heal>DPS)<br>
