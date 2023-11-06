@@ -768,5 +768,4 @@ end
 miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
 miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
-miog.mainFrame:RegisterEvent("ADDON_LOADED")
 miog.mainFrame:SetScript("OnEvent", miog.OnEvent)

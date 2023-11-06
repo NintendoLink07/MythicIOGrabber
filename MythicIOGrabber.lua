@@ -1622,6 +1622,15 @@ miog.OnEvent = function(_, event, ...)
 		LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.mainFrame:Show() end)
 		--LFGListFrame.ApplicationViewer = miog.mainFrame
 
+		if(IsAddOnLoaded("RaiderIO")) then
+			getRioProfile = RaiderIO.GetProfile
+			miog.F.IS_RAIDERIO_LOADED = true
+	
+			if(miog.mainFrame.raiderIOAddonIsLoadedFrame) then
+				miog.mainFrame.raiderIOAddonIsLoadedFrame:Hide()
+	
+			end
+		end
 
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
 		miog.F.ACTIVE_ENTRY_INFO = C_LFGList.GetActiveEntryInfo()
@@ -1744,19 +1753,6 @@ miog.OnEvent = function(_, event, ...)
 			miog.setAffixes()
 
         end
-
-	elseif(event == "ADDON_LOADED") then
-		local addon = ...
-
-		if(addon == "RaiderIO") then
-			getRioProfile = RaiderIO.GetProfile
-			miog.F.IS_RAIDERIO_LOADED = true
-
-			if(miog.mainFrame.raiderIOAddonIsLoadedFrame) then
-				miog.mainFrame.raiderIOAddonIsLoadedFrame:Hide()
-
-			end
-		end
 
 	elseif(event == "GROUP_JOINED" or event == "GROUP_LEFT") then
 		--print(event)

@@ -1,6 +1,7 @@
-## Interface: 100107
+## Interface: 100200
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
+## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
 ## Version: 1.2.0
