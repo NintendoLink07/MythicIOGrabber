@@ -71,11 +71,10 @@ miog.createMainFrame = function()
 	end)
 	_G[mainFrame:GetName()] = mainFrame
 
-	local backdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, nil, "Texture")
-	backdropFrame.Texture:SetVertTile(true)
-	backdropFrame.Texture:SetHorizTile(true)
-	backdropFrame.Texture:SetTexture(miog.BACKGROUNDS[18])
-	backdropFrame:SetFrameStrata("HIGH")
+	local backdropFrame = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/backgrounds/df-bg-1.png", mainFrame)
+	backdropFrame:SetVertTile(true)
+	backdropFrame:SetHorizTile(true)
+	backdropFrame:SetDrawLayer("BACKGROUND", -8)
 	backdropFrame:SetPoint("TOPLEFT", mainFrame, "TOPLEFT")
 	backdropFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT")
 
@@ -86,7 +85,9 @@ miog.createMainFrame = function()
 	openSettingsButton:SetNormalTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/settingGear.png")
 	openSettingsButton:RegisterForClicks("LeftButtonDown")
 	openSettingsButton:SetScript("OnClick", function()
-		InterfaceOptionsFrame_OpenToCategory(miog.interfaceOptionsPanel)
+		--InterfaceOptionsFrame_OpenToCategory(miog.interfaceOptionsPanel)
+		Settings.OpenToCategory("Mythic IO Grabber")
+
 	end)
 
 	local expandDownwardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
@@ -121,11 +122,6 @@ miog.createMainFrame = function()
 
 	local classPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", mainFrame)
 	classPanel:SetPoint("TOPRIGHT", mainFrame, "TOPLEFT", -1, -2)
-	--classPanel.childYPadding = 5
-	--classPanel.isHorizontal = true
-	--classPanel.stride = 1
-	--classPanel.layoutFramesGoingUp = false
-	--classPanel.spacing = 5
 	classPanel.fixedWidth = 28
 
 	mainFrame.classPanel = classPanel
@@ -144,18 +140,12 @@ miog.createMainFrame = function()
 
 		local specPanel = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", classFrame)
 		specPanel:SetPoint("RIGHT", classFrame, "LEFT", -5, 0)
-		--specPanel.childXPadding = 5
-		--specPanel.isHorizontal = false
-		--specPanel.stride = 1
-		--specPanel.layoutFramesGoingRight = false
 		specPanel.fixedHeight = 25
-		--specPanel.spacing = 5
 		specPanel.specFrames = {}
-		--specPanel.align = "center"
 		specPanel:Hide()
 		classFrame.specPanel = specPanel
 
-		local specCounter = 1 
+		local specCounter = 1
 
 		for _, specID in ipairs(classEntry.specs) do
 			local specFrame = miog.createBasicFrame("persistent", "BackdropTemplate", specPanel, 25, 25, "Texture", miog.SPECIALIZATIONS[specID].squaredIcon)
@@ -247,27 +237,26 @@ miog.createMainFrame = function()
 
 	mainFrame.infoPanel = infoPanel
 
-	local infoPanelBackdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, nil, nil)
+	local infoPanelBackdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel)
 	infoPanelBackdropFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT")
 	infoPanelBackdropFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT")
-	infoPanelBackdropFrame:SetFrameStrata("HIGH", 0)
 	infoPanelBackdropFrame.backdropInfo = {
-		bgFile=miog.BACKGROUNDS[16],
+		bgFile=miog.BACKGROUNDS[10],
 		tileSize=miog.C.APPLICANT_MEMBER_HEIGHT,
 		tile=false,
 		edgeSize=2,
-		insets={left=1, right=1}
+		insets={left=1, right=1, top=1, bottom=0}
 	}
 
 	infoPanelBackdropFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	infoPanelBackdropFrame:ApplyBackdrop()
+	infoPanelBackdropFrame.Center:SetDrawLayer("BACKGROUND", 1)
 
 	mainFrame.infoPanelBackdropFrame = infoPanelBackdropFrame
 
-	local infoPanelDarkenFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel)
+	local infoPanelDarkenFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanelBackdropFrame)
 	infoPanelDarkenFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT", 0, 0)
 	infoPanelDarkenFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT", 0, 0)
-	infoPanelDarkenFrame:SetFrameStrata("HIGH", 1)
 	infoPanelDarkenFrame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false, edgeSize=1} )
 	infoPanelDarkenFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.4)
 	--infoPanelDarkenFrame:Hide()
@@ -277,7 +266,7 @@ miog.createMainFrame = function()
 	activityNameFontString:SetPoint("TOPLEFT", infoPanel, "TOPLEFT", miog.C.STANDARD_PADDING, -miog.C.STANDARD_PADDING)
 	activityNameFontString:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -miog.C.STANDARD_PADDING, -miog.C.STANDARD_PADDING)
 	activityNameFontString:SetJustifyH("LEFT")
-	activityNameFontString:SetParent(infoPanel)
+	activityNameFontString:SetParent(infoPanelDarkenFrame)
 	activityNameFontString:SetWordWrap(true)
 	activityNameFontString:SetText("ActivityName")
 	activityNameFontString:SetTextColor(1, 0.8, 0, 1)
@@ -285,7 +274,7 @@ miog.createMainFrame = function()
 
 	infoPanel.activityNameFrame = activityNameFontString
 
-	local commentScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", infoPanel)
+	local commentScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", infoPanelDarkenFrame)
 	commentScrollFrame:SetPoint("TOPLEFT", activityNameFontString, "BOTTOMLEFT", 0, -miog.C.STANDARD_PADDING*2)
 	commentScrollFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT", -miog.C.STANDARD_PADDING, miog.C.STANDARD_PADDING)
 	--commentScrollFrame.ScrollBar:Hide()

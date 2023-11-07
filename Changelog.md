@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.2.1] - 2023-11-07
+
+### Added
+
+- Added an option to enable/disable the class panel
+- More background options: 1 from every expansion, just for a bit more flavour
+
+
+### Fixed
+
+- Settings button should now reliably open the settings (updated to Dragonflight functions)
+
+
+
 ## [1.2.0] - 2023-11-06
 
 ### Added
@@ -389,7 +403,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.0...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.1...HEAD
+[1.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.1
 [1.2.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.0
 [1.1.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.7
 [1.1.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.1.5

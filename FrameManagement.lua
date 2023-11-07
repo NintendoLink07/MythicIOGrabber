@@ -30,7 +30,11 @@ local function resetFrame(pool, childFrame)
 		childFrame:SetScript("OnKeyDown", nil)
 
 	elseif(typeOfFrame == "Frame") then
-		childFrame:ClearBackdrop()
+		if(pool:GetTemplate() == "BackdropTemplate") then
+			childFrame:ClearBackdrop()
+
+		end
+
 		childFrame:SetScript("OnEnter", nil)
 		childFrame:SetScript("OnLeave", nil)
 		childFrame.Texture = nil
@@ -83,6 +87,7 @@ end
 
 miog.persistentFramePool = CreateFramePoolCollection()
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Frame", nil, "UIDropDownMenuTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "VerticalLayoutFrame, BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", resetFrame)

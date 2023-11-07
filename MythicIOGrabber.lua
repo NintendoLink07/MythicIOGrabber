@@ -1142,7 +1142,14 @@ local function createFullEntries(iterations)
 
 			local specID = miog.CLASSES[classID].specs[random(1, #miog.CLASSES[classID].specs)]
 
-			--local specID = miog.CLASSES[classInfo.classFile].specs[random(1, #miog.CLASSES[classInfo.classFile].specs)]
+			--local specID = miog.CLASSES[classInfo.classFile].specs[random(1, #miog.CLASSES[classInfo.classFile].specs)]+
+
+			local highestKey
+
+			if(rioProfile) then
+				highestKey = rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel > rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel and 
+				rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel or rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel
+			end
 
 			miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID][memberIndex] = {
 				[1] = debugProfile[1] .. "-" .. debugProfile[2],
@@ -1161,7 +1168,7 @@ local function createFullEntries(iterations)
 				[14]  = "Alliance",
 				[15]  = 0,
 				[16]  = specID,
-				[17]  = {finishedSuccess = true, bestRunLevel = random(20, 35), mapName = "Big Dick Land"},
+				[17]  = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"},
 				[18]  = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
 			}
 		end
@@ -1190,6 +1197,7 @@ local function updateSpecFrames()
 
 				if(unitInPartyOrRaid) then
 					indexedGroup[#indexedGroup+1] = groupMember
+					indexedGroup[#indexedGroup].guid = guid
 
 					miog.mainFrame.classPanel.progressText:SetText(#indexedGroup .. "/" .. numOfMembers)
 
@@ -1275,6 +1283,21 @@ local function updateSpecFrames()
 			classIconFrame:SetFrameStrata("DIALOG")
 
 			if(groupMember.classID <= #miog.CLASSES) then
+				classIconFrame:SetScript("OnEnter", function()
+					local _, _, _, _, _, name, realm = GetPlayerInfoByGUID(groupMember.guid)
+
+					GameTooltip:SetOwner(classIconFrame, "ANCHOR_CURSOR")
+					GameTooltip:AddLine(name .. " - " .. (realm ~= "" and realm or GetRealmName()))
+					GameTooltip:Show()
+
+				end)
+				classIconFrame:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+
+				end)
+			end
+
+			if(groupMember.classID <= #miog.CLASSES) then
 				local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[groupMember.classID].name)
 				miog.createFrameBorder(classIconFrame, 1, rPerc, gPerc, bPerc, 1)
 
@@ -1309,11 +1332,7 @@ local lastNotifyTime = 0
 local inspectQueue = {}
 local inspectCoroutine
 
-InspectQueueMIOG = inspectQueue
-
 local function requestInspectData()
-
-	InspectQueueMIOG = inspectQueue
 
 	for k, v in pairs(inspectQueue) do
 		C_Timer.After((lastNotifyTime - GetTimePreciseSec()) > miog.C.BLIZZARD_INSPECT_THROTTLE and 0 or miog.C.BLIZZARD_INSPECT_THROTTLE,
@@ -1687,8 +1706,6 @@ miog.OnEvent = function(_, event, ...)
 				if(applicantData.displayOrderID > 0) then --APPLICANT WITH DATA
 					if(applicantData.pendingApplicationStatus == nil) then--NEW APPLICANT WITH DATA 
 						--print(... .. " APPLICANT NEW")
-						--print("NEW")
-						--miog.checkApplicantList(C_PartyInfo.CanInvite())
 
 						applicantSystem.applicantMember[...] = {
 							activeFrame = nil,
@@ -1718,7 +1735,6 @@ miog.OnEvent = function(_, event, ...)
 			else --STATUS TRIGGERED BY APPLICANT
 				--print(... .. " UPDATE STATUS" .. applicantData.applicationStatus)
 				--INVITED, TIMED OUT, FAILED, ETC
-				--print("APP DECLINE")
 				updateApplicantStatus(..., applicantData.applicationStatus)
 
 			end
@@ -1737,12 +1753,9 @@ miog.OnEvent = function(_, event, ...)
 			--miog.checkApplicantList(false)
 
 		if(newEntry == false and withData == false) then --DECLINED APPLICANT
-			--print("MAJOR DECLINE")
 			miog.checkApplicantList(true)
 
 		elseif(not newEntry and not withData) then --REFRESH APP LIST
-			--print("REFRESH")
-			--print("MAJOR REFRESH")
 			miog.checkApplicantList(true)
 
 		end

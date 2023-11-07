@@ -19,6 +19,11 @@ local function compareSettings(defaultOptions, savedSettings)
 			elseif(savedSettings[key].type ~= optionEntry.type) then
 				savedSettings[key].type = optionEntry.type
 
+			else
+				if(savedSettings[key].type == "dropdown") then
+					savedSettings[key].table = optionEntry.table
+
+				end
 			end
 		end
 	end
@@ -118,9 +123,32 @@ miog.loadSettings = function()
 			title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields",
 			value = true,
 		},
+		enableClassPanel = {
+			type = "checkbox",
+			title = "Enable the class panel for your group (shows class and spec data for your whole group after all inspects went through)",
+			value = true,
+		},
 		lastActiveSortingMethods = {
 			type = "variable",
 			title = "Last active sorting methods",
+		},
+		backgroundOptions = {
+			type = "dropdown",
+			title = "Background options",
+			table = {
+				[1] = {"Standard", "lfg-background_tall_1024.png"},
+				[2] = {"Vanilla", "vanilla-bg-1.png"},
+				[3] = {"The Burning Crusade", "tbc-bg-1.png"},
+				[4] = {"Wrath of the Lich King", "wotlk-bg-1.png"},
+				[5] = {"Cataclysm", "cata-bg-1.png"},
+				[6] = {"Mists of Pandaria", "mop-bg-1.png"},
+				[7] = {"Warlords of Draenor", "wod-bg-1.png"},
+				[8] = {"Legion", "legion-bg-1.png"},
+				[9] = {"Battle for Azeroth", "bfa-bg-1.png"},
+				[10] = {"Shadowlands", "sl-bg-1.png"},
+				[11] = {"Dragonflight", "df-bg-1.png"},
+			},
+			value = 11
 		}
 	}
 
@@ -138,8 +166,10 @@ miog.loadSettings = function()
 
 	local interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
 	interfaceOptionsPanel.name = "Mythic IO Grabber"
----@diagnostic disable-next-line: undefined-global --DEPRECATED
-	InterfaceOptions_AddCategory(interfaceOptionsPanel)
+
+	local category, layout = Settings.RegisterCanvasLayoutCategory(interfaceOptionsPanel, interfaceOptionsPanel.name, interfaceOptionsPanel.name)
+	category.ID = interfaceOptionsPanel.name
+	Settings.RegisterAddOnCategory(category)
 
 	miog.interfaceOptionsPanel = interfaceOptionsPanel
 
@@ -161,7 +191,7 @@ miog.loadSettings = function()
 
 	local sortedTable = sortSettingsAlphabetically()
 
-	local lastOptionButton = nil
+	local lastOption = nil
 
 	for _, setting in pairs(sortedTable or MIOG_SavedSettings) do
 		if(setting.type == "checkbox") then
@@ -170,7 +200,7 @@ miog.loadSettings = function()
 			optionButton:SetPushedAtlas("checkbox-minimal")
 			optionButton:SetCheckedTexture("checkmark-minimal")
 			optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-			optionButton:SetPoint("TOPLEFT", lastOptionButton or optionPanelContainer, lastOptionButton and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+			optionButton:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
 			optionButton:RegisterForClicks("LeftButtonDown")
 			optionButton:SetChecked(setting.value)
 
@@ -214,6 +244,16 @@ miog.loadSettings = function()
 					
 					end
 				end)
+			elseif(setting.key == "enableClassPanel") then
+
+				optionButton:SetScript("OnClick", function()
+					setting.value = not setting.value
+
+					miog.mainFrame.classPanel:SetShown(setting.value)
+					miog.mainFrame.classPanel:MarkDirty()
+				end)
+
+				miog.mainFrame.classPanel:SetShown(setting.value)
 			end
 
 			local optionButtonString = miog.createBasicFontString("persistent", 12, optionButton)
@@ -224,7 +264,42 @@ miog.loadSettings = function()
 			optionButtonString:SetWordWrap(true)
 			optionButtonString:SetNonSpaceWrap(true)
 
-			lastOptionButton = optionButton
+			lastOption = optionButton
+
+		elseif(setting.type == "dropdown") then
+			if(setting.key == "backgroundOptions") then
+				local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", optionPanelContainer)
+				--local optionDropdown = CreateFrame("Frame", "WPDemoDropDown", optionPanelContainer, "UIDropDownMenuTemplate")
+				optionDropdown:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+				UIDropDownMenu_SetWidth(optionDropdown, 200)
+
+				UIDropDownMenu_SetText(optionDropdown, setting.table[setting.value][1])
+				UIDropDownMenu_Initialize(optionDropdown,
+					function(frame, level, menuList)
+						local info = UIDropDownMenu_CreateInfo()
+						info.func = function(_, arg1, _, _)
+							setting.value = arg1
+							miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. setting.table[arg1][2])
+							UIDropDownMenu_SetText(optionDropdown, setting.table[arg1][1])
+							CloseDropDownMenus()
+		
+						end
+
+						for k, v in ipairs(setting.table) do
+							if(v[1]) then
+								info.text, info.arg1 = v[1], k
+								info.checked = k == setting.value
+								UIDropDownMenu_AddButton(info)
+
+							end
+						end
+					end
+				)
+				
+				miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. setting.table[setting.value][2])
+
+				lastOption = optionDropdown
+			end
 		end
 
 	end
