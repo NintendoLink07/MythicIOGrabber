@@ -164,6 +164,8 @@ miog.F = {
 	CURRENT_RAID_DIFFICULTY = 0,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],
+	CURRENT_SEASON = nil,
+	PREVIOUS_SEASON = nil
 }
 
 miog.BLANK_BACKGROUND_INFO = {
