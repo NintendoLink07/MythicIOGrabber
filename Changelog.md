@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning].
 - Settings button should now reliably open the settings (updated to Dragonflight functions)
 - Title bar group ordering should now be correct
 - Fixed "CURRENT_SEASON" bug. First week of a new patch there's is technically no actual season
-
+- Fixed the addon compartment function, should now open the settings reliably
 
 
 ## [1.2.0] - 2023-11-06

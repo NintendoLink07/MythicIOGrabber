@@ -352,6 +352,5 @@ miog.loadSettings = function()
 end
 
 function MIOG_OpenInterfaceOptions()
----@diagnostic disable-next-line: undefined-global
-	InterfaceOptionsFrame_OpenToCategory(interfaceOptionsPanel)
+	Settings.OpenToCategory("Mythic IO Grabber")
 end
