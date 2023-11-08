@@ -122,7 +122,7 @@ miog.MPLUS_SEASONS = {
 	[10] = "S2",
 	[11] = "S3",
 	[12] = "S4",
-
+	[99] = "DUMMY SEASON"
 }
 
 --CHANGING VARIABLES
@@ -164,8 +164,6 @@ miog.F = {
 	CURRENT_RAID_DIFFICULTY = 0,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],
-	CURRENT_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()],
-	PREVIOUS_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1],
 }
 
 miog.BLANK_BACKGROUND_INFO = {
@@ -335,6 +333,8 @@ miog.CLASSES = {
 	[12] = 	{name = "DEMONHUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", specs = {[1] = 577, [2] = 581}},
 	[13] = 	{name = "EVOKER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", specs = {[1] = 1467, [2] = 1468, [3] = 1473}},
 	[20] = 	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
+	[21] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
+	[22] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
 }
 
 miog.SPECIALIZATIONS = {

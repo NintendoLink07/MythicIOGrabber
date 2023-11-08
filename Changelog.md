@@ -5,17 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [1.2.1] - 2023-11-07
+## [1.2.1] - 2023-11-08
 
 ### Added
 
-- Added an option to enable/disable the class panel
+- Added an option in the interface settings panel to show/hide the class panel
 - More background options: 1 from every expansion, just for a bit more flavour
 
 
 ### Fixed
 
 - Settings button should now reliably open the settings (updated to Dragonflight functions)
+- Title bar group ordering should now be correct
+- Fixed "CURRENT_SEASON" bug. First week of a new patch there's is technically no actual season
 
 
 

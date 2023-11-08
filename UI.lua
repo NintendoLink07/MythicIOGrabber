@@ -55,7 +55,7 @@ miog.createMainFrame = function()
 	--mainFrame:SetScale(1.5)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	mainFrame:SetFrameStrata("DIALOG")
-	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight())
+	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
 
 	miog.createFrameBorder(mainFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
@@ -85,7 +85,6 @@ miog.createMainFrame = function()
 	openSettingsButton:SetNormalTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/settingGear.png")
 	openSettingsButton:RegisterForClicks("LeftButtonDown")
 	openSettingsButton:SetScript("OnClick", function()
-		--InterfaceOptionsFrame_OpenToCategory(miog.interfaceOptionsPanel)
 		Settings.OpenToCategory("Mythic IO Grabber")
 
 	end)

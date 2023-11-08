@@ -167,7 +167,7 @@ miog.loadSettings = function()
 	local interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
 	interfaceOptionsPanel.name = "Mythic IO Grabber"
 
-	local category, layout = Settings.RegisterCanvasLayoutCategory(interfaceOptionsPanel, interfaceOptionsPanel.name, interfaceOptionsPanel.name)
+	local category, layout = Settings.RegisterCanvasLayoutCategory(interfaceOptionsPanel, interfaceOptionsPanel.name)
 	category.ID = interfaceOptionsPanel.name
 	Settings.RegisterAddOnCategory(category)
 

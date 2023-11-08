@@ -649,7 +649,7 @@ local function addApplicantToPanel(applicantID)
 					local previousScoreString = ""
 
 					if(mythicKeystoneProfile.previousScore > 0) then
-						previousScoreString = miog.F.PREVIOUS_SEASON .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForScore(mythicKeystoneProfile.previousScore):GenerateHexColor())
+						previousScoreString = miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1] .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForScore(mythicKeystoneProfile.previousScore):GenerateHexColor())
 					end
 
 					mythicPlusPanel.rows[5].FontString:SetText(previousScoreString)
@@ -661,14 +661,14 @@ local function addApplicantToPanel(applicantID)
 
 					else
 						if(mythicKeystoneProfile.mainCurrentScore > 0 and mythicKeystoneProfile.mainPreviousScore > 0) then
-							mainScoreString = "Main " .. miog.F.CURRENT_SEASON .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
+							mainScoreString = "Main " .. miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()] .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
 							" " .. miog.F.PREVIOUS_SEASON .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 						elseif(mythicKeystoneProfile.mainCurrentScore > 0) then
-							mainScoreString = "Main " .. miog.F.CURRENT_SEASON .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
+							mainScoreString = "Main " .. miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()] .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
 
 						elseif(mythicKeystoneProfile.mainPreviousScore > 0) then
-							mainScoreString = "Main " .. miog.F.PREVIOUS_SEASON .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
+							mainScoreString = "Main " .. miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1] .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 						end
 
@@ -837,7 +837,6 @@ local function addApplicantToPanel(applicantID)
 											if(sortedProgress.progress.killsPerBoss) then
 												if(kills > 0 and bossFrame.Center:IsDesaturated() == true) then
 													desaturated = false
-													--miog.createFrameBorder(bossFrame, 1, miog.ITEM_QUALITY_COLORS[lowerDifficultyNumber+1].color:GetRGBA())
 													bossFrame:SetBackdropBorderColor(miog.ITEM_QUALITY_COLORS[lowerDifficultyNumber+1].color:GetRGBA())
 													bossFrame.Center:SetDesaturated(desaturated)
 												elseif(kills == 0 and bossFrame.Center:IsDesaturated() == true) then
@@ -849,7 +848,6 @@ local function addApplicantToPanel(applicantID)
 												if(progressCount == bossCount) then
 													if(bossFrame.Center:IsDesaturated() == true) then
 														desaturated = false
-														--miog.createFrameBorder(bossFrame, 1, miog.ITEM_QUALITY_COLORS[lowerDifficultyNumber+1].color:GetRGBA())
 														bossFrame:SetBackdropBorderColor(miog.ITEM_QUALITY_COLORS[lowerDifficultyNumber+1].color:GetRGBA())
 														bossFrame.Center:SetDesaturated(desaturated)
 													end
@@ -1192,10 +1190,10 @@ local function updateSpecFrames()
 
 	for guid, groupMember in pairs(groupSystem.groupMember) do
 		if(groupMember.specID ~= nil and groupMember.specID ~= 0) then
-			if(UnitGUID(groupMember.unitID) == guid) then
+			if(UnitGUID(groupMember.unitID) == guid or guid == "PLAYER-1329-00000001") then
 				local unitInPartyOrRaid = UnitInRaid(groupMember.unitID) or UnitInParty(groupMember.unitID) or miog.checkLFGState() == "solo"
 
-				if(unitInPartyOrRaid) then
+				if(unitInPartyOrRaid or guid == "PLAYER-1329-00000001") then
 					indexedGroup[#indexedGroup+1] = groupMember
 					indexedGroup[#indexedGroup].guid = guid
 
@@ -1206,6 +1204,7 @@ local function updateSpecFrames()
 			end
 		end
 	end
+
 	
 	if(#indexedGroup >= numOfMembers) then
 		miog.mainFrame.classPanel.progressText:SetText("")
@@ -1239,7 +1238,6 @@ local function updateSpecFrames()
 
 	miog.mainFrame.classPanel:MarkDirty()
 
-
 	if(#indexedGroup < 5) then
 		if(groupSystem.roleCount["TANK"] < 1) then
 			indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty", name = "afk", classID = 20, role = "TANK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
@@ -1247,13 +1245,13 @@ local function updateSpecFrames()
 		end
 
 		if(groupSystem.roleCount["HEALER"] < 1 and #indexedGroup < 5) then
-			indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty", name = "afk", classID = 20, role = "HEALER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+			indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty", name = "afk", classID = 21, role = "HEALER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
 
 		end
 
 		for i = 1, 3 - groupSystem.roleCount["DAMAGER"], 1 do
 			if(groupSystem.roleCount["DAMAGER"] < 3 and #indexedGroup < 5) then
-				indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty"..i, name = "afk", classID = 20, role = "DAMAGER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+				indexedGroup[#indexedGroup + 1] = {guid = "empty", unitID = "empty"..i, name = "afk", classID = 22, role = "DAMAGER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
 
 			end
 
@@ -1273,6 +1271,8 @@ local function updateSpecFrames()
 	local lastIcon
 
 	if(GetNumGroupMembers() < 6) then
+		local counter = 1
+
 		lastIcon = nil
 
 		for index, groupMember in ipairs(indexedGroup) do
@@ -1304,6 +1304,12 @@ local function updateSpecFrames()
 			end
 
 			lastIcon = classIconFrame
+
+			counter = counter + 1
+
+			if(counter == 6) then
+				break
+			end
 
 		end
 
@@ -1386,8 +1392,6 @@ local function createGroupMemberEntry(guid, unitID)
 		role = GetSpecializationRoleByID(specID),
 		specID = specID ~= 0 and specID or nil
 	}
-
-	--DevTools_Dump(groupSystem.groupMember[guid])
 	
 end
 
@@ -1426,38 +1430,32 @@ local function updateRosterInfoData()
 
 		if(guid) then
 			local name, _, _, _, _, classFile, _, _, _, _, _, role = GetRaidRosterInfo(groupIndex)
-			local classID = classFile and miog.CLASSFILE_TO_ID[classFile]
 
 			groupSystem.groupMember[guid] = {
 				unitID = unitID,
 				name = name or UnitName(unitID),
-				classID = classID or select(2, UnitClassBase(unitID)),
-				role = role == "NONE" and "DAMAGER" or role,
+				classID = classFile and miog.CLASSFILE_TO_ID[classFile] or miog.CLASSFILE_TO_ID[select(2, GetPlayerInfoByGUID(guid))] or select(2, UnitClassBase(unitID)),
+				role = role == "NONE" and UnitGroupRolesAssigned(unitID) or role or "DAMAGER",
 				specID = groupSystem.inspectedGUIDs[guid]
 			}
 
 			local member = groupSystem.groupMember[guid]
 
 			if(groupSystem.inspectedGUIDs[guid]) then
-				--print("GOT THE DATA ALREADY " .. unitID, member.specID)
-
 				updateSpecFrames()
 
-			elseif(inspectQueue[guid]) then
-				--print("ALREADY IN QUEUE " .. unitID)
+			--elseif(inspectQueue[guid]) then
 				
 			else
 
-				if(lfgState == "party" and unitID ~= "player" or lfgState == "raid" and UnitGUID("player") ~= guid) then
-					--print("QUEUED " .. unitID)
+				if(lfgState == "party" and unitID ~= "player" or lfgState == "raid" and guid ~= UnitGUID("player")) then
 					inspectQueue[guid] = unitID
 
 				else
-					--print("DATA FOR PLAYER ALREADY AVAILABLE")
-					member.specID = GetSpecializationInfo(GetSpecialization())
-					member.classID = select(2, UnitClassBase(unitID))
-					--member.role = select(5, GetSpecializationInfoByID(member.specID))
-					member.role = GetSpecializationRoleByID(member.specID)
+					local specID, _, _, _, role = GetSpecializationInfo(GetSpecialization())
+					member.specID = specID
+					member.classID = miog.CLASSFILE_TO_ID[classFile] or select(2, UnitClassBase(unitID))
+					member.role = role or GetSpecializationRoleByID(member.specID)
 
 					updateSpecFrames()
 	
@@ -1764,6 +1762,9 @@ miog.OnEvent = function(_, event, ...)
 		if(not miog.F.WEEKLY_AFFIX) then
 			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 			miog.setAffixes()
+
+			miog.F.CURRENT_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
+			miog.F.PREVIOUS_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
 
         end
 
