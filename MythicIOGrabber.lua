@@ -375,7 +375,6 @@ local function addApplicantToPanel(applicantID)
 				declineButton:SetFrameStrata("DIALOG")
 				declineButton:RegisterForClicks("LeftButtonUp")
 				declineButton:SetScript("OnClick", function()
-					--print(applicantSystem.applicantMember[applicantID].status)
 
 					if(applicantSystem.applicantMember[applicantID].status == "fullyAdded") then
 
@@ -958,17 +957,19 @@ miog.checkApplicantList = function(needRefresh)
 	for _, applicantID in pairs(currentApplicants) do
 
 		if(applicantSystem.applicantMember[applicantID]) then
+
+			local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
+
 			if(applicantSystem.applicantMember[applicantID].saveData == nil) then
-				local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
 				if(applicantData and applicantData.applicationStatus == "applied" and applicantData.displayOrderID > 0) then
 
-					local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, bestDungeonScoreForListing, pvpRatingInfo
+					local name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, _, bestDungeonScoreForListing, pvpRatingInfo
 
 					if(miog.F.IS_IN_DEBUG_MODE) then
-						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, 1)
+						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, _, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, 1)
 					else
-						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
+						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, _ = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
 					end
 
 					local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
@@ -1057,12 +1058,12 @@ miog.checkApplicantList = function(needRefresh)
 
 				end
 
-			else
-				--print("FOUND DATA FOR STUFFS")
+			--else
+				--ALREADY HAVE DATA
 
 			end
 
-			if(applicantSystem.applicantMember[applicantID].activeFrame == nil) then
+			if(applicantSystem.applicantMember[applicantID].activeFrame == nil and applicantData.applicationStatus == "applied") then
 				unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].saveData
 
 			end
@@ -1346,12 +1347,13 @@ local function requestInspectData()
 			local guid = UnitGUID(v)
 
 			if(guid) then
-				--print("NOTIFY FOR " .. v, guid)
 				NotifyInspect(v)
+
 				-- LAST NOTIFY SAVED SO THE MAX TIME BETWEEN NOTIFY CALLS IS ~1.5s
 				lastNotifyTime = GetTimePreciseSec()
+
 			else
-				--print("GUID DOESNT EXIST ANYMORE")
+				--GUID gone
 			
 			end
 		end)
