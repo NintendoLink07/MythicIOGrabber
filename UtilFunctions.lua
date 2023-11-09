@@ -12,13 +12,15 @@ miog.setAffixes = function()
 
 			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, 0, 1, 0, 1)
 			miog.mainFrame.infoPanel.affixFrame.tooltipText = miog.mainFrame.infoPanel.affixFrame.tooltipText .. name .. (index < #affixIDs and ", " or "")
+
+			miog.F.WEEKLY_AFFIX = affixIDs[1].id
 		end
 
-		miog.F.WEEKLY_AFFIX = affixIDs[1].id
-
 		miog.mainFrame.infoPanel.affixFrame.FontString:SetText(affixString)
+
 	else
 		return nil
+
 	end
 end
 

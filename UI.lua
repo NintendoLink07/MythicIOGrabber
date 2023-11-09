@@ -741,6 +741,8 @@ miog.createMainFrame = function()
 	miog.mainFrame:RegisterEvent("GROUP_LEFT")
 	miog.mainFrame:RegisterEvent("INSPECT_READY")
 	miog.mainFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+	C_MythicPlus.GetCurrentAffixes()
 
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
@@ -751,9 +753,10 @@ miog.createMainFrame = function()
 		RaiderIO_ExportButton:SetPoint("LEFT", browseGroupsButton, "RIGHT", 5, 0)
 		RaiderIO_ExportButton:SetParent(footerBar)
 	end
+
+
 end
 
 miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
-miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
 miog.mainFrame:SetScript("OnEvent", miog.OnEvent)

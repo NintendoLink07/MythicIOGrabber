@@ -1763,10 +1763,14 @@ miog.OnEvent = function(_, event, ...)
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		if(not miog.F.WEEKLY_AFFIX) then
 			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
-			miog.setAffixes()
+			
+			if(miog.mainFrame and miog.mainFrame.infoPanel) then
+				miog.setAffixes()
 
-			miog.F.CURRENT_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
-			miog.F.PREVIOUS_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
+				miog.F.CURRENT_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
+				miog.F.PREVIOUS_SEASON = miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
+
+			end
 
         end
 
