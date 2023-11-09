@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning].
 - Changed the order when the affixes for the week are getting requested.
 Otherwise there was a veeeery small chance that it would request them before the main addon was initialized, leading to an error.
 
+- Deleted a debug print that I forgot.
+
+
 
 
 ## [1.2.1] - 2023-11-08

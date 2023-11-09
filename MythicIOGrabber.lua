@@ -271,7 +271,7 @@ local function addApplicantToPanel(applicantID)
 					GameTooltip:SetText(nameFrame.FontString:GetText())
 					GameTooltip:Show()
 
-				elseif(name == "Rhany-Ravencrest") then
+				elseif(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
 					GameTooltip:SetOwner(nameFrame, "ANCHOR_CURSOR")
 					GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
 					GameTooltip:Show()

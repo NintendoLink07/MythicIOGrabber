@@ -122,7 +122,6 @@ miog.createCustomColorForScore = function(score)
 		
 		return CreateColor(0.9, 0.8, 0.5)
 	else
-		print("RETURN RED")
 		return miog.CLRSCC["red"]
 
 	end
@@ -142,6 +141,7 @@ end
 miog.handleCoroutineReturn = function(coroutineReturn)
 	if(coroutineReturn[1] == false) then
 		print("ERROR: " .. coroutineReturn[2])
+		print("If you see this, please report the whole error to me on either GitHub or CurseForge. Thank you!")
 
 	end
 end
