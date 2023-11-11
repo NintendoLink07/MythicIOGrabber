@@ -2,5 +2,5 @@
 
 ### Fixed
 
-- Fixed some code so previous season's score, main score and previous season's main score show up again.
+- Fixed some code so previous season score, main score and main's previous season score show up again.
 - TOC Version update
