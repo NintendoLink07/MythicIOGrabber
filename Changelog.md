@@ -426,7 +426,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.2...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.3...HEAD
+[1.2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.3
 [1.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.2
 [1.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.1
 [1.2.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.0
