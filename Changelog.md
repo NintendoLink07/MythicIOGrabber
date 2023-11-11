@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.2.3] - 2023-11-11
+
+### Fixed
+
+- Fixed some code so previous season's score, main score and previous season's main score show up again.
+- TOC Version update
+
+
+
 ## [1.2.2] - 2023-11-09
 
 ### Fixed
@@ -13,7 +22,6 @@ and this project adheres to [Semantic Versioning].
 Otherwise there was a veeeery small chance that it would request them before the main addon was initialized, leading to an error.
 
 - Deleted a debug print that I forgot.
-
 
 
 
@@ -31,6 +39,7 @@ Otherwise there was a veeeery small chance that it would request them before the
 - Title bar group ordering should now be correct
 - Fixed "CURRENT_SEASON" bug. First week of a new patch there's is technically no actual season
 - Fixed the addon compartment function, should now open the settings reliably
+
 
 
 ## [1.2.0] - 2023-11-06

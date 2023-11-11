@@ -1,8 +1,6 @@
-## [1.2.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.2) - 2023-11-09
+## [1.2.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.3) - 2023-11-11
 
 ### Fixed
 
-- Changed the order when the affixes for the week are getting requested.
-Otherwise there was a veeeery small chance that it would request them before the main addon was initialized, leading to an error.
-
-- Deleted a debug print that I forgot.
+- Fixed some code so previous season's score, main score and previous season's main score show up again.
+- TOC Version update

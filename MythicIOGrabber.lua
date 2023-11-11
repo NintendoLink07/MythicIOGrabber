@@ -648,7 +648,7 @@ local function addApplicantToPanel(applicantID)
 					local previousScoreString = ""
 
 					if(mythicKeystoneProfile.previousScore > 0) then
-						previousScoreString = miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1] .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForScore(mythicKeystoneProfile.previousScore):GenerateHexColor())
+						previousScoreString = (miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]) .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForScore(mythicKeystoneProfile.previousScore):GenerateHexColor())
 					end
 
 					mythicPlusPanel.rows[5].FontString:SetText(previousScoreString)
@@ -660,14 +660,14 @@ local function addApplicantToPanel(applicantID)
 
 					else
 						if(mythicKeystoneProfile.mainCurrentScore > 0 and mythicKeystoneProfile.mainPreviousScore > 0) then
-							mainScoreString = "Main " .. miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()] .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
+							mainScoreString = "Main " .. (miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]) .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
 							" " .. miog.F.PREVIOUS_SEASON .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 						elseif(mythicKeystoneProfile.mainCurrentScore > 0) then
-							mainScoreString = "Main " .. miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()] .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
+							mainScoreString = "Main " .. (miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]) .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
 
 						elseif(mythicKeystoneProfile.mainPreviousScore > 0) then
-							mainScoreString = "Main " .. miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1] .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
+							mainScoreString = "Main " .. (miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]) .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 						end
 
