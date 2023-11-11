@@ -245,6 +245,14 @@ local function addApplicantToPanel(applicantID)
 			end)
 			basicInformationPanel.expandButton = expandFrameButton
 
+			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
+				local commentFrame = miog.createBasicTexture("fleeting", 136459, basicInformationPanel, basicInformationPanel.maximumHeight - 10, basicInformationPanel.maximumHeight - 10)
+				commentFrame:ClearAllPoints()
+				commentFrame:SetDrawLayer("ARTWORK")
+				commentFrame:SetPoint("BOTTOMRIGHT", expandFrameButton, "BOTTOMRIGHT", 0, 0)
+			
+			end
+
 			local coloredSubName = name == "Rhany-Ravencrest" and wticc(nameTable[1], miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(nameTable[1], select(4, GetClassColor(class)))
 
 			local nameFrame = miog.createBasicFrame("fleeting", "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", miog.C.APPLICANT_MEMBER_FONT_SIZE)
@@ -299,12 +307,6 @@ local function addApplicantToPanel(applicantID)
 			end)
 			nameFrame.linkBox:Hide()
 
-			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
-				local commentFrame = miog.createBasicTexture("fleeting", 136459, basicInformationPanel, basicInformationPanel.maximumHeight - 10, basicInformationPanel.maximumHeight - 10)
-				commentFrame:ClearAllPoints()
-				commentFrame:SetPoint("BOTTOMRIGHT", expandFrameButton, "BOTTOMRIGHT", 0, 0)
-			end
-
 			local specFrame
 
 			if(specID) then
@@ -317,7 +319,7 @@ local function addApplicantToPanel(applicantID)
 
 			local roleFrame = miog.createBasicTexture("fleeting", nil, basicInformationPanel, basicInformationPanel.maximumHeight - 1, basicInformationPanel.maximumHeight - 1)
 			roleFrame:SetPoint("LEFT", specFrame or nameFrame, "RIGHT", 1, 0)
-
+			roleFrame:SetDrawLayer("ARTWORK")
 			roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
 
 			local primaryIndicator = miog.createBasicFontString("fleeting", miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.11, basicInformationPanel.maximumHeight)
@@ -345,7 +347,7 @@ local function addApplicantToPanel(applicantID)
 			if(relationship) then
 				local friendFrame = miog.createBasicTexture("fleeting", miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
 				friendFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 3, 0)
-				friendFrame:SetDrawLayer("OVERLAY")
+				friendFrame:SetDrawLayer("ARTWORK")
 				friendFrame:SetMouseMotionEnabled(true)
 				friendFrame:SetScript("OnEnter", function()
 					GameTooltip:SetOwner(friendFrame, "ANCHOR_CURSOR")

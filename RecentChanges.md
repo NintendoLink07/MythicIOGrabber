@@ -1,6 +1,5 @@
-## [1.2.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.3) - 2023-11-11
+## [1.2.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.4) - 2023-11-11
 
 ### Fixed
 
-- Fixed some code so previous season score, main score and main's previous season score show up again.
-- TOC Version update
+- Fixed some layering issues so the comment icon, role icon and pretty much everything else should not disappear if you requeue a bunch of times.

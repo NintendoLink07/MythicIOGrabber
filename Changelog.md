@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [1.2.4] - 2023-11-11
+
+### Fixed
+
+- Fixed some layering issues so the comment icon, role icon and pretty much everything else should not disappear if you requeue a bunch of times.
+
+
+
 ## [1.2.3] - 2023-11-11
 
 ### Fixed
@@ -426,7 +435,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.3...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.4...HEAD
+[1.2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.4
 [1.2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.3
 [1.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.2
 [1.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.1
