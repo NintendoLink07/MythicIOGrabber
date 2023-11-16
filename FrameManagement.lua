@@ -31,6 +31,8 @@ local function resetFrame(pool, childFrame)
 
 	elseif(typeOfFrame == "Frame") then
 		if(pool:GetTemplate() == "BackdropTemplate") then
+			childFrame:SetBackdropColor(0,0,0,0)
+			childFrame:SetBackdropBorderColor(0,0,0,0)
 			childFrame:ClearBackdrop()
 
 		end

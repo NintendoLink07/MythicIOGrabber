@@ -337,9 +337,12 @@ miog.CLASSES = {
 	[20] = 	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
 	[21] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
 	[22] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
+	[100] =	{name = "UNKNOWN", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
 }
 
 miog.SPECIALIZATIONS = {
+	[0] = {name = "Unknown", class = miog.CLASSES["UNKNOWN"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/unknown.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/unknown.png"},
+
 	[62] = {name = "Arcane", class = miog.CLASSES["MAGE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane_squared.png"},
 	[63] = {name = "Fire", class = miog.CLASSES["MAGE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fire.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fire_squared.png"},
 	[64] = {name = "Frost", class = miog.CLASSES["MAGE"], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/frostMage.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/frostMage_squared.png"},

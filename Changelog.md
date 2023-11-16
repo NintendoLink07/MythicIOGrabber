@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.2.7] - 2023-11-16
+
+### Added
+
+- When Blizzard hasn't sent the actual spec the person is applying with it shows a question mark
+
+
+### Fixed
+
+- All colored borders will now reset and not persist through relistings
+
+
+
 ## [1.2.6] - 2023-11-16
 
 ### Fixed
@@ -451,7 +464,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.6...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.7...HEAD
+[1.2.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.7
 [1.2.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.6
 [1.2.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.5
 [1.2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.4
