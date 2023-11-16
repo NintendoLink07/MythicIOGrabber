@@ -1,5 +1,5 @@
-## [1.2.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.4) - 2023-11-11
+## [1.2.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.5) - 2023-11-16
 
 ### Fixed
 
-- Fixed some layering issues so the comment icon, role icon and pretty much everything else should not disappear if you requeue a bunch of times.
+- Fixed spec id problems (if Blizzard somehow didn't send the actual spec id)
