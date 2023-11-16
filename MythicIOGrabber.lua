@@ -309,7 +309,9 @@ local function addApplicantToPanel(applicantID)
 
 			local specFrame
 
-			if(specID and specID ~= 0) then
+			if(specID and specID ~= 0 and specID ~= "0") then
+
+				print(specID)
 				specFrame = miog.createBasicTexture("fleeting", miog.SPECIALIZATIONS[specID].icon, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
 				specFrame:SetPoint("LEFT", nameFrame, "RIGHT", 3, 0)
 				specFrame:SetDrawLayer("ARTWORK")
