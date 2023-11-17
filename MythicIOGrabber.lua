@@ -307,17 +307,18 @@ local function addApplicantToPanel(applicantID)
 			end)
 			nameFrame.linkBox:Hide()
 
-			local specFrame
+			local specFrame = miog.createBasicTexture("fleeting", nil, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
 
-			if(specID) then
-				specFrame = miog.createBasicTexture("fleeting", miog.SPECIALIZATIONS[specID].icon, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
-				specFrame:SetPoint("LEFT", nameFrame, "RIGHT", 3, 0)
-				specFrame:SetDrawLayer("ARTWORK")
+			if(specID and specID ~= 0 and specID ~= "0") then
+				specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
 
 			else
-				--nameFrame:SetWidth(nameFrame:GetWidth() + basicInformationPanel.maximumHeight)
+				specFrame:SetTexture(miog.SPECIALIZATIONS[0].icon)
 
 			end
+
+			specFrame:SetPoint("LEFT", nameFrame, "RIGHT", 3, 0)
+			specFrame:SetDrawLayer("ARTWORK")
 
 			local roleFrame = miog.createBasicTexture("fleeting", nil, basicInformationPanel, basicInformationPanel.maximumHeight - 1, basicInformationPanel.maximumHeight - 1)
 			roleFrame:SetPoint("LEFT", specFrame or nameFrame, "RIGHT", 1, 0)

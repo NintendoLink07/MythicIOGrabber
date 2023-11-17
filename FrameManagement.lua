@@ -169,7 +169,9 @@ local createBasicTexture = function(type, texturePath, parent, width, height, la
 		texture:SetDrawLayer(layer)
 	end
 
-	texture:SetTexture(texturePath)
+	if(texturePath) then
+		texture:SetTexture(texturePath)
+	end
 
 	texture:Show()
 
