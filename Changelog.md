@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning].
 
 ### Known issues
 
-- For some reason a premade group of 2 or more people doesn't send correct spec data to the game client.
-So for now it will show a question mark instead of a spec icon 99% of the time.
-It's a bug on Blizzard's end, unless I find a workaround we have to wait for Blizzard to fix it.
-I did report it on the official/non-official github issues page, so now we wait [World of Warcraft UI Community Bug Tracker](https://github.com/Stanzilla/WoWUIBugs/issues/502)
+- A premade group of 2 or more members won't send correct spec data to the game client.<br>
+Instead of a spec icon it will show a question mark for those groups.<br>
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.<br>
+I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
 
 
 ### Added
