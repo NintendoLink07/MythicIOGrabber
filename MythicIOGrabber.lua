@@ -309,7 +309,7 @@ local function addApplicantToPanel(applicantID)
 
 			local specFrame = miog.createBasicTexture("fleeting", nil, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
 
-			print(applicantID, specID)
+			--print(applicantID, specID)
 
 			if(miog.SPECIALIZATIONS[specID]) then
 				specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
