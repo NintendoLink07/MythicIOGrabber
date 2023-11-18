@@ -236,6 +236,24 @@ miog.createMainFrame = function()
 
 	mainFrame.infoPanel = infoPanel
 
+	local knownIssuesPanel = miog.createBasicFrame("persistent", "IconButtonTemplate", infoPanel, 15, 15)
+	knownIssuesPanel:SetNormalAtlas("glueannouncementpopup-icon-info")
+	knownIssuesPanel:SetHighlightAtlas("glueannouncementpopup-icon-info")
+	knownIssuesPanel:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -4, -4)
+	knownIssuesPanel:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(knownIssuesPanel, "ANCHOR_TOPRIGHT")
+		GameTooltip:AddLine("Current Issues:")
+		GameTooltip:AddLine("A premade group of 2 or more members won't send correct spec data to the game client.")
+		GameTooltip:AddLine("Instead of a spec icon it will show a question mark for those groups.")
+		GameTooltip:AddLine("It's a bug on Blizzard's end, unless I find a workaround we have to wait for Blizzard to fix it.")
+		GameTooltip:Show()
+
+	end)
+	knownIssuesPanel:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+
+	end)
+
 	local infoPanelBackdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel)
 	infoPanelBackdropFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT")
 	infoPanelBackdropFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT")

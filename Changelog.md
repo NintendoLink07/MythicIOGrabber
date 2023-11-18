@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.2.9] - 2023-11-18
+
+
+### Known issues
+
+- For some reason a premade group of 2 or more people doesn't send correct spec data to the game client.
+So for now it will show a question mark instead of a spec icon 99% of the time.
+It's a bug on Blizzard's end, unless I find a workaround we have to wait for Blizzard to fix it.
+I did report it on the official/non-official github issues page, so now we wait [World of Warcraft UI Community Bug Tracker](https://github.com/Stanzilla/WoWUIBugs/issues/502)
+
+
+### Added
+
+- There's an info icon in the topright corner of the info panel when there are any ongoing issues that are not fixed / fixable until Blizzard fixes it.
+
+
+### Fixed
+
+- All frame borders should now reset correctly.
+
+
+
 ## [1.2.8] - 2023-11-17
 
 
@@ -480,7 +502,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.8...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.9...HEAD
+[1.2.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.9
 [1.2.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.8
 [1.2.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.7
 [1.2.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.6
