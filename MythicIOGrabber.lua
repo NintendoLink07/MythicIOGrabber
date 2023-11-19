@@ -74,24 +74,6 @@ local function updateApplicantStatus(applicantID, applicantStatus)
 	end
 end
 
---[[local function updateApplicantStatus(applicantID, applicantStatus)
-	local currentApplicant = applicantSystem.applicantMember[applicantID]
-
-	if(currentApplicant and currentApplicant.frame) then
-		if(currentApplicant.frame.inviteButton) then
-			currentApplicant.frame.inviteButton:Disable()
-		end
-
-		for _, memberFrame in pairs(currentApplicant.frame.memberFrames) do
-			memberFrame.statusFrame:Show()
-			memberFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[applicantStatus].statusString, miog.APPLICANT_STATUS_INFO[applicantStatus].color))
-
-		end
-
-		currentApplicant.creationStatus = applicantStatus == "invited" and "invited" or "canBeRemoved"
-	end
-end]]
-
 local function sortApplicantList(applicant1, applicant2)
 
 	for key, tableElement in pairs(miog.F.SORT_METHODS) do
@@ -1636,12 +1618,12 @@ end
 
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
-		miog.loadSettings()
 
 		updateRosterInfoData()
 
 	elseif(event == "PLAYER_LOGIN") then
 		miog.createMainFrame()
+		miog.loadSettings()
 
 		C_MythicPlus.RequestCurrentAffixes()
 

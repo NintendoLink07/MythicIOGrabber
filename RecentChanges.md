@@ -1,4 +1,4 @@
-## [1.2.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.9) - 2023-11-18
+## [1.2.10](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.10) - 2023-11-19
 
 
 ### Known issues
@@ -9,11 +9,6 @@ Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizz
 I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
 
 
-### Added
-
-- There's an info icon in the topright corner of the info panel when there are any ongoing issues that are not fixed / fixable until Blizzard fixes it.
-
-
 ### Fixed
 
-- All frame borders should now reset correctly.
+- There should now only be one interface option panel instead of a new one getting created after every loading screen.
