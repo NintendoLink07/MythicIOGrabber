@@ -127,14 +127,12 @@ miog.MPLUS_SEASONS = {
 
 --CHANGING VARIABLES
 miog.F = {
-	UI_SCALE = C_CVar.GetCVar("uiScale") or UIParent:GetEffectiveScale(),
-    FACTION_ICON_SIZE = 0,
     WEEKLY_AFFIX = nil,
     SHOW_TANKS = true,
     SHOW_HEALERS = true,
     SHOW_DPS = true,
 	LISTED_CATEGORY_ID = 0,
-	AUTO_SORT_ENABLED = nil,
+	LOADING_SCREEN_OCCURRED = false,
 
 	APPLIED_NUM_OF_TANKS = 0,
 	APPLIED_NUM_OF_HEALERS = 0,

@@ -1,4 +1,4 @@
-## [1.2.10](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.10) - 2023-11-19
+## [1.2.11](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.11) - 2023-11-20
 
 
 ### Known issues
@@ -11,4 +11,4 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 ### Fixed
 
-- There should now only be one interface option panel instead of a new one getting created after every loading screen.
+- Applicants should no longer duplicate when you get a loading screen of any kind.

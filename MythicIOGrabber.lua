@@ -1618,8 +1618,8 @@ end
 
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
-
 		updateRosterInfoData()
+		miog.F.LOADING_SCREEN_OCCURRED = true
 
 	elseif(event == "PLAYER_LOGIN") then
 		miog.createMainFrame()
@@ -1647,7 +1647,7 @@ miog.OnEvent = function(_, event, ...)
 			insertLFGInfo()
 		end
 
-		if(... == nil) then
+		if(... == nil) then --DELIST
 			if not(miog.F.ACTIVE_ENTRY_INFO) then
 				if(queueTimer) then
 					queueTimer:Cancel()
@@ -1664,22 +1664,24 @@ miog.OnEvent = function(_, event, ...)
 				end
 			end
 		else
-			resetArrays()
-			refreshFunction()
-			miog.checkApplicantList(true)
+			resetArrays() --DEBUG STUFF
 
 			if(... == true) then --NEW LISTING
 				MIOG_QueueUpTime = GetTimePreciseSec()
 				expandedFrameList = {}
 
-			elseif(... == false) then --RELOAD OR SETTINGS EDIT
+			elseif(... == false) then --RELOAD, LOADING SCREENS OR SETTINGS EDIT
+				if(miog.F.LOADING_SCREEN_OCCURRED) then
+					refreshFunction()
+					miog.F.LOADING_SCREEN_OCCURRED = false
+				end
+
 				MIOG_QueueUpTime = (MIOG_QueueUpTime and MIOG_QueueUpTime > 0) and MIOG_QueueUpTime or GetTimePreciseSec()
 
 			end
 
 			queueTimer = C_Timer.NewTicker(1, function()
-				local time = miog.secondsToClock(GetTimePreciseSec() - MIOG_QueueUpTime)
-				miog.mainFrame.infoPanel.timerFrame.FontString:SetText(time)
+				miog.mainFrame.infoPanel.timerFrame.FontString:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_QueueUpTime))
 
 			end)
 			miog.mainFrame:Show()
@@ -1687,7 +1689,6 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then --ONE APPLICANT
-
 		local applicantData = C_LFGList.GetApplicantInfo(...)
 
 		if(applicantData) then
@@ -1733,7 +1734,6 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
-
 		local newEntry, withData = ...
 
 		--if(newEntry == true and withData == false) then --NEW APPLICANT WITHOUT DATA
