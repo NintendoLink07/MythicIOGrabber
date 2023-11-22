@@ -291,9 +291,7 @@ local function addApplicantToPanel(applicantID)
 
 			local specFrame = miog.createBasicTexture("fleeting", nil, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
 
-			--print(applicantID, specID)
-
-			if(miog.SPECIALIZATIONS[specID]) then
+			if(miog.SPECIALIZATIONS[specID] and class == miog.SPECIALIZATIONS[specID].class.name) then
 				specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
 
 			else
@@ -1128,9 +1126,7 @@ local function createFullEntries(iterations)
 			local classID = random(1, 13)
 			local classInfo = C_CreatureInfo.GetClassInfo(classID) or {"WARLOCK", "Warlock"}
 
-			local specID = miog.CLASSES[classID].specs[random(1, #miog.CLASSES[classID].specs)]
-
-			--local specID = miog.CLASSES[classInfo.classFile].specs[random(1, #miog.CLASSES[classInfo.classFile].specs)]+
+			local specID = miog.CLASSES[classID].specs[random(1, #miog.DEBUG_SPEC_TABLE[classID])]
 
 			local highestKey
 

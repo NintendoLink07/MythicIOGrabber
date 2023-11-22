@@ -1,5 +1,4 @@
-## [1.2.11](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.11) - 2023-11-20
-
+## [1.2.12](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.12) - 2023-11-23
 
 ### Known issues
 
@@ -11,4 +10,6 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 ### Fixed
 
-- Applicants should no longer duplicate when you get a loading screen of any kind.
+- Windwalker and Mistweaver should now be correctly identified when applying
+
+- Made one more check for specs, even with the current Blizzard bug sometimes hunters would show up as in Discipline spec (lol)

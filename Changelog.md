@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.2.12] - 2023-11-23
+
+### Known issues
+
+- A premade group of 2 or more members won't send correct spec data to the game client.<br>
+Instead of a spec icon it will show a question mark for those groups.<br>
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.<br>
+I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
+
+
+### Fixed
+
+- Windwalker and Mistweaver should now be correctly identified
+
+- Made one more check for specs, even with the current Blizzard bug sometimes hunters would show up as Discipline spec (lol)
+
+
+
 ## [1.2.11] - 2023-11-20
 
 ### Known issues
@@ -532,7 +550,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.11...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.2.12...HEAD
+[1.2.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.12
 [1.2.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.11
 [1.2.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.10
 [1.2.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.9
