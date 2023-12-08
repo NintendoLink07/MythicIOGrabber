@@ -19,8 +19,6 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 - On the left side of the refresh button there's now a number indicating how many applicants you currently have.
 
-- Forgot to mention this: 
-
 ### Changed
 
 - M+ dungeons are now always sorted alphabetically
