@@ -500,7 +500,7 @@ miog.createMainFrame = function()
 				miog.F.SHOW_DPS = not miog.F.SHOW_DPS
 				showRoleButtonText:SetShown(not miog.F.SHOW_DPS)
 	
-				miog.checkApplicantList(true)
+				C_LFGList.RefreshApplicants()
 			end)
 
 		elseif(i == 2) then
@@ -510,7 +510,7 @@ miog.createMainFrame = function()
 				miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
 				showRoleButtonText:SetShown(not miog.F.SHOW_HEALERS)
 	
-				miog.checkApplicantList(true)
+				C_LFGList.RefreshApplicants()
 			end)
 
 		elseif(i == 1) then
@@ -520,7 +520,7 @@ miog.createMainFrame = function()
 				miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
 				showRoleButtonText:SetShown(not miog.F.SHOW_TANKS)
 	
-				miog.checkApplicantList(true)
+				C_LFGList.RefreshApplicants()
 			end)
 
 		end
@@ -630,7 +630,7 @@ miog.createMainFrame = function()
 					end
 				end
 
-				miog.checkApplicantList(true)
+				C_LFGList.RefreshApplicants()
 			elseif(button == "RightButton") then
 				if(activeState == 1 or activeState == 2) then
 					
@@ -663,7 +663,7 @@ miog.createMainFrame = function()
 						end
 					end
 
-					miog.checkApplicantList(true)
+					C_LFGList.RefreshApplicants()
 				end
 			end
 		end)
@@ -686,6 +686,13 @@ miog.createMainFrame = function()
 	)
 
 	buttonPanel.resetButton = resetButton
+
+	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, itemLevelFrame)
+	applicantNumberFontString:SetPoint("RIGHT", resetButton, "LEFT", -10, -2)
+	applicantNumberFontString:SetJustifyH("CENTER")
+	applicantNumberFontString:SetText(0)
+
+	buttonPanel.applicantNumberFontString = applicantNumberFontString
 
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
 	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
@@ -736,16 +743,18 @@ miog.createMainFrame = function()
 	end)
 
 	local applicantPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", titleBar)
-	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 0, 0)
+	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 1, 0)
 	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, 0)
 	mainFrame.applicantPanel = applicantPanel
 
 	miog.C.MAIN_WIDTH = applicantPanel:GetWidth()
 
-	local applicantPanelContainer = miog.createBasicFrame("persistent", "BackdropTemplate", applicantPanel)
-	applicantPanelContainer:SetSize(applicantPanel:GetWidth(), 1)
+	local applicantPanelContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", applicantPanel)
+	applicantPanelContainer.fixedWidth = applicantPanel:GetWidth()
+	applicantPanelContainer.minimumHeight = 1
+	applicantPanelContainer.spacing = 5
+	applicantPanelContainer.align = "top"
 	applicantPanelContainer:SetPoint("TOPLEFT", applicantPanel, "TOPLEFT")
-	--applicantPanelContainer:MarkDirty()
 	applicantPanel.container = applicantPanelContainer
 
 	applicantPanel:SetScrollChild(applicantPanelContainer)
@@ -764,7 +773,7 @@ miog.createMainFrame = function()
 
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
-	EJ_SelectInstance(1208)
+	EJ_SelectInstance(1207)
 
 	if(RaiderIO_ExportButton) then
 		RaiderIO_ExportButton:ClearAllPoints()

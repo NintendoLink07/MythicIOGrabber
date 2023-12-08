@@ -26,27 +26,28 @@ end
 
 miog.checkLFGState = function()
 	return UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "solo"
+	
 end
 
 miog.createFrameBorder = function(frame, thickness, r, g, b, a)
-
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
-	frame:SetBackdropColor(0, 0 , 0, 0) -- main area color
+	frame:SetBackdropColor(0, 0, 0, 0) -- main area color
 	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- border color
+
 end
 
 miog.createTopBottomLines = function(frame, thickness, r, g, b, a)
-
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=0, right=0, top=-miog.F.PX_SIZE_1(), bottom=-miog.F.PX_SIZE_1()}} )
 	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color
 	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 0) -- border color
+
 end
 
 miog.createLeftRightLines = function(frame, thickness, r, g, b, a)
-
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1(), top=0, bottom=0}} )
 	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color
 	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 0) -- border color
+
 end
 
 miog.simpleSplit = function(tempString, delimiter)
@@ -56,6 +57,7 @@ miog.simpleSplit = function(tempString, delimiter)
 	end
 
 	return resultArray
+
 end
 
 miog.round = function(number, decimals)
@@ -63,49 +65,61 @@ miog.round = function(number, decimals)
 
 	if(dot) then
 		return string.sub(number, 1, dot+decimals)
+
 	else
 		return number
+
 	end
+
 end
 
 miog.round2 = function(num)
 	return num + (2^52 + 2^51) - (2^52 + 2^51)
+
 end
 
 miog.secondsToClock = function(stringSeconds)
 	local seconds = tonumber(stringSeconds)
 
 	if seconds <= 0 then
-		return "00:00";
+		return "00:00"
+
 	else
-		local hours = string.format("%01.f", math.floor(seconds/3600));
-		local mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
-		local secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
+		local hours = string.format("%01.f", math.floor(seconds/3600))
+		local mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)))
+		local secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60))
 		return
 		hours..":"..
 		mins..":"..
 		secs
+
 	end
 end
 
 miog.checkIfCanInvite = function()
-	if(UnitIsGroupLeader("player")) then
+	if(C_PartyInfo.CanInvite()) then
 		miog.mainFrame.footerBar:Show()
 		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
+		return true
 
 	else
 		miog.mainFrame.footerBar:Hide()
 		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
+		return false
 
 	end
+
 end
 
 miog.changeDrawLayer = function(regionType, oldDrawLayer, newDrawLayer, ...)
 	for index = 1, select('#', ...) do
 		local region = select(index, ...)
+
 		if region:IsObjectType(regionType) and region:GetDrawLayer() == oldDrawLayer then
 			region:SetDrawLayer(newDrawLayer)
+
 		end
+
 	end
 end
 
