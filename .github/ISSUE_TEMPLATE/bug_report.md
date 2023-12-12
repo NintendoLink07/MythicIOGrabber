@@ -25,7 +25,6 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
-- OS: Windows/Mac/Linux (ideally which version aswell)
 - MIOG version: 1.x
 - RaiderIO installed: yes/no
 
