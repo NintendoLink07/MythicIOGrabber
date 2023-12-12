@@ -465,69 +465,261 @@ miog.createMainFrame = function()
 	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT + 2)
 	buttonPanel:SetPoint("TOPLEFT", listingSettingPanel, "BOTTOMLEFT", 0, 1)
 	buttonPanel:SetPoint("TOPRIGHT", listingSettingPanel, "BOTTOMRIGHT", 0, 1)
-	buttonPanel.RoleTextures = {}
-	buttonPanel.RoleButtons = {}
 	miog.createFrameBorder(buttonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	buttonPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	mainFrame.buttonPanel = buttonPanel
 
+	local expandFilterPanelButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), TripleStateButtonMixin)
+	expandFilterPanelButton:OnLoad()
+	expandFilterPanelButton:SetMaxStates(2)
+	expandFilterPanelButton:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+	expandFilterPanelButton:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+	expandFilterPanelButton:SetState(false)
+	expandFilterPanelButton:SetPoint("LEFT", buttonPanel, "LEFT", 2, 0)
+	expandFilterPanelButton:SetFrameStrata("DIALOG")
+	expandFilterPanelButton:RegisterForClicks("LeftButtonDown")
+	expandFilterPanelButton:SetScript("OnClick", function()
+		if(buttonPanel.filterPanel) then
+			expandFilterPanelButton:AdvanceState()
+			buttonPanel.filterPanel:SetShown(not buttonPanel.filterPanel:IsVisible())
+
+		end
+
+	end)
+	buttonPanel.expandButton = expandFilterPanelButton
+	
+	local filterString = miog.createBasicFontString("persistent", 12, buttonPanel)
+	filterString:SetPoint("LEFT", expandFilterPanelButton, "RIGHT", 2, -1)
+	filterString:SetJustifyH("CENTER")
+	filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+	local filterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", buttonPanel, 220, 300)
+	filterPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT")
+	filterPanel:Hide()
+	miog.createFrameBorder(filterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	filterPanel:SetBackdropColor(0.1, 0.1, 0.1, 1)
+
+	buttonPanel.filterPanel = filterPanel
+
+	local roleFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", filterPanel, 150, 20)
+	roleFilterPanel:SetPoint("TOPLEFT", filterPanel, "TOPLEFT", 1, -4)
+	roleFilterPanel.RoleTextures = {}
+	roleFilterPanel.RoleButtons = {}
+
+	filterPanel.roleFilterPanel = roleFilterPanel
+
 	for i = 1, 3, 1 do
-		local toggleRoleButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+		local toggleRoleButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", roleFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
 		toggleRoleButton:SetNormalAtlas("checkbox-minimal")
 		toggleRoleButton:SetPushedAtlas("checkbox-minimal")
 		toggleRoleButton:SetCheckedTexture("checkmark-minimal")
 		toggleRoleButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-		toggleRoleButton:SetPoint("LEFT", buttonPanel.RoleTextures[i-1] or buttonPanel, buttonPanel.RoleTextures[i-1] and "RIGHT" or "LEFT", buttonPanel.RoleTextures[i-1] and 5 or 1, 0)
+		toggleRoleButton:SetPoint("LEFT", roleFilterPanel.RoleTextures[i-1] or roleFilterPanel, roleFilterPanel.RoleTextures[i-1] and "RIGHT" or "LEFT", roleFilterPanel.RoleTextures[i-1] and 8 or 0, 0)
 		toggleRoleButton:RegisterForClicks("LeftButtonDown")
 		toggleRoleButton:SetChecked(true)
 
-		local roleTexture = miog.createBasicTexture("persistent", nil, buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
+		local roleTexture = miog.createBasicTexture("persistent", nil, roleFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
 		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
 
-		local showRoleButtonText = miog.createBasicFontString("persistent", 16, buttonPanel)
+		local showRoleButtonText = miog.createBasicFontString("persistent", 16, roleFilterPanel)
 		showRoleButtonText:Hide()
-		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 0, -1)
+		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 1, -1)
 		showRoleButtonText:SetJustifyV("CENTER")
 		showRoleButtonText:SetText("0")
 
 		roleTexture.text = showRoleButtonText
 
-		if(i == 3) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
+		toggleRoleButton:SetScript("OnClick", function()
+			showRoleButtonText:SetShown(toggleRoleButton:GetChecked())
 
-			toggleRoleButton:SetScript("OnClick", function()
-				miog.F.SHOW_DPS = not miog.F.SHOW_DPS
-				showRoleButtonText:SetShown(not miog.F.SHOW_DPS)
-	
-				C_LFGList.RefreshApplicants()
-			end)
+			if(not miog.checkForActiveFilters()) then
+				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+			else
+				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+			
+			end
+
+			C_LFGList.RefreshApplicants()
+			
+		end)
+
+		if(i == 1) then
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png")
 
 		elseif(i == 2) then
 			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png")
 
-			toggleRoleButton:SetScript("OnClick", function()
-				miog.F.SHOW_HEALERS = not miog.F.SHOW_HEALERS
-				showRoleButtonText:SetShown(not miog.F.SHOW_HEALERS)
-	
-				C_LFGList.RefreshApplicants()
-			end)
-
-		elseif(i == 1) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png")
-
-			toggleRoleButton:SetScript("OnClick", function()
-				miog.F.SHOW_TANKS = not miog.F.SHOW_TANKS
-				showRoleButtonText:SetShown(not miog.F.SHOW_TANKS)
-	
-				C_LFGList.RefreshApplicants()
-			end)
+		elseif(i == 3) then
+			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
 
 		end
 
-		buttonPanel.RoleButtons[i] = toggleRoleButton
-		buttonPanel.RoleTextures[i] = roleTexture
+		roleFilterPanel.RoleButtons[i] = toggleRoleButton
+		roleFilterPanel.RoleTextures[i] = roleTexture
+
 	end
+
+	local classFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", filterPanel, filterPanel:GetWidth() - 2, filterPanel:GetHeight() - roleFilterPanel:GetHeight())
+	classFilterPanel:SetPoint("TOPLEFT", roleFilterPanel, "BOTTOMLEFT", 0, -2)
+	classFilterPanel.ClassPanels = {}
+
+	filterPanel.classFilterPanel = classFilterPanel
+
+	for classIndex, classEntry in ipairs(miog.CLASSES) do
+		local singleClassPanel = miog.createBasicFrame("persistent", "BackdropTemplate", classFilterPanel, classFilterPanel:GetWidth(), 20)
+		singleClassPanel:SetPoint("TOPLEFT", classFilterPanel.ClassPanels[classIndex-1] or classFilterPanel, classFilterPanel.ClassPanels[classIndex-1] and "BOTTOMLEFT" or "TOPLEFT", 0, -1)
+		local r, g, b = GetClassColor(classEntry.name)
+		miog.createFrameBorder(singleClassPanel, 1, r, g, b, 0.9)
+		singleClassPanel:SetBackdropColor(r, g, b, 0.6)
+
+		local toggleClassButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", classFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+		toggleClassButton:SetNormalAtlas("checkbox-minimal")
+		toggleClassButton:SetPushedAtlas("checkbox-minimal")
+		toggleClassButton:SetCheckedTexture("checkmark-minimal")
+		toggleClassButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+		toggleClassButton:RegisterForClicks("LeftButtonDown")
+		toggleClassButton:SetChecked(true)
+		toggleClassButton:SetPoint("LEFT", singleClassPanel, "LEFT")
+		singleClassPanel.Button = toggleClassButton
+
+		local classTexture = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/classIcons/" .. classEntry.name .. "_round.png", singleClassPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
+		classTexture:SetPoint("LEFT", toggleClassButton, "RIGHT", 0, 0)
+		singleClassPanel.Texture = classTexture
+
+		local specFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", singleClassPanel, 200, 180)
+		specFilterPanel:SetPoint("TOPLEFT", roleFilterPanel, "BOTTOMLEFT")
+		specFilterPanel.SpecTextures = {}
+		specFilterPanel.SpecButtons = {}
+
+		singleClassPanel.specFilterPanel = specFilterPanel
+		classFilterPanel.ClassPanels[classIndex] = singleClassPanel
+
+		for specIndex, specID in pairs(classEntry.specs) do
+			local specEntry = miog.SPECIALIZATIONS[specID]
+
+			local toggleSpecButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", specFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+			toggleSpecButton:SetNormalAtlas("checkbox-minimal")
+			toggleSpecButton:SetPushedAtlas("checkbox-minimal")
+			toggleSpecButton:SetCheckedTexture("checkmark-minimal")
+			toggleSpecButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+			toggleSpecButton:SetPoint("LEFT", specFilterPanel.SpecTextures[classEntry.specs[specIndex-1]] or classTexture, "RIGHT", 8, 0)
+			toggleSpecButton:RegisterForClicks("LeftButtonDown")
+			toggleSpecButton:SetChecked(true)
+			toggleSpecButton:SetScript("OnClick", function()
+				if(toggleSpecButton:GetChecked()) then
+					toggleClassButton:SetChecked(true)
+
+					if(not miog.checkForActiveFilters()) then
+						filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+					end
+
+				else
+					filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+
+				end
+
+				C_LFGList.RefreshApplicants()
+
+			end)
+
+			local specTexture = miog.createBasicTexture("persistent", specEntry.icon, specFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 4, miog.C.APPLICANT_MEMBER_HEIGHT - 4, "ARTWORK")
+			specTexture:SetPoint("LEFT", toggleSpecButton, "RIGHT", 0, 0)
+
+			specFilterPanel.SpecTextures[specID] = specTexture
+			specFilterPanel.SpecButtons[specID] = toggleSpecButton
+
+		end
+
+		toggleClassButton:SetScript("OnClick", function()
+
+			for k,v in pairs(specFilterPanel.SpecButtons) do
+
+				if(toggleClassButton:GetChecked()) then
+					v:SetChecked(true)
+				
+				else
+					v:SetChecked(false)
+				
+				end
+
+				C_LFGList.RefreshApplicants()
+
+			end
+
+			if(not miog.checkForActiveFilters()) then
+				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+			else
+				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+			
+			end
+		end)
+
+	end
+
+	local uncheckAllFiltersButton = miog.createBasicFrame("persistent", "IconButtonTemplate", filterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+	uncheckAllFiltersButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
+	uncheckAllFiltersButton.iconSize = miog.C.APPLICANT_MEMBER_HEIGHT - 3
+	uncheckAllFiltersButton:OnLoad()
+	uncheckAllFiltersButton:SetPoint("TOPRIGHT", filterPanel, "TOPRIGHT", 1, -5)
+	uncheckAllFiltersButton:SetFrameStrata("DIALOG")
+	uncheckAllFiltersButton:RegisterForClicks("LeftButtonUp")
+	uncheckAllFiltersButton:SetScript("OnClick", function()
+		for _, v in pairs(classFilterPanel.ClassPanels) do
+			v.Button:SetChecked(false)
+
+			for _, y in pairs(v.specFilterPanel.SpecButtons) do
+				y:SetChecked(false)
+
+			end
+			
+		end
+
+		if(not miog.checkForActiveFilters()) then
+			filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+		else
+			filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+		
+		end
+
+		C_LFGList.RefreshApplicants()
+	end)
+	filterPanel.uncheckAllFiltersButton = uncheckAllFiltersButton
+
+	local checkAllFiltersButton = miog.createBasicFrame("persistent", "IconButtonTemplate", filterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+	checkAllFiltersButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
+	checkAllFiltersButton.iconSize = miog.C.APPLICANT_MEMBER_HEIGHT - 3
+	checkAllFiltersButton:OnLoad()
+	checkAllFiltersButton:SetPoint("RIGHT", uncheckAllFiltersButton, "LEFT", -3, 0)
+	checkAllFiltersButton:SetFrameStrata("DIALOG")
+	checkAllFiltersButton:RegisterForClicks("LeftButtonUp")
+	checkAllFiltersButton:SetScript("OnClick", function()
+		for _, v in pairs(classFilterPanel.ClassPanels) do
+			v.Button:SetChecked(true)
+
+			for _, y in pairs(v.specFilterPanel.SpecButtons) do
+				y:SetChecked(true)
+
+			end
+
+			if(not miog.checkForActiveFilters()) then
+				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+			else
+				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+			
+			end
+			
+		end
+
+		C_LFGList.RefreshApplicants()
+	end)
+	filterPanel.checkAllFiltersButton = checkAllFiltersButton
+
 
 	buttonPanel.sortByCategoryButtons = {}
 
@@ -687,13 +879,6 @@ miog.createMainFrame = function()
 
 	buttonPanel.resetButton = resetButton
 
-	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, itemLevelFrame)
-	applicantNumberFontString:SetPoint("RIGHT", resetButton, "LEFT", -10, -2)
-	applicantNumberFontString:SetJustifyH("CENTER")
-	applicantNumberFontString:SetText(0)
-
-	buttonPanel.applicantNumberFontString = applicantNumberFontString
-
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
 	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
 	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrame:GetHeight()*0.06)
@@ -708,39 +893,58 @@ miog.createMainFrame = function()
 	browseGroupsButton:FitToText()
 	browseGroupsButton:RegisterForClicks("LeftButtonDown")
 	browseGroupsButton:SetScript("OnClick", function()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-		local baseFilters = LFGListFrame.baseFilters;
-		local searchPanel = LFGListFrame.SearchPanel;
-		local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		local baseFilters = LFGListFrame.baseFilters
+		local searchPanel = LFGListFrame.SearchPanel
+		local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 		if(activeEntryInfo) then
-			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID);
+			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
 			if(activityInfo) then
-				LFGListSearchPanel_SetCategory(searchPanel, activityInfo.categoryID, activityInfo.filters, baseFilters);
-				LFGListFrame_SetActivePanel(LFGListFrame, searchPanel);
-				LFGListSearchPanel_DoSearch(searchPanel);
+				LFGListSearchPanel_SetCategory(searchPanel, activityInfo.categoryID, activityInfo.filters, baseFilters)
+				LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
+				LFGListSearchPanel_DoSearch(searchPanel)
 			end
 		end
 	end)
 
-	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
-	editButton:SetPoint("RIGHT", footerBar, "RIGHT")
-	editButton:SetText("Edit")
-	editButton:FitToText()
-	editButton:RegisterForClicks("LeftButtonDown")
-	editButton:SetScript("OnClick", function()
-		local entryCreation = LFGListFrame.EntryCreation;
-		LFGListEntryCreation_SetEditMode(entryCreation, true);
-		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation);
-	end)
+	footerBar.browseGroupsButton = browseGroupsButton
 
 	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
-	delistButton:SetPoint("RIGHT", editButton, "LEFT")
+	delistButton:SetPoint("LEFT", browseGroupsButton, "RIGHT")
 	delistButton:SetText("Delist")
 	delistButton:FitToText()
 	delistButton:RegisterForClicks("LeftButtonDown")
 	delistButton:SetScript("OnClick", function()
 		C_LFGList.RemoveListing()
 	end)
+
+	footerBar.delistButton = delistButton
+
+	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
+	editButton:SetPoint("LEFT", delistButton, "RIGHT")
+	editButton:SetText("Edit")
+	editButton:FitToText()
+	editButton:RegisterForClicks("LeftButtonDown")
+	editButton:SetScript("OnClick", function()
+		local entryCreation = LFGListFrame.EntryCreation
+		LFGListEntryCreation_SetEditMode(entryCreation, true)
+		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation)
+	end)
+
+	footerBar.editButton = editButton
+
+	if(RaiderIO_ExportButton) then
+		RaiderIO_ExportButton:ClearAllPoints()
+		RaiderIO_ExportButton:SetPoint("LEFT", editButton, "RIGHT", 5, 0)
+		RaiderIO_ExportButton:SetParent(footerBar)
+	end
+
+	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, itemLevelFrame)
+	applicantNumberFontString:SetPoint("RIGHT", footerBar, "RIGHT", -3, -2)
+	applicantNumberFontString:SetJustifyH("CENTER")
+	applicantNumberFontString:SetText(0)
+
+	footerBar.applicantNumberFontString = applicantNumberFontString
 
 	local applicantPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", titleBar)
 	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 1, 0)
@@ -774,12 +978,6 @@ miog.createMainFrame = function()
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
 	EJ_SelectInstance(1207)
-
-	if(RaiderIO_ExportButton) then
-		RaiderIO_ExportButton:ClearAllPoints()
-		RaiderIO_ExportButton:SetPoint("LEFT", browseGroupsButton, "RIGHT", 5, 0)
-		RaiderIO_ExportButton:SetParent(footerBar)
-	end
 
 
 end

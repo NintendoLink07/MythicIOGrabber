@@ -6,13 +6,38 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.4] - 2023-12-12
+
+### Added
+
+- You can now filter classes and specs!
+Instead of the 3 role filter options you have now a filter panel where you can enable or disable what you want to filter.
+Obviously if you filter for a healer demon hunter you won't find anything though... probably.
+
+- When there's a player on your ignore list the name is colored in red and the tooltip indicates that the player is on your ignore list.
+
+### Changed
+
+- Number of current applicants is now in the bottom right corner (in the footer bar)
+
+- Disk space requirement increased because I used round class textures for the filters (increased by about 3.5mb)
+
+### Known issues
+
+- A premade group of 2 or more members / sometimes even single ones won't send correct spec data to the game client.
+Instead of a spec icon it will show a question mark for those groups.
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.
+I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
+
+
+
 ## [1.3] - 2023-12-08
 
 ### Known issues
 
-- A premade group of 2 or more members / sometimes even single ones won't send correct spec data to the game client.<br>
-Instead of a spec icon it will show a question mark for those groups.<br>
-Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.<br>
+- A premade group of 2 or more members / sometimes even single ones won't send correct spec data to the game client.
+Instead of a spec icon it will show a question mark for those groups.
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.
 I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
 
 ### Added
@@ -42,9 +67,9 @@ Since the addon has a lot of information visible even when the applicant frame i
 
 ### Known issues
 
-- A premade group of 2 or more members won't send correct spec data to the game client.<br>
-Instead of a spec icon it will show a question mark for those groups.<br>
-Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.<br>
+- A premade group of 2 or more members won't send correct spec data to the game client.
+Instead of a spec icon it will show a question mark for those groups.
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.
 I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
 
 
@@ -60,9 +85,9 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 ### Known issues
 
-- A premade group of 2 or more members won't send correct spec data to the game client.<br>
-Instead of a spec icon it will show a question mark for those groups.<br>
-Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.<br>
+- A premade group of 2 or more members won't send correct spec data to the game client.
+Instead of a spec icon it will show a question mark for those groups.
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.
 I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
 
 
@@ -76,9 +101,9 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 ### Known issues
 
-- A premade group of 2 or more members won't send correct spec data to the game client.<br>
-Instead of a spec icon it will show a question mark for those groups.<br>
-Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.<br>
+- A premade group of 2 or more members won't send correct spec data to the game client.
+Instead of a spec icon it will show a question mark for those groups.
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.
 I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
 
 
@@ -92,9 +117,9 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 ### Known issues
 
-- A premade group of 2 or more members won't send correct spec data to the game client.<br>
-Instead of a spec icon it will show a question mark for those groups.<br>
-Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.<br>
+- A premade group of 2 or more members won't send correct spec data to the game client.
+Instead of a spec icon it will show a question mark for those groups.
+Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.
 I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
 
 
@@ -582,7 +607,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.3...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4...HEAD
+[1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4
 [1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.3
 [1.2.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.12
 [1.2.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.11

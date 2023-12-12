@@ -96,15 +96,52 @@ miog.secondsToClock = function(stringSeconds)
 	end
 end
 
+miog.checkForActiveFilters = function()
+	local filtersActive = false
+
+	for _, v in pairs(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels) do
+		if(not v.Button:GetChecked()) then
+			filtersActive = true
+			break
+
+		end
+
+		for _, y in pairs(v.specFilterPanel.SpecButtons) do
+			if(not y:GetChecked()) then
+				filtersActive = true
+				break
+
+			end
+
+		end
+		
+	end
+	
+	for _, v in pairs(miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons) do
+		if(not v:GetChecked()) then
+			filtersActive = true
+			break
+
+		end
+
+	end
+
+	return filtersActive
+end
+
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		miog.mainFrame.footerBar:Show()
-		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
+		miog.mainFrame.footerBar.browseGroupsButton:Show()
+		miog.mainFrame.footerBar.delistButton:Show()
+		miog.mainFrame.footerBar.editButton:Show()
+		
 		return true
 
 	else
-		miog.mainFrame.footerBar:Hide()
-		miog.mainFrame.applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT", 0, 0)
+		miog.mainFrame.footerBar.browseGroupsButton:Hide()
+		miog.mainFrame.footerBar.delistButton:Hide()
+		miog.mainFrame.footerBar.editButton:Hide()
+
 		return false
 
 	end

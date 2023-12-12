@@ -39,7 +39,7 @@ local function fullRelease()
 
 	miog.fleetingFramePool:ReleaseAll()
 
-	miog.mainFrame.buttonPanel.applicantNumberFontString:SetText(0)
+	miog.mainFrame.footerBar.applicantNumberFontString:SetText(0)
 	miog.mainFrame.applicantPanel.container:MarkDirty()
 end
 
@@ -52,7 +52,7 @@ local function hideAllFrames()
 		end
 	end
 
-	miog.mainFrame.buttonPanel.applicantNumberFontString:SetText(0)
+	miog.mainFrame.footerBar.applicantNumberFontString:SetText(0)
 	miog.mainFrame.applicantPanel.container:MarkDirty()
 end
 
@@ -253,12 +253,22 @@ local function createApplicantFrame(applicantID)
 			
 			end
 
-			local coloredSubName = name == "Rhany-Ravencrest" and wticc(nameTable[1], miog.ITEM_QUALITY_COLORS[6].pureHex) or wticc(nameTable[1], select(4, GetClassColor(class)))
+			local coloredName
+
+			local playerIsIgnored = C_FriendList.IsIgnored(name)
+
+			if(playerIsIgnored) then
+				coloredName = wticc(nameTable[1], "FFFF0000")
+
+			else
+				coloredName = wticc(nameTable[1], select(4, GetClassColor(class)))
+
+			end
 
 			local nameFrame = miog.createFleetingFrame(applicantFrame.framePool, "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", applicantFrame.fontStringPool,  miog.C.APPLICANT_MEMBER_FONT_SIZE)
 			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 0, 0)
 			nameFrame:SetFrameStrata("DIALOG")
-			nameFrame.FontString:SetText(coloredSubName)
+			nameFrame.FontString:SetText(coloredName)
 			nameFrame:SetMouseMotionEnabled(true)
 			nameFrame:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
@@ -274,17 +284,22 @@ local function createApplicantFrame(applicantID)
 				end
 			end)
 			nameFrame:SetScript("OnEnter", function()
-				if(nameFrame.FontString:IsTruncated()) then
-					GameTooltip:SetOwner(nameFrame, "ANCHOR_CURSOR")
-					GameTooltip:SetText(nameFrame.FontString:GetText())
-					GameTooltip:Show()
+				GameTooltip:SetOwner(nameFrame, "ANCHOR_CURSOR")
 
-				elseif(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
-					GameTooltip:SetOwner(nameFrame, "ANCHOR_CURSOR")
-					GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
-					GameTooltip:Show()
+				if(playerIsIgnored) then
+					GameTooltip:SetText("Player is on your ignore list")
 
+				else
+					if(nameFrame.FontString:IsTruncated()) then
+						GameTooltip:SetText(nameFrame.FontString:GetText())
+
+					elseif(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
+						GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
+
+					end
 				end
+
+				GameTooltip:Show()
 
 			end)
 			nameFrame:SetScript("OnLeave", function()
@@ -307,7 +322,7 @@ local function createApplicantFrame(applicantID)
 			end)
 			nameFrame.linkBox:Hide()
 
-			local specFrame = miog.createFleetingTexture(applicantFrame.texturePool, nil, basicInformationPanel, basicInformationPanel.maximumHeight - 4, basicInformationPanel.maximumHeight - 4)
+			local specFrame = miog.createFleetingTexture(applicantFrame.texturePool, nil, basicInformationPanel, basicInformationPanel.maximumHeight - 5, basicInformationPanel.maximumHeight - 5)
 
 			if(miog.SPECIALIZATIONS[specID] and class == miog.SPECIALIZATIONS[specID].class.name) then
 				specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
@@ -970,13 +985,13 @@ local function gatherSortData()
 			if(applicantSystem.applicantMember[applicantID] and applicantSystem.applicantMember[applicantID].status ~= "removable") then
 				if(applicantSystem.applicantMember[applicantID].saveData == nil) then -- FIRST TIME THIS APPLICANT APPLIES?
 
-					local name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, _, bestDungeonScoreForListing, pvpRatingInfo
+					local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo
 
 					if(miog.F.IS_IN_DEBUG_MODE) then
-						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, _, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, 1)
+						name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, 1)
 
 					else
-						name, _, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, _ = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
+						name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, 1)
 
 					end
 
@@ -1059,6 +1074,8 @@ local function gatherSortData()
 						name = name,
 						index = applicantID,
 						role = assignedRole,
+						class = class,
+						specID = specID,
 						primary = primarySortAttribute,
 						secondary = secondarySortAttribute,
 						ilvl = itemLevel
@@ -1074,6 +1091,22 @@ local function gatherSortData()
 	return unsortedMainApplicantsList
 end
 
+local function addOrShowApplicant(listEntry)
+	if(applicantSystem.applicantMember[listEntry.index].frame) then
+		applicantSystem.applicantMember[listEntry.index].frame:Show()
+
+	else
+		applicantSystem.applicantMember[listEntry.index].status = "inProgress"
+		createApplicantFrame(listEntry.index)
+
+	end
+
+	applicantSystem.applicantMember[listEntry.index].frame.layoutIndex = layoutIndex
+
+	miog.mainFrame.applicantPanel.container:MarkDirty()
+	layoutIndex = layoutIndex + 1
+end
+
 local function checkApplicantList()
 	hideAllFrames()
 
@@ -1083,7 +1116,7 @@ local function checkApplicantList()
 
 	local unsortedList = gatherSortData()
 
-	miog.mainFrame.buttonPanel.applicantNumberFontString:SetText(#unsortedList)
+	miog.mainFrame.footerBar.applicantNumberFontString:SetText(#unsortedList)
 
 	if(unsortedList[1]) then
 		local allSystemMembers = {}
@@ -1110,20 +1143,21 @@ local function checkApplicantList()
 
 			end
 
-			if(listEntry.role == "TANK" and miog.F.SHOW_TANKS or listEntry.role == "HEALER" and miog.F.SHOW_HEALERS or listEntry.role == "DAMAGER" and miog.F.SHOW_DPS) then
-				if(applicantSystem.applicantMember[listEntry.index].frame) then
-					applicantSystem.applicantMember[listEntry.index].frame:Show()
+			if((listEntry.role == "TANK" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
+			or listEntry.role == "HEALER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
+			or listEntry.role == "DAMAGER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
+				if(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[listEntry.class]].Button:GetChecked()) then
+					if(miog.SPECIALIZATIONS[listEntry.specID] and listEntry.class == miog.SPECIALIZATIONS[listEntry.specID].class.name) then
+						if(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[listEntry.class]].specFilterPanel.SpecButtons[listEntry.specID]:GetChecked()) then
+							addOrShowApplicant(listEntry)
+						end
+						
+					else
+						addOrShowApplicant(listEntry)
 
-				else
-					applicantSystem.applicantMember[listEntry.index].status = "inProgress"
-					createApplicantFrame(listEntry.index)
+					end
 
 				end
-
-				applicantSystem.applicantMember[listEntry.index].frame.layoutIndex = layoutIndex
-
-				miog.mainFrame.applicantPanel.container:MarkDirty()
-				layoutIndex = layoutIndex + 1
 
 			end
 
@@ -1142,9 +1176,9 @@ local function checkApplicantList()
 			end
 		end
 
-		miog.mainFrame.buttonPanel.RoleTextures[1].text:SetText(miog.F.APPLIED_NUM_OF_TANKS)
-		miog.mainFrame.buttonPanel.RoleTextures[2].text:SetText(miog.F.APPLIED_NUM_OF_HEALERS)
-		miog.mainFrame.buttonPanel.RoleTextures[3].text:SetText(miog.F.APPLIED_NUM_OF_DPS)
+		--miog.mainFrame.buttonPanel.RoleTextures[1].text:SetText(miog.F.APPLIED_NUM_OF_TANKS)
+		--miog.mainFrame.buttonPanel.RoleTextures[2].text:SetText(miog.F.APPLIED_NUM_OF_HEALERS)
+		--miog.mainFrame.buttonPanel.RoleTextures[3].text:SetText(miog.F.APPLIED_NUM_OF_DPS)
 
 	end
 end
@@ -1194,8 +1228,8 @@ local function createFullEntries(iterations)
 
 			local highestKey
 
-			if(rioProfile) then
-				highestKey = rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel > rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel and 
+			if(rioProfile and rioProfile.mythicKeystoneProfile) then
+				highestKey = rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel > rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel and
 				rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel or rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel
 			end
 
