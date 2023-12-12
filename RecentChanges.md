@@ -12,6 +12,8 @@ Obviously if you filter for a healer demon hunter you won't find anything though
 
 - Number of current applicants is now in the bottom right corner (in the footer bar)
 
+- Disk space requirement increased because I used round class textures for the filters (increased by about 3.5mb)
+
 ### Known issues
 
 - A premade group of 2 or more members / sometimes even single ones won't send correct spec data to the game client.
