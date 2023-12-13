@@ -119,6 +119,7 @@ local function sortApplicantList(applicant1, applicant2)
 end
 
 local layoutIndex = 0
+local applicantMemberPadding = 2
 
 local function createApplicantFrame(applicantID)
 
@@ -129,7 +130,6 @@ local function createApplicantFrame(applicantID)
 
 		expandedFrameList[applicantID] = expandedFrameList[applicantID] or {}
 
-		local applicantMemberPadding = 2
 		local applicantFrame = miog.createBasicFrame("fleeting", "ResizeLayoutFrame, BackdropTemplate", miog.mainFrame.applicantPanel.container)
 		applicantFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
 		applicantFrame.heightPadding = 1
@@ -167,6 +167,10 @@ local function createApplicantFrame(applicantID)
 			end
 
 			local nameTable = miog.simpleSplit(name, "-")
+
+			if(not nameTable[2]) then
+				nameTable[2] = GetNormalizedRealmName()
+			end
 
 			local profile, mythicKeystoneProfile, dungeonProfile, raidProfile
 
@@ -250,32 +254,23 @@ local function createApplicantFrame(applicantID)
 				commentFrame:ClearAllPoints()
 				commentFrame:SetDrawLayer("ARTWORK")
 				commentFrame:SetPoint("BOTTOMRIGHT", expandFrameButton, "BOTTOMRIGHT", 0, 0)
-			
-			end
 
-			local coloredName
+			end
 
 			local playerIsIgnored = C_FriendList.IsIgnored(name)
 
-			if(playerIsIgnored) then
-				coloredName = wticc(nameTable[1], "FFFF0000")
-
-			else
-				coloredName = wticc(nameTable[1], select(4, GetClassColor(class)))
-
-			end
+			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
 			local nameFrame = miog.createFleetingFrame(applicantFrame.framePool, "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", applicantFrame.fontStringPool,  miog.C.APPLICANT_MEMBER_FONT_SIZE)
 			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 0, 0)
 			nameFrame:SetFrameStrata("DIALOG")
-			nameFrame.FontString:SetText(coloredName)
+			nameFrame.FontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
 			nameFrame:SetMouseMotionEnabled(true)
 			nameFrame:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
-					local link = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
 					nameFrame.linkBox:SetAutoFocus(true)
-					nameFrame.linkBox:SetText(link)
+					nameFrame.linkBox:SetText(rioLink)
 					nameFrame.linkBox:HighlightText()
 
 					nameFrame.linkBox:Show()
@@ -292,8 +287,9 @@ local function createApplicantFrame(applicantID)
 				else
 					if(nameFrame.FontString:IsTruncated()) then
 						GameTooltip:SetText(nameFrame.FontString:GetText())
+					end
 
-					elseif(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
+					if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
 						GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
 
 					end
@@ -429,7 +425,6 @@ local function createApplicantFrame(applicantID)
 
 					if(miog.F.IS_IN_DEBUG_MODE) then
 						updateApplicantStatusFrame(applicantID, "debug")
-						--debugApplicantData[applicantID] = nil
 					end
 
 				end)
@@ -631,7 +626,7 @@ local function createApplicantFrame(applicantID)
 
 					--for rowIndex = 1, #mythicKeystoneProfile.dungeons, 1 do
 					if(dungeonProfile) then
-						for k, dungeonEntry in ipairs(mythicKeystoneProfile.sortedDungeons) do
+						for _, dungeonEntry in ipairs(mythicKeystoneProfile.sortedDungeons) do
 							local rowIndex = dungeonEntry.dungeon.index
 							local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeons[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeons[rowIndex] or 0
 							local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeonUpgrades[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeonUpgrades[rowIndex] or 0
@@ -657,7 +652,7 @@ local function createApplicantFrame(applicantID)
 
 
 							---[[ M+ order, key levels]]
-							
+
 
 							local primaryAffixScoreFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.30, miog.C.APPLICANT_MEMBER_HEIGHT)
 							local primaryText = wticc(primaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE_2 and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.CLRSCC["red"] or "0")
@@ -827,7 +822,7 @@ local function createApplicantFrame(applicantID)
 											bossFrame:SetBackdropBorderColor(0, 0, 0, 0)
 
 										end
-										
+
 										bossFrame.Center:SetDesaturated(desaturated)
 
 									end
@@ -866,7 +861,7 @@ local function createApplicantFrame(applicantID)
 													bossFrame.Center:SetDesaturated(desaturated)
 												elseif(kills == 0 and bossFrame.Center:IsDesaturated() == true) then
 													bossFrame:SetBackdropBorderColor(0, 0, 0, 0)
-												
+
 												end
 
 											else
@@ -876,7 +871,7 @@ local function createApplicantFrame(applicantID)
 														bossFrame:SetBackdropBorderColor(miog.ITEM_QUALITY_COLORS[lowerDifficultyNumber+1].color:GetRGBA())
 														bossFrame.Center:SetDesaturated(desaturated)
 													end
-												
+
 												end
 											end
 
@@ -1110,10 +1105,6 @@ end
 local function checkApplicantList()
 	hideAllFrames()
 
-	miog.F.APPLIED_NUM_OF_DPS = 0
-	miog.F.APPLIED_NUM_OF_HEALERS = 0
-	miog.F.APPLIED_NUM_OF_TANKS = 0
-
 	local unsortedList = gatherSortData()
 
 	miog.mainFrame.footerBar.applicantNumberFontString:SetText(#unsortedList)
@@ -1132,17 +1123,6 @@ local function checkApplicantList()
 		for _, listEntry in ipairs(unsortedList) do
 			allSystemMembers[listEntry.index] = nil
 
-			if(listEntry.role == "TANK") then
-				miog.F.APPLIED_NUM_OF_TANKS = miog.F.APPLIED_NUM_OF_TANKS + 1
-
-			elseif(listEntry.role == "HEALER") then
-				miog.F.APPLIED_NUM_OF_HEALERS = miog.F.APPLIED_NUM_OF_HEALERS + 1
-
-			elseif(listEntry.role == "DAMAGER") then
-				miog.F.APPLIED_NUM_OF_DPS = miog.F.APPLIED_NUM_OF_DPS + 1
-
-			end
-
 			if((listEntry.role == "TANK" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
 			or listEntry.role == "HEALER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
 			or listEntry.role == "DAMAGER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
@@ -1151,7 +1131,7 @@ local function checkApplicantList()
 						if(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[listEntry.class]].specFilterPanel.SpecButtons[listEntry.specID]:GetChecked()) then
 							addOrShowApplicant(listEntry)
 						end
-						
+
 					else
 						addOrShowApplicant(listEntry)
 
@@ -1170,16 +1150,11 @@ local function checkApplicantList()
 				applicantSystem.applicantMember[k].frame.texturePool:ReleaseAll()
 
 				miog.fleetingFramePool:Release(applicantSystem.applicantMember[k].frame)
-				
+
 				applicantSystem.applicantMember[k] = nil
-				
+
 			end
 		end
-
-		--miog.mainFrame.buttonPanel.RoleTextures[1].text:SetText(miog.F.APPLIED_NUM_OF_TANKS)
-		--miog.mainFrame.buttonPanel.RoleTextures[2].text:SetText(miog.F.APPLIED_NUM_OF_HEALERS)
-		--miog.mainFrame.buttonPanel.RoleTextures[3].text:SetText(miog.F.APPLIED_NUM_OF_DPS)
-
 	end
 end
 
@@ -1290,7 +1265,7 @@ local function updateSpecFrames()
 		end
 	end
 
-	
+
 	if(#indexedGroup >= numOfMembers) then
 		miog.mainFrame.classPanel.progressText:SetText("")
 
@@ -1314,7 +1289,7 @@ local function updateSpecFrames()
 				currentSpecFrame:Hide()
 
 			end
-			
+
 		end
 
 		miog.mainFrame.classPanel.classFrames[classID].specPanel:MarkDirty()
@@ -1424,7 +1399,7 @@ local function requestInspectData()
 
 			else
 				--GUID gone
-			
+
 			end
 		end)
 
@@ -1464,7 +1439,7 @@ local function createGroupMemberEntry(guid, unitID)
 		role = GetSpecializationRoleByID(specID),
 		specID = specID ~= 0 and specID or nil
 	}
-	
+
 end
 
 local function updateRosterInfoData()
@@ -1519,7 +1494,7 @@ local function updateRosterInfoData()
 				updateSpecFrames()
 
 			--elseif(inspectQueue[guid]) then
-				
+
 			else
 
 				if(lfgState == "party" and unitID ~= "player" or lfgState == "raid" and guid ~= UnitGUID("player")) then
@@ -1532,7 +1507,7 @@ local function updateRosterInfoData()
 					member.role = role or GetSpecializationRoleByID(member.specID)
 
 					updateSpecFrames()
-	
+
 				end
 
 			end
@@ -1548,7 +1523,7 @@ local function updateRosterInfoData()
 			end
 
 		else
-			--print("Unit does not exist: " .. unitID)
+			--Unit does not exist
 
 		end
 
@@ -1569,9 +1544,9 @@ local function updateRosterInfoData()
 	end
 
 	table.sort(keys, function(a, b) return groupSystem.classCount[a] > groupSystem.classCount[b] end)
-	
+
 	local counter = 1
-	
+
 	for _, classID in ipairs(keys) do
 		local classCount = groupSystem.classCount[classID]
 		local currentClassFrame = miog.mainFrame.classPanel.classFrames[classID]
@@ -1582,10 +1557,10 @@ local function updateRosterInfoData()
 		if(classCount > 0) then
 			local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[classID].name)
 			miog.createFrameBorder(currentClassFrame, 1, rPerc, gPerc, bPerc, 1)
-		
+
 		else
 			miog.createFrameBorder(currentClassFrame, 1, 0, 0, 0, 1)
-		
+
 		end
 
 		counter = counter + 1
@@ -1717,10 +1692,10 @@ miog.OnEvent = function(_, event, ...)
 		if(IsAddOnLoaded("RaiderIO")) then
 			getRioProfile = RaiderIO.GetProfile
 			miog.F.IS_RAIDERIO_LOADED = true
-	
+
 			if(miog.mainFrame.raiderIOAddonIsLoadedFrame) then
 				miog.mainFrame.raiderIOAddonIsLoadedFrame:Hide()
-	
+
 			end
 		end
 
@@ -1772,17 +1747,6 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then --ONE APPLICANT
 		local applicantData = C_LFGList.GetApplicantInfo(...)
 
-		--print(event, ...)
-		if(applicantData) then
-			--print(applicantData.applicationStatus, applicantData.pendingApplicationStatus)
-
-		else
-			--print("No applicant data for " .. ...)
-		end
-
-		--print(...)
-		--DevTools_Dump(applicantData)
-
 		if(applicantData) then
 			if(applicantData.applicationStatus == "applied") then
 				if(applicantData.displayOrderID > 0) then --APPLICANT WITH DATA
@@ -1794,27 +1758,16 @@ miog.OnEvent = function(_, event, ...)
 								status = "dataAvailable",
 							}
 
-						--false
 						end
 
 						checkApplicantList()
 
 					elseif(applicantData.pendingApplicationStatus == "declined") then
-						--applicantSystem.applicantMember[...].frame = nil
-
-						--true
 						checkApplicantList()
-
-					else
 
 					end
 
 				elseif(applicantData.displayOrderID == 0) then
-					--[[applicantSystem.applicantMember[...] = {
-						activeFrame = nil,
-						saveData = nil,
-						status = "noDataAvailable",
-					}]]
 
 				end
 			else --STATUS TRIGGERED BY APPLICANT
@@ -1822,7 +1775,6 @@ miog.OnEvent = function(_, event, ...)
 
 			end
 		else
-			--print(... .. " NO DATA")
 			updateApplicantStatusFrame(..., "declined")
 
 		end
@@ -1830,19 +1782,7 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
 		local newEntry, withData = ...
 
-		local canInvite = miog.checkIfCanInvite()
-
-		--if(newEntry == true and withData == false) then --NEW APPLICANT WITHOUT DATA
-
-		--if(newEntry == true and withData == true) then --NEW APPLICANT WITH DATA
-			--checkApplicantList(false)
-
-		--if(newEntry == false and withData == false) then --DECLINED APPLICANT
-			--checkApplicantList(not canInvite)
-
-		--else
 		if(not newEntry and not withData) then --REFRESH APP LIST
-			--true
 			checkApplicantList()
 
 		end
@@ -1850,7 +1790,7 @@ miog.OnEvent = function(_, event, ...)
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		if(not miog.F.WEEKLY_AFFIX) then
 			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
-			
+
 			if(miog.mainFrame and miog.mainFrame.infoPanel) then
 				miog.setAffixes()
 
@@ -1878,49 +1818,39 @@ miog.OnEvent = function(_, event, ...)
 		local guid = UnitGUID(...)
 		if(guid) then
 			if(groupSystem.groupMember[guid] and not inspectQueue[guid]) then
-
-				--print("SPEC CHANGE: " .. ...)
 				inspectQueue[guid] = ...
 				checkCoroutineStatus()
-
-				--groupSystem.inspectedGUIDs[guid] = nil
-				--updateRosterInfoData()
 
 			end
 		end
 
 	elseif(event == "INSPECT_READY") then
 		if(groupSystem.groupMember[...] or inspectQueue[...]) then
-			--print("INSPECT DATA READY FOR", ...)
 			inspectQueue[...] = nil
 
 			local member = groupSystem.groupMember[...]
 			local specID = GetInspectSpecialization(member.unitID)
 			member.specID = specID ~= 0 and specID or nil
 			groupSystem.inspectedGUIDs[...] = specID
-		
+
 			if(not member.classID) then
-				--print("NO CLASS FOR " .. ...)
 				member.classID = select(2, UnitClassBase(member.unitID))
-		
+
 			end
-		
+
 			if(not member.role) then
-				--print("NO ROLE FOR " .. ...)
-				--local tempRole = select(5, GetSpecializationInfoByID(specID))
 				local tempRole = GetSpecializationRoleByID(member.specID)
 				member.role = tempRole == "NONE" and "DAMAGER" or tempRole
-		
+
 			end
-		
+
 			if(member.specID ~= nil and miog.CLASSES[member.classID] and (member.role == "TANK" or member.role == "HEALER" or member.role == "DAMAGER")) then
 				updateSpecFrames()
-		
+
 			else
 				--RE-NOTIFY FOR GUID, DATA MISSING FROM INSPECT
-				--print(member.unitID, "SPEC/CLASS/ROLE MISSING", member.specID, member.classID, member.role)
 				groupSystem.inspectedGUIDs[...] = nil
-		
+
 			end
 
 			checkCoroutineStatus(true)

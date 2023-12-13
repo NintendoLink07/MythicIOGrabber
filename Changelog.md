@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.4.1] - 2023-12-13
+
+### Fixed
+
+- An issue where the right click r.io link couldn't be generated has been fixed (if the applicant was from the same server).
+
+
 
 ## [1.4] - 2023-12-12
 
@@ -607,7 +614,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4.1...HEAD
+[1.4.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.1
 [1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4
 [1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.3
 [1.2.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.2.12

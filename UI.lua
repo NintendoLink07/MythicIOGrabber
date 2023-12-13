@@ -522,17 +522,7 @@ miog.createMainFrame = function()
 		local roleTexture = miog.createBasicTexture("persistent", nil, roleFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
 		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
 
-		local showRoleButtonText = miog.createBasicFontString("persistent", 16, roleFilterPanel)
-		showRoleButtonText:Hide()
-		showRoleButtonText:SetPoint("CENTER", roleTexture, "CENTER", 1, -1)
-		showRoleButtonText:SetJustifyV("CENTER")
-		showRoleButtonText:SetText("0")
-
-		roleTexture.text = showRoleButtonText
-
 		toggleRoleButton:SetScript("OnClick", function()
-			showRoleButtonText:SetShown(toggleRoleButton:GetChecked())
-
 			if(not miog.checkForActiveFilters()) then
 				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
@@ -678,6 +668,11 @@ miog.createMainFrame = function()
 			
 		end
 
+		--for _, v in pairs(roleFilterPanel.RoleButtons) do
+		--	v:SetChecked(false)
+
+		--end
+
 		if(not miog.checkForActiveFilters()) then
 			filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
@@ -715,6 +710,11 @@ miog.createMainFrame = function()
 			end
 			
 		end
+
+		--for _, v in pairs(roleFilterPanel.RoleButtons) do
+		--	v:SetChecked(true)
+
+		--end
 
 		C_LFGList.RefreshApplicants()
 	end)
