@@ -82,7 +82,7 @@ miog.secondsToClock = function(stringSeconds)
 	local seconds = tonumber(stringSeconds)
 
 	if seconds <= 0 then
-		return "00:00"
+		return "0:00:00"
 
 	else
 		local hours = string.format("%01.f", math.floor(seconds/3600))

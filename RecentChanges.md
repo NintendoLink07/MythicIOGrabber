@@ -1,5 +1,10 @@
-## [1.4.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.1) - 2023-12-13
+## [1.4.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.2) - 2023-12-15
 
 ### Fixed
 
-- An issue where the right click r.io link couldn't be generated has been fixed (if the applicant was from the same server).
+- Dungeons are now actually alphabetically sorted.
+
+### Changed
+
+- Edited the info message so people know why there is sometimes no spec data of single/multiple applicants.
+- Small code changes for performance gains.

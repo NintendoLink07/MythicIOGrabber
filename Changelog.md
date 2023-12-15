@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [1.4.2] - 2023-12-15
+
+### Fixed
+
+- Dungeons are now actually alphabetically sorted.
+
+### Changed
+
+- Edited the info message so people know why there is sometimes no spec data of the applicants.
+- Small code changes for performance gains.
+
+
+
 ## [1.4.1] - 2023-12-13
 
 ### Fixed
@@ -614,7 +628,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4.1...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4.2...HEAD
+[1.4.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.2
 [1.4.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.1
 [1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4
 [1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.3

@@ -224,8 +224,10 @@ miog.loadSettings = function()
 
 					if(setting.value == true) then
 						LFGListEntryCreation_Clear = keepInfoFromGroupCreation
+
 					else
 						LFGListEntryCreation_Clear = clearEntryCreation
+						
 
 					end
 				end)
@@ -248,12 +250,13 @@ miog.loadSettings = function()
 
 				optionButton:SetScript("OnClick", function()
 					setting.value = not setting.value
-
 					miog.mainFrame.classPanel:SetShown(setting.value)
 					miog.mainFrame.classPanel:MarkDirty()
+
 				end)
 
 				miog.mainFrame.classPanel:SetShown(setting.value)
+
 			end
 
 			local optionButtonString = miog.createBasicFontString("persistent", 12, optionButton)
@@ -268,9 +271,14 @@ miog.loadSettings = function()
 
 		elseif(setting.type == "dropdown") then
 			if(setting.key == "backgroundOptions") then
+				local backgroundOptionString = miog.createBasicFontString("persistent", 12, optionPanelContainer)
+				backgroundOptionString:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+				backgroundOptionString:SetText(setting.title)
+				backgroundOptionString:SetWordWrap(true)
+				backgroundOptionString:SetNonSpaceWrap(true)
+
 				local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", optionPanelContainer)
-				--local optionDropdown = CreateFrame("Frame", "WPDemoDropDown", optionPanelContainer, "UIDropDownMenuTemplate")
-				optionDropdown:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+				optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
 				UIDropDownMenu_SetWidth(optionDropdown, 200)
 
 				UIDropDownMenu_SetText(optionDropdown, setting.table[setting.value][1])
@@ -319,8 +327,10 @@ miog.loadSettings = function()
 					miog.F.SORT_METHODS[sortKey].active = true
 					miog.F.SORT_METHODS[sortKey].currentLayer = currentLayer
 					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
+
 				else
 					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+
 				end
 			end
 		end
@@ -330,8 +340,10 @@ miog.loadSettings = function()
 
 	if(MIOG_SavedSettings.keepSignUpNote and MIOG_SavedSettings.keepSignUpNote.value ==  true) then
 		LFGListApplicationDialog_Show = keepSignUpNote
+
 	else
 		LFGListApplicationDialog_Show = clearSignUpNote
+
 	end
 
 	if(MIOG_SavedSettings.keepInfoFromGroupCreation and MIOG_SavedSettings.keepInfoFromGroupCreation.value ==  true) then

@@ -172,7 +172,7 @@ local function createApplicantFrame(applicantID)
 				nameTable[2] = GetNormalizedRealmName()
 			end
 
-			local profile, mythicKeystoneProfile, dungeonProfile, raidProfile
+			local profile, mythicKeystoneProfile, raidProfile
 
 			if(miog.F.IS_RAIDERIO_LOADED) then
 				profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
@@ -180,14 +180,6 @@ local function createApplicantFrame(applicantID)
 				if(profile ~= nil) then
 					mythicKeystoneProfile = profile.mythicKeystoneProfile
 					raidProfile = profile.raidProfile
-
-					if(mythicKeystoneProfile ~= nil) then
-						dungeonProfile = mythicKeystoneProfile.sortedDungeons
-
-						if(dungeonProfile ~= nil) then
-							table.sort(dungeonProfile, function(k1, k2) return k1.dungeon.index < k2.dungeon.index end)
-						end
-					end
 				end
 			end
 
@@ -618,52 +610,49 @@ local function createApplicantFrame(applicantID)
 			end
 
 			if(profile) then
-				if(mythicKeystoneProfile and mythicKeystoneProfile.currentScore > 0) then
+				if(mythicKeystoneProfile and mythicKeystoneProfile.currentScore > 0 and mythicKeystoneProfile.sortedDungeons) then
 
 					table.sort(mythicKeystoneProfile.sortedDungeons, function(k1, k2)
-						return k1.dungeon.name < k2.dungeon.name
+						return k1.dungeon.shortName < k2.dungeon.shortName
 					end)
 
-					--for rowIndex = 1, #mythicKeystoneProfile.dungeons, 1 do
-					if(dungeonProfile) then
-						for _, dungeonEntry in ipairs(mythicKeystoneProfile.sortedDungeons) do
-							local rowIndex = dungeonEntry.dungeon.index
-							local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeons[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeons[rowIndex] or 0
-							local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeonUpgrades[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeonUpgrades[rowIndex] or 0
-							local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeons[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeons[rowIndex] or 0
-							local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeonUpgrades[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeonUpgrades[rowIndex] or 0
+					for _, dungeonEntry in ipairs(mythicKeystoneProfile.sortedDungeons) do
+						local rowIndex = dungeonEntry.dungeon.index
+						local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeons[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeons[rowIndex] or 0
+						local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeonUpgrades[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeonUpgrades[rowIndex] or 0
+						local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeons[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeons[rowIndex] or 0
+						local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeonUpgrades[rowIndex] or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeonUpgrades[rowIndex] or 0
 
-							local textureString = miog.DUNGEON_ICONS[dungeonProfile[rowIndex].dungeon.instance_map_id]
+						local textureString = miog.DUNGEON_ICONS[mythicKeystoneProfile.sortedDungeons[rowIndex].dungeon.instance_map_id]
 
-							local dungeonIconFrame = miog.createFleetingTexture(applicantFrame.texturePool, textureString, mythicPlusPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 2, miog.C.APPLICANT_MEMBER_HEIGHT - 2)
-							dungeonIconFrame:SetPoint("LEFT", tabPanel.rows[rowIndex], "LEFT")
-							dungeonIconFrame:SetMouseClickEnabled(true)
-							dungeonIconFrame:SetDrawLayer("OVERLAY")
-							dungeonIconFrame:SetScript("OnMouseDown", function()
-								local instanceID = C_EncounterJournal.GetInstanceForGameMap(dungeonProfile[rowIndex].dungeon.instance_map_id)
+						local dungeonIconFrame = miog.createFleetingTexture(applicantFrame.texturePool, textureString, mythicPlusPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 2, miog.C.APPLICANT_MEMBER_HEIGHT - 2)
+						dungeonIconFrame:SetPoint("LEFT", tabPanel.rows[rowIndex], "LEFT")
+						dungeonIconFrame:SetMouseClickEnabled(true)
+						dungeonIconFrame:SetDrawLayer("OVERLAY")
+						dungeonIconFrame:SetScript("OnMouseDown", function()
+							local instanceID = C_EncounterJournal.GetInstanceForGameMap(mythicKeystoneProfile.sortedDungeons[rowIndex].dungeon.instance_map_id)
 
-								--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-								EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
-							end)
+							--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+							EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
+						end)
 
-							local dungeonNameFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.28, miog.C.APPLICANT_MEMBER_HEIGHT)
-							dungeonNameFrame:SetText(dungeonProfile[rowIndex].dungeon.shortName .. ":")
-							dungeonNameFrame:SetPoint("LEFT", dungeonIconFrame, "RIGHT", 1, 0)
+						local dungeonNameFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.28, miog.C.APPLICANT_MEMBER_HEIGHT)
+						dungeonNameFrame:SetText(mythicKeystoneProfile.sortedDungeons[rowIndex].dungeon.shortName .. ":")
+						dungeonNameFrame:SetPoint("LEFT", dungeonIconFrame, "RIGHT", 1, 0)
 
 
-							---[[ M+ order, key levels]]
+						---[[ M+ order, key levels]]
 
 
-							local primaryAffixScoreFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.30, miog.C.APPLICANT_MEMBER_HEIGHT)
-							local primaryText = wticc(primaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE_2 and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.CLRSCC["red"] or "0")
-							primaryAffixScoreFrame:SetText(primaryText)
-							primaryAffixScoreFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
+						local primaryAffixScoreFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.30, miog.C.APPLICANT_MEMBER_HEIGHT)
+						local primaryText = wticc(primaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE_2 and 3 or primaryDungeonChests), primaryDungeonChests > 0 and miog.C.GREEN_COLOR or primaryDungeonChests == 0 and miog.CLRSCC["red"] or "0")
+						primaryAffixScoreFrame:SetText(primaryText)
+						primaryAffixScoreFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
 
-							local secondaryAffixScoreFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.30, miog.C.APPLICANT_MEMBER_HEIGHT)
-							local secondaryText = wticc(secondaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE_2 and 3 or secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.CLRSCC["red"] or "0")
-							secondaryAffixScoreFrame:SetText(secondaryText)
-							secondaryAffixScoreFrame:SetPoint("LEFT", primaryAffixScoreFrame, "RIGHT")
-						end
+						local secondaryAffixScoreFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.30, miog.C.APPLICANT_MEMBER_HEIGHT)
+						local secondaryText = wticc(secondaryDungeonLevel .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE_2 and 3 or secondaryDungeonChests), secondaryDungeonChests > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests == 0 and miog.CLRSCC["red"] or "0")
+						secondaryAffixScoreFrame:SetText(secondaryText)
+						secondaryAffixScoreFrame:SetPoint("LEFT", primaryAffixScoreFrame, "RIGHT")
 					end
 
 					local previousScoreString = ""
