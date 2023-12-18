@@ -78,6 +78,27 @@ miog.round2 = function(num)
 
 end
 
+miog.deepCopyTable = function(orig, copies)
+	copies = copies or {}
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        if copies[orig] then
+            copy = copies[orig]
+        else
+            copy = {}
+            copies[orig] = copy
+            for orig_key, orig_value in next, orig, nil do
+                copy[miog.deepCopyTable(orig_key, copies)] = miog.deepCopyTable(orig_value, copies)
+            end
+            setmetatable(copy, miog.deepCopyTable(getmetatable(orig), copies))
+        end
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
 miog.secondsToClock = function(stringSeconds)
 	local seconds = tonumber(stringSeconds)
 

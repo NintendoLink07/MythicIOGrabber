@@ -160,7 +160,9 @@ miog.F = {
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],
 	CURRENT_SEASON = nil,
-	PREVIOUS_SEASON = nil
+	PREVIOUS_SEASON = nil,
+
+	RAID_BOSSES = {},
 }
 
 miog.BLANK_BACKGROUND_INFO = {

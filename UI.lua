@@ -45,7 +45,6 @@ local function positionTab1PVEFrame()
 end
 
 miog.createMainFrame = function()
-
 	local mainFrame = miog.mainFrame ---@class Frame
     pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
 

@@ -34,7 +34,7 @@ local function resetFrame(pool, childFrame)
 
 	elseif(typeOfFrame == "Frame") then
 		if(string.find(pool:GetTemplate(), "BackdropTemplate")) then
-			childFrame:SetBackdrop()	
+			childFrame:SetBackdrop()
 
 		end
 
@@ -43,7 +43,7 @@ local function resetFrame(pool, childFrame)
 		childFrame:SetScript("OnLeave", nil)
 		childFrame:SetScript("OnMouseDown", nil)
 		childFrame:SetScript("OnLoad", nil)
-		
+
 		childFrame.Texture = nil
 		childFrame.FontString = nil
 
@@ -51,6 +51,7 @@ local function resetFrame(pool, childFrame)
 		childFrame.statusFrame = nil
 		childFrame.basicInformationPanel = nil
 		childFrame.detailedInformationPanel = nil
+		childFrame.border = nil
 
 		childFrame.declineButton = nil
 		childFrame.inviteButton = nil
@@ -69,7 +70,7 @@ local function resetFrame(pool, childFrame)
 		childFrame.rows = nil
 		childFrame.textureRows = nil
 	end
-	
+
 	childFrame:ClearAllPoints()
 	childFrame:SetParent()
 end
@@ -84,7 +85,7 @@ local function resetFontString(_, childFontString)
 	childFontString:SetJustifyV("MIDDLE")
 	childFontString:SetWordWrap(false)
 	childFontString:SetSpacing(0)
-	
+
 	childFontString:ClearAllPoints()
 	childFontString:SetParent()
 end
@@ -176,7 +177,7 @@ local createBasicTexture = function(poolType, texturePath, parent, width, height
 	end
 
 	texture:SetParent(parent)
-	
+
 	if(width == nil and height == nil) then
 		texture:SetPoint("TOPLEFT", parent, "TOPLEFT", 1, -1)
 		texture:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -1, 1)
@@ -264,7 +265,7 @@ local function createFleetingTexture(pool, texturePath, parent, width, height, l
 	local texture = pool:Acquire()
 
 	texture:SetParent(parent)
-	
+
 	if(width == nil and height == nil) then
 		texture:SetPoint("TOPLEFT", parent, "TOPLEFT", 1, -1)
 		texture:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -1, 1)

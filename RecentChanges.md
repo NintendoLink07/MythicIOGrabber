@@ -1,10 +1,9 @@
-## [1.4.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.2) - 2023-12-15
-
-### Fixed
-
-- Dungeons are now actually alphabetically sorted.
+## [1.4.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.3) - 2023-12-18
 
 ### Changed
 
-- Edited the info message so people know why there is sometimes no spec data of single/multiple applicants.
-- Small code changes for performance gains.
+- Further improvements to performance (the new filter options took quite a toll on the performance).
+Per 33 applicants from ~0.088s to 0.071s (fastest compute ever even with data before the new filter options).
+Mostly matters when you /reload or join a group that is still listed and looking for members and has already a lot of applicants.
+
+- Improved the raid panel visually (made difficulty borders width / height more consistent).
