@@ -76,7 +76,7 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 
 		if(applicantStatus == "invited") then
 			currentApplicant.status = "pendingInvite"
-
+			
 		else
 			currentApplicant.status = "removable"
 
@@ -193,18 +193,28 @@ local function createApplicantFrame(applicantID)
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.minimumHeight = 20
 			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -applicantMemberPadding or -1)
-			applicantMemberFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
-			applicantMemberFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-			applicantMemberFrame:SetBackdropBorderColor(0, 0, 0, 0)
+			--applicantMemberFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
+			--applicantMemberFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+			--applicantMemberFrame:SetBackdropBorderColor(0, 0, 0, 0)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
+
+			local applicantMemberFrameBackground = miog.createFleetingTexture(applicantFrame.texturePool, nil, applicantMemberFrame, applicantMemberFrame.fixedWidth, applicantMemberFrame.minimumHeight)
+			applicantMemberFrameBackground:SetDrawLayer("BACKGROUND")
+			applicantMemberFrameBackground:SetAllPoints(true)
+			applicantMemberFrameBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 			local applicantMemberStatusFrame = miog.createFleetingFrame(applicantFrame.framePool, "BackdropTemplate", applicantFrame, nil, nil, "FontString", applicantFrame.fontStringPool)
 			applicantMemberStatusFrame:Hide()
 			applicantMemberStatusFrame:SetPoint("TOPLEFT", applicantMemberFrame, "TOPLEFT", 0, 0)
 			applicantMemberStatusFrame:SetPoint("BOTTOMRIGHT", applicantMemberFrame, "BOTTOMRIGHT", 0, 0)
 			applicantMemberStatusFrame:SetFrameStrata("FULLSCREEN")
-			applicantMemberStatusFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
-			applicantMemberStatusFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.7)
+			--applicantMemberStatusFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
+			--applicantMemberStatusFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.7)
+
+			local applicantMemberStatusFrameBackground = miog.createFleetingTexture(applicantFrame.texturePool, nil, applicantMemberStatusFrame)
+			--applicantMemberStatusFrameBackground:SetDrawLayer("BACKGROUND")
+			applicantMemberStatusFrameBackground:SetAllPoints(true)
+			applicantMemberStatusFrameBackground:SetColorTexture(0.1, 0.1, 0.1, 0.7)
 
 			applicantMemberStatusFrame.FontString:SetJustifyH("CENTER")
 			applicantMemberStatusFrame.FontString:SetWidth(applicantMemberFrame.fixedWidth)
@@ -509,14 +519,20 @@ local function createApplicantFrame(applicantID)
 				textRowFrame:SetPoint("TOPLEFT", lastTextRow or mythicPlusTabButton, "BOTTOMLEFT")
 				lastTextRow = textRowFrame
 				tabPanel.rows[rowIndex] = textRowFrame
+				
+				local textRowBackground = miog.createFleetingTexture(applicantFrame.texturePool, nil, textRowFrame, basicInformationPanel.fixedWidth, miog.C.APPLICANT_MEMBER_HEIGHT)
+				textRowBackground:SetDrawLayer("BACKGROUND")
+				textRowBackground:SetPoint("CENTER", textRowFrame, "CENTER")
 
 				if(remainder == 1) then
-					textRowFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
-					textRowFrame:SetBackdropColor(unpack(hoverColor))
+					--textRowFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
+					--textRowFrame:SetBackdropColor(unpack(hoverColor))
+					textRowBackground:SetColorTexture(unpack(hoverColor))
 
 				else
-					textRowFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
-					textRowFrame:SetBackdropColor(unpack(cardColor))
+					--textRowFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
+					--textRowFrame:SetBackdropColor(unpack(cardColor))
+					textRowBackground:SetColorTexture(unpack(cardColor))
 
 				end
 
@@ -970,7 +986,7 @@ local function createApplicantFrame(applicantID)
 
 	end
 
-	--updateApplicantStatus(applicantID, "debug")
+	--updateApplicantStatusFrame(applicantID, "debug")
 
 end
 
@@ -1100,82 +1116,87 @@ local function gatherSortData()
 	return unsortedMainApplicantsList
 end
 
-local function addOrShowApplicant(listEntry)
-	if(applicantSystem.applicantMember[listEntry.index].frame) then
-		applicantSystem.applicantMember[listEntry.index].frame:Show()
+local function addOrShowApplicant(applicantID)
+	if(applicantSystem.applicantMember[applicantID].frame) then
+		applicantSystem.applicantMember[applicantID].frame:Show()
 
 	else
-		applicantSystem.applicantMember[listEntry.index].status = "inProgress"
-		createApplicantFrame(listEntry.index)
+		applicantSystem.applicantMember[applicantID].status = "inProgress"
+		createApplicantFrame(applicantID)
 
 	end
 
-	applicantSystem.applicantMember[listEntry.index].frame.layoutIndex = layoutIndex
+	applicantSystem.applicantMember[applicantID].frame.layoutIndex = layoutIndex
 
 	miog.mainFrame.applicantPanel.container:MarkDirty()
 	layoutIndex = layoutIndex + 1
 end
 
-local function checkApplicantList()
+local function checkApplicantList(forceReorder, applicantID)
 	local unsortedList = gatherSortData()
 
 	miog.mainFrame.footerBar.applicantNumberFontString:SetText(#unsortedList)
 
-	if(unsortedList[1]) then
-		local allSystemMembers = {}
+	local allSystemMembers = {}
 
+	if(forceReorder) then
 		for k, v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
 				v.frame:Hide()
 				v.frame.layoutIndex = nil
-
+	
 			end
-
+	
 			allSystemMembers[k] = true
 			
 		end
-
+	
 		miog.mainFrame.applicantPanel.container:MarkDirty()
-
+	
 		layoutIndex = 0
 
-		table.sort(unsortedList, sortApplicantList)
+		if(unsortedList[1]) then
+			table.sort(unsortedList, sortApplicantList)
 
-		for _, listEntry in ipairs(unsortedList) do
-			allSystemMembers[listEntry.index] = nil
+			for _, listEntry in ipairs(unsortedList) do
+				allSystemMembers[listEntry.index] = nil
 
-			if((listEntry.role == "TANK" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
-			or listEntry.role == "HEALER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
-			or listEntry.role == "DAMAGER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
-				if(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[listEntry.class]].Button:GetChecked()) then
-					if(miog.SPECIALIZATIONS[listEntry.specID] and listEntry.class == miog.SPECIALIZATIONS[listEntry.specID].class.name) then
-						if(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[listEntry.class]].specFilterPanel.SpecButtons[listEntry.specID]:GetChecked()) then
-							addOrShowApplicant(listEntry)
+				if((listEntry.role == "TANK" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
+				or listEntry.role == "HEALER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
+				or listEntry.role == "DAMAGER" and miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
+					if(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[listEntry.class]].Button:GetChecked()) then
+						if(miog.SPECIALIZATIONS[listEntry.specID] and listEntry.class == miog.SPECIALIZATIONS[listEntry.specID].class.name) then
+							if(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[listEntry.class]].specFilterPanel.SpecButtons[listEntry.specID]:GetChecked()) then
+								addOrShowApplicant(listEntry.index)
+
+							end
+
+						else
+							addOrShowApplicant(listEntry.index)
 
 						end
-
-					else
-						addOrShowApplicant(listEntry)
 
 					end
 
 				end
 
 			end
-
 		end
+	else
+		addOrShowApplicant(applicantID)
+	
+	end
 
-		for k in pairs(allSystemMembers) do
-			if(applicantSystem.applicantMember[k].frame) then
-				applicantSystem.applicantMember[k].frame.framePool:ReleaseAll()
-				applicantSystem.applicantMember[k].frame.fontStringPool:ReleaseAll()
-				applicantSystem.applicantMember[k].frame.texturePool:ReleaseAll()
+	for k in pairs(allSystemMembers) do
+		if(applicantSystem.applicantMember[k].frame) then
+			applicantSystem.applicantMember[k].frame.framePool:ReleaseAll()
+			applicantSystem.applicantMember[k].frame.fontStringPool:ReleaseAll()
+			applicantSystem.applicantMember[k].frame.texturePool:ReleaseAll()
 
-				miog.fleetingFramePool:Release(applicantSystem.applicantMember[k].frame)
+			miog.fleetingFramePool:Release(applicantSystem.applicantMember[k].frame)
 
-				applicantSystem.applicantMember[k] = nil
+			applicantSystem.applicantMember[k] = nil
 
-			end
 		end
 	end
 end
@@ -1255,7 +1276,7 @@ local function createFullEntries(iterations)
 	end
 
 	local startTime = GetTimePreciseSec()
-	checkApplicantList()
+	checkApplicantList(true)
 	local endTime = GetTimePreciseSec()
 
 	currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
@@ -1777,10 +1798,10 @@ miog.OnEvent = function(_, event, ...)
 
 						end
 
-						checkApplicantList()
+						checkApplicantList(false, ...)
 
 					elseif(applicantData.pendingApplicationStatus == "declined") then
-						checkApplicantList()
+						checkApplicantList(false, ...)
 
 					end
 
@@ -1800,7 +1821,7 @@ miog.OnEvent = function(_, event, ...)
 		local newEntry, withData = ...
 
 		if(not newEntry and not withData) then --REFRESH APP LIST
-			checkApplicantList()
+			checkApplicantList(true)
 
 		end
 

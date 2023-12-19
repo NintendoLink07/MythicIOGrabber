@@ -240,7 +240,7 @@ end
 
 miog.debug_DeclineApplicant = function(applicantID)
 	miog.DEBUG_APPLICANT_DATA[applicantID] = nil
-	miog.checkApplicantList(true)
+	C_LFGList.RefreshApplicants()
 
 end
 
