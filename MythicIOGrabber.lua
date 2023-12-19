@@ -76,7 +76,7 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 
 		if(applicantStatus == "invited") then
 			currentApplicant.status = "pendingInvite"
-			
+
 		else
 			currentApplicant.status = "removable"
 
@@ -388,6 +388,7 @@ local function createApplicantFrame(applicantID)
 				groupFrame:ClearAllPoints()
 				groupFrame:SetDrawLayer("OVERLAY")
 				groupFrame:SetPoint("TOPRIGHT", basicInformationPanel, "TOPRIGHT", -1, -1)
+				
 			end
 
 			if(applicantIndex == 1 and C_PartyInfo.CanInvite() or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
@@ -1788,6 +1789,8 @@ miog.OnEvent = function(_, event, ...)
 		if(applicantData) then
 			if(applicantData.applicationStatus == "applied") then
 				if(applicantData.displayOrderID > 0) then --APPLICANT WITH DATA
+					local canInvite = miog.checkIfCanInvite()
+
 					if(applicantData.pendingApplicationStatus == nil) then--NEW APPLICANT WITH DATA
 						if(not applicantSystem.applicantMember[...]) then
 							applicantSystem.applicantMember[...] = {
@@ -1798,10 +1801,10 @@ miog.OnEvent = function(_, event, ...)
 
 						end
 
-						checkApplicantList(false, ...)
+						checkApplicantList(not canInvite, ...)
 
 					elseif(applicantData.pendingApplicationStatus == "declined") then
-						checkApplicantList(false, ...)
+						checkApplicantList(not canInvite, ...)
 
 					end
 

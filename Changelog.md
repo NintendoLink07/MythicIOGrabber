@@ -22,9 +22,13 @@ If you don't have invite privileges it will still auto refresh on every new appl
 ### Changed
 
 - Improved performance again by quite a lot!
-From ~0.071s to around 0.02s per 33 applicants.
+From ~0.071s to around 0.021s per 33 applicants.
 Or in other words: joining a group with 100 applicants now is faster than joining a group with 33 applicants with the old MIOG version.
 Makes the lag when you join a group really short.
+
+For anyone interested why the improvement is so large: the SetBackdrop function is actually quite time expensive.
+While it's easier to just use the functions already available than to make a new texture it's (for my use-case) not worth it.
+With multiple applicants applying and going through the same loops hundreds to sometimes thousand times per second making a new texture is easier on the CPU (very important for WoW) and actually not that RAM hungry.
 
 
 
