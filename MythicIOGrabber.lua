@@ -388,7 +388,7 @@ local function createApplicantFrame(applicantID)
 				groupFrame:ClearAllPoints()
 				groupFrame:SetDrawLayer("OVERLAY")
 				groupFrame:SetPoint("TOPRIGHT", basicInformationPanel, "TOPRIGHT", -1, -1)
-				
+
 			end
 
 			if(applicantIndex == 1 and C_PartyInfo.CanInvite() or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
@@ -443,7 +443,6 @@ local function createApplicantFrame(applicantID)
 
 			local detailedInformationPanel = miog.createFleetingFrame(applicantFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", applicantMemberFrame)
 			detailedInformationPanel:SetWidth(basicInformationPanel.fixedWidth)
-
 			detailedInformationPanel:SetPoint("TOPLEFT", basicInformationPanel, "BOTTOMLEFT", 0, 0)
 			detailedInformationPanel:SetShown(expandFrameButton:GetActiveState() > 0 and true or false)
 			local rowWidth = basicInformationPanel.fixedWidth * 0.5
@@ -1760,7 +1759,7 @@ miog.OnEvent = function(_, event, ...)
 				miog.mainFrame:Hide()
 
 				if(miog.F.WEEKLY_AFFIX == nil) then
-					miog.getAffixes()
+					miog.setAffixes()
 
 				end
 			end

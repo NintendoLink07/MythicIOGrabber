@@ -241,11 +241,6 @@ miog.createMainFrame = function()
 	knownIssuesPanel:SetPoint("TOPRIGHT", infoPanel, "TOPRIGHT", -4, -4)
 	knownIssuesPanel:SetScript("OnEnter", function()
 		GameTooltip:SetOwner(knownIssuesPanel, "ANCHOR_TOPRIGHT")
-		GameTooltip:AddLine("Current Issues:")
-		GameTooltip:AddLine("A premade group of 2 or more members / sometimes even single ones won't send correct spec data to the game client.")
-		GameTooltip:AddLine("Instead of a spec icon it will show a question mark for those groups.")
-		GameTooltip:AddLine("Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.")
-		GameTooltip:AddLine("I did report it ingame and on the official/non-official github issues page, so now we wait.")
 		GameTooltip:Show()
 
 	end)
@@ -253,6 +248,7 @@ miog.createMainFrame = function()
 		GameTooltip:Hide()
 
 	end)
+	knownIssuesPanel:Hide()
 
 	local infoPanelBackdropFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanel)
 	infoPanelBackdropFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT")
@@ -947,7 +943,7 @@ miog.createMainFrame = function()
 	footerBar.applicantNumberFontString = applicantNumberFontString
 
 	local applicantPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", titleBar)
-	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 1, 0)
+	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 2, 0)
 	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, 0)
 	mainFrame.applicantPanel = applicantPanel
 

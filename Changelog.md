@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.4.5] - 2023-12-20
+
+### Changed
+
+- Minor UI pixel shift for visuals
+
+- Disabled the known issues icon since there are no known issues at the moment
+
+### Fixed
+
+- Affixes should now always be correctly requested
+
+
 
 ## [1.4.4] - 2023-12-19
 
@@ -666,7 +679,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4.4...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4.5...HEAD
+[1.4.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.5
 [1.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.4
 [1.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.3
 [1.4.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.2
