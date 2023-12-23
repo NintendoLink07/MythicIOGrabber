@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.5] - 2023-12-24
+
+Happy holidays everyone!
+
+### Added
+
+- You can now add members you've recently invited to your group to be preferred!
+
+These players will show up at the top before other applicants.
+They have a golden border so they can be identified quickly.
+You can select past applicants in the new "Last invites" panel (this frame is also expandable).
+All preferred applicants are listed in the interface options (accessible with the cogwheel, via Addon Compartment button or just manually going into those options).
+
+Last invited applicants stay in the list for 3 days, afterwards they'll get deleted.
+Preferred applicants in the interface options stay there until they're manually deleted.
+
+
+
 ## [1.4.5] - 2023-12-20
 
 ### Changed
@@ -679,7 +697,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.4.5...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.5...HEAD
+[1.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5
 [1.4.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.5
 [1.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.4
 [1.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.3

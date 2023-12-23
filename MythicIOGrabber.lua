@@ -77,6 +77,9 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 		if(applicantStatus == "invited") then
 			currentApplicant.status = "pendingInvite"
 
+		elseif(C_PartyInfo.CanInvite() and (applicantStatus == "inviteaccepted" or applicantStatus == "debug")) then
+			miog.addLastInvitedApplicant(currentApplicant)
+
 		else
 			currentApplicant.status = "removable"
 
@@ -95,35 +98,59 @@ local function sortApplicantList(applicant1, applicant2)
 				if(innerTableElement.currentLayer == 2) then
 					local secondState = miog.mainFrame.buttonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
 
-					if(applicant1[key] == applicant2[key]) then
-						return secondState == 1 and applicant1[innerKey] > applicant2[innerKey] or secondState == 2 and applicant1[innerKey] < applicant2[innerKey]
+					if(applicant1.preferred and not applicant2.preferred) then
+						return true
+				
+					elseif(not applicant1.preferred and applicant2.preferred) then
+						return false
+				
+					else
+						if(applicant1[key] == applicant2[key]) then
+							return secondState == 1 and applicant1[innerKey] > applicant2[innerKey] or secondState == 2 and applicant1[innerKey] < applicant2[innerKey]
 
-					elseif(applicant1[key] ~= applicant2[key]) then
-						return firstState == 1 and applicant1[key] > applicant2[key] or firstState == 2 and applicant1[key] < applicant2[key]
+						elseif(applicant1[key] ~= applicant2[key]) then
+							return firstState == 1 and applicant1[key] > applicant2[key] or firstState == 2 and applicant1[key] < applicant2[key]
 
+						end
 					end
 				end
 
 			end
 
-			if(applicant1[key] == applicant2[key]) then
-				return firstState == 1 and applicant1.index > applicant2.index or firstState == 2 and applicant1.index < applicant2.index
+			if(applicant1.preferred and not applicant2.preferred) then
+				return true
+		
+			elseif(not applicant1.preferred and applicant2.preferred) then
+				return false
+		
+			else
+				if(applicant1[key] == applicant2[key]) then
+					return firstState == 1 and applicant1.index > applicant2.index or firstState == 2 and applicant1.index < applicant2.index
 
-			elseif(applicant1[key] ~= applicant2[key]) then
-				return firstState == 1 and applicant1[key] > applicant2[key] or firstState == 2 and applicant1[key] < applicant2[key]
+				elseif(applicant1[key] ~= applicant2[key]) then
+					return firstState == 1 and applicant1[key] > applicant2[key] or firstState == 2 and applicant1[key] < applicant2[key]
 
+				end
 			end
 
 		end
 
 	end
 
-	return applicant1.index < applicant2.index
+	if(applicant1.preferred and not applicant2.preferred) then
+		return true
+
+	elseif(not applicant1.preferred and applicant2.preferred) then
+		return false
+
+	else
+		return applicant1.index < applicant2.index
+
+	end
 
 end
 
 local layoutIndex = 0
-local applicantMemberPadding = 2
 
 local function createApplicantFrame(applicantID)
 
@@ -137,7 +164,7 @@ local function createApplicantFrame(applicantID)
 		local applicantFrame = miog.createBasicFrame("fleeting", "ResizeLayoutFrame, BackdropTemplate", miog.mainFrame.applicantPanel.container)
 		applicantFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
 		applicantFrame.heightPadding = 1
-		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + applicantMemberPadding)
+		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 		applicantFrame.memberFrames = {}
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePoolCollection()
@@ -175,6 +202,8 @@ local function createApplicantFrame(applicantID)
 			if(not nameTable[2]) then
 				nameTable[2] = GetNormalizedRealmName()
 
+				name = nameTable[1] .. "-" .. nameTable[2]
+
 			end
 
 			local profile, mythicKeystoneProfile, raidProfile
@@ -192,11 +221,13 @@ local function createApplicantFrame(applicantID)
 			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", applicantFrame)
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.minimumHeight = 20
-			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -applicantMemberPadding or -1)
-			--applicantMemberFrame:SetBackdrop(miog.BLANK_BACKGROUND_INFO)
-			--applicantMemberFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-			--applicantMemberFrame:SetBackdropBorderColor(0, 0, 0, 0)
+			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
+
+			if(MIOG_SavedSettings.preferredApplicants.table[name]) then
+				miog.createFrameBorder(applicantMemberFrame, 2, CreateColorFromHexString("FFe1ad21"):GetRGBA())
+
+			end
 
 			local applicantMemberFrameBackground = miog.createFleetingTexture(applicantFrame.texturePool, nil, applicantMemberFrame, applicantMemberFrame.fixedWidth, applicantMemberFrame.minimumHeight)
 			applicantMemberFrameBackground:SetDrawLayer("BACKGROUND")
@@ -391,7 +422,9 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			if(applicantIndex == 1 and C_PartyInfo.CanInvite() or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
+			-- Mark player: good/bad
+
+			if(applicantIndex == 1 and C_PartyInfo.CanInvite() == true or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
 				local declineButton = miog.createFleetingFrame(applicantFrame.framePool, "IconButtonTemplate", basicInformationPanel, basicInformationPanel.maximumHeight, basicInformationPanel.maximumHeight)
 				declineButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
 				declineButton.iconSize = basicInformationPanel.maximumHeight - 4
@@ -1016,11 +1049,17 @@ local function gatherSortData()
 
 					end
 
+					local nameTable = miog.simpleSplit(name, "-")
+
+					if(not nameTable[2]) then
+						nameTable[2] = GetNormalizedRealmName()
+
+					end
+
 					local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
 					local profile, primarySortAttribute, secondarySortAttribute
 
 					if(miog.F.IS_RAIDERIO_LOADED) then
-						local nameTable = miog.simpleSplit(name, "-")
 						profile = getRioProfile(nameTable[1], nameTable[2], miog.C.CURRENT_REGION)
 
 					end
@@ -1095,7 +1134,9 @@ local function gatherSortData()
 					end
 
 					applicantSystem.applicantMember[applicantID].saveData = {
-						name = name,
+						name = nameTable[1],
+						realm = nameTable[2],
+						fullName = name,
 						index = applicantID,
 						role = assignedRole,
 						class = class,
@@ -1108,6 +1149,7 @@ local function gatherSortData()
 				end
 
 				unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].saveData
+				unsortedMainApplicantsList[#unsortedMainApplicantsList].preferred = MIOG_SavedSettings.preferredApplicants.table[unsortedMainApplicantsList[#unsortedMainApplicantsList].fullName] and true or false
 
 			end
 		end
@@ -1209,7 +1251,9 @@ local function createFullEntries(iterations)
 	local numbers = {}
 	for i = 1, #miog.DEBUG_RAIDER_IO_PROFILES do
 		numbers[i] = i
+
 	end
+	
 	miog.shuffleNumberTable(numbers)
 
 	for index = 1, iterations, 1 do
@@ -1236,7 +1280,7 @@ local function createFullEntries(iterations)
 			local rating = random(1, 4000)
 			rating = 0
 
-			local debugProfile = miog.DEBUG_RAIDER_IO_PROFILES[numbers[index]]
+			local debugProfile = miog.DEBUG_RAIDER_IO_PROFILES[numbers[random(1, #miog.DEBUG_RAIDER_IO_PROFILES)]]
 			local rioProfile = RaiderIO.GetProfile(debugProfile[1], debugProfile[2], debugProfile[3])
 
 			local classID = random(1, 13)
@@ -1914,7 +1958,7 @@ local function handler(msg, editBox)
 	if(command == "") then
 
 	elseif(command == "options") then
-		MIOG_OpenInterfaceOptions()
+		MIOG_OpenInterfaceOptions()		
 
 	elseif(command == "debug") then
 

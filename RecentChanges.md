@@ -1,11 +1,15 @@
-## [1.4.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.5) - 2023-12-20
+## [1.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5) - 2023-12-24
 
-### Changed
+Happy holidays everyone!
 
-- Minor UI pixel shifts for visuals
+### Added
 
-- Disabled the known issues icon since there are no known issues atm
+- You can now add members you've recently invited to your group to be preferred!
 
-### Fixed
+These players will show up at the top before other applicants.
+They have a golden border so they can be identified quickly.
+You can select past applicants in the new "Last invites" panel (this frame is also expandable).
+All preferred applicants are listed in the interface options (accessible with the cogwheel, via Addon Compartment button or just manually going into those options).
 
-- Affixes should now always be correctly requested
+Last invited applicants stay in the list for 3 days, afterwards they'll get deleted.
+Preferred applicants in the interface options stay there until they're manually deleted.

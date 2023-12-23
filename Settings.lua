@@ -149,6 +149,18 @@ miog.loadSettings = function()
 				[11] = {"Dragonflight", "df-bg-1.png"},
 			},
 			value = 11
+		},
+		-- Name + Realm, time of last invite
+		lastInvitedApplicants = {
+			type = "variable",
+			title = "Last invited applicants",
+			table = {}
+		},
+		-- Name + Realm
+		preferredApplicants = {
+			type = "list",
+			title = "Preferred applicants",
+			table = {}
 		}
 	}
 
@@ -158,10 +170,11 @@ miog.loadSettings = function()
 		compareSettings(miog.defaultOptionSettings, MIOG_SavedSettings)
 	end
 	
-	MIOG_SavedSettings.datestamp = {
+	MIOG_SavedSettings.timestamp = {
 		type = "interal",
-		title = "Datestamp of last setting save",
-		value = date("%d/%m/%y %H:%M:%S")
+		title = "Timestamp of last setting save",
+		value = time(),
+		visual = date("%d/%m/%y %H:%M:%S")
 	}
 
 	local interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
@@ -308,6 +321,43 @@ miog.loadSettings = function()
 
 				lastOption = optionDropdown
 			end
+		elseif(setting.type == "list") then
+			if(setting.key == "preferredApplicants") then
+				local preferredApplicants = miog.createBasicFontString("persistent", 12, optionPanelContainer)
+				preferredApplicants:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+				preferredApplicants:SetText(setting.title)
+				preferredApplicants:SetWordWrap(true)
+				preferredApplicants:SetNonSpaceWrap(true)
+
+				local preferredApplicantsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanelContainer, 250, 140)
+				preferredApplicantsPanel:SetPoint("TOPLEFT", preferredApplicants, "BOTTOMLEFT", 0, -15)
+				miog.createFrameBorder(preferredApplicantsPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+				preferredApplicantsPanel.standardHeight = 140
+
+				optionPanelContainer.preferredApplicantsPanel = preferredApplicantsPanel
+
+				local preferredApplicantsScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", preferredApplicantsPanel)
+				preferredApplicantsScrollFrame:SetPoint("TOPLEFT", preferredApplicantsPanel, "TOPLEFT", 1, 0)
+				preferredApplicantsScrollFrame:SetPoint("BOTTOMRIGHT", preferredApplicantsPanel, "BOTTOMRIGHT", -2, 1)
+				preferredApplicantsPanel.scrollFrame = preferredApplicantsScrollFrame
+
+				local preferredApplicantsContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", preferredApplicantsScrollFrame)
+				preferredApplicantsContainer.fixedWidth = preferredApplicantsPanel:GetWidth()
+				preferredApplicantsContainer.minimumHeight = 1
+				preferredApplicantsContainer.spacing = 3
+				preferredApplicantsContainer.align = "top"
+				preferredApplicantsContainer:SetPoint("TOPLEFT", preferredApplicantsScrollFrame, "TOPLEFT")
+
+				preferredApplicantsScrollFrame.container = preferredApplicantsContainer
+				preferredApplicantsScrollFrame:SetScrollChild(preferredApplicantsContainer)
+
+				for _, v in pairs(setting.table) do
+					miog.addPreferredApplicant(v)
+
+				end
+		
+				lastOption = preferredApplicantsPanel
+			end
 		end
 
 	end
@@ -336,6 +386,7 @@ miog.loadSettings = function()
 		end
 	else
 		MIOG_SavedSettings.lastActiveSortingMethods.value = {}
+
 	end
 
 	if(MIOG_SavedSettings.keepSignUpNote and MIOG_SavedSettings.keepSignUpNote.value ==  true) then
@@ -360,6 +411,20 @@ miog.loadSettings = function()
 		miog.mainFrame.backdropFrame:SetShown(true)
 		miog.mainFrame.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 	
+	end
+
+	if(MIOG_SavedSettings.lastInvitedApplicants) then
+		for _, v in pairs(MIOG_SavedSettings.lastInvitedApplicants.table) do
+			if(v.timestamp and difftime(time(), v.timestamp) < 259200) then
+				miog.addLastInvitedApplicant(v)
+
+			else
+				v = nil
+			
+			end
+
+		end
+
 	end
 end
 

@@ -11,9 +11,9 @@ TripleStateButtonMixin = {}
 
 function TripleStateButtonMixin:OnLoad()
     self.stateList = {
-        [0] = {name = "", key = "off", value = true},
-        [1] = {name = "", key = "state1", value = false},
-        [2] = {name = "", key = "state2", value = false},
+        [0] = {name = "", key = "off", value = true, singleTexture = false},
+        [1] = {name = "", key = "state1", value = false, singleTexture = false},
+        [2] = {name = "", key = "state2", value = false, singleTexture = false},
     }
 
     self.currentState = 0
@@ -30,19 +30,28 @@ function TripleStateButtonMixin:GetStateList()
 end
 
 function TripleStateButtonMixin:SetAllTextures(state)
+    if(self.stateList[state].singleTexture == true) then
+        self:SetNormalTexture(self.stateList[state].textures.normal or "")
+        self:SetPushedTexture(self.stateList[state].textures.pushed or "")
+        self:SetHighlightTexture(self.stateList[state].textures.highlight or "")
+        self:SetDisabledTexture(self.stateList[state].textures.disabled or "")
 
-    if(self.stateList[state].textures.normal) then
+        if(self.stateList[state].size) then
+            self:SetSize(self.stateList[state].size, self.stateList[state].size)
+
+        end
+
+    elseif(self.stateList[state].textures.normal) then
         self:SetNormalAtlas(self.stateList[state].textures.normal or "")
         self:SetPushedAtlas(self.stateList[state].textures.pushed or "")
         self:SetHighlightAtlas(self.stateList[state].textures.highlight or "")
         self:SetDisabledAtlas(self.stateList[state].textures.disabled or "")
 
-
         --Implement later, checkbutton states:
 
         --self:SetCheckedTexture(self.stateList[state].textures.checked or "")
         --self:SetDisabledCheckedTexture(self.stateList[state].textures.disabledChecked or "")
-
+    
     else
         self:ClearNormalTexture()
         self:ClearPushedTexture()
@@ -122,7 +131,7 @@ function TripleStateButtonMixin:GetStateName(state)
 end
 
 function TripleStateButtonMixin:AdvanceState()
-    self.currentState = self.currentState < (#self.stateList and (self.maxStates-1)) and self.currentState + 1 or 0
+    self.currentState = self.currentState < (#self.stateList and (self.maxStates - 1)) and self.currentState + 1 or 0
 
     if(self.currentState == 0) then
         self.stateList[0].value = true
@@ -195,4 +204,21 @@ function TripleStateButtonMixin:SetTexturesForState2(normal, pushed, highlight, 
         disabledChecked = disabledChecked
     }
 
+end
+
+function TripleStateButtonMixin:SetSingleTextureForSpecificState(state, texture, size)
+    self.stateList[state].singleTexture = true
+    self.stateList[state].textures = {
+        normal = texture,
+        pushed = texture,
+        highlight = texture,
+        disabled = texture,
+        checked = texture,
+        disabledChecked = texture
+    }
+
+    if(size) then
+        self.stateList[state].size = size
+
+    end
 end
