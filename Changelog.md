@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
 ## [1.5] - 2023-12-24
 
 Happy holidays everyone!
@@ -15,11 +16,11 @@ Happy holidays everyone!
 
 These players will show up at the top before other applicants.
 They have a golden border so they can be identified quickly.
-You can select past applicants in the new "Last invites" panel (this frame is also expandable).
+You can select past applicants in the new "Last invites" panel (click on the vertical "INVITES" button, not sure if I'm a fan of the vertical button, maybe I'll change it up in the next couple of updates).
 All preferred applicants are listed in the interface options (accessible with the cogwheel, via Addon Compartment button or just manually going into those options).
 
-Last invited applicants stay in the list for 3 days, afterwards they'll get deleted.
-Preferred applicants in the interface options stay there until they're manually deleted.
+Last invited applicants stay in the list for 3 days.
+Preferred applicants in the interface options stay there until they're manually deleted via the X button there.
 
 
 

@@ -231,68 +231,9 @@ miog.createMainFrame = function()
 	local infoPanel = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame)
 	infoPanel:SetHeight(mainFrame:GetHeight()*0.19)
 	infoPanel:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 1)
-	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", 0, 1)
+	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", -20, 1)
 
 	mainFrame.infoPanel = infoPanel
-
-	local lastInvitesPanel = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, 250, 140)
-	lastInvitesPanel:SetPoint("TOPLEFT", titleBar, "TOPRIGHT")
-	miog.createFrameBorder(lastInvitesPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	lastInvitesPanel.standardHeight = 140
-
-	mainFrame.lastInvitesPanel = lastInvitesPanel
-
-	local lastInvitesPanelBackground = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/backgrounds/df-bg-1.png", lastInvitesPanel)
-	lastInvitesPanelBackground:SetTexCoord(0, 1, 0.25, 1)
-	--lastInvitesPanelBackground:SetVertTile(true)
-	--lastInvitesPanelBackground:SetHorizTile(true)
-	lastInvitesPanelBackground:SetDrawLayer("BACKGROUND", -8)
-	lastInvitesPanelBackground:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT")
-	lastInvitesPanelBackground:SetPoint("BOTTOMRIGHT", lastInvitesPanel, "BOTTOMRIGHT")
-
-	local lastInvitesTitleBar = miog.createBasicFrame("persistent", "BackdropTemplate", lastInvitesPanel, nil, mainFrame:GetHeight()*0.06)
-	lastInvitesTitleBar:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT", 0, 0)
-	lastInvitesTitleBar:SetPoint("TOPRIGHT", lastInvitesPanel, "TOPRIGHT", 0, 0)
-	miog.createFrameBorder(lastInvitesTitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	local lastInvitesTitleBarString = miog.createBasicFontString("persistent", miog.C.TITLE_FONT_SIZE, lastInvitesTitleBar)
-	lastInvitesTitleBarString:SetText("Last Invites")
-	lastInvitesTitleBarString:SetPoint("CENTER", lastInvitesTitleBar, "CENTER")
-
-	local lastInvitesExpandDownwardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", lastInvitesPanel, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
-	lastInvitesExpandDownwardsButton:SetPoint("RIGHT", lastInvitesTitleBar, "RIGHT", -3, -lastInvitesExpandDownwardsButton:GetHeight() / 4)
-	lastInvitesExpandDownwardsButton:SetNormalTexture(293770)
-	lastInvitesExpandDownwardsButton:SetPushedTexture(293769)
-	lastInvitesExpandDownwardsButton:SetDisabledTexture(293768)
-	lastInvitesExpandDownwardsButton:RegisterForClicks("LeftButtonDown")
-	lastInvitesExpandDownwardsButton.active = false
-	lastInvitesExpandDownwardsButton:SetScript("OnClick", function()
-		lastInvitesExpandDownwardsButton.active = not lastInvitesExpandDownwardsButton.active
-		if(lastInvitesExpandDownwardsButton.active) then
-			lastInvitesPanel:SetHeight(lastInvitesPanel.standardHeight * 2)
-
-		else
-			lastInvitesPanel:SetHeight(lastInvitesPanel.standardHeight)
-
-		end
-	end)
-
-	lastInvitesPanel.expandDownwardsButton = expandDownwardsButton
-
-	local lastInvitesScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", lastInvitesPanel)
-	lastInvitesScrollFrame:SetPoint("TOPLEFT", lastInvitesTitleBar, "BOTTOMLEFT", 1, 0)
-	lastInvitesScrollFrame:SetPoint("BOTTOMRIGHT", lastInvitesPanel, "BOTTOMRIGHT", -1, 1)
-	lastInvitesPanel.scrollFrame = lastInvitesScrollFrame
-
-	local lastInvitesContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", lastInvitesScrollFrame)
-	lastInvitesContainer.fixedWidth = lastInvitesScrollFrame:GetWidth()
-	lastInvitesContainer.minimumHeight = 1
-	lastInvitesContainer.spacing = 3
-	lastInvitesContainer.align = "top"
-	lastInvitesContainer:SetPoint("TOPLEFT", lastInvitesScrollFrame, "TOPLEFT")
-
-	lastInvitesScrollFrame.container = lastInvitesContainer
-	lastInvitesScrollFrame:SetScrollChild(lastInvitesContainer)
 
 	local knownIssuesPanel = miog.createBasicFrame("persistent", "IconButtonTemplate", infoPanel, 15, 15)
 	knownIssuesPanel:SetNormalAtlas("glueannouncementpopup-icon-info")
@@ -934,6 +875,85 @@ miog.createMainFrame = function()
 
 	buttonPanel.resetButton = resetButton
 
+
+	local lastInvitesPanel = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, 250, 250)
+	lastInvitesPanel:SetPoint("TOPLEFT", titleBar, "TOPRIGHT", 5, 0)
+	miog.createFrameBorder(lastInvitesPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	lastInvitesPanel.standardHeight = 140
+	lastInvitesPanel:Hide()
+
+	mainFrame.lastInvitesPanel = lastInvitesPanel
+
+	local lastInvitesShowHideButton = miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", mainFrame, 20, 100)
+	lastInvitesShowHideButton:SetPoint("TOPLEFT", infoPanel, "TOPRIGHT")
+	lastInvitesShowHideButton:SetPoint("BOTTOMLEFT", buttonPanel, "BOTTOMRIGHT", 0, 0)
+	miog.createFrameBorder(lastInvitesShowHideButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	lastInvitesShowHideButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	lastInvitesShowHideButton:RegisterForClicks("LeftButtonDown")
+	lastInvitesShowHideButton:SetScript("OnClick", function()
+		lastInvitesPanel:Show()
+		
+	end)
+
+	local lastInvitesShowHideString = miog.createBasicFontString("persistent", 16, lastInvitesShowHideButton)
+	lastInvitesShowHideString:SetJustifyV("TOP")
+	lastInvitesShowHideString:SetPoint("TOPLEFT", lastInvitesShowHideButton, "TOPLEFT", 4, -5)
+	lastInvitesShowHideString:SetText(string.gsub("INVITES", "(.)", function(x) return x.."\n" end))
+	lastInvitesShowHideString:SetSpacing(0)
+	lastInvitesShowHideString:SetNonSpaceWrap(true)
+	lastInvitesShowHideString:SetWordWrap(true)
+
+	local lastInvitesPanelBackground = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/backgrounds/df-bg-1.png", lastInvitesPanel)
+	lastInvitesPanelBackground:SetTexCoord(0, 1, 0.25, 0.9)
+	--lastInvitesPanelBackground:SetVertTile(true)
+	--lastInvitesPanelBackground:SetHorizTile(true)
+	lastInvitesPanelBackground:SetDrawLayer("BACKGROUND", -8)
+	lastInvitesPanelBackground:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT")
+	lastInvitesPanelBackground:SetPoint("BOTTOMRIGHT", lastInvitesPanel, "BOTTOMRIGHT")
+
+	local lastInvitesTitleBar = miog.createBasicFrame("persistent", "BackdropTemplate", lastInvitesPanel, nil, mainFrame:GetHeight()*0.06)
+	lastInvitesTitleBar:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT", 0, 0)
+	lastInvitesTitleBar:SetPoint("TOPRIGHT", lastInvitesPanel, "TOPRIGHT", 0, 0)
+	miog.createFrameBorder(lastInvitesTitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	lastInvitesTitleBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	local lastInvitesTitleBarString = miog.createBasicFontString("persistent", miog.C.TITLE_FONT_SIZE, lastInvitesTitleBar)
+	lastInvitesTitleBarString:SetText("Last Invites")
+	lastInvitesTitleBarString:SetPoint("CENTER", lastInvitesTitleBar, "CENTER")
+
+	local lastInvitesRetractSidewardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", lastInvitesPanel, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
+	lastInvitesRetractSidewardsButton:SetPoint("RIGHT", lastInvitesTitleBar, "RIGHT", -5, -2)
+
+	lastInvitesRetractSidewardsButton:SetNormalTexture(293770)
+	lastInvitesRetractSidewardsButton:SetDisabledTexture(293768)
+	lastInvitesRetractSidewardsButton:GetNormalTexture():SetRotation(-math.pi/2)
+	lastInvitesRetractSidewardsButton:GetDisabledTexture():SetRotation(-math.pi/2)
+
+	lastInvitesRetractSidewardsButton:RegisterForClicks("LeftButtonDown")
+	lastInvitesRetractSidewardsButton:SetScript("OnClick", function()
+		lastInvitesPanel:Hide()
+		
+	end)
+
+	--lastInvitesPanel.expandDownwardsButton = expandDownwardsButton
+
+	local lastInvitesScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", lastInvitesPanel)
+	lastInvitesScrollFrame:SetPoint("TOPLEFT", lastInvitesTitleBar, "BOTTOMLEFT", 1, 0)
+	lastInvitesScrollFrame:SetPoint("BOTTOMRIGHT", lastInvitesPanel, "BOTTOMRIGHT", -1, 1)
+	lastInvitesPanel.scrollFrame = lastInvitesScrollFrame
+
+	local lastInvitesContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", lastInvitesScrollFrame)
+	lastInvitesContainer.fixedWidth = lastInvitesScrollFrame:GetWidth()
+	lastInvitesContainer.minimumHeight = 1
+	lastInvitesContainer.spacing = 3
+	lastInvitesContainer.align = "top"
+	lastInvitesContainer:SetPoint("TOPLEFT", lastInvitesScrollFrame, "TOPLEFT")
+
+	lastInvitesScrollFrame.container = lastInvitesContainer
+	lastInvitesScrollFrame:SetScrollChild(lastInvitesContainer)
+
+
+
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
 	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
 	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrame:GetHeight()*0.06)
@@ -1005,6 +1025,8 @@ miog.createMainFrame = function()
 	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 2, 0)
 	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, 0)
 	mainFrame.applicantPanel = applicantPanel
+	applicantPanel.ScrollBar:SetPoint("TOPLEFT", applicantPanel, "TOPRIGHT", 0, -10)
+	applicantPanel.ScrollBar:SetPoint("BOTTOMLEFT", applicantPanel, "BOTTOMRIGHT", 0, 10)
 
 	miog.C.MAIN_WIDTH = applicantPanel:GetWidth()
 

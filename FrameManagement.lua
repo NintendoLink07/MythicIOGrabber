@@ -121,6 +121,7 @@ miog.persistentFramePool:GetOrCreatePool("Frame", nil, "GridLayoutFrame, Backdro
 miog.persistentFramePool:GetOrCreatePool("ScrollFrame", nil, "ScrollFrameTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "IconButtonTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate, BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
 
