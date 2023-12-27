@@ -891,7 +891,7 @@ miog.createMainFrame = function()
 	lastInvitesShowHideButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 	lastInvitesShowHideButton:RegisterForClicks("LeftButtonDown")
 	lastInvitesShowHideButton:SetScript("OnClick", function()
-		lastInvitesPanel:Show()
+		lastInvitesPanel:SetShown(not lastInvitesPanel:IsVisible())
 		
 	end)
 

@@ -1958,7 +1958,7 @@ local function handler(msg, editBox)
 	if(command == "") then
 
 	elseif(command == "options") then
-		MIOG_OpenInterfaceOptions()		
+		MIOG_OpenInterfaceOptions()
 
 	elseif(command == "debug") then
 

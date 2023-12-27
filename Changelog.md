@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.5.1] - 2023-12-27
+
+### Changed
+
+- The new last invites panel can now also be hidden with another click on the "INVITES" button
+
+
+
 ## [1.5] - 2023-12-24
 
 Happy holidays everyone!
@@ -698,7 +706,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.5...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.5.1...HEAD
+[1.5.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5.1
 [1.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5
 [1.4.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.5
 [1.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.4.4
