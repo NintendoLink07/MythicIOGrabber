@@ -7,7 +7,7 @@ With the Raider.IO addon it expands the functionality of this addon massively an
 CurseForge site: [MythicIOGrabber on CurseForge](https://www.curseforge.com/wow/addons/mythic-io-grabber)<br>
 If you have way too much money: <a href="https://www.paypal.com/donate/?hosted_button_id=G3X525EXQGJCE"> <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"> </a>
 
-![Screenshot 2023-10-14 153105](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/ba1e5cab-a7b5-4871-ab37-12f6a18a27ec)
+![Screenshot 2023-12-24 133718](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/7728081c-c494-4757-9937-76fcd65a0c31)
 
 ## Addon features
 In order from left to right, top to bottom (:star: is different or completely new):
@@ -18,7 +18,7 @@ In order from left to right, top to bottom (:star: is different or completely ne
 - Setting button to access the interface options quickly
 
 ### Information Panel
-![Screenshot 2023-10-14 153004](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/30286e83-a349-4477-a51a-f27832bf278e)
+![Screenshot 2023-12-24 133430](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/b0845a14-4068-4bd5-bace-b50c5830030c)
 
 Information shown while your group is listed:<br>
 - Title
@@ -35,11 +35,12 @@ Information shown while your group is listed:<br>
 - :star: Itemlevel threshold
 - :star: Current affixes: hovering of the frames shows a tooltip with the affix names
 - :star: Queue timer: timer for how long you've been in queue (saves between reloads and relogs for the same group)
-
+- :star: Last invites panel: You can check your last invites and set them to preferred, making them show up at the top of your applicant list all the time
+- :star: Background image changes based on your dungeon (implemented every dungeon/raid DF S2 and forward)
 
 ### Filtering and sorting:
-- :star: Tank/Healer/DPS filter: Filters out the applicant leaders (and their premades!)<br>
-![Screenshot 2023-10-14 153615](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/0b1633b8-7820-43b6-89a1-e6bd86109bb6)
+- :star: Role/class/spec filter: Filters out the applicant leaders (and their premades!)<br>
+![Screenshot 2023-12-18 181925](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/8e72e4a7-9479-42c0-bfc2-86fbfe02817e)
 - :star: Sort for role, dungeon score / pvp rating / raid progress, highest key done or ilvl: You can have 2 methods active at a time, most useful way is probably sort 1. for role and 2. for score/rating/progress
 - You can sort ascending or descending, e.g. if you wanna list the tanks with the lowest key done first you'd do 1. descending role and 2. ascending highest key<br>
 ![Screenshot 2023-10-14 153621](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/6b4e6c70-2286-4d68-8fa4-2c2fed7b4899)
