@@ -1,5 +1,9 @@
-## [1.5.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5.1) - 2023-12-27
+## [1.5.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5.2) - 2024-01-06
 
 ### Changed
 
-- The new last invites panel can now also be hidden with another click on the "INVITES" button
+- The race of the applicant is now shown in the detailed panel
+
+### Fixed
+
+- All roles an applicant can play will now be shown, due to a code bug it only showed the first available role

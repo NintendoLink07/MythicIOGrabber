@@ -188,7 +188,7 @@ local function createApplicantFrame(applicantID)
 			local dungeonData, pvpData, rioProfile
 
 			if(miog.F.IS_IN_DEBUG_MODE) then
-				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, _, specID, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
+				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
 
 			else
 				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -621,8 +621,28 @@ local function createApplicantFrame(applicantID)
 			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
 			generalInfoPanel.rows[1].FontString:SetWordWrap(true)
 			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
+			generalInfoPanel.rows[7].FontString:SetText("Role: ")
 
-			generalInfoPanel.rows[7].FontString:SetText(_G["LFG_TOOLTIP_ROLES"] .. ((tank == true and miog.C.TANK_TEXTURE) or (healer == true and miog.C.HEALER_TEXTURE) or (damager == true and miog.C.DPS_TEXTURE)))
+			if(tank) then
+				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() .. miog.C.TANK_TEXTURE)
+
+			end
+
+			if(healer) then
+				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() .. miog.C.HEALER_TEXTURE)
+
+			end
+
+			if(damager) then
+				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() .. miog.C.DPS_TEXTURE)
+
+			end
+
+			if(raceID and miog.RACES[raceID]) then
+				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
+
+			end
+
 			generalInfoPanel.rows[9].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (nameTable[2] or GetRealmName() or ""))
 
 			if(miog.F.LISTED_CATEGORY_ID == 2) then
@@ -1276,6 +1296,8 @@ local function createFullEntries(iterations)
 
 		miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID] = {}
 
+		local trueAndFalse = {true, false}
+
 		for memberIndex = 1, miog.DEBUG_APPLICANT_DATA[applicantID].numMembers, 1 do
 			local rating = random(1, 4000)
 			rating = 0
@@ -1295,6 +1317,8 @@ local function createFullEntries(iterations)
 				rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel or rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel
 			end
 
+			local randomRace = random(1, 5)
+
 			miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID][memberIndex] = {
 				[1] = debugProfile[1] .. "-" .. debugProfile[2],
 				[2]  = classInfo.classFile, --ENG
@@ -1302,15 +1326,15 @@ local function createFullEntries(iterations)
 				[4]  = UnitLevel("player"),
 				[5]  = random(0, 450) + 0.5,
 				[6]  = UnitHonorLevel("player"),
-				[7]  = false,
-				[8]  = false,
-				[9]  = true,
+				[7]  = trueAndFalse[random(1,2)],
+				[8]  = trueAndFalse[random(1,2)],
+				[9]  = trueAndFalse[random(1,2)],
 				[10]  = select(5, GetSpecializationInfoByID(specID)),
 				[11]  = true,
 				[12]  = rioProfile and rioProfile.mythicKeystoneProfile and rioProfile.mythicKeystoneProfile.currentScore or 0,
 				[13]  = random(400, 450) + 0.5,
-				[14]  = "Alliance",
-				[15]  = 0,
+				[14]  = random(0, 100) > 50 and "Alliance" or "Horde",
+				[15]  = randomRace == 1 and random(1, 11) or randomRace == 2 and 22 or randomRace == 3 and random(24, 37) or randomRace == 4 and 52 or 70,
 				[16]  = specID,
 				[17]  = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"},
 				[18]  = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},

@@ -400,6 +400,38 @@ miog.SPECIALIZATIONS = {
 	[1473] = {name = "Augmentation", class = miog.CLASSES[13], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/augmentation.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/augmentation_squared.png"},
 }
 
+miog.RACES = {
+	[1] = "raceicon-human-male",
+	[2] = "raceicon-orc-male",
+	[3] = "raceicon-dwarf-male",
+	[4] = "raceicon-nightelf-male",
+	[5] = "raceicon-undead-male",
+	[6] = "raceicon-tauren-male",
+	[7] = "raceicon-gnome-male",
+	[8] = "raceicon-troll-male",
+	[9] = "raceicon-goblin-male",
+	[10] = "raceicon-bloodelf-male",
+	[11] = "raceicon-draenei-male",
+	[22] = "raceicon-worgen-male",
+	[24] = "raceicon-pandaren-male",
+	[25] = "raceicon-pandaren-male",
+	[26] = "raceicon-pandaren-male",
+	[27] = "raceicon-nightborne-male",
+	[28] = "raceicon-highmountain-male",
+	[29] = "raceicon-voidelf-male",
+	[30] = "raceicon-lightforged-male",
+	[31] = "raceicon-zandalari-male",
+	[32] = "raceicon-kultiran-male",
+	[33] = "raceicon-darkirondwarf-male",
+	[34] = "raceicon-darkirondwarf-male",
+	[35] = "raceicon-vulpera-male",
+	[36] = "raceicon-magharorc-male",
+	[37] = "raceicon-mechagnome-male",
+	[52] = "raceicon-dracthyr-male",
+	[70] = "raceicon-dracthyr-male",
+
+}
+
 miog.SEARCH_LANGUAGES = {
 	itIT=true,
 	ruRU=true,
