@@ -1,4 +1,5 @@
 # MythicIOGrabber
+![Screenshot 2023-12-18 181830](https://github.com/NintendoLink07/MythicIOGrabber/assets/3246525/de943ecd-2a5d-4eec-886e-723323a516d0)
 
 This addon replaces the standard application viewer with a much more detailed version.<br>
 It shows you the applicants for your group finder listing in a clear but more extensive way.<br>
