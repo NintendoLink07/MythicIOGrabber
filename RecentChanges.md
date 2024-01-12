@@ -10,7 +10,7 @@ This feature is enabled by default and can be disabled in the inferace options.
 - Added a tooltip for the premade texture (in case people don't know what it means).
 
 - The frame can now manually be resized via the button in the bottom left corner above the footer bar (where the browse, delist and edit buttons are).
-The new height will be saved in the settings.
+The manually set height will be the new standard height for the extend button in the "Dungeons & Raids" title bar.
 
 ### Fixed
 

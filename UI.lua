@@ -51,15 +51,15 @@ miog.createMainFrame = function()
 	local mainFrameWidth = (LFGListFrame:GetWidth() + 2)
 	local mainFrameHeight = (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
 
-	mainFrame:SetSize(mainFrameWidth, MIOG_SavedSettings.frameManuallyResized.value or mainFrameHeight)
+	mainFrame:SetSize(mainFrameWidth, mainFrameHeight)
 	mainFrame.standardHeight = mainFrameHeight
-	mainFrame.extendedHeight = mainFrame.standardHeight * 1.5
+	mainFrame.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value or mainFrame.standardHeight * 1.5
 	--mainFrame:SetScale(1.5)
 	mainFrame:SetResizable(true)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	mainFrame:SetFrameStrata("DIALOG")
 	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
-	mainFrame:SetResizeBounds(mainFrameWidth, mainFrameHeight, mainFrameWidth, 960)
+	mainFrame:SetResizeBounds(mainFrameWidth, mainFrameHeight, mainFrameWidth, GetScreenHeight() * 0.66666)
 
 	miog.createFrameBorder(mainFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
@@ -967,24 +967,6 @@ miog.createMainFrame = function()
 
 	mainFrame.footerBar = footerBar
 
-	local resizeMainFrameButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame)
-	resizeMainFrameButton:EnableMouse(true)
-	resizeMainFrameButton:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
-	resizeMainFrameButton:SetSize(16, 16)
-	resizeMainFrameButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
-	resizeMainFrameButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
-	resizeMainFrameButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
-	resizeMainFrameButton:SetScript("OnMouseDown", function(self)
-		self:GetParent():StartSizing("BOTTOMRIGHT")
-
-	end)
-	resizeMainFrameButton:SetScript("OnMouseUp", function(self)
-		local parent = self:GetParent()
-		parent:StopMovingOrSizing("BOTTOMRIGHT")
-		MIOG_SavedSettings.frameManuallyResized.value = parent:GetHeight()
-
-	end)
-
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")
 	browseGroupsButton:SetText("Browse Groups")
@@ -1062,6 +1044,28 @@ miog.createMainFrame = function()
 	applicantPanel.container = applicantPanelContainer
 
 	applicantPanel:SetScrollChild(applicantPanelContainer)
+
+	local resizeMainFrameButton = miog.createBasicFrame("persistent", "UIButtonTemplate", applicantPanel)
+	resizeMainFrameButton:EnableMouse(true)
+	resizeMainFrameButton:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
+	resizeMainFrameButton:SetSize(20, 20)
+	resizeMainFrameButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	resizeMainFrameButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	resizeMainFrameButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	resizeMainFrameButton:SetScript("OnMouseDown", function(self)
+		mainFrame:StartSizing()
+
+	end)
+	resizeMainFrameButton:SetScript("OnMouseUp", function(self)
+		mainFrame:StopMovingOrSizing()
+		MIOG_SavedSettings.frameManuallyResized.value = mainFrame:GetHeight()
+
+		if(MIOG_SavedSettings.frameManuallyResized.value > mainFrame.standardHeight) then
+			MIOG_SavedSettings.frameExtended.value = true
+
+		end
+
+	end)
 
 	miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
 	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
