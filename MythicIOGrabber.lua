@@ -1802,6 +1802,7 @@ miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
 		local isInitialLogin, isReloadingUi = ...
 
+
 		if(isInitialLogin or isReloadingUi) then
 			updateRosterInfoData()
 
@@ -1844,7 +1845,7 @@ miog.OnEvent = function(_, event, ...)
 			if not(miog.F.ACTIVE_ENTRY_INFO) then
 				if(queueTimer) then
 					queueTimer:Cancel()
-	
+
 				end
 
 				resetArrays()

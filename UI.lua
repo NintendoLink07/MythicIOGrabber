@@ -57,7 +57,7 @@ miog.createMainFrame = function()
 	--mainFrame:SetScale(1.5)
 	mainFrame:SetResizable(true)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
-	mainFrame:SetFrameStrata("FULLSCREEN")
+	mainFrame:SetFrameStrata("DIALOG")
 	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
 	mainFrame:SetResizeBounds(mainFrameWidth, mainFrameHeight, mainFrameWidth, 960)
 

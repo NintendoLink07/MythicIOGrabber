@@ -33,7 +33,7 @@ local function resetFrame(pool, childFrame)
 		childFrame:SetScript("OnKeyDown", nil)
 
 	elseif(typeOfFrame == "Frame") then
-		if(string.find(pool:GetTemplate(), "BackdropTemplate") and childFrame:GetBackdrop() ~= nil) then
+		if(string.find(pool:GetTemplate(), "BackdropTemplate")) then
 			childFrame:SetBackdrop()
 
 		end
