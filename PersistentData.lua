@@ -47,8 +47,10 @@ miog.C = {
 	-- 1.4 locks up the inspects after a maximum of ~15 inspects.
 	-- First 6 inspects are not affected by this throttle.
 	-- I have played around with many different delays or different request "sets" (e.g. every 3 seconds 2 applicants, every 5 seconds 4 applicants) but nothing seems to work as well as: if number of members < 6 all instantly, otherwise every 1.5 seconds
-	BLIZZARD_INSPECT_THROTTLE = 1.6,
+	BLIZZARD_INSPECT_THROTTLE = 1.65,
 
+
+	PLAYER_GUID = UnitGUID("player"),
 
     --
     --- FRAME SIZES
@@ -79,7 +81,6 @@ miog.C = {
     GREEN_SECONDARY_COLOR = "9900FF77",
     RED_COLOR = "FFFF2222",
     RED_SECONDARY_COLOR = "99FF2222",
-
     BACKGROUND_COLOR = "FF18191A",
     BACKGROUND_COLOR_2 = "FF2A2B2C",
     BACKGROUND_COLOR_3 = "FF3C3D4E",
@@ -115,6 +116,8 @@ miog.C = {
 	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:20:20|t",
 	STAR_TEXTURE = "⋆",
 
+	ELVUI_INSTALLED = IsAddOnLoaded("ElvUI"),
+	SUF_INSTALLED = IsAddOnLoaded("ShadowedUnitFrames")
 }
 
 miog.MPLUS_SEASONS = {
@@ -163,13 +166,17 @@ miog.F = {
 	CURRENT_SEASON = nil,
 	PREVIOUS_SEASON = nil,
 
+	LFG_STATE = "solo",
+
 	RAID_BOSSES = {},
 
 	LAST_INVITES_COUNTER = 0,
-	PREFERRED_APPLICANTS_COUNTER = 0,
+	FAVOURED_APPLICANTS_COUNTER = 0,
 
 	LAST_INVITED_APPLICANTS = {},
-	PREFERRED_APPLICANTS = {},
+	FAVOURED_APPLICANTS = {},
+
+	CAN_INVITE = false
 }
 
 miog.BLANK_BACKGROUND_INFO = {
@@ -305,6 +312,12 @@ miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
 
 miog.FONTS = {
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
+}
+
+miog.MAX_GROUP_SIZES = {
+	["solo"] = 1,
+	["party"] = 5,
+	["raid"] = 40
 }
 
 miog.CLASSFILE_TO_ID = {
@@ -1610,57 +1623,36 @@ miog.DEBUG_TIER_TABLE = {
 
 miog.DEBUG_RAIDER_IO_PROFILES = {
 	[1] = {"Holyypits", "TwistingNether", "eu"},
-	[2] = {"Sicatrice", "Hyjal", "eu"},
+	[2] = {"Clydragon", "Blackhand", "eu"},
 	[3] = {"Bloo", "Drak'thul", "eu"},
-	[4] = {"Razarok", "Draenor", "eu"},
+	[4] = {"Mayvoker", "TarrenMill", "eu"},
 	[5] = {"Facerollmon", "Draenor", "eu"},
-	[6] = {"Amrul", "Hyjal", "eu"},
+	[6] = {"Celacestial", "TwistingNether", "eu"},
 	[7] = {"Gripples", "Blackhand", "eu"},
 	[8] = {"Lineal", "Ysondre", "eu"},
-	[9] = {"Trioshaman", "Blackmoore", "eu"},
-	[10] = {"Tuctuc", "Dalaran", "eu"},
+	[9] = {"Erloko", "Zul'jin", "eu"},
+	[10] = {"Kuszii", "BurningLegion", "eu"},
 	[11] = {"Panomanixme", "Suramar", "eu"},
 	[12] = {"Dreana", "Ghostlands", "eu"},
 	[13] = {"Drjay", "Ragnaros", "eu"},
-	[14] = {"Пофанудру", "Ревущийфьорд", "eu"},
+	[14] = {"Jisoô", "TwistingNether", "eu"},
 	[15] = {"Rhany", "Ravencrest", "eu"},
 	[16] = {"Amesiella", "Blackrock", "eu"},
-	[17] = {"Pangnam", "Blackrock", "eu"},
-	[18] = {"Ikaris", "Draenor", "eu"},
-	[19] = {"Kiiwwievoker", "Draenor", "eu"},
-	[20] = {"Chuhlo", "Eredar", "eu"},
+	[17] = {"Roftegar", "Kazzak", "eu"},
+	[18] = {"Timmý", "Stormscale", "eu"},
+	[19] = {"Sáberxx", "Blackrock", "eu"},
+	[20] = {"Gorlami", "Blackhand", "eu"},
 	[21] = {"Pøggers", "Eredar", "eu"},
-	[22] = {"Viegoavery", "Kazzak", "eu"},
-
-	[23] = {"Dungztshaman", "아즈샤라", "kr"},
-	[24] = {"개솔희희", "아즈샤라", "kr"},
-	[25] = {"권카우", "아즈샤라", "kr"},
-	[26] = {"기픈물", "아즈샤라", "kr"},
-	[27] = {"Mopreme", "세나리우스", "kr"},
-	[28] = {"Sensory", "세나리우스", "kr"},
-	[29] = {"푸르른빛", "세나리우스", "kr"},
-
-	[30] = {"Jldoom", "阿薩斯", "tw"},
-	[31] = {"Passiøn", "阿薩斯", "tw"},
-	[32] = {"優質上進青年", "阿薩斯", "tw"},
-	[33] = {"嚣张的李二狗", "阿薩斯", "tw"},
-	[34] = {"Shaon", "亞雷戈斯", "tw"},
-	[35] = {"帕拉西", "亞雷戈斯", "tw"},
-	[36] = {"暮光路路", "亞雷戈斯", "tw"},
-
-	[37] = {"Drewmaage", "Illidan", "us"},
-	[38] = {"Cheezeadin", "Mal'Ganis", "us"},
-	[39] = {"Qwynn", "Trollbane", "us"},
-	[40] = {"Rainbowzy", "Illidan", "us"},
-	[41] = {"Beesindatrap", "Area52", "us"},
-	[42] = {"Ephesus", "Area52", "us"},
-	[43] = {"Gummieshark", "Area52", "us"},
-
-	[44] = {"Grangeese", "Silvermoon", "eu"},
-	[45] = {"Holyquarttet", "Silvermoon", "eu"},
-	[46] = {"Iceyshards", "Silvermoon", "eu"},
-	[47] = {"Chlight", "Ysondre", "eu"},
-	[48] = {"Emedrion", "TwistingNether", "eu"},
-	[49] = {"Maradenlock", "TwistingNether", "eu"},
-	[50] = {"Mingudh", "TwistingNether", "eu"},
+	[22] = {"Eroxp", "Kazzak", "eu"},
+	[23] = {"Baletea", "TwistingNether", "eu"},
+	[24] = {"Minikristus", "Kazzak", "eu"},
+	[25] = {"Cyavoker", "Nemesis", "eu"},
+	[26] = {"Deathdots", "Kazzak", "eu"},
+	[27] = {"Zeptia", "Draenor", "eu"},
+	[28] = {"Args", "Blackrock", "eu"},
+	[29] = {"Kittaren", "Silvermoon", "eu"},
+	[30] = {"Caeladore", "TwistingNether", "eu"},
+	[31] = {"Alizka", "Blackhand", "eu"},
+	[32] = {"Kattenkurrar", "Ravencrest", "eu"},
+	[33] = {"Celestio", "TwistingNether", "eu"},
 }

@@ -48,13 +48,18 @@ miog.createMainFrame = function()
 	local mainFrame = miog.mainFrame ---@class Frame
     pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
 
-	mainFrame:SetSize((LFGListFrame:GetWidth() + 2), (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5))
-	mainFrame.standardHeight = mainFrame:GetHeight()
+	local mainFrameWidth = (LFGListFrame:GetWidth() + 2)
+	local mainFrameHeight = (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
+
+	mainFrame:SetSize(mainFrameWidth, MIOG_SavedSettings.frameManuallyResized.value or mainFrameHeight)
+	mainFrame.standardHeight = mainFrameHeight
 	mainFrame.extendedHeight = mainFrame.standardHeight * 1.5
 	--mainFrame:SetScale(1.5)
+	mainFrame:SetResizable(true)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
-	mainFrame:SetFrameStrata("DIALOG")
+	mainFrame:SetFrameStrata("FULLSCREEN")
 	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
+	mainFrame:SetResizeBounds(mainFrameWidth, mainFrameHeight, mainFrameWidth, 960)
 
 	miog.createFrameBorder(mainFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
@@ -64,10 +69,12 @@ miog.createMainFrame = function()
 
 		end
 	end)
+
 	mainFrame:HookScript("OnHide", function()
 		positionTab1PVEFrame()
 
 	end)
+	
 	_G[mainFrame:GetName()] = mainFrame
 
 	local backdropFrame = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/backgrounds/df-bg-1.png", mainFrame)
@@ -182,7 +189,7 @@ miog.createMainFrame = function()
 
 	classPanel.progressText = inspectProgressText
 
-	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, mainFrame:GetHeight()*0.06)
+	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, mainFrameHeight*0.06)
 	titleBar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 0, 0)
 	titleBar:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", 0, 0)
 	miog.createFrameBorder(titleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -229,7 +236,7 @@ miog.createMainFrame = function()
 	groupMemberListing.FontString = groupMemberListingText
 
 	local infoPanel = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame)
-	infoPanel:SetHeight(mainFrame:GetHeight()*0.19)
+	infoPanel:SetHeight(mainFrameHeight*0.19)
 	infoPanel:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 1)
 	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", -20, 1)
 
@@ -911,7 +918,7 @@ miog.createMainFrame = function()
 	lastInvitesPanelBackground:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT")
 	lastInvitesPanelBackground:SetPoint("BOTTOMRIGHT", lastInvitesPanel, "BOTTOMRIGHT")
 
-	local lastInvitesTitleBar = miog.createBasicFrame("persistent", "BackdropTemplate", lastInvitesPanel, nil, mainFrame:GetHeight()*0.06)
+	local lastInvitesTitleBar = miog.createBasicFrame("persistent", "BackdropTemplate", lastInvitesPanel, nil, mainFrameHeight*0.06)
 	lastInvitesTitleBar:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT", 0, 0)
 	lastInvitesTitleBar:SetPoint("TOPRIGHT", lastInvitesPanel, "TOPRIGHT", 0, 0)
 	miog.createFrameBorder(lastInvitesTitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -952,15 +959,31 @@ miog.createMainFrame = function()
 	lastInvitesScrollFrame.container = lastInvitesContainer
 	lastInvitesScrollFrame:SetScrollChild(lastInvitesContainer)
 
-
-
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
 	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
-	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrame:GetHeight()*0.06)
+	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrameHeight*0.06)
 	miog.createFrameBorder(footerBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	footerBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	mainFrame.footerBar = footerBar
+
+	local resizeMainFrameButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame)
+	resizeMainFrameButton:EnableMouse(true)
+	resizeMainFrameButton:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
+	resizeMainFrameButton:SetSize(16, 16)
+	resizeMainFrameButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	resizeMainFrameButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	resizeMainFrameButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	resizeMainFrameButton:SetScript("OnMouseDown", function(self)
+		self:GetParent():StartSizing("BOTTOMRIGHT")
+
+	end)
+	resizeMainFrameButton:SetScript("OnMouseUp", function(self)
+		local parent = self:GetParent()
+		parent:StopMovingOrSizing("BOTTOMRIGHT")
+		MIOG_SavedSettings.frameManuallyResized.value = parent:GetHeight()
+
+	end)
 
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")
@@ -1015,7 +1038,7 @@ miog.createMainFrame = function()
 	end
 
 	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, itemLevelFrame)
-	applicantNumberFontString:SetPoint("RIGHT", footerBar, "RIGHT", -3, -2)
+	applicantNumberFontString:SetPoint("RIGHT", footerBar, "RIGHT", -3, -1)
 	applicantNumberFontString:SetJustifyH("CENTER")
 	applicantNumberFontString:SetText(0)
 

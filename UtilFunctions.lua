@@ -26,7 +26,7 @@ end
 
 miog.checkLFGState = function()
 	return UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "solo"
-	
+
 end
 
 miog.createFrameBorder = function(frame, thickness, r, g, b, a)
@@ -135,9 +135,9 @@ miog.checkForActiveFilters = function()
 			end
 
 		end
-		
+
 	end
-	
+
 	for _, v in pairs(miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons) do
 		if(not v:GetChecked()) then
 			filtersActive = true
@@ -155,13 +155,17 @@ miog.checkIfCanInvite = function()
 		miog.mainFrame.footerBar.browseGroupsButton:Show()
 		miog.mainFrame.footerBar.delistButton:Show()
 		miog.mainFrame.footerBar.editButton:Show()
-		
+
+		miog.F.CAN_INVITE = true
+
 		return true
 
 	else
 		miog.mainFrame.footerBar.browseGroupsButton:Hide()
 		miog.mainFrame.footerBar.delistButton:Hide()
 		miog.mainFrame.footerBar.editButton:Hide()
+
+		miog.F.CAN_INVITE = false
 
 		return false
 
@@ -186,12 +190,12 @@ miog.createCustomColorForScore = function(score)
 		for k, v in ipairs(miog.COLOR_BREAKPOINTS) do
 			if(score < v.breakpoint) then
 				local percentage = (v.breakpoint - score) / 600
-				
+
 				return CreateColor(v.r + (miog.COLOR_BREAKPOINTS[k - 1].r - v.r) * percentage, v.g + (miog.COLOR_BREAKPOINTS[k - 1].g - v.g) * percentage, v.b + (miog.COLOR_BREAKPOINTS[k - 1].b - v.b) * percentage)
 
 			end
 		end
-		
+
 		return CreateColor(0.9, 0.8, 0.5)
 	else
 		return miog.CLRSCC["red"]
@@ -213,26 +217,23 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 	invitedApplicantBackground:SetAllPoints(true)
 	invitedApplicantBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
-	MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.saveData.fullName] = MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.saveData.fullName] or {
-		saveData = currentApplicant.saveData
-	}
-
-	MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.saveData.fullName].timestamp = MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.saveData.fullName].timestamp or time()
+	MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName] = currentApplicant
+	MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName].timestamp = MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName].timestamp or time()
 
 	local invitedApplicantNameString = miog.createBasicFontString("persistent", 12, invitedApplicant)
-	invitedApplicantNameString:SetText(WrapTextInColorCode(currentApplicant.saveData.name, select(4, GetClassColor(currentApplicant.saveData.class))))
+	invitedApplicantNameString:SetText(WrapTextInColorCode(currentApplicant.name, select(4, GetClassColor(currentApplicant.class))))
 	invitedApplicantNameString:SetPoint("LEFT", invitedApplicant, "LEFT", 3, 0)
 
-	local invitedApplicantSpec = miog.createBasicTexture("persistent", miog.SPECIALIZATIONS[currentApplicant.saveData.specID].icon, invitedApplicant, 15, 15)
+	local invitedApplicantSpec = miog.createBasicTexture("persistent", miog.SPECIALIZATIONS[currentApplicant.specID].icon, invitedApplicant, 15, 15)
 	invitedApplicantSpec:SetPoint("LEFT", invitedApplicant, "LEFT", invitedApplicant:GetWidth()*0.45, 0)
 	invitedApplicantSpec:SetDrawLayer("ARTWORK")
 
-	local invitedApplicantRole = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. currentApplicant.saveData.role .. "Icon.png", invitedApplicant, 16, 16)
+	local invitedApplicantRole = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. currentApplicant.role .. "Icon.png", invitedApplicant, 16, 16)
 	invitedApplicantRole:SetPoint("LEFT", invitedApplicantSpec, "RIGHT", 3, 0)
 	invitedApplicantRole:SetDrawLayer("ARTWORK")
 
 	local invitedApplicantScore = miog.createBasicFontString("persistent", 12, invitedApplicant)
-	invitedApplicantScore:SetText(currentApplicant.saveData.primary)
+	invitedApplicantScore:SetText(currentApplicant.primary)
 	invitedApplicantScore:SetPoint("LEFT", invitedApplicantRole, "RIGHT", 3, 0)
 
 	local deleteButton = miog.createBasicFrame("persistent", "IconButtonTemplate", invitedApplicant, 15, 15)
@@ -248,40 +249,39 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 		miog.persistentTexturePool:Release(invitedApplicantBackground)
 		miog.persistentTexturePool:Release(invitedApplicantRole)
 		miog.persistentTexturePool:Release(invitedApplicantSpec)
-		miog.persistentFramePool:Release(invitedApplicant.preferButton)
+		miog.persistentFramePool:Release(invitedApplicant.favourButton)
 		miog.persistentFramePool:Release(deleteButton)
 		miog.persistentFramePool:Release(invitedApplicant)
 
-		MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.saveData.fullName] = nil
+		MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName] = nil
 
 		miog.mainFrame.lastInvitesPanel.scrollFrame.container:MarkDirty()
 	end)
-	
-	local preferButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", invitedApplicant, 15, 15), TripleStateButtonMixin)
-	preferButton:OnLoad()
-	preferButton:SetSingleTextureForSpecificState(0, miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", 15)
-	preferButton:SetSingleTextureForSpecificState(1, miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png", 12)
-	--preferButton:SetSingleTextureForSpecificState(1, miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png", 12)
-	preferButton:SetMaxStates(2)
-	preferButton:SetState(MIOG_SavedSettings.preferredApplicants.table[currentApplicant.saveData.fullName] and true or false)
-	preferButton:SetFrameStrata("DIALOG")
-	preferButton:SetPoint("RIGHT", deleteButton, "LEFT", -5, 0)
-	preferButton:RegisterForClicks("LeftButtonDown")
-	preferButton:SetScript("OnClick", function()
-		preferButton:AdvanceState()
 
-		if(preferButton:GetActiveState() == 0) then
-			miog.deletePreferredApplicant(currentApplicant.saveData.fullName)
+	local favourButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", invitedApplicant, 15, 15), TripleStateButtonMixin)
+	favourButton:OnLoad()
+	favourButton:SetSingleTextureForSpecificState(0, miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", 15)
+	favourButton:SetSingleTextureForSpecificState(1, miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png", 12)
+	favourButton:SetMaxStates(2)
+	favourButton:SetState(MIOG_SavedSettings.favouredApplicants.table[currentApplicant.fullName] and true or false)
+	favourButton:SetFrameStrata("DIALOG")
+	favourButton:SetPoint("RIGHT", deleteButton, "LEFT", -5, 0)
+	favourButton:RegisterForClicks("LeftButtonDown")
+	favourButton:SetScript("OnClick", function()
+		favourButton:AdvanceState()
+
+		if(favourButton:GetActiveState() == 0) then
+			miog.deleteFavouredApplicant(currentApplicant.fullName)
 
 		else
-			miog.addPreferredApplicant(currentApplicant.saveData)
-		
+			miog.addFavouredApplicant(currentApplicant)
+
 		end
 
 
 	end)
 
-	invitedApplicant.preferButton = preferButton
+	invitedApplicant.favourButton = favourButton
 
 	--[[
 
@@ -296,85 +296,163 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 
 	]]
 
-	miog.F.LAST_INVITED_APPLICANTS[currentApplicant.saveData.fullName] = invitedApplicant
+	miog.F.LAST_INVITED_APPLICANTS[currentApplicant.fullName] = invitedApplicant
 
 	miog.mainFrame.lastInvitesPanel.scrollFrame.container:MarkDirty()
 end
 
-miog.addPreferredApplicant = function(currentApplicant)
-	miog.F.PREFERRED_APPLICANTS_COUNTER = miog.F.PREFERRED_APPLICANTS_COUNTER + 1
+miog.addFavouredApplicant = function(currentApplicant)
+	miog.F.FAVOURED_APPLICANTS_COUNTER = miog.F.FAVOURED_APPLICANTS_COUNTER + 1
 
-	local preferredApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.mainFrame.optionPanel.container.preferredApplicantsPanel.scrollFrame.container, miog.mainFrame.optionPanel.container.preferredApplicantsPanel:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
-	preferredApplicant.layoutIndex = miog.F.PREFERRED_APPLICANTS_COUNTER
+	local favouredApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.mainFrame.optionPanel.container.favouredApplicantsPanel.scrollFrame.container, miog.mainFrame.optionPanel.container.favouredApplicantsPanel:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
+	favouredApplicant.layoutIndex = miog.F.FAVOURED_APPLICANTS_COUNTER
 
-	miog.createFrameBorder(preferredApplicant, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
+	miog.createFrameBorder(favouredApplicant, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
 
-	local preferredApplicantBackground = miog.createBasicTexture("persistent", nil, preferredApplicant, preferredApplicant:GetSize())
-	preferredApplicantBackground:SetDrawLayer("BACKGROUND")
-	preferredApplicantBackground:SetAllPoints(true)
-	preferredApplicantBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-	preferredApplicant.background = preferredApplicantBackground
+	local FavouredApplicantBackground = miog.createBasicTexture("persistent", nil, favouredApplicant, favouredApplicant:GetSize())
+	FavouredApplicantBackground:SetDrawLayer("BACKGROUND")
+	FavouredApplicantBackground:SetAllPoints(true)
+	FavouredApplicantBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+	favouredApplicant.background = FavouredApplicantBackground
 
-	local preferredApplicantNameString = miog.createBasicFontString("persistent", 12, preferredApplicant)
-	preferredApplicantNameString:SetText(WrapTextInColorCode(currentApplicant.name, select(4, GetClassColor(currentApplicant.class))))
-	preferredApplicantNameString:SetPoint("LEFT", preferredApplicant, "LEFT", 3, 0)
-	preferredApplicant.nameString = preferredApplicantNameString
+	local FavouredApplicantNameString = miog.createBasicFontString("persistent", 12, favouredApplicant)
+	FavouredApplicantNameString:SetText(currentApplicant.class and WrapTextInColorCode(currentApplicant.name, select(4, GetClassColor(currentApplicant.class))) or currentApplicant.name)
+	FavouredApplicantNameString:SetPoint("LEFT", favouredApplicant, "LEFT", 3, 0)
+	favouredApplicant.nameString = FavouredApplicantNameString
 
-	local preferredApplicantSpec = miog.createBasicTexture("persistent", miog.SPECIALIZATIONS[currentApplicant.specID].icon, preferredApplicant, 15, 15)
-	preferredApplicantSpec:SetPoint("LEFT", preferredApplicant, "LEFT", preferredApplicant:GetWidth()*0.45, 0)
-	preferredApplicantSpec:SetDrawLayer("ARTWORK")
-	preferredApplicant.specTexture = preferredApplicantSpec
+	local FavouredApplicantSpec, FavouredApplicantRole, FavouredApplicantScore
 
-	local preferredApplicantRole = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. currentApplicant.role .. "Icon.png", preferredApplicant, 16, 16)
-	preferredApplicantRole:SetPoint("LEFT", preferredApplicantSpec, "RIGHT", 3, 0)
-	preferredApplicantRole:SetDrawLayer("ARTWORK")
-	preferredApplicant.roleTexture = preferredApplicantRole
+	FavouredApplicantSpec = miog.createBasicTexture("persistent", nil , favouredApplicant, 15, 15)
+	FavouredApplicantSpec:SetPoint("LEFT", favouredApplicant, "LEFT", favouredApplicant:GetWidth()*0.50, 0)
+	FavouredApplicantSpec:SetDrawLayer("ARTWORK")
+	favouredApplicant.specTexture = FavouredApplicantSpec
 
-	local preferredApplicantScore = miog.createBasicFontString("persistent", 12, preferredApplicant)
-	preferredApplicantScore:SetText(currentApplicant.primary)
-	preferredApplicantScore:SetPoint("LEFT", preferredApplicantRole, "RIGHT", 3, 0)
-	preferredApplicant.scoreString = preferredApplicantScore
+	if(currentApplicant.specID) then
+		FavouredApplicantSpec:SetTexture(miog.SPECIALIZATIONS[currentApplicant.specID].icon)
 
-	local deleteButton = miog.createBasicFrame("persistent", "IconButtonTemplate", preferredApplicant, 15, 15)
+	end
+
+	FavouredApplicantRole = miog.createBasicTexture("persistent", nil, favouredApplicant, 16, 16)
+	FavouredApplicantRole:SetPoint("LEFT", FavouredApplicantSpec, "RIGHT", 3, 0)
+	FavouredApplicantRole:SetDrawLayer("ARTWORK")
+	favouredApplicant.roleTexture = FavouredApplicantRole
+
+	if(currentApplicant.role) then
+		FavouredApplicantRole:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. currentApplicant.role .. "Icon.png")
+
+	end
+
+	FavouredApplicantScore = miog.createBasicFontString("persistent", 12, favouredApplicant)
+	FavouredApplicantScore:SetPoint("LEFT", FavouredApplicantRole, "RIGHT", 3, 0)
+	favouredApplicant.scoreString = FavouredApplicantScore
+
+	if(currentApplicant.primary) then
+		FavouredApplicantScore:SetText(currentApplicant.primary)
+
+	end
+
+	local deleteButton = miog.createBasicFrame("persistent", "IconButtonTemplate", favouredApplicant, 15, 15)
 	deleteButton:SetFrameStrata("DIALOG")
-	deleteButton:SetPoint("RIGHT", preferredApplicant, "RIGHT", -3, 0)
+	deleteButton:SetPoint("RIGHT", favouredApplicant, "RIGHT", -3, 0)
 	deleteButton:RegisterForClicks("LeftButtonDown")
 	deleteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
 	deleteButton.iconSize = 12
 	deleteButton:OnLoad()
 	deleteButton:SetScript("OnClick", function()
-		miog.deletePreferredApplicant(currentApplicant.fullName)
+		miog.deleteFavouredApplicant(currentApplicant.fullName)
 
 	end)
-	preferredApplicant.deleteButton = deleteButton
+	favouredApplicant.deleteButton = deleteButton
 
-	miog.F.PREFERRED_APPLICANTS[currentApplicant.fullName] = preferredApplicant
+	miog.F.FAVOURED_APPLICANTS[currentApplicant.fullName] = favouredApplicant
 
-	miog.mainFrame.optionPanel.container.preferredApplicantsPanel.scrollFrame.container:MarkDirty()
+	miog.mainFrame.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
 
-	MIOG_SavedSettings.preferredApplicants.table[currentApplicant.fullName] = currentApplicant
+	MIOG_SavedSettings.favouredApplicants.table[currentApplicant.fullName] = currentApplicant
 end
 
-miog.deletePreferredApplicant = function(name)
-	local preferredApplicant = miog.F.PREFERRED_APPLICANTS[name]
-	miog.persistentFontStringPool:Release(preferredApplicant.nameString)
-	miog.persistentFontStringPool:Release(preferredApplicant.scoreString)
-	miog.persistentTexturePool:Release(preferredApplicant.background)
-	miog.persistentTexturePool:Release(preferredApplicant.roleTexture)
-	miog.persistentTexturePool:Release(preferredApplicant.specTexture)
-	miog.persistentFramePool:Release(preferredApplicant.deleteButton)
-	miog.persistentFramePool:Release(preferredApplicant)
+miog.deleteFavouredApplicant = function(name)
+	local favouredApplicant = miog.F.FAVOURED_APPLICANTS[name]
+	miog.persistentFontStringPool:Release(favouredApplicant.nameString)
+	miog.persistentFontStringPool:Release(favouredApplicant.scoreString)
+	miog.persistentTexturePool:Release(favouredApplicant.background)
+	miog.persistentTexturePool:Release(favouredApplicant.roleTexture)
+	miog.persistentTexturePool:Release(favouredApplicant.specTexture)
+	miog.persistentFramePool:Release(favouredApplicant.deleteButton)
+	miog.persistentFramePool:Release(favouredApplicant)
 
-	miog.mainFrame.optionPanel.container.preferredApplicantsPanel.scrollFrame.container:MarkDirty()
+	miog.mainFrame.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
 
-	MIOG_SavedSettings.preferredApplicants.table[name] = nil
+	MIOG_SavedSettings.favouredApplicants.table[name] = nil
+
+	miog.F.FAVOURED_APPLICANTS[name] = nil
 
 	if(miog.F.LAST_INVITED_APPLICANTS[name]) then
-		miog.F.LAST_INVITED_APPLICANTS[name].preferButton:SetState(false)
+		miog.F.LAST_INVITED_APPLICANTS[name].favourButton:SetState(false)
 
 	end
 
 end
+
+miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
+	if(UIDROPDOWNMENU_MENU_LEVEL == 1) then
+		local unit = nil
+
+		if(miog.C.ELVUI_INSTALLED or miog.C.SUF_INSTALLED) then
+			unit = dropdownMenu.unit
+
+		else
+			unit = dropdownMenu:GetParent().unit
+
+		end
+
+		if(UnitIsPlayer(unit) and dropdownMenu.which ~= "SELF") then
+			local name = dropdownMenu.name
+			local server = dropdownMenu.server or GetRealmName()
+			local fullName = name .. "-" .. server
+
+			UIDropDownMenu_AddSeparator()
+
+			local info = UIDropDownMenu_CreateInfo()
+			info.notCheckable = true
+			info.func = function(self, arg1, arg2, checked)
+				if(type(arg1) == "table") then
+					miog.addFavouredApplicant(arg1)
+
+				else
+					miog.deleteFavouredApplicant(arg1)
+
+				end
+
+			end
+
+			if(miog.F.FAVOURED_APPLICANTS[fullName]) then
+				info.text = "[MIOG] Unfavour"
+				info.arg1 = fullName
+
+			else
+				local profile = miog.F.IS_RAIDERIO_LOADED and RaiderIO.GetProfile(name, server, miog.F.CURRENT_REGION)
+
+				local applicantData = {
+					name = name,
+					--class = class,
+					--spec = spec,
+					--role = role,
+					primary = profile and profile.mythicKeystoneProfile and profile.mythicKeystoneProfile.currentScore and profile.mythicKeystoneProfile.currentScore > 0 and profile.mythicKeystoneProfile.currentScore or "No score",
+					fullName = fullName,
+				}
+
+				info.text = "[MIOG] Favour"
+				info.arg1 = applicantData
+
+			end
+
+			UIDropDownMenu_AddButton(info, 1)
+		end
+
+	end
+end
+
 
 miog.dummyFunction = function()
 	-- empty function for overwriting useless Blizzard functions
