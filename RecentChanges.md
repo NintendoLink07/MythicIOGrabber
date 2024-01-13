@@ -1,7 +1,5 @@
-## [1.6.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.1) - 2024-01-13
+## [1.6.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.2) - 2024-01-14
 
 ### Fixed
 
-- Some errors were popping up if this was the first time you installed the addon.
-
-- Favoured applicants panel and background options weren't showing up in the interface options.
+- Manual frame resizes should now be correctly applied when pressing the expand button.

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.6.2] - 2024-01-14
+
+### Fixed
+
+- Manual frame resizes should now be correctly applied when pressing the expand button.
+
+
+
 ## [1.6.1] - 2024-01-13
 
 ### Fixed
@@ -752,7 +760,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.6.1...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.6.2...HEAD
+[1.6.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.2
 [1.6.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.1
 [1.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6
 [1.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5.2

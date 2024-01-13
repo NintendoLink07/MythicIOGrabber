@@ -205,10 +205,12 @@ miog.createMainFrame = function()
 			GameTooltip:SetOwner(titleStringFrame, "ANCHOR_CURSOR")
 			GameTooltip:SetText(titleStringFrame.FontString:GetText())
 			GameTooltip:Show()
+			
 		end
 	end)
 	titleStringFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
+
 	end)
 	titleStringFrame.FontString:AdjustPointsOffset(miog.C.STANDARD_PADDING, -1)
 	titleStringFrame.FontString:SetText("")
@@ -1062,6 +1064,7 @@ miog.createMainFrame = function()
 
 		if(MIOG_SavedSettings.frameManuallyResized.value > mainFrame.standardHeight) then
 			MIOG_SavedSettings.frameExtended.value = true
+			mainFrame.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
 
 		end
 
