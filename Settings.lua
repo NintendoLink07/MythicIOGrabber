@@ -110,13 +110,13 @@ miog.loadSettings = function()
 		},
 		keepSignUpNote = {
 			type = "checkbox",
-			title = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up note",
+			title = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up not.|cFFFF0000 REQUIRES A RELOAD |r",
 			value = true,
 			index = 6,
 		},
 		keepInfoFromGroupCreation = {
 			type = "checkbox",
-			title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields",
+			title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields.|cFFFF0000 REQUIRES A RELOAD |r",
 			value = true,
 			index = 7,
 		},
@@ -133,19 +133,6 @@ miog.loadSettings = function()
 		backgroundOptions = {
 			type = "dropdown",
 			title = "Background options",
-			table = {
-				[1] = {"Standard", "lfg-background_tall_1024.png"},
-				[2] = {"Vanilla", "vanilla-bg-1.png"},
-				[3] = {"The Burning Crusade", "tbc-bg-1.png"},
-				[4] = {"Wrath of the Lich King", "wotlk-bg-1.png"},
-				[5] = {"Cataclysm", "cata-bg-1.png"},
-				[6] = {"Mists of Pandaria", "mop-bg-1.png"},
-				[7] = {"Warlords of Draenor", "wod-bg-1.png"},
-				[8] = {"Legion", "legion-bg-1.png"},
-				[9] = {"Battle for Azeroth", "bfa-bg-1.png"},
-				[10] = {"Shadowlands", "sl-bg-1.png"},
-				[11] = {"Dragonflight", "df-bg-1.png"},
-			},
 			value = 11,
 			index = 1
 		},
@@ -207,7 +194,7 @@ miog.loadSettings = function()
 
 	local lastOption = nil
 
-	for _, setting in pairs(MIOG_SavedSettings) do
+	for key, setting in pairs(MIOG_SavedSettings) do
 		for settingTypes in string.gmatch(setting.type, '([^,]+)') do
 			if(settingTypes == "checkbox") then
 				local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
@@ -219,7 +206,7 @@ miog.loadSettings = function()
 				optionButton:RegisterForClicks("LeftButtonDown")
 				optionButton:SetChecked(setting.value)
 
-				if(setting.key == "keepSignUpNote") then
+				if(key == "keepSignUpNote") then
 
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
@@ -231,8 +218,10 @@ miog.loadSettings = function()
 							LFGListApplicationDialog_Show = clearSignUpNote
 
 						end
+
+						C_UI.Reload()
 					end)
-				elseif(setting.key == "keepInfoFromGroupCreation") then
+				elseif(key == "keepInfoFromGroupCreation") then
 
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
@@ -245,8 +234,10 @@ miog.loadSettings = function()
 							
 
 						end
+
+						C_UI.Reload()
 					end)
-				elseif(setting.key == "disableBackgroundImages") then
+				elseif(key == "disableBackgroundImages") then
 
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
@@ -261,7 +252,7 @@ miog.loadSettings = function()
 						
 						end
 					end)
-				elseif(setting.key == "enableClassPanel") then
+				elseif(key == "enableClassPanel") then
 
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
@@ -272,7 +263,7 @@ miog.loadSettings = function()
 
 					miog.mainFrame.classPanel:SetShown(setting.value)
 
-				elseif(setting.key == "favouredApplicants") then
+				elseif(key == "favouredApplicants") then
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
 
@@ -292,7 +283,7 @@ miog.loadSettings = function()
 				lastOption = optionButton
 
 			elseif(settingTypes == "dropdown") then
-				if(setting.key == "backgroundOptions") then
+				if(key == "backgroundOptions") then
 					local backgroundOptionString = miog.createBasicFontString("persistent", 12, optionPanelContainer)
 					backgroundOptionString:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
 					backgroundOptionString:SetText(setting.title)
@@ -303,19 +294,19 @@ miog.loadSettings = function()
 					optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
 					UIDropDownMenu_SetWidth(optionDropdown, 200)
 
-					UIDropDownMenu_SetText(optionDropdown, setting.table[setting.value][1])
+					UIDropDownMenu_SetText(optionDropdown, miog.MAINFRAME_BACKGROUNDS[setting.value][1])
 					UIDropDownMenu_Initialize(optionDropdown,
 						function(frame, level, menuList)
 							local info = UIDropDownMenu_CreateInfo()
 							info.func = function(_, arg1, _, _)
 								setting.value = arg1
-								miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. setting.table[arg1][2])
-								UIDropDownMenu_SetText(optionDropdown, setting.table[arg1][1])
+								miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.MAINFRAME_BACKGROUNDS[setting.value][2])
+								UIDropDownMenu_SetText(optionDropdown, miog.MAINFRAME_BACKGROUNDS[setting.value][1])
 								CloseDropDownMenus()
 			
 							end
 
-							for k, v in ipairs(setting.table) do
+							for k, v in ipairs(miog.MAINFRAME_BACKGROUNDS) do
 								if(v[1]) then
 									info.text, info.arg1 = v[1], k
 									info.checked = k == setting.value
@@ -326,19 +317,13 @@ miog.loadSettings = function()
 						end
 					)
 					
-					miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. setting.table[setting.value][2])
+					miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.MAINFRAME_BACKGROUNDS[setting.value][2])
 
 					lastOption = optionDropdown
 				end
 			elseif(settingTypes == "list") then
-				if(setting.key == "favouredApplicants" and setting.value == true) then
+				if(key == "favouredApplicants" and setting.value == true) then
 					hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
-
-					--[[local favouredApplicants = miog.createBasicFontString("persistent", 12, optionPanelContainer)
-					favouredApplicants:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-					favouredApplicants:SetText(setting.title)
-					favouredApplicants:SetWordWrap(true)
-					favouredApplicants:SetNonSpaceWrap(true)]]
 
 					local favouredApplicantsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanelContainer, 250, 140)
 					favouredApplicantsPanel:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)

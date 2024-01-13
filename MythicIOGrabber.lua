@@ -1717,7 +1717,7 @@ local function insertLFGInfo()
 		miog.mainFrame.infoPanel.affixFrame:Hide()
 	end
 
-	miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.BACKGROUNDS[activityInfo.categoryID]
+	miog.mainFrame.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID]
 	miog.mainFrame.infoPanelBackdropFrame:ApplyBackdrop()
 
 	miog.mainFrame.titleBar.titleStringFrame.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.name)

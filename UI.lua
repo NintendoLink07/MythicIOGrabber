@@ -53,7 +53,7 @@ miog.createMainFrame = function()
 
 	mainFrame:SetSize(mainFrameWidth, mainFrameHeight)
 	mainFrame.standardHeight = mainFrameHeight
-	mainFrame.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value or mainFrame.standardHeight * 1.5
+	mainFrame.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value or mainFrame.standardHeight * 1.5
 	--mainFrame:SetScale(1.5)
 	mainFrame:SetResizable(true)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
@@ -261,7 +261,7 @@ miog.createMainFrame = function()
 	infoPanelBackdropFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT")
 	infoPanelBackdropFrame:SetPoint("BOTTOMRIGHT", infoPanel, "BOTTOMRIGHT")
 	infoPanelBackdropFrame.backdropInfo = {
-		bgFile=miog.BACKGROUNDS[10],
+		bgFile=miog.ACTIVITY_BACKGROUNDS[10],
 		tileSize=miog.C.APPLICANT_MEMBER_HEIGHT,
 		tile=false,
 		edgeSize=2,

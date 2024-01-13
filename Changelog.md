@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.6.1] - 2024-01-13
+
+### Fixed
+
+- Some errors were popping up if this was the first time you installed the addon.
+
+- Favoured applicants panel and background options weren't showing up in the interface options.
+
+
+
 ## [1.6] - 2024-01-12
 
 ### Added
@@ -742,7 +752,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.6...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.6.1...HEAD
+[1.6.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.1
 [1.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6
 [1.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5.2
 [1.5.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.5.1

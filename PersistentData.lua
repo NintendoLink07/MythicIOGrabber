@@ -487,7 +487,7 @@ miog.PLAYSTYLE_STRINGS = {
 	pvp3 = "Increase Rating"
 }
 
-miog.BACKGROUNDS = {
+miog.ACTIVITY_BACKGROUNDS = {
 	[1] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool3_1024.png", --QUESTING
 	[2] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/oldSchoolCool1_1024.png", --DUNGEONS
 	[3] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/2ndGOAT_1024.png", --RAID
@@ -500,6 +500,20 @@ miog.BACKGROUNDS = {
 	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
 	[111] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
+}
+
+miog.MAINFRAME_BACKGROUNDS = {
+	[1] = {"Standard", "lfg-background_tall_1024.png"},
+	[2] = {"Vanilla", "vanilla-bg-1.png"},
+	[3] = {"The Burning Crusade", "tbc-bg-1.png"},
+	[4] = {"Wrath of the Lich King", "wotlk-bg-1.png"},
+	[5] = {"Cataclysm", "cata-bg-1.png"},
+	[6] = {"Mists of Pandaria", "mop-bg-1.png"},
+	[7] = {"Warlords of Draenor", "wod-bg-1.png"},
+	[8] = {"Legion", "legion-bg-1.png"},
+	[9] = {"Battle for Azeroth", "bfa-bg-1.png"},
+	[10] = {"Shadowlands", "sl-bg-1.png"},
+	[11] = {"Dragonflight", "df-bg-1.png"},
 }
 
 miog.GROUP_ACTIVITY_BACKGROUNDS = {
