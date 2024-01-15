@@ -1284,7 +1284,7 @@ local function createFullEntries(iterations)
 			applicationStatus = "applied",
 			numMembers = random(1, 1),
 			isNew = true,
-			comment = "Heiho, heiho, wir sind froh. Johei, johei, die Arbeit ist vorbei.",
+			comment = "Tettles is question mark spam pinging me, please help.",
 			displayOrderID = 1,
 		}
 
@@ -1322,7 +1322,7 @@ local function createFullEntries(iterations)
 			end
 
 			local randomRace = random(1, 5)
-			local itemLevel = random(400, 489) + 0.5
+			local itemLevel = random(440, 489) + 0.5
 
 			miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID][memberIndex] = {
 				[1] = debugProfile[1] .. "-" .. debugProfile[2],
