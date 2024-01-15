@@ -7,29 +7,32 @@ local addonName, miog = ...
     Way easier than implementing it manually all the time 
 ]]
 
-TripleStateButtonMixin = {}
+MultiStateButtonMixin = {}
 
-function TripleStateButtonMixin:OnLoad()
+function MultiStateButtonMixin:OnLoad(numberOfStates)
     self.stateList = {
         [0] = {name = "", key = "off", value = true, singleTexture = false},
-        [1] = {name = "", key = "state1", value = false, singleTexture = false},
-        [2] = {name = "", key = "state2", value = false, singleTexture = false},
     }
+
+    for i = 1, numberOfStates and numberOfStates - 1 or 2, 1 do
+        self.stateList[i] = {name = "", key = "state" .. i, value = false, singleTexture = false}
+
+    end
 
     self.currentState = 0
 
-    self.maxStates = 3
+    self.maxStates = numberOfStates or 3
 end
 
-function TripleStateButtonMixin:SetMaxStates(number)
+function MultiStateButtonMixin:SetMaxStates(number)
     self.maxStates = number
 end
 
-function TripleStateButtonMixin:GetStateList()
+function MultiStateButtonMixin:GetStateList()
     return self.stateList
 end
 
-function TripleStateButtonMixin:SetAllTextures(state)
+function MultiStateButtonMixin:SetAllTextures(state)
     if(self.stateList[state].singleTexture == true) then
         self:SetNormalTexture(self.stateList[state].textures.normal or "")
         self:SetPushedTexture(self.stateList[state].textures.pushed or "")
@@ -62,26 +65,26 @@ function TripleStateButtonMixin:SetAllTextures(state)
     
 end
 
-function TripleStateButtonMixin:GetActiveStateAndValue()
+function MultiStateButtonMixin:GetActiveStateAndValue()
     return self.currentState, self.stateList[self.currentState].value
 end
 
-function TripleStateButtonMixin:GetActiveState()
+function MultiStateButtonMixin:GetActiveState()
     return self.currentState
 
 end
 
-function TripleStateButtonMixin:GetActiveStateValue()
+function MultiStateButtonMixin:GetActiveStateValue()
     return self.stateList[self.currentState].value
 
 end
 
-function TripleStateButtonMixin:GetStateValue(state)
+function MultiStateButtonMixin:GetStateValue(state)
     return self.stateList[state].value
 
 end
 
-function TripleStateButtonMixin:SetState(value, state)
+function MultiStateButtonMixin:SetState(value, state)
     if(state) then
         if(state == 0) then
             self.stateList[0].value = value
@@ -122,15 +125,15 @@ function TripleStateButtonMixin:SetState(value, state)
     end
 end
 
-function TripleStateButtonMixin:SetStateName(state, name)
+function MultiStateButtonMixin:SetStateName(state, name)
     self.stateList[state].name = name
 end
 
-function TripleStateButtonMixin:GetStateName(state)
+function MultiStateButtonMixin:GetStateName(state)
     return self.stateList[state].name
 end
 
-function TripleStateButtonMixin:AdvanceState()
+function MultiStateButtonMixin:AdvanceState()
     self.currentState = self.currentState < (#self.stateList and (self.maxStates - 1)) and self.currentState + 1 or 0
 
     if(self.currentState == 0) then
@@ -158,7 +161,7 @@ function TripleStateButtonMixin:AdvanceState()
 
 end
 
-function TripleStateButtonMixin:SetTexturesForSpecificState(state, normal, pushed, highlight, disabled, checked, disabledChecked)
+function MultiStateButtonMixin:SetTexturesForSpecificState(state, normal, pushed, highlight, disabled, checked, disabledChecked)
     self.stateList[state].textures = {
         normal = normal,
         pushed = pushed,
@@ -170,7 +173,7 @@ function TripleStateButtonMixin:SetTexturesForSpecificState(state, normal, pushe
 
 end
 
-function TripleStateButtonMixin:SetTexturesForBaseState(normal, pushed, highlight, disabled, checked, disabledChecked)
+function MultiStateButtonMixin:SetTexturesForBaseState(normal, pushed, highlight, disabled, checked, disabledChecked)
     self.stateList[0].textures = {
         normal = normal,
         pushed = pushed,
@@ -182,7 +185,7 @@ function TripleStateButtonMixin:SetTexturesForBaseState(normal, pushed, highligh
 
 end
 
-function TripleStateButtonMixin:SetTexturesForState1(normal, pushed, highlight, disabled, checked, disabledChecked)
+function MultiStateButtonMixin:SetTexturesForState1(normal, pushed, highlight, disabled, checked, disabledChecked)
     self.stateList[1].textures = {
         normal = normal,
         pushed = pushed,
@@ -194,7 +197,7 @@ function TripleStateButtonMixin:SetTexturesForState1(normal, pushed, highlight, 
 
 end
 
-function TripleStateButtonMixin:SetTexturesForState2(normal, pushed, highlight, disabled, checked, disabledChecked)
+function MultiStateButtonMixin:SetTexturesForState2(normal, pushed, highlight, disabled, checked, disabledChecked)
     self.stateList[2].textures = {
         normal = normal,
         pushed = pushed,
@@ -206,7 +209,7 @@ function TripleStateButtonMixin:SetTexturesForState2(normal, pushed, highlight, 
 
 end
 
-function TripleStateButtonMixin:SetSingleTextureForSpecificState(state, texture, size)
+function MultiStateButtonMixin:SetSingleTextureForSpecificState(state, texture, size)
     self.stateList[state].singleTexture = true
     self.stateList[state].textures = {
         normal = texture,

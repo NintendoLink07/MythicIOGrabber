@@ -5,29 +5,102 @@ MIOG_SavedSettings = MIOG_SavedSettings
 local clearSignUpNote = LFGListApplicationDialog_Show
 local clearEntryCreation = LFGListEntryCreation_Clear
 
-local function compareSettings(defaultOptions, savedSettings)
-	for key, optionEntry in pairs(defaultOptions) do
-		if(not savedSettings[key]) then
-			savedSettings[key] = {}
+
+
+local defaultOptionSettings = {
+	disableBackgroundImages = {
+		type = "checkbox",
+		title = "Hide the background image and some background colors (mainly for ElvUI users)",
+		value = false,
+		index = 3,
+	},
+	frameExtended = {
+		type = "variable",
+		title = "Extend the mainframe",
+		value = false,
+	},
+	frameManuallyResized = {
+		type = "variable",
+		title = "Resized the mainframe via resize button",
+		value = 0,
+	},
+	keepSignUpNote = {
+		type = "checkbox",
+		title = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up not.|cFFFF0000 REQUIRES A RELOAD |r",
+		value = true,
+		index = 6,
+	},
+	keepInfoFromGroupCreation = {
+		type = "checkbox",
+		title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields.|cFFFF0000 REQUIRES A RELOAD |r",
+		value = true,
+		index = 7,
+	},
+	enableClassPanel = {
+		type = "checkbox",
+		title = "Enable the class panel for your group (shows class and spec data for your whole group after all inspects went through)",
+		value = true,
+		index = 2,
+	},
+	lastActiveSortingMethods = {
+		type = "variable",
+		title = "Last active sorting methods",
+	},
+	backgroundOptions = {
+		type = "dropdown",
+		title = "Background options",
+		value = 11,
+		index = 1
+	},
+	-- Name + Realm, time of last invite
+	lastInvitedApplicants = {
+		type = "variable",
+		title = "Last invited applicants",
+		table = {}
+	},
+	-- Name + Realm
+	favouredApplicants = {
+		type = "checkbox,list",
+		title = "Enable favoured applicants (this also shows/hides the right click dropdown option).|cFFFF0000 REQUIRES A RELOAD |r",
+		table = {},
+		value = true,
+		index = 5,
+	}
+}
+
+local function compareSettings()
+	for key, optionEntry in pairs(defaultOptionSettings) do
+		if(not MIOG_SavedSettings[key]) then
+			MIOG_SavedSettings[key] = {}
 			for k,v in pairs(optionEntry) do
-				savedSettings[key][k] = v
+				MIOG_SavedSettings[key][k] = v
+
 			end
 		else
-			if(savedSettings[key].title ~= optionEntry.title) then
-				savedSettings[key].title = optionEntry.title
+			if(MIOG_SavedSettings[key].title ~= optionEntry.title) then
+				MIOG_SavedSettings[key].title = optionEntry.title
 
-			elseif(savedSettings[key].type ~= optionEntry.type) then
-				savedSettings[key].type = optionEntry.type
+			elseif(MIOG_SavedSettings[key].type ~= optionEntry.type) then
+				MIOG_SavedSettings[key].type = optionEntry.type
 
-			elseif(savedSettings[key].index ~= optionEntry.index) then
-				savedSettings[key].index = optionEntry.index
+			elseif(MIOG_SavedSettings[key].index ~= optionEntry.index) then
+				MIOG_SavedSettings[key].index = optionEntry.index
 
 			else
-				if(savedSettings[key].type == "dropdown") then
-					savedSettings[key].table = optionEntry.table
+				if(MIOG_SavedSettings[key].type == "dropdown") then
+					MIOG_SavedSettings[key].table = optionEntry.table
 
 				end
 			end
+		end
+	end
+end
+
+local function deleteOldSettings()
+	for key in pairs(MIOG_SavedSettings) do
+		if(not defaultOptionSettings[key]) then
+			MIOG_SavedSettings[key] = nil
+
 		end
 	end
 end
@@ -91,72 +164,13 @@ local function keepSignUpNote(self, resultID)
 end
 
 miog.loadSettings = function()
-    miog.defaultOptionSettings = {
-		disableBackgroundImages = {
-			type = "checkbox",
-			title = "Hide the background image and some background colors (mainly for ElvUI users)",
-			value = false,
-			index = 3,
-		},
-		frameExtended = {
-			type = "variable",
-			title = "Extend the mainframe",
-			value = false,
-		},
-		frameManuallyResized = {
-			type = "variable",
-			title = "Resized the mainframe via resize button",
-			value = 0,
-		},
-		keepSignUpNote = {
-			type = "checkbox",
-			title = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up not.|cFFFF0000 REQUIRES A RELOAD |r",
-			value = true,
-			index = 6,
-		},
-		keepInfoFromGroupCreation = {
-			type = "checkbox",
-			title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields.|cFFFF0000 REQUIRES A RELOAD |r",
-			value = true,
-			index = 7,
-		},
-		enableClassPanel = {
-			type = "checkbox",
-			title = "Enable the class panel for your group (shows class and spec data for your whole group after all inspects went through)",
-			value = true,
-			index = 2,
-		},
-		lastActiveSortingMethods = {
-			type = "variable",
-			title = "Last active sorting methods",
-		},
-		backgroundOptions = {
-			type = "dropdown",
-			title = "Background options",
-			value = 11,
-			index = 1
-		},
-		-- Name + Realm, time of last invite
-		lastInvitedApplicants = {
-			type = "variable",
-			title = "Last invited applicants",
-			table = {}
-		},
-		-- Name + Realm
-		favouredApplicants = {
-			type = "checkbox,list",
-			title = "Enable favoured applicants (this also shows/hides the right click dropdown option).|cFFFF0000 REQUIRES A RELOAD |r",
-			table = {},
-			value = true,
-			index = 5,
-		}
-	}
 
 	if(not MIOG_SavedSettings) then
-		MIOG_SavedSettings = miog.defaultOptionSettings
+		MIOG_SavedSettings = defaultOptionSettings
 
 	else
-		compareSettings(miog.defaultOptionSettings, MIOG_SavedSettings)
+		compareSettings()
+		deleteOldSettings()
 
 	end
 	
@@ -167,21 +181,12 @@ miog.loadSettings = function()
 		visual = date("%d/%m/%y %H:%M:%S")
 	}
 
-	local interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
-	interfaceOptionsPanel.name = "Mythic IO Grabber"
-
-	local category, layout = Settings.RegisterCanvasLayoutCategory(interfaceOptionsPanel, interfaceOptionsPanel.name)
-	category.ID = interfaceOptionsPanel.name
-	Settings.RegisterAddOnCategory(category)
-
-	miog.interfaceOptionsPanel = interfaceOptionsPanel
-
-	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "FontString", 20)
-	titleFrame:SetPoint("TOP", interfaceOptionsPanel, "TOP", 0, 0)
+	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", miog.interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "FontString", 20)
+	titleFrame:SetPoint("TOP", miog.interfaceOptionsPanel, "TOP", 0, 0)
 	titleFrame.FontString:SetText("Mythic IO Grabber")
 	titleFrame.FontString:SetJustifyH("CENTER")
 	
-	local optionPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", interfaceOptionsPanel)
+	local optionPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", miog.interfaceOptionsPanel)
 	optionPanel:SetPoint("TOPLEFT", titleFrame, "BOTTOMLEFT", 0, 0)
 	optionPanel:SetSize(SettingsPanel.Container:GetWidth(), SettingsPanel.Container:GetHeight())
 	miog.mainFrame.optionPanel = optionPanel

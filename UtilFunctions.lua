@@ -258,7 +258,7 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 		miog.mainFrame.lastInvitesPanel.scrollFrame.container:MarkDirty()
 	end)
 
-	local favourButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", invitedApplicant, 15, 15), TripleStateButtonMixin)
+	local favourButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", invitedApplicant, 15, 15), MultiStateButtonMixin)
 	favourButton:OnLoad()
 	favourButton:SetSingleTextureForSpecificState(0, miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", 15)
 	favourButton:SetSingleTextureForSpecificState(1, miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png", 12)
