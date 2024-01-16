@@ -3,10 +3,10 @@ manual-changelog:
  markup-type: markdown
 
 ignore:
- - .github
- - .github/ISSUE_TEMPLATE
+- .github
+- .github/ISSUE_TEMPLATE
 
 tools-used:
- - Visual Studio Code with several WoW extensions
- - AI upscalers
- - wago.tools
+- Visual Studio Code with several WoW extensions
+- AI upscalers
+- wago.tools

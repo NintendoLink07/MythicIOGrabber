@@ -103,6 +103,7 @@ miog.C = {
 		[3]	= "eu",
 		[4] = "tw",
 		[5] = "cn",
+		[72] = "eu", --ptr, forcing eu for development
  	},
 
 	STANDARD_PADDING = 4,
@@ -186,7 +187,7 @@ miog.BLANK_BACKGROUND_INFO = {
 	edgeSize = 1
 }
 
-miog.DIFFICULT_NAMES_TO_ID = {
+miog.DIFFICULTY_NAMES_TO_ID = {
 	--category id to further divide
 
 	[1] = { --QUESTING

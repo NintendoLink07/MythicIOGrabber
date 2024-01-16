@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.6.4] - 2024-01-16
+
+### Upcoming
+
+- Application viewer is pretty solid so now I'm gonna go ahead and start dev time for the lfg simulator side.
+Lots of stuff can be improved in regards to the process of applying to groups.
+
+### Changed
+
+- TOC push for 10.2.5
+
+- Added some code to make ptr development easier
+
+- Code cleanup
+
+
 ## [1.6.3] - 2024-01-15
 
 

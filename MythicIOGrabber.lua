@@ -622,7 +622,7 @@ local function createApplicantFrame(applicantID)
 			1-4 Comment
 			5 Score for prev. season
 			6 Score for main current/prev. season
-			7 Applicant alternative roles
+			7 Applicant alternative roles + race
 			8 M+ keys done +5 +10 +15 +20 (+25 not available from Raider.IO addon data)
 			9 Region + Realm
  
@@ -744,19 +744,6 @@ local function createApplicantFrame(applicantID)
 							secondaryAffixScoreFrame:SetText(wticc(secondaryDungeonLevel[rowIndex] .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests[rowIndex]),
 							secondaryDungeonChests[rowIndex] > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests[rowIndex] == 0 and miog.CLRSCC["red"] or "0"))
 							secondaryAffixScoreFrame:SetPoint("LEFT", primaryAffixScoreFrame, "RIGHT")
-
-							--[[if(miog.F.WEEKLY_AFFIX == 9 and rowIndex == mythicKeystoneProfile.tyrannicalMaxDungeonIndex or miog.F.WEEKLY_AFFIX == 10 and rowIndex == mythicKeystoneProfile.fortifiedMaxDungeonIndex) then
-								local bestPrimaryDungeonFrame = miog.createFleetingTexture(applicantFrame.texturePool, miog.C.STANDARD_FILE_PATH .."/shapes/dotted_border.png", mythicPlusPanel, rowWidthThirty, miog.C.APPLICANT_MEMBER_HEIGHT)
-								bestPrimaryDungeonFrame:SetDrawLayer("OVERLAY")
-								bestPrimaryDungeonFrame:SetPoint("TOPLEFT", primaryAffixScoreFrame, "TOPLEFT")
-
-							elseif(miog.F.WEEKLY_AFFIX == 9 and rowIndex == mythicKeystoneProfile.fortifiedMaxDungeonIndex or miog.F.WEEKLY_AFFIX == 10 and rowIndex == mythicKeystoneProfile.tyrannicalMaxDungeonIndex) then
-								local bestSecondaryDungeonFrame = miog.createFleetingTexture(applicantFrame.texturePool, miog.C.STANDARD_FILE_PATH .."/shapes/dotted_border.png", mythicPlusPanel, rowWidthThirty, miog.C.APPLICANT_MEMBER_HEIGHT)
-								bestSecondaryDungeonFrame:SetDrawLayer("OVERLAY")
-								bestSecondaryDungeonFrame:SetPoint("TOPLEFT", secondaryAffixScoreFrame, "TOPLEFT")
-
-							end]]
-
 						end
 					end
 
@@ -872,8 +859,6 @@ local function createApplicantFrame(applicantID)
 
 								for bossIndex = 1, bossCount, 1 do
 									if(bossIndex <= bossCount) then
-										--local bossFrame = miog.createFleetingFrame(applicantFrame.framePool, "BackdropTemplate", raidPanel, rowHeight, rowHeight)
-										--bossFrame:SetPoint("TOPLEFT", columnIndex == 2 and raidPanel.textureRows[raidIndex][rowIndex].bossFrames[columnIndex-1] or raidPanel.textureRows[raidIndex][rowIndex], columnIndex == 2 and "TOPRIGHT" or "TOPLEFT", 2, 0)
 										local bossFrame = miog.createFleetingTexture(applicantFrame.texturePool, miog.RAID_ICONS[sortedProgress.progress.raid.mapId][bossIndex], raidPanel, rowHeight, rowHeight)
 										bossFrame:SetPoint("TOPLEFT", bossIndex == 1 and progressFrame or bossIndex == 2 and raidPanel.textureRows[raidIndex][bossIndex - 1] or raidPanel.textureRows[raidIndex][bossIndex - 2],
 										bossIndex == 2 and "TOPRIGHT" or "BOTTOMLEFT", bossIndex == 1 and 2 or bossIndex == 2 and 5 or 0, bossIndex == 1 and -2 or bossIndex == 2 and 0 or -5)
@@ -1055,7 +1040,6 @@ local function gatherSortData()
 
 			local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
-			--if(applicantData and applicantData.applicationStatus == "applied" and applicantData.displayOrderID > 0) then --IF DATA IS AVAILABLE
 			if(applicantSystem.applicantMember[applicantID] and applicantSystem.applicantMember[applicantID].status ~= "removable") then
 				if(applicantSystem.applicantMember[applicantID].memberData == nil) then -- FIRST TIME THIS APPLICANT APPLIES?
 					applicantSystem.applicantMember[applicantID].memberData = {}
@@ -1693,11 +1677,11 @@ local function insertLFGInfo()
 	miog.mainFrame.buttonPanel.sortByCategoryButtons.secondary:Enable()
 
 	if(activityInfo.categoryID == 2) then --Dungeons
-		miog.F.CURRENT_DUNGEON_DIFFICULTY = miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DUNGEON_DIFFICULTY
+		miog.F.CURRENT_DUNGEON_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DUNGEON_DIFFICULTY
 		miog.mainFrame.infoPanel.affixFrame:Show()
 
 	elseif(activityInfo.categoryID == 3) then --Raids
-		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULT_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
+		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
 		miog.mainFrame.infoPanel.affixFrame:Hide()
 	end
 
@@ -1803,7 +1787,6 @@ miog.OnEvent = function(_, event, ...)
 		C_MythicPlus.RequestCurrentAffixes()
 
 		LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.mainFrame:Show() end)
-		--hooksecurefunc("UnitPopup_ShowMenu", miog.addPreferButtonsToUnitPopup)
 
 		miog.C.ELVUI_INSTALLED = IsAddOnLoaded("ElvUI")
 		miog.C.SUF_INSTALLED = IsAddOnLoaded("ShadowedUnitFrames")
@@ -1942,8 +1925,6 @@ miog.OnEvent = function(_, event, ...)
 
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		local canInvite = miog.checkIfCanInvite()
-
-		--groupSystem.inspectedGUIDs = {}
 
 		for _,v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
