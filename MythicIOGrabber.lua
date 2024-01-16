@@ -1755,12 +1755,14 @@ local function insertLFGInfo()
 	end
 
 	if(miog.F.ACTIVE_ENTRY_INFO.comment ~= "") then
-
 		miog.mainFrame.infoPanel.commentFrame.FontString:SetHeight(2500)
 		miog.mainFrame.infoPanel.commentFrame.FontString:SetText("Description: " .. miog.F.ACTIVE_ENTRY_INFO.comment)
 		miog.mainFrame.infoPanel.commentFrame.FontString:SetHeight(miog.mainFrame.infoPanel.commentFrame.FontString:GetStringHeight())
 		miog.mainFrame.infoPanel.commentFrame:SetHeight(miog.mainFrame.infoPanel.commentFrame.FontString:GetStringHeight())
 
+	else
+		miog.mainFrame.infoPanel.commentFrame.FontString:SetText("")
+	
 	end
 
 	miog.mainFrame.listingSettingPanel:MarkDirty()

@@ -15,11 +15,16 @@ Lots of stuff can be improved in regards to the process of applying to groups.
 
 ### Changed
 
-- TOC push for 10.2.5
+- TOC push for 10.2.5.
 
-- Added some code to make ptr development easier
+- Added some code to make ptr development easier.
 
-- Code cleanup
+- Code cleanup.
+
+### Fixed
+
+- When creating a new group with no description after the old group had a set description it should now clear the description.
+
 
 
 ## [1.6.3] - 2024-01-15
@@ -793,7 +798,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.6.3...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.6.4...HEAD
+[1.6.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.4
 [1.6.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.3
 [1.6.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.2
 [1.6.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.1
