@@ -5,8 +5,6 @@ MIOG_SavedSettings = MIOG_SavedSettings
 local clearSignUpNote = LFGListApplicationDialog_Show
 local clearEntryCreation = LFGListEntryCreation_Clear
 
-
-
 local defaultOptionSettings = {
 	disableBackgroundImages = {
 		type = "checkbox",
@@ -65,6 +63,47 @@ local defaultOptionSettings = {
 		table = {},
 		value = true,
 		index = 5,
+	},
+	searchPanel_FilterOptions = {
+		type = "variable",
+		title = "Filter options for the search panel",
+		table = {
+			classSpec = {
+				class = {},
+				spec = {},
+			},
+			partyFit = false,
+			ressFit = false,
+			lustFit = false,
+			minTanks = 0,
+			maxTanks = 0,
+			minHealers = 0,
+			maxHealers = 0,
+			minDamager = 0,
+			maxDamager = 0,
+		},
+	},
+	sortMethods_SearchPanel = {
+		table = {
+			primary = {
+				currentLayer = 0,
+				currentState = 0,
+				active = false,
+			},
+			secondary = {
+				currentLayer = 0,
+				currentState = 0,
+				active = false,
+			},
+			age = {
+				currentLayer = 0,
+				currentState = 0,
+				active = false,
+			},
+			numberOfActiveMethods = 0,
+		},
+		type = "variable",
+		title = "Last active sorting methods for the search panel",
 	}
 }
 
@@ -72,9 +111,17 @@ local function compareSettings()
 	for key, optionEntry in pairs(defaultOptionSettings) do
 		if(not MIOG_SavedSettings[key]) then
 			MIOG_SavedSettings[key] = {}
+
 			for k,v in pairs(optionEntry) do
 				MIOG_SavedSettings[key][k] = v
 
+			end
+		elseif(MIOG_SavedSettings[key].table) then
+			for tableKey, tableEntry in pairs(optionEntry.table) do
+				if(not MIOG_SavedSettings[key].table[tableKey]) then
+					MIOG_SavedSettings[key].table[tableKey] = tableEntry
+					
+				end
 			end
 		else
 			if(MIOG_SavedSettings[key].title ~= optionEntry.title) then
@@ -98,9 +145,18 @@ end
 
 local function deleteOldSettings()
 	for key in pairs(MIOG_SavedSettings) do
-		if(not defaultOptionSettings[key]) then
+		if(defaultOptionSettings[key] == nil) then
 			MIOG_SavedSettings[key] = nil
 
+		else
+			if(MIOG_SavedSettings[key].table) then
+				for tableKey in pairs(MIOG_SavedSettings[key].table) do
+					if(defaultOptionSettings[key].table[tableKey] == nil) then
+						MIOG_SavedSettings[key].table[tableKey] = nil
+
+					end
+				end
+			end
 		end
 	end
 end
@@ -189,7 +245,7 @@ miog.loadSettings = function()
 	local optionPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", miog.interfaceOptionsPanel)
 	optionPanel:SetPoint("TOPLEFT", titleFrame, "BOTTOMLEFT", 0, 0)
 	optionPanel:SetSize(SettingsPanel.Container:GetWidth(), SettingsPanel.Container:GetHeight())
-	miog.mainFrame.optionPanel = optionPanel
+	miog.applicationViewer.optionPanel = optionPanel
 
 	local optionPanelContainer = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanel)
 	optionPanelContainer:SetSize(optionPanel:GetWidth(), optionPanel:GetHeight() - titleFrame:GetHeight())
@@ -250,10 +306,10 @@ miog.loadSettings = function()
 						miog.mainFrame.backdropFrame:SetShown(not setting.value)
 
 						if(setting.value == false) then
-							miog.mainFrame.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+							miog.applicationViewer.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 						else
-							miog.mainFrame.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
+							miog.applicationViewer.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
 						
 						end
 					end)
@@ -261,12 +317,12 @@ miog.loadSettings = function()
 
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
-						miog.mainFrame.classPanel:SetShown(setting.value)
-						miog.mainFrame.classPanel:MarkDirty()
+						miog.applicationViewer.classPanel:SetShown(setting.value)
+						miog.applicationViewer.classPanel:MarkDirty()
 
 					end)
 
-					miog.mainFrame.classPanel:SetShown(setting.value)
+					miog.applicationViewer.classPanel:SetShown(setting.value)
 
 				elseif(key == "favouredApplicants") then
 					optionButton:SetScript("OnClick", function()
@@ -299,19 +355,19 @@ miog.loadSettings = function()
 					optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
 					UIDropDownMenu_SetWidth(optionDropdown, 200)
 
-					UIDropDownMenu_SetText(optionDropdown, miog.MAINFRAME_BACKGROUNDS[setting.value][1])
+					UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
 					UIDropDownMenu_Initialize(optionDropdown,
 						function(frame, level, menuList)
 							local info = UIDropDownMenu_CreateInfo()
 							info.func = function(_, arg1, _, _)
 								setting.value = arg1
-								miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.MAINFRAME_BACKGROUNDS[setting.value][2])
-								UIDropDownMenu_SetText(optionDropdown, miog.MAINFRAME_BACKGROUNDS[setting.value][1])
+								miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+								UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
 								CloseDropDownMenus()
 			
 							end
 
-							for k, v in ipairs(miog.MAINFRAME_BACKGROUNDS) do
+							for k, v in ipairs(miog.APPLICATION_VIEWER_BACKGROUNDS) do
 								if(v[1]) then
 									info.text, info.arg1 = v[1], k
 									info.checked = k == setting.value
@@ -322,7 +378,7 @@ miog.loadSettings = function()
 						end
 					)
 					
-					miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.MAINFRAME_BACKGROUNDS[setting.value][2])
+					miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
 
 					lastOption = optionDropdown
 				end
@@ -366,27 +422,45 @@ miog.loadSettings = function()
 	if(MIOG_SavedSettings.lastActiveSortingMethods and MIOG_SavedSettings.lastActiveSortingMethods.value) then
 		for sortKey, row in pairs(MIOG_SavedSettings.lastActiveSortingMethods.value) do
 			
-			if(miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]) then
+			if(miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey]) then
 				if(row.active == true) then
 					local active = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].active
 					local currentLayer = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentLayer
 					local currentState = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentState
 			
-					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]:SetState(active, currentState)
+					miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey]:SetState(active, currentState)
 			
 					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
 					miog.F.SORT_METHODS[sortKey].active = true
 					miog.F.SORT_METHODS[sortKey].currentLayer = currentLayer
-					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
+					miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
 
 				else
-					miog.mainFrame.buttonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+					miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey]:SetState(false)
 
 				end
 			end
 		end
 	else
 		MIOG_SavedSettings.lastActiveSortingMethods.value = {}
+
+	end
+	
+	if(MIOG_SavedSettings.sortMethods_SearchPanel and MIOG_SavedSettings.sortMethods_SearchPanel.table) then
+		for sortKey, row in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
+			if(miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey]) then
+				if(row.active == true) then
+					miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].active, MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentState)
+					miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentLayer)
+
+				else
+					miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+
+				end
+			end
+		end
+	else
+		MIOG_SavedSettings.sortMethods_SearchPanel.table = {}
 
 	end
 
@@ -406,11 +480,11 @@ miog.loadSettings = function()
 
 	if(MIOG_SavedSettings.disableBackgroundImages and MIOG_SavedSettings.disableBackgroundImages.value ==  true) then
 		miog.mainFrame.backdropFrame:SetShown(false)
-		miog.mainFrame.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
+		miog.applicationViewer.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
 
 	else
 		miog.mainFrame.backdropFrame:SetShown(true)
-		miog.mainFrame.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+		miog.applicationViewer.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 	
 	end
 

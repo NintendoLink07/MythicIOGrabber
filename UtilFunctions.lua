@@ -11,12 +11,12 @@ miog.setAffixes = function()
 			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
 
 			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, 0, 1, 0, 1)
-			miog.mainFrame.infoPanel.affixFrame.tooltipText = miog.mainFrame.infoPanel.affixFrame.tooltipText .. name .. (index < #affixIDs and ", " or "")
+			miog.applicationViewer.infoPanel.affixFrame.tooltipText = miog.applicationViewer.infoPanel.affixFrame.tooltipText .. name .. (index < #affixIDs and ", " or "")
 
 			miog.F.WEEKLY_AFFIX = affixIDs[1].id
 		end
 
-		miog.mainFrame.infoPanel.affixFrame.FontString:SetText(affixString)
+		miog.applicationViewer.infoPanel.affixFrame.FontString:SetText(affixString)
 
 	else
 		return nil
@@ -117,10 +117,35 @@ miog.secondsToClock = function(stringSeconds)
 	end
 end
 
-miog.checkForActiveFilters = function()
+miog.signupToGroup = function(resultID, button)
+	--LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
+	
+	--self.selectedResult = resultID;
+	--LFGListSearchPanel_UpdateResults(self)
+
+	--C_LFGList.ApplyToGroup(LFGListFrame.SearchPanel.selectedResult, miog.C.AVAILABLE_ROLES.TANK, miog.C.AVAILABLE_ROLES.HEALER, miog.C.AVAILABLE_ROLES.DAMAGER)
+	--LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
+	--LFGListSearchPanel_SelectResult
+	--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	--LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
+
+	
+	local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(resultID);
+	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
+	print(appStatus, pendingStatus, searchResultInfo.isDelisted )
+	if ( appStatus ~= "none" or pendingStatus or searchResultInfo.isDelisted ) then
+		return false;
+	end
+
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+	LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
+	LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
+end
+
+miog.checkForActiveFilters = function(filterPanel)
 	local filtersActive = false
 
-	for _, v in pairs(miog.mainFrame.buttonPanel.filterPanel.classFilterPanel.ClassPanels) do
+	for _, v in pairs(filterPanel.classFilterPanel.ClassPanels) do
 		if(not v.Button:GetChecked()) then
 			filtersActive = true
 			break
@@ -138,13 +163,15 @@ miog.checkForActiveFilters = function()
 
 	end
 
-	for _, v in pairs(miog.mainFrame.buttonPanel.filterPanel.roleFilterPanel.RoleButtons) do
-		if(not v:GetChecked()) then
-			filtersActive = true
-			break
+	if(filterPanel.roleFilterPanel) then
+		for _, v in pairs(filterPanel.roleFilterPanel.RoleButtons) do
+			if(not v:GetChecked()) then
+				filtersActive = true
+				break
+
+			end
 
 		end
-
 	end
 
 	return filtersActive
@@ -152,18 +179,18 @@ end
 
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		miog.mainFrame.footerBar.browseGroupsButton:Show()
-		miog.mainFrame.footerBar.delistButton:Show()
-		miog.mainFrame.footerBar.editButton:Show()
+		miog.applicationViewer.footerBar.browseGroupsButton:Show()
+		miog.applicationViewer.footerBar.delistButton:Show()
+		miog.applicationViewer.footerBar.editButton:Show()
 
 		miog.F.CAN_INVITE = true
 
 		return true
 
 	else
-		miog.mainFrame.footerBar.browseGroupsButton:Hide()
-		miog.mainFrame.footerBar.delistButton:Hide()
-		miog.mainFrame.footerBar.editButton:Hide()
+		miog.applicationViewer.footerBar.browseGroupsButton:Hide()
+		miog.applicationViewer.footerBar.delistButton:Hide()
+		miog.applicationViewer.footerBar.editButton:Hide()
 
 		miog.F.CAN_INVITE = false
 
@@ -206,9 +233,9 @@ end
 miog.addLastInvitedApplicant = function(currentApplicant)
 	miog.F.LAST_INVITES_COUNTER = miog.F.LAST_INVITES_COUNTER + 1
 
-	local invitedApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.mainFrame.lastInvitesPanel.scrollFrame.container)
+	local invitedApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.applicationViewer.lastInvitesPanel.scrollFrame.container)
 	invitedApplicant.layoutIndex = miog.F.LAST_INVITES_COUNTER
-	invitedApplicant:SetSize(miog.mainFrame.lastInvitesPanel.scrollFrame:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
+	invitedApplicant:SetSize(miog.applicationViewer.lastInvitesPanel.scrollFrame:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 
 	miog.createFrameBorder(invitedApplicant, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
 
@@ -255,7 +282,7 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 
 		MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName] = nil
 
-		miog.mainFrame.lastInvitesPanel.scrollFrame.container:MarkDirty()
+		miog.applicationViewer.lastInvitesPanel.scrollFrame.container:MarkDirty()
 	end)
 
 	local favourButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", invitedApplicant, 15, 15), MultiStateButtonMixin)
@@ -298,13 +325,13 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 
 	miog.F.LAST_INVITED_APPLICANTS[currentApplicant.fullName] = invitedApplicant
 
-	miog.mainFrame.lastInvitesPanel.scrollFrame.container:MarkDirty()
+	miog.applicationViewer.lastInvitesPanel.scrollFrame.container:MarkDirty()
 end
 
 miog.addFavouredApplicant = function(currentApplicant)
 	miog.F.FAVOURED_APPLICANTS_COUNTER = miog.F.FAVOURED_APPLICANTS_COUNTER + 1
 
-	local favouredApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.mainFrame.optionPanel.container.favouredApplicantsPanel.scrollFrame.container, miog.mainFrame.optionPanel.container.favouredApplicantsPanel:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
+	local favouredApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.applicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container, miog.applicationViewer.optionPanel.container.favouredApplicantsPanel:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 	favouredApplicant.layoutIndex = miog.F.FAVOURED_APPLICANTS_COUNTER
 
 	miog.createFrameBorder(favouredApplicant, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
@@ -366,7 +393,7 @@ miog.addFavouredApplicant = function(currentApplicant)
 
 	miog.F.FAVOURED_APPLICANTS[currentApplicant.fullName] = favouredApplicant
 
-	miog.mainFrame.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
+	miog.applicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
 
 	MIOG_SavedSettings.favouredApplicants.table[currentApplicant.fullName] = currentApplicant
 end
@@ -381,7 +408,7 @@ miog.deleteFavouredApplicant = function(name)
 	miog.persistentFramePool:Release(favouredApplicant.deleteButton)
 	miog.persistentFramePool:Release(favouredApplicant)
 
-	miog.mainFrame.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
+	miog.applicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
 
 	MIOG_SavedSettings.favouredApplicants.table[name] = nil
 

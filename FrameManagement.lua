@@ -38,6 +38,11 @@ local function resetFrame(pool, childFrame)
 
 		end
 
+		childFrame.framePool = nil
+		childFrame.texturePool = nil
+		childFrame.fontStringPool = nil
+		childFrame.background = nil
+
 		childFrame:SetMouseClickEnabled(false)
 		childFrame:SetScript("OnEnter", nil)
 		childFrame:SetScript("OnLeave", nil)
@@ -48,6 +53,7 @@ local function resetFrame(pool, childFrame)
 		childFrame.FontString = nil
 
 		childFrame.memberFrames = nil
+		childFrame.bossFrames = nil
 		childFrame.statusFrame = nil
 		childFrame.basicInformationPanel = nil
 		childFrame.detailedInformationPanel = nil
@@ -57,6 +63,7 @@ local function resetFrame(pool, childFrame)
 		childFrame.inviteButton = nil
 		childFrame.expandButton = nil
 		childFrame.linkBox = nil
+		childFrame.titleString = nil
 
 		childFrame.mythicPlusPanel = nil
 		childFrame.raidPanel = nil
@@ -88,6 +95,10 @@ local function resetFontString(_, childFontString)
 
 	childFontString:ClearAllPoints()
 	childFontString:SetParent()
+
+	childFontString:SetScript("OnMouseDown", nil)
+	childFontString:SetScript("OnEnter", nil)
+	childFontString:SetScript("OnLeave", nil)
 end
 
 local function resetTexture(_, childTexture)
@@ -102,6 +113,7 @@ local function resetTexture(_, childTexture)
 	childTexture:SetMouseClickEnabled(false)
 	childTexture:SetScript("OnMouseDown", nil)
 	childTexture:SetScript("OnEnter", nil)
+	childTexture:SetScript("OnLeave", nil)
 
 	childTexture:ClearAllPoints()
 	childTexture:SetParent()
@@ -124,11 +136,13 @@ miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", rese
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate, BackdropTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("EditBox", nil, "InputBoxTemplate", resetFrame)
 
 miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
 
-miog.fleetingFramePool = CreateFramePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
+miog.applicantFramePool = CreateFramePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
+miog.searchResultFramePool = CreateFramePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
 
 miog.raidRosterFramePool = CreateFramePool("Frame", nil, "BackdropTemplate", resetFrame)
 miog.raidRosterFontStringPool = CreateFontStringPool(miog.raidRosterFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)

@@ -1,6 +1,9 @@
 local addonName, miog = ...
 
+miog.scriptReceiver = CreateFrame("Frame", "MythicIOGrabber_ScriptReceiver", LFGListFrame, "BackdropTemplate") ---@class Frame
 miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "BackdropTemplate") ---@class Frame
+miog.applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.mainFrame, "BackdropTemplate") ---@class Frame
+miog.searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.mainFrame, "BackdropTemplate") ---@class Frame
 
 local function insertPointsIntoTable(frame)
 	local table = {}
@@ -20,11 +23,11 @@ end
 
 local pveFrameTab1_Point = nil
 
-local function positionTab1ToMainFrame()
-	miog.mainFrame:SetHeight(miog.mainFrame.extendedHeight)
-	PVEFrameTab1:SetParent(miog.mainFrame)
+local function positionTab1ToActiveFrame(frame)
+	frame:SetHeight(frame.extendedHeight)
+	PVEFrameTab1:SetParent(frame)
 	PVEFrameTab1:ClearAllPoints()
-	PVEFrameTab1:SetPoint("TOPLEFT", miog.mainFrame, "BOTTOMLEFT", 0, 0)
+	PVEFrameTab1:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0)
 
 	PVEFrameTab1:SetWidth(PVEFrameTab1:GetWidth() - 2)
 	PVEFrameTab2:SetWidth(PVEFrameTab2:GetWidth() - 2)
@@ -32,8 +35,8 @@ local function positionTab1ToMainFrame()
 
 end
 
-local function positionTab1PVEFrame()
-	miog.mainFrame:SetHeight(miog.mainFrame.standardHeight)
+local function positionTab1ToPVEFrame(frame)
+	frame:SetHeight(frame.standardHeight)
 	PVEFrameTab1:SetParent(PVEFrame)
 	PVEFrameTab1:ClearAllPoints()
 	insertPointsIntoFrame(PVEFrameTab1, pveFrameTab1_Point)
@@ -44,37 +47,35 @@ local function positionTab1PVEFrame()
 
 end
 
-miog.createMainFrame = function()
+local function createMainFrame()
 	local mainFrame = miog.mainFrame ---@class Frame
     pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
 
-	local mainFrameWidth = (LFGListFrame:GetWidth() + 2)
-	local mainFrameHeight = (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
-
-	mainFrame:SetSize(mainFrameWidth, mainFrameHeight)
-	mainFrame.standardHeight = mainFrameHeight
+	mainFrame.standardWidth = (LFGListFrame:GetWidth() + 2)
+	mainFrame.standardHeight = (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
+	mainFrame:SetSize(mainFrame.standardWidth, mainFrame.standardHeight)
 	mainFrame.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or mainFrame.standardHeight * 1.5
-	--mainFrame:SetScale(1.5)
+	--applicationViewer:SetScale(1.5)
 	mainFrame:SetResizable(true)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	mainFrame:SetFrameStrata("DIALOG")
 	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
-	mainFrame:SetResizeBounds(mainFrameWidth, mainFrameHeight, mainFrameWidth, GetScreenHeight() * 0.66666)
+	mainFrame:SetResizeBounds(mainFrame.standardWidth, mainFrame.standardHeight, mainFrame.standardWidth, GetScreenHeight() * 0.66666)
 
 	miog.createFrameBorder(mainFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	mainFrame:HookScript("OnShow", function()
 		if(MIOG_SavedSettings.frameExtended.value) then
-			positionTab1ToMainFrame()
+			positionTab1ToActiveFrame(mainFrame)
 
 		end
 	end)
 
 	mainFrame:HookScript("OnHide", function()
-		positionTab1PVEFrame()
+		positionTab1ToPVEFrame(mainFrame)
 
 	end)
-	
+
 	_G[mainFrame:GetName()] = mainFrame
 
 	local backdropFrame = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/backgrounds/df-bg-1.png", mainFrame)
@@ -83,6 +84,7 @@ miog.createMainFrame = function()
 	backdropFrame:SetDrawLayer("BACKGROUND", -8)
 	backdropFrame:SetPoint("TOPLEFT", mainFrame, "TOPLEFT")
 	backdropFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT")
+	backdropFrame:Hide()
 
 	mainFrame.backdropFrame = backdropFrame
 
@@ -107,37 +109,69 @@ miog.createMainFrame = function()
 		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
 
 		if(MIOG_SavedSettings.frameExtended.value) then
-			positionTab1ToMainFrame()
+			positionTab1ToActiveFrame(mainFrame)
 
 		elseif(not MIOG_SavedSettings.frameExtended.value) then
-			positionTab1PVEFrame()
+			positionTab1ToPVEFrame(mainFrame)
 
 		end
 	end)
 
 	mainFrame.expandDownwardsButton = expandDownwardsButton
-	
+
 	local raiderIOAddonIsLoadedFrame = miog.createBasicFontString("persistent", 16, mainFrame)
 	raiderIOAddonIsLoadedFrame:SetPoint("RIGHT", openSettingsButton, "LEFT", - 5 - expandDownwardsButton:GetWidth(), 0)
 	raiderIOAddonIsLoadedFrame:SetJustifyH("RIGHT")
 	raiderIOAddonIsLoadedFrame:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	raiderIOAddonIsLoadedFrame:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
-	miog.mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
+	mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
+	
+	local resizeApplicationViewerButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame)
+	resizeApplicationViewerButton:EnableMouse(true)
+	resizeApplicationViewerButton:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", 0, 20)
+	resizeApplicationViewerButton:SetSize(20, 20)
+	resizeApplicationViewerButton:SetFrameStrata("DIALOG")
+	resizeApplicationViewerButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	resizeApplicationViewerButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	resizeApplicationViewerButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	resizeApplicationViewerButton:SetScript("OnMouseDown", function()
+		mainFrame:StartSizing()
 
-	local classPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", mainFrame)
-	classPanel:SetPoint("TOPRIGHT", mainFrame, "TOPLEFT", -1, -2)
+	end)
+	resizeApplicationViewerButton:SetScript("OnMouseUp", function()
+		mainFrame:StopMovingOrSizing()
+
+		MIOG_SavedSettings.frameManuallyResized.value = mainFrame:GetHeight()
+
+		if(MIOG_SavedSettings.frameManuallyResized.value > mainFrame.standardHeight) then
+			MIOG_SavedSettings.frameExtended.value = true
+			mainFrame.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
+
+		end
+
+	end)
+end
+
+local function createApplicationViewer()
+	local applicationViewer = miog.applicationViewer ---@class Frame
+	applicationViewer:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT")
+	applicationViewer:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT")
+	applicationViewer:SetFrameStrata("DIALOG")
+
+	local classPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", applicationViewer)
+	classPanel:SetPoint("TOPRIGHT", applicationViewer, "TOPLEFT", -1, -2)
 	classPanel.fixedWidth = 28
 
-	mainFrame.classPanel = classPanel
+	applicationViewer.classPanel = classPanel
 
 	classPanel.classFrames = {}
-	
+
 	for classID, classEntry in ipairs(miog.CLASSES) do
 		local classFrame = miog.createBasicFrame("persistent", "BackdropTemplate", classPanel, 25, 25, "Texture", classEntry.icon)
 		classPanel.classFrames[classID] = classFrame
 		classFrame.bottomPadding = 5
-		
+
 		local classFrameFontString = miog.createBasicFontString("persistent", 20, classFrame)
 		classFrameFontString:SetPoint("CENTER", classFrame, "CENTER", 0, -1)
 		classFrameFontString:SetJustifyH("CENTER")
@@ -189,13 +223,13 @@ miog.createMainFrame = function()
 
 	classPanel.progressText = inspectProgressText
 
-	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, nil, mainFrameHeight*0.06)
-	titleBar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 0, 0)
-	titleBar:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", 0, 0)
+	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", applicationViewer, nil, miog.mainFrame.standardHeight*0.06)
+	titleBar:SetPoint("TOPLEFT", applicationViewer, "TOPLEFT", 0, 0)
+	titleBar:SetPoint("TOPRIGHT", applicationViewer, "TOPRIGHT", 0, 0)
 	miog.createFrameBorder(titleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	titleBar.factionIconSize = titleBar:GetHeight() - 4
-	mainFrame.titleBar = titleBar
+	applicationViewer.titleBar = titleBar
 
 	local titleStringFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar:GetWidth()*0.6, titleBar:GetHeight(), "FontString", miog.C.TITLE_FONT_SIZE)
 	titleStringFrame:SetPoint("LEFT", titleBar, "LEFT")
@@ -205,7 +239,7 @@ miog.createMainFrame = function()
 			GameTooltip:SetOwner(titleStringFrame, "ANCHOR_CURSOR")
 			GameTooltip:SetText(titleStringFrame.FontString:GetText())
 			GameTooltip:Show()
-			
+
 		end
 	end)
 	titleStringFrame:SetScript("OnLeave", function()
@@ -216,7 +250,7 @@ miog.createMainFrame = function()
 	titleStringFrame.FontString:SetText("")
 
 	titleBar.titleStringFrame = titleStringFrame
-	
+
 	local factionFrame = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar, titleBar.factionIconSize, titleBar.factionIconSize, "Texture", 2437241)
 	factionFrame:SetPoint("RIGHT", titleBar, "RIGHT", -1, 0)
 
@@ -237,12 +271,12 @@ miog.createMainFrame = function()
 
 	groupMemberListing.FontString = groupMemberListingText
 
-	local infoPanel = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame)
-	infoPanel:SetHeight(mainFrameHeight*0.19)
+	local infoPanel = miog.createBasicFrame("persistent", "BackdropTemplate", applicationViewer)
+	infoPanel:SetHeight(miog.mainFrame.standardHeight*0.19)
 	infoPanel:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 1)
 	infoPanel:SetPoint("TOPRIGHT", titleBar, "BOTTOMRIGHT", -20, 1)
 
-	mainFrame.infoPanel = infoPanel
+	applicationViewer.infoPanel = infoPanel
 
 	local knownIssuesPanel = miog.createBasicFrame("persistent", "IconButtonTemplate", infoPanel, 15, 15)
 	knownIssuesPanel:SetNormalAtlas("glueannouncementpopup-icon-info")
@@ -274,7 +308,7 @@ miog.createMainFrame = function()
 	infoPanelBackdropFrame:ApplyBackdrop()
 	infoPanelBackdropFrame.Center:SetDrawLayer("BACKGROUND", 1)
 
-	mainFrame.infoPanelBackdropFrame = infoPanelBackdropFrame
+	applicationViewer.infoPanelBackdropFrame = infoPanelBackdropFrame
 
 	local infoPanelDarkenFrame = miog.createBasicFrame("persistent", "BackdropTemplate", infoPanelBackdropFrame)
 	infoPanelDarkenFrame:SetPoint("TOPLEFT", infoPanel, "TOPLEFT", 0, 0)
@@ -313,7 +347,7 @@ miog.createMainFrame = function()
 	commentScrollFrame:SetScrollChild(commentFrame)
 
 	infoPanel.commentFrame = commentFrame
-	
+
 	local listingSettingPanel = miog.createBasicFrame("persistent", "ResizeLayoutFrame, BackdropTemplate", infoPanel)
 	listingSettingPanel:SetPoint("TOPLEFT", infoPanel, "BOTTOMLEFT")
 	listingSettingPanel:SetPoint("TOPRIGHT", infoPanel, "BOTTOMRIGHT")
@@ -322,7 +356,7 @@ miog.createMainFrame = function()
 	miog.createFrameBorder(listingSettingPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	mainFrame.listingSettingPanel = listingSettingPanel
+	applicationViewer.listingSettingPanel = listingSettingPanel
 
 	local privateGroupFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.04, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/questionMark_Grey.png")
 	privateGroupFrame:SetPoint("LEFT", listingSettingPanel, "LEFT", 0, 0)
@@ -344,7 +378,7 @@ miog.createMainFrame = function()
 	end)
 	listingSettingPanel.privateGroupFrame = privateGroupFrame
 	miog.createFrameBorder(privateGroupFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	
+
 	local voiceChatFrame = miog.createBasicFrame("persistent", "BackdropTemplate", listingSettingPanel, listingSettingPanel:GetWidth()*0.06, listingSettingPanel:GetHeight(), "Texture", miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
 	voiceChatFrame.fixedHeight = listingSettingPanel:GetHeight()
 	voiceChatFrame.maximumWidth = listingSettingPanel:GetWidth()*0.15
@@ -473,7 +507,7 @@ miog.createMainFrame = function()
 	miog.createFrameBorder(buttonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	buttonPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	mainFrame.buttonPanel = buttonPanel
+	applicationViewer.buttonPanel = buttonPanel
 
 	local expandFilterPanelButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
 	expandFilterPanelButton:OnLoad()
@@ -493,7 +527,7 @@ miog.createMainFrame = function()
 
 	end)
 	buttonPanel.expandButton = expandFilterPanelButton
-	
+
 	local filterString = miog.createBasicFontString("persistent", 12, buttonPanel)
 	filterString:SetPoint("LEFT", expandFilterPanelButton, "RIGHT", 2, -1)
 	filterString:SetJustifyH("CENTER")
@@ -528,16 +562,16 @@ miog.createMainFrame = function()
 		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
 
 		toggleRoleButton:SetScript("OnClick", function()
-			if(not miog.checkForActiveFilters()) then
+			if(not miog.checkForActiveFilters(filterPanel)) then
 				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 			else
 				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-			
+
 			end
 
 			C_LFGList.RefreshApplicants()
-			
+
 		end)
 
 		if(i == 1) then
@@ -606,7 +640,7 @@ miog.createMainFrame = function()
 				if(toggleSpecButton:GetChecked()) then
 					toggleClassButton:SetChecked(true)
 
-					if(not miog.checkForActiveFilters()) then
+					if(not miog.checkForActiveFilters(filterPanel)) then
 						filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 					end
@@ -634,23 +668,23 @@ miog.createMainFrame = function()
 
 				if(toggleClassButton:GetChecked()) then
 					v:SetChecked(true)
-				
+
 				else
 					v:SetChecked(false)
-				
-				end
 
-				C_LFGList.RefreshApplicants()
+				end
 
 			end
 
-			if(not miog.checkForActiveFilters()) then
+			if(not miog.checkForActiveFilters(filterPanel)) then
 				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 			else
 				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-			
+
 			end
+
+			C_LFGList.RefreshApplicants()
 		end)
 
 	end
@@ -670,7 +704,7 @@ miog.createMainFrame = function()
 				y:SetChecked(false)
 
 			end
-			
+
 		end
 
 		--for _, v in pairs(roleFilterPanel.RoleButtons) do
@@ -678,12 +712,12 @@ miog.createMainFrame = function()
 
 		--end
 
-		if(not miog.checkForActiveFilters()) then
+		if(not miog.checkForActiveFilters(filterPanel)) then
 			filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 		else
 			filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-		
+
 		end
 
 		C_LFGList.RefreshApplicants()
@@ -706,14 +740,14 @@ miog.createMainFrame = function()
 
 			end
 
-			if(not miog.checkForActiveFilters()) then
+			if(not miog.checkForActiveFilters(filterPanel)) then
 				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 			else
 				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-			
+
 			end
-			
+
 		end
 
 		--for _, v in pairs(roleFilterPanel.RoleButtons) do
@@ -814,10 +848,10 @@ miog.createMainFrame = function()
 						end
 					end
 				end
-				
+
 				if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
 					sortByCategoryButton:AdvanceState()
-					
+
 					miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
 
 					MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
@@ -830,7 +864,7 @@ miog.createMainFrame = function()
 				C_LFGList.RefreshApplicants()
 			elseif(button == "RightButton") then
 				if(activeState == 1 or activeState == 2) then
-					
+
 					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
 
 					miog.F.SORT_METHODS[currentCategory].active = false
@@ -846,11 +880,11 @@ miog.createMainFrame = function()
 							MIOG_SavedSettings.lastActiveSortingMethods.value[k].currentLayer = 1
 						end
 					end
-					
+
 					sortByCategoryButton:SetState(false)
-				
+
 					if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
-						
+
 						miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
 
 						MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
@@ -877,23 +911,23 @@ miog.createMainFrame = function()
 	resetButton:SetScript("OnClick",
 		function()
 			C_LFGList.RefreshApplicants()
-		
-			miog.mainFrame.applicantPanel:SetVerticalScroll(0)
+
+			miog.applicationViewer.applicantPanel:SetVerticalScroll(0)
 		end
 	)
 
 	buttonPanel.resetButton = resetButton
 
 
-	local lastInvitesPanel = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame, 250, 250)
+	local lastInvitesPanel = miog.createBasicFrame("persistent", "BackdropTemplate", applicationViewer, 250, 250)
 	lastInvitesPanel:SetPoint("TOPLEFT", titleBar, "TOPRIGHT", 5, 0)
 	miog.createFrameBorder(lastInvitesPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	lastInvitesPanel.standardHeight = 140
 	lastInvitesPanel:Hide()
 
-	mainFrame.lastInvitesPanel = lastInvitesPanel
+	applicationViewer.lastInvitesPanel = lastInvitesPanel
 
-	local lastInvitesShowHideButton = miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", mainFrame, 20, 100)
+	local lastInvitesShowHideButton = miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", applicationViewer, 20, 100)
 	lastInvitesShowHideButton:SetPoint("TOPLEFT", infoPanel, "TOPRIGHT")
 	lastInvitesShowHideButton:SetPoint("BOTTOMLEFT", buttonPanel, "BOTTOMRIGHT", 0, 0)
 	miog.createFrameBorder(lastInvitesShowHideButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -901,7 +935,7 @@ miog.createMainFrame = function()
 	lastInvitesShowHideButton:RegisterForClicks("LeftButtonDown")
 	lastInvitesShowHideButton:SetScript("OnClick", function()
 		lastInvitesPanel:SetShown(not lastInvitesPanel:IsVisible())
-		
+
 	end)
 
 	local lastInvitesShowHideString = miog.createBasicFontString("persistent", 16, lastInvitesShowHideButton)
@@ -920,7 +954,7 @@ miog.createMainFrame = function()
 	lastInvitesPanelBackground:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT")
 	lastInvitesPanelBackground:SetPoint("BOTTOMRIGHT", lastInvitesPanel, "BOTTOMRIGHT")
 
-	local lastInvitesTitleBar = miog.createBasicFrame("persistent", "BackdropTemplate", lastInvitesPanel, nil, mainFrameHeight*0.06)
+	local lastInvitesTitleBar = miog.createBasicFrame("persistent", "BackdropTemplate", lastInvitesPanel, nil, miog.mainFrame.standardHeight*0.06)
 	lastInvitesTitleBar:SetPoint("TOPLEFT", lastInvitesPanel, "TOPLEFT", 0, 0)
 	lastInvitesTitleBar:SetPoint("TOPRIGHT", lastInvitesPanel, "TOPRIGHT", 0, 0)
 	miog.createFrameBorder(lastInvitesTitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -941,7 +975,7 @@ miog.createMainFrame = function()
 	lastInvitesRetractSidewardsButton:RegisterForClicks("LeftButtonDown")
 	lastInvitesRetractSidewardsButton:SetScript("OnClick", function()
 		lastInvitesPanel:Hide()
-		
+
 	end)
 
 	--lastInvitesPanel.expandDownwardsButton = expandDownwardsButton
@@ -962,12 +996,12 @@ miog.createMainFrame = function()
 	lastInvitesScrollFrame:SetScrollChild(lastInvitesContainer)
 
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
-	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
-	footerBar:SetPoint("TOPRIGHT", mainFrame, "BOTTOMRIGHT", 0, mainFrameHeight*0.06)
+	footerBar:SetPoint("BOTTOMLEFT", applicationViewer, "BOTTOMLEFT", 0, 0)
+	footerBar:SetPoint("TOPRIGHT", applicationViewer, "BOTTOMRIGHT", 0, miog.mainFrame.standardHeight*0.06)
 	miog.createFrameBorder(footerBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	footerBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	mainFrame.footerBar = footerBar
+	applicationViewer.footerBar = footerBar
 
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
 	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")
@@ -1015,13 +1049,7 @@ miog.createMainFrame = function()
 
 	footerBar.editButton = editButton
 
-	if(RaiderIO_ExportButton) then
-		RaiderIO_ExportButton:ClearAllPoints()
-		RaiderIO_ExportButton:SetPoint("LEFT", editButton, "RIGHT", 5, 0)
-		RaiderIO_ExportButton:SetParent(footerBar)
-	end
-
-	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, itemLevelFrame)
+	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, footerBar)
 	applicantNumberFontString:SetPoint("RIGHT", footerBar, "RIGHT", -3, -1)
 	applicantNumberFontString:SetJustifyH("CENTER")
 	applicantNumberFontString:SetText(0)
@@ -1031,7 +1059,7 @@ miog.createMainFrame = function()
 	local applicantPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", titleBar)
 	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 2, 0)
 	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, 0)
-	mainFrame.applicantPanel = applicantPanel
+	applicationViewer.applicantPanel = applicantPanel
 	applicantPanel.ScrollBar:SetPoint("TOPLEFT", applicantPanel, "TOPRIGHT", 0, -10)
 	applicantPanel.ScrollBar:SetPoint("BOTTOMLEFT", applicantPanel, "BOTTOMRIGHT", 0, 10)
 
@@ -1046,47 +1074,701 @@ miog.createMainFrame = function()
 	applicantPanel.container = applicantPanelContainer
 
 	applicantPanel:SetScrollChild(applicantPanelContainer)
+end
 
-	local resizeMainFrameButton = miog.createBasicFrame("persistent", "UIButtonTemplate", applicantPanel)
-	resizeMainFrameButton:EnableMouse(true)
-	resizeMainFrameButton:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
-	resizeMainFrameButton:SetSize(20, 20)
-	resizeMainFrameButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
-	resizeMainFrameButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
-	resizeMainFrameButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
-	resizeMainFrameButton:SetScript("OnMouseDown", function(self)
-		mainFrame:StartSizing()
+
+
+local lastFilterOption = nil
+
+local function addOptionToFilterFrame(text, name)
+	local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", miog.searchPanel.filterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+	optionButton:SetNormalAtlas("checkbox-minimal")
+	optionButton:SetPushedAtlas("checkbox-minimal")
+	optionButton:SetCheckedTexture("checkmark-minimal")
+	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+	optionButton:SetPoint("TOPLEFT", lastFilterOption or miog.searchPanel.filterFrame.filterPanel, "BOTTOMLEFT", 0, -5)
+	optionButton:RegisterForClicks("LeftButtonDown")
+	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[name] or false)
+	optionButton:HookScript("OnClick", function()
+		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = optionButton:GetChecked()
+		miog.updateSearchResultList(true)
+	end)
+
+	miog.searchPanel.filterFrame[name] = optionButton
+
+	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.filterFrame)
+	optionString:SetPoint("LEFT", optionButton, "RIGHT")
+	optionString:SetText(text)
+
+	lastFilterOption = optionButton
+end
+
+local function addNumericSpinnerToFilterFrame(text, name)
+	local numericSpinner = Mixin(miog.createBasicFrame("persistent", "InputBoxTemplate", miog.searchPanel.filterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 5, miog.C.INTERFACE_OPTION_BUTTON_SIZE), NumericInputSpinnerMixin)
+	numericSpinner:SetAutoFocus(false)
+	numericSpinner:SetNumeric(true)
+	numericSpinner:SetMaxLetters(1)
+	numericSpinner:SetMinMaxValues(0, 9)
+	numericSpinner:SetValue(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[name] or 0)
+
+	local decrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+	decrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Up")
+	decrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Down")
+	decrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Disabled")
+	decrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
+	decrementButton:SetPoint("TOPLEFT", lastFilterOption or miog.searchPanel.filterFrame.filterPanel, "BOTTOMLEFT", 0, -5)
+	decrementButton:SetScript("OnMouseDown", function()
+		if decrementButton:IsEnabled() then
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			numericSpinner:StartDecrement()
+
+		end
+	end)
+	decrementButton:SetScript("OnMouseUp", function()
+		numericSpinner:EndIncrement()
+		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = numericSpinner:GetValue()
+		numericSpinner:ClearFocus()
+		miog.updateSearchResultList(true)
 
 	end)
-	resizeMainFrameButton:SetScript("OnMouseUp", function(self)
-		mainFrame:StopMovingOrSizing()
-		MIOG_SavedSettings.frameManuallyResized.value = mainFrame:GetHeight()
 
-		if(MIOG_SavedSettings.frameManuallyResized.value > mainFrame.standardHeight) then
-			MIOG_SavedSettings.frameExtended.value = true
-			mainFrame.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
+	numericSpinner:SetPoint("LEFT", decrementButton, "RIGHT", 6, 0)
+
+	local incrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+	incrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
+	incrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Down")
+	incrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
+	incrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
+	incrementButton:SetPoint("LEFT", numericSpinner, "RIGHT")
+	incrementButton:SetScript("OnMouseDown", function()
+		if incrementButton:IsEnabled() then
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			numericSpinner:StartIncrement()
+		end
+	end)
+	incrementButton:SetScript("OnMouseUp", function()
+		numericSpinner:EndIncrement()
+		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = numericSpinner:GetValue()
+		numericSpinner:ClearFocus()
+		miog.updateSearchResultList(true)
+
+	end)
+
+	miog.searchPanel.filterFrame[name] = numericSpinner
+
+	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.filterFrame)
+	optionString:SetPoint("LEFT", incrementButton, "RIGHT")
+	optionString:SetText(text)
+
+	lastFilterOption = decrementButton
+
+end
+
+local function addDualNumericSpinnerToFilterFrame(name)
+	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.filterFrame)
+	optionString:SetPoint("TOPLEFT", lastFilterOption or miog.searchPanel.filterFrame.filterPanel, "BOTTOMLEFT", lastFilterOption and 0 or 5, -5)
+	optionString:SetText(name)
+
+	lastFilterOption = nil
+
+	local minName = "min" .. name
+	local maxName = "max" .. name
+
+	for i = 1, 2, 1 do
+		local numericSpinner = Mixin(miog.createBasicFrame("persistent", "InputBoxTemplate", miog.searchPanel.filterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 5, miog.C.INTERFACE_OPTION_BUTTON_SIZE), NumericInputSpinnerMixin)
+		numericSpinner:SetAutoFocus(false)
+		numericSpinner.autoFocus = false
+		numericSpinner:SetNumeric(true)
+		numericSpinner:SetMaxLetters(1)
+		numericSpinner:SetMinMaxValues(0, 9)
+		numericSpinner:SetValue(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] or 0)
+
+		local decrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+		decrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Up")
+		decrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Down")
+		decrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Disabled")
+		decrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
+		decrementButton:SetPoint("LEFT", i == 1 and optionString or lastFilterOption, "RIGHT", i == 1 and 2 or 5, 0)
+		decrementButton:SetScript("OnMouseDown", function()
+			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			numericSpinner:Decrement()
+
+			local spinnerValue = numericSpinner:GetValue()
+
+			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = spinnerValue
+
+			if(i == 2 and miog.searchPanel.filterFrame[minName]:GetValue() > spinnerValue) then
+				miog.searchPanel.filterFrame[minName]:SetValue(spinnerValue)
+				MIOG_SavedSettings.searchPanel_FilterOptions.table[minName] = spinnerValue
+
+			end
+
+			numericSpinner:ClearFocus()
+			miog.updateSearchResultList(true)
+		end)
+		decrementButton:SetScript("OnMouseUp", function()
+		end)
+
+		numericSpinner:SetPoint("LEFT", decrementButton, "RIGHT", 6, 0)
+
+		local incrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+		incrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
+		incrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Down")
+		incrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
+		incrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
+		incrementButton:SetPoint("LEFT", numericSpinner, "RIGHT")
+		incrementButton:SetScript("OnMouseDown", function()
+			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			numericSpinner:Increment()
+
+			local spinnerValue = numericSpinner:GetValue()
+
+			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = spinnerValue
+
+			if(i == 1 and miog.searchPanel.filterFrame[maxName]:GetValue() < spinnerValue) then
+				miog.searchPanel.filterFrame[maxName]:SetValue(spinnerValue)
+				MIOG_SavedSettings.searchPanel_FilterOptions.table[maxName] = spinnerValue
+
+			end
+
+			numericSpinner:ClearFocus()
+			miog.updateSearchResultList(true)
+		end)
+
+		miog.searchPanel.filterFrame[i == 1 and minName or maxName] = numericSpinner
+
+		lastFilterOption = incrementButton
+	end
+
+	lastFilterOption = optionString
+
+end
+
+local function createSearchPanel()
+	local searchPanel = miog.searchPanel ---@class Frame
+	searchPanel:SetPoint("TOPLEFT", miog.mainFrame, "TOPLEFT")
+	searchPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame, "BOTTOMRIGHT")
+	searchPanel:SetFrameStrata("DIALOG")
+
+	local filterFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, 220, 500)
+	filterFrame:SetPoint("TOPLEFT", searchPanel, "TOPRIGHT", 10, 0)
+	miog.createFrameBorder(filterFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	filterFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	searchPanel.filterFrame = filterFrame
+
+	local filterString = miog.createBasicFontString("persistent", 12, filterFrame, filterFrame:GetWidth(), 20)
+	filterString:SetPoint("TOPLEFT", filterFrame, "TOPLEFT", 0, -1)
+	filterString:SetJustifyH("CENTER")
+	filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+	local filterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", filterFrame, 220, 300)
+	filterPanel:SetPoint("TOPLEFT", filterString, "BOTTOMLEFT")
+	miog.createFrameBorder(filterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	filterPanel:SetBackdropColor(0.1, 0.1, 0.1, 1)
+
+	filterFrame.filterPanel = filterPanel
+
+	local uncheckAllFiltersButton = miog.createBasicFrame("persistent", "IconButtonTemplate", filterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+	uncheckAllFiltersButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
+	uncheckAllFiltersButton.iconSize = miog.C.APPLICANT_MEMBER_HEIGHT - 3
+	uncheckAllFiltersButton:OnLoad()
+	uncheckAllFiltersButton:SetPoint("TOPRIGHT", filterPanel, "TOPRIGHT", 0, -2)
+	uncheckAllFiltersButton:SetFrameStrata("DIALOG")
+	uncheckAllFiltersButton:RegisterForClicks("LeftButtonUp")
+	uncheckAllFiltersButton:SetScript("OnClick", function()
+		for classIndex, v in pairs(miog.searchPanel.filterFrame.filterPanel.classFilterPanel.ClassPanels) do
+			v.Button:SetChecked(false)
+
+			for specIndex, y in pairs(v.specFilterPanel.SpecButtons) do
+				y:SetChecked(false)
+				MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specIndex] = false
+
+			end
+
+			MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.class[classIndex] = false
 
 		end
 
+		--for _, v in pairs(roleFilterPanel.RoleButtons) do
+		--	v:SetChecked(false)
+
+		--end
+
+		if(not miog.checkForActiveFilters(filterPanel)) then
+			filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+		else
+			filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+
+		end
+
+		miog.updateSearchResultList(true)
+	end)
+	filterPanel.uncheckAllFiltersButton = uncheckAllFiltersButton
+
+	local checkAllFiltersButton = miog.createBasicFrame("persistent", "IconButtonTemplate", filterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+	checkAllFiltersButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
+	checkAllFiltersButton.iconSize = miog.C.APPLICANT_MEMBER_HEIGHT - 3
+	checkAllFiltersButton:OnLoad()
+	checkAllFiltersButton:SetPoint("RIGHT", uncheckAllFiltersButton, "LEFT", -3, 0)
+	checkAllFiltersButton:SetFrameStrata("DIALOG")
+	checkAllFiltersButton:RegisterForClicks("LeftButtonUp")
+	checkAllFiltersButton:SetScript("OnClick", function()
+		for classIndex, v in pairs(miog.searchPanel.filterFrame.filterPanel.classFilterPanel.ClassPanels) do
+			v.Button:SetChecked(true)
+
+			for specIndex, y in pairs(v.specFilterPanel.SpecButtons) do
+				y:SetChecked(true)
+
+				MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specIndex] = true
+
+			end
+
+			MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.class[classIndex] = true
+
+			if(not miog.checkForActiveFilters(filterPanel)) then
+				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+			else
+				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+
+			end
+
+		end
+
+		miog.updateSearchResultList(true)
+
 	end)
 
-	miog.mainFrame:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
-	miog.mainFrame:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
-	miog.mainFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-	miog.mainFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-	miog.mainFrame:RegisterEvent("GROUP_JOINED")
-	miog.mainFrame:RegisterEvent("GROUP_LEFT")
-	miog.mainFrame:RegisterEvent("INSPECT_READY")
-	miog.mainFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	miog.mainFrame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+
+	local classFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", filterPanel, filterPanel:GetWidth() - 2, filterPanel:GetHeight())
+	classFilterPanel:SetPoint("TOPLEFT", filterPanel, "TOPLEFT", 0, - miog.C.APPLICANT_MEMBER_HEIGHT)
+	classFilterPanel.ClassPanels = {}
+
+	filterPanel.classFilterPanel = classFilterPanel
+
+	for classIndex, classEntry in ipairs(miog.CLASSES) do
+		local singleClassPanel = miog.createBasicFrame("persistent", "BackdropTemplate", classFilterPanel, classFilterPanel:GetWidth(), 20)
+		singleClassPanel:SetPoint("TOPLEFT", classFilterPanel.ClassPanels[classIndex-1] or classFilterPanel, classFilterPanel.ClassPanels[classIndex-1] and "BOTTOMLEFT" or "TOPLEFT", 0, -1)
+		local r, g, b = GetClassColor(classEntry.name)
+		miog.createFrameBorder(singleClassPanel, 1, r, g, b, 0.9)
+		singleClassPanel:SetBackdropColor(r, g, b, 0.6)
+
+		local toggleClassButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", classFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+		toggleClassButton:SetNormalAtlas("checkbox-minimal")
+		toggleClassButton:SetPushedAtlas("checkbox-minimal")
+		toggleClassButton:SetCheckedTexture("checkmark-minimal")
+		toggleClassButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+		toggleClassButton:RegisterForClicks("LeftButtonDown")
+
+		if(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec) then
+			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.class[classIndex] ~= nil) then
+				toggleClassButton:SetChecked(MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.class[classIndex])
+				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+
+			else
+				toggleClassButton:SetChecked(true)
+
+			end
+
+		else
+			toggleClassButton:SetChecked(true)
+
+		end
+
+		toggleClassButton:SetPoint("LEFT", singleClassPanel, "LEFT")
+		singleClassPanel.Button = toggleClassButton
+
+		local classTexture = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/classIcons/" .. classEntry.name .. "_round.png", singleClassPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
+		classTexture:SetPoint("LEFT", toggleClassButton, "RIGHT", 0, 0)
+		singleClassPanel.Texture = classTexture
+
+		local specFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", singleClassPanel, 200, 180)
+		specFilterPanel:SetPoint("TOPLEFT", classFilterPanel, "BOTTOMLEFT")
+		specFilterPanel.SpecTextures = {}
+		specFilterPanel.SpecButtons = {}
+
+		singleClassPanel.specFilterPanel = specFilterPanel
+		classFilterPanel.ClassPanels[classIndex] = singleClassPanel
+
+		for specIndex, specID in pairs(classEntry.specs) do
+			local specEntry = miog.SPECIALIZATIONS[specID]
+
+			local toggleSpecButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", specFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
+			toggleSpecButton:SetNormalAtlas("checkbox-minimal")
+			toggleSpecButton:SetPushedAtlas("checkbox-minimal")
+			toggleSpecButton:SetCheckedTexture("checkmark-minimal")
+			toggleSpecButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+			toggleSpecButton:SetPoint("LEFT", specFilterPanel.SpecTextures[classEntry.specs[specIndex-1]] or classTexture, "RIGHT", 8, 0)
+			toggleSpecButton:RegisterForClicks("LeftButtonDown")
+
+			if(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec) then
+				if(MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specID] ~= nil) then
+					toggleSpecButton:SetChecked(MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specID])
+					filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+
+				else
+					toggleSpecButton:SetChecked(true)
+
+				end
+
+			else
+				toggleSpecButton:SetChecked(true)
+
+			end
+
+
+			toggleSpecButton:SetScript("OnClick", function()
+				local state = toggleSpecButton:GetChecked()
+
+				if(state) then
+					toggleClassButton:SetChecked(true)
+
+					if(not miog.checkForActiveFilters(filterPanel)) then
+						filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+					end
+
+				else
+					filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+
+				end
+
+				MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specID] = state
+
+				miog.updateSearchResultList(true)
+
+			end)
+
+			local specTexture = miog.createBasicTexture("persistent", specEntry.icon, specFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 4, miog.C.APPLICANT_MEMBER_HEIGHT - 4, "ARTWORK")
+			specTexture:SetPoint("LEFT", toggleSpecButton, "RIGHT", 0, 0)
+
+			specFilterPanel.SpecTextures[specID] = specTexture
+			specFilterPanel.SpecButtons[specID] = toggleSpecButton
+
+		end
+
+		toggleClassButton:SetScript("OnClick", function()
+			local state = toggleClassButton:GetChecked()
+
+			for specIndex, v in pairs(specFilterPanel.SpecButtons) do
+
+				if(state) then
+					v:SetChecked(true)
+
+				else
+					v:SetChecked(false)
+
+				end
+
+				MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specIndex] = state
+			end
+
+			MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.class[classIndex] = state
+
+			if(not miog.checkForActiveFilters(filterPanel)) then
+				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
+
+			else
+				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
+
+			end
+
+			miog.updateSearchResultList(true)
+		end)
+
+	end
+
+	filterPanel.checkAllFiltersButton = checkAllFiltersButton
+
+	-- KEY LEVEL
+	-- DUNGEONS
+
+	addOptionToFilterFrame("Party fit", "partyFit")
+	addOptionToFilterFrame("Ress fit", "ressFit")
+	addOptionToFilterFrame("Lust fit", "lustFit")
+	addDualNumericSpinnerToFilterFrame("Tanks")
+	addDualNumericSpinnerToFilterFrame("Healers")
+	addDualNumericSpinnerToFilterFrame("Damager")
+
+	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel)
+	footerBar:SetPoint("BOTTOMLEFT", searchPanel, "BOTTOMLEFT", 0, 0)
+	footerBar:SetPoint("TOPRIGHT", searchPanel, "BOTTOMRIGHT", 0, miog.mainFrame.standardHeight*0.06)
+	miog.createFrameBorder(footerBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	footerBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	searchPanel.footerBar = footerBar
+
+	local backButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
+	backButton:SetPoint("LEFT", footerBar, "LEFT")
+	backButton:SetText("Back")
+	backButton:FitToText()
+	backButton:RegisterForClicks("LeftButtonDown")
+	backButton:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+		LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.CategorySelection);
+		self:GetParent().shouldAlwaysShowCreateGroupButton = false;
+	end)
+
+	footerBar.backButton = backButton
+
+	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
+	signupButton:SetPoint("LEFT", backButton, "RIGHT")
+	signupButton:SetText("Signup")
+	signupButton:FitToText()
+	signupButton:RegisterForClicks("LeftButtonDown")
+	signupButton:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		LFGListApplicationDialog_Show(LFGListApplicationDialog, miog.F.CURRENT_SEARCH_RESULT_ID)
+
+		miog.signupToGroup(LFGListFrame.SearchPanel.resultID)
+	end)
+
+	footerBar.signupButton = signupButton
+
+	local groupNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, footerBar)
+	groupNumberFontString:SetPoint("RIGHT", footerBar, "RIGHT", -3, -1)
+	groupNumberFontString:SetJustifyH("CENTER")
+	groupNumberFontString:SetText(0)
+
+	footerBar.groupNumberFontString = groupNumberFontString
+
+	local interactionPanel = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, miog.mainFrame.standardWidth, 45)
+	interactionPanel:SetPoint("TOPLEFT", searchPanel, "TOPLEFT")
+
+	local searchFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, miog.mainFrame.standardWidth, footerBar:GetHeight())
+	searchFrame:SetFrameStrata("DIALOG")
+	searchFrame:SetPoint("TOPLEFT", interactionPanel, "TOPLEFT")
+
+	local searchBar = LFGListFrame.SearchPanel.SearchBox
+	searchBar:ClearAllPoints()
+	searchBar:SetSize(250, footerBar:GetHeight() + 10)
+	searchBar:SetFrameStrata("DIALOG")
+	searchBar:SetPoint("LEFT", searchFrame, "LEFT", 10, 0)
+
+	searchPanel.searchBar = searchBar
+
+	local function ResolveCategoryFilters(categoryID, filters)
+		-- Dungeons ONLY display recommended groups.
+		if(categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS) then
+			return bit.band(bit.bnot(Enum.LFGListFilter.NotRecommended), bit.bor(filters, Enum.LFGListFilter.Recommended));
+		end
+
+		return filters;
+	end
+
+	local searchButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
+	searchButton:SetPoint("LEFT", searchBar, "RIGHT")
+	searchButton:SetText(_G["SEARCH"])
+	searchButton:FitToText()
+	searchButton:RegisterForClicks("LeftButtonDown")
+	searchButton:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		C_LFGList.Search(LFGListFrame.SearchPanel.categoryID, ResolveCategoryFilters(LFGListFrame.SearchPanel.categoryID, LFGListFrame.SearchPanel.filters), LFGListFrame.SearchPanel.preferredFilters, C_LFGList.GetLanguageSearchFilter())
+
+		miog.searchPanel.resultPanel:SetVerticalScroll(0)
+	end)
+
+	footerBar.searchButton = searchButton
+
+	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT + 2)
+	buttonPanel:SetPoint("TOPLEFT", searchFrame, "BOTTOMLEFT")
+	buttonPanel:SetPoint("TOPRIGHT", searchFrame, "BOTTOMRIGHT")
+	miog.createFrameBorder(buttonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	buttonPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	searchPanel.buttonPanel = buttonPanel
+
+	buttonPanel.sortByCategoryButtons = {}
+
+	for i = 1, 3, 1 do
+		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
+		sortByCategoryButton:OnLoad()
+		sortByCategoryButton:SetTexturesForBaseState("hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
+		sortByCategoryButton:SetTexturesForState1("hud-MainMenuBar-arrowdown-up", "hud-MainMenuBar-arrowdown-down", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
+		sortByCategoryButton:SetTexturesForState2("hud-MainMenuBar-arrowup-up", "hud-MainMenuBar-arrowup-down", "hud-MainMenuBar-arrowup-highlight", "hud-MainMenuBar-arrowup-disabled")
+		sortByCategoryButton:SetStateName(0, "None")
+		sortByCategoryButton:SetStateName(1, "Descending")
+		sortByCategoryButton:SetStateName(2, "Ascending")
+		sortByCategoryButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+		sortByCategoryButton:SetState(false)
+		sortByCategoryButton:SetMouseMotionEnabled(true)
+		sortByCategoryButton:SetScript("OnEnter", function()
+			GameTooltip:SetOwner(sortByCategoryButton, "ANCHOR_CURSOR")
+			GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+			GameTooltip:Show()
+
+		end)
+		sortByCategoryButton:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+
+		end)
+
+		local sortByCategoryButtonString = miog.createBasicFontString("persistent", 9, sortByCategoryButton)
+		sortByCategoryButtonString:ClearAllPoints()
+		sortByCategoryButtonString:SetPoint("BOTTOMLEFT", sortByCategoryButton, "BOTTOMLEFT")
+
+		sortByCategoryButton.FontString = sortByCategoryButtonString
+
+		local currentCategory = ""
+
+		if(i == 1) then
+			currentCategory = "primary"
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 181, 0)
+
+		elseif(i == 2) then
+			currentCategory = "secondary"
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 216, 0)
+
+		elseif(i == 3) then
+			currentCategory = "age"
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 256, 0)
+
+		end
+
+		sortByCategoryButton:SetScript("OnClick", function(_, button)
+			local activeState = sortByCategoryButton:GetActiveState()
+
+			if(button == "LeftButton") then
+
+				if(activeState == 0 and MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods < 2) then
+					--TO 1
+					MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods + 1
+
+					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active = true
+					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentLayer = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods
+
+					sortByCategoryButton.FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods)
+
+				elseif(activeState == 1) then
+					--TO 2
+
+
+				elseif(activeState == 2) then
+					--RESET TO 0
+					MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods - 1
+
+					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active = false
+					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentLayer = 0
+
+					sortByCategoryButton.FontString:SetText("")
+
+					for k, v in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
+						if(type(v) == "table" and v.currentLayer == 2) then
+							v.currentLayer = 1
+							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
+							MIOG_SavedSettings.sortMethods_SearchPanel.table[k].currentLayer = 1
+						end
+					end
+				end
+
+				if(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods < 2 or MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods == 2 and MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active == true) then
+					sortByCategoryButton:AdvanceState()
+
+					--miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
+					--MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
+
+					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentState = sortByCategoryButton:GetActiveState()
+
+					if(GameTooltip:GetOwner() == sortByCategoryButton) then
+						GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+					end
+				end
+
+				miog.updateSearchResultList(true)
+			elseif(button == "RightButton") then
+				if(activeState == 1 or activeState == 2) then
+
+					MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods - 1
+
+					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active = false
+					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentLayer = 0
+
+					sortByCategoryButton.FontString:SetText("")
+
+					for k, v in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
+						if(type(v) == "table" and v.currentLayer == 2) then
+							v.currentLayer = 1
+							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
+							MIOG_SavedSettings.sortMethods_SearchPanel.table[k].currentLayer = 1
+						end
+					end
+
+					sortByCategoryButton:SetState(false)
+
+					if(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods < 2 or MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods == 2 and MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active == true) then
+
+						--miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
+						--MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
+
+						MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentState = sortByCategoryButton:GetActiveState()
+
+						if(GameTooltip:GetOwner() == sortByCategoryButton) then
+							GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
+						end
+					end
+
+					miog.updateSearchResultList(true)
+				end
+			end
+		end)
+
+		buttonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
+
+	end
+
+	local resultPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", searchPanel)
+	resultPanel:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT", 2, -2)
+	resultPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 2, 2)
+	searchPanel.resultPanel = resultPanel
+	resultPanel.ScrollBar:SetPoint("TOPLEFT", resultPanel, "TOPRIGHT", 0, -10)
+	resultPanel.ScrollBar:SetPoint("BOTTOMLEFT", resultPanel, "BOTTOMRIGHT", 0, 10)
+
+	local resultPanelContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", resultPanel)
+	resultPanelContainer.fixedWidth = resultPanel:GetWidth()
+
+	resultPanelContainer.minimumHeight = 1
+	resultPanelContainer.spacing = 5
+	resultPanelContainer.align = "top"
+	resultPanelContainer:SetPoint("TOP", resultPanel, "TOP")
+	resultPanel.container = resultPanelContainer
+
+	resultPanel:SetScrollChild(resultPanelContainer)
+end
+
+miog.createFrames = function()
+	createMainFrame()
+	createApplicationViewer()
+	createSearchPanel()
+
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_SEARCH_FAILED")
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+
+	miog.scriptReceiver:RegisterEvent("PARTY_LEADER_CHANGED")
+	miog.scriptReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+	miog.scriptReceiver:RegisterEvent("GROUP_JOINED")
+	miog.scriptReceiver:RegisterEvent("GROUP_LEFT")
+	miog.scriptReceiver:RegisterEvent("INSPECT_READY")
+	miog.scriptReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	miog.scriptReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+
 	C_MythicPlus.GetCurrentAffixes()
 
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
 	EJ_SelectInstance(1207)
+
 end
 
-miog.mainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-miog.mainFrame:RegisterEvent("PLAYER_LOGIN")
-miog.mainFrame:SetScript("OnEvent", miog.OnEvent)
+miog.scriptReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
+miog.scriptReceiver:RegisterEvent("PLAYER_LOGIN")
+miog.scriptReceiver:SetScript("OnEvent", miog.OnEvent)

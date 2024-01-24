@@ -29,6 +29,7 @@ miog.CLRSCC = { -- from clrs.cc
 }
 
 miog.APPLICANT_STATUS_INFO = {
+	["applied"] = {statusString = "APPLIED", color = "FF3D9970"},
 	["invited"] = {statusString = "INVITED", color = "FFFFFF00"},
 	["failed"] = {statusString = "FAILED", color = "FFFF009D"},
 	["cancelled"] = {statusString = "CANCELLED", color = "FFFFA600"},
@@ -36,9 +37,10 @@ miog.APPLICANT_STATUS_INFO = {
 	["inviteaccepted"] = {statusString = "INVITE ACCEPTED", color = "FF00FF00"},
 	["invitedeclined"] = {statusString = "INVITE DECLINED", color = "FFFFFF00"},
 	["declined"] = {statusString = "DECLINED", color = miog.CLRSCC["red"]},
-	["declined_full"] = {statusString = "FULL DECLINE", color = miog.CLRSCC["red"]},
+	["declined_full"] = {statusString = "GROUP IS FULL", color = miog.CLRSCC["red"]},
 	["declined_delisted"] = {statusString = "DELISTED", color = miog.CLRSCC["red"]},
 	["debug"] = {statusString = "GONE BABY", color = miog.CLRSCC["red"]},
+	["none"] = {statusString = "NONE", color = miog.CLRSCC["green"]},
 }
 
 --CONSTANTS
@@ -73,6 +75,8 @@ miog.C = {
 	AFFIX_TEXTURE_FONT_SIZE = 12, --always weird, gotta change that
 	APPLICANT_MEMBER_FONT_SIZE = 11,
 	TEXT_ROW_FONT_SIZE = 11,
+
+	SEARCH_RESULT_FRAME_TEXT_SIZE = 14,
     
     --
     -- COLORS
@@ -90,6 +94,7 @@ miog.C = {
     SECONDARY_TEXT_COLOR = "FFB0B3B8",
 
 	DIFFICULTY = {
+		[4] = {shortName = "M+", description = "Mythic+", color = miog.ITEM_QUALITY_COLORS[5].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[5].desaturatedHex},
 		[3] = {shortName = "M", description = _G["PLAYER_DIFFICULTY6"], color = miog.ITEM_QUALITY_COLORS[4].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[4].desaturatedHex},
 		[2] = {shortName = "H", description = _G["PLAYER_DIFFICULTY2"], color = miog.ITEM_QUALITY_COLORS[3].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[3].desaturatedHex},
 		[1] = {shortName = "N", description = _G["PLAYER_DIFFICULTY1"], color = miog.ITEM_QUALITY_COLORS[2].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[2].desaturatedHex},
@@ -118,7 +123,13 @@ miog.C = {
 	STAR_TEXTURE = "⋆",
 
 	ELVUI_INSTALLED = IsAddOnLoaded("ElvUI"),
-	SUF_INSTALLED = IsAddOnLoaded("ShadowedUnitFrames")
+	SUF_INSTALLED = IsAddOnLoaded("ShadowedUnitFrames"),
+	
+	AVAILABLE_ROLES = {
+		["TANK"] = false,
+		["HEALER"] = false,
+		["DAMAGER"] = false
+	}
 }
 
 miog.MPLUS_SEASONS = {
@@ -127,6 +138,7 @@ miog.MPLUS_SEASONS = {
 	[10] = "S2",
 	[11] = "S3",
 	[12] = "S4",
+	[13] = "S1",
 	[99] = "DUMMY SEASON"
 }
 
@@ -177,7 +189,9 @@ miog.F = {
 	LAST_INVITED_APPLICANTS = {},
 	FAVOURED_APPLICANTS = {},
 
-	CAN_INVITE = false
+	CAN_INVITE = false,
+
+	CURRENT_SEARCH_RESULT_ID = 0,
 }
 
 miog.BLANK_BACKGROUND_INFO = {
@@ -217,84 +231,200 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 	},
 }
 
-miog.DUNGEON_ICONS = {
+miog.MAP_INFO = {
 	--CATACLYSM
-	[643] = "interface/lfgframe/lfgicon-throneofthetides",
-	[657] = "interface/lfgframe/lfgicon-thevortexpinnacle",
+	[643] = {shortName = "ToTT", icon = "interface/lfgframe/lfgicon-throneofthetides"},
+	[657] = {shortName = "VP", icon = "interface/lfgframe/lfgicon-thevortexpinnacle"},
 
 	--MISTS OF PANDARIA
-	[960] = "interface/lfgframe/lfgicon-templeofthejadeserpent",
+	[960] = {shortName = "ToJS", icon = "interface/lfgframe/lfgicon-templeofthejadeserpent"},
 
 	--WARLORDS OF DRAENOR
-	[1176] = "interface/lfgframe/lfgicon-shadowmoonburialgrounds",
-	[1279] = "interface/lfgframe/lfgicon-everbloom",
+	[1176] = {shortName = "SBG", icon = "interface/lfgframe/lfgicon-shadowmoonburialgrounds"},
+	[1279] = {shortName = "EB", icon = "interface/lfgframe/lfgicon-everbloom"},
 
 	--LEGION
-	[1458] = "interface/lfgframe/lfgicon-neltharionslair",
-	[1466] = "interface/lfgframe/lfgicon-darkheartthicket",
-	[1477] = "interface/lfgframe/lfgicon-hallsofvalor",
-	[1571] = "interface/lfgframe/lfgicon-courtofstars",
-	[1501] = "interface/lfgframe/lfgicon-blackrookhold",
+	[1458] = {shortName = "NL", icon = "interface/lfgframe/lfgicon-neltharionslair"},
+	[1466] = {shortName = "DHT", icon = "interface/lfgframe/lfgicon-darkheartthicket"},
+	[1477] = {shortName = "HoV", icon = "interface/lfgframe/lfgicon-hallsofvalor"},
+	[1571] = {shortName = "CoS", icon = "interface/lfgframe/lfgicon-courtofstars"},
+	[1501] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookhold"},
 
 	--BATTLE FOR AZEROTH
-	[1754] = "interface/lfgframe/lfgicon-freehold",
-	[1763] = "interface/lfgframe/lfgicon-ataldazar",
-	[1841] = "interface/lfgframe/lfgicon-theunderrot",
-	[1862] = "interface/lfgframe/lfgicon-waycrestmanor",
+	[1754] = {shortName = "FH", icon = "interface/lfgframe/lfgicon-freehold"},
+	[1763] = {shortName = "AD", icon = "interface/lfgframe/lfgicon-ataldazar"},
+	[1841] = {shortName = "UR", icon = "interface/lfgframe/lfgicon-theunderrot"},
+	[1862] = {shortName = "WM", icon = "interface/lfgframe/lfgicon-waycrestmanor"},
 
 	--SHADOWLANDS
 
 	--DRAGONFLIGHT
-	[2451] = "interface/lfgframe/lfgicon-uldaman-legacyoftyr",
-	[2515] = "interface/lfgframe/lfgicon-arcanevaults",
-	[2516] = "interface/lfgframe/lfgicon-centaurplains",
-	[2519] = "interface/lfgframe/lfgicon-neltharus",
-	[2520] = "interface/lfgframe/lfgicon-brackenhidehollow",
-	[2521] = "interface/lfgframe/lfgicon-lifepools",
-	[2526] = "interface/lfgframe/lfgicon-theacademy",
-	[2527] = "interface/lfgframe/lfgicon-hallsofinfusion",
-	[2579] = "interface/lfgframe/lfgicon-dawnoftheinfinite",
+	[2451] = {shortName = "ULoT", icon = "interface/lfgframe/lfgicon-uldaman-legacyoftyr"},
+	[2515] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-arcanevaults"},
+	[2516] = {shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains"},
+	[2519] = {shortName = "NELT", icon = "interface/lfgframe/lfgicon-neltharus"},
+	[2520] = {shortName = "BH", icon = "interface/lfgframe/lfgicon-brackenhidehollow"},
+	[2521] = {shortName = "RLP", icon = "interface/lfgframe/lfgicon-lifepools"},
+	[2526] = {shortName = "AA", icon = "interface/lfgframe/lfgicon-theacademy"},
+	[2527] = {shortName = "HoI", icon = "interface/lfgframe/lfgicon-hallsofinfusion"},
+	[2579] = {shortName = "DotI", icon = "interface/lfgframe/lfgicon-dawnoftheinfinite"},
 }
 
-miog.RAID_ICONS = {
+miog.RAID_INFO = {
+	[2444] = {
+		{shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png"},
+	},
 	[2549] = { --interface/icons/inv_achievement_raidemeralddream
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png",
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
+		{shortName = "ATDH", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png"},
 	},
 	[2569] = { -- interface/icons/inv_achievement_raiddragon
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/chamber.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/experiment.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/assault.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashok.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/zskarn.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png",
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/chamber.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/experiment.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/assault.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashok.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/zskarn.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
+		{shortName = "ATSC", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png"},
 	},
 	[2522] = { --interface/icons/achievement_raidprimalist
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png",
-		miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png",
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
+		{shortName = "VotI", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png"},
 	},
 }
 
-for _, value in pairs(miog.RAID_ICONS) do
+miog.GROUP_ACTIVITY_BACKGROUNDS = {
+	--CATACLYSM
+	[54] = {mapID = 643, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/throneofthetides.png"},
+	[59] = {mapID = 657, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vortexpinnacle.png"},
+
+	--MISTS OF PANDARIA
+
+	[61] = {mapID = 960, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/templeofthejadeserpent.png"},
+
+	--WARLORDS OF DRAENOR
+	[11] = {mapID = 1279, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/everbloom.png"},
+	[12] = {mapID = 1176, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/shadowmoonburialgrounds.png"},
+	[67] = {mapID = 1279, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/everbloom.png"},
+
+	--LEGION
+	[113] = {mapID = 1466, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/darkheartthicket.png"},
+	[115] = {mapID = 1458, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/neltharionslair.png"},
+	[118] = {mapID = 1501, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/blackrookhold.png"},
+
+	--BATTLE FOR AZEROTH
+	[137] = {mapID = 1763, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/ataldazar.png"},
+	[138] = {mapID = 1841, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/underrot.png"},
+	[142] = {mapID = 1754, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/freehold.png"},
+	[145] = {mapID = 1862, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/waycrestmanor.png"},
+
+	--DRAGONFLIGHT
+	[302] = {mapID = 2526, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/algetharacademy.png"},
+	[303] = {mapID = 2520, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/brackenhidehollow.png"},
+	[304] = {mapID = 2527, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/hallsofinfusion.png"},
+	[305] = {mapID = 2519, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/neltharus.png"},
+	[306] = {mapID = 2521, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/rubylifepools.png"},
+	[307] = {mapID = 2515, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/azurevault.png"},
+	[308] = {mapID = 2516, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/nokhudoffensive.png"},
+	[309] = {mapID = 2451, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/uldamanlegacyoftyr.png"},
+	[315] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png"},
+	[316] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png"},
+	[317] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png"},
+	[318] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png"},
+
+	[310] = {mapID = 2522, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vaultoftheincarnates.png"},
+	[313] = {mapID = 2549, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/aberrus.png"},
+	[319] = {mapID = 2569, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/amirdrassil.png"},
+}
+
+miog.ACTIVITY_ID_INFO = {
+	[184] = {difficultyID = 4, shortName = "EB", mapID = 1279},
+	--[] = {difficultyID = , shortName = "", mapID = 0},,
+	--[] = {difficultyID = , shortName = "", mapID = 0},,
+	--[] = {difficultyID = , shortName = "", mapID = 0},,
+	--[] = {difficultyID = , shortName = "", mapID = 0},,
+	[460] = {difficultyID = 4, shortName = "DHT", mapID = 1466},
+	[463] = {difficultyID = 4, shortName = "BRH", mapID = 1501},
+	--[] = {difficultyID = , shortName = "", mapID = 0},,
+	--[] = {difficultyID = , shortName = "", mapID = 0},,
+	--[] = {difficultyID = , shortName = "", mapID = 0},,
+	[502] = {difficultyID = 4, shortName = "AD", mapID = 1763},
+	--[] = {difficultyID = , shortName = "", mapID = 0},
+	--[] = {difficultyID = , shortName = "", mapID = 0},
+	[530] = {difficultyID = 4, shortName = "WM", mapID = 1862},
+	[1146] = {difficultyID = 1, shortName = "DF WORLD", mapID = 2444},
+	[1157] = {difficultyID = 1, shortName = "AA", mapID = 2526},
+	[1158] = {difficultyID = 2, shortName = "AA", mapID = 2526},
+	[1159] = {difficultyID = 3, shortName = "AA", mapID = 2526},
+	[1160] = {difficultyID = 4, shortName = "AA", mapID = 2526},
+	[1161] = {difficultyID = 1, shortName = "BH", mapID = 2520},
+	[1162] = {difficultyID = 2, shortName = "BH", mapID = 2520},
+	[1163] = {difficultyID = 3, shortName = "BH", mapID = 2520},
+	[1164] = {difficultyID = 4, shortName = "BH", mapID = 2520},
+	[1165] = {difficultyID = 1, shortName = "HOI", mapID = 2527},
+	[1166] = {difficultyID = 2, shortName = "HOI", mapID = 2527},
+	[1167] = {difficultyID = 3, shortName = "HOI", mapID = 2527},
+	[1168] = {difficultyID = 4, shortName = "HOI", mapID = 2527},
+	[1169] = {difficultyID = 1, shortName = "NELT", mapID = 2519},
+	[1170] = {difficultyID = 2, shortName = "NELT", mapID = 2519},
+	[1171] = {difficultyID = 3, shortName = "NELT", mapID = 2519},
+	[1172] = {difficultyID = 4, shortName = "NELT", mapID = 2519},
+	[1173] = {difficultyID = 1, shortName = "RLP", mapID = 2521},
+	[1174] = {difficultyID = 2, shortName = "RLP", mapID = 2521},
+	[1175] = {difficultyID = 3, shortName = "RLP", mapID = 2521},
+	[1176] = {difficultyID = 4, shortName = "RLP", mapID = 2521},
+	[1177] = {difficultyID = 1, shortName = "AV", mapID = 2515},
+	[1178] = {difficultyID = 2, shortName = "AV", mapID = 2515},
+	[1179] = {difficultyID = 3, shortName = "AV", mapID = 2515},
+	[1180] = {difficultyID = 4, shortName = "AV", mapID = 2515},
+	[1181] = {difficultyID = 1, shortName = "NO", mapID = 2516},
+	[1182] = {difficultyID = 2, shortName = "NO", mapID = 2516},
+	[1183] = {difficultyID = 3, shortName = "NO", mapID = 2516},
+	[1184] = {difficultyID = 4, shortName = "NO", mapID = 2516},
+	[1185] = {difficultyID = 1, shortName = "ULOT", mapID = 2451},
+	[1186] = {difficultyID = 2, shortName = "ULOT", mapID = 2451},
+	[1187] = {difficultyID = 3, shortName = "ULOT", mapID = 2451},
+	[1188] = {difficultyID = 4, shortName = "ULOT", mapID = 2451},
+	[1189] = {difficultyID = 1, shortName = "VOTI", mapID = 2522},
+	[1190] = {difficultyID = 2, shortName = "VOTI", mapID = 2522},
+	[1191] = {difficultyID = 3, shortName = "VOTI", mapID = 2522},
+	[1192] = {difficultyID = 4, shortName = "TOTJS", mapID = 960},
+	[1193] = {difficultyID = 4, shortName = "SBG", mapID = 1176},
+	[1194] = {difficultyID = 1, shortName = "ULOT", mapID = 2451},
+	[1195] = {difficultyID = 4, shortName = "VP", mapID = 657},
+	[1235] = {difficultyID = 1, shortName = "ATSC", mapID = 2549},
+	[1236] = {difficultyID = 2, shortName = "ATSC", mapID = 2549},
+	[1237] = {difficultyID = 3, shortName = "ATSC", mapID = 2549},
+	[1244] = {difficultyID = 3, shortName = "DOTI", mapID = 2579},
+	[1245] = {difficultyID = 2, shortName = "FALL", mapID = 2579},
+	[1246] = {difficultyID = 2, shortName = "RISE", mapID = 2579},
+	[1247] = {difficultyID = 4, shortName = "FALL", mapID = 2579},
+	[1248] = {difficultyID = 4, shortName = "RISE", mapID = 2579},
+	[1251] = {difficultyID = 1, shortName = "ATDH", mapID = 2569},
+	[1252] = {difficultyID = 2, shortName = "ATDH", mapID = 2569},
+	[1253] = {difficultyID = 3, shortName = "ATDH", mapID = 2569},
+	[1274] = {difficultyID = 4, shortName = "TOTT", mapID = 643},
+}
+
+for _, value in pairs(miog.RAID_INFO) do
 	miog.F.MOST_BOSSES = #value-1 > miog.F.MOST_BOSSES and #value-1 or miog.F.MOST_BOSSES
 end
 
@@ -355,11 +485,14 @@ miog.CLASSES = {
 	[20] = 	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
 	[21] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
 	[22] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
-	[100] =	{name = "UNKNOWN", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", specs = {}},
+	[100] =	{name = "EMPTY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", specs = {}},
 }
 
+miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID = {}
+
 miog.SPECIALIZATIONS = {
-	[0] = {name = "Unknown", class = miog.CLASSES[100], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/unknown.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/unknown.png"},
+	[0] = {name = "Unknown", class = miog.CLASSES[100], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png"},
+	[20] = {name = "Empty", class = miog.CLASSES[20], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"},
 
 	[62] = {name = "Arcane", class = miog.CLASSES[8], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane_squared.png"},
 	[63] = {name = "Fire", class = miog.CLASSES[8], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fire.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fire_squared.png"},
@@ -446,6 +579,11 @@ miog.RACES = {
 
 }
 
+miog.INSTANCE_SHORT_NAME = {
+
+
+}
+
 miog.SEARCH_LANGUAGES = {
 	itIT=true,
 	ruRU=true,
@@ -503,7 +641,7 @@ miog.ACTIVITY_BACKGROUNDS = {
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
 }
 
-miog.MAINFRAME_BACKGROUNDS = {
+miog.APPLICATION_VIEWER_BACKGROUNDS = {
 	[1] = {"Standard", "lfg-background_tall_1024.png"},
 	[2] = {"Vanilla", "vanilla-bg-1.png"},
 	[3] = {"The Burning Crusade", "tbc-bg-1.png"},
@@ -515,43 +653,6 @@ miog.MAINFRAME_BACKGROUNDS = {
 	[9] = {"Battle for Azeroth", "bfa-bg-1.png"},
 	[10] = {"Shadowlands", "sl-bg-1.png"},
 	[11] = {"Dragonflight", "df-bg-1.png"},
-}
-
-miog.GROUP_ACTIVITY_BACKGROUNDS = {
-	--CATACLYSM
-	[54] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/throneofthetides.png",
-	[59] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vortexpinnacle.png",
-
-	--WARLORDS OF DRAENOR
-	[11] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/everbloom.png",
-
-	--LEGION
-	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/darkheartthicket.png",
-	[115] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/neltharionslair.png",
-	[118] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/blackrookhold.png",
-
-	--BATTLE FOR AZEROTH
-	[137] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/ataldazar.png",
-	[138] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/underrot.png",
-	[142] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/freehold.png",
-	[145] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/waycrestmanor.png",
-
-	--DRAGONFLIGHT
-	[302] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/algetharacademy.png",
-	[303] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/brackenhidehollow.png",
-	[304] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/hallsofinfusion.png",
-	[305] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/neltharus.png",
-	[306] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/rubylifepools.png",
-	[307] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/azurevault.png",
-	[308] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/nokhudoffensive.png",
-	[309] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/uldamanlegacyoftyr.png",
-	[315] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png",
-	[316] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png",
-	[317] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png",
-
-	[310] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vaultoftheincarnates.png",
-	[313] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/aberrus.png",
-	[319] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/amirdrassil.png",
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms
@@ -1670,4 +1771,9 @@ miog.DEBUG_RAIDER_IO_PROFILES = {
 	[31] = {"Alizka", "Blackhand", "eu"},
 	[32] = {"Kattenkurrar", "Ravencrest", "eu"},
 	[33] = {"Celestio", "TwistingNether", "eu"},
+}
+
+miog.DEBUG_DEV_CHARACTERS = {
+	"Rhany-Ravencrest",
+	"Gerhanya-Ravencrest",
 }

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.7] - 2024-01-24
+
+### Added
+
+- The search panel has now also been updated!
+1. Instead of the role icons there are now spec icons.
+2. For groups with 5 or less members you will see all members currently in the group, with 
+4. You can click on the dungeon / raid image, this opens up the Adventure Guide
+5. 
+
+
+### Fixed
+
+- Performance improvements all around!
+Much stuff has been fixed / improved since many UI elements and a lot of code is reused with the new search panel.
+
+- Settings improvements: while old settings have reliably been deleted if no longer in use now new settings get automatically imported from the default list.
+Should prevent a bunch of errors for new installs.
+
+
 
 ## [1.6.4] - 2024-01-16
 
@@ -798,7 +818,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.6.4...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.7...HEAD
+[1.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7
 [1.6.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.4
 [1.6.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.3
 [1.6.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.2
