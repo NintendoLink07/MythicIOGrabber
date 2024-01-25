@@ -117,31 +117,6 @@ miog.secondsToClock = function(stringSeconds)
 	end
 end
 
-miog.signupToGroup = function(resultID, button)
-	--LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
-	
-	--self.selectedResult = resultID;
-	--LFGListSearchPanel_UpdateResults(self)
-
-	--C_LFGList.ApplyToGroup(LFGListFrame.SearchPanel.selectedResult, miog.C.AVAILABLE_ROLES.TANK, miog.C.AVAILABLE_ROLES.HEALER, miog.C.AVAILABLE_ROLES.DAMAGER)
-	--LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
-	--LFGListSearchPanel_SelectResult
-	--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-	--LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
-
-	
-	local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(resultID);
-	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
-	print(appStatus, pendingStatus, searchResultInfo.isDelisted )
-	if ( appStatus ~= "none" or pendingStatus or searchResultInfo.isDelisted ) then
-		return false;
-	end
-
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-	LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
-	LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
-end
-
 miog.checkForActiveFilters = function(filterPanel)
 	local filtersActive = false
 
@@ -423,60 +398,54 @@ end
 
 miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 	if(UIDROPDOWNMENU_MENU_LEVEL == 1) then
-		local unit = nil
+		local dropdownParent =  dropdownMenu:GetParent()
 
-		if(miog.C.ELVUI_INSTALLED or miog.C.SUF_INSTALLED) then
-			unit = dropdownMenu.unit
+		if(dropdownMenu.unit or dropdownParent and dropdownParent.unit) then
+			local unit = dropdownMenu and (dropdownMenu.unit or dropdownMenu:GetParent().unit)
+			if(UnitIsPlayer(unit) and dropdownMenu.which ~= "SELF") then
+				local name = dropdownMenu.name
+				local server = dropdownMenu.server or GetRealmName()
+				local fullName = name .. "-" .. server
 
-		else
-			unit = dropdownMenu:GetParent().unit
+				UIDropDownMenu_AddSeparator()
 
-		end
+				local info = UIDropDownMenu_CreateInfo()
+				info.notCheckable = true
+				info.func = function(self, arg1, arg2, checked)
+					if(type(arg1) == "table") then
+						miog.addFavouredApplicant(arg1)
 
-		if(UnitIsPlayer(unit) and dropdownMenu.which ~= "SELF") then
-			local name = dropdownMenu.name
-			local server = dropdownMenu.server or GetRealmName()
-			local fullName = name .. "-" .. server
+					else
+						miog.deleteFavouredApplicant(arg1)
 
-			UIDropDownMenu_AddSeparator()
-
-			local info = UIDropDownMenu_CreateInfo()
-			info.notCheckable = true
-			info.func = function(self, arg1, arg2, checked)
-				if(type(arg1) == "table") then
-					miog.addFavouredApplicant(arg1)
-
-				else
-					miog.deleteFavouredApplicant(arg1)
+					end
 
 				end
 
+				if(miog.F.FAVOURED_APPLICANTS[fullName]) then
+					info.text = "[MIOG] Unfavour"
+					info.arg1 = fullName
+
+				else
+					local profile = miog.F.IS_RAIDERIO_LOADED and RaiderIO.GetProfile(name, server, miog.F.CURRENT_REGION)
+
+					local applicantData = {
+						name = name,
+						--class = class,
+						--spec = spec,
+						--role = role,
+						primary = profile and profile.mythicKeystoneProfile and profile.mythicKeystoneProfile.currentScore and profile.mythicKeystoneProfile.currentScore > 0 and profile.mythicKeystoneProfile.currentScore or "No score",
+						fullName = fullName,
+					}
+
+					info.text = "[MIOG] Favour"
+					info.arg1 = applicantData
+
+				end
+
+				UIDropDownMenu_AddButton(info, 1)
 			end
-
-			if(miog.F.FAVOURED_APPLICANTS[fullName]) then
-				info.text = "[MIOG] Unfavour"
-				info.arg1 = fullName
-
-			else
-				local profile = miog.F.IS_RAIDERIO_LOADED and RaiderIO.GetProfile(name, server, miog.F.CURRENT_REGION)
-
-				local applicantData = {
-					name = name,
-					--class = class,
-					--spec = spec,
-					--role = role,
-					primary = profile and profile.mythicKeystoneProfile and profile.mythicKeystoneProfile.currentScore and profile.mythicKeystoneProfile.currentScore > 0 and profile.mythicKeystoneProfile.currentScore or "No score",
-					fullName = fullName,
-				}
-
-				info.text = "[MIOG] Favour"
-				info.arg1 = applicantData
-
-			end
-
-			UIDropDownMenu_AddButton(info, 1)
 		end
-
 	end
 end
 

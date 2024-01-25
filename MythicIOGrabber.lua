@@ -372,7 +372,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 				else
 					if(mythicKeystoneProfile.mainCurrentScore > 0 and mythicKeystoneProfile.mainPreviousScore > 0) then
 						mainScoreString = "Main " .. (miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]) .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
-						" " .. miog.F.PREVIOUS_SEASON .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
+						" " .. (miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]) .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 					elseif(mythicKeystoneProfile.mainCurrentScore > 0) then
 						mainScoreString = "Main " .. (miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]) .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
@@ -420,8 +420,8 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 				if(sortedProgress.isMainProgress ~= true) then
 					local progressCount = sortedProgress.progress.progressCount
 					local bossCount = sortedProgress.progress.raid.bossCount
-					local panelProgressString = wticc(miog.C.DIFFICULTY[sortedProgress.progress.difficulty].shortName .. ":" .. progressCount .. "/" .. bossCount, miog.C.DIFFICULTY[sortedProgress.progress.difficulty].color)
-					local basicProgressString = wticc(progressCount .. "/" .. bossCount, sortedProgress.progress.raid.ordinal == 1 and miog.C.DIFFICULTY[sortedProgress.progress.difficulty].color or miog.C.DIFFICULTY[sortedProgress.progress.difficulty].desaturated)
+					local panelProgressString = wticc(progressCount .. "/" .. bossCount .. miog.DIFFICULTY[sortedProgress.progress.difficulty].shortName, miog.DIFFICULTY[sortedProgress.progress.difficulty].color)
+					local basicProgressString = wticc(progressCount .. "/" .. bossCount, sortedProgress.progress.raid.ordinal == 1 and miog.DIFFICULTY[sortedProgress.progress.difficulty].color or miog.DIFFICULTY[sortedProgress.progress.difficulty].desaturated)
 
 					if(sortedProgress.progress.raid.ordinal ~= lastOrdinal) then
 
@@ -559,16 +559,16 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 					lastOrdinal = sortedProgress.progress.raid.ordinal
 
 				else
-					mainProgressText = mainProgressText .. wticc(miog.C.DIFFICULTY[sortedProgress.progress.difficulty].shortName .. ":" .. sortedProgress.progress.progressCount .. "/" .. sortedProgress.progress.raid.bossCount, miog.C.DIFFICULTY[sortedProgress.progress.difficulty].color) .. " "
+					mainProgressText = mainProgressText .. wticc(miog.DIFFICULTY[sortedProgress.progress.difficulty].shortName .. ":" .. sortedProgress.progress.progressCount .. "/" .. sortedProgress.progress.raid.bossCount, miog.DIFFICULTY[sortedProgress.progress.difficulty].color) .. " "
 
 					if(miog.F.LISTED_CATEGORY_ID == 3) then
 						if(primaryIndicator:GetText() == nil) then
-							primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+							primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
 						end
 
 						if(secondaryIndicator:GetText() == nil) then
-							secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+							secondaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
 						end
 					end
@@ -586,12 +586,12 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 			if(miog.F.LISTED_CATEGORY_ID == 3) then
 				if(primaryIndicator:GetText() == nil) then
-					primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+					primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
 				end
 
 				if(secondaryIndicator:GetText() == nil) then
-					secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+					secondaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
 				end
 			end
@@ -601,8 +601,8 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			raidPanel.rows[1].FontString:SetPoint("LEFT", raidPanel.rows[1], "LEFT", 2, 0)
 
 			if(miog.F.LISTED_CATEGORY_ID == 3) then
-				primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
-				secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+				primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
+				secondaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
 			end
 
@@ -616,8 +616,8 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		raidPanel.rows[1].FontString:SetPoint("LEFT", generalInfoPanel.rows[1], "LEFT", 2, 0)
 
 		if(miog.F.LISTED_CATEGORY_ID == 3) then
-			primaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
-			secondaryIndicator:SetText(wticc("0/0", miog.C.DIFFICULTY[-1].color))
+			primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
+			secondaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
 		end
 
@@ -1026,7 +1026,7 @@ local function createApplicantFrame(applicantID)
 
 					secondaryIndicator:SetText(highestKeyForDungeon)
 				else
-					local difficulty = miog.C.DIFFICULTY[-1] -- NO DATA
+					local difficulty = miog.DIFFICULTY[-1] -- NO DATA
 					primaryIndicator:SetText(wticc("0", difficulty.color))
 					secondaryIndicator:SetText(wticc("0", difficulty.color))
 
@@ -1424,7 +1424,7 @@ local function updateSpecFrames()
 
 	miog.applicationViewer.classPanel:MarkDirty()
 
-	if(#indexedGroup < 5) then
+	if(#indexedGroup < 6) then
 		if(groupSystem.roleCount["TANK"] < 1) then
 			indexedGroup[#indexedGroup + 1] = {guid = "emptyTank", unitID = "emptyTank", name = "afkTank", classID = 20, role = "TANK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
 			groupSystem.roleCount["TANK"] = groupSystem.roleCount["TANK"] + 1
@@ -1447,12 +1447,12 @@ local function updateSpecFrames()
 
 	end
 
-	table.sort(indexedGroup, function(a, b)
-		if(a.role ~= b.role) then
-			return a.role > b.role
+	table.sort(indexedGroup, function(k1, k2)
+		if(k1.role ~= k2.role) then
+			return k1.role > k2.role
 
 		else
-			return a.classID > b.classID
+			return k1.classID > k2.classID
 
 		end
 	end)
@@ -1709,7 +1709,8 @@ local function insertLFGInfo()
 		miog.applicationViewer.infoPanel.affixFrame:Hide()
 	end
 
-	miog.applicationViewer.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID].file or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID]
+	miog.applicationViewer.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID] and miog.GROUP_ACTIVITY_BACKGROUNDS[activityInfo.groupFinderActivityGroupID].file 
+	or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID]
 	miog.applicationViewer.infoPanelBackdropFrame:ApplyBackdrop()
 
 	miog.applicationViewer.titleBar.titleStringFrame.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.name)
@@ -1809,12 +1810,12 @@ local function releaseAllSearchResultFrames()
 	miog.searchPanel.footerBar.groupNumberFontString:SetText(0)
 end
 
-local function computeResultMembers(resultID, numMembers)
+local function computeResultMembers(resultID, numMembers, mapID)
 	local orderedList = {}
 	local resultFrame = searchResultSystem.resultFrames[resultID]
 
 	if(resultFrame.memberFrames) then
-		for k, v in pairs(resultFrame.memberFrames) do
+		for _, v in pairs(resultFrame.memberFrames) do
 			if(v.leaderCrown) then
 				resultFrame.texturePool:Release(v.leaderCrown)
 
@@ -1842,77 +1843,111 @@ local function computeResultMembers(resultID, numMembers)
 		end
 	end
 
-	if(#orderedList < 5) then
-		if(roleCount["TANK"] == 0) then
-			orderedList[#orderedList + 1] = {class = "DUMMY", role = "TANK", specID = 20}
-			roleCount["TANK"] = roleCount["TANK"] + 1
-		end
+	if(miog.F.LISTED_CATEGORY_ID == 3) then
+		resultFrame.basicInformationPanel.secondFrame.resultMemberComp:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 
-		if(roleCount["HEALER"] == 0 and #orderedList < 6) then
-			orderedList[#orderedList + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
-			roleCount["HEALER"] = roleCount["HEALER"] + 1
+		--[[if(miog.RAID_INFO[mapID]) then
+			resultFrame.bossFrames = {}
 
-		end
+			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
+			local encountersDefeated = {}
 
-		for i = 1, 3 - roleCount["DAMAGER"], 1 do
-			if(roleCount["DAMAGER"] < 3 and #orderedList < 6) then
-				orderedList[#orderedList + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
-				roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+			if(encounterInfo) then
+				for _, v in pairs(encounterInfo) do
+					encountersDefeated[v] = true
+				end
+			end
+
+			for i = 1, #miog.RAID_INFO[mapID] - 1, 1 do
+				local resultBossFrame = miog.createFleetingTexture(resultFrame.texturePool, miog.RAID_INFO[mapID][i].icon, basicInformationFirstFrame, 15, 15)
+				resultBossFrame:SetPoint("LEFT", resultFrame.bossFrames[i-1] or difficultyZoneFrame, "RIGHT", 3, 0)
+				resultBossFrame:SetDrawLayer("ARTWORK")
+				resultFrame.bossFrames[i] = resultBossFrame
+				
+				if(encountersDefeated[miog.RAID_INFO[mapID][i].name]) then
+					resultBossFrame:SetDesaturated(true)
+					
+				end
+			end
+		end]]
+	else
+		if(#orderedList < 5) then
+			if(roleCount["TANK"] == 0) then
+				orderedList[#orderedList + 1] = {class = "DUMMY", role = "TANK", specID = 20}
+				roleCount["TANK"] = roleCount["TANK"] + 1
+			end
+
+			if(roleCount["HEALER"] == 0 and #orderedList < 6) then
+				orderedList[#orderedList + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
+				roleCount["HEALER"] = roleCount["HEALER"] + 1
+
+			end
+
+			for i = 1, 3 - roleCount["DAMAGER"], 1 do
+				if(roleCount["DAMAGER"] < 3 and #orderedList < 6) then
+					orderedList[#orderedList + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
+					roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+				end
+
 			end
 
 		end
 
-	end
+		table.sort(orderedList, function(k1, k2)
+			if(k1.role ~= k2.role) then
+				return k1.role > k2.role
 
-	table.sort(orderedList, function(k1, k2)
-		if(k1.role ~= k2.role) then
-			return k1.role > k2.role
+			elseif(k1.spec ~= k2.spec) then
+				return k1.spec > k2.spec
 
-		elseif(k1.spec ~= k2.spec) then
-			return k1.spec > k2.spec
+			else
+				return k1.class > k2.class
 
-		else
-			return k1.class > k2.class
+			end
+
+		end)
+
+		local resultMemberPanel = resultFrame.basicInformationPanel.secondFrame.memberPanel
+
+		for i = 1, #orderedList, 1 do
+			local resultMemberFrame = miog.createFleetingTexture(resultFrame.texturePool, miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon, resultMemberPanel, resultMemberPanel.fixedHeight, resultMemberPanel.fixedHeight)
+			resultMemberFrame.layoutIndex = i
+			resultMemberFrame:SetDrawLayer("OVERLAY", -4)
+			resultFrame.memberFrames[i] = resultMemberFrame
+
+			resultMemberFrame.border = miog.createFleetingTexture(resultFrame.texturePool, nil, resultMemberPanel)
+			resultMemberFrame.border:SetDrawLayer("OVERLAY", -5)
+			resultMemberFrame.border:SetPoint("TOPLEFT", resultMemberFrame, "TOPLEFT", -2, 2)
+			resultMemberFrame.border:SetPoint("BOTTOMRIGHT", resultMemberFrame, "BOTTOMRIGHT", 2, -2)
+
+			if(orderedList[i].class ~= "DUMMY") then
+				resultMemberFrame.border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
+			end
+
+			if(orderedList[i].leader) then
+				local leaderCrown = miog.createFleetingTexture(resultFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/leaderIcon.png", resultMemberPanel, resultMemberPanel.fixedHeight, resultMemberPanel.fixedHeight)
+				leaderCrown:SetPoint("CENTER", resultMemberFrame, "TOP")
+				leaderCrown:SetDrawLayer("OVERLAY", -3)
+				resultMemberFrame.leaderCrown = leaderCrown
+
+				resultMemberFrame:SetMouseMotionEnabled(true)
+				resultMemberFrame:SetScript("OnEnter", function()
+					GameTooltip:SetOwner(resultMemberFrame, "ANCHOR_CURSOR")
+					GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], resultFrame.name))
+					GameTooltip:Show()
+
+				end)
+				resultMemberFrame:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+
+				end)
+
+			end
 
 		end
-
-	end)
-
-	resultFrame.memberFrames = {}
-
-	local resultMemberPanel = miog.createFleetingFrame(resultFrame.framePool, "HorizontalLayoutFrame, BackdropTemplate", resultFrame.basicInformationPanel)
-	resultMemberPanel.fixedHeight = resultFrame.basicInformationPanel.secondFrame:GetHeight() - 4
-	resultMemberPanel.fixedWidth = 100
-	resultMemberPanel.spacing = 14
-	resultMemberPanel:SetPoint("LEFT", resultFrame.basicInformationPanel.secondFrame.difficultyZoneFrame, "RIGHT", 5, 0)
-
-	for i = 1, #orderedList, 1 do
-		local resultMemberFrame = miog.createFleetingTexture(resultFrame.texturePool, miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon, resultMemberPanel, resultMemberPanel.fixedHeight, resultMemberPanel.fixedHeight)
-		--resultMemberFrame:SetPoint("LEFT", resultFrame.memberFrames[i-1] or resultFrame, resultFrame.memberFrames[i-1] and "RIGHT" or "LEFT", resultFrame.memberFrames[i-1] and 6 or firstLineString:GetWidth(), 0)
-		resultMemberFrame.layoutIndex = i
-		resultMemberFrame:SetDrawLayer("OVERLAY", -4)
-		resultFrame.memberFrames[i] = resultMemberFrame
-
-		resultMemberFrame.border = miog.createFleetingTexture(resultFrame.texturePool, nil, resultMemberPanel)
-		resultMemberFrame.border:SetDrawLayer("OVERLAY", -5)
-		resultMemberFrame.border:SetPoint("TOPLEFT", resultMemberFrame, "TOPLEFT", -2, 2)
-		resultMemberFrame.border:SetPoint("BOTTOMRIGHT", resultMemberFrame, "BOTTOMRIGHT", 2, -2)
-
-		if(orderedList[i].class ~= "DUMMY") then
-			resultMemberFrame.border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
-		end
-
-		if(orderedList[i].leader) then
-			local leaderCrown = miog.createFleetingTexture(resultFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/leaderIcon.png", resultMemberPanel, resultMemberPanel.fixedHeight, resultMemberPanel.fixedHeight)
-			leaderCrown:SetPoint("CENTER", resultMemberFrame, "TOP")
-			leaderCrown:SetDrawLayer("OVERLAY", -3)
-			resultMemberFrame.leaderCrown = leaderCrown
-
-		end
-
-	end
 
 	resultMemberPanel:MarkDirty()
+	end
 
 end
 
@@ -1920,6 +1955,8 @@ local function updateResultFrameStatus(resultID, status)
 	local resultFrame = searchResultSystem.resultFrames[resultID]
 
 	if(resultFrame) then
+		searchResultSystem.applicationStatus[resultID] = status
+
 		if(status ~= "applied") then
 			if(status ~= "none") then
 				resultFrame.statusFrame:Show()
@@ -1930,7 +1967,8 @@ local function updateResultFrameStatus(resultID, status)
 
 				resultFrame.basicInformationPanel.firstFrame.cancelApplicationButton:Hide()
 
-				miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
+				--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
+				searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 				searchResultSystem.resultFrames[resultID].background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 			end
 
@@ -1939,13 +1977,22 @@ local function updateResultFrameStatus(resultID, status)
 
 			end
 
+			if(status == "invitedeclined") then
+				resultFrame.statusFrame.inviteButton:Hide()
+				resultFrame.statusFrame.declineButton:Hide()
+
+			end
+
 			if(status == "invited") then
 				resultFrame.statusFrame.inviteButton:Show()
 				resultFrame.statusFrame.declineButton:Show()
 
+				resultFrame.basicInformationPanel.firstFrame.cancelApplicationButton:Hide()
+
 			end
 		elseif(status == "applied") then
-			miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.CLRSCC.green):GetRGB())
+			--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.CLRSCC.green):GetRGB())
+			searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
 			searchResultSystem.resultFrames[resultID].background:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.olive):GetRGBA())
 			
 			searchResultSystem.resultFrames[resultID].basicInformationPanel.firstFrame.cancelApplicationButton:Show()
@@ -1954,7 +2001,17 @@ local function updateResultFrameStatus(resultID, status)
 			--miog.reorderSearchResultList()
 		
 		end
+		
+		searchResultSystem.applicationStatus[resultID] = status
 
+	end
+end
+
+local function createResultTooltip(resultID, resultFrame, autoAccept)
+	if(C_LFGList.HasSearchResultInfo(resultID)) then
+		GameTooltip:SetOwner(resultFrame, "ANCHOR_RIGHT", 25, 0)
+		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID, autoAccept == true and LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE)
+		
 	end
 end
 
@@ -1967,7 +2024,13 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	resultFrame.minimumHeight = 40
 	resultFrame:SetFrameStrata("DIALOG")
 	resultFrame:SetScript("OnMouseDown", function(_, button)
-		miog.signupToGroup(resultID, button)
+		miog.signupToGroup(resultID)
+	end)
+	resultFrame:SetScript("OnEnter", function()
+		createResultTooltip(resultID, resultFrame, searchResultData.autoAccept)
+	end)
+	resultFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
 	end)
 	resultFrame.resultID = resultID + 1
 	miog.createFrameBorder(resultFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
@@ -1978,7 +2041,7 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	resultFrame.framePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	resultFrame.framePool:GetOrCreatePool("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	resultFrame.framePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	resultFrame.framePool:GetOrCreatePool("Button", nil, "IconButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	resultFrame.framePool:GetOrCreatePool("Button", nil, "IconButtonTemplate, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	resultFrame.framePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	resultFrame.framePool:GetOrCreatePool("Button", nil, "UIPanelButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
@@ -1997,6 +2060,8 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 		searchResultData.leaderName = nameTable[1] .. "-" .. nameTable[2]
 
 	end
+
+	resultFrame.name = searchResultData.leaderName
 
 	if(miog.F.IS_RAIDERIO_LOADED) then
 		profile = RaiderIO.GetProfile(nameTable[1], nameTable[2], miog.F.CURRENT_REGION)
@@ -2021,15 +2086,15 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	resultFrameStatusFrame:SetPoint("BOTTOMRIGHT", resultFrame, "BOTTOMRIGHT", 0, 0)
 	resultFrameStatusFrame:SetFrameStrata("FULLSCREEN")
 	resultFrameStatusFrame.FontString:SetJustifyH("CENTER")
-	resultFrameStatusFrame.FontString:SetWidth(resultFrame.fixedWidth)
+	--resultFrameStatusFrame.FontString:SetWidth(resultFrame.fixedWidth)
 	resultFrameStatusFrame.FontString:SetPoint("TOP", resultFrameStatusFrame, "TOP", 0, -2)
 	resultFrameStatusFrame.FontString:Show()
 
-	local statusFrameInviteButton = miog.createFleetingFrame(resultFrame.framePool, "IconButtonTemplate", resultFrameStatusFrame, 20, 20)
+	local statusFrameInviteButton = miog.createFleetingFrame(resultFrame.framePool, "IconButtonTemplate, BackdropTemplate", resultFrameStatusFrame, 20, 20)
 	statusFrameInviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
 	statusFrameInviteButton.iconSize = 20 - 4
 	statusFrameInviteButton:OnLoad()
-	statusFrameInviteButton:SetPoint("RIGHT", resultFrameStatusFrame.FontString, "LEFT")
+	statusFrameInviteButton:SetPoint("RIGHT", resultFrameStatusFrame.FontString, "LEFT", -5, 0)
 	statusFrameInviteButton:RegisterForClicks("LeftButtonDown")
 	statusFrameInviteButton:SetScript("OnClick", function(self, button)
 		if(button == "LeftButton") then
@@ -2040,11 +2105,13 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	statusFrameInviteButton:Hide()
 	resultFrameStatusFrame.inviteButton = statusFrameInviteButton
 
-	local statusFrameDeclineButton = miog.createFleetingFrame(resultFrame.framePool, "IconButtonTemplate", resultFrameStatusFrame, 20, 20)
+	miog.createFrameBorder(statusFrameInviteButton, 2, CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
+
+	local statusFrameDeclineButton = miog.createFleetingFrame(resultFrame.framePool, "IconButtonTemplate, BackdropTemplate", resultFrameStatusFrame, 20, 20)
 	statusFrameDeclineButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
 	statusFrameDeclineButton.iconSize = 20 - 4
 	statusFrameDeclineButton:OnLoad()
-	statusFrameDeclineButton:SetPoint("LEFT", resultFrameStatusFrame.FontString, "RIGHT")
+	statusFrameDeclineButton:SetPoint("LEFT", resultFrameStatusFrame.FontString, "RIGHT", 5, 0)
 	statusFrameDeclineButton:RegisterForClicks("LeftButtonDown")
 	statusFrameDeclineButton:SetScript("OnClick", function(self, button)
 		if(button == "LeftButton") then
@@ -2052,7 +2119,10 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 
 		end
 	end)
+	statusFrameDeclineButton:Hide()
 	resultFrameStatusFrame.declineButton = statusFrameInviteButton
+
+	miog.createFrameBorder(statusFrameDeclineButton, 2, CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
 
 	local resultFrameStatusFrameBackground = miog.createFleetingTexture(resultFrame.texturePool, nil, resultFrameStatusFrame)
 	resultFrameStatusFrameBackground:SetAllPoints(true)
@@ -2086,7 +2156,15 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	iconFrame.border:SetDrawLayer("OVERLAY", -5)
 	iconFrame.border:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", -1, 1)
 	iconFrame.border:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", 1, -1)
-	iconFrame.border:SetColorTexture(miog.ITEM_QUALITY_COLORS[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID+1].color:GetRGBA())
+	local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors
+
+	if(color) then
+		iconFrame.border:SetColorTexture(color and color.r, color.g, color.b, 1)
+
+	else
+		iconFrame.border:SetColorTexture(1, 1, 1, 1)
+
+	end
 
 	local expandFrameButton = Mixin(miog.createFleetingFrame(resultFrame.framePool, "UIButtonTemplate", basicInformationPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
 	expandFrameButton:OnLoad()
@@ -2139,31 +2217,13 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	titleFrame:SetPoint("LEFT", basicInformationFirstFrame, "LEFT", 5, -1)
 	titleFrame:SetText(searchResultData.name)
 	titleFrame:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(titleFrame, "ANCHOR_CURSOR")
-
-		if(playerIsIgnored) then
-			GameTooltip:SetText("Player is on your ignore list")
-
-		else
-			if(titleFrame:IsTruncated()) then
-				GameTooltip:AddLine(titleFrame:GetText())
-			end
-
-			if(searchResultData.leaderName == "Rhany-Ravencrest" or searchResultData.leaderName == "Gerhanya-Ravencrest") then
-				GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
-
-			end
-		end
-
-		GameTooltip:Show()
-
+		createResultTooltip(resultID, resultFrame, searchResultData.autoAccept)
 	end)
 	titleFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
-
 	end)
 	titleFrame:SetScript("OnMouseDown", function(_, button)
-		miog.signupToGroup(resultID, button)
+		miog.signupToGroup(resultID)
 	end)
 
 
@@ -2213,7 +2273,7 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 		end)
 	end
 
-	local cancelApplicationButton = miog.createFleetingFrame(resultFrame.framePool, "IconButtonTemplate", basicInformationFirstFrame, basicInformationFirstFrame:GetHeight(), basicInformationFirstFrame:GetHeight())
+	local cancelApplicationButton = miog.createFleetingFrame(resultFrame.framePool, "IconButtonTemplate, BackdropTemplate", basicInformationFirstFrame, basicInformationFirstFrame:GetHeight(), basicInformationFirstFrame:GetHeight())
 	cancelApplicationButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
 	cancelApplicationButton.iconSize = basicInformationFirstFrame:GetHeight() - 4
 	cancelApplicationButton:OnLoad()
@@ -2244,57 +2304,36 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	
 	local difficultyZoneFrame = miog.createFleetingFontString(resultFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationSecondFrame, basicInformationFirstFrame:GetWidth() * 0.45, basicInformationFirstFrame:GetHeight())
 	difficultyZoneFrame:SetPoint("LEFT", basicInformationSecondFrame, "LEFT", 5, 0)
-	difficultyZoneFrame:SetText(miog.C.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
-	(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].shortName))
+	difficultyZoneFrame:SetText(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
+	(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].shortName) or activityInfo.fullName)
 	difficultyZoneFrame:SetMouseMotionEnabled(true)
 	difficultyZoneFrame:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(resultFrame, "ANCHOR_CURSOR")
-
-		if(difficultyZoneFrame:IsTruncated()) then
-			GameTooltip:AddLine(difficultyZoneFrame:GetText())
-
-		end
-
-		GameTooltip:Show()
-
+		createResultTooltip(resultID, resultFrame, searchResultData.autoAccept)
 	end)
-	difficultyZoneFrame:SetScript("OnLeave", function()
+	titleFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
-
 	end)
 	difficultyZoneFrame:SetScript("OnMouseDown", function(_, button)
-		miog.signupToGroup(resultID, button)
+		miog.signupToGroup(resultID)
 	end)
 
-
 	basicInformationSecondFrame.difficultyZoneFrame = difficultyZoneFrame
+	
+	local resultMemberPanel = miog.createFleetingFrame(resultFrame.framePool, "HorizontalLayoutFrame, BackdropTemplate", basicInformationSecondFrame)
+	resultMemberPanel.fixedHeight = basicInformationSecondFrame:GetHeight() - 4
+	resultMemberPanel.fixedWidth = 100
+	resultMemberPanel.spacing = 14
+	resultMemberPanel:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 0)
 
-	local largeIconCategory = (LFGListFrame.SearchPanel.categoryID == 1 or LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 4) and true or false
+	basicInformationSecondFrame.memberPanel = resultMemberPanel
 
-	if(largeIconCategory) then
-		computeResultMembers(resultID, searchResultData.numMembers)
+	resultFrame.memberFrames = {}
 
-	else
-		if(miog.RAID_INFO[mapID] and activityInfo.categoryID == 3) then
-			resultFrame.bossFrames = {}
+	local resultMemberComp = miog.createFleetingFontString(resultFrame.fontStringPool, 12, basicInformationSecondFrame)
+	resultMemberComp:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 0)
+	basicInformationSecondFrame.resultMemberComp = resultMemberComp
 
-			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
-
-			for i = 1, #miog.RAID_INFO[mapID] - 1, 1 do
-				local resultBossFrame = miog.createFleetingTexture(resultFrame.texturePool, miog.RAID_INFO[mapID][i].icon, basicInformationFirstFrame, 15, 15)
-				resultBossFrame:SetPoint("LEFT", resultFrame.bossFrames[i-1] or difficultyZoneFrame, "RIGHT", 3, 0)
-				resultBossFrame:SetDrawLayer("ARTWORK")
-
-				if(encounterInfo) then
-					resultBossFrame:SetDesaturated(encounterInfo[i] and true or false)
-
-				end
-
-				resultFrame.bossFrames[i] = resultBossFrame
-
-			end
-		end
-	end
+	computeResultMembers(resultID, searchResultData.numMembers, mapID)
 
 	gatherRaiderIODisplayData(nameTable[1], nameTable[2], resultFrame, resultFrame)
 
@@ -2303,7 +2342,8 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 	if(searchResultData.comment) then
 		generalInfoPanel.rows[1].FontString:SetScript("OnEnter", function()
 			GameTooltip:SetOwner(generalInfoPanel.rows[1].FontString, "ANCHOR_CURSOR")
-			GameTooltip:AddLine(searchResultData.comment)
+			GameTooltip:SetText(searchResultData.comment)
+			GameTooltip:Show()
 		end)
 
 		generalInfoPanel.rows[1].FontString:SetScript("OnLeave", function()
@@ -2349,7 +2389,7 @@ local function createSearchResultFrame(searchResultData, activityInfo)
 
 			secondaryIndicator:SetText(highestKeyForDungeon)
 		else
-			local difficulty = miog.C.DIFFICULTY[-1] -- NO DATA
+			local difficulty = miog.DIFFICULTY[-1] -- NO DATA
 			primaryIndicator:SetText(wticc("0", difficulty.color))
 			secondaryIndicator:SetText(wticc("0", difficulty.color))
 
@@ -2415,12 +2455,12 @@ local function HasRemainingSlotsForBattleResurrection(resultID)
 
 		end
 
-		if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0 or roles["TANK_REMAINING" > 0]) then
+		if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0 or roles["TANK_REMAINING"] > 0) then
 			return true
 
 		end
 
-		if(playerRole == "TANK" and roles["DAMAGER_REMAINING"] > 0 or roles["HEALER_REMAINING" > 0]) then
+		if(playerRole == "TANK" and roles["DAMAGER_REMAINING"] > 0 or roles["HEALER_REMAINING"] > 0) then
 			return true
 
 		end
@@ -2450,7 +2490,12 @@ end
 local function isGroupEligible(resultID)
 	local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 
-	if(searchResultData and not searchResultData.isDelisted) then
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.groupOptions) then
+		if(miog.searchPanel.filterFrame.filterForDifficulty:GetChecked() == true and miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID ~= MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID) then
+			return false
+
+		end
+
 		if(miog.searchPanel.filterFrame.partyFit:GetChecked() == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
 			return false
 
@@ -2468,7 +2513,7 @@ local function isGroupEligible(resultID)
 
 		if(C_LFGList.GetActivityInfoTable(searchResultData.activityID).categoryID ~= LFGListFrame.SearchPanel.categoryID) then
 			return false
-	
+
 		end
 
 		local roleCount = {
@@ -2485,8 +2530,8 @@ local function isGroupEligible(resultID)
 			if(specID) then
 				roleCount[role or "NONE"] = roleCount[role] + 1
 
-				if(not miog.searchPanel.filterFrame.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].Button:GetChecked() or
-				not miog.searchPanel.filterFrame.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].specFilterPanel.SpecButtons[specID]:GetChecked()) then
+				if(not miog.searchPanel.filterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].Button:GetChecked() or
+				not miog.searchPanel.filterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].specFilterPanel.SpecButtons[specID]:GetChecked()) then
 					return false
 
 				end
@@ -2500,19 +2545,20 @@ local function isGroupEligible(resultID)
 		local minDamager = miog.searchPanel.filterFrame["minDamager"]:GetValue()
 		local maxDamager = miog.searchPanel.filterFrame["maxDamager"]:GetValue()
 
-		if(maxTanks > 0 and not (roleCount["TANK"] >= minTanks and roleCount["TANK"] <= maxTanks)
-		or maxHealers > 0 and not (roleCount["HEALER"] >= minHealers and roleCount["HEALER"] <= maxHealers)
-		or maxDamager > 0 and not (roleCount["DAMAGER"] >= minDamager and roleCount["DAMAGER"] <= maxDamager)) then
+		if(miog.searchPanel.filterFrame["filterForTanks"]:GetChecked() and maxTanks > 0 and not (roleCount["TANK"] >= minTanks and roleCount["TANK"] <= maxTanks)
+		or miog.searchPanel.filterFrame["filterForHealers"]:GetChecked() and maxHealers > 0 and not (roleCount["HEALER"] >= minHealers and roleCount["HEALER"] <= maxHealers)
+		or miog.searchPanel.filterFrame["filterForDamager"]:GetChecked() and maxDamager > 0 and not (roleCount["DAMAGER"] >= minDamager and roleCount["DAMAGER"] <= maxDamager)) then
 			return false
 
 		end
-
-		return true
-
-	else
+	end
+	
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonOptions and MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[searchResultData.activityID] == false) then
 		return false
 
 	end
+
+	return true
 end
 
 local function sortSearchResultList(result1, result2)
@@ -2579,35 +2625,63 @@ local function sortSearchResultList(result1, result2)
 
 end
 
-miog.updateSingleSearchResult = function(resultID)
+local function updateSingleSearchResult(resultID, appStatus)
 	local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
-	if(isGroupEligible(resultID) and searchResultData.leaderName) then
+
+	if((appStatus == "applied" or isGroupEligible(resultID)) and searchResultData and searchResultData.leaderName and not searchResultData.isDelisted) then
 		local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
 
 		if(not searchResultSystem.resultFrames[resultID]) then
 			createSearchResultFrame(searchResultData, activityInfo)
 
-		else
-			local largeIconCategory = (activityInfo.categoryID == 1 or activityInfo.categoryID == 2 or activityInfo.categoryID == 4) and true or false
-
-			if(largeIconCategory and searchResultSystem.resultFrames[resultID].numMembers ~= searchResultData.numMembers) then
-				computeResultMembers(resultID, searchResultData.numMembers)
-
-				searchResultSystem.resultFrames[resultID].numMembers = searchResultData.numMembers
-
-			end
 		end
-		
+
+		local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].mapID or 0
+		computeResultMembers(resultID, searchResultData.numMembers, mapID)
+		searchResultSystem.resultFrames[resultID].basicInformationPanel.firstFrame.titleFrame:SetText(searchResultData.name)
 		searchResultSystem.resultFrames[resultID]:Show()
 		searchResultSystem.resultFrames[resultID].layoutIndex = searchResultSystem.resultFrames[resultID].layoutIndex or resultFrameIndex
 		resultFrameIndex = resultFrameIndex + 1
+		return true
+		
+	else
+		return false
+	
 	end
+end
+
+miog.signupToGroup = function(resultID)
+	local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(resultID)
+	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+	if (appStatus ~= "none" or pendingStatus or searchResultInfo.isDelisted ) then
+		return false
+
+	end
+
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
+
+	if(searchResultSystem.resultFrames[resultID]) then
+		searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
+
+		if(searchResultSystem.selectedResult and searchResultSystem.resultFrames[searchResultSystem.selectedResult]) then
+			searchResultSystem.resultFrames[searchResultSystem.selectedResult]:SetBackdropBorderColor(
+				CreateColorFromHexString(searchResultSystem.applicationStatus[searchResultSystem.selectedResult] == "applied" and miog.CLRSCC.olive or miog.C.BACKGROUND_COLOR_3):GetRGBA()
+			)
+
+		end
+
+		searchResultSystem.selectedResult = resultID
+	end
+
+	LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
 end
 
 local function gatherSearchResultSortData(singleResultID)
 	local unsortedMainApplicantsList = {}
 
-	local _, resultTable = C_LFGList.GetSearchResults()
+	local _, resultTable = LFGListFrame.SearchPanel.totalResults, LFGListFrame.SearchPanel.results or C_LFGList.GetSearchResults()
 
 	local counter = 1
 
@@ -2615,87 +2689,91 @@ local function gatherSearchResultSortData(singleResultID)
 		local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 
 		if(searchResultData and searchResultData.leaderName) then
-			local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
-			local profile, primarySortAttribute, secondarySortAttribute
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
 
-			if(miog.F.IS_RAIDERIO_LOADED) then
-				profile = RaiderIO.GetProfile(searchResultData.leaderName)
+			if(activityInfo.categoryID == LFGListFrame.SearchPanel.categoryID) then
+				local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+				local profile, primarySortAttribute, secondarySortAttribute
 
-			end
+				if(miog.F.IS_RAIDERIO_LOADED) then
+					profile = RaiderIO.GetProfile(searchResultData.leaderName)
 
-			if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
-				primarySortAttribute = searchResultData.leaderOverallDungeonScore
-				secondarySortAttribute = searchResultData.leaderDungeonScoreInfo.bestRunLevel
+				end
 
-			elseif(miog.F.LISTED_CATEGORY_ID == 3) then
-				local raidData = {}
+				if(miog.F.LISTED_CATEGORY_ID ~= (3 or 4 or 7 or 8 or 9)) then
+					primarySortAttribute = searchResultData.leaderOverallDungeonScore
+					secondarySortAttribute = searchResultData.leaderDungeonScoreInfo.bestRunLevel
 
-				if(profile) then
-					if(profile.raidProfile) then
-						local lastDifficulty = nil
-						local lastOrdinal = nil
+				elseif(miog.F.LISTED_CATEGORY_ID == 3) then
+					local raidData = {}
 
-						for i = 1, #profile.raidProfile.sortedProgress, 1 do
-							if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-								if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
-									local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-									local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
+					if(profile) then
+						if(profile.raidProfile) then
+							local lastDifficulty = nil
+							local lastOrdinal = nil
 
-									raidData[#raidData+1] = {
-										ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-										difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-										progress = kills,
-										bossCount = bossCount,
-										parsedString = kills .. "/" .. bossCount,
-										weight = kills / bossCount + miog.WEIGHTS_TABLE[profile.raidProfile.sortedProgress[i].progress.raid.ordinal][profile.raidProfile.sortedProgress[i].progress.difficulty]
-									}
+							for i = 1, #profile.raidProfile.sortedProgress, 1 do
+								if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
+									if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
+										local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
+										local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
 
-									if(#raidData == 2) then
-										break
+										raidData[#raidData+1] = {
+											ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
+											difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
+											progress = kills,
+											bossCount = bossCount,
+											parsedString = kills .. "/" .. bossCount,
+											weight = kills / bossCount + miog.WEIGHTS_TABLE[profile.raidProfile.sortedProgress[i].progress.raid.ordinal][profile.raidProfile.sortedProgress[i].progress.difficulty]
+										}
 
+										if(#raidData == 2) then
+											break
+
+										end
 									end
+
+									lastOrdinal = raidData[i] and raidData[i].ordinal
+									lastDifficulty = raidData[i] and raidData[i].difficulty
+
 								end
-
-								lastOrdinal = raidData[i] and raidData[i].ordinal
-								lastDifficulty = raidData[i] and raidData[i].difficulty
-
 							end
 						end
 					end
-				end
 
-				for i = 1, 2, 1 do
-					if(not raidData[i]) then
-						raidData[i] = {
-							ordinal = 0,
-							difficulty = -1,
-							progress = 0,
-							bossCount = 0,
-							parsedString = "0/0",
-							weight = 0
-						}
+					for i = 1, 2, 1 do
+						if(not raidData[i]) then
+							raidData[i] = {
+								ordinal = 0,
+								difficulty = -1,
+								progress = 0,
+								bossCount = 0,
+								parsedString = "0/0",
+								weight = 0
+							}
 
+						end
 					end
+
+					primarySortAttribute = raidData[1].weight
+					secondarySortAttribute = raidData[2].weight
+
+				elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
+					primarySortAttribute = searchResultData.leaderPvpRatingInfo.rating
+					secondarySortAttribute = searchResultData.leaderPvpRatingInfo.rating
+
 				end
 
-				primarySortAttribute = raidData[1].weight
-				secondarySortAttribute = raidData[2].weight
+				unsortedMainApplicantsList[counter] = {
+					appStatus = searchResultData.isDelisted and "declined_delisted" or appStatus,
+					primary = primarySortAttribute,
+					secondary = secondarySortAttribute,
+					age = searchResultData.age,
+					index = resultID
+				}
 
-			elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
-				primarySortAttribute = searchResultData.leaderPvpRatingInfo.rating
-				secondarySortAttribute = searchResultData.leaderPvpRatingInfo.rating
-
+				counter = counter + 1
 			end
-
-			unsortedMainApplicantsList[counter] = {
-				appStatus = searchResultData.isDelisted and "declined_delisted" or appStatus,
-				primary = primarySortAttribute,
-				secondary = secondarySortAttribute,
-				age = searchResultData.age,
-				index = resultID
-			}
-
-			counter = counter + 1
 		end
 
 	end
@@ -2739,13 +2817,38 @@ end
 	miog.searchPanel.resultPanel.container:MarkDirty()
 end]]
 
+local startTime, endTime
+local currentlyFullyUpdatingSearchResultList = false
+
 miog.updateSearchResultList = function(forceReorder, resultID)
-	local unsortedList = gatherSearchResultSortData(resultID)
+	miog.mainFrame.throttledString:Hide()
+	currentlyFullyUpdatingSearchResultList = forceReorder
+	
+	if(miog.F.IS_IN_DEBUG_MODE) then
+		startTime = GetTimePreciseSec()
+	end
+
+	local unsortedList
+
+	if(forceReorder) then
+		unsortedList = gatherSearchResultSortData(resultID)
+
+	else
+		unsortedList = {}
+
+		local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
+		local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+		appStatus = searchResultData.isDelisted and "declined_delisted" or appStatus
+		
+		unsortedList[1] = {index = resultID, appStatus = appStatus}
+	end
 	
 	if(unsortedList[1]) then
 		local allSystemMembers = {}
 
 		if(forceReorder) then
+			table.sort(unsortedList, sortSearchResultList)
+			
 			for k, v in pairs(searchResultSystem.resultFrames) do
 				v:Hide()
 				v.layoutIndex = nil
@@ -2754,27 +2857,28 @@ miog.updateSearchResultList = function(forceReorder, resultID)
 			end
 		end
 
-		table.sort(unsortedList, sortSearchResultList)
-
 		for _, listEntry in ipairs(unsortedList) do
-			allSystemMembers[listEntry.index] = nil
-
-			miog.updateSingleSearchResult(listEntry.index)
+			if(updateSingleSearchResult(listEntry.index, listEntry.appStatus)) then
+				allSystemMembers[listEntry.index] = nil
+				
+			end
 
 			updateResultFrameStatus(listEntry.index, listEntry.appStatus)
 		end
 
-		for k in pairs(allSystemMembers) do
-			if(searchResultSystem.resultFrames[k]) then
-				searchResultSystem.resultFrames[k].framePool:ReleaseAll()
-				searchResultSystem.resultFrames[k].fontStringPool:ReleaseAll()
-				searchResultSystem.resultFrames[k].texturePool:ReleaseAll()
+		if(forceReorder) then
+			for k in pairs(allSystemMembers) do
+				if(searchResultSystem.resultFrames[k]) then
+					searchResultSystem.resultFrames[k].framePool:ReleaseAll()
+					searchResultSystem.resultFrames[k].fontStringPool:ReleaseAll()
+					searchResultSystem.resultFrames[k].texturePool:ReleaseAll()
 
-				miog.searchResultFramePool:Release(searchResultSystem.resultFrames[k])
+					miog.searchResultFramePool:Release(searchResultSystem.resultFrames[k])
 
-				searchResultSystem.resultFrames[k] = nil
-				searchResultSystem.applicationStatus[k] = nil
+					searchResultSystem.resultFrames[k] = nil
+					searchResultSystem.applicationStatus[k] = nil
 
+				end
 			end
 		end
 
@@ -2782,6 +2886,29 @@ miog.updateSearchResultList = function(forceReorder, resultID)
 
 	end
 
+	if(miog.F.IS_IN_DEBUG_MODE) then 
+		endTime = GetTimePreciseSec()
+		currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
+
+		if(currentAverageExecuteTime[#currentAverageExecuteTime] > 0.05) then
+			print(currentAverageExecuteTime[#currentAverageExecuteTime])
+		end
+	end
+
+	miog.searchPanel.footerBar.groupNumberFontString:SetText(LFGListFrame.SearchPanel.totalResults)
+	currentlyFullyUpdatingSearchResultList = false
+end
+
+local function searchResultsReceived()
+	if(LFGListFrame.SearchPanel.totalResults > 0) then
+		if(miog.F.WAITING_FOR_RESULTS == true) then
+			miog.searchPanel.resultPanel:SetVerticalScroll(0)
+
+			miog.F.WAITING_FOR_RESULTS = false
+			--print(GetTimePreciseSec(), "GOT ACTUAL SEARCH RESULTS", LFGListFrame.SearchPanel.totalResults)
+			miog.updateSearchResultList(true)
+		end	
+	end
 end
 
 miog.OnEvent = function(_, event, ...)
@@ -2799,6 +2926,7 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "PLAYER_LOGIN") then
+		miog.checkForSavedSettings()
 		miog.createFrames()
 		miog.loadSettings()
 
@@ -2810,28 +2938,26 @@ miog.OnEvent = function(_, event, ...)
 		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) self:Hide() miog.searchPanel:Show() end)
 		LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.searchPanel:Show() end)
 
-		miog.C.ELVUI_INSTALLED = C_AddOns.IsAddOnLoaded("ElvUI")
-		miog.C.SUF_INSTALLED = C_AddOns.IsAddOnLoaded("ShadowedUnitFrames")
-
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
 
 			miog.mainFrame.raiderIOAddonIsLoadedFrame:Hide()
 
 		end
+		
+		miog.scriptReceiver:UnregisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+		miog.scriptReceiver:UnregisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
+		hooksecurefunc("LFGListSearchPanel_UpdateResultList", function(self)
+			searchResultsReceived()
+		end)
 
 		if(C_AddOns.IsAddOnLoaded("PremadeGroupsFilter")) then
 			-- Hooking into the same functions PGF uses
 
 			--miog.scriptReceiver:UnregisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
-			--miog.scriptReceiver:UnregisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 			--miog.scriptReceiver:UnregisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
 			--hooksecurefunc("LFGListSearchEntry_Update", function(self) miog.updateSearchResultList(true, self.resultID) end)
-			--hooksecurefunc("LFGListSearchPanel_UpdateResultList", function(self)
-			--	local total = C_LFGList.GetSearchResults()
-			--	print("MIOG", total)
-			--end)
 
 			-- HOOK BEFORE EVENT
 			-- THROTTLE OR WRONG METHOD
@@ -3034,35 +3160,28 @@ miog.OnEvent = function(_, event, ...)
 
 		end
 	elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
-		miog.applicationViewer.applicantPanel:SetVerticalScroll(0)
-
-		--print("GOT SEARCH RESULTS")
-
-		local total = C_LFGList.GetSearchResults()
-
-		if(total > 0) then
-			miog.searchPanel.footerBar.groupNumberFontString:SetText(total)
-			miog.updateSearchResultList(true)
-		end
-
-		--local total, resultTable = C_LFGList.GetSearchResults()
-
-		--print(total)
-
+		searchResultsReceived()
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
-		--print("Search Result ID: " .. ...)
+		print("Search Result ID: " .. ...)
 
 		--print(..., searchResultData.name, C_LFGList.HasSearchResultInfo(...))
 
-		miog.updateSearchResultList(false, ...)
+		if(not currentlyFullyUpdatingSearchResultList) then
+			miog.updateSearchResultList(false, ...)
+		end
 
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
-		print("Search failed because of " .. ...)
+		--print("Search failed because of " .. ...)
+
+		if(... == "throttled") then
+			miog.mainFrame.throttledString:Show()
+
+		end
 
 	elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
 		local resultID, new, old, name = ...
-		print(...)
+		--print(...)
 
 		searchResultSystem.applicationStatus[resultID] = new
 
@@ -3076,10 +3195,12 @@ miog.OnEvent = function(_, event, ...)
 		--miog.updateSearchResultList(false, resultID)
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then
-		print(event, ...)
+		--print(event, ...)
+		--Happens when in a group and group is at max members after inviting a person
+		--Not decided if it's needed
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TIMEOUT") then
-		print(event, ...)
+		--print(event, ...)
 
 	end
 end
@@ -3172,7 +3293,6 @@ local function handler(msg, editBox)
 		miog.F.IS_IN_DEBUG_MODE = false
 		releaseApplicantFrames()
 		resetArrays()
-
 	else
 		--miog.applicationViewer:Show()
 
@@ -3247,3 +3367,8 @@ end]]
 
 	end
 end)]]
+
+hooksecurefunc("LFGListSearchPanel_DoSearch", function()
+	miog.F.WAITING_FOR_RESULTS = true
+	releaseAllSearchResultFrames()
+end)

@@ -75,12 +75,20 @@ local defaultOptionSettings = {
 			partyFit = false,
 			ressFit = false,
 			lustFit = false,
+			filterForTanks = false,
+			filterForHealers = false,
+			filterForDamager = false,
+			filterForDifficulty = false,
 			minTanks = 0,
 			maxTanks = 0,
 			minHealers = 0,
 			maxHealers = 0,
 			minDamager = 0,
 			maxDamager = 0,
+			difficultyID = 4,
+			dungeons = {},
+			groupOptions = false,
+			dungeonOptions = false,
 		},
 	},
 	sortMethods_SearchPanel = {
@@ -120,7 +128,7 @@ local function compareSettings()
 			for tableKey, tableEntry in pairs(optionEntry.table) do
 				if(not MIOG_SavedSettings[key].table[tableKey]) then
 					MIOG_SavedSettings[key].table[tableKey] = tableEntry
-					
+
 				end
 			end
 		else
@@ -219,8 +227,7 @@ local function keepSignUpNote(self, resultID)
 	StaticPopupSpecial_Show(self)
 end
 
-miog.loadSettings = function()
-
+miog.checkForSavedSettings = function()
 	if(not MIOG_SavedSettings) then
 		MIOG_SavedSettings = defaultOptionSettings
 
@@ -236,7 +243,9 @@ miog.loadSettings = function()
 		value = time(),
 		visual = date("%d/%m/%y %H:%M:%S")
 	}
+end
 
+miog.loadSettings = function()
 	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", miog.interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "FontString", 20)
 	titleFrame:SetPoint("TOP", miog.interfaceOptionsPanel, "TOP", 0, 0)
 	titleFrame.FontString:SetText("Mythic IO Grabber")

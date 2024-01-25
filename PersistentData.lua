@@ -93,15 +93,6 @@ miog.C = {
     PRIMARY_TEXT_COLOR = "FFE4E6EB",
     SECONDARY_TEXT_COLOR = "FFB0B3B8",
 
-	DIFFICULTY = {
-		[4] = {shortName = "M+", description = "Mythic+", color = miog.ITEM_QUALITY_COLORS[5].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[5].desaturatedHex},
-		[3] = {shortName = "M", description = _G["PLAYER_DIFFICULTY6"], color = miog.ITEM_QUALITY_COLORS[4].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[4].desaturatedHex},
-		[2] = {shortName = "H", description = _G["PLAYER_DIFFICULTY2"], color = miog.ITEM_QUALITY_COLORS[3].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[3].desaturatedHex},
-		[1] = {shortName = "N", description = _G["PLAYER_DIFFICULTY1"], color = miog.ITEM_QUALITY_COLORS[2].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[2].desaturatedHex},
-		[0] = {shortName = "LT", description = "Last tier", color = miog.ITEM_QUALITY_COLORS[0].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[0].desaturatedHex},
-		[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222", desaturated = "ffe93838"},
-	},
-
 	REGIONS = {
 		[1]	= "us",
 		[2]	= "kr",
@@ -121,9 +112,6 @@ miog.C = {
 	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png:20:20|t",
 	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:20:20|t",
 	STAR_TEXTURE = "⋆",
-
-	ELVUI_INSTALLED = IsAddOnLoaded("ElvUI"),
-	SUF_INSTALLED = IsAddOnLoaded("ShadowedUnitFrames"),
 	
 	AVAILABLE_ROLES = {
 		["TANK"] = false,
@@ -192,13 +180,25 @@ miog.F = {
 	CAN_INVITE = false,
 
 	CURRENT_SEARCH_RESULT_ID = 0,
+	WAITING_FOR_RESULTS = false,
 }
+
+local color = "FF1eff00"
 
 miog.BLANK_BACKGROUND_INFO = {
 	bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 	tileSize = miog.C.APPLICANT_MEMBER_HEIGHT,
 	tile = false,
 	edgeSize = 1
+}
+
+miog.DIFFICULTY = {
+	[4] = {shortName = "M+", description = "Mythic+", color = miog.ITEM_QUALITY_COLORS[5].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[5].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[5].color},
+	[3] = {shortName = "M", description = _G["PLAYER_DIFFICULTY6"], color = miog.ITEM_QUALITY_COLORS[4].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[4].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[4].color},
+	[2] = {shortName = "H", description = _G["PLAYER_DIFFICULTY2"], color = miog.ITEM_QUALITY_COLORS[3].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[3].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[3].color},
+	[1] = {shortName = "N", description = _G["PLAYER_DIFFICULTY1"], color = miog.ITEM_QUALITY_COLORS[2].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[2].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[2].color},
+	[0] = {shortName = "LT", description = "Last tier", color = miog.ITEM_QUALITY_COLORS[0].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[0].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[0].color},
+	[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222", desaturated = "ffe93838"},
 }
 
 miog.DIFFICULTY_NAMES_TO_ID = {
@@ -311,6 +311,15 @@ miog.RAID_INFO = {
 	},
 }
 
+for k, v in pairs(miog.RAID_INFO) do
+	local journalID = C_EncounterJournal.GetInstanceForGameMap(k)
+
+	for i = 1, #v - 1, 1 do
+		local name = EJ_GetEncounterInfoByIndex(i, journalID)
+		miog.RAID_INFO[k][i].name = name
+	end
+end
+
 miog.GROUP_ACTIVITY_BACKGROUNDS = {
 	--CATACLYSM
 	[54] = {mapID = 643, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/throneofthetides.png"},
@@ -351,25 +360,25 @@ miog.GROUP_ACTIVITY_BACKGROUNDS = {
 	[318] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/dawnoftheinfinite.png"},
 
 	[310] = {mapID = 2522, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vaultoftheincarnates.png"},
-	[313] = {mapID = 2549, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/aberrus.png"},
-	[319] = {mapID = 2569, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/amirdrassil.png"},
+	[313] = {mapID = 2569, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/aberrus.png"},
+	[319] = {mapID = 2549, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/amirdrassil.png"},
 }
 
 miog.ACTIVITY_ID_INFO = {
-	[184] = {difficultyID = 4, shortName = "EB", mapID = 1279},
+	[184] = {difficultyID = 4, shortName = "EB", mapID = 1279, mPlusSeasons = {11, }},
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
-	[460] = {difficultyID = 4, shortName = "DHT", mapID = 1466},
-	[463] = {difficultyID = 4, shortName = "BRH", mapID = 1501},
+	[460] = {difficultyID = 4, shortName = "DHT", mapID = 1466, mPlusSeasons = {11, }},
+	[463] = {difficultyID = 4, shortName = "BRH", mapID = 1501, mPlusSeasons = {11, }},
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
-	[502] = {difficultyID = 4, shortName = "AD", mapID = 1763},
+	[502] = {difficultyID = 4, shortName = "AD", mapID = 1763, mPlusSeasons = {11, }},
 	--[] = {difficultyID = , shortName = "", mapID = 0},
 	--[] = {difficultyID = , shortName = "", mapID = 0},
-	[530] = {difficultyID = 4, shortName = "WM", mapID = 1862},
+	[530] = {difficultyID = 4, shortName = "WM", mapID = 1862, mPlusSeasons = {11, }},
 	[1146] = {difficultyID = 1, shortName = "DF WORLD", mapID = 2444},
 	[1157] = {difficultyID = 1, shortName = "AA", mapID = 2526},
 	[1158] = {difficultyID = 2, shortName = "AA", mapID = 2526},
@@ -410,18 +419,18 @@ miog.ACTIVITY_ID_INFO = {
 	[1193] = {difficultyID = 4, shortName = "SBG", mapID = 1176},
 	[1194] = {difficultyID = 1, shortName = "ULOT", mapID = 2451},
 	[1195] = {difficultyID = 4, shortName = "VP", mapID = 657},
-	[1235] = {difficultyID = 1, shortName = "ATSC", mapID = 2549},
-	[1236] = {difficultyID = 2, shortName = "ATSC", mapID = 2549},
-	[1237] = {difficultyID = 3, shortName = "ATSC", mapID = 2549},
+	[1235] = {difficultyID = 1, shortName = "ATSC", mapID = 2569},
+	[1236] = {difficultyID = 2, shortName = "ATSC", mapID = 2569},
+	[1237] = {difficultyID = 3, shortName = "ATSC", mapID = 2569},
 	[1244] = {difficultyID = 3, shortName = "DOTI", mapID = 2579},
 	[1245] = {difficultyID = 2, shortName = "FALL", mapID = 2579},
 	[1246] = {difficultyID = 2, shortName = "RISE", mapID = 2579},
-	[1247] = {difficultyID = 4, shortName = "FALL", mapID = 2579},
-	[1248] = {difficultyID = 4, shortName = "RISE", mapID = 2579},
-	[1251] = {difficultyID = 1, shortName = "ATDH", mapID = 2569},
-	[1252] = {difficultyID = 2, shortName = "ATDH", mapID = 2569},
-	[1253] = {difficultyID = 3, shortName = "ATDH", mapID = 2569},
-	[1274] = {difficultyID = 4, shortName = "TOTT", mapID = 643},
+	[1247] = {difficultyID = 4, shortName = "FALL", mapID = 2579, mPlusSeasons = {11, }},
+	[1248] = {difficultyID = 4, shortName = "RISE", mapID = 2579, mPlusSeasons = {11, }},
+	[1251] = {difficultyID = 1, shortName = "ATDH", mapID = 2549},
+	[1252] = {difficultyID = 2, shortName = "ATDH", mapID = 2549},
+	[1253] = {difficultyID = 3, shortName = "ATDH", mapID = 2549},
+	[1274] = {difficultyID = 4, shortName = "TOTT", mapID = 643, mPlusSeasons = {11, }},
 }
 
 for _, value in pairs(miog.RAID_INFO) do
