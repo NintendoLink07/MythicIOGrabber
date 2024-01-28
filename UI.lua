@@ -1890,18 +1890,17 @@ local function createSearchPanel()
 	end
 
 	local resultPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", searchPanel)
-	resultPanel:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT", 2, -2)
-	resultPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 2, 2)
+	resultPanel:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT", 1, -1)
+	resultPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 1, 1)
 	searchPanel.resultPanel = resultPanel
 	resultPanel.ScrollBar:SetPoint("TOPLEFT", resultPanel, "TOPRIGHT", 0, -10)
 	resultPanel.ScrollBar:SetPoint("BOTTOMLEFT", resultPanel, "BOTTOMRIGHT", 0, 10)
 
 	local resultPanelContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", resultPanel)
 	resultPanelContainer.fixedWidth = resultPanel:GetWidth()
-
 	resultPanelContainer.minimumHeight = 1
 	resultPanelContainer.spacing = 5
-	resultPanelContainer.align = "top"
+	resultPanelContainer.align = "center"
 	resultPanelContainer:SetPoint("TOP", resultPanel, "TOP")
 	resultPanel.container = resultPanelContainer
 

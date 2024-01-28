@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning].
 
 ## [1.7] - 2024-01-25
 
+### Added
+
+- Added the timeout timer when you apply to a group.
+
+### Changed
+
+- Micro stutters are (almost) no more.
+ 
+
+### Fixed
+
+- Made searching for groups more reliable
+
+## [1.7] - 2024-01-25
+
 Thanks for 10000 downloads already!
 Happy to see players actually enjoying my work.
 Please report any bugs either as a comment on the Curseforge page or on the Github issues page, unfortunately I can't test everything by myself.
