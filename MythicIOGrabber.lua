@@ -1883,90 +1883,90 @@ end
 local function isGroupEligible(resultID, appStatus)
 	local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 
-		if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty == true and miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID ~= MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID) then
-			return false
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty == true and miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID ~= MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID) then
+		return false
 
+	end
+
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.partyFit == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
+		return false
+
+	end
+	
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.ressFit == true and not HasRemainingSlotsForBattleResurrection(resultID)) then
+		return false
+
+	end
+	
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.lustFit == true and not HasRemainingSlotsForBloodlust(resultID)) then
+		return false
+
+	end
+
+	if(appStatus ~= "applied" and C_LFGList.GetActivityInfoTable(searchResultData.activityID).categoryID ~= LFGListFrame.SearchPanel.categoryID) then
+		return false
+
+	end
+
+	local roleCount = {
+		["TANK"] = 0,
+		["HEALER"] = 0,
+		["DAMAGER"] = 0,
+		["NONE"] = 0
+	}
+
+	for i = 1, searchResultData.numMembers, 1 do
+		local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(resultID, i)
+		local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
+
+		if(specID) then
+			roleCount[role or "NONE"] = roleCount[role] + 1
+
+			
+			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForClassSpecs) then
+				if(not miog.searchPanel.filterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].Button:GetChecked()
+				or not miog.searchPanel.filterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].specFilterPanel.SpecButtons[specID]:GetChecked()) then
+					return false
+
+				end
+	
+			end
 		end
+	end
 
-		if(MIOG_SavedSettings.searchPanel_FilterOptions.table.partyFit == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
-			return false
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForTanks and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxTanks > 0
+	and not (roleCount["TANK"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minTanks and roleCount["TANK"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxTanks)
 
-		end
-		
-		if(MIOG_SavedSettings.searchPanel_FilterOptions.table.ressFit == true and not HasRemainingSlotsForBattleResurrection(resultID)) then
-			return false
+	or MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForHealers and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxHealers > 0
+	and not (roleCount["HEALER"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxHealers)
 
-		end
-		
-		if(MIOG_SavedSettings.searchPanel_FilterOptions.table.lustFit == true and not HasRemainingSlotsForBloodlust(resultID)) then
-			return false
+	or MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDamager and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager > 0
+	and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager)) then
+		return false
 
-		end
+	end
 
-		if(appStatus ~= "applied" and C_LFGList.GetActivityInfoTable(searchResultData.activityID).categoryID ~= LFGListFrame.SearchPanel.categoryID) then
-			return false
+	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForScore) then
+		if(MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore ~= 0 and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore ~= 0) then
+			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore >= 0
+			and not (searchResultData.leaderOverallDungeonScore >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore and searchResultData.leaderOverallDungeonScore <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore)) then
+				return false
 
-		end
+			end
+		elseif(MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore ~= 0) then
+			if(searchResultData.leaderOverallDungeonScore < MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore) then
+				return false
 
-		local roleCount = {
-			["TANK"] = 0,
-			["HEALER"] = 0,
-			["DAMAGER"] = 0,
-			["NONE"] = 0
-		}
-
-		for i = 1, searchResultData.numMembers, 1 do
-			local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(resultID, i)
-			local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
-
-			if(specID) then
-				roleCount[role or "NONE"] = roleCount[role] + 1
-
+			end
+		elseif(MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore ~= 0) then
+			if(searchResultData.leaderOverallDungeonScore >= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore) then
+				return false
 				
-				if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForClassSpecs) then
-					if(not miog.searchPanel.filterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].Button:GetChecked()
-					or not miog.searchPanel.filterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[class]].specFilterPanel.SpecButtons[specID]:GetChecked()) then
-						return false
-
-					end
-		
-				end
 			end
-		end
-
-		if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForTanks and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxTanks > 0
-		and not (roleCount["TANK"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minTanks and roleCount["TANK"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxTanks)
-
-		or MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForHealers and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxHealers > 0
-		and not (roleCount["HEALER"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxHealers)
-
-		or MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDamager and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager > 0
-		and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager)) then
-			return false
 
 		end
-
-		if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForScore) then
-			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore ~= 0 and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore ~= 0) then
-				if(MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore >= 0
-				and not (searchResultData.leaderOverallDungeonScore >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore and searchResultData.leaderOverallDungeonScore <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore)) then
-					return false
-
-				end
-			elseif(MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore ~= 0) then
-				if(searchResultData.leaderOverallDungeonScore < MIOG_SavedSettings.searchPanel_FilterOptions.table.minScore) then
-					return false
-
-				end
-			elseif(MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore ~= 0) then
-				if(searchResultData.leaderOverallDungeonScore >= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxScore) then
-					return false
-					
-				end
-
-			end
-		
-		end
+	
+	end
 	
 	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonOptions) then
 		if(not MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[searchResultData.activityID]) then
@@ -2019,7 +2019,28 @@ local function updateResultFrameStatus(resultID, appStatus)
 				end
 			elseif(appStatus == "applied") then
 				--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.CLRSCC.green):GetRGB())
-				if(isGroupEligible(resultID, appStatus)) then
+				
+				local _, _, _, appDuration = C_LFGList.GetApplicationInfo(resultID)
+
+				local ageFrame = resultFrame.basicInformationPanel.firstFrame.ageFrame
+
+				if(ageFrame.ageTicker) then
+					ageFrame.ageTicker:Cancel()
+				end
+			
+				local ageNumber = appDuration
+				ageFrame:SetText(miog.secondsToClock(ageNumber))
+			
+				ageFrame:SetTextColor(CreateColorFromHexString(miog.CLRSCC.purple):GetRGBA())
+				ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
+			
+				ageFrame.ageTicker = C_Timer.NewTicker(1, function()
+					ageNumber = ageNumber - 1
+					ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
+			
+				end)
+
+				if(HasRemainingSlotsForLocalPlayerRole(resultID)) then
 					searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
 					searchResultSystem.resultFrames[resultID].background:SetColorTexture(CreateColorFromHexString("FF28644B"):GetRGBA())
 
@@ -2860,7 +2881,7 @@ local function updateSearchResultList(forceReorder, singleResultID)
 
 				end
 
-				if(new == true or listEntry.resultID == singleResultID) then
+				if(listEntry.appStatus == "applied" or new == true or listEntry.resultID == singleResultID) then
 					updateSearchResultFrameWithNewData(searchResultData, listEntry.appDuration > 0 and listEntry.appDuration or nil)
 
 				end
