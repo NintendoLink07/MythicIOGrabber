@@ -1,4 +1,4 @@
-## [1.7.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.1) - 2024-01-28
+## [1.7.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.1) - 2024-01-29
 
 Thanks for 10000 downloads already!
 Happy to see players actually enjoying my work.
