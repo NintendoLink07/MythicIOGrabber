@@ -145,6 +145,7 @@ miog.F = {
 	REQUIRED_ILVL = 0,
 
 	IS_RAIDERIO_LOADED = false,
+	IS_PGF1_LOADED = false,
 	IS_IN_DEBUG_MODE = false,
 
 	MOST_BOSSES = 0,

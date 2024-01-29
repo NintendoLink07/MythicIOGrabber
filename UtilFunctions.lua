@@ -200,7 +200,7 @@ miog.createCustomColorForScore = function(score)
 
 		return CreateColor(0.9, 0.8, 0.5)
 	else
-		return miog.CLRSCC["red"]
+		return CreateColorFromHexString(miog.CLRSCC.red)
 
 	end
 end

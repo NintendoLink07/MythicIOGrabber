@@ -1235,8 +1235,6 @@ local function addDualNumericSpinnerToFilterFrame(name)
 
 			end
 		end)
-		decrementButton:SetScript("OnMouseUp", function()
-		end)
 
 		numericSpinner:SetPoint("LEFT", decrementButton, "RIGHT", 6, 0)
 		numericSpinner.decrementButton = decrementButton
@@ -1273,6 +1271,55 @@ local function addDualNumericSpinnerToFilterFrame(name)
 		miog.searchPanel.filterFrame[i == 1 and minName or maxName] = numericSpinner
 
 		lastFilterOption = incrementButton
+	end
+
+	lastFilterOption = optionButton
+
+end
+
+local function addDualNumericFieldsToFilterFrame(name)
+	local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", miog.searchPanel.filterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+	optionButton:SetNormalAtlas("checkbox-minimal")
+	optionButton:SetPushedAtlas("checkbox-minimal")
+	optionButton:SetCheckedTexture("checkmark-minimal")
+	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+	optionButton:SetPoint("TOPLEFT", lastFilterOption, "BOTTOMLEFT", 0, -5)
+	optionButton:RegisterForClicks("LeftButtonDown")
+	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] or false)
+	optionButton:HookScript("OnClick", function()
+		MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] = optionButton:GetChecked()
+		miog.updateSearchResultList(true)
+	end)
+
+	miog.searchPanel.filterFrame["filterFor" .. name] = optionButton
+
+	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.filterFrame)
+	optionString:SetPoint("LEFT", optionButton, "RIGHT")
+	optionString:SetText(name)
+
+	local minName = "min" .. name
+	local maxName = "max" .. name
+
+	for i = 1, 2, 1 do
+		local numericField = miog.createBasicFrame("persistent", "InputBoxTemplate", miog.searchPanel.filterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE * 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+		numericField:SetPoint("LEFT", i == 1 and optionString or lastFilterOption, "RIGHT", 5, 0)
+		numericField:SetAutoFocus(false)
+		numericField.autoFocus = false
+		numericField:SetNumeric(true)
+		numericField:SetMaxLetters(4)
+		numericField:SetText(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] or 0)
+		numericField:HookScript("OnTextChanged", function(self, ...)
+			local text = tonumber(self:GetText())
+			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = text ~= nil and text or 0
+
+			miog.updateSearchResultList(true)
+
+		end)
+		
+
+		miog.searchPanel.filterFrame[i == 1 and minName or maxName] = numericField
+
+		lastFilterOption = numericField
 	end
 
 	lastFilterOption = optionButton
@@ -1352,7 +1399,7 @@ local function createSearchPanel()
 		miog.F.LISTED_CATEGORY_ID = LFGListFrame.SearchPanel.categoryID
 	end)
 
-	local filterFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, 220, 600)
+	local filterFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, 220, 620)
 	filterFrame:SetPoint("TOPLEFT", searchPanel, "TOPRIGHT", 10, 0)
 	miog.createFrameBorder(filterFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	filterFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -1438,7 +1485,7 @@ local function createSearchPanel()
 	end)
 	filterFrame.checkAllFiltersButton = checkAllFiltersButton
 
-	addOptionToFilterFrame("Group options", "groupOptions")
+	addOptionToFilterFrame("Class / spec", "filterForClassSpecs")
 
 	local classFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", filterFrame, filterFrame:GetWidth() - 2, 20 * 14)
 	classFilterPanel:SetPoint("TOPLEFT", lastFilterOption or filterFrame, lastFilterOption and "BOTTOMLEFT" or "TOPLEFT", 0, lastFilterOption and -5 or -20)
@@ -1604,7 +1651,9 @@ local function createSearchPanel()
 			local info = UIDropDownMenu_CreateInfo()
 			info.func = function(_, arg1, _, _)
 				MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID = arg1
-				UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID and miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID].description or "Mythic+")
+				UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID and miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID].description)
+				
+				miog.updateSearchResultList(true)
 				CloseDropDownMenus()
 
 			end
@@ -1629,6 +1678,8 @@ local function createSearchPanel()
 	addDualNumericSpinnerToFilterFrame("Tanks")
 	addDualNumericSpinnerToFilterFrame("Healers")
 	addDualNumericSpinnerToFilterFrame("Damager")
+
+	addDualNumericFieldsToFilterFrame("Score")
 
 	local divider = miog.createBasicTexture("persistent", nil, filterFrame, filterFrame:GetWidth(), 1, "BORDER")
 	divider:SetAtlas("UI-LFG-DividerLine")

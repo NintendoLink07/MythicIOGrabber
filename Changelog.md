@@ -5,20 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [1.7] - 2024-01-25
+## [1.7.1] - 2024-01-28
 
 ### Added
 
-- Added the timeout timer when you apply to a group.
+- A timeout timer when you apply to a group has been added.
+
+- Dual score checks (min, max) has been added to the filter frame
 
 ### Changed
 
-- Micro stutters are (almost) no more.
+- Decreased the brightness of the color texture of groups you've applied to.
+Using a darker green so Monks', Hunters' and Evokers' border doesn't seem to disappear.
  
-
 ### Fixed
 
 - Made searching for groups more reliable
+
+- When you applied to a M+ group and you're currently in the raid panel (or any combination of panel tbh) the group you've applied to will show up (standard Blizzard behaviour, forgot this edge case)
+
+- PVP ordering and displaying of brackets should now work correctly
+
+- Changing the difficulty with the dropdown should now refresh the result list
+
+- Improved compatibility with PremadeGroupsFilter
+
+
 
 ## [1.7] - 2024-01-25
 
@@ -63,7 +75,7 @@ Should prevent a bunch of errors for new installs.
 - Squished some really old bugs like when you pixel- & frame perfect clicked between two applicants you could sometimes invite a different applicant that was in the Blizzard application viewer (...lol)
 
 - [#9](https://github.com/NintendoLink07/MythicIOGrabber/issues/9): "Character Portrait Menu Lua Error Compatability with Ndui" has been fixed.
-Fixed this case for every UI that rewrites character frames (ElvUI and SUF were not affected since I only used those for testing).
+Fixed this case for every UI that rewrites character frames (ElvUI and SUF were not affected since I used those for testing).
 
 
 ## [1.6.4] - 2024-01-16
@@ -858,7 +870,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.7...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.7.1...HEAD
+[1.7.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.1
 [1.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7
 [1.6.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.4
 [1.6.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.3
