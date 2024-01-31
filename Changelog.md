@@ -31,6 +31,8 @@ This will be improved during this and next week.
 
 - When a category has not a single group listed (e.g. Rated BG's, Skirmishes) the throttle frame doesn't disappear (I currently only refresh the frames when atleast 1 result is available)
 
+- When you install the addon for the first time or you delete the settings you have to press the "Search" button twice in each category to actually see correct results (only for the first login)
+
 
 
 ## [1.7.1] - 2024-01-29
