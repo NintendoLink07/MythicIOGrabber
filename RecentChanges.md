@@ -18,3 +18,7 @@ This will be improved during this and next week.
 - Improved the handling of applications, delisting, etc. behind the scenes, made it less prone to error.
 
 - Fixed some filter edge cases.
+
+### Known issues
+
+- When a category has not a single group listed (e.g. Rated BG's, Skirmishes) the throttle frame doesn't disappear (I currently only refresh the frames when atleast 1 result is available)
