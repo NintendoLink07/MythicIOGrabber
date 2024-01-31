@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [1.7.2] - 2024-01-31
+
+### Added
+
+- A proper throttle frame (when you search too often) has been implemented
+
+- There are now boss frames when you are looking for a raid.
+Encounters that are desaturated have already been defeated.
+
+### Changed
+
+- When you applied to a M+ group and you're currently in the raid panel (or any combination of panels tbh) the groups will now have their m+ score or progress data shown.
+
+- Improved the search result frame system, which leads to almost no micro stutters occuring.
+The only "downside" is that the used memory jumps to almost 80mb (equal to having all RaiderIO addon EU data loaded) when currently looking for members and browsing groups at the same time, with no filters active.
+This will be improved during this and next week.
+
+- Improved the handling of applications, delisting, etc. behind the scenes, made it less prone to error.
+
+- Fixed some filter edge cases.
+
+
+
+
+
 ## [1.7.1] - 2024-01-29
 
 ### Added
@@ -875,7 +901,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.7.1...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.7.2...HEAD
+[1.7.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.2
 [1.7.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.1
 [1.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7
 [1.6.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.6.4

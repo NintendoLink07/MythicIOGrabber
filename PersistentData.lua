@@ -182,6 +182,8 @@ miog.F = {
 
 	CURRENT_SEARCH_RESULT_ID = 0,
 	WAITING_FOR_RESULTS = false,
+
+	SEARCH_IS_THROTTLED = false
 }
 
 local color = "FF1eff00"

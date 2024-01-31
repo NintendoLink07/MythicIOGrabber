@@ -11,8 +11,10 @@ local applicantSystem = {}
 applicantSystem.applicantMember = {}
 
 local searchResultSystem = {}
-searchResultSystem.resultFrames = {}
-searchResultSystem.applicationStatus = {}
+searchResultSystem.persistentFrames = {}
+searchResultSystem.searchResultData = {}
+searchResultSystem.resultIDToFrameIndex = {}
+searchResultSystem.sortData = {}
 
 local currentAverageExecuteTime = {}
 local debugTimer = nil
@@ -31,9 +33,6 @@ local queueTimer
 local lastNotifyTime = 0
 local inspectQueue = {}
 local inspectCoroutine
-
-local searchResultCoroutine
-local searchResultQueue = {}
 
 local function resetArrays()
 	miog.DEBUG_APPLICANT_DATA = {}
@@ -188,7 +187,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 	local detailedInformationPanel = miog.createFleetingFrame(poolFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", memberFrame)
 	detailedInformationPanel:SetWidth(basicInformationPanel.fixedWidth)
 	detailedInformationPanel:SetPoint("TOPLEFT", basicInformationPanel, "BOTTOMLEFT", 0, 0)
-	detailedInformationPanel:SetShown(basicInformationPanel.expandButton:GetActiveState() > 0 and true or false)
+	detailedInformationPanel:SetShown(basicInformationPanel.expandFrameButton:GetActiveState() > 0 and true or false)
 	local rowWidth = basicInformationPanel.fixedWidth * 0.5
 
 	memberFrame.detailedInformationPanel = detailedInformationPanel
@@ -318,7 +317,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 			end)
 
-			local rowWidthThirty = rowWidth*0.30
+			local rowWidthThirty = rowWidth * 0.30
 
 			local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeons or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeons
 			local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeonUpgrades or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeonUpgrades
@@ -747,7 +746,7 @@ local function createApplicantFrame(applicantID)
 				end
 
 			end)
-			basicInformationPanel.expandButton = expandFrameButton
+			basicInformationPanel.expandFrameButton = expandFrameButton
 
 			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
 				local commentFrame = miog.createFleetingTexture(applicantFrame.texturePool, 136459, basicInformationPanel, basicInformationPanel.maximumHeight - 10, basicInformationPanel.maximumHeight - 10)
@@ -1881,6 +1880,10 @@ local function HasRemainingSlotsForLocalPlayerRole(resultID) -- LFGList.lua loca
 end
 
 local function isGroupEligible(resultID, appStatus)
+	if(appStatus == "applied") then
+		return true
+	end
+
 	local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 
 	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty == true and miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID ~= MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID) then
@@ -1979,86 +1982,92 @@ local function isGroupEligible(resultID, appStatus)
 	return true
 end
 
-local function updateResultFrameStatus(resultID, appStatus)
-	if(appStatus ~= "none") then
-		local resultFrame = searchResultSystem.resultFrames[resultID]
-
-		if(resultFrame) then
-			searchResultSystem.applicationStatus[resultID] = appStatus
-
-			if(appStatus ~= "applied") then
-				resultFrame.statusFrame:Show()
-				resultFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[appStatus].statusString, miog.APPLICANT_STATUS_INFO[appStatus].color))
-				--resultFrame:SetScript("OnMouseDown", nil)
-				
-				resultFrame.basicInformationPanel.firstFrame.ageFrame.ageTicker:Cancel()
-
-				resultFrame.basicInformationPanel.firstFrame.cancelApplicationButton:Hide()
-
-				--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
-				searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-				searchResultSystem.resultFrames[resultID].background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-
-				if(appStatus == "inviteaccepted") then
-					--releaseAllSearchResultFrames()
-
-				end
-
-				if(appStatus == "invitedeclined") then
-					resultFrame.statusFrame.inviteButton:Hide()
-					resultFrame.statusFrame.declineButton:Hide()
-
-				end
-
-				if(appStatus == "invited") then
-					resultFrame.statusFrame.inviteButton:Show()
-					resultFrame.statusFrame.declineButton:Show()
-
-					resultFrame.basicInformationPanel.firstFrame.cancelApplicationButton:Hide()
-
-				end
-			elseif(appStatus == "applied") then
-				--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.CLRSCC.green):GetRGB())
-				
-				local _, _, _, appDuration = C_LFGList.GetApplicationInfo(resultID)
-
-				local ageFrame = resultFrame.basicInformationPanel.firstFrame.ageFrame
-
-				if(ageFrame.ageTicker) then
-					ageFrame.ageTicker:Cancel()
-				end
-			
-				local ageNumber = appDuration
-				ageFrame:SetText(miog.secondsToClock(ageNumber))
-			
-				ageFrame:SetTextColor(CreateColorFromHexString(miog.CLRSCC.purple):GetRGBA())
-				ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
-			
-				ageFrame.ageTicker = C_Timer.NewTicker(1, function()
-					ageNumber = ageNumber - 1
-					ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
-			
-				end)
-
-				if(HasRemainingSlotsForLocalPlayerRole(resultID)) then
-					searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
-					searchResultSystem.resultFrames[resultID].background:SetColorTexture(CreateColorFromHexString("FF28644B"):GetRGBA())
-
-				else
-					searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
-					searchResultSystem.resultFrames[resultID].background:SetColorTexture(CreateColorFromHexString("FF28644B"):GetRGBA())
-				
-				end
-					
-				searchResultSystem.resultFrames[resultID].basicInformationPanel.firstFrame.cancelApplicationButton:Show()
-				searchResultSystem.resultFrames[resultID].layoutIndex = -1
-				--miog.reorderSearchResultList()
-			
-			end
-			
-			searchResultSystem.applicationStatus[resultID] = appStatus
-
+local function updateResultFrameStatus(resultID, newStatus)
+	local resultFrame = searchResultSystem.persistentFrames[searchResultSystem.resultIDToFrameIndex[resultID]]
+	if(resultFrame and newStatus) then
+		local ageFrame = resultFrame.basicInformationPanel.ageFrame
+		
+		if(ageFrame.ageTicker) then
+			ageFrame.ageTicker:Cancel()
 		end
+
+		if(newStatus ~= "none") then
+
+			if(resultFrame) then
+				if(newStatus ~= "applied") then
+					resultFrame.statusFrame:Show()
+					resultFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[newStatus].statusString, miog.APPLICANT_STATUS_INFO[newStatus].color))
+					--resultFrame:SetScript("OnMouseDown", nil)
+
+					resultFrame.basicInformationPanel.cancelApplicationButton:Hide()
+
+					--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
+					resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+					resultFrame.background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+
+					if(newStatus == "inviteaccepted") then
+						--releaseAllSearchResultFrames()
+
+					end
+
+					if(newStatus == "invitedeclined") then
+						resultFrame.statusFrame.inviteButton:Hide()
+						resultFrame.statusFrame.declineButton:Hide()
+
+					end
+
+					if(newStatus == "invited") then
+						resultFrame.statusFrame.inviteButton:Show()
+						resultFrame.statusFrame.declineButton:Show()
+
+						resultFrame.basicInformationPanel.cancelApplicationButton:Hide()
+
+					end
+
+				elseif(newStatus == "applied") then
+					--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.CLRSCC.green):GetRGB())
+					
+					local _, _, _, appDuration = C_LFGList.GetApplicationInfo(resultID)
+				
+					local ageNumber = appDuration
+					ageFrame:SetText(miog.secondsToClock(ageNumber))
+				
+					ageFrame:SetTextColor(CreateColorFromHexString(miog.CLRSCC.purple):GetRGBA())
+					ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
+				
+					ageFrame.ageTicker = C_Timer.NewTicker(1, function()
+						ageNumber = ageNumber - 1
+						ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
+				
+					end)
+
+					if(HasRemainingSlotsForLocalPlayerRole(resultID)) then
+						resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
+
+					else
+						resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+					
+					end
+
+					resultFrame.background:SetColorTexture(CreateColorFromHexString("FF28644B"):GetRGBA())
+						
+					resultFrame.basicInformationPanel.cancelApplicationButton:Show()
+				
+				end
+			end
+		else
+			local ageNumber = searchResultSystem.searchResultData[resultID].age
+			ageFrame:SetText(miog.secondsToClock(ageNumber))
+			ageFrame:SetTextColor(1, 1, 1, 1)
+
+			ageFrame.ageTicker = C_Timer.NewTicker(1, function()
+				ageNumber = ageNumber + 1
+				ageFrame:SetText(miog.secondsToClock(ageNumber))
+		
+			end)
+		end
+
+		searchResultSystem.sortData[resultID].appStatus = newStatus
 	end
 end
 
@@ -2134,30 +2143,37 @@ local function sortSearchResultList(result1, result2)
 
 end
 
-miog.signupToGroup = function(resultID)
+local function signupToGroup(resultID)
 	local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(resultID)
-	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+	local searchResultInfo = searchResultSystem.searchResultData[resultID]
 
 	if(appStatus ~= "none" or pendingStatus or searchResultInfo.isDelisted) then
 		return false
 
 	end
 
+	if(searchResultSystem.selectedResult) then
+		local oldResultIndex = searchResultSystem.resultIDToFrameIndex[searchResultSystem.selectedResult]
+
+		if(oldResultIndex) then
+			searchResultSystem.persistentFrames[oldResultIndex]:SetBackdropBorderColor(
+				CreateColorFromHexString(searchResultSystem.sortData[searchResultSystem.selectedResult].appStatus == "applied" and miog.CLRSCC.green or miog.C.BACKGROUND_COLOR_3):GetRGBA()
+			)
+		end
+
+	end
+
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
 
-	if(searchResultSystem.resultFrames[resultID]) then
-		searchResultSystem.resultFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
+	local newResultIndex = searchResultSystem.resultIDToFrameIndex[resultID]
 
-		if(searchResultSystem.selectedResult and searchResultSystem.resultFrames[searchResultSystem.selectedResult]) then
-			searchResultSystem.resultFrames[searchResultSystem.selectedResult]:SetBackdropBorderColor(
-				CreateColorFromHexString(searchResultSystem.applicationStatus[searchResultSystem.selectedResult] == "applied" and miog.CLRSCC.green or miog.C.BACKGROUND_COLOR_3):GetRGBA()
-			)
+	if(resultID ~= searchResultSystem.selectedResult and searchResultSystem.persistentFrames[newResultIndex]) then
+		searchResultSystem.persistentFrames[newResultIndex]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
 
-		end
-
-		searchResultSystem.selectedResult = resultID
 	end
+
+	searchResultSystem.selectedResult = resultID
 
 	LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
 end
@@ -2275,9 +2291,11 @@ local function gatherSearchResultSortData()
 	return unsortedMainApplicantsList
 end
 
-local function updateSearchResultFrameWithNewData(searchResultData, appDuration)
+local function updateSearchResultFrameWithNewData(searchResultData)
 	local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].mapID or 0
 	local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
+	
+	local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(searchResultData.searchResultID)
 	
 	local nameTable = miog.simpleSplit(searchResultData.leaderName, "-")
 
@@ -2391,10 +2409,10 @@ local function updateSearchResultFrameWithNewData(searchResultData, appDuration)
 		ageFrame.ageTicker:Cancel()
 	end
 
-	local ageNumber = appDuration or searchResultData.age
+	local ageNumber = appDuration > 0 and appDuration or searchResultData.age
 	ageFrame:SetText(miog.secondsToClock(ageNumber))
 
-	if(appDuration) then
+	if(appDuration > 0) then
 		ageFrame:SetTextColor(CreateColorFromHexString(miog.CLRSCC.purple):GetRGBA())
 		ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
 
@@ -2405,7 +2423,7 @@ local function updateSearchResultFrameWithNewData(searchResultData, appDuration)
 	end
 
 	ageFrame.ageTicker = C_Timer.NewTicker(1, function()
-		if(appDuration) then
+		if(appDuration > 0) then
 			ageNumber = ageNumber - 1
 			ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
 
@@ -2665,6 +2683,504 @@ local function updateSearchResultFrameWithNewData(searchResultData, appDuration)
 
 end
 
+local function updatePersistentResultFrame(resultID)
+	if(searchResultSystem.resultIDToFrameIndex[resultID] and C_LFGList.HasSearchResultInfo(resultID)) then
+		searchResultSystem.searchResultData[resultID] = C_LFGList.GetSearchResultInfo(resultID)
+
+		if(searchResultSystem.searchResultData[resultID].leaderName) then
+			local searchResultData = searchResultSystem.searchResultData[resultID]
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
+			local sortData = searchResultSystem.sortData[resultID]
+
+			local currentFrame = searchResultSystem.persistentFrames[searchResultSystem.resultIDToFrameIndex[resultID]]
+			local basicInformationPanel = currentFrame.basicInformationPanel
+			local expandFrameButton = basicInformationPanel.expandFrameButton
+			local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].mapID or 0
+			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+			
+			--currentFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+			currentFrame.background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+
+			currentFrame:SetScript("OnMouseDown", function(_, button)
+				signupToGroup(searchResultData.searchResultID)
+
+			end)
+			currentFrame:SetScript("OnEnter", function()
+				createResultTooltip(searchResultData.searchResultID, currentFrame, searchResultData.autoAccept)
+
+			end)
+
+			currentFrame.statusFrame:Hide()
+
+			currentFrame.iconFrame:SetTexture(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.RAID_INFO[mapID] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]].icon or nil)
+			currentFrame.iconFrame:SetScript("OnMouseDown", function()
+
+				--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+				EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
+
+			end)
+			local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors
+
+			if(color) then
+				currentFrame.iconFrame.border:SetColorTexture(color and color.r, color.g, color.b, 1)
+
+			else
+				currentFrame.iconFrame.border:SetColorTexture(1, 1, 1, 1)
+
+			end
+			
+			if(searchPanel_ExpandedFrameList[searchResultData.searchResultID]) then
+				expandFrameButton:AdvanceState()
+		
+			end
+	
+			expandFrameButton:SetScript("OnClick", function()
+				if(currentFrame.detailedInformationPanel) then
+					expandFrameButton:AdvanceState()
+					searchPanel_ExpandedFrameList[searchResultData.searchResultID] = not currentFrame.detailedInformationPanel:IsVisible()
+					currentFrame.detailedInformationPanel:SetShown(not currentFrame.detailedInformationPanel:IsVisible())
+					currentFrame:MarkDirty()
+		
+				end
+		
+			end)
+
+			basicInformationPanel.titleFrame:SetText(searchResultData.name)
+			basicInformationPanel.commentFrame:SetShown(searchResultData.comment ~= "" and searchResultData.comment ~= nil and true or false)
+			basicInformationPanel.friendFrame:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
+			
+			basicInformationPanel.cancelApplicationButton:SetShown(sortData.appStatus == "applied" and true or false)
+			basicInformationPanel.cancelApplicationButton:SetScript("OnClick", function(self, button)
+				if(button == "LeftButton") then
+					local _, appStatus = C_LFGList.GetApplicationInfo(searchResultData.searchResultID)
+
+					if(appStatus == "applied") then
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+						C_LFGList.CancelApplication(searchResultData.searchResultID)
+					
+					end
+				end
+			end)
+			
+			basicInformationPanel.difficultyZoneFrame:SetText(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
+			(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].shortName) or activityInfo.fullName)
+
+			
+			local primaryIndicator = currentFrame.basicInformationPanel.primaryIndicator
+			primaryIndicator:SetText(nil)
+			local secondaryIndicator = currentFrame.basicInformationPanel.secondaryIndicator
+			secondaryIndicator:SetText(nil)
+			local nameTable = miog.simpleSplit(searchResultData.leaderName, "-")
+
+			if(not nameTable[2]) then
+				nameTable[2] = GetNormalizedRealmName()
+
+				searchResultData.leaderName = nameTable[1] .. "-" .. nameTable[2]
+
+			end
+
+			gatherRaiderIODisplayData(nameTable[1], nameTable[2], currentFrame, currentFrame)
+
+			local generalInfoPanel = currentFrame.detailedInformationPanel.tabPanel.generalInfoPanel
+
+			if(searchResultData.comment) then
+				generalInfoPanel.rows[1].FontString:SetScript("OnEnter", function()
+					GameTooltip:SetOwner(generalInfoPanel.rows[1].FontString, "ANCHOR_CURSOR")
+					GameTooltip:SetText(searchResultData.comment)
+					GameTooltip:Show()
+				end)
+
+				generalInfoPanel.rows[1].FontString:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+			
+				end)
+			end
+
+			generalInfoPanel.rows[1].FontString:SetJustifyV("TOP")
+			generalInfoPanel.rows[1].FontString:SetPoint("TOPLEFT", generalInfoPanel.rows[1], "TOPLEFT", 0, -5)
+			generalInfoPanel.rows[1].FontString:SetPoint("BOTTOMRIGHT", currentFrame.detailedInformationPanel.tabPanel.rows[4], "BOTTOMRIGHT", 0, 0)
+			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultData.comment and searchResultData.comment) or ""))
+			generalInfoPanel.rows[1].FontString:SetWordWrap(true)
+			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
+			generalInfoPanel.rows[7].FontString:SetText("Role: ")
+			generalInfoPanel.rows[9].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (nameTable[2] or GetRealmName() or ""))
+
+			local appCategory = activityInfo.categoryID
+
+			if(appCategory == 2) then
+				if(searchResultData.leaderOverallDungeonScore > 0) then
+					local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
+					local highestKeyForDungeon
+
+					if(reqScore > searchResultData.leaderOverallDungeonScore) then
+						primaryIndicator:SetText(wticc(tostring(searchResultData.leaderOverallDungeonScore), miog.CLRSCC["red"]))
+
+					else
+						primaryIndicator:SetText(wticc(tostring(searchResultData.leaderOverallDungeonScore), miog.createCustomColorForScore(searchResultData.leaderOverallDungeonScore):GenerateHexColor()))
+
+					end
+
+					if(searchResultData.leaderDungeonScoreInfo) then
+						if(searchResultData.leaderDungeonScoreInfo.finishedSuccess == true) then
+							highestKeyForDungeon = wticc(tostring(searchResultData.leaderDungeonScoreInfo.bestRunLevel), miog.C.GREEN_COLOR)
+
+						elseif(searchResultData.leaderDungeonScoreInfo.finishedSuccess == false) then
+							highestKeyForDungeon = wticc(tostring(searchResultData.leaderDungeonScoreInfo.bestRunLevel), miog.CLRSCC["red"])
+
+						end
+					else
+						highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
+
+					end
+
+					secondaryIndicator:SetText(highestKeyForDungeon)
+				else
+					local difficulty = miog.DIFFICULTY[-1] -- NO DATA
+					primaryIndicator:SetText(wticc("0", difficulty.color))
+					secondaryIndicator:SetText(wticc("0", difficulty.color))
+
+				end
+			elseif(appCategory == 4 or appCategory == 7 or appCategory == 8 or appCategory == 9) then
+				if(searchResultData.leaderPvpRatingInfo) then
+					primaryIndicator:SetText(wticc(tostring(searchResultData.leaderPvpRatingInfo.rating), miog.createCustomColorForScore(searchResultData.leaderPvpRatingInfo.rating):GenerateHexColor()))
+
+					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(searchResultData.leaderPvpRatingInfo.tier), " ")
+					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+					
+				else
+					primaryIndicator:SetText(0)
+					secondaryIndicator:SetText("Unra")
+
+				end
+			end
+
+			local orderedList = {}
+
+			local roleCount = {
+				["TANK"] = 0,
+				["HEALER"] = 0,
+				["DAMAGER"] = 0,
+			}
+
+			for i = 1, searchResultData.numMembers, 1 do
+				local role, class, classLocalized, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultData.searchResultID, i)
+
+				orderedList[i] = {leader = i == 1 and true or false, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
+
+				if(role) then
+					roleCount[role] = roleCount[role] + 1
+
+				end
+			end
+
+			local memberPanel = basicInformationPanel.memberPanel
+			local bossPanel = basicInformationPanel.bossPanel
+
+			if(appCategory == 3) then
+				memberPanel:Hide()
+
+				basicInformationPanel.resultMemberComp:Show()
+				basicInformationPanel.resultMemberComp:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
+
+				bossPanel:Show()
+
+				if(miog.RAID_INFO[mapID]) then
+					local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
+					local encountersDefeated = {}
+
+					if(encounterInfo) then
+						for _, v in pairs(encounterInfo) do
+							encountersDefeated[v] = true
+						end
+					end
+
+					local numOfBosses = #miog.RAID_INFO[mapID] - 1
+
+					for i = 1, numOfBosses, 1 do
+						bossPanel.bossFrames[i]:SetTexture(miog.RAID_INFO[mapID][numOfBosses - (i - 1)].icon)
+
+						if(encountersDefeated[miog.RAID_INFO[mapID][numOfBosses - (i - 1)].name]) then
+							bossPanel.bossFrames[i]:SetDesaturated(true)
+							
+						end
+					end
+				end
+
+			elseif(appCategory ~= 0) then
+				basicInformationPanel.resultMemberComp:Hide()
+				bossPanel:Hide()
+
+				if(#orderedList < 5) then
+					if(roleCount["TANK"] == 0) then
+						orderedList[#orderedList + 1] = {class = "DUMMY", role = "TANK", specID = 20}
+						roleCount["TANK"] = roleCount["TANK"] + 1
+					end
+
+					if(roleCount["HEALER"] == 0 and #orderedList < 5) then
+						orderedList[#orderedList + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
+						roleCount["HEALER"] = roleCount["HEALER"] + 1
+
+					end
+
+					for i = 1, 3 - roleCount["DAMAGER"], 1 do
+						if(roleCount["DAMAGER"] < 3 and #orderedList < 5) then
+							orderedList[#orderedList + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
+							roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+						end
+
+					end
+
+				end
+
+				table.sort(orderedList, function(k1, k2)
+					if(k1.role ~= k2.role) then
+						return k1.role > k2.role
+
+					elseif(k1.spec ~= k2.spec) then
+						return k1.spec > k2.spec
+
+					else
+						return k1.class > k2.class
+
+					end
+
+				end)
+				
+				for i = 1, 5, 1 do
+					local currentMemberFrame = memberPanel.memberFrames[i]
+					currentMemberFrame:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
+
+					if(orderedList[i].class ~= "DUMMY") then
+						currentMemberFrame.border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
+
+					else
+						currentMemberFrame.border:SetColorTexture(0, 0, 0, 0)
+					
+					end
+
+					if(orderedList[i].leader) then
+						memberPanel.leaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
+						memberPanel.leaderCrown:Show()
+
+						currentMemberFrame:SetMouseMotionEnabled(true)
+						currentMemberFrame:SetScript("OnEnter", function()
+							GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_CURSOR")
+							GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultData.leaderName))
+							GameTooltip:Show()
+
+						end)
+						currentMemberFrame:SetScript("OnLeave", function()
+							GameTooltip:Hide()
+
+						end)
+					else
+						currentMemberFrame:SetScript("OnEnter", nil)
+					
+					end
+				end
+				
+				memberPanel:Show()
+
+			end
+				
+			currentFrame:Show()
+
+		end
+	end
+end
+
+local function createPersistentResultFrame(index)
+	local persistentFrame = miog.createBasicFrame("searchResult", "ResizeLayoutFrame, BackdropTemplate", miog.searchPanel.resultPanel.container)
+	persistentFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
+	persistentFrame.heightPadding = 1
+	persistentFrame.minimumHeight = 40
+	persistentFrame.layoutIndex = index
+	persistentFrame:SetFrameStrata("DIALOG")
+	persistentFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+
+	end)
+	miog.createFrameBorder(persistentFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
+
+	persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Button", nil, "IconButtonTemplate, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Button", nil, "UIPanelButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+
+	-- resultID, appStatus, pendingStatus, appDuration, role
+
+	persistentFrame.fontStringPool = persistentFrame.fontStringPool or CreateFontStringPool(persistentFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
+	persistentFrame.texturePool = persistentFrame.texturePool or CreateTexturePool(persistentFrame, "ARTWORK", nil, nil, miog.resetTexture)
+
+	searchResultSystem.persistentFrames[index] = persistentFrame
+
+	local resultFrameBackground = miog.createFleetingTexture(persistentFrame.texturePool, nil, persistentFrame)
+	resultFrameBackground:SetDrawLayer("BACKGROUND")
+	resultFrameBackground:SetAllPoints(true)
+	resultFrameBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+
+	persistentFrame.background = resultFrameBackground
+
+	local resultFrameStatusFrame = miog.createFleetingFrame(persistentFrame.framePool, "BackdropTemplate", persistentFrame, nil, nil, "FontString", persistentFrame.fontStringPool)
+	resultFrameStatusFrame:Hide()
+	resultFrameStatusFrame:SetAllPoints(true)
+	resultFrameStatusFrame:SetFrameStrata("FULLSCREEN")
+	resultFrameStatusFrame.FontString:SetJustifyH("CENTER")
+	resultFrameStatusFrame.FontString:SetPoint("TOP", resultFrameStatusFrame, "TOP", 0, -2)
+	resultFrameStatusFrame.FontString:Show()
+	persistentFrame.statusFrame = resultFrameStatusFrame
+	
+	local resultFrameStatusFrameBackground = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultFrameStatusFrame)
+	resultFrameStatusFrameBackground:SetAllPoints(true)
+	resultFrameStatusFrameBackground:SetColorTexture(0.1, 0.1, 0.1, 0.77)
+
+	local basicInformationPanel = miog.createFleetingFrame(persistentFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", persistentFrame)
+	basicInformationPanel.fixedWidth = persistentFrame.fixedWidth
+	basicInformationPanel.fixedHeight = persistentFrame.minimumHeight
+	basicInformationPanel:SetPoint("TOPLEFT", persistentFrame, "TOPLEFT", 0, 0)
+	persistentFrame.basicInformationPanel = basicInformationPanel
+
+	local bipHalfHeight = basicInformationPanel.fixedHeight * 0.5
+
+	local iconFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, basicInformationPanel, bipHalfHeight, bipHalfHeight)
+	iconFrame:SetPoint("TOPLEFT", basicInformationPanel, "TOPLEFT", 2, -2)
+	iconFrame:SetMouseClickEnabled(true)
+	iconFrame:SetDrawLayer("OVERLAY")
+
+	iconFrame.border = miog.createFleetingTexture(persistentFrame.texturePool, nil, persistentFrame)
+	iconFrame.border:SetDrawLayer("OVERLAY", -5)
+	iconFrame.border:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", -1, 1)
+	iconFrame.border:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", 1, -1)
+
+	persistentFrame.iconFrame = iconFrame
+
+	local expandFrameButton = Mixin(miog.createFleetingFrame(persistentFrame.framePool, "UIButtonTemplate", basicInformationPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
+	expandFrameButton:OnLoad()
+	expandFrameButton:SetMaxStates(2)
+	expandFrameButton:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+	expandFrameButton:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+	expandFrameButton:SetState(false)
+	expandFrameButton:SetPoint("TOP", iconFrame, "BOTTOM", 0, 0)
+	expandFrameButton:SetFrameStrata("DIALOG")
+	expandFrameButton:RegisterForClicks("LeftButtonDown")
+	basicInformationPanel.expandFrameButton = expandFrameButton
+
+	local commentFrame = miog.createFleetingTexture(persistentFrame.texturePool, 136459, basicInformationPanel, bipHalfHeight - 10, bipHalfHeight - 10)
+	commentFrame:ClearAllPoints()
+	commentFrame:SetDrawLayer("ARTWORK")
+	commentFrame:SetPoint("CENTER", expandFrameButton, "CENTER", 7, -3)
+	commentFrame:Hide()
+	basicInformationPanel.commentFrame = commentFrame
+
+	local titleFrame = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
+	titleFrame:SetWidth(basicInformationPanel.fixedWidth * 0.35)
+	titleFrame:SetPoint("LEFT", iconFrame, "RIGHT", 5, 0)
+	basicInformationPanel.titleFrame = titleFrame
+
+	local primaryIndicator = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
+	primaryIndicator:SetWidth(basicInformationPanel.fixedWidth * 0.11)
+	primaryIndicator:SetPoint("LEFT", titleFrame, "RIGHT", 5, 0)
+	primaryIndicator:SetJustifyH("CENTER")
+	primaryIndicator:SetText(0)
+	basicInformationPanel.primaryIndicator = primaryIndicator
+
+	local secondaryIndicator = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
+	secondaryIndicator:SetWidth(basicInformationPanel.fixedWidth * 0.11)
+	secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 1, 0)
+	secondaryIndicator:SetJustifyH("CENTER")
+	secondaryIndicator:SetText(0)
+	basicInformationPanel.secondaryIndicator = secondaryIndicator
+
+	local ageFrame = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
+	ageFrame:SetPoint("LEFT", secondaryIndicator, "RIGHT", 1, 0)
+	ageFrame:SetWidth(basicInformationPanel.fixedWidth * 0.24)
+	ageFrame:SetJustifyH("CENTER")
+	ageFrame:SetText("0:00:00")
+	basicInformationPanel.ageFrame = ageFrame
+
+	local friendFrame = miog.createFleetingTexture(persistentFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, bipHalfHeight - 3, bipHalfHeight - 3)
+	friendFrame:SetPoint("LEFT", ageFrame, "RIGHT", 3, 1)
+	friendFrame:SetDrawLayer("ARTWORK")
+	friendFrame:SetMouseMotionEnabled(true)
+	friendFrame:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(friendFrame, "ANCHOR_CURSOR")
+		GameTooltip:SetText("On your friendlist")
+		GameTooltip:Show()
+
+	end)
+	friendFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+
+	end)
+	basicInformationPanel.friendFrame = friendFrame
+
+	local cancelApplicationButton = miog.createFleetingFrame(persistentFrame.framePool, "IconButtonTemplate, BackdropTemplate", basicInformationPanel, bipHalfHeight, bipHalfHeight)
+	cancelApplicationButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
+	cancelApplicationButton.iconSize = bipHalfHeight - 4
+	cancelApplicationButton:OnLoad()
+	cancelApplicationButton:SetPoint("TOPRIGHT", basicInformationPanel, "TOPRIGHT", -2, -2)
+	cancelApplicationButton:RegisterForClicks("LeftButtonDown")
+	cancelApplicationButton:Hide()
+	basicInformationPanel.cancelApplicationButton = cancelApplicationButton
+
+	local dividerFirstSecondFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, persistentFrame, basicInformationPanel:GetWidth(), 2, "BORDER")
+	dividerFirstSecondFrame:SetAtlas("UI-LFG-DividerLine")
+	dividerFirstSecondFrame:SetPoint("BOTTOMRIGHT", basicInformationPanel, "BOTTOMRIGHT", 0, 0)
+
+	local difficultyZoneFrame = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
+	difficultyZoneFrame:SetWidth(titleFrame:GetWidth())
+	difficultyZoneFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 5, 0)
+	basicInformationPanel.difficultyZoneFrame = difficultyZoneFrame
+	
+	local resultMemberPanel = miog.createFleetingFrame(persistentFrame.framePool, "BackdropTemplate", basicInformationPanel)
+	resultMemberPanel:SetHeight(bipHalfHeight - 4)
+	resultMemberPanel:SetWidth(100)
+	resultMemberPanel:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 2)
+	resultMemberPanel:Hide()
+	resultMemberPanel.memberFrames = {}
+	basicInformationPanel.memberPanel = resultMemberPanel
+
+	for i = 1, 5, 1 do
+		local resultMemberFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultMemberPanel, 14, 14)
+		resultMemberFrame:SetPoint("LEFT", resultMemberPanel.memberFrames[i-1] or resultMemberPanel, resultMemberPanel.memberFrames[i-1] and "RIGHT" or "LEFT", 14, 0)
+		resultMemberFrame:SetDrawLayer("OVERLAY", -4)
+		resultMemberPanel.memberFrames[i] = resultMemberFrame
+
+		resultMemberFrame.border = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultMemberPanel)
+		resultMemberFrame.border:SetDrawLayer("OVERLAY", -5)
+		resultMemberFrame.border:SetPoint("TOPLEFT", resultMemberFrame, "TOPLEFT", -2, 2)
+		resultMemberFrame.border:SetPoint("BOTTOMRIGHT", resultMemberFrame, "BOTTOMRIGHT", 2, -2)
+	end
+
+	local resultMemberComp = miog.createFleetingFontString(persistentFrame.fontStringPool, 12, basicInformationPanel)
+	resultMemberComp:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 0)
+	basicInformationPanel.resultMemberComp = resultMemberComp
+	
+	local resultBossPanel = miog.createFleetingFrame(persistentFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", basicInformationPanel)
+	resultBossPanel.fixedHeight = bipHalfHeight - 4
+	resultBossPanel:SetPoint("BOTTOMRIGHT", basicInformationPanel, "BOTTOMRIGHT", -2, 2)
+	resultBossPanel:Hide()
+	resultBossPanel.bossFrames = {}
+	basicInformationPanel.bossPanel = resultBossPanel
+
+	for i = 1, miog.F.MOST_BOSSES, 1 do
+		local resultBossFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultBossPanel, 12, 12)
+		resultBossFrame:SetPoint("RIGHT", resultBossPanel.bossFrames[i-1] or resultBossPanel, resultBossPanel.bossFrames[i-1] and "LEFT" or "RIGHT", -2, 0)
+		resultBossFrame:SetDrawLayer("ARTWORK")
+		resultBossPanel.bossFrames[i] = resultBossFrame
+	end
+
+	resultBossPanel:MarkDirty()
+
+	local leaderCrown = miog.createFleetingTexture(persistentFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/leaderIcon.png", resultMemberPanel, 14, 14)
+	leaderCrown:SetDrawLayer("OVERLAY", -3)
+	leaderCrown:Hide()
+	resultMemberPanel.leaderCrown = leaderCrown
+end
+
 local function createNewSearchResultFrame(resultID)
 	local resultFrame = miog.createBasicFrame("searchResult", "ResizeLayoutFrame, BackdropTemplate", nil)
 	resultFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
@@ -2846,93 +3362,73 @@ local function createNewSearchResultFrame(resultID)
 	resultMemberPanel.leaderCrown = leaderCrown
 end
 
-local function updateSearchResultList(forceReorder, singleResultID)
-	miog.mainFrame.throttledString:Hide()
+local function updateSearchResultList(forceReorder)
+	if(not miog.F.SEARCH_IS_THROTTLED) then
+		miog.searchPanel.throttledString:Hide()
 
-	if(forceReorder) then
-		resultFrameIndex = 0
-		miog.F.RESULT_LIST_MARKED_DIRTY = true
+		if(forceReorder) then
+			local selectedFrame = searchResultSystem.persistentFrames[searchResultSystem.resultIDToFrameIndex[searchResultSystem.selectedResult]]
 
-	end
-
-	local unsortedList = gatherSearchResultSortData()
-	table.sort(unsortedList, sortSearchResultList)
-
-	local actualResultsCounter = 0
-	
-	if(unsortedList[1]) then
-		local updatedFrames = {}
-
-
-		-- UPDATE OLD FRAMES THAT ARE STILL IN NEW LIST
-		for k, listEntry in ipairs(unsortedList) do
-			local searchResultData = C_LFGList.GetSearchResultInfo(listEntry.resultID)
-			local new = false
-
-			if((listEntry.appStatus == "applied" or isGroupEligible(listEntry.resultID, listEntry.appStatus)) and searchResultData and searchResultData.leaderName) then
-				updatedFrames[listEntry.resultID] = true
-
-				actualResultsCounter = actualResultsCounter + 1
-				
-				if(searchResultSystem.resultFrames[listEntry.resultID] == nil) then
-					createNewSearchResultFrame(listEntry.resultID)
-					new = true
-					miog.F.RESULT_LIST_MARKED_DIRTY = true
-
-				end
-
-				if(listEntry.appStatus == "applied" or new == true or listEntry.resultID == singleResultID) then
-					updateSearchResultFrameWithNewData(searchResultData, listEntry.appDuration > 0 and listEntry.appDuration or nil)
-
-				end
-
-				searchResultSystem.resultFrames[listEntry.resultID]:Show()
-				searchResultSystem.resultFrames[listEntry.resultID].layoutIndex = resultFrameIndex
-				resultFrameIndex = resultFrameIndex + 1
-			
-			else
-				if(searchResultData.isDelisted) then
-					updatedFrames[listEntry.resultID] = true
-	
-				end
-			
+			if(selectedFrame) then
+				selectedFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 			end
+			
+			searchResultSystem.selectedResult = nil
 
+			searchResultSystem.searchResultData = {}
+			searchResultSystem.resultIDToFrameIndex = {}
+			searchResultSystem.sortData = {}
+		end
 
-			updateResultFrameStatus(listEntry.resultID, listEntry.appStatus)
+		local unsortedList = gatherSearchResultSortData()
+		table.sort(unsortedList, sortSearchResultList)
+
+		local actualResultsCounter = 0
 		
-		end
+		if(unsortedList[1]) then
+			for index, listEntry in ipairs(unsortedList) do
+				local newIndexFrame = false
+				local isEligible = isGroupEligible(listEntry.resultID, listEntry.appStatus)
 
-		for k, v in pairs(searchResultSystem.resultFrames) do
-			if(not updatedFrames[k]) then
-				--[[v.framePool:ReleaseAll()
-				v.fontStringPool:ReleaseAll()
-				v.texturePool:ReleaseAll()
+				if(searchResultSystem.persistentFrames[index] == nil) then
+					createPersistentResultFrame(index)
+					newIndexFrame = true
 
-				miog.searchResultFramePool:Release(searchResultSystem.resultFrames[k])
+				end
 
-				searchResultSystem.resultFrames[k] = nil
-				searchResultSystem.applicationStatus[k] = nil]]
-				
+				if(forceReorder and isEligible or not forceReorder and (newIndexFrame or searchResultSystem.searchResultData[listEntry.resultID] == nil)) then
+					searchResultSystem.sortData[listEntry.resultID] = listEntry
 
-				v.layoutIndex = nil
-				v:Hide()
+					searchResultSystem.resultIDToFrameIndex[listEntry.resultID] = index
+
+					updatePersistentResultFrame(listEntry.resultID)
+
+					updateResultFrameStatus(listEntry.resultID, listEntry.appStatus)
+
+					searchResultSystem.persistentFrames[index].updated = true
+				end
+			end
+
+			for index, v in pairs(searchResultSystem.persistentFrames) do
+				if(not v.updated) then
+					v:Hide()
+
+				else
+					actualResultsCounter = actualResultsCounter + 1
+
+				end
+
+				v.updated = false
 			end
 		end
-	end
 
-	miog.searchPanel.footerBar.groupNumberFontString:SetText(actualResultsCounter)
-
-	if(miog.F.RESULT_LIST_MARKED_DIRTY) then
-		miog.F.RESULT_LIST_MARKED_DIRTY = false
 		miog.searchPanel.resultPanel.container:MarkDirty()
 
+		miog.searchPanel.footerBar.groupNumberFontString:SetText(actualResultsCounter)
 	end
 end
 
 miog.updateSearchResultList = updateSearchResultList
-
-local currentlyUpdatingSearchResultData = false
 
 local function searchResultsReceived()
 	local totalResults
@@ -3202,35 +3698,47 @@ miog.OnEvent = function(_, event, ...)
 		--checkSearchResultCoroutine()
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
-		--print(..., searchResultData.name, C_LFGList.HasSear
-		updateSearchResultList(false, ...)
+		--print(...)
+		--updateSearchResultList(false, ...)
 
 		--searchResultQueue[...] = true
 		
 		--checkSearchResultCoroutine()
 
+		
+		updatePersistentResultFrame(...)
+		updateResultFrameStatus(..., searchResultSystem.searchResultData[...] and searchResultSystem.searchResultData[...].isDelisted and "declined_delisted" or nil)
+
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
 		--print("Search failed because of " .. ...)
 
 		if(... == "throttled") then
-			miog.mainFrame.throttledString:Show()
+			if(not miog.F.SEARCH_IS_THROTTLED) then
+				miog.F.SEARCH_IS_THROTTLED = true
+				local timestamp = GetTime()
+				miog.searchPanel.throttledString.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
 
+				local throttleTicker = C_Timer.NewTicker(0.2, function(self)
+					local timeUntil = timestamp + 3 - GetTime()
+					miog.searchPanel.throttledString.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
+
+					if(timeUntil <= 0) then
+						miog.searchPanel.throttledString.FontString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
+						miog.F.SEARCH_IS_THROTTLED = false
+						self:Cancel()
+					end
+				end)
+			
+				miog.searchPanel.throttledString:Show()
+
+			end
 		end
 
 	elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
 		local resultID, new, old, name = ...
 		--print(...)
 
-		searchResultSystem.applicationStatus[resultID] = new
-
-		if(searchResultSystem.resultFrames[resultID]) then
-			--if(isGroupEligible(resultID)) then
-			updateResultFrameStatus(resultID, new)
-
-			--end
-		end
-
-		--miog.updateSearchResultList(false, resultID)
+		updateResultFrameStatus(resultID, new)
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then
 		--print(event, ...)
@@ -3343,16 +3851,22 @@ hooksecurefunc("LFGListFrame_SetActivePanel", function(selfFrame, panel)
 		miog.searchPanel:Hide()
 		miog.mainFrame:Show()
 		miog.applicationViewer:Show()
+		
+		--miog.F.LISTED_CATEGORY_ID = nil
 
 	elseif(panel == LFGListFrame.SearchPanel) then
 		miog.applicationViewer:Hide()
 		miog.mainFrame:Show()
 		miog.searchPanel:Show()
 
+		miog.F.LISTED_CATEGORY_ID = LFGListFrame.SearchPanel.categoryID
+
 	else
 		miog.mainFrame:Hide()
 		miog.applicationViewer:Hide()
 		miog.searchPanel:Hide()
+		
+		miog.F.LISTED_CATEGORY_ID = nil
 
 	end
 end)

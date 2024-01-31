@@ -61,7 +61,7 @@ local function resetFrame(pool, childFrame)
 
 		childFrame.declineButton = nil
 		childFrame.inviteButton = nil
-		childFrame.expandButton = nil
+		childFrame.expandFrameButton = nil
 		childFrame.linkBox = nil
 		childFrame.titleString = nil
 

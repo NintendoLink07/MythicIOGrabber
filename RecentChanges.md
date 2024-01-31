@@ -1,33 +1,20 @@
-## [1.7.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.1) - 2024-01-29
-
-Thanks for 10000 downloads already!
-Happy to see players actually enjoying my work.
-Please report any bugs either as a comment on the Curseforge page or on the Github issues page, unfortunately I can't test everything by myself.
+## [1.7.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.2) - 2024-01-31
 
 ### Added
 
-- A timeout timer when you apply to a group has been added.
+- A proper throttle frame (when you search too often) has been implemented
 
-- Dual score checks (min, max) has been added to the filter frame.
+- There are now boss frames when you are looking for a raid.
+Encounters that are desaturated have already been defeated.
 
 ### Changed
 
-- Filtering has been made more reliable.
+- When you applied to a M+ group and you're currently in the raid panel (or any combination of panels tbh) the groups will now have their m+ score or progress data shown.
 
-- Lowered the amount of micro stutters.
-Already have an idea how to get rid of them completely, will release the new frame system with 1.7.2 at some point this week.
+- Improved the search result frame system, which leads to almost no micro stutters occuring.
+The only "downside" is that the used memory jumps to almost 80mb (equal to having all RaiderIO addon EU data loaded) when currently looking for members and browsing groups at the same time, with no filters active.
+This will be improved during this and next week.
 
-- Decreased the brightness of the color texture of groups you've applied to.
-Using a darker green so Monks', Hunters' and Evokers' border doesn't seem to disappear.
- 
-### Fixed
+- Improved the handling of applications, delisting, etc. behind the scenes, made it less prone to error.
 
-- Made searching for groups more reliable.
-
-- When you applied to a M+ group and you're currently in the raid panel (or any combination of panel tbh) the group you've applied to will show up (standard Blizzard behaviour, forgot this edge case).
-
-- PVP ordering and displaying of brackets should now work correctly.
-
-- Changing the difficulty with the dropdown should now refresh the result list.
-
-- Improved compatibility with PremadeGroupsFilter.
+- Fixed some filter edge cases.

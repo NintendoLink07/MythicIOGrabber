@@ -62,7 +62,7 @@ local function createMainFrame()
 	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
 	mainFrame:SetResizeBounds(mainFrame.standardWidth, mainFrame.standardHeight, mainFrame.standardWidth, GetScreenHeight() * 0.66666)
 	
-	mainFrame:SetScript("OnEnter", function(_, button)
+	mainFrame:SetScript("OnEnter", function()
 		
 	end)
 
@@ -130,16 +130,6 @@ local function createMainFrame()
 
 	mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
 
-	local throttledString = miog.createBasicFontString("persistent", 16, mainFrame)
-	throttledString:SetWordWrap(true)
-	throttledString:SetNonSpaceWrap(true)
-	throttledString:SetText("Search is throttled.\nWait 2 seconds.")
-	throttledString:SetJustifyH("CENTER")
-	throttledString:SetPoint("TOP", mainFrame, "TOP", 0, -50)
-	throttledString:SetDrawLayer("BACKGROUND", 0)
-	throttledString:Hide()
-	mainFrame.throttledString = throttledString
-	
 	local resizeApplicationViewerButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame)
 	resizeApplicationViewerButton:EnableMouse(true)
 	resizeApplicationViewerButton:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", 0, 22)
@@ -1746,6 +1736,16 @@ local function createSearchPanel()
 
 	searchPanel.searchBar = searchBar
 
+	local loadingBar = CreateFrame("StatusBar", "MythicIOGrabber_LoadingBar", searchPanel, "BackdropTemplate")
+	loadingBar:SetSize(200, 20)
+	loadingBar:SetPoint("TOPLEFT", searchBar, "TOPLEFT")
+	loadingBar:SetMinMaxValues(0, 100)
+	loadingBar:SetStatusBarTexture("Interface\\Glues\\LoadingBar\\Loading-BarFill.blp")
+	loadingBar:SetStatusBarColor(0, 1, 0, 0.5)
+    loadingBar:Hide()
+
+	searchPanel.loadingBar = loadingBar
+
 	local function ResolveCategoryFilters(categoryID, filters)
 		-- Dungeons ONLY display recommended groups.
 		if(categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS) then
@@ -1939,6 +1939,25 @@ local function createSearchPanel()
 		buttonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
 
 	end
+
+	local throttledString = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, nil, nil, "FontString", 16)
+	throttledString.FontString:SetWordWrap(true)
+	throttledString.FontString:SetNonSpaceWrap(true)
+	throttledString.FontString:SetJustifyH("CENTER")
+	throttledString:SetFrameStrata("FULLSCREEN")
+	throttledString:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT")
+	throttledString:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
+	throttledString:SetScript("OnEnter", function()
+		
+	end)
+	--throttledString:SetDrawLayer("OVERLAY")
+	throttledString:Hide()
+	searchPanel.throttledString = throttledString
+
+
+	local throttleBackground = miog.createBasicTexture("persistent", nil, throttledString)
+	throttleBackground:SetAllPoints(true)
+	throttleBackground:SetColorTexture(0.1, 0.1, 0.1, 0.93)
 
 	local resultPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", searchPanel)
 	resultPanel:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT", 1, -1)
