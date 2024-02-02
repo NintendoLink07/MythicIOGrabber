@@ -138,6 +138,7 @@ miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIButtonTemplate, Backd
 miog.persistentFramePool:GetOrCreatePool("Button", nil, "UIPanelDynamicResizeButtonTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("CheckButton", nil, "UICheckButtonTemplate", resetFrame)
 miog.persistentFramePool:GetOrCreatePool("EditBox", nil, "InputBoxTemplate", resetFrame)
+miog.persistentFramePool:GetOrCreatePool("Frame", nil, "LoadingSpinnerTemplate", resetFrame)
 
 miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)

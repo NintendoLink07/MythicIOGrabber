@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.7.3] - 2024-02-02
+
+### Added
+
+- A loading spinner and a status frame when no groups have been found has been added.
+
+### Changed
+
+- I've noticed that the bottom few results (around 15-30) are always unsorted, because there is some data missing which Blizzard sents later than intended.
+I can't really do anything about that.
+I have added 0.25s delay, which usually covers all the data that gets sent later.
+You can turn this delay off in the interface options but I do advise against it.
+Otherwise you will have to press "Search" and press "Search" again when all the groups are visible, this should also cover the delay but isn't as elegant as my built-in solution.
+
+### Fixed
+
+- New installs of this addon or fresh starts (after a PC restart or full exit of WoW) don't have to press the search button of each category twice for results to show up.
+
+- Fixed PVP sorting by rating not working correctly.
+
+- Adjust the sort buttons' position in the search panel.
+
+
+
 ## [1.7.2] - 2024-01-31
 
 ### Added

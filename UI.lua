@@ -59,7 +59,7 @@ local function createMainFrame()
 	mainFrame:SetResizable(true)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	mainFrame:SetFrameStrata("DIALOG")
-	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
+	mainFrame:AdjustPointsOffset(-4 + 400, -PVEFrame.TitleContainer:GetHeight() - 1)
 	mainFrame:SetResizeBounds(mainFrame.standardWidth, mainFrame.standardHeight, mainFrame.standardWidth, GetScreenHeight() * 0.66666)
 	
 	mainFrame:SetScript("OnEnter", function()
@@ -1302,7 +1302,9 @@ local function addDualNumericFieldsToFilterFrame(name)
 			local text = tonumber(self:GetText())
 			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = text ~= nil and text or 0
 
-			miog.updateSearchResultList(true)
+			if(MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name]) then
+				miog.updateSearchResultList(true)
+			end
 
 		end)
 		
@@ -1356,10 +1358,13 @@ local function addDungeonCheckboxes()
 		optionButton:SetCheckedTexture("checkmark-minimal")
 		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 		optionButton:RegisterForClicks("LeftButtonDown")
-		optionButton:SetChecked(MIOG_SavedSettings and (MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[activityEntry.activityID] and false or MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[activityEntry.activityID] and true))
+		optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[activityEntry.activityID])
 		optionButton:HookScript("OnClick", function()
 			MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
-			miog.updateSearchResultList(true)
+
+			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonOptions) then
+				miog.updateSearchResultList(true)
+			end
 
 		end)
 	
@@ -1572,7 +1577,9 @@ local function createSearchPanel()
 
 				MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specID] = state
 
-				miog.updateSearchResultList(true)
+				if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForClassSpecs) then
+					miog.updateSearchResultList(true)
+				end
 
 			end)
 
@@ -1610,7 +1617,9 @@ local function createSearchPanel()
 
 			end
 
-			miog.updateSearchResultList(true)
+			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForClassSpecs) then
+				miog.updateSearchResultList(true)
+			end
 		end)
 
 	end
@@ -1630,32 +1639,42 @@ local function createSearchPanel()
 		miog.updateSearchResultList(true)
 	end)
 
-	miog.searchPanel.filterFrame.filterForDifficulty = dropdownOptionButton
+	filterFrame.filterForDifficulty = dropdownOptionButton
+
+	local function fillDropdown(optionDropdown, level, menuList)
+		local info = UIDropDownMenu_CreateInfo()
+		local currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
+		local currentCategoryID = MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
+		or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
+
+		info.func = function(_, arg1, _, _)
+			MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] = arg1
+			UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] and currentCategoryID)
+			
+			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty) then
+				miog.updateSearchResultList(true)
+			end
+
+			CloseDropDownMenus()
+
+		end
+
+		for i = (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and 2 or LFGListFrame.SearchPanel.categoryID == 3 and 3 or 4, 1, -1 do
+			info.text, info.arg1 = (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[i].description or miog.DIFFICULTY[i].description, i
+			info.checked = i == MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]
+			UIDropDownMenu_AddButton(info)
+
+		end
+
+		UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] and currentCategoryID)
+	end
 
 	local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", filterFrame)
 	optionDropdown:SetPoint("LEFT", dropdownOptionButton, "RIGHT", -15, 0)
+	optionDropdown.initialize = fillDropdown
 	UIDropDownMenu_SetWidth(optionDropdown, 175)
-	UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID and miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID].description or "Mythic+")
-	UIDropDownMenu_Initialize(optionDropdown,
-		function(frame, level, menuList)
-			local info = UIDropDownMenu_CreateInfo()
-			info.func = function(_, arg1, _, _)
-				MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID = arg1
-				UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID and miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID].description)
-				
-				miog.updateSearchResultList(true)
-				CloseDropDownMenus()
 
-			end
-
-			for i = 4, 1, -1 do
-				info.text, info.arg1 = miog.DIFFICULTY[i].description, i
-				info.checked = i == MIOG_SavedSettings.searchPanel_FilterOptions.table.difficultyID
-				UIDropDownMenu_AddButton(info)
-
-			end
-		end
-	)
+	filterFrame.dropdown = optionDropdown
 
 	lastFilterOption = dropdownOptionButton
 
@@ -1736,34 +1755,12 @@ local function createSearchPanel()
 
 	searchPanel.searchBar = searchBar
 
-	local loadingBar = CreateFrame("StatusBar", "MythicIOGrabber_LoadingBar", searchPanel, "BackdropTemplate")
-	loadingBar:SetSize(200, 20)
-	loadingBar:SetPoint("TOPLEFT", searchBar, "TOPLEFT")
-	loadingBar:SetMinMaxValues(0, 100)
-	loadingBar:SetStatusBarTexture("Interface\\Glues\\LoadingBar\\Loading-BarFill.blp")
-	loadingBar:SetStatusBarColor(0, 1, 0, 0.5)
-    loadingBar:Hide()
-
-	searchPanel.loadingBar = loadingBar
-
-	local function ResolveCategoryFilters(categoryID, filters)
-		-- Dungeons ONLY display recommended groups.
-		if(categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS) then
-			return bit.band(bit.bnot(Enum.LFGListFilter.NotRecommended), bit.bor(filters, Enum.LFGListFilter.Recommended));
-		end
-
-		return filters;
-	end
-
 	local searchButton = miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", searchFrame, 52, miog.C.APPLICANT_MEMBER_HEIGHT)
 	searchButton:SetPoint("LEFT", searchBar, "RIGHT")
 	searchButton:RegisterForClicks("LeftButtonDown")
 	miog.createFrameBorder(searchButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	searchButton:SetScript("OnClick", function(self)
-		--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		--C_LFGList.SetSearchToActivity(self.activityID);
+	searchButton:SetScript("OnClick", function( )
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-		--C_LFGList.Search(LFGListFrame.SearchPanel.categoryID, ResolveCategoryFilters(LFGListFrame.SearchPanel.categoryID, LFGListFrame.SearchPanel.filters), LFGListFrame.SearchPanel.preferredFilters, C_LFGList.GetLanguageSearchFilter())
 
 		miog.searchPanel.resultPanel:SetVerticalScroll(0)
 	end)
@@ -1792,7 +1789,6 @@ local function createSearchPanel()
 	filterShowHideString:SetPoint("CENTER", filterShowHideButton, "CENTER")
 	filterShowHideString:SetJustifyH("CENTER")
 	filterShowHideString:SetText("Filter")
-
 
 	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT + 2)
 	buttonPanel:SetPoint("TOPLEFT", searchFrame, "BOTTOMLEFT")
@@ -1837,15 +1833,15 @@ local function createSearchPanel()
 
 		if(i == 1) then
 			currentCategory = "primary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 181, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 159, 0)
 
 		elseif(i == 2) then
 			currentCategory = "secondary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 216, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 198, 0)
 
 		elseif(i == 3) then
 			currentCategory = "age"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 265, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 255, 0)
 
 		end
 
@@ -1939,25 +1935,46 @@ local function createSearchPanel()
 		buttonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
 
 	end
+	
+	local resultStatusFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel)
+	resultStatusFrame:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT")
+	resultStatusFrame:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
+	resultStatusFrame:SetFrameStrata("FULLSCREEN")
+	searchPanel.statusFrame = resultStatusFrame
 
-	local throttledString = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, nil, nil, "FontString", 16)
-	throttledString.FontString:SetWordWrap(true)
-	throttledString.FontString:SetNonSpaceWrap(true)
-	throttledString.FontString:SetJustifyH("CENTER")
-	throttledString:SetFrameStrata("FULLSCREEN")
-	throttledString:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT")
-	throttledString:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
+	local statusBackground = miog.createBasicTexture("persistent", nil, resultStatusFrame)
+	statusBackground:SetAllPoints(true)
+	statusBackground:SetColorTexture(0.1, 0.1, 0.1, 0.93)
+	resultStatusFrame.background = statusBackground
+
+	local loadingSpinner = miog.createBasicFrame("persistent", "LoadingSpinnerTemplate", resultStatusFrame, 60, 60)
+	loadingSpinner:SetPoint("TOP", resultStatusFrame, "TOP", 0, -10)
+	loadingSpinner:Hide()
+	resultStatusFrame.loadingSpinner = loadingSpinner
+
+	local throttledString = miog.createBasicFontString("persistent", 16, resultStatusFrame)
+	throttledString:SetWidth(resultStatusFrame:GetWidth())
+	throttledString:SetPoint("TOP", resultStatusFrame, "TOP", 0, -10)
+	throttledString:SetWordWrap(true)
+	throttledString:SetNonSpaceWrap(true)
+	throttledString:SetJustifyH("CENTER")
 	throttledString:SetScript("OnEnter", function()
 		
 	end)
-	--throttledString:SetDrawLayer("OVERLAY")
 	throttledString:Hide()
-	searchPanel.throttledString = throttledString
+	resultStatusFrame.throttledString = throttledString
 
-
-	local throttleBackground = miog.createBasicTexture("persistent", nil, throttledString)
-	throttleBackground:SetAllPoints(true)
-	throttleBackground:SetColorTexture(0.1, 0.1, 0.1, 0.93)
+	local noResultsString = miog.createBasicFontString("persistent", 16, resultStatusFrame)
+	noResultsString:SetWidth(resultStatusFrame:GetWidth())
+	noResultsString:SetPoint("TOP", resultStatusFrame, "TOP", 0, -10)
+	noResultsString:SetWordWrap(true)
+	noResultsString:SetNonSpaceWrap(true)
+	noResultsString:SetJustifyH("CENTER")
+	noResultsString:SetScript("OnEnter", function()
+		
+	end)
+	noResultsString:Hide()
+	resultStatusFrame.noResultsString = noResultsString
 
 	local resultPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", searchPanel)
 	resultPanel:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT", 1, -1)
@@ -2011,4 +2028,5 @@ end
 
 miog.scriptReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
 miog.scriptReceiver:RegisterEvent("PLAYER_LOGIN")
+miog.scriptReceiver:RegisterEvent("UPDATE_LFG_LIST")
 miog.scriptReceiver:SetScript("OnEvent", miog.OnEvent)

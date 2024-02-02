@@ -204,6 +204,13 @@ miog.DIFFICULTY = {
 	[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222", desaturated = "ffe93838"},
 }
 
+miog.BRACKETS = {
+	[2] = {shortName = "3's", description = _G["ARENA_3V3"], color = miog.ITEM_QUALITY_COLORS[3].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[3].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[3].color},
+	[1] = {shortName = "2's", description = _G["ARENA_2V2"], color = miog.ITEM_QUALITY_COLORS[2].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[2].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[2].color},
+	--[0] = {shortName = "LT", description = "Last tier", color = miog.ITEM_QUALITY_COLORS[0].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[0].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[0].color},
+	--[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222", desaturated = "ffe93838"},
+}
+
 miog.DIFFICULTY_NAMES_TO_ID = {
 	--category id to further divide
 
@@ -368,6 +375,8 @@ miog.GROUP_ACTIVITY_BACKGROUNDS = {
 }
 
 miog.ACTIVITY_ID_INFO = {
+	[6] = {difficultyID = 1, shortName = "2's"},
+	[7] = {difficultyID = 2, shortName = "3's"},
 	[184] = {difficultyID = 4, shortName = "EB", mapID = 1279, mPlusSeasons = {11, }},
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
 	--[] = {difficultyID = , shortName = "", mapID = 0},,
