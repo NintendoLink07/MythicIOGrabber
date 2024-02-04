@@ -2120,8 +2120,10 @@ local function setResultFrameColors(resultID, appStatus)
 		end
 
 		resultFrame.background:SetColorTexture(CreateColorFromHexString("FF28644B"):GetRGBA())
+
 	elseif(MIOG_SavedSettings.favouredApplicants.table[searchResultSystem.searchResultData[resultID].leaderName]) then
 		resultFrame:SetBackdropBorderColor(CreateColorFromHexString("FFe1ad21"):GetRGBA())
+		resultFrame.background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 	else
 		resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -2222,6 +2224,12 @@ local function createResultTooltip(resultID, resultFrame, autoAccept)
 		GameTooltip:SetOwner(resultFrame, "ANCHOR_RIGHT", 25, 0)
 		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID, autoAccept == true and LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE)
 		
+		if(MIOG_SavedSettings.favouredApplicants.table[searchResultSystem.searchResultData[resultID].leaderName]) then
+			GameTooltip:AddLine(" ");
+			GameTooltip:AddLine(searchResultSystem.searchResultData[resultID].leaderName .. " is on your favoured player list.")
+		end
+
+		GameTooltip:Show()
 	end
 end
 
@@ -3552,7 +3560,9 @@ hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 	--UIDropDownMenu_RefreshAll(miog.searchPanel.filterFrame.dropdown, "")
 end)
 
-hooksecurefunc("NotifyInspect", function() lastNotifyTime = GetTimePreciseSec() end)
+hooksecurefunc("NotifyInspect", function()
+	lastNotifyTime = GetTimePreciseSec()
+end)
 
 -- Courtesy of Premade Group Finder
 
@@ -3600,7 +3610,3 @@ end]]
 
 	end
 end)]]
-
-hooksecurefunc("LFGListSearchPanel_DoSearch", function()
-	--releaseAllSearchResultFrames()
-end)

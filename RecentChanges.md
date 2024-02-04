@@ -37,6 +37,8 @@ In all other categories the dropdown is not visible (unless I find some use for 
 
 - Improved performance overall and especially when you refresh the search list.
 
-- Fixed boss frame desaturation (in Amirdrassil the encounter journal doesn't go by wings, e.g. Volco -> Larodar. Instead the index goes Volco -> Council -> Larodar -> Nymue. Lol why)
+- Corrected boss frame desaturation (in Amirdrassil the encounter journal doesn't go by wings, e.g. Volco -> Larodar. Instead the index goes Volco -> Council -> Larodar -> Nymue. Lol why).
+
+- Party fit, bloodlust fit and battle ress fit will now apply correctly if you're in a category where there technically are no real limits (BG's, custom groups).
 
 - Various errors have been fixed.
