@@ -59,8 +59,8 @@ local function createMainFrame()
 	mainFrame:SetResizable(true)
 	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
 	mainFrame:SetFrameStrata("DIALOG")
-	mainFrame:AdjustPointsOffset(-4 + 400, -PVEFrame.TitleContainer:GetHeight() - 1)
-	mainFrame:SetResizeBounds(mainFrame.standardWidth, mainFrame.standardHeight, mainFrame.standardWidth, GetScreenHeight() * 0.66666)
+	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
+	mainFrame:SetResizeBounds(mainFrame.standardWidth, mainFrame.standardHeight, mainFrame.standardWidth, GetScreenHeight() * 0.67)
 	
 	mainFrame:SetScript("OnEnter", function()
 		
@@ -1644,19 +1644,34 @@ local function createSearchPanel()
 	local function fillDropdown(optionDropdown, level, menuList)
 		local info = UIDropDownMenu_CreateInfo()
 		local currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
-		local currentCategoryID = MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
-		or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
+		if(currentCategoryTableValue) then
+			local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
+			or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
+
+			UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
+
+		end
 
 		info.func = function(_, arg1, _, _)
-			MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] = arg1
-			UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] and currentCategoryID)
-			
-			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty) then
-				miog.updateSearchResultList(true)
-			end
+				currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
+				if(currentCategoryTableValue) then
+					MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] = arg1
 
-			CloseDropDownMenus()
+					local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
+					or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
 
+
+					print(currentCategoryDescription)
+					
+					if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty) then
+						miog.updateSearchResultList(true)
+
+					end
+
+					UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
+
+					CloseDropDownMenus()
+				end
 		end
 
 		for i = (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and 2 or LFGListFrame.SearchPanel.categoryID == 3 and 3 or 4, 1, -1 do
@@ -1666,7 +1681,6 @@ local function createSearchPanel()
 
 		end
 
-		UIDropDownMenu_SetText(optionDropdown, MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] and currentCategoryID)
 	end
 
 	local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", filterFrame)
@@ -1833,15 +1847,15 @@ local function createSearchPanel()
 
 		if(i == 1) then
 			currentCategory = "primary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 159, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 160, 0)
 
 		elseif(i == 2) then
 			currentCategory = "secondary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 198, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 197, 0)
 
 		elseif(i == 3) then
 			currentCategory = "age"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 255, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 257, 0)
 
 		end
 

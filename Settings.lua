@@ -117,6 +117,13 @@ local defaultOptionSettings = {
 		},
 		type = "variable",
 		title = "Last active sorting methods for the search panel",
+	},
+	searchPanel_DeclinedGroups = {
+		type = "variable",
+		title = "Last active sorting methods for the search panel",
+		table = {
+
+		}
 	}
 }
 
@@ -161,7 +168,7 @@ local function deleteOldSettings()
 		if(defaultOptionSettings[key] == nil) then
 			MIOG_SavedSettings[key] = nil
 
-		else
+		--[[else
 			if(MIOG_SavedSettings[key].table) then
 				for tableKey in pairs(MIOG_SavedSettings[key].table) do
 					if(defaultOptionSettings[key].table[tableKey] == nil) then
@@ -169,7 +176,7 @@ local function deleteOldSettings()
 
 					end
 				end
-			end
+			end]]
 		end
 	end
 end
@@ -512,6 +519,16 @@ miog.loadSettings = function()
 			
 			end
 
+		end
+
+	end
+
+	if(MIOG_SavedSettings.searchPanel_DeclinedGroups and MIOG_SavedSettings.searchPanel_DeclinedGroups.table) then
+		for k, v in pairs(MIOG_SavedSettings.searchPanel_DeclinedGroups.table) do
+			if(v.timestamp < time() - 900) then
+				MIOG_SavedSettings.searchPanel_DeclinedGroups.table[k] = nil
+				
+			end
 		end
 
 	end

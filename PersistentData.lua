@@ -122,11 +122,11 @@ miog.C = {
 
 miog.MPLUS_SEASONS = {
 	-- Dragonflight
-	[9] = "S1",
-	[10] = "S2",
-	[11] = "S3",
-	[12] = "S4",
-	[13] = "S1",
+	[9] = "S1", --8
+	[10] = "S2", --8
+	[11] = "S3", --8
+	[12] = "S4", --8
+	[13] = "S1", --8
 	[99] = "DUMMY SEASON"
 }
 
@@ -287,10 +287,10 @@ miog.RAID_INFO = {
 	[2549] = { --interface/icons/inv_achievement_raidemeralddream
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
