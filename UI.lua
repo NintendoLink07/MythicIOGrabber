@@ -1324,7 +1324,7 @@ local function addDungeonCheckboxes()
 	for activityID, activityEntry in pairs(miog.ACTIVITY_ID_INFO) do
 		if(activityEntry.mPlusSeasons) then
 			for _, seasonID in ipairs(activityEntry.mPlusSeasons) do
-				if(seasonID == (miog.F.CURRENT_SEASON or C_MythicPlus.GetCurrentSeason())) then
+				if(seasonID == miog.F.CURRENT_SEASON) then
 					sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {activityID = activityID, name = activityEntry.shortName}
 
 				end
@@ -1383,6 +1383,8 @@ local function addDungeonCheckboxes()
 		
 	lastFilterOption = dungeonPanel
 end
+
+miog.addDungeonCheckboxes = addDungeonCheckboxes
 
 local function createSearchPanel()
 	local searchPanel = miog.searchPanel ---@class Frame
@@ -1711,7 +1713,8 @@ local function createSearchPanel()
 	lastFilterOption = divider
 
 	addOptionToFilterFrame("Dungeon options", "dungeonOptions")
-	addDungeonCheckboxes()
+	C_MythicPlus.RequestMapInfo() --to get data for the dungeon checkboxes
+	--addDungeonCheckboxes()
 
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel)
 	footerBar:SetPoint("BOTTOMLEFT", searchPanel, "BOTTOMLEFT", 0, 0)
@@ -2030,6 +2033,7 @@ miog.createFrames = function()
 	miog.scriptReceiver:RegisterEvent("GROUP_LEFT")
 	miog.scriptReceiver:RegisterEvent("INSPECT_READY")
 	miog.scriptReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	miog.scriptReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 	miog.scriptReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
 
 	C_MythicPlus.GetCurrentAffixes()

@@ -493,8 +493,11 @@ local function gatherRaiderIODisplayData(playerName, realm, memberFrame)
 
 			local previousScoreString = ""
 
+			local currentSeason = miog.MPLUS_SEASONS[miog.F.CURRENT_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
+			local previousSeason = miog.MPLUS_SEASONS[miog.F.PREVIOUS_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
+
 			if(mythicKeystoneProfile.previousScore and mythicKeystoneProfile.previousScore > 0) then
-				previousScoreString = (miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]) .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForScore(mythicKeystoneProfile.previousScore):GenerateHexColor())
+				previousScoreString = previousSeason .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForScore(mythicKeystoneProfile.previousScore):GenerateHexColor())
 
 			end
 
@@ -508,14 +511,14 @@ local function gatherRaiderIODisplayData(playerName, realm, memberFrame)
 
 				else
 					if(mythicKeystoneProfile.mainCurrentScore > 0 and mythicKeystoneProfile.mainPreviousScore > 0) then
-						mainScoreString = "Main " .. (miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]) .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
-						" " .. (miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]) .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
+						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
+						" " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 					elseif(mythicKeystoneProfile.mainCurrentScore > 0) then
-						mainScoreString = "Main " .. (miog.F.CURRENT_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]) .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
+						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
 
 					elseif(mythicKeystoneProfile.mainPreviousScore > 0) then
-						mainScoreString = "Main " .. (miog.F.PREVIOUS_SEASON or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]) .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
+						mainScoreString = "Main " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 					end
 
@@ -2414,6 +2417,7 @@ local function gatherSearchResultSortData(singleResultID)
 					appStatus = searchResultData.isDelisted and "declined_delisted" or appStatus,
 					primary = primarySortAttribute,
 					secondary = secondarySortAttribute,
+					age = searchResultData.age,
 					resultID = resultID,
 					favoured = searchResultData.leaderName and MIOG_SavedSettings.favouredApplicants.table[searchResultData.leaderName] and true or false
 				}
@@ -3012,14 +3016,7 @@ local function searchResultsReceived()
 	miog.searchPanel.statusFrame.noResultsString:Hide()
 	miog.searchPanel.statusFrame.loadingSpinner:Show()
 
-	local totalResults
-	if(miog.F.IS_PGF1_LOADED) then
-		totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
-
-	else
-		totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
-
-	end
+	local totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
 
 	--print("TOTAL: " .. totalResults, GetTimePreciseSec())
 
@@ -3070,17 +3067,17 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "PLAYER_LOGIN") then
+		C_MythicPlus.RequestCurrentAffixes()
+		
 		miog.checkForSavedSettings()
 		miog.createFrames()
 		miog.loadSettings()
-		createSearchResultFrames()
 
-		C_MythicPlus.RequestCurrentAffixes()
+		createSearchResultFrames()
 
 		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
 
 		LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.applicationViewer:Show() end)
-		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) self:Hide() miog.searchPanel:Show() end)
 		LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.searchPanel:Show() end)
 
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
@@ -3091,10 +3088,9 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 		if(C_AddOns.IsAddOnLoaded("PremadeGroupsFilter")) then
-			--miog.F.IS_PGF1_LOADED = true
+			miog.F.IS_PGF1_LOADED = true
 
 			miog.scriptReceiver:UnregisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-			--miog.scriptReceiver:UnregisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
 
 			hooksecurefunc("LFGListSearchPanel_UpdateResultList", function(self)
 				searchResultsReceived()
@@ -3200,17 +3196,22 @@ miog.OnEvent = function(_, event, ...)
 
 		end
 
+    elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
+		if(not miog.searchPanel.filterFrame.dungeonPanel) then
+			local currentSeason = C_MythicPlus.GetCurrentSeason()
+
+			miog.F.CURRENT_SEASON = currentSeason
+			miog.F.PREVIOUS_SEASON = currentSeason - 1
+
+			miog.addDungeonCheckboxes()
+		end
+
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		if(not miog.F.WEEKLY_AFFIX) then
 			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 
 			if(miog.applicationViewer and miog.applicationViewer.infoPanel) then
 				miog.setAffixes()
-
-				local currentSeason = C_MythicPlus.GetCurrentSeason()
-
-				miog.F.CURRENT_SEASON = miog.MPLUS_SEASONS[currentSeason]
-				miog.F.PREVIOUS_SEASON = miog.MPLUS_SEASONS[currentSeason - 1]
 
 			end
 

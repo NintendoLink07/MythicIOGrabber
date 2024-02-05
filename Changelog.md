@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.7.5] - 2024-02-05
+
+### Fixed
+
+- Current M+ dungeons filter options should now always be available.
+
+- Sorting by age should now be possible again.
+
+
+
 ## [1.7.4] - 2024-02-05
 
 ### Fixed
