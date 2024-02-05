@@ -3,3 +3,5 @@
 ### Fixed
 
 - Current M+ dungeons filter options should now always be available.
+
+- Sorting by age should now be possible again.
