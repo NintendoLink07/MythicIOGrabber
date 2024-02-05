@@ -2373,9 +2373,13 @@ local function gatherSearchResultSortData(singleResultID)
 			if(appStatus == "applied" or activityInfo.categoryID == LFGListFrame.SearchPanel.categoryID) then
 				local primarySortAttribute, secondarySortAttribute
 
-				local nameTable = miog.simpleSplit(searchResultData.leaderName, "-")
+				local nameTable
 
-				if(not nameTable[2]) then
+				if(searchResultData.leaderName) then
+					nameTable = miog.simpleSplit(searchResultData.leaderName, "-")
+				end
+
+				if(nameTable and not nameTable[2]) then
 					nameTable[2] = GetNormalizedRealmName()
 
 					searchResultData.leaderName = nameTable[1] .. "-" .. nameTable[2]
