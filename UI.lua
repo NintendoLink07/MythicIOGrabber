@@ -1,9 +1,11 @@
 local addonName, miog = ...
+local wticc = WrapTextInColorCode
 
 miog.scriptReceiver = CreateFrame("Frame", "MythicIOGrabber_ScriptReceiver", LFGListFrame, "BackdropTemplate") ---@class Frame
 miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "BackdropTemplate") ---@class Frame
 miog.applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.mainFrame, "BackdropTemplate") ---@class Frame
 miog.searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.mainFrame, "BackdropTemplate") ---@class Frame
+miog.ipDialog = CreateFrame("Frame", "MythicIOGrabber_UpgradedInvitePendingDialog", nil, "ResizeLayoutFrame, BackdropTemplate")
 
 local function insertPointsIntoTable(frame)
 	local table = {}
@@ -1092,7 +1094,7 @@ local function addOptionToFilterFrame(text, name)
 	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[name] or false)
 	optionButton:HookScript("OnClick", function()
 		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = optionButton:GetChecked()
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 	end)
 
 	miog.searchPanel.filterFrame[name] = optionButton
@@ -1129,7 +1131,7 @@ local function addNumericSpinnerToFilterFrame(text, name)
 		numericSpinner:EndIncrement()
 		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = numericSpinner:GetValue()
 		numericSpinner:ClearFocus()
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 
 	end)
 
@@ -1151,7 +1153,7 @@ local function addNumericSpinnerToFilterFrame(text, name)
 		numericSpinner:EndIncrement()
 		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = numericSpinner:GetValue()
 		numericSpinner:ClearFocus()
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 
 	end)
 
@@ -1176,7 +1178,7 @@ local function addDualNumericSpinnerToFilterFrame(name)
 	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] or false)
 	optionButton:HookScript("OnClick", function()
 		MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] = optionButton:GetChecked()
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 	end)
 
 	miog.searchPanel.filterFrame["filterFor" .. name] = optionButton
@@ -1221,7 +1223,7 @@ local function addDualNumericSpinnerToFilterFrame(name)
 			numericSpinner:ClearFocus()
 
 			if(optionButton:GetChecked()) then
-				miog.updateSearchResultList(true)
+				miog.checkListForEligibleMembers()
 
 			end
 		end)
@@ -1252,7 +1254,7 @@ local function addDualNumericSpinnerToFilterFrame(name)
 			numericSpinner:ClearFocus()
 
 			if(optionButton:GetChecked()) then
-				miog.updateSearchResultList(true)
+				miog.checkListForEligibleMembers()
 				
 			end
 		end)
@@ -1278,7 +1280,7 @@ local function addDualNumericFieldsToFilterFrame(name)
 	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] or false)
 	optionButton:HookScript("OnClick", function()
 		MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] = optionButton:GetChecked()
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 	end)
 
 	miog.searchPanel.filterFrame["filterFor" .. name] = optionButton
@@ -1303,7 +1305,7 @@ local function addDualNumericFieldsToFilterFrame(name)
 			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = text ~= nil and text or 0
 
 			if(MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name]) then
-				miog.updateSearchResultList(true)
+				miog.checkListForEligibleMembers()
 			end
 
 		end)
@@ -1363,7 +1365,7 @@ local function addDungeonCheckboxes()
 			MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
 
 			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonOptions) then
-				miog.updateSearchResultList(true)
+				miog.checkListForEligibleMembers()
 			end
 
 		end)
@@ -1443,7 +1445,7 @@ local function createSearchPanel()
 
 		end
 
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 	end)
 	filterFrame.uncheckAllFiltersButton = uncheckAllFiltersButton
 
@@ -1477,7 +1479,7 @@ local function createSearchPanel()
 
 		end
 
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 
 	end)
 	filterFrame.checkAllFiltersButton = checkAllFiltersButton
@@ -1580,7 +1582,7 @@ local function createSearchPanel()
 				MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specID] = state
 
 				if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForClassSpecs) then
-					miog.updateSearchResultList(true)
+					miog.checkListForEligibleMembers()
 				end
 
 			end)
@@ -1620,7 +1622,7 @@ local function createSearchPanel()
 			end
 
 			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForClassSpecs) then
-				miog.updateSearchResultList(true)
+				miog.checkListForEligibleMembers()
 			end
 		end)
 
@@ -1638,7 +1640,7 @@ local function createSearchPanel()
 	dropdownOptionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty or false)
 	dropdownOptionButton:HookScript("OnClick", function()
 		MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty = dropdownOptionButton:GetChecked()
-		miog.updateSearchResultList(true)
+		miog.checkListForEligibleMembers()
 	end)
 
 	filterFrame.filterForDifficulty = dropdownOptionButton
@@ -1661,12 +1663,9 @@ local function createSearchPanel()
 
 					local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
 					or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
-
-
-					print(currentCategoryDescription)
 					
 					if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty) then
-						miog.updateSearchResultList(true)
+						miog.checkListForEligibleMembers()
 
 					end
 
@@ -1713,7 +1712,6 @@ local function createSearchPanel()
 	lastFilterOption = divider
 
 	addOptionToFilterFrame("Dungeon options", "dungeonOptions")
-	C_MythicPlus.RequestMapInfo() --to get data for the dungeon checkboxes
 	--addDungeonCheckboxes()
 
 	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel)
@@ -1911,7 +1909,7 @@ local function createSearchPanel()
 					end
 				end
 
-				miog.updateSearchResultList(true)
+				miog.checkListForEligibleMembers()
 			elseif(button == "RightButton") then
 				if(activeState == 1 or activeState == 2) then
 
@@ -1944,7 +1942,7 @@ local function createSearchPanel()
 						end
 					end
 
-					miog.updateSearchResultList(true)
+					miog.checkListForEligibleMembers()
 				end
 			end
 		end)
@@ -2011,10 +2009,613 @@ local function createSearchPanel()
 	resultPanel:SetScrollChild(resultPanelContainer)
 end
 
+local function createUpgradedInvitePendingDialog()
+	local ipDialog = miog.ipDialog ---@class Frame
+	ipDialog.fixedWidth = miog.C.MAIN_WIDTH + 25
+	ipDialog.minimumHeight = 1
+	ipDialog.extend = true
+	ipDialog.activeFrames = 0
+	--ipDialog:SetScale(miog.mainFrame:GetEffectiveScale())
+	ipDialog:SetScript("OnEnter", function()
+		
+	end)
+	miog.createFrameBorder(ipDialog, 1, CreateColorFromHexString(miog.CLRSCC.yellow):GetRGBA())
+	ipDialog:Hide()
+	StaticPopup_SetUpPosition(miog.ipDialog)
+	ipDialog:SetFrameStrata("MEDIUM")
+
+	local ipDialogBackground = miog.createBasicTexture("persistent", nil, ipDialog)
+	ipDialogBackground:SetDrawLayer("BACKGROUND")
+	ipDialogBackground:SetAllPoints(true)
+	ipDialogBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+	ipDialog.background = ipDialogBackground
+	
+	local titleBar = miog.createBasicFrame("persistent", "BackdropTemplate", ipDialog, nil, 25)
+	titleBar:SetPoint("TOPLEFT", ipDialog, "TOPLEFT", 0, 0)
+	titleBar:SetPoint("TOPRIGHT", ipDialog, "TOPRIGHT", 0, 0)
+	miog.createFrameBorder(titleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	local titleString = miog.createBasicFontString("persistent", miog.C.TITLE_FONT_SIZE, titleBar)
+	titleString:SetPoint("TOPLEFT", titleBar, "TOPLEFT", 0, -2)
+	titleString:SetPoint("BOTTOMRIGHT", titleBar, "BOTTOMRIGHT")
+	titleString:SetJustifyH("CENTER")
+	titleString:SetJustifyV("CENTER")
+	titleString:SetText("You have been invited!")
+
+	titleBar.titleString = titleString
+
+	local scrollFrameContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", ipDialog)
+	scrollFrameContainer:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT")
+	scrollFrameContainer:SetPoint("BOTTOMRIGHT", ipDialog, "BOTTOMRIGHT")
+	scrollFrameContainer.fixedWidth = ipDialog.fixedWidth
+	scrollFrameContainer.minimumHeight = 1
+	scrollFrameContainer.spacing = 2
+	scrollFrameContainer.align = "top"
+	ipDialog.container = scrollFrameContainer
+
+	scrollFrameContainer:MarkDirty()
+---@diagnostic disable-next-line: undefined-field
+	ipDialog:MarkDirty()
+end
+
+local frameIndex = 0
+
+local function createInviteFrame()
+	frameIndex = frameIndex + 1
+	local listInviteFrame = miog.createBasicFrame("persistent", "BackdropTemplate", miog.ipDialog.container, miog.ipDialog.fixedWidth, 40)
+	listInviteFrame.layoutIndex = frameIndex
+	miog.createFrameBorder(listInviteFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
+	listInviteFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+
+	end)
+
+	listInviteFrame.framePool = listInviteFrame.framePool or CreateFramePoolCollection()
+	listInviteFrame.framePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	listInviteFrame.framePool:GetOrCreatePool("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	listInviteFrame.framePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	listInviteFrame.framePool:GetOrCreatePool("Button", nil, "IconButtonTemplate, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	listInviteFrame.framePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	listInviteFrame.framePool:GetOrCreatePool("Button", nil, "UIButtonTemplate, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	listInviteFrame.framePool:GetOrCreatePool("Button", nil, "UIPanelButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+
+	-- resultID, appStatus, pendingStatus, appDuration, role
+
+	listInviteFrame.fontStringPool = listInviteFrame.fontStringPool or CreateFontStringPool(listInviteFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
+	listInviteFrame.texturePool = listInviteFrame.texturePool or CreateTexturePool(listInviteFrame, "ARTWORK", nil, nil, miog.resetTexture)
+
+	local resultFrameBackground = miog.createFleetingTexture(listInviteFrame.texturePool, nil, listInviteFrame)
+	resultFrameBackground:SetDrawLayer("BACKGROUND")
+	resultFrameBackground:SetAllPoints(true)
+	resultFrameBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+	listInviteFrame.background = resultFrameBackground
+
+	local resultFrameStatusFrame = miog.createFleetingFrame(listInviteFrame.framePool, "BackdropTemplate", listInviteFrame)
+	resultFrameStatusFrame:Hide()
+	resultFrameStatusFrame:SetAllPoints(true)
+	listInviteFrame.statusFrame = resultFrameStatusFrame
+
+	local resultFrameStatusFrameBackground = miog.createFleetingTexture(listInviteFrame.texturePool, nil, resultFrameStatusFrame)
+	resultFrameStatusFrameBackground:SetAllPoints(true)
+	resultFrameStatusFrameBackground:SetColorTexture(0.1, 0.1, 0.1, 0.77)
+
+	local statusFrameFontString = miog.createFleetingFontString(listInviteFrame.fontStringPool, 16, resultFrameStatusFrame)
+	statusFrameFontString:SetPoint("CENTER", resultFrameStatusFrame, "CENTER")
+	resultFrameStatusFrame.FontString = statusFrameFontString
+	resultFrameStatusFrame.FontString:SetJustifyH("CENTER")
+	resultFrameStatusFrame.FontString:Show()
+
+	local iconFrameBorder = miog.createFleetingTexture(listInviteFrame.texturePool, nil, listInviteFrame, 36, 36)
+	iconFrameBorder:SetDrawLayer("OVERLAY", -5)
+	iconFrameBorder:SetPoint("TOPLEFT", listInviteFrame, "TOPLEFT", 2, -2)
+
+	local iconFrame = miog.createFleetingTexture(listInviteFrame.texturePool, nil, listInviteFrame)
+	iconFrame:SetPoint("TOPLEFT", iconFrameBorder, "TOPLEFT", 2, -2)
+	iconFrame:SetPoint("BOTTOMRIGHT", iconFrameBorder, "BOTTOMRIGHT", -2, 2)
+	iconFrame:SetMouseClickEnabled(true)
+	iconFrame:SetDrawLayer("OVERLAY")
+	iconFrame.border = iconFrameBorder
+
+	listInviteFrame.iconFrame = iconFrame
+	
+	--[[local commentFrame = miog.createFleetingTexture(listInviteFrame., 136459, listInviteFrame, bipHalfHeight - 10, bipHalfHeight - 10)
+	commentFrame:ClearAllPoints()
+	commentFrame:SetDrawLayer("ARTWORK")
+	commentFrame:SetPoint("CENTER", expandFrameButton, "CENTER", 7, -1)
+	commentFrame:Hide()
+	basicInformationPanel.commentFrame = commentFrame]]
+
+	local titleFrame = miog.createFleetingFontString(listInviteFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, listInviteFrame)
+	titleFrame:SetText("TITLE TEXT HERE")
+	titleFrame:SetWidth(miog.ipDialog.container.fixedWidth * 0.35)
+	titleFrame:SetPoint("TOPLEFT", iconFrame, "TOPRIGHT", 5, -2)
+	listInviteFrame.titleFrame = titleFrame
+
+	local primaryIndicator = miog.createFleetingFontString(listInviteFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, listInviteFrame)
+	primaryIndicator:SetWidth(miog.ipDialog.container.fixedWidth * 0.11)
+	primaryIndicator:SetPoint("LEFT", titleFrame, "RIGHT", 5, 0)
+	primaryIndicator:SetJustifyH("CENTER")
+	primaryIndicator:SetText(0)
+	listInviteFrame.primaryIndicator = primaryIndicator
+
+	local secondaryIndicator = miog.createFleetingFontString(listInviteFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, listInviteFrame)
+	secondaryIndicator:SetWidth(miog.ipDialog.container.fixedWidth * 0.11)
+	secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 1, 0)
+	secondaryIndicator:SetJustifyH("CENTER")
+	secondaryIndicator:SetText(0)
+	listInviteFrame.secondaryIndicator = secondaryIndicator
+
+	local ageFrame = miog.createFleetingFontString(listInviteFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, listInviteFrame)
+	ageFrame:SetPoint("LEFT", secondaryIndicator, "RIGHT", 1, 0)
+	ageFrame:SetWidth(miog.ipDialog.container.fixedWidth * 0.24)
+	ageFrame:SetJustifyH("CENTER")
+	ageFrame:SetTextColor(CreateColorFromHexString(miog.CLRSCC.purple):GetRGBA())
+	ageFrame:SetText("[0:01:30]")
+	listInviteFrame.ageFrame = ageFrame
+
+	local friendFrame = miog.createFleetingTexture(listInviteFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", listInviteFrame, 20 - 3, 20 - 3)
+	friendFrame:SetPoint("LEFT", ageFrame, "RIGHT", 3, 1)
+	friendFrame:SetDrawLayer("ARTWORK")
+	friendFrame:SetMouseMotionEnabled(true)
+	friendFrame:SetScript("OnEnter", function()
+		GameTooltip:SetOwner(friendFrame, "ANCHOR_CURSOR")
+		GameTooltip:SetText("A friend is in this group")
+		GameTooltip:Show()
+
+	end)
+	friendFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+
+	end)
+	listInviteFrame.friendFrame = friendFrame
+
+	local dividerFirstSecondFrame = miog.createFleetingTexture(listInviteFrame.texturePool, nil, listInviteFrame, miog.ipDialog.container.fixedWidth - iconFrameBorder:GetWidth(), 2, "BORDER")
+	dividerFirstSecondFrame:SetAtlas("UI-LFG-DividerLine")
+	dividerFirstSecondFrame:SetPoint("LEFT", iconFrame, "RIGHT", 0, 0)
+
+	local difficultyZoneFrame = miog.createFleetingFontString(listInviteFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, listInviteFrame)
+	difficultyZoneFrame:SetText("DIFFICULTY TEXT HERE")
+	difficultyZoneFrame:SetWidth(titleFrame:GetWidth())
+	difficultyZoneFrame:SetPoint("BOTTOMLEFT", iconFrame, "BOTTOMRIGHT", 5, 0)
+	listInviteFrame.difficultyZoneFrame = difficultyZoneFrame
+	
+	local resultMemberPanel = miog.createFleetingFrame(listInviteFrame.framePool, "BackdropTemplate", listInviteFrame)
+	resultMemberPanel:SetHeight(20 - 4)
+	resultMemberPanel:SetWidth(100)
+	resultMemberPanel:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 2)
+	resultMemberPanel:Hide()
+	resultMemberPanel.memberFrames = {}
+	listInviteFrame.memberPanel = resultMemberPanel
+
+	for i = 1, 5, 1 do
+		local resultMemberFrame = miog.createFleetingTexture(listInviteFrame.texturePool, nil, resultMemberPanel, 13, 13)
+		resultMemberFrame:SetPoint("LEFT", resultMemberPanel.memberFrames[i-1] or resultMemberPanel, resultMemberPanel.memberFrames[i-1] and "RIGHT" or "LEFT", 14, 0)
+		resultMemberFrame:SetDrawLayer("OVERLAY", -4)
+		resultMemberPanel.memberFrames[i] = resultMemberFrame
+
+		resultMemberFrame.border = miog.createFleetingTexture(listInviteFrame.texturePool, nil, resultMemberPanel)
+		resultMemberFrame.border:SetDrawLayer("OVERLAY", -5)
+		resultMemberFrame.border:SetPoint("TOPLEFT", resultMemberFrame, "TOPLEFT", -2, 2)
+		resultMemberFrame.border:SetPoint("BOTTOMRIGHT", resultMemberFrame, "BOTTOMRIGHT", 2, -2)
+	end
+
+	local resultMemberComp = miog.createFleetingFontString(listInviteFrame.fontStringPool, 12, listInviteFrame)
+	resultMemberComp:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 0)
+	listInviteFrame.resultMemberComp = resultMemberComp
+
+	local declineInviteButton = miog.createFleetingFrame(listInviteFrame.framePool, "IconButtonTemplate, BackdropTemplate", listInviteFrame, 20, 20)
+	declineInviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
+	declineInviteButton.iconSize = 20 - 4
+	declineInviteButton:OnLoad()
+	declineInviteButton:SetPoint("TOPRIGHT", listInviteFrame, "TOPRIGHT", -1, -1)
+	declineInviteButton:RegisterForClicks("LeftButtonDown")
+	listInviteFrame.declineInviteButton = declineInviteButton
+
+	local acceptInviteButton = miog.createFleetingFrame(listInviteFrame.framePool, "IconButtonTemplate, BackdropTemplate", listInviteFrame, 20, 20)
+	acceptInviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
+	acceptInviteButton.iconSize = 20 - 4
+	acceptInviteButton:OnLoad()
+	acceptInviteButton:SetPoint("BOTTOMRIGHT", listInviteFrame, "BOTTOMRIGHT", -1, 1)
+	acceptInviteButton:RegisterForClicks("LeftButtonDown")
+	listInviteFrame.acceptInviteButton = acceptInviteButton
+	
+	local resultBossPanel = miog.createFleetingFrame(listInviteFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", listInviteFrame)
+	resultBossPanel.fixedHeight = 20 - 4
+	resultBossPanel:SetPoint("BOTTOMRIGHT", acceptInviteButton, "BOTTOMLEFT", 0, 1)
+	resultBossPanel:Hide()
+	resultBossPanel.bossFrames = {}
+	listInviteFrame.bossPanel = resultBossPanel
+
+	for i = 1, miog.F.MOST_BOSSES, 1 do
+		local resultBossFrame = miog.createFleetingTexture(listInviteFrame.texturePool, nil, resultBossPanel, 12, 12)
+		resultBossFrame:SetPoint("RIGHT", resultBossPanel.bossFrames[i-1] or resultBossPanel, resultBossPanel.bossFrames[i-1] and "LEFT" or "RIGHT", -2, 0)
+		resultBossFrame:SetDrawLayer("ARTWORK")
+		resultBossPanel.bossFrames[i] = resultBossFrame
+	end
+
+	resultBossPanel:MarkDirty()
+
+	local leaderCrown = miog.createFleetingTexture(listInviteFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/leaderIcon.png", resultMemberPanel, 14, 14)
+	leaderCrown:SetDrawLayer("OVERLAY", -3)
+	leaderCrown:Hide()
+	resultMemberPanel.leaderCrown = leaderCrown
+
+	return listInviteFrame
+end
+
+local currentInvites = {}
+
+miog.currentInvites = currentInvites
+
+local function updateInviteFrame(resultID, newStatus)
+	local resultFrame = currentInvites[resultID]
+
+	if(resultFrame and newStatus and newStatus ~= "invited") then
+		resultFrame.statusFrame:Show()
+		resultFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[newStatus].statusString, miog.APPLICANT_STATUS_INFO[newStatus].color))
+		--resultFrame:SetScript("OnMouseDown", nil)
+
+		resultFrame.ageFrame.ageTicker:Cancel()
+
+		--miog.createFrameBorder(searchResultSystem.resultFrames[resultID], 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
+		resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+		resultFrame.background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+
+		if(newStatus == "declined" or newStatus == "declined_full" or newStatus == "declined_delisted" or newStatus == "timedout") then
+			resultFrame.acceptInviteButton:Hide()
+			--resultFrame.declineInviteButton:Hide()
+
+			--miog.hideActiveInviteFrame(resultID)
+		end
+	end
+end
+
+miog.updateInviteFrame = updateInviteFrame
+
+local function hideActiveInviteFrame(resultID)
+	if(currentInvites[resultID]) then
+		currentInvites[resultID].fontStringPool:ReleaseAll()
+		currentInvites[resultID].texturePool:ReleaseAll()
+		currentInvites[resultID].framePool:ReleaseAll()
+		miog.persistentFramePool:Release(currentInvites[resultID])
+
+		currentInvites[resultID] = nil
+		
+		miog.ipDialog.container:MarkDirty()
+		---@diagnostic disable-next-line: undefined-field
+		miog.ipDialog:MarkDirty()
+
+		miog.ipDialog.activeFrames = miog.ipDialog.activeFrames - 1
+
+		if(miog.ipDialog.activeFrames == 0) then
+			miog.ipDialog:Hide()
+
+		end
+	end
+
+end
+
+miog.hideActiveInviteFrame = hideActiveInviteFrame
+
+miog.showUpgradedInvitePendingDialog = function(resultID)
+	local currentFrame
+
+	if(not currentInvites[resultID]) then
+		currentFrame = createInviteFrame()
+		miog.ipDialog.activeFrames = miog.ipDialog.activeFrames + 1
+
+		PlaySound(SOUNDKIT.READY_CHECK)
+		FlashClientIcon()
+
+	else
+		currentFrame = currentInvites[resultID]
+	
+	end
+
+	local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
+	local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
+	local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].mapID or 0
+	local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+	currentFrame:SetScript("OnEnter", function()
+		miog.createResultTooltip(searchResultData.searchResultID, currentFrame, searchResultData.autoAccept)
+
+	end)
+
+	if(not currentInvites[resultID]) then
+		currentFrame.acceptInviteButton:SetScript("OnClick", function(self, button)
+			miog.handleInvite(self, button, resultID, true)
+			hideActiveInviteFrame(resultID)
+			
+		end)
+
+		currentFrame.declineInviteButton:SetScript("OnClick", function(self, button)
+			miog.handleInvite(self, button, resultID, false)
+			hideActiveInviteFrame(resultID)
+
+		end)
+
+		local _, _, _, appDuration = C_LFGList.GetApplicationInfo(resultID)
+		appDuration = appDuration > 0 and appDuration or 89
+
+		currentFrame.ageFrame.ageTicker = C_Timer.NewTicker(1, function()
+			appDuration = appDuration - 1
+			currentFrame.ageFrame:SetText("[" .. miog.secondsToClock(appDuration) .. "]")
+
+		end)
+	end
+
+	currentFrame.iconFrame:SetTexture(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.RAID_INFO[mapID] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]].icon or nil)
+	currentFrame.iconFrame:SetScript("OnMouseDown", function()
+
+		--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+		EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
+
+	end)
+	local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and
+	(activityInfo.isPvpActivity and miog.BRACKETS[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors
+	or miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors) or {r = 1, g = 1, b = 1}
+	currentFrame.iconFrame.border:SetColorTexture(color.r, color.g, color.b, 1)
+
+	currentFrame.titleFrame:SetText(searchResultData.name)
+	currentFrame.friendFrame:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
+
+	currentFrame.difficultyZoneFrame:SetText(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
+	(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].shortName) or activityInfo.fullName)
+
+	currentFrame.primaryIndicator:SetText(nil)
+	currentFrame.secondaryIndicator:SetText(nil)
+
+	local appCategory = activityInfo.categoryID
+	local primarySortAttribute, secondarySortAttribute
+
+	local nameTable
+
+	if(searchResultData.leaderName) then
+		nameTable = miog.simpleSplit(searchResultData.leaderName, "-")
+	end
+
+	if(nameTable and not nameTable[2]) then
+		nameTable[2] = GetNormalizedRealmName()
+
+		searchResultData.leaderName = nameTable[1] .. "-" .. nameTable[2]
+
+	end
+
+	if(appCategory ~= 3 and appCategory ~= 4 and appCategory ~= 7 and appCategory ~= 8 and appCategory ~= 9) then
+		if(searchResultData.leaderOverallDungeonScore > 0) then
+			local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
+			local highestKeyForDungeon
+
+			if(reqScore > searchResultData.leaderOverallDungeonScore) then
+				currentFrame.primaryIndicator:SetText(wticc(tostring(searchResultData.leaderOverallDungeonScore), miog.CLRSCC["red"]))
+
+			else
+				currentFrame.primaryIndicator:SetText(wticc(tostring(searchResultData.leaderOverallDungeonScore), miog.createCustomColorForScore(searchResultData.leaderOverallDungeonScore):GenerateHexColor()))
+
+			end
+
+			if(searchResultData.leaderDungeonScoreInfo) then
+				if(searchResultData.leaderDungeonScoreInfo.finishedSuccess == true) then
+					highestKeyForDungeon = wticc(tostring(searchResultData.leaderDungeonScoreInfo.bestRunLevel), miog.C.GREEN_COLOR)
+
+				elseif(searchResultData.leaderDungeonScoreInfo.finishedSuccess == false) then
+					highestKeyForDungeon = wticc(tostring(searchResultData.leaderDungeonScoreInfo.bestRunLevel), miog.CLRSCC["red"])
+
+				end
+			else
+				highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
+
+			end
+
+			currentFrame.secondaryIndicator:SetText(highestKeyForDungeon)
+		else
+			local difficulty = miog.DIFFICULTY[-1] -- NO DATA
+			currentFrame.primaryIndicator:SetText(wticc("0", difficulty.color))
+			currentFrame.secondaryIndicator:SetText(wticc("0", difficulty.color))
+
+		end
+	elseif(appCategory == 3) then
+		local raidData = miog.getRaidSortData(searchResultData.leaderName)
+
+		if(raidData) then
+			
+			primarySortAttribute = wticc(raidData[1].parsedString, raidData[1].ordinal == 1 and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated)
+			secondarySortAttribute = wticc(raidData[2].parsedString, raidData[2].ordinal == 1 and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated)
+
+		else
+			primarySortAttribute = 0
+			secondarySortAttribute = 0
+		
+		end
+
+		currentFrame.primaryIndicator:SetText(primarySortAttribute)
+		currentFrame.secondaryIndicator:SetText(secondarySortAttribute)
+
+	elseif(appCategory == 4 or appCategory == 7 or appCategory == 8 or appCategory == 9) then
+		if(searchResultData.leaderPvpRatingInfo) then
+			currentFrame.primaryIndicator:SetText(wticc(tostring(searchResultData.leaderPvpRatingInfo.rating), miog.createCustomColorForScore(searchResultData.leaderPvpRatingInfo.rating):GenerateHexColor()))
+
+			local tierResult = miog.simpleSplit(PVPUtil.GetTierName(searchResultData.leaderPvpRatingInfo.tier), " ")
+			currentFrame.secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+			
+		else
+			currentFrame.primaryIndicator:SetText(0)
+			currentFrame.secondaryIndicator:SetText("Unra")
+
+		end
+	end
+
+	local orderedList = {}
+
+	local roleCount = {
+		["TANK"] = 0,
+		["HEALER"] = 0,
+		["DAMAGER"] = 0,
+	}
+
+	for i = 1, searchResultData.numMembers, 1 do
+		local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultData.searchResultID, i)
+
+		orderedList[i] = {leader = i == 1 and true or false, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
+
+		if(role) then
+			roleCount[role] = roleCount[role] + 1
+
+		end
+	end
+
+	local memberPanel = currentFrame.memberPanel
+	local bossPanel = currentFrame.bossPanel
+
+	if(appCategory == 3 or appCategory == 9) then
+		memberPanel:Hide()
+
+		currentFrame.resultMemberComp:Show()
+		currentFrame.resultMemberComp:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
+
+		if(miog.RAID_INFO[mapID]) then
+			bossPanel:Show()
+
+			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
+			local encountersDefeated = {}
+
+			if(encounterInfo) then
+				for _, v in pairs(encounterInfo) do
+					encountersDefeated[v] = true
+				end
+			end
+
+			local numOfBosses = #miog.RAID_INFO[mapID] - 1
+
+			for i = 1, miog.F.MOST_BOSSES, 1 do
+				local currentRaidInfo = miog.RAID_INFO[mapID][numOfBosses - (i - 1)]
+				if(currentRaidInfo) then
+					bossPanel.bossFrames[i]:SetTexture(currentRaidInfo.icon)
+
+					if(encountersDefeated[currentRaidInfo.name]) then
+						bossPanel.bossFrames[i]:SetDesaturated(true)
+						
+					else
+						bossPanel.bossFrames[i]:SetDesaturated(false)
+
+					end
+
+					bossPanel.bossFrames[i]:Show()
+
+				else
+					bossPanel.bossFrames[i]:Hide()
+				
+				end
+			end
+		end
+
+	elseif(appCategory ~= 0) then
+		-- BRACKET 1 == 3v3, 0 == 2v2
+		currentFrame.resultMemberComp:Hide()
+		bossPanel:Hide()
+
+		local groupLimit = (appCategory == 4 or appCategory == 7) and (searchResultData.leaderPvpRatingInfo.bracket == 0 and 2 or searchResultData.leaderPvpRatingInfo.bracket == 1 and 3 or 5) or 5
+		local groupSize = #orderedList
+
+		if(roleCount["TANK"] == 0 and groupSize < groupLimit) then
+			orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
+			roleCount["TANK"] = roleCount["TANK"] + 1
+			groupSize = groupSize + 1
+		end
+
+		if(roleCount["HEALER"] == 0 and groupSize < groupLimit) then
+			orderedList[groupSize + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
+			roleCount["HEALER"] = roleCount["HEALER"] + 1
+			groupSize = groupSize + 1
+
+		end
+
+		for _ = 1, 3 - roleCount["DAMAGER"], 1 do
+			if(roleCount["DAMAGER"] < 3 and groupSize < groupLimit) then
+				orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
+				roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+				groupSize = groupSize + 1
+
+			end
+		end
+
+		table.sort(orderedList, function(k1, k2)
+			if(k1.role ~= k2.role) then
+				return k1.role > k2.role
+
+			elseif(k1.spec ~= k2.spec) then
+				return k1.spec > k2.spec
+
+			else
+				return k1.class > k2.class
+
+			end
+
+		end)
+		
+		for i = 1, groupLimit, 1 do
+			local currentMemberFrame = memberPanel.memberFrames[i]
+
+			if(currentMemberFrame) then
+				currentMemberFrame:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
+
+				if(orderedList[i].class ~= "DUMMY") then
+					currentMemberFrame.border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
+
+				else
+					currentMemberFrame.border:SetColorTexture(0, 0, 0, 0)
+				
+				end
+
+				if(orderedList[i].leader) then
+					memberPanel.leaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
+					memberPanel.leaderCrown:Show()
+
+					currentMemberFrame:SetMouseMotionEnabled(true)
+					currentMemberFrame:SetScript("OnEnter", function()
+						GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_CURSOR")
+						GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultData.leaderName))
+						GameTooltip:Show()
+
+					end)
+					currentMemberFrame:SetScript("OnLeave", function()
+						GameTooltip:Hide()
+
+					end)
+				else
+					currentMemberFrame:SetScript("OnEnter", nil)
+				
+				end
+
+			else
+				memberPanel.memberFrames[i]:Hide()
+			
+			end
+		end
+		
+		memberPanel:Show()
+
+	end
+
+	currentInvites[resultID] = currentFrame
+	currentFrame:Show()
+
+	--miog.ipDialog:SetPoint("TOPLEFT", dialogBox, "TOPLEFT")
+	miog.ipDialog.container:MarkDirty()
+	---@diagnostic disable-next-line: undefined-field
+	miog.ipDialog:MarkDirty()
+	miog.ipDialog:SetShown(true)
+	--StaticPopupSpecial_Show(miog.ipDialog)
+end
+
+MIOG_IPD = miog.showUpgradedInvitePendingDialog
+
 miog.createFrames = function()
 	createMainFrame()
 	createApplicationViewer()
 	createSearchPanel()
+	createUpgradedInvitePendingDialog()
 
 	miog.scriptReceiver:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
 	miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
@@ -2036,12 +2637,9 @@ miog.createFrames = function()
 	miog.scriptReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 	miog.scriptReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
 
-	C_MythicPlus.GetCurrentAffixes()
-
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
 	EJ_SelectInstance(1207)
-
 end
 
 miog.scriptReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
