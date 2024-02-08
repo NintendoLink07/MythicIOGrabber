@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.8.1] - 2024-02-08
+
+### Fixed
+
+- Filtering and sorting in the group finder should now be possible again.
+
 
 ## [1.8] - 2024-02-07
 
@@ -1024,7 +1030,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.8...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.8.1...HEAD
+[1.8.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8.1
 [1.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8
 [1.7.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.5
 [1.7.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.4

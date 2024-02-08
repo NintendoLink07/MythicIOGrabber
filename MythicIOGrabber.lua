@@ -1990,6 +1990,7 @@ local function isGroupEligible(resultID, bordermode)
 		(activityInfo.categoryID == 4 or activityInfo.categoryID == 7) and MIOG_SavedSettings.searchPanel_FilterOptions.table.bracketID
 	)
 	)then
+		print("WRONG2")
 		return false
 
 	end
@@ -2025,8 +2026,8 @@ local function isGroupEligible(resultID, bordermode)
 
 			
 			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForClassSpecs) then
-				if(not MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.class[miog.CLASSFILE_TO_ID[class]]
-				or not MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specID]) then
+				if(MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.class[miog.CLASSFILE_TO_ID[class]] == false
+				or MIOG_SavedSettings.searchPanel_FilterOptions.table.classSpec.spec[specID] == false) then
 					return false
 
 				end
@@ -2043,6 +2044,7 @@ local function isGroupEligible(resultID, bordermode)
 
 	or MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDamager and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager > 0
 	and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager)) then
+		print("WRONG7")
 		return false
 
 	end
@@ -3037,6 +3039,8 @@ local function checkListForEligibleMembers()
 	if(lastOrderedList) then
 		local actualResultsCounter = 0
 		local updatedFrames = {}
+
+		table.sort(lastOrderedList, sortSearchResultList)
 
 		for index, listEntry in ipairs(lastOrderedList) do
 			if(searchResultSystem.persistentFrames[listEntry.resultID]) then
