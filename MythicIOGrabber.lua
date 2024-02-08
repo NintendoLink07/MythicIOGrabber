@@ -1990,7 +1990,6 @@ local function isGroupEligible(resultID, bordermode)
 		(activityInfo.categoryID == 4 or activityInfo.categoryID == 7) and MIOG_SavedSettings.searchPanel_FilterOptions.table.bracketID
 	)
 	)then
-		print("WRONG2")
 		return false
 
 	end
@@ -2044,7 +2043,6 @@ local function isGroupEligible(resultID, bordermode)
 
 	or MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDamager and MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager > 0
 	and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.searchPanel_FilterOptions.table.minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.searchPanel_FilterOptions.table.maxDamager)) then
-		print("WRONG7")
 		return false
 
 	end
