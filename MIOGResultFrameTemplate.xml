@@ -1,0 +1,307 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+    
+    <Frame name="MIOGResultFrameTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
+        <KeyValues>
+			<KeyValue key="minimumHeight" value="40" type="number"/>
+		</KeyValues>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background">
+                    <Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" >
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.7" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <FontHeight val="16"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="BasicInformationPanel">
+                <Size y="40" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2"/>
+                </Anchors>
+
+                 <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Icon" enableMouseClicks="true">
+                            <Size x="18" y="18" />
+
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="BORDER">
+                        <Texture parentKey="IconBorder">
+                            <Size x="22" y="22" />
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPLEFT" x="-2" y="2" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="TOP" relativeKey="$parent.Icon" relativePoint="BOTTOM" />
+                        </Anchors>
+                    </Button>
+
+                    <Button parentKey="CancelApplication" inherits="IconButtonTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
+                            <KeyValue key="iconSize" value="16" type="number" />
+                        </KeyValues>
+                        <Size x="16" y="16" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2" />
+                        </Anchors>
+                    </Button>
+
+                    <Button parentKey="Invite" inherits="IconButtonTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
+                            <KeyValue key="iconSize" value="16" type="number" />
+                        </KeyValues>
+                        <Size x="16" y="16" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Decline" relativePoint="LEFT" x="-2"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
+                            <Size x="10" y="10" />
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.ExpandFrame" relativePoint="CENTER" x="7" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Title" font="LibMono" justifyH="LEFT">
+                            <FontHeight val="11"/>
+                            <Size x="116" y="20"/>
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="5" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Primary" font="LibMono" justifyH="CENTER" text="0">
+                            <FontHeight val="11"/>
+                            <Size x="37" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="4" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Secondary" font="LibMono" justifyH="CENTER" text="0">
+                            <FontHeight val="11"/>
+                            <Size x="37" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="3"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Age" font="LibMono" justifyH="CENTER" text="0:00:00">
+                            <FontHeight val="11"/>
+                            <Size x="80" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Friend" file="Interface\Addons\MythicIOGrabber\res\infoIcons\friend.png" hidden="true">
+                            <Size x="17" y="17" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" />
+                            </Anchors>
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					                GameTooltip:SetText("A friend is in this group")
+					                GameTooltip:Show()
+                                </OnEnter>
+					
+                                <OnLeave>
+				                    GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
+                        </Texture>
+                        
+                        <Texture parentKey="Premade" file="Interface\Addons\MythicIOGrabber\res\infoIcons\link.png" hidden="true">
+                            <Size x="17" y="17" />
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" y="-1"/>
+                            </Anchors>
+                            <Scripts>
+                                <OnLeave>
+				                    GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
+                        </Texture>
+                        
+                        <Texture parentKey="Divider" atlas="UI-LFG-DividerLine">
+                            <Size x="312" y="2" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT" x="0" y="1"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="DifficultyZone" font="LibMono" justifyH="LEFT">
+                            <FontHeight val="11"/>
+                            <Size x="116" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="5" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+
+                    <Layer level="DIALOG">
+                        <FontString parentKey="RoleComposition" font="LibMono" justifyH="LEFT">
+                            <FontHeight val="11"/>
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="5" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="MemberPanel" hidden="true">
+                        <Size x="100" y="16"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="5" y="1"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="1" inherits="MIOG_GroupMemberTemplate">
+                                <Size x="17" y="17" />
+                            </Frame>
+
+                            <Frame parentKey="2" inherits="MIOG_GroupMemberTemplate">
+                                <Size x="17" y="17" />
+                            </Frame>
+
+                            <Frame parentKey="3" inherits="MIOG_GroupMemberTemplate">
+                                <Size x="17" y="17" />
+                            </Frame>
+
+                            <Frame parentKey="4" inherits="MIOG_GroupMemberTemplate">
+                                <Size x="17" y="17" />
+                            </Frame>
+
+                            <Frame parentKey="5" inherits="MIOG_GroupMemberTemplate">
+                                <Size x="17" y="17" />
+                            </Frame>
+                        </Frames>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png">
+                                    <Size x="14" y="14" />
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    
+                    <Frame parentKey="BossPanel" inherits="ResizeLayoutFrame" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="fixedHeight" value="16" />
+                        </KeyValues>
+
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="2"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="1" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="2" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="3" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="4" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="5" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="6" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="7" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="8" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="9" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+
+                            <Frame parentKey="10" inherits="MIOG_ResultFrameBossFrameTemplate">
+                                <Size x="12" y="12" />
+                            </Frame>
+                        </Frames>
+
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <EditBox parentKey="LinkBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" frameLevel="100" autoFocus="false" font="LibMono" hidden="true">
+                <FontHeight val="11"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" />
+                </Anchors>       
+                <Size y="20" />         
+            </EditBox>
+
+        </Frames>
+    </Frame>
+</Ui>

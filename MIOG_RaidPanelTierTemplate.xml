@@ -1,0 +1,95 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+    <Frame name="MIOG_RaidPanelTierTemplate" virtual="true">
+        <Frames>
+            <Frame parentKey="UpperRow" inherits="BackdropTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                </Anchors>
+                <Frames>
+                    <Frame parentKey="1" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="2" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.1" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="3" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.2" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="4" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.3" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="5" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.4" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>                           
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="LowerRow">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.UpperRow" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Frames>
+                    <Frame parentKey="6" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="7" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.6" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="8" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.7" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="9" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.8" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="10" inherits="MIOGRaidBossFrameTemplate">
+                        <Size x="23" y="23" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.9" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

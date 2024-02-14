@@ -1637,9 +1637,9 @@ local function createSearchPanel()
 	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 	dropdownOptionButton:SetPoint("TOPLEFT", lastFilterOption or filterFrame, "BOTTOMLEFT", 0, -5)
 	dropdownOptionButton:RegisterForClicks("LeftButtonDown")
-	dropdownOptionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty or false)
+	dropdownOptionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[miog.F.LISTED_CATEGORY_ID == 2 and "filterForDungeonDifficulty" or miog.F.LISTED_CATEGORY_ID == 3 and "filterForRaidDifficulty" or(miog.F.LISTED_CATEGORY_ID == 4 or miog.F.LISTED_CATEGORY_ID == 7) and "filterForArenaBracket"] or false)
 	dropdownOptionButton:HookScript("OnClick", function()
-		MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty = dropdownOptionButton:GetChecked()
+		MIOG_SavedSettings.searchPanel_FilterOptions.table[miog.F.LISTED_CATEGORY_ID == 2 and "filterForDungeonDifficulty" or miog.F.LISTED_CATEGORY_ID == 3 and "filterForRaidDifficulty" or(miog.F.LISTED_CATEGORY_ID == 4 or miog.F.LISTED_CATEGORY_ID == 7) and "filterForArenaBracket"] = dropdownOptionButton:GetChecked()
 		miog.checkListForEligibleMembers()
 	end)
 
@@ -1664,7 +1664,7 @@ local function createSearchPanel()
 					local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
 					or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
 					
-					if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty) then
+					if(dropdownOptionButton:GetChecked()) then
 						miog.checkListForEligibleMembers()
 
 					end
@@ -2305,12 +2305,13 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 		miog.ipDialog.activeFrames = miog.ipDialog.activeFrames + 1
 
 		PlaySound(SOUNDKIT.READY_CHECK)
-		FlashClientIcon()
 
 	else
 		currentFrame = currentInvites[resultID]
 	
 	end
+	
+	FlashClientIcon()
 
 	local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 	local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)

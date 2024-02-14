@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 1.8.1
+## Version: 1.9
 ## SavedVariables: MIOG_SavedSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -19,3 +19,14 @@ PersistentData.lua
 FrameManagement.lua
 UI.lua
 MultiStateButton.lua
+MIOGApplicantMemberFrameTemplate.xml
+MIOGResultFrameTemplate.xml
+MIOGDetailedInformationPanelTemplate.xml
+MIOGDetailedInformationPanelTextRowTemplate.xml
+MIOGDungeonRowTemplate.xml
+MIOGRaidRowTemplate.xml
+MIOGRaidBossFrameTemplate.xml
+MIOG_GroupMemberTemplate.xml
+MIOG_ResultFrameBossFrameTemplate.xml
+MIOG_RaidPanelTemplate.xml
+MIOG_RaidPanelTierTemplate.xml

@@ -76,11 +76,11 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 
 	if(currentApplicant and currentApplicant.frame and currentApplicant.frame.memberFrames) then
 		for _, memberFrame in pairs(currentApplicant.frame.memberFrames) do
-			memberFrame.statusFrame:Show()
-			memberFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[applicantStatus].statusString, miog.APPLICANT_STATUS_INFO[applicantStatus].color))
+			memberFrame.StatusFrame:Show()
+			memberFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[applicantStatus].statusString, miog.APPLICANT_STATUS_INFO[applicantStatus].color))
 
-			if(memberFrame.basicInformationPanel.inviteButton) then
-				memberFrame.basicInformationPanel.inviteButton:Disable()
+			if(memberFrame.BasicInformationPanel.inviteButton) then
+				memberFrame.BasicInformationPanel.inviteButton:Disable()
 
 			end
 		end
@@ -234,72 +234,53 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 
 	end
 	
-	local detailedInformationPanel = miog.createFleetingFrame(poolFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", listFrame)
-	detailedInformationPanel:SetWidth(listFrame.basicInformationPanel.fixedWidth)
-	detailedInformationPanel:SetPoint("TOPLEFT", listFrame.basicInformationPanel, "BOTTOMLEFT", 0, 0)
-	detailedInformationPanel:SetShown(listFrame.basicInformationPanel.expandFrameButton:GetActiveState() > 0 and true or false)
-	local rowWidth = listFrame.basicInformationPanel.fixedWidth * 0.5
+	local detailedInformationPanel = miog.createFleetingFrame(poolFrame.framePool, "MIOGDetailedInformationPanelTemplate", listFrame)
+	detailedInformationPanel:SetPoint("TOPLEFT", listFrame.BasicInformationPanel, "BOTTOMLEFT")
+	detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.BasicInformationPanel, "BOTTOMRIGHT")
+	detailedInformationPanel:SetShown(listFrame.BasicInformationPanel.ExpandFrame:GetActiveState() > 0 and true or false)
+	listFrame.DetailedInformationPanel = detailedInformationPanel
 
-	listFrame.detailedInformationPanel = detailedInformationPanel
-
-	local tabPanel = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", detailedInformationPanel)
+	local tabPanel = detailedInformationPanel.TabPanel
 	tabPanel:SetPoint("TOPLEFT", detailedInformationPanel, "TOPLEFT")
 	tabPanel:SetPoint("TOPRIGHT", detailedInformationPanel, "TOPRIGHT")
-	tabPanel:SetHeight(miog.C.APPLICANT_MEMBER_HEIGHT)
 	tabPanel.rows = {}
 
-	detailedInformationPanel.tabPanel = tabPanel
-
-	local mythicPlusTabButton = miog.createFleetingFrame(poolFrame.framePool, "UIPanelButtonTemplate", tabPanel)
-	mythicPlusTabButton:SetSize(rowWidth, miog.C.APPLICANT_MEMBER_HEIGHT)
-	mythicPlusTabButton:SetPoint("LEFT", tabPanel, "LEFT")
-	mythicPlusTabButton:SetFrameStrata("DIALOG")
-	mythicPlusTabButton:SetText("Mythic+")
+	local mythicPlusTabButton = tabPanel.MythicPlusTabButton
 	mythicPlusTabButton:RegisterForClicks("LeftButtonDown")
 	mythicPlusTabButton:SetScript("OnClick", function()
-		tabPanel.mythicPlusPanel:Show()
-		tabPanel.raidPanel:Hide()
+		detailedInformationPanel.MythicPlusPanel:Show()
+		detailedInformationPanel.RaidPanel:Hide()
 
-		detailedInformationPanel:SetHeight(tabPanel.mythicPlusPanel:GetHeight() + 20)
+		detailedInformationPanel:SetHeight(detailedInformationPanel.MythicPlusPanel:GetHeight() + 20)
 		detailedInformationPanel:MarkDirty()
 		poolFrame:MarkDirty()
 	end)
-	tabPanel.mythicPlusTabButton = mythicPlusTabButton
 
-	local raidTabButton = miog.createFleetingFrame(poolFrame.framePool, "UIPanelButtonTemplate", tabPanel)
-	raidTabButton:SetSize(rowWidth, miog.C.APPLICANT_MEMBER_HEIGHT)
-	raidTabButton:SetPoint("LEFT", mythicPlusTabButton, "RIGHT")
-	raidTabButton:SetFrameStrata("DIALOG")
-	raidTabButton:SetText("Raid")
+	local raidTabButton = tabPanel.RaidTabButton
 	raidTabButton:RegisterForClicks("LeftButtonDown")
 	raidTabButton:SetScript("OnClick", function()
-		tabPanel.mythicPlusPanel:Hide()
-		tabPanel.raidPanel:Show()
+		detailedInformationPanel.MythicPlusPanel:Hide()
+		detailedInformationPanel.RaidPanel:Show()
 
-		detailedInformationPanel:SetHeight(tabPanel.raidPanel:GetHeight() + 20)
+		detailedInformationPanel:SetHeight(detailedInformationPanel.RaidPanel:GetHeight() + 20)
 		detailedInformationPanel:MarkDirty()
 		poolFrame:MarkDirty()
 	end)
-	tabPanel.raidTabButton = raidTabButton
 
-	local raidPanel = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", detailedInformationPanel, rowWidth, 9 * 20)
-	raidPanel:SetPoint("TOPLEFT", tabPanel, "BOTTOMLEFT")
-	tabPanel.raidPanel = raidPanel
+	local mythicPlusPanel = detailedInformationPanel.MythicPlusPanel
+	mythicPlusPanel:SetShown(miog.F.LISTED_CATEGORY_ID ~= 3 and true)
+	mythicPlusPanel.rows = {}
+	mythicPlusPanel.dungeonFrames = {}
+
+	local raidPanel = detailedInformationPanel.RaidPanel
+	--raidPanel:SetPoint("TOPLEFT", tabPanel, "BOTTOMLEFT")
 	raidPanel:SetShown(miog.F.LISTED_CATEGORY_ID == 3 and true)
 	raidPanel.rows = {}
 
-	local mythicPlusPanel = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", detailedInformationPanel, rowWidth, 9 * 20)
-	mythicPlusPanel:SetPoint("TOPLEFT", tabPanel, "BOTTOMLEFT")
-	tabPanel.mythicPlusPanel = mythicPlusPanel
-	mythicPlusPanel:SetShown(miog.F.LISTED_CATEGORY_ID ~= 3 and true)
-	mythicPlusPanel.rows = {}
+	-- 9 * 20
 
-	local generalInfoPanel = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", detailedInformationPanel, rowWidth, 9 * 20)
-	generalInfoPanel:SetPoint("TOPRIGHT", tabPanel, "BOTTOMRIGHT")
-	tabPanel.generalInfoPanel = generalInfoPanel
+	local generalInfoPanel = detailedInformationPanel.GeneralInfoPanel
 	generalInfoPanel.rows = {}
-
-	local lastTextRow = nil
 
 	local hoverColor = {CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA()}
 	local cardColor = {CreateColorFromHexString(miog.C.CARD_COLOR):GetRGBA()}
@@ -307,60 +288,85 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	for rowIndex = 1, miog.F.MOST_BOSSES, 1 do
 		local remainder = fmod(rowIndex, 2)
 
-		local textRowFrame = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", detailedInformationPanel)
-		textRowFrame:SetSize(listFrame.basicInformationPanel.fixedWidth, miog.C.APPLICANT_MEMBER_HEIGHT)
-		textRowFrame:SetPoint("TOPLEFT", lastTextRow or mythicPlusTabButton, "BOTTOMLEFT")
-		lastTextRow = textRowFrame
+		local textRowFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOGDetailedInformationPanelTextRowTemplate", detailedInformationPanel)
+		textRowFrame:SetPoint("TOPLEFT", tabPanel.rows[rowIndex-1] or tabPanel, "BOTTOMLEFT")
+		textRowFrame:SetPoint("TOPRIGHT", tabPanel.rows[rowIndex-1] or tabPanel, "BOTTOMRIGHT")
+		textRowFrame:SetHeight(miog.C.APPLICANT_MEMBER_HEIGHT)
 		tabPanel.rows[rowIndex] = textRowFrame
 
-		local textRowBackground = miog.createFleetingTexture(poolFrame.texturePool, nil, textRowFrame, listFrame.basicInformationPanel.fixedWidth, miog.C.APPLICANT_MEMBER_HEIGHT)
-		textRowBackground:SetDrawLayer("BACKGROUND")
-		textRowBackground:SetPoint("CENTER", textRowFrame, "CENTER")
-
 		if(remainder == 1) then
-			textRowBackground:SetColorTexture(unpack(hoverColor))
+			textRowFrame.Background:SetColorTexture(unpack(hoverColor))
 
 		else
-			textRowBackground:SetColorTexture(unpack(cardColor))
+			textRowFrame.Background:SetColorTexture(unpack(cardColor))
 
 		end
 
-		local divider = miog.createFleetingTexture(poolFrame.texturePool, nil, textRowFrame, listFrame.basicInformationPanel.fixedWidth, 1, "BORDER")
-		divider:SetAtlas("UI-LFG-DividerLine")
-		divider:SetPoint("BOTTOM", textRowFrame, "BOTTOM", 0, 0)
+		local textRowGeneralInfo = textRowFrame.GeneralInfo
+		generalInfoPanel.rows[rowIndex] = textRowGeneralInfo
 
-		mythicPlusPanel.rows[rowIndex] = {}
-		raidPanel.rows[rowIndex] = {}
+		local textRowMythicPlus = textRowFrame.MythicPlus
+		textRowMythicPlus:SetParent(mythicPlusPanel)
+		mythicPlusPanel.rows[rowIndex] = textRowMythicPlus
 
-		if(rowIndex == 1 or rowIndex > 4 and rowIndex < 10) then
-			local textRowGeneralInfo = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", textRowFrame, rowWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", poolFrame.fontStringPool,  miog.C.TEXT_ROW_FONT_SIZE)
-			textRowGeneralInfo.FontString:SetJustifyH("CENTER")
-			textRowGeneralInfo:SetPoint("LEFT", textRowFrame, "LEFT", rowWidth, 0)
-			generalInfoPanel.rows[rowIndex] = textRowGeneralInfo
+		local textRowRaid = textRowFrame.Raid
+		textRowRaid:SetParent(raidPanel)
+		raidPanel.rows[rowIndex] = textRowRaid
+		
+		if(rowIndex ~= 1) then
+			textRowMythicPlus.FontString:SetJustifyH("CENTER")
+			textRowMythicPlus.FontString:SetPoint("CENTER", textRowGeneralInfo, "CENTER")
 
-			if(rowIndex == 1 or rowIndex == 5 or rowIndex == 6) then
-				local textRowMythicPlus = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", mythicPlusPanel, rowWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE)
-				local textRowRaid = miog.createFleetingFrame(poolFrame.framePool, "BackdropTemplate", raidPanel, rowWidth, miog.C.APPLICANT_MEMBER_HEIGHT, "FontString", poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE)
+			textRowRaid.FontString:SetJustifyH("CENTER")
+			textRowRaid.FontString:SetPoint("CENTER", textRowGeneralInfo, "CENTER")
+			
+		else
+			textRowGeneralInfo.FontString:SetJustifyV("TOP")
+			textRowGeneralInfo.FontString:SetWordWrap(true)
+			textRowGeneralInfo.FontString:SetNonSpaceWrap(true)
+			textRowGeneralInfo.FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 
-				if(rowIndex == 1) then
-					textRowMythicPlus:SetPoint("LEFT", textRowFrame, "LEFT")
-					textRowRaid:SetPoint("LEFT", textRowFrame, "LEFT")
-
-				else
-					textRowMythicPlus.FontString:SetJustifyH("CENTER")
-					textRowMythicPlus:SetPoint("LEFT", textRowGeneralInfo, "LEFT")
-
-					textRowRaid.FontString:SetJustifyH("CENTER")
-					textRowRaid:SetPoint("LEFT", textRowGeneralInfo, "LEFT")
-
+			textRowGeneralInfo.FontString:SetScript("OnEnter", function(self)
+				if(self:GetText() ~= nil) then
+					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					GameTooltip:SetText(self:GetText(), nil, nil, nil, nil, true)
+					GameTooltip:Show()
 				end
+			end)
 
-				mythicPlusPanel.rows[rowIndex] = textRowMythicPlus
-				raidPanel.rows[rowIndex] = textRowRaid
+			textRowGeneralInfo.FontString:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+		
+			end)
+		end
 
-			end
+		if(rowIndex < 9) then
+			local dungeonRowFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOGDungeonRowTemplate", mythicPlusPanel)
+			dungeonRowFrame:SetPoint("TOPLEFT", mythicPlusPanel.rows[rowIndex], "TOPLEFT")
+			dungeonRowFrame:SetPoint("BOTTOMRIGHT", mythicPlusPanel.rows[rowIndex], "BOTTOMRIGHT")
+			dungeonRowFrame.Icon:SetMouseClickEnabled(true)
+
+			mythicPlusPanel.dungeonFrames[rowIndex] = dungeonRowFrame
+
 		end
 	end
+	
+	generalInfoPanel.rows[1].FontString:SetPoint("TOPLEFT", generalInfoPanel.rows[1], "TOPLEFT", 0, -5)
+	generalInfoPanel.rows[1].FontString:SetPoint("BOTTOMRIGHT", generalInfoPanel.rows[4], "BOTTOMRIGHT", 0, 0)
+
+	local currentTierFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOG_RaidPanelTemplate", raidPanel)
+	currentTierFrame:SetPoint("TOPLEFT", raidPanel.rows[1], "TOPLEFT")
+	currentTierFrame:SetPoint("BOTTOMRIGHT", raidPanel.rows[4], "BOTTOMRIGHT")
+	raidPanel.currentTier = currentTierFrame
+
+	local lastTierFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOG_RaidPanelTemplate", raidPanel)
+	lastTierFrame:SetPoint("TOPLEFT", raidPanel.rows[5], "TOPLEFT")
+	lastTierFrame:SetPoint("BOTTOMRIGHT", raidPanel.rows[8], "BOTTOMRIGHT")
+	raidPanel.lastTier = lastTierFrame
+	--miog.createFrameBorder(currentTierFrame.BossFrames.UpperRow, 2, 0, 1, 0, 1)
+	--miog.createFrameBorder(currentTierFrame.BossFrames, 2, 1, 0, 0, 1)
+
+	detailedInformationPanel:MarkDirty()
 end
 
 local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFrame)
@@ -370,14 +376,13 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 	end
 
 	local profile, mythicKeystoneProfile, raidProfile
-	local basicInformationPanel = memberFrame.basicInformationPanel
-	local detailedInformationPanel = memberFrame.detailedInformationPanel
-	local primaryIndicator = basicInformationPanel.primaryIndicator
-	local secondaryIndicator = basicInformationPanel.secondaryIndicator
-	local tabPanel = detailedInformationPanel.tabPanel
-	local mythicPlusPanel = tabPanel.mythicPlusPanel
-	local raidPanel = tabPanel.raidPanel
-	local generalInfoPanel = tabPanel.generalInfoPanel
+	local BasicInformationPanel = memberFrame.BasicInformationPanel
+	local detailedInformationPanel = memberFrame.DetailedInformationPanel
+	local primaryIndicator = BasicInformationPanel.Primary
+	local secondaryIndicator = BasicInformationPanel.Secondary
+	local mythicPlusPanel = detailedInformationPanel.MythicPlusPanel
+	local raidPanel = detailedInformationPanel.RaidPanel
+	local generalInfoPanel = detailedInformationPanel.GeneralInfoPanel
 
 	if(miog.F.IS_RAIDERIO_LOADED) then
 		profile = RaiderIO.GetProfile(playerName, realm, miog.F.CURRENT_REGION)
@@ -401,47 +406,29 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeons or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeons
 			local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeonUpgrades or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeonUpgrades
 
-			local rowWidth = basicInformationPanel.fixedWidth * 0.5
-			local rowWidthThirty = rowWidth * 0.30
-
 			if(primaryDungeonLevel and primaryDungeonChests and secondaryDungeonLevel and secondaryDungeonChests) then
 				for i, dungeonEntry in ipairs(mythicKeystoneProfile.sortedDungeons) do
-					local dungeonIconFrame = miog.createFleetingTexture(poolFrame.texturePool, nil, mythicPlusPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 2, miog.C.APPLICANT_MEMBER_HEIGHT - 2)
-					dungeonIconFrame:SetPoint("LEFT", tabPanel.rows[i], "LEFT")
-					dungeonIconFrame:SetMouseClickEnabled(true)
-					dungeonIconFrame:SetDrawLayer("OVERLAY")
-					mythicPlusPanel.rows[i].iconFrame = dungeonIconFrame
 
-					local dungeonNameFrame = miog.createFleetingFontString(poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidth*0.25, miog.C.APPLICANT_MEMBER_HEIGHT)
-					dungeonNameFrame:SetPoint("LEFT", dungeonIconFrame, "RIGHT", 1, 0)
-					mythicPlusPanel.rows[i].nameFrame = dungeonNameFrame
-
-					local primaryAffixScoreFrame = miog.createFleetingFontString(poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidthThirty, miog.C.APPLICANT_MEMBER_HEIGHT)
-					primaryAffixScoreFrame:SetPoint("LEFT", dungeonNameFrame, "RIGHT")
-					mythicPlusPanel.rows[i].primary = primaryAffixScoreFrame
-
-					local secondaryAffixScoreFrame = miog.createFleetingFontString(poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  mythicPlusPanel, rowWidthThirty, miog.C.APPLICANT_MEMBER_HEIGHT)
-					secondaryAffixScoreFrame:SetPoint("LEFT", primaryAffixScoreFrame, "RIGHT")
-					mythicPlusPanel.rows[i].secondary = secondaryAffixScoreFrame
+					local dungeonRowFrame = mythicPlusPanel.dungeonFrames[i]
 
 					local rowIndex = dungeonEntry.dungeon.index
-					local texture = miog.MAP_INFO[mythicKeystoneProfile.sortedDungeons[rowIndex].dungeon.instance_map_id].icon
+					local texture = miog.MAP_INFO[dungeonEntry.dungeon.instance_map_id].icon
 
-					dungeonIconFrame:SetTexture(texture)
-					dungeonIconFrame:SetScript("OnMouseDown", function()
-						local instanceID = C_EncounterJournal.GetInstanceForGameMap(mythicKeystoneProfile.sortedDungeons[rowIndex].dungeon.instance_map_id)
+					dungeonRowFrame.Icon:SetTexture(texture)
+					dungeonRowFrame.Icon:SetScript("OnMouseDown", function()
+						local instanceID = C_EncounterJournal.GetInstanceForGameMap(dungeonEntry.dungeon.instance_map_id)
 
 						--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
 						EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
 
 					end)
 
-					dungeonNameFrame:SetText(mythicKeystoneProfile.sortedDungeons[rowIndex].dungeon.shortName .. ":")
+					dungeonRowFrame.Name:SetText(dungeonEntry.dungeon.shortName .. ":")
 
-					primaryAffixScoreFrame:SetText(wticc(primaryDungeonLevel[rowIndex] .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or primaryDungeonChests[rowIndex]),
+					dungeonRowFrame.Primary:SetText(wticc(primaryDungeonLevel[rowIndex] .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or primaryDungeonChests[rowIndex]),
 					primaryDungeonChests[rowIndex] > 0 and miog.C.GREEN_COLOR or primaryDungeonChests[rowIndex] == 0 and miog.CLRSCC["red"] or "0"))
 
-					secondaryAffixScoreFrame:SetText(wticc(secondaryDungeonLevel[rowIndex] .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests[rowIndex]),
+					dungeonRowFrame.Secondary:SetText(wticc(secondaryDungeonLevel[rowIndex] .. rep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests[rowIndex]),
 					secondaryDungeonChests[rowIndex] > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests[rowIndex] == 0 and miog.CLRSCC["red"] or "0"))
 				end
 			end
@@ -491,7 +478,6 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 		else
 			mythicPlusPanel.rows[1].FontString:SetText(wticc("NO M+ DATA", miog.CLRSCC["red"]))
-			mythicPlusPanel.rows[1].FontString:SetPoint("LEFT", mythicPlusPanel.rows[1], "LEFT", 2, 0)
 
 		end
 
@@ -500,16 +486,10 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			local lastOrdinal = nil
 
 			local higherDifficultyNumber = nil
-			local progressFrame
-
 			local mainProgressText = ""
 
 			local raidIndex = 0
-
-			local halfRowWidth = raidPanel.rows[1]:GetWidth() * 0.5
-			local rowHeight = (miog.C.APPLICANT_MEMBER_HEIGHT * 1.35) - 4
-
-			raidPanel.raid = {}
+			local currentTierFrame
 
 			for _, sortedProgress in ipairs(raidProfile.sortedProgress) do
 				if(sortedProgress.isMainProgress ~= true) then
@@ -520,8 +500,6 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 					if(sortedProgress.progress.raid.ordinal ~= lastOrdinal) then
 						raidIndex = raidIndex + 1
-
-						raidPanel.raid[raidIndex] = {}
 
 						if(miog.F.LISTED_CATEGORY_ID == 3) then
 							if(primaryIndicator:GetText() ~= nil and secondaryIndicator:GetText() == nil) then
@@ -536,86 +514,62 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 						end
 
 						local instanceID = C_EncounterJournal.GetInstanceForGameMap(sortedProgress.progress.raid.mapId)
+						currentTierFrame = raidPanel[raidIndex == 1 and "currentTier" or "lastTier"]
 
-						local raidIconFrame = miog.createFleetingTexture(poolFrame.texturePool, nil, raidPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 2, miog.C.APPLICANT_MEMBER_HEIGHT - 2)
-						raidIconFrame:SetPoint("LEFT", raidPanel.rows[1], "LEFT", raidIndex == 2 and halfRowWidth or 0, 0)
-						raidIconFrame:SetMouseClickEnabled(true)
-						raidIconFrame:SetDrawLayer("OVERLAY")
-						raidPanel.raid[raidIndex].icon = raidIconFrame
-
-						local raidNameString = miog.createFleetingFontString(poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE, raidPanel)
-						raidNameString:SetPoint("LEFT", raidIconFrame, "RIGHT", 2, 0)
-						raidPanel.raid[raidIndex].name = raidNameString
-						
-						progressFrame = miog.createFleetingFontString(poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE,  raidPanel, halfRowWidth, miog.C.APPLICANT_MEMBER_HEIGHT)
-						progressFrame:SetPoint("TOPLEFT", raidIconFrame, "BOTTOMLEFT")
-						raidPanel.raid[raidIndex].progress = progressFrame
-
-						raidPanel.raid[raidIndex].bossFrames = {}
-
-						raidIconFrame:SetTexture(miog.RAID_INFO[sortedProgress.progress.raid.mapId][bossCount + 1].icon)
-						raidIconFrame:SetScript("OnMouseDown", function()
+						currentTierFrame.Icon:SetTexture(miog.RAID_INFO[sortedProgress.progress.raid.mapId][bossCount + 1].icon)
+						currentTierFrame.Icon:SetScript("OnMouseDown", function()
 							--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
 							EncounterJournal_OpenJournal(miog.F.CURRENT_RAID_DIFFICULTY, instanceID, nil, nil, nil, nil)
 
 						end)
 
-						raidNameString:SetText(sortedProgress.progress.raid.shortName .. ":")
+						currentTierFrame.Name:SetText(sortedProgress.progress.raid.shortName .. ":")
 
 						higherDifficultyNumber = sortedProgress.progress.difficulty
 
-						progressFrame = raidPanel.raid[raidIndex].progress
-						progressFrame:SetText(panelProgressString)
+						currentTierFrame.Progress:SetText(panelProgressString)
 
 						local currentDiffColor = {miog.ITEM_QUALITY_COLORS[higherDifficultyNumber+1].color:GetRGBA()}
 
-						for bossIndex = 1, bossCount, 1 do
-						--for bossIndex = 1, bossCount, 1 do
-							local bossFrame = miog.createFleetingTexture(poolFrame.texturePool, nil, raidPanel, rowHeight, rowHeight)
-							bossFrame:SetPoint("TOPLEFT", bossIndex == 1 and progressFrame or bossIndex == 2 and raidPanel.raid[raidIndex].bossFrames[bossIndex - 1] or raidPanel.raid[raidIndex].bossFrames[bossIndex - 2],
-							bossIndex == 2 and "TOPRIGHT" or "BOTTOMLEFT", bossIndex == 1 and 2 or bossIndex == 2 and 5 or 0, bossIndex == 1 and -2 or bossIndex == 2 and 0 or -5)
-							bossFrame:SetDrawLayer("OVERLAY", -4)
-							bossFrame:SetMouseClickEnabled(true)
+						for i = 1, 10, 1 do
+							local currentBoss = currentTierFrame.BossFrames[i < 6 and "UpperRow" or "LowerRow"][tostring(i)]
+							if(miog.RAID_INFO[sortedProgress.progress.raid.mapId][i] and not miog.RAID_INFO[sortedProgress.progress.raid.mapId][i].shortName) then
+								currentBoss.Icon:SetTexture(miog.RAID_INFO[sortedProgress.progress.raid.mapId][i].icon)
+								currentBoss.Icon:SetScript("OnMouseDown", function()
 
-							local bossFrameBorder = miog.createFleetingTexture(poolFrame.texturePool, nil, raidPanel, rowHeight + 4, rowHeight + 4)
-							bossFrameBorder:SetDrawLayer("OVERLAY", -5)
-							bossFrameBorder:SetPoint("TOPLEFT", bossFrame, "TOPLEFT", -2, 2)
-							bossFrame.border = bossFrameBorder
+									--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+									EncounterJournal_OpenJournal(miog.F.CURRENT_RAID_DIFFICULTY, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
+								end)
 
-							local bossNumber = miog.createFleetingFontString(poolFrame.fontStringPool, miog.C.TEXT_ROW_FONT_SIZE, raidPanel)
-							bossNumber:SetPoint("TOPLEFT", bossFrame, "TOPLEFT")
-							bossNumber:SetText(bossIndex)
+								currentBoss.Index:SetText(i)
 
-							raidPanel.raid[raidIndex].bossFrames[bossIndex] = bossFrame
+								--raidPanel.raid[raidIndex].bossFrames[bossIndex] = bossFrame
 
-							bossFrame:SetTexture(miog.RAID_INFO[sortedProgress.progress.raid.mapId][bossIndex].icon)
-							bossFrame:SetScript("OnMouseDown", function()
+								if(sortedProgress.progress.killsPerBoss) then
+									local desaturated
+									local numberOfBossKills = sortedProgress.progress.killsPerBoss[i]
 
-								--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-								EncounterJournal_OpenJournal(miog.F.CURRENT_RAID_DIFFICULTY, instanceID, select(3, EJ_GetEncounterInfoByIndex(bossIndex, instanceID)), nil, nil, nil)
+									if(numberOfBossKills > 0) then
+										desaturated = false
 
-							end)
+										currentBoss.Border:SetColorTexture(unpack(currentDiffColor))
 
-							if(sortedProgress.progress.killsPerBoss) then
-								local desaturated
-								local numberOfBossKills = sortedProgress.progress.killsPerBoss[bossIndex]
+									elseif(numberOfBossKills == 0) then
+										desaturated = true
+										currentBoss.Border:SetColorTexture(0, 0, 0, 0)
 
-								if(numberOfBossKills > 0) then
-									desaturated = false
+									end
 
-									bossFrameBorder:SetColorTexture(unpack(currentDiffColor))
-
-								elseif(numberOfBossKills == 0) then
-									desaturated = true
-									bossFrameBorder:SetColorTexture(0, 0, 0, 0)
+									currentBoss.Icon:SetDesaturated(desaturated)
 
 								end
 
-								bossFrame:SetDesaturated(desaturated)
+								currentBoss:Show()
 
+							else
+								currentBoss:Hide()
 							end
 						end
-
 					else
 
 						if(sortedProgress.progress.difficulty ~= higherDifficultyNumber) then
@@ -626,30 +580,31 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 								end
 							end
 
-							progressFrame:SetText(progressFrame:GetText() .. " " .. panelProgressString)
+							currentTierFrame.Progress:SetText(currentTierFrame.Progress:GetText() .. " " .. panelProgressString)
 
-							for bossIndex, bossFrame in ipairs(raidPanel.raid[raidIndex].bossFrames) do
-								local desaturated = bossFrame:IsDesaturated()
+							for i = 1, 10, 1 do
+								local currentBoss = currentTierFrame.BossFrames[i < 6 and "UpperRow" or "LowerRow"][tostring(i)]
+								if(miog.RAID_INFO[sortedProgress.progress.raid.mapId][i] and not miog.RAID_INFO[sortedProgress.progress.raid.mapId][i].shortName) then
+									local desaturated = currentBoss.Icon:IsDesaturated()
 
-								local bossFrameBorder = raidPanel.raid[raidIndex].bossFrames[bossIndex].border
+									if(sortedProgress.progress.killsPerBoss and sortedProgress.progress.killsPerBoss[i]) then
+										if(sortedProgress.progress.killsPerBoss[i] > 0 and desaturated == true) then
+											currentBoss.Border:SetColorTexture(miog.ITEM_QUALITY_COLORS[sortedProgress.progress.difficulty + 1].color:GetRGBA())
+											currentBoss.Icon:SetDesaturated(false)
 
-								if(sortedProgress.progress.killsPerBoss and sortedProgress.progress.killsPerBoss[bossIndex]) then
-									if(sortedProgress.progress.killsPerBoss[bossIndex] > 0 and desaturated == true) then
-										bossFrameBorder:SetColorTexture(miog.ITEM_QUALITY_COLORS[sortedProgress.progress.difficulty + 1].color:GetRGBA())
-										bossFrame:SetDesaturated(false)
-
-									elseif(sortedProgress.progress.killsPerBoss[bossIndex] == 0 and desaturated == true) then
-										bossFrameBorder:SetColorTexture(0, 0, 0, 0)
-									end
-
-								else
-									if(progressCount == bossCount) then
-										if(desaturated == true) then
-											bossFrameBorder:SetColorTexture(miog.ITEM_QUALITY_COLORS[sortedProgress.progress.difficulty + 1].color:GetRGBA())
-											bossFrame:SetDesaturated(false)
-
+										elseif(sortedProgress.progress.killsPerBoss[i] == 0 and desaturated == true) then
+											currentBoss.Border:SetColorTexture(0, 0, 0, 0)
 										end
 
+									else
+										if(progressCount == bossCount) then
+											if(desaturated == true) then
+												currentBoss.Border:SetColorTexture(miog.ITEM_QUALITY_COLORS[sortedProgress.progress.difficulty + 1].color:GetRGBA())
+												currentBoss.Icon:SetDesaturated(false)
+
+											end
+
+										end
 									end
 								end
 							end
@@ -686,7 +641,6 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 		else
 			raidPanel.rows[1].FontString:SetText(wticc("NO RAIDING DATA", miog.CLRSCC["red"]))
-			raidPanel.rows[1].FontString:SetPoint("LEFT", raidPanel.rows[1], "LEFT", 2, 0)
 
 			if(miog.F.LISTED_CATEGORY_ID == 3) then
 				primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
@@ -698,10 +652,8 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 	else -- If RaiderIO is not installed
 		mythicPlusPanel.rows[1].FontString:SetText(wticc("NO RAIDER.IO DATA", miog.CLRSCC["red"]))
-		mythicPlusPanel.rows[1].FontString:SetPoint("LEFT", generalInfoPanel.rows[1], "LEFT", 2, 0)
 
 		raidPanel.rows[1].FontString:SetText(wticc("NO RAIDER.IO DATA", miog.CLRSCC["red"]))
-		raidPanel.rows[1].FontString:SetPoint("LEFT", generalInfoPanel.rows[1], "LEFT", 2, 0)
 	end
 
 
@@ -714,6 +666,8 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		secondaryIndicator:SetText(wticc(miog.F.LISTED_CATEGORY_ID == 3 and "0/0" or 0, miog.DIFFICULTY[-1].color))
 
 	end
+
+	generalInfoPanel.rows[9].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
 end
 
 miog.gatherRaiderIODisplayData = gatherRaiderIODisplayData
@@ -734,12 +688,11 @@ local function createApplicantFrame(applicantID)
 		applicantFrame.memberFrames = {}
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePoolCollection()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("EditBox", nil, "InputBoxTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Button", nil, "IconButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Button", nil, "UIPanelButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGApplicantMemberFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
 		applicantFrame.fontStringPool = applicantFrame.fontStringPool or CreateFontStringPool(applicantFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
 		applicantFrame.texturePool = applicantFrame.texturePool or CreateTexturePool(applicantFrame, "ARTWORK", nil, nil, miog.resetTexture)
@@ -772,7 +725,7 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", applicantFrame)
+			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOGApplicantMemberFrameTemplate", applicantFrame)
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.minimumHeight = 20
 			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
@@ -783,43 +736,15 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			local applicantMemberFrameBackground = miog.createFleetingTexture(applicantFrame.texturePool, nil, applicantMemberFrame, applicantMemberFrame.fixedWidth, applicantMemberFrame.minimumHeight)
-			applicantMemberFrameBackground:SetDrawLayer("BACKGROUND")
-			applicantMemberFrameBackground:SetAllPoints(true)
-			applicantMemberFrameBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-
-			local applicantMemberStatusFrame = miog.createFleetingFrame(applicantFrame.framePool, "BackdropTemplate", applicantFrame, nil, nil, "FontString", applicantFrame.fontStringPool)
-			applicantMemberStatusFrame:Hide()
-			applicantMemberStatusFrame:SetPoint("TOPLEFT", applicantMemberFrame, "TOPLEFT", 0, 0)
-			applicantMemberStatusFrame:SetPoint("BOTTOMRIGHT", applicantMemberFrame, "BOTTOMRIGHT", 0, 0)
+			local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
 			applicantMemberStatusFrame:SetFrameStrata("FULLSCREEN")
 
-			local applicantMemberStatusFrameBackground = miog.createFleetingTexture(applicantFrame.texturePool, nil, applicantMemberStatusFrame)
-			--applicantMemberStatusFrameBackground:SetDrawLayer("BACKGROUND")
-			applicantMemberStatusFrameBackground:SetAllPoints(true)
-			applicantMemberStatusFrameBackground:SetColorTexture(0.1, 0.1, 0.1, 0.7)
-
-			applicantMemberStatusFrame.FontString:SetJustifyH("CENTER")
-			applicantMemberStatusFrame.FontString:SetWidth(applicantMemberFrame.fixedWidth)
-			applicantMemberStatusFrame.FontString:SetPoint("TOP", applicantMemberStatusFrame, "TOP", 0, -2)
-			applicantMemberStatusFrame.FontString:Show()
-
-			applicantMemberFrame.statusFrame = applicantMemberStatusFrame
-
-			local basicInformationPanel = miog.createFleetingFrame(applicantFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", applicantMemberFrame)
-			basicInformationPanel.fixedWidth = applicantMemberFrame.fixedWidth
-			basicInformationPanel.maximumHeight = miog.C.APPLICANT_MEMBER_HEIGHT
-			basicInformationPanel:SetPoint("TOPLEFT", applicantMemberFrame, "TOPLEFT", 0, 0)
-			applicantMemberFrame.basicInformationPanel = basicInformationPanel
-
-			local expandFrameButton = Mixin(miog.createFleetingFrame(applicantFrame.framePool, "UIButtonTemplate", basicInformationPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
+			local expandFrameButton = applicantMemberFrame.BasicInformationPanel.ExpandFrame
 			expandFrameButton:OnLoad()
 			expandFrameButton:SetMaxStates(2)
 			expandFrameButton:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
 			expandFrameButton:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
 			expandFrameButton:SetState(false)
-			expandFrameButton:SetPoint("LEFT", basicInformationPanel, "LEFT", 0, 0)
-			expandFrameButton:SetFrameStrata("DIALOG")
 
 			if(applicantViewer_ExpandedFrameList[applicantID][applicantIndex]) then
 				expandFrameButton:AdvanceState()
@@ -828,23 +753,19 @@ local function createApplicantFrame(applicantID)
 
 			expandFrameButton:RegisterForClicks("LeftButtonDown")
 			expandFrameButton:SetScript("OnClick", function()
-				if(applicantMemberFrame.detailedInformationPanel) then
+				if(applicantMemberFrame.DetailedInformationPanel) then
 					expandFrameButton:AdvanceState()
-					applicantViewer_ExpandedFrameList[applicantID][applicantIndex] = not applicantMemberFrame.detailedInformationPanel:IsVisible()
-					applicantMemberFrame.detailedInformationPanel:SetShown(not applicantMemberFrame.detailedInformationPanel:IsVisible())
+					applicantViewer_ExpandedFrameList[applicantID][applicantIndex] = not applicantMemberFrame.DetailedInformationPanel:IsVisible()
+					applicantMemberFrame.DetailedInformationPanel:SetShown(not applicantMemberFrame.DetailedInformationPanel:IsVisible())
 
 					applicantFrame:MarkDirty()
 
 				end
 
 			end)
-			basicInformationPanel.expandFrameButton = expandFrameButton
 
 			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
-				local commentFrame = miog.createFleetingTexture(applicantFrame.texturePool, 136459, basicInformationPanel, basicInformationPanel.maximumHeight - 10, basicInformationPanel.maximumHeight - 10)
-				commentFrame:ClearAllPoints()
-				commentFrame:SetDrawLayer("ARTWORK")
-				commentFrame:SetPoint("BOTTOMRIGHT", expandFrameButton, "BOTTOMRIGHT", 0, 0)
+				applicantMemberFrame.BasicInformationPanel.Comment:Show()
 
 			end
 
@@ -852,32 +773,29 @@ local function createApplicantFrame(applicantID)
 
 			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
-			local nameFrame = miog.createFleetingFrame(applicantFrame.framePool, "BackdropTemplate", basicInformationPanel, basicInformationPanel.fixedWidth * 0.27, basicInformationPanel.maximumHeight, "FontString", applicantFrame.fontStringPool,  miog.C.APPLICANT_MEMBER_FONT_SIZE)
-			nameFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 0, 0)
-			nameFrame:SetFrameStrata("DIALOG")
-			nameFrame.FontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
-			nameFrame:SetMouseMotionEnabled(true)
-			nameFrame:SetScript("OnMouseDown", function(_, button)
+			local nameString = applicantMemberFrame.BasicInformationPanel.Name
+			nameString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
+			nameString:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
 
-					nameFrame.linkBox:SetAutoFocus(true)
-					nameFrame.linkBox:SetText(rioLink)
-					nameFrame.linkBox:HighlightText()
+					applicantMemberFrame.LinkBox:SetAutoFocus(true)
+					applicantMemberFrame.LinkBox:SetText(rioLink)
+					applicantMemberFrame.LinkBox:HighlightText()
 
-					nameFrame.linkBox:Show()
-					nameFrame.linkBox:SetAutoFocus(false)
+					applicantMemberFrame.LinkBox:Show()
+					applicantMemberFrame.LinkBox:SetAutoFocus(false)
 
 				end
 			end)
-			nameFrame:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(nameFrame, "ANCHOR_CURSOR")
+			nameString:SetScript("OnEnter", function()
+				GameTooltip:SetOwner(nameString, "ANCHOR_CURSOR")
 
 				if(playerIsIgnored) then
 					GameTooltip:SetText("Player is on your ignore list")
 
 				else
-					if(nameFrame.FontString:IsTruncated()) then
-						GameTooltip:SetText(nameFrame.FontString:GetText())
+					if(nameString:IsTruncated()) then
+						GameTooltip:SetText(nameString:GetText())
 					end
 
 					if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
@@ -889,29 +807,16 @@ local function createApplicantFrame(applicantID)
 				GameTooltip:Show()
 
 			end)
-			nameFrame:SetScript("OnLeave", function()
-				GameTooltip:Hide()
 
-			end)
-
-			applicantMemberFrame.basicInformationPanel.nameFrame = nameFrame
-
-			nameFrame.linkBox = miog.createFleetingFrame(applicantFrame.framePool, "InputBoxTemplate", applicantMemberFrame, nil, miog.C.APPLICANT_MEMBER_HEIGHT)
-			nameFrame.linkBox:SetFont(miog.FONTS["libMono"], miog.C.APPLICANT_MEMBER_FONT_SIZE, "OUTLINE")
-			nameFrame.linkBox:SetFrameStrata("FULLSCREEN")
-			nameFrame.linkBox:SetPoint("TOPLEFT", applicantMemberStatusFrame, "TOPLEFT", 5, 0)
-			nameFrame.linkBox:SetPoint("TOPRIGHT", applicantMemberStatusFrame, "TOPRIGHT", -1, 0)
-			nameFrame.linkBox:SetAutoFocus(true)
-			nameFrame.linkBox:SetScript("OnKeyDown", function(_, key)
+			applicantMemberFrame.LinkBox:SetScript("OnKeyDown", function(_, key)
 				if(key == "ESCAPE" or key == "ENTER") then
-					nameFrame.linkBox:Hide()
-					nameFrame.linkBox:ClearFocus()
+					applicantMemberFrame.LinkBox:Hide()
+					applicantMemberFrame.LinkBox:ClearFocus()
 
 				end
 			end)
-			nameFrame.linkBox:Hide()
 
-			local specFrame = miog.createFleetingTexture(applicantFrame.texturePool, nil, basicInformationPanel, basicInformationPanel.maximumHeight - 5, basicInformationPanel.maximumHeight - 5)
+			local specFrame = applicantMemberFrame.BasicInformationPanel.Spec
 
 			if(miog.SPECIALIZATIONS[specID] and class == miog.SPECIALIZATIONS[specID].class.name) then
 				specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
@@ -921,29 +826,12 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			specFrame:SetPoint("LEFT", nameFrame, "RIGHT", 3, 0)
-			specFrame:SetDrawLayer("ARTWORK")
-
-			local roleFrame = miog.createFleetingTexture(applicantFrame.texturePool, nil, basicInformationPanel, basicInformationPanel.maximumHeight - 1, basicInformationPanel.maximumHeight - 1)
-			roleFrame:SetPoint("LEFT", specFrame or nameFrame, "RIGHT", 1, 0)
-			roleFrame:SetDrawLayer("ARTWORK")
+			local roleFrame = applicantMemberFrame.BasicInformationPanel.Role
 			roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
 
-			local primaryIndicator = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.11, basicInformationPanel.maximumHeight)
-			primaryIndicator:SetPoint("LEFT", roleFrame, "RIGHT", 5, 0)
-			primaryIndicator:SetJustifyH("CENTER")
-
-			basicInformationPanel.primaryIndicator = primaryIndicator
-
-			local secondaryIndicator = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.11, basicInformationPanel.maximumHeight)
-			secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 1, 0)
-			secondaryIndicator:SetJustifyH("CENTER")
-
-			basicInformationPanel.secondaryIndicator = secondaryIndicator
-
-			local itemLevelFrame = miog.createFleetingFontString(applicantFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel, basicInformationPanel.fixedWidth*0.13, basicInformationPanel.maximumHeight)
-			itemLevelFrame:SetPoint("LEFT", secondaryIndicator, "RIGHT", 1, 0)
-			itemLevelFrame:SetJustifyH("CENTER")
+			local primaryIndicator = applicantMemberFrame.BasicInformationPanel.Primary
+			local secondaryIndicator = applicantMemberFrame.BasicInformationPanel.Secondary
+			local itemLevelFrame = applicantMemberFrame.BasicInformationPanel.ItemLevel
 
 			local reqIlvl = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel or 0
 
@@ -955,48 +843,20 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			if(relationship) then
-				local friendFrame = miog.createFleetingTexture(applicantFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
-				friendFrame:SetPoint("LEFT", itemLevelFrame, "RIGHT", 3, 0)
-				friendFrame:SetDrawLayer("ARTWORK")
-				friendFrame:SetMouseMotionEnabled(true)
-				friendFrame:SetScript("OnEnter", function()
-					GameTooltip:SetOwner(friendFrame, "ANCHOR_CURSOR")
-					GameTooltip:SetText("On your friendlist")
-					GameTooltip:Show()
-
-				end)
-				friendFrame:SetScript("OnLeave", function()
-					GameTooltip:Hide()
-
-				end)
-			end
+			applicantMemberFrame.BasicInformationPanel.Friend:SetShown(relationship and true or false)
 
 			if(applicantIndex > 1) then
-				local groupFrame = miog.createFleetingTexture(applicantFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/link.png", basicInformationPanel, basicInformationPanel.maximumHeight - 3, basicInformationPanel.maximumHeight - 3)
-				groupFrame:ClearAllPoints()
-				groupFrame:SetDrawLayer("OVERLAY")
-				groupFrame:SetPoint("TOPRIGHT", basicInformationPanel, "TOPRIGHT", -1, -1)
-				groupFrame:SetScript("OnEnter", function()
-					GameTooltip:SetOwner(groupFrame, "ANCHOR_CURSOR")
-					GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].basicInformationPanel.nameFrame.FontString:GetText())
+				applicantMemberFrame.BasicInformationPanel.Group:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].BasicInformationPanel.nameFrame:GetText())
 					GameTooltip:Show()
-
-				end)
-				groupFrame:SetScript("OnLeave", function()
-					GameTooltip:Hide()
 
 				end)
 
 			end
 
-			local declineButton = miog.createFleetingFrame(applicantFrame.framePool, "IconButtonTemplate", basicInformationPanel, basicInformationPanel.maximumHeight, basicInformationPanel.maximumHeight)
-			declineButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
-			declineButton.iconSize = basicInformationPanel.maximumHeight - 4
+			local declineButton = applicantMemberFrame.BasicInformationPanel.Decline
 			declineButton:OnLoad()
-			declineButton:SetPoint("RIGHT", basicInformationPanel, "RIGHT", 0, 0)
-			declineButton:SetFrameStrata("DIALOG")
-			declineButton:RegisterForClicks("LeftButtonUp")
 			declineButton:SetScript("OnClick", function()
 				if(applicantSystem.applicantMember[applicantID].status == "indexed") then
 					if(not miog.F.IS_IN_DEBUG_MODE) then
@@ -1018,15 +878,9 @@ local function createApplicantFrame(applicantID)
 
 				end
 			end)
-			applicantMemberFrame.basicInformationPanel.declineButton = declineButton
 
-			local inviteButton = miog.createFleetingFrame(applicantFrame.framePool, "IconButtonTemplate", basicInformationPanel, basicInformationPanel.maximumHeight, basicInformationPanel.maximumHeight)
-			inviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
-			inviteButton.iconSize = basicInformationPanel.maximumHeight - 4
-			inviteButton:SetFrameStrata("DIALOG")
+			local inviteButton = applicantMemberFrame.BasicInformationPanel.Invite
 			inviteButton:OnLoad()
-			inviteButton:SetPoint("RIGHT", declineButton, "LEFT")
-			inviteButton:RegisterForClicks("LeftButtonDown")
 			inviteButton:SetScript("OnClick", function()
 				C_LFGList.InviteApplicant(applicantID)
 
@@ -1036,12 +890,9 @@ local function createApplicantFrame(applicantID)
 
 			end)
 
-			applicantMemberFrame.basicInformationPanel.inviteButton = inviteButton
-
 			if(applicantIndex == 1 and miog.F.CAN_INVITE or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
-			else
-				declineButton:Hide()
-				inviteButton:Hide()
+				declineButton:Show()
+				inviteButton:Show()
 
 			end
 
@@ -1061,14 +912,9 @@ local function createApplicantFrame(applicantID)
 
 			gatherRaiderIODisplayData(nameTable[1], nameTable[2], applicantFrame, applicantMemberFrame)
 
-			local generalInfoPanel = applicantMemberFrame.detailedInformationPanel.tabPanel.generalInfoPanel
+			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.GeneralInfoPanel
 
-			generalInfoPanel.rows[1].FontString:SetJustifyV("TOP")
-			generalInfoPanel.rows[1].FontString:SetPoint("TOPLEFT", generalInfoPanel.rows[1], "TOPLEFT", 0, -5)
-			generalInfoPanel.rows[1].FontString:SetPoint("BOTTOMRIGHT", applicantMemberFrame.detailedInformationPanel.tabPanel.rows[4], "BOTTOMRIGHT", 0, 0)
 			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
-			generalInfoPanel.rows[1].FontString:SetWordWrap(true)
-			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 			generalInfoPanel.rows[7].FontString:SetText("Role: ")
 
 			if(tank) then
@@ -1090,8 +936,6 @@ local function createApplicantFrame(applicantID)
 				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
 
 			end
-
-			generalInfoPanel.rows[9].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (nameTable[2] or GetRealmName() or ""))
 
 			if(miog.F.LISTED_CATEGORY_ID == 2) then
 				if(dungeonScore > 0) then
@@ -1135,8 +979,8 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			basicInformationPanel:MarkDirty()
-			applicantMemberFrame.detailedInformationPanel:MarkDirty()
+			--BasicInformationPanel:MarkDirty()
+			applicantMemberFrame.DetailedInformationPanel:MarkDirty()
 			applicantMemberFrame:MarkDirty()
 
 		end
@@ -1372,6 +1216,83 @@ local function checkApplicantList(forceReorder, applicantID)
 	miog.applicationViewer.applicantPanel.container:MarkDirty()
 end
 
+local function createAVSelfEntry(pvpBracket)
+	resetArrays()
+	releaseApplicantFrames()
+
+	local applicantID = 99999
+
+	miog.DEBUG_APPLICANT_DATA[applicantID] = {
+		applicantID = applicantID,
+		applicationStatus = "applied",
+		numMembers = 1,
+		isNew = true,
+		comment = "Tettles is question mark spam pinging me, please help.",
+		displayOrderID = 1,
+	}
+
+	applicantSystem.applicantMember[applicantID] = {
+		frame = nil,
+		memberData = nil,
+		status = "dataAvailable",
+	}
+
+	miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID] = {}
+
+	local rioProfile
+
+	if(miog.F.IS_RAIDERIO_LOADED) then
+		rioProfile = RaiderIO.GetProfile(UnitFullName("player"))
+	end
+
+	local className, classFile = UnitClass("player")
+	local specID = GetSpecializationInfo(GetSpecialization())
+	local role = GetSpecializationRoleByID(specID)
+
+	local highestKey
+
+	if(rioProfile and rioProfile.mythicKeystoneProfile) then
+		highestKey = rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel > rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel and
+		rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel or rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel
+	end
+
+	local _, _, raceID = UnitRace("player")
+	local _, itemLevel, pvpItemLevel = GetAverageItemLevel()
+
+	local rating = 0
+
+	if(pvpBracket) then
+		rating = GetPersonalRatedInfo(pvpBracket)
+	end
+
+	miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID][1] = {
+		[1] = UnitFullName("player"),
+		[2]  = classFile, --ENG
+		[3]  = className, --GER
+		[4]  = UnitLevel("player"),
+		[5]  = itemLevel,
+		[6]  = UnitHonorLevel("player"),
+		[7]  = role == "TANK",
+		[8]  = role == "HEALER",
+		[9]  = role == "DAMAGER",
+		[10]  = select(5, GetSpecializationInfoByID(specID)),
+		[11]  = true,
+		[12]  = C_ChallengeMode.GetOverallDungeonScore(),
+		[13]  = pvpItemLevel,
+		[14]  = UnitFactionGroup("player"),
+		[15]  = raceID,
+		[16]  = specID,
+		[17]  = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"},
+		[18]  = {bracket = pvpBracket, rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
+	}
+
+	--local startTime = GetTimePreciseSec()
+	checkApplicantList(true)
+	--local endTime = GetTimePreciseSec()
+
+	--currentAverageExecuteTime[#currentAverageExecuteTime+1] = endTime - startTime
+end
+
 local function createFullEntries(iterations)
 	resetArrays()
 	releaseApplicantFrames()
@@ -1390,7 +1311,7 @@ local function createFullEntries(iterations)
 		miog.DEBUG_APPLICANT_DATA[applicantID] = {
 			applicantID = applicantID,
 			applicationStatus = "applied",
-			numMembers = random(1, 3),
+			numMembers = random(1, 1),
 			isNew = true,
 			comment = "Tettles is question mark spam pinging me, please help.",
 			displayOrderID = 1,
@@ -1975,6 +1896,19 @@ local function HasRemainingSlotsForLocalPlayerRole(resultID) -- LFGList.lua loca
 	end
 end
 
+local function retrieveIDForDropdownFiltering(categoryID)
+	if(categoryID == 2) then
+		return MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonDifficultyID
+
+	elseif(categoryID == 3) then
+		return MIOG_SavedSettings.searchPanel_FilterOptions.table.raidDifficultyID
+	
+	elseif(categoryID == 4 or categoryID == 7) then
+		return MIOG_SavedSettings.searchPanel_FilterOptions.table.bracketID
+
+	end
+end
+
 local function isGroupEligible(resultID, bordermode)
 	local searchResultData = searchResultSystem.searchResultData[resultID]
 	local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
@@ -1984,10 +1918,15 @@ local function isGroupEligible(resultID, bordermode)
 
 	end
 
-	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDifficulty == true and miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID ~= (
-		activityInfo.categoryID == 2 and MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonDifficultyID or
-		activityInfo.categoryID == 3 and MIOG_SavedSettings.searchPanel_FilterOptions.table.raidDifficultyID or
-		(activityInfo.categoryID == 4 or activityInfo.categoryID == 7) and MIOG_SavedSettings.searchPanel_FilterOptions.table.bracketID
+	local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
+	local isDungeon = activityInfo.categoryID == 2
+	local isRaid = activityInfo.categoryID == 3
+
+	if(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID ~= (retrieveIDForDropdownFiltering(activityInfo.categoryID))
+	and (
+		isDungeon and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDungeonDifficulty
+		or isRaid and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForRaidDifficulty
+		or (activityInfo.categoryID == 4 or activityInfo.categoryID == 7) and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForArenaBracket
 	)
 	)then
 		return false
@@ -2047,10 +1986,6 @@ local function isGroupEligible(resultID, bordermode)
 
 	end
 
-	local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
-	local isDungeon = activityInfo.categoryID == 2
-	--local isRaid = activityInfo.categoryID == 3
-
 	local score = isPvp and (searchResultData.leaderPvpRatingInfo and searchResultData.leaderPvpRatingInfo.rating or 0) or searchResultData.leaderOverallDungeonScore or 0
 
 	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForScore) then
@@ -2093,6 +2028,8 @@ local function setResultFrameColors(resultID)
 	local isEligible = isGroupEligible(resultID, true)
 	local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
+	
+		
 	if(appStatus == "applied") then
 		if(isEligible) then
 			resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
@@ -2102,7 +2039,11 @@ local function setResultFrameColors(resultID)
 		
 		end
 
-		resultFrame.background:SetColorTexture(CreateColorFromHexString("FF28644B"):GetRGBA())
+		resultFrame.Background:SetColorTexture(CreateColorFromHexString("FF28644B"):GetRGBA())
+
+	elseif(resultID == searchResultSystem.selectedResult) then
+			resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
+			resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 	elseif(MIOG_SavedSettings.favouredApplicants.table[searchResultSystem.searchResultData[resultID].leaderName]) then
 		if(isEligible) then
@@ -2113,7 +2054,7 @@ local function setResultFrameColors(resultID)
 
 		end
 
-		resultFrame.background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+		resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 	else
 		if(isEligible) then
@@ -2124,7 +2065,7 @@ local function setResultFrameColors(resultID)
 
 		end
 
-		resultFrame.background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+		resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 	
 	end
 end
@@ -2170,19 +2111,19 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 
 	if(resultFrame and newStatus) then
 		if(newStatus ~= "none") then
-			if(resultFrame.basicInformationPanel.ageFrame.ageTicker) then
-				resultFrame.basicInformationPanel.ageFrame.ageTicker:Cancel()
+			if(resultFrame.BasicInformationPanel.Age.ageTicker) then
+				resultFrame.BasicInformationPanel.Age.ageTicker:Cancel()
 			end
 
 			if(newStatus ~= "applied") then
-				resultFrame.statusFrame:Show()
-				resultFrame.statusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[newStatus].statusString, miog.APPLICANT_STATUS_INFO[newStatus].color))
+				resultFrame.StatusFrame:Show()
+				resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[newStatus].statusString, miog.APPLICANT_STATUS_INFO[newStatus].color))
 				resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-				resultFrame.background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+				resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 				if(oldStatus and (newStatus == "declined" or newStatus == "declined_full" or newStatus == "declined_delisted" or newStatus == "timedout")) then
-					resultFrame.basicInformationPanel.ageFrame.ageTicker = nil
-					resultFrame.basicInformationPanel.cancelApplicationButton:Hide()
+					resultFrame.BasicInformationPanel.Age.ageTicker = nil
+					resultFrame.BasicInformationPanel.CancelApplication:Hide()
 
 					local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 					
@@ -2196,15 +2137,15 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 				elseif(newStatus == "invitedeclined") then
 
 				elseif(newStatus == "invited") then
-					resultFrame.basicInformationPanel.cancelApplicationButton:Hide()
+					resultFrame.BasicInformationPanel.CancelApplication:Hide()
 
 				end
 
 			elseif(newStatus == "applied") then
 				local ageNumber = 0
-				local ageFrame = resultFrame.basicInformationPanel.ageFrame
+				local ageFrame = resultFrame.BasicInformationPanel.Age
 				
-				resultFrame.basicInformationPanel.cancelApplicationButton:Show()
+				resultFrame.BasicInformationPanel.CancelApplication:Show()
 
 				local _, _, _, appDuration = C_LFGList.GetApplicationInfo(resultID)
 				ageNumber = appDuration or 0
@@ -2216,17 +2157,19 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 					ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
 
 				end)
-				resultFrame.basicInformationPanel.cancelApplicationButton:Show()
+				resultFrame.BasicInformationPanel.CancelApplication:Show()
 
 				setResultFrameColors(resultID)
 
-				miog.checkListForEligibleMembers()
+				resultFrame.layoutIndex = -1
+
+				miog.searchPanel.resultPanel.container:MarkDirty()
 
 			end
 		else
-			resultFrame.statusFrame:Hide()
+			resultFrame.StatusFrame:Hide()
 
-			local ageFrame = resultFrame.basicInformationPanel.ageFrame
+			local ageFrame = resultFrame.BasicInformationPanel.Age
 			if(ageFrame.ageTicker) then
 				ageFrame.ageTicker:Cancel()
 			end
@@ -2464,7 +2407,7 @@ local function updatePersistentResultFrame(resultID)
 			local searchResultData = searchResultSystem.searchResultData[resultID]
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
 			local currentFrame = searchResultSystem.persistentFrames[resultID]
-			local basicInformationPanel = currentFrame.basicInformationPanel
+			local BasicInformationPanel = currentFrame.BasicInformationPanel
 			local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].mapID or 0
 			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 			local declineData = searchResultData.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultData.activityID .. searchResultData.leaderName]
@@ -2478,29 +2421,30 @@ local function updatePersistentResultFrame(resultID)
 
 			end)
 
-			currentFrame.iconFrame:SetTexture(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.RAID_INFO[mapID] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]].icon or nil)
-			currentFrame.iconFrame:SetScript("OnMouseDown", function()
+			currentFrame.BasicInformationPanel.Icon:SetTexture(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.RAID_INFO[mapID] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]].icon or nil)
+			currentFrame.BasicInformationPanel.Icon:SetScript("OnMouseDown", function()
 
 				--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
 				EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
 
 			end)
+
 			local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and
 			(activityInfo.isPvpActivity and miog.BRACKETS[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors
 			or miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors) or {r = 1, g = 1, b = 1}
 
-			currentFrame.iconFrame.border:SetColorTexture(color.r, color.g, color.b, 1)
+			currentFrame.BasicInformationPanel.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 			
 			if(searchPanel_ExpandedFrameList[searchResultData.searchResultID]) then
-				basicInformationPanel.expandFrameButton:AdvanceState()
+				BasicInformationPanel.ExpandFrame:AdvanceState()
 		
 			end
 	
-			basicInformationPanel.expandFrameButton:SetScript("OnClick", function()
-				if(currentFrame.detailedInformationPanel) then
-					basicInformationPanel.expandFrameButton:AdvanceState()
-					searchPanel_ExpandedFrameList[searchResultData.searchResultID] = not currentFrame.detailedInformationPanel:IsVisible()
-					currentFrame.detailedInformationPanel:SetShown(not currentFrame.detailedInformationPanel:IsVisible())
+			BasicInformationPanel.ExpandFrame:SetScript("OnClick", function()
+				if(currentFrame.DetailedInformationPanel) then
+					BasicInformationPanel.ExpandFrame:AdvanceState()
+					searchPanel_ExpandedFrameList[searchResultData.searchResultID] = not currentFrame.DetailedInformationPanel:IsVisible()
+					currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
 					currentFrame:MarkDirty()
 		
 				end
@@ -2527,11 +2471,11 @@ local function updatePersistentResultFrame(resultID)
 			end
 			
 
-			basicInformationPanel.titleFrame:SetText(wticc(searchResultData.name, titleZoneColor))
-			basicInformationPanel.commentFrame:SetShown(searchResultData.comment ~= "" and searchResultData.comment ~= nil and true or false)
-			basicInformationPanel.friendFrame:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
+			BasicInformationPanel.Title:SetText(wticc(searchResultData.name, titleZoneColor))
+			BasicInformationPanel.Comment:SetShown(searchResultData.comment ~= "" and searchResultData.comment ~= nil and true or false)
+			BasicInformationPanel.Friend:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
 
-			basicInformationPanel.cancelApplicationButton:SetScript("OnClick", function(self, button)
+			BasicInformationPanel.CancelApplication:SetScript("OnClick", function(self, button)
 				if(button == "LeftButton") then
 					local _, appStatus = C_LFGList.GetApplicationInfo(searchResultData.searchResultID)
 
@@ -2543,45 +2487,26 @@ local function updatePersistentResultFrame(resultID)
 				end
 			end)
 			
-			basicInformationPanel.difficultyZoneFrame:SetText(wticc(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
+			BasicInformationPanel.DifficultyZone:SetText(wticc(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
 			(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].shortName) or activityInfo.fullName, titleZoneColor))
 
-			local primaryIndicator = currentFrame.basicInformationPanel.primaryIndicator
+			local primaryIndicator = currentFrame.BasicInformationPanel.Primary
 			primaryIndicator:SetText(nil)
 
-			local secondaryIndicator = currentFrame.basicInformationPanel.secondaryIndicator
+			local secondaryIndicator = currentFrame.BasicInformationPanel.Secondary
 			secondaryIndicator:SetText(nil)
 
-			currentFrame.detailedInformationPanel.tabPanel.mythicPlusPanel.rows[1].FontString:SetText(nil)
-			currentFrame.detailedInformationPanel.tabPanel.raidPanel.rows[1].FontString:SetText(nil)
+			currentFrame.DetailedInformationPanel.MythicPlusPanel.rows[1].FontString:SetText(nil)
+			currentFrame.DetailedInformationPanel.RaidPanel.rows[1].FontString:SetText(nil)
 			
 			local nameTable = miog.simpleSplit(searchResultData.leaderName, "-")
 
 			gatherRaiderIODisplayData(nameTable[1], nameTable[2], currentFrame)
 
-			local generalInfoPanel = currentFrame.detailedInformationPanel.tabPanel.generalInfoPanel
-
-			if(searchResultData.comment) then
-				generalInfoPanel.rows[1].FontString:SetScript("OnEnter", function()
-					GameTooltip:SetOwner(generalInfoPanel.rows[1].FontString, "ANCHOR_CURSOR")
-					GameTooltip:SetText(searchResultData.comment)
-					GameTooltip:Show()
-				end)
-
-				generalInfoPanel.rows[1].FontString:SetScript("OnLeave", function()
-					GameTooltip:Hide()
+			local generalInfoPanel = currentFrame.DetailedInformationPanel.GeneralInfoPanel
 			
-				end)
-			end
-
-			generalInfoPanel.rows[1].FontString:SetJustifyV("TOP")
-			generalInfoPanel.rows[1].FontString:SetPoint("TOPLEFT", generalInfoPanel.rows[1], "TOPLEFT", 0, -5)
-			generalInfoPanel.rows[1].FontString:SetPoint("BOTTOMRIGHT", currentFrame.detailedInformationPanel.tabPanel.rows[4], "BOTTOMRIGHT", 0, 0)
 			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultData.comment and searchResultData.comment) or ""))
-			generalInfoPanel.rows[1].FontString:SetWordWrap(true)
-			generalInfoPanel.rows[1].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 			generalInfoPanel.rows[7].FontString:SetText("Role: ")
-			generalInfoPanel.rows[9].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (nameTable[2] or GetRealmName() or ""))
 
 			local appCategory = activityInfo.categoryID
 
@@ -2651,14 +2576,14 @@ local function updatePersistentResultFrame(resultID)
 				end
 			end
 
-			local memberPanel = basicInformationPanel.memberPanel
-			local bossPanel = basicInformationPanel.bossPanel
+			local memberPanel = BasicInformationPanel.MemberPanel
+			local bossPanel = BasicInformationPanel.BossPanel
 
 			if(appCategory == 3 or appCategory == 9) then
 				memberPanel:Hide()
 
-				basicInformationPanel.resultMemberComp:Show()
-				basicInformationPanel.resultMemberComp:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
+				BasicInformationPanel.RoleComposition:Show()
+				BasicInformationPanel.RoleComposition:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 
 				if(miog.RAID_INFO[mapID]) then
 					bossPanel:Show()
@@ -2677,20 +2602,12 @@ local function updatePersistentResultFrame(resultID)
 					for i = 1, miog.F.MOST_BOSSES, 1 do
 						local currentRaidInfo = miog.RAID_INFO[mapID][numOfBosses - (i - 1)]
 						if(currentRaidInfo) then
-							bossPanel.bossFrames[i]:SetTexture(currentRaidInfo.icon)
-
-							if(encountersDefeated[currentRaidInfo.name]) then
-								bossPanel.bossFrames[i]:SetDesaturated(true)
-								
-							else
-								bossPanel.bossFrames[i]:SetDesaturated(false)
-
-							end
-
-							bossPanel.bossFrames[i]:Show()
+							bossPanel[tostring(i)].Icon:SetTexture(currentRaidInfo.icon)
+							bossPanel[tostring(i)].Icon:SetDesaturated(encountersDefeated[currentRaidInfo.name] and true or false)
+							bossPanel[tostring(i)]:Show()
 
 						else
-							bossPanel.bossFrames[i]:Hide()
+							bossPanel[tostring(i)]:Hide()
 						
 						end
 					end
@@ -2698,7 +2615,7 @@ local function updatePersistentResultFrame(resultID)
 
 			elseif(appCategory ~= 0) then
 				-- BRACKET 1 == 3v3, 0 == 2v2
-				basicInformationPanel.resultMemberComp:Hide()
+				BasicInformationPanel.RoleComposition:Hide()
 				bossPanel:Hide()
 
 				local groupLimit = (appCategory == 4 or appCategory == 7) and (searchResultData.leaderPvpRatingInfo.bracket == 0 and 2 or searchResultData.leaderPvpRatingInfo.bracket == 1 and 3 or 5) or 5
@@ -2741,32 +2658,29 @@ local function updatePersistentResultFrame(resultID)
 				end)
 				
 				for i = 1, groupLimit, 1 do
-					local currentMemberFrame = memberPanel.memberFrames[i]
+					local currentMemberFrame = memberPanel[tostring(i)]
 
 					if(currentMemberFrame) then
-						currentMemberFrame:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
+						currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
 
 						if(orderedList[i].class ~= "DUMMY") then
-							currentMemberFrame.border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
+							currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
 
 						else
-							currentMemberFrame.border:SetColorTexture(0, 0, 0, 0)
+							currentMemberFrame.Border:SetColorTexture(0, 0, 0, 0)
 						
 						end
 
 						if(orderedList[i].leader) then
-							memberPanel.leaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
-							memberPanel.leaderCrown:Show()
+							memberPanel.LeaderCrown:ClearAllPoints()
+							memberPanel.LeaderCrown:SetParent(currentMemberFrame)
+							memberPanel.LeaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
 
 							currentMemberFrame:SetMouseMotionEnabled(true)
 							currentMemberFrame:SetScript("OnEnter", function()
 								GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_CURSOR")
 								GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultData.leaderName))
 								GameTooltip:Show()
-
-							end)
-							currentMemberFrame:SetScript("OnLeave", function()
-								GameTooltip:Hide()
 
 							end)
 						else
@@ -2777,7 +2691,7 @@ local function updatePersistentResultFrame(resultID)
 						--orderedListIndex = orderedListIndex + 1
 
 					else
-						memberPanel.memberFrames[i]:Hide()
+						memberPanel[tostring(i)]:Hide()
 					
 					end
 				end
@@ -2790,10 +2704,8 @@ local function updatePersistentResultFrame(resultID)
 end
 
 local function createPersistentResultFrame(resultID)
-	local persistentFrame = miog.createBasicFrame("searchResult", "ResizeLayoutFrame, BackdropTemplate", miog.searchPanel.resultPanel.container)
+	local persistentFrame = miog.createBasicFrame("searchResult", "MIOGResultFrameTemplate", miog.searchPanel.resultPanel.container)
 	persistentFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
-	persistentFrame.heightPadding = 1
-	persistentFrame.minimumHeight = 40
 	persistentFrame:SetFrameStrata("DIALOG")
 	persistentFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
@@ -2801,232 +2713,44 @@ local function createPersistentResultFrame(resultID)
 	end)
 	miog.createFrameBorder(persistentFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
 
-	local pFHalfHeight = (persistentFrame.minimumHeight * 0.5)
-
 	persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "HorizontalLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Button", nil, "IconButtonTemplate, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Button", nil, "UIButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Button", nil, "UIButtonTemplate, BackdropTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Button", nil, "UIPanelButtonTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-
-	-- resultID, appStatus, pendingStatus, appDuration, role
-
-	persistentFrame.fontStringPool = persistentFrame.fontStringPool or CreateFontStringPool(persistentFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
-	persistentFrame.texturePool = persistentFrame.texturePool or CreateTexturePool(persistentFrame, "ARTWORK", nil, nil, miog.resetTexture)
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
 	searchResultSystem.persistentFrames[resultID] = persistentFrame
 
-	local resultFrameBackground = miog.createFleetingTexture(persistentFrame.texturePool, nil, persistentFrame)
-	resultFrameBackground:SetDrawLayer("BACKGROUND")
-	resultFrameBackground:SetAllPoints(true)
-	resultFrameBackground:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+	persistentFrame.StatusFrame:SetFrameStrata("FULLSCREEN")
 
-	persistentFrame.background = resultFrameBackground
+	local BasicInformationPanel = persistentFrame.BasicInformationPanel
 
-	local resultFrameStatusFrame = miog.createFleetingFrame(persistentFrame.framePool, "BackdropTemplate", persistentFrame)
-	resultFrameStatusFrame:Hide()
-	resultFrameStatusFrame:SetAllPoints(true)
-	resultFrameStatusFrame:SetFrameStrata("FULLSCREEN")
-	persistentFrame.statusFrame = resultFrameStatusFrame
-
-	local resultFrameStatusFrameBackground = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultFrameStatusFrame)
-	resultFrameStatusFrameBackground:SetAllPoints(true)
-	resultFrameStatusFrameBackground:SetColorTexture(0.1, 0.1, 0.1, 0.77)
-
-	local statusFrameFontString = miog.createFleetingFontString(persistentFrame.fontStringPool, 16, resultFrameStatusFrame)
-	statusFrameFontString:SetPoint("CENTER", resultFrameStatusFrame, "CENTER")
-	resultFrameStatusFrame.FontString = statusFrameFontString
-	resultFrameStatusFrame.FontString:SetJustifyH("CENTER")
-	resultFrameStatusFrame.FontString:Show()
-
-	--[[local acceptInviteFrame = miog.createFleetingFrame(persistentFrame.framePool, "UIButtonTemplate, BackdropTemplate", resultFrameStatusFrame, 100, 20)
-	acceptInviteFrame:SetPoint("RIGHT", resultFrameStatusFrame.FontString, "LEFT", -10, 0)
-	acceptInviteFrame:RegisterForClicks("LeftButtonDown")
-	miog.createFrameBorder(acceptInviteFrame, 2, CreateColorFromHexString("FF39B904"):GetRGBA())
-	resultFrameStatusFrame.acceptInviteFrame = acceptInviteFrame
-	acceptInviteFrame:Hide()
-
-	local acceptInviteButton = miog.createFleetingFrame(persistentFrame.framePool, "IconButtonTemplate, BackdropTemplate", acceptInviteFrame, pFHalfHeight, pFHalfHeight)
-	acceptInviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
-	acceptInviteButton.iconSize = pFHalfHeight - 4
-	acceptInviteButton:OnLoad()
-	acceptInviteButton:SetPoint("RIGHT", acceptInviteFrame, "RIGHT", -5, 0)
-	acceptInviteButton:RegisterForClicks("LeftButtonDown")
-	resultFrameStatusFrame.acceptInviteButton = acceptInviteButton
-
-	local acceptInviteString = miog.createFleetingFontString(persistentFrame.fontStringPool, 14, acceptInviteButton)
-	acceptInviteString:SetPoint("RIGHT", acceptInviteButton, "LEFT", -5, -1)
-	acceptInviteString:SetTextColor(CreateColorFromHexString("FF39B904"):GetRGBA())
-	acceptInviteString:SetText("ACCEPT")
-	acceptInviteButton.FontString = acceptInviteString
-
-	local declineInviteFrame = miog.createFleetingFrame(persistentFrame.framePool, "UIButtonTemplate, BackdropTemplate", resultFrameStatusFrame, 100, 20)
-	declineInviteFrame:SetPoint("LEFT", resultFrameStatusFrame.FontString, "RIGHT", 10, 0)
-	declineInviteFrame:RegisterForClicks("LeftButtonDown")
-	miog.createFrameBorder(declineInviteFrame, 2, CreateColorFromHexString("FFCF2D1B"):GetRGBA())
-	resultFrameStatusFrame.declineInviteFrame = declineInviteFrame
-	declineInviteFrame:Hide()
-
-	local declineInviteButton = miog.createFleetingFrame(persistentFrame.framePool, "IconButtonTemplate, BackdropTemplate", declineInviteFrame, pFHalfHeight, pFHalfHeight)
-	declineInviteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
-	declineInviteButton.iconSize = pFHalfHeight - 4
-	declineInviteButton:OnLoad()
-	declineInviteButton:SetPoint("LEFT", declineInviteFrame, "LEFT", 5, 0)
-	declineInviteButton:RegisterForClicks("LeftButtonDown")
-	resultFrameStatusFrame.declineInviteButton = declineInviteButton
-
-	local declineInviteString = miog.createFleetingFontString(persistentFrame.fontStringPool, 14, declineInviteButton)
-	declineInviteString:SetPoint("LEFT", declineInviteButton, "RIGHT", 5, -1)
-	declineInviteString:SetTextColor(CreateColorFromHexString("FFCF2D1B"):GetRGBA())
-	declineInviteString:SetText("DECLINE")
-	declineInviteButton.FontString = declineInviteString]]
-
-	local basicInformationPanel = miog.createFleetingFrame(persistentFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", persistentFrame)
-	basicInformationPanel.fixedWidth = persistentFrame.fixedWidth
-	basicInformationPanel.fixedHeight = persistentFrame.minimumHeight
-	basicInformationPanel:SetPoint("TOPLEFT", persistentFrame, "TOPLEFT", 0, 0)
-	persistentFrame.basicInformationPanel = basicInformationPanel
-
-	local bipHalfHeight = basicInformationPanel.fixedHeight * 0.5
-
-	local iconFrameBorder = miog.createFleetingTexture(persistentFrame.texturePool, nil, persistentFrame, bipHalfHeight + 2, bipHalfHeight + 2)
-	iconFrameBorder:SetDrawLayer("OVERLAY", -5)
-	iconFrameBorder:SetPoint("TOPLEFT", basicInformationPanel, "TOPLEFT", 2, -2)
-
-	local iconFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, basicInformationPanel)
-	iconFrame:SetPoint("TOPLEFT", iconFrameBorder, "TOPLEFT", 1, -1)
-	iconFrame:SetPoint("BOTTOMRIGHT", iconFrameBorder, "BOTTOMRIGHT", -1, 1)
-	iconFrame:SetMouseClickEnabled(true)
-	iconFrame:SetDrawLayer("OVERLAY")
-	iconFrame.border = iconFrameBorder
-
-	persistentFrame.iconFrame = iconFrame
-
-	local expandFrameButton = Mixin(miog.createFleetingFrame(persistentFrame.framePool, "UIButtonTemplate", basicInformationPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
+	local expandFrameButton = BasicInformationPanel.ExpandFrame
 	expandFrameButton:OnLoad()
 	expandFrameButton:SetMaxStates(2)
 	expandFrameButton:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
 	expandFrameButton:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
 	expandFrameButton:SetState(false)
-	expandFrameButton:SetPoint("TOP", iconFrame, "BOTTOM", 0, 0)
-	expandFrameButton:SetFrameStrata("DIALOG")
-	expandFrameButton:RegisterForClicks("LeftButtonDown")
-	basicInformationPanel.expandFrameButton = expandFrameButton
 
-	local commentFrame = miog.createFleetingTexture(persistentFrame.texturePool, 136459, basicInformationPanel, bipHalfHeight - 10, bipHalfHeight - 10)
-	commentFrame:ClearAllPoints()
-	commentFrame:SetDrawLayer("ARTWORK")
-	commentFrame:SetPoint("CENTER", expandFrameButton, "CENTER", 7, -1)
-	commentFrame:Hide()
-	basicInformationPanel.commentFrame = commentFrame
-
-	local titleFrame = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
-	titleFrame:SetWidth(basicInformationPanel.fixedWidth * 0.35)
-	titleFrame:SetPoint("LEFT", iconFrame, "RIGHT", 5, 0)
-	basicInformationPanel.titleFrame = titleFrame
-
-	local primaryIndicator = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
-	primaryIndicator:SetWidth(basicInformationPanel.fixedWidth * 0.11)
-	primaryIndicator:SetPoint("LEFT", titleFrame, "RIGHT", 5, 0)
-	primaryIndicator:SetJustifyH("CENTER")
-	primaryIndicator:SetText(0)
-	basicInformationPanel.primaryIndicator = primaryIndicator
-
-	local secondaryIndicator = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
-	secondaryIndicator:SetWidth(basicInformationPanel.fixedWidth * 0.11)
-	secondaryIndicator:SetPoint("LEFT", primaryIndicator, "RIGHT", 1, 0)
-	secondaryIndicator:SetJustifyH("CENTER")
-	secondaryIndicator:SetText(0)
-	basicInformationPanel.secondaryIndicator = secondaryIndicator
-
-	local ageFrame = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
-	ageFrame:SetPoint("LEFT", secondaryIndicator, "RIGHT", 1, 0)
-	ageFrame:SetWidth(basicInformationPanel.fixedWidth * 0.24)
-	ageFrame:SetJustifyH("CENTER")
-	ageFrame:SetText("0:00:00")
-	basicInformationPanel.ageFrame = ageFrame
-
-	local friendFrame = miog.createFleetingTexture(persistentFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/friend.png", basicInformationPanel, bipHalfHeight - 3, bipHalfHeight - 3)
-	friendFrame:SetPoint("LEFT", ageFrame, "RIGHT", 3, 1)
-	friendFrame:SetDrawLayer("ARTWORK")
-	friendFrame:SetMouseMotionEnabled(true)
-	friendFrame:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(friendFrame, "ANCHOR_CURSOR")
-		GameTooltip:SetText("A friend is in this group")
-		GameTooltip:Show()
-
-	end)
-	friendFrame:SetScript("OnLeave", function()
-		GameTooltip:Hide()
-
-	end)
-	basicInformationPanel.friendFrame = friendFrame
-
-	local cancelApplicationButton = miog.createFleetingFrame(persistentFrame.framePool, "IconButtonTemplate, BackdropTemplate", basicInformationPanel, bipHalfHeight, bipHalfHeight)
-	cancelApplicationButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
-	cancelApplicationButton.iconSize = bipHalfHeight - 4
-	cancelApplicationButton:OnLoad()
-	cancelApplicationButton:SetPoint("TOPRIGHT", basicInformationPanel, "TOPRIGHT", -2, -2)
-	cancelApplicationButton:RegisterForClicks("LeftButtonDown")
-	cancelApplicationButton:Hide()
-	basicInformationPanel.cancelApplicationButton = cancelApplicationButton
-
-	local dividerFirstSecondFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, persistentFrame, basicInformationPanel.fixedWidth - bipHalfHeight, 2, "BORDER")
-	dividerFirstSecondFrame:SetAtlas("UI-LFG-DividerLine")
-	dividerFirstSecondFrame:SetPoint("LEFT", iconFrame, "BOTTOMRIGHT", 0, 2)
-
-	local difficultyZoneFrame = miog.createFleetingFontString(persistentFrame.fontStringPool, miog.C.APPLICANT_MEMBER_FONT_SIZE, basicInformationPanel)
-	difficultyZoneFrame:SetWidth(titleFrame:GetWidth())
-	difficultyZoneFrame:SetPoint("LEFT", expandFrameButton, "RIGHT", 5, 0)
-	basicInformationPanel.difficultyZoneFrame = difficultyZoneFrame
-	
-	local resultMemberPanel = miog.createFleetingFrame(persistentFrame.framePool, "BackdropTemplate", basicInformationPanel)
-	resultMemberPanel:SetHeight(bipHalfHeight - 4)
-	resultMemberPanel:SetWidth(100)
-	resultMemberPanel:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 2)
-	resultMemberPanel:Hide()
-	resultMemberPanel.memberFrames = {}
-	basicInformationPanel.memberPanel = resultMemberPanel
+	BasicInformationPanel.CancelApplication:OnLoad()
 
 	for i = 1, 5, 1 do
-		local resultMemberFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultMemberPanel, 13, 13)
-		resultMemberFrame:SetPoint("LEFT", resultMemberPanel.memberFrames[i-1] or resultMemberPanel, resultMemberPanel.memberFrames[i-1] and "RIGHT" or "LEFT", 14, 0)
-		resultMemberFrame:SetDrawLayer("OVERLAY", -4)
-		resultMemberPanel.memberFrames[i] = resultMemberFrame
-
-		resultMemberFrame.border = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultMemberPanel)
-		resultMemberFrame.border:SetDrawLayer("OVERLAY", -5)
-		resultMemberFrame.border:SetPoint("TOPLEFT", resultMemberFrame, "TOPLEFT", -2, 2)
-		resultMemberFrame.border:SetPoint("BOTTOMRIGHT", resultMemberFrame, "BOTTOMRIGHT", 2, -2)
+		local resultMemberFrame = BasicInformationPanel.MemberPanel[tostring(i)]
+		resultMemberFrame:SetPoint("LEFT", i == 1 and BasicInformationPanel.MemberPanel or BasicInformationPanel.MemberPanel[tostring(i-1)], BasicInformationPanel.MemberPanel[tostring(i-1)] and "RIGHT" or "LEFT", 14, 0)
 	end
 
-	local resultMemberComp = miog.createFleetingFontString(persistentFrame.fontStringPool, 12, basicInformationPanel)
-	resultMemberComp:SetPoint("LEFT", difficultyZoneFrame, "RIGHT", 5, 0)
-	basicInformationPanel.resultMemberComp = resultMemberComp
-	
-	local resultBossPanel = miog.createFleetingFrame(persistentFrame.framePool, "ResizeLayoutFrame, BackdropTemplate", basicInformationPanel)
-	resultBossPanel.fixedHeight = bipHalfHeight - 4
-	resultBossPanel:SetPoint("BOTTOMRIGHT", basicInformationPanel, "BOTTOMRIGHT", -2, 1)
-	resultBossPanel:Hide()
-	resultBossPanel.bossFrames = {}
-	basicInformationPanel.bossPanel = resultBossPanel
+	BasicInformationPanel.BossPanel.bossFrames = {}
 
 	for i = 1, miog.F.MOST_BOSSES, 1 do
-		local resultBossFrame = miog.createFleetingTexture(persistentFrame.texturePool, nil, resultBossPanel, 12, 12)
-		resultBossFrame:SetPoint("RIGHT", resultBossPanel.bossFrames[i-1] or resultBossPanel, resultBossPanel.bossFrames[i-1] and "LEFT" or "RIGHT", -2, 0)
-		resultBossFrame:SetDrawLayer("ARTWORK")
-		resultBossPanel.bossFrames[i] = resultBossFrame
+		local resultBossFrame = BasicInformationPanel.BossPanel[tostring(i)]
+
+		--local resultBossFrame = miog.createFleetingFrame(persistentFrame.framePool, "MIOG_ResultFrameBossFrameTemplate", BasicInformationPanel.BossPanel, 12, 12)
+		resultBossFrame:SetPoint("RIGHT", i == 1 and BasicInformationPanel.BossPanel or BasicInformationPanel.BossPanel[tostring(i-1)], i == 1 and "RIGHT" or "LEFT", -2, 0)
+		--BasicInformationPanel.BossPanel.bossFrames[i] = resultBossFrame
 	end
 
-	resultBossPanel:MarkDirty()
-
-	local leaderCrown = miog.createFleetingTexture(persistentFrame.texturePool, miog.C.STANDARD_FILE_PATH .. "/infoIcons/leaderIcon.png", resultMemberPanel, 14, 14)
-	leaderCrown:SetDrawLayer("OVERLAY", -3)
-	leaderCrown:Hide()
-	resultMemberPanel.leaderCrown = leaderCrown
+	BasicInformationPanel.BossPanel:MarkDirty()
 
 	createDetailedInformationPanel(persistentFrame)
 end
@@ -3072,8 +2796,8 @@ miog.checkListForEligibleMembers = checkListForEligibleMembers
 local function releaseAllResultFrames()
 	for index, v in pairs(searchResultSystem.persistentFrames) do
 		v.framePool:ReleaseAll()
-		v.fontStringPool:ReleaseAll()
-		v.texturePool:ReleaseAll()
+		--v.fontStringPool:ReleaseAll()
+		--v.texturePool:ReleaseAll()
 
 		miog.searchResultFramePool:Release(v)
 
@@ -3356,8 +3080,8 @@ miog.OnEvent = function(_, event, ...)
 
 		for _,v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
-				v.frame.memberFrames[1].basicInformationPanel.inviteButton:SetShown(canInvite)
-				v.frame.memberFrames[1].basicInformationPanel.declineButton:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.inviteButton:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.declineButton:SetShown(canInvite)
 
 			end
 		end
@@ -3367,8 +3091,8 @@ miog.OnEvent = function(_, event, ...)
 
 		for _,v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
-				v.frame.memberFrames[1].basicInformationPanel.inviteButton:SetShown(canInvite)
-				v.frame.memberFrames[1].basicInformationPanel.declineButton:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.inviteButton:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.declineButton:SetShown(canInvite)
 
 			end
 		end
@@ -3525,16 +3249,30 @@ local function handler(msg, editBox)
 		MIOG_OpenInterfaceOptions()
 
 	elseif(command == "debugon_av") then
-
-		miog.F.IS_IN_DEBUG_MODE = true
-		print("Debug mode on - No standard applicants coming through")
 		if(IsInGroup()) then
+			miog.F.IS_IN_DEBUG_MODE = true
+			print("Debug mode on - No standard applicants coming through")
+
 			PVEFrame:Show()
 			LFGListFrame:Show()
 			LFGListPVEStub:Show()
 			LFGListFrame.ApplicationViewer:Show()
 
 			createFullEntries(33)
+
+			miog.applicationViewer:Show()
+		end
+	elseif(command == "debugon_av_self") then
+		if(IsInGroup()) then
+			miog.F.IS_IN_DEBUG_MODE = true
+			print("Debug mode on - No standard applicants coming through")
+
+			PVEFrame:Show()
+			LFGListFrame:Show()
+			LFGListPVEStub:Show()
+			LFGListFrame.ApplicationViewer:Show()
+
+			createAVSelfEntry(rest)
 
 			miog.applicationViewer:Show()
 		end
@@ -3705,6 +3443,8 @@ hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		end
 
 		miog.F.LISTED_CATEGORY_ID = LFGListFrame.SearchPanel.categoryID
+
+		miog.searchPanel.filterFrame.filterForDifficulty:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[miog.F.LISTED_CATEGORY_ID == 2 and "filterForDungeonDifficulty" or miog.F.LISTED_CATEGORY_ID == 3 and "filterForRaidDifficulty" or(miog.F.LISTED_CATEGORY_ID == 4 or miog.F.LISTED_CATEGORY_ID == 7) and "filterForArenaBracket"] or false)
 
 	else
 		miog.mainFrame:Hide()

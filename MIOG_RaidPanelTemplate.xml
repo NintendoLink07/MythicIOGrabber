@@ -1,0 +1,45 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOG_RaidPanelTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" enableMouseClicks="true">
+                    <Size x="16" y="16" />
+
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="LibMono" justifyH="LEFT">
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress" font="LibMono" justifyH="LEFT">
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="BossFrames" inherits="MIOG_RaidPanelTierTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-23"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

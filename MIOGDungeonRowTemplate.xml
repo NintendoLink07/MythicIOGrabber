@@ -1,0 +1,44 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOGDungeonRowTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="18" y="18" />
+
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="LibMono" justifyH="LEFT">
+                    <Size x="52" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Primary" font="LibMono" justifyH="LEFT">
+                    <Size x="48" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Secondary" font="LibMono" justifyH="CENLEFTTER">
+                    <Size x="48" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>
