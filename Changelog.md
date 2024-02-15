@@ -1081,7 +1081,6 @@ Basically just the rating for the bracket and the tier they're currently in
 <!-- Versions -->
 [unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.9...HEAD
 [1.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.9
-[1.8.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8.2
 [1.8.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8.1
 [1.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8
 [1.7.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.7.5
