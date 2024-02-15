@@ -4,7 +4,7 @@
         <FontHeight val="11" />
     </Font>
     
-    <Frame name="MIOGApplicantMemberFrameTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
+    <Frame name="MIOG_ApplicantMemberFrameTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
         <KeyValues>
 			<KeyValue key="minimumHeight" value="20" type="number"/>
 			<KeyValue key="maximumHeight" value="20" type="number"/>
@@ -192,7 +192,18 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" />
                 </Anchors>       
-                <Size y="20" />         
+                <Size y="20" />     
+
+                <Scripts>
+                    <OnKeyDown>
+                        if(key == "ESCAPE" or key == "ENTER") then
+                            self:Hide()
+                            self:ClearFocus()
+
+                        end
+
+                    </OnKeyDown>
+                </Scripts>    
             </EditBox>
 
         </Frames>

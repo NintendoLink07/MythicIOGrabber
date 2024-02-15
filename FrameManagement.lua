@@ -147,7 +147,7 @@ miog.applicantFramePool = CreateFramePool("Frame", nil, "ResizeLayoutFrame, Back
 --miog.applicantFramePool = CreateFramePool("Frame", nil, "MIOGApplicantMemberFrameTemplate", resetFrame)
 --miog.applicantFramePool = CreateFramePool("Frame", nil, "MIOGDetailedInformationPanelTemplate", resetFrame)
 
-miog.searchResultFramePool = CreateFramePool("Frame", nil, "MIOGResultFrameTemplate", resetFrame)
+miog.searchResultFramePool = CreateFramePool("Frame", nil, "MIOG_ResultFrameTemplate", resetFrame)
 
 miog.raidRosterFramePool = CreateFramePool("Frame", nil, "BackdropTemplate", resetFrame)
 miog.raidRosterFontStringPool = CreateFontStringPool(miog.raidRosterFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)

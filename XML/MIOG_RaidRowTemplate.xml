@@ -4,15 +4,15 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOGRaidRowTemplate" virtual="true">
+    <Frame name="MIOG_RaidRowTemplate" virtual="true">
         <Frames>
-            <Frame parentKey="FirstBoss" inherits="MIOGRaidBossFrameTemplate">
+            <Frame parentKey="FirstBoss" inherits="MIOG_RaidBossFrameTemplate">
                 <Size x="43" y="20" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                 </Anchors>
             </Frame>
-            <Frame parentKey="SecondBoss" inherits="MIOGRaidBossFrameTemplate">
+            <Frame parentKey="SecondBoss" inherits="MIOG_RaidBossFrameTemplate">
                 <Size x="43" y="20" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.FirstBoss" relativePoint="RIGHT" />

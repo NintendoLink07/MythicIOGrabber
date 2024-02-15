@@ -4,7 +4,7 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOGDungeonRowTemplate" virtual="true">
+    <Frame name="MIOG_DungeonRowTemplate" virtual="true">
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">

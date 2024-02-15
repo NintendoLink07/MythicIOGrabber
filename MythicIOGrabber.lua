@@ -234,7 +234,7 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 
 	end
 	
-	local detailedInformationPanel = miog.createFleetingFrame(poolFrame.framePool, "MIOGDetailedInformationPanelTemplate", listFrame)
+	local detailedInformationPanel = miog.createFleetingFrame(poolFrame.framePool, "MIOG_DetailedInformationPanelTemplate", listFrame)
 	detailedInformationPanel:SetPoint("TOPLEFT", listFrame.BasicInformationPanel, "BOTTOMLEFT")
 	detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.BasicInformationPanel, "BOTTOMRIGHT")
 	detailedInformationPanel:SetShown(listFrame.BasicInformationPanel.ExpandFrame:GetActiveState() > 0 and true or false)
@@ -288,7 +288,7 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	for rowIndex = 1, miog.F.MOST_BOSSES, 1 do
 		local remainder = fmod(rowIndex, 2)
 
-		local textRowFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOGDetailedInformationPanelTextRowTemplate", detailedInformationPanel)
+		local textRowFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOG_DetailedInformationPanelTextRowTemplate", detailedInformationPanel)
 		textRowFrame:SetPoint("TOPLEFT", tabPanel.rows[rowIndex-1] or tabPanel, "BOTTOMLEFT")
 		textRowFrame:SetPoint("TOPRIGHT", tabPanel.rows[rowIndex-1] or tabPanel, "BOTTOMRIGHT")
 		textRowFrame:SetHeight(miog.C.APPLICANT_MEMBER_HEIGHT)
@@ -341,7 +341,7 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 		end
 
 		if(rowIndex < 9) then
-			local dungeonRowFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOGDungeonRowTemplate", mythicPlusPanel)
+			local dungeonRowFrame = miog.createFleetingFrame(poolFrame.framePool, "MIOG_DungeonRowTemplate", mythicPlusPanel)
 			dungeonRowFrame:SetPoint("TOPLEFT", mythicPlusPanel.rows[rowIndex], "TOPLEFT")
 			dungeonRowFrame:SetPoint("BOTTOMRIGHT", mythicPlusPanel.rows[rowIndex], "BOTTOMRIGHT")
 			dungeonRowFrame.Icon:SetMouseClickEnabled(true)
@@ -688,10 +688,10 @@ local function createApplicantFrame(applicantID)
 		applicantFrame.memberFrames = {}
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePoolCollection()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGApplicantMemberFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ApplicantMemberFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
 		applicantFrame.fontStringPool = applicantFrame.fontStringPool or CreateFontStringPool(applicantFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
@@ -725,7 +725,7 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOGApplicantMemberFrameTemplate", applicantFrame)
+			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOG_ApplicantMemberFrameTemplate", applicantFrame)
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.minimumHeight = 20
 			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
@@ -808,13 +808,13 @@ local function createApplicantFrame(applicantID)
 
 			end)
 
-			applicantMemberFrame.LinkBox:SetScript("OnKeyDown", function(_, key)
+			--[[applicantMemberFrame.LinkBox:SetScript("OnKeyDown", function(_, key)
 				if(key == "ESCAPE" or key == "ENTER") then
 					applicantMemberFrame.LinkBox:Hide()
 					applicantMemberFrame.LinkBox:ClearFocus()
 
 				end
-			end)
+			end)]]
 
 			local specFrame = applicantMemberFrame.BasicInformationPanel.Spec
 
@@ -2611,6 +2611,9 @@ local function updatePersistentResultFrame(resultID)
 						
 						end
 					end
+				else
+					bossPanel:Hide()
+				
 				end
 
 			elseif(appCategory ~= 0) then
@@ -2704,7 +2707,7 @@ local function updatePersistentResultFrame(resultID)
 end
 
 local function createPersistentResultFrame(resultID)
-	local persistentFrame = miog.createBasicFrame("searchResult", "MIOGResultFrameTemplate", miog.searchPanel.resultPanel.container)
+	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", miog.searchPanel.resultPanel.container)
 	persistentFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
 	persistentFrame:SetFrameStrata("DIALOG")
 	persistentFrame:SetScript("OnLeave", function()
@@ -2714,9 +2717,9 @@ local function createPersistentResultFrame(resultID)
 	miog.createFrameBorder(persistentFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
 
 	persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOGDungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
@@ -2738,16 +2741,15 @@ local function createPersistentResultFrame(resultID)
 	for i = 1, 5, 1 do
 		local resultMemberFrame = BasicInformationPanel.MemberPanel[tostring(i)]
 		resultMemberFrame:SetPoint("LEFT", i == 1 and BasicInformationPanel.MemberPanel or BasicInformationPanel.MemberPanel[tostring(i-1)], BasicInformationPanel.MemberPanel[tostring(i-1)] and "RIGHT" or "LEFT", 14, 0)
+
 	end
 
 	BasicInformationPanel.BossPanel.bossFrames = {}
 
 	for i = 1, miog.F.MOST_BOSSES, 1 do
 		local resultBossFrame = BasicInformationPanel.BossPanel[tostring(i)]
-
-		--local resultBossFrame = miog.createFleetingFrame(persistentFrame.framePool, "MIOG_ResultFrameBossFrameTemplate", BasicInformationPanel.BossPanel, 12, 12)
 		resultBossFrame:SetPoint("RIGHT", i == 1 and BasicInformationPanel.BossPanel or BasicInformationPanel.BossPanel[tostring(i-1)], i == 1 and "RIGHT" or "LEFT", -2, 0)
-		--BasicInformationPanel.BossPanel.bossFrames[i] = resultBossFrame
+
 	end
 
 	BasicInformationPanel.BossPanel:MarkDirty()

@@ -4,7 +4,7 @@
         <FontHeight val="11" />
     </Font>
     
-    <Frame name="MIOGRaidBossFrameTemplate" virtual="true">
+    <Frame name="MIOG_RaidBossFrameTemplate" virtual="true">
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon" enableMouseClicks="true">

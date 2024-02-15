@@ -4,7 +4,7 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOGDetailedInformationPanelTextRowTemplate" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_DetailedInformationPanelTextRowTemplate" inherits="BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background" setAllPoints="true" />
