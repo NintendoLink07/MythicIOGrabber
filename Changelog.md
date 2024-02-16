@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning].
 
 - Corrected the position of the "Friend in group" icon
 
-- The "Cancel Application" button should now correctly be hidden when re-searching
+- The "Cancel Application" button should now correctly be hidden for subsequent searches if the application fails or gets declined
+
 
 
 ## [1.9] - 2024-02-15
