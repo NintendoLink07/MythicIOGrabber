@@ -134,7 +134,7 @@
 
                         <FontString parentKey="Age" font="LibMono" justifyH="CENTER" text="0:00:00">
                             <FontHeight val="11"/>
-                            <Size x="80" />
+                            <Size x="70" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" />
                             </Anchors>
@@ -145,7 +145,7 @@
                         <Texture parentKey="Friend" file="Interface\Addons\MythicIOGrabber\res\infoIcons\friend.png" hidden="true">
                             <Size x="17" y="17" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" />
+                                <Anchor point="LEFT" relativeKey="$parent.Age" relativePoint="RIGHT" y="1" />
                             </Anchors>
                             <Scripts>
                                 <OnEnter>

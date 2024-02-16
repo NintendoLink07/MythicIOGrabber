@@ -2475,6 +2475,7 @@ local function updatePersistentResultFrame(resultID)
 			BasicInformationPanel.Comment:SetShown(searchResultData.comment ~= "" and searchResultData.comment ~= nil and true or false)
 			BasicInformationPanel.Friend:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
 
+			BasicInformationPanel.CancelApplication:Hide()
 			BasicInformationPanel.CancelApplication:SetScript("OnClick", function(self, button)
 				if(button == "LeftButton") then
 					local _, appStatus = C_LFGList.GetApplicationInfo(searchResultData.searchResultID)

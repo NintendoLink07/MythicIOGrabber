@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [1.9.1] - 2024-02-16
+
+### Fixed
+
+- Corrected the position of the "Friend in group" icon
+
+- The "Cancel Application" button should now correctly be hidden when re-searching
+
+
 ## [1.9] - 2024-02-15
 
 ### Added
@@ -1079,7 +1088,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.9...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.9.1...HEAD
+[1.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.9.1
 [1.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.9
 [1.8.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8.1
 [1.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8
