@@ -15,6 +15,35 @@ and this project adheres to [Semantic Versioning].
 - The "Cancel Application" button should now correctly be hidden for subsequent searches if the application fails or gets declined
 
 
+## [2.0] - 2024-03-03
+
+2.0 is out! Completely overhauled xxx is here!
+
+### Added
+
+- Quick queue from the dropdown in the topleft!
+All dungeon queues and raid finder queues are supported.
+For PvP queues there are unfortunately some restrictions from Blizzard:
+- Due to some code restrictions it is incredibly hard to queue up to most Battleground/Arena stuff (read more here: [Wowhead](https://www.wowhead.com/blue-tracker/topic/cant-leave-bg-queue-with-acceptbattlefieldport-1-0-1999564311))
+- For specific battleground maps you will have to click the last option in the dropdown which brings up the standard PvP menu where you then can go to specific battlegrounds.
+- For anything else you will have to click on the type of queue you want to join and click again. This is because Blizzard does not allow any 3rd party addons to simulate a click on their buttons, let alone use their functions.
+I hate this myself, believe me. But it's still quicker to queue up this way than the Blizzard way.
+
+Exceptions to this are both Brawls and Arena Skirmish, those functions are not restricted and can be accessed by everyone.
+
+- See the status of the current "application" in the panel on the left side!
+You'll get a quick overview of the active queues, you can expand the window and see some additional stats like average wait time, what's currently needed, etc.
+While both queue applications and manual group applications(think applications to "485+++ Fyrakk" groups) will be visible here, your manual applications will always be at the top by default (order can be changed via the interface option settings).
+You can click on the frame of a manual application to switch over to the group finder.
+
+- All categories are visible by default, no more switching between PVE and PVP panels.
+
+- While looking for members for your manually listed group you can edit everything right from the same window by double clicking on what you wanna change. Saves pressing the edit button, though you can still do that if you prefer that.
+
+
+
+
+
 
 ## [1.9] - 2024-02-15
 

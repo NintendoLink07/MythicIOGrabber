@@ -1,0 +1,264 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" movable="true" hidden="true" virtual="true">
+        <Frames>
+            <Frame parentKey="TitleBar">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="TitleString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
+                            <FontHeight val="12"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <EditBox parentKey="SearchBox" secureReferenceKey="LFGListSearchBox" securityDisableSetText="true" inherits="SearchBoxTemplate" letters="64" hidden="true">
+                <Size x="319" y="18"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+                
+            </EditBox>
+
+            <Frame parentKey="AutoCompleteFrame" frameLevel="20" hidden="true">
+                <Size x="0" y="30"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-2" y="0"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMRIGHT" x="-4" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="BottomLeftBorder" inherits="UI-Frame-BotCornerLeft">
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="BottomRightBorder" inherits="UI-Frame-BotCornerRight">
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="BottomBorder" inherits="_UI-Frame-Bot">
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent.BottomLeftBorder" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightBorder" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="LeftBorder" inherits="!UI-Frame-LeftTile">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0" />
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent.BottomLeftBorder" relativePoint="TOPLEFT"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="RightBorder" inherits="!UI-Frame-RightTile">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" x="1" y="0" />
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightBorder" relativePoint="TOPRIGHT" x="1" y="0"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button parentArray="Results" inherits="LFGListSearchAutoCompleteButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.LeftBorder" relativePoint="TOPRIGHT" x="-8" y="0"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.RightBorder" relativePoint="TOPLEFT" x="5" y="0"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="SearchingSpinner" hidden="true">
+                <Size x="1" y="1" />
+            </Frame>
+
+            <Frame parentKey="ScrollBox" hidden="true">
+                <Size x="1" y="1" />
+                <Frames>
+                    <Frame parentKey="NoResultsFound" hidden="true">
+                        <Size x="1" y="1" />
+                    </Frame>
+                    <Frame parentKey="StartGroupButton" hidden="true">
+                        <Size x="1" y="1" />
+                    </Frame>
+                </Frames>    
+            </Frame>
+
+            <Frame parentKey="RolePanel" inherits="BackdropTemplate">
+                <Size x="180" y="45" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="TOPLEFT" y="-20"/>
+                </Anchors>
+                <Frames>
+
+                    <Frame parentKey="Leader">
+                        <Size x="40" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="10"/>
+                        </Anchors>
+
+                        <Frames>
+                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                                <Size x="22" y="22" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                </Anchors>
+                            </CheckButton>
+                        </Frames>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/friend.png">
+                                    <Size x="18" y="18" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+
+                    <Frame parentKey="Tank">
+                        <Size x="40" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="50"/>
+                        </Anchors>
+
+                        <Frames>
+                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                                <Size x="22" y="22" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                </Anchors>
+                            </CheckButton>
+                        </Frames>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/tankIcon.png">
+                                    <Size x="18" y="18" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+
+                    <Frame parentKey="Healer">
+                        <Size x="40" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="90"/>
+                        </Anchors>
+
+                        <Frames>
+                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                                <Size x="22" y="22" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                </Anchors>
+                            </CheckButton>
+                        </Frames>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png">
+                                    <Size x="18" y="18" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+
+                    <Frame parentKey="Damager">
+                        <Size x="40" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="130"/>
+                        </Anchors>
+
+                        <Frames>
+                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                                <Size x="22" y="22" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                </Anchors>
+                            </CheckButton>
+                        </Frames>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png">
+                                    <Size x="18" y="18" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="QueueDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="QueuePanel" inherits="BackdropTemplate" frameLevel="2">
+                <Size x="188" y="330" />
+
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate">
+                    <KeyValues>
+                        <KeyValue key="align" value="top" />
+                        <KeyValue key="spacing" value="3" />
+                    </KeyValues>
+
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="CategoryPanel" inherits="BackdropTemplate">
+                <Size x="188" y="300" />
+
+                <Anchors>
+                    <Anchor point="BOTTOM" relativeKey="$parent" relativePoint="BOTTOM"/>
+                </Anchors>
+
+                <Frames>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

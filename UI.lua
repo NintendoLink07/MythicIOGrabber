@@ -1,8 +1,8 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-miog.scriptReceiver = CreateFrame("Frame", "MythicIOGrabber_ScriptReceiver", LFGListFrame, "BackdropTemplate") ---@class Frame
-miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", LFGListFrame, "BackdropTemplate") ---@class Frame
+miog.scriptReceiver = CreateFrame("Frame", "MythicIOGrabber_ScriptReceiver", miog.pveFrame2, "BackdropTemplate") ---@class Frame
+miog.mainFrame = CreateFrame("Frame", "MythicIOGrabber_MainFrame", miog.pveFrame2, "BackdropTemplate") ---@class Frame
 miog.applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.mainFrame, "BackdropTemplate") ---@class Frame
 miog.searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.mainFrame, "BackdropTemplate") ---@class Frame
 miog.ipDialog = CreateFrame("Frame", "MythicIOGrabber_UpgradedInvitePendingDialog", nil, "ResizeLayoutFrame, BackdropTemplate")
@@ -51,17 +51,19 @@ end
 
 local function createMainFrame()
 	local mainFrame = miog.mainFrame ---@class Frame
-    pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
-
-	mainFrame.standardWidth = (LFGListFrame:GetWidth() + 2)
-	mainFrame.standardHeight = (LFGListPVEStub:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 5)
-	mainFrame:SetSize(mainFrame.standardWidth, mainFrame.standardHeight)
-	mainFrame.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or mainFrame.standardHeight * 1.5
+    --pveFrameTab1_Point = insertPointsIntoTable(PVEFrameTab1)
+	--mainFrame:SetSize(mainFrame.standardWidth, mainFrame.standardHeight)
 	--applicationViewer:SetScale(1.5)
+	mainFrame:SetScale(0.64)
 	mainFrame:SetResizable(true)
-	mainFrame:SetPoint(LFGListFrame.ApplicationViewer:GetPoint())
+	mainFrame:SetPoint("TOPRIGHT", miog.pveFrame2.SearchBox, "BOTTOMRIGHT")
+	mainFrame:SetPoint("BOTTOMLEFT", miog.pveFrame2.QueuePanel, "BOTTOMRIGHT")
 	mainFrame:SetFrameStrata("DIALOG")
-	mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
+	--mainFrame:AdjustPointsOffset(-4, -PVEFrame.TitleContainer:GetHeight() - 1)
+
+	mainFrame.standardWidth = mainFrame:GetWidth()
+	mainFrame.standardHeight = mainFrame:GetHeight()
+	mainFrame.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or mainFrame.standardHeight * 1.5
 	mainFrame:SetResizeBounds(mainFrame.standardWidth, mainFrame.standardHeight, mainFrame.standardWidth, GetScreenHeight() * 0.67)
 	
 	mainFrame:SetScript("OnEnter", function()
@@ -72,13 +74,13 @@ local function createMainFrame()
 
 	mainFrame:HookScript("OnShow", function()
 		if(MIOG_SavedSettings.frameExtended.value) then
-			positionTab1ToActiveFrame(mainFrame)
+			--positionTab1ToActiveFrame(mainFrame)
 
 		end
 	end)
 
 	mainFrame:HookScript("OnHide", function()
-		positionTab1ToPVEFrame(mainFrame)
+		--positionTab1ToPVEFrame(mainFrame)
 
 	end)
 
@@ -90,6 +92,7 @@ local function createMainFrame()
 	backdropFrame:SetDrawLayer("BACKGROUND", -8)
 	backdropFrame:SetPoint("TOPLEFT", mainFrame, "TOPLEFT")
 	backdropFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT")
+	backdropFrame:Hide()
 
 	mainFrame.backdropFrame = backdropFrame
 
@@ -114,14 +117,13 @@ local function createMainFrame()
 		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
 
 		if(MIOG_SavedSettings.frameExtended.value) then
-			positionTab1ToActiveFrame(mainFrame)
+			--positionTab1ToActiveFrame(mainFrame)
 
 		elseif(not MIOG_SavedSettings.frameExtended.value) then
-			positionTab1ToPVEFrame(mainFrame)
+			--positionTab1ToPVEFrame(mainFrame)
 
 		end
 	end)
-
 	mainFrame.expandDownwardsButton = expandDownwardsButton
 
 	local raiderIOAddonIsLoadedFrame = miog.createBasicFontString("persistent", 16, mainFrame)
@@ -129,12 +131,33 @@ local function createMainFrame()
 	raiderIOAddonIsLoadedFrame:SetJustifyH("RIGHT")
 	raiderIOAddonIsLoadedFrame:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	raiderIOAddonIsLoadedFrame:SetShown(not miog.F.IS_RAIDERIO_LOADED)
-
 	mainFrame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
+
+
+	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", mainFrame)
+	footerBar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 0, 0)
+	footerBar:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", 0, 0)
+	footerBar:SetHeight(25)
+	footerBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	miog.createFrameBorder(footerBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	mainFrame.footerBar = footerBar
+
+	local backButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", mainFrame, 1, 20)
+	backButton:SetPoint("LEFT", footerBar, "LEFT")
+	backButton:SetText("Back")
+	backButton:FitToText()
+	backButton:RegisterForClicks("LeftButtonDown")
+	backButton:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+		LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.CategorySelection);
+		self:GetParent().shouldAlwaysShowCreateGroupButton = false;
+	end)
+
+	mainFrame.backButton = backButton
 
 	local resizeApplicationViewerButton = miog.createBasicFrame("persistent", "UIButtonTemplate", mainFrame)
 	resizeApplicationViewerButton:EnableMouse(true)
-	resizeApplicationViewerButton:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", 0, 22)
+	resizeApplicationViewerButton:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, 0)
 	resizeApplicationViewerButton:SetSize(20, 20)
 	resizeApplicationViewerButton:SetFrameStrata("FULLSCREEN")
 	resizeApplicationViewerButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
@@ -156,6 +179,282 @@ local function createMainFrame()
 		end
 
 	end)
+	
+end
+
+local function initializeActivityDropdown()
+	local activityDropDown = miog.entryCreation.ActivityDropDown
+	activityDropDown.List.framePool:ReleaseAll()
+	--UIDropDownMenu_Initialize(miog.entryCreation.ActivityDropdown, function(self, level, menuList)
+		--[[local useMore = false;
+
+		self = LFGListFrame.EntryCreation
+	
+		--Start out displaying everything
+		print(miog.F.LISTED_CATEGORY_ID)
+		local groups = C_LFGList.GetAvailableActivityGroups(miog.F.LISTED_CATEGORY_ID, 4);
+		local activities = C_LFGList.GetAvailableActivities(miog.F.LISTED_CATEGORY_ID, 0, 4);
+		if ( self.selectedFilters == 0 ) then
+			--We don't bother filtering if we have less than 5 items anyway
+			if ( #groups + #activities > 5 ) then
+				--Try just displaying the recommended
+				local filters = 4
+				local recGroups = C_LFGList.GetAvailableActivityGroups(miog.F.LISTED_CATEGORY_ID, filters);
+				local recActivities = C_LFGList.GetAvailableActivities(miog.F.LISTED_CATEGORY_ID, 0, filters);
+
+				--If we have some recommended, just display those
+				if ( #recGroups + #recActivities > 0 ) then
+					--If we still have just as many, we don't need to display more
+					useMore = #recGroups ~= #groups or #recActivities ~= #activities;
+					groups = recGroups;
+					activities = recActivities;
+				end
+			end
+		end
+	
+		local groupOrder = groups[1] and select(2, C_LFGList.GetActivityGroupInfo(groups[1]));
+		local activityInfo = activities[1] and C_LFGList.GetActivityInfoTable(activities[1]);
+		local activityOrder = activityInfo and activityInfo.orderIndex;
+	
+		local groupIndex, activityIndex = 1, 1;
+
+		local info = UIDropDownMenu_CreateInfo()
+	
+		--Start merging
+		for i=1, #groups do
+			if ( not groupOrder and not activityOrder ) then
+				break;
+			end
+	
+			if ( activityOrder and (not groupOrder or activityOrder < groupOrder) ) then
+				local activityID = activities[activityIndex];
+				local activityInfo = activityID and C_LFGList.GetActivityInfoTable(activityID);
+				local name = activityInfo and activityInfo.shortName;
+	
+				info.text = name;
+				info.value = activityID;
+				info.arg1 = "activity";
+				info.checked = (self.selectedActivity == activityID);
+				info.isRadio = true;
+				UIDropDownMenu_AddButton(info);
+	
+				activityIndex = activityIndex + 1;
+				local nextActivityInfo =  activities[activityIndex] and C_LFGList.GetActivityInfoTable(activities[activityIndex]);
+				activityOrder = nextActivityInfo and nextActivityInfo.orderIndex;
+			else
+				local groupID = groups[groupIndex];
+				local name = C_LFGList.GetActivityGroupInfo(groupID);
+	
+				info.text = name;
+				info.value = groupID;
+				info.arg1 = "group";
+				info.checked = (self.selectedGroup == groupID);
+				info.isRadio = true;
+				UIDropDownMenu_AddButton(info);
+	
+				groupIndex = groupIndex + 1;
+				groupOrder = groups[groupIndex] and select(2, C_LFGList.GetActivityGroupInfo(groups[groupIndex]));
+			end
+		end]]
+
+		--local info = UIDropDownMenu_CreateInfo()
+
+		local categoryID = 2
+		local filter = nil
+
+		local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
+
+		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, filter)
+
+		for k, v in ipairs(groups) do
+			--local name, order = C_LFGList.GetActivityGroupInfo(v)
+			--print(name)
+
+			--print(v)
+			--C_LFGList.GetActivityInfoTable(v)
+
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v, filter)
+
+			for activityIndex, activityID in ipairs(activities) do
+				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+
+				if(activityInfo.isMythicPlusActivity) then
+					--[[info.text = activityInfo.fullName;
+					info.value = activityID;
+					info.arg1 = "group";
+					--info.checked = (self.selectedGroup == activityID);
+					info.isRadio = true;
+					UIDropDownMenu_AddButton(info);]]
+
+
+					local info = {}
+					info.entryType = "option"
+					info.index = activityInfo.orderIndex
+					info.text = activityInfo.fullName
+					info.value = activityID
+					if(miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
+						info.icon = miog.MAP_INFO[miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID].icon
+
+					end
+
+					local filters, categoryID, groupID, activityID = LFGListUtil_AugmentWithBest(bit.bor(0, filter or 0), categoryID, v, activityID);
+
+					--print(filters, categoryID, groupID, activityID)
+					local shouldShowPlayStyleDropdown = (categoryInfo.showPlaystyleDropdown) and (activityInfo.isMythicPlusActivity or activityInfo.isRatedPvpActivity or activityInfo.isCurrentRaidActivity or activityInfo.isMythicActivity);
+					local shouldShowCrossFactionToggle = (categoryInfo.allowCrossFaction);
+					local shouldDisableCrossFactionToggle = (categoryInfo.allowCrossFaction) and not (activityInfo.allowCrossFaction);
+					if(shouldShowPlayStyleDropdown) then
+						--LFGListEntryCreation_OnPlayStyleSelected(self, self.PlayStyleDropdown, self.selectedPlaystyle or Enum.LFGEntryPlaystyle.Standard);
+					end
+
+					--print(shouldShowPlayStyleDropdown, shouldShowCrossFactionToggle, shouldDisableCrossFactionToggle)
+
+					activityDropDown:CreateEntryFrame(info)
+
+				end
+			end
+		end
+
+		miog.entryCreation.ActivityDropDown.List:MarkDirty()
+		miog.entryCreation.ActivityDropDown:MarkDirty()
+
+		--UIDropDownMenu_AddSeparator()
+
+		categoryID = 2
+		filter = nil
+
+		groups = C_LFGList.GetAvailableActivityGroups(categoryID, filter)
+
+		for k, v in ipairs(groups) do
+			--local name, order = C_LFGList.GetActivityGroupInfo(v)
+			--print(name)
+
+			--print(v)
+			--C_LFGList.GetActivityInfoTable(v)
+
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v, filter)
+
+			for activityIndex, activityID in ipairs(activities) do
+				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+
+				if(not activityInfo.isMythicPlusActivity) then
+					--[[info.text = activityInfo.fullName;
+					info.value = activityID;
+					info.arg1 = "group";
+					--info.checked = (self.selectedGroup == activityID);
+					info.isRadio = true;
+					UIDropDownMenu_AddButton(info);]]
+				end
+			end
+		end
+
+		--[[for i = 1, #activities, 1 do
+			local activityID = activities[i];
+			local activityInfo = activityID and C_LFGList.GetActivityInfoTable(activityID);
+			local name = activityInfo and activityInfo.shortName;
+			print(name)
+		end]]
+	--end)
+end
+
+miog.initializeActivityDropdown = initializeActivityDropdown
+
+
+local function resetDropDownListFrame(_, frame)
+	frame:Hide()
+	frame.layoutIndex = nil
+
+	local objectType = frame:GetObjectType()
+
+	if(objectType == "Frame") then
+		frame.Name:SetText("")
+		frame.Icon:SetTexture(nil)
+	end
+
+	miog.entryCreation.ActivityDropDown.List:MarkDirty()
+	miog.entryCreation.ActivityDropDown:MarkDirty()
+end
+
+local function createEntryCreation()
+	miog.entryCreation = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.mainFrame, "MIOG_EntryCreation") ---@class Frame
+
+	local frame = miog.entryCreation
+
+	--local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", frame, 200, 25)
+	--optionDropdown:SetPoint("TOPLEFT", frame, "TOPLEFT")
+	--UIDropDownMenu_SetWidth(optionDropdown, 160)
+	--frame.ActivityDropdown = optionDropdown
+
+	---@diagnostic disable-next-line: undefined-field
+	local activityDropDown = frame.ActivityDropDown
+	activityDropDown:OnLoad()
+
+	---@diagnostic disable-next-line: undefined-field
+	local playstyleDropDown = frame.PlaystyleDropDown
+	playstyleDropDown:OnLoad()
+
+	frame:HookScript("OnShow", function()
+		print(miog.pveFrame2.selectedActivity, C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel())
+		local activityInfo = C_LFGList.GetActivityInfoTable(miog.pveFrame2.selectedActivity or C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel() or activityDropDown.List:GetLayoutChildren()[1].value)
+
+		local info = {}
+		
+		info.entryType = "option"
+
+		if (activityInfo.isRatedPvpActivity) then
+			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
+			info.value = Enum.LFGEntryPlaystyle.Standard;
+			info.checked = false;
+			info.isRadio = true;
+			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Standard); end;
+			--UIDropDownMenu_AddButton(info);
+			playstyleDropDown:CreateEntryFrame(info)
+	
+			info.text =  C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
+			info.value = Enum.LFGEntryPlaystyle.Casual;
+			info.checked = false;
+			info.isRadio = true;
+			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Casual); end;
+			--UIDropDownMenu_AddButton(info);
+			playstyleDropDown:CreateEntryFrame(info)
+	
+			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
+			info.value = Enum.LFGEntryPlaystyle.Hardcore;
+			info.checked = false;
+			info.isRadio = true;
+			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
+			--UIDropDownMenu_AddButton(info);
+			playstyleDropDown:CreateEntryFrame(info)
+
+		else
+			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
+			info.value = Enum.LFGEntryPlaystyle.Standard;
+			info.checked = false;
+			info.isRadio = true;
+			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Standard); end;
+			--UIDropDownMenu_AddButton(info);
+			playstyleDropDown:CreateEntryFrame(info)
+	
+			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
+			info.value = Enum.LFGEntryPlaystyle.Casual;
+			info.checked = false;
+			info.isRadio = true;
+			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Casual); end;
+			--UIDropDownMenu_AddButton(info);
+			playstyleDropDown:CreateEntryFrame(info)
+	
+			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
+			info.value = Enum.LFGEntryPlaystyle.Hardcore;
+			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
+			info.checked = false;
+			info.isRadio = true;
+			--UIDropDownMenu_AddButton(info);
+			playstyleDropDown:CreateEntryFrame(info)
+		end
+	end)
+	
+	--miogDropdown.List:MarkDirty()
+	--miogDropdown:MarkDirty()
 end
 
 local function createApplicationViewer()
@@ -1000,16 +1299,8 @@ local function createApplicationViewer()
 	lastInvitesScrollFrame.container = lastInvitesContainer
 	lastInvitesScrollFrame:SetScrollChild(lastInvitesContainer)
 
-	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", titleBar)
-	footerBar:SetPoint("BOTTOMLEFT", applicationViewer, "BOTTOMLEFT", 0, 0)
-	footerBar:SetPoint("TOPRIGHT", applicationViewer, "BOTTOMRIGHT", 0, miog.mainFrame.standardHeight*0.06)
-	miog.createFrameBorder(footerBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	footerBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	applicationViewer.footerBar = footerBar
-
-	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
-	browseGroupsButton:SetPoint("LEFT", footerBar, "LEFT")
+	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
+	browseGroupsButton:SetPoint("LEFT", miog.mainFrame.footerBar.backButton, "LEFT")
 	browseGroupsButton:SetText("Browse Groups")
 	browseGroupsButton:FitToText()
 	browseGroupsButton:RegisterForClicks("LeftButtonDown")
@@ -1021,16 +1312,18 @@ local function createApplicationViewer()
 		if(activeEntryInfo) then
 			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
 			if(activityInfo) then
-				LFGListSearchPanel_SetCategory(searchPanel, activityInfo.categoryID, activityInfo.filters, baseFilters)
-				LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
+				miog.LFG_LIST_FILTER = activityInfo.filters
+				LFGListSearchPanel_SetCategory(searchPanel, activityInfo.categoryID, miog.LFG_LIST_FILTER, baseFilters)
 				LFGListSearchPanel_DoSearch(searchPanel)
+				--miog.requestSearchResults(miog.pveFrame2.categoryID, miog.LFG_LIST_FILTER)
+				LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
 			end
 		end
 	end)
 
-	footerBar.browseGroupsButton = browseGroupsButton
+	miog.applicationViewer.browseGroupsButton = browseGroupsButton
 
-	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
+	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
 	delistButton:SetPoint("LEFT", browseGroupsButton, "RIGHT")
 	delistButton:SetText("Delist")
 	delistButton:FitToText()
@@ -1039,9 +1332,9 @@ local function createApplicationViewer()
 		C_LFGList.RemoveListing()
 	end)
 
-	footerBar.delistButton = delistButton
+	miog.applicationViewer.delistButton = delistButton
 
-	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
+	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
 	editButton:SetPoint("LEFT", delistButton, "RIGHT")
 	editButton:SetText("Edit")
 	editButton:FitToText()
@@ -1052,18 +1345,18 @@ local function createApplicationViewer()
 		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation)
 	end)
 
-	footerBar.editButton = editButton
+	miog.applicationViewer.editButton = editButton
 
-	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, footerBar)
-	applicantNumberFontString:SetPoint("RIGHT", footerBar, "RIGHT", -3, -1)
+	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, miog.applicationViewer)
+	applicantNumberFontString:SetPoint("RIGHT", miog.mainFrame.footerBar, "RIGHT", -3, -1)
 	applicantNumberFontString:SetJustifyH("CENTER")
 	applicantNumberFontString:SetText(0)
 
-	footerBar.applicantNumberFontString = applicantNumberFontString
+	miog.applicationViewer.applicantNumberFontString = applicantNumberFontString
 
 	local applicantPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", titleBar)
 	applicantPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 2, 0)
-	applicantPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 0, 0)
+	applicantPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 0, 0)
 	applicationViewer.applicantPanel = applicantPanel
 	applicantPanel.ScrollBar:SetPoint("TOPLEFT", applicantPanel, "TOPRIGHT", 0, -10)
 	applicantPanel.ScrollBar:SetPoint("BOTTOMLEFT", applicantPanel, "BOTTOMRIGHT", 0, 10)
@@ -1396,6 +1689,7 @@ local function createSearchPanel()
 
 	searchPanel:HookScript("OnShow", function()
 		miog.F.LISTED_CATEGORY_ID = LFGListFrame.SearchPanel.categoryID
+		LFGListFrame.SearchPanel.SearchBox:Show()
 	end)
 
 	local filterFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, 220, 620)
@@ -1714,29 +2008,8 @@ local function createSearchPanel()
 	addOptionToFilterFrame("Dungeon options", "dungeonOptions")
 	--addDungeonCheckboxes()
 
-	local footerBar = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel)
-	footerBar:SetPoint("BOTTOMLEFT", searchPanel, "BOTTOMLEFT", 0, 0)
-	footerBar:SetPoint("TOPRIGHT", searchPanel, "BOTTOMRIGHT", 0, miog.mainFrame.standardHeight*0.06)
-	miog.createFrameBorder(footerBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	footerBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	searchPanel.footerBar = footerBar
-
-	local backButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
-	backButton:SetPoint("LEFT", footerBar, "LEFT")
-	backButton:SetText("Back")
-	backButton:FitToText()
-	backButton:RegisterForClicks("LeftButtonDown")
-	backButton:SetScript("OnClick", function(self)
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-		LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.CategorySelection);
-		self:GetParent().shouldAlwaysShowCreateGroupButton = false;
-	end)
-
-	footerBar.backButton = backButton
-
-	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", footerBar, 1, footerBar:GetHeight())
-	signupButton:SetPoint("LEFT", backButton, "RIGHT")
+	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.searchPanel, 1, 20)
+	signupButton:SetPoint("LEFT", miog.mainFrame.footerBar.backButton, "RIGHT")
 	signupButton:SetText("Signup")
 	signupButton:FitToText()
 	signupButton:RegisterForClicks("LeftButtonDown")
@@ -1747,49 +2020,24 @@ local function createSearchPanel()
 		miog.signupToGroup(LFGListFrame.SearchPanel.resultID)
 	end)
 
-	footerBar.signupButton = signupButton
+	searchPanel.signupButton = signupButton
 
-	local groupNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, footerBar)
-	groupNumberFontString:SetPoint("RIGHT", footerBar, "RIGHT", -3, -1)
+	local groupNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, miog.searchPanel)
+	groupNumberFontString:SetPoint("RIGHT", miog.mainFrame.footerBar, "RIGHT", -3, -1)
 	groupNumberFontString:SetJustifyH("CENTER")
 	groupNumberFontString:SetText(0)
 
-	footerBar.groupNumberFontString = groupNumberFontString
+	searchPanel.groupNumberFontString = groupNumberFontString
 
 	local interactionPanel = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, miog.mainFrame.standardWidth, 45)
 	interactionPanel:SetPoint("TOPLEFT", searchPanel, "TOPLEFT")
 
-	local searchFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, miog.mainFrame.standardWidth, footerBar:GetHeight())
+	local searchFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, miog.mainFrame.standardWidth, 20)
 	searchFrame:SetFrameStrata("DIALOG")
 	searchFrame:SetPoint("TOPLEFT", interactionPanel, "TOPLEFT")
 
-	local searchBar = LFGListFrame.SearchPanel.SearchBox
-	searchBar:ClearAllPoints()
-	searchBar:SetFrameStrata("DIALOG")
-	searchBar:SetPoint("LEFT", searchFrame, "LEFT", 5, 0)
-
-	searchPanel.searchBar = searchBar
-
-	local searchButton = miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", searchFrame, 52, miog.C.APPLICANT_MEMBER_HEIGHT)
-	searchButton:SetPoint("LEFT", searchBar, "RIGHT")
-	searchButton:RegisterForClicks("LeftButtonDown")
-	miog.createFrameBorder(searchButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	searchButton:SetScript("OnClick", function( )
-		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-
-		miog.searchPanel.resultPanel:SetVerticalScroll(0)
-	end)
-
-	searchPanel.searchButton = searchButton
-
-	local searchButtonString = miog.createBasicFontString("persistent", 12, searchButton)
-	searchButtonString:SetWidth(52)
-	searchButtonString:SetPoint("CENTER", searchButton, "CENTER")
-	searchButtonString:SetJustifyH("CENTER")
-	searchButtonString:SetText(_G["SEARCH"])
-
 	local filterShowHideButton = miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", searchFrame, 52, miog.C.APPLICANT_MEMBER_HEIGHT)
-	filterShowHideButton:SetPoint("LEFT", searchButton, "RIGHT")
+	filterShowHideButton:SetPoint("RIGHT", searchFrame, "RIGHT")
 	miog.createFrameBorder(filterShowHideButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	filterShowHideButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 	filterShowHideButton:RegisterForClicks("LeftButtonDown")
@@ -1804,6 +2052,25 @@ local function createSearchPanel()
 	filterShowHideString:SetPoint("CENTER", filterShowHideButton, "CENTER")
 	filterShowHideString:SetJustifyH("CENTER")
 	filterShowHideString:SetText("Filter")
+
+	local searchButton = miog.createBasicFrame("persistent", "UIButtonTemplate, BackdropTemplate", searchFrame, 52, miog.C.APPLICANT_MEMBER_HEIGHT)
+	searchButton:SetPoint("RIGHT", filterShowHideButton, "LEFT")
+	searchButton:RegisterForClicks("LeftButtonDown")
+	miog.createFrameBorder(searchButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	searchButton:SetScript("OnClick", function( )
+		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+		--miog.requestSearchResults(miog.pveFrame2.categoryID, miog.LFG_LIST_FILTER)
+
+		miog.searchPanel.resultPanel:SetVerticalScroll(0)
+	end)
+
+	searchPanel.searchButton = searchButton
+
+	local searchButtonString = miog.createBasicFontString("persistent", 12, searchButton)
+	searchButtonString:SetWidth(52)
+	searchButtonString:SetPoint("CENTER", searchButton, "CENTER")
+	searchButtonString:SetJustifyH("CENTER")
+	searchButtonString:SetText(_G["SEARCH"])
 
 	local buttonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel, nil, miog.C.APPLICANT_MEMBER_HEIGHT + 2)
 	buttonPanel:SetPoint("TOPLEFT", searchFrame, "BOTTOMLEFT")
@@ -1953,7 +2220,7 @@ local function createSearchPanel()
 	
 	local resultStatusFrame = miog.createBasicFrame("persistent", "BackdropTemplate", searchPanel)
 	resultStatusFrame:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT")
-	resultStatusFrame:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT")
+	resultStatusFrame:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT")
 	resultStatusFrame:SetFrameStrata("FULLSCREEN")
 	searchPanel.statusFrame = resultStatusFrame
 
@@ -1993,7 +2260,7 @@ local function createSearchPanel()
 
 	local resultPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", searchPanel)
 	resultPanel:SetPoint("TOPLEFT", interactionPanel, "BOTTOMLEFT", 1, -1)
-	resultPanel:SetPoint("BOTTOMRIGHT", footerBar, "TOPRIGHT", 1, 1)
+	resultPanel:SetPoint("BOTTOMRIGHT", miog.mainFrame.footerBar, "TOPRIGHT", 1, 1)
 	searchPanel.resultPanel = resultPanel
 	resultPanel.ScrollBar:SetPoint("TOPLEFT", resultPanel, "TOPRIGHT", 0, -10)
 	resultPanel.ScrollBar:SetPoint("BOTTOMLEFT", resultPanel, "BOTTOMRIGHT", 0, 10)
@@ -2346,7 +2613,7 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 		end)
 	end
 
-	currentFrame.iconFrame:SetTexture(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.RAID_INFO[mapID] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]] and miog.RAID_INFO[mapID][#miog.RAID_INFO[mapID]].icon or nil)
+	currentFrame.iconFrame:SetTexture(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID][#miog.MAP_INFO[mapID]] and miog.MAP_INFO[mapID][#miog.MAP_INFO[mapID]].icon or nil)
 	currentFrame.iconFrame:SetScript("OnMouseDown", function()
 
 		--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
@@ -2475,7 +2742,7 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 		currentFrame.resultMemberComp:Show()
 		currentFrame.resultMemberComp:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 
-		if(miog.RAID_INFO[mapID]) then
+		if(miog.MAP_INFO[mapID]) then
 			bossPanel:Show()
 
 			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
@@ -2487,10 +2754,10 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 				end
 			end
 
-			local numOfBosses = #miog.RAID_INFO[mapID] - 1
+			local numOfBosses = #miog.MAP_INFO[mapID] - 1
 
 			for i = 1, miog.F.MOST_BOSSES, 1 do
-				local currentRaidInfo = miog.RAID_INFO[mapID][numOfBosses - (i - 1)]
+				local currentRaidInfo = miog.MAP_INFO[mapID][numOfBosses - (i - 1)]
 				if(currentRaidInfo) then
 					bossPanel.bossFrames[i]:SetTexture(currentRaidInfo.icon)
 
@@ -2613,9 +2880,11 @@ end
 MIOG_IPD = miog.showUpgradedInvitePendingDialog
 
 miog.createFrames = function()
+	miog.createPVEFrameReplacement()
 	createMainFrame()
 	createApplicationViewer()
 	createSearchPanel()
+	createEntryCreation()
 	createUpgradedInvitePendingDialog()
 
 	miog.scriptReceiver:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
@@ -2629,6 +2898,8 @@ miog.createFrames = function()
 	miog.scriptReceiver:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
 	miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
+	miog.scriptReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+
 	miog.scriptReceiver:RegisterEvent("PARTY_LEADER_CHANGED")
 	miog.scriptReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 	miog.scriptReceiver:RegisterEvent("GROUP_JOINED")
@@ -2637,6 +2908,12 @@ miog.createFrames = function()
 	miog.scriptReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	miog.scriptReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 	miog.scriptReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+
+	miog.scriptReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
+	miog.scriptReceiver:RegisterEvent("LFG_UPDATE")
+	miog.scriptReceiver:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
+	miog.scriptReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
+	miog.scriptReceiver:RegisterEvent("BATTLEFIELDS_SHOW")
 
 	EncounterJournal_LoadUI()
 	C_EncounterJournal.OnOpen = miog.dummyFunction

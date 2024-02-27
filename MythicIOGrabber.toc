@@ -19,6 +19,8 @@ PersistentData.lua
 FrameManagement.lua
 UI.lua
 MultiStateButton.lua
+SlickDropDown.lua
+PVEFrame2.lua
 
 XML\MIOG_ApplicantMemberFrameTemplate.xml
 XML\MIOG_ResultFrameTemplate.xml
@@ -31,3 +33,9 @@ XML\MIOG_GroupMemberTemplate.xml
 XML\MIOG_ResultFrameBossFrameTemplate.xml
 XML\MIOG_RaidPanelTemplate.xml
 XML\MIOG_RaidPanelTierTemplate.xml
+XML\MIOG_MainFrameTemplate.xml
+XML\MIOG_QueueFrame.xml
+XML\MIOG_MenuButtonTemplate.xml
+XML\MIOG_EntryCreation.xml
+XML\MIOG_DropDownMenu.xml
+XML\MIOG_DropDownMenuEntry.xml

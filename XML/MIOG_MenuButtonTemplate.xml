@@ -1,0 +1,73 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOG_MenuButtonTemplate" inherits="BackdropTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+		</KeyValues>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
+                    <FontHeight val="12"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="BACKGROUND">
+                <Texture parentKey="BackgroundImage">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="4"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Button parentKey="StartGroup">
+                <Size x="21" y="21" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="1"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture atlas="tradeskills-icon-add" setAllPoints="true">
+
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+
+            <Button parentKey="FindGroup">
+                <Size x="21" y="21" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5"/>
+                </Anchors>
+                
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture atlas="talents-search-suggestion-magnifyingglass" setAllPoints="true">
+
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+
+        <Scripts>
+            <OnEnter>
+                self.BackgroundImage:SetDesaturated(true)
+            </OnEnter>
+            <OnLeave>
+                self.BackgroundImage:SetDesaturated(false)
+            </OnLeave>
+        </Scripts>
+    </Frame>
+</Ui>

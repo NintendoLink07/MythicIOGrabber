@@ -1,0 +1,73 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOG_EntryCreation" inherits="BackdropTemplate" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+
+        <Frames>
+            <Frame parentKey="ActivityDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="DifficultyDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
+                </Anchors>
+            </Frame>
+
+            <EditBox parentKey="TitleEditBox" inherits="InputBoxTemplate">
+                <Size x="350" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="7" y="-50"/>
+                </Anchors>
+            </EditBox>
+
+            <EditBox parentKey="DescriptionEditBox" inherits="InputBoxTemplate">
+                <Size x="350" y="75" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleEditBox" relativePoint="BOTTOMLEFT" y="-20"/>
+                </Anchors>
+            </EditBox>
+
+            <Frame parentKey="PlaystyleDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                <Size x="125" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.DescriptionEditBox" relativePoint="BOTTOM" y="-20"/>
+                </Anchors>
+            </Frame>
+
+            <EditBox parentKey="RatingEditBox" inherits="InputBoxTemplate">
+                <Size x="100" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOMLEFT" y="-10"/>
+                </Anchors>
+            </EditBox>
+
+            <EditBox parentKey="ItemLevelEditBox" inherits="InputBoxTemplate">
+                <Size x="100" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.RatingEditBox" relativePoint="BOTTOMLEFT" y="-10"/>
+                </Anchors>
+            </EditBox>
+
+            <EditBox parentKey="VoiceChatEditBox" inherits="InputBoxTemplate">
+                <Size x="100" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ItemLevelEditBox" relativePoint="BOTTOMLEFT" y="-10"/>
+                </Anchors>
+            </EditBox>
+
+        </Frames>
+    </Frame>
+</Ui>

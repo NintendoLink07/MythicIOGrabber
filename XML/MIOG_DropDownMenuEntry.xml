@@ -1,0 +1,116 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Button name="MIOG_DropDownMenuEntry" inherits="SecureFrameTemplate" virtual="true">
+        <Size y="20" />
+
+        <Frames>
+            <CheckButton parentKey="Radio" inherits="UIRadioButtonTemplate">
+                <!--<Attributes>
+                    <Attribute name="type" value="macro" />
+                    <Attribute name="macrotext1" value="/run print(securecall(issecure))" type="global" />
+                </Attributes>-->
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" />
+                </Anchors>
+
+                <Scripts>
+                    <OnLoad>
+                        self:Disable()
+                    </OnLoad>
+                </Scripts>
+            </CheckButton>
+            
+            <Frame parentKey="Difficulty1">
+                <Size x="14" y="14" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="D1" wordwrap="false">
+                            <FontHeight val="11"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="align" value="top" />
+                    <KeyValue key="spacing" value="3" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>       
+        </Frames>
+        
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="12" y="12" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Radio" relativePoint="RIGHT" x="2" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title of the thingy" wordwrap="false">
+                    <FontHeight val="11"/>
+
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Difficulty1" relativePoint="LEFT" x="-3" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+        	<OnEnter>
+                if(self.ParentDropDown.currentList) then
+                    if(self.parentIndex and self:GetParent():GetParent().layoutIndex) then
+                        if(self.parentIndex ~= self:GetParent():GetParent().layoutIndex) then
+                            self.ParentDropDown.currentList:Hide()
+                        end
+                    else
+                        self.ParentDropDown.currentList:Hide()
+                    
+                    end
+                end
+
+                if(self.entryType ~= "option") then
+                    self.List:Show()
+                    self.ParentDropDown.currentList = self.List
+                end
+
+                if(self.tooltip) then
+
+                end
+            </OnEnter>
+
+            <PostClick>
+                self.ParentDropDown.CheckedValue.Name:SetText(self.Name:GetText())
+                self.ParentDropDown.CheckedValue.value = self.value
+                self.Radio:SetChecked(true)
+
+                if(self.ParentDropDown.currentList)  then
+                    self.ParentDropDown.currentList:Hide()
+                end
+
+                self.ParentDropDown.List:Hide()
+
+            </PostClick>
+        </Scripts>
+    </Button>
+</Ui>

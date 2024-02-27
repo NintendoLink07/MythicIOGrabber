@@ -1,0 +1,85 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true">
+
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+        </Anchors>
+
+        <Frames>
+            <Button parentKey="Button" inherits="UIPanelButtonTemplate">
+                <Size x="25" y="25" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        local parent = self:GetParent()
+                        for k,v in pairs(parent.List:GetLayoutChildren()) do
+                            if(parent.CheckedValue.value == v.value) then
+                                v.Radio:SetChecked(true)
+                                
+                            else
+                                v.Radio:SetChecked(false)
+                            
+                            end
+                        end
+
+                        if(parent.List:IsVisible()) then
+                            print("LOWER")
+                            parent.List:SetFrameLevel(1)
+
+                        else
+                            print("RAISE")
+                            parent.List:SetFrameLevel(100)
+
+                        end
+                        self:GetParent().List:SetShown(not self:GetParent().List:IsVisible())
+                        self:GetParent():MarkDirty()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Frame parentKey="CheckedValue" inherits="BackdropTemplate">
+                <KeyValues>
+                    <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+                </KeyValues>
+
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Button" relativePoint="TOPLEFT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="LibMono" justifyH="MIDDLE" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="false">
+                            <FontHeight val="11"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" />
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="align" value="top" />
+                    <KeyValue key="spacing" value="3" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CheckedValue" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>
