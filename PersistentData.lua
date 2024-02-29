@@ -247,51 +247,51 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 
 miog.MAP_INFO = {
 	--CATACLYSM
-	[643] = {shortName = "ToTT", icon = "interface/lfgframe/lfgicon-throneofthetides"},
-	[657] = {shortName = "VP", icon = "interface/lfgframe/lfgicon-thevortexpinnacle"},
+	[643] = {gfID = 54, expansionLevel = 3, shortName = "ToTT", icon = "interface/lfgframe/lfgicon-throneofthetides"},
+	[657] = {gfID = 59, expansionLevel = 3,  shortName = "VP", icon = "interface/lfgframe/lfgicon-thevortexpinnacle"},
 
 	--MISTS OF PANDARIA
-	[960] = {shortName = "ToJS", icon = "interface/lfgframe/lfgicon-templeofthejadeserpent"},
+	[960] = {gfID = 61, expansionLevel = 4,  shortName = "ToJS", icon = "interface/lfgframe/lfgicon-templeofthejadeserpent"},
 
 	--WARLORDS OF DRAENOR
-	[1176] = {shortName = "SBG", icon = "interface/lfgframe/lfgicon-shadowmoonburialgrounds"},
-	[1279] = {shortName = "EB", icon = "interface/lfgframe/lfgicon-everbloom"},
+	[1176] = {gfID = 12, expansionLevel = 5,  shortName = "SBG", icon = "interface/lfgframe/lfgicon-shadowmoonburialgrounds"},
+	[1279] = {gfID = 11, expansionLevel = 5,  shortName = "EB", icon = "interface/lfgframe/lfgicon-everbloom"},
 
 	--LEGION
-	[1458] = {shortName = "NL", icon = "interface/lfgframe/lfgicon-neltharionslair"},
-	[1466] = {shortName = "DHT", icon = "interface/lfgframe/lfgicon-darkheartthicket"},
-	[1477] = {shortName = "HoV", icon = "interface/lfgframe/lfgicon-hallsofvalor"},
-	[1571] = {shortName = "CoS", icon = "interface/lfgframe/lfgicon-courtofstars"},
-	[1501] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookhold"},
+	[1458] = {gfID = 115, expansionLevel = 6,  shortName = "NL", icon = "interface/lfgframe/lfgicon-neltharionslair"},
+	[1466] = {gfID = 113, expansionLevel = 6,  shortName = "DHT", icon = "interface/lfgframe/lfgicon-darkheartthicket"},
+	[1477] = {gfID = 114, expansionLevel = 6,  shortName = "HoV", icon = "interface/lfgframe/lfgicon-hallsofvalor"},
+	[1571] = {gfID = 120, expansionLevel = 6,  shortName = "CoS", icon = "interface/lfgframe/lfgicon-courtofstars"},
+	[1501] = {gfID = 118, expansionLevel = 6,  shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookhold"},
 
 	--BATTLE FOR AZEROTH
-	[1754] = {shortName = "FH", icon = "interface/lfgframe/lfgicon-freehold"},
-	[1763] = {shortName = "AD", icon = "interface/lfgframe/lfgicon-ataldazar"},
-	[1841] = {shortName = "UR", icon = "interface/lfgframe/lfgicon-theunderrot"},
-	[1862] = {shortName = "WM", icon = "interface/lfgframe/lfgicon-waycrestmanor"},
+	[1754] = {gfID = 142, expansionLevel = 7,  shortName = "FH", icon = "interface/lfgframe/lfgicon-freehold"},
+	[1763] = {gfID = 137, expansionLevel = 7,  shortName = "AD", icon = "interface/lfgframe/lfgicon-ataldazar"},
+	[1841] = {gfID = 138, expansionLevel = 7,  shortName = "UR", icon = "interface/lfgframe/lfgicon-theunderrot"},
+	[1862] = {gfID = 145, expansionLevel = 7,  shortName = "WM", icon = "interface/lfgframe/lfgicon-waycrestmanor"},
 
 	--SHADOWLANDS
 
 	--DRAGONFLIGHT
 	
-	[1453] = {shortName = "TWMOP", icon = "interface/lfgframe/lfgicon-pandaria.blp"},
-	[2350] = {shortName = "LFDN", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png"},
-	[2351] = {shortName = "LFDH", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png"},
-	[2451] = {shortName = "ULoT", icon = "interface/lfgframe/lfgicon-uldaman-legacyoftyr"},
-	[2515] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-arcanevaults"},
-	[2516] = {shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains"},
-	[2519] = {shortName = "NELT", icon = "interface/lfgframe/lfgicon-neltharus"},
-	[2520] = {shortName = "BH", icon = "interface/lfgframe/lfgicon-brackenhidehollow"},
-	[2521] = {shortName = "RLP", icon = "interface/lfgframe/lfgicon-lifepools"},
-	[2526] = {shortName = "AA", icon = "interface/lfgframe/lfgicon-theacademy"},
-	[2527] = {shortName = "HoI", icon = "interface/lfgframe/lfgicon-hallsofinfusion"},
-	[2579] = {shortName = "DotI", icon = "interface/lfgframe/lfgicon-dawnoftheinfinite"},
+	[1453] = {gfID = 0, expansionLevel = 9,  shortName = "TWMOP", icon = "interface/lfgframe/lfgicon-pandaria.blp"},
+	[2350] = {gfID = 0, expansionLevel = 9,  shortName = "LFDN", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png"},
+	[2351] = {gfID = 0, expansionLevel = 9,  shortName = "LFDH", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png"},
+	[2451] = {gfID = 309, expansionLevel = 9,  shortName = "ULoT", icon = "interface/lfgframe/lfgicon-uldaman-legacyoftyr"},
+	[2515] = {gfID = 307, expansionLevel = 9,  shortName = "AV", icon = "interface/lfgframe/lfgicon-arcanevaults"},
+	[2516] = {gfID = 308, expansionLevel = 9,  shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains"},
+	[2519] = {gfID = 305, expansionLevel = 9,  shortName = "NELT", icon = "interface/lfgframe/lfgicon-neltharus"},
+	[2520] = {gfID = 303, expansionLevel = 9,  shortName = "BH", icon = "interface/lfgframe/lfgicon-brackenhidehollow"},
+	[2521] = {gfID = 306, expansionLevel = 9, shortName = "RLP", icon = "interface/lfgframe/lfgicon-lifepools"},
+	[2526] = {gfID = 302, expansionLevel = 9, shortName = "AA", icon = "interface/lfgframe/lfgicon-theacademy"},
+	[2527] = {gfID = 304, expansionLevel = 9, shortName = "HoI", icon = "interface/lfgframe/lfgicon-hallsofinfusion"},
+	[2579] = {gfID = 315, expansionLevel = 9, shortName = "DotI", icon = "interface/lfgframe/lfgicon-dawnoftheinfinite"},
 
 
 	-- RAIDS
 
 	[2444] = {
-		{shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png"},
+		gfID = 0, expansionLevel = 9,  shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png",
 	},
 	[2549] = { --interface/icons/inv_achievement_raidemeralddream
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
@@ -303,7 +303,7 @@ miog.MAP_INFO = {
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
-		{shortName = "ATDH", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png"},
+		gfID = 319, expansionLevel = 9, shortName = "ATDH", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png",
 	},
 	[2569] = { -- interface/icons/inv_achievement_raiddragon
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png"},
@@ -315,7 +315,7 @@ miog.MAP_INFO = {
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
-		{shortName = "ATSC", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png"},
+		gfID = 313, expansionLevel = 9, shortName = "ATSC", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png",
 	},
 	[2522] = { --interface/icons/achievement_raidprimalist
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png"},
@@ -326,9 +326,295 @@ miog.MAP_INFO = {
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
-		{shortName = "VotI", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png"},
+		gfID = 310, expansionLevel = 9, shortName = "VotI", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png",
 	},
 
+
+	
+
+	[1136] = {gfID = 1, expansionLevel = 4,  shortName = "SOO", icon = "interface/lfgframe/lfgicon-orgrimmargates"},
+	--[602] = {gfID = 2, shortName = "", icon = ""},
+	--[599] = {gfID = 3, shortName = "", icon = ""},
+	--[595] = {gfID = 4, shortName = "", icon = ""},
+	[36] = {gfID = 5, expansionLevel = 0,  shortName = "DM", icon = "interface/lfgframe/lfgicon-deadmines.blp"},
+	[1175] = {gfID = 6, expansionLevel = 5,  shortName = "BSM", icon = "interface/lfgframe/lfgicon-bloodmaulslagmines.blp"},
+	[1195] = {gfID = 7, expansionLevel = 5,  shortName = "ID", icon = "interface/lfgframe/lfgicon-irondocks.blp"},
+	[1182] = {gfID = 8, expansionLevel = 5,  shortName = "AUCH", icon = "interface/lfgframe/lfgicon-auchindounwod.blp"},
+	[1209] = {gfID = 9, expansionLevel = 5,  shortName = "SR", icon = "interface/lfgframe/lfgicon-skyreach.blp"},
+	[1208] = {gfID = 10, expansionLevel = 5,  shortName = "GD", icon = "interface/lfgframe/lfgicon-grimraildepot.blp"},
+	[1358] = {gfID = 13, expansionLevel = 0,  shortName = "UBRS", icon = "interface/lfgframe/lfgicon-upperblackrockspire.blp"},
+	[1228] = {gfID = 14, expansionLevel = 5, shortName = "HM", icon = "interface/lfgframe/lfgicon-highmaul.blp"},
+	[1205] = {gfID = 15, expansionLevel = 5, shortName = "BRF", icon = "interface/lfgframe/lfgicon-blackrockfoundry.blp"},
+
+	[533] = {gfID = 16, expansionLevel = 0, shortName = "NAXX", icon = "interface/lfgframe/lfgicon-naxxramas.blp"},
+	[631] = {gfID = 17, expansionLevel = 2, shortName = "ICC", icon = "interface/lfgframe/lfgicon-icecrowncitadel.blp"},
+
+	[1007] = {gfID = 18, expansionLevel = 0, shortName = "SCHOLO", icon = "interface/lfgframe/lfgicon-scholomance.blp"},
+	[33] = {gfID = 19, expansionLevel = 0, shortName = "SFK", icon = "interface/lfgframe/lfgicon-shadowfangkeep.blp"},
+
+	[543] = {gfID = 20, expansionLevel = 1, shortName = "RAMPS", icon = "interface/lfgframe/lfgicon-hellfirecitadel.blp"},
+	[542] = {gfID = 21, expansionLevel = 1, shortName = "BF", icon = "interface/lfgframe/lfgicon-hellfirecitadel.blp"},
+	[540] = {gfID = 22, expansionLevel = 1, shortName = "SH", icon = "interface/lfgframe/lfgicon-hellfirecitadel.blp"},
+	[547] = {gfID = 23, expansionLevel = 1, shortName = "SP", icon = "interface/lfgframe/lfgicon-coilfang.blp"},
+	[546] = {gfID = 24, expansionLevel = 1, shortName = "UB", icon = "interface/lfgframe/lfgicon-coilfang.blp"},
+	[545] = {gfID = 25, expansionLevel = 1, shortName = "SV", icon = "interface/lfgframe/lfgicon-coilfang.blp"},
+	[557] = {gfID = 26, expansionLevel = 1, shortName = "MT", icon = "interface/lfgframe/lfgicon-auchindoun.blp"},
+	[558] = {gfID = 27, expansionLevel = 1, shortName = "CRYPTS", icon = "interface/lfgframe/lfgicon-auchindoun.blp"},
+	[556] = {gfID = 28, expansionLevel = 1, shortName = "SETH", icon = "interface/lfgframe/lfgicon-auchindoun.blp"},
+	[555] = {gfID = 29, expansionLevel = 1, shortName = "SL", icon = "interface/lfgframe/lfgicon-auchindoun.blp"},
+	[1001] = {gfID = 30, expansionLevel = 1, shortName = "SH", icon = "interface/lfgframe/lfgicon-scarlethalls.blp"},
+	[1004] = {gfID = 31, expansionLevel = 1, shortName = "SM", icon = "interface/lfgframe/lfgicon-scarletmonastery.blp"},
+	[560] = {gfID = 32, expansionLevel = 1, shortName = "OHB", icon = "interface/lfgframe/lfgicon-cavernsoftime.blp"},
+	[269] = {gfID = 33, expansionLevel = 1, shortName = "BM", icon = "interface/lfgframe/lfgicon-cavernsoftime.blp"},
+	[554] = {gfID = 34, expansionLevel = 1, shortName = "MECH", icon = "interface/lfgframe/lfgicon-tempestkeep.blp"},
+	[553] = {gfID = 35, expansionLevel = 1, shortName = "BOTA", icon = "interface/lfgframe/lfgicon-tempestkeep.blp"},
+	[552] = {gfID = 36, expansionLevel = 1, shortName = "ARC", icon = "interface/lfgframe/lfgicon-tempestkeep.blp"},
+	[585] = {gfID = 37, expansionLevel = 1, shortName = "MGT", icon = "interface/lfgframe/lfgicon-magistersterrace.blp"},
+
+	[574] = {gfID = 38, expansionLevel = 2, shortName = "UTK", icon = "interface/lfgframe/lfgicon-utgarde.blp"},
+	[575] = {gfID = 39, expansionLevel = 2, shortName = "UTP", icon = "interface/lfgframe/lfgicon-utgardepinnacle.blp"},
+	[601] = {gfID = 40, expansionLevel = 2, shortName = "AN", icon = "interface/lfgframe/lfgicon-azjolnerub.blp"},
+	[578] = {gfID = 41, expansionLevel = 2, shortName = "OCU", icon = "interface/lfgframe/lfgicon-theoculus.blp"},
+	[602] = {gfID = 42, expansionLevel = 2, shortName = "HOL", icon = "interface/lfgframe/lfgicon-hallsoflightning.blp"},
+	[599] = {gfID = 43, expansionLevel = 2, shortName = "HOS", icon = "interface/lfgframe/lfgicon-hallsofstone.blp"},
+	[595] = {gfID = 44, expansionLevel = 2, shortName = "CULL", icon = "interface/lfgframe/lfgicon-oldstratholme.blp"},
+	[600] = {gfID = 45, expansionLevel = 2, shortName = "DTK", icon = "interface/lfgframe/lfgicon-draktharon.blp"},
+	[604] = {gfID = 46, expansionLevel = 2, shortName = "GUN", icon = "interface/lfgframe/lfgicon-gundrak.blp"},
+	[619] = {gfID = 47, expansionLevel = 2, shortName = "ATOK", icon = "interface/lfgframe/lfgicon-ahnkalet.blp"},
+	[608] = {gfID = 48, expansionLevel = 2, shortName = "VH", icon = "interface/lfgframe/lfgicon-theviolethold.blp"},
+	[576] = {gfID = 49, expansionLevel = 2, shortName = "NEX", icon = "interface/lfgframe/lfgicon-thenexus.blp"},
+	[650] = {gfID = 50, expansionLevel = 2, shortName = "TOTC", icon = "interface/lfgframe/lfgicon-argentdungeon.blp"},
+	[632] = {gfID = 51, expansionLevel = 2, shortName = "FOS", icon = "interface/lfgframe/lfgicon-theforgeofsouls.blp"},
+	[658] = {gfID = 52, expansionLevel = 2, shortName = "PIT", icon = "interface/lfgframe/lfgicon-pitofsaron.blp"},
+	[668] = {gfID = 53, expansionLevel = 2, shortName = "HOR", icon = "interface/lfgframe/lfgicon-hallsofreflection.blp"},
+
+	[645] = {gfID = 55, expansionLevel = 3, shortName = "BRC", icon = "interface/lfgframe/lfgicon-blackrockcaverns.blp"},
+	[670] = {gfID = 56, expansionLevel = 3, shortName = "GB", icon = "interface/lfgframe/lfgicon-grimbatol.blp"},
+	[644] = {gfID = 57, expansionLevel = 3, shortName = "HOO", icon = "interface/lfgframe/lfgicon-hallsoforigination.blp"},
+	[725] = {gfID = 58, expansionLevel = 3, shortName = "SC", icon = "interface/lfgframe/lfgicon-thestonecore.blp"},
+	[755] = {gfID = 60, expansionLevel = 3, shortName = "LCT", icon = "interface/lfgframe/lfgicon-lostcityoftolvir.blp"},
+
+	[961] = {gfID = 62, expansionLevel = 4, shortName = "SSB", icon = "interface/lfgframe/lfgicon-stormstoutbrewery.blp"},
+	[959] = {gfID = 63, expansionLevel = 4, shortName = "SPM", icon = "interface/lfgframe/lfgicon-shadowpanmonastery.blp"},
+	[994] = {gfID = 64, expansionLevel = 4, shortName = "MSP", icon = "interface/lfgframe/lfgicon-mogushanpalace.blp"},
+	[1011] = {gfID = 65, expansionLevel = 4, shortName = "SNT", icon = "interface/lfgframe/lfgicon-siegeofnizaotemple.blp"},
+	[962] = {gfID = 66, expansionLevel = 4, shortName = "GOTSS", icon = "interface/lfgframe/lfgicon-gateofthesettingsun.blp"},
+	--[] = {gfID = 67, expansionLevel = 2, shortName = "EB", icon = ""},
+
+	[649] = {gfID = 73, expansionLevel = 2, shortName = "TOTC", icon = "interface/lfgframe/lfgicon-argentraid.blp"},
+
+	[724] = {gfID = 74, expansionLevel = 2, shortName = "RS", icon = "interface/lfgframe/lfgicon-rubysanctum.blp"},
+	[669] = {gfID = 75, expansionLevel = 3, shortName = "BWD", icon = "interface/lfgframe/lfgicon-blackwingdescentraid.blp"},
+	[671] = {gfID = 76, expansionLevel = 3, shortName = "BOT", icon = "interface/lfgframe/lfgicon-grimbatol.blp"},
+	[754] = {gfID = 77, expansionLevel = 3, shortName = "TOTFW", icon = "interface/lfgframe/lfgicon-throneofthefourwinds.blp"},
+	[720] = {gfID = 78, expansionLevel = 3, shortName = "FL", icon = "interface/lfgframe/lfgicon-firelands.blp"},
+	[967] = {gfID = 79, expansionLevel = 3, shortName = "DS", icon = "interface/lfgframe/lfgicon-dragonsoul.blp"},
+
+	[1008] = {gfID = 80, expansionLevel = 4, shortName = "MSV", icon = "interface/lfgframe/lfgicon-mogushanvaults.blp"},
+	[1009] = {gfID = 81, expansionLevel = 4, shortName = "HOF", icon = "interface/lfgframe/lfgicon-heartoffear.blp"},
+	[996] = {gfID = 82, expansionLevel = 4, shortName = "TOES", icon = "interface/lfgframe/lfgicon-terraceoftheendlessspring.blp"},
+	[1098] = {gfID = 83, expansionLevel = 4, shortName = "TOT", icon = "interface/lfgframe/lfgicon-thunderforgotten.blp"},
+	--[870] = {gfID = 84, expansionLevel = 2, shortName = "RPD", icon = ""}, --RANDOM PANDARIA DUNGEON
+	--[1116] = {gfID = 109, expansionLevel = 2, shortName = "RWD", icon = ""}, --RANDOM WARLORDS DUNGEON
+	[1448] = {gfID = 110, expansionLevel = 5, shortName = "HFC", icon = "interface/lfgframe/lfgicon-hellfirecitadelraid.blp"},
+	--[1220] = {gfID = 111, expansionLevel = 2, shortName = "RLD", icon = ""}, --RANDOM LEGION DUNGEON
+
+	[1456] = {gfID = 112, expansionLevel = 6, shortName = "EOA", icon = "interface/lfgframe/lfgicon-eyeofazshara.blp"},
+	[1544] = {gfID = 116, expansionLevel = 6, shortName = "AOVH", icon = "interface/lfgframe/lfgicon-assaultonviolethold.blp"},
+	[1493] = {gfID = 117, expansionLevel = 6, shortName = "VOTW", icon = "interface/lfgframe/lfgicon-vaultofthewardens.blp"},
+	[1492] = {gfID = 119, expansionLevel = 6, shortName = "MOS", icon = "interface/lfgframe/lfgicon-mawofsouls.blp"},
+	[1516] = {gfID = 121, expansionLevel = 6, shortName = "ARC", icon = "interface/lfgframe/lfgicon-thearcway.blp"},
+
+	[1520] = {gfID = 122, expansionLevel = 6, shortName = "EN", icon = "interface/lfgframe/lfgicon-theemeraldnightmare-riftofaln.blp"},
+	[1530] = {gfID = 123, expansionLevel = 6, shortName = "NH", icon = "interface/lfgframe/lfgicon-thenighthold.blp"},
+	[1648] = {gfID = 126, expansionLevel = 6, shortName = "TOV", icon = "interface/lfgframe/lfgicon-trialofvalor.blp"},
+	--[1651] = {gfID = 127, expansionLevel = 2, shortName = "", icon = ""},
+	[1651] = {gfID = 128, expansionLevel = 6, shortName = "RTK", icon = "interface/lfgframe/lfgicon-returntokarazhan.blp"},
+	[1677] = {gfID = 129, expansionLevel = 6, shortName = "COEN", icon = "interface/lfgframe/lfgicon-cathedralofeternalnight.blp"},
+
+	[1676] = {gfID = 131, expansionLevel = 6, shortName = "TOS", icon = "interface/lfgframe/lfgicon-tombofsargeraschamberoftheavatar.blp"},
+	[1712] = {gfID = 132, expansionLevel = 6, shortName = "ATBT", icon = "interface/lfgframe/lfgicon-antorus.blp"},
+	[1753] = {gfID = 133, expansionLevel = 6, shortName = "SEAT", icon = "interface/lfgframe/lfgicon-seatofthetriumvirate.blp"},
+
+	[1861] = {gfID = 135, expansionLevel = 7, shortName = "ULDIR", icon = "interface/lfgframe/lfgicon-uldir.blp"},
+	--[1642] = {gfID = 136, expansionLevel = 2, shortName = "RBD", icon = ""}, --RANDOM BFA DUNGEON
+	[1877] = {gfID = 139, expansionLevel = 7, shortName = "TOS", icon = "interface/lfgframe/lfgicon-templeofsethraliss.blp"},
+	[1594] = {gfID = 140, expansionLevel = 7, shortName = "ML", icon = "interface/lfgframe/lfgicon-themotherlode.blp"},
+	[1762] = {gfID = 141, expansionLevel = 7, shortName = "KR", icon = "interface/lfgframe/lfgicon-kingsrest.blp"},
+	[1864] = {gfID = 143, expansionLevel = 7, shortName = "SOTS", icon = "interface/lfgframe/lfgicon-shrineofthestorm.blp"},
+	[1771] = {gfID = 144, expansionLevel = 7, shortName = "TD", icon = "interface/lfgframe/lfgicon-toldagor.blp"},
+	[1822] = {gfID = 146, expansionLevel = 7, shortName = "SOB", icon = "interface/lfgframe/lfgicon-siegeofboralus.blp"},
+	[2070] = {gfID = 251, expansionLevel = 7, shortName = "BOD", icon = "interface/lfgframe/lfgicon-battleofdazaralor.blp"},
+	[2096] = {gfID = 252, expansionLevel = 7, shortName = "COS", icon = "interface/lfgframe/lfgicon-crucibleofstorms.blp"},
+	[2164] = {gfID = 254, expansionLevel = 7, shortName = "EP", icon = "interface/lfgframe/lfgicon-eternalpalace.blp"},
+	--[2097] = {gfID = 256, expansionLevel = 2, shortName = "JY", icon = ""},
+	[2097] = {gfID = 257, expansionLevel = 7, shortName = "MECH", icon = "interface/lfgframe/lfgicon-mechagon.blp"},
+	[2217] = {gfID = 258, expansionLevel = 7, shortName = "NWK", icon = "interface/lfgframe/lfgicon-nyalotha.blp"},
+	
+	[2289] = {gfID = 259, expansionLevel = 8, shortName = "PF", icon = "interface/lfgframe/lfgicon-plaguefall.blp"},
+	[2291] = {gfID = 260, expansionLevel = 8, shortName = "DOS", icon = "interface/lfgframe/lfgicon-theotherside.blp"},
+	[2287] = {gfID = 261, expansionLevel = 8, shortName = "HOA", icon = "interface/lfgframe/lfgicon-hallsofatonement.blp"},
+	[2290] = {gfID = 262, expansionLevel = 8, shortName = "MOTS", icon = "interface/lfgframe/lfgicon-mistsoftirnascithe.blp"},
+	[2284] = {gfID = 263, expansionLevel = 8, shortName = "SD", icon = "interface/lfgframe/lfgicon-sanguinedepths.blp"},
+	[2285] = {gfID = 264, expansionLevel = 8, shortName = "SOA", icon = "interface/lfgframe/lfgicon-spiresofascension.blp"},
+	[2286] = {gfID = 265, expansionLevel = 8, shortName = "NW", icon = "interface/lfgframe/lfgicon-necroticwake.blp"},
+	[2293] = {gfID = 266, expansionLevel = 8, shortName = "TOP", icon = "interface/lfgframe/lfgicon-theaterofpain.blp"},
+	[2296] = {gfID = 267, expansionLevel = 8, shortName = "CN", icon = "interface/lfgframe/lfgicon-castlenathria.blp"},
+	[2450] = {gfID = 271, expansionLevel = 8, shortName = "SOD", icon = "interface/lfgframe/lfgicon-sanctumofdomination.blp"},
+	[2441] = {gfID = 281, expansionLevel = 8, shortName = "TAZA", icon = "interface/lfgframe/lfgicon-tazaveshtheveiledmarket.blp"},
+	[2481] = {gfID = 282, expansionLevel = 8, shortName = "SFO", icon = "interface/lfgframe/lfgicon-sepulcherofthefirstones.blp"},
+	--[2162] = {gfID = 283, expansionLevel = 2, shortName = "TJG", icon = ""},
+}
+
+miog.MAP_ID_TO_GROUP_ACTIVITY_ID = {
+
+	[1136] = 1,
+	--[602] = 2,
+	--[599] = 3,
+	--[595] = 4,
+	[36] = 5,
+	[1175] = 6,
+	[1195] = 7,
+	[1182] = 8,
+	[1209] = 9,
+	[1208] = 10,
+
+	[1279] = 11,
+	[1176] = 12,
+	[1358] = 13,
+	[1228] = 14,
+	[1205] = 15,
+	[533] = 16,
+	[631] = 17,
+	[1007] = 18,
+	[33] = 19,
+	[543] = 20,
+
+	[542] = 21,
+	[540] = 22,
+	[547] = 23,
+	[546] = 24,
+	[545] = 25,
+	[557] = 26,
+	[558] = 27,
+	[556] = 28,
+	[555] = 29,
+	[1001] = 30,
+
+	[1004] = 31,
+	[560] = 32,
+	[269] = 33,
+	[554] = 34,
+	[553] = 35,
+	[552] = 36,
+	[585] = 37,
+	[574] = 38,
+	[575] = 39,
+	[601] = 40,
+
+	[578] = 41,
+	[602] = 42,
+	[599] = 43,
+	[595] = 44,
+	[600] = 45,
+	[604] = 46,
+	[619] = 47,
+	[608] = 48,
+	[576] = 49,
+	[650] = 50,
+
+	[632] = 51,
+	[658] = 52,
+	[668] = 53,
+	[643] = 54,
+	[645] = 55,
+	[670] = 56,
+	[644] = 57,
+	[725] = 58,
+
+	[657] = 59,
+	[755] = 60,
+	[960] = 61,
+	[961] = 62,
+	[959] = 63,
+	[994] = 64,
+	[1011] = 65,
+
+	[962] = 66,
+	[649] = 73,
+	[724] = 74,
+	[669] = 75,
+	[671] = 76,
+	[754] = 77,
+	[720] = 78,
+
+	[967] = 79,
+	[1008] = 80,
+	[1009] = 81,
+	[996] = 82,
+	[1098] = 83,
+	[1116] = 109,
+
+	[1448] = 110,
+	[1220] = 111,
+	[1456] = 112,
+	[1466] = 113,
+	[1477] = 114,
+	[1458] = 115,
+
+	[1544] = 116,
+	[1493] = 117,
+	[1501] = 118,
+	[1492] = 119,
+	[1571] = 120,
+	[1516] = 121,
+
+	[1520] = 122,
+	[1530] = 123,
+	[1648] = 126,
+	--[1651] = 127,
+	[1651] = 128,
+	[1677] = 129,
+
+	[1676] = 131,
+	[1712] = 132,
+	[1753] = 133,
+	[1861] = 135,
+	[1642] = 136,
+	[1763] = 137,
+
+	[1841] = 138,
+	[1877] = 139,
+	[1594] = 140,
+	[1762] = 141,
+	[1754] = 142,
+	[1864] = 143,
+
+	[1771] = 144,
+	[1862] = 145,
+	[1822] = 146,
+	[2070] = 251,
+	[2096] = 252,
+	[2164] = 254,
+
+	[1804] = 254,
+	[2097] = 257,
+	[2217] = 258,
+	[2289] = 259,
+	[2291] = 260,
+	
+	[2287] = 261,
+	[2290] = 262,
+	[2284] = 263,
+	[2285] = 264,
+
+	[2286] = 265,
+	[2293] = 266,
+	[2296] = 267,
+	[2450] = 271,
+	[2441] = 281,
+	[2481] = 282,
+	[2162] = 283,
 }
 
 for k, v in pairs(miog.MAP_INFO) do
@@ -341,6 +627,10 @@ for k, v in pairs(miog.MAP_INFO) do
 end
 
 miog.GROUP_ACTIVITY = {
+
+	--[] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
+
+
 	--CATACLYSM
 	[54] = {mapID = 643, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/throneofthetides.png"},
 	[59] = {mapID = 657, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vortexpinnacle.png"},
@@ -382,7 +672,170 @@ miog.GROUP_ACTIVITY = {
 	[310] = {mapID = 2522, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/vaultoftheincarnates.png"},
 	[313] = {mapID = 2569, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/aberrus.png"},
 	[319] = {mapID = 2549, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/groupFinderBackgrounds/amirdrassil.png"},
+
+
+	--- BLIZZARD ICONS FOR NOW
+--[[
+	[1] = 1136,
+	[2] = 0, --EK OUTDOOR
+	[3] = 0, --KALIMDOR OUTDOOR
+	[4] = 0, --MISSING
+	[5] = 36, --DEADMINES
+	[6] = 1175,
+	[7] = 1195,
+	[8] = 1182,
+	[9] = 1209,
+	[10] = 1208,
+
+	[13] = 0,
+	[14] = 0,
+	[15] = 36,
+	[16] = 1175,
+	[17] = 1195,
+	[18] = 1182,
+	[19] = 1209,
+	[20] = 1208,
+
+	[1279] = 11,
+	[1176] = 12,
+	[1358] = 13,
+	[1228] = 14,
+	[1205] = 15,
+	[533] = 16,
+	[631] = 17,
+	[1007] = 18,
+	[33] = 19,
+	[543] = 20,
+
+	[542] = 21,
+	[540] = 22,
+	[547] = 23,
+	[546] = 24,
+	[545] = 25,
+	[557] = 26,
+	[558] = 27,
+	[556] = 28,
+	[555] = 29,
+	[1001] = 30,
+
+	[1004] = 31,
+	[560] = 32,
+	[269] = 33,
+	[554] = 34,
+	[553] = 35,
+	[552] = 36,
+	[585] = 37,
+	[574] = 38,
+	[575] = 39,
+	[601] = 40,
+
+	[578] = 41,
+	[602] = 42,
+	[599] = 43,
+	[595] = 44,
+	[600] = 45,
+	[604] = 46,
+	[619] = 47,
+	[608] = 48,
+	[576] = 49,
+	[650] = 50,
+
+	[632] = 51,
+	[658] = 52,
+	[668] = 53,
+	[643] = 54,
+	[645] = 55,
+	[670] = 56,
+	[644] = 57,
+	[725] = 58,
+
+	[657] = 59,
+	[755] = 60,
+	[960] = 61,
+	[961] = 62,
+	[959] = 63,
+	[994] = 64,
+	[1011] = 65,
+
+	[962] = 66,
+	[649] = 73,
+	[724] = 74,
+	[669] = 75,
+	[671] = 76,
+	[754] = 77,
+	[720] = 78,
+
+	[967] = 79,
+	[1008] = 80,
+	[1009] = 81,
+	[996] = 82,
+	[1098] = 83,
+	[1116] = 109,
+
+	[1448] = 110,
+	[1220] = 111,
+	[1456] = 112,
+	[1466] = 113,
+	[1477] = 114,
+	[1458] = 115,
+
+	[1544] = 116,
+	[1493] = 117,
+	[1501] = 118,
+	[1492] = 119,
+	[1571] = 120,
+	[1516] = 121,
+
+	[1520] = 122,
+	[1530] = 123,
+	[1648] = 126,
+	--[1651] = 127,
+	[1651] = 128,
+	[1677] = 129,
+
+	[1676] = 131,
+	[1712] = 132,
+	[1753] = 133,
+	[1861] = 135,
+	[1642] = 136,
+	[1763] = 137,
+
+	[1841] = 138,
+	[1877] = 139,
+	[1594] = 140,
+	[1762] = 141,
+	[1754] = 142,
+	[1864] = 143,
+
+	[1771] = 144,
+	[1862] = 145,
+	[1822] = 146,
+	[2070] = 251,
+	[2096] = 252,
+	[2164] = 254,
+
+	[1804] = 254,
+	[2097] = 257,
+	[2217] = 258,
+	[2289] = 259,
+	[2291] = 260,
+	
+	[2287] = 261,
+	[2290] = 262,
+	[2284] = 263,
+	[2285] = 264,
+
+	[2286] = 265,
+	[2293] = 266,
+	[2296] = 267,
+	[2450] = 271,
+	[2441] = 281,
+	[2481] = 282,
+	[2162] = 283,
+]]
 }
+
+miog.GROUP_ID_TO_LFG_ID = {}
 
 miog.ACTIVITY_ID_INFO = {
 	[6] = {difficultyID = 1, shortName = "2's"},

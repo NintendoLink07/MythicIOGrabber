@@ -32,11 +32,9 @@
                         end
 
                         if(parent.List:IsVisible()) then
-                            print("LOWER")
                             parent.List:SetFrameLevel(1)
 
                         else
-                            print("RAISE")
                             parent.List:SetFrameLevel(100)
 
                         end

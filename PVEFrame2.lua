@@ -35,7 +35,7 @@ local function resetQueueFrame(_, frame)
 end
 
 hooksecurefunc("PVEFrame_ToggleFrame", function()
-	PVEFrame:Hide()
+	HideUIPanel(PVEFrame)
 	miog.pveFrame2:SetShown(not miog.pveFrame2:IsVisible())
 end)
 
@@ -46,7 +46,7 @@ local function createPVEFrameReplacement()
 	frame:SetPoint(PVEFrame:GetPoint())
 	frame:SetScale(0.64)
 
-	frame:AdjustPointsOffset(0, 0)
+	frame:AdjustPointsOffset(900, 0)
 
 	miog.createFrameBorder(frame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	--frame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -206,7 +206,17 @@ local function updateDungeons()
 	for _, dungeonID in ipairs(dungeonList) do
 ---@diagnostic disable-next-line: redundant-parameter
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
-		local name, typeID, subtypeID, _, _, _, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, lfgMapID = GetLFGDungeonInfo(dungeonID)
+		local name, typeID, subtypeID, _, _, _, _, _, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, lfgMapID = GetLFGDungeonInfo(dungeonID)
+
+		--miog.GROUP_ID_TO_LFG_ID[groupID == 0 and 0 or (groupID * -1)] = {mapID = lfgMapID, icon = fileID, difficultyID = difficultyID}
+		--print(name, difficultyID, groupID, lfgMapID, dungeonID)
+		local groupActivityID = miog.MAP_ID_TO_GROUP_ACTIVITY_ID[lfgMapID]
+
+		if(groupActivityID and not miog.GROUP_ACTIVITY[groupActivityID]) then
+			miog.GROUP_ACTIVITY[groupActivityID] = {mapID = lfgMapID, file = fileID}
+			--print("miog.GROUP_ACTIVITY[" .. groupActivityID .. "] = {mapID = " .. lfgMapID .. ", file = " .. fileID .. "}")
+		end
+
 		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
 		--if(not LFGLockList[dungeonID] and typeID == menuList) then
@@ -247,6 +257,8 @@ local function updateDungeons()
 			
 		end
 	end
+
+	--DevTools_Dump(miog.GROUP_ID_TO_LFG_ID)
 end
 
 local function updateRaidFinder()
@@ -875,8 +887,6 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 					--DevTools_Dump({GetLFGQueueStats(categoryID, queueID)})
 
 					local name, typeID, subTypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
-
-					print(averageWait)
 
 					local queueStats = {
 						[1] = hasData,

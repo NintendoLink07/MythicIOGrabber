@@ -152,20 +152,42 @@ miog.checkForActiveFilters = function(filterPanel)
 	return filtersActive
 end
 
+miog.retrieveMapIDFromGFID = function(groupFinderID)
+	for k, v in pairs(miog.MAP_INFO) do
+		if(v.gfID == groupFinderID) then
+			return k
+		end
+	end
+end
+
+miog.checkIfDungeonIsInCurrentSeason = function(activityID)
+	if(miog.ACTIVITY_ID_INFO[activityID]) then
+		for _, seasonID in ipairs(miog.ACTIVITY_ID_INFO[activityID].mPlusSeasons) do
+			print(seasonID, miog.F.CURRENT_SEASON)
+			if(seasonID == miog.F.CURRENT_SEASON) then
+				return true
+
+			end
+		end
+
+		return false
+	end
+end
+
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		miog.applicationViewer.footerBar.browseGroupsButton:Show()
-		miog.applicationViewer.footerBar.delistButton:Show()
-		miog.applicationViewer.footerBar.editButton:Show()
+		miog.applicationViewer.browseGroupsButton:Show()
+		miog.applicationViewer.delistButton:Show()
+		miog.applicationViewer.editButton:Show()
 
 		miog.F.CAN_INVITE = true
 
 		return true
 
 	else
-		miog.applicationViewer.footerBar.browseGroupsButton:Hide()
-		miog.applicationViewer.footerBar.delistButton:Hide()
-		miog.applicationViewer.footerBar.editButton:Hide()
+		miog.applicationViewer.browseGroupsButton:Hide()
+		miog.applicationViewer.delistButton:Hide()
+		miog.applicationViewer.editButton:Hide()
 
 		miog.F.CAN_INVITE = false
 

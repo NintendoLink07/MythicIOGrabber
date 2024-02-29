@@ -16,26 +16,61 @@ function SlickDropDown:OnLoad()
 	self.deactivatedExtraButtons = {}
 end
 
-function SlickDropDown:ResetFrame(_, frame)
-	if(frame) then
-		frame:Hide()
-		frame.layoutIndex = nil
-		frame.Name:SetText("")
-		frame.Icon:SetTexture(nil)
-		frame.infoTable = nil
-		frame.type2 = nil
-		frame.entryType = nil
-		frame.ParentDropDown = nil
-		frame.parentIndex = nil
+function SlickDropDown:ResetDropDown()
+	self.List.framePool:ReleaseAll()
+	self.entryFrameTree = {}
+	self.currentList = nil
+	self.deactivatedExtraButtons = {}
+end
 
-		frame:SetScript("OnShow", nil)
+function SlickDropDown:Disable()
+	self.Button:Disable()
+end
 
-		frame:SetAttribute("macrotext1", "")
-		frame:SetAttribute("original", "")
+function SlickDropDown:Enable()
+	self.Button:Enable()
+end
 
-		self.List:MarkDirty()
-		self:MarkDirty()
+function SlickDropDown:IsEnabled()
+	return self.Button:IsEnabled()
+end
+
+function SlickDropDown:GetFrameAtIndex(index, parentIndex)
+	if(parentIndex) then
+		return self.entryFrameTree[parentIndex][index]
+
+	elseif(index) then
+		return self.entryFrameTree[index]
+	
+	else
+		return nil
+	
 	end
+end
+
+function SlickDropDown:GetFrameAtLayoutIndex(index)
+	return self.List:GetLayoutChildren()[index]
+end
+
+function SlickDropDown:ResetFrame(frame)
+	frame:Hide()
+	frame.layoutIndex = nil
+	frame.Name:SetText("")
+	frame.Icon:SetTexture(nil)
+	frame.infoTable = nil
+	frame.type2 = nil
+	frame.value = nil
+	frame.entryType = nil
+	frame.ParentDropDown = nil
+	frame.parentIndex = nil
+
+	frame:SetScript("OnShow", nil)
+
+	frame:SetAttribute("macrotext1", "")
+	frame:SetAttribute("original", "")
+
+	--self.List:MarkDirty()
+	--self:MarkDirty()
 end
 
 function SlickDropDown:CreateEntryFrame(infoTable)
@@ -137,9 +172,6 @@ function SlickDropDown:CreateEntryFrame(infoTable)
 	end
 
 	frame:Show()
-
-	self.List:MarkDirty()
-	self:MarkDirty()
 
 	return frame
 end

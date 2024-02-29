@@ -182,9 +182,394 @@ local function createMainFrame()
 	
 end
 
-local function initializeActivityDropdown()
+local function setUpPlaystyleDropDown(activityInfo)
+	local playstyleDropDown = miog.entryCreation.PlaystyleDropDown
+	playstyleDropDown:ResetDropDown()
+
+	local info = {}
+		
+	info.entryType = "option"
+
+	if (activityInfo.isRatedPvpActivity) then
+		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
+		info.value = Enum.LFGEntryPlaystyle.Standard;
+		info.checked = false;
+		info.isRadio = true;
+		--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Standard); end;
+		--UIDropDownMenu_AddButton(info);
+		playstyleDropDown:CreateEntryFrame(info)
+
+		info.text =  C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
+		info.value = Enum.LFGEntryPlaystyle.Casual;
+		info.checked = false;
+		info.isRadio = true;
+		--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Casual); end;
+		--UIDropDownMenu_AddButton(info);
+		playstyleDropDown:CreateEntryFrame(info)
+
+		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
+		info.value = Enum.LFGEntryPlaystyle.Hardcore;
+		info.checked = false;
+		info.isRadio = true;
+		--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
+		--UIDropDownMenu_AddButton(info);
+		playstyleDropDown:CreateEntryFrame(info)
+
+	else
+		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
+		info.value = Enum.LFGEntryPlaystyle.Standard;
+		info.checked = false;
+		info.isRadio = true;
+		--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Standard); end;
+		--UIDropDownMenu_AddButton(info);
+		playstyleDropDown:CreateEntryFrame(info)
+
+		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
+		info.value = Enum.LFGEntryPlaystyle.Casual;
+		info.checked = false;
+		info.isRadio = true;
+		--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Casual); end;
+		--UIDropDownMenu_AddButton(info);
+		playstyleDropDown:CreateEntryFrame(info)
+
+		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
+		info.value = Enum.LFGEntryPlaystyle.Hardcore;
+		--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
+		info.checked = false;
+		info.isRadio = true;
+		--UIDropDownMenu_AddButton(info);
+		playstyleDropDown:CreateEntryFrame(info)
+	end
+end
+
+local function setUpDifficultyDropDown(filters)
+	local frame = miog.entryCreation
+	frame.DifficultyDropDown:ResetDropDown()
+
+	--Start out displaying everything
+	local activities = C_LFGList.GetAvailableActivities(frame.selectedCategory, frame.selectedGroup, filters);
+
+	local info = {}
+
+	--for k, v in ipairs(activities) do
+
+	for i = #activities, 1, -1 do
+		local activityID = activities[i];
+		local activityInfo = C_LFGList.GetActivityInfoTable(activityID);
+		local shortName = activityInfo and activityInfo.shortName;
+
+		--info.arg1 = "activity";
+		info.entryType = "option"
+		info.index = #activities - i + 1
+		info.text = shortName
+		--print(shortName)
+		info.value = activityID
+		info.func = function()
+			frame.ActivityDropDown.CheckedValue.value = activityID
+		end
+
+		frame.DifficultyDropDown:CreateEntryFrame(info)
+	end
+end
+
+local function setUpEntryCreation(filters, categoryID, groupID, activityID)
+	local frame = miog.entryCreation
+
+	---@diagnostic disable-next-line: undefined-field
+	local activityDropDown = frame.ActivityDropDown
+
+	---@diagnostic disable-next-line: undefined-field
+	local playstyleDropDown = frame.PlaystyleDropDown
+
+	---@diagnostic disable-next-line: undefined-field
+	local difficultyDropDown = frame.DifficultyDropDown
+	
+	---@diagnostic disable-next-line: undefined-field
+	local crossFaction = frame.CrossFaction
+
+
+	--local filters, categoryID, groupID, activityID = LFGListUtil_AugmentWithBest(bit.bor(self.baseFilters or 0, filters or 0), categoryID, groupID, activityID);
+	filters, categoryID, groupID, activityID = LFGListUtil_AugmentWithBest(bit.bor(LFGListFrame.baseFilters or 0, filters or 0), categoryID, groupID, activityID);
+
+	miog.entryCreation.selectedCategory = categoryID;
+	miog.entryCreation.selectedGroup = groupID;
+	miog.entryCreation.selectedActivity = activityID;
+	LFGListFrame.EntryCreation.selectedActivity = activityID;
+	miog.entryCreation.selectedFilters = filters;
+
+	--Update the category dropdown
+	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
+
+	--Update the activity dropdown
+	local activityInfo = C_LFGList.GetActivityInfoTable(activityID);
+	if(not activityInfo) then
+		return;
+	end
+
+	--Update the group dropdown. If the group dropdown is showing an activity, hide the activity dropdown
+	local groupName = C_LFGList.GetActivityGroupInfo(groupID);
+	activityDropDown:SetShown(groupName and not categoryInfo.autoChooseActivity);
+	difficultyDropDown:SetShown(not categoryInfo.autoChooseActivity);
+
+	local shouldShowPlayStyleDropdown = (categoryInfo.showPlaystyleDropdown) and (activityInfo.isMythicPlusActivity or activityInfo.isRatedPvpActivity or activityInfo.isCurrentRaidActivity or activityInfo.isMythicActivity);
+	local shouldShowCrossFactionToggle = (categoryInfo.allowCrossFaction);
+	local shouldDisableCrossFactionToggle = (categoryInfo.allowCrossFaction) and not (activityInfo.allowCrossFaction);
+
+	--print((categoryInfo.showPlaystyleDropdown), (activityInfo.isMythicPlusActivity or activityInfo.isRatedPvpActivity or activityInfo.isCurrentRaidActivity or activityInfo.isMythicActivity))
+
+	if(shouldShowPlayStyleDropdown) then
+		--LFGListEntryCreation_OnPlayStyleSelected(self, self.PlayStyleDropdown, self.selectedPlaystyle or Enum.LFGEntryPlaystyle.Standard);
+		setUpPlaystyleDropDown(activityInfo)
+		playstyleDropDown:Enable()
+
+	elseif(not shouldShowPlayStyleDropdown) then
+		miog.entryCreation.selectedPlaystyle = nil
+		playstyleDropDown:Disable()
+	
+	end
+
+	playstyleDropDown:SetShown(shouldShowPlayStyleDropdown);
+	--self.PlayStyleLabel:SetShown(shouldShowPlayStyleDropdown);
+
+	local _, localizedFaction = UnitFactionGroup("player");
+	--self.CrossFactionGroup.Label:SetText(LFG_LIST_CROSS_FACTION:format(localizedFaction));
+	--self.CrossFactionGroup.tooltip = LFG_LIST_CROSS_FACTION_TOOLTIP:format(localizedFaction);
+	--self.CrossFactionGroup.disableTooltip = LFG_LIST_CROSS_FACTION_DISABLE_TOOLTIP:format(localizedFaction);
+	crossFaction:SetShown(shouldShowCrossFactionToggle)
+	crossFaction:SetEnabled(not shouldDisableCrossFactionToggle)
+	crossFaction:SetChecked(shouldDisableCrossFactionToggle)
+
+	frame.Rating:SetShown(activityInfo.isMythicPlusActivity or activityInfo.isRatedPvpActivity);
+	--self.PVPRating:SetShown(activityInfo.isRatedPvpActivity);
+
+	--Update the recommended item level box
+	if ( activityInfo.ilvlSuggestion ~= 0 ) then
+		frame.ItemLevel.instructions = format(LFG_LIST_RECOMMENDED_ILVL, activityInfo.ilvlSuggestion);
+	else
+		frame.ItemLevel.instructions = LFG_LIST_ITEM_LEVEL_INSTR_SHORT;
+	end
+
+	--self.NameLabel:ClearAllPoints();
+	if (not frame.ActivityDropDown:IsShown() and not frame.DifficultyDropDown:IsShown()) then
+	--	self.NameLabel:SetPoint("TOPLEFT", 20, -82);
+	else
+	--	self.NameLabel:SetPoint("TOPLEFT", 20, -120);
+	end
+
+	--self.ItemLevel:ClearAllPoints();
+	--self.PvpItemLevel:ClearAllPoints();
+
+	--self.ItemLevel:SetShown(not activityInfo.isPvpActivity);
+	--self.PvpItemLevel:SetShown(activityInfo.isPvpActivity);
+
+	--[[if (self.MythicPlusRating:IsShown()) then
+		self.ItemLevel:SetPoint("TOPLEFT", self.MythicPlusRating, "BOTTOMLEFT", 0, -3);
+		self.PvpItemLevel:SetPoint("TOPLEFT", self.MythicPlusRating, "BOTTOMLEFT", 0, -3);
+	elseif (self.PVPRating:IsShown()) then
+		self.ItemLevel:SetPoint("TOPLEFT", self.PVPRating, "BOTTOMLEFT", 0, -3);
+		self.PvpItemLevel:SetPoint("TOPLEFT", self.PVPRating, "BOTTOMLEFT", 0, -3);
+	elseif(self.PlayStyleDropdown:IsShown()) then
+		self.ItemLevel:SetPoint("TOPLEFT", self.PlayStyleLabel, "BOTTOMLEFT", -1, -15);
+		self.PvpItemLevel:SetPoint("TOPLEFT", self.PlayStyleLabel, "BOTTOMLEFT", -1, -15);
+	else
+		self.ItemLevel:SetPoint("TOPLEFT", self.Description, "BOTTOMLEFT", -6, -19);
+		self.PvpItemLevel:SetPoint("TOPLEFT", self.Description, "BOTTOMLEFT", -6, -19);
+	end]]
+
+	setUpDifficultyDropDown(filters)
+
+	if(miog.SETUP_FIRST_ENTRY_CREATION_VIEW) then
+		local firstActivityFrame = miog.entryCreation.ActivityDropDown:GetFrameAtLayoutIndex(1)
+
+		if(firstActivityFrame) then
+			local firstActivityName = firstActivityFrame.Name:GetText()
+			print(firstActivityName)
+			miog.entryCreation.ActivityDropDown.CheckedValue.Name:SetText(firstActivityName)
+			miog.entryCreation.ActivityDropDown.CheckedValue.value = firstActivityFrame.value
+			firstActivityFrame.Name:SetText(firstActivityName)
+			firstActivityFrame.Radio:SetChecked(true)
+		end
+
+		local firstDifficultyFrame = miog.entryCreation.DifficultyDropDown:GetFrameAtIndex(1)
+
+		if(firstDifficultyFrame) then
+			local firstDifficultyName = firstDifficultyFrame.Name:GetText()
+			miog.entryCreation.DifficultyDropDown.CheckedValue.Name:SetText(firstDifficultyName)
+			miog.entryCreation.DifficultyDropDown.CheckedValue.value = firstDifficultyFrame.value
+			miog.entryCreation.ActivityDropDown.CheckedValue.value = firstDifficultyFrame.value
+			firstDifficultyFrame.Name:SetText(firstDifficultyName)
+			firstDifficultyFrame.Radio:SetChecked(true)
+
+		end
+
+		local firstPlaystyleFrame = miog.entryCreation.PlaystyleDropDown:GetFrameAtIndex(1)
+
+		if(firstPlaystyleFrame) then
+			local firstPlaystyleName = firstPlaystyleFrame.Name:GetText()
+			miog.entryCreation.PlaystyleDropDown.CheckedValue.Name:SetText(firstPlaystyleName)
+			miog.entryCreation.PlaystyleDropDown.CheckedValue.value = firstPlaystyleFrame.value
+			firstPlaystyleFrame.Name:SetText(firstPlaystyleName)
+			firstPlaystyleFrame.Radio:SetChecked(true)
+		end
+		
+		miog.SETUP_FIRST_ENTRY_CREATION_VIEW = false
+	end
+end
+
+local function gatherGroupsAndActivitiesForCategory(categoryID)
 	local activityDropDown = miog.entryCreation.ActivityDropDown
-	activityDropDown.List.framePool:ReleaseAll()
+	activityDropDown:ResetDropDown()
+
+	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
+
+	local borFilters = bit.bor(0, 8)
+
+	local firstFilters, firstCategoryID, firstGroupID, firstActivityID
+
+	if(categoryID < 4 or categoryID == 6) then
+		if(categoryID == 2) then
+			--implement expansion headers for dungeon view
+
+		end
+
+		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, categoryInfo.separateRecommended and miog.LFG_LIST_FILTER or 0);
+
+		firstFilters = categoryInfo.separateRecommended and miog.LFG_LIST_FILTER or 0
+		firstCategoryID = categoryID
+
+		local lastHighestIndex = 0
+
+		for k, v in ipairs(groups) do
+			--local groupName, order, x1, x2, x3 = C_LFGList.GetActivityGroupInfo(v)
+
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
+			local activityID = activities[1]
+
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+
+			local currentMPlus = nil
+			local info = {}
+
+			if(categoryID == 2) then
+				--info.parentIndex = 
+				print(activityInfo.orderIndex)
+				for activityIndex, activityID in ipairs(activities) do
+					local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+				--	print(activityInfo.fullName, activityInfo.isMythicPlusActivity, activityID, activityInfo.groupFinderActivityGroupID)
+
+					if(activityInfo.isMythicPlusActivity and miog.checkIfDungeonIsInCurrentSeason(activityID)) then
+						currentMPlus = activityID
+
+					end
+				end
+			else
+				info.parentIndex = nil
+			
+			end
+
+			info.entryType = "option"
+			info.index = activityInfo.groupFinderActivityGroupID - (categoryID == 2 and currentMPlus and 1000 or 0)
+			--print(groupName, activityInfo.isMythicPlusActivity, activityInfo.groupFinderActivityGroupID - (categoryID == 2 and hasCurrentMPlus and -1000 or 0))
+			--info.index = activityIndex
+			--info.text = activityInfo.fullName
+			info.text = C_LFGList.GetActivityGroupInfo(v)
+			--print(activityInfo.shortName)
+			info.func = function()
+				miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+				setUpEntryCreation(firstFilters, categoryID, v, activityID)
+			end
+
+			info.value = activityID
+			
+			local mapID = miog.retrieveMapIDFromGFID(activityInfo.groupFinderActivityGroupID)
+
+			if(mapID) then
+				info.icon = miog.MAP_INFO[mapID].icon
+			end
+
+			local entryFrame = activityDropDown:CreateEntryFrame(info)
+
+			if(categoryID == 2) then
+				lastHighestIndex = info.index < lastHighestIndex and info.index or lastHighestIndex
+
+				if(lastHighestIndex == info.index) then
+					firstGroupID = groups[1]
+					firstActivityID = currentMPlus
+					--print(lastHighestIndex, info.text, firstActivityID, firstGroupID)
+
+				end
+				
+			else
+				if(k == 1) then
+					firstGroupID = groups[1]
+					firstActivityID = activityID
+				end
+
+			end
+		end
+	else
+		local pvpActivities = C_LFGList.GetAvailableActivities(categoryID, 0, borFilters);
+		firstFilters = 0
+		firstCategoryID = categoryID
+		firstGroupID = 0
+		firstActivityID = pvpActivities[1]
+	
+		for k, v in ipairs(pvpActivities) do
+			local activityID = v
+
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+
+			local info = {}
+			info.entryType = "option"
+			info.index = activityInfo.groupFinderActivityGroupID
+			--print(groupName, activityInfo.isMythicPlusActivity, activityInfo.groupFinderActivityGroupID - (categoryID == 2 and hasCurrentMPlus and -1000 or 0))
+			--info.index = activityIndex
+			--info.text = activityInfo.fullName
+			info.text = activityInfo.fullName
+			--print(activityInfo.shortName)
+			--info.func = function() selectActivity(borFilters, categoryID, v, activityID) end
+
+			info.value = activityID
+			
+			local mapID = miog.retrieveMapIDFromGFID(activityInfo.groupFinderActivityGroupID)
+
+			if(mapID) then
+				info.icon = miog.MAP_INFO[mapID].icon
+			end
+
+			local entryFrame = activityDropDown:CreateEntryFrame(info)
+
+		end
+	end
+
+	setUpEntryCreation(firstFilters, firstCategoryID, firstGroupID, firstActivityID)
+end
+
+local function initializeActivityDropdown()
+	print("INIT")
+
+	local frame = miog.entryCreation
+
+	local categoryInfo = C_LFGList.GetLfgCategoryInfo(miog.pveFrame2.categoryID);
+	
+	if(frame.selectedCategory ~= miog.pveFrame2.categoryID or frame.selectedCategory == miog.pveFrame2.categoryID and categoryInfo.separateRecommended) then
+		local setFirst = false
+		
+		local activityDropDown = frame.ActivityDropDown
+		activityDropDown:ResetDropDown()
+
+		local categoryID = miog.pveFrame2.categoryID or 2
+		--local filter = miog.pveFrame2.filters
+		local selectedFilters = 1
+
+		--local groups = C_LFGList.GetAvailableActivityGroups(categoryID, filter)
+
+		gatherGroupsAndActivitiesForCategory(categoryID)
+
+
+		miog.entryCreation.ActivityDropDown.List:MarkDirty()
+		miog.entryCreation.ActivityDropDown:MarkDirty()
+	end
 	--UIDropDownMenu_Initialize(miog.entryCreation.ActivityDropdown, function(self, level, menuList)
 		--[[local useMore = false;
 
@@ -259,94 +644,35 @@ local function initializeActivityDropdown()
 
 		--local info = UIDropDownMenu_CreateInfo()
 
-		local categoryID = 2
-		local filter = nil
+	
 
-		local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
-
-		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, filter)
-
-		for k, v in ipairs(groups) do
-			--local name, order = C_LFGList.GetActivityGroupInfo(v)
-			--print(name)
-
-			--print(v)
-			--C_LFGList.GetActivityInfoTable(v)
-
-			local activities = C_LFGList.GetAvailableActivities(categoryID, v, filter)
-
-			for activityIndex, activityID in ipairs(activities) do
-				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-
-				if(activityInfo.isMythicPlusActivity) then
-					--[[info.text = activityInfo.fullName;
-					info.value = activityID;
-					info.arg1 = "group";
-					--info.checked = (self.selectedGroup == activityID);
-					info.isRadio = true;
-					UIDropDownMenu_AddButton(info);]]
+	--UIDropDownMenu_AddSeparator()
 
 
-					local info = {}
-					info.entryType = "option"
-					info.index = activityInfo.orderIndex
-					info.text = activityInfo.fullName
-					info.value = activityID
-					if(miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
-						info.icon = miog.MAP_INFO[miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID].icon
+	--[===[groups = C_LFGList.GetAvailableActivityGroups(categoryID, filter)
 
-					end
+	for k, v in ipairs(groups) do
+		--local name, order = C_LFGList.GetActivityGroupInfo(v)
+		--print(name)
 
-					local filters, categoryID, groupID, activityID = LFGListUtil_AugmentWithBest(bit.bor(0, filter or 0), categoryID, v, activityID);
+		--print(v)
+		--C_LFGList.GetActivityInfoTable(v)
 
-					--print(filters, categoryID, groupID, activityID)
-					local shouldShowPlayStyleDropdown = (categoryInfo.showPlaystyleDropdown) and (activityInfo.isMythicPlusActivity or activityInfo.isRatedPvpActivity or activityInfo.isCurrentRaidActivity or activityInfo.isMythicActivity);
-					local shouldShowCrossFactionToggle = (categoryInfo.allowCrossFaction);
-					local shouldDisableCrossFactionToggle = (categoryInfo.allowCrossFaction) and not (activityInfo.allowCrossFaction);
-					if(shouldShowPlayStyleDropdown) then
-						--LFGListEntryCreation_OnPlayStyleSelected(self, self.PlayStyleDropdown, self.selectedPlaystyle or Enum.LFGEntryPlaystyle.Standard);
-					end
+		local activities = C_LFGList.GetAvailableActivities(categoryID, v, filter)
 
-					--print(shouldShowPlayStyleDropdown, shouldShowCrossFactionToggle, shouldDisableCrossFactionToggle)
+		for activityIndex, activityID in ipairs(activities) do
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 
-					activityDropDown:CreateEntryFrame(info)
-
-				end
+			if(not activityInfo.isMythicPlusActivity) then
+				--[[info.text = activityInfo.fullName;
+				info.value = activityID;
+				info.arg1 = "group";
+				--info.checked = (self.selectedGroup == activityID);
+				info.isRadio = true;
+				UIDropDownMenu_AddButton(info);]]
 			end
 		end
-
-		miog.entryCreation.ActivityDropDown.List:MarkDirty()
-		miog.entryCreation.ActivityDropDown:MarkDirty()
-
-		--UIDropDownMenu_AddSeparator()
-
-		categoryID = 2
-		filter = nil
-
-		groups = C_LFGList.GetAvailableActivityGroups(categoryID, filter)
-
-		for k, v in ipairs(groups) do
-			--local name, order = C_LFGList.GetActivityGroupInfo(v)
-			--print(name)
-
-			--print(v)
-			--C_LFGList.GetActivityInfoTable(v)
-
-			local activities = C_LFGList.GetAvailableActivities(categoryID, v, filter)
-
-			for activityIndex, activityID in ipairs(activities) do
-				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-
-				if(not activityInfo.isMythicPlusActivity) then
-					--[[info.text = activityInfo.fullName;
-					info.value = activityID;
-					info.arg1 = "group";
-					--info.checked = (self.selectedGroup == activityID);
-					info.isRadio = true;
-					UIDropDownMenu_AddButton(info);]]
-				end
-			end
-		end
+	end]===]
 
 		--[[for i = 1, #activities, 1 do
 			local activityID = activities[i];
@@ -359,26 +685,102 @@ end
 
 miog.initializeActivityDropdown = initializeActivityDropdown
 
+--[[
+local function LFGListEntryCreation_ListGroup()
+	local frame = miog.entryCreation
 
-local function resetDropDownListFrame(_, frame)
-	frame:Hide()
-	frame.layoutIndex = nil
+	local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0;
+	--local pvpRating =  tonumber(self.PVPRating.EditBox:GetText()) or 0;
+	--local mythicPlusRating =  tonumber(self.MythicPlusRating.EditBox:GetText()) or 0;
+	local rating = tonumber(frame.Rating:GetText()) or 0;
+	local pvpRating = rating
+	local mythicPlusRating = rating
+	local autoAccept = false;
+	local privateGroup = frame.PrivateGroup:GetChecked();
+	--local isCrossFaction =  frame.CrossFactionGroup:IsShown() and not self.CrossFactionGroup.CheckButton:GetChecked();
+	local isCrossFaction = true
+	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.CheckedValue.value or nil;
+	local activityID = frame.ActivityDropDown.CheckedValue.value or 0
 
-	local objectType = frame:GetObjectType()
+	local self = LFGListFrame.EntryCreation
 
-	if(objectType == "Frame") then
-		frame.Name:SetText("")
-		frame.Icon:SetTexture(nil)
+	local honorLevel = 0;
+		if(C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)) then
+			self.WorkingCover:Show();
+			--LFGListEntryCreation_ClearFocus(self);
+		end
+end
+
+]]
+
+
+local function LFGListEntryCreation_ListGroup()
+	local frame = miog.entryCreation
+
+	local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0;
+	--local pvpRating =  tonumber(self.PVPRating.EditBox:GetText()) or 0;
+	--local mythicPlusRating =  tonumber(self.MythicPlusRating.EditBox:GetText()) or 0;
+	local rating = tonumber(frame.Rating:GetText()) or 0;
+	local pvpRating = rating
+	local mythicPlusRating = rating
+	local autoAccept = false;
+	local privateGroup = frame.PrivateGroup:GetChecked();
+	local isCrossFaction =  frame.CrossFaction:IsShown() and not frame.CrossFaction:GetChecked();
+	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.CheckedValue.value or nil;
+	local activityID = frame.ActivityDropDown.CheckedValue.value or 0
+
+	local self = LFGListFrame.EntryCreation
+
+	--LFGListEntryCreation_IsEditMode(LFGListFrame.EntryCreation)
+	--LFGListEntryCreation_ListGroupInternal(self, 173, 0, false, true, 0, 0, 0, nil, false)
+
+	local honorLevel = 0;
+	local isListed = C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
+	if(isListed) then
+		print("SUCCESS: ", activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, nil, isCrossFaction)
+		--self.WorkingCover:Show();
+		--LFGListEntryCreation_ClearFocus(self);
+	else
+		print("FAILURE: ", activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, nil, isCrossFaction)
+
+	end
+end
+
+function LFGListEntryCreation_UpdateValidState(self)
+	local errorText;
+	local activityInfo = C_LFGList.GetActivityInfoTable(self.selectedActivity)
+	local maxNumPlayers = activityInfo and  activityInfo.maxNumPlayers or 0;
+	local mythicPlusDisableActivity = not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity) and (activityInfo.isMythicPlusActivity and not C_LFGList.GetKeystoneForActivity(self.selectedActivity));
+	if ( maxNumPlayers > 0 and GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) >= maxNumPlayers ) then
+		errorText = string.format(LFG_LIST_TOO_MANY_FOR_ACTIVITY, maxNumPlayers);
+	elseif (mythicPlusDisableActivity) then
+		errorText = LFG_AUTHENTICATOR_BUTTON_MYTHIC_PLUS_TOOLTIP;
+	elseif ( LFGListEntryCreation_GetSanitizedName(self) == "" ) then
+		errorText = LFG_LIST_MUST_HAVE_NAME;
 	end
 
-	miog.entryCreation.ActivityDropDown.List:MarkDirty()
-	miog.entryCreation.ActivityDropDown:MarkDirty()
+	LFGListEntryCreation_UpdateAuthenticatedState(self);
+
+	LFGListFrame.EntryCreation.ListGroupButton.DisableStateClickButton:SetShown(mythicPlusDisableActivity);
+	LFGListFrame.EntryCreation.ListGroupButton:SetEnabled(not errorText and not mythicPlusDisableActivity);
+	LFGListFrame.EntryCreation.ListGroupButton.errorText = errorText;
+end
+
+function LFGListEntryCreation_UpdateAuthenticatedState(self)
+	local isAuthenticated = C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity);
+	LFGListFrame.EntryCreation.Description.EditBox:SetEnabled(isAuthenticated);
+	local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+	local isQuestListing = activeEntryInfo and activeEntryInfo.questID or nil;
+	LFGListFrame.EntryCreation.Name:SetEnabled(isAuthenticated and not isQuestListing);
+	LFGListFrame.EntryCreation.VoiceChat.EditBox:SetEnabled(isAuthenticated)
 end
 
 local function createEntryCreation()
 	miog.entryCreation = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.mainFrame, "MIOG_EntryCreation") ---@class Frame
 
 	local frame = miog.entryCreation
+
+	frame.selectedActivity = 0
 
 	--local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", frame, 200, 25)
 	--optionDropdown:SetPoint("TOPLEFT", frame, "TOPLEFT")
@@ -390,71 +792,62 @@ local function createEntryCreation()
 	activityDropDown:OnLoad()
 
 	---@diagnostic disable-next-line: undefined-field
+	local difficultyDropDown = frame.DifficultyDropDown
+	difficultyDropDown:OnLoad()
+
+	---@diagnostic disable-next-line: undefined-field
 	local playstyleDropDown = frame.PlaystyleDropDown
 	playstyleDropDown:OnLoad()
 
-	frame:HookScript("OnShow", function()
-		print(miog.pveFrame2.selectedActivity, C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel())
-		local activityInfo = C_LFGList.GetActivityInfoTable(miog.pveFrame2.selectedActivity or C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel() or activityDropDown.List:GetLayoutChildren()[1].value)
+	local nameField = LFGListFrame.EntryCreation.Name
+	nameField:ClearAllPoints()
+	nameField:SetAutoFocus(false)
+	nameField:SetParent(frame)
+	---@diagnostic disable-next-line: undefined-field
+	nameField:SetSize(250, 25)
+	nameField:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -80)
+	frame.Name = nameField
 
-		local info = {}
-		
-		info.entryType = "option"
-
-		if (activityInfo.isRatedPvpActivity) then
-			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
-			info.value = Enum.LFGEntryPlaystyle.Standard;
-			info.checked = false;
-			info.isRadio = true;
-			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Standard); end;
-			--UIDropDownMenu_AddButton(info);
-			playstyleDropDown:CreateEntryFrame(info)
+	local descriptionField = LFGListFrame.EntryCreation.Description
+	descriptionField:ClearAllPoints()
+	descriptionField:SetParent(frame)
+	---@diagnostic disable-next-line: undefined-field
+	descriptionField:SetSize(250, 50)
+	descriptionField:SetPoint("TOPLEFT", frame.Name, "BOTTOMLEFT", 0, -10)
+	frame.Description = descriptionField
 	
-			info.text =  C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
-			info.value = Enum.LFGEntryPlaystyle.Casual;
-			info.checked = false;
-			info.isRadio = true;
-			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Casual); end;
-			--UIDropDownMenu_AddButton(info);
-			playstyleDropDown:CreateEntryFrame(info)
-	
-			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
-			info.value = Enum.LFGEntryPlaystyle.Hardcore;
-			info.checked = false;
-			info.isRadio = true;
-			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
-			--UIDropDownMenu_AddButton(info);
-			playstyleDropDown:CreateEntryFrame(info)
-
-		else
-			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
-			info.value = Enum.LFGEntryPlaystyle.Standard;
-			info.checked = false;
-			info.isRadio = true;
-			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Standard); end;
-			--UIDropDownMenu_AddButton(info);
-			playstyleDropDown:CreateEntryFrame(info)
-	
-			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
-			info.value = Enum.LFGEntryPlaystyle.Casual;
-			info.checked = false;
-			info.isRadio = true;
-			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Casual); end;
-			--UIDropDownMenu_AddButton(info);
-			playstyleDropDown:CreateEntryFrame(info)
-	
-			info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
-			info.value = Enum.LFGEntryPlaystyle.Hardcore;
-			--info.func = function() LFGListEntryCreation_OnPlayStyleSelected(self, dropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
-			info.checked = false;
-			info.isRadio = true;
-			--UIDropDownMenu_AddButton(info);
-			playstyleDropDown:CreateEntryFrame(info)
-		end
-	end)
+	frame.Rating:SetPoint("TOPLEFT", frame.Description, "BOTTOMLEFT", 0, -10)
 	
 	--miogDropdown.List:MarkDirty()
 	--miogDropdown:MarkDirty()
+
+	local startGroup = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.entryCreation, 1, 20)
+	startGroup:SetPoint("RIGHT", miog.mainFrame.footerBar, "RIGHT")
+	startGroup:SetText("Start Group")
+	startGroup:FitToText()
+	startGroup:RegisterForClicks("LeftButtonDown")
+	startGroup:SetScript("OnClick", function()
+		--local honorLevel = 0;
+		--if ( LFGListEntryCreation_IsEditMode(self) ) then
+			--local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+			--if activeEntryInfo.isCrossFactionListing == isCrossFaction then
+				--print(frame.ActivityDropDown.CheckedValue.value, frame.ItemLevelEditBox:GetText(), 0, false, frame.Private:GetChecked(), 0, frame.RatingEditBox:GetText(), frame.RatingEditBox:GetText(), frame.PlaystyleDropDown.value, true)
+				--C_LFGList.UpdateListing(frame.ActivityDropDown.CheckedValue.value, frame.ItemLevelEditBox:GetText(), 0, false, frame.Private:GetChecked(), 0, frame.RatingEditBox:GetText(), frame.RatingEditBox:GetText(), frame.PlaystyleDropDown.value, true);
+			--else
+				-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
+				--C_LFGList.RemoveListing();
+				--C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+			--end
+			--LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
+		--else
+			--if(C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)) then
+			--	self.WorkingCover:Show();
+			--	LFGListEntryCreation_ClearFocus(self);
+			--end
+		--end
+
+		LFGListEntryCreation_ListGroup()
+	end)
 end
 
 local function createApplicationViewer()

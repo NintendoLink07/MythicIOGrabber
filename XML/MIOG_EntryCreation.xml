@@ -18,6 +18,7 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                 </Anchors>
             </Frame>
+            
 
             <Frame parentKey="DifficultyDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
                 <Size y="25" />
@@ -26,48 +27,60 @@
                 </Anchors>
             </Frame>
 
-            <EditBox parentKey="TitleEditBox" inherits="InputBoxTemplate">
-                <Size x="350" y="25" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="7" y="-50"/>
-                </Anchors>
-            </EditBox>
-
-            <EditBox parentKey="DescriptionEditBox" inherits="InputBoxTemplate">
-                <Size x="350" y="75" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleEditBox" relativePoint="BOTTOMLEFT" y="-20"/>
-                </Anchors>
-            </EditBox>
-
             <Frame parentKey="PlaystyleDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                <Size x="125" y="25" />
+                <Size y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.DescriptionEditBox" relativePoint="BOTTOM" y="-20"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-50"/>
                 </Anchors>
             </Frame>
 
-            <EditBox parentKey="RatingEditBox" inherits="InputBoxTemplate">
-                <Size x="100" y="25" />
+            <EditBox parentKey="Name" autoFocus="false" hidden="true">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOMLEFT" y="-10"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOMLEFT" x="10" y="-5"/>
                 </Anchors>
             </EditBox>
 
-            <EditBox parentKey="ItemLevelEditBox" inherits="InputBoxTemplate">
-                <Size x="100" y="25" />
+            <EditBox parentKey="Description" inherits="LargeInputBoxTemplate" autoFocus="false" multiLine="true">
+                <Size x="350" y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.RatingEditBox" relativePoint="BOTTOMLEFT" y="-10"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
             </EditBox>
 
-            <EditBox parentKey="VoiceChatEditBox" inherits="InputBoxTemplate">
+            <EditBox parentKey="Rating" inherits="InputBoxTemplate" autoFocus="false">
                 <Size x="100" y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ItemLevelEditBox" relativePoint="BOTTOMLEFT" y="-10"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Description" relativePoint="BOTTOMLEFT" y="-10"/>
                 </Anchors>
             </EditBox>
 
+            <EditBox parentKey="ItemLevel" inherits="InputBoxTemplate" autoFocus="false">
+                <Size x="100" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Rating" relativePoint="BOTTOMLEFT" y="-10"/>
+                </Anchors>
+            </EditBox>
+
+            <EditBox parentKey="VoiceChat" inherits="InputBoxTemplate" autoFocus="false">
+                <Size x="100" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ItemLevel" relativePoint="BOTTOMLEFT" y="-10"/>
+                </Anchors>
+            </EditBox>
+
+            <CheckButton parentKey="PrivateGroup" inherits="UICheckButtonTemplate">
+                <Size x="22" y="22" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.VoiceChat" relativePoint="BOTTOMLEFT" y="-10"/>
+                </Anchors>
+            </CheckButton>
+
+            <CheckButton parentKey="CrossFaction" inherits="UICheckButtonTemplate">
+                <Size x="22" y="22" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.PrivateGroup" relativePoint="BOTTOMLEFT" y="-10"/>
+                </Anchors>
+            </CheckButton>
         </Frames>
     </Frame>
 </Ui>

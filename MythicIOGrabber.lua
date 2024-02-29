@@ -2908,7 +2908,6 @@ miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
 		local isInitialLogin, isReloadingUi = ...
 
-
 		if(isInitialLogin or isReloadingUi) then
 			updateRosterInfoData()
 
@@ -2920,11 +2919,12 @@ miog.OnEvent = function(_, event, ...)
 
 	elseif(event == "PLAYER_LOGIN") then
 
-		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
+		C_MythicPlus.RequestMapInfo()
 
 		C_MythicPlus.RequestCurrentAffixes()
 
-		C_MythicPlus.RequestMapInfo()
+		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
+
 		
 		miog.checkForSavedSettings()
 		miog.createFrames()
@@ -2969,8 +2969,22 @@ miog.OnEvent = function(_, event, ...)
 
 		DevTools_Dump({C_PvP.GetAvailableBrawlInfo()})
 		DevTools_Dump({C_PvP.GetSpecialEventBrawlInfo()})]]
-		
 		C_MythicPlus.GetCurrentAffixes()
+		
+		if(not miog.searchPanel.filterFrame.dungeonPanel) then
+			local currentSeason = C_MythicPlus.GetCurrentSeason()
+
+			miog.F.CURRENT_SEASON = currentSeason
+			miog.F.PREVIOUS_SEASON = currentSeason - 1
+
+			--print(miog.F.CURRENT_SEASON)
+
+			miog.addDungeonCheckboxes()
+			--miog.initializeActivityDropdown()
+
+		end
+
+
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
 		miog.F.ACTIVE_ENTRY_INFO = C_LFGList.GetActiveEntryInfo()
 
@@ -3388,7 +3402,7 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		print("UPDATE LIST")
 		miog.updateQueueDropDown()
-		miog.initializeActivityDropdown()
+		--miog.initializeActivityDropdown()
 
 		local lastFrame = nil
 	
@@ -3412,6 +3426,13 @@ miog.OnEvent = function(_, event, ...)
 				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.StartGroup:SetScript("OnClick", function()
 					miog.F.LISTED_CATEGORY_ID = categoryID
+					miog.LFG_LIST_FILTER = Enum.LFGListFilter.Recommended
+					miog.pveFrame2.filters = miog.LFG_LIST_FILTER
+					miog.pveFrame2.categoryID = categoryID
+
+					miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+					
+					miog.initializeActivityDropdown()
 					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation)
 				end)
 				---@diagnostic disable-next-line: undefined-field
@@ -3441,9 +3462,6 @@ miog.OnEvent = function(_, event, ...)
 
 					--miog.requestSearchResults(categoryID, miog.LFG_LIST_FILTER)
 					LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
-
-					miog.mainFrame:Show()
-					miog.searchPanel:Show()
 				end)
 			
 				lastFrame = categoryFrame
@@ -3465,6 +3483,12 @@ miog.OnEvent = function(_, event, ...)
 					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.StartGroup:SetScript("OnClick", function()
 						miog.F.LISTED_CATEGORY_ID = categoryID
+						miog.LFG_LIST_FILTER = Enum.LFGListFilter.NotRecommended
+						miog.pveFrame2.filters = miog.LFG_LIST_FILTER
+						miog.pveFrame2.categoryID = categoryID
+
+						miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+						miog.initializeActivityDropdown()
 						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation)
 					end)
 ---@diagnostic disable-next-line: undefined-field
@@ -3492,8 +3516,6 @@ miog.OnEvent = function(_, event, ...)
 						LFGListSearchPanel_DoSearch(searchPanel)
 						--miog.requestSearchResults(categoryID, miog.LFG_LIST_FILTER)
 						LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
-						miog.mainFrame:Show()
-						miog.searchPanel:Show()
 					end)
 			
 					lastFrame = notRecommendedFrame
