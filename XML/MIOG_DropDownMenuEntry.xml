@@ -9,10 +9,6 @@
 
         <Frames>
             <CheckButton parentKey="Radio" inherits="UIRadioButtonTemplate">
-                <!--<Attributes>
-                    <Attribute name="type" value="macro" />
-                    <Attribute name="macrotext1" value="/run print(securecall(issecure))" type="global" />
-                </Attributes>-->
                 <Size x="16" y="16" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" />

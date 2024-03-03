@@ -5,18 +5,20 @@ miog.setAffixes = function()
 
 	if(affixIDs) then
 		local affixString = ""
+		miog.applicationViewer.CreationSettings.Affixes.tooltipText = affixString
 
 		for index, affix in ipairs(affixIDs) do
 
 			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
 
 			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, 0, 1, 0, 1)
-			miog.applicationViewer.infoPanel.affixFrame.tooltipText = miog.applicationViewer.infoPanel.affixFrame.tooltipText .. name .. (index < #affixIDs and ", " or "")
+			miog.applicationViewer.CreationSettings.Affixes.tooltipText = miog.applicationViewer.CreationSettings.Affixes.tooltipText .. name .. (index < #affixIDs and ", " or "")
 
 			miog.F.WEEKLY_AFFIX = affixIDs[1].id
 		end
 
-		miog.applicationViewer.infoPanel.affixFrame.FontString:SetText(affixString)
+		print(affixString)
+		miog.applicationViewer.CreationSettings.Affixes:SetText(affixString)
 
 	else
 		return nil
@@ -47,6 +49,13 @@ miog.createLeftRightLines = function(frame, thickness, r, g, b, a)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1(), top=0, bottom=0}} )
 	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color
 	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 0) -- border color
+
+end
+
+miog.createFrameWithBackgroundAndBorder = function(frame, thickness, r, g, b, a)
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness} )
+	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color
+	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), 0.3) -- border color
 
 end
 
@@ -121,14 +130,14 @@ miog.checkForActiveFilters = function(filterPanel)
 	local filtersActive = false
 
 	for _, v in pairs(filterPanel.classFilterPanel.ClassPanels) do
-		if(not v.Button:GetChecked()) then
+		if(not v.Class.Button:GetChecked()) then
 			filtersActive = true
 			break
 
 		end
 
-		for _, y in pairs(v.specFilterPanel.SpecButtons) do
-			if(not y:GetChecked()) then
+		for _, y in pairs(v.SpecFrames) do
+			if(not y.Button:GetChecked()) then
 				filtersActive = true
 				break
 
@@ -152,6 +161,25 @@ miog.checkForActiveFilters = function(filterPanel)
 	return filtersActive
 end
 
+miog.retrieveBackgroundImageFromGroupActivityID = function(groupActivityID, type)
+	local groupActivity = miog.GROUP_ACTIVITY[groupActivityID]
+
+	if(groupActivity) then
+		if(type == "background" and string.find(groupActivity.file, "groupFinder") or type == "icon" and miog.MAP_INFO[groupActivity.mapID]) then
+			return type == "background" and miog.GROUP_ACTIVITY[groupActivityID].file or type == "icon" and miog.MAP_INFO[groupActivity.mapID].icon
+
+		else
+			local journalID = C_EncounterJournal.GetInstanceForGameMap(miog.GROUP_ACTIVITY[groupActivityID].mapID)
+			local _, _, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, _ = EJ_GetInstanceInfo(journalID)
+			
+			return type == "background" and loreImage or type == "icon" and buttonImage2
+		
+		end
+	end
+
+	return nil
+end
+
 miog.retrieveMapIDFromGFID = function(groupFinderID)
 	for k, v in pairs(miog.MAP_INFO) do
 		if(v.gfID == groupFinderID) then
@@ -163,7 +191,6 @@ end
 miog.checkIfDungeonIsInCurrentSeason = function(activityID)
 	if(miog.ACTIVITY_ID_INFO[activityID]) then
 		for _, seasonID in ipairs(miog.ACTIVITY_ID_INFO[activityID].mPlusSeasons) do
-			print(seasonID, miog.F.CURRENT_SEASON)
 			if(seasonID == miog.F.CURRENT_SEASON) then
 				return true
 

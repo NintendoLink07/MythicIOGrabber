@@ -5,6 +5,368 @@
     </Font>
 
     <Frame name="MIOG_ApplicationViewer" inherits="BackdropTemplate" virtual="true">
-        <Size x="330" y="500" />
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+
+        <Frames>
+            <Frame parentKey="ClassPanel" inherits="MIOG_ClassPanel">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="TitleBar" inherits="BackdropTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                            </Anchors>
+                            <Scripts>
+                                <OnEnter>
+                                    if(self:IsTruncated()) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                        GameTooltip:SetText(self:GetText())
+                                        GameTooltip:Show()
+                                    end
+                                </OnEnter>
+                                <OnLeave>
+		                            GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
+                        </FontString>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Faction">
+                            <Size x="18" y="18" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="GroupComposition" inherits="BackdropTemplate">
+                        <Size x="110" y="18" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Faction" relativePoint="LEFT" y="-1"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Party" inherits="HorizontalLayoutFrame">
+                                <KeyValues>
+                                    <KeyValue key="fixedHeight" value="18" type="number" />
+                                    <KeyValue key="minimumWidth" value="20" type="number" />
+                                </KeyValues>
+                                <Anchors>
+                                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="Roles" font="LibMono" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="0/0/0" wordwrap="false">
+                                    <Anchors>
+                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="InfoPanel" inherits="BackdropTemplate">
+                <Size y="80" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" setAllPoints="true" />
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Activity" font="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="ActivityName" wordwrap="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                            </Anchors>
+
+                            <Color r="1" g="0.8" b="0" a="1" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <ScrollFrame parentKey="CommentScrollFrame" inherits="ScrollFrameTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Activity" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnShow>
+                                self.ScrollBar:Hide()
+                            </OnShow>
+                        </Scripts>
+                    </ScrollFrame>
+
+                    <Frame parentKey="CommentFrame">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.CommentScrollFrame" relativePoint="TOPLEFT" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.CommentScrollFrame" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:GetParent().CommentScrollFrame:SetScrollChild(self)
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="CreationSettings" inherits="BackdropTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InfoPanel" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.InfoPanel" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="PrivateGroup" file="Interface/Addons/MythicIOGrabber/res/infoIcons/questionMark_Grey.png">
+                            <KeyValues>
+                                <KeyValue key="active" value="false" type="global" />
+                            </KeyValues>
+
+                            <Size x="7" y="18" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3"/>
+                            </Anchors>
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetText("Group listing is set to private")
+                                    GameTooltip:Show()
+                                </OnEnter>
+                                <OnLeave>
+                                    GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
+                        </Texture>
+
+                        <Texture parentKey="VoiceChat" file="Interface/Addons/MythicIOGrabber/res/infoIcons/voiceChatOff.png">
+                            <KeyValues>
+                                <KeyValue key="tooltipText" value="" type="global" />
+                            </KeyValues>
+
+                            <Size x="15" y="18" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.PrivateGroup" relativePoint="RIGHT" x="3"/>
+                            </Anchors>
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetText(self.tooltipText)
+                                    GameTooltip:Show()
+                                </OnEnter>
+                                <OnLeave>
+                                    GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
+                        </Texture>
+
+                        <Texture parentKey="Playstyle" file="Interface/Addons/MythicIOGrabber/res/infoIcons/book.png">
+                            <KeyValues>
+                                <KeyValue key="tooltipText" value="" type="global" />
+                            </KeyValues>
+
+                            <Size x="20" y="20" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.VoiceChat" relativePoint="RIGHT" x="3"/>
+                            </Anchors>
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetText(self.tooltipText)
+                                    GameTooltip:Show()
+                                </OnEnter>
+                                <OnLeave>
+                                    GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="Rating">
+                        <Size x="50" y="20" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Playstyle" relativePoint="RIGHT" x="3"/>
+                            </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Texture" file="Interface/Addons/MythicIOGrabber/res/infoIcons/skull.png">
+
+                                    <Size x="20" y="20" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                GameTooltip:SetText(self.tooltipText)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="ItemLevel">
+                        <Size x="45" y="20" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="3"/>
+                            </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Texture" file="Interface/Addons/MythicIOGrabber/res/infoIcons/itemsacks.png">
+                                    <Size x="20" y="20" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                GameTooltip:SetText(self.tooltipText)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Affixes" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true">
+                            <KeyValues>
+                                <KeyValue key="tooltipText" value="" type="global" />
+                            </KeyValues>
+
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="3" />
+                            </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetText(self.tooltipText)
+                                    GameTooltip:Show()
+                                </OnEnter>
+                                <OnLeave>
+                                    GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
+                        </FontString>
+                        
+                        <FontString parentKey="Timer" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0:00:00" wordwrap="true" nonspacewrap="true">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Affixes" relativePoint="RIGHT" x="3" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+            
+            <Frame parentKey="ButtonPanel">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Frames>
+                    <Button parentKey="Expand" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:OnLoad()
+                                self:SetMaxStates(2)
+                                self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                                self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                                self:SetState(false)
+                            </OnLoad>
+                            <OnClick>
+                                self:AdvanceState()
+			                    self:GetParent().FilterFrame:SetShown(not self:GetParent().FilterFrame:IsVisible())
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FilterString" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="No filters" wordwrap="true" nonspacewrap="true">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="3" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
     </Frame>
 </Ui>

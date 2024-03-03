@@ -1,0 +1,24 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ClassSpecSingleOptionTemplate" virtual="true">
+        <Frames>
+            <CheckButton parentKey="Button" inherits="MIOG_MinimalCheckButtonTemplate">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                </Anchors>
+            </CheckButton>
+        </Frames>
+        
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Texture">
+                    <Size x="16" y="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

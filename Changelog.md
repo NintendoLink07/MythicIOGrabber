@@ -40,6 +40,9 @@ You can click on the frame of a manual application to switch over to the group f
 
 - While looking for members for your manually listed group you can edit everything right from the same window by double clicking on what you wanna change. Saves pressing the edit button, though you can still do that if you prefer that.
 
+### Fixed
+
+- You can (once again) switch to the options panel from the settings gear in the top right
 
 
 

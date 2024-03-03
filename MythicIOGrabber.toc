@@ -22,6 +22,10 @@ MultiStateButton.lua
 SlickDropDown.lua
 PVEFrame2.lua
 
+Blizzard_ChallengesFrameMixin.lua
+Blizzard_ChallengeModeWeeklyChestMixin.lua
+Blizzard_WeeklyRewardsMixin.lua
+
 XML\MIOG_ApplicantMemberFrameTemplate.xml
 XML\MIOG_ResultFrameTemplate.xml
 XML\MIOG_DetailedInformationPanelTemplate.xml
@@ -33,9 +37,20 @@ XML\MIOG_GroupMemberTemplate.xml
 XML\MIOG_ResultFrameBossFrameTemplate.xml
 XML\MIOG_RaidPanelTemplate.xml
 XML\MIOG_RaidPanelTierTemplate.xml
+
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_QueueFrame.xml
 XML\MIOG_MenuButtonTemplate.xml
+
 XML\MIOG_EntryCreation.xml
+XML\MIOG_ApplicationViewer.xml
+XML\MIOG_ClassPanel.xml
+XML\MIOG_ClassPanelClassFrameTemplate.xml
+XML\MIOG_ClassPanelSpecFrameTemplate.xml
+
 XML\MIOG_DropDownMenu.xml
 XML\MIOG_DropDownMenuEntry.xml
+
+XML\MIOG_MinimalCheckButtonTemplate.xml
+XML\MIOG_ClassSpecFilterRowTemplate.xml
+XML\MIOG_ClassSpecSingleOptionTemplate.xml

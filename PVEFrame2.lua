@@ -15,6 +15,7 @@ local function resetQueueFrame(_, frame)
 	local objectType = frame:GetObjectType()
 
 	if(objectType == "Frame") then
+		frame:SetScript("OnMouseDown", nil)
 		frame.Name:SetText("")
 		frame.Age:SetText("")
 
@@ -51,6 +52,189 @@ local function createPVEFrameReplacement()
 	miog.createFrameBorder(frame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	--frame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
+	frame:HookScript("OnShow", function(selfPVEFrame)
+			for frameIndex = 1, 3, 1 do
+				local activities = C_WeeklyRewards.GetActivities(frameIndex)
+				local firstThreshold = activities[1].progress >= activities[1].threshold;
+				local secondThreshold = activities[2].progress >= activities[2].threshold;
+				local thirdThreshold = activities[3].progress >= activities[3].threshold;
+				local currentColor = thirdThreshold and miog.CLRSCC.green or secondThreshold and miog.CLRSCC.yellow or firstThreshold and miog.CLRSCC.orange or miog.CLRSCC.red
+				local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+				dimColor[4] = 0.1
+
+				local currentFrame = frameIndex == 1 and frame.MPlusStatus or frameIndex == 2 and frame.HonorStatus or frame.RaidStatus
+
+				if(currentFrame.ticks) then
+					for k, v in pairs(currentFrame.ticks) do
+						miog.persistentTexturePool:Release(v)
+						currentFrame.ticks[k] = nil
+
+					end
+
+				end
+
+				currentFrame:SetMinMaxValues(0, activities[3].threshold)
+				currentFrame.info = (thirdThreshold or secondThreshold) and activities[3] or firstThreshold and activities[2] or activities[1]
+				currentFrame.unlocked = currentFrame.info.progress >= currentFrame.info.threshold;
+
+				currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+				miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
+
+				currentFrame:SetScript("OnEnter", function(self)
+
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11);
+
+					if self.info then
+						local itemLink, upgradeItemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.info.id);
+						local itemLevel, upgradeItemLevel;
+						if itemLink then
+							itemLevel = GetDetailedItemLevelInfo(itemLink);
+						end
+						if upgradeItemLink then
+							upgradeItemLevel = GetDetailedItemLevelInfo(upgradeItemLink);
+						end
+						if not itemLevel then
+							--GameTooltip_AddErrorLine(GameTooltip, RETRIEVING_ITEM_INFO);
+							--self.UpdateTooltip = self.ShowPreviewItemTooltip;
+						
+						end
+
+						local canShow = self:CanShowPreviewItemTooltip()
+						
+						GameTooltip_SetTitle(GameTooltip, GREAT_VAULT_REWARDS);
+						GameTooltip_AddBlankLineToTooltip(GameTooltip);
+					
+						local hasRewards = C_WeeklyRewards.HasAvailableRewards();
+						if hasRewards then
+							GameTooltip_AddColoredLine(GameTooltip, GREAT_VAULT_REWARDS_WAITING, GREEN_FONT_COLOR);
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
+						end
+
+						if self.info.type == Enum.WeeklyRewardChestThresholdType.Activities then
+							if(canShow) then
+								local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(self.info.activityTierID, self.info.level);
+								if hasData then
+									upgradeItemLevel = nextItemLevel;
+								else
+									nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(self.info.level);
+								end
+								self:HandlePreviewMythicRewardTooltip(itemLevel, upgradeItemLevel, nextLevel);
+
+							else
+								self:ShowIncompleteMythicTooltip();
+
+							end
+
+						elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
+							print("RAID")
+							local currentDifficultyID = self.info.level;
+
+							if(itemLevel) then
+								local currentDifficultyName = DifficultyUtil.GetDifficultyName(currentDifficultyID);
+								GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_RAID, itemLevel, currentDifficultyName));
+								GameTooltip_AddBlankLineToTooltip(GameTooltip);
+							end
+							
+							--
+							--print(nextDifficultyID)
+							--if nextDifficultyID then
+							--	print("GOT DIFF ID")
+								if upgradeItemLevel then
+									local nextDifficultyID = DifficultyUtil.GetNextPrimaryRaidDifficultyID(currentDifficultyID);
+									local difficultyName = DifficultyUtil.GetDifficultyName(nextDifficultyID);
+									GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
+									GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_RAID, difficultyName));
+								end
+					
+								local encounters = C_WeeklyRewards.GetActivityEncounterInfo(self.info.type, self.info.index);
+								if encounters then
+									table.sort(encounters, function(left, right)
+										if left.instanceID ~= right.instanceID then
+											return left.instanceID < right.instanceID;
+										end
+										local leftCompleted = left.bestDifficulty > 0;
+										local rightCompleted = right.bestDifficulty > 0;
+										if leftCompleted ~= rightCompleted then
+											return leftCompleted;
+										end
+										return left.uiOrder < right.uiOrder;
+									end)
+									local lastInstanceID = nil;
+									for index, encounter in ipairs(encounters) do
+										local name, description, encounterID, rootSectionID, link, instanceID = EJ_GetEncounterInfo(encounter.encounterID);
+										if instanceID ~= lastInstanceID then
+											local instanceName = EJ_GetInstanceInfo(instanceID);
+											--GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_ENCOUNTER_LIST, instanceName));
+											--GameTooltip_AddBlankLineToTooltip(GameTooltip);	
+											lastInstanceID = instanceID;
+										end
+										if name then
+											if encounter.bestDifficulty > 0 then
+												local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty);
+												GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName), miog.RAID_DIFFICULTY_UTIL_IDS_TO_COLOR[encounter.bestDifficulty]);
+											else
+												GameTooltip_AddColoredLine(GameTooltip, string.format(DASH_WITH_TEXT, name), DISABLED_FONT_COLOR);
+											end
+										end
+									end
+								end
+							--end
+
+						elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
+							if not ConquestFrame_HasActiveSeason() then
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip_AddDisabledLine(GameTooltip, UNAVAILABLE);
+								GameTooltip_AddNormalLine(GameTooltip, CONQUEST_REQUIRES_PVP_SEASON);
+								GameTooltip:Show();
+								return;
+							end
+						
+							local weeklyProgress = C_WeeklyRewards.GetConquestWeeklyProgress();
+							local unlocksCompleted = weeklyProgress.unlocksCompleted or 0;
+						
+							local maxUnlocks = weeklyProgress.maxUnlocks or 3;
+							local description;
+							if unlocksCompleted > 0 then
+								description = RATED_PVP_WEEKLY_VAULT_TOOLTIP:format(unlocksCompleted, maxUnlocks);
+
+							else
+								description = RATED_PVP_WEEKLY_VAULT_TOOLTIP_NO_REWARDS:format(unlocksCompleted, maxUnlocks);
+
+							end
+
+							GameTooltip_AddNormalLine(GameTooltip, description);
+						
+							--GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+							--GameTooltip:Show();
+						end
+
+						GameTooltip_AddBlankLineToTooltip(GameTooltip);
+						GameTooltip_AddInstructionLine(GameTooltip, WEEKLY_REWARDS_CLICK_TO_PREVIEW_INSTRUCTIONS);
+
+						GameTooltip:Show()
+
+					end
+				end)
+				currentFrame:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+			
+				end)
+				
+
+				currentFrame.ticks = {}
+
+				if(not secondThreshold) then
+					for tickIndex = 1, 2, 1 do
+						local tick = miog.createBasicTexture("persistent", "Interface\\ChatFrame\\ChatFrameBackground", currentFrame, 20, 5)
+						tick:SetPoint("BOTTOMLEFT", currentFrame, "BOTTOMLEFT", 0, currentFrame:GetHeight() / (activities[3].threshold / activities[tickIndex].threshold))
+						currentFrame.ticks[tickIndex] = tick
+					end
+				end
+
+				currentFrame:SetValue(activities[3].progress)
+			end
+	end)
+
 	miog.pveFrame2 = frame
 	--PVEFrame:SetAlpha(0)
 	--PVEFrame:HookScript("OnShow", function(self)
@@ -63,6 +247,44 @@ local function createPVEFrameReplacement()
 
 ---@diagnostic disable-next-line: undefined-field
 	miog.createFrameBorder(frame.QueuePanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	local backdropFrame = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/backgrounds/df-bg-1.png", frame)
+	backdropFrame:SetVertTile(true)
+	backdropFrame:SetHorizTile(true)
+	backdropFrame:SetDrawLayer("BACKGROUND", -8)
+	backdropFrame:SetPoint("TOPLEFT", frame, "TOPLEFT")
+	backdropFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
+	backdropFrame:Hide()
+
+	frame.backdropFrame = backdropFrame
+
+	local expandDownwardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", frame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
+	expandDownwardsButton:SetPoint("RIGHT", frame.TitleBar.Settings, "LEFT", 0, -expandDownwardsButton:GetHeight() / 4)
+	expandDownwardsButton:SetNormalTexture(293770)
+	expandDownwardsButton:SetPushedTexture(293769)
+	expandDownwardsButton:SetDisabledTexture(293768)
+	expandDownwardsButton:RegisterForClicks("LeftButtonDown")
+	expandDownwardsButton:SetScript("OnClick", function()
+
+		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
+
+		if(MIOG_SavedSettings.frameExtended.value) then
+			--positionTab1ToActiveFrame(mainFrame)
+
+		elseif(not MIOG_SavedSettings.frameExtended.value) then
+			--positionTab1ToPVEFrame(mainFrame)
+
+		end
+	end)
+	frame.expandDownwardsButton = expandDownwardsButton
+
+	local raiderIOAddonIsLoadedFrame = miog.createBasicFontString("persistent", 16, frame)
+	raiderIOAddonIsLoadedFrame:SetPoint("RIGHT", frame.TitleBar.Settings, "LEFT", - 5 - expandDownwardsButton:GetWidth(), 0)
+	raiderIOAddonIsLoadedFrame:SetJustifyH("RIGHT")
+	raiderIOAddonIsLoadedFrame:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
+	raiderIOAddonIsLoadedFrame:SetShown(not miog.F.IS_RAIDERIO_LOADED)
+	frame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
+
 
 ---@diagnostic disable-next-line: undefined-field
 	queueSystem.framePool = CreateFramePool("Frame", miog.pveFrame2.QueuePanel.Container, "MIOG_QueueFrame", resetQueueFrame)
@@ -86,6 +308,13 @@ local function createPVEFrameReplacement()
 		self:ClearFocus();
 	
 	end)]]
+
+	
+	local scrollBox = LFGListFrame.SearchPanel.ScrollBox
+	scrollBox:ClearAllPoints()
+	scrollBox:SetParent(frame)
+	scrollBox:Hide()
+	frame.ScrollBox = scrollBox
 
 ---@diagnostic disable-next-line: undefined-field
 	local rolePanel = frame.RolePanel
@@ -356,8 +585,8 @@ local function updatePvP()
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.pveFrame2.QueueDropDown
 
-	if(queueDropDown.entryFrameTree[5].List.framePool) then
-		queueDropDown.entryFrameTree[5].List.framePool:ReleaseAll()
+	if(queueDropDown.entryFrameTree[5].List.securePool) then
+		queueDropDown.entryFrameTree[5].List.securePool:ReleaseAll()
 	end
 
 	local info = {}
@@ -520,7 +749,7 @@ miog.updatePvP = updatePvP
 local function updateQueueDropDown()
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.pveFrame2.QueueDropDown
-	queueDropDown.List.framePool:ReleaseAll()
+	queueDropDown:ResetDropDown()
 
 	print("UPDATE QUEUE")
 --SetLFGDungeon(LE_LFG_CATEGORY_RF, RaidFinderQueueFrame.raid);
@@ -855,10 +1084,12 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 	for categoryID = 1, NUM_LE_LFG_CATEGORYS do
 		local mode, submode = GetLFGMode(categoryID);
 
+		--print(mode, submode)
+
 		if (mode and submode ~= "noteleport" ) then
 
-			local activeIndex = nil;
-			local allNames = {};
+			--local activeIndex = nil;
+			--local allNames = {};
 
 				--Get the list of everything we're queued for
 			queuedList = GetLFGQueuedList(categoryID, queuedList) or {}
@@ -868,19 +1099,19 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 				mode, submode = GetLFGMode(categoryID, queueID);
 				if ( mode ) then
 					--Save off the name (we'll remove the active one later)
-					allNames[#allNames + 1] = queueID
-					if ( mode ~= "queued" and mode ~= "listed" and mode ~= "suspended" ) then
-						activeID = queueID;
-						activeIndex = #allNames;
-					elseif ( not activeID ) then
-						activeID = queueID;
-						activeIndex = #allNames;
-					end
+					--allNames[#allNames + 1] = queueID
+					--if ( mode ~= "queued" and mode ~= "listed" and mode ~= "suspended" ) then
+						--activeID = queueID;w
+						--activeIndex = #allNames;
+					--elseif ( not activeID ) then
+						--activeID = queueID;
+					--	activeIndex = #allNames;
+					--end
 				end
 
 				if(queued == true) then
 					--local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
-					local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, activeID or queueID)
+					local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
 					--print(activeID, queueID, averageWait, tankWait, healerWait, damageWait, myWait)
 					--print(queueID, hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime)
 
@@ -892,7 +1123,7 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 						[1] = hasData,
 						[11] = name,
 						[12] = averageWait,
-						[17] = queuedTime,
+						[17] = {"queued", queuedTime},
 						[18] = queueID,
 						[19] = categoryID == 1 and "LFD" or categoryID == 3 and "LFR",
 						[20] = miog.MAP_INFO[queueID] and miog.MAP_INFO[queueID].icon or fileID or nil
@@ -1013,26 +1244,78 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 	--Try LFGList entries
 	local isActive = C_LFGList.HasActiveEntryInfo();
 	if ( isActive ) then
-		--local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
-		--local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants();
+		local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+		local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants();
 		--QueueStatusEntry_SetMinimalDisplay(entry, activeEntryInfo.name, QUEUED_STATUS_LISTED, string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants));
+		local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
+
+		local icon = miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "icon")
+
+		local queueStats = {
+			[1] = true,
+			[11] = "YOUR LISTING",
+			[12] = -1,
+			[17] = {"duration", activeEntryInfo.duration},
+			[18] = "YOURLISTING",
+			[19] = "LFM",
+			[20] = icon
+		}
+
+		miog.createQueueFrame(queueStats)
+
+		miog.queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+		miog.queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
+		miog.queueSystem.queueFrames["YOURLISTING"]:SetScript("OnMouseDown", function()
+			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
+		end)
 
 		--miog.createQueueFrame(categoryID, {GetLFGDungeonInfo(activeID)}, {GetLFGQueueStats(categoryID)})
 	end
---[[
+
 	--Try LFGList applications
 	local apps = C_LFGList.GetApplications();
 	for i=1, #apps do
-		local _, appStatus = C_LFGList.GetApplicationInfo(apps[i])
+		local id, appStatus, pendingStatus, appDuration, role = C_LFGList.GetApplicationInfo(apps[i])
 
 		if ( appStatus == "applied" or appStatus == "invited" ) then
-			QueueStatusEntry_SetUpLFGListApplication(entry, apps[i]);
+			--QueueStatusEntry_SetUpLFGListApplication(entry, apps[i]);
+			local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
+			local activityName = C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode);
+
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+
+			local icon = miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "icon")
+
+			local identifier = "APPLICATION_" .. id
+	
+			local queueStats = {
+				[1] = true,
+				[11] = searchResultInfo.name,
+				[12] = -1,
+				[17] = {"duration", appDuration},
+				[18] = identifier,
+				[19] = "LFM",
+				[20] = icon
+			}
+	
+			miog.createQueueFrame(queueStats)
+	
+			miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+
+			--[[miog.queueSystem.queueFrames["YOURLISTING"]:SetScript("OnMouseDown", function()
+				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
+			end)]]
 
 			if ( appStatus == "applied" ) then
+				
+
+			elseif(appStatus == "invited") then
+				miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+			
 			end
 		end
 	end 
-
+--[[
 	local inProgress, _, _, _, _, isBattleground = GetLFGRoleUpdate();
 
 	--Try PvP Role Check
@@ -1077,7 +1360,7 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 						[1] = true,
 						[11] = mapName,
 						[12] = estimatedTime,
-						[17] = queuedTime,
+						[17] = {"queued", queuedTime},
 						[18] = mapName,
 						[19] = "BATTLEGROUND",
 						[20] = findBattlegroundIconByName(mapName) or findBrawlIconByName(mapName)
@@ -1184,14 +1467,28 @@ local function createQueueFrame(queueInfo)
 
 	queueFrame.Name:SetText(queueInfo[11])
 
-	local ageNumber = GetTime() - queueInfo[17]
+	local ageNumber = 0
+
+	if(queueInfo[17][1] == "queued") then
+		ageNumber = GetTime() - queueInfo[17][2]
+
+		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
+			ageNumber = ageNumber + 1
+			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+		end)
+	elseif(queueInfo[17][1] == "duration") then
+		ageNumber = queueInfo[17][2]
+
+		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
+			ageNumber = ageNumber - 1
+			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+		end)
+	
+	end
+
 	queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
-
-	queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
-		ageNumber = ageNumber + 1
-		queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
-
-	end)
 
 	if(queueInfo[20]) then
 		queueFrame.Icon:SetTexture(queueInfo[20])

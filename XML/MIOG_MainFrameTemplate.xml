@@ -1,10 +1,12 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
+	<Script file="Blizzard_WeeklyRewardsMixin.lua"/>
+
     <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" movable="true" hidden="true" virtual="true">
+    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true">
         <Frames>
             <Frame parentKey="TitleBar">
                 <Size y="20" />
@@ -15,7 +17,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="TitleString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
+                        <FontString parentKey="TitleString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
                             <FontHeight val="12"/>
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
@@ -23,6 +25,69 @@
                         </FontString>
                     </Layer>
                 </Layers>
+
+                <Frames>
+                
+                    <Button parentKey="KnownIssuesPanel" inherits="IconButtonTemplate" hidden="true">
+                        <Size x="15" y="15"/>
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+						</Anchors>
+
+                        <NormalTexture atlas="glueannouncementpopup-icon-info" />
+                        <HighlightTexture atlas="glueannouncementpopup-icon-info" />
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(knownIssuesPanel, "ANCHOR_TOPRIGHT")
+                                GameTooltip:SetText(self.text)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+		                        GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+                        <Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								PVEFrame_ToggleFrame()
+							</OnClick>
+						</Scripts>
+					</Button>
+
+                    <Button parentKey="Settings">
+                        <Size x="20" y="20"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.CloseButton" relativePoint="LEFT" x="-2" />
+                        </Anchors>
+                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/settingGear.png" />
+                        <Scripts>
+							<OnClick>
+		                        Settings.OpenToCategory("MythicIOGrabber")
+							</OnClick>
+						</Scripts>
+                    </Button>
+                </Frames>
+
+                <Scripts>
+                    <OnLoad>
+
+                    </OnLoad>
+                </Scripts>
+                
+            </Frame>
+
+            <Frame parentKey="Plugin">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="190"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
             </Frame>
 
             <EditBox parentKey="SearchBox" secureReferenceKey="LFGListSearchBox" securityDisableSetText="true" inherits="SearchBoxTemplate" letters="64" hidden="true">
@@ -30,7 +95,6 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
-                
             </EditBox>
 
             <Frame parentKey="AutoCompleteFrame" frameLevel="20" hidden="true">
@@ -259,6 +323,51 @@
                 <Frames>
                 </Frames>
             </Frame>
+
+            <StatusBar parentKey="HonorStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin" orientation="VERTICAL" rotatesTexture="true">
+                <Size x="20" y="200" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+		                self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+                    </OnLoad>
+                    <OnMouseDown>
+                        WeeklyRewards_ShowUI()
+                    </OnMouseDown>
+                </Scripts>
+            </StatusBar>
+
+            <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin"  orientation="VERTICAL" rotatesTexture="true">
+                <Size x="20" y="200" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.HonorStatus" relativePoint="LEFT" x="-5"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+		                self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+                    </OnLoad>
+                    <OnMouseDown>
+                        WeeklyRewards_ShowUI()
+                    </OnMouseDown>
+                </Scripts>
+            </StatusBar>
+
+            <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin"  orientation="VERTICAL" rotatesTexture="true">
+                <Size x="20" y="200" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.RaidStatus" relativePoint="LEFT" x="-5"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+		                self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+                    </OnLoad>
+                    <OnMouseDown>
+                        WeeklyRewards_ShowUI()
+                    </OnMouseDown>
+                </Scripts>
+            </StatusBar>
         </Frames>
     </Frame>
 </Ui>

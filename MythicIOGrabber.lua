@@ -106,12 +106,12 @@ local function sortApplicantList(applicant1, applicant2)
 
 	for key, tableElement in pairs(miog.F.SORT_METHODS) do
 		if(tableElement.currentLayer == 1) then
-			local firstState = miog.applicationViewer.buttonPanel.sortByCategoryButtons[key]:GetActiveState()
+			local firstState = miog.applicationViewer.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
 
 			for innerKey, innerTableElement in pairs(miog.F.SORT_METHODS) do
 
 				if(innerTableElement.currentLayer == 2) then
-					local secondState = miog.applicationViewer.buttonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
+					local secondState = miog.applicationViewer.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
 
 					if(applicant1Member1.favoured and not applicant2Member1.favoured) then
 						return true
@@ -267,14 +267,17 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 		poolFrame:MarkDirty()
 	end)
 
+	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
+	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
+
 	local mythicPlusPanel = detailedInformationPanel.MythicPlusPanel
-	mythicPlusPanel:SetShown(miog.F.LISTED_CATEGORY_ID ~= 3 and true)
+	mythicPlusPanel:SetShown(categoryID ~= 3 and true)
 	mythicPlusPanel.rows = {}
 	mythicPlusPanel.dungeonFrames = {}
 
 	local raidPanel = detailedInformationPanel.RaidPanel
 	--raidPanel:SetPoint("TOPLEFT", tabPanel, "BOTTOMLEFT")
-	raidPanel:SetShown(miog.F.LISTED_CATEGORY_ID == 3 and true)
+	raidPanel:SetShown(categoryID == 3 and true)
 	raidPanel.rows = {}
 
 	-- 9 * 20
@@ -394,6 +397,9 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		end
 	end
 
+	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
+	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
+
 	if(profile) then
 		if(mythicKeystoneProfile and mythicKeystoneProfile.currentScore > 0 and mythicKeystoneProfile.sortedDungeons) then
 			table.sort(mythicKeystoneProfile.sortedDungeons, function(k1, k2)
@@ -501,7 +507,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 					if(sortedProgress.progress.raid.ordinal ~= lastOrdinal) then
 						raidIndex = raidIndex + 1
 
-						if(miog.F.LISTED_CATEGORY_ID == 3) then
+						if(categoryID == 3) then
 							if(primaryIndicator:GetText() ~= nil and secondaryIndicator:GetText() == nil) then
 								secondaryIndicator:SetText(basicProgressString)
 
@@ -516,7 +522,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 						local instanceID = C_EncounterJournal.GetInstanceForGameMap(sortedProgress.progress.raid.mapId)
 						currentTierFrame = raidPanel[raidIndex == 1 and "currentTier" or "lastTier"]
 
-						currentTierFrame.Icon:SetTexture(miog.MAP_INFO[sortedProgress.progress.raid.mapId][bossCount + 1].icon)
+						currentTierFrame.Icon:SetTexture(miog.MAP_INFO[sortedProgress.progress.raid.mapId].icon)
 						currentTierFrame.Icon:SetScript("OnMouseDown", function()
 							--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
 							EncounterJournal_OpenJournal(miog.F.CURRENT_RAID_DIFFICULTY, instanceID, nil, nil, nil, nil)
@@ -574,7 +580,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 						if(sortedProgress.progress.difficulty ~= higherDifficultyNumber) then
 
-							if(miog.F.LISTED_CATEGORY_ID == 3) then
+							if(categoryID == 3) then
 								if(secondaryIndicator:GetText() == nil) then
 									secondaryIndicator:SetText(basicProgressString) -- ACTUAL PROGRESS
 								end
@@ -616,7 +622,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 				else
 					mainProgressText = mainProgressText .. wticc(miog.DIFFICULTY[sortedProgress.progress.difficulty].shortName .. ":" .. sortedProgress.progress.progressCount .. "/" .. sortedProgress.progress.raid.bossCount, miog.DIFFICULTY[sortedProgress.progress.difficulty].color) .. " "
 
-					if(miog.F.LISTED_CATEGORY_ID == 3) then
+					if(categoryID == 3) then
 						if(primaryIndicator:GetText() == nil) then
 							primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
@@ -642,7 +648,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		else
 			raidPanel.rows[1].FontString:SetText(wticc("NO RAIDING DATA", miog.CLRSCC["red"]))
 
-			if(miog.F.LISTED_CATEGORY_ID == 3) then
+			if(categoryID == 3) then
 				primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 				secondaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
 
@@ -658,12 +664,12 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 
 	if(primaryIndicator:GetText() == nil) then
-		primaryIndicator:SetText(wticc(miog.F.LISTED_CATEGORY_ID == 3 and "0/0" or 0, miog.DIFFICULTY[-1].color))
+		primaryIndicator:SetText(wticc(categoryID == 3 and "0/0" or 0, miog.DIFFICULTY[-1].color))
 
 	end
 
 	if(secondaryIndicator:GetText() == nil) then
-		secondaryIndicator:SetText(wticc(miog.F.LISTED_CATEGORY_ID == 3 and "0/0" or 0, miog.DIFFICULTY[-1].color))
+		secondaryIndicator:SetText(wticc(categoryID == 3 and "0/0" or 0, miog.DIFFICULTY[-1].color))
 
 	end
 
@@ -936,8 +942,12 @@ local function createApplicantFrame(applicantID)
 				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
 
 			end
+			
 
-			if(miog.F.LISTED_CATEGORY_ID == 2) then
+			local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
+			local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
+
+			if(categoryID == 2) then
 				if(dungeonScore > 0) then
 					local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
 					local highestKeyForDungeon
@@ -971,7 +981,7 @@ local function createApplicantFrame(applicantID)
 
 				end
 
-			elseif(miog.F.LISTED_CATEGORY_ID == 4 or miog.F.LISTED_CATEGORY_ID == 7 or miog.F.LISTED_CATEGORY_ID == 8 or miog.F.LISTED_CATEGORY_ID == 9) then
+			elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForScore(pvpData.rating):GenerateHexColor()))
 
 				local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
@@ -995,138 +1005,143 @@ local function createApplicantFrame(applicantID)
 end
 
 local function gatherSortData()
+	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
 	local unsortedMainApplicantsList = {}
 
 	local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
 
-	for _, applicantID in pairs(currentApplicants) do
+	if(activeEntry) then
+		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
 
-		if(applicantSystem.applicantMember[applicantID]) then --CHECK IF ENTRY IS THERE
+		for _, applicantID in pairs(currentApplicants) do
 
-			local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
+			if(applicantSystem.applicantMember[applicantID]) then --CHECK IF ENTRY IS THERE
 
-			if(applicantSystem.applicantMember[applicantID] and applicantSystem.applicantMember[applicantID].status ~= "removable") then
-				if(applicantSystem.applicantMember[applicantID].memberData == nil) then -- FIRST TIME THIS APPLICANT APPLIES?
-					applicantSystem.applicantMember[applicantID].memberData = {}
+				local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
-					for applicantIndex = 1, applicantData.numMembers, 1 do
-						local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo
+				if(applicantSystem.applicantMember[applicantID] and applicantSystem.applicantMember[applicantID].status ~= "removable") then
+					if(applicantSystem.applicantMember[applicantID].memberData == nil) then -- FIRST TIME THIS APPLICANT APPLIES?
+						applicantSystem.applicantMember[applicantID].memberData = {}
 
-						if(miog.F.IS_IN_DEBUG_MODE) then
-							name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
+						for applicantIndex = 1, applicantData.numMembers, 1 do
+							local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo
 
-						else
-							name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
+							if(miog.F.IS_IN_DEBUG_MODE) then
+								name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
 
-						end
-
-						local nameTable = miog.simpleSplit(name, "-")
-
-						if(not nameTable[2]) then
-							nameTable[2] = GetNormalizedRealmName()
-
-						end
-
-						applicantSystem.applicantMember[applicantID].memberData[applicantIndex] = {
-							name = nameTable[1],
-							realm = nameTable[2],
-							fullName = name,
-							role = assignedRole,
-							class = class,
-							specID = specID,
-							ilvl = itemLevel,
-						}
-
-						if(applicantIndex == 1) then -- GET SORT DATA
-							local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
-							local profile, primarySortAttribute, secondarySortAttribute
-
-							if(miog.F.IS_RAIDERIO_LOADED) then
-								profile = RaiderIO.GetProfile(nameTable[1], nameTable[2], miog.F.CURRENT_REGION)
+							else
+								name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
 
 							end
 
-							if(miog.F.LISTED_CATEGORY_ID ~= 3 and miog.F.LISTED_CATEGORY_ID ~= 4 or miog.F.LISTED_CATEGORY_ID ~= 7 or miog.F.LISTED_CATEGORY_ID ~= 8 or miog.F.LISTED_CATEGORY_ID ~= 9) then
-								primarySortAttribute = dungeonScore
-								secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
+							local nameTable = miog.simpleSplit(name, "-")
 
-							elseif(miog.F.LISTED_CATEGORY_ID == 3) then
-								local raidData = {}
+							if(not nameTable[2]) then
+								nameTable[2] = GetNormalizedRealmName()
 
-								if(profile) then
-									if(profile.raidProfile) then
-										local lastDifficulty = nil
-										local lastOrdinal = nil
+							end
 
-										for i = 1, #profile.raidProfile.sortedProgress, 1 do
-											if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-												if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
-													local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-													local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
+							applicantSystem.applicantMember[applicantID].memberData[applicantIndex] = {
+								name = nameTable[1],
+								realm = nameTable[2],
+								fullName = name,
+								role = assignedRole,
+								class = class,
+								specID = specID,
+								ilvl = itemLevel,
+							}
 
-													raidData[#raidData+1] = {
-														ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-														difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-														progress = kills,
-														bossCount = bossCount,
-														parsedString = kills .. "/" .. bossCount,
-														weight = kills / bossCount + miog.WEIGHTS_TABLE[profile.raidProfile.sortedProgress[i].progress.raid.ordinal][profile.raidProfile.sortedProgress[i].progress.difficulty]
-													}
+							if(applicantIndex == 1) then -- GET SORT DATA
+								local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
+								local profile, primarySortAttribute, secondarySortAttribute
 
-													if(#raidData == 2) then
-														break
+								if(miog.F.IS_RAIDERIO_LOADED) then
+									profile = RaiderIO.GetProfile(nameTable[1], nameTable[2], miog.F.CURRENT_REGION)
 
+								end
+
+								if(categoryID ~= 3 and categoryID ~= 4 or categoryID ~= 7 or categoryID ~= 8 or categoryID ~= 9) then
+									primarySortAttribute = dungeonScore
+									secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
+
+								elseif(categoryID == 3) then
+									local raidData = {}
+
+									if(profile) then
+										if(profile.raidProfile) then
+											local lastDifficulty = nil
+											local lastOrdinal = nil
+
+											for i = 1, #profile.raidProfile.sortedProgress, 1 do
+												if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
+													if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
+														local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
+														local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
+
+														raidData[#raidData+1] = {
+															ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
+															difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
+															progress = kills,
+															bossCount = bossCount,
+															parsedString = kills .. "/" .. bossCount,
+															weight = kills / bossCount + miog.WEIGHTS_TABLE[profile.raidProfile.sortedProgress[i].progress.raid.ordinal][profile.raidProfile.sortedProgress[i].progress.difficulty]
+														}
+
+														if(#raidData == 2) then
+															break
+
+														end
 													end
+
+													lastOrdinal = raidData[i] and raidData[i].ordinal
+													lastDifficulty = raidData[i] and raidData[i].difficulty
+
 												end
-
-												lastOrdinal = raidData[i] and raidData[i].ordinal
-												lastDifficulty = raidData[i] and raidData[i].difficulty
-
 											end
 										end
 									end
-								end
 
-								for i = 1, 2, 1 do
-									if(not raidData[i]) then
-										raidData[i] = {
-											ordinal = 0,
-											difficulty = -1,
-											progress = 0,
-											bossCount = 0,
-											parsedString = "0/0",
-											weight = 0
-										}
+									for i = 1, 2, 1 do
+										if(not raidData[i]) then
+											raidData[i] = {
+												ordinal = 0,
+												difficulty = -1,
+												progress = 0,
+												bossCount = 0,
+												parsedString = "0/0",
+												weight = 0
+											}
+
+										end
+									end
+
+									primarySortAttribute = raidData[1].weight
+									secondarySortAttribute = raidData[2].weight
+
+								elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
+									if(not miog.F.IS_IN_DEBUG_MODE) then
+										pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activityID)
 
 									end
-								end
 
-								primarySortAttribute = raidData[1].weight
-								secondarySortAttribute = raidData[2].weight
-
-							elseif(miog.F.LISTED_CATEGORY_ID == (4 or 7 or 8 or 9)) then
-								if(not miog.F.IS_IN_DEBUG_MODE) then
-									pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activityID)
+									primarySortAttribute = pvpRatingInfo.rating
+									secondarySortAttribute = pvpRatingInfo.rating
 
 								end
 
-								primarySortAttribute = pvpRatingInfo.rating
-								secondarySortAttribute = pvpRatingInfo.rating
-
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].primary = primarySortAttribute
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].secondary = secondarySortAttribute
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].index = applicantID
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favoured = MIOG_SavedSettings.favouredApplicants.table[applicantSystem.applicantMember[applicantID].memberData[applicantIndex].fullName] and true or false
 							end
 
-							applicantSystem.applicantMember[applicantID].memberData[applicantIndex].primary = primarySortAttribute
-							applicantSystem.applicantMember[applicantID].memberData[applicantIndex].secondary = secondarySortAttribute
-							applicantSystem.applicantMember[applicantID].memberData[applicantIndex].index = applicantID
-							applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favoured = MIOG_SavedSettings.favouredApplicants.table[applicantSystem.applicantMember[applicantID].memberData[applicantIndex].fullName] and true or false
 						end
 
 					end
 
+					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].memberData
+
 				end
-
-				unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].memberData
-
 			end
 		end
 	end
@@ -1180,11 +1195,11 @@ local function checkApplicantList(forceReorder, applicantID)
 				allSystemMembers[listEntry[1].index] = nil
 
 				for _, v in pairs(listEntry) do
-					if((v.role == "TANK" and miog.applicationViewer.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
-					or v.role == "HEALER" and miog.applicationViewer.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
-					or v.role == "DAMAGER" and miog.applicationViewer.buttonPanel.filterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
-						if(miog.applicationViewer.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].Button:GetChecked()) then
-							if(miog.applicationViewer.buttonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].specFilterPanel.SpecButtons[v.specID]:GetChecked()) then
+					if((v.role == "TANK" and miog.applicationViewer.ButtonPanel.filterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
+					or v.role == "HEALER" and miog.applicationViewer.ButtonPanel.filterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
+					or v.role == "DAMAGER" and miog.applicationViewer.ButtonPanel.filterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
+						if(miog.applicationViewer.ButtonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].Button:GetChecked()) then
+							if(miog.applicationViewer.ButtonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].specFilterPanel.SpecButtons[v.specID]:GetChecked()) then
 								addOrShowApplicant(listEntry[1].index)
 								break
 
@@ -1480,16 +1495,17 @@ local function updateSpecFrames()
 		end
 	end)
 
+	local width = miog.applicationViewer.TitleBar.Faction:GetWidth()
+	local height = miog.applicationViewer.TitleBar.Faction:GetHeight()
+
 	if(numOfMembers < 6) then
-		miog.applicationViewer.titleBar.groupMemberListing.FontString:SetText("")
-	
-		local lastIcon = nil
+		miog.applicationViewer.TitleBar.GroupComposition.Roles:Hide()
 
 		for index, groupMember in ipairs(indexedGroup) do
 			local specIcon = groupMember.icon or miog.SPECIALIZATIONS[groupMember.specID].squaredIcon
-			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.applicationViewer.titleBar.groupMemberListing, miog.applicationViewer.titleBar.factionIconSize - 2, miog.applicationViewer.titleBar.factionIconSize - 2, "Texture", specIcon)
+			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.applicationViewer.TitleBar.GroupComposition.Party, width - 2, height - 2, "Texture", specIcon)
 			classIconFrame.layoutIndex = index
-			classIconFrame:SetPoint("LEFT", lastIcon or miog.applicationViewer.titleBar.groupMemberListing, lastIcon and "RIGHT" or "LEFT")
+			--classIconFrame:SetPoint("LEFT", lastIcon or miog.applicationViewer.TitleBar.GroupComposition, lastIcon and "RIGHT" or "LEFT")
 			classIconFrame:SetFrameStrata("DIALOG")
 
 			if(groupMember.classID <= 13) then
@@ -1505,29 +1521,24 @@ local function updateSpecFrames()
 					GameTooltip:Hide()
 
 				end)
-			end
 
-			if(groupMember.classID <= 13) then
 				local color = C_ClassColor.GetClassColor(miog.CLASSES[groupMember.classID].name)
 				miog.createFrameBorder(classIconFrame, 1, color.r, color.g, color.b, 1)
 
 			end
-
-			lastIcon = classIconFrame
 
 			if(index == 5) then
 				break
 			end
 
 		end
-
+		
+		miog.applicationViewer.TitleBar.GroupComposition.Party:MarkDirty()
 	else
-		miog.applicationViewer.titleBar.groupMemberListing.FontString:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
+		miog.applicationViewer.TitleBar.GroupComposition.Roles:Show()
+		miog.applicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
 		
 	end
-
-	miog.applicationViewer.titleBar.groupMemberListing:MarkDirty()
-
 end
 
 local function requestInspectData()
@@ -1676,7 +1687,7 @@ local function updateRosterInfoData()
 		local currentClassFrame = miog.applicationViewer.classPanel.classFrames[classID]
 		currentClassFrame.layoutIndex = counter
 		currentClassFrame.FontString:SetText(classCount > 0 == true and classCount or "")
-		currentClassFrame.Texture:SetDesaturated(classCount > 0 == false and true or false)
+		currentClassFrame.Icon:SetDesaturated(classCount > 0 == false and true or false)
 
 		if(classCount > 0) then
 			local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[classID].name)
@@ -1702,28 +1713,24 @@ end
 local function insertLFGInfo()
 	local activityInfo = C_LFGList.GetActivityInfoTable(miog.F.ACTIVE_ENTRY_INFO.activityID)
 
-	miog.F.LISTED_CATEGORY_ID = activityInfo.categoryID
-
-	miog.applicationViewer.buttonPanel.sortByCategoryButtons.secondary:Enable()
+	miog.applicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
 
 	if(activityInfo.categoryID == 2) then --Dungeons
 		miog.F.CURRENT_DUNGEON_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DUNGEON_DIFFICULTY
-		miog.applicationViewer.infoPanel.affixFrame:Show()
+		miog.applicationViewer.CreationSettings.Affixes:Show()
 
 	elseif(activityInfo.categoryID == 3) then --Raids
 		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
-		miog.applicationViewer.infoPanel.affixFrame:Hide()
+		miog.applicationViewer.CreationSettings.Affixes:Hide()
 	end
+	
+	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "background") or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
-	miog.applicationViewer.infoPanelBackdropFrame.backdropInfo.bgFile = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID] and miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].file 
-	or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID]
-	miog.applicationViewer.infoPanelBackdropFrame:ApplyBackdrop()
+	miog.applicationViewer.TitleBar.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.name)
+	miog.applicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
 
-	miog.applicationViewer.titleBar.titleStringFrame.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.name)
-	miog.applicationViewer.infoPanel.activityNameFrame:SetText(activityInfo.fullName)
-
-	miog.applicationViewer.listingSettingPanel.privateGroupFrame.active = miog.F.ACTIVE_ENTRY_INFO.privateGroup
-	miog.applicationViewer.listingSettingPanel.privateGroupFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (miog.F.ACTIVE_ENTRY_INFO.privateGroup and "/infoIcons/questionMark_Yellow.png" or "/infoIcons/questionMark_Grey.png"))
+	miog.applicationViewer.CreationSettings.PrivateGroup.active = miog.F.ACTIVE_ENTRY_INFO.privateGroup
+	miog.applicationViewer.CreationSettings.PrivateGroup:SetTexture(miog.C.STANDARD_FILE_PATH .. (miog.F.ACTIVE_ENTRY_INFO.privateGroup and "/infoIcons/questionMark_Yellow.png" or "/infoIcons/questionMark_Grey.png"))
 
 	if(miog.F.ACTIVE_ENTRY_INFO.playstyle) then
 		local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..miog.F.ACTIVE_ENTRY_INFO.playstyle]) or
@@ -1731,34 +1738,36 @@ local function insertLFGInfo()
 		(activityInfo.isCurrentRaidActivity and miog.PLAYSTYLE_STRINGS["raid"..miog.F.ACTIVE_ENTRY_INFO.playstyle]) or
 		((activityInfo.isRatedPvpActivity or activityInfo.isPvpActivity) and miog.PLAYSTYLE_STRINGS["pvp"..miog.F.ACTIVE_ENTRY_INFO.playstyle])
 
-		miog.applicationViewer.listingSettingPanel.playstyleFrame.tooltipText = playStyleString
+		miog.applicationViewer.CreationSettings.Playstyle.tooltipText = playStyleString
 
 	else
-		miog.applicationViewer.listingSettingPanel.playstyleFrame.tooltipText = ""
+		miog.applicationViewer.CreationSettings.Playstyle.tooltipText = ""
 
 	end
 
 	if(miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore and activityInfo.categoryID == 2 or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating and activityInfo.categoryID == (4 or 7 or 8 or 9)) then
-		miog.applicationViewer.listingSettingPanel.ratingFrame.tooltipText = "Required rating: " .. miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating
-		miog.applicationViewer.listingSettingPanel.ratingFrame.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating)
+		miog.applicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating
+		miog.applicationViewer.CreationSettings.Rating.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating)
 
-		miog.applicationViewer.listingSettingPanel.ratingFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore and "/infoIcons/skull.png" or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating and "/infoIcons/spear.png"))
+		miog.applicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore and "/infoIcons/skull.png" or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating and "/infoIcons/spear.png"))
 
 	else
-		miog.applicationViewer.listingSettingPanel.ratingFrame.FontString:SetText("----")
-		miog.applicationViewer.listingSettingPanel.ratingFrame.tooltipText = ""
+		miog.applicationViewer.CreationSettings.Rating.FontString:SetText("----")
+		miog.applicationViewer.CreationSettings.Rating.tooltipText = ""
 
 	end
 
 	if(miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel > 0) then
-		miog.applicationViewer.listingSettingPanel.itemLevelFrame.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel)
-		miog.applicationViewer.listingSettingPanel.itemLevelFrame.tooltipText = "Required itemlevel: " .. miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel
+		miog.applicationViewer.CreationSettings.ItemLevel.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel)
+		miog.applicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel
 
 	else
-		miog.applicationViewer.listingSettingPanel.itemLevelFrame.FontString:SetText("---")
-		miog.applicationViewer.listingSettingPanel.itemLevelFrame.tooltipText = ""
+		miog.applicationViewer.CreationSettings.ItemLevel.FontString:SetText("---")
+		miog.applicationViewer.CreationSettings.ItemLevel.tooltipText = ""
 
 	end
+
+	print("VOICE", miog.F.ACTIVE_ENTRY_INFO.voiceChat)
 
 	if(miog.F.ACTIVE_ENTRY_INFO.voiceChat ~= "") then
 		LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
@@ -1766,37 +1775,37 @@ local function insertLFGInfo()
 	end
 
 	if(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked()) then
+		print("GOT VOICE")
 
-		miog.applicationViewer.listingSettingPanel.voiceChatFrame.tooltipText = miog.F.ACTIVE_ENTRY_INFO.voiceChat
-		miog.applicationViewer.listingSettingPanel.voiceChatFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOn.png")
+		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = miog.F.ACTIVE_ENTRY_INFO.voiceChat
+		miog.applicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOn.png")
 	else
 
-		miog.applicationViewer.listingSettingPanel.voiceChatFrame.tooltipText = ""
-		miog.applicationViewer.listingSettingPanel.voiceChatFrame.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
+		print("NO VOICE")
+		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = ""
+		miog.applicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
 
 	end
 
 	if(miog.F.ACTIVE_ENTRY_INFO.isCrossFactionListing == true) then
-		miog.applicationViewer.titleBar.factionFrame.Texture:SetTexture(2437241)
+		miog.applicationViewer.TitleBar.Faction:SetTexture(2437241)
 
 	else
 		local playerFaction = UnitFactionGroup("player")
-		miog.applicationViewer.titleBar.factionFrame.Texture:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
+		miog.applicationViewer.TitleBar.Faction:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
 
 	end
 
 	if(miog.F.ACTIVE_ENTRY_INFO.comment ~= "") then
-		miog.applicationViewer.infoPanel.commentFrame.FontString:SetHeight(2500)
-		miog.applicationViewer.infoPanel.commentFrame.FontString:SetText("Description: " .. miog.F.ACTIVE_ENTRY_INFO.comment)
-		miog.applicationViewer.infoPanel.commentFrame.FontString:SetHeight(miog.applicationViewer.infoPanel.commentFrame.FontString:GetStringHeight())
-		miog.applicationViewer.infoPanel.commentFrame:SetHeight(miog.applicationViewer.infoPanel.commentFrame.FontString:GetStringHeight())
+		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetHeight(2500)
+		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetText("Description: " .. miog.F.ACTIVE_ENTRY_INFO.comment)
+		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetHeight(miog.applicationViewer.InfoPanel.CommentFrame.FontString:GetStringHeight())
+		miog.applicationViewer.InfoPanel.CommentFrame:SetHeight(miog.applicationViewer.InfoPanel.CommentFrame.FontString:GetStringHeight())
 
 	else
-		miog.applicationViewer.infoPanel.commentFrame.FontString:SetText("")
+		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetText("")
 
 	end
-
-	miog.applicationViewer.listingSettingPanel:MarkDirty()
 end
 
 local roleRemainingKeyLookup = {
@@ -2938,7 +2947,7 @@ miog.OnEvent = function(_, event, ...)
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
 
-			miog.mainFrame.raiderIOAddonIsLoadedFrame:Hide()
+			miog.pveFrame2.raiderIOAddonIsLoadedFrame:Hide()
 
 		end
 		
@@ -2971,7 +2980,7 @@ miog.OnEvent = function(_, event, ...)
 		DevTools_Dump({C_PvP.GetSpecialEventBrawlInfo()})]]
 		C_MythicPlus.GetCurrentAffixes()
 		
-		if(not miog.searchPanel.filterFrame.dungeonPanel) then
+		if(not miog.searchPanel.FilterFrame.dungeonPanel) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
@@ -2983,6 +2992,7 @@ miog.OnEvent = function(_, event, ...)
 			--miog.initializeActivityDropdown()
 
 		end
+		miog.F.CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
 
 
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
@@ -3002,7 +3012,7 @@ miog.OnEvent = function(_, event, ...)
 				resetArrays()
 				releaseApplicantFrames()
 
-				miog.applicationViewer.infoPanel.timerFrame.FontString:SetText("00:00:00")
+				miog.applicationViewer.CreationSettings.Timer:SetText("00:00:00")
 
 				miog.applicationViewer:Hide()
 
@@ -3022,7 +3032,7 @@ miog.OnEvent = function(_, event, ...)
 			end
 
 			queueTimer = C_Timer.NewTicker(1, function()
-				miog.applicationViewer.infoPanel.timerFrame.FontString:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_QueueUpTime))
+				miog.applicationViewer.CreationSettings.Timer:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_QueueUpTime))
 
 			end)
 
@@ -3076,7 +3086,7 @@ miog.OnEvent = function(_, event, ...)
 		end
 
     elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
-		if(not miog.searchPanel.filterFrame.dungeonPanel) then
+		if(not miog.searchPanel.FilterFrame.dungeonPanel) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
@@ -3091,7 +3101,7 @@ miog.OnEvent = function(_, event, ...)
 		if(not miog.F.WEEKLY_AFFIX) then
 			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 
-			if(miog.applicationViewer and miog.applicationViewer.infoPanel) then
+			if(miog.applicationViewer and miog.applicationViewer.InfoPanel) then
 				miog.setAffixes()
 
 			end
@@ -3402,7 +3412,29 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		print("UPDATE LIST")
 		miog.updateQueueDropDown()
-		--miog.initializeActivityDropdown()
+
+		if(C_LFGList.HasActiveEntryInfo() and not miog.entryCreation:IsVisible()) then
+			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
+
+			local panel = LFGListFrame.CategorySelection;
+
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+
+			panel.selectedCategory = activityInfo.categoryID;
+			panel.selectedFilters = activityInfo.filters;
+
+			local groups = C_LFGList.GetAvailableActivityGroups(panel.selectedCategory, panel.selectedFilters)
+
+			LFGListEntryCreation_ClearAutoCreateMode(panel:GetParent().EntryCreation);
+
+			miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+			miog.initializeActivityDropdown()
+			--LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.CategorySelection.StartGroupButton)
+
+			
+			miog.setUpEntryCreation(activityInfo.filters, activityInfo.categoryID, groups[1], activeEntryInfo.activityID)
+		end
 
 		local lastFrame = nil
 	
@@ -3414,6 +3446,9 @@ miog.OnEvent = function(_, event, ...)
 			if(not _G["MythicIOGrabber_" .. categoryInfo.name .. "Button"]) then
 
 				local categoryFrame = CreateFrame("Button", "MythicIOGrabber_" .. categoryInfo.name .. "Button", miog.pveFrame2.CategoryPanel, "MIOG_MenuButtonTemplate")
+				categoryFrame.categoryID = categoryID
+				categoryFrame.filters = Enum.LFGListFilter.Recommended
+
 				categoryFrame:SetHeight(30)
 				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
 				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
@@ -3424,16 +3459,23 @@ miog.OnEvent = function(_, event, ...)
 				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
 				---@diagnostic disable-next-line: undefined-field
-				categoryFrame.StartGroup:SetScript("OnClick", function()
-					miog.F.LISTED_CATEGORY_ID = categoryID
-					miog.LFG_LIST_FILTER = Enum.LFGListFilter.Recommended
-					miog.pveFrame2.filters = miog.LFG_LIST_FILTER
-					miog.pveFrame2.categoryID = categoryID
-
-					miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+				categoryFrame.StartGroup:SetScript("OnClick", function(self)
+					if(not C_LFGList.HasActiveEntryInfo()) then
+						miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+					end
 					
+					local panel = LFGListFrame.CategorySelection;
+					local actualFrame = self:GetParent()
+
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+
+					panel.selectedCategory = actualFrame.categoryID;
+					panel.selectedFilters = actualFrame.filters;
+
+					LFGListEntryCreation_ClearAutoCreateMode(panel:GetParent().EntryCreation);
+
 					miog.initializeActivityDropdown()
-					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation)
+					LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.CategorySelection.StartGroupButton)
 				end)
 				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.FindGroup:SetScript("OnClick", function()
@@ -3451,13 +3493,7 @@ miog.OnEvent = function(_, event, ...)
 					local baseFilters = LFGListFrame.baseFilters
 					local searchPanel = LFGListFrame.SearchPanel
 
-					miog.LFG_LIST_FILTER = Enum.LFGListFilter.Recommended
-					miog.pveFrame2.filters = miog.LFG_LIST_FILTER
-					miog.pveFrame2.categoryID = categoryID
-
-					LFGListFrame.SearchPanel.preferredFilters = miog.LFG_LIST_FILTER
-
-					LFGListSearchPanel_SetCategory(searchPanel, categoryID, miog.LFG_LIST_FILTER, baseFilters)
+					LFGListSearchPanel_SetCategory(searchPanel, categoryID, Enum.LFGListFilter.Recommended, baseFilters)
 					LFGListSearchPanel_DoSearch(searchPanel)
 
 					--miog.requestSearchResults(categoryID, miog.LFG_LIST_FILTER)
@@ -3469,6 +3505,9 @@ miog.OnEvent = function(_, event, ...)
 				--DevTools_Dump(categoryInfo)
 				if categoryInfo.separateRecommended then
 					local notRecommendedFrame = CreateFrame("Button", "MythicIOGrabber_" .. LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true) .. "Button", miog.pveFrame2.CategoryPanel, "MIOG_MenuButtonTemplate")
+					notRecommendedFrame.categoryID = categoryID
+					notRecommendedFrame.filters = Enum.LFGListFilter.NotRecommended
+
 					notRecommendedFrame:SetHeight(30)
 					notRecommendedFrame:SetPoint("TOPLEFT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
 					notRecommendedFrame:SetPoint("TOPRIGHT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
@@ -3481,15 +3520,23 @@ miog.OnEvent = function(_, event, ...)
 					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
 					---@diagnostic disable-next-line: undefined-field
-					notRecommendedFrame.StartGroup:SetScript("OnClick", function()
-						miog.F.LISTED_CATEGORY_ID = categoryID
-						miog.LFG_LIST_FILTER = Enum.LFGListFilter.NotRecommended
-						miog.pveFrame2.filters = miog.LFG_LIST_FILTER
-						miog.pveFrame2.categoryID = categoryID
-
-						miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+					notRecommendedFrame.StartGroup:SetScript("OnClick", function(self)
+						if(not C_LFGList.HasActiveEntryInfo()) then
+							miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+						end
+						
+						local panel = LFGListFrame.CategorySelection;
+						local actualFrame = self:GetParent()
+	
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+	
+						panel.selectedCategory = actualFrame.categoryID;
+						panel.selectedFilters = actualFrame.filters;
+	
+						LFGListEntryCreation_ClearAutoCreateMode(panel:GetParent().EntryCreation);
+	
 						miog.initializeActivityDropdown()
-						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation)
+						LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.CategorySelection.StartGroupButton)
 					end)
 ---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.FindGroup:SetScript("OnClick", function()
@@ -3503,16 +3550,10 @@ miog.OnEvent = function(_, event, ...)
 						--LFGListSearchPanel_DoSearch(searchPanel);
 						--LFGListFrame_SetActivePanel(self:GetParent(), searchPanel);
 
-						miog.LFG_LIST_FILTER = Enum.LFGListFilter.NotRecommended
-						miog.pveFrame2.filters = miog.LFG_LIST_FILTER
-						miog.pveFrame2.categoryID = categoryID
-
-						LFGListFrame.SearchPanel.preferredFilters = miog.LFG_LIST_FILTER
-
 						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 						local baseFilters = LFGListFrame.baseFilters
 						local searchPanel = LFGListFrame.SearchPanel
-						LFGListSearchPanel_SetCategory(searchPanel, categoryID, miog.LFG_LIST_FILTER, baseFilters)
+						LFGListSearchPanel_SetCategory(searchPanel, categoryID, Enum.LFGListFilter.NotRecommended, baseFilters)
 						LFGListSearchPanel_DoSearch(searchPanel)
 						--miog.requestSearchResults(categoryID, miog.LFG_LIST_FILTER)
 						LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
@@ -3738,10 +3779,12 @@ local function handler(msg, editBox)
 			miog.F.IS_IN_DEBUG_MODE = true
 			print("Debug mode on - No standard applicants coming through")
 
-			PVEFrame:Show()
-			LFGListFrame:Show()
-			LFGListPVEStub:Show()
-			LFGListFrame.ApplicationViewer:Show()
+			--PVEFrame:Show()
+			--LFGListFrame:Show()
+			--LFGListPVEStub:Show()
+			--LFGListFrame.ApplicationViewer:Show()
+
+			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
 
 			createFullEntries(33)
 
@@ -3752,10 +3795,12 @@ local function handler(msg, editBox)
 			miog.F.IS_IN_DEBUG_MODE = true
 			print("Debug mode on - No standard applicants coming through")
 
-			PVEFrame:Show()
-			LFGListFrame:Show()
-			LFGListPVEStub:Show()
-			LFGListFrame.ApplicationViewer:Show()
+			--PVEFrame:Show()
+			--LFGListFrame:Show()
+			--LFGListPVEStub:Show()
+			--LFGListFrame.ApplicationViewer:Show()
+
+			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
 
 			createAVSelfEntry(rest)
 
@@ -3907,38 +3952,45 @@ hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 	if(panel == LFGListFrame.ApplicationViewer) then
 		miog.searchPanel:Hide()
 		miog.entryCreation:Hide()
+		miog.pveFrame2.CategoryPanel:Hide()
+		miog.mainFrame:Hide()
 
-		miog.mainFrame:Show()
+		miog.pveFrame2:Show()
+		--miog.mainFrame:Show()
 		miog.applicationViewer:Show()
-		
-		--miog.F.LISTED_CATEGORY_ID = nil
 
 	elseif(panel == LFGListFrame.SearchPanel) then
 		miog.applicationViewer:Hide()
 		miog.entryCreation:Hide()
+		miog.pveFrame2.CategoryPanel:Hide()
 
-		miog.mainFrame:Show()
+		miog.pveFrame2:Show()
+		--miog.mainFrame:Show()
 		miog.searchPanel:Show()
 
 		if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
-			UIDropDownMenu_Initialize(miog.searchPanel.filterFrame.dropdown, miog.searchPanel.filterFrame.dropdown.initialize)
-			miog.searchPanel.filterFrame.filterForDifficulty:Show()
-			miog.searchPanel.filterFrame.dropdown:Show()
+			UIDropDownMenu_Initialize(miog.searchPanel.FilterFrame.dropdown, miog.searchPanel.FilterFrame.dropdown.initialize)
+			miog.searchPanel.FilterFrame.filterForDifficulty:Show()
+			miog.searchPanel.FilterFrame.dropdown:Show()
 
 		else
-			miog.searchPanel.filterFrame.dropdown:Hide()
-			miog.searchPanel.filterFrame.filterForDifficulty:Hide()
+			miog.searchPanel.FilterFrame.dropdown:Hide()
+			miog.searchPanel.FilterFrame.filterForDifficulty:Hide()
 		
-		end
+		end 
 
-		miog.F.LISTED_CATEGORY_ID = LFGListFrame.SearchPanel.categoryID
-
-		miog.searchPanel.filterFrame.filterForDifficulty:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[miog.F.LISTED_CATEGORY_ID == 2 and "filterForDungeonDifficulty" or miog.F.LISTED_CATEGORY_ID == 3 and "filterForRaidDifficulty" or(miog.F.LISTED_CATEGORY_ID == 4 or miog.F.LISTED_CATEGORY_ID == 7) and "filterForArenaBracket"] or false)
+		miog.searchPanel.FilterFrame.filterForDifficulty:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[
+			LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
+			LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
+			(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] or false)
 
 	elseif(panel == LFGListFrame.EntryCreation) then
+		--LFGListFrame.EntryCreation.editMode = false
 		miog.applicationViewer:Hide()
 		miog.searchPanel:Hide()
+		miog.pveFrame2.CategoryPanel:Hide()
 
+		miog.pveFrame2:Show()
 		miog.mainFrame:Show()
 		miog.entryCreation:Show()
 		
@@ -3947,13 +3999,12 @@ hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		miog.applicationViewer:Hide()
 		miog.searchPanel:Hide()
 		miog.entryCreation:Hide()
-		
-		miog.F.LISTED_CATEGORY_ID = nil
+		miog.pveFrame2.CategoryPanel:Show()
 
 	end
-	--miog.searchPanel.filterFrame.dropdown.initialize()
-	--miog.searchPanel.filterFrame.dropdown.initialize(miog.searchPanel.filterFrame.dropdown)
-	--UIDropDownMenu_RefreshAll(miog.searchPanel.filterFrame.dropdown, "")
+	--miog.searchPanel.FilterFrame.dropdown.initialize()
+	--miog.searchPanel.FilterFrame.dropdown.initialize(miog.searchPanel.FilterFrame.dropdown)
+	--UIDropDownMenu_RefreshAll(miog.searchPanel.FilterFrame.dropdown, "")
 end)
 
 hooksecurefunc("NotifyInspect", function()

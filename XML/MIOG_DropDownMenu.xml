@@ -56,6 +56,14 @@
                 </Anchors>
 
                 <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" horizTile="true" vertTile="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5"  y="-2"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="5"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
                     <Layer level="OVERLAY">
                         <FontString parentKey="Name" font="LibMono" justifyH="MIDDLE" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="false">
                             <FontHeight val="11"/>

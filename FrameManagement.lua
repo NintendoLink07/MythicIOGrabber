@@ -252,8 +252,10 @@ miog.createBasicFrame = createBasicFrame
 
 if(Settings) then
 	local interfaceOptionsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", nil)
-	local category = Settings.RegisterCanvasLayoutCategory(interfaceOptionsPanel, "Mythic IO Grabber")
-	category.ID = interfaceOptionsPanel.name
+	local category, layout = Settings.RegisterCanvasLayoutCategory(interfaceOptionsPanel, "MythicIOGrabber")
+	category.ID = "MythicIOGrabber"
+	layout:AddAnchorPoint("TOPLEFT", 10, -10);
+	layout:AddAnchorPoint("BOTTOMRIGHT", -10, 10);
 	
 	Settings.RegisterAddOnCategory(category)
 

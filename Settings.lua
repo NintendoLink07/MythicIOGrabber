@@ -64,6 +64,17 @@ local defaultOptionSettings = {
 		value = true,
 		index = 5,
 	},
+	applicationViewer_FilterOptions = {
+		type = "variable",
+		title = "Filter options for the application viewer",
+		table = {
+			classSpec = {
+				class = {},
+				spec = {},
+			},
+		}
+	},
+
 	searchPanel_FilterOptions = {
 		type = "variable",
 		title = "Filter options for the search panel",
@@ -326,7 +337,7 @@ miog.loadSettings = function()
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
 
-						miog.mainFrame.backdropFrame:SetShown(not setting.value)
+						miog.pveFrame2.backdropFrame:SetShown(not setting.value)
 
 						if(setting.value == false) then
 							miog.applicationViewer.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -384,7 +395,7 @@ miog.loadSettings = function()
 							local info = UIDropDownMenu_CreateInfo()
 							info.func = function(_, arg1, _, _)
 								setting.value = arg1
-								miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+								miog.pveFrame2.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
 								UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
 								CloseDropDownMenus()
 			
@@ -401,7 +412,7 @@ miog.loadSettings = function()
 						end
 					)
 					
-					miog.mainFrame.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+					miog.pveFrame2.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
 
 					lastOption = optionDropdown
 				end
@@ -502,12 +513,12 @@ miog.loadSettings = function()
 	end
 
 	if(MIOG_SavedSettings.disableBackgroundImages and MIOG_SavedSettings.disableBackgroundImages.value ==  true) then
-		miog.mainFrame.backdropFrame:SetShown(false)
-		miog.applicationViewer.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
+		miog.pveFrame2.backdropFrame:SetShown(false)
+		miog.applicationViewer.CreationSettings:SetBackdropColor(0, 0, 0, 0)
 
 	else
-		miog.mainFrame.backdropFrame:SetShown(true)
-		miog.applicationViewer.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+		miog.pveFrame2.backdropFrame:SetShown(true)
+		miog.applicationViewer.CreationSettings:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 	
 	end
 
@@ -537,5 +548,5 @@ miog.loadSettings = function()
 end
 
 function MIOG_OpenInterfaceOptions()
-	Settings.OpenToCategory("Mythic IO Grabber")
+	Settings.OpenToAddonCategory("MythicIOGrabber")
 end

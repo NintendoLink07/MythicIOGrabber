@@ -17,7 +17,19 @@ function SlickDropDown:OnLoad()
 end
 
 function SlickDropDown:ResetDropDown()
+	for widget in self.List.framePool:EnumerateActive() do
+		if(widget.List.framePool) then
+			widget.List.framePool:ReleaseAll()
+		end
+
+		if(widget.List.securePool) then
+			widget.List.securePool:ReleaseAll()
+
+		end
+	end
+
 	self.List.framePool:ReleaseAll()
+
 	self.entryFrameTree = {}
 	self.currentList = nil
 	self.deactivatedExtraButtons = {}
@@ -61,7 +73,6 @@ function SlickDropDown:ResetFrame(frame)
 	frame.type2 = nil
 	frame.value = nil
 	frame.entryType = nil
-	frame.ParentDropDown = nil
 	frame.parentIndex = nil
 
 	frame:SetScript("OnShow", nil)
@@ -78,9 +89,16 @@ function SlickDropDown:CreateEntryFrame(infoTable)
 
 	if(infoTable.parentIndex) then
 		local parent = self.entryFrameTree[infoTable.parentIndex]
+		parent.List.framePool = parent.List.framePool or CreateFramePool("Button", parent.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
+		parent.List.securePool = parent.List.securePool or CreateFramePool("Button", parent.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
 
-		parent.List.framePool = parent.List.framePool or CreateFramePool("Button", self.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
-		frame = parent.List.framePool:Acquire()
+		if(infoTable.func) then
+			frame = parent.List.framePool:Acquire()
+
+		else
+			frame = parent.List.securePool:Acquire()
+
+		end
 
 		local tableIndex = #parent + 1
 		frame.layoutIndex = infoTable.index or tableIndex
@@ -153,15 +171,6 @@ function SlickDropDown:CreateEntryFrame(infoTable)
 		frame:SetAttribute("original", frame:GetAttribute("macrotext1"))
 
 	end
-
-	--HonorFrameQueueButton
-	--ConquestJoinButton
-	--frame.Radio:SetNormalTexture("Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\checkmarkSmallIcon.png")
-	--frame.Radio:SetAttribute("macrotext1", "/run " .. frame:GetDebugName() .. ".Radio:Click()" .. "\r\n" .. "/click [nocombat] HonorFrameQueueButton")
-	--frame.Radio:SetAttribute("macrotext1", "/run print(issecure())")
-	--frame.Radio:HookScript("PreClick", function()
-		
-	--end)
 
 	if(infoTable.disabled) then
 		frame.Name:SetTextColor(0.5, 0.5, 0.5, 1)
