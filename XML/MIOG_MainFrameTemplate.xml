@@ -8,6 +8,12 @@
 
     <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true">
         <Frames>
+            <Frame parentKey="LastInvites" inherits="MIOG_LastInvitesTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
+
             <Frame parentKey="TitleBar">
                 <Size y="20" />
                 <Anchors>
@@ -27,7 +33,6 @@
                 </Layers>
 
                 <Frames>
-                
                     <Button parentKey="KnownIssuesPanel" inherits="IconButtonTemplate" hidden="true">
                         <Size x="15" y="15"/>
 						<Anchors>
@@ -83,14 +88,63 @@
                 
             </Frame>
 
-            <Frame parentKey="Plugin">
+            <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="190"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="25"/>
                 </Anchors>
+
+                <Frames>
+                    <Frame parentKey="FooterBar" inherits="BackdropTemplate">
+                        <Size y="25" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Button parentKey="Back" inherits="UIPanelDynamicResizeButtonTemplate" text="Back">
+                                <Size x="1" y="20" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                </Anchors>
+                                
+                                <Scripts>
+                                    <OnLoad>
+                                        self:FitToText()
+                                    </OnLoad>
+                                    <OnClick>
+                                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+                                        LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.CategorySelection);
+                                        LFGListFrame.SearchPanel.shouldAlwaysShowCreateGroupButton = false;
+
+                                    </OnClick>
+                                </Scripts>
+                            </Button>
+                        </Frames>
+                    </Frame>
+
+                    <Button parentKey="Resize" inherits="UIButtonTemplate" frameStrata="FULLSCREEN">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+
+                        <NormalTexture file="Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down" />
+                        <PushedTexture file="Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up" />
+                        <HighlightTexture file="Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight" />
+
+                        <Scripts>
+                            <OnClick>
+		                        self:GetParent():StartSizing()
+
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
             </Frame>
 
-            <EditBox parentKey="SearchBox" secureReferenceKey="LFGListSearchBox" securityDisableSetText="true" inherits="SearchBoxTemplate" letters="64" hidden="true">
+            <EditBox parentKey="SearchBox" hidden="true">
                 <Size x="319" y="18"/>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
@@ -369,5 +423,13 @@
                 </Scripts>
             </StatusBar>
         </Frames>
+
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture parentKey="Background" setAllPoints="true" horizTile="true" vertTile="true">
+
+                </Texture>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

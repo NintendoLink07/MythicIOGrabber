@@ -13,8 +13,8 @@
         <Frames>
             <Frame parentKey="ClassPanel" inherits="MIOG_ClassPanel">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2" />
                 </Anchors>
             </Frame>
 
@@ -27,10 +27,12 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
+                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
+                            <FontHeight val="13" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
                             </Anchors>
+
                             <Scripts>
                                 <OnEnter>
                                     if(self:IsTruncated()) then
@@ -49,7 +51,7 @@
                         <Texture parentKey="Faction">
                             <Size x="18" y="18" />
                             <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1"/>
                             </Anchors>
                         </Texture>
                     </Layer>
@@ -57,15 +59,15 @@
 
                 <Frames>
                     <Frame parentKey="GroupComposition" inherits="BackdropTemplate">
-                        <Size x="110" y="18" />
+                        <Size x="110" y="19" />
                         <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.Faction" relativePoint="LEFT" y="-1"/>
+                            <Anchor point="RIGHT" relativeKey="$parent.Faction" relativePoint="LEFT" x="-2" y="-1"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Party" inherits="HorizontalLayoutFrame">
                                 <KeyValues>
-                                    <KeyValue key="fixedHeight" value="18" type="number" />
+                                    <KeyValue key="fixedHeight" value="19" type="number" />
                                     <KeyValue key="minimumWidth" value="20" type="number" />
                                 </KeyValues>
                                 <Anchors>
@@ -96,14 +98,19 @@
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" setAllPoints="true" />
+                        <Texture parentKey="Background">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                            </Anchors>
+                        </Texture>
                     </Layer>
 
                     <Layer level="OVERLAY">
                         <FontString parentKey="Activity" font="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="ActivityName" wordwrap="true">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="3" y="-3"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-3" y="-3" />
                             </Anchors>
 
                             <Color r="1" g="0.8" b="0" a="1" />
@@ -328,7 +335,7 @@
                 </Layers>
             </Frame>
             
-            <Frame parentKey="ButtonPanel">
+            <Frame parentKey="ButtonPanel" inherits="BackdropTemplate">
                 <Size y="20" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMLEFT" />
@@ -351,8 +358,31 @@
                             </OnLoad>
                             <OnClick>
                                 self:AdvanceState()
-			                    self:GetParent().FilterFrame:SetShown(not self:GetParent().FilterFrame:IsVisible())
+			                    self:GetParent().FilterPanel:SetShown(not self:GetParent().FilterPanel:IsVisible())
                             </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Frame parentKey="FilterPanel" hidden="true">
+                        <Size x="220" y="300" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Button parentKey="ResetButton" inherits="IconButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="iconAtlas" value="UI-RefreshButton" />
+                            <KeyValue key="iconSize" value="20" />
+                        </KeyValues>
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                        </Anchors>
+                        <Scripts>
+                            <OnShow>
+                                self:OnLoad()
+                            </OnShow>
                         </Scripts>
                     </Button>
                 </Frames>
@@ -367,6 +397,34 @@
                     </Layer>
                 </Layers>
             </Frame>
+
+            <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:SetScrollChild(self.Container)
+                    </OnShow>
+                </Scripts>
+
+                <Frames>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                        <KeyValues>
+                            <KeyValue key="minimumWidth" value="1" type="number" />
+                            <KeyValue key="minimumHeight" value="1" type="number" />
+                            <KeyValue key="spacing" value="5" type="number" />
+                            <KeyValue key="align" value="top" type="global" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnLoad>
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                </Frames>
+            </ScrollFrame>
         </Frames>
     </Frame>
 </Ui>

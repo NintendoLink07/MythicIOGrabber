@@ -11,7 +11,7 @@
 		</KeyValues>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture>
+                <Texture parentKey="Background" setAllPoints="true">
                     <Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />
                 </Texture>
             </Layer>

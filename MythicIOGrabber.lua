@@ -53,7 +53,7 @@ local function releaseApplicantFrames()
 	miog.applicantFramePool:ReleaseAll()
 
 	miog.applicationViewer.applicantNumberFontString:SetText(0)
-	miog.applicationViewer.applicantPanel.container:MarkDirty()
+	miog.applicationViewer.FramePanel.Container:MarkDirty()
 
 end
 
@@ -67,7 +67,7 @@ local function hideAllApplicantFrames()
 	end
 
 	miog.applicationViewer.applicantNumberFontString:SetText(0)
-	miog.applicationViewer.applicantPanel.container:MarkDirty()
+	miog.applicationViewer.FramePanel.Container:MarkDirty()
 
 end
 
@@ -687,8 +687,8 @@ local function createApplicantFrame(applicantID)
 
 		applicantViewer_ExpandedFrameList[applicantID] = applicantViewer_ExpandedFrameList[applicantID] or {}
 
-		local applicantFrame = miog.createBasicFrame("applicant", "ResizeLayoutFrame, BackdropTemplate", miog.applicationViewer.applicantPanel.container)
-		applicantFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
+		local applicantFrame = miog.createBasicFrame("applicant", "ResizeLayoutFrame, BackdropTemplate", miog.applicationViewer.FramePanel.Container)
+		applicantFrame.fixedWidth = miog.applicationViewer.FramePanel:GetWidth()
 		applicantFrame.heightPadding = 1
 		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 		applicantFrame.memberFrames = {}
@@ -703,7 +703,7 @@ local function createApplicantFrame(applicantID)
 		applicantFrame.fontStringPool = applicantFrame.fontStringPool or CreateFontStringPool(applicantFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
 		applicantFrame.texturePool = applicantFrame.texturePool or CreateTexturePool(applicantFrame, "ARTWORK", nil, nil, miog.resetTexture)
 
-		miog.createFrameBorder(applicantFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
+		miog.createFrameBorder(applicantFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
 
 		applicantSystem.applicantMember[applicantID].frame = applicantFrame
 
@@ -740,6 +740,9 @@ local function createApplicantFrame(applicantID)
 			if(MIOG_SavedSettings.favouredApplicants.table[name]) then
 				miog.createFrameBorder(applicantMemberFrame, 2, CreateColorFromHexString("FFe1ad21"):GetRGBA())
 
+			else
+				--miog.createFrameBorder(applicantMemberFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+			
 			end
 
 			local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
@@ -1184,8 +1187,6 @@ local function checkApplicantList(forceReorder, applicantID)
 
 		end
 
-		--miog.applicationViewer.applicantPanel.container:MarkDirty()
-
 		applicationFrameIndex = 0
 
 		if(unsortedList[1]) then
@@ -1195,11 +1196,11 @@ local function checkApplicantList(forceReorder, applicantID)
 				allSystemMembers[listEntry[1].index] = nil
 
 				for _, v in pairs(listEntry) do
-					if((v.role == "TANK" and miog.applicationViewer.ButtonPanel.filterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
-					or v.role == "HEALER" and miog.applicationViewer.ButtonPanel.filterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
-					or v.role == "DAMAGER" and miog.applicationViewer.ButtonPanel.filterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
-						if(miog.applicationViewer.ButtonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].Button:GetChecked()) then
-							if(miog.applicationViewer.ButtonPanel.filterPanel.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].specFilterPanel.SpecButtons[v.specID]:GetChecked()) then
+					if((v.role == "TANK" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
+					or v.role == "HEALER" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
+					or v.role == "DAMAGER" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
+						if(miog.applicationViewer.ButtonPanel.FilterPanel.FilterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].Class.Button:GetChecked()) then
+							if(miog.applicationViewer.ButtonPanel.FilterPanel.FilterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].SpecFrames[v.specID].Button:GetChecked()) then
 								addOrShowApplicant(listEntry[1].index)
 								break
 
@@ -1228,7 +1229,7 @@ local function checkApplicantList(forceReorder, applicantID)
 	end
 
 	miog.applicationViewer.applicantNumberFontString:SetText(applicationFrameIndex .. "(" .. #unsortedList .. ")")
-	miog.applicationViewer.applicantPanel.container:MarkDirty()
+	miog.applicationViewer.FramePanel.Container:MarkDirty()
 end
 
 local function createAVSelfEntry(pvpBracket)
@@ -3946,66 +3947,6 @@ local function handler(msg, editBox)
 	end
 end
 SlashCmdList["MIOG"] = handler
-
-
-hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
-	if(panel == LFGListFrame.ApplicationViewer) then
-		miog.searchPanel:Hide()
-		miog.entryCreation:Hide()
-		miog.pveFrame2.CategoryPanel:Hide()
-		miog.mainFrame:Hide()
-
-		miog.pveFrame2:Show()
-		--miog.mainFrame:Show()
-		miog.applicationViewer:Show()
-
-	elseif(panel == LFGListFrame.SearchPanel) then
-		miog.applicationViewer:Hide()
-		miog.entryCreation:Hide()
-		miog.pveFrame2.CategoryPanel:Hide()
-
-		miog.pveFrame2:Show()
-		--miog.mainFrame:Show()
-		miog.searchPanel:Show()
-
-		if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
-			UIDropDownMenu_Initialize(miog.searchPanel.FilterFrame.dropdown, miog.searchPanel.FilterFrame.dropdown.initialize)
-			miog.searchPanel.FilterFrame.filterForDifficulty:Show()
-			miog.searchPanel.FilterFrame.dropdown:Show()
-
-		else
-			miog.searchPanel.FilterFrame.dropdown:Hide()
-			miog.searchPanel.FilterFrame.filterForDifficulty:Hide()
-		
-		end 
-
-		miog.searchPanel.FilterFrame.filterForDifficulty:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[
-			LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
-			LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
-			(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] or false)
-
-	elseif(panel == LFGListFrame.EntryCreation) then
-		--LFGListFrame.EntryCreation.editMode = false
-		miog.applicationViewer:Hide()
-		miog.searchPanel:Hide()
-		miog.pveFrame2.CategoryPanel:Hide()
-
-		miog.pveFrame2:Show()
-		miog.mainFrame:Show()
-		miog.entryCreation:Show()
-		
-	else
-		miog.mainFrame:Hide()
-		miog.applicationViewer:Hide()
-		miog.searchPanel:Hide()
-		miog.entryCreation:Hide()
-		miog.pveFrame2.CategoryPanel:Show()
-
-	end
-	--miog.searchPanel.FilterFrame.dropdown.initialize()
-	--miog.searchPanel.FilterFrame.dropdown.initialize(miog.searchPanel.FilterFrame.dropdown)
-	--UIDropDownMenu_RefreshAll(miog.searchPanel.FilterFrame.dropdown, "")
-end)
 
 hooksecurefunc("NotifyInspect", function()
 	lastNotifyTime = GetTimePreciseSec()

@@ -47,6 +47,7 @@ XML\MIOG_ApplicationViewer.xml
 XML\MIOG_ClassPanel.xml
 XML\MIOG_ClassPanelClassFrameTemplate.xml
 XML\MIOG_ClassPanelSpecFrameTemplate.xml
+XML\MIOG_LastInvitesTemplate.xml
 
 XML\MIOG_DropDownMenu.xml
 XML\MIOG_DropDownMenuEntry.xml

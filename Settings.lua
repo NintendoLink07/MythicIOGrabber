@@ -337,7 +337,7 @@ miog.loadSettings = function()
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
 
-						miog.pveFrame2.backdropFrame:SetShown(not setting.value)
+						miog.pveFrame2.Background:SetShown(not setting.value)
 
 						if(setting.value == false) then
 							miog.applicationViewer.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -395,7 +395,8 @@ miog.loadSettings = function()
 							local info = UIDropDownMenu_CreateInfo()
 							info.func = function(_, arg1, _, _)
 								setting.value = arg1
-								miog.pveFrame2.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+								miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+								miog.pveFrame2.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
 								UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
 								CloseDropDownMenus()
 			
@@ -412,7 +413,8 @@ miog.loadSettings = function()
 						end
 					)
 					
-					miog.pveFrame2.backdropFrame:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+					miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+					miog.pveFrame2.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
 
 					lastOption = optionDropdown
 				end
@@ -456,21 +458,21 @@ miog.loadSettings = function()
 	if(MIOG_SavedSettings.lastActiveSortingMethods and MIOG_SavedSettings.lastActiveSortingMethods.value) then
 		for sortKey, row in pairs(MIOG_SavedSettings.lastActiveSortingMethods.value) do
 			
-			if(miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey]) then
+			if(miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]) then
 				if(row.active == true) then
 					local active = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].active
 					local currentLayer = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentLayer
 					local currentState = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentState
 			
-					miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey]:SetState(active, currentState)
+					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(active, currentState)
 			
 					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
 					miog.F.SORT_METHODS[sortKey].active = true
 					miog.F.SORT_METHODS[sortKey].currentLayer = currentLayer
-					miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
+					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
 
 				else
-					miog.applicationViewer.buttonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
 
 				end
 			end
@@ -513,12 +515,10 @@ miog.loadSettings = function()
 	end
 
 	if(MIOG_SavedSettings.disableBackgroundImages and MIOG_SavedSettings.disableBackgroundImages.value ==  true) then
-		miog.pveFrame2.backdropFrame:SetShown(false)
-		miog.applicationViewer.CreationSettings:SetBackdropColor(0, 0, 0, 0)
+		miog.pveFrame2.Background:SetShown(false)
 
 	else
-		miog.pveFrame2.backdropFrame:SetShown(true)
-		miog.applicationViewer.CreationSettings:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+		miog.pveFrame2.Background:SetShown(true)
 	
 	end
 

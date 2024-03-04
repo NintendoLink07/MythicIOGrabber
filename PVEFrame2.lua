@@ -50,7 +50,6 @@ local function createPVEFrameReplacement()
 	frame:AdjustPointsOffset(900, 0)
 
 	miog.createFrameBorder(frame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	--frame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	frame:HookScript("OnShow", function(selfPVEFrame)
 			for frameIndex = 1, 3, 1 do
@@ -248,16 +247,6 @@ local function createPVEFrameReplacement()
 ---@diagnostic disable-next-line: undefined-field
 	miog.createFrameBorder(frame.QueuePanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	local backdropFrame = miog.createBasicTexture("persistent", miog.C.STANDARD_FILE_PATH .. "/backgrounds/df-bg-1.png", frame)
-	backdropFrame:SetVertTile(true)
-	backdropFrame:SetHorizTile(true)
-	backdropFrame:SetDrawLayer("BACKGROUND", -8)
-	backdropFrame:SetPoint("TOPLEFT", frame, "TOPLEFT")
-	backdropFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
-	backdropFrame:Hide()
-
-	frame.backdropFrame = backdropFrame
-
 	local expandDownwardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", frame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
 	expandDownwardsButton:SetPoint("RIGHT", frame.TitleBar.Settings, "LEFT", 0, -expandDownwardsButton:GetHeight() / 4)
 	expandDownwardsButton:SetNormalTexture(293770)
@@ -366,13 +355,41 @@ local function createPVEFrameReplacement()
 	local queueDropDown = frame.QueueDropDown
 	queueDropDown:OnLoad()
 	--miog.createFrameBorder(queueDropDown, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	--queueDropDown:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 	--queueDropDown.framePool = CreateFramePool("Frame", queueDropDown.List, "MIOG_DropDownMenuEntry", resetDropDownListFrame)
 	--queueDropDown.entryFrameTree = {}
 	--queueDropDown.List.entryTable = {}
 	--miog.pveFrame2.QueueDropDown = queueDropDown
+
+	miog.createFrameBorder(frame.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	
+	frame.Plugin.Resize:SetScript("OnMouseUp", function()
+		frame.Plugin:StopMovingOrSizing()
+
+		MIOG_SavedSettings.frameManuallyResized.value = frame.Plugin:GetHeight()
+
+		if(MIOG_SavedSettings.frameManuallyResized.value > frame.Plugin.standardHeight) then
+			MIOG_SavedSettings.frameExtended.value = true
+			frame.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
+
+		end
+
+	end)
+
+	frame.Plugin.standardWidth = frame.Plugin:GetWidth()
+	frame.Plugin.standardHeight = frame.Plugin:GetHeight()
+	frame.Plugin.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight * 1.5
+	frame.Plugin:SetResizeBounds(frame.Plugin.standardWidth, frame.Plugin.standardHeight, frame.Plugin.standardWidth, GetScreenHeight() * 0.67)
+	miog.createFrameBorder(frame.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	frame.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	miog.createFrameBorder(frame.LastInvites.Button, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	frame.LastInvites.Button:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	miog.createFrameBorder(frame.LastInvites.Panel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	miog.createFrameBorder(frame.LastInvites.Panel.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	frame.LastInvites.Panel.TitleBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 end
 
 local function updateRandomDungeons()
@@ -1072,6 +1089,78 @@ local queueFrameIndex = 0
 
 local queuedList = {};
 
+local function createQueueFrame(queueInfo)
+	local queueFrame = queueSystem.queueFrames[queueInfo[18]]
+
+	if(not queueSystem.queueFrames[queueInfo[18]]) then
+		queueFrame = queueSystem.framePool:Acquire()
+		queueFrame.ActiveIDFrame:Hide()
+		queueFrame.CancelApplication:SetMouseClickEnabled(true)
+		queueFrame.CancelApplication:RegisterForClicks("LeftButtonDown")
+
+		miog.createFrameBorder(queueFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+		queueSystem.queueFrames[queueInfo[18]] = queueFrame
+
+		queueFrameIndex = queueFrameIndex + 1
+		queueFrame.layoutIndex = queueFrameIndex
+	
+	end
+	
+	queueFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+
+	queueFrame.Name:SetText(queueInfo[11])
+
+	local ageNumber = 0
+
+	if(queueInfo[17][1] == "queued") then
+		ageNumber = GetTime() - queueInfo[17][2]
+
+		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
+			ageNumber = ageNumber + 1
+			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+		end)
+	elseif(queueInfo[17][1] == "duration") then
+		ageNumber = queueInfo[17][2]
+
+		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
+			ageNumber = ageNumber - 1
+			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+		end)
+	
+	end
+
+	queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+	if(queueInfo[20]) then
+		queueFrame.Icon:SetTexture(queueInfo[20])
+	end
+
+	queueFrame.Wait:SetText("(" .. (queueInfo[12] ~= -1 and miog.secondsToClock(queueInfo[12]) or "N/A") .. ")")
+
+	--/run DevTools_Dump(C_PvP.GetAvailableBrawlInfo())
+	--/run DevTools_Dump(C_PvP.GetSpecialEventBrawlInfo())
+	--/run DevTools_Dump()
+	--/run DevTools_Dump()
+	--/run DevTools_Dump()
+
+	queueFrame:SetShown(true)
+
+---@diagnostic disable-next-line: undefined-field
+	miog.pveFrame2.QueuePanel.Container:MarkDirty()
+end
+
+miog.createQueueFrame = createQueueFrame
+
+miog.createPVEFrameReplacement = createPVEFrameReplacement
+
+miog.scriptReceiver = CreateFrame("Frame", "MythicIOGrabber_ScriptReceiver", frame, "BackdropTemplate") ---@class Frame
+miog.scriptReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
+miog.scriptReceiver:RegisterEvent("PLAYER_LOGIN")
+miog.scriptReceiver:RegisterEvent("UPDATE_LFG_LIST")
+miog.scriptReceiver:SetScript("OnEvent", miog.OnEvent)
+
 hooksecurefunc(QueueStatusFrame, "Update", function()
 	--print("LFG")
 
@@ -1445,69 +1534,3 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 		end
 	end
 end)
-
-local function createQueueFrame(queueInfo)
-	local queueFrame = queueSystem.queueFrames[queueInfo[18]]
-
-	if(not queueSystem.queueFrames[queueInfo[18]]) then
-		queueFrame = queueSystem.framePool:Acquire()
-		queueFrame.ActiveIDFrame:Hide()
-		queueFrame.CancelApplication:SetMouseClickEnabled(true)
-		queueFrame.CancelApplication:RegisterForClicks("LeftButtonDown")
-
-		miog.createFrameBorder(queueFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-		queueSystem.queueFrames[queueInfo[18]] = queueFrame
-
-		queueFrameIndex = queueFrameIndex + 1
-		queueFrame.layoutIndex = queueFrameIndex
-	
-	end
-	
-	queueFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-
-	queueFrame.Name:SetText(queueInfo[11])
-
-	local ageNumber = 0
-
-	if(queueInfo[17][1] == "queued") then
-		ageNumber = GetTime() - queueInfo[17][2]
-
-		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
-			ageNumber = ageNumber + 1
-			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
-
-		end)
-	elseif(queueInfo[17][1] == "duration") then
-		ageNumber = queueInfo[17][2]
-
-		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
-			ageNumber = ageNumber - 1
-			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
-
-		end)
-	
-	end
-
-	queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
-
-	if(queueInfo[20]) then
-		queueFrame.Icon:SetTexture(queueInfo[20])
-	end
-
-	queueFrame.Wait:SetText("(" .. (queueInfo[12] ~= -1 and miog.secondsToClock(queueInfo[12]) or "N/A") .. ")")
-
-	--/run DevTools_Dump(C_PvP.GetAvailableBrawlInfo())
-	--/run DevTools_Dump(C_PvP.GetSpecialEventBrawlInfo())
-	--/run DevTools_Dump()
-	--/run DevTools_Dump()
-	--/run DevTools_Dump()
-
-	queueFrame:SetShown(true)
-
----@diagnostic disable-next-line: undefined-field
-	miog.pveFrame2.QueuePanel.Container:MarkDirty()
-end
-
-miog.createQueueFrame = createQueueFrame
-
-miog.createPVEFrameReplacement = createPVEFrameReplacement
