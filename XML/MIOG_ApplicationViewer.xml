@@ -13,16 +13,32 @@
         <Frames>
             <Frame parentKey="ClassPanel" inherits="MIOG_ClassPanel">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2" />
+                    <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-2"/>
                 </Anchors>
+
+                <Frames>
+                    <StatusBar parentKey="InspectStatus" inherits="BackdropTemplate" orientation="HORIZONTAL" frameStrata="DIALOG">
+                        <Size y="5" />
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnLoad>
+                                self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+                                self:SetMinMaxValues(0, 40)
+                                self:SetValue(0)
+                            </OnLoad>
+                        </Scripts>
+                    </StatusBar>
+                </Frames>
             </Frame>
 
             <Frame parentKey="TitleBar" inherits="BackdropTemplate">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-30" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-30" />
                 </Anchors>
 
                 <Layers>

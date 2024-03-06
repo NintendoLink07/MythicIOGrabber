@@ -17,7 +17,6 @@ miog.setAffixes = function()
 			miog.F.WEEKLY_AFFIX = affixIDs[1].id
 		end
 
-		print(affixString)
 		miog.applicationViewer.CreationSettings.Affixes:SetText(affixString)
 
 	else

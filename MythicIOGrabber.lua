@@ -1423,45 +1423,58 @@ local function updateSpecFrames()
 					indexedGroup[#indexedGroup+1] = groupMember
 					indexedGroup[#indexedGroup].guid = guid
 
-					miog.applicationViewer.classPanel.progressText:SetText(#indexedGroup .. "/" .. numOfMembers)
-
 					groupSystem.specCount[groupMember.specID] = groupSystem.specCount[groupMember.specID] and groupSystem.specCount[groupMember.specID] + 1 or 1
 				end
 			end
 		end
 	end
 
+	local percentageInspected = #indexedGroup / numOfMembers
 
-	if(#indexedGroup >= numOfMembers) then
-		miog.applicationViewer.classPanel.progressText:SetText("")
+	miog.applicationViewer.ClassPanel.InspectStatus:SetMinMaxValues(0, numOfMembers)
+	miog.applicationViewer.ClassPanel.InspectStatus:SetValue(#indexedGroup)
+	miog.applicationViewer.ClassPanel.InspectStatus:SetStatusBarColor(1 - percentageInspected, percentageInspected, 0, 1)
 
+
+	if(percentageInspected >= 1) then
+		miog.applicationViewer.ClassPanel.InspectStatus:Hide()
+
+	else
+		miog.applicationViewer.ClassPanel.InspectStatus:Show()
+	
 	end
+
 	local specCounter = 1
 
 	for classID, classEntry in ipairs(miog.CLASSES) do
 		for _, v in ipairs(classEntry.specs) do
-			local currentSpecFrame = miog.applicationViewer.classPanel.classFrames[classID].specPanel.specFrames[v]
+			local currentSpecFrame = miog.applicationViewer.ClassPanel.classFrames[classID].specPanel.specFrames[v]
 
 			if(groupSystem.specCount[v]) then
 				currentSpecFrame.layoutIndex = specCounter
 				currentSpecFrame.FontString:SetText(groupSystem.specCount[v])
 				specCounter = specCounter + 1
+
+				local color = C_ClassColor.GetClassColor(miog.CLASSES[classID].name)
+				miog.createFrameBorder(currentSpecFrame, 1, color.r, color.g, color.b, 1)
+
 				currentSpecFrame:Show()
 
 			else
 				currentSpecFrame.layoutIndex = nil
 				currentSpecFrame.FontString:SetText("")
+				currentSpecFrame:ClearBackdrop()
 				currentSpecFrame:Hide()
 
 			end
 
 		end
 
-		miog.applicationViewer.classPanel.classFrames[classID].specPanel:MarkDirty()
+		miog.applicationViewer.ClassPanel.classFrames[classID].specPanel:MarkDirty()
 
 	end
 
-	miog.applicationViewer.classPanel:MarkDirty()
+	miog.applicationViewer.ClassPanel:MarkDirty()
 
 	if(#indexedGroup < 5) then
 		if(groupSystem.roleCount["TANK"] < 1) then
@@ -1685,7 +1698,7 @@ local function updateRosterInfoData()
 
 	for _, classID in ipairs(keys) do
 		local classCount = groupSystem.classCount[classID]
-		local currentClassFrame = miog.applicationViewer.classPanel.classFrames[classID]
+		local currentClassFrame = miog.applicationViewer.ClassPanel.classFrames[classID]
 		currentClassFrame.layoutIndex = counter
 		currentClassFrame.FontString:SetText(classCount > 0 == true and classCount or "")
 		currentClassFrame.Icon:SetDesaturated(classCount > 0 == false and true or false)
@@ -1701,7 +1714,7 @@ local function updateRosterInfoData()
 
 		counter = counter + 1
 
-		miog.applicationViewer.classPanel:MarkDirty()
+		miog.applicationViewer.ClassPanel:MarkDirty()
 
 	end
 
@@ -1768,21 +1781,16 @@ local function insertLFGInfo()
 
 	end
 
-	print("VOICE", miog.F.ACTIVE_ENTRY_INFO.voiceChat)
-
 	if(miog.F.ACTIVE_ENTRY_INFO.voiceChat ~= "") then
 		LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
 
 	end
 
 	if(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked()) then
-		print("GOT VOICE")
-
 		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = miog.F.ACTIVE_ENTRY_INFO.voiceChat
 		miog.applicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOn.png")
+		
 	else
-
-		print("NO VOICE")
 		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = ""
 		miog.applicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
 
@@ -2173,7 +2181,7 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 
 				resultFrame.layoutIndex = -1
 
-				miog.searchPanel.resultPanel.container:MarkDirty()
+				miog.searchPanel.FramePanel.Container:MarkDirty()
 
 			end
 		else
@@ -2221,12 +2229,12 @@ miog.createResultTooltip = createResultTooltip
 local function sortSearchResultList(result1, result2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
 		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
-			local firstState = miog.searchPanel.buttonPanel.sortByCategoryButtons[key]:GetActiveState()
+			local firstState = miog.searchPanel.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
 
 			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
 
 				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
-					local secondState = miog.searchPanel.buttonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
+					local secondState = miog.searchPanel.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
 
 					if(result1.appStatus == "applied" and result2.appStatus ~= "applied") then
 						return true
@@ -2718,8 +2726,8 @@ local function updatePersistentResultFrame(resultID)
 end
 
 local function createPersistentResultFrame(resultID)
-	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", miog.searchPanel.resultPanel.container)
-	persistentFrame.fixedWidth = miog.C.MAIN_WIDTH - 2
+	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", miog.searchPanel.FramePanel.Container)
+	persistentFrame.fixedWidth = miog.searchPanel.FramePanel:GetWidth()
 	persistentFrame:SetFrameStrata("DIALOG")
 	persistentFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
@@ -2798,7 +2806,7 @@ local function checkListForEligibleMembers()
 			end
 		end
 
-		miog.searchPanel.resultPanel.container:MarkDirty()
+		miog.searchPanel.FramePanel.Container:MarkDirty()
 
 		miog.searchPanel.groupNumberFontString:SetText(actualResultsCounter .. "(" .. #lastOrderedList .. ")")
 	end
@@ -2871,7 +2879,7 @@ local function updateSearchResultList(forceReorder)
 			end
 		end
 
-		miog.searchPanel.resultPanel.container:MarkDirty()
+		miog.searchPanel.FramePanel.Container:MarkDirty()
 
 		miog.searchPanel.groupNumberFontString:SetText(actualResultsCounter .. "(" .. #orderedList .. ")")
 
@@ -2883,10 +2891,9 @@ miog.updateSearchResultList = updateSearchResultList
 local blocked = false
 
 local function searchResultsReceived()
-	miog.searchPanel.statusFrame:Show()
-	miog.searchPanel.statusFrame.throttledString:Hide()
-	miog.searchPanel.statusFrame.noResultsString:Hide()
-	miog.searchPanel.statusFrame.loadingSpinner:Show()
+	miog.searchPanel.Status:Show()
+	miog.searchPanel.Status.FontString:Hide()
+	miog.searchPanel.Status.LoadingSpinner:Show()
 
 	local totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
 
@@ -2894,24 +2901,79 @@ local function searchResultsReceived()
 		if(totalResults > 0) then
 			if(not blocked) then
 				blocked = true
-				miog.searchPanel.resultPanel:SetVerticalScroll(0)
+				miog.searchPanel.FramePanel:SetVerticalScroll(0)
 				
 				C_Timer.After(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods > 0 and 0.45 or 0, function()
-					miog.searchPanel.statusFrame:Hide()
-					miog.searchPanel.statusFrame.loadingSpinner:Hide()
+					miog.searchPanel.Status:Hide()
+					miog.searchPanel.Status.LoadingSpinner:Hide()
 					updateSearchResultList(true)
 					blocked = false
 				end)
 			end
 		else
 			if(not miog.F.SEARCH_IS_THROTTLED) then
-				miog.searchPanel.statusFrame.loadingSpinner:Hide()
-				miog.searchPanel.statusFrame.noResultsString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
-				miog.searchPanel.statusFrame.noResultsString:Show()
+				miog.searchPanel.Status.LoadingSpinner:Hide()
+				miog.searchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
+				miog.searchPanel.Status.FontString:Show()
 
 			end
 		end
 	end
+end
+
+local function startNewGroup(categoryFrame)
+	if(not C_LFGList.HasActiveEntryInfo()) then
+		miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
+	end
+
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+	LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
+
+	local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
+	local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
+
+	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID;
+	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters;
+
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+	
+	miog.initializeActivityDropdown(isDifferentCategory, isSeparateCategory)
+end
+
+local function ResolveCategoryFilters(categoryID, filters)
+	-- Dungeons ONLY display recommended groups.
+	if categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS then
+		return bit.band(bit.bnot(Enum.LFGListFilter.NotRecommended), bit.bor(filters, Enum.LFGListFilter.Recommended));
+	end
+
+	return filters;
+end
+
+function LFGListSearchPanel_DoSearch(self)
+	local searchText = self.SearchBox:GetText();
+	local languages = C_LFGList.GetLanguageSearchFilter();
+
+	local filters = ResolveCategoryFilters(LFGListFrame.SearchPanel.categoryID, LFGListFrame.SearchPanel.filters);
+	C_LFGList.Search(LFGListFrame.SearchPanel.categoryID, filters, LFGListFrame.SearchPanel.preferredFilters, languages);
+	LFGListFrame.SearchPanel.searching = true;
+	LFGListFrame.SearchPanel.searchFailed = false;
+	LFGListFrame.SearchPanel.selectedResult = nil;
+	LFGListSearchPanel_UpdateResultList(LFGListFrame.SearchPanel);
+
+	-- If auto-create is desired, then the caller needs to set up that data after the search begins.
+	-- There's an issue with using OnTextChanged to handle this due to how OnShow processes the update.
+	if LFGListFrame.SearchPanel.previousSearchText ~= searchText then
+		LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
+	end
+
+	LFGListFrame.SearchPanel.previousSearchText = searchText;
+end
+
+local function findGroup(categoryFrame)
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
+	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 end
 
 miog.OnEvent = function(_, event, ...)
@@ -2948,7 +3010,7 @@ miog.OnEvent = function(_, event, ...)
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
 
-			miog.pveFrame2.raiderIOAddonIsLoadedFrame:Hide()
+			miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
 
 		end
 		
@@ -2981,7 +3043,7 @@ miog.OnEvent = function(_, event, ...)
 		DevTools_Dump({C_PvP.GetSpecialEventBrawlInfo()})]]
 		C_MythicPlus.GetCurrentAffixes()
 		
-		if(not miog.searchPanel.FilterFrame.dungeonPanel) then
+		if(not miog.searchPanel.FilterPanel.FilterFrame.dungeonPanel) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
@@ -2990,7 +3052,6 @@ miog.OnEvent = function(_, event, ...)
 			--print(miog.F.CURRENT_SEASON)
 
 			miog.addDungeonCheckboxes()
-			--miog.initializeActivityDropdown()
 
 		end
 		miog.F.CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
@@ -3087,14 +3148,13 @@ miog.OnEvent = function(_, event, ...)
 		end
 
     elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
-		if(not miog.searchPanel.FilterFrame.dungeonPanel) then
+		if(not miog.searchPanel.FilterPanel.FilterFrame.dungeonPanel) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
 
 			miog.addDungeonCheckboxes()
-			--miog.initializeActivityDropdown()
 
 		end
 
@@ -3216,23 +3276,23 @@ miog.OnEvent = function(_, event, ...)
 				miog.F.SEARCH_IS_THROTTLED = true
 				local timestamp = GetTime()
 
-				miog.searchPanel.statusFrame.noResultsString:Hide()
-				miog.searchPanel.statusFrame.loadingSpinner:Hide()
-				miog.searchPanel.statusFrame.throttledString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
+				miog.searchPanel.Status.FontString:Hide()
+				miog.searchPanel.Status.LoadingSpinner:Hide()
+				miog.searchPanel.Status.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
 
 				C_Timer.NewTicker(0.2, function(self)
 					local timeUntil = timestamp + 3 - GetTime()
-					miog.searchPanel.statusFrame.throttledString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
+					miog.searchPanel.Status.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
 
 					if(timeUntil <= 0) then
-						miog.searchPanel.statusFrame.throttledString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
+						miog.searchPanel.Status.FontString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
 						miog.F.SEARCH_IS_THROTTLED = false
 						self:Cancel()
 					end
 				end)
 			
-				miog.searchPanel.statusFrame:Show()
-				miog.searchPanel.statusFrame.throttledString:Show()
+				miog.searchPanel.Status:Show()
+				miog.searchPanel.Status.FontString:Show()
 
 			end
 		end
@@ -3411,6 +3471,7 @@ miog.OnEvent = function(_, event, ...)
 		miog.updatePvP()
 
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
+
 		print("UPDATE LIST")
 		miog.updateQueueDropDown()
 
@@ -3418,23 +3479,9 @@ miog.OnEvent = function(_, event, ...)
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
 
-			local panel = LFGListFrame.CategorySelection;
-
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-
-			panel.selectedCategory = activityInfo.categoryID;
-			panel.selectedFilters = activityInfo.filters;
-
-			local groups = C_LFGList.GetAvailableActivityGroups(panel.selectedCategory, panel.selectedFilters)
-
-			LFGListEntryCreation_ClearAutoCreateMode(panel:GetParent().EntryCreation);
-
 			miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
-			miog.initializeActivityDropdown()
-			--LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.CategorySelection.StartGroupButton)
 
-			
-			miog.setUpEntryCreation(activityInfo.filters, activityInfo.categoryID, groups[1], activeEntryInfo.activityID)
+			startNewGroup({categoryID = activityInfo.categoryID, filters = activityInfo.filters})
 		end
 
 		local lastFrame = nil
@@ -3460,45 +3507,20 @@ miog.OnEvent = function(_, event, ...)
 				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
 				---@diagnostic disable-next-line: undefined-field
+				
 				categoryFrame.StartGroup:SetScript("OnClick", function(self)
-					if(not C_LFGList.HasActiveEntryInfo()) then
-						miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
-					end
-					
-					local panel = LFGListFrame.CategorySelection;
-					local actualFrame = self:GetParent()
+					local button = self:GetParent()
+					startNewGroup(button)
 
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-
-					panel.selectedCategory = actualFrame.categoryID;
-					panel.selectedFilters = actualFrame.filters;
-
-					LFGListEntryCreation_ClearAutoCreateMode(panel:GetParent().EntryCreation);
-
-					miog.initializeActivityDropdown()
-					LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.CategorySelection.StartGroupButton)
+					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 				end)
 				---@diagnostic disable-next-line: undefined-field
-				categoryFrame.FindGroup:SetScript("OnClick", function()
-					--local baseFilters = self:GetParent().baseFilters;
-					--local searchPanel = self:GetParent().SearchPanel;
-					--LFGListSearchPanel_Clear(searchPanel);
-					--if questID then
-					--	C_LFGList.SetSearchToQuestID(questID);
-					--end
-					--LFGListSearchPanel_SetCategory(searchPanel, self.selectedCategory, self.selectedFilters, baseFilters);
-					--LFGListSearchPanel_DoSearch(searchPanel);
-					--LFGListFrame_SetActivePanel(self:GetParent(), searchPanel);
-
+				categoryFrame.FindGroup:SetScript("OnClick", function(self)
 					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-					local baseFilters = LFGListFrame.baseFilters
-					local searchPanel = LFGListFrame.SearchPanel
+					local button = self:GetParent()
+					findGroup(button)
 
-					LFGListSearchPanel_SetCategory(searchPanel, categoryID, Enum.LFGListFilter.Recommended, baseFilters)
-					LFGListSearchPanel_DoSearch(searchPanel)
-
-					--miog.requestSearchResults(categoryID, miog.LFG_LIST_FILTER)
-					LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
+					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 				end)
 			
 				lastFrame = categoryFrame
@@ -3522,42 +3544,17 @@ miog.OnEvent = function(_, event, ...)
 					notRecommendedFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
 					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.StartGroup:SetScript("OnClick", function(self)
-						if(not C_LFGList.HasActiveEntryInfo()) then
-							miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
-						end
-						
-						local panel = LFGListFrame.CategorySelection;
-						local actualFrame = self:GetParent()
+						local button = self:GetParent()
+						startNewGroup(button)
 	
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-	
-						panel.selectedCategory = actualFrame.categoryID;
-						panel.selectedFilters = actualFrame.filters;
-	
-						LFGListEntryCreation_ClearAutoCreateMode(panel:GetParent().EntryCreation);
-	
-						miog.initializeActivityDropdown()
-						LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.CategorySelection.StartGroupButton)
+						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 					end)
 ---@diagnostic disable-next-line: undefined-field
-					notRecommendedFrame.FindGroup:SetScript("OnClick", function()
-						--local baseFilters = self:GetParent().baseFilters;
-						--local searchPanel = self:GetParent().SearchPanel;
-						--LFGListSearchPanel_Clear(searchPanel);
-						--if questID then
-						--	C_LFGList.SetSearchToQuestID(questID);
-						--end
-						--LFGListSearchPanel_SetCategory(searchPanel, self.selectedCategory, self.selectedFilters, baseFilters);
-						--LFGListSearchPanel_DoSearch(searchPanel);
-						--LFGListFrame_SetActivePanel(self:GetParent(), searchPanel);
+					notRecommendedFrame.FindGroup:SetScript("OnClick", function(self)
+						local button = self:GetParent()
+						findGroup(button)
 
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-						local baseFilters = LFGListFrame.baseFilters
-						local searchPanel = LFGListFrame.SearchPanel
-						LFGListSearchPanel_SetCategory(searchPanel, categoryID, Enum.LFGListFilter.NotRecommended, baseFilters)
-						LFGListSearchPanel_DoSearch(searchPanel)
-						--miog.requestSearchResults(categoryID, miog.LFG_LIST_FILTER)
-						LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
+						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 					end)
 			
 					lastFrame = notRecommendedFrame
@@ -3568,204 +3565,6 @@ miog.OnEvent = function(_, event, ...)
 		print("BF SHOW")
 	end
 end
-
-local function ResolveCategoryFilters(categoryID, filters)
-	-- Dungeons ONLY display recommended groups.
-	if categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS then
-		return bit.band(bit.bnot(Enum.LFGListFilter.NotRecommended), bit.bor(filters, Enum.LFGListFilter.Recommended));
-	end
-
-	return filters;
-end
-
---[===[miog.updateSearchBoxAutoComplete = function(self)
-	local text = self.SearchBox:GetText();
-	if ( text == "" or not self.SearchBox:HasFocus() ) then
-		self.AutoCompleteFrame:Hide();
-		self.AutoCompleteFrame.selected = nil;
-		return;
-	end
-
-	--Choose the autocomplete results
-	local filters = ResolveCategoryFilters(self.categoryID, self.filters);
-	local matchingActivities = C_LFGList.GetAvailableActivities(self.categoryID, nil, filters, text);
-	LFGListUtil_SortActivitiesByRelevancy(matchingActivities);
-
-	local numResults = math.min(#matchingActivities, MAX_LFG_LIST_SEARCH_AUTOCOMPLETE_ENTRIES);
-
-	if ( numResults == 0 ) then
-		self.AutoCompleteFrame:Hide();
-		self.AutoCompleteFrame.selected = nil;
-		return;
-	end
-
-	--Update the buttons
-	local foundSelected = false;
-	for i=1, numResults do
-		local id = matchingActivities[i];
-
-		local button = self.AutoCompleteFrame.Results[i];
-		if ( not button ) then
-			button = CreateFrame("BUTTON", nil, self.AutoCompleteFrame, "LFGListSearchAutoCompleteButtonTemplate");
-			button:SetPoint("TOPLEFT", self.AutoCompleteFrame.Results[i-1], "BOTTOMLEFT", 0, 0);
-			button:SetPoint("TOPRIGHT", self.AutoCompleteFrame.Results[i-1], "BOTTOMRIGHT", 0, 0);
-			self.AutoCompleteFrame.Results[i] = button;
-		end
-
-		if ( i == numResults and numResults < #matchingActivities ) then
-			--This is just a "x more" button
-			button:SetFormattedText(LFG_LIST_AND_MORE, #matchingActivities - numResults + 1);
-			button:Disable();
-			button.Selected:Hide();
-			button.activityID = nil;
-		else
-			--This is an actual activity
-			button:SetText( (C_LFGList.GetActivityFullName(id)) );
-			button:Enable();
-			button.activityID = id;
-
-			if ( id == self.AutoCompleteFrame.selected ) then
-				button.Selected:Show();
-				foundSelected = true;
-			else
-				button.Selected:Hide();
-			end
-		end
-		button:Show();
-	end
-
-	if ( not foundSelected ) then
-		self.selected = nil;
-	end
-
-	--Hide unused buttons
-	for i=numResults + 1, #self.AutoCompleteFrame.Results do
-		self.AutoCompleteFrame.Results[i]:Hide();
-	end
-
-	--Update the frames height and show it
-	self.AutoCompleteFrame:SetHeight(numResults * self.AutoCompleteFrame.Results[1]:GetHeight() + 8);
-	self.AutoCompleteFrame:Show();
-end
-
-function LFGListSearchPanel_DoSearch()
-	local self = LFGListFrame.SearchPanel
-
-	local searchText = self.SearchBox:GetText();
-	local languages = C_LFGList.GetLanguageSearchFilter();
-
-	local filters = ResolveCategoryFilters(self.categoryID, self.filters);
-	C_LFGList.Search(self.categoryID, filters, self.preferredFilters, languages);
-	self.searching = true;
-	self.searchFailed = false;
-	self.selectedResult = nil;
-	LFGListSearchPanel_UpdateResultList(self);
-
-	-- If auto-create is desired, then the caller needs to set up that data after the search begins.
-	-- There's an issue with using OnTextChanged to handle this due to how OnShow processes the update.
-	if self.previousSearchText ~= searchText then
-		LFGListEntryCreation_ClearAutoCreateMode(self:GetParent().EntryCreation);
-	end
-
-	self.previousSearchText = searchText;
-end]===]
-
---[===[local function requestSearchResults2(categoryID, filters)
-
-	local searchText = self.SearchBox:GetText();
-	local languages = C_LFGList.GetLanguageSearchFilter();
-
-	filters = ResolveCategoryFilters(self.categoryID, self.filters);
-	C_LFGList.Search(miog.pveFrame2.categoryID, filters, miog.pveFrame2.preferredFilters, languages);
-	self.searching = true;
-	self.searchFailed = false;
-	self.selectedResult = nil;
-	LFGListSearchPanel_UpdateResultList(self);
-
-	-- If auto-create is desired, then the caller needs to set up that data after the search begins.
-	-- There's an issue with using OnTextChanged to handle this due to how OnShow processes the update.
-	if self.previousSearchText ~= searchText then
-		LFGListEntryCreation_ClearAutoCreateMode(self:GetParent().EntryCreation);
-	end
-
-	self.previousSearchText = searchText;
-
-
-
-	--[[local searchText = self.SearchBox:GetText();
-	local languages = C_LFGList.GetLanguageSearchFilter();
-
-	local filters = ResolveCategoryFilters(self.categoryID, self.filters);
-
-	C_LFGList.Search(categoryID, filters, LFGListFrame.baseFilters, languages, true);
-
-	local searching = true;
-	local searchFailed = false;
-	local selectedResult = nil;
-
-	LFGListFrame.SearchPanel.totalResults, LFGListFrame.SearchPanel.results = C_LFGList.GetFilteredSearchResults();
-	LFGListFrame.SearchPanel.applications = C_LFGList.GetApplications();
-	LFGListUtil_SortSearchResults(LFGListFrame.SearchPanel.results);
-
-
-	--If we have an application selected, deselect it.
-	LFGListSearchPanel_ValidateSelected(self);
-
-	if ( self.searching ) then
-		self.SearchingSpinner:Show();
-		self.ScrollBox.NoResultsFound:Hide();
-		self.ScrollBox.StartGroupButton:Hide();
-		self.ScrollBox:RemoveDataProvider();
-	else
-		self.SearchingSpinner:Hide();
-
-		local dataProvider = CreateDataProvider();
-		local results = self.results;
-		for index = 1, #results do
-			dataProvider:Insert({resultID=results[index]});
-		end
-
-		local apps = self.applications;
-		local resultSet = tInvert(self.results);
-		for i, app in ipairs(apps) do
-			if not resultSet[app]  then
-				dataProvider:Insert({resultID=app});
-			end
-		end
-
-		if(self.totalResults == 0) then
-			self.ScrollBox.NoResultsFound:Show();
-			self.ScrollBox.StartGroupButton:SetShown(not self.searchFailed);
-			self.ScrollBox.StartGroupButton:ClearAllPoints();
-			self.ScrollBox.StartGroupButton:SetPoint("BOTTOM", self.ScrollBox.NoResultsFound, "BOTTOM", 0, - 27);
-			self.ScrollBox.NoResultsFound:SetText(self.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND);
-		else
-			self.ScrollBox.NoResultsFound:Hide();
-			self.ScrollBox.StartGroupButton:SetShown(false);
-
-			if(self.shouldAlwaysShowCreateGroupButton) then
-				dataProvider:Insert({startGroup=true});
-			end
-		end
-
-		self.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
-
-		--Reanchor the errors to not overlap applications
-		if not self.ScrollBox:HasScrollableExtent() then
-			local extent = self.ScrollBox:GetExtent();
-			self.ScrollBox.NoResultsFound:SetPoint("TOP", self.ScrollBox, "TOP", 0, -extent - 27);
-		end
-	end
-	LFGListSearchPanel_UpdateButtonStatus(self);
-	
-	if self.previousSearchText ~= searchText then
-		LFGListEntryCreation_ClearAutoCreateMode(self:GetParent().EntryCreation);
-	end
-	
-	self.previousSearchText = searchText]]
-end
-
-miog.requestSearchResults = requestSearchResults]===]
 
 SLASH_MIOG1 = '/miog'
 local function handler(msg, editBox)
@@ -3951,123 +3750,3 @@ SlashCmdList["MIOG"] = handler
 hooksecurefunc("NotifyInspect", function()
 	lastNotifyTime = GetTimePreciseSec()
 end)
-
--- Courtesy of Premade Group Finder
-
---[[function LFGListSearchPanel_SelectResult(self, resultID)
-	self.selectedResult = resultID;
-	LFGListSearchPanel_UpdateResults(self)
-
-	if (IsInGroup() == false or UnitIsGroupLeader("player")) then
-		C_LFGList.ApplyToGroup(LFGListFrame.SearchPanel.selectedResult, miog.C.AVAILABLE_ROLES.TANK, miog.C.AVAILABLE_ROLES.HEALER, miog.C.AVAILABLE_ROLES.DAMAGER)
-
-	end
-end]]
-
---[[LFGListApplicationDialog:HookScript("OnShow", function(self)
-	if(IsInGroup() and not UnitIsGroupLeader("player")) then
-		if(miog.C.AVAILABLE_ROLES.TANK) then
-			LFDRoleCheckPopupRoleButtonTank.checkButton:SetChecked(true)
-
-		else
-			LFDRoleCheckPopupRoleButtonTank.checkButton:SetChecked(false)
-
-		end
-
-		if(miog.C.AVAILABLE_ROLES.HEALER) then
-			LFDRoleCheckPopupRoleButtonHealer.checkButton:SetChecked(true)
-
-		else
-			LFDRoleCheckPopupRoleButtonHealer.checkButton:SetChecked(false)
-
-		end
-
-		if(miog.C.AVAILABLE_ROLES.DAMAGER) then
-			LFDRoleCheckPopupRoleButtonDPS.checkButton:SetChecked(true)
-
-		else
-			LFDRoleCheckPopupRoleButtonDPS.checkButton:SetChecked(false)
-
-		end
-
-		LFDRoleCheckPopupAcceptButton:Enable()
-		LFDRoleCheckPopupAcceptButton:Click()
-
-	else
-		LFGListApplicationDialog:Hide()
-
-	end
-end)]]
-
---[[function LFGListInviteDialog_CheckPending(self)
-	--print("GOT INVITE")
-
-	local apps = C_LFGList.GetApplications()
-	for i=1, #apps do
-		local resultID, status, pendingStatus = C_LFGList.GetApplicationInfo(apps[i])
-
-		if (status == "invited") then
-			if(not pendingStatus) then
-				if(miog.currentInvites[resultID] == nil) then
-					miog.showUpgradedInvitePendingDialog(self, resultID)
-				end
-
-			else
-				if(miog.currentInvites[resultID]) then
-					miog.hideActiveInviteFrame(resultID)
-				end
-			
-			end
-
-			print(i, resultID)
-		else
-			if(miog.currentInvites[resultID]) then
-				miog.hideActiveInviteFrame(resultID)
-			end
-
-		end
-	end
-
-end]]
-
-hooksecurefunc("LFGListInviteDialog_CheckPending", function (self)
-	StaticPopupSpecial_Hide(self)
-	
-end)
-
---[[function LFGListInviteDialog_Show(self, resultID, kstringGroupName)
-	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
-	local activityName = C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode);
-	local _, status, _, _, role = C_LFGList.GetApplicationInfo(resultID);
-
-	local informational = (status ~= "invited");
-	assert(not informational or status == "inviteaccepted");
-
-	self.resultID = resultID;
-	self.GroupName:SetText(kstringGroupName or searchResultInfo.name);
-	self.ActivityName:SetText(activityName);
-	self.Role:SetText(_G[role]);
-	local showDisabled = false;
-	self.RoleIcon:SetAtlas(GetIconForRole(role, showDisabled), TextureKitConstants.IgnoreAtlasSize);
-	self.Label:SetText(informational and LFG_LIST_JOINED_GROUP_NOTICE or LFG_LIST_INVITED_TO_GROUP);
-
-	self.informational = informational;
-	self.AcceptButton:SetShown(not informational);
-	self.DeclineButton:SetShown(not informational);
-	self.AcknowledgeButton:SetShown(informational);
-
----@diagnostic disable-next-line: redundant-parameter
-	if ( not informational and GroupHasOfflineMember(LE_PARTY_CATEGORY_HOME) ) then
-		self:SetHeight(250);
-		self.OfflineNotice:Show();
-		LFGListInviteDialog_UpdateOfflineNotice(self);
-	else
-		self:SetHeight(210);
-		self.OfflineNotice:Hide();
-	end
-
-	--StaticPopupSpecial_Show(self);	
-	
-	--PlaySound(SOUNDKIT.READY_CHECK);
-	--FlashClientIcon();
-end]]

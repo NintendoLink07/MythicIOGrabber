@@ -1092,9 +1092,9 @@ miog.BRAWL = {
 	{18, "Brawl: Stocked House","Team Deathmatch",0,0,0},
 	{19, "Seething Shore","Collect Azerite",894,0,0},
 	{120, "Brawl: Classic Ashran","Endless Epic Battleground",1021,0,0},
-	{121, "Brawl: Comp Stomp","Domination",0,1966,0},
+	{121, "Brawl: Comp Stomp","Domination",1019,1966,0}, --BGID[4] is 0, has dungeonID 1966, replaced BGID 0 with mapID 1019
 	{122, "Wintergrasp","Defend or Assault Wintergrasp",1030,0,0},
-	{123, "Brawl: Teeming Island","10 v 10 Island","We're going to need a bigger boat...",0,2025,0},
+	{123, "Brawl: Teeming Island","10 v 10 Island","We're going to need a bigger boat...",0,2025,0}, --BGID[4] is 0, has dungeonID 2025, replaced BGID 0 with mapID ????
 	{124, "Korrak's Revenge","WoW Anniversary Event",1033,0,63953},
 	{125, "Deepwind Gorge","Capture the objectives",1039,0,0},
 	{126, "Brawl: Korrak's Revenge","Classic Alterac Valley",1033,0,0},
@@ -1326,7 +1326,7 @@ miog.ACTIVITY_BACKGROUNDS = {
 
 miog.APPLICATION_VIEWER_BACKGROUNDS = {
 	[1] = {"Standard", "lfg-background_tall_1024.png"},
-	[2] = {"Vanilla", "vanilla-bg-1.png"},
+	[2] = {"Classic", "vanilla-bg-1.png"},
 	[3] = {"The Burning Crusade", "tbc-bg-1.png"},
 	[4] = {"Wrath of the Lich King", "wotlk-bg-1.png"},
 	[5] = {"Cataclysm", "cata-bg-1.png"},

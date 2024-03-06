@@ -211,6 +211,7 @@ C_LFGList.GetPlaystyleString = function(playstyle, activityInfo)
     elseif activityInfo.isMythicActivity then
         globalStringPrefix = "GROUP_FINDER_PVE_MYTHICZERO_PLAYSTYLE"
     end
+	print(globalStringPrefix .. tostring(playstyle))
     return globalStringPrefix and _G[globalStringPrefix .. tostring(playstyle)] or nil
 end
 
@@ -351,12 +352,12 @@ miog.loadSettings = function()
 
 					optionButton:SetScript("OnClick", function()
 						setting.value = not setting.value
-						miog.applicationViewer.classPanel:SetShown(setting.value)
-						miog.applicationViewer.classPanel:MarkDirty()
+						miog.applicationViewer.ClassPanel:SetShown(setting.value)
+						miog.applicationViewer.ClassPanel:MarkDirty()
 
 					end)
 
-					miog.applicationViewer.classPanel:SetShown(setting.value)
+					miog.applicationViewer.ClassPanel:SetShown(setting.value)
 
 				elseif(key == "favouredApplicants") then
 					optionButton:SetScript("OnClick", function()
@@ -484,13 +485,13 @@ miog.loadSettings = function()
 	
 	if(MIOG_SavedSettings.sortMethods_SearchPanel and MIOG_SavedSettings.sortMethods_SearchPanel.table) then
 		for sortKey, row in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
-			if(miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey]) then
+			if(miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey]) then
 				if(row.active == true) then
-					miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].active, MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentState)
-					miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentLayer)
+					miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].active, MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentState)
+					miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentLayer)
 
 				else
-					miog.searchPanel.buttonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+					miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
 
 				end
 			end

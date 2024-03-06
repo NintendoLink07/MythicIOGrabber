@@ -11,10 +11,120 @@
         </Anchors>
 
         <Frames>
-            <Frame parentKey="Filter" inherits="MIOG_ClassSpecFilterTemplate">
+            <Frame parentKey="Status" setAllPoints="true" frameStrata="FULLSCREEN">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.93"/>
+                        </Texture>
+                    </Layer>
 
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="LibMono" hidden="true" justifyH="CENTER" wordwrap="true" nonspacewrap="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="LoadingSpinner" inherits="LoadingSpinnerTemplate" hidden="true">
+                        <Size x="60" y="60" />
+                        <Anchors>
+                            <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-10"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
             </Frame>
 
+            <Frame parentKey="FilterPanel" hidden="true">
+                <Size x="220" y="300" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <EditBox parentKey="SearchBox" hidden="true">
+                <Size x="210" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" y="-1"/>
+                </Anchors>
+            </EditBox>
+
+            <Frame parentKey="InteractionPanel">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Frames>
+
+                    <Button parentKey="ToggleFilter" inherits="UIPanelDynamicResizeButtonTemplate" text="Filter">
+                        <Size y="20" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:FitToText()
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="StartSearch" inherits="UIPanelDynamicResizeButtonTemplate" text="Search">
+                        <Size y="20" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.ToggleFilter" relativePoint="LEFT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:FitToText()
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="ButtonPanel" inherits="BackdropTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25" />
+                </Anchors>
+            </Frame>
+
+            <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:SetScrollChild(self.Container)
+                    </OnShow>
+                </Scripts>
+
+                <Frames>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                        <KeyValues>
+                            <KeyValue key="minimumWidth" value="1" type="number" />
+                            <KeyValue key="minimumHeight" value="1" type="number" />
+                            <KeyValue key="spacing" value="5" type="number" />
+                            <KeyValue key="align" value="top" type="global" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnLoad>
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                </Frames>
+            </ScrollFrame>
         </Frames>
     </Frame>
 </Ui>

@@ -5,7 +5,28 @@
     </Font>
 
     <Button name="MIOG_QueueFrame" inherits="BackdropTemplate" hidden="true" virtual="true">        
-        <Size x="188" y="38" />
+        <Size y="38" />
+
+        <Frames>
+            <Button parentKey="CancelApplication" inherits="SecureActionButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Icon" file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png">
+                            <Size x="16" y="16" />
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
@@ -24,11 +45,11 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="false">
+                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="true">
                     <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="2" y="-2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.CancelApplication" relativePoint="TOPLEFT" x="-2" y="-2"/>
                     </Anchors>
                 </FontString>
 
@@ -47,29 +68,5 @@
                 </FontString>
             </Layer>
         </Layers>
-
-        <Frames>
-            <Button parentKey="CancelApplication" inherits="SecureActionButtonTemplate">
-                <!--<KeyValues>
-                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
-                    <KeyValue key="iconSize" value="16" type="number" />
-                </KeyValues>-->
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
-
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="Icon" file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png">
-                            <Size x="16" y="16" />
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
-        </Frames>
     </Button>
 </Ui>

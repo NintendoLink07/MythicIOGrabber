@@ -61,11 +61,6 @@
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2"/>
                         </Anchors>
-                        <!--<Scripts>
-                            <OnLoad>
-                                self:OnLoad()
-                            </OnLoad>
-                        </Scripts>-->
                     </Button>
 
                     <Button parentKey="Invite" inherits="IconButtonTemplate" hidden="true">
@@ -95,7 +90,7 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="Name" font="LibMono"  justifyH="LEFT" enableMouseMotion="true">
                             <FontHeight val="11"/>
-                            <Size x="95" y="20" />
+                            <Size x="120" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
                             </Anchors>

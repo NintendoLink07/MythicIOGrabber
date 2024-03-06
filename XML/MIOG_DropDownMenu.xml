@@ -4,7 +4,7 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true">
+    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true" frameStrata="HIGH">
 
         <Anchors>
             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
@@ -38,7 +38,13 @@
                             parent.List:SetFrameLevel(100)
 
                         end
+
                         self:GetParent().List:SetShown(not self:GetParent().List:IsVisible())
+
+                        if(parent.currentList) then
+                            parent.currentList:Hide()
+                        end
+
                         self:GetParent():MarkDirty()
                     </OnClick>
                 </Scripts>

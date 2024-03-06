@@ -6,7 +6,10 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true">
+    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true" enableMouse="true">
+        <KeyValues>
+            <KeyValue key="activeDropdown" value="" type="global" />
+        </KeyValues>
         <Frames>
             <Frame parentKey="LastInvites" inherits="MIOG_LastInvitesTemplate">
                 <Anchors>
@@ -20,17 +23,6 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                 </Anchors>
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="TitleString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
-                            <FontHeight val="12"/>
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
 
                 <Frames>
                     <Button parentKey="KnownIssuesPanel" inherits="IconButtonTemplate" hidden="true">
@@ -78,20 +70,42 @@
 							</OnClick>
 						</Scripts>
                     </Button>
-                </Frames>
 
-                <Scripts>
-                    <OnLoad>
+                    <Button parentKey="Expand">
+                        <Size x="20" y="20"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2" y="-5"/>
+                        </Anchors>
+                        <NormalTexture file="interface/buttons/arrow-down-up.blp" />
+                        <PushedTexture file="interface/buttons/arrow-down-down.blp" />
+                        <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
+                    </Button>
+                </Frames>    
 
-                    </OnLoad>
-                </Scripts>
-                
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="TitleString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
+                            <FontHeight val="12"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                            </Anchors>
+                        </FontString>
+                        
+                        <FontString parentKey="RaiderIOLoaded" font="LibMono" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.TitleString" relativePoint="LEFT" x="-3" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>            
             </Frame>
 
-            <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true">
+            <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true" frameStrata="HIGH">
+                <Size x="370" y="383" />
+
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="190"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="25"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-370" y="-20"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
                 </Anchors>
 
                 <Frames>
@@ -124,32 +138,19 @@
                         </Frames>
                     </Frame>
 
-                    <Button parentKey="Resize" inherits="UIButtonTemplate" frameStrata="FULLSCREEN">
+                    <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" frameStrata="FULLSCREEN">
                         <Size x="20" y="20" />
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
-
-                        <NormalTexture file="Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down" />
-                        <PushedTexture file="Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up" />
-                        <HighlightTexture file="Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight" />
-
                         <Scripts>
-                            <OnClick>
-		                        self:GetParent():StartSizing()
-
-                            </OnClick>
+                            <OnMouseDown>
+                                self:GetParent():StartSizing()
+                            </OnMouseDown>
                         </Scripts>
                     </Button>
                 </Frames>
             </Frame>
-
-            <EditBox parentKey="SearchBox" hidden="true">
-                <Size x="319" y="18"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
-            </EditBox>
 
             <Frame parentKey="AutoCompleteFrame" frameLevel="20" hidden="true">
                 <Size x="0" y="30"/>
@@ -215,11 +216,12 @@
                 </Frames>    
             </Frame>
 
-            <Frame parentKey="RolePanel" inherits="BackdropTemplate">
-                <Size x="180" y="45" />
+            <Frame parentKey="RolePanel">
+                <Size x="190" y="30" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="TOPLEFT" y="-20"/>
                 </Anchors>
+
                 <Frames>
 
                     <Frame parentKey="Leader">
@@ -346,23 +348,47 @@
             </Frame>
 
             <Frame parentKey="QueuePanel" inherits="BackdropTemplate" frameLevel="2">
-                <Size x="188" y="330" />
+                <KeyValues>
+                    <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+                </KeyValues>
+
+                <Size x="188" y="340" />
 
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate">
-                    <KeyValues>
-                        <KeyValue key="align" value="top" />
-                        <KeyValue key="spacing" value="3" />
-                    </KeyValues>
+                    <Frame parentKey="Title" inherits="BackdropTemplate">
+                        <KeyValues>
+                            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+                        </KeyValues>
+                        <Size y="20" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="LibMono" text="Active queues">
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
 
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                    </Anchors>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate">
+                        <KeyValues>
+                            <KeyValue key="align" value="top" />
+                            <KeyValue key="spacing" value="3" />
+                        </KeyValues>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" x="4" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT" x="-3"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>
@@ -431,5 +457,17 @@
                 </Texture>
             </Layer>
         </Layers>
+
+        <Scripts>
+            <OnDragStart>
+                self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+                self:StopMovingOrSizing()
+            </OnDragStop>
+            <OnLoad>
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+        </Scripts>
     </Frame>
 </Ui>

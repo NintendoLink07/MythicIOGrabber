@@ -41,13 +41,15 @@ hooksecurefunc("PVEFrame_ToggleFrame", function()
 end)
 
 local function createPVEFrameReplacement()
-
 	local frame = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", WorldFrame, "MIOG_MainFrameTemplate")
 	frame:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
-	frame:SetPoint(PVEFrame:GetPoint())
+
+	if(frame:GetPoint() == nil) then
+		frame:SetPoint(PVEFrame:GetPoint())
+	end
 	frame:SetScale(0.64)
 
-	frame:AdjustPointsOffset(900, 0)
+	_G[frame:GetName()] = frame
 
 	miog.createFrameBorder(frame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
@@ -124,8 +126,10 @@ local function createPVEFrameReplacement()
 
 							end
 
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
+							GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
+
 						elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
-							print("RAID")
 							local currentDifficultyID = self.info.level;
 
 							if(itemLevel) then
@@ -134,50 +138,48 @@ local function createPVEFrameReplacement()
 								GameTooltip_AddBlankLineToTooltip(GameTooltip);
 							end
 							
-							--
-							--print(nextDifficultyID)
-							--if nextDifficultyID then
-							--	print("GOT DIFF ID")
-								if upgradeItemLevel then
-									local nextDifficultyID = DifficultyUtil.GetNextPrimaryRaidDifficultyID(currentDifficultyID);
-									local difficultyName = DifficultyUtil.GetDifficultyName(nextDifficultyID);
-									GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
-									GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_RAID, difficultyName));
-								end
-					
-								local encounters = C_WeeklyRewards.GetActivityEncounterInfo(self.info.type, self.info.index);
-								if encounters then
-									table.sort(encounters, function(left, right)
-										if left.instanceID ~= right.instanceID then
-											return left.instanceID < right.instanceID;
-										end
-										local leftCompleted = left.bestDifficulty > 0;
-										local rightCompleted = right.bestDifficulty > 0;
-										if leftCompleted ~= rightCompleted then
-											return leftCompleted;
-										end
-										return left.uiOrder < right.uiOrder;
-									end)
-									local lastInstanceID = nil;
-									for index, encounter in ipairs(encounters) do
-										local name, description, encounterID, rootSectionID, link, instanceID = EJ_GetEncounterInfo(encounter.encounterID);
-										if instanceID ~= lastInstanceID then
-											local instanceName = EJ_GetInstanceInfo(instanceID);
-											--GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_ENCOUNTER_LIST, instanceName));
-											--GameTooltip_AddBlankLineToTooltip(GameTooltip);	
-											lastInstanceID = instanceID;
-										end
-										if name then
-											if encounter.bestDifficulty > 0 then
-												local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty);
-												GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName), miog.RAID_DIFFICULTY_UTIL_IDS_TO_COLOR[encounter.bestDifficulty]);
-											else
-												GameTooltip_AddColoredLine(GameTooltip, string.format(DASH_WITH_TEXT, name), DISABLED_FONT_COLOR);
-											end
+							if upgradeItemLevel then
+								local nextDifficultyID = DifficultyUtil.GetNextPrimaryRaidDifficultyID(currentDifficultyID);
+								local difficultyName = DifficultyUtil.GetDifficultyName(nextDifficultyID);
+								GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
+								GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_RAID, difficultyName));
+							end
+				
+							local encounters = C_WeeklyRewards.GetActivityEncounterInfo(self.info.type, self.info.index);
+							if encounters then
+								table.sort(encounters, function(left, right)
+									if left.instanceID ~= right.instanceID then
+										return left.instanceID < right.instanceID;
+									end
+									local leftCompleted = left.bestDifficulty > 0;
+									local rightCompleted = right.bestDifficulty > 0;
+									if leftCompleted ~= rightCompleted then
+										return leftCompleted;
+									end
+									return left.uiOrder < right.uiOrder;
+								end)
+								local lastInstanceID = nil;
+								for index, encounter in ipairs(encounters) do
+									local name, description, encounterID, rootSectionID, link, instanceID = EJ_GetEncounterInfo(encounter.encounterID);
+									if instanceID ~= lastInstanceID then
+										local instanceName = EJ_GetInstanceInfo(instanceID);
+										--GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_ENCOUNTER_LIST, instanceName));
+										--GameTooltip_AddBlankLineToTooltip(GameTooltip);	
+										lastInstanceID = instanceID;
+									end
+									if name then
+										if encounter.bestDifficulty > 0 then
+											local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty);
+											GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName), miog.RAID_DIFFICULTY_UTIL_IDS_TO_COLOR[encounter.bestDifficulty]);
+										else
+											GameTooltip_AddColoredLine(GameTooltip, string.format(DASH_WITH_TEXT, name), DISABLED_FONT_COLOR);
 										end
 									end
 								end
-							--end
+							end
+
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
+							GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
 
 						elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
 							if not ConquestFrame_HasActiveSeason() then
@@ -235,80 +237,30 @@ local function createPVEFrameReplacement()
 	end)
 
 	miog.pveFrame2 = frame
-	--PVEFrame:SetAlpha(0)
-	--PVEFrame:HookScript("OnShow", function(self)
-		--print("HIDE")
-		--PVEFrame:Hide()
-		--miog.pveFrame2:Show()
-	
-	--end)
-	--PVEFrame:HookScript("OnHide", function(self) miog.pveFrame2:Hide() end)
 
----@diagnostic disable-next-line: undefined-field
-	miog.createFrameBorder(frame.QueuePanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	local expandDownwardsButton = miog.createBasicFrame("persistent", "UIButtonTemplate", frame, miog.C.APPLICANT_BUTTON_SIZE, miog.C.APPLICANT_BUTTON_SIZE)
-	expandDownwardsButton:SetPoint("RIGHT", frame.TitleBar.Settings, "LEFT", 0, -expandDownwardsButton:GetHeight() / 4)
-	expandDownwardsButton:SetNormalTexture(293770)
-	expandDownwardsButton:SetPushedTexture(293769)
-	expandDownwardsButton:SetDisabledTexture(293768)
-	expandDownwardsButton:RegisterForClicks("LeftButtonDown")
-	expandDownwardsButton:SetScript("OnClick", function()
+	frame.TitleBar.Expand:SetScript("OnClick", function()
 
 		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
 
-		if(MIOG_SavedSettings.frameExtended.value) then
-			--positionTab1ToActiveFrame(mainFrame)
+		if(MIOG_SavedSettings.frameExtended.value == true) then
+			frame.Plugin:SetHeight(frame.Plugin.extendedHeight)
 
-		elseif(not MIOG_SavedSettings.frameExtended.value) then
-			--positionTab1ToPVEFrame(mainFrame)
+		elseif(MIOG_SavedSettings.frameExtended.value == false) then
+			frame.Plugin:SetHeight(frame.Plugin.standardHeight)
 
 		end
 	end)
-	frame.expandDownwardsButton = expandDownwardsButton
 
-	local raiderIOAddonIsLoadedFrame = miog.createBasicFontString("persistent", 16, frame)
-	raiderIOAddonIsLoadedFrame:SetPoint("RIGHT", frame.TitleBar.Settings, "LEFT", - 5 - expandDownwardsButton:GetWidth(), 0)
-	raiderIOAddonIsLoadedFrame:SetJustifyH("RIGHT")
-	raiderIOAddonIsLoadedFrame:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
-	raiderIOAddonIsLoadedFrame:SetShown(not miog.F.IS_RAIDERIO_LOADED)
-	frame.raiderIOAddonIsLoadedFrame = raiderIOAddonIsLoadedFrame
+	frame.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
+	frame.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
 
 ---@diagnostic disable-next-line: undefined-field
 	queueSystem.framePool = CreateFramePool("Frame", miog.pveFrame2.QueuePanel.Container, "MIOG_QueueFrame", resetQueueFrame)
 
-	local searchBox = LFGListFrame.SearchPanel.SearchBox
-	searchBox:ClearAllPoints()
-	searchBox:SetParent(frame)
-	---@diagnostic disable-next-line: undefined-field
-	searchBox:SetPoint(frame.SearchBox:GetPoint())
-	searchBox:SetFrameStrata("DIALOG")
-
-	LFGListFrame.SearchPanel.SearchBox:Hide()
-	--[[searchBox:SetScript("OnEnterPressed", function(self)
-		local parent = self:GetParent();
-
-		if ( parent.AutoCompleteFrame:IsShown() and parent.AutoCompleteFrame.selected ) then
-			C_LFGList.SetSearchToActivity(parent.AutoCompleteFrame.selected);
-		end
-
-		miog.requestSearchResults(miog.pveFrame2.categoryID, miog.pveFrame2.filters)
-		self:ClearFocus();
-	
-	end)]]
-
-	
-	local scrollBox = LFGListFrame.SearchPanel.ScrollBox
-	scrollBox:ClearAllPoints()
-	scrollBox:SetParent(frame)
-	scrollBox:Hide()
-	frame.ScrollBox = scrollBox
-
 ---@diagnostic disable-next-line: undefined-field
 	local rolePanel = frame.RolePanel
 	--rolePanel:SetPoint("BOTTOM", frame.QueueDropdown, "TOP", 0, 5)
-	miog.createFrameBorder(rolePanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	local leader, tank, healer, damager = LFDQueueFrame_GetRoles()
 
@@ -360,9 +312,14 @@ local function createPVEFrameReplacement()
 	--queueDropDown.entryFrameTree = {}
 	--queueDropDown.List.entryTable = {}
 	--miog.pveFrame2.QueueDropDown = queueDropDown
+	
+	--miog.createFrameBorder(frame.QueuePanel, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	frame.QueuePanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	--miog.createFrameBorder(frame.QueuePanel.Title, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	miog.createFrameBorder(frame.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	
+	frame.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
 	frame.Plugin.Resize:SetScript("OnMouseUp", function()
 		frame.Plugin:StopMovingOrSizing()
 
@@ -374,12 +331,19 @@ local function createPVEFrameReplacement()
 
 		end
 
+		--frame.Plugin:ClearAllPoints()
+		frame.Plugin:SetPoint("TOPLEFT", frame, "TOPRIGHT", -370, -20)
+		frame.Plugin:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, -20)
+
 	end)
 
-	frame.Plugin.standardWidth = frame.Plugin:GetWidth()
+	local standardWidth = frame.Plugin:GetWidth()
 	frame.Plugin.standardHeight = frame.Plugin:GetHeight()
 	frame.Plugin.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight * 1.5
-	frame.Plugin:SetResizeBounds(frame.Plugin.standardWidth, frame.Plugin.standardHeight, frame.Plugin.standardWidth, GetScreenHeight() * 0.67)
+
+	frame.Plugin:SetResizeBounds(standardWidth, frame.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
+	frame.Plugin:SetHeight(MIOG_SavedSettings and MIOG_SavedSettings.frameExtended.value == true and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight)
+
 	miog.createFrameBorder(frame.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	frame.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
@@ -454,53 +418,33 @@ local function updateDungeons()
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
 		local name, typeID, subtypeID, _, _, _, _, _, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, lfgMapID = GetLFGDungeonInfo(dungeonID)
 
-		--miog.GROUP_ID_TO_LFG_ID[groupID == 0 and 0 or (groupID * -1)] = {mapID = lfgMapID, icon = fileID, difficultyID = difficultyID}
-		--print(name, difficultyID, groupID, lfgMapID, dungeonID)
 		local groupActivityID = miog.MAP_ID_TO_GROUP_ACTIVITY_ID[lfgMapID]
 
 		if(groupActivityID and not miog.GROUP_ACTIVITY[groupActivityID]) then
 			miog.GROUP_ACTIVITY[groupActivityID] = {mapID = lfgMapID, file = fileID}
-			--print("miog.GROUP_ACTIVITY[" .. groupActivityID .. "] = {mapID = " .. lfgMapID .. ", file = " .. fileID .. "}")
 		end
 
 		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
-		--if(not LFGLockList[dungeonID] and typeID == menuList) then
 		if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon)) then
-			--local isLFGFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID);
-		--print(name)
 			local mode = GetLFGMode(1, dungeonID)
 			info.text = isHolidayDungeon and "(Event) " .. name or name
 			info.checked = mode == "queued"
 			info.icon = fileID or miog.MAP_INFO[lfgMapID] and miog.MAP_INFO[lfgMapID].icon or nil
 			info.parentIndex = isFollowerDungeon and 3 or subtypeID
 			info.func = function()
-				--print(name, dungeonID)
-				--JoinSingleLFG(1, dungeonID)
 				ClearAllLFGDungeons(1);
 				SetLFGDungeon(1, dungeonID);
-				--JoinLFG(LE_LFG_CATEGORY_RF);
 				JoinSingleLFG(1, dungeonID);
 
-				--LFGRole_SetChecked(tankButton, tank);
-				--LFGRole_SetChecked(healButton, healer);
-				--LFGRole_SetChecked(dpsButton, dps);
-
-				--if ( leaderButton ) then
-				--	leaderButton.checkButton:SetChecked(leader);
-				--endless
-
 			end
-			--print(typeID)
-			-- UIDropDownMenu_AddButton(info, level)
-				local tempFrame = queueDropDown:CreateEntryFrame(info)
-				tempFrame:SetScript("OnShow", function(self)
-					local tempMode = GetLFGMode(1, dungeonID)
-					self.Radio:SetChecked(tempMode == "queued")
-					
-				end)
-		--print(dungeonID, name)
-			
+
+			local tempFrame = queueDropDown:CreateEntryFrame(info)
+			tempFrame:SetScript("OnShow", function(self)
+				local tempMode = GetLFGMode(1, dungeonID)
+				self.Radio:SetChecked(tempMode == "queued")
+				
+			end)
 		end
 	end
 
@@ -620,13 +564,13 @@ local function updatePvP()
 	--end
 
 	for index = 1, 5, 1 do
-		local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or C_PvP.GetSpecialEventBrawlInfo()
+		local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or index == 5 and C_PvP.GetSpecialEventBrawlInfo()
 
 		if(currentBGQueue and (index == 3 or currentBGQueue.canQueue)) then
 			info.text = index == 1 and RANDOM_BATTLEGROUNDS or index == 2 and RANDOM_EPIC_BATTLEGROUND or index == 3 and "Skirmish" or currentBGQueue.name
 			-- info.checked = false
 			--info.disabled = index == 1 or index == 2
-			info.icon = index < 3 and findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and findBrawlIconByID(currentBGQueue.brawlID)
+			info.icon = index < 3 and findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (findBrawlIconByID(currentBGQueue.brawlID) or findBrawlIconByName(currentBGQueue.name))
 			info.func = nil
 
 			-- UIDropDownMenu_AddButton(info, level)
@@ -917,6 +861,19 @@ local function updateQueueDropDown()
 			-- info.hasArrow = true
 			-- UIDropDownMenu_AddButton(info)
 			queueDropDown:CreateEntryFrame(info)
+
+			info.text = "Pet Battle"
+			info.entryType = "arrow"
+			info.level = 1
+			info.index = 6
+			info.func = function()
+				C_PetBattles.StartPVPMatchmaking()
+			end
+			-- info.checked = false
+			-- info.menuList = 7
+			-- info.hasArrow = true
+			-- UIDropDownMenu_AddButton(info)
+			queueDropDown:CreateEntryFrame(info)
 		
 		--else
 			
@@ -1105,6 +1062,8 @@ local function createQueueFrame(queueInfo)
 		queueFrame.layoutIndex = queueFrameIndex
 	
 	end
+
+	queueFrame:SetWidth(miog.pveFrame2.QueuePanel:GetWidth() - 7)
 	
 	queueFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
@@ -1167,16 +1126,16 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 	queueSystem.queueFrames = {}
 	queueSystem.framePool:ReleaseAll()
 
+	local gotInvite = false
+	miog.inviteBox.framePool:ReleaseAll()
+
 	local queueIndex = 1
 
 	--Try each LFG type
 	for categoryID = 1, NUM_LE_LFG_CATEGORYS do
 		local mode, submode = GetLFGMode(categoryID);
 
-		--print(mode, submode)
-
 		if (mode and submode ~= "noteleport" ) then
-
 			--local activeIndex = nil;
 			--local allNames = {};
 
@@ -1185,41 +1144,32 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 		
 			local activeID = select(18, GetLFGQueueStats(categoryID));
 			for queueID, queued in pairs(queuedList) do
-				mode, submode = GetLFGMode(categoryID, queueID);
-				if ( mode ) then
-					--Save off the name (we'll remove the active one later)
-					--allNames[#allNames + 1] = queueID
-					--if ( mode ~= "queued" and mode ~= "listed" and mode ~= "suspended" ) then
-						--activeID = queueID;w
-						--activeIndex = #allNames;
-					--elseif ( not activeID ) then
-						--activeID = queueID;
-					--	activeIndex = #allNames;
-					--end
-				end
+				mode, submode = GetLFGMode(categoryID, activeID);
 
 				if(queued == true) then
-					--local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
+					local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
 					local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
 					--print(activeID, queueID, averageWait, tankWait, healerWait, damageWait, myWait)
 					--print(queueID, hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime)
 
 					--DevTools_Dump({GetLFGQueueStats(categoryID, queueID)})
 
-					local name, typeID, subTypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
+					local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
+			
+					local isFollowerDungeon = queueID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(queueID)
 
-					local queueStats = {
+					local frameData = {
 						[1] = hasData,
+						[2] = isFollowerDungeon and "Follower" or subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic" or subtypeID == 3 and "Raid Finder",
 						[11] = name,
 						[12] = averageWait,
 						[17] = {"queued", queuedTime},
 						[18] = queueID,
-						[19] = categoryID == 1 and "LFD" or categoryID == 3 and "LFR",
-						[20] = miog.MAP_INFO[queueID] and miog.MAP_INFO[queueID].icon or fileID or nil
+						[20] = miog.MAP_INFO[mapID or queueID] and miog.MAP_INFO[mapID or queueID].icon or fileID or findBattlegroundIconByName(name) or findBrawlIconByName(name) or nil
 					}
 
 					if(hasData) then
-						miog.createQueueFrame(queueStats)
+						miog.createQueueFrame(frameData)
 
 						if(categoryID == 3 and activeID == queueID) then
 							miog.queueSystem.queueFrames[queueID].ActiveIDFrame:Show()
@@ -1241,6 +1191,20 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 								LeaveSingleLFG(categoryID, queueID)
 							end
 						end)]]
+					else
+						if(mode == "proposal") then
+							local frame = miog.createInviteFrame(frameData)
+							frame.Decline:SetAttribute("type", "macro") -- left click causes macro
+							frame.Decline:SetAttribute("macrotext1", "/run RejectProposal()")
+
+							frame.Accept:SetAttribute("type", "macro") -- left click causes macro
+							frame.Accept:SetAttribute("macrotext1", "/run AcceptProposal()")
+							
+							--LFGListInviteDialog_Accept(self:GetParent());
+
+							gotInvite = true
+						end
+
 					end
 				end
 			end
@@ -1327,6 +1291,7 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 			end]]
 			
 			queueIndex = queueIndex + 1
+		else
 		end
 	end
 
@@ -1337,24 +1302,26 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 		local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants();
 		--QueueStatusEntry_SetMinimalDisplay(entry, activeEntryInfo.name, QUEUED_STATUS_LISTED, string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants));
 		local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
+		local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 
 		local icon = miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "icon")
 
-		local queueStats = {
+		local frameData = {
 			[1] = true,
+			[2] = groupInfo.name,
 			[11] = "YOUR LISTING",
 			[12] = -1,
 			[17] = {"duration", activeEntryInfo.duration},
 			[18] = "YOURLISTING",
-			[19] = "LFM",
 			[20] = icon
 		}
 
-		miog.createQueueFrame(queueStats)
+		miog.createQueueFrame(frameData)
 
 		miog.queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
 		miog.queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
 		miog.queueSystem.queueFrames["YOURLISTING"]:SetScript("OnMouseDown", function()
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
 		end)
 
@@ -1362,48 +1329,60 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 	end
 
 	--Try LFGList applications
-	local apps = C_LFGList.GetApplications();
-	for i=1, #apps do
-		local id, appStatus, pendingStatus, appDuration, role = C_LFGList.GetApplicationInfo(apps[i])
-
-		if ( appStatus == "applied" or appStatus == "invited" ) then
-			--QueueStatusEntry_SetUpLFGListApplication(entry, apps[i]);
-			local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-			local activityName = C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode);
-
-			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
-
-			local icon = miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "icon")
+	local applications = C_LFGList.GetApplications()
+	if(applications) then
+		for _, v in ipairs(applications) do
+		--for i=1, #apps do
+			local id, appStatus, pendingStatus, appDuration, role = C_LFGList.GetApplicationInfo(v)
 
 			local identifier = "APPLICATION_" .. id
-	
-			local queueStats = {
-				[1] = true,
-				[11] = searchResultInfo.name,
-				[12] = -1,
-				[17] = {"duration", appDuration},
-				[18] = identifier,
-				[19] = "LFM",
-				[20] = icon
-			}
-	
-			miog.createQueueFrame(queueStats)
-	
-			miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+			if(appStatus == "applied" or appStatus == "invited") then
+				local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
+				--local activityName = C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode);
 
-			--[[miog.queueSystem.queueFrames["YOURLISTING"]:SetScript("OnMouseDown", function()
-				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
-			end)]]
+				local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+				local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 
-			if ( appStatus == "applied" ) then
-				
+				local icon = miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "icon")
+		
+				local frameData = {
+					[1] = true,
+					[2] = groupInfo.name,
+					[11] = searchResultInfo.name,
+					[12] = -1,
+					[17] = {"duration", appDuration},
+					[18] = identifier,
+					[20] = icon
+				}
 
-			elseif(appStatus == "invited") then
-				miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+				if(appStatus == "applied") then
+					miog.createQueueFrame(frameData)
+					miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+					miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
+					miog.queueSystem.queueFrames[identifier]:SetScript("OnMouseDown", function()
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+						LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+						LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
+						LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+					end)
+
+				elseif(appStatus == "invited") then
+					miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
 			
+					local frame = miog.createInviteFrame(frameData)
+					
+					frame.Decline:SetAttribute("type", "macro") -- left click causes macro
+					frame.Decline:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+
+					frame.Accept:SetAttribute("type", "macro") -- left click causes macro
+					frame.Accept:SetAttribute("macrotext1", "/run C_LFGList.AcceptInvite(" .. id .. ")")
+
+					gotInvite = true
+				end
 			end
 		end
-	end 
+	end
 --[[
 	local inProgress, _, _, _, _, isBattleground = GetLFGRoleUpdate();
 
@@ -1421,18 +1400,28 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 
 	--Try all PvP queues
 	for i=1, GetMaxBattlefieldID() do
-		local status, mapName, teamSize, registeredMatch, suspend, _, _, _, _, _, longDescription, x1 = GetBattlefieldStatus(i);
-		if ( status and status ~= "none" ) then
+		local status, mapName, teamSize, registeredMatch, suspend, queueType, gameType, _, _, _, longDescription, x1 = GetBattlefieldStatus(i);
+		if ( status and status ~= "none" and status ~= "error" ) then
+			local queuedTime = GetTime() - GetBattlefieldTimeWaited(i) / 1000
+			local estimatedTime = GetBattlefieldEstimatedWaitTime(i) / 1000
+			local isTank, isHealer, isDPS, totalTanks, totalHealers, totalDPS, tankNeeds, healerNeeds, dpsNeeds, subTitle, extraText = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil;
+			local assignedSpec = C_PvP.GetAssignedSpecForBattlefieldQueue(i);
+			local allowsDecline = PVPHelper_QueueAllowsLeaveQueueWithMatchReady(queueType)
+			
+			local frameData = {
+				[1] = true,
+				[2] = gameType,
+				[11] = mapName,
+				[12] = estimatedTime,
+				[17] = {"queued", queuedTime},
+				[18] = mapName,
+				[20] = findBattlegroundIconByName(mapName) or findBrawlIconByName(mapName)
+			}
 			
 			if ( status == "queued" ) then
 				if ( suspend ) then
 					--QueueStatusEntry_SetMinimalDisplay(entry, mapName, QUEUED_STATUS_SUSPENDED);
 				else
-					local queuedTime = GetTime() - GetBattlefieldTimeWaited(i) / 1000
----@diagnostic disable-next-line: redundant-parameter
-					local estimatedTime = GetBattlefieldEstimatedWaitTime(i) / 1000
-					local isTank, isHealer, isDPS, totalTanks, totalHealers, totalDPS, tankNeeds, healerNeeds, dpsNeeds, subTitle, extraText = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil;
-					local assignedSpec = C_PvP.GetAssignedSpecForBattlefieldQueue(i);
 					--QueueStatusEntry_SetFullDisplay(entry, mapName, queuedTime, estimatedTime, isTank, isHealer, isDPS, totalTanks, totalHealers, totalDPS, tankNeeds, healerNeeds, dpsNeeds, subTitle, extraText, assignedSpec);
 
 
@@ -1443,43 +1432,38 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 					--local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime
 
 					--print(mapName, queueType, short, long)
-					
-
-					local queueStats = {
-						[1] = true,
-						[11] = mapName,
-						[12] = estimatedTime,
-						[17] = {"queued", queuedTime},
-						[18] = mapName,
-						[19] = "BATTLEGROUND",
-						[20] = findBattlegroundIconByName(mapName) or findBrawlIconByName(mapName)
-					}
 
 					--BattlemasterList
 					--PvpBrawl
 
 					if (mapName and queuedTime) then
 						--print("NEW PVP")
-						miog.createQueueFrame(queueStats)
+						miog.createQueueFrame(frameData)
 						--print("CREATED " .. mapName)
 						--miog.queueSystem.queueFrames[mapName].CancelApplication:SetScript("OnClick",  SecureActionButton_OnClick)
 					end
 
+					local currentDeclineButton = "/click QueueStatusButton RightButton" .. "\r\n" ..
+					(
+						queueIndex == 1 and "/click [nocombat]DropDownList1Button2 Left Button" or
+						queueIndex == 2 and "/click [nocombat]DropDownList1Button4 Left Button" or
+						queueIndex == 3 and "/click [nocombat]DropDownList1Button6 Left Button" or
+						queueIndex == 4 and "/click [nocombat]DropDownList1Button8 Left Button" or
+						queueIndex == 5 and "/click [nocombat]DropDownList1Button10 Left Button" or
+						queueIndex == 6 and "/click [nocombat]DropDownList1Button12 Left Button" or
+						queueIndex == 7 and "/click [nocombat]DropDownList1Button14 Left Button" or
+						queueIndex == 8 and "/click [nocombat]DropDownList1Button16 Left Button" or
+						queueIndex == 9 and "/click [nocombat]DropDownList1Button18 Left Button" or
+						queueIndex == 10 and "/click [nocombat]DropDownList1Button20 Left Button" or
+						queueIndex == 11 and "/click [nocombat]DropDownList1Button22 Left Button" or
+						queueIndex == 12 and "/click [nocombat]DropDownList1Button24 Left Button"
+					)
+
 					if(miog.queueSystem.queueFrames[mapName]) then
 						--print("PVP MACRO")
+						
 						miog.queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-						miog.queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("macrotext1", queueIndex == 1 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button2 Left Button"
-						or queueIndex == 2 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button4 Left Button"
-						or queueIndex == 3 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button6 Left Button"
-						or queueIndex == 4 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button8 Left Button"
-						or queueIndex == 5 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button10 Left Button"
-						or queueIndex == 6 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button12 Left Button"
-						or queueIndex == 7 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button14 Left Button"
-						or queueIndex == 8 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button16 Left Button"
-						or queueIndex == 9 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button18 Left Button"
-						or queueIndex == 10 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button20 Left Button"
-						or queueIndex == 11 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button22 Left Button"
-						or queueIndex == 12 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button24 Left Button")
+						miog.queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("macrotext1", currentDeclineButton)
 
 						--print(miog.queueSystem.queueFrames[mapName].CancelApplication:GetAttribute("macrotext1"))
 					end
@@ -1489,7 +1473,52 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 
 				end
 			elseif ( status == "confirm" ) then
-				--QueueStatusEntry_SetMinimalDisplay(entry, mapName, QUEUED_STATUS_PROPOSAL);
+				
+				local currentDeclineButton = queueIndex == 1 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button3 Left Button"
+				or queueIndex == 2 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button6 Left Button"
+				or queueIndex == 3 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button9 Left Button"
+				or queueIndex == 4 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button12 Left Button"
+				or queueIndex == 5 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button15 Left Button"
+				or queueIndex == 6 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button18 Left Button"
+				or queueIndex == 7 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button21 Left Button"
+				or queueIndex == 8 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button24 Left Button"
+				or queueIndex == 9 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button27 Left Button"
+				or queueIndex == 10 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button30 Left Button"
+				or queueIndex == 11 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button33 Left Button"
+				or queueIndex == 12 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button36 Left Button"
+				
+
+				local currentAcceptButton = queueIndex == 1 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button2 Left Button"
+				or queueIndex == 2 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button4 Left Button"
+				or queueIndex == 3 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button6 Left Button"
+				or queueIndex == 4 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button8 Left Button"
+				or queueIndex == 5 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button10 Left Button"
+				or queueIndex == 6 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button12 Left Button"
+				or queueIndex == 7 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button14 Left Button"
+				or queueIndex == 8 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button16 Left Button"
+				or queueIndex == 9 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button18 Left Button"
+				or queueIndex == 10 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button20 Left Button"
+				or queueIndex == 11 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button22 Left Button"
+				or queueIndex == 12 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button24 Left Button"
+
+				local frame = miog.createInviteFrame(frameData)
+				frame.activeIndex = i
+				frame.Decline:SetAttribute("type", "macro") -- left click causes macro
+				--frame.Decline = Mixin(frame.Decline, PVPReadyDialogLeaveButtonMixin)
+				--frame.Decline:SetAttribute("macrotext1", currentDeclineButton)
+
+				frame.Accept:SetAttribute("type", "macro") -- left click causes macro
+				frame.Accept:SetAttribute("macrotext1", currentAcceptButton)
+
+				if(allowsDecline) then
+					frame.Decline:Show()
+
+				else
+					frame.Decline:Hide()
+				
+				end
+
+				gotInvite = true
 			elseif ( status == "active" ) then
 				if (mapName) then
 					--local hasLongDescription = longDescription and longDescription ~= "";
@@ -1511,11 +1540,38 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 
 	--Try all World PvP queues
 	for i=1, MAX_WORLD_PVP_QUEUES do
-		local status, mapName, queueID = GetWorldPVPQueueStatus(i);
+		local status, mapName, queueID, expireTime, averageWaitTime, queuedTime, suspended = GetWorldPVPQueueStatus(i)
 		if ( status and status ~= "none" ) then
 			--QueueStatusEntry_SetUpWorldPvP(entry, i);
-
-			if ( status == "queued" ) then
+			local frameData = {
+				[1] = true,
+				[2] = "World PvP",
+				[11] = mapName,
+				[12] = averageWaitTime,
+				[17] = {"queued", queuedTime},
+				[18] = mapName,
+				[20] = "interface/icons/inv_currency_petbattle.blp"
+			}
+	
+			if (status == "queued") then
+				miog.createQueueFrame(frameData)
+	
+				if(miog.queueSystem.queueFrames["PETBATTLE"]) then
+					miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
+					miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
+	
+				end
+	
+				queueIndex = queueIndex + 1
+	
+			elseif(status == "proposal") then
+				local frame = miog.createInviteFrame(frameData)
+				frame.Decline:SetAttribute("type", "macro")
+				frame.Decline:SetAttribute("macrotext1", "/run C_PetBattles.DeclineQueuedPVPMatch()")
+	
+				frame.Accept:SetAttribute("type", "macro")
+				frame.Accept:SetAttribute("macrotext1", "/run QueueStatusDropDown_AcceptQueuedPVPMatch()")
+			
 			end
 		end
 	end
@@ -1526,11 +1582,39 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 	end
 
 	--Pet Battle PvP Queue
-	local pbStatus = C_PetBattles.GetPVPMatchmakingInfo();
+	local pbStatus, estimate, queued = C_PetBattles.GetPVPMatchmakingInfo();
 	if ( pbStatus ) then
-		--QueueStatusEntry_SetUpPetBattlePvP(entry);
+		local frameData = {
+			[1] = true,
+			[2] = "",
+			[11] = "Pet Battle",
+			[12] = estimate,
+			[17] = {"queued", queued},
+			[18] = "PETBATTLE",
+			[20] = "interface/icons/inv_currency_petbattle.blp"
+		}
 
-		if ( pbStatus == "queued" ) then
+		if (pbStatus == "queued") then
+			miog.createQueueFrame(frameData)
+
+			if(miog.queueSystem.queueFrames["PETBATTLE"]) then
+				miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
+				miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
+
+			end
+
+			queueIndex = queueIndex + 1
+
+		elseif(pbStatus == "proposal") then
+			local frame = miog.createInviteFrame(frameData)
+			frame.Decline:SetAttribute("type", "macro")
+			frame.Decline:SetAttribute("macrotext1", "/run C_PetBattles.DeclineQueuedPVPMatch()")
+
+			frame.Accept:SetAttribute("type", "macro")
+			frame.Accept:SetAttribute("macrotext1", "/run QueueStatusDropDown_AcceptQueuedPVPMatch()")
+		
 		end
 	end
+
+	miog.inviteBox:SetShown(gotInvite)
 end)

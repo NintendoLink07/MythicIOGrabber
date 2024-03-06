@@ -64,6 +64,57 @@ function SlickDropDown:GetFrameAtLayoutIndex(index)
 	return self.List:GetLayoutChildren()[index]
 end
 
+function SlickDropDown:GetFirstFrameWithValue(value)
+	for _, v in ipairs(self.List:GetLayoutChildren()) do
+		if(v.value == value) then
+			return v
+		end
+	end
+end
+
+function SlickDropDown:SelectFirstFrameWithValue(value)
+	for _, v in ipairs(self.List:GetLayoutChildren()) do
+		if(v.value == value) then
+			return self:SelectFrame(v)
+		end
+	end
+
+	return false
+end
+
+function SlickDropDown:SelectFrame(frame)
+	if(frame) then
+		local firstActivityName = frame.Name:GetText()
+
+		self.CheckedValue.Name:SetText(firstActivityName)
+		self.CheckedValue.value = frame.value
+
+		frame.Radio:SetChecked(true)
+
+		return true
+
+	else
+		return false
+	
+	end
+end
+
+function SlickDropDown:SelectFrameAtLayoutIndex(index)
+	return self:SelectFrame(self.List:GetLayoutChildren()[index])
+end
+
+function SlickDropDown:SelectFrameAtIndex(index, parentIndex)
+	if(parentIndex) then
+		return self:SelectFrame(self.entryFrameTree[parentIndex][index])
+
+	elseif(index) then
+		return self:SelectFrame(self.entryFrameTree[index])
+
+	end
+
+	return false
+end
+
 function SlickDropDown:ResetFrame(frame)
 	frame:Hide()
 	frame.layoutIndex = nil
