@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 1.9.1
+## Version: 2.0.0
 ## SavedVariables: MIOG_SavedSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -45,8 +45,11 @@ XML\MIOG_MenuButtonTemplate.xml
 XML\MIOG_EntryCreation.xml
 XML\MIOG_ApplicationViewer.xml
 XML\MIOG_SearchPanel.xml
+
 XML\MIOG_InviteBox.xml
 XML\MIOG_InviteBoxFrameTemplate.xml
+
+XML\MIOG_FilterPanel.xml
 
 XML\MIOG_ClassPanel.xml
 XML\MIOG_ClassPanelClassFrameTemplate.xml

@@ -4,8 +4,8 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_LastInvitesTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size x="250" y="250" />
+    <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate" hidden="true" virtual="true">
+        <Size x="220" y="600" />
 
         <Frames>
             <Button parentKey="Button" inherits="UIButtonTemplate, BackdropTemplate">
@@ -16,7 +16,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="INVITES">
+                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="FILTERS">
                             <FontHeight val="13" />
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
@@ -24,7 +24,7 @@
 
                             <Scripts>
                                 <OnLoad>
-	                                self:SetText(string.gsub("INVITES", "(.)", function(x) return x.."\n" end))
+	                                self:SetText(string.gsub("FILTERS", "(.)", function(x) return x.."\n" end))
                                 </OnLoad>
                             </Scripts>
                         </FontString>
@@ -73,42 +73,48 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="Last Invites" wordwrap="true" nonspacewrap="true" spacing="0">
+                                <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="No filters active" wordwrap="true" nonspacewrap="true" spacing="0">
 
                                 </FontString>
                             </Layer>
                         </Layers>
                     </Frame>
-                    <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" setAllPoints="true">
-                        <Frames>
-                            <Frame parentKey="Container" inherits="VerticalLayoutFrame">
-                                <KeyValues>
-                                    <KeyValue key="spacing" value="3" type="number" />
-                                    <KeyValue key="align" value="top" type="global" />
-                                </KeyValues>
+                    <Button parentKey="Uncheck" inherits="IconButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2" />
+                        </Anchors>
 
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                                </Anchors>
+                        <KeyValues>
+                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="global" />
+                            <KeyValue key="iconSize" value="16" type="number" />
+                        </KeyValues>
 
-                                <Scripts>
-                                    <OnLoad>
-                                        self:GetParent():SetScrollChild(self)
-                                    </OnLoad>
-                                </Scripts>
-                            </Frame>
-                        </Frames>
-                    </ScrollFrame>
+                        <Scripts>
+                            <OnLoad>
+                                self:OnLoad()
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+                    
+                    <Button parentKey="Check" inherits="IconButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="LEFT" x="-4" />
+                        </Anchors>
+
+                        <KeyValues>
+                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="global" />
+                            <KeyValue key="iconSize" value="16" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:OnLoad()
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
                 </Frames>
-
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" setAllPoints="true">
-                            <TexCoords left="0" right="1" top="0.25" bottom="0.9" />
-                        </Texture>
-                    </Layer>
-                </Layers>
             </Frame>
         </Frames>
     </Frame>

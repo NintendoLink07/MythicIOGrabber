@@ -334,7 +334,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	end
 	
 	if(categoryID == 2) then
-		--implement expansion headers for dungeon view
 		for i = 0, GetNumExpansions() - 1, 1 do
 			local expansionInfo = GetExpansionDisplayInfo(i)
 
@@ -355,17 +354,18 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			end)
 
 			for k, v in ipairs(groups) do
-				local activities = C_LFGList.GetAvailableActivities(categoryID, v)
+				local activities = C_LFGList.GetAvailableActivities(categoryID)
 				local activityID = activities[1]
 
 				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-
-				info = {}
 				
 				local mapID = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID
 
+				--GO THROUGH EJ, COPY EXP LEVEL INTO MAP INFO TABLE
+
 				if(mapID) then
 					if(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel == i) then
+						info = {}
 						info.icon = miog.MAP_INFO[mapID].icon
 
 						info.parentIndex = i + 10000
@@ -382,9 +382,11 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 						info.value = activityID
 
 						local entryFrame = activityDropDown:CreateEntryFrame(info)
+					else
+						--print("EXP LEVEL WRONG FOR ", C_LFGList.GetActivityGroupInfo(v), miog.MAP_INFO[mapID].expansionLevel, i)
 					end
 				else
-					print("NO MAP ID FOR ", activityInfo.groupFinderActivityGroupID)
+					--print("NO MAP ID FOR ", activityInfo.groupFinderActivityGroupID)
 				
 				end
 			end
@@ -613,536 +615,6 @@ local function createEntryCreation()
 	end)
 end
 
-local lastFilterOption = nil
-
-local function addOptionToFilterFrame(parent, parentName, text, name)
-	local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", parent.FilterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	optionButton:SetNormalAtlas("checkbox-minimal")
-	optionButton:SetPushedAtlas("checkbox-minimal")
-	optionButton:SetCheckedTexture("checkmark-minimal")
-	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	optionButton:SetPoint("TOPLEFT", lastFilterOption or parent.FilterFrame, lastFilterOption and "BOTTOMLEFT" or "TOPLEFT", 0, lastFilterOption and -5 or -20)
-	optionButton:RegisterForClicks("LeftButtonDown")
-	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[parentName .. "_FilterOptions"].table[name] or false)
-	optionButton:HookScript("OnClick", function()
-		MIOG_SavedSettings[parentName .. "_FilterOptions"].table[name] = optionButton:GetChecked()
-		miog.checkListForEligibleMembers()
-	end)
-
-	parent.FilterFrame[name] = optionButton
-
-	local optionString = miog.createBasicFontString("persistent", 12, parent.FilterFrame)
-	optionString:SetPoint("LEFT", optionButton, "RIGHT")
-	optionString:SetText(text)
-
-	lastFilterOption = optionButton
-end
-
-local function addNumericSpinnerToFilterFrame(text, name)
-	local numericSpinner = Mixin(miog.createBasicFrame("persistent", "InputBoxTemplate", miog.searchPanel.FilterPanel.FilterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 5, miog.C.INTERFACE_OPTION_BUTTON_SIZE), NumericInputSpinnerMixin)
-	numericSpinner:SetAutoFocus(false)
-	numericSpinner:SetNumeric(true)
-	numericSpinner:SetMaxLetters(1)
-	numericSpinner:SetMinMaxValues(0, 9)
-	numericSpinner:SetValue(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[name] or 0)
-
-	local decrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	decrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Up")
-	decrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Down")
-	decrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Disabled")
-	decrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
-	decrementButton:SetPoint("TOPLEFT", lastFilterOption or miog.searchPanel.FilterPanel.FilterFrame, "BOTTOMLEFT", 0, -5)
-	decrementButton:SetScript("OnMouseDown", function()
-		if decrementButton:IsEnabled() then
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			numericSpinner:StartDecrement()
-
-		end
-	end)
-	decrementButton:SetScript("OnMouseUp", function()
-		numericSpinner:EndIncrement()
-		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = numericSpinner:GetValue()
-		numericSpinner:ClearFocus()
-		miog.checkListForEligibleMembers()
-
-	end)
-
-	numericSpinner:SetPoint("LEFT", decrementButton, "RIGHT", 6, 0)
-
-	local incrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	incrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
-	incrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Down")
-	incrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
-	incrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
-	incrementButton:SetPoint("LEFT", numericSpinner, "RIGHT")
-	incrementButton:SetScript("OnMouseDown", function()
-		if incrementButton:IsEnabled() then
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			numericSpinner:StartIncrement()
-		end
-	end)
-	incrementButton:SetScript("OnMouseUp", function()
-		numericSpinner:EndIncrement()
-		MIOG_SavedSettings.searchPanel_FilterOptions.table[name] = numericSpinner:GetValue()
-		numericSpinner:ClearFocus()
-		miog.checkListForEligibleMembers()
-
-	end)
-
-	miog.searchPanel.FilterPanel.FilterFrame[name] = numericSpinner
-
-	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.FilterPanel.FilterFrame)
-	optionString:SetPoint("LEFT", incrementButton, "RIGHT")
-	optionString:SetText(text)
-
-	lastFilterOption = decrementButton
-
-end
-
-local function addDualNumericSpinnerToFilterFrame(name, range)
-	local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", miog.searchPanel.FilterPanel.FilterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	optionButton:SetNormalAtlas("checkbox-minimal")
-	optionButton:SetPushedAtlas("checkbox-minimal")
-	optionButton:SetCheckedTexture("checkmark-minimal")
-	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	optionButton:SetPoint("TOPLEFT", lastFilterOption, "BOTTOMLEFT", 0, -5)
-	optionButton:RegisterForClicks("LeftButtonDown")
-	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] or false)
-	optionButton:HookScript("OnClick", function()
-		MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] = optionButton:GetChecked()
-		miog.checkListForEligibleMembers()
-	end)
-
-	miog.searchPanel.FilterPanel.FilterFrame["filterFor" .. name] = optionButton
-
-	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.FilterPanel.FilterFrame)
-	optionString:SetPoint("LEFT", optionButton, "RIGHT")
-	optionString:SetText(name)
-
-	local minName = "min" .. name
-	local maxName = "max" .. name
-	local filterFrameWidth = miog.searchPanel.FilterPanel.FilterFrame:GetWidth() * 0.30
-
-	for i = 1, 2, 1 do
-		local numericSpinner = Mixin(miog.createBasicFrame("persistent", "InputBoxTemplate", miog.searchPanel.FilterPanel.FilterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 5, miog.C.INTERFACE_OPTION_BUTTON_SIZE), NumericInputSpinnerMixin)
-		numericSpinner:SetAutoFocus(false)
-		numericSpinner.autoFocus = false
-		numericSpinner:SetNumeric(true)
-		numericSpinner:SetMaxLetters(1)
-		numericSpinner:SetMinMaxValues(range ~= nil and range or 0, 9)
-		numericSpinner:SetValue(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] or 0)
-
-		local decrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-		decrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Up")
-		decrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Down")
-		decrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Disabled")
-		decrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
-		decrementButton:SetPoint("LEFT", i == 1 and optionString or miog.searchPanel.FilterPanel.FilterFrame[minName].incrementButton, i == 1 and "LEFT" or "RIGHT", i == 1 and filterFrameWidth or 0, 0)
-		decrementButton:SetScript("OnMouseDown", function()
-			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			numericSpinner:Decrement()
-
-			local spinnerValue = numericSpinner:GetValue()
-
-			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = spinnerValue
-
-			if(i == 2 and miog.searchPanel.FilterPanel.FilterFrame[minName]:GetValue() > spinnerValue) then
-				miog.searchPanel.FilterPanel.FilterFrame[minName]:SetValue(spinnerValue)
-				MIOG_SavedSettings.searchPanel_FilterOptions.table[minName] = spinnerValue
-
-			end
-
-			numericSpinner:ClearFocus()
-
-			if(optionButton:GetChecked()) then
-				miog.checkListForEligibleMembers()
-
-			end
-		end)
-
-		numericSpinner:SetPoint("LEFT", decrementButton, "RIGHT", 6, 0)
-		numericSpinner.decrementButton = decrementButton
-
-		local incrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-		incrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
-		incrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Down")
-		incrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
-		incrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
-		incrementButton:SetPoint("LEFT", numericSpinner, "RIGHT")
-		incrementButton:SetScript("OnMouseDown", function()
-			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			numericSpinner:Increment()
-
-			local spinnerValue = numericSpinner:GetValue()
-
-			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = spinnerValue
-
-			if(i == 1 and miog.searchPanel.FilterPanel.FilterFrame[maxName]:GetValue() < spinnerValue) then
-				miog.searchPanel.FilterPanel.FilterFrame[maxName]:SetValue(spinnerValue)
-				MIOG_SavedSettings.searchPanel_FilterOptions.table[maxName] = spinnerValue
-
-			end
-
-			numericSpinner:ClearFocus()
-
-			if(optionButton:GetChecked()) then
-				miog.checkListForEligibleMembers()
-				
-			end
-		end)
-		numericSpinner.incrementButton = incrementButton
-
-		miog.searchPanel.FilterPanel.FilterFrame[i == 1 and minName or maxName] = numericSpinner
-
-		lastFilterOption = incrementButton
-	end
-
-	lastFilterOption = optionButton
-
-end
-
-miog.addDualNumericSpinnerToFilterFrame = addDualNumericSpinnerToFilterFrame
-
-local function addDualNumericFieldsToFilterFrame(name)
-	local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", miog.searchPanel.FilterPanel.FilterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	optionButton:SetNormalAtlas("checkbox-minimal")
-	optionButton:SetPushedAtlas("checkbox-minimal")
-	optionButton:SetCheckedTexture("checkmark-minimal")
-	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	optionButton:SetPoint("TOPLEFT", lastFilterOption, "BOTTOMLEFT", 0, -5)
-	optionButton:RegisterForClicks("LeftButtonDown")
-	optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] or false)
-	optionButton:HookScript("OnClick", function()
-		MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name] = optionButton:GetChecked()
-		miog.checkListForEligibleMembers()
-	end)
-
-	miog.searchPanel.FilterPanel.FilterFrame["filterFor" .. name] = optionButton
-
-	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.FilterPanel.FilterFrame)
-	optionString:SetPoint("LEFT", optionButton, "RIGHT")
-	optionString:SetText(name)
-
-	local minName = "min" .. name
-	local maxName = "max" .. name
-
-	for i = 1, 2, 1 do
-		local numericField = miog.createBasicFrame("persistent", "InputBoxTemplate", miog.searchPanel.FilterPanel.FilterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE * 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-		numericField:SetPoint("LEFT", i == 1 and optionString or lastFilterOption, "RIGHT", 5, 0)
-		numericField:SetAutoFocus(false)
-		numericField.autoFocus = false
-		numericField:SetNumeric(true)
-		numericField:SetMaxLetters(4)
-		numericField:SetText(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] or 0)
-		numericField:HookScript("OnTextChanged", function(self, ...)
-			local text = tonumber(self:GetText())
-			MIOG_SavedSettings.searchPanel_FilterOptions.table[i == 1 and minName or maxName] = text ~= nil and text or 0
-
-			if(MIOG_SavedSettings.searchPanel_FilterOptions.table["filterFor" .. name]) then
-				miog.checkListForEligibleMembers()
-			end
-
-		end)
-		
-
-		miog.searchPanel.FilterPanel.FilterFrame[i == 1 and minName or maxName] = numericField
-
-		lastFilterOption = numericField
-	end
-
-	lastFilterOption = optionButton
-
-end
-
-local function addDungeonCheckboxes()
-	local sortedSeasonDungeons = {}
-
-	for activityID, activityEntry in pairs(miog.ACTIVITY_ID_INFO) do
-		if(activityEntry.mPlusSeasons) then
-			for _, seasonID in ipairs(activityEntry.mPlusSeasons) do
-				if(seasonID == miog.F.CURRENT_SEASON) then
-					sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {activityID = activityID, name = activityEntry.shortName}
-
-				end
-			end
-		end
-	end
-
-	table.sort(sortedSeasonDungeons, function(k1, k2)
-		return k1.name < k2.name
-	end)
-
-	local dungeonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", miog.searchPanel.FilterPanel.FilterFrame, miog.searchPanel.FilterPanel.FilterFrame:GetWidth(), miog.C.INTERFACE_OPTION_BUTTON_SIZE * 3)
-	dungeonPanel:SetPoint("TOPLEFT", lastFilterOption or miog.searchPanel.FilterPanel.FilterFrame, lastFilterOption and "BOTTOMLEFT" or "TOPLEFT", 0, -5)
-	dungeonPanel.buttons = {}
-
-	miog.searchPanel.FilterPanel.FilterFrame.dungeonPanel = dungeonPanel
-
-	local dungeonPanelFirstRow = miog.createBasicFrame("persistent", "BackdropTemplate", dungeonPanel, miog.searchPanel.FilterPanel.FilterFrame:GetWidth(), dungeonPanel:GetHeight() / 2)
-	dungeonPanelFirstRow:SetPoint("TOPLEFT", dungeonPanel, "TOPLEFT")
-
-	local dungeonPanelSecondRow = miog.createBasicFrame("persistent", "BackdropTemplate", dungeonPanel, miog.searchPanel.FilterPanel.FilterFrame:GetWidth(), dungeonPanel:GetHeight() / 2)
-	dungeonPanelSecondRow:SetPoint("BOTTOMLEFT", dungeonPanel, "BOTTOMLEFT")
-
-	local counter = 0
-
-	for _, activityEntry in ipairs(sortedSeasonDungeons) do
-		local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", dungeonPanel, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-		optionButton:SetPoint("LEFT", counter < 4 and dungeonPanelFirstRow or counter > 3 and dungeonPanelSecondRow, "LEFT", counter < 4 and counter * 57 or (counter - 4) * 57, 0)
-		optionButton:SetNormalAtlas("checkbox-minimal")
-		optionButton:SetPushedAtlas("checkbox-minimal")
-		optionButton:SetCheckedTexture("checkmark-minimal")
-		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-		optionButton:RegisterForClicks("LeftButtonDown")
-		optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[activityEntry.activityID])
-		optionButton:HookScript("OnClick", function()
-			MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
-
-			if(MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonOptions) then
-				miog.checkListForEligibleMembers()
-			end
-
-		end)
-	
-		miog.searchPanel.FilterPanel.FilterFrame[activityEntry.activityID] = optionButton
-	
-		local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.FilterPanel.FilterFrame)
-		optionString:SetPoint("LEFT", optionButton, "RIGHT")
-		optionString:SetText(activityEntry.name)
-
-		dungeonPanel.buttons[activityEntry.activityID] = optionButton
-
-		optionButton.fontString = optionString
-
-		counter = counter + 1
-	end
-		
-	lastFilterOption = dungeonPanel
-end
-
-local function createClassSpecFilters(parent, parentName)
-	local filterFrame = miog.createBasicFrame("persistent", "BackdropTemplate", parent, 220, 620)
-	miog.createFrameBorder(filterFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	filterFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	parent.FilterFrame = filterFrame
-
-	local filterString = miog.createBasicFontString("persistent", 12, filterFrame, filterFrame:GetWidth(), 20)
-	filterString:SetPoint("TOPLEFT", filterFrame, "TOPLEFT", 0, -1)
-	filterString:SetJustifyH("CENTER")
-	filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
-
-	local uncheckAllFiltersButton = miog.createBasicFrame("persistent", "IconButtonTemplate", filterFrame, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
-	uncheckAllFiltersButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
-	uncheckAllFiltersButton.iconSize = miog.C.APPLICANT_MEMBER_HEIGHT - 3
-	uncheckAllFiltersButton:OnLoad()
-	uncheckAllFiltersButton:SetPoint("TOPRIGHT", filterFrame, "TOPRIGHT", 0, -2)
-	uncheckAllFiltersButton:SetFrameStrata("DIALOG")
-	uncheckAllFiltersButton:RegisterForClicks("LeftButtonUp")
-	uncheckAllFiltersButton:SetScript("OnClick", function()
-		for classIndex, v in pairs(parent.FilterFrame.classFilterPanel.ClassPanels) do
-			v.Class.Button:SetChecked(false)
-
-			for specIndex, y in pairs(v.SpecFrames) do
-				y.Button:SetChecked(false)
-				MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.spec[specIndex] = false
-
-			end
-
-			MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.class[classIndex] = false
-
-		end
-
-		--for _, v in pairs(roleFilterPanel.RoleButtons) do
-		--	v:SetChecked(false)
-
-		--end
-
-		if(not miog.checkForActiveFilters(filterFrame)) then
-			filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
-
-		else
-			filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-
-		end
-
-		miog.checkListForEligibleMembers()
-	end)
-	filterFrame.uncheckAllFiltersButton = uncheckAllFiltersButton
-
-	local checkAllFiltersButton = miog.createBasicFrame("persistent", "IconButtonTemplate", filterFrame, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
-	checkAllFiltersButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png"
-	checkAllFiltersButton.iconSize = miog.C.APPLICANT_MEMBER_HEIGHT - 3
-	checkAllFiltersButton:OnLoad()
-	checkAllFiltersButton:SetPoint("RIGHT", uncheckAllFiltersButton, "LEFT", -3, 0)
-	checkAllFiltersButton:SetFrameStrata("DIALOG")
-	checkAllFiltersButton:RegisterForClicks("LeftButtonUp")
-	checkAllFiltersButton:SetScript("OnClick", function()
-		for classIndex, v in pairs(parent.FilterFrame.classFilterPanel.ClassPanels) do
-			v.Class.Button:SetChecked(true)
-
-			for specIndex, y in pairs(v.SpecFrames) do
-				y.Button:SetChecked(true)
-
-				MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.spec[specIndex] = true
-
-			end
-
-			MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.class[classIndex] = true
-
-			if(not miog.checkForActiveFilters(filterFrame)) then
-				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
-
-			else
-				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-
-			end
-
-		end
-
-		miog.checkListForEligibleMembers()
-
-	end)
-	filterFrame.checkAllFiltersButton = checkAllFiltersButton
-
-	local classFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", filterFrame, filterFrame:GetWidth() - 2, 20 * 14)
-	classFilterPanel:SetPoint("TOPLEFT", lastFilterOption or filterFrame, lastFilterOption and "BOTTOMLEFT" or "TOPLEFT", 0, lastFilterOption and -5 or -20)
-	classFilterPanel.ClassPanels = {}
-
-	filterFrame.classFilterPanel = classFilterPanel
-
-	for classIndex, classEntry in ipairs(miog.CLASSES) do
-		local classPanel = CreateFrame("Frame", nil, classFilterPanel, "MIOG_ClassSpecFilterRowTemplate")
-
-		classPanel:SetSize(classFilterPanel:GetWidth(), 20)
-		classPanel:SetPoint("TOPLEFT", classFilterPanel.ClassPanels[classIndex-1] or classFilterPanel, classFilterPanel.ClassPanels[classIndex-1] and "BOTTOMLEFT" or "TOPLEFT", 0, -1)
-		local r, g, b = GetClassColor(classEntry.name)
-		miog.createFrameBorder(classPanel, 1, r, g, b, 0.9)
-		classPanel:SetBackdropColor(r, g, b, 0.6)
-
-		if(MIOG_SavedSettings and MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec) then
-			if(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.class[classIndex] ~= nil) then
-				classPanel.Class.Button:SetChecked(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.class[classIndex])
-				
-				if(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.class[classIndex] == false) then
-					filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-				end
-
-			else
-				classPanel.Class.Button:SetChecked(true)
-
-			end
-
-		else
-			classPanel.Class.Button:SetChecked(true)
-
-		end
-
-		classPanel.Class.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. "/classIcons/" .. classEntry.name .. "_round.png")
-
-		classFilterPanel.ClassPanels[classIndex] = classPanel
-		classPanel.SpecFrames = {}
-
-		for specIndex, specID in pairs(classEntry.specs) do
-			local specEntry = miog.SPECIALIZATIONS[specID]
-
-			local currentSpec = CreateFrame("Frame", nil, classFilterPanel, "MIOG_ClassSpecSingleOptionTemplate")
-			currentSpec:SetSize(36, 20)
-			currentSpec:SetPoint("LEFT", classPanel.SpecFrames[classEntry.specs[specIndex-1]] or classPanel.Class.Texture, "RIGHT", 8, 0)
-
-			if(MIOG_SavedSettings and MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec) then
-				if(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.spec[specID] ~= nil) then
-					currentSpec.Button:SetChecked(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.spec[specID])
-
-					if(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.spec[specID] == false) then
-						filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-					end
-
-				else
-					currentSpec.Button:SetChecked(true)
-
-				end
-
-			else
-				currentSpec.Button:SetChecked(true)
-
-			end
-
-
-			currentSpec.Button:SetScript("OnClick", function()
-				local state = currentSpec.Button:GetChecked()
-
-				if(state) then
-					classPanel.Class.Button:SetChecked(true)
-
-					if(not miog.checkForActiveFilters(filterFrame)) then
-						filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
-
-					end
-
-				else
-					filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-
-				end
-
-				MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.spec[specID] = state
-
-				if(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.filterForClassSpecs) then
-					miog.checkListForEligibleMembers()
-				end
-
-			end)
-
-			--local specTexture = miog.createBasicTexture("persistent", specEntry.icon, specFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 4, miog.C.APPLICANT_MEMBER_HEIGHT - 4, "ARTWORK")
-			currentSpec.Texture:SetTexture(specEntry.icon)
-			--specTexture:SetPoint("LEFT", toggleSpecButton, "RIGHT", 0, 0)
-
-			--specFilterPanel.SpecTextures[specID] = specTexture
-			--specFilterPanel.SpecButtons[specID] = toggleSpecButton
-
-			classPanel.SpecFrames[specID] = currentSpec
-
-		end
-
-		classPanel.Class.Button:SetScript("OnClick", function()
-			local state = classPanel.Class.Button:GetChecked()
-
-			for specIndex, specFrame in pairs(classPanel.SpecFrames) do
-			--for i = 1, 4, 1 do
-
-				if(state) then
-					specFrame.Button:SetChecked(true)
-
-				else
-					specFrame.Button:SetChecked(false)
-
-				end
-
-				MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.spec[specIndex] = state
-			end
-
-			MIOG_SavedSettings[parentName .. "_FilterOptions"].table.classSpec.class[classIndex] = state
-
-			if(not miog.checkForActiveFilters(filterFrame)) then
-				filterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
-
-			else
-				filterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-
-			end
-
-			if(MIOG_SavedSettings[parentName .. "_FilterOptions"].table.filterForClassSpecs) then
-				miog.checkListForEligibleMembers()
-			end
-		end)
-
-	end
-
-	lastFilterOption = filterFrame
-	
-	return filterFrame
-end
-
 local function createApplicationViewer()
 	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.pveFrame2.Plugin, "MIOG_ApplicationViewer") ---@class Frame
 	miog.applicationViewer = applicationViewer
@@ -1252,10 +724,6 @@ local function createApplicationViewer()
 		roleFilterPanel.RoleTextures[i] = roleTexture
 
 	end
-
-	local filterFrame = createClassSpecFilters(buttonPanel.FilterPanel, "applicationViewer")
-	filterFrame:SetHeight(320)
-	filterFrame:SetPoint("TOPLEFT", roleFilterPanel, "BOTTOMLEFT")
 
 	buttonPanel.sortByCategoryButtons = {}
 
@@ -1468,101 +936,6 @@ miog.addDungeonCheckboxes = addDungeonCheckboxes
 local function createSearchPanel()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.pveFrame2.Plugin, "MIOG_SearchPanel") ---@class Frame
 	miog.searchPanel = searchPanel
-
-	local filterFrame = createClassSpecFilters(searchPanel.FilterPanel, "searchPanel")
-	filterFrame:SetHeight(320)
-	filterFrame:SetPoint("TOPLEFT", searchPanel.FilterPanel, "TOPLEFT")
-
-	addOptionToFilterFrame(searchPanel.FilterPanel, "searchPanel", "Class / spec", "filterForClassSpecs")
-
-	local dropdownOptionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", searchPanel.FilterPanel, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	dropdownOptionButton:SetNormalAtlas("checkbox-minimal")
-	dropdownOptionButton:SetPushedAtlas("checkbox-minimal")
-	dropdownOptionButton:SetCheckedTexture("checkmark-minimal")
-	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	dropdownOptionButton:SetPoint("TOPLEFT", lastFilterOption or searchPanel.FilterPanel, "BOTTOMLEFT", 0, -5)
-	dropdownOptionButton:RegisterForClicks("LeftButtonDown")
-	dropdownOptionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
-	LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
-	(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] or false)
-	dropdownOptionButton:HookScript("OnClick", function()
-		MIOG_SavedSettings.searchPanel_FilterOptions.table[
-			LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
-			LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
-			(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] = dropdownOptionButton:GetChecked()
-		miog.checkListForEligibleMembers()
-	end)
-
-	searchPanel.FilterPanel.filterForDifficulty = dropdownOptionButton
-
-	local function fillDropdown(optionDropdown, level, menuList)
-		local info = UIDropDownMenu_CreateInfo()
-		local currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
-		if(currentCategoryTableValue) then
-			local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
-			or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
-
-			UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
-
-		end
-
-		info.func = function(_, arg1, _, _)
-				currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
-				if(currentCategoryTableValue) then
-					MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue] = arg1
-
-					local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
-					or miog.DIFFICULTY[MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]].description
-					
-					if(dropdownOptionButton:GetChecked()) then
-						miog.checkListForEligibleMembers()
-
-					end
-
-					UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
-
-					CloseDropDownMenus()
-				end
-		end
-
-		for i = (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and 2 or LFGListFrame.SearchPanel.categoryID == 3 and 3 or 4, 1, -1 do
-			info.text, info.arg1 = (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[i].description or miog.DIFFICULTY[i].description, i
-			info.checked = i == MIOG_SavedSettings.searchPanel_FilterOptions.table[currentCategoryTableValue]
-			UIDropDownMenu_AddButton(info)
-
-		end
-
-	end
-
-	local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", searchPanel.FilterPanel)
-	optionDropdown:SetPoint("LEFT", dropdownOptionButton, "RIGHT", -15, 0)
-	optionDropdown.initialize = fillDropdown
-	UIDropDownMenu_SetWidth(optionDropdown, 175)
-
-	searchPanel.FilterPanel.dropdown = optionDropdown
-
-	lastFilterOption = dropdownOptionButton
-
-	-- KEY LEVEL
-	-- DUNGEONS
-
-	addOptionToFilterFrame(searchPanel.FilterPanel, "searchPanel", "Party fit", "partyFit")
-	addOptionToFilterFrame(searchPanel.FilterPanel, "searchPanel", "Ress fit", "ressFit")
-	addOptionToFilterFrame(searchPanel.FilterPanel, "searchPanel", "Lust fit", "lustFit")
-	addDualNumericSpinnerToFilterFrame("Tanks")
-	addDualNumericSpinnerToFilterFrame("Healers")
-	addDualNumericSpinnerToFilterFrame("Damager")
-
-	addDualNumericFieldsToFilterFrame("Score")
-
-	local divider = miog.createBasicTexture("persistent", nil, searchPanel.FilterPanel, searchPanel.FilterPanel:GetWidth(), 1, "BORDER")
-	divider:SetAtlas("UI-LFG-DividerLine")
-	divider:SetPoint("BOTTOM", lastFilterOption, "BOTTOM", 0, -5)
-
-	lastFilterOption = divider
-
-	addOptionToFilterFrame(searchPanel.FilterPanel, "searchPanel", "Dungeon options", "dungeonOptions")
-	--addDungeonCheckboxes()
 
 	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.searchPanel, 1, 20)
 	signupButton:SetPoint("LEFT", miog.pveFrame2.Plugin.FooterBar.Back, "RIGHT")
@@ -2320,6 +1693,7 @@ miog.createFrames = function()
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		if(panel == LFGListFrame.ApplicationViewer) then
+			miog.pveFrame2.activePanel = "applicationViewer"
 			miog.searchPanel:Hide()
 			miog.entryCreation:Hide()
 			miog.pveFrame2.CategoryPanel:Hide()
@@ -2327,8 +1701,10 @@ miog.createFrames = function()
 			miog.pveFrame2:Show()
 			miog.pveFrame2.Plugin:Show()
 			miog.applicationViewer:Show()
+			miog.pveFrame2.FilterPanel:Show()
 	
 		elseif(panel == LFGListFrame.SearchPanel) then
+			miog.pveFrame2.activePanel = "searchPanel"
 			miog.applicationViewer:Hide()
 			miog.entryCreation:Hide()
 			miog.pveFrame2.CategoryPanel:Hide()
@@ -2336,6 +1712,7 @@ miog.createFrames = function()
 			miog.pveFrame2:Show()
 			miog.pveFrame2.Plugin:Show()
 			miog.searchPanel:Show()
+			miog.pveFrame2.FilterPanel:Show()
 	
 			if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
 				UIDropDownMenu_Initialize(miog.searchPanel.FilterPanel.dropdown, miog.searchPanel.FilterPanel.dropdown.initialize)
@@ -2358,6 +1735,7 @@ miog.createFrames = function()
 			miog.applicationViewer:Hide()
 			miog.searchPanel:Hide()
 			miog.pveFrame2.CategoryPanel:Hide()
+			miog.pveFrame2.FilterPanel:Hide()
 	
 			miog.pveFrame2:Show()
 			miog.pveFrame2.Plugin:Show()
@@ -2367,12 +1745,11 @@ miog.createFrames = function()
 			miog.applicationViewer:Hide()
 			miog.searchPanel:Hide()
 			miog.entryCreation:Hide()
+			miog.pveFrame2.FilterPanel:Hide()
+
 			miog.pveFrame2.CategoryPanel:Show()
 			miog.pveFrame2.Plugin:Hide()
 	
 		end
-		--miog.searchPanel.FilterPanel.FilterFrame.dropdown.initialize()
-		--miog.searchPanel.FilterPanel.FilterFrame.dropdown.initialize(miog.searchPanel.FilterPanel.FilterFrame.dropdown)
-		--UIDropDownMenu_RefreshAll(miog.searchPanel.FilterPanel.FilterFrame.dropdown, "")
 	end)
 end

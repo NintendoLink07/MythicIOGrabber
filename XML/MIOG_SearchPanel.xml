@@ -39,13 +39,6 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="FilterPanel" hidden="true">
-                <Size x="220" y="300" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
-            </Frame>
-
             <EditBox parentKey="SearchBox" hidden="true">
                 <Size x="210" y="20"/>
                 <Anchors>

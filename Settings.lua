@@ -211,7 +211,6 @@ C_LFGList.GetPlaystyleString = function(playstyle, activityInfo)
     elseif activityInfo.isMythicActivity then
         globalStringPrefix = "GROUP_FINDER_PVE_MYTHICZERO_PLAYSTYLE"
     end
-	print(globalStringPrefix .. tostring(playstyle))
     return globalStringPrefix and _G[globalStringPrefix .. tostring(playstyle)] or nil
 end
 

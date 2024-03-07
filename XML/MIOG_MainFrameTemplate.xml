@@ -17,6 +17,12 @@
                 </Anchors>
             </Frame>
 
+            <Frame parentKey="FilterPanel" inherits="MIOG_FilterPanel">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.LastInvites.Button" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </Frame>
+
             <Frame parentKey="TitleBar">
                 <Size y="20" />
                 <Anchors>

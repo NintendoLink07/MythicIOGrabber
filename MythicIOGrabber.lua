@@ -3043,13 +3043,15 @@ miog.OnEvent = function(_, event, ...)
 		DevTools_Dump({C_PvP.GetSpecialEventBrawlInfo()})]]
 		C_MythicPlus.GetCurrentAffixes()
 		
-		if(not miog.searchPanel.FilterPanel.FilterFrame.dungeonPanel) then
+		if(not miog.pveFrame2.FilterPanel.Panel.DungeonPanel) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
 
-			--print(miog.F.CURRENT_SEASON)
+			print(miog.F.CURRENT_SEASON)
+
+			--ADD DUNGEON BOXES / CHECK WHY STUFF DOESNT WORK
 
 			miog.addDungeonCheckboxes()
 
@@ -3148,7 +3150,7 @@ miog.OnEvent = function(_, event, ...)
 		end
 
     elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
-		if(not miog.searchPanel.FilterPanel.FilterFrame.dungeonPanel) then
+		if(not miog.pveFrame2.FilterPanel.Panel.DungeonPanel) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
