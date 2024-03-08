@@ -222,7 +222,7 @@
                 </Frames>    
             </Frame>
 
-            <Frame parentKey="RolePanel">
+            <Frame parentKey="QueueRolePanel">
                 <Size x="190" y="30" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="TOPLEFT" y="-20"/>
@@ -348,8 +348,8 @@
             <Frame parentKey="QueueDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
                 <Size y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueRolePanel" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.QueueRolePanel" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
             </Frame>
 

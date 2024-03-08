@@ -676,55 +676,6 @@ local function createApplicationViewer()
 
 	local buttonPanel = applicationViewer.ButtonPanel
 
-	local roleFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", buttonPanel.FilterPanel, 150, 20)
-	roleFilterPanel:SetPoint("TOPLEFT", buttonPanel.FilterPanel, "TOPLEFT", 1, -4)
-	roleFilterPanel.RoleTextures = {}
-	roleFilterPanel.RoleButtons = {}
-
-	buttonPanel.FilterPanel.roleFilterPanel = roleFilterPanel
-
-	for i = 1, 3, 1 do
-		local toggleRoleButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", roleFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
-		toggleRoleButton:SetNormalAtlas("checkbox-minimal")
-		toggleRoleButton:SetPushedAtlas("checkbox-minimal")
-		toggleRoleButton:SetCheckedTexture("checkmark-minimal")
-		toggleRoleButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-		toggleRoleButton:SetPoint("LEFT", roleFilterPanel.RoleTextures[i-1] or roleFilterPanel, roleFilterPanel.RoleTextures[i-1] and "RIGHT" or "LEFT", roleFilterPanel.RoleTextures[i-1] and 8 or 0, 0)
-		toggleRoleButton:RegisterForClicks("LeftButtonDown")
-		toggleRoleButton:SetChecked(true)
-
-		local roleTexture = miog.createBasicTexture("persistent", nil, roleFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
-		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
-
-		toggleRoleButton:SetScript("OnClick", function()
-			if(not miog.checkForActiveFilters(buttonPanel.FilterPanel)) then
-				buttonPanel.FilterString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
-
-			else
-				buttonPanel.FilterString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
-
-			end
-
-			C_LFGList.RefreshApplicants()
-
-		end)
-
-		if(i == 1) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png")
-
-		elseif(i == 2) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png")
-
-		elseif(i == 3) then
-			roleTexture:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
-
-		end
-
-		roleFilterPanel.RoleButtons[i] = toggleRoleButton
-		roleFilterPanel.RoleTextures[i] = roleTexture
-
-	end
-
 	buttonPanel.sortByCategoryButtons = {}
 
 	for i = 1, 4, 1 do
@@ -994,12 +945,7 @@ local function createSearchPanel()
 	scrollBox:Hide()
 	searchPanel.ScrollBox = scrollBox
 
-	searchPanel.InteractionPanel.ToggleFilter:SetScript("OnClick", function()
-		searchPanel.FilterPanel:SetShown(not searchPanel.FilterPanel:IsVisible())
-
-	end)
-
-	searchPanel.InteractionPanel.StartSearch:SetScript("OnClick", function( )
+	searchPanel.StartSearch:SetScript("OnClick", function( )
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 
 		miog.searchPanel.FramePanel:SetVerticalScroll(0)
@@ -1103,7 +1049,7 @@ local function createSearchPanel()
 					end
 				end
 
-				miog.checkListForEligibleMembers()
+				miog.checkSearchResultListForEligibleMembers()
 			elseif(button == "RightButton") then
 				if(activeState == 1 or activeState == 2) then
 
@@ -1136,7 +1082,7 @@ local function createSearchPanel()
 						end
 					end
 
-					miog.checkListForEligibleMembers()
+					miog.checkSearchResultListForEligibleMembers()
 				end
 			end
 		end)
@@ -1144,6 +1090,113 @@ local function createSearchPanel()
 		searchPanel.ButtonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
 
 	end
+
+	local searchPanelExtraFilter = miog.createBasicFrame("persistent", "BackdropTemplate", miog.pveFrame2.FilterPanel.Panel.Plugin, 220, 185)
+	searchPanelExtraFilter:SetPoint("TOPLEFT", miog.pveFrame2.FilterPanel.Panel.Plugin, "TOPLEFT")
+	searchPanelExtraFilter:Hide()
+
+	miog.searchPanel.PanelFilters = searchPanelExtraFilter
+
+	--miog.createFrameBorder(searchPanelExtraFilter, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	--searchPanelExtraFilter:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	local dropdownOptionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", searchPanelExtraFilter, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+	dropdownOptionButton:SetNormalAtlas("checkbox-minimal")
+	dropdownOptionButton:SetPushedAtlas("checkbox-minimal")
+	dropdownOptionButton:SetCheckedTexture("checkmark-minimal")
+	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+	dropdownOptionButton:SetPoint("TOPLEFT", searchPanelExtraFilter, "TOPLEFT", 0, 0)
+	dropdownOptionButton:RegisterForClicks("LeftButtonDown")
+	--[[dropdownOptionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
+	LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
+	(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] or false)]]
+	dropdownOptionButton:HookScript("OnClick", function()
+		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[
+			LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
+			LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
+			(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] = dropdownOptionButton:GetChecked()
+
+			if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+				miog.checkSearchResultListForEligibleMembers()
+	
+			elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+				C_LFGList.RefreshApplicants()
+	
+			end
+	end)
+
+	miog.pveFrame2.FilterPanel.Panel.FilterOptions.DifficultyButton = dropdownOptionButton
+
+	local function fillDropdown(optionDropdown, level, menuList)
+		local info = UIDropDownMenu_CreateInfo()
+		local currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
+		if(currentCategoryTableValue) then
+			local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue]].description
+			or miog.DIFFICULTY[MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue]].description
+
+			UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
+
+		end
+
+		info.func = function(_, arg1, _, _)
+				currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
+				if(currentCategoryTableValue) then
+					MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue] = arg1
+
+					local currentCategoryDescription = currentCategoryTableValue and (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue]].description
+					or miog.DIFFICULTY[MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue]].description
+					
+					if(dropdownOptionButton:GetChecked()) then
+						miog.checkSearchResultListForEligibleMembers()
+
+					end
+
+					UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
+
+					CloseDropDownMenus()
+				end
+		end
+
+		for i = (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and 2 or LFGListFrame.SearchPanel.categoryID == 3 and 3 or 4, 1, -1 do
+			info.text, info.arg1 = (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and miog.BRACKETS[i].description or miog.DIFFICULTY[i].description, i
+			info.checked = i == MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue]
+			UIDropDownMenu_AddButton(info)
+
+		end
+
+	end
+
+	local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", searchPanelExtraFilter)
+	optionDropdown:SetPoint("LEFT", dropdownOptionButton, "RIGHT", -15, 0)
+	optionDropdown.initialize = fillDropdown
+	UIDropDownMenu_SetWidth(optionDropdown, 175)
+
+	miog.pveFrame2.FilterPanel.Panel.FilterOptions.Dropdown = optionDropdown
+
+	local tanksSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Tanks")
+	tanksSpinner:SetPoint("TOPLEFT", dropdownOptionButton, "BOTTOMLEFT", 0, 0)
+
+	local healerSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Healers")
+	healerSpinner:SetPoint("TOPLEFT", tanksSpinner, "BOTTOMLEFT", 0, 0)
+
+	local damagerSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Damager")
+	damagerSpinner:SetPoint("TOPLEFT", healerSpinner, "BOTTOMLEFT", 0, 0)
+
+	local scoreField = miog.addDualNumericFieldsToFilterFrame(searchPanelExtraFilter, "Score")
+	scoreField:SetPoint("TOPLEFT", damagerSpinner, "BOTTOMLEFT", 0, 0)
+
+	local divider = miog.createBasicTexture("persistent", nil, searchPanelExtraFilter, searchPanelExtraFilter:GetWidth(), 1, "BORDER")
+	divider:SetAtlas("UI-LFG-DividerLine")
+	divider:SetPoint("BOTTOMLEFT", scoreField, "BOTTOMLEFT", 0, -5)
+
+	local dungeonOptionsButton = miog.addOptionToFilterFrame(searchPanelExtraFilter, nil, "Dungeon options", "dungeonOptions")
+	dungeonOptionsButton:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 0, 0)
+
+	local dungeonPanel = miog.addDungeonCheckboxes(searchPanelExtraFilter)
+	dungeonPanel:SetPoint("TOPLEFT", dungeonOptionsButton, "BOTTOMLEFT", 0, 0)
+
+
+
 end
 
 local function createUpgradedInvitePendingDialog()
@@ -1697,6 +1750,8 @@ miog.createFrames = function()
 			miog.searchPanel:Hide()
 			miog.entryCreation:Hide()
 			miog.pveFrame2.CategoryPanel:Hide()
+
+			miog.setupFiltersForActivePanel()
 	
 			miog.pveFrame2:Show()
 			miog.pveFrame2.Plugin:Show()
@@ -1708,24 +1763,26 @@ miog.createFrames = function()
 			miog.applicationViewer:Hide()
 			miog.entryCreation:Hide()
 			miog.pveFrame2.CategoryPanel:Hide()
-	
+
+			miog.setupFiltersForActivePanel()
+
 			miog.pveFrame2:Show()
 			miog.pveFrame2.Plugin:Show()
 			miog.searchPanel:Show()
 			miog.pveFrame2.FilterPanel:Show()
 	
 			if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
-				UIDropDownMenu_Initialize(miog.searchPanel.FilterPanel.dropdown, miog.searchPanel.FilterPanel.dropdown.initialize)
-				miog.searchPanel.FilterPanel.filterForDifficulty:Show()
-				miog.searchPanel.FilterPanel.dropdown:Show()
+				UIDropDownMenu_Initialize(miog.pveFrame2.FilterPanel.Panel.FilterOptions.Dropdown, miog.pveFrame2.FilterPanel.Panel.FilterOptions.Dropdown.initialize)
+				miog.pveFrame2.FilterPanel.Panel.FilterOptions.DifficultyButton:Show()
+				miog.pveFrame2.FilterPanel.Panel.FilterOptions.Dropdown:Show()
 	
 			else
-				miog.searchPanel.FilterPanel.dropdown:Hide()
-				miog.searchPanel.FilterPanel.filterForDifficulty:Hide()
+				miog.pveFrame2.FilterPanel.Panel.FilterOptions.Dropdown:Hide()
+				miog.pveFrame2.FilterPanel.Panel.FilterOptions.DifficultyButton:Hide()
 			
 			end 
 	
-			miog.searchPanel.FilterPanel.filterForDifficulty:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[
+			miog.pveFrame2.FilterPanel.Panel.FilterOptions.DifficultyButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[
 				LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
 				LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
 				(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] or false)

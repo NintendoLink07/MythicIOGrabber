@@ -128,7 +128,7 @@ end
 miog.checkForActiveFilters = function(filterPanel)
 	local filtersActive = false
 
-	for _, v in pairs(filterPanel.classFilterPanel.ClassPanels) do
+	for _, v in pairs(filterPanel.FilterOptions.ClassPanels) do
 		if(not v.Class.Button:GetChecked()) then
 			filtersActive = true
 			break

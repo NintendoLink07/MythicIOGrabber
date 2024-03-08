@@ -1,0 +1,35 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOG_FilterOptionSpinnerTemplate" virtual="true">
+        <Frames>
+            <Button parentKey="Button" inherits="MIOG_MinimalCheckButtonTemplate">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                </Anchors>
+            </Button>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="LibMono">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="2" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <EditBox parentKey="Spinner1" inherits="NumericInputSpinnerTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="2" />
+                </Anchors>
+            </EditBox>
+        </Frames>
+    </Frame>
+</Ui>

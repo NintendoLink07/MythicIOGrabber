@@ -358,27 +358,6 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
                 <Frames>
-                    <Button parentKey="Expand" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
-                        </Anchors>
-
-                        <Scripts>
-                            <OnLoad>
-                                self:OnLoad()
-                                self:SetMaxStates(2)
-                                self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
-                                self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
-                                self:SetState(false)
-                            </OnLoad>
-                            <OnClick>
-                                self:AdvanceState()
-			                    self:GetParent().FilterPanel:SetShown(not self:GetParent().FilterPanel:IsVisible())
-                            </OnClick>
-                        </Scripts>
-                    </Button>
-
                     <Frame parentKey="FilterPanel" hidden="true">
                         <Size x="220" y="300" />
                         <Anchors>
@@ -402,16 +381,6 @@
                         </Scripts>
                     </Button>
                 </Frames>
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FilterString" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="No filters" wordwrap="true" nonspacewrap="true">
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="3" />
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
             </Frame>
 
             <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate">

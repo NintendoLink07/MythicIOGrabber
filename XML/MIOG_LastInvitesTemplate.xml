@@ -9,7 +9,7 @@
 
         <Frames>
             <Button parentKey="Button" inherits="UIButtonTemplate, BackdropTemplate">
-                <Size x="20" y="100" />
+                <Size x="25" y="100" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                 </Anchors>

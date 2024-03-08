@@ -40,48 +40,24 @@
             </Frame>
 
             <EditBox parentKey="SearchBox" hidden="true">
-                <Size x="210" y="20"/>
+                <Size x="280" y="20"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" y="-1"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" y="-2" />
                 </Anchors>
             </EditBox>
 
-            <Frame parentKey="InteractionPanel">
-                <Size y="25" />
+            <Button parentKey="StartSearch" inherits="UIPanelDynamicResizeButtonTemplate" text="Search">
+                <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="TOPRIGHT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2"/>
                 </Anchors>
 
-                <Frames>
-
-                    <Button parentKey="ToggleFilter" inherits="UIPanelDynamicResizeButtonTemplate" text="Filter">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        </Anchors>
-
-                        <Scripts>
-                            <OnLoad>
-                                self:FitToText()
-                            </OnLoad>
-                        </Scripts>
-                    </Button>
-
-                    <Button parentKey="StartSearch" inherits="UIPanelDynamicResizeButtonTemplate" text="Search">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.ToggleFilter" relativePoint="LEFT" />
-                        </Anchors>
-
-                        <Scripts>
-                            <OnLoad>
-                                self:FitToText()
-                            </OnLoad>
-                        </Scripts>
-                    </Button>
-                </Frames>
-            </Frame>
+                <Scripts>
+                    <OnLoad>
+                        self:FitToText()
+                    </OnLoad>
+                </Scripts>
+            </Button>
 
             <Frame parentKey="ButtonPanel" inherits="BackdropTemplate">
                 <Size y="25" />

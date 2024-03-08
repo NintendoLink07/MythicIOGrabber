@@ -9,7 +9,7 @@
 
         <Frames>
             <Button parentKey="Button" inherits="UIButtonTemplate, BackdropTemplate">
-                <Size x="20" y="100" />
+                <Size x="25" y="100" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                 </Anchors>
@@ -114,6 +114,16 @@
                             </OnLoad>
                         </Scripts>
                     </Button>
+
+                    <Frame parentKey="Plugin">
+                        <Size y="185" />
+
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+
+                    </Frame>
                 </Frames>
             </Frame>
         </Frames>

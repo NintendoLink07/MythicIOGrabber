@@ -49,7 +49,10 @@ XML\MIOG_SearchPanel.xml
 XML\MIOG_InviteBox.xml
 XML\MIOG_InviteBoxFrameTemplate.xml
 
+XML\MIOG_FilterOption.xml
 XML\MIOG_FilterPanel.xml
+XML\MIOG_FilterOptionSpinnerTemplate.xml
+XML\MIOG_FilterOptionDualSpinnerTemplate.xml
 
 XML\MIOG_ClassPanel.xml
 XML\MIOG_ClassPanelClassFrameTemplate.xml

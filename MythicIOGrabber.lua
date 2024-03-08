@@ -1160,6 +1160,7 @@ local function addOrShowApplicant(applicantID)
 		else
 			applicantSystem.applicantMember[applicantID].status = "inProgress"
 			createApplicantFrame(applicantID)
+			applicantSystem.applicantMember[applicantID].frame:Show()
 
 		end
 
@@ -1170,13 +1171,52 @@ local function addOrShowApplicant(applicantID)
 	end
 end
 
+local function checkApplicantListForEligibleMembers(listEntry)
+	print(listEntry.role, MIOG_SavedSettings.applicationViewer_FilterOptions.table.filterForRoles[listEntry.role])
+	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.filterForRoles[listEntry.role] ~= true) then
+		return false
+
+	end
+
+	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.filterForClassSpecs == true) then
+		if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
+			return false
+		
+		end
+
+		if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.classSpec.spec[listEntry.specID] ~= true) then
+			return false
+
+		end
+	end
+
+	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.lustFit) then
+		if(listEntry.class ~= "HUNTER" and listEntry.class ~= "SHAMAN" and listEntry.class ~= "MAGE" and listEntry.class ~= "EVOKER") then
+			return false
+
+		end
+	end
+	
+	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.ressFit) then
+		if(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
+			return false
+
+		end
+	end
+
+	return true
+end
+
 local function checkApplicantList(forceReorder, applicantID)
 	local unsortedList = gatherSortData()
 
 	local allSystemMembers = {}
+	--print("LISTTTTTT")
 
 	if(forceReorder) then
-		for k, v in pairs(applicantSystem.applicantMember) do
+		local updatedFrames = {}
+
+		--[===[for k, v in pairs(applicantSystem.applicantMember) do
 			--[[if(v.frame) then
 				v.frame:Hide()
 				v.frame.layoutIndex = nil
@@ -1185,47 +1225,51 @@ local function checkApplicantList(forceReorder, applicantID)
 
 			allSystemMembers[k] = true
 
-		end
+		end]===]
 
 		applicationFrameIndex = 0
 
 		if(unsortedList[1]) then
 			table.sort(unsortedList, sortApplicantList)
 
-			for _, listEntry in ipairs(unsortedList) do
-				allSystemMembers[listEntry[1].index] = nil
+			local time = GetTime()
+
+			for d, listEntry in ipairs(unsortedList) do
 
 				for _, v in pairs(listEntry) do
-					if((v.role == "TANK" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
+					--[===[if((v.role == "TANK" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
 					or v.role == "HEALER" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
 					or v.role == "DAMAGER" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
 						if(miog.applicationViewer.ButtonPanel.FilterPanel.FilterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].Class.Button:GetChecked()) then
 							if(miog.applicationViewer.ButtonPanel.FilterPanel.FilterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].SpecFrames[v.specID].Button:GetChecked()) then
-								addOrShowApplicant(listEntry[1].index)
-								break
 
 							end
 						end
+					end]===]
+
+					if(checkApplicantListForEligibleMembers(v) == true) then
+						--print(d, "IS OK", time)
+						updatedFrames[listEntry[1].index] = true
+						addOrShowApplicant(listEntry[1].index)
+						break
+					else
+						--print(d, "NOT OK", time)
+					
 					end
 				end
 			end
 		end
+
+		for index, v in pairs(applicantSystem.applicantMember) do
+			if(not updatedFrames[index] and v.frame) then
+				v.frame:Hide()
+	
+			end
+		end
+
 	else
 		addOrShowApplicant(applicantID)
 
-	end
-
-	for k in pairs(allSystemMembers) do
-		if(applicantSystem.applicantMember[k].frame) then
-			applicantSystem.applicantMember[k].frame.framePool:ReleaseAll()
-			applicantSystem.applicantMember[k].frame.fontStringPool:ReleaseAll()
-			applicantSystem.applicantMember[k].frame.texturePool:ReleaseAll()
-
-			miog.applicantFramePool:Release(applicantSystem.applicantMember[k].frame)
-
-			applicantSystem.applicantMember[k] = nil
-
-		end
 	end
 
 	miog.applicationViewer.applicantNumberFontString:SetText(applicationFrameIndex .. "(" .. #unsortedList .. ")")
@@ -2778,7 +2822,7 @@ end
 
 local lastOrderedList = nil
 
-local function checkListForEligibleMembers()
+local function checkSearchResultListForEligibleMembers()
 	if(lastOrderedList) then
 		local actualResultsCounter = 0
 		local updatedFrames = {}
@@ -2812,7 +2856,7 @@ local function checkListForEligibleMembers()
 	end
 end
 
-miog.checkListForEligibleMembers = checkListForEligibleMembers
+miog.checkSearchResultListForEligibleMembers = checkSearchResultListForEligibleMembers
 
 local function releaseAllResultFrames()
 	for index, v in pairs(searchResultSystem.persistentFrames) do
