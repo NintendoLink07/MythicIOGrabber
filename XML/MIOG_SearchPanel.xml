@@ -11,7 +11,13 @@
         </Anchors>
 
         <Frames>
-            <Frame parentKey="Status" setAllPoints="true" frameStrata="FULLSCREEN">
+            
+            <Frame parentKey="Status" frameStrata="FULLSCREEN">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture parentKey="Background" setAllPoints="true">
@@ -22,8 +28,9 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="FontString" font="LibMono" hidden="true" justifyH="CENTER" wordwrap="true" nonspacewrap="true">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
-                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
+                                <Anchor point="TOP" relativeKey="$parent.Background" relativePoint="TOP" y="-20"/>
+                                <Anchor point="LEFT" relativeKey="$parent.Background" relativePoint="LEFT"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Background" relativePoint="RIGHT"/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -37,6 +44,12 @@
                         </Anchors>
                     </Frame>
                 </Frames>
+
+                <Scripts>
+                    <OnMouseDown>
+                        
+                    </OnMouseDown>
+                </Scripts>
             </Frame>
 
             <EditBox parentKey="SearchBox" hidden="true">

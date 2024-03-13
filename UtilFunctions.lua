@@ -71,18 +71,23 @@ end
 miog.round = function(number, decimals)
 	local dot = string.find(number, "%.")
 
-	if(dot) then
-		return string.sub(number, 1, dot+decimals)
+	if(dot and decimals > 0) then
+		return tonumber(string.sub(number, 1, dot+decimals))
+
+	elseif(dot and decimals == 0) then
+		return tonumber(string.sub(number, 1, dot-1))
 
 	else
-		return number
+		return tonumber(number)
 
 	end
 
 end
 
-miog.round2 = function(num)
-	return num + (2^52 + 2^51) - (2^52 + 2^51)
+miog.round2 = function(num, factor)
+	num = factor and num / factor or num
+	local rounded = num + (2^52 + 2^51) - (2^52 + 2^51)
+	return factor and rounded * factor or rounded
 
 end
 
@@ -188,7 +193,7 @@ miog.retrieveMapIDFromGFID = function(groupFinderID)
 end
 
 miog.checkIfDungeonIsInCurrentSeason = function(activityID)
-	if(miog.ACTIVITY_ID_INFO[activityID]) then
+	--[[if(miog.ACTIVITY_ID_INFO[activityID] and miog.ACTIVITY_ID_INFO[activityID].mPlusSeasons) then
 		for _, seasonID in ipairs(miog.ACTIVITY_ID_INFO[activityID].mPlusSeasons) do
 			if(seasonID == miog.F.CURRENT_SEASON) then
 				return true
@@ -197,7 +202,16 @@ miog.checkIfDungeonIsInCurrentSeason = function(activityID)
 		end
 
 		return false
+	end]]
+
+	for k, v in ipairs(miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) do
+		if(miog.ACTIVITY_ID_INFO[activityID] == v) then
+			return true
+		end
+
 	end
+
+	return false
 end
 
 miog.checkIfCanInvite = function()
@@ -254,11 +268,12 @@ miog.createCustomColorForScore = function(score)
 end
 
 miog.addLastInvitedApplicant = function(currentApplicant)
+	local container = miog.pveFrame2.SidePanel.Container.LastInvites.Panel.ScrollFrame.Container
 	miog.F.LAST_INVITES_COUNTER = miog.F.LAST_INVITES_COUNTER + 1
 
-	local invitedApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.applicationViewer.lastInvitesPanel.scrollFrame.container)
+	local invitedApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", container)
 	invitedApplicant.layoutIndex = miog.F.LAST_INVITES_COUNTER
-	invitedApplicant:SetSize(miog.applicationViewer.lastInvitesPanel.scrollFrame:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
+	invitedApplicant:SetSize(container:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 
 	miog.createFrameBorder(invitedApplicant, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
 
@@ -293,7 +308,7 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 	deleteButton.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
 	deleteButton.iconSize = 12
 	deleteButton:OnLoad()
-	deleteButton:SetScript("OnClick", function()
+	deleteButton:SetScript("OnClick", function(self)
 		miog.persistentFontStringPool:Release(invitedApplicantNameString)
 		miog.persistentFontStringPool:Release(invitedApplicantScore)
 		miog.persistentTexturePool:Release(invitedApplicantBackground)
@@ -305,7 +320,7 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 
 		MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName] = nil
 
-		miog.applicationViewer.lastInvitesPanel.scrollFrame.container:MarkDirty()
+		container:MarkDirty()
 	end)
 
 	local favourButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", invitedApplicant, 15, 15), MultiStateButtonMixin)
@@ -348,7 +363,7 @@ miog.addLastInvitedApplicant = function(currentApplicant)
 
 	miog.F.LAST_INVITED_APPLICANTS[currentApplicant.fullName] = invitedApplicant
 
-	miog.applicationViewer.lastInvitesPanel.scrollFrame.container:MarkDirty()
+	container:MarkDirty()
 end
 
 miog.addFavouredApplicant = function(currentApplicant)
@@ -450,7 +465,7 @@ miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 
 		if(dropdownMenu.unit or dropdownParent and dropdownParent.unit) then
 			local unit = dropdownMenu and (dropdownMenu.unit or dropdownMenu:GetParent().unit)
-			if(UnitIsPlayer(unit) and dropdownMenu.which ~= "SELF") then
+			if(UnitIsPlayer(unit)) then --  and dropdownMenu.which ~= "SELF"
 				local name = dropdownMenu.name
 				local server = dropdownMenu.server or GetRealmName()
 				local fullName = name .. "-" .. server
@@ -534,7 +549,6 @@ miog.debugGetTestTier = function(rating)
 end
 
 miog.debug_InviteApplicant = function(applicantID)
-
 end
 
 miog.debug_DeclineApplicant = function(applicantID)

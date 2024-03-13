@@ -101,7 +101,7 @@ local defaultOptionSettings = {
 			raidDifficultyID = 3,
 			bracketID = 1,
 			dungeons = {},
-			dungeonOptions = false,
+			filterForDungeons = false,
 		}
 	},
 
@@ -142,7 +142,7 @@ local defaultOptionSettings = {
 			raidDifficultyID = 3,
 			bracketID = 1,
 			dungeons = {},
-			dungeonOptions = false,
+			filterForDungeons = false,
 		},
 	},
 	sortMethods_SearchPanel = {
@@ -432,7 +432,7 @@ miog.loadSettings = function()
 							info.func = function(_, arg1, _, _)
 								setting.value = arg1
 								miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
-								miog.pveFrame2.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+								miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
 								UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
 								CloseDropDownMenus()
 			
@@ -450,7 +450,7 @@ miog.loadSettings = function()
 					)
 					
 					miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
-					miog.pveFrame2.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+					miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
 
 					lastOption = optionDropdown
 				end

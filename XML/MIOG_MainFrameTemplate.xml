@@ -11,15 +11,11 @@
             <KeyValue key="activeDropdown" value="" type="global" />
         </KeyValues>
         <Frames>
-            <Frame parentKey="LastInvites" inherits="MIOG_LastInvitesTemplate">
+            <Frame parentKey="SidePanel" inherits="MIOG_SidePanel">
+                <Size x="220" y="300" />
+
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
-            </Frame>
-
-            <Frame parentKey="FilterPanel" inherits="MIOG_FilterPanel">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.LastInvites.Button" relativePoint="BOTTOMLEFT" />
                 </Anchors>
             </Frame>
 
@@ -132,6 +128,7 @@
                                 <Scripts>
                                     <OnLoad>
                                         self:FitToText()
+
                                     </OnLoad>
                                     <OnClick>
                                         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
@@ -144,7 +141,7 @@
                         </Frames>
                     </Frame>
 
-                    <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" frameStrata="FULLSCREEN">
+                    <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true">
                         <Size x="20" y="20" />
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
@@ -156,6 +153,12 @@
                         </Scripts>
                     </Button>
                 </Frames>
+
+                <Scripts>
+                    <OnEnter>
+
+                    </OnEnter>
+                </Scripts>
             </Frame>
 
             <Frame parentKey="AutoCompleteFrame" frameLevel="20" hidden="true">
@@ -234,11 +237,11 @@
                         <Size x="40" y="20" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="10"/>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="0"/>
                         </Anchors>
 
                         <Frames>
-                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
                                 <Size x="22" y="22" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
@@ -248,7 +251,7 @@
 
                         <Layers>
                             <Layer level="ARTWORK">
-                                <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/friend.png">
+                                <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/leaderIcon.png">
                                     <Size x="18" y="18" />
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
@@ -262,11 +265,11 @@
                         <Size x="40" y="20" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="50"/>
+                            <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="5"/>
                         </Anchors>
 
                         <Frames>
-                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
                                 <Size x="22" y="22" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
@@ -290,11 +293,11 @@
                         <Size x="40" y="20" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="90"/>
+                            <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="5"/>
                         </Anchors>
 
                         <Frames>
-                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
                                 <Size x="22" y="22" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
@@ -318,11 +321,11 @@
                         <Size x="40" y="20" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="130"/>
+                            <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="5"/>
                         </Anchors>
 
                         <Frames>
-                            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate">
+                            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
                                 <Size x="22" y="22" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
@@ -369,11 +372,13 @@
                         <KeyValues>
                             <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
                         </KeyValues>
+
                         <Size y="20" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
                             <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                         </Anchors>
+
                         <Layers>
                             <Layer level="OVERLAY">
                                 <FontString parentKey="FontString" font="LibMono" text="Active queues">
@@ -474,6 +479,13 @@
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
             </OnLoad>
+            <OnMouseDown>         
+                self.QueueDropDown.List:Hide()
+
+                if(self.QueueDropDown.currentList) then
+                    self.QueueDropDown.currentList:Hide()
+                end
+            </OnMouseDown>
         </Scripts>
     </Frame>
 </Ui>

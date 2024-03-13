@@ -23,6 +23,7 @@
                 <Size y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>
             </Frame>
 
@@ -30,6 +31,7 @@
                 <Size y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-50"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-50"/>
                 </Anchors>
             </Frame>
 
@@ -53,7 +55,7 @@
                 </Anchors>
                 <Scripts>
                     <OnTextChanged>
-                        local categoryID = self:GetParent().selectedCategory
+                        local categoryID = LFGListFrame.EntryCreation.selectedCategory
                         local isAboveRating = nil
 
                         if(categoryID == 2) then
@@ -76,6 +78,15 @@
 
                     </OnTextChanged>
                 </Scripts>
+
+                <Frames>
+                    <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
             </EditBox>
 
             <EditBox parentKey="ItemLevel" inherits="InputBoxTemplate" autoFocus="false" numeric="true" letters="3">
@@ -85,7 +96,7 @@
                 </Anchors>
                 <Scripts>
                     <OnTextChanged>
-                        local categoryID = self:GetParent().selectedCategory
+                        local categoryID = LFGListFrame.EntryCreation.selectedCategory
                         local isAboveIlvl = nil
 
                         if(categoryID == 1 or categoryID == 2 or categoryID == 3 or categoryID == 6) then
@@ -107,6 +118,15 @@
                         end
                     </OnTextChanged>
                 </Scripts>
+
+                <Frames>
+                    <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
             </EditBox>
 
             <EditBox parentKey="VoiceChat" inherits="InputBoxTemplate" autoFocus="false" hidden="true">
@@ -190,5 +210,15 @@
                 </FontString>
             </Layer>
         </Layers>
+
+        <Scripts>
+            <OnMouseDown>         
+                self.ActivityDropDown.List:Hide()
+
+                if(self.ActivityDropDown.currentList) then
+                    self.ActivityDropDown.currentList:Hide()
+                end
+            </OnMouseDown>
+        </Scripts>
     </Frame>
 </Ui>

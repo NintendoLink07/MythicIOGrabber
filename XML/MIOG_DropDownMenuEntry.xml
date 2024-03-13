@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL">
         <FontHeight val="11" />
     </Font>
 
@@ -8,7 +8,7 @@
         <Size y="20" />
 
         <Frames>
-            <CheckButton parentKey="Radio" inherits="UIRadioButtonTemplate">
+            <CheckButton parentKey="Radio" inherits="UIRadioButtonTemplate" checked="false">
                 <Size x="16" y="16" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" />
@@ -47,26 +47,44 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                 </Anchors>
+
+                <Scripts>
+                    <OnShow>
+                        if(self.List) then
+                            for k,v in pairs(self.List:GetLayoutChildren()) do
+                                if(self.CheckedValue.value == v.value) then
+                                    v.Radio:SetChecked(true)
+                                    
+                                else
+                                    v.Radio:SetChecked(false)
+                                
+                                end
+                            end
+                        end
+
+                        self:Raise()
+                    </OnShow>
+                </Scripts>
             </Frame>       
         </Frames>
         
         <Layers>
             <Layer level="ARTWORK">
+            </Layer>
+
+            <Layer level="OVERLAY">
                 <Texture parentKey="Icon">
                     <Size x="12" y="12" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Radio" relativePoint="RIGHT" x="2" />
                     </Anchors>
                 </Texture>
-            </Layer>
 
-            <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title of the thingy" wordwrap="false">
                     <FontHeight val="11"/>
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
-                        <Anchor point="RIGHT" relativeKey="$parent.Difficulty1" relativePoint="LEFT" x="-3" />
                     </Anchors>
                 </FontString>
             </Layer>
@@ -75,9 +93,15 @@
         <Scripts>
         	<OnEnter>
                 if(self.ParentDropDown.currentList) then
-                    if(self.parentIndex and self:GetParent():GetParent().layoutIndex) then
-                        if(self.parentIndex ~= self:GetParent():GetParent().layoutIndex) then
+                    local parent = self:GetParent():GetParent()
+
+                    if(self.parentIndex and parent.layoutIndex) then
+                        if(self.parentIndex ~= parent.layoutIndex) then
                             self.ParentDropDown.currentList:Hide()
+
+                        elseif(self.parentIndex == nil and parent.layoutIndex == nil)then
+                            self.ParentDropDown.currentList:Hide()
+                        
                         end
                     else
                         self.ParentDropDown.currentList:Hide()
@@ -85,26 +109,40 @@
                     end
                 end
 
-                if(self.entryType ~= "option") then
+                if(self.List and #self.List:GetLayoutChildren() > 1) then
                     self.List:Show()
                     self.ParentDropDown.currentList = self.List
+                    
                 end
 
                 if(self.tooltip) then
 
                 end
+
+                
+                if(self:GetTop() and GetScreenHeight() / 2 > self:GetTop()) then
+                    self.List:ClearAllPoints()
+                    self.List:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT")
+
+                else
+                    self.List:ClearAllPoints()
+                    self.List:SetPoint("TOPLEFT", self, "TOPRIGHT")
+
+                end
             </OnEnter>
 
             <PostClick>
-                self.ParentDropDown.CheckedValue.Name:SetText(self.Name:GetText())
-                self.ParentDropDown.CheckedValue.value = self.value
-                self.Radio:SetChecked(true)
+                if(not self.hasArrow) then
+                    self.ParentDropDown.CheckedValue.Name:SetText(self.Name:GetText())
+                    self.ParentDropDown.CheckedValue.value = self.value
+                    self.Radio:SetChecked(true)
 
-                if(self.ParentDropDown.currentList)  then
-                    self.ParentDropDown.currentList:Hide()
+                    if(self.ParentDropDown.currentList)  then
+                        self.ParentDropDown.currentList:Hide()
+                    end
+
+                    self.ParentDropDown.List:Hide()
                 end
-
-                self.ParentDropDown.List:Hide()
 
             </PostClick>
         </Scripts>

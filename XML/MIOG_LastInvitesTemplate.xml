@@ -4,81 +4,11 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_LastInvitesTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size x="250" y="250" />
+    <Frame name="MIOG_LastInvitesTemplate" inherits="BackdropTemplate" virtual="true" setAllPoints="true">
 
         <Frames>
-            <Button parentKey="Button" inherits="UIButtonTemplate, BackdropTemplate">
-                <Size x="25" y="100" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                </Anchors>
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="INVITES">
-                            <FontHeight val="13" />
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
-                            </Anchors>
-
-                            <Scripts>
-                                <OnLoad>
-	                                self:SetText(string.gsub("INVITES", "(.)", function(x) return x.."\n" end))
-                                </OnLoad>
-                            </Scripts>
-                        </FontString>
-                    </Layer>
-                </Layers>
-
-                <Scripts>
-                    <OnClick>
-		                self:GetParent().Panel:SetShown(not self:GetParent().Panel:IsVisible())
-                        self:Hide()
-                    </OnClick>
-                </Scripts>
-            </Button>
-
-            <Frame parentKey="Panel" inherits="BackdropTemplate" setAllPoints="true" hidden="true">
+            <Frame parentKey="Panel" inherits="BackdropTemplate" setAllPoints="true">
                 <Frames>
-                    <Frame parentKey="TitleBar" inherits="BackdropTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        </Anchors>
-
-                        <Frames>
-                            <Button parentKey="Retract" inherits="UIButtonTemplate">
-                                <Size x="20" y="20" />
-                                <Anchors>
-                                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="-1"/>
-                                </Anchors>
-
-                                <NormalTexture file="interface/buttons/arrow-down-up.blp" />
-                                <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
-
-                                <Scripts>
-                                    <OnLoad>
-                                        self:GetNormalTexture():SetRotation(-math.pi/2)
-                                        self:GetDisabledTexture():SetRotation(-math.pi/2)
-                                    </OnLoad>
-                                    <OnClick>
-                                        self:GetParent():GetParent():Hide()
-                                        self:GetParent():GetParent():GetParent().Button:Show()
-                                    </OnClick>
-                                </Scripts>
-                            </Button>
-                        </Frames>
-
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="Last Invites" wordwrap="true" nonspacewrap="true" spacing="0">
-
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                    </Frame>
                     <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" setAllPoints="true">
                         <Frames>
                             <Frame parentKey="Container" inherits="VerticalLayoutFrame">
@@ -91,14 +21,14 @@
                                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                                 </Anchors>
-
-                                <Scripts>
-                                    <OnLoad>
-                                        self:GetParent():SetScrollChild(self)
-                                    </OnLoad>
-                                </Scripts>
                             </Frame>
                         </Frames>
+                        
+                        <Scripts>
+                            <OnShow>
+                                self:SetScrollChild(self.Container)
+                            </OnShow>
+                        </Scripts>
                     </ScrollFrame>
                 </Frames>
 

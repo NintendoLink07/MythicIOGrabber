@@ -1172,7 +1172,6 @@ local function addOrShowApplicant(applicantID)
 end
 
 local function checkApplicantListForEligibleMembers(listEntry)
-	print(listEntry.role, MIOG_SavedSettings.applicationViewer_FilterOptions.table.filterForRoles[listEntry.role])
 	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.filterForRoles[listEntry.role] ~= true) then
 		return false
 
@@ -1237,23 +1236,10 @@ local function checkApplicantList(forceReorder, applicantID)
 			for d, listEntry in ipairs(unsortedList) do
 
 				for _, v in pairs(listEntry) do
-					--[===[if((v.role == "TANK" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[1]:GetChecked()
-					or v.role == "HEALER" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[2]:GetChecked()
-					or v.role == "DAMAGER" and miog.applicationViewer.ButtonPanel.FilterPanel.roleFilterPanel.RoleButtons[3]:GetChecked())) then
-						if(miog.applicationViewer.ButtonPanel.FilterPanel.FilterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].Class.Button:GetChecked()) then
-							if(miog.applicationViewer.ButtonPanel.FilterPanel.FilterFrame.classFilterPanel.ClassPanels[miog.CLASSFILE_TO_ID[v.class]].SpecFrames[v.specID].Button:GetChecked()) then
-
-							end
-						end
-					end]===]
-
 					if(checkApplicantListForEligibleMembers(v) == true) then
-						--print(d, "IS OK", time)
 						updatedFrames[listEntry[1].index] = true
 						addOrShowApplicant(listEntry[1].index)
 						break
-					else
-						--print(d, "NOT OK", time)
 					
 					end
 				end
@@ -2073,7 +2059,7 @@ local function isGroupEligible(resultID, bordermode)
 	
 	end
 	
-	if(isDungeon and MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeonOptions) then
+	if(isDungeon and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDungeons) then
 		if(not MIOG_SavedSettings.searchPanel_FilterOptions.table.dungeons[searchResultData.activityID]) then
 			return false
 
@@ -2470,7 +2456,7 @@ local function updatePersistentResultFrame(resultID)
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
 			local currentFrame = searchResultSystem.persistentFrames[resultID]
 			local BasicInformationPanel = currentFrame.BasicInformationPanel
-			local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].mapID or 0
+			local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID][9] or 0
 			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 			local declineData = searchResultData.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultData.activityID .. searchResultData.leaderName]
 			
@@ -2483,7 +2469,7 @@ local function updatePersistentResultFrame(resultID)
 
 			end)
 
-			currentFrame.BasicInformationPanel.Icon:SetTexture(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID][#miog.MAP_INFO[mapID]] and miog.MAP_INFO[mapID][#miog.MAP_INFO[mapID]].icon or nil)
+			currentFrame.BasicInformationPanel.Icon:SetTexture(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].icon or nil)
 			currentFrame.BasicInformationPanel.Icon:SetScript("OnMouseDown", function()
 
 				--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
@@ -2493,7 +2479,7 @@ local function updatePersistentResultFrame(resultID)
 
 			local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and
 			(activityInfo.isPvpActivity and miog.BRACKETS[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors
-			or miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors) or {r = 1, g = 1, b = 1}
+			or miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_ID_INFO[searchResultData.activityID][10]]) or {r = 1, g = 1, b = 1}
 
 			currentFrame.BasicInformationPanel.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 			
@@ -2550,8 +2536,12 @@ local function updatePersistentResultFrame(resultID)
 				end
 			end)
 			
-			BasicInformationPanel.DifficultyZone:SetText(wticc(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
-			(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].shortName) or activityInfo.fullName, titleZoneColor))
+			BasicInformationPanel.DifficultyZone:SetText(
+				wticc(
+					miog.MAP_INFO[mapID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY_ID_INFO[miog.ACTIVITY_ID_INFO[searchResultData.activityID][10]].shortName .. " - " ..
+					miog.MAP_INFO[mapID].shortName or activityInfo.fullName,
+				titleZoneColor)
+			)
 
 			local primaryIndicator = currentFrame.BasicInformationPanel.Primary
 			primaryIndicator:SetText(nil)
@@ -2966,9 +2956,6 @@ local function searchResultsReceived()
 end
 
 local function startNewGroup(categoryFrame)
-	if(not C_LFGList.HasActiveEntryInfo()) then
-		miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
-	end
 
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 	LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
@@ -2992,6 +2979,8 @@ local function ResolveCategoryFilters(categoryID, filters)
 
 	return filters;
 end
+
+miog.ResolveCategoryFilters = ResolveCategoryFilters
 
 function LFGListSearchPanel_DoSearch(self)
 	local searchText = self.SearchBox:GetText();
@@ -3020,8 +3009,11 @@ local function findGroup(categoryFrame)
 	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 end
 
+local calendarBacklog = {}
+
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
+		
 		local isInitialLogin, isReloadingUi = ...
 
 		if(isInitialLogin or isReloadingUi) then
@@ -3077,32 +3069,50 @@ miog.OnEvent = function(_, event, ...)
 			end
 		end
 
-		--[[for i = 1, GetNumBattlegroundTypes(), 1 do
-			local name, cantEnter, isHoliday, isRandom, battleGroundID, info = GetBattlegroundInfo(i)
-
-			miog.INSTANCE_IDS[battleGroundID] = name
-		end
-
-		DevTools_Dump({C_PvP.GetAvailableBrawlInfo()})
-		DevTools_Dump({C_PvP.GetSpecialEventBrawlInfo()})]]
 		C_MythicPlus.GetCurrentAffixes()
 		
-		if(not miog.pveFrame2.FilterPanel.Panel.DungeonPanel) then
+		if(not miog.F.ADDED_DUNGEON_FILTERS) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
 
-			print(miog.F.CURRENT_SEASON)
-
-			--ADD DUNGEON BOXES / CHECK WHY STUFF DOESNT WORK
-
-			miog.addDungeonCheckboxes()
+			miog.uppdateDungeonCheckboxes()
 
 		end
 		miog.F.CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
 
+	--elseif(event == "CALENDAR_UPDATE_EVENT_LIST") then
+		--[[print("UPDATE CALENDAR")
 
+		local day = 12
+
+		for i = day, day + 14, 1 do
+			local numEvents = C_Calendar.GetNumDayEvents(0, i)
+
+			for k = 1, numEvents, 1 do
+				local success = C_Calendar.OpenEvent(0, day, k)
+
+				if(success) then
+					tinsert(calendarBacklog, {i, k})
+				end
+			end
+		end
+
+	elseif(event == "CALENDAR_OPEN_EVENT") then
+		local info = C_Calendar.GetEventInfo()
+
+		if(info) then
+			print(i, k, info.title)
+
+
+		end
+
+
+	--IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
+
+
+]]
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
 		miog.F.ACTIVE_ENTRY_INFO = C_LFGList.GetActiveEntryInfo()
 
@@ -3194,13 +3204,13 @@ miog.OnEvent = function(_, event, ...)
 		end
 
     elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
-		if(not miog.pveFrame2.FilterPanel.Panel.DungeonPanel) then
+		if(not miog.F.ADDED_DUNGEON_FILTERS) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
 
-			miog.addDungeonCheckboxes()
+			miog.uppdateDungeonCheckboxes()
 
 		end
 
@@ -3324,6 +3334,7 @@ miog.OnEvent = function(_, event, ...)
 
 				miog.searchPanel.Status.FontString:Hide()
 				miog.searchPanel.Status.LoadingSpinner:Hide()
+				miog.searchPanel.StartSearch:Disable()
 				miog.searchPanel.Status.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
 
 				C_Timer.NewTicker(0.2, function(self)
@@ -3331,6 +3342,7 @@ miog.OnEvent = function(_, event, ...)
 					miog.searchPanel.Status.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
 
 					if(timeUntil <= 0) then
+						miog.searchPanel.StartSearch:Enable()
 						miog.searchPanel.Status.FontString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
 						miog.F.SEARCH_IS_THROTTLED = false
 						self:Cancel()
@@ -3525,8 +3537,6 @@ miog.OnEvent = function(_, event, ...)
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
 
-			miog.SETUP_FIRST_ENTRY_CREATION_VIEW = true
-
 			startNewGroup({categoryID = activityInfo.categoryID, filters = activityInfo.filters})
 		end
 
@@ -3541,7 +3551,7 @@ miog.OnEvent = function(_, event, ...)
 
 				local categoryFrame = CreateFrame("Button", "MythicIOGrabber_" .. categoryInfo.name .. "Button", miog.pveFrame2.CategoryPanel, "MIOG_MenuButtonTemplate")
 				categoryFrame.categoryID = categoryID
-				categoryFrame.filters = Enum.LFGListFilter.Recommended
+				categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 
 				categoryFrame:SetHeight(30)
 				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)

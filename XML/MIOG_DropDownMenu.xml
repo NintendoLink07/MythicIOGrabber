@@ -4,48 +4,39 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true" frameStrata="HIGH">
-
-        <Anchors>
-            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-        </Anchors>
-
+    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true" frameStrata="HIGH" topLevel="true">
         <Frames>
-            <Button parentKey="Button" inherits="UIPanelButtonTemplate">
-                <Size x="25" y="25" />
+            <Button parentKey="Button" inherits="UIPanelButtonTemplate" hidden="true">
+                <Size x="22" y="21" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="1"/>
                 </Anchors>
-
+                
                 <Scripts>
                     <OnClick>
                         local parent = self:GetParent()
+
                         for k,v in pairs(parent.List:GetLayoutChildren()) do
-                            if(parent.CheckedValue.value == v.value) then
-                                v.Radio:SetChecked(true)
+                            if(v.Radio) then
+                                if(parent.CheckedValue.value == v.value) then
+                                    v.Radio:SetChecked(true)
+                                    
+                                else
+                                    v.Radio:SetChecked(false)
                                 
-                            else
-                                v.Radio:SetChecked(false)
-                            
+                                end
                             end
                         end
 
-                        if(parent.List:IsVisible()) then
-                            parent.List:SetFrameLevel(1)
-
-                        else
-                            parent.List:SetFrameLevel(100)
-
-                        end
-
-                        self:GetParent().List:SetShown(not self:GetParent().List:IsVisible())
+                        parent.List:SetShown(not parent.List:IsVisible())
 
                         if(parent.currentList) then
                             parent.currentList:Hide()
                         end
 
-                        self:GetParent():MarkDirty()
+                        parent:Raise()
+
+                        parent:MarkDirty()
                     </OnClick>
                 </Scripts>
             </Button>
@@ -58,15 +49,15 @@
                 <Size y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Button" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                 </Anchors>
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" horizTile="true" vertTile="true">
+                        <Texture parentKey="Background" setAllPoints="true">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5"  y="-2"/>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="5"/>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                             </Anchors>
                         </Texture>
                     </Layer>
@@ -80,6 +71,34 @@
                         </FontString>
                     </Layer>
                 </Layers>
+                
+                <Scripts>
+                    <OnMouseDown>
+                        local parent = self:GetParent()
+
+                        for k,v in pairs(parent.List:GetLayoutChildren()) do
+                            if(v.Radio) then
+                                if(parent.CheckedValue.value == v.value) then
+                                    v.Radio:SetChecked(true)
+                                    
+                                else
+                                    v.Radio:SetChecked(false)
+                                
+                                end
+                            end
+                        end
+
+                        parent.List:SetShown(not parent.List:IsVisible())
+
+                        if(parent.currentList) then
+                            parent.currentList:Hide()
+                        end
+
+                        parent:Raise()
+
+                        parent:MarkDirty()
+                    </OnMouseDown>
+                </Scripts>
             </Frame>
 
             <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true">
@@ -89,7 +108,7 @@
                 </KeyValues>
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.CheckedValue" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>
             </Frame>
         </Frames>

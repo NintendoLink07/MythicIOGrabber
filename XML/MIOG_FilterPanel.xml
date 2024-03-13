@@ -4,81 +4,35 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate" hidden="true" virtual="true">
-        <Size x="220" y="600" />
-
+    <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate" virtual="true" setAllPoints="true">
         <Frames>
-            <Button parentKey="Button" inherits="UIButtonTemplate, BackdropTemplate">
-                <Size x="25" y="100" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                </Anchors>
-
+            <Frame parentKey="Lock" inherits="BackdropTemplate" setAllPoints="true" hidden="true" frameStrata="FULLSCREEN">
                 <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="FILTERS">
-                            <FontHeight val="13" />
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
-                            </Anchors>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.93"/>
+                        </Texture>
+                    </Layer>
 
-                            <Scripts>
-                                <OnLoad>
-	                                self:SetText(string.gsub("FILTERS", "(.)", function(x) return x.."\n" end))
-                                </OnLoad>
-                            </Scripts>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="Filters are only available in the search panel or application viewer.">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
+                            </Anchors>
                         </FontString>
                     </Layer>
                 </Layers>
 
                 <Scripts>
-                    <OnClick>
-		                self:GetParent().Panel:SetShown(not self:GetParent().Panel:IsVisible())
-                        self:Hide()
-                    </OnClick>
+                    <OnMouseDown>
+                        
+                    </OnMouseDown>
                 </Scripts>
-            </Button>
+            </Frame>
 
-            <Frame parentKey="Panel" inherits="BackdropTemplate" setAllPoints="true" hidden="true">
+            <Frame parentKey="Panel" inherits="BackdropTemplate" setAllPoints="true">
                 <Frames>
-                    <Frame parentKey="TitleBar" inherits="BackdropTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        </Anchors>
-
-                        <Frames>
-                            <Button parentKey="Retract" inherits="UIButtonTemplate">
-                                <Size x="20" y="20" />
-                                <Anchors>
-                                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="-1"/>
-                                </Anchors>
-
-                                <NormalTexture file="interface/buttons/arrow-down-up.blp" />
-                                <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
-
-                                <Scripts>
-                                    <OnLoad>
-                                        self:GetNormalTexture():SetRotation(-math.pi/2)
-                                        self:GetDisabledTexture():SetRotation(-math.pi/2)
-                                    </OnLoad>
-                                    <OnClick>
-                                        self:GetParent():GetParent():Hide()
-                                        self:GetParent():GetParent():GetParent().Button:Show()
-                                    </OnClick>
-                                </Scripts>
-                            </Button>
-                        </Frames>
-
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="No filters active" wordwrap="true" nonspacewrap="true" spacing="0">
-
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                    </Frame>
                     <Button parentKey="Uncheck" inherits="IconButtonTemplate">
                         <Size x="20" y="20" />
                         <Anchors>
@@ -116,13 +70,7 @@
                     </Button>
 
                     <Frame parentKey="Plugin">
-                        <Size y="185" />
-
-                        <Anchors>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-
+                        <Size y="200" />
                     </Frame>
                 </Frames>
             </Frame>

@@ -39,6 +39,8 @@ XML\MIOG_RaidPanelTemplate.xml
 XML\MIOG_RaidPanelTierTemplate.xml
 
 XML\MIOG_MainFrameTemplate.xml
+XML\MIOG_SidePanel.xml
+XML\MIOG_VerticalButtonTemplate.xml
 XML\MIOG_QueueFrame.xml
 XML\MIOG_MenuButtonTemplate.xml
 
