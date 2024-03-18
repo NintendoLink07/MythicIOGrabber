@@ -3026,13 +3026,7 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "PLAYER_LOGIN") then
-
-		C_MythicPlus.RequestMapInfo()
-
-		C_MythicPlus.RequestCurrentAffixes()
-
 		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
-
 		
 		miog.checkForSavedSettings()
 		miog.createFrames()
@@ -3068,8 +3062,6 @@ miog.OnEvent = function(_, event, ...)
 				miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k
 			end
 		end
-
-		C_MythicPlus.GetCurrentAffixes()
 		
 		if(not miog.F.ADDED_DUNGEON_FILTERS) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -3213,6 +3205,8 @@ miog.OnEvent = function(_, event, ...)
 			miog.uppdateDungeonCheckboxes()
 
 		end
+
+		miog.gatherMPlusStatistics()
 
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		if(not miog.F.WEEKLY_AFFIX) then
@@ -3549,13 +3543,13 @@ miog.OnEvent = function(_, event, ...)
 
 			if(not _G["MythicIOGrabber_" .. categoryInfo.name .. "Button"]) then
 
-				local categoryFrame = CreateFrame("Button", "MythicIOGrabber_" .. categoryInfo.name .. "Button", miog.pveFrame2.CategoryPanel, "MIOG_MenuButtonTemplate")
+				local categoryFrame = CreateFrame("Button", "MythicIOGrabber_" .. categoryInfo.name .. "Button", miog.mainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
 				categoryFrame.categoryID = categoryID
 				categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 
 				categoryFrame:SetHeight(30)
-				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
-				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
+				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
+				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
 				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.Title:SetText(categoryInfo.name)
 				---@diagnostic disable-next-line: undefined-field
@@ -3583,13 +3577,13 @@ miog.OnEvent = function(_, event, ...)
 		
 				--DevTools_Dump(categoryInfo)
 				if categoryInfo.separateRecommended then
-					local notRecommendedFrame = CreateFrame("Button", "MythicIOGrabber_" .. LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true) .. "Button", miog.pveFrame2.CategoryPanel, "MIOG_MenuButtonTemplate")
+					local notRecommendedFrame = CreateFrame("Button", "MythicIOGrabber_" .. LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true) .. "Button", miog.mainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
 					notRecommendedFrame.categoryID = categoryID
 					notRecommendedFrame.filters = Enum.LFGListFilter.NotRecommended
 
 					notRecommendedFrame:SetHeight(30)
-					notRecommendedFrame:SetPoint("TOPLEFT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
-					notRecommendedFrame:SetPoint("TOPRIGHT", lastFrame or miog.pveFrame2.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
+					notRecommendedFrame:SetPoint("TOPLEFT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
+					notRecommendedFrame:SetPoint("TOPRIGHT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
 					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
 					---@diagnostic disable-next-line: undefined-field

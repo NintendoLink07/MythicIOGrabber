@@ -18,6 +18,10 @@ function SlickDropDown:OnLoad()
 	self.currentList = nil
 	self.deactivatedExtraButtons = {}
 	self.List.highestWidth = 0
+
+	--miog.setStandardBackdrop(self.CheckedValue)
+	--local color = CreateColorFromHexString(miog.C.BACKGROUND_COLOR)
+	--self.CheckedValue:SetBackdropColor(color.r, color.g, color.b, 0.6)
 end
 
 function SlickDropDown:ResetDropDown()

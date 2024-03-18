@@ -32,7 +32,7 @@ local function resetQueueFrame(_, frame)
 	end
 
 ---@diagnostic disable-next-line: undefined-field
-	miog.pveFrame2.QueuePanel.Container:MarkDirty()
+	miog.mainTab.QueuePanel.Container:MarkDirty()
 end
 
 hooksecurefunc("PVEFrame_ToggleFrame", function()
@@ -78,7 +78,7 @@ local function addNumericSpinnerToFilterFrame(text, name)
 	decrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Down")
 	decrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Disabled")
 	decrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
-	decrementButton:SetPoint("TOPLEFT", lastFilterOption or miog.searchPanel.FilterPanel.FilterFrame, "BOTTOMLEFT", 0, -5)
+	decrementButton:SetPoint("TOPLEFT", miog.searchPanel.FilterPanel.FilterFrame, "BOTTOMLEFT", 0, -5)
 	decrementButton:SetScript("OnMouseDown", function()
 		if decrementButton:IsEnabled() then
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -695,33 +695,42 @@ local function addRolePanel(parent)
 end
 
 local function createPVEFrameReplacement()
-	local frame = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", WorldFrame, "MIOG_MainFrameTemplate")
-	frame:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
-	frame.SidePanel:SetHeight(frame:GetHeight() * 1.45)
+	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", WorldFrame, "MIOG_MainFrameTemplate")
+	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
+	pveFrame2.SidePanel:SetHeight(pveFrame2:GetHeight() * 1.45)
 
-	if(frame:GetPoint() == nil) then
-		frame:SetPoint(PVEFrame:GetPoint())
+	if(pveFrame2:GetPoint() == nil) then
+		pveFrame2:SetPoint(PVEFrame:GetPoint())
 	end
-	frame:SetScale(0.64)
+	pveFrame2:SetScale(0.64)
 
-	_G[frame:GetName()] = frame
+	_G[pveFrame2:GetName()] = pveFrame2
 
-	miog.createFrameBorder(frame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	frame:HookScript("OnShow", function(selfPVEFrame)
-		local level = C_MythicPlus.GetOwnedKeystoneLevel()
-		print(level)
+	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
+
+		C_MythicPlus.RequestCurrentAffixes()
+		C_MythicPlus.RequestMapInfo()
+
+		miog.setUpMPlusStatistics()
+		miog.gatherMPlusStatistics()
 		
 		for frameIndex = 1, 3, 1 do
 			local activities = C_WeeklyRewards.GetActivities(frameIndex)
-			local firstThreshold = activities[1].progress >= activities[1].threshold;
-			local secondThreshold = activities[2].progress >= activities[2].threshold;
-			local thirdThreshold = activities[3].progress >= activities[3].threshold;
+
+			activities[1].progress = random(0, activities[1].threshold) * 2
+			activities[2].progress = activities[1].progress >= activities[1].threshold and random(activities[1].progress, activities[3].threshold) or activities[1].progress
+			activities[3].progress = activities[2].progress >= activities[2].threshold and random(activities[2].progress, activities[3].threshold) or activities[2].progress
+
+			local firstThreshold = activities[1].progress >= activities[1].threshold
+			local secondThreshold = activities[2].progress >= activities[2].threshold
+			local thirdThreshold = activities[3].progress >= activities[3].threshold
 			local currentColor = thirdThreshold and miog.CLRSCC.green or secondThreshold and miog.CLRSCC.yellow or firstThreshold and miog.CLRSCC.orange or miog.CLRSCC.red
 			local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
 			dimColor[4] = 0.1
 
-			local currentFrame = frameIndex == 1 and frame.MPlusStatus or frameIndex == 2 and frame.HonorStatus or frame.RaidStatus
+			local currentFrame = frameIndex == 1 and miog.mainTab.MPlusStatus or frameIndex == 2 and miog.mainTab.HonorStatus or miog.mainTab.RaidStatus
 
 			if(currentFrame.ticks) then
 				for k, v in pairs(currentFrame.ticks) do
@@ -850,6 +859,9 @@ local function createPVEFrameReplacement()
 					
 						local weeklyProgress = C_WeeklyRewards.GetConquestWeeklyProgress();
 						local unlocksCompleted = weeklyProgress.unlocksCompleted or 0;
+
+						GameTooltip_AddNormalLine(GameTooltip, "Honor earned: " .. weeklyProgress.progress .. "/" .. weeklyProgress.maxProgress);
+						GameTooltip_AddBlankLineToTooltip(GameTooltip);
 					
 						local maxUnlocks = weeklyProgress.maxUnlocks or 3;
 						local description;
@@ -882,35 +894,61 @@ local function createPVEFrameReplacement()
 
 			currentFrame.ticks = {}
 
-			if(not secondThreshold) then
+			if(not thirdThreshold) then
 				for tickIndex = 1, 2, 1 do
-					local tick = miog.createBasicTexture("persistent", "Interface\\ChatFrame\\ChatFrameBackground", currentFrame, 20, 5)
+					dimColor[4] = tickIndex == 1 and firstThreshold and 0.1 or tickIndex == 2 and secondThreshold and 0.1 or 1
+	
+					local tick = miog.createBasicTexture("persistent", "Interface\\ChatFrame\\ChatFrameBackground", currentFrame, 20, 3)
+					tick:SetColorTexture(0.8, 0.8, 0.8, 1)
+					tick:SetDrawLayer("OVERLAY")
 					tick:SetPoint("BOTTOMLEFT", currentFrame, "BOTTOMLEFT", 0, currentFrame:GetHeight() / (activities[3].threshold / activities[tickIndex].threshold))
-					currentFrame.ticks[tickIndex] = tick
+					currentFrame.ticks[#currentFrame.ticks+1] = tick
 				end
+
+				for tickIndex = 1, 2, 1 do
+					if(tickIndex == 1 and firstThreshold or tickIndex == 2 and secondThreshold) then
+						local tick = miog.createBasicTexture("persistent", "Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\checkmarkSmallIcon.png", currentFrame, 10, 10)
+						tick:SetPoint("BOTTOMRIGHT", currentFrame, "BOTTOMRIGHT", 5, currentFrame:GetHeight() / (activities[3].threshold / activities[tickIndex].threshold))
+						tick:SetDrawLayer("OVERLAY")
+						currentFrame.ticks[#currentFrame.ticks+1] = tick
+					end
+				end
+
+			else
+				local tick = miog.createBasicTexture("persistent", "Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\checkmarkSmallIcon.png", currentFrame, 10, 10)
+				tick:SetPoint("TOPRIGHT", currentFrame, "TOPRIGHT", 5, 5)
+				tick:SetDrawLayer("OVERLAY")
+				currentFrame.ticks[#currentFrame.ticks+1] = tick
+
 			end
 
 			currentFrame:SetValue(activities[3].progress)
 		end
 	end)
 
-	miog.pveFrame2 = frame
+	miog.pveFrame2 = pveFrame2
+	
+	miog.mainTab = pveFrame2.TabFramesPanel.MainTab
+	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
 
-	local filterPanel = frame.SidePanel.Container.FilterPanel
+	local frame = miog.mainTab
+
+
+	local filterPanel = pveFrame2.SidePanel.Container.FilterPanel
 	
 	filterPanel.Panel.FilterOptions = {}
 
 	--miog.createFrameBorder(filterPanel.Button, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	--filterPanel.Button:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	miog.createFrameBorder(frame.SidePanel.Container, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	frame.SidePanel.Container:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	miog.createFrameBorder(pveFrame2.SidePanel.Container, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	pveFrame2.SidePanel.Container:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	miog.createFrameBorder(frame.SidePanel.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	frame.SidePanel.ButtonPanel.FilterButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	miog.createFrameBorder(pveFrame2.SidePanel.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	pveFrame2.SidePanel.ButtonPanel.FilterButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	miog.createFrameBorder(frame.SidePanel.ButtonPanel.LastInvitesButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	frame.SidePanel.ButtonPanel.LastInvitesButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	miog.createFrameBorder(pveFrame2.SidePanel.ButtonPanel.LastInvitesButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	pveFrame2.SidePanel.ButtonPanel.LastInvitesButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	local rolePanel = addRolePanel(filterPanel.Panel)
 	rolePanel:SetPoint("TOPLEFT", filterPanel.Panel, "TOPLEFT")
@@ -933,7 +971,7 @@ local function createPVEFrameReplacement()
 	filterPanel.Panel.Plugin:SetWidth(filterPanel.Panel:GetWidth())
 	filterPanel.Panel.Plugin:SetPoint("TOPLEFT", lustFitButton, "BOTTOMLEFT", 0, 0)
 
-	frame.TitleBar.Expand:SetScript("OnClick", function()
+	pveFrame2.TitleBar.Expand:SetScript("OnClick", function()
 
 		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
 
@@ -946,12 +984,12 @@ local function createPVEFrameReplacement()
 		end
 	end)
 
-	frame.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
-	frame.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
+	pveFrame2.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
+	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
 
 ---@diagnostic disable-next-line: undefined-field
-	queueSystem.framePool = CreateFramePool("Frame", miog.pveFrame2.QueuePanel.Container, "MIOG_QueueFrame", resetQueueFrame)
+	queueSystem.framePool = CreateFramePool("Frame", miog.mainTab.QueuePanel.Container, "MIOG_QueueFrame", resetQueueFrame)
 
 ---@diagnostic disable-next-line: undefined-field
 	local queueRolePanel = frame.QueueRolePanel
@@ -989,28 +1027,20 @@ local function createPVEFrameReplacement()
 		SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
 	end)
 
-	--local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", frame, 200, 20)
-	--optionDropdown:SetPoint("TOP", rolePanel, "BOTTOM", 0, 0)
-	--UIDropDownMenu_SetWidth(optionDropdown, 160)
-	--frame.QueueDropdown = optionDropdown
-
-	--PVPQueueFrame_ShowFrame(HonorFrame)
 	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
-	--local queueDropDown = Mixin(CreateFrame("Frame", nil, frame, "MIOG_DropDownMenu"), SlickDropDown) --CreateFrame("Frame", nil, frame, "MIOG_DropDownMenu") ---@class Frame
 ---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = frame.QueueDropDown
 	queueDropDown:OnLoad()
-	--miog.createFrameBorder(queueDropDown, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	--queueDropDown.framePool = CreateFramePool("Frame", queueDropDown.List, "MIOG_DropDownMenuEntry", resetDropDownListFrame)
-	--queueDropDown.entryFrameTree = {}
-	--queueDropDown.List.entryTable = {}
-	--miog.pveFrame2.QueueDropDown = queueDropDown
-	
-	--miog.createFrameBorder(frame.QueuePanel, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	frame.QueuePanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-	--miog.createFrameBorder(frame.QueuePanel.Title, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	--[[
+
+	miog.setStandardBackdrop(frame.QueuePanel)
+	local color = CreateColorFromHexString(miog.C.BACKGROUND_COLOR)
+	frame.QueuePanel:SetBackdropColor(color.r, color.g, color.b, 0.6)
+
+	]]
 
 	miog.createFrameBorder(frame.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	frame.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -1045,18 +1075,21 @@ local function createPVEFrameReplacement()
 	--miog.createFrameBorder(frame.LastInvites.Button, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	--frame.LastInvites.Button:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	local lastInvitesPanel = frame.SidePanel.Container.LastInvites
+	local lastInvitesPanel = pveFrame2.SidePanel.Container.LastInvites
 
 	miog.createFrameBorder(lastInvitesPanel.Panel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	miog.createFrameBorder(frame.SidePanel.Container.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	miog.createFrameBorder(pveFrame2.SidePanel.Container.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	--frame.SidePanel.Container.TitleBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	--miog.createFrameBorder(frame.SidePanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	--miog.setStandardBackdrop(frame.MPlusStatistics)
+	--frame.MPlusStatistics:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 end
 
 local function updateRandomDungeons()
-	local queueDropDown = miog.pveFrame2.QueueDropDown
+	local queueDropDown = miog.mainTab.QueueDropDown
 	local info = {}
 	info.entryType = "option"
 	info.level = 2
@@ -1098,7 +1131,7 @@ end
 
 local function updateDungeons()
 	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.pveFrame2.QueueDropDown
+	local queueDropDown = miog.mainTab.QueueDropDown
 	local info = {}
 	info.entryType = "option"
 	info.level = 2
@@ -1146,7 +1179,7 @@ end
 
 local function updateRaidFinder()
 	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.pveFrame2.QueueDropDown
+	local queueDropDown = miog.mainTab.QueueDropDown
 	if(queueDropDown.entryFrameTree[4].List.framePool) then
 		queueDropDown.entryFrameTree[4].List.framePool:ReleaseAll()
 	end
@@ -1242,7 +1275,7 @@ end
 
 local function updatePvP()
 	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.pveFrame2.QueueDropDown
+	local queueDropDown = miog.mainTab.QueueDropDown
 
 	if(queueDropDown.entryFrameTree[5].List.securePool) then
 		queueDropDown.entryFrameTree[5].List.securePool:ReleaseAll()
@@ -1414,7 +1447,7 @@ miog.updatePvP = updatePvP
 
 local function updateQueueDropDown()
 	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.pveFrame2.QueueDropDown
+	local queueDropDown = miog.mainTab.QueueDropDown
 	queueDropDown:ResetDropDown()
 
 	print("UPDATE QUEUE")
@@ -1592,7 +1625,7 @@ local function createQueueFrame(queueInfo)
 	
 	end
 
-	queueFrame:SetWidth(miog.pveFrame2.QueuePanel:GetWidth() - 7)
+	queueFrame:SetWidth(miog.mainTab.QueuePanel:GetWidth() - 7)
 	
 	queueFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
@@ -1636,7 +1669,7 @@ local function createQueueFrame(queueInfo)
 	queueFrame:SetShown(true)
 
 ---@diagnostic disable-next-line: undefined-field
-	miog.pveFrame2.QueuePanel.Container:MarkDirty()
+	miog.mainTab.QueuePanel.Container:MarkDirty()
 end
 
 miog.createQueueFrame = createQueueFrame
@@ -1647,6 +1680,7 @@ miog.scriptReceiver = CreateFrame("Frame", "MythicIOGrabber_ScriptReceiver", fra
 miog.scriptReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
 miog.scriptReceiver:RegisterEvent("PLAYER_LOGIN")
 miog.scriptReceiver:RegisterEvent("UPDATE_LFG_LIST")
+miog.scriptReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 miog.scriptReceiver:SetScript("OnEvent", miog.OnEvent)
 
 hooksecurefunc(QueueStatusFrame, "Update", function()

@@ -6,15 +6,6 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [1.9.1] - 2024-02-16
-
-### Fixed
-
-- Corrected the position of the "Friend in group" icon
-
-- The "Cancel Application" button should now correctly be hidden for subsequent searches if the application fails or gets declined
-
-
 ## [2.0] - 2024-03-03
 
 2.0 is out! Completely overhauled xxx is here!
@@ -40,11 +31,23 @@ You can click on the frame of a manual application to switch over to the group f
 
 - While looking for members for your manually listed group you can edit everything right from the same window by double clicking on what you wanna change. Saves pressing the edit button, though you can still do that if you prefer that.
 
+- Updated all of the background art for the application viewer, mostly dungeon/raids background images.
+
 ### Fixed
 
 - You can (once again) switch to the options panel from the settings gear in the top right
 
+- Added all the initial spec id's (when you haven't chosen a spec you still have a spec id for the game to function correctly). No more weird errors because of unknown specs.
 
+
+
+## [1.9.1] - 2024-02-16
+
+### Fixed
+
+- Corrected the position of the "Friend in group" icon
+
+- The "Cancel Application" button should now correctly be hidden for subsequent searches if the application fails or gets declined
 
 
 

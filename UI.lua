@@ -840,7 +840,7 @@ end)
 ]===]
 
 local function createEntryCreation()
-	miog.entryCreation = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.pveFrame2.Plugin, "MIOG_EntryCreation") ---@class Frame
+	miog.entryCreation = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.mainTab.Plugin, "MIOG_EntryCreation") ---@class Frame
 
 	local frame = miog.entryCreation
 
@@ -900,7 +900,7 @@ local function createEntryCreation()
 
 	local startGroup = CreateFrame("Button", nil, miog.entryCreation, "UIPanelDynamicResizeButtonTemplate, LFGListMagicButtonTemplate")
 	startGroup:SetSize(1, 20)
-	startGroup:SetPoint("RIGHT", miog.pveFrame2.Plugin.FooterBar, "RIGHT")
+	startGroup:SetPoint("RIGHT", miog.mainTab.Plugin.FooterBar, "RIGHT")
 	startGroup:SetText("Start Group")
 	startGroup:FitToText()
 	startGroup:RegisterForClicks("LeftButtonDown")
@@ -947,7 +947,7 @@ local function createEntryCreation()
 end
 
 local function createApplicationViewer()
-	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.pveFrame2.Plugin, "MIOG_ApplicationViewer") ---@class Frame
+	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.mainTab.Plugin, "MIOG_ApplicationViewer") ---@class Frame
 	miog.applicationViewer = applicationViewer
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -1160,7 +1160,7 @@ local function createApplicationViewer()
 	)
 
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
-	browseGroupsButton:SetPoint("LEFT", miog.pveFrame2.Plugin.FooterBar.Back, "RIGHT")
+	browseGroupsButton:SetPoint("LEFT", miog.mainTab.Plugin.FooterBar.Back, "RIGHT")
 	browseGroupsButton:SetText("Browse Groups")
 	browseGroupsButton:FitToText()
 	browseGroupsButton:RegisterForClicks("LeftButtonDown")
@@ -1206,7 +1206,7 @@ local function createApplicationViewer()
 	miog.applicationViewer.editButton = editButton
 
 	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, miog.applicationViewer)
-	applicantNumberFontString:SetPoint("RIGHT", miog.pveFrame2.Plugin.FooterBar, "RIGHT", -3, -1)
+	applicantNumberFontString:SetPoint("RIGHT", miog.mainTab.Plugin.FooterBar, "RIGHT", -3, -1)
 	applicantNumberFontString:SetJustifyH("CENTER")
 	applicantNumberFontString:SetText(0)
 
@@ -1214,13 +1214,13 @@ local function createApplicationViewer()
 end
 
 local function createSearchPanel()
-	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.pveFrame2.Plugin, "MIOG_SearchPanel") ---@class Frame
+	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.mainTab.Plugin, "MIOG_SearchPanel") ---@class Frame
 	miog.searchPanel = searchPanel
 	miog.searchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.searchPanel.FramePanel, "TOPRIGHT", -10, 0)
 	miog.applicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.applicationViewer.FramePanel, "TOPRIGHT", -10, 0)
 
 	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.searchPanel, 1, 20)
-	signupButton:SetPoint("LEFT", miog.pveFrame2.Plugin.FooterBar.Back, "RIGHT")
+	signupButton:SetPoint("LEFT", miog.mainTab.Plugin.FooterBar.Back, "RIGHT")
 	signupButton:SetText("Signup")
 	signupButton:FitToText()
 	signupButton:RegisterForClicks("LeftButtonDown")
@@ -1234,7 +1234,7 @@ local function createSearchPanel()
 	searchPanel.SignUpButton = signupButton
 
 	local groupNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, miog.searchPanel)
-	groupNumberFontString:SetPoint("RIGHT", miog.pveFrame2.Plugin.FooterBar, "RIGHT", -3, -1)
+	groupNumberFontString:SetPoint("RIGHT", miog.mainTab.Plugin.FooterBar, "RIGHT", -3, -1)
 	groupNumberFontString:SetJustifyH("CENTER")
 	groupNumberFontString:SetText(0)
 
@@ -2061,7 +2061,6 @@ miog.createFrames = function()
 	miog.scriptReceiver:RegisterEvent("GROUP_LEFT")
 	miog.scriptReceiver:RegisterEvent("INSPECT_READY")
 	miog.scriptReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	miog.scriptReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 	miog.scriptReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
 
 	miog.scriptReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
@@ -2083,12 +2082,12 @@ miog.createFrames = function()
 			miog.pveFrame2.activePanel = "applicationViewer"
 			miog.searchPanel:Hide()
 			miog.entryCreation:Hide()
-			miog.pveFrame2.CategoryPanel:Hide()
+			miog.mainTab.CategoryPanel:Hide()
 
 			miog.setupFiltersForActivePanel()
 	
 			miog.pveFrame2:Show()
-			miog.pveFrame2.Plugin:Show()
+			miog.mainTab.Plugin:Show()
 			miog.applicationViewer:Show()
 			miog.pveFrame2.SidePanel.Container.FilterPanel:Show()
 			miog.searchPanel.PanelFilters:Hide()
@@ -2098,12 +2097,12 @@ miog.createFrames = function()
 			miog.pveFrame2.activePanel = "searchPanel"
 			miog.applicationViewer:Hide()
 			miog.entryCreation:Hide()
-			miog.pveFrame2.CategoryPanel:Hide()
+			miog.mainTab.CategoryPanel:Hide()
 
 			miog.setupFiltersForActivePanel()
 
 			miog.pveFrame2:Show()
-			miog.pveFrame2.Plugin:Show()
+			miog.mainTab.Plugin:Show()
 			miog.searchPanel:Show()
 			miog.pveFrame2.SidePanel.Container.FilterPanel:Show()
 			miog.searchPanel.PanelFilters:Show()
@@ -2129,10 +2128,10 @@ miog.createFrames = function()
 			--LFGListFrame.EntryCreation.editMode = false
 			miog.applicationViewer:Hide()
 			miog.searchPanel:Hide()
-			miog.pveFrame2.CategoryPanel:Hide()
+			miog.mainTab.CategoryPanel:Hide()
 	
 			miog.pveFrame2:Show()
-			miog.pveFrame2.Plugin:Show()
+			miog.mainTab.Plugin:Show()
 			miog.entryCreation:Show()
 			miog.searchPanel.PanelFilters:Hide()
 			miog.pveFrame2.SidePanel.Container.FilterPanel.Lock:Show()
@@ -2142,9 +2141,9 @@ miog.createFrames = function()
 			miog.searchPanel:Hide()
 			miog.entryCreation:Hide()
 
-			miog.pveFrame2.CategoryPanel:Show()
+			miog.mainTab.CategoryPanel:Show()
 			miog.pveFrame2.SidePanel.Container.FilterPanel.Lock:Show()
-			miog.pveFrame2.Plugin:Hide()
+			miog.mainTab.Plugin:Hide()
 			miog.searchPanel.PanelFilters:Hide()
 	
 		end

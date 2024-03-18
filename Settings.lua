@@ -34,6 +34,12 @@ local defaultOptionSettings = {
 		value = true,
 		index = 7,
 	},
+	mPlusStatistics = {
+		type = "variable",
+		title = "Mythic + Statistics for all your characters",
+		table = {},
+
+	},
 	enableClassPanel = {
 		type = "checkbox",
 		title = "Enable the class panel for your group (shows class and spec data for your whole group after all inspects went through)",
@@ -178,6 +184,7 @@ local defaultOptionSettings = {
 
 local function compareSettings()
 	for key, optionEntry in pairs(defaultOptionSettings) do
+
 		if(not MIOG_SavedSettings[key]) then
 			MIOG_SavedSettings[key] = {}
 
@@ -201,6 +208,9 @@ local function compareSettings()
 
 			elseif(MIOG_SavedSettings[key].index ~= optionEntry.index) then
 				MIOG_SavedSettings[key].index = optionEntry.index
+
+			elseif(optionEntry.table and MIOG_SavedSettings[key].table == nil) then
+				MIOG_SavedSettings[key].table = {}
 
 			else
 				if(MIOG_SavedSettings[key].type == "dropdown") then

@@ -67,3 +67,8 @@ XML\MIOG_DropDownMenuEntry.xml
 XML\MIOG_MinimalCheckButtonTemplate.xml
 XML\MIOG_ClassSpecFilterRowTemplate.xml
 XML\MIOG_ClassSpecSingleOptionTemplate.xml
+
+XML\MIOG_MPlusStatistics.xml
+XML\MIOG_MPlusStatisticsCharacterTemplate.xml
+XML\MIOG_MPlusStatisticsRowTemplate.xml
+XML\MIOG_MPlusStatisticsDungeonTemplate.xml

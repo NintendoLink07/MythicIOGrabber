@@ -38,7 +38,7 @@
                 </Layers>
             </Frame>
 
-            <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true">
+            <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true" frameStrata="HIGH" topLevel="true">
                 <KeyValues>
                     <KeyValue key="align" value="top" />
                     <KeyValue key="spacing" value="3" />

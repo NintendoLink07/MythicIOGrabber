@@ -4,7 +4,7 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true" frameStrata="HIGH" topLevel="true">
+    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true">
         <Frames>
             <Button parentKey="Button" inherits="UIPanelButtonTemplate" hidden="true">
                 <Size x="22" y="21" />
@@ -101,7 +101,7 @@
                 </Scripts>
             </Frame>
 
-            <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true">
+            <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true" frameStrata="HIGH" topLevel="true">
                 <KeyValues>
                     <KeyValue key="align" value="top" />
                     <KeyValue key="spacing" value="3" />

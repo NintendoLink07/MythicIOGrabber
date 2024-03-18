@@ -35,8 +35,8 @@ function Blizzard_ChallengesFrameMixin:OnShow()
 	self:UpdateTitle();
 	PVEFrame_HideLeftInset();
 
-	C_MythicPlus.RequestCurrentAffixes();
-	C_MythicPlus.RequestMapInfo();
+	--C_MythicPlus.RequestCurrentAffixes();
+	--C_MythicPlus.RequestMapInfo();
     for i = 1, #self.maps do
         C_ChallengeMode.RequestLeaders(self.maps[i]);
     end
