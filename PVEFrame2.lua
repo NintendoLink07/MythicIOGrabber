@@ -1098,11 +1098,9 @@ local function updateRandomDungeons()
 	for i=1, GetNumRandomDungeons() do
 				
 		local id, name, typeID, subtypeID, _, _, _, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon = GetLFGRandomDungeonInfo(i)
-		--print(id, name, typeID, subtypeID, isHolidayDungeon)
 		
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
 
-		--print(id, name)
 		if((isAvailableForPlayer or not hideIfNotJoinable)) then
 			if(isAvailableForAll) then
 				local mode = GetLFGMode(1, id)
@@ -1235,7 +1233,6 @@ end
 local function findBattlegroundIconByName(mapName)
 	for bgID, bgEntry in pairs(miog.BATTLEGROUNDS) do
 		if(bgEntry[2] == mapName) then
-			--print("HIT", mapName)
 			return bgEntry[16] ~= 0 and bgEntry[16] or 525915
 		end
 	end
@@ -1451,83 +1448,6 @@ local function updateQueueDropDown()
 	queueDropDown:ResetDropDown()
 
 	print("UPDATE QUEUE")
---SetLFGDungeon(LE_LFG_CATEGORY_RF, RaidFinderQueueFrame.raid);
-	--JoinLFG(LE_LFG_CATEGORY_RF);
-	--JoinSingleLFG(LE_LFG_CATEGORY_RF, RaidFinderQueueFrame.raid);
-	--LFG_QueueForInstanceIfEnabled(category, queueID);
-	--IsLFGDungeonJoinable
-	
-	--[[function LFG_QueueForInstanceIfEnabled(category, queueID)
-		if ( not LFGIsIDHeader(queueID) and LFGEnabledList[queueID] and not LFGLockList[queueID] ) then
-			SetLFGDungeon(category, queueID);
-			return true;
-		end
-		return false;
-	end]]
-
-	--SetLFGDungeon(3, 2368)
-	--JoinLFG(3)
-	--SetLFGDungeon(3, 2370)
-	--JoinLFG(3)
-	--SetLFGDungeon(3, 2399)
-	--JoinLFG(3)
-	--SetLFGDungeon(3, 2400)
-	--JoinLFG(3)
-	
-
-	--[[local function GetLFGLockList()
-		local lockInfo = C_LFGInfo.GetLFDLockStates();
-		local lockMap = {};
-		for _, lock in ipairs(lockInfo) do
-			lockMap[lock.lfgID] = lock;
-		end
-		return lockMap;
-	end
-
-	--local LFGLockList = GetLFGLockList()
-	LFGEnabledList = GetLFDChoiceEnabledState(LFGEnabledList)]]
-	
- 
-	--UIDropDownMenu_Initialize(optionDropdown, function(self, level, menuList)
-		--local info = UIDropDownMenu_CreateInfo()
-
-		--[[info.text = "Dungeons"
-		-- info.checked = false
-		-- info.menuList = 1
-		-- info.hasArrow = true
-		-- UIDropDownMenu_AddButton(info)
-
-		info.text = "Raid"
-		-- info.checked = false
-		-- info.menuList = 2
-		-- info.hasArrow = true
-		-- UIDropDownMenu_AddButton(info)
-
-		info.text = "Outdoor"
-		-- info.checked = false
-		-- info.menuList = 4
-		-- info.hasArrow = true
-		-- UIDropDownMenu_AddButton(info)
-
-		info.text = "Random Dungeon"
-		-- info.checked = false
-		-- info.menuList = 6
-		-- info.hasArrow = true
-		-- UIDropDownMenu_AddButton(info)
-
-		for _, dungeonID in ipairs(dungeonList) do
-			local name, typeID = GetLFGDungeonInfo(dungeonID)
-
-			if not LFGLockList[dungeonID] then
-				--print(name)
-					info.text = name
-					-- info.checked = false
-					print(typeID)
-					-- UIDropDownMenu_AddButton(info, typeID)
-				--print(dungeonID, name)
-				
-			end
-		end]]
 
 		local info = {}
 			info.text = "Dungeons (Normal)"
@@ -1684,8 +1604,6 @@ miog.scriptReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 miog.scriptReceiver:SetScript("OnEvent", miog.OnEvent)
 
 hooksecurefunc(QueueStatusFrame, "Update", function()
-	--print("LFG")
-
 	queueSystem.queueFrames = {}
 	queueSystem.framePool:ReleaseAll()
 
@@ -1712,10 +1630,6 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 				if(queued == true) then
 					local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
 					local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
-					--print(activeID, queueID, averageWait, tankWait, healerWait, damageWait, myWait)
-					--print(queueID, hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime)
-
-					--DevTools_Dump({GetLFGQueueStats(categoryID, queueID)})
 
 					local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
 			
@@ -1745,15 +1659,6 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 						miog.queueSystem.queueFrames[queueID].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
 						miog.queueSystem.queueFrames[queueID].CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
 
-						--print(miog.queueSystem.queueFrames[queueID].CancelApplication:GetAttribute("macrotext1"))
-					
-						--[[miog.queueSystem.queueFrames[queueID].CancelApplication:SetScript("PostClick", function(self, button)
-							if(button == "LeftButton") then
-								local mode2, submode2 = GetLFGMode(categoryID, queueID)
-								print(categoryID, queueID, mode2, submode2)
-								LeaveSingleLFG(categoryID, queueID)
-							end
-						end)]]
 					else
 						if(mode == "proposal") then
 							local frame = miog.createInviteFrame(frameData)
@@ -1994,15 +1899,12 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 					--		1		2			3			4			5			6			7				8		9				10				11				12			13			14			15		16			17
 					--local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime
 
-					--print(mapName, queueType, short, long)
 
 					--BattlemasterList
 					--PvpBrawl
 
 					if (mapName and queuedTime) then
-						--print("NEW PVP")
 						miog.createQueueFrame(frameData)
-						--print("CREATED " .. mapName)
 						--miog.queueSystem.queueFrames[mapName].CancelApplication:SetScript("OnClick",  SecureActionButton_OnClick)
 					end
 
@@ -2023,12 +1925,10 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 					)
 
 					if(miog.queueSystem.queueFrames[mapName]) then
-						--print("PVP MACRO")
 						
 						miog.queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
 						miog.queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("macrotext1", currentDeclineButton)
 
-						--print(miog.queueSystem.queueFrames[mapName].CancelApplication:GetAttribute("macrotext1"))
 					end
 
 					queueIndex = queueIndex + 1
@@ -2096,7 +1996,6 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 				--QueueStatusEntry_SetMinimalDisplay(entry, mapName, QUEUED_STATUS_UNKNOWN);
 			end
 		elseif(status) then
-			--print(mapName)
 		
 		end
 	end

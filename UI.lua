@@ -449,7 +449,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 					end
 
 					info.mapID = miog.ACTIVITY_ID_INFO[activityID][9]
-					print(info.mapID)
 					info.icon = miog.ACTIVITY_ID_INFO[activityID].icon
 
 					--[[local mapID = miog.ACTIVITY_ID_INFO[activityID].mapID
