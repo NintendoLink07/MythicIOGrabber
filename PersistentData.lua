@@ -323,7 +323,7 @@ miog.MAP_INFO = {
 	-- RAIDS
 
 	[2444] = {
-		gfID = 0, expansionLevel = 9,  shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png",
+		gfID = 0, expansionLevel = 9,  shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png", fileName = "dragonislescontinent",
 	},
 	[2549] = { --interface/icons/inv_achievement_raidemeralddream
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},

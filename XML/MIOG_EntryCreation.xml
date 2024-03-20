@@ -152,6 +152,15 @@
         </Frames>
 
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" horizTile="true" vertTile="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.ActivityDropDown" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOMRIGHT" x="-2" y="3" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
             <Layer level="OVERLAY">
                 <FontString parentKey="NameString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title" wordwrap="false">
                     <FontHeight val="11"/>

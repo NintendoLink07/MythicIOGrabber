@@ -6,12 +6,6 @@ local clearSignUpNote = LFGListApplicationDialog_Show
 local clearEntryCreation = LFGListEntryCreation_Clear
 
 local defaultOptionSettings = {
-	disableBackgroundImages = {
-		type = "checkbox",
-		title = "Hide the background image and some background colors (mainly for ElvUI users)",
-		value = false,
-		index = 3,
-	},
 	frameExtended = {
 		type = "variable",
 		title = "Extend the mainframe",
@@ -377,21 +371,6 @@ miog.loadSettings = function()
 						end
 
 						C_UI.Reload()
-					end)
-				elseif(key == "disableBackgroundImages") then
-
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
-
-						miog.pveFrame2.Background:SetShown(not setting.value)
-
-						if(setting.value == false) then
-							miog.applicationViewer.listingSettingPanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-						else
-							miog.applicationViewer.listingSettingPanel:SetBackdropColor(0, 0, 0, 0)
-						
-						end
 					end)
 				elseif(key == "enableClassPanel") then
 

@@ -169,10 +169,22 @@ miog.checkForActiveFilters = function(filterPanel)
 	return filtersActive
 end
 
+miog.retrieveBackgroundImageFromActivityID = function(activityID)
+	local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+
+	if(activityInfo) then
+		if(activityInfo.groupFinderActivityGroupID and activityInfo.groupFinderActivityGroupID ~= 0) then
+			return miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].file
+
+		else
+			return miog.MAP_INFO[miog.ACTIVITY_ID_INFO[activityID][9]].horizontal
+		
+		end
+	end
+end
+
 miog.retrieveBackgroundImageFromGroupActivityID = function(groupActivityID, type)
 	local groupActivity = miog.GROUP_ACTIVITY[groupActivityID]
-
-	print(groupActivityID)
 
 	if(groupActivity) then
 		if(type == "background" and string.find(groupActivity.file, "horizontal") or type == "icon" and miog.MAP_INFO[groupActivity.mapID]) then
@@ -216,7 +228,7 @@ miog.setUpMPlusStatistics = function()
 					local dungeonRow = CreateFrame("Frame", nil, miog.MPlusStatistics.DungeonRows, "MIOG_MPlusStatisticsRowTemplate")
 					dungeonRow:SetHeight(miog.MPlusStatistics:GetHeight())
 					dungeonRow.layoutIndex = x
-					local texture = miog.MAP_INFO[miog.ACTIVITY_ID_INFO[y][9]].verticalImage
+					local texture = miog.MAP_INFO[miog.ACTIVITY_ID_INFO[y][9]].vertical
 					dungeonRow.Background:SetTexture(texture)
 					--dungeonRow.Background:SetRotation(math.pi/2)
 

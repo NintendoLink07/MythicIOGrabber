@@ -54,11 +54,12 @@
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" setAllPoints="true">
+                        <Texture parentKey="Background" horizTile="true" vertTile="true">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
                             </Anchors>
+                            <Color r="0.2" g="0.2" b="0.2" a="0.5" />
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
@@ -110,6 +111,10 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>
+                <Scripts>
+                    <OnMouseDown>
+                    </OnMouseDown>
+                </Scripts>
             </Frame>
         </Frames>
     </Frame>

@@ -13,15 +13,21 @@ function SlickDropDown:OnLoad()
 	self.List.framePool = CreateFramePool("Button", self.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
 	self.List.fontStringPool = CreateFontStringPool(self.List, "OVERLAY", nil, "GameTooltipText", SlickDropDown.ResetFontString)
 	self.List.texturePool = CreateTexturePool(self.List, "ARTWORK", nil, nil, SlickDropDown.ResetTexture)
+	self.List.buttonPool = CreateFramePool("Button", self.List, "UIButtonTemplate", SlickDropDown.ResetButton)
 	
 	self.entryFrameTree = {}
 	self.currentList = nil
 	self.deactivatedExtraButtons = {}
 	self.List.highestWidth = 0
+	self.List.ExpandButton = {}
 
 	--miog.setStandardBackdrop(self.CheckedValue)
 	--local color = CreateColorFromHexString(miog.C.BACKGROUND_COLOR)
 	--self.CheckedValue:SetBackdropColor(color.r, color.g, color.b, 0.6)
+end
+
+function SlickDropDown:SetText(text)
+	self.CheckedValue.Name:SetText(text)
 end
 
 function SlickDropDown:ResetDropDown()
@@ -38,13 +44,18 @@ function SlickDropDown:ResetDropDown()
 
 	self.List.fontStringPool:ReleaseAll()
 	self.List.texturePool:ReleaseAll()
-
+	self.List.buttonPool:ReleaseAll()
 	self.List.framePool:ReleaseAll()
 
 	self.entryFrameTree = {}
 	self.currentList = nil
 	self.deactivatedExtraButtons = {}
 	self.List.highestWidth = 0
+	self.List.ExpandButton = {}
+end
+
+function SlickDropDown:ResetButton(button)
+
 end
 
 function SlickDropDown:ResetFrame(frame)
@@ -113,13 +124,39 @@ function SlickDropDown:GetFrameAtIndex(index, parentIndex)
 end
 
 function SlickDropDown:GetFrameAtLayoutIndex(index)
-	return self.List:GetLayoutChildren()[index]
+	local layoutChildren = self.List:GetLayoutChildren()
+
+	for k,v in ipairs(layoutChildren) do
+		if(v.layoutIndex == index) then
+			if(v.value) then
+				return v
+
+			else
+				return layoutChildren[k + 1]
+
+			end
+		end
+	end
+
+	return nil
 end
 
 function SlickDropDown:GetFirstFrameWithValue(value)
 	for _, v in ipairs(self.List:GetLayoutChildren()) do
 		if(v.value and v.value == value) then
 			return v
+
+		else
+			if(v.activities) then
+				for x, y in pairs(v.activities) do
+					if(y == value) then
+						return v
+					end
+
+				end
+
+			end
+
 		end
 	end
 end
@@ -129,6 +166,18 @@ function SlickDropDown:SelectFirstFrameWithValue(value)
 		if(v.value == value) then
 			local status = self:SelectFrame(v)
 			return status
+		else
+			if(v.activities) then
+				for x, y in pairs(v.activities) do
+					if(y == value) then
+						local status = self:SelectFrame(v)
+						return status
+					end
+
+				end
+
+			end
+
 		end
 	end
 
@@ -153,19 +202,24 @@ function SlickDropDown:SelectFrame(frame)
 end
 
 function SlickDropDown:SelectFrameAtLayoutIndex(index)
-	local selectedFrame = self.List:GetLayoutChildren()[index]
+	local layoutChildren = self.List:GetLayoutChildren()
 
-	if(selectedFrame) then
-		if(selectedFrame.Name) then
-			return self:SelectFrame(selectedFrame)
+	for k,v in ipairs(layoutChildren) do
+		if(v.layoutIndex == index) then
+			local selectedFrame = v
+			if(selectedFrame) then
+				if(selectedFrame.value) then
+					return self:SelectFrame(selectedFrame)
 
-		else
-			return self:SelectFrameAtLayoutIndex(index + 1)
+				else
+					return self:SelectFrame(layoutChildren[k + 1])
 
+				end
+			else
+				return false
+			
+			end
 		end
-	else
-		return false
-	
 	end
 end
 
@@ -188,10 +242,6 @@ function SlickDropDown:SetWidthToWidestFrame(infoTable)
 
 	width = width > self:GetWidth() and width or self:GetWidth()
 
-	-- SET TO LIST STANDARD WITH IF EVERY FRAME IS SMALLER
-
-	--list:SetWidth(width)
-
 	for _, v in ipairs(list:GetLayoutChildren()) do
 		v:SetWidth(width)
 
@@ -200,12 +250,43 @@ function SlickDropDown:SetWidthToWidestFrame(infoTable)
 	list:MarkDirty()
 end
 
-function SlickDropDown:CreateTextLine(index, specificList, text)
+function SlickDropDown:CreateTextLine(index, specificList, text, icon, expandable)
 	local textLine = self.List.fontStringPool:Acquire()
 	textLine.topPadding = 7
 	textLine:SetJustifyH("CENTER")
 	textLine:SetText(text)
 	textLine.layoutIndex = index or specificList and #specificList:GetLayoutChildren() or #self.entryFrameTree + 1
+
+	if(icon) then
+		local leftIcon = self.List.texturePool:Acquire()
+		leftIcon:SetSize(20, 20)
+		leftIcon:SetTexture(icon)
+		leftIcon:SetPoint("CENTER", textLine, "CENTER", - (textLine:GetStringWidth() / 2) - 15, 0)
+	end
+
+	if(expandable) then
+		local button = Mixin(self.List.buttonPool:Acquire(), MultiStateButtonMixin)
+		button:OnLoad()
+		button:SetMaxStates(2)
+		button:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+		button:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+		button:SetState(false)
+		button:SetPoint("CENTER", textLine, "CENTER", (textLine:GetStringWidth() / 2) + 15, 0)
+
+		local currentButtonIndex = #self.List.ExpandButton + 1
+		self.List.ExpandButton[currentButtonIndex] = {}
+
+		button:SetScript("OnClick", function(selfButton)
+			for k, v in pairs(self.List.ExpandButton[currentButtonIndex]) do
+				v:SetShown(not v:IsShown())
+				
+
+			end
+
+			self.List:MarkDirty()
+			selfButton:AdvanceState()
+		end)
+	end
 end
 
 function SlickDropDown:CreateSeparator(index, specificList)
@@ -215,17 +296,23 @@ function SlickDropDown:CreateSeparator(index, specificList)
 	divider.bottomPadding = 3
 	divider:SetAtlas("UI-LFG-DividerLine")
 	divider.layoutIndex = index or specificList and #specificList:GetLayoutChildren() or #self.entryFrameTree + 1
+
+	self.List.ExpandButton[#self.List.ExpandButton + 1] = {}
+
 end
 
 local color = "FFAAAAAA"
 
-function SlickDropDown:CreateEntryFrame(infoTable)
+function SlickDropDown:CreateEntryFrame(info)
 	local frame = nil
 	local list = nil
+	local tableIndex = 0
+
+	local infoTable = info
 
 	if(infoTable.parentIndex) then
 		local parent = self.entryFrameTree[infoTable.parentIndex]
-		local tableIndex = #parent + 1
+		tableIndex = #parent + 1
 		list = self.entryFrameTree[infoTable.parentIndex].List
 
 		parent.List.framePool = parent.List.framePool or CreateFramePool("Button", parent.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
@@ -253,7 +340,7 @@ function SlickDropDown:CreateEntryFrame(infoTable)
 		end
 
 	else
-		local tableIndex = infoTable.index or #self.entryFrameTree + 1
+		tableIndex = infoTable.index or #self.entryFrameTree + 1
 		list = self.List
 
 		frame = self.List.framePool:Acquire()
@@ -265,7 +352,11 @@ function SlickDropDown:CreateEntryFrame(infoTable)
 		self.List:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
 		frame.Difficulty1:Hide()
 		frame.List.highestWidth = 0
-	
+
+	end
+
+	if(self.List.ExpandButton and #self.List.ExpandButton > 0) then
+		table.insert(self.List.ExpandButton[#self.List.ExpandButton], frame)
 	end
 
 	frame.Name:SetText(infoTable.text)
@@ -273,6 +364,7 @@ function SlickDropDown:CreateEntryFrame(infoTable)
 	frame.type2 = infoTable.type2
 	frame.value = infoTable.value
 	frame.hasArrow = infoTable.hasArrow
+	frame.activities = infoTable.activities
 
 	local stringWidth = frame.Name:GetStringWidth()
 	list.highestWidth = (stringWidth  > list.highestWidth and stringWidth or list.highestWidth)
@@ -291,12 +383,10 @@ function SlickDropDown:CreateEntryFrame(infoTable)
 
 	if(infoTable.func) then
 		frame:SetScript("OnClick", infoTable.func)
-
 	else
 		frame:SetMouseClickEnabled(not infoTable.disabled)
 		frame:RegisterForClicks("LeftButtonDown")
 		frame:SetAttribute("type", "macro") -- left click causes macro
-
 	end
 
 	if(infoTable.disabled) then

@@ -1768,7 +1768,7 @@ local function insertLFGInfo()
 		miog.applicationViewer.CreationSettings.Affixes:Hide()
 	end
 	
-	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "background") or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
+	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.retrieveBackgroundImageFromActivityID(miog.F.ACTIVE_ENTRY_INFO.activityID) or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
 	miog.applicationViewer.TitleBar.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.name)
 	miog.applicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
@@ -2239,7 +2239,7 @@ end
 
 local function createResultTooltip(resultID, resultFrame, autoAccept)
 	if(C_LFGList.HasSearchResultInfo(resultID)) then
-		GameTooltip:SetOwner(resultFrame, "ANCHOR_RIGHT", 25, 0)
+		GameTooltip:SetOwner(resultFrame, "ANCHOR_RIGHT", 0, 0)
 		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID, autoAccept == true and LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE)
 
 		GameTooltip:AddLine(" ")
@@ -2469,6 +2469,8 @@ local function updatePersistentResultFrame(resultID)
 
 			end)
 
+			currentFrame.StatusFrame:Hide()
+
 			currentFrame.BasicInformationPanel.Icon:SetTexture(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].icon or nil)
 			currentFrame.BasicInformationPanel.Icon:SetScript("OnMouseDown", function()
 
@@ -2650,7 +2652,7 @@ local function updatePersistentResultFrame(resultID)
 						end
 					end
 
-					local numOfBosses = #miog.MAP_INFO[mapID] - 1
+					local numOfBosses = #miog.MAP_INFO[mapID]
 
 					for i = 1, miog.F.MOST_BOSSES, 1 do
 						local currentRaidInfo = miog.MAP_INFO[mapID][numOfBosses - (i - 1)]
@@ -3543,13 +3545,13 @@ miog.OnEvent = function(_, event, ...)
 
 			if(not _G["MythicIOGrabber_" .. categoryInfo.name .. "Button"]) then
 
-				local categoryFrame = CreateFrame("Button", "MythicIOGrabber_" .. categoryInfo.name .. "Button", miog.mainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
+				local categoryFrame = CreateFrame("Button", "MythicIOGrabber_" .. categoryInfo.name .. "Button", miog.MainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
 				categoryFrame.categoryID = categoryID
 				categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 
 				categoryFrame:SetHeight(30)
-				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
-				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
+				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
+				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
 				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.Title:SetText(categoryInfo.name)
 				---@diagnostic disable-next-line: undefined-field
@@ -3577,13 +3579,13 @@ miog.OnEvent = function(_, event, ...)
 		
 				--DevTools_Dump(categoryInfo)
 				if categoryInfo.separateRecommended then
-					local notRecommendedFrame = CreateFrame("Button", "MythicIOGrabber_" .. LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true) .. "Button", miog.mainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
+					local notRecommendedFrame = CreateFrame("Button", "MythicIOGrabber_" .. LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true) .. "Button", miog.MainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
 					notRecommendedFrame.categoryID = categoryID
 					notRecommendedFrame.filters = Enum.LFGListFilter.NotRecommended
 
 					notRecommendedFrame:SetHeight(30)
-					notRecommendedFrame:SetPoint("TOPLEFT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
-					notRecommendedFrame:SetPoint("TOPRIGHT", lastFrame or miog.mainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
+					notRecommendedFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
+					notRecommendedFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
 					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
 					---@diagnostic disable-next-line: undefined-field
