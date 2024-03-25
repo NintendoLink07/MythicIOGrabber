@@ -1754,8 +1754,9 @@ local function updateRosterInfoData()
 
 end
 
-local function insertLFGInfo()
-	local activityInfo = C_LFGList.GetActivityInfoTable(miog.F.ACTIVE_ENTRY_INFO.activityID)
+local function insertLFGInfo(activityID)
+	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo() or miog.F.ACTIVE_ENTRY_INFO
+	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityID)
 
 	miog.applicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
 
@@ -1768,19 +1769,19 @@ local function insertLFGInfo()
 		miog.applicationViewer.CreationSettings.Affixes:Hide()
 	end
 	
-	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.retrieveBackgroundImageFromActivityID(miog.F.ACTIVE_ENTRY_INFO.activityID) or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
+	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.retrieveBackgroundImageFromActivityID(entryInfo.activityID) or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
-	miog.applicationViewer.TitleBar.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.name)
+	miog.applicationViewer.TitleBar.FontString:SetText(entryInfo.name)
 	miog.applicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
 
-	miog.applicationViewer.CreationSettings.PrivateGroup.active = miog.F.ACTIVE_ENTRY_INFO.privateGroup
-	miog.applicationViewer.CreationSettings.PrivateGroup:SetTexture(miog.C.STANDARD_FILE_PATH .. (miog.F.ACTIVE_ENTRY_INFO.privateGroup and "/infoIcons/questionMark_Yellow.png" or "/infoIcons/questionMark_Grey.png"))
+	miog.applicationViewer.CreationSettings.PrivateGroup.active = entryInfo.privateGroup
+	miog.applicationViewer.CreationSettings.PrivateGroup:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.privateGroup and "/infoIcons/questionMark_Yellow.png" or "/infoIcons/questionMark_Grey.png"))
 
-	if(miog.F.ACTIVE_ENTRY_INFO.playstyle) then
-		local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..miog.F.ACTIVE_ENTRY_INFO.playstyle]) or
-		(activityInfo.isMythicActivity and miog.PLAYSTYLE_STRINGS["mZero"..miog.F.ACTIVE_ENTRY_INFO.playstyle]) or
-		(activityInfo.isCurrentRaidActivity and miog.PLAYSTYLE_STRINGS["raid"..miog.F.ACTIVE_ENTRY_INFO.playstyle]) or
-		((activityInfo.isRatedPvpActivity or activityInfo.isPvpActivity) and miog.PLAYSTYLE_STRINGS["pvp"..miog.F.ACTIVE_ENTRY_INFO.playstyle])
+	if(entryInfo.playstyle) then
+		local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..entryInfo.playstyle]) or
+		(activityInfo.isMythicActivity and miog.PLAYSTYLE_STRINGS["mZero"..entryInfo.playstyle]) or
+		(activityInfo.isCurrentRaidActivity and miog.PLAYSTYLE_STRINGS["raid"..entryInfo.playstyle]) or
+		((activityInfo.isRatedPvpActivity or activityInfo.isPvpActivity) and miog.PLAYSTYLE_STRINGS["pvp"..entryInfo.playstyle])
 
 		miog.applicationViewer.CreationSettings.Playstyle.tooltipText = playStyleString
 
@@ -1789,11 +1790,11 @@ local function insertLFGInfo()
 
 	end
 
-	if(miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore and activityInfo.categoryID == 2 or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating and activityInfo.categoryID == (4 or 7 or 8 or 9)) then
-		miog.applicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating
-		miog.applicationViewer.CreationSettings.Rating.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating)
+	if(entryInfo.requiredDungeonScore and activityInfo.categoryID == 2 or entryInfo.requiredPvpRating and activityInfo.categoryID == (4 or 7 or 8 or 9)) then
+		miog.applicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating
+		miog.applicationViewer.CreationSettings.Rating.FontString:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating)
 
-		miog.applicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore and "/infoIcons/skull.png" or miog.F.ACTIVE_ENTRY_INFO.requiredPvpRating and "/infoIcons/spear.png"))
+		miog.applicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.requiredDungeonScore and "/infoIcons/skull.png" or entryInfo.requiredPvpRating and "/infoIcons/spear.png"))
 
 	else
 		miog.applicationViewer.CreationSettings.Rating.FontString:SetText("----")
@@ -1801,9 +1802,9 @@ local function insertLFGInfo()
 
 	end
 
-	if(miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel > 0) then
-		miog.applicationViewer.CreationSettings.ItemLevel.FontString:SetText(miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel)
-		miog.applicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel
+	if(entryInfo.requiredItemLevel > 0) then
+		miog.applicationViewer.CreationSettings.ItemLevel.FontString:SetText(entryInfo.requiredItemLevel)
+		miog.applicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. entryInfo.requiredItemLevel
 
 	else
 		miog.applicationViewer.CreationSettings.ItemLevel.FontString:SetText("---")
@@ -1811,13 +1812,15 @@ local function insertLFGInfo()
 
 	end
 
-	if(miog.F.ACTIVE_ENTRY_INFO.voiceChat ~= "") then
+	DevTools_Dump(entryInfo)
+
+	if(entryInfo.voiceChat ~= "") then
 		LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
 
 	end
 
 	if(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked()) then
-		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = miog.F.ACTIVE_ENTRY_INFO.voiceChat
+		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = entryInfo.voiceChat
 		miog.applicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOn.png")
 		
 	else
@@ -1826,7 +1829,7 @@ local function insertLFGInfo()
 
 	end
 
-	if(miog.F.ACTIVE_ENTRY_INFO.isCrossFactionListing == true) then
+	if(entryInfo.isCrossFactionListing == true) then
 		miog.applicationViewer.TitleBar.Faction:SetTexture(2437241)
 
 	else
@@ -1835,9 +1838,9 @@ local function insertLFGInfo()
 
 	end
 
-	if(miog.F.ACTIVE_ENTRY_INFO.comment ~= "") then
+	if(entryInfo.comment ~= "") then
 		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetHeight(2500)
-		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetText("Description: " .. miog.F.ACTIVE_ENTRY_INFO.comment)
+		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetText("Description: " .. entryInfo.comment)
 		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetHeight(miog.applicationViewer.InfoPanel.CommentFrame.FontString:GetStringHeight())
 		miog.applicationViewer.InfoPanel.CommentFrame:SetHeight(miog.applicationViewer.InfoPanel.CommentFrame.FontString:GetStringHeight())
 
@@ -1846,6 +1849,8 @@ local function insertLFGInfo()
 
 	end
 end
+
+miog.insertLFGInfo = insertLFGInfo
 
 local roleRemainingKeyLookup = {
 	["TANK"] = "TANK_REMAINING",
@@ -1966,19 +1971,26 @@ local function isGroupEligible(resultID, bordermode)
 
 	end
 
-	local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
+	local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7
 	local isDungeon = activityInfo.categoryID == 2
 	local isRaid = activityInfo.categoryID == 3
 
-	if(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID ~= (retrieveIDForDropdownFiltering(activityInfo.categoryID))
-	and (
-		isDungeon and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDungeonDifficulty
-		or isRaid and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForRaidDifficulty
-		or (activityInfo.categoryID == 4 or activityInfo.categoryID == 7) and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForArenaBracket
-	)
-	)then
-		return false
+	if(not isPvp) then
+		if(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID][10] ~= (retrieveIDForDropdownFiltering(activityInfo.categoryID))
+		and (
+			isDungeon and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDungeonDifficulty
+			or isRaid and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForRaidDifficulty
+		)
+		)then
+			return false
 
+		end
+	else
+		if(searchResultData.activityID ~= retrieveIDForDropdownFiltering(activityInfo.categoryID) and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForArenaBracket) then
+			return false
+
+		end
+	
 	end
 
 	if(MIOG_SavedSettings.searchPanel_FilterOptions.table.partyFit == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
@@ -2479,9 +2491,7 @@ local function updatePersistentResultFrame(resultID)
 
 			end)
 
-			local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and
-			(activityInfo.isPvpActivity and miog.BRACKETS[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors
-			or miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_ID_INFO[searchResultData.activityID][10]]) or {r = 1, g = 1, b = 1}
+			local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_ID_INFO[searchResultData.activityID][10]] or {r = 1, g = 1, b = 1}
 
 			currentFrame.BasicInformationPanel.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 			
@@ -3071,7 +3081,7 @@ miog.OnEvent = function(_, event, ...)
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
 
-			miog.uppdateDungeonCheckboxes()
+			miog.updateDungeonCheckboxes()
 
 		end
 		miog.F.CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()]
@@ -3204,7 +3214,7 @@ miog.OnEvent = function(_, event, ...)
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
 
-			miog.uppdateDungeonCheckboxes()
+			miog.updateDungeonCheckboxes()
 
 		end
 
@@ -3249,6 +3259,8 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 		updateRosterInfoData()
+		
+		miog.updatePvP()
 
 	elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
 		local guid = UnitGUID(...)
@@ -3389,30 +3401,16 @@ miog.OnEvent = function(_, event, ...)
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TIMEOUT") then
 		--print(event, ...)
-
+	elseif(event == "LFG_UPDATE_RANDOM_INFO") then
+		print("LFG RANDOM UPDATE")
+		miog.updateRandomDungeons()
 
 	elseif(event == "LFG_UPDATE") then
-		--[[print("LFGUPDATE")
-		local queuedFor = {}
 
-		for categoryID, listEntry in ipairs(LFGQueuedForList) do
-			for dungeonID, queued in pairs(listEntry) do
-				queuedFor[dungeonID] = true
-			end
-		end
-
-		for queueFrameID, frame in pairs(miog.queueSystem.queueFrames) do
-			print(queueFrameID)
-			if(not queuedFor[queueFrameID]) then
-				print("RELEASE")
-				miog.queueSystem.framePool:Release(frame)
-				miog.queueSystem.queueFrames[queueFrameID] = nil
-
-			end
-
-		end
-
-		miog.pveFrame2.QueuePanel.Container:MarkDirty()]]
+	elseif(event == "LFG_LOCK_INFO_RECEIVED") then
+		print("LOCK INFO")
+		miog.updateRaidFinder()
+		miog.updateDungeons()
 		
 	elseif(event == "LFG_QUEUE_STATUS_UPDATE") then
 		--[[print("QUEUE UPDATE")

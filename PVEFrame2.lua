@@ -32,7 +32,7 @@ local function resetQueueFrame(_, frame)
 	end
 
 ---@diagnostic disable-next-line: undefined-field
-	miog.MainTab.QueuePanel.Container:MarkDirty()
+	miog.MainTab.QueuePanel.ScrollFrame.Container:MarkDirty()
 end
 
 hooksecurefunc("PVEFrame_ToggleFrame", function()
@@ -298,50 +298,49 @@ end
 
 miog.addDualNumericFieldsToFilterFrame = addDualNumericFieldsToFilterFrame
 
-local function uppdateDungeonCheckboxes()
+local function updateDungeonCheckboxes()
 	local filterPanel = miog.pveFrame2.SidePanel.Container.FilterPanel
 	local sortedSeasonDungeons = {}
 
-	for activityID, activityEntry in pairs(miog.ACTIVITY_ID_INFO) do
-		if(activityEntry.mPlusSeasons) then
-			for _, seasonID in ipairs(activityEntry.mPlusSeasons) do
-				if(seasonID == miog.F.CURRENT_SEASON) then
-					sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {activityID = activityID, name = activityEntry.shortName}
+	if(miog.F.CURRENT_SEASON and miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) then
+		for _, v in ipairs(miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) do
+			local activityInfo = C_LFGList.GetActivityInfoTable(v)
+			sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {activityID = v, name = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].shortName}
 
-				end
-			end
 		end
-	end
 
-	table.sort(sortedSeasonDungeons, function(k1, k2)
-		return k1.name < k2.name
-	end)
-
-	for k, activityEntry in ipairs(sortedSeasonDungeons) do
-		local checked = MIOG_SavedSettings and MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID]
-		local currentButton = filterPanel.Panel.FilterOptions.DungeonPanel.Buttons[k]
-		currentButton:SetChecked(checked)
-
-		currentButton:HookScript("OnClick", function(self)
-			MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID] = self:GetChecked()
-
-			if(MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons) then
-				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-					miog.checkSearchResultListForEligibleMembers()
-		
-				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-					C_LFGList.RefreshApplicants()
-		
-				end
-			end
-
+		table.sort(sortedSeasonDungeons, function(k1, k2)
+			return k1.name < k2.name
 		end)
-		
-		currentButton.FontString:SetText(activityEntry.name)
+
+		for k, activityEntry in ipairs(sortedSeasonDungeons) do
+			local checked = MIOG_SavedSettings and MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID]
+			local currentButton = filterPanel.Panel.FilterOptions.DungeonPanel.Buttons[k]
+			currentButton:SetChecked(checked)
+
+			currentButton:HookScript("OnClick", function(self)
+				MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID] = self:GetChecked()
+
+				if(MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons) then
+					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+						miog.checkSearchResultListForEligibleMembers()
+			
+					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+						C_LFGList.RefreshApplicants()
+			
+					end
+				end
+
+			end)
+			
+			currentButton.FontString:SetText(activityEntry.name)
+		end
+
+		miog.F.ADDED_DUNGEON_FILTERS = true
 	end
 end
 
-miog.uppdateDungeonCheckboxes = uppdateDungeonCheckboxes
+miog.updateDungeonCheckboxes = updateDungeonCheckboxes
 
 local function addDungeonCheckboxes()
 	local filterPanel = miog.pveFrame2.SidePanel.Container.FilterPanel
@@ -715,6 +714,16 @@ local function createPVEFrameReplacement()
 
 		miog.setUpMPlusStatistics()
 		miog.gatherMPlusStatistics()
+		
+		if(not miog.F.ADDED_DUNGEON_FILTERS) then
+			local currentSeason = C_MythicPlus.GetCurrentSeason()
+
+			miog.F.CURRENT_SEASON = currentSeason
+			miog.F.PREVIOUS_SEASON = currentSeason - 1
+
+			miog.uppdateDungeonCheckboxes()
+
+		end
 
 		local regularActivityID, regularGroupID, regularLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
 
@@ -912,14 +921,13 @@ local function createPVEFrameReplacement()
 		
 			end)
 			
-
 			currentFrame.ticks = {}
 
 			if(not thirdThreshold) then
 				for tickIndex = 1, 2, 1 do
 					dimColor[4] = tickIndex == 1 and firstThreshold and 0.1 or tickIndex == 2 and secondThreshold and 0.1 or 1
 	
-					local tick = miog.createBasicTexture("persistent", "Interface\\ChatFrame\\ChatFrameBackground", currentFrame, 20, 3)
+					local tick = miog.createBasicTexture("persistent", "Interface\\ChatFrame\\ChatFrameBackground", currentFrame, 24, 3)
 					tick:SetColorTexture(0.8, 0.8, 0.8, 1)
 					tick:SetDrawLayer("OVERLAY")
 					tick:SetPoint("BOTTOMLEFT", currentFrame, "BOTTOMLEFT", 0, currentFrame:GetHeight() / (activities[3].threshold / activities[tickIndex].threshold))
@@ -1010,7 +1018,7 @@ local function createPVEFrameReplacement()
 
 
 ---@diagnostic disable-next-line: undefined-field
-	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueuePanel.Container, "MIOG_QueueFrame", resetQueueFrame)
+	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueuePanel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 
 ---@diagnostic disable-next-line: undefined-field
 	local queueRolePanel = frame.QueueRolePanel
@@ -1118,8 +1126,15 @@ local function updateRandomDungeons()
 	info.level = 2
 	info.index = nil
 
+	if(queueDropDown.entryFrameTree[1]) then
+		queueDropDown:ReleaseSpecificFrames("random", queueDropDown.entryFrameTree[1].List)
+	end
+	
+	if(queueDropDown.entryFrameTree[2]) then
+		queueDropDown:ReleaseSpecificFrames("random", queueDropDown.entryFrameTree[2].List)
+	end
+
 	for i=1, GetNumRandomDungeons() do
-				
 		local id, name, typeID, subtypeID, _, _, _, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon = GetLFGRandomDungeonInfo(i)
 		
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
@@ -1132,6 +1147,8 @@ local function updateRandomDungeons()
 				info.checked = mode == "queued"
 				info.icon = miog.MAP_INFO[id] and miog.MAP_INFO[id].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
 				info.parentIndex = subtypeID
+				info.index = 1
+				info.type2 = "random"
 
 				info.func = function()
 					ClearAllLFGDungeons(1);
@@ -1150,9 +1167,23 @@ local function updateRandomDungeons()
 	end
 end
 
+miog.updateRandomDungeons = updateRandomDungeons
+
 local function updateDungeons()
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueDropDown
+	if(queueDropDown.entryFrameTree[1].List.framePool) then
+		queueDropDown.entryFrameTree[1].List.framePool:ReleaseAll()
+	end
+
+	if(queueDropDown.entryFrameTree[2].List.framePool) then
+		queueDropDown.entryFrameTree[2].List.framePool:ReleaseAll()
+	end
+
+	if(queueDropDown.entryFrameTree[3].List.framePool) then
+		queueDropDown.entryFrameTree[3].List.framePool:ReleaseAll()
+	end
+
 	local info = {}
 	info.entryType = "option"
 	info.level = 2
@@ -1200,10 +1231,13 @@ local function updateDungeons()
 	--DevTools_Dump(miog.GROUP_ID_TO_LFG_ID)
 end
 
+miog.updateDungeons = updateDungeons
+
 local function updateRaidFinder()
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueDropDown
-	if(queueDropDown.entryFrameTree[4].List.framePool) then
+
+	if(queueDropDown.entryFrameTree[4] and queueDropDown.entryFrameTree[4].List.framePool) then
 		queueDropDown.entryFrameTree[4].List.framePool:ReleaseAll()
 	end
 
@@ -1254,6 +1288,8 @@ local function updateRaidFinder()
 		end
 	end
 end
+
+miog.updateRaidFinder = updateRaidFinder
 
 local function findBattlegroundIconByName(mapName)
 	for bgID, bgEntry in pairs(miog.BATTLEGROUNDS) do
@@ -1344,6 +1380,10 @@ local function updatePvP()
 		queueDropDown.entryFrameTree[5].List.securePool:ReleaseAll()
 	end
 
+	if(queueDropDown.entryFrameTree[5].List.framePool) then
+		queueDropDown.entryFrameTree[5].List.framePool:ReleaseAll()
+	end
+
 
 	for index = 1, 5, 1 do
 		local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or index == 5 and C_PvP.GetSpecialEventBrawlInfo()
@@ -1363,8 +1403,6 @@ local function updatePvP()
 
 			-- UIDropDownMenu_AddButton(info, level)
 			local tempFrame = queueDropDown:CreateEntryFrame(info)
-
-			print(index, info.disabled)
 
 			if(currentBGQueue.bgID) then
 				if(currentBGQueue.bgID == 32) then
@@ -1531,77 +1569,77 @@ local function updateQueueDropDown()
 
 	print("UPDATE QUEUE")
 
-		local info = {}
-			info.text = "Dungeons (Normal)"
-			info.hasArrow = true
-			info.level = 1
-			info.index = 1
-			-- info.checked = false
-			-- info.menuList = 1
-			-- info.hasArrow = true
-			-- UIDropDownMenu_AddButton(info)
-			queueDropDown:CreateEntryFrame(info)
+	local info = {}
+	info.text = "Dungeons (Normal)"
+	info.hasArrow = true
+	info.level = 1
+	info.index = 1
+	-- info.checked = false
+	-- info.menuList = 1
+	-- info.hasArrow = true
+	-- UIDropDownMenu_AddButton(info)
+	queueDropDown:CreateEntryFrame(info)
 
-			info.text = "Dungeons (Heroic)"
-			info.hasArrow = true
-			info.level = 1
-			info.index = 2
-			-- info.checked = false
-			-- info.menuList = 2
-			-- info.hasArrow = true
-			-- UIDropDownMenu_AddButton(info)
-			queueDropDown:CreateEntryFrame(info)
+	info.text = "Dungeons (Heroic)"
+	info.hasArrow = true
+	info.level = 1
+	info.index = 2
+	-- info.checked = false
+	-- info.menuList = 2
+	-- info.hasArrow = true
+	-- UIDropDownMenu_AddButton(info)
+	queueDropDown:CreateEntryFrame(info)
 
-			info.text = "Follower"
-			info.hasArrow = true
-			info.level = 1
-			info.index = 3
-			-- info.checked = false
-			-- info.menuList = 3
-			-- info.hasArrow = true
-			-- UIDropDownMenu_AddButton(info)
-			queueDropDown:CreateEntryFrame(info)
+	info.text = "Follower"
+	info.hasArrow = true
+	info.level = 1
+	info.index = 3
+	-- info.checked = false
+	-- info.menuList = 3
+	-- info.hasArrow = true
+	-- UIDropDownMenu_AddButton(info)
+	queueDropDown:CreateEntryFrame(info)
 
-			info.text = "Raid Finder"
-			info.hasArrow = true
-			info.level = 1
-			info.index = 4
-			-- info.checked = false
-			-- info.menuList = 4
-			-- info.hasArrow = true
-			-- UIDropDownMenu_AddButton(info)
-			queueDropDown:CreateEntryFrame(info)
+	info.text = "Raid Finder"
+	info.hasArrow = true
+	info.level = 1
+	info.index = 4
+	-- info.checked = false
+	-- info.menuList = 4
+	-- info.hasArrow = true
+	-- UIDropDownMenu_AddButton(info)
+	queueDropDown:CreateEntryFrame(info)
 
-			info.text = "PvP"
-			info.hasArrow = true
-			info.level = 1
-			info.index = 5
-			-- info.checked = false
-			-- info.menuList = 7
-			-- info.hasArrow = true
-			-- UIDropDownMenu_AddButton(info)
-			queueDropDown:CreateEntryFrame(info)
+	info.text = "PvP"
+	info.hasArrow = true
+	info.level = 1
+	info.index = 5
+	-- info.checked = false
+	-- info.menuList = 7
+	-- info.hasArrow = true
+	-- UIDropDownMenu_AddButton(info)
+	queueDropDown:CreateEntryFrame(info)
 
-			info.text = "Pet Battle"
-			info.entryType = "option"
-			info.level = 1
-			info.index = 6
-			info.checked = false
-			info.func = function()
-				C_PetBattles.StartPVPMatchmaking()
-			end
+	info.text = "Pet Battle"
+	info.entryType = "option"
+	info.level = 1
+	info.index = 6
+	info.checked = false
+	info.func = function()
+		C_PetBattles.StartPVPMatchmaking()
+	end
 
-			queueDropDown:CreateEntryFrame(info)
-		
+	queueDropDown:CreateEntryFrame(info)
 
-			info.entryType = "option"
-			info.level = 2
-			info.index = nil
 
-			updateRandomDungeons()
-			updateDungeons()
-			updateRaidFinder()
-			updatePvP()
+	info.entryType = "option"
+	info.level = 2
+	info.index = nil
+
+	updateRandomDungeons()
+	updateDungeons()
+	updateRaidFinder()
+	updatePvP()
 end
 
 miog.updateQueueDropDown = updateQueueDropDown
@@ -1671,7 +1709,7 @@ local function createQueueFrame(queueInfo)
 	queueFrame:SetShown(true)
 
 ---@diagnostic disable-next-line: undefined-field
-	miog.MainTab.QueuePanel.Container:MarkDirty()
+	miog.MainTab.QueuePanel.ScrollFrame.Container:MarkDirty()
 end
 
 miog.createQueueFrame = createQueueFrame

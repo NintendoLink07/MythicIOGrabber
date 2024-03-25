@@ -46,7 +46,7 @@
                     <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
                 </KeyValues>
 
-                <Size y="25" />
+                <Size y="20" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
@@ -59,7 +59,7 @@
                                 <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
                             </Anchors>
-                            <Color r="0.2" g="0.2" b="0.2" a="0.5" />
+                            <Color r="0" g="0" b="0" a="0.7" />
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
@@ -95,9 +95,9 @@
                             parent.currentList:Hide()
                         end
 
-                        parent:Raise()
+                        parent.List:Raise()
 
-                        parent:MarkDirty()
+                        parent.List:MarkDirty()
                     </OnMouseDown>
                 </Scripts>
             </Frame>

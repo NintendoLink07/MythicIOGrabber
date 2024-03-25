@@ -4,7 +4,7 @@
         <FontHeight val="11" />
     </Font>
 
-    <Button name="MIOG_QueueFrame" inherits="BackdropTemplate" hidden="true" virtual="true">        
+    <Button name="MIOG_QueueFrame" inherits="BackdropTemplate" virtual="true">        
         <Size y="38" />
 
         <Frames>

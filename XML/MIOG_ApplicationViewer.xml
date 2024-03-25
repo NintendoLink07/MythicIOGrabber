@@ -177,6 +177,22 @@
                 </Anchors>
 
                 <Frames>
+                    <EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="true" font="LibMono">
+                        <Frames>
+                            <Button parentKey="UpdateButton" inherits="UIPanelButtonTemplate" text="Update">
+                                <Size x="60" y="20" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="RIGHT" />
+                                </Anchors>
+                            </Button>
+                        </Frames>
+
+                        <Scripts>
+                            <OnEnterPressed>
+
+                            </OnEnterPressed>
+                        </Scripts>
+                    </EditBox>
                 </Frames>
 
                 <Layers>
@@ -247,6 +263,13 @@
                 </Layers>
 
                 <Frames>
+                    <Frame parentKey="PrivateGroupDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
+                        <Size x="25" y="25" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.PrivateGroup" relativePoint="TOPLEFT" />
+                        </Anchors>
+                    </Frame>
+
                     <Frame parentKey="Rating">
                         <Size x="50" y="20" />
                             <Anchors>

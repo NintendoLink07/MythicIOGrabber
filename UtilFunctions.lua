@@ -213,13 +213,6 @@ miog.retrieveMapIDFromGFID = function(groupFinderID)
 	end
 end
 
---[===[
-
-CREATE ALL LOADING SCREENS, BOTH VERT AND HORIZ
-
-]===]
-
-
 miog.setUpMPlusStatistics = function()
 	for k, v in pairs(miog.SEASONAL_DUNGEONS) do
 		if(miog.F.CURRENT_SEASON == k) then
@@ -228,9 +221,9 @@ miog.setUpMPlusStatistics = function()
 					local dungeonRow = CreateFrame("Frame", nil, miog.MPlusStatistics.DungeonRows, "MIOG_MPlusStatisticsRowTemplate")
 					dungeonRow:SetHeight(miog.MPlusStatistics:GetHeight())
 					dungeonRow.layoutIndex = x
+
 					local texture = miog.MAP_INFO[miog.ACTIVITY_ID_INFO[y][9]].vertical
 					dungeonRow.Background:SetTexture(texture)
-					--dungeonRow.Background:SetRotation(math.pi/2)
 
 					local activityInfo = C_LFGList.GetActivityInfoTable(y)
 					dungeonRow.ShortName:SetText(miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].shortName)
@@ -333,7 +326,11 @@ miog.createMPlusCharacter = function(playerGUID)
 			characterFrame:SetHeight(55)
 			local fontFile, height, flags = characterFrame.Name:GetFont()
 			characterFrame.Name:SetFont(fontFile, 14, flags)
+			characterFrame.TransparentDark:SetHeight(36)
 
+		else
+			characterFrame.TransparentDark:SetHeight(32)
+		
 		end
 
 		miog.MPlusStatistics.CharacterScrollFrame.Columns[playerGUID] = characterFrame
@@ -402,11 +399,6 @@ miog.gatherMPlusStatistics = function()
 	end
 
 	miog.MPlusStatistics.CharacterScrollFrame.Columns:MarkDirty()
-
-	for k, v in pairs(miog.MPlusStatistics.CharacterScrollFrame) do
-		--print(k, v)
-
-	end
 end
 
 miog.checkIfDungeonIsInCurrentSeason = function(activityID)

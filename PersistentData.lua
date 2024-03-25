@@ -86,6 +86,19 @@ end
 
 miog.DIFFICULTY_ID_INFO[0] = {name = " ", shortName = " ", type="party"}
 
+miog.DUNGEON_DIFFICULTIES = {
+	DifficultyUtil.ID.DungeonNormal,
+	DifficultyUtil.ID.DungeonHeroic,
+	DifficultyUtil.ID.DungeonChallenge,
+	DifficultyUtil.ID.DungeonMythic,
+}
+
+miog.RAID_DIFFICULTIES = {
+	DifficultyUtil.ID.PrimaryRaidNormal,
+	DifficultyUtil.ID.PrimaryRaidHeroic,
+	DifficultyUtil.ID.PrimaryRaidMythic,
+}
+
 --CONSTANTS
 miog.C = {
 	-- 1.5 seconds seems to be the internal throttle of the inspect function / Blizzard's inspect data provider.
@@ -283,7 +296,7 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 
 miog.MAP_INFO = {
 	--CATACLYSM
-	[643] = {gfID = 54, expansionLevel = 3, shortName = "ToTT", icon = "interface/lfgframe/lfgicon-throneofthetides", fileName = "throneofthetides"},
+	[643] = {gfID = 54, expansionLevel = 3, shortName = "TOTT", icon = "interface/lfgframe/lfgicon-throneofthetides", fileName = "throneofthetides"},
 	[657] = {gfID = 59, expansionLevel = 3,  shortName = "VP", icon = "interface/lfgframe/lfgicon-thevortexpinnacle", fileName = "vortexpinnacle"},
 
 	--MISTS OF PANDARIA
@@ -915,7 +928,7 @@ miog.GROUP_ACTIVITY = {
 
 miog.GROUP_ID_TO_LFG_ID = {}
 
-miog.ACTIVITY_ID_INFO = {
+miog.ACTIVITY_ID_INFO = { -- https://wago.tools/db2/GroupFinderActivity
 	[2] = {"Teldrassil","Teldrassil",1,0,3,258,0,0,1,0,141,0,4,0,0},
 	[3] = {"Westfall","Westfall",1,0,2,258,0,0,0,0,40,0,4,0,0},
 	[4] = {"Siege of Orgrimmar (Normal)","Normal",3,0,1,35,0,0,1136,14,0,30,0,0,0},
@@ -1681,7 +1694,8 @@ miog.ACTIVITY_ID_INFO = {
 }
 
 miog.SEASONAL_DUNGEONS = {
-	[11] = {184, 450, 460, 536, 543, 1247, 1248, 1274}
+	[11] = {184, 1274, 1247, 1248, 502, 463, 460, 530},
+	[12] = {1160, 1164, 1168, 1172, 1176, 1180, 1184, 1188},
 }
 
 for _, v in pairs(miog.SEASONAL_DUNGEONS) do

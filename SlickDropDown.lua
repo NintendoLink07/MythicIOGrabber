@@ -42,6 +42,11 @@ function SlickDropDown:ResetDropDown()
 		end
 	end
 
+	if(self.List.securePool) then
+		self.List.securePool:ReleaseAll()
+
+	end
+
 	self.List.fontStringPool:ReleaseAll()
 	self.List.texturePool:ReleaseAll()
 	self.List.buttonPool:ReleaseAll()
@@ -54,6 +59,18 @@ function SlickDropDown:ResetDropDown()
 	self.List.ExpandButton = {}
 end
 
+function SlickDropDown:ReleaseSpecificFrames(keyword, specificList)
+	local currentPool = specificList and specificList.framePool or self.List.framePool
+
+	for k, v in currentPool:EnumerateActive() do
+		if(k.type2 == keyword) then
+			currentPool:Release(k)
+
+		end
+
+	end
+end
+
 function SlickDropDown:ResetButton(button)
 
 end
@@ -64,6 +81,7 @@ function SlickDropDown:ResetFrame(frame)
 	frame.Name:SetText("")
 	frame.Icon:SetTexture(nil)
 	frame.infoTable = nil
+	frame.info = nil
 	frame.type2 = nil
 	frame.value = nil
 	frame.parentIndex = nil
@@ -99,11 +117,13 @@ end
 function SlickDropDown:Disable()
 	--self.Button:Disable()
 	self:SetMouseClickEnabled(false)
+	self.CheckedValue:SetMouseClickEnabled(false)
 end
 
 function SlickDropDown:Enable()
 	--self.Button:Enable()
 	self:SetMouseClickEnabled(false)
+	self.CheckedValue:SetMouseClickEnabled(true)
 end
 
 function SlickDropDown:IsEnabled()

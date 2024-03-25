@@ -21,12 +21,32 @@
                     </Anchors>
                 </FontString>
             </Layer>
-            <Layer level="BORDER">
-                <Texture parentKey="Divider" atlas="UI-LFG-DividerLine" setAllPoints="true">
-                    <Size y="2" />
+
+            <Layer level="BACKGROUND">
+                <Texture parentKey="TransparentDark" >
+                    <Size y="32" />
+                    <Color r="0.03" g="0.03" b="0.03" a="0.3" />
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            
+            <Layer level="BORDER">
+                <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">
+                    <Size y="6" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.TransparentDark" relativePoint="TOPLEFT" x="-10" y="2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.TransparentDark" relativePoint="TOPRIGHT" x="10" y="2" />
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Divider2" atlas="dragonflight-weeklyrewards-divider">
+                    <Size y="3" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.TransparentDark" relativePoint="BOTTOMLEFT" x="-10" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.TransparentDark" relativePoint="BOTTOMRIGHT" x="10" y="-2" />
                     </Anchors>
                 </Texture>
             </Layer>
