@@ -21,13 +21,13 @@ function SlickDropDown:OnLoad()
 	self.List.highestWidth = 0
 	self.List.ExpandButton = {}
 
-	--miog.setStandardBackdrop(self.CheckedValue)
+	--miog.setStandardBackdrop(self.Selected)
 	--local color = CreateColorFromHexString(miog.C.BACKGROUND_COLOR)
-	--self.CheckedValue:SetBackdropColor(color.r, color.g, color.b, 0.6)
+	--self.Selected:SetBackdropColor(color.r, color.g, color.b, 0.6)
 end
 
 function SlickDropDown:SetText(text)
-	self.CheckedValue.Name:SetText(text)
+	self.Selected.Name:SetText(text)
 end
 
 function SlickDropDown:ResetDropDown()
@@ -117,13 +117,13 @@ end
 function SlickDropDown:Disable()
 	--self.Button:Disable()
 	self:SetMouseClickEnabled(false)
-	self.CheckedValue:SetMouseClickEnabled(false)
+	self.Selected:SetMouseClickEnabled(false)
 end
 
 function SlickDropDown:Enable()
 	--self.Button:Enable()
 	self:SetMouseClickEnabled(false)
-	self.CheckedValue:SetMouseClickEnabled(true)
+	self.Selected:SetMouseClickEnabled(true)
 end
 
 function SlickDropDown:IsEnabled()
@@ -208,8 +208,8 @@ function SlickDropDown:SelectFrame(frame)
 	if(frame) then
 		local firstActivityName = frame.Name:GetText()
 
-		self.CheckedValue.Name:SetText(firstActivityName)
-		self.CheckedValue.value = frame.value
+		self.Selected.Name:SetText(firstActivityName)
+		self.Selected.value = frame.value
 
 		frame.Radio:SetChecked(true)
 
@@ -267,7 +267,10 @@ function SlickDropDown:SetWidthToWidestFrame(infoTable)
 
 	end
 
+	list.minimumWidth = width
+
 	list:MarkDirty()
+	self:MarkDirty()
 end
 
 function SlickDropDown:CreateTextLine(index, specificList, text, icon, expandable)
@@ -416,8 +419,6 @@ function SlickDropDown:CreateEntryFrame(info)
 		frame.Name:SetTextColor(1, 1, 1, 1)
 
 	end
-
-	--self:SetWidthToWidestFrame(frame, infoTable)
 
 	frame:Show()
 

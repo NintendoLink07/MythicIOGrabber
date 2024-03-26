@@ -1812,8 +1812,6 @@ local function insertLFGInfo(activityID)
 
 	end
 
-	DevTools_Dump(entryInfo)
-
 	if(entryInfo.voiceChat ~= "") then
 		LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
 
@@ -1839,13 +1837,11 @@ local function insertLFGInfo(activityID)
 	end
 
 	if(entryInfo.comment ~= "") then
-		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetHeight(2500)
-		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetText("Description: " .. entryInfo.comment)
-		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetHeight(miog.applicationViewer.InfoPanel.CommentFrame.FontString:GetStringHeight())
-		miog.applicationViewer.InfoPanel.CommentFrame:SetHeight(miog.applicationViewer.InfoPanel.CommentFrame.FontString:GetStringHeight())
-
+		miog.applicationViewer.InfoPanel.Description.Container.FontString:SetText("Description: " .. entryInfo.comment)
+		miog.applicationViewer.InfoPanel.Description.Container:SetHeight(miog.applicationViewer.InfoPanel.Description.Container.FontString:GetStringHeight())
+		
 	else
-		miog.applicationViewer.InfoPanel.CommentFrame.FontString:SetText("")
+		miog.applicationViewer.InfoPanel.Description.Container.FontString:SetText("")
 
 	end
 end

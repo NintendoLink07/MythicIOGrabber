@@ -52,7 +52,7 @@
                     <OnShow>
                         if(self.List) then
                             for k,v in pairs(self.List:GetLayoutChildren()) do
-                                if(self.CheckedValue.value == v.value) then
+                                if(self.Selected.value == v.value) then
                                     v.Radio:SetChecked(true)
                                     
                                 else
@@ -133,8 +133,8 @@
 
             <PostClick>
                 if(not self.hasArrow) then
-                    self.ParentDropDown.CheckedValue.Name:SetText(self.Name:GetText())
-                    self.ParentDropDown.CheckedValue.value = self.value
+                    self.ParentDropDown.Selected.Name:SetText(self.Name:GetText())
+                    self.ParentDropDown.Selected.value = self.value
                     self.Radio:SetChecked(true)
 
                     if(self.ParentDropDown.currentList)  then

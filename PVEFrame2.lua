@@ -721,7 +721,7 @@ local function createPVEFrameReplacement()
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
 
-			miog.uppdateDungeonCheckboxes()
+			miog.updateDungeonCheckboxes()
 
 		end
 
@@ -1911,8 +1911,6 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
 		end)
-
-		print("ICON", frameData[20])
 
 		--miog.createQueueFrame(categoryID, {GetLFGDungeonInfo(activeID)}, {GetLFGQueueStats(categoryID)})
 	end

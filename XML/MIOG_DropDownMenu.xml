@@ -18,7 +18,7 @@
 
                         for k,v in pairs(parent.List:GetLayoutChildren()) do
                             if(v.Radio) then
-                                if(parent.CheckedValue.value == v.value) then
+                                if(parent.Selected.value == v.value) then
                                     v.Radio:SetChecked(true)
                                     
                                 else
@@ -41,7 +41,7 @@
                 </Scripts>
             </Button>
 
-            <Frame parentKey="CheckedValue" inherits="BackdropTemplate">
+            <Frame parentKey="Selected" inherits="BackdropTemplate">
                 <KeyValues>
                     <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
                 </KeyValues>
@@ -79,7 +79,7 @@
 
                         for k,v in pairs(parent.List:GetLayoutChildren()) do
                             if(v.Radio) then
-                                if(parent.CheckedValue.value == v.value) then
+                                if(parent.Selected.value == v.value) then
                                     v.Radio:SetChecked(true)
                                     
                                 else
@@ -89,7 +89,7 @@
                             end
                         end
 
-                        parent.List:SetShown(not parent.List:IsVisible())
+                        parent.List:SetShown(not parent.List:IsShown())
 
                         if(parent.currentList) then
                             parent.currentList:Hide()
@@ -97,7 +97,6 @@
 
                         parent.List:Raise()
 
-                        parent.List:MarkDirty()
                     </OnMouseDown>
                 </Scripts>
             </Frame>
@@ -111,10 +110,6 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>
-                <Scripts>
-                    <OnMouseDown>
-                    </OnMouseDown>
-                </Scripts>
             </Frame>
         </Frames>
     </Frame>

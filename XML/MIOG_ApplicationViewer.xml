@@ -135,37 +135,22 @@
                 </Layers>
 
                 <Frames>
-                    <ScrollFrame parentKey="CommentScrollFrame" inherits="ScrollFrameTemplate">
+                    <ScrollFrame parentKey="Description" inherits="ScrollFrameTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Activity" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Activity" relativePoint="BOTTOMLEFT" y="-2" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3" />
                         </Anchors>
 
-                        <Scripts>
-                            <OnShow>
-                                self.ScrollBar:Hide()
-                            </OnShow>
-                        </Scripts>
+                        <ScrollChild>
+                            <Frame parentKey="Container" setAllPoints="true">
+                                <Layers>
+                                    <Layer level="OVERLAY">
+                                        <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true" />
+                                    </Layer>
+                                </Layers>
+                            </Frame>
+                        </ScrollChild>
                     </ScrollFrame>
-
-                    <Frame parentKey="CommentFrame">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.CommentScrollFrame" relativePoint="TOPLEFT" />
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.CommentScrollFrame" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
-                                </FontString>
-                            </Layer>
-                        </Layers>
-
-                        <Scripts>
-                            <OnLoad>
-                                self:GetParent().CommentScrollFrame:SetScrollChild(self)
-                            </OnLoad>
-                        </Scripts>
-                    </Frame>
                 </Frames>
             </Frame>
 
@@ -186,12 +171,6 @@
                                 </Anchors>
                             </Button>
                         </Frames>
-
-                        <Scripts>
-                            <OnEnterPressed>
-
-                            </OnEnterPressed>
-                        </Scripts>
                     </EditBox>
                 </Frames>
 
@@ -208,9 +187,15 @@
                             </Anchors>
                             <Scripts>
                                 <OnEnter>
-                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                                    GameTooltip:SetText("Group listing is set to private")
-                                    GameTooltip:Show()
+                                    if(self.active) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                        GameTooltip:SetText("Group listing is set to private")
+                                        GameTooltip:Show()
+
+                                    else
+                                        GameTooltip:Hide()
+                                    
+                                    end
                                 </OnEnter>
                                 <OnLeave>
                                     GameTooltip:Hide()
@@ -263,13 +248,6 @@
                 </Layers>
 
                 <Frames>
-                    <Frame parentKey="PrivateGroupDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
-                        <Size x="25" y="25" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.PrivateGroup" relativePoint="TOPLEFT" />
-                        </Anchors>
-                    </Frame>
-
                     <Frame parentKey="Rating">
                         <Size x="50" y="20" />
                             <Anchors>
@@ -308,9 +286,9 @@
 
                     <Frame parentKey="ItemLevel">
                         <Size x="45" y="20" />
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="3"/>
-                            </Anchors>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
                         <Layers>
                             <Layer level="ARTWORK">
                                 <Texture parentKey="Texture" file="Interface/Addons/MythicIOGrabber/res/infoIcons/itemsacks.png">
@@ -411,13 +389,8 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:SetScrollChild(self.Container)
-                    </OnShow>
-                </Scripts>
 
-                <Frames>
+                <ScrollChild>
                     <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
                         <KeyValues>
                             <KeyValue key="minimumWidth" value="1" type="number" />
@@ -431,7 +404,7 @@
                             </OnLoad>
                         </Scripts>
                     </Frame>
-                </Frames>
+                </ScrollChild>
             </ScrollFrame>
         </Frames>
     </Frame>

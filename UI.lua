@@ -303,6 +303,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	local mythicPlusTable = {}
 	local pvpTable = {}
 	local expansionTable = {}
+	local allDungeonsTable = {}
 
 	local borFilters = bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters)
 
@@ -341,24 +342,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			end
 			info.icon = miog.ACTIVITY_ID_INFO[activityID].icon
 			info.mapID = miog.ACTIVITY_ID_INFO[activityID][9]
-			
-			--[[local mapID = activityInfo.groupFinderActivityGroupID ~= 0 and miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID
-
-			if(mapID) then
-				if(miog.MAP_INFO[mapID]) then
-					info.mapID = mapID
-					info.icon = miog.MAP_INFO[mapID].icon
-
-				else
-					local journalID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-					local _, _, _, buttonImage1, _, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, _ = EJ_GetInstanceInfo(journalID)
-					
-					info.icon = buttonImage2
-				end
-			end]]
-			
-			local worldBosses = C_LFGList.GetAvailableActivities(categoryID, 0, 5)
-
 
 			if(info.sort == "mplus") then
 				mythicPlusTable[#mythicPlusTable+1] = info
@@ -377,7 +360,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			if(LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.Recommended) then
 				local worldBossActivity = C_LFGList.GetAvailableActivities(categoryID, 0, 5)
 		
-				for activityIndex, activityID in ipairs(worldBossActivity) do
+				for _, activityID in ipairs(worldBossActivity) do
 					local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 					if(activityInfo.filters == 5) then
 						local info = {}
@@ -455,8 +438,26 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			pvpTable[#pvpTable+1] = info
 		end
 	end
+
+	local mplusOffset = 0
 	
 	if(categoryID == 2) then
+		activityDropDown:CreateTextLine(-1, nil, "Seasonal Mythic+ Dungeons")
+		
+		table.sort(mythicPlusTable, function(k1, k2)
+			return k1.text < k2.text
+		end)
+
+		for k, v in ipairs(mythicPlusTable) do
+			v.index = k
+			activityDropDown:CreateEntryFrame(v)
+
+			mplusOffset = mplusOffset + 1
+		end
+
+		activityDropDown:CreateSeparator(9)
+		mplusOffset = mplusOffset + 1
+
 		for i = 0, GetNumExpansions() - 1, 1 do
 			local expansionInfo = GetExpansionDisplayInfo(i)
 
@@ -470,12 +471,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			--local expansionFrame = activityDropDown:CreateEntryFrame(info)
 
 			local groups = C_LFGList.GetAvailableActivityGroups(categoryID)
-
-			table.sort(groups, function(k1, k2)
-				local k1name = C_LFGList.GetActivityGroupInfo(k1)
-				local k2name = C_LFGList.GetActivityGroupInfo(k2)
-				return k1name < k2name
-			end)
 
 			for k, v in ipairs(groups) do
 				local activities = C_LFGList.GetAvailableActivities(categoryID, v)
@@ -501,8 +496,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 							
 						end
 
-
-						expansionTable[#expansionTable+1] = info
+						allDungeonsTable[#allDungeonsTable+1] = info
 						--local entryFrame = activityDropDown:CreateEntryFrame(info)
 					else
 						--print("EXP LEVEL WRONG FOR ", C_LFGList.GetActivityGroupInfo(v), miog.MAP_INFO[mapID].expansionLevel, i)
@@ -531,14 +525,17 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 					end
 					info.icon = miog.ACTIVITY_ID_INFO[activityID].icon
 
-					expansionTable[#expansionTable+1] = info
+					allDungeonsTable[#allDungeonsTable+1] = info
 				end
 			end
 
 		end
+
+		table.sort(allDungeonsTable, function(k1, k2)
+			return k1.text < k2.text
+		end)
 	end
 	
-
 	local info = {}
 	info.entryType = "option"
 	info.index = 100000
@@ -546,28 +543,8 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	info.func = function()
 		LFGListEntryCreationActivityFinder_Show(LFGListFrame.EntryCreation.ActivityFinder, categoryID, nil, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters))
 	end
-	
 
 	listTable[#listTable+1] = info
-	local mplusOffset = 0
-
-	if(categoryID == 2) then
-		activityDropDown:CreateTextLine(-1, nil, "Seasonal Mythic+ Dungeons")
-		
-		table.sort(mythicPlusTable, function(k1, k2)
-			return k1.text < k2.text
-		end)
-
-		for k, v in ipairs(mythicPlusTable) do
-			v.index = k
-			activityDropDown:CreateEntryFrame(v)
-
-			mplusOffset = mplusOffset + 1
-		end
-
-		activityDropDown:CreateSeparator(9)
-		mplusOffset = mplusOffset + 1
-	end
 
 	if(categoryID == 2 or categoryID == 3) then
 		table.sort(lfgTable, function(k1, k2)
@@ -616,6 +593,11 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	activityDropDown:CreateSeparator(9999)
 
 	for k, v in ipairs(expansionTable) do
+		activityDropDown:CreateEntryFrame(v)
+
+	end
+
+	for k, v in ipairs(allDungeonsTable) do
 		activityDropDown:CreateEntryFrame(v)
 
 	end
@@ -694,20 +676,21 @@ local function listGroup()
 	local autoAccept = false;
 	local privateGroup = frame.PrivateGroup:GetChecked();
 	local isCrossFaction =  frame.CrossFaction:IsShown() and not frame.CrossFaction:GetChecked();
-	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.CheckedValue.value or nil;
-	local activityID = frame.DifficultyDropDown.CheckedValue.value or frame.ActivityDropDown.CheckedValue.value or 0
+	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.Selected.value or nil;
+	local activityID = frame.DifficultyDropDown.Selected.value or frame.ActivityDropDown.Selected.value or 0
 
 	local self = LFGListFrame.EntryCreation
 
-	--LFGListEntryCreation_ListGroupInternal(self, activityID, itemLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
-
 	local honorLevel = 0;
 
+	local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+
 	if ( LFGListEntryCreation_IsEditMode(self) ) then
-		local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 		if activeEntryInfo.isCrossFactionListing == isCrossFaction then
+			print("UP1")
 			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
 		else
+			print("RE1")
 			-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
 			C_LFGList.RemoveListing();
 			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
@@ -715,10 +698,18 @@ local function listGroup()
 
 		LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
 	else
-		if(C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)) then
-			self.WorkingCover:Show();
-			LFGListEntryCreation_ClearFocus(self);
+		if(C_LFGList.HasActiveEntryInfo()) then
+			print("UP2")
+			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
+
+		else
+			print("CR1")
+			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
+
 		end
+
+		self.WorkingCover:Show();
+		LFGListEntryCreation_ClearFocus(self);
 	end
 end
 
@@ -927,12 +918,12 @@ local function createEntryCreation()
 	activityFinder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 	activityFinder:SetFrameStrata("DIALOG")
 
-	frame.ItemLevel.DropDown.CheckedValue:Hide()
+	frame.ItemLevel.DropDown.Selected:Hide()
 	frame.ItemLevel.DropDown.Button:Show()
 	frame.ItemLevel.DropDown:OnLoad()
 	setUpItemLevels()
 
-	frame.Rating.DropDown.CheckedValue:Hide()
+	frame.Rating.DropDown.Selected:Hide()
 	frame.Rating.DropDown.Button:Show()
 	frame.Rating.DropDown:OnLoad()
 	setUpRatingLevels()
@@ -1204,21 +1195,39 @@ local function createApplicationViewer()
 	miog.applicationViewer.applicantNumberFontString = applicantNumberFontString
 
 	miog.applicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
+		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
+
 		local editbox = miog.applicationViewer.CreationSettings.EditBox
 		editbox:Hide()
-		editbox.hiddenElement:Show()
 
-		local text = editbox:GetText()
-		miog.entryCreation[editbox.name]:SetText(text)
+		if(editbox.hiddenElement) then
+			editbox.hiddenElement:Show()
+		end
+
+		if(editbox.name) then
+			local text = editbox:GetText()
+			miog.entryCreation[editbox.name]:SetText(text)
+		end
+
 		listGroup()
 		miog.insertLFGInfo()
 	end)
 
 	miog.applicationViewer.CreationSettings.EditBox:SetScript("OnEnterPressed", miog.applicationViewer.CreationSettings.EditBox.UpdateButton:GetScript("OnClick"))
+
+	miog.applicationViewer.InfoPanel.Description.Container:SetSize(miog.applicationViewer.InfoPanel.Description:GetSize())
+
+	miog.applicationViewer.InfoPanel.Description:SetScript("OnMouseDown", function(self)
+		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
+			--miog.entryCreation.Description:SetParent(miog.applicationViewer.InfoPanel)
+			--miog.applicationViewer.CreationSettings.EditBox.UpdateButton:SetPoint("LEFT", miog.entryCreation.Description, "RIGHT")
+		end
+	
+		self.lastClick = GetTime()
+	end)
 	
 	miog.applicationViewer.CreationSettings.ItemLevel:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
-			miog.entryCreation.ItemLevel:SetText("")
 			showEditBox("ItemLevel", self.FontString, true, 3)
 		end
 	
@@ -1227,47 +1236,19 @@ local function createApplicationViewer()
 
 	miog.applicationViewer.CreationSettings.Rating:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
-			miog.entryCreation.Rating:SetText("")
 			showEditBox("Rating", self.FontString, true, 4)
 		end
 	
 		self.lastClick = GetTime()
 	end)
 
-	miog.applicationViewer.CreationSettings.PrivateGroupDropdown:OnLoad()
+	miog.applicationViewer.CreationSettings.PrivateGroup:SetScript("OnMouseDown", function()
+		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 
-	local info = {}
-	info.entryType = "option"
-	info.level = 1
-	info.value = ""
-	info.icon = "Interface/Addons/MythicIOGrabber/res/infoIcons/questionMark_Grey.png"
-	info.func = function()
-		print("NE")
-	end
-		
-	miog.applicationViewer.CreationSettings.PrivateGroupDropdown:CreateEntryFrame(info)
-
-
-	info = {}
-	info.entryType = "option"
-	info.level = 1
-	info.value = ""
-	info.icon = "Interface/Addons/MythicIOGrabber/res/infoIcons/questionMark_Yellow.png"
-	info.func = function()
-		print("YE")
-	end
-		
-	miog.applicationViewer.CreationSettings.PrivateGroupDropdown:CreateEntryFrame(info)
-
-	miog.applicationViewer.CreationSettings.PrivateGroup:SetScript("OnMouseDown", function(self)
-		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
-			miog.applicationViewer.CreationSettings.PrivateGroupDropdown:Show()
-		end
-	
-		self.lastClick = GetTime()
+		miog.entryCreation.PrivateGroup:SetChecked(not miog.entryCreation.PrivateGroup:GetChecked())
+		listGroup()
+		miog.insertLFGInfo()
 	end)
-
-	
 end
 
 local function updateFilterDifficulties()
@@ -1307,8 +1288,6 @@ local function updateFilterDifficulties()
 	difficultyDropDown:MarkDirty()
 	difficultyDropDown.List:MarkDirty()
 
-	print(difficultyDropDown:GetSize())
-	print(difficultyDropDown.List:GetSize())
 	local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentValue])
 end
 
