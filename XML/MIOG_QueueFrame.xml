@@ -4,24 +4,19 @@
         <FontHeight val="11" />
     </Font>
 
-    <Button name="MIOG_QueueFrame" inherits="BackdropTemplate" virtual="true">        
-        <Size y="38" />
+    <Button name="MIOG_QueueFrame" inherits="BackdropTemplate, TooltipBackdropTemplate" virtual="true">        
+        <Size y="43" />
 
         <Frames>
             <Button parentKey="CancelApplication" inherits="SecureActionButtonTemplate">
-                <Size x="16" y="16" />
+                <Size x="14" y="14" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" />
                 </Anchors>
 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="Icon" file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png">
-                            <Size x="16" y="16" />
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2"/>
-                            </Anchors>
-                        </Texture>
+                        <Texture parentKey="Icon" file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" setAllPoints="true" />
                     </Layer>
                 </Layers>
             </Button>
@@ -30,9 +25,9 @@
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
-                    <Size x="36" y="36" />
+                    <Size x="30" y="30" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="6"/>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="ActiveIDFrame" hidden="true">
@@ -48,8 +43,8 @@
                 <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="true">
                     <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="2" y="-2"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.CancelApplication" relativePoint="TOPLEFT" x="-2" y="-2"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="1"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-18"/>
                     </Anchors>
                 </FontString>
 

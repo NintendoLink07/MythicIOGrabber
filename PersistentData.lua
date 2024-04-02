@@ -79,7 +79,7 @@ for i = 0, 205, 1 do -- max # of difficulties in wago tools Difficulty
 
 	if(name) then
 		miog.DIFFICULTY_ID_INFO[i] = {name = name, shortName = (i == 1 or i == 3 or i == 4 or i == 9 or i == 14) and "N" or (i == 2 or i == 5 or i == 6 or i == 15 or i == 24 or i == 33) and "H" or i == 8 and "M+" or (i == 7 or i == 17) and "LFR" or (i == 16 or i == 23) and "M",
-		type = groupType, isHeroic = isHeroic, isChallengeMode = isChallengeMode, toggleDifficulty = toggleDifficultyID, color = miog.DIFFICULTY_ID_TO_COLOR[i] and miog.DIFFICULTY_ID_TO_COLOR[i]}
+		type = groupType, isHeroic = isHeroic, isChallengeMode = isChallengeMode, isLFR = isLFR, toggleDifficulty = toggleDifficultyID, color = miog.DIFFICULTY_ID_TO_COLOR[i] and miog.DIFFICULTY_ID_TO_COLOR[i]}
 
 	end
 end
@@ -1708,9 +1708,13 @@ for _, v in pairs(miog.SEASONAL_DUNGEONS) do
 end
 
 for k, v in pairs(miog.ACTIVITY_ID_INFO) do
-	if(v[9] ~= 0) then
+	if(v[9] ~= 0 and v[9] ~= nil) then
 		local journalID = C_EncounterJournal.GetInstanceForGameMap(v[9])
 		local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalID)
+
+		if(miog.MAP_INFO[v[9]]) then
+			miog.MAP_INFO[v[9]].activityID = k
+		end
 
 		v.icon = button2
 		v.background = miog.MAP_INFO[v[9]] and miog.MAP_INFO[v[9]].horizontal or loreImage
@@ -2142,17 +2146,16 @@ miog.ACTIVITY_BACKGROUNDS = {
 }
 
 miog.APPLICATION_VIEWER_BACKGROUNDS = {
-	[1] = {"Standard", "lfg-background_tall_1024.png"},
-	[2] = {"Classic", "vanilla-bg-1.png"},
-	[3] = {"The Burning Crusade", "tbc-bg-1.png"},
-	[4] = {"Wrath of the Lich King", "wotlk-bg-1.png"},
-	[5] = {"Cataclysm", "cata-bg-1.png"},
-	[6] = {"Mists of Pandaria", "mop-bg-1.png"},
-	[7] = {"Warlords of Draenor", "wod-bg-1.png"},
-	[8] = {"Legion", "legion-bg-1.png"},
-	[9] = {"Battle for Azeroth", "bfa-bg-1.png"},
-	[10] = {"Shadowlands", "sl-bg-1.png"},
-	[11] = {"Dragonflight", "df-bg-1.png"},
+	[1] = {"Classic", "vanilla-bg-1"},
+	[2] = {"The Burning Crusade", "tbc-bg-1"},
+	[3] = {"Wrath of the Lich King", "wotlk-bg-1"},
+	[4] = {"Cataclysm", "cata-bg-1"},
+	[5] = {"Mists of Pandaria", "mop-bg-1"},
+	[6] = {"Warlords of Draenor", "wod-bg-1"},
+	[7] = {"Legion", "legion-bg-1"},
+	[8] = {"Battle for Azeroth", "bfa-bg-1"},
+	[9] = {"Shadowlands", "sl-bg-1"},
+	[10] = {"Dragonflight", "df-bg-1"},
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms

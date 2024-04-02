@@ -2339,38 +2339,42 @@ local function sortSearchResultList(result1, result2)
 
 end
 
-local function signupToGroup(resultID)
-	local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
-	searchResultSystem.searchResultData[resultID] = C_LFGList.GetSearchResultInfo(resultID)
-	local searchResultData = searchResultSystem.searchResultData[resultID]
+local function groupSignup(resultID)
+	if(resultID) then
+		local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
+		searchResultSystem.searchResultData[resultID] = C_LFGList.GetSearchResultInfo(resultID)
+		local searchResultData = searchResultSystem.searchResultData[resultID]
 
-	if (appStatus ~= "none" or pendingStatus or searchResultData.isDelisted) then
-		return false
-	end
-
-	if(searchResultSystem.selectedResult) then
-		_, appStatus = C_LFGList.GetApplicationInfo(searchResultSystem.selectedResult)
-
-		if(searchResultSystem.persistentFrames[searchResultSystem.selectedResult]) then
-			searchResultSystem.persistentFrames[searchResultSystem.selectedResult]:SetBackdropBorderColor(
-				CreateColorFromHexString(appStatus == "applied" and miog.CLRSCC.green or miog.C.BACKGROUND_COLOR_3):GetRGBA()
-			)
+		if (appStatus ~= "none" or pendingStatus or searchResultData.isDelisted) then
+			return false
 		end
+
+		if(searchResultSystem.selectedResult) then
+			_, appStatus = C_LFGList.GetApplicationInfo(searchResultSystem.selectedResult)
+
+			if(searchResultSystem.persistentFrames[searchResultSystem.selectedResult]) then
+				searchResultSystem.persistentFrames[searchResultSystem.selectedResult]:SetBackdropBorderColor(
+					CreateColorFromHexString(appStatus == "applied" and miog.CLRSCC.green or miog.C.BACKGROUND_COLOR_3):GetRGBA()
+				)
+			end
+		end
+
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
+
+		if(resultID ~= searchResultSystem.selectedResult and searchResultSystem.persistentFrames[resultID]) then
+			searchResultSystem.persistentFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
+
+		end
+
+		searchResultSystem.selectedResult = resultID
+
+		LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
 	end
-
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-	LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
-
-	if(resultID ~= searchResultSystem.selectedResult and searchResultSystem.persistentFrames[resultID]) then
-		searchResultSystem.persistentFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
-
-	end
-
-	searchResultSystem.selectedResult = resultID
-
-	LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
 
 end
+
+miog.groupSignup = groupSignup
 
 local function gatherSearchResultSortData(singleResultID)
 	local unsortedMainApplicantsList = {}
@@ -2469,7 +2473,7 @@ local function updatePersistentResultFrame(resultID)
 			local declineData = searchResultData.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultData.activityID .. searchResultData.leaderName]
 			
 			currentFrame:SetScript("OnMouseDown", function(_, button)
-				signupToGroup(searchResultData.searchResultID)
+				groupSignup(searchResultData.searchResultID)
 
 			end)
 			currentFrame:SetScript("OnEnter", function()
@@ -2547,7 +2551,7 @@ local function updatePersistentResultFrame(resultID)
 			BasicInformationPanel.DifficultyZone:SetText(
 				wticc(
 					miog.MAP_INFO[mapID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY_ID_INFO[miog.ACTIVITY_ID_INFO[searchResultData.activityID][10]].shortName .. " - " ..
-					miog.MAP_INFO[mapID].shortName or activityInfo.fullName,
+					miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].shortName or miog.MAP_INFO[mapID].shortName or activityInfo.fullName,
 				titleZoneColor)
 			)
 
@@ -3113,6 +3117,9 @@ miog.OnEvent = function(_, event, ...)
 
 
 ]]
+	elseif(event == "KeystoneUpdate") then
+		print("KEY UP")
+
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
 		miog.F.ACTIVE_ENTRY_INFO = C_LFGList.GetActiveEntryInfo()
 
@@ -3244,6 +3251,8 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "GROUP_ROSTER_UPDATE") then
+		miog.openRaidLib.RequestKeystoneDataFromParty()
+		
 		local canInvite = miog.checkIfCanInvite()
 
 		for _,v in pairs(applicantSystem.applicantMember) do
@@ -3532,9 +3541,7 @@ miog.OnEvent = function(_, event, ...)
 
 		local lastFrame = nil
 	
-		--for i=1, #miog.CUSTOM_CATEGORY_ORDER do
 		for k, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-			local isSelected = false;
 			local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
 
 			if(not _G["MythicIOGrabber_" .. categoryInfo.name .. "Button"]) then
@@ -3543,16 +3550,14 @@ miog.OnEvent = function(_, event, ...)
 				categoryFrame.categoryID = categoryID
 				categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 
+				miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
+
 				categoryFrame:SetHeight(30)
 				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
 				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
-				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.Title:SetText(categoryInfo.name)
-				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.BackgroundImage:SetVertTile(true)
-				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
-				---@diagnostic disable-next-line: undefined-field
 				
 				categoryFrame.StartGroup:SetScript("OnClick", function(self)
 					local button = self:GetParent()
@@ -3560,7 +3565,6 @@ miog.OnEvent = function(_, event, ...)
 
 					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 				end)
-				---@diagnostic disable-next-line: undefined-field
 				categoryFrame.FindGroup:SetScript("OnClick", function(self)
 					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 					local button = self:GetParent()
@@ -3571,31 +3575,26 @@ miog.OnEvent = function(_, event, ...)
 			
 				lastFrame = categoryFrame
 		
-				--DevTools_Dump(categoryInfo)
 				if categoryInfo.separateRecommended then
 					local notRecommendedFrame = CreateFrame("Button", "MythicIOGrabber_" .. LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true) .. "Button", miog.MainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
 					notRecommendedFrame.categoryID = categoryID
 					notRecommendedFrame.filters = Enum.LFGListFilter.NotRecommended
 
+					miog.createFrameBorder(notRecommendedFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
+
 					notRecommendedFrame:SetHeight(30)
 					notRecommendedFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
 					notRecommendedFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
-					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
-					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.BackgroundImage:SetVertTile(true)
-					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.BackgroundImage:SetHorizTile(true)
-					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-					---@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.StartGroup:SetScript("OnClick", function(self)
 						local button = self:GetParent()
 						startNewGroup(button)
 	
 						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 					end)
----@diagnostic disable-next-line: undefined-field
 					notRecommendedFrame.FindGroup:SetScript("OnClick", function(self)
 						local button = self:GetParent()
 						findGroup(button)

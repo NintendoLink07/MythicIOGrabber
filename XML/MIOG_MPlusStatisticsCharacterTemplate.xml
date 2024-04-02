@@ -11,13 +11,19 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="NAME">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="7"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="6"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Score" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="CURRENT SCORE">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="-7"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="-8"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="ScoreIncrease" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="SCORE INC" hidden="true">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="5" />
                     </Anchors>
                 </FontString>
             </Layer>
@@ -25,7 +31,7 @@
             <Layer level="BACKGROUND">
                 <Texture parentKey="TransparentDark" >
                     <Size y="32" />
-                    <Color r="0.03" g="0.03" b="0.03" a="0.3" />
+                    <Color r="0.03" g="0.03" b="0.03" a="0.6" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1" />
@@ -35,7 +41,7 @@
             
             <Layer level="BORDER">
                 <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">
-                    <Size y="6" />
+                    <Size y="7" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.TransparentDark" relativePoint="TOPLEFT" x="-10" y="2"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent.TransparentDark" relativePoint="TOPRIGHT" x="10" y="2" />
@@ -43,7 +49,7 @@
                 </Texture>
 
                 <Texture parentKey="Divider2" atlas="dragonflight-weeklyrewards-divider">
-                    <Size y="3" />
+                    <Size y="4" />
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.TransparentDark" relativePoint="BOTTOMLEFT" x="-10" y="-2"/>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.TransparentDark" relativePoint="BOTTOMRIGHT" x="10" y="-2" />

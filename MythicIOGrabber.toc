@@ -12,6 +12,8 @@
 ## X-Curse-Project-ID: 916354
 ## X-Website: https://github.com/NintendoLink07/MythicIOGrabber
 
+Libs\libs.xml
+
 MythicIOGrabber.lua
 Settings.lua
 UtilFunctions.lua
@@ -21,6 +23,7 @@ UI.lua
 MultiStateButton.lua
 SlickDropDown.lua
 PVEFrame2.lua
+MythicPlusStatistics.lua
 
 Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua
@@ -70,5 +73,5 @@ XML\MIOG_ClassSpecSingleOptionTemplate.xml
 
 XML\MIOG_MPlusStatistics.xml
 XML\MIOG_MPlusStatisticsCharacterTemplate.xml
-XML\MIOG_MPlusStatisticsRowTemplate.xml
+XML\MIOG_MPlusStatisticsColumnTemplate.xml
 XML\MIOG_MPlusStatisticsDungeonTemplate.xml

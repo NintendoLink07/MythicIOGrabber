@@ -30,6 +30,21 @@ function SlickDropDown:SetText(text)
 	self.Selected.Name:SetText(text)
 end
 
+function SlickDropDown:SetListAnchorToTopleft()
+	self.List:ClearAllPoints()
+	self.List:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+end
+
+function SlickDropDown:SetListAnchorToTopright()
+	self.List:ClearAllPoints()
+	self.List:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT")
+end
+
+function SlickDropDown:SetListAnchorToTop()
+	self.List:ClearAllPoints()
+	self.List:SetPoint("TOP", self, "BOTTOM")
+end
+
 function SlickDropDown:ResetDropDown()
 	for widget in self.List.framePool:EnumerateActive() do
 		if(widget.List.framePool) then
@@ -335,17 +350,22 @@ function SlickDropDown:CreateEntryFrame(info)
 
 	if(infoTable.parentIndex) then
 		local parent = self.entryFrameTree[infoTable.parentIndex]
+
+		if(parent == nil) then
+			DevTools_Dump(infoTable)
+
+		end
 		tableIndex = #parent + 1
 		list = self.entryFrameTree[infoTable.parentIndex].List
 
-		parent.List.framePool = parent.List.framePool or CreateFramePool("Button", parent.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
-		parent.List.securePool = parent.List.securePool or CreateFramePool("Button", parent.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
+		list.framePool = list.framePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
+		list.securePool = list.securePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
 
 		if(infoTable.func) then
-			frame = parent.List.framePool:Acquire()
+			frame = list.framePool:Acquire()
 
 		else
-			frame = parent.List.securePool:Acquire()
+			frame = list.securePool:Acquire()
 
 		end
 
@@ -366,20 +386,20 @@ function SlickDropDown:CreateEntryFrame(info)
 		tableIndex = infoTable.index or #self.entryFrameTree + 1
 		list = self.List
 
-		frame = self.List.framePool:Acquire()
+		frame = list.framePool:Acquire()
 		frame.layoutIndex = tableIndex
 		self.entryFrameTree[tableIndex] = frame
 
-		self.List:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-		self.List:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-		self.List:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+		list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+		list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
+		list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
 		frame.Difficulty1:Hide()
 		frame.List.highestWidth = 0
 
 	end
 
-	if(self.List.ExpandButton and #self.List.ExpandButton > 0) then
-		table.insert(self.List.ExpandButton[#self.List.ExpandButton], frame)
+	if(list.ExpandButton and #list.ExpandButton > 0) then
+		table.insert(list.ExpandButton[#list.ExpandButton], frame)
 	end
 
 	frame.Name:SetText(infoTable.text)

@@ -285,11 +285,14 @@ end
 local function keepSignUpNote(self, resultID)
 	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
-	self.resultID = resultID
-	self.activityID = searchResultInfo.activityID
+	if(searchResultInfo) then
 
-	LFGListApplicationDialog_UpdateRoles(self)
-	StaticPopupSpecial_Show(self)
+		self.resultID = resultID
+		self.activityID = searchResultInfo.activityID
+
+		LFGListApplicationDialog_UpdateRoles(self)
+		StaticPopupSpecial_Show(self)
+	end
 end
 
 miog.checkForSavedSettings = function()
@@ -420,8 +423,8 @@ miog.loadSettings = function()
 							local info = UIDropDownMenu_CreateInfo()
 							info.func = function(_, arg1, _, _)
 								setting.value = arg1
-								miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
-								miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+								miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
+								miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
 								UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
 								CloseDropDownMenus()
 			
@@ -438,8 +441,8 @@ miog.loadSettings = function()
 						end
 					)
 					
-					miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
-					miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2])
+					miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
+					miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
 
 					lastOption = optionDropdown
 				end

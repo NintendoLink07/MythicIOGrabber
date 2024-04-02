@@ -464,7 +464,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			local info = {}
 			info.entryType = "arrow"
 			info.index = i + 10000
-			info.text = miog.APPLICATION_VIEWER_BACKGROUNDS[i + 2][1]
+			info.text = miog.APPLICATION_VIEWER_BACKGROUNDS[i + 1][1]
 			info.icon = expansionInfo and expansionInfo.logo
 
 			expansionTable[#expansionTable+1] = info
@@ -573,7 +573,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 		if(categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters ~= 1 and v.mapID and lastExpansion ~= miog.MAP_INFO[v.mapID].expansionLevel) then
 			local expansionInfo = GetExpansionDisplayInfo(miog.MAP_INFO[v.mapID].expansionLevel)
-			activityDropDown:CreateTextLine(currentIndex, nil, miog.APPLICATION_VIEWER_BACKGROUNDS[miog.MAP_INFO[v.mapID].expansionLevel + 2][1], expansionInfo and expansionInfo.logo, true)
+			activityDropDown:CreateTextLine(currentIndex, nil, miog.APPLICATION_VIEWER_BACKGROUNDS[miog.MAP_INFO[v.mapID].expansionLevel + 1][1], expansionInfo and expansionInfo.logo, true)
 			lastExpansion = miog.MAP_INFO[v.mapID].expansionLevel
 			offset = offset + 1
 			currentIndex = mplusOffset + offset + k
@@ -632,7 +632,8 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				end
 			end
 		else
-			LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, firstGroupID, activityDropDown:GetFrameAtLayoutIndex(1).value)
+			local firstFrame = activityDropDown:GetFrameAtLayoutIndex(1)
+			LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, firstGroupID, firstFrame and firstFrame.value or nil)
 
 		end
 	end
@@ -1026,19 +1027,19 @@ local function createApplicationViewer()
 
 		if(i == 1) then
 			currentCategory = "role"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 132, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.419, 0)
 
 		elseif(i == 2) then
 			currentCategory = "primary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 164, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.505, 0)
 
 		elseif(i == 3) then
 			currentCategory = "secondary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 203, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.612, 0)
 
 		elseif(i == 4) then
 			currentCategory = "ilvl"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", 243, 0)
+			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.724, 0)
 
 		end
 
@@ -1137,7 +1138,7 @@ local function createApplicationViewer()
 		function()
 			C_LFGList.RefreshApplicants()
 
-			miog.applicationViewer.applicantPanel:SetVerticalScroll(0)
+			miog.applicationViewer.FramePanel:SetVerticalScroll(0)
 		end
 	)
 
@@ -1304,9 +1305,9 @@ local function createSearchPanel()
 	signupButton:RegisterForClicks("LeftButtonDown")
 	signupButton:SetScript("OnClick", function(self)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		LFGListApplicationDialog_Show(LFGListApplicationDialog, miog.F.CURRENT_SEARCH_RESULT_ID)
+		LFGListApplicationDialog_Show(LFGListApplicationDialog, LFGListFrame.SearchPanel.selectedResult)
 
-		miog.signupToGroup(LFGListFrame.SearchPanel.resultID)
+		miog.groupSignup(LFGListFrame.SearchPanel.selectedResult)
 	end)
 
 	searchPanel.SignUpButton = signupButton
@@ -2178,6 +2179,8 @@ miog.createFrames = function()
 	miog.scriptReceiver:RegisterEvent("LFG_UPDATE")
 	miog.scriptReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
 	miog.scriptReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
+
+	--miog.scriptReceiver:RegisterEvent("KeystoneUpdate")
 
 	-- IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
 	--miog.scriptReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")

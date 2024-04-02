@@ -142,6 +142,10 @@
                     end
 
                     self.ParentDropDown.List:Hide()
+
+                    if(self.entryType == "option") then
+                        self.List:Hide()
+                    end
                 end
 
             </PostClick>

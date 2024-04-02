@@ -4,7 +4,7 @@
         <FontHeight val="13" />
     </Font>
 
-    <Frame name="MIOG_MPlusStatisticsRowTemplate" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_MPlusStatisticsColumnTemplate" inherits="BackdropTemplate" virtual="true">
         <KeyValues>
             <KeyValue key="leftPadding" value="3" type="number" />
         </KeyValues>
@@ -18,7 +18,7 @@
 
             <Layer level="BORDER">
                 <Texture parentKey="TransparentDark" setAllPoints="true">
-                    <Color r="0.1" g="0.1" b="0.1" a="0.15" />
+                    <Color r="0.1" g="0.1" b="0.1" a="0.4" />
                 </Texture>
             </Layer>
 

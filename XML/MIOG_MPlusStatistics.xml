@@ -6,27 +6,44 @@
 
     <Frame name="MIOG_MPlusStatistics" inherits="BackdropTemplate" virtual="true" toplevel="true">
         <Frames>
+            <Frame parentKey="KeystoneDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                <KeyValues>
+                    <KeyValue key="minimumWidth" value="135" type="number" />
+                    <KeyValue key="minimumHeight" value="25" type="number" />
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-3"/>
+                </Anchors>
+            </Frame>
+            
             <ScrollFrame parentKey="CharacterScrollFrame" inherits="BackdropTemplate, ScrollFrameTemplate">
                 <KeyValues>
                     <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                     <KeyValue key="scrollBarTopY" value="-70" type="number" />
+                    <KeyValue key="scrollBarX" value="-5" type="number" />
                 </KeyValues>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Keystone" relativePoint="TOPLEFT" y="-25"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 
                 <ScrollChild>
-                    <Frame parentKey="Columns" inherits="BackdropTemplate, VerticalLayoutFrame" setAllPoints="true">
+                    <Frame parentKey="Rows" inherits="BackdropTemplate, VerticalLayoutFrame" setAllPoints="true">
                     </Frame>
                 </ScrollChild>
             </ScrollFrame>
 
-            <Frame parentKey="DungeonRows" inherits="HorizontalLayoutFrame" frameStrata="LOW">
+            <Frame parentKey="DungeonColumns" inherits="HorizontalLayoutFrame" frameStrata="LOW">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="135" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="135" />
                 </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Selection" inherits="BackdropTemplate" frameStrata="HIGH">
+                        <Size x="50" />
+                    </Frame>
+                </Frames>
             </Frame>
         </Frames>
     </Frame>

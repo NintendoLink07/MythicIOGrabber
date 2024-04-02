@@ -4,11 +4,7 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_MenuButtonTemplate" inherits="BackdropTemplate" virtual="true">
-		<KeyValues>
-			<KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
-		</KeyValues>
-
+    <Button name="MIOG_MenuButtonTemplate" inherits="BackdropTemplate, UIButtonTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Title" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
@@ -22,8 +18,8 @@
             <Layer level="BACKGROUND">
                 <Texture parentKey="BackgroundImage">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="4"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                     </Anchors>
                 </Texture>
             </Layer>
@@ -33,7 +29,7 @@
             <Button parentKey="StartGroup">
                 <Size x="21" y="21" />
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="1"/>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5"/>
                 </Anchors>
 
                 <Layers>
@@ -53,7 +49,7 @@
                 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture atlas="talents-search-suggestion-magnifyingglass" setAllPoints="true">
+                        <Texture atlas="uitools-icon-search" setAllPoints="true">
 
                         </Texture>
                     </Layer>
@@ -61,13 +57,15 @@
             </Button>
         </Frames>
 
-        <Scripts>
-            <OnEnter>
-                self.BackgroundImage:SetDesaturated(true)
-            </OnEnter>
-            <OnLeave>
-                self.BackgroundImage:SetDesaturated(false)
-            </OnLeave>
-        </Scripts>
-    </Frame>
+        --UI-CharacterCreate-LargeButton-Yellow-Highlight   yellow round x+3-3 y+1-1
+        --communities-create-button-highlight               blue rounded x+5-5 y+1-1
+        --communitiesfinder_card_highlight                  blue
+        --groupfinder-highlightbar-green
+        --BattleBar-SwapPetFrame-Highlight                  yellow
+        --auctionhouse-nav-button-highlight
+        --auctionhouse-nav-button-secondary-highlight
+        --search-highlight
+        
+        <HighlightTexture atlas="communitiesfinder_card_highlight" />
+    </Button>
 </Ui>

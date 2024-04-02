@@ -16,8 +16,9 @@
                 </Anchors>
             </Frame>
 
+            
             <Frame parentKey="TitleBar">
-                <Size y="20" />
+                <Size y="23" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
@@ -48,7 +49,7 @@
                     <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
                         <Size x="20" y="20"/>
 						<Anchors>
-							<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+							<Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
 						</Anchors>
 						<Scripts>
 							<OnClick>
@@ -101,7 +102,7 @@
 
             <Frame parentKey="TabFramesPanel">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-1" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-5" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                 </Anchors>
 
@@ -109,23 +110,151 @@
                     <Frame parentKey="MainTab" setAllPoints="true">
                         <Frames>
                             <Frame parentKey="Keystone" inherits="BackdropTemplate">
-                                <KeyValues>
-                                    <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
-                                </KeyValues>
-                                <Size x="180" y="50" />
+                                <Size x="200" y="20" />
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                                 </Anchors>
 
                                 <Layers>
+                                    <Layer level="ARTWORK">
+                                        <Texture parentKey="Icon" atlas="Dungeon">
+                                            <Size x="20" y="20" />
+                                            <Anchors>
+                                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+
                                     <Layer level="OVERLAY">
-                                        <FontString parentKey="Text" setAllPoints="true" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE">
+                                        <FontString parentKey="Text" setAllPoints="true" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                             <FontHeight val="12" />
                                             <Color r="1" g="0" b="0" a="1" />
+                                            <Anchors>
+                                                <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
+                                            </Anchors>
                                         </FontString>
                                     </Layer>
                                 </Layers>
                             </Frame>
+
+                            <Frame parentKey="Awakened" inherits="BackdropTemplate">
+                                <Size x="200" y="20" />
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>
+                                </Anchors>
+
+                                <Layers>
+                                    <Layer level="ARTWORK">
+                                        <Texture parentKey="Icon" atlas="Raid">
+                                            <Size x="20" y="20" />
+                                            <Anchors>
+                                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+
+                                    <Layer level="OVERLAY">
+                                        <FontString parentKey="Text" setAllPoints="true" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                            <FontHeight val="12" />
+                                            <Color r="1" g="0" b="0" a="1" />
+                                            <Anchors>
+                                                <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                            </Frame>
+
+                            <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin">
+                                <BarTexture atlas="ui-castingbar-filling-standard" />
+                                <Size x="144" y="16" />
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Awakened" relativePoint="BOTTOMRIGHT" />
+                                </Anchors>
+
+                                <Layers>
+                                    <Layer level="BACKGROUND">
+                                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/dungeonrewardsbackground.png" setAllPoints="true" />
+                                    </Layer>
+
+                                    <Layer level="OVERLAY">
+                                        <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/8 Dungeons" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                            <FontHeight val="12" />
+                                            <Color r="1" g="0" b="0" a="1" />
+                                            <Anchors>
+                                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+
+                                <Scripts>
+                                    <OnMouseDown>
+                                        WeeklyRewards_ShowUI()
+                                    </OnMouseDown>
+                                </Scripts>
+                            </StatusBar>
+
+                            <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin">
+                                <BarTexture atlas="ui-castingbar-filling-standard" />
+                                <Size x="144" y="16" />
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.MPlusStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                </Anchors>
+
+                                <Layers>
+                                    <Layer level="BACKGROUND">
+                                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/raidrewardsbackground.png" setAllPoints="true" />
+                                    </Layer>
+
+                                    <Layer level="OVERLAY">
+                                        <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/7 Bosses" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">        
+                                            <FontHeight val="12" />
+                                            <Color r="1" g="0" b="0" a="1" />
+                                            <Anchors>
+                                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+
+                                <Scripts>
+                                    <OnMouseDown>
+                                        WeeklyRewards_ShowUI()
+                                    </OnMouseDown>
+                                </Scripts>
+                            </StatusBar>
+
+                            <StatusBar parentKey="HonorStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin">
+                                <BarTexture atlas="ui-castingbar-filling-standard" />
+                                <Size x="144" y="16" />
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.RaidStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                </Anchors>
+
+                                <Layers>
+                                    <Layer level="BACKGROUND">
+                                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/pvprewardsbackground.png" setAllPoints="true" />
+                                    </Layer>
+
+                                    <Layer level="OVERLAY">
+                                        <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/5000 Honor" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                            <FontHeight val="12" />
+                                            <Color r="1" g="0" b="0" a="1" />
+                                            <Anchors>
+                                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+
+                                <Scripts>
+                                    <OnMouseDown>
+                                        WeeklyRewards_ShowUI()
+
+                                    </OnMouseDown>
+                                </Scripts>
+                            </StatusBar>
 
                             <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true" frameStrata="HIGH">
                                 <Size x="370" y="380" />
@@ -144,7 +273,7 @@
                                         </Anchors>
 
                                         <Frames>
-                                            <Button parentKey="Back" inherits="UIPanelDynamicResizeButtonTemplate" text="Back">
+                                            <Button parentKey="Back" inherits="UIPanelDynamicResizeButtonTemplate" text="Main Menu">
                                                 <Size x="1" y="20" />
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
@@ -187,18 +316,17 @@
                             </Frame>
 
                             <Frame parentKey="QueueRolePanel">
-                                <Size x="190" y="30" />
+                                <Size x="188" y="30" />
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="TOPLEFT" />
                                 </Anchors>
 
                                 <Frames>
-
                                     <Frame parentKey="Leader">
                                         <Size x="40" y="20" />
 
                                         <Anchors>
-                                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="0"/>
+                                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5"/>
                                         </Anchors>
 
                                         <Frames>
@@ -322,7 +450,7 @@
                                     <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
                                 </KeyValues>
 
-                                <Size x="188" y="340" />
+                                <Size x="188" y="350" />
 
                                 <Anchors>
                                     <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
@@ -330,10 +458,6 @@
 
                                 <Frames>
                                     <Frame parentKey="Title" inherits="BackdropTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
-                                        </KeyValues>
-
                                         <Size y="20" />
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
@@ -350,22 +474,45 @@
                                             </Layer>
                                         </Layers>
                                     </Frame>
+                                </Frames>
 
+                                <Layers>
+                                    <Layer level="BACKGROUND">
+                                        <Texture parentKey="Background" horizTile="true" vertTile="true">
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
+                                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
+                                            </Anchors>
+                                            <Color r="0" g="0" b="0" a="0.7" />
+                                        </Texture>
+                                    </Layer>
+                                    <Layer level="BORDER">
+                                        <Texture parentKey="Divider" atlas="UI-LFG-DividerLine">
+                                            <Size y="4" />
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" />
+                                                <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT" />
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
+                                
+                                <Frames>
                                     <ScrollFrame parentKey="ScrollFrame" inherits="BackdropTemplate, ScrollFrameTemplate">
                                         <KeyValues>
                                             <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                                         </KeyValues>
 
                                         <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" x="4" />
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" x="4" y="-5"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="3"/>
                                         </Anchors>
 
                                         <ScrollChild>
                                             <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
                                                 <KeyValues>
                                                     <KeyValue key="align" value="top" />
-                                                    <KeyValue key="spacing" value="3" />
+                                                    <KeyValue key="spacing" value="0" />
                                                 </KeyValues>
                                             </Frame>
                                         </ScrollChild>
@@ -374,7 +521,7 @@
                             </Frame>
 
                             <Frame parentKey="CategoryPanel" inherits="BackdropTemplate">
-                                <Size x="188" y="300" />
+                                <Size x="185" y="300" />
 
                                 <Anchors>
                                     <Anchor point="BOTTOM" relativeKey="$parent" relativePoint="BOTTOM"/>
@@ -383,68 +530,6 @@
                                 <Frames>
                                 </Frames>
                             </Frame>
-
-                            <StatusBar parentKey="HonorStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin" orientation="VERTICAL" rotatesTexture="true">
-                                <Size x="24" y="192" />
-                                <Anchors>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-6" y="1" />
-                                </Anchors>
-                                <Scripts>
-                                    <OnLoad>
-                                        self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-
-                                    </OnLoad>
-                                    <OnMouseDown>
-                                        WeeklyRewards_ShowUI()
-
-                                    </OnMouseDown>
-                                </Scripts>
-                                <Layers>
-                                    <Layer level="BACKGROUND">
-                                        <Texture file="Interface/Addons/MythicIOGrabber/res/backgrounds/vertical/pvprewardsbackground_vertical.png" setAllPoints="true" />
-                                    </Layer>
-                                </Layers>
-                            </StatusBar>
-
-                            <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin"  orientation="VERTICAL" rotatesTexture="true">
-                                <Size x="24" y="192" />
-                                <Anchors>
-                                    <Anchor point="RIGHT" relativeKey="$parent.HonorStatus" relativePoint="LEFT" x="-5"/>
-                                </Anchors>
-                                <Scripts>
-                                    <OnLoad>
-                                        self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-                                    </OnLoad>
-                                    <OnMouseDown>
-                                        WeeklyRewards_ShowUI()
-                                    </OnMouseDown>
-                                </Scripts>
-                                <Layers>
-                                    <Layer level="BACKGROUND">
-                                        <Texture file="Interface/Addons/MythicIOGrabber/res/backgrounds/vertical/raidrewardsbackground_vertical.png" setAllPoints="true" />
-                                    </Layer>
-                                </Layers>
-                            </StatusBar>
-
-                            <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin"  orientation="VERTICAL" rotatesTexture="true">
-                                <Size x="24" y="192" />
-                                <Anchors>
-                                    <Anchor point="RIGHT" relativeKey="$parent.RaidStatus" relativePoint="LEFT" x="-5"/>
-                                </Anchors>
-                                <Scripts>
-                                    <OnLoad>
-                                        self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-                                    </OnLoad>
-                                    <OnMouseDown>
-                                        WeeklyRewards_ShowUI()
-                                    </OnMouseDown>
-                                </Scripts>
-                                <Layers>
-                                    <Layer level="BACKGROUND">
-                                        <Texture file="Interface/Addons/MythicIOGrabber/res/backgrounds/vertical/dungeonrewardsbackground_vertical.png" setAllPoints="true" />
-                                    </Layer>
-                                </Layers>
-                            </StatusBar>
                         </Frames>
                     </Frame>
 
@@ -488,7 +573,7 @@
 
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="1">
-                <Texture parentKey="Background" setAllPoints="true" horizTile="true" vertTile="true">
+                <Texture parentKey="Background" setAllPoints="true">
 
                 </Texture>
             </Layer>
