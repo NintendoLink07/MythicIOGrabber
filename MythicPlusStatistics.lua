@@ -133,14 +133,15 @@ miog.refreshKeystones = function()
 	
 				end
 	
-				miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.mapID], "TOPLEFT")
-				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.mapID].TransparentDark
+				--miog.MPlusStatistics.DungeonColumns.Selection:SetSize(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]:GetSize())
+				miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID], "TOPLEFT")
+				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID].TransparentDark
 				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
 	
 				if(unitID == "player") then
 					local playerGUID = UnitGUID("player")
 	
-					for k, v in pairs(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars) do
+					for _, v in pairs(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars) do
 						v.ScoreIncrease:Hide()
 	
 					end
@@ -182,8 +183,9 @@ miog.refreshKeystones = function()
 
 			end
 
-			miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.mapID], "TOPLEFT")
-			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.mapID].TransparentDark
+			miog.MPlusStatistics.DungeonColumns.Selection:SetSize(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]:GetSize())
+			miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID], "TOPLEFT")
+			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID].TransparentDark
 			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
 
 			local unitID = "PARTY1"

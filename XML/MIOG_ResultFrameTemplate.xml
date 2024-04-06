@@ -5,9 +5,6 @@
     </Font>
     
     <Frame name="MIOG_ResultFrameTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
-        <KeyValues>
-			<KeyValue key="minimumHeight" value="40" type="number"/>
-		</KeyValues>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background">
@@ -35,82 +32,61 @@
                 </Layers>
             </Frame>
 
-            <Frame parentKey="BasicInformationPanel">
-                <Size y="40" />
+            <Button parentKey="CancelApplication" inherits="IconButtonTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2" />
+                </Anchors>
+            </Button>
+
+            <Button parentKey="Invite" inherits="IconButtonTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.Decline" relativePoint="LEFT" x="-2"/>
+                </Anchors>
+            </Button>
+
+            <Frame parentKey="BasicInformation">
+                <Size y="20" />
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1"/>
                 </Anchors>
 
-                 <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="Icon" enableMouseClicks="true">
-                            <Size x="18" y="18" />
-
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2" />
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-
+                <Layers>
                     <Layer level="BORDER">
                         <Texture parentKey="IconBorder">
-                            <Size x="22" y="22" />
+                            <Size x="18" y="18" />
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPLEFT" x="-2" y="2" />
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
                             </Anchors>
                         </Texture>
                     </Layer>
-                </Layers>
 
-                <Frames>
-                    <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="TOP" relativeKey="$parent.Icon" relativePoint="BOTTOM" />
-                        </Anchors>
-                    </Button>
-
-                    <Button parentKey="CancelApplication" inherits="IconButtonTemplate" hidden="true">
-                        <KeyValues>
-                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
-                            <KeyValue key="iconSize" value="16" type="number" />
-                        </KeyValues>
-                        <Size x="16" y="16" />
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2" />
-                        </Anchors>
-                    </Button>
-
-                    <Button parentKey="Invite" inherits="IconButtonTemplate" hidden="true">
-                        <KeyValues>
-                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
-                            <KeyValue key="iconSize" value="16" type="number" />
-                        </KeyValues>
-                        <Size x="16" y="16" />
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.Decline" relativePoint="LEFT" x="-2"/>
-                        </Anchors>
-                    </Button>
-                </Frames>
-
-                <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
-                            <Size x="10" y="10" />
+                        <Texture parentKey="Icon" enableMouseClicks="true">
+                            <Size x="16" y="16" />
+
                             <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent.ExpandFrame" relativePoint="CENTER" x="7" />
+                                <Anchor point="TOPLEFT" relativeKey="$parent.IconBorder" relativePoint="TOPLEFT" x="1" y="-1" />
                             </Anchors>
                         </Texture>
+                    
                     </Layer>
-                </Layers>
-
-                <Layers>
+                    
                     <Layer level="OVERLAY">
                         <FontString parentKey="Title" font="LibMono" justifyH="LEFT">
                             <FontHeight val="11"/>
-                            <Size x="140" y="20"/>
+                            <Size x="150" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="5" />
                             </Anchors>
@@ -173,17 +149,51 @@
                         </Texture>
                         
                         <Texture parentKey="Divider" atlas="UI-LFG-DividerLine">
-                            <Size x="312" y="2" />
+                            <Size y="2" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT" x="0" y="1"/>
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                             </Anchors>
                         </Texture>
                     </Layer>
+                </Layers>
 
+
+            </Frame>
+
+            <Frame parentKey="CategoryInformation">
+                <Size y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Frames>
+                    <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
+                        </Anchors>
+                    </Button>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
+                            <Size x="10" y="10" />
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.ExpandFrame" relativePoint="CENTER" x="7" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Layers>
                     <Layer level="OVERLAY">
                         <FontString parentKey="DifficultyZone" font="LibMono" justifyH="LEFT">
                             <FontHeight val="11"/>
-                            <Size x="140" y="20"/>
+                            <Size x="150" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="5" />
                             </Anchors>
@@ -202,30 +212,45 @@
 
                 <Frames>
                     <Frame parentKey="MemberPanel" hidden="true">
-                        <Size x="100" y="16"/>
+                        <Size x="160" y="16"/>
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="5" y="1"/>
+                            <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="5"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="1" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="17" y="17" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                                </Anchors>
                             </Frame>
 
                             <Frame parentKey="2" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="17" y="17" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.1" relativePoint="RIGHT" x="13"/>
+                                </Anchors>
                             </Frame>
 
                             <Frame parentKey="3" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="17" y="17" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.2" relativePoint="RIGHT" x="13"/>
+                                </Anchors>
                             </Frame>
 
                             <Frame parentKey="4" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="17" y="17" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.3" relativePoint="RIGHT" x="13"/>
+                                </Anchors>
                             </Frame>
 
                             <Frame parentKey="5" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="17" y="17" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.4" relativePoint="RIGHT" x="13"/>
+                                </Anchors>
                             </Frame>
                         </Frames>
 
@@ -289,6 +314,29 @@
                             </Frame>
                         </Frames>
 
+                    </Frame>
+                </Frames>
+            </Frame>
+            
+            <Frame parentKey="RaidInformation" hidden="true">
+                <Size y="12" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryInformation" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.CategoryInformation" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="SmallMemberPanel" inherits="HorizontalLayoutFrame">
+                        <KeyValues>
+                            <KeyValue key="spacing" value="1" />
+                        </KeyValues>
+
+                        <Size y="12" />
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>

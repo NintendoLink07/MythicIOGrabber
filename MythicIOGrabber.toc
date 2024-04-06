@@ -13,6 +13,7 @@
 ## X-Website: https://github.com/NintendoLink07/MythicIOGrabber
 
 Libs\libs.xml
+RawBlizzardData.lua
 
 MythicIOGrabber.lua
 Settings.lua
@@ -29,6 +30,8 @@ Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua
 Blizzard_WeeklyRewardsMixin.lua
 
+XML\MIOG_MultiStateButtonTemplate.xml
+
 XML\MIOG_ApplicantMemberFrameTemplate.xml
 XML\MIOG_ResultFrameTemplate.xml
 XML\MIOG_DetailedInformationPanelTemplate.xml
@@ -37,6 +40,7 @@ XML\MIOG_DungeonRowTemplate.xml
 XML\MIOG_RaidRowTemplate.xml
 XML\MIOG_RaidBossFrameTemplate.xml
 XML\MIOG_GroupMemberTemplate.xml
+XML\MIOG_SmallGroupMemberTemplate.xml
 XML\MIOG_ResultFrameBossFrameTemplate.xml
 XML\MIOG_RaidPanelTemplate.xml
 XML\MIOG_RaidPanelTierTemplate.xml
@@ -58,11 +62,11 @@ XML\MIOG_FilterOption.xml
 XML\MIOG_FilterPanel.xml
 XML\MIOG_FilterOptionSpinnerTemplate.xml
 XML\MIOG_FilterOptionDualSpinnerTemplate.xml
+XML\MIOG_LastInvitesTemplate.xml
 
 XML\MIOG_ClassPanel.xml
 XML\MIOG_ClassPanelClassFrameTemplate.xml
 XML\MIOG_ClassPanelSpecFrameTemplate.xml
-XML\MIOG_LastInvitesTemplate.xml
 
 XML\MIOG_DropDownMenu.xml
 XML\MIOG_DropDownMenuEntry.xml

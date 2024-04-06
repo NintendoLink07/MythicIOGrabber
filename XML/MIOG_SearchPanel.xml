@@ -78,6 +78,29 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25" />
                 </Anchors>
+
+                <Frames>
+                    <Button parentKey="PrimarySort" inherits="MIOG_MultiStateButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="186"/>
+                        </Anchors>
+                    </Button>
+
+                    <Button parentKey="SecondarySort" inherits="MIOG_MultiStateButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.PrimarySort" relativePoint="RIGHT" x="20"/>
+                        </Anchors>
+                    </Button>
+
+                    <Button parentKey="AgeSort" inherits="MIOG_MultiStateButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.SecondarySort" relativePoint="RIGHT" x="37"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
             </Frame>
 
             <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate">

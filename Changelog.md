@@ -46,6 +46,9 @@ You can click on the frame of a manual application to switch over to the group f
 
 ### Fixed
 
+- Way better memory management, lower end hardware will feel this the most, before the addon would use easily 150-200mb if you were listing your own group and looking through the group finder at the same time.
+While there is still some stuff to fix (e.g. if you only use the search panel for multiple hours straight without any /reloads memory usage will get to ~150mb usage) it's way better than before
+
 - You can (once again) switch to the options panel from the settings gear in the top right.
 
 - Added all the initial spec id's (when you haven't chosen a spec you still have a spec id for the game to function correctly). No more weird errors because of unknown specs.

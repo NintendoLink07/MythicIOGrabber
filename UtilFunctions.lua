@@ -169,42 +169,6 @@ miog.checkForActiveFilters = function(filterPanel)
 	return filtersActive
 end
 
-miog.retrieveBackgroundImageFromActivityID = function(activityID)
-	local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-
-	if(activityInfo) then
-		if(activityInfo.groupFinderActivityGroupID and activityInfo.groupFinderActivityGroupID ~= 0) then
-			return miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].file
-
-		else
-			return miog.MAP_INFO[miog.ACTIVITY_ID_INFO[activityID][9]] and miog.MAP_INFO[miog.ACTIVITY_ID_INFO[activityID][9]].horizontal or miog.ACTIVITY_BACKGROUNDS[1]
-
-		end
-	end
-end
-
-miog.retrieveBackgroundImageFromGroupActivityID = function(groupActivityID, type)
-	local groupActivity = miog.GROUP_ACTIVITY[groupActivityID]
-
-	if(groupActivity) then
-		if(type == "background" and string.find(groupActivity.file, "horizontal") or type == "icon" and miog.MAP_INFO[groupActivity.mapID]) then
-			return type == "background" and miog.GROUP_ACTIVITY[groupActivityID].file or type == "icon" and miog.MAP_INFO[groupActivity.mapID].icon
-
-		elseif(type == "background" and miog.MAP_INFO[groupActivity.mapID] and miog.MAP_INFO[groupActivity.mapID].horizontal) then
-			return miog.MAP_INFO[groupActivity.mapID].horizontal
-
-		else
-			local journalID = C_EncounterJournal.GetInstanceForGameMap(miog.GROUP_ACTIVITY[groupActivityID].mapID)
-			local _, _, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, _ = EJ_GetInstanceInfo(journalID)
-
-			return type == "background" and loreImage or type == "icon" and buttonImage2
-
-		end
-	end
-
-	return nil
-end
-
 miog.retrieveMapIDFromGFID = function(groupFinderID)
 	for k, v in pairs(miog.MAP_INFO) do
 		if(v.gfID == groupFinderID) then
@@ -213,40 +177,57 @@ miog.retrieveMapIDFromGFID = function(groupFinderID)
 	end
 end
 
-miog.setUpMPlusStatistics = function()
-	for k, v in pairs(miog.SEASONAL_DUNGEONS) do
-		if(miog.F.CURRENT_SEASON == k) then
-			for x, y in pairs(v) do
-				if(miog.MPlusStatistics.DungeonColumns.Dungeons[y] == nil) then
-					local dungeonColumn = CreateFrame("Frame", nil, miog.MPlusStatistics.DungeonColumns, "MIOG_MPlusStatisticsColumnTemplate")
-					dungeonColumn:SetHeight(miog.MPlusStatistics:GetHeight())
-					dungeonColumn.layoutIndex = x
-
-					miog.createFrameBorder(dungeonColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-
-					local texture = miog.MAP_INFO[miog.ACTIVITY_ID_INFO[y][9]].vertical
-					dungeonColumn.Background:SetTexture(texture)
-
-					local activityInfo = C_LFGList.GetActivityInfoTable(y)
-					dungeonColumn.ShortName:SetText(miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].shortName)
-
-					miog.MPlusStatistics.DungeonColumns.Dungeons[miog.ACTIVITY_ID_INFO[y][9]] = dungeonColumn
-				end
-			end
+miog.retrieveMapIDFromChallengeModeMap = function(challengeID)
+	for k, v in pairs(miog.CHALLENGE_MODE) do
+		if(v[2] == challengeID) then
+			return v[3]
 		end
 	end
+end
+
+miog.retrieveShortNameFromChallengeModeMap = function(challengeID)
+	for k, v in pairs(miog.GROUP_ACTIVITY) do
+		if(v.challengeModeID == challengeID) then
+			return v.shortName
+		end
+	end
+end
+
+miog.setUpMPlusStatistics = function()
+	--for k, v in pairs(miog.SEASONAL_DUNGEONS) do
+		--if(miog.F.CURRENT_SEASON == k) then
+			--for x, y in pairs(v) do
+			for index, challengeMap in pairs(C_ChallengeMode.GetMapTable()) do
+				if(miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMap] == nil) then
+					local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeMap)
+					local mapInfo = miog.MAP_INFO[mapID]
+
+					local dungeonColumn = CreateFrame("Frame", nil, miog.MPlusStatistics.DungeonColumns, "MIOG_MPlusStatisticsColumnTemplate")
+					dungeonColumn:SetHeight(miog.MPlusStatistics:GetHeight())
+					dungeonColumn.layoutIndex = index
+
+					miog.createFrameBorder(dungeonColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+					dungeonColumn.Background:SetTexture(mapInfo.vertical)
+
+					local shortName = miog.retrieveShortNameFromChallengeModeMap(challengeMap)
+					dungeonColumn.ShortName:SetText(shortName)
+
+					miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMap] = dungeonColumn
+				end
+			end
+		--end
+	--end
 
 	local selectionFrame = miog.MPlusStatistics.DungeonColumns.Selection
 	selectionFrame:SetHeight(miog.MPlusStatistics:GetHeight())
-	miog.createFrameBorder(selectionFrame, 2, CreateColorFromHexString(miog.CLRSCC.gray):GetRGBA())
+	miog.createFrameBorder(selectionFrame, 1, CreateColorFromHexString(miog.CLRSCC.silver):GetRGBA())
 
 	miog.MPlusStatistics.DungeonColumns:MarkDirty()
 end
 
 miog.fillMPlusCharacter = function(playerGUID, orderedActivityIDTable)
 	local characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
-
-	print(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name)
 
 	for x, y in pairs(orderedActivityIDTable) do
 		local dungeonFrame
@@ -258,8 +239,8 @@ miog.fillMPlusCharacter = function(playerGUID, orderedActivityIDTable)
 			characterFrame[y] = dungeonFrame
 
 		else
-
 			dungeonFrame = characterFrame[y]
+
 		end
 
 		local activityInfo = C_LFGList.GetActivityInfoTable(y)
@@ -267,13 +248,11 @@ miog.fillMPlusCharacter = function(playerGUID, orderedActivityIDTable)
 
 		local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID)
 
-		DevTools_Dump(affixScores)
+		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[mapID] = playerGUID == UnitGUID("player") and affixScores and affixScores[1] or {}
+		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[mapID] = playerGUID == UnitGUID("player") and affixScores and affixScores[2] or {}
 
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[mapID] = affixScores and (miog.F.WEEKLY_AFFIX == 9 and affixScores[2] or affixScores[1]) or {}
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[mapID] = affixScores and (miog.F.WEEKLY_AFFIX == 9 and affixScores[1] or affixScores[2]) or {}
-
-		local thisWeek = miog.F.WEEKLY_AFFIX == 9 and MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[mapID] or MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[mapID]
-		local lastWeek = miog.F.WEEKLY_AFFIX == 9 and MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[mapID] or MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[mapID]
+		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][mapID]
+		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][mapID]
 
 		dungeonFrame.Level1:SetText(thisWeek.level or 0)
 		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek.level == 0 or thisWeek.level) == nil and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
@@ -308,9 +287,9 @@ miog.loadSavedMPlusDataForCharacter = function(playerGUID, orderedActivityIDTabl
 
 			local activityInfo = C_LFGList.GetActivityInfoTable(y)
 			local mapID = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].challengeModeID
-
-			local thisWeek = miog.F.WEEKLY_AFFIX == 9 and MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[mapID] or MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[mapID]
-			local lastWeek = miog.F.WEEKLY_AFFIX == 9 and MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[mapID] or MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[mapID]
+			
+			local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][mapID]
+			local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][mapID]
 
 			dungeonFrame.Level1:SetText(thisWeek.level or 0)
 			dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek.level == 0 or thisWeek.level) == nil and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
@@ -405,19 +384,8 @@ miog.gatherMPlusStatistics = function()
 end
 
 miog.checkIfDungeonIsInCurrentSeason = function(activityID)
-	--[[if(miog.ACTIVITY_ID_INFO[activityID] and miog.ACTIVITY_ID_INFO[activityID].mPlusSeasons) then
-		for _, seasonID in ipairs(miog.ACTIVITY_ID_INFO[activityID].mPlusSeasons) do
-			if(seasonID == miog.F.CURRENT_SEASON) then
-				return true
-
-			end
-		end
-
-		return false
-	end]]
-
 	for k, v in ipairs(miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) do
-		if(miog.ACTIVITY_ID_INFO[activityID] == v) then
+		if(miog.ACTIVITY_INFO[activityID] == v) then
 			return true
 		end
 

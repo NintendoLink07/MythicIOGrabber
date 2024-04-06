@@ -342,7 +342,109 @@ local function updateDungeonCheckboxes()
 	end
 end
 
+local function updateRaidCheckboxes()
+	local filterPanel = miog.pveFrame2.SidePanel.Container.FilterPanel
+	local sortedExpansionRaids = {}
+
+	if(miog.F.CURRENT_SEASON and miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) then
+		for _, v in ipairs(miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) do
+			local activityInfo = C_LFGList.GetActivityInfoTable(v)
+			sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {activityID = v, name = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].shortName}
+
+		end
+
+		table.sort(sortedSeasonDungeons, function(k1, k2)
+			return k1.name < k2.name
+		end)
+
+		for k, activityEntry in ipairs(sortedSeasonDungeons) do
+			local checked = MIOG_SavedSettings and MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID]
+			local currentButton = filterPanel.Panel.FilterOptions.DungeonPanel.Buttons[k]
+			currentButton:SetChecked(checked)
+
+			currentButton:HookScript("OnClick", function(self)
+				MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID] = self:GetChecked()
+
+				if(MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons) then
+					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+						miog.checkSearchResultListForEligibleMembers()
+			
+					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+						C_LFGList.RefreshApplicants()
+			
+					end
+				end
+
+			end)
+			
+			currentButton.FontString:SetText(activityEntry.name)
+		end
+
+		miog.F.ADDED_DUNGEON_FILTERS = true
+	end
+end
+
 miog.updateDungeonCheckboxes = updateDungeonCheckboxes
+
+local function addRaidCheckboxes()
+	local filterPanel = miog.pveFrame2.SidePanel.Container.FilterPanel
+	
+	local raidPanel = miog.createBasicFrame("persistent", "BackdropTemplate", miog.searchPanel.PanelFilters, miog.searchPanel.PanelFilters:GetWidth(), miog.C.INTERFACE_OPTION_BUTTON_SIZE * 3)
+	raidPanel.Buttons = {}
+
+	filterPanel.Panel.FilterOptions.RaidPanel = raidPanel
+
+	local raidPanelFirstRow = miog.createBasicFrame("persistent", "BackdropTemplate", raidPanel, raidPanel:GetWidth(), raidPanel:GetHeight() / 2)
+	raidPanelFirstRow:SetPoint("TOPLEFT", raidPanel, "TOPLEFT")
+
+	local raidPanelSecondRow = miog.createBasicFrame("persistent", "BackdropTemplate", raidPanel, raidPanel:GetWidth(), raidPanel:GetHeight() / 2)
+	raidPanelSecondRow:SetPoint("BOTTOMLEFT", raidPanel, "BOTTOMLEFT")
+
+	local counter = 0
+
+	--for _, activityEntry in ipairs(sortedSeasonDungeons) do
+	for i = 1, 3, 1 do
+		local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", raidPanel, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+		optionButton:SetPoint("LEFT", counter < 4 and raidPanelFirstRow or counter > 3 and raidPanelSecondRow, "LEFT", counter < 4 and counter * 57 or (counter - 4) * 57, 0)
+		optionButton:SetNormalAtlas("checkbox-minimal")
+		optionButton:SetPushedAtlas("checkbox-minimal")
+		optionButton:SetCheckedTexture("checkmark-minimal")
+		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+		optionButton:RegisterForClicks("LeftButtonDown")
+		--[[optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons[activityEntry.activityID])
+		optionButton:HookScript("OnClick", function()
+			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
+
+			if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons) then
+				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+					miog.checkSearchResultListForEligibleMembers()
+		
+				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+					C_LFGList.RefreshApplicants()
+		
+				end
+			end
+
+		end)]]
+	
+		raidPanel.Buttons[i] = optionButton
+		--filterPanel.Panel.FilterOptions[activityEntry.activityID] = optionButton
+	
+		local optionString = miog.createBasicFontString("persistent", 12, raidPanel)
+		optionString:SetPoint("LEFT", optionButton, "RIGHT")
+		--optionString:SetText(activityEntry.name)
+
+		--dungeonPanel.Buttons[activityEntry.activityID] = optionButton
+
+		optionButton.FontString = optionString
+
+		counter = counter + 1
+	end
+
+	return raidPanel
+end
+
+miog.addRaidCheckboxes = addRaidCheckboxes
 
 local function addDungeonCheckboxes()
 	local filterPanel = miog.pveFrame2.SidePanel.Container.FilterPanel
@@ -385,7 +487,7 @@ local function addDungeonCheckboxes()
 
 		end)]]
 	
-		filterPanel.Panel.FilterOptions.DungeonPanel.Buttons[i] = optionButton
+		dungeonPanel.Buttons[i] = optionButton
 		--filterPanel.Panel.FilterOptions[activityEntry.activityID] = optionButton
 	
 		local optionString = miog.createBasicFontString("persistent", 12, dungeonPanel)
@@ -1311,7 +1413,7 @@ end
 miog.updateRaidFinder = updateRaidFinder
 
 local function findBattlegroundIconByName(mapName)
-	for bgID, bgEntry in pairs(miog.BATTLEGROUNDS) do
+	for bgID, bgEntry in pairs(miog.RAW["BattlemasterList"]) do
 		if(bgEntry[2] == mapName) then
 			return bgEntry[16] ~= 0 and bgEntry[16] or 525915
 		end
@@ -1321,7 +1423,7 @@ local function findBattlegroundIconByName(mapName)
 end
 
 local function findBattlegroundIconByID(mapID)
-	for bgID, bgEntry in pairs(miog.BATTLEGROUNDS) do
+	for bgID, bgEntry in pairs(miog.RAW["BattlemasterList"]) do
 		if(bgEntry[1] == mapID) then
 			return bgEntry[16] ~= 0 and bgEntry[16] or 525915
 		end
@@ -1331,7 +1433,7 @@ local function findBattlegroundIconByID(mapID)
 end
 
 local function findBrawlIconByName(mapName)
-	for brawlID, brawlEntry in pairs(miog.BRAWL) do
+	for brawlID, brawlEntry in pairs(miog.RAW["PvpBrawl"]) do
 		if(brawlEntry[2] == mapName) then
 			return findBattlegroundIconByID(brawlEntry[4])
 		end
@@ -1341,7 +1443,7 @@ local function findBrawlIconByName(mapName)
 end
 
 local function findBrawlIconByID(mapID)
-	for brawlID, brawlEntry in pairs(miog.BRAWL) do
+	for brawlID, brawlEntry in pairs(miog.RAW["PvpBrawl"]) do
 		if(brawlEntry[1] == mapID) then
 			return findBattlegroundIconByID(brawlEntry[4])
 		end
@@ -1915,8 +2017,7 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 			[12] = -1,
 			[17] = {"duration", activeEntryInfo.duration},
 			[18] = "YOURLISTING",
-			[20] = miog.MAP_INFO[miog.ACTIVITY_ID_INFO[activeEntryInfo.activityID][9]] and miog.MAP_INFO[miog.ACTIVITY_ID_INFO[activeEntryInfo.activityID][9]].icon
-				or miog.ACTIVITY_ID_INFO[activeEntryInfo.activityID].icon or miog.retrieveBackgroundImageFromGroupActivityID(activityInfo.groupFinderActivityGroupID, "icon") or nil,
+			[20] = miog.ACTIVITY_INFO[activeEntryInfo.activityID].icon or nil,
 			[21] = -2
 		}
 

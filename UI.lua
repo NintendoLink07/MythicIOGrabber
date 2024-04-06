@@ -267,8 +267,8 @@ local function setUpEntryCreation()
 	difficultyDropDown:SelectFirstFrameWithValue(self.selectedActivity)
 	playstyleDropDown:SelectFirstFrameWithValue(self.selectedPlaystyle)
 
-	if(miog.MAP_INFO[miog.ACTIVITY_ID_INFO[self.selectedActivity][9]]) then
-		frame.Background:SetTexture(miog.MAP_INFO[miog.ACTIVITY_ID_INFO[self.selectedActivity][9]].horizontal)
+	if(miog.ACTIVITY_INFO[self.selectedActivity]) then
+		frame.Background:SetTexture(miog.ACTIVITY_INFO[self.selectedActivity].horizontal)
 
 	else
 		frame.Background:SetTexture(nil)
@@ -285,7 +285,6 @@ local function setUpEntryCreation()
 		miog.entryCreation.ItemLevel:SetText(entryInfo.requiredItemLevel)
 		miog.entryCreation.Rating:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating or "")
 
-	
 	end
 
 end
@@ -340,8 +339,8 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
 				
 			end
-			info.icon = miog.ACTIVITY_ID_INFO[activityID].icon
-			info.mapID = miog.ACTIVITY_ID_INFO[activityID][9]
+			info.icon = miog.ACTIVITY_INFO[activityID].icon
+			info.mapID = miog.ACTIVITY_INFO[activityID].mapID
 
 			if(info.sort == "mplus") then
 				mythicPlusTable[#mythicPlusTable+1] = info
@@ -374,8 +373,8 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 							
 						end
 
-						info.icon = miog.MAP_INFO[miog.ACTIVITY_ID_INFO[activityID][9]].icon or miog.ACTIVITY_ID_INFO[activityID].icon
-						info.mapID = miog.ACTIVITY_ID_INFO[activityID][9]
+						info.icon = miog.ACTIVITY_INFO[activityID].icon
+						info.mapID = miog.ACTIVITY_INFO[activityID].mapID
 
 						lfgTable[#lfgTable+1] = info
 		
@@ -387,7 +386,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
 
 				for activityIndex, activityID in ipairs(activities) do
-					if(miog.MAP_INFO[miog.ACTIVITY_ID_INFO[activityID][9]]) then
+					if(miog.ACTIVITY_INFO[activityID]) then
 						local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 						local info = {}
 
@@ -401,12 +400,12 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 							
 						end
 
-						info.mapID = miog.ACTIVITY_ID_INFO[activityID][9]
-						info.icon = miog.ACTIVITY_ID_INFO[activityID].icon
+						info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+						info.icon = miog.ACTIVITY_INFO[activityID].icon
 
 						lfgTable[#lfgTable+1] = info
 					else
-						print("MIOG: NO DATA FOR", miog.ACTIVITY_ID_INFO[activityID][9], C_LFGList.GetActivityFullName(activityID))
+						print("MIOG: NO DATA FOR", miog.ACTIVITY_INFO[activityID].mapID, C_LFGList.GetActivityFullName(activityID))
 					
 					end
 				end
@@ -468,7 +467,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			info.icon = expansionInfo and expansionInfo.logo
 
 			expansionTable[#expansionTable+1] = info
-			--local expansionFrame = activityDropDown:CreateEntryFrame(info)
 
 			local groups = C_LFGList.GetAvailableActivityGroups(categoryID)
 
@@ -476,41 +474,37 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				local activities = C_LFGList.GetAvailableActivities(categoryID, v)
 				local activityID = activities[#activities]
 
-				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-				
-				local mapID = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID
-
-				if(mapID) then
-					if(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel == i) then
-						info = {}
-						info.icon = miog.MAP_INFO[mapID].icon
-
-						info.parentIndex = i + 10000
-						info.entryType = "option"
-						info.mapID = mapID
-						--info.index = k
-						info.text = C_LFGList.GetActivityGroupInfo(v)
-						info.value = activityID
-						info.func = function()
-							LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
-							
-						end
-
-						allDungeonsTable[#allDungeonsTable+1] = info
-						--local entryFrame = activityDropDown:CreateEntryFrame(info)
-					else
-						--print("EXP LEVEL WRONG FOR ", C_LFGList.GetActivityGroupInfo(v), miog.MAP_INFO[mapID].expansionLevel, i)
-					end
-				else
-					print("NO MAP ID FOR ", activityInfo.groupFinderActivityGroupID, C_LFGList.GetActivityGroupInfo(v))
-				
+				if(activityID == 1208) then
+					print(miog.ACTIVITY_INFO[activityID].fullName)
 				end
+
+				if(miog.ACTIVITY_INFO[activityID].expansionLevel == i) then
+					info = {}
+					info.icon = miog.ACTIVITY_INFO[activityID].icon
+
+					info.parentIndex = i + 10000
+					info.entryType = "option"
+					info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+					--info.index = k
+					info.text = C_LFGList.GetActivityGroupInfo(v)
+					info.value = activityID
+					info.func = function()
+						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+						
+					end
+
+					allDungeonsTable[#allDungeonsTable+1] = info
+					--local entryFrame = activityDropDown:CreateEntryFrame(info)
+				else
+					--print("EXP LEVEL WRONG FOR ", C_LFGList.GetActivityGroupInfo(v), miog.MAP_INFO[mapID].expansionLevel, i)
+				end
+				
 			end
 			
 			local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
 
 			for activityIndex, activityID in ipairs(activities) do
-				local mapID = miog.ACTIVITY_ID_INFO[activityID][9]
+				local mapID = miog.ACTIVITY_INFO[activityID].mapID
 				if(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel == i) then
 					local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 					info = {}
@@ -523,7 +517,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
 						
 					end
-					info.icon = miog.ACTIVITY_ID_INFO[activityID].icon
+					info.icon = miog.ACTIVITY_INFO[activityID].icon
 
 					allDungeonsTable[#allDungeonsTable+1] = info
 				end
@@ -1365,20 +1359,10 @@ local function createSearchPanel()
 
 	searchPanel.ButtonPanel.sortByCategoryButtons = {}
 
-	local firstButton = 199
-
 	for i = 1, 3, 1 do
-		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", searchPanel.ButtonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
-		sortByCategoryButton:OnLoad()
-		sortByCategoryButton:SetTexturesForBaseState("hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
-		sortByCategoryButton:SetTexturesForState1("hud-MainMenuBar-arrowdown-up", "hud-MainMenuBar-arrowdown-down", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
-		sortByCategoryButton:SetTexturesForState2("hud-MainMenuBar-arrowup-up", "hud-MainMenuBar-arrowup-down", "hud-MainMenuBar-arrowup-highlight", "hud-MainMenuBar-arrowup-disabled")
-		sortByCategoryButton:SetStateName(0, "None")
-		sortByCategoryButton:SetStateName(1, "Descending")
-		sortByCategoryButton:SetStateName(2, "Ascending")
-		sortByCategoryButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-		sortByCategoryButton:SetState(false)
-		sortByCategoryButton:SetMouseMotionEnabled(true)
+		local sortByCategoryButton = searchPanel.ButtonPanel[i == 1 and "PrimarySort" or i == 2 and "SecondarySort" or "AgeSort"]
+		local currentCategory = i == 1 and "primary" or i == 2 and "secondary" or "age"
+		
 		sortByCategoryButton:SetScript("OnEnter", function()
 			GameTooltip:SetOwner(sortByCategoryButton, "ANCHOR_CURSOR")
 			GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
@@ -1395,22 +1379,6 @@ local function createSearchPanel()
 		sortByCategoryButtonString:SetPoint("BOTTOMLEFT", sortByCategoryButton, "BOTTOMLEFT")
 
 		sortByCategoryButton.FontString = sortByCategoryButtonString
-
-		local currentCategory = ""
-
-		if(i == 1) then
-			currentCategory = "primary"
-			sortByCategoryButton:SetPoint("LEFT", searchPanel.ButtonPanel, "LEFT", firstButton, 0)
-
-		elseif(i == 2) then
-			currentCategory = "secondary"
-			sortByCategoryButton:SetPoint("LEFT", searchPanel.ButtonPanel, "LEFT", firstButton + 40, 0)
-
-		elseif(i == 3) then
-			currentCategory = "age"
-			sortByCategoryButton:SetPoint("LEFT", searchPanel.ButtonPanel, "LEFT", firstButton + 93, 0)
-
-		end
 
 		sortByCategoryButton:SetScript("OnClick", function(_, button)
 			local activeState = sortByCategoryButton:GetActiveState()
@@ -1442,7 +1410,7 @@ local function createSearchPanel()
 					for k, v in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
 						if(type(v) == "table" and v.currentLayer == 2) then
 							v.currentLayer = 1
-							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
+							searchPanel.ButtonPanel.sortByCategoryButtons[k].FontString:SetText(1)
 							MIOG_SavedSettings.sortMethods_SearchPanel.table[k].currentLayer = 1
 						end
 					end
@@ -1461,7 +1429,6 @@ local function createSearchPanel()
 					end
 				end
 
-				miog.checkSearchResultListForEligibleMembers()
 			elseif(button == "RightButton") then
 				if(activeState == 1 or activeState == 2) then
 
@@ -1475,7 +1442,7 @@ local function createSearchPanel()
 					for k, v in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
 						if(type(v) == "table" and v.currentLayer == 2) then
 							v.currentLayer = 1
-							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
+							searchPanel.ButtonPanel.sortByCategoryButtons[k].FontString:SetText(1)
 							MIOG_SavedSettings.sortMethods_SearchPanel.table[k].currentLayer = 1
 						end
 					end
@@ -1493,10 +1460,10 @@ local function createSearchPanel()
 							GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
 						end
 					end
-
-					miog.checkSearchResultListForEligibleMembers()
 				end
 			end
+
+			miog.checkSearchResultListForEligibleMembers()
 		end)
 
 		searchPanel.ButtonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
@@ -1533,78 +1500,6 @@ local function createSearchPanel()
 	end)
 	miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton = dropdownOptionButton
 
-	--[===[dropdownOptionButton:RegisterForClicks("LeftButtonDown")
-	--[[dropdownOptionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
-	LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
-	(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] or false)]]
-	dropdownOptionButton:HookScript("OnClick", function(self)
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[
-			LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
-			LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
-			(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] = self:GetChecked()
-
-			if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-				miog.checkSearchResultListForEligibleMembers()
-	
-			elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-				C_LFGList.RefreshApplicants()
-	
-			end
-	end)
-
-	miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton = dropdownOptionButton
-	
-
-	local function fillDropdown(optionDropdown, level, menuList)
-		local info = UIDropDownMenu_CreateInfo()
-		local currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
-		
-		if(currentCategoryTableValue) then
-			local difficultyID = MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue]
-			local currentCategoryDescription = miog.DIFFICULTY_ID_INFO[difficultyID].name
-
-			UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
-
-		end
-
-		info.func = function(_, arg1, _, _)
-			currentCategoryTableValue = LFGListFrame.SearchPanel.categoryID == 2 and "dungeonDifficultyID" or LFGListFrame.SearchPanel.categoryID == 3 and "raidDifficultyID" or (LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "bracketID" or nil
-			
-			if(currentCategoryTableValue) then
-				MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue] = arg1
-
-				local difficultyID = MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentCategoryTableValue]
-				local currentCategoryDescription = miog.DIFFICULTY_ID_INFO[difficultyID].name
-				
-				if(dropdownOptionButton:GetChecked()) then
-					miog.checkSearchResultListForEligibleMembers()
-
-				end
-
-				UIDropDownMenu_SetText(optionDropdown, currentCategoryDescription)
-
-				CloseDropDownMenus()
-			end
-		end
-
-		for k, v in ipairs(LFGListFrame.SearchPanel.categoryID == 3 and miog.RAID_DIFFICULTIES or miog.DUNGEON_DIFFICULTIES) do
-			info.text = miog.DIFFICULTY_ID_INFO[v].name
-			info.arg1 = v
-			UIDropDownMenu_AddButton(info)
-
-		end
-
-	end
-
-	local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", searchPanelExtraFilter)
-	optionDropdown:SetPoint("LEFT", dropdownOptionButton, "RIGHT", -15, 0)
-	optionDropdown.initialize = fillDropdown
-	UIDropDownMenu_SetWidth(optionDropdown, 175)
-
-	miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown = optionDropdown
-
-	]===]
-
 	local optionDropDown = Mixin(CreateFrame("Frame", nil, searchPanelExtraFilter, "MIOG_DropDownMenu"), SlickDropDown)
 	optionDropDown:OnLoad()
 	optionDropDown.minimumWidth = searchPanelExtraFilter:GetWidth() - dropdownOptionButton:GetWidth() - 3
@@ -1634,6 +1529,14 @@ local function createSearchPanel()
 
 	local dungeonPanel = miog.addDungeonCheckboxes()
 	dungeonPanel:SetPoint("TOPLEFT", dungeonOptionsButton, "BOTTOMLEFT", 0, 0)
+	dungeonPanel.OptionsButton = dungeonOptionsButton
+
+	local raidOptionsButton = miog.addOptionToFilterFrame(searchPanelExtraFilter, nil, "Raid options", "filterForRaids")
+	raidOptionsButton:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 0, 0)
+
+	local raidPanel = miog.addRaidCheckboxes()
+	raidPanel:SetPoint("TOPLEFT", raidOptionsButton, "BOTTOMLEFT", 0, 0)
+	raidPanel.OptionsButton = raidOptionsButton
 
 end
 
@@ -1848,7 +1751,7 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 
 	local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 	local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
-	local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].mapID or 0
+	local mapID = miog.ACTIVITY_INFO[searchResultData.activityID] and miog.ACTIVITY_INFO[searchResultData.activityID].mapID or 0
 	local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 
 	currentFrame:SetScript("OnEnter", function()
@@ -1886,16 +1789,17 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 		EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
 
 	end)
-	local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and
-	(activityInfo.isPvpActivity and miog.BRACKETS[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors
-	or miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].miogColors) or {r = 1, g = 1, b = 1}
+	local color = miog.ACTIVITY_INFO[searchResultData.activityID] and
+	(activityInfo.isPvpActivity and miog.BRACKETS[miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID].miogColors
+	or miog.DIFFICULTY[miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID].miogColors) or {r = 1, g = 1, b = 1}
 	currentFrame.iconFrame.border:SetColorTexture(color.r, color.g, color.b, 1)
 
 	currentFrame.titleFrame:SetText(searchResultData.name)
 	currentFrame.friendFrame:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
 
-	currentFrame.difficultyZoneFrame:SetText(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY[miog.ACTIVITY_ID_INFO[searchResultData.activityID].difficultyID].shortName .. " - " ..
-	(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].shortName) or activityInfo.fullName)
+	currentFrame.difficultyZoneFrame:SetText(
+		(miog.ACTIVITY_INFO[searchResultData.activityID] and miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID].shortName .. " - " or "") ..
+		(miog.ACTIVITY_INFO[searchResultData.activityID].shortName or activityInfo.fullName))
 
 	currentFrame.primaryIndicator:SetText(nil)
 	currentFrame.secondaryIndicator:SetText(nil)
@@ -2225,6 +2129,22 @@ miog.createFrames = function()
 				updateFilterDifficulties()
 				miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Enable()
 				miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Enable()
+
+				if(LFGListFrame.SearchPanel.categoryID == 2) then
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Show()
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel.OptionsButton:Show()
+
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel:Hide()
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel.OptionsButton:Hide()
+					
+				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Hide()
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel.OptionsButton:Hide()
+
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel:Show()
+					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel.OptionsButton:Show()
+
+				end
 	
 			else
 				--miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Hide()

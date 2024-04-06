@@ -235,9 +235,9 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	end
 	
 	local detailedInformationPanel = miog.createFleetingFrame(poolFrame.framePool, "MIOG_DetailedInformationPanelTemplate", listFrame)
-	detailedInformationPanel:SetPoint("TOPLEFT", listFrame.BasicInformationPanel, "BOTTOMLEFT")
-	detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.BasicInformationPanel, "BOTTOMRIGHT")
-	detailedInformationPanel:SetShown(listFrame.BasicInformationPanel.ExpandFrame:GetActiveState() > 0 and true or false)
+	detailedInformationPanel:SetPoint("TOPLEFT", listFrame.RaidInformation or listFrame.BasicInformationPanel, "BOTTOMLEFT")
+	detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.RaidInformation or listFrame.BasicInformationPanel, "BOTTOMRIGHT")
+	detailedInformationPanel:SetShown((listFrame.BasicInformationPanel or listFrame.CategoryInformation).ExpandFrame:GetActiveState() > 0 and true or false)
 	listFrame.DetailedInformationPanel = detailedInformationPanel
 
 	local tabPanel = detailedInformationPanel.TabPanel
@@ -379,7 +379,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 	end
 
 	local profile, mythicKeystoneProfile, raidProfile
-	local BasicInformationPanel = memberFrame.BasicInformationPanel
+	local BasicInformationPanel = memberFrame.BasicInformationPanel or memberFrame.BasicInformation
 	local detailedInformationPanel = memberFrame.DetailedInformationPanel
 	local primaryIndicator = BasicInformationPanel.Primary
 	local secondaryIndicator = BasicInformationPanel.Secondary
@@ -1769,7 +1769,7 @@ local function insertLFGInfo(activityID)
 		miog.applicationViewer.CreationSettings.Affixes:Hide()
 	end
 	
-	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.retrieveBackgroundImageFromActivityID(entryInfo.activityID) or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
+	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityID].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
 	miog.applicationViewer.TitleBar.FontString:SetText(entryInfo.name)
 	miog.applicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
@@ -1972,7 +1972,7 @@ local function isGroupEligible(resultID, bordermode)
 	local isRaid = activityInfo.categoryID == 3
 
 	if(not isPvp) then
-		if(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID][10] ~= (retrieveIDForDropdownFiltering(activityInfo.categoryID))
+		if(miog.ACTIVITY_INFO[searchResultData.activityID] and miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID ~= (retrieveIDForDropdownFiltering(activityInfo.categoryID))
 		and (
 			isDungeon and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForDungeonDifficulty
 			or isRaid and MIOG_SavedSettings.searchPanel_FilterOptions.table.filterForRaidDifficulty
@@ -2167,8 +2167,8 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 
 	if(resultFrame and newStatus) then
 		if(newStatus ~= "none") then
-			if(resultFrame.BasicInformationPanel.Age.ageTicker) then
-				resultFrame.BasicInformationPanel.Age.ageTicker:Cancel()
+			if(resultFrame.BasicInformation.Age.ageTicker) then
+				resultFrame.BasicInformation.Age.ageTicker:Cancel()
 			end
 
 			if(newStatus ~= "applied") then
@@ -2178,8 +2178,8 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 				resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 				if(oldStatus and (newStatus == "declined" or newStatus == "declined_full" or newStatus == "declined_delisted" or newStatus == "timedout")) then
-					resultFrame.BasicInformationPanel.Age.ageTicker = nil
-					resultFrame.BasicInformationPanel.CancelApplication:Hide()
+					resultFrame.BasicInformation.Age.ageTicker = nil
+					resultFrame.CancelApplication:Hide()
 
 					local searchResultData = C_LFGList.GetSearchResultInfo(resultID)
 					
@@ -2193,15 +2193,15 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 				elseif(newStatus == "invitedeclined") then
 
 				elseif(newStatus == "invited") then
-					resultFrame.BasicInformationPanel.CancelApplication:Hide()
+					resultFrame.CancelApplication:Hide()
 
 				end
 
 			elseif(newStatus == "applied") then
 				local ageNumber = 0
-				local ageFrame = resultFrame.BasicInformationPanel.Age
+				local ageFrame = resultFrame.BasicInformation.Age
 				
-				resultFrame.BasicInformationPanel.CancelApplication:Show()
+				resultFrame.CancelApplication:Show()
 
 				local _, _, _, appDuration = C_LFGList.GetApplicationInfo(resultID)
 				ageNumber = appDuration or 0
@@ -2213,7 +2213,7 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 					ageFrame:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
 
 				end)
-				resultFrame.BasicInformationPanel.CancelApplication:Show()
+				resultFrame.CancelApplication:Show()
 
 				setResultFrameColors(resultID)
 
@@ -2225,7 +2225,7 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 		else
 			resultFrame.StatusFrame:Hide()
 
-			local ageFrame = resultFrame.BasicInformationPanel.Age
+			local ageFrame = resultFrame.BasicInformation.Age
 			if(ageFrame.ageTicker) then
 				ageFrame.ageTicker:Cancel()
 			end
@@ -2467,8 +2467,7 @@ local function updatePersistentResultFrame(resultID)
 			local searchResultData = searchResultSystem.searchResultData[resultID]
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultData.activityID)
 			local currentFrame = searchResultSystem.persistentFrames[resultID]
-			local BasicInformationPanel = currentFrame.BasicInformationPanel
-			local mapID = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID][9] or 0
+			local mapID = miog.ACTIVITY_INFO[searchResultData.activityID] and miog.ACTIVITY_INFO[searchResultData.activityID].mapID
 			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 			local declineData = searchResultData.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultData.activityID .. searchResultData.leaderName]
 			
@@ -2483,28 +2482,29 @@ local function updatePersistentResultFrame(resultID)
 
 			currentFrame.StatusFrame:Hide()
 
-			currentFrame.BasicInformationPanel.Icon:SetTexture(miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID].icon or nil)
-			currentFrame.BasicInformationPanel.Icon:SetScript("OnMouseDown", function()
+			currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultData.activityID] and miog.ACTIVITY_INFO[searchResultData.activityID].icon or nil)
+			currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
 
 				--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
 				EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
 
 			end)
 
-			local color = miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_ID_INFO[searchResultData.activityID][10]] or {r = 1, g = 1, b = 1}
+			local color = miog.ACTIVITY_INFO[searchResultData.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID] or {r = 1, g = 1, b = 1}
 
-			currentFrame.BasicInformationPanel.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
+			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 			
 			if(searchPanel_ExpandedFrameList[searchResultData.searchResultID]) then
-				BasicInformationPanel.ExpandFrame:AdvanceState()
+				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
 		
 			end
 	
-			BasicInformationPanel.ExpandFrame:SetScript("OnClick", function()
+			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function()
 				if(currentFrame.DetailedInformationPanel) then
-					BasicInformationPanel.ExpandFrame:AdvanceState()
+					currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
 					searchPanel_ExpandedFrameList[searchResultData.searchResultID] = not currentFrame.DetailedInformationPanel:IsVisible()
 					currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
+					currentFrame.RaidInformation:SetShown(not currentFrame.RaidInformation:IsVisible())
 					currentFrame:MarkDirty()
 		
 				end
@@ -2531,12 +2531,12 @@ local function updatePersistentResultFrame(resultID)
 			end
 			
 
-			BasicInformationPanel.Title:SetText(wticc(searchResultData.name, titleZoneColor))
-			BasicInformationPanel.Comment:SetShown(searchResultData.comment ~= "" and searchResultData.comment ~= nil and true or false)
-			BasicInformationPanel.Friend:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
+			currentFrame.BasicInformation.Title:SetText(wticc(searchResultData.name, titleZoneColor))
+			currentFrame.CategoryInformation.Comment:SetShown(searchResultData.comment ~= "" and searchResultData.comment ~= nil and true or false)
+			currentFrame.BasicInformation.Friend:SetShown((searchResultData.numBNetFriends > 0 or searchResultData.numCharFriends > 0 or searchResultData.numGuildMates > 0) and true or false)
 
-			BasicInformationPanel.CancelApplication:Hide()
-			BasicInformationPanel.CancelApplication:SetScript("OnClick", function(self, button)
+			currentFrame.CancelApplication:Hide()
+			currentFrame.CancelApplication:SetScript("OnClick", function(self, button)
 				if(button == "LeftButton") then
 					local _, appStatus = C_LFGList.GetApplicationInfo(searchResultData.searchResultID)
 
@@ -2547,18 +2547,21 @@ local function updatePersistentResultFrame(resultID)
 					end
 				end
 			end)
+
+			local difficultyID = miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID
+			local difficultyName = miog.ACTIVITY_INFO[searchResultData.activityID] and miog.ACTIVITY_INFO[searchResultData.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
+			local questType = searchResultData.questID and miog.RAW["QuestInfo"][C_QuestLog.GetQuestType(searchResultData.questID)][1]
+			local shortName = miog.ACTIVITY_INFO[searchResultData.activityID] and miog.ACTIVITY_INFO[searchResultData.activityID].shortName
+
+			local difficultyZoneText = difficultyID and difficultyName or questType or nil
 			
-			BasicInformationPanel.DifficultyZone:SetText(
-				wticc(
-					miog.MAP_INFO[mapID] and miog.ACTIVITY_ID_INFO[searchResultData.activityID] and miog.DIFFICULTY_ID_INFO[miog.ACTIVITY_ID_INFO[searchResultData.activityID][10]].shortName .. " - " ..
-					miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].shortName or miog.MAP_INFO[mapID].shortName or activityInfo.fullName,
-				titleZoneColor)
+			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor)
 			)
 
-			local primaryIndicator = currentFrame.BasicInformationPanel.Primary
+			local primaryIndicator = currentFrame.BasicInformation.Primary
 			primaryIndicator:SetText(nil)
 
-			local secondaryIndicator = currentFrame.BasicInformationPanel.Secondary
+			local secondaryIndicator = currentFrame.BasicInformation.Secondary
 			secondaryIndicator:SetText(nil)
 
 			currentFrame.DetailedInformationPanel.MythicPlusPanel.rows[1].FontString:SetText(nil)
@@ -2638,17 +2641,19 @@ local function updatePersistentResultFrame(resultID)
 				if(role) then
 					roleCount[role] = roleCount[role] + 1
 
+				else
+					orderedList[i].role = "DAMAGER"
 				end
 			end
 
-			local memberPanel = BasicInformationPanel.MemberPanel
-			local bossPanel = BasicInformationPanel.BossPanel
+			local memberPanel = currentFrame.CategoryInformation.MemberPanel
+			local bossPanel = currentFrame.CategoryInformation.BossPanel
 
 			if(appCategory == 3 or appCategory == 9) then
 				memberPanel:Hide()
 
-				BasicInformationPanel.RoleComposition:Show()
-				BasicInformationPanel.RoleComposition:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
+				currentFrame.CategoryInformation.RoleComposition:Show()
+				currentFrame.CategoryInformation.RoleComposition:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 
 				if(miog.MAP_INFO[mapID]) then
 					bossPanel:Show()
@@ -2681,9 +2686,42 @@ local function updatePersistentResultFrame(resultID)
 				
 				end
 
+				table.sort(orderedList, function(k1, k2)
+					if(k1.role ~= k2.role) then
+						return k1.role > k2.role
+
+					elseif(k1.spec ~= k2.spec) then
+						return k1.spec > k2.spec
+
+					else
+						return k1.class > k2.class
+
+					end
+
+				end)
+
+				for i = 1, 30, 1 do
+					local groupMemberFrame = currentFrame.RaidInformation.SmallMemberPanel.SpecFrames[i]
+
+					if(i <= searchResultData.numMembers) then
+						groupMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
+						groupMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
+						groupMemberFrame:Show()
+
+					else
+						groupMemberFrame:Hide()
+					
+					end
+					
+				end
+
+				currentFrame.RaidInformation.SmallMemberPanel:MarkDirty()
+
 			elseif(appCategory ~= 0) then
+
+				currentFrame.RaidInformation:Hide()
 				-- BRACKET 1 == 3v3, 0 == 2v2
-				BasicInformationPanel.RoleComposition:Hide()
+				currentFrame.CategoryInformation.RoleComposition:Hide()
 				bossPanel:Hide()
 
 				local groupLimit = (appCategory == 4 or appCategory == 7) and (searchResultData.leaderPvpRatingInfo.bracket == 0 and 2 or searchResultData.leaderPvpRatingInfo.bracket == 1 and 3 or 5) or 5
@@ -2787,37 +2825,43 @@ local function createPersistentResultFrame(resultID)
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_GroupMemberTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
 	searchResultSystem.persistentFrames[resultID] = persistentFrame
 
 	persistentFrame.StatusFrame:SetFrameStrata("FULLSCREEN")
 
-	local BasicInformationPanel = persistentFrame.BasicInformationPanel
+	local CategoryInformation = persistentFrame.CategoryInformation
 
-	local expandFrameButton = BasicInformationPanel.ExpandFrame
+	local expandFrameButton = CategoryInformation.ExpandFrame
 	expandFrameButton:OnLoad()
 	expandFrameButton:SetMaxStates(2)
 	expandFrameButton:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
 	expandFrameButton:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
 	expandFrameButton:SetState(false)
 
-	BasicInformationPanel.CancelApplication:OnLoad()
+	persistentFrame.CancelApplication:OnLoad()
 
-	for i = 1, 5, 1 do
-		local resultMemberFrame = BasicInformationPanel.MemberPanel[tostring(i)]
-		resultMemberFrame:SetPoint("LEFT", i == 1 and BasicInformationPanel.MemberPanel or BasicInformationPanel.MemberPanel[tostring(i-1)], BasicInformationPanel.MemberPanel[tostring(i-1)] and "RIGHT" or "LEFT", 14, 0)
-
-	end
-
-	BasicInformationPanel.BossPanel.bossFrames = {}
+	CategoryInformation.BossPanel.bossFrames = {}
 
 	for i = 1, miog.F.MOST_BOSSES, 1 do
-		local resultBossFrame = BasicInformationPanel.BossPanel[tostring(i)]
-		resultBossFrame:SetPoint("RIGHT", i == 1 and BasicInformationPanel.BossPanel or BasicInformationPanel.BossPanel[tostring(i-1)], i == 1 and "RIGHT" or "LEFT", -2, 0)
+		local resultBossFrame = CategoryInformation.BossPanel[tostring(i)]
+		resultBossFrame:SetPoint("RIGHT", i == 1 and CategoryInformation.BossPanel or CategoryInformation.BossPanel[tostring(i-1)], i == 1 and "RIGHT" or "LEFT", -2, 0)
 
 	end
 
-	BasicInformationPanel.BossPanel:MarkDirty()
+	persistentFrame.RaidInformation.SmallMemberPanel.SpecFrames = {}
+
+	for i = 1, 30, 1 do
+		local groupMemberFrame = persistentFrame.framePool:Acquire("MIOG_SmallGroupMemberTemplate")
+		groupMemberFrame:SetParent(persistentFrame.RaidInformation.SmallMemberPanel)
+		groupMemberFrame.layoutIndex = i
+
+		persistentFrame.RaidInformation.SmallMemberPanel.SpecFrames[i] = groupMemberFrame
+	end
+
+	CategoryInformation.BossPanel:MarkDirty()
 
 	createDetailedInformationPanel(persistentFrame)
 end
@@ -3264,8 +3308,8 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 		updateRosterInfoData()
-		
-		miog.updatePvP()
+
+		miog.updateQueueDropDown()
 
 	elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
 		local guid = UnitGUID(...)
@@ -3524,8 +3568,7 @@ miog.OnEvent = function(_, event, ...)
 		
 	elseif(event == "PVP_BRAWL_INFO_UPDATED") then
 		print("BRAWL LIST")
-		--miog.updateQueueDropDown()
-		miog.updatePvP()
+		miog.updateQueueDropDown()
 
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 
