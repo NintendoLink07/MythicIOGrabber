@@ -918,73 +918,6 @@ miog.SEASONAL_DUNGEONS = {
 	[12] = {1160, 1164, 1168, 1172, 1176, 1180, 1184, 1188},
 }
 
-miog.CHALLENGE_MODE = {
-	{"Temple of the Jade Serpent",2,960,2,4,21775,1800,1440,1080},
-	{"Stormstout Brewery",56,961,2,0,21783,2700,1260,720},
-	{"Gate of the Setting Sun",57,962,2,0,21776,2700,1320,780},
-	{"Shado-Pan Monastery",58,959,2,0,21781,3600,2100,1260},
-	{"Siege of Niuzao Temple",59,1011,2,0,21782,3000,1800,1050},
-	{"Mogu'shan Palace",60,994,2,0,21777,2700,1440,720},
-	{"Scholomance",76,1007,2,0,21780,3300,1980,1140},
-	{"Scarlet Halls",77,1001,2,0,21778,2700,1320,780},
-	{"Scarlet Monastery",78,1004,2,0,21779,2700,1320,780},
-	{"Skyreach",161,1209,2,0,21789,3400,1700,1020},
-	{"Bloodmaul Slag Mines",163,1175,2,0,21785,3600,2100,1320},
-	{"Auchindoun",164,1182,2,0,21784,3300,1920,1140},
-	{"Shadowmoon Burial Grounds",165,1176,2,5,21788,1980,1584,1188},
-	{"Grimrail Depot",166,1208,2,5,21786,1800,1440,1080},
-	{"Upper Blackrock Spire",167,1358,2,0,21791,5100,2580,1500},
-	{"The Everbloom",168,1279,2,5,21790,1980,1584,1188},
-	{"Iron Docks",169,1195,2,5,21787,1800,1440,1080},
-	{"Eye of Azshara",197,1456,6,0,21796,2100,1680,1260},
-	{"Darkheart Thicket",198,1466,6,0,21795,1800,1440,1080},
-	{"Black Rook Hold",199,1501,6,0,21793,2160,1728,1296},
-	{"Halls of Valor",200,1477,6,0,21797,2280,1824,1368},
-	{"Neltharion's Lair",206,1458,6,6,21799,1980,1584,1188},
-	{"Vault of the Wardens",207,1493,6,0,21800,1980,1584,1188},
-	{"Maw of Souls",208,1492,6,0,21798,1440,1152,864},
-	{"The Arcway",209,1516,6,0,21792,2700,2160,1620},
-	{"Court of Stars",210,1571,6,0,21794,1800,1440,1080},
-	{"Return to Karazhan: Lower",227,1651,6,0,21801,2520,2016,1512},
-	{"Cathedral of Eternal Night",233,1677,6,0,21803,2100,1680,1260},
-	{"Return to Karazhan: Upper",234,1651,2,0,21802,2100,1680,1260},
-	{"Seat of the Triumvirate",239,1753,6,0,21804,2100,1680,1260},
-	{"Atal'Dazar",244,1763,4,7,21805,1800,1440,1080},
-	{"Freehold",245,1754,4,7,21806,1800,1440,1080},
-	{"Tol Dagor",246,1771,0,7,21812,2160,1728,1296},
-	{"The MOTHERLODE!!",247,1594,0,7,21814,2340,1872,1404},
-	{"Waycrest Manor",248,1862,0,7,21809,2220,1776,1332},
-	{"Kings' Rest",249,1762,0,7,21813,2520,2016,1512},
-	{"Temple of Sethraliss",250,1877,0,7,21808,2160,1728,1296},
-	{"The Underrot",251,1841,0,7,21807,1800,1440,1080},
-	{"Shrine of the Storm",252,1864,0,7,21810,2520,2016,1512},
-	{"Siege of Boralus",353,1822,0,7,21811,2160,1728,1296},
-	{"Operation: Mechagon - Junkyard",369,2097,4,7,21815,2280,1824,1368},
-	{"Operation: Mechagon - Workshop",370,2097,0,7,21816,1920,1536,1152},
-	{"Mists of Tirna Scithe",375,2290,0,8,21820,1800,1440,1080},
-	{"The Necrotic Wake",376,2286,0,8,21818,2160,1728,1296},
-	{"De Other Side",377,2291,0,8,21824,2580,2064,1548},
-	{"Halls of Atonement",378,2287,0,8,21821,1920,1536,1152},
-	{"Plaguefall",379,2289,0,8,21819,2280,1824,1368},
-	{"Sanguine Depths",380,2284,0,8,21825,2460,1968,1476},
-	{"Spires of Ascension",381,2285,0,8,21822,2340,1872,1404},
-	{"Theater of Pain",382,2293,0,8,21823,2280,1824,1368},
-	{"Tazavesh: Streets of Wonder",391,2441,0,8,21826,2340,1872,1404},
-	{"Tazavesh: So'leah's Gambit",392,2441,0,8,21827,1800,1440,1080},
-	{"Ruby Life Pools",399,2521,0,9,22268,1800,1440,1080},
-	{"The Nokhud Offensive",400,2516,0,9,22270,2400,1920,1440},
-	{"The Azure Vault",401,2515,0,9,22271,2190,1764,1338},
-	{"Algeth'ar Academy",402,2526,0,9,22274,1920,1536,1152},
-	{"Uldaman: Legacy of Tyr",403,2451,0,9,22267,2100,1680,1260},
-	{"Neltharus",404,2519,0,9,22269,1980,1584,1188},
-	{"Brackenhide Hollow",405,2520,0,9,22272,2100,1680,1260},
-	{"Halls of Infusion",406,2527,0,9,22273,2100,1680,1260},
-	{"The Vortex Pinnacle",438,657,0,9,23327,1800,1440,1080},
-	{"Throne of the Tides",456,643,0,9,24627,2040,1632,1224},
-	{"Dawn of the Infinite: Galakrond's Fall",463,2579,0,8,24972,2040,1632,1224},
-	{"Dawn of the Infinite: Murozond's Rise",464,2579,0,9,24973,2160,1728,1296},
-}
-
 for _, v in pairs(miog.SEASONAL_DUNGEONS) do
 	table.sort(v, function(k1, k2)
 		local info1 = C_LFGList.GetActivityFullName(k1)
@@ -994,93 +927,118 @@ for _, v in pairs(miog.SEASONAL_DUNGEONS) do
 	end)
 end
 
--- [1501] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookhold", fileName = "blackrookhold"}, Map
---[272] = {mapID = 2441, file = miog.C.STANDARD_FILE_PATH .. "tazaveshtheveiledmarket"}, GroupFinderActivityGrp
---{"Temple of the Jade Serpent",2,960,2,4,21775,1800,1440,1080}, MapChallengeMode
+miog.ENCOUNTER_INFO = {
 
--- [21] = {"Bloodmaul Slag Mines (Normal)","Normal",2,1,6,99,0,0,1175,1,0,5,1,0,0}, GroupFinderActivity
+}
 
-for k, v in pairs(miog.RAW["Map"]) do
-	if(miog.MAP_INFO[v[1]]) then
-		local mapInfo = miog.MAP_INFO[v[1]]
-		mapInfo.instanceType = v[5]
-		mapInfo.expansionLevel = v[6]
-		mapInfo.loadingScreenID = v[8]
+local function loadRawData()
+	for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
+		if(v[6] == 0) then
+			miog.ENCOUNTER_INFO[v[3]] = {name = v[1], id = v[2], creatureDisplayInfoID = v[4], icon = v[5]}
+	
+		end
+	
+	end
 
-		local journalID = C_EncounterJournal.GetInstanceForGameMap(v[1])
+	for k, v in pairs(miog.RAW["Map"]) do
+		if(miog.MAP_INFO[v[1]]) then
+			local mapInfo = miog.MAP_INFO[v[1]]
+			mapInfo.name = v[3]
+			mapInfo.instanceType = v[5]
+			mapInfo.expansionLevel = v[6]
+			mapInfo.loadingScreenID = v[8]
+	
+			local journalID = C_EncounterJournal.GetInstanceForGameMap(v[1])
 
-		mapInfo.bosses = {}
+			if(journalID) then
+				EJ_SelectInstance(journalID)
+			else
+				print(mapInfo.name, "has no journal ID data?")
+			end
 
-		for i = 1, 20, 1 do
-			local name = EJ_GetEncounterInfoByIndex(i, journalID)
+			mapInfo.bosses = {}
+	
+			local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalID)
+	
+			for i = 1, 20, 1 do
+				local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfoByIndex(i, journalID)
 
-			if(name) then
-				mapInfo.bosses[i] = {name = name}
+				if(name == "Molten Core") then
+					print(i, bossName, mapInfo.bosses[i])
+
+				end
+	
+				if(bossName) then
+					mapInfo.bosses[i] = miog.ENCOUNTER_INFO[journalEncounterID]
+					
+				end
+			end
+		
+			if(mapInfo.fileName) then
+				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. mapInfo.fileName .. ".png"
+				mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. mapInfo.fileName .. ".png"
+			
+			end
+	
+			mapInfo.background = loreImage
+			mapInfo.icon = button2
+		end
+	end
+	
+	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
+		miog.ACTIVITY_INFO[k] = {
+			fullName = v[1],
+			difficultyName = v[2],
+			categoryID = v[3],
+	
+			groupFinderActivityID = v[5],
+	
+			mapID = v[9],
+			difficultyID = v[10],
+	
+			maxPlayers = v[12],
+		}
+	
+		
+		if(miog.MAP_INFO[v[9]]) then
+			miog.ACTIVITY_INFO[k].instanceType = miog.MAP_INFO[v[9]].instanceType
+			miog.ACTIVITY_INFO[k].expansionLevel = miog.MAP_INFO[v[9]].expansionLevel
+			miog.ACTIVITY_INFO[k].bosses = miog.MAP_INFO[v[9]].bosses
+			miog.ACTIVITY_INFO[k].fileName = miog.MAP_INFO[v[9]].fileName
+			miog.ACTIVITY_INFO[k].horizontal = miog.MAP_INFO[v[9]].horizontal
+			miog.ACTIVITY_INFO[k].vertical = miog.MAP_INFO[v[9]].vertical
+			miog.ACTIVITY_INFO[k].background = miog.MAP_INFO[v[9]].background
+			miog.ACTIVITY_INFO[k].icon = miog.MAP_INFO[v[9]].icon
+			miog.ACTIVITY_INFO[k].shortName = miog.GROUP_ACTIVITY[v[5]] and miog.GROUP_ACTIVITY[v[5]].shortName or miog.MAP_INFO[v[9]].shortName
+		end
+	
+	end
+	
+	for k, v in pairs(miog.ACTIVITY_INFO) do
+		for x, y in pairs(miog.RAW["GroupFinderActivityGrp"]) do
+			if(y[1] == v.groupFinderActivityID) then
+				v.groupFinderActivityName = y[2] or C_LFGList.GetActivityGroupInfo(y[1])
 			end
 		end
-
-		local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalID)
+	end
 	
-		if(mapInfo.fileName) then
-			mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. mapInfo.fileName .. ".png"
-			mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. mapInfo.fileName .. ".png"
-		
-		end
-
-		mapInfo.background = loreImage
-		mapInfo.icon = button2
-	end
-end
-
-for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
-	miog.ACTIVITY_INFO[k] = {
-		fullName = v[1],
-		difficultyName = v[2],
-		categoryID = v[3],
-
-		groupFinderActivityID = v[5],
-
-		mapID = v[9],
-		difficultyID = v[10],
-
-		maxPlayers = v[12],
-	}
-
+	for k, v in pairs(miog.ACTIVITY_INFO) do
+		for x, y in pairs(miog.RAW["MapChallengeMode"]) do
+			if(y[3] == v.mapID) then
+				v.challengeModeID = y[2]
 	
-	if(miog.MAP_INFO[v[9]]) then
-		miog.ACTIVITY_INFO[k].instanceType = miog.MAP_INFO[v[9]].instanceType
-		miog.ACTIVITY_INFO[k].expansionLevel = miog.MAP_INFO[v[9]].expansionLevel
-		miog.ACTIVITY_INFO[k].bosses = miog.MAP_INFO[v[9]].bosses
-		miog.ACTIVITY_INFO[k].fileName = miog.MAP_INFO[v[9]].fileName
-		miog.ACTIVITY_INFO[k].horizontal = miog.MAP_INFO[v[9]].horizontal
-		miog.ACTIVITY_INFO[k].vertical = miog.MAP_INFO[v[9]].vertical
-		miog.ACTIVITY_INFO[k].background = miog.MAP_INFO[v[9]].background
-		miog.ACTIVITY_INFO[k].icon = miog.MAP_INFO[v[9]].icon
-		miog.ACTIVITY_INFO[k].shortName = miog.GROUP_ACTIVITY[v[5]] and miog.GROUP_ACTIVITY[v[5]].shortName or miog.MAP_INFO[v[9]].shortName
-	end
-
-end
-
-for k, v in pairs(miog.ACTIVITY_INFO) do
-	for x, y in pairs(miog.RAW["GroupFinderActivityGrp"]) do
-		if(y[1] == v.groupFinderActivityID) then
-			v.groupFinderActivityName = y[2] or C_LFGList.GetActivityGroupInfo(y[1])
+			end
 		end
 	end
-end
-
-for k, v in pairs(miog.ACTIVITY_INFO) do
-	for x, y in pairs(miog.RAW["MapChallengeMode"]) do
-		if(y[3] == v.mapID) then
-			v.challengeModeID = y[2]
-
-		end
+	
+	for _, value in pairs(miog.MAP_INFO) do
+		miog.F.MOST_BOSSES = #value > miog.F.MOST_BOSSES and #value or miog.F.MOST_BOSSES
 	end
 end
 
-for _, value in pairs(miog.MAP_INFO) do
-	miog.F.MOST_BOSSES = #value > miog.F.MOST_BOSSES and #value or miog.F.MOST_BOSSES
-end
+miog.loadRawData = loadRawData
+
+loadRawData()
 
 miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
 	[1] = { --CURRENT TIER

@@ -25,6 +25,7 @@ MultiStateButton.lua
 SlickDropDown.lua
 PVEFrame2.lua
 MythicPlusStatistics.lua
+EditDistance.lua
 
 Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua

@@ -342,6 +342,8 @@ local function updateDungeonCheckboxes()
 	end
 end
 
+-- IMPLEMENT BOSS LIST FOR LEGACY RAIDS
+
 local function updateRaidCheckboxes()
 	local filterPanel = miog.pveFrame2.SidePanel.Container.FilterPanel
 	local sortedExpansionRaids = {}
@@ -798,6 +800,7 @@ local function addRolePanel(parent)
 end
 
 local function createPVEFrameReplacement()
+
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", WorldFrame, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
 	pveFrame2.SidePanel:SetHeight(pveFrame2:GetHeight() * 1.45)
@@ -1090,6 +1093,11 @@ local function createPVEFrameReplacement()
 		miog.MPlusStatistics.KeystoneDropdown:SetText("Party keystones")
 		miog.refreshKeystones()
 	end)
+
+	local texture = WorldFrame:CreateTexture("test", "OVERLAY")
+	texture:SetSize(50, 50)
+	texture:SetPoint("TOPLEFT")
+	texture:Show()
 
 	local frame = miog.MainTab
 	local filterPanel = pveFrame2.SidePanel.Container.FilterPanel

@@ -295,18 +295,37 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	local activityDropDown = miog.entryCreation.ActivityDropDown
 	activityDropDown:ResetDropDown()
 
-	local firstGroupID, firstActivityID
-
-	local listTable = {}
-	local lfgTable = {}
-	local mythicPlusTable = {}
-	local pvpTable = {}
-	local expansionTable = {}
-	local allDungeonsTable = {}
+	local firstGroupID
 
 	local borFilters = bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters)
 
-	if(categoryID < 4 or categoryID == 6) then
+	-- DUNGEONS
+
+	if(categoryID == 2 or categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
+		local expansionTable = {}
+
+		activityDropDown:CreateSeparator(9999)
+
+		for i = 0, GetNumExpansions() - 2, 1 do
+			local expansionInfo = GetExpansionDisplayInfo(i)
+
+			local expInfo = {}
+			expInfo.entryType = "arrow"
+			expInfo.index = i + 10000
+			expInfo.text = miog.APPLICATION_VIEWER_BACKGROUNDS[i + 1][1]
+			expInfo.icon = expansionInfo and expansionInfo.logo
+
+			expansionTable[#expansionTable+1] = expInfo
+		end
+
+		for k, v in ipairs(expansionTable) do
+			activityDropDown:CreateEntryFrame(v)
+	
+		end
+	end
+
+	if(categoryID == 1 or categoryID == 6) then
+		local questingCustomTable = {}
 		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, borFilters)
 
 		for k, v in ipairs(groups) do
@@ -316,19 +335,167 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 			local info = {}
 
-			if(categoryID == 2) then
-				for activityIndex, difficultyActivityID in ipairs(activities) do
-					local difficultyActivityInfo = C_LFGList.GetActivityInfoTable(difficultyActivityID)
-
-					if(difficultyActivityInfo.isMythicPlusActivity) then
-						info.sort = "mplus"
-
-					end
-				end
-			else
-				info.parentIndex = nil
-			
+			info.entryType = "option"
+			info.index = activityInfo.groupFinderActivityGroupID
+			info.text = C_LFGList.GetActivityGroupInfo(v)
+			info.value = activityID
+			info.activities = activities
+			info.func = function()
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+				
 			end
+			
+			info.icon = miog.ACTIVITY_INFO[activityID].icon
+			info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+
+			questingCustomTable[#questingCustomTable+1] = info
+			
+
+			if(k == 1) then
+				firstGroupID = groups[1]
+			end
+		end
+
+		for k, v in ipairs(questingCustomTable) do
+			activityDropDown:CreateEntryFrame(v)
+
+		end
+	elseif(categoryID == 2) then
+		local mythicPlusTable = {}
+		local currentExpansionDungeons = {}
+		local legacyDungeonsTable = {}
+
+		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, borFilters)
+
+		for k, v in ipairs(groups) do
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
+			local activityID = activities[#activities]
+
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+			local info = {}
+
+			for activityIndex, difficultyActivityID in ipairs(activities) do
+				local difficultyActivityInfo = C_LFGList.GetActivityInfoTable(difficultyActivityID)
+
+				if(difficultyActivityInfo.isMythicPlusActivity) then
+					info.sort = "mplus"
+
+				end
+			end
+
+			info.entryType = "option"
+			info.index = activityInfo.groupFinderActivityGroupID
+			info.text = C_LFGList.GetActivityGroupInfo(v)
+			info.value = activityID
+			info.activities = activities
+			info.func = function()
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+				
+			end
+
+			info.icon = miog.ACTIVITY_INFO[activityID].icon
+			info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+
+			if(k == 1) then
+				firstGroupID = groups[1]
+			end
+			
+			if(info.sort == "mplus") then
+				mythicPlusTable[#mythicPlusTable+1] = info
+
+			else
+				currentExpansionDungeons[#currentExpansionDungeons+1] = info
+
+			end
+		end
+		
+		table.sort(mythicPlusTable, function(k1, k2)
+			return k1.text < k2.text
+		end)
+	
+		activityDropDown:CreateTextLine(-1, nil, "Seasonal Mythic+ Dungeons")
+	
+		for k, v in ipairs(mythicPlusTable) do
+			v.index = k
+			activityDropDown:CreateEntryFrame(v)
+	
+		end
+	
+		activityDropDown:CreateSeparator(9)
+
+		for k, v in ipairs(currentExpansionDungeons) do
+			activityDropDown:CreateEntryFrame(v)
+	
+		end
+
+		groups = C_LFGList.GetAvailableActivityGroups(categoryID)
+
+		local maxExpansions = GetNumExpansions() - 1
+
+		for k, v in ipairs(groups) do
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
+			local activityID = activities[#activities]
+
+			--if(miog.ACTIVITY_INFO[activityID].expansionLevel == i) then
+			if(miog.ACTIVITY_INFO[activityID].expansionLevel < maxExpansions) then
+				local info = {}
+				info.icon = miog.ACTIVITY_INFO[activityID].icon
+
+				info.parentIndex = miog.ACTIVITY_INFO[activityID].expansionLevel + 10000
+				info.entryType = "option"
+				info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+				info.text = C_LFGList.GetActivityGroupInfo(v)
+				info.value = activityID
+				info.func = function()
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+					
+				end
+
+				legacyDungeonsTable[#legacyDungeonsTable+1] = info
+			end
+			
+		end
+		
+		local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
+
+		for activityIndex, activityID in ipairs(activities) do
+				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+				local info = {}
+
+				info.entryType = "option"
+				info.parentIndex = miog.ACTIVITY_INFO[activityID].expansionLevel + 10000
+				info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+				info.text = activityInfo.shortName
+				info.value = activityID
+				info.func = function()
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
+					
+				end
+				info.icon = miog.ACTIVITY_INFO[activityID].icon
+
+				legacyDungeonsTable[#legacyDungeonsTable+1] = info
+		end
+
+		table.sort(legacyDungeonsTable, function(k1, k2)
+			return k1.text < k2.text
+		end)
+
+		for k, v in ipairs(legacyDungeonsTable) do
+			activityDropDown:CreateEntryFrame(v)
+	
+		end
+	elseif(categoryID == 3) then
+		local currentRaidTable = {}
+		local legacyRaidTable = {}
+
+		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, borFilters)
+
+		for k, v in ipairs(groups) do
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
+			local activityID = activities[#activities]
+
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+			local info = {}
 
 			info.entryType = "option"
 			info.index = activityInfo.groupFinderActivityGroupID
@@ -342,11 +509,12 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			info.icon = miog.ACTIVITY_INFO[activityID].icon
 			info.mapID = miog.ACTIVITY_INFO[activityID].mapID
 
-			if(info.sort == "mplus") then
-				mythicPlusTable[#mythicPlusTable+1] = info
+			if(LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
+				info.parentIndex = miog.ACTIVITY_INFO[activityID].expansionLevel + 10000
+				legacyRaidTable[#legacyRaidTable+1] = info
 
 			else
-				lfgTable[#lfgTable+1] = info
+				currentRaidTable[#currentRaidTable+1] = info
 			
 			end
 
@@ -355,63 +523,74 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			end
 		end
 
-		if(categoryID == 3) then
-			if(LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.Recommended) then
-				local worldBossActivity = C_LFGList.GetAvailableActivities(categoryID, 0, 5)
-		
-				for _, activityID in ipairs(worldBossActivity) do
-					local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-					if(activityInfo.filters == 5) then
-						local info = {}
-						info.entryType = "option"
-						info.index = 1000
-						info.text = activityInfo.fullName
-						info.value = activityID
-						info.activities = worldBossActivity
-						info.func = function()
-							LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
-							
-						end
+		if(LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.Recommended) then
+			local worldBossActivity = C_LFGList.GetAvailableActivities(categoryID, 0, 5)
+	
+			for _, activityID in ipairs(worldBossActivity) do
+				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+				if(activityInfo.filters == 5) then
+					local info = {}
+					info.entryType = "option"
+					info.index = 5000
+					info.text = activityInfo.fullName
+					info.value = activityID
+					info.activities = worldBossActivity
 
-						info.icon = miog.ACTIVITY_INFO[activityID].icon
-						info.mapID = miog.ACTIVITY_INFO[activityID].mapID
-
-						lfgTable[#lfgTable+1] = info
-		
+					info.func = function()
+						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, activityInfo.groupFinderActivityGroupID, activityID)
+						
 					end
-		
+
+					info.icon = miog.ACTIVITY_INFO[activityID].icon
+					info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+
+					currentRaidTable[#currentRaidTable+1] = info
+	
 				end
-				
-			elseif(LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
-				local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
+	
+			end
+			
+		elseif(LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
+			local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
 
-				for activityIndex, activityID in ipairs(activities) do
-					if(miog.ACTIVITY_INFO[activityID]) then
-						local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-						local info = {}
+			for activityIndex, activityID in ipairs(activities) do
+				if(miog.ACTIVITY_INFO[activityID]) then
+					local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+					local info = {}
 
-						info.entryType = "option"
-						info.index = #groups + activityIndex
-						info.text = activityInfo.fullName
-						info.value = activityID
-						info.activities = activities
-						info.func = function()
-							LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
-							
-						end
-
-						info.mapID = miog.ACTIVITY_INFO[activityID].mapID
-						info.icon = miog.ACTIVITY_INFO[activityID].icon
-
-						lfgTable[#lfgTable+1] = info
-					else
-						print("MIOG: NO DATA FOR", miog.ACTIVITY_INFO[activityID].mapID, C_LFGList.GetActivityFullName(activityID))
-					
+					info.entryType = "option"
+					info.index = #groups + activityIndex
+					info.parentIndex = miog.ACTIVITY_INFO[activityID].expansionLevel + 10000
+					info.text = activityInfo.fullName
+					info.value = activityID
+					info.activities = activities
+					info.func = function()
+						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
+						
 					end
+
+					info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+					info.icon = miog.ACTIVITY_INFO[activityID].icon
+
+					legacyRaidTable[#legacyRaidTable+1] = info
+				
 				end
 			end
 		end
-	else
+
+		for k, v in ipairs(currentRaidTable) do
+			activityDropDown:CreateEntryFrame(v)
+	
+		end
+
+		for k, v in ipairs(legacyRaidTable) do
+			activityDropDown:CreateEntryFrame(v)
+	
+		end
+	
+	elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
+		local pvpTable = {}
+
 		local pvpActivities = C_LFGList.GetAvailableActivities(categoryID, 0, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters));
 		firstGroupID = 0
 	
@@ -436,99 +615,17 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 			pvpTable[#pvpTable+1] = info
 		end
-	end
 
-	local mplusOffset = 0
-	
-	if(categoryID == 2) then
-		activityDropDown:CreateTextLine(-1, nil, "Seasonal Mythic+ Dungeons")
-		
-		table.sort(mythicPlusTable, function(k1, k2)
-			return k1.text < k2.text
-		end)
-
-		for k, v in ipairs(mythicPlusTable) do
-			v.index = k
+		for k, v in ipairs(pvpTable) do
 			activityDropDown:CreateEntryFrame(v)
 
-			mplusOffset = mplusOffset + 1
 		end
 
-		activityDropDown:CreateSeparator(9)
-		mplusOffset = mplusOffset + 1
-
-		for i = 0, GetNumExpansions() - 1, 1 do
-			local expansionInfo = GetExpansionDisplayInfo(i)
-
-			local info = {}
-			info.entryType = "arrow"
-			info.index = i + 10000
-			info.text = miog.APPLICATION_VIEWER_BACKGROUNDS[i + 1][1]
-			info.icon = expansionInfo and expansionInfo.logo
-
-			expansionTable[#expansionTable+1] = info
-
-			local groups = C_LFGList.GetAvailableActivityGroups(categoryID)
-
-			for k, v in ipairs(groups) do
-				local activities = C_LFGList.GetAvailableActivities(categoryID, v)
-				local activityID = activities[#activities]
-
-				if(activityID == 1208) then
-					print(miog.ACTIVITY_INFO[activityID].fullName)
-				end
-
-				if(miog.ACTIVITY_INFO[activityID].expansionLevel == i) then
-					info = {}
-					info.icon = miog.ACTIVITY_INFO[activityID].icon
-
-					info.parentIndex = i + 10000
-					info.entryType = "option"
-					info.mapID = miog.ACTIVITY_INFO[activityID].mapID
-					--info.index = k
-					info.text = C_LFGList.GetActivityGroupInfo(v)
-					info.value = activityID
-					info.func = function()
-						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
-						
-					end
-
-					allDungeonsTable[#allDungeonsTable+1] = info
-					--local entryFrame = activityDropDown:CreateEntryFrame(info)
-				else
-					--print("EXP LEVEL WRONG FOR ", C_LFGList.GetActivityGroupInfo(v), miog.MAP_INFO[mapID].expansionLevel, i)
-				end
-				
-			end
-			
-			local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
-
-			for activityIndex, activityID in ipairs(activities) do
-				local mapID = miog.ACTIVITY_INFO[activityID].mapID
-				if(miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel == i) then
-					local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-					info = {}
-
-					info.entryType = "option"
-					info.parentIndex = i + 10000
-					info.text = activityInfo.shortName
-					info.value = activityID
-					info.func = function()
-						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
-						
-					end
-					info.icon = miog.ACTIVITY_INFO[activityID].icon
-
-					allDungeonsTable[#allDungeonsTable+1] = info
-				end
-			end
-
-		end
-
-		table.sort(allDungeonsTable, function(k1, k2)
-			return k1.text < k2.text
-		end)
 	end
+
+	local listTable = {}
+	
+	activityDropDown:CreateSeparator(99999)
 	
 	local info = {}
 	info.entryType = "option"
@@ -539,62 +636,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	end
 
 	listTable[#listTable+1] = info
-
-	if(categoryID == 2 or categoryID == 3) then
-		table.sort(lfgTable, function(k1, k2)
-			--local newIndex = string.sub(k1.text, 1, 1) > string.sub(k2.text, 1, 1)
-			if(categoryID == 3 and k1.mapID and k2.mapID) then
-				if(miog.MAP_INFO[k1.mapID].expansionLevel == miog.MAP_INFO[k2.mapID].expansionLevel) then
-					return k1.index < k2.index
-					
-				else
-					return miog.MAP_INFO[k1.mapID].expansionLevel < miog.MAP_INFO[k2.mapID].expansionLevel
-				
-				end
-
-			else
-				return k1.text < k2.text
-
-			end
-		end)
-	end
-
-	local lastExpansion = nil
-	local offset = 0
-
-	for k, v in ipairs(lfgTable) do
-		local currentIndex = mplusOffset + offset + k
-
-		if(categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters ~= 1 and v.mapID and lastExpansion ~= miog.MAP_INFO[v.mapID].expansionLevel) then
-			local expansionInfo = GetExpansionDisplayInfo(miog.MAP_INFO[v.mapID].expansionLevel)
-			activityDropDown:CreateTextLine(currentIndex, nil, miog.APPLICATION_VIEWER_BACKGROUNDS[miog.MAP_INFO[v.mapID].expansionLevel + 1][1], expansionInfo and expansionInfo.logo, true)
-			lastExpansion = miog.MAP_INFO[v.mapID].expansionLevel
-			offset = offset + 1
-			currentIndex = mplusOffset + offset + k
-		end
-
-		v.index = currentIndex
-
-		activityDropDown:CreateEntryFrame(v)
-
-	end
-
-	for k, v in ipairs(pvpTable) do
-		activityDropDown:CreateEntryFrame(v)
-
-	end
-	
-	activityDropDown:CreateSeparator(9999)
-
-	for k, v in ipairs(expansionTable) do
-		activityDropDown:CreateEntryFrame(v)
-
-	end
-
-	for k, v in ipairs(allDungeonsTable) do
-		activityDropDown:CreateEntryFrame(v)
-
-	end
 
 	for k, v in ipairs(listTable) do
 		activityDropDown:CreateEntryFrame(v)
@@ -753,69 +794,6 @@ function LFGListEntryCreation_UpdateAuthenticatedState(self)
 	LFGListFrame.EntryCreation.Name:SetEnabled(isAuthenticated and not isQuestListing);
 	LFGListFrame.EntryCreation.VoiceChat.EditBox:SetEnabled(isAuthenticated)
 end
---[===[
-hooksecurefunc("LFGListEntryCreation_SetEditMode", function(self, editMode)
-	--self.editMode = editMode;
-
-	local descInstructions = nil;
-	local isAccountSecured = C_LFGList.IsPlayerAuthenticatedForLFG(self:GetParent().selectedActivity);
-	if (not isAccountSecured) then
-		descInstructions = LFG_AUTHENTICATOR_DESCRIPTION_BOX;
-	end
-
-	if ( editMode ) then
-		local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
-		assert(activeEntryInfo);
-
-		LFGListEntryCreation_Select(self, nil, nil, nil, activeEntryInfo.activityID);
-
-		miog.entryCreation.ActivityDropDown:Disable()
-		miog.entryCreation.DifficultyDropDown:Disable()
-
-		C_LFGList.CopyActiveEntryInfoToCreationFields();
-		miog.entryCreation.Name:SetEnabled(activeEntryInfo.questID == nil and isAccountSecured);
-		if ( activeEntryInfo.questID ) then
-			miog.entryCreation.Description.EditBox.Instructions:SetText(LFGListUtil_GetQuestDescription(activeEntryInfo.questID));
-		else
-			miog.entryCreation.Description.EditBox.Instructions:SetText(descInstructions or DESCRIPTION_OF_YOUR_GROUP);
-		end
-
-		if (miog.entryCreation.ItemLevel:IsShown()) then
-			miog.entryCreation.ItemLevel:SetText(activeEntryInfo.requiredItemLevel ~= 0 and activeEntryInfo.requiredItemLevel or "");
-		end
-
-		miog.entryCreation.Rating:SetText(activeEntryInfo.requiredDungeonScore or activeEntryInfo.requiredPvpRating or "" );
-		miog.entryCreation.PrivateGroup:SetChecked(activeEntryInfo.privateGroup);
-		miog.entryCreation.CrossFaction:SetChecked(not activeEntryInfo.isCrossFactionListing);
-
-		--if(self.PlayStyleDropdown:IsShown()) then
-			--LFGListEntryCreation_OnPlayStyleSelected(self, self.PlayStyleDropdown, activeEntryInfo.playstyle);
-		--end
-
-		miog.entryCreation.StartGroup:SetText(DONE_EDITING);
-	else
-		miog.entryCreation.ActivityDropDown:Enable()
-		miog.entryCreation.DifficultyDropDown:Enable()
-		miog.entryCreation.StartGroup:SetText(LIST_GROUP);
-		miog.entryCreation.Name:SetEnabled(isAccountSecured);
-		miog.entryCreation.Description.EditBox.Instructions:SetText(descInstructions or DESCRIPTION_OF_YOUR_GROUP);
-
-		local activityInfo = C_LFGList.GetActivityInfoTable(self.selectedActivity);
-
-		if(activityInfo and self.selectedCategory == GROUP_FINDER_CATEGORY_ID_DUNGEONS) then
-			local activityID, groupID = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
-			if(activityID) then
-				LFGListEntryCreation_Select(self, self.selectedFilters, self.selectedCategory, groupID, activityID);
-			else
-				local activityID, groupID = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true);  -- Check for a timewalking keystone.
-				if(activityID) then
-					LFGListEntryCreation_Select(self, self.selectedFilters, self.selectedCategory, groupID, activityID);
-				end
-			end
-		end
-	end
-end)
-]===]
 
 local function createEntryCreation()
 	local frame = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.MainTab.Plugin, "MIOG_EntryCreation") ---@class Frame
@@ -824,20 +802,12 @@ local function createEntryCreation()
 
 	frame.selectedActivity = 0
 
-	--local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", frame, 200, 25)
-	--optionDropdown:SetPoint("TOPLEFT", frame, "TOPLEFT")
-	--UIDropDownMenu_SetWidth(optionDropdown, 160)
-	--frame.ActivityDropdown = optionDropdown
-
-	---@diagnostic disable-next-line: undefined-field
 	local activityDropDown = frame.ActivityDropDown
 	activityDropDown:OnLoad()
 
-	---@diagnostic disable-next-line: undefined-field
 	local difficultyDropDown = frame.DifficultyDropDown
 	difficultyDropDown:OnLoad()
 
-	---@diagnostic disable-next-line: undefined-field
 	local playstyleDropDown = frame.PlaystyleDropDown
 	playstyleDropDown:OnLoad()
 
@@ -2048,6 +2018,10 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 end
 
 miog.createFrames = function()
+	EncounterJournal_LoadUI()
+	C_EncounterJournal.OnOpen = miog.dummyFunction
+	EJ_SelectInstance(1207)
+
 	miog.createPVEFrameReplacement()
 	createApplicationViewer()
 	createSearchPanel()
@@ -2089,10 +2063,6 @@ miog.createFrames = function()
 	-- IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
 	--miog.scriptReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
 	--miog.scriptReceiver:RegisterEvent("CALENDAR_OPEN_EVENT")
-
-	EncounterJournal_LoadUI()
-	C_EncounterJournal.OnOpen = miog.dummyFunction
-	EJ_SelectInstance(1207)
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		if(panel == LFGListFrame.ApplicationViewer) then
@@ -2183,4 +2153,6 @@ miog.createFrames = function()
 	
 		end
 	end)
+	
+	--miog.loadRawData()
 end

@@ -2661,20 +2661,55 @@ local function updatePersistentResultFrame(resultID)
 					local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
 					local encountersDefeated = {}
 
+					--IMPLEMENTING EDIT DISTANCE, SINCE ENCOUNTER JOURNAL AND SEARCH PANEL ENCOUNTERS DEFEATED ARE NOT 100% SIMILAR
+
 					if(encounterInfo) then
+						--DevTools_Dump(encounterInfo)
 						for _, v in pairs(encounterInfo) do
 							encountersDefeated[v] = true
+							
+							local startString = "The Guardian of the First Ones"
+							local editDistance = EditDistance(startString, v)
+							
+							local largerString = strlen(startString) > strlen(v) and strlen(startString) or strlen(v)
+
+							local percent = (largerString - editDistance) / largerString
+
+							if(percent > 0.66) then
+								print("DISTANCE", editDistance, percent * 100, v)
+							end
 						end
 					end
 
-					local numOfBosses = #miog.MAP_INFO[mapID]
+					if(#encountersDefeated > 0) then
+						--DevTools_Dump(encountersDefeated)
+					end
+
+					for k, v in ipairs(miog.MAP_INFO[mapID].bosses) do
+						--print(v.name, v.icon)
+						local numberString = tostring(k)
+
+						if(#encountersDefeated > 0) then
+							print("BOSS:", v.name)
+						end
+
+						if(bossPanel[numberString]) then
+							SetPortraitTextureFromCreatureDisplayID(bossPanel[numberString].Icon, v.creatureDisplayInfoID)
+							bossPanel[numberString].Icon:SetDesaturated(encountersDefeated[v.name] and true or false)
+							bossPanel[numberString]:Show()
+						end
+					end
 
 					for i = 1, miog.F.MOST_BOSSES, 1 do
-						local currentRaidInfo = miog.MAP_INFO[mapID][numOfBosses - (i - 1)]
+						local currentRaidInfo = miog.MAP_INFO[mapID].bosses[i]
+						--local currentRaidInfo = miog.MAP_INFO[mapID].bosses[i]
 						if(currentRaidInfo) then
-							bossPanel[tostring(i)].Icon:SetTexture(currentRaidInfo.icon)
-							bossPanel[tostring(i)].Icon:SetDesaturated(encountersDefeated[currentRaidInfo.name] and true or false)
-							bossPanel[tostring(i)]:Show()
+							--bossPanel[tostring(i)].Icon:SetTexture(currentRaidInfo.icon)
+							--print(bossPanel[tostring(i)])
+
+							--SetPortraitTextureFromCreatureDisplayID(bossPanel[tostring(i)].Icon, miog.MAP_INFO[mapID].bosses[i].icon)
+							--bossPanel[tostring(i)].Icon:SetDesaturated(encountersDefeated[currentRaidInfo.name] and true or false)
+							--bossPanel[tostring(i)]:Show()
 
 						else
 							bossPanel[tostring(i)]:Hide()
@@ -3161,8 +3196,6 @@ miog.OnEvent = function(_, event, ...)
 
 
 ]]
-	elseif(event == "KeystoneUpdate") then
-		print("KEY UP")
 
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
 		miog.F.ACTIVE_ENTRY_INFO = C_LFGList.GetActiveEntryInfo()

@@ -178,7 +178,7 @@ miog.retrieveMapIDFromGFID = function(groupFinderID)
 end
 
 miog.retrieveMapIDFromChallengeModeMap = function(challengeID)
-	for k, v in pairs(miog.CHALLENGE_MODE) do
+	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
 		if(v[2] == challengeID) then
 			return v[3]
 		end
