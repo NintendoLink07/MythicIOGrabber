@@ -78,7 +78,7 @@ for i = 0, 205, 1 do -- max # of difficulties in wago tools Difficulty
 	local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic, toggleDifficultyID, isLFR, minGroupSize, maxGroupSize = GetDifficultyInfo(i)
 
 	if(name) then
-		miog.DIFFICULTY_ID_INFO[i] = {name = name, shortName = (i == 1 or i == 3 or i == 4 or i == 9 or i == 14) and "N" or (i == 2 or i == 5 or i == 6 or i == 15 or i == 24 or i == 33) and "H" or i == 8 and "M+" or (i == 7 or i == 17) and "LFR" or (i == 16 or i == 23) and "M",
+		miog.DIFFICULTY_ID_INFO[i] = {name = i == 8 and "Mythic+" or name, shortName = (i == 1 or i == 3 or i == 4 or i == 9 or i == 14) and "N" or (i == 2 or i == 5 or i == 6 or i == 15 or i == 24 or i == 33) and "H" or i == 8 and "M+" or (i == 7 or i == 17) and "LFR" or (i == 16 or i == 23) and "M",
 		type = groupType, isHeroic = isHeroic, isChallengeMode = isChallengeMode, isLFR = isLFR, toggleDifficulty = toggleDifficultyID, color = miog.DIFFICULTY_ID_TO_COLOR[i] and miog.DIFFICULTY_ID_TO_COLOR[i]}
 
 	end
@@ -208,15 +208,7 @@ miog.F = {
 	
 	CURRENTLY_INSPECTING = false,
 	ACTIVE_ENTRY_INFO = nil,
-
-	SORT_METHODS = {
-		role = {active = false, currentLayer = 0},
-		primary = {active = false, currentLayer = 0},
-		secondary = {active = false, currentLayer = 0},
-		ilvl = {active = false, currentLayer = 0},
-	},
-
-	CURRENTLY_ACTIVE_SORTING_METHODS = 0,
+	
 	CURRENT_DUNGEON_DIFFICULTY = 0,
 	CURRENT_RAID_DIFFICULTY = 0,
 
@@ -927,19 +919,15 @@ for _, v in pairs(miog.SEASONAL_DUNGEONS) do
 	end)
 end
 
-miog.ENCOUNTER_INFO = {
+miog.JOURNAL_CREATURE_INFO = {
+
+}
+
+miog.DUNGEON_ENCOUNTER_INFO = {
 
 }
 
 local function loadRawData()
-	for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
-		if(v[6] == 0) then
-			miog.ENCOUNTER_INFO[v[3]] = {name = v[1], id = v[2], creatureDisplayInfoID = v[4], icon = v[5]}
-	
-		end
-	
-	end
-
 	for k, v in pairs(miog.RAW["Map"]) do
 		if(miog.MAP_INFO[v[1]]) then
 			local mapInfo = miog.MAP_INFO[v[1]]
@@ -947,32 +935,7 @@ local function loadRawData()
 			mapInfo.instanceType = v[5]
 			mapInfo.expansionLevel = v[6]
 			mapInfo.loadingScreenID = v[8]
-	
-			local journalID = C_EncounterJournal.GetInstanceForGameMap(v[1])
-
-			if(journalID) then
-				EJ_SelectInstance(journalID)
-			else
-				print(mapInfo.name, "has no journal ID data?")
-			end
-
 			mapInfo.bosses = {}
-	
-			local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalID)
-	
-			for i = 1, 20, 1 do
-				local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfoByIndex(i, journalID)
-
-				if(name == "Molten Core") then
-					print(i, bossName, mapInfo.bosses[i])
-
-				end
-	
-				if(bossName) then
-					mapInfo.bosses[i] = miog.ENCOUNTER_INFO[journalEncounterID]
-					
-				end
-			end
 		
 			if(mapInfo.fileName) then
 				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. mapInfo.fileName .. ".png"
@@ -980,9 +943,90 @@ local function loadRawData()
 			
 			end
 	
+			--[[local journalID = C_EncounterJournal.GetInstanceForGameMap(v[1])
+
+			if(journalID) then
+				--EJ_SelectInstance(journalID)
+
+			else
+				print(mapInfo.name, "has no journal ID data?")
+
+			end
+
+	
+			local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalID)
+	
+			for i = 1, 20, 1 do
+				local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfoByIndex(i, journalID)
+	
+				if(mapInfo.name == "Molten Core") then
+					print(bossName, dungeonEncounterID)
+
+				end
+				
+				if(bossName and dungeonEncounterID) then
+					mapInfo.bosses[i] = {
+						name = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].name,
+						encounterID = dungeonEncounterID,
+						journalInstanceID = journalInstanceID,
+						instanceID = instanceID,
+						orderIndex = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].orderIndex,
+						creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
+						icon = miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
+
+					}
+					
+				end
+			end
+	
 			mapInfo.background = loreImage
-			mapInfo.icon = button2
+			mapInfo.icon = button2]]
 		end
+	end
+
+	for k, v in pairs(miog.RAW["DungeonEncounter"]) do
+		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5]}
+	end
+
+	for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
+		if(v[6] == 0) then
+			miog.JOURNAL_CREATURE_INFO[v[3]] = {name = v[1], id = v[2], creatureDisplayInfoID = v[4], icon = v[5]}
+
+			local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfo(v[3])
+			local dungeonEncounterInfo = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID]
+
+			if(dungeonEncounterInfo) then
+				local mapInfo = miog.MAP_INFO[dungeonEncounterInfo.mapID]
+				
+				if(mapInfo) then
+					if(miog.JOURNAL_CREATURE_INFO[journalEncounterID]) then
+						mapInfo.bosses[#mapInfo.bosses+1] = {
+							name = dungeonEncounterInfo.name,
+							encounterID = v[2],
+							journalInstanceID = journalInstanceID,
+							instanceID = instanceID,
+							orderIndex = dungeonEncounterInfo.orderIndex,
+							creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
+							icon = miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
+		
+						}
+					else
+						--print("MISSING DATA:", v[2], bossName, journalEncounterID)
+					
+					end
+			
+					local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalInstanceID)
+		
+					mapInfo.background = loreImage
+					mapInfo.icon = button2
+
+					table.sort(mapInfo.bosses, function(k1, k2)
+						return k1.orderIndex < k2.orderIndex
+					end)
+				end
+			end
+		end
+	
 	end
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
@@ -991,7 +1035,7 @@ local function loadRawData()
 			difficultyName = v[2],
 			categoryID = v[3],
 	
-			groupFinderActivityID = v[5],
+			groupFinderActivityGroupID = v[5],
 	
 			mapID = v[9],
 			difficultyID = v[10],
@@ -1030,26 +1074,20 @@ local function loadRawData()
 			end
 		end
 	end
-	
-	for _, value in pairs(miog.MAP_INFO) do
-		miog.F.MOST_BOSSES = #value > miog.F.MOST_BOSSES and #value or miog.F.MOST_BOSSES
-	end
 end
 
 miog.loadRawData = loadRawData
 
-loadRawData()
-
 miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
 	[1] = { --CURRENT TIER
-		[3] = miog.F.MOST_BOSSES * 100000 + miog.F.MOST_BOSSES,
-		[2] = miog.F.MOST_BOSSES * 10000 + miog.F.MOST_BOSSES,
-		[1] = miog.F.MOST_BOSSES * 1000 + miog.F.MOST_BOSSES,
+		[3] = 9 * 100000 + 9,
+		[2] = 9 * 10000 + 9,
+		[1] = 9 * 1000 + 9,
 	},
 	[2] = { --LAST TIER
-		[3] = miog.F.MOST_BOSSES * 100 + miog.F.MOST_BOSSES,
-		[2] = miog.F.MOST_BOSSES * 10 + miog.F.MOST_BOSSES,
-		[1] = miog.F.MOST_BOSSES * 1 + miog.F.MOST_BOSSES,
+		[3] = 9 * 100 + 9,
+		[2] = 9 * 10 + 9,
+		[1] = 9 * 1 + 9,
 	}
 }
 
@@ -1104,6 +1142,9 @@ miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID = {}
 
 miog.SPECIALIZATIONS = {
 	[0] = {name = "Unknown", class = miog.CLASSES[100], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png"},
+	[1] = {name = "Missing Tank", class = miog.CLASSES[20], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/tankIcon.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/tankIcon.png"},
+	[2] = {name = "Missing Healer", class = miog.CLASSES[21], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/healerIcon.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/healerIcon.png"},
+	[3] = {name = "Missing Damager", class = miog.CLASSES[22], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/damagerIcon.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/damagerIcon.png"},
 	[20] = {name = "Empty", class = miog.CLASSES[20], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"},
 
 	[62] = {name = "Arcane", class = miog.CLASSES[8], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane_squared.png"},

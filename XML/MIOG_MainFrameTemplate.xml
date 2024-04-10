@@ -25,10 +25,23 @@
                 </Anchors>
 
                 <Frames>
+                    <Button parentKey="BlizzardFrame" inherits="UIButtonTemplate">
+                        <Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+						</Anchors>
+                        <NormalTexture atlas="Battlenet-ClientIcon-WoW" />
+						<Scripts>
+							<OnClick>
+								PVEFrame_ShowFrame("GroupFinderFrame", LFGListPVEStub)
+							</OnClick>
+						</Scripts>
+					</Button>
+
                     <Button parentKey="KnownIssuesPanel" inherits="IconButtonTemplate" hidden="true">
                         <Size x="15" y="15"/>
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+							<Anchor point="LEFT" relativeKey="$parent.BlizzardFrame" relativePoint="RIGHT" />
 						</Anchors>
 
                         <NormalTexture atlas="glueannouncementpopup-icon-info" />
@@ -36,7 +49,7 @@
 
                         <Scripts>
                             <OnEnter>
-                                GameTooltip:SetOwner(knownIssuesPanel, "ANCHOR_TOPRIGHT")
+                                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
                                 GameTooltip:SetText(self.text)
                                 GameTooltip:Show()
                             </OnEnter>
@@ -53,7 +66,9 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								PVEFrame_ToggleFrame()
+                                if(not InCombatLockdown()) then
+								    PVEFrame_ToggleFrame()
+                                end
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -108,11 +123,34 @@
 
                 <Frames>
                     <Frame parentKey="MainTab" setAllPoints="true">
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="Affixes" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
+                                    <FontHeight val="12"/>
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                                    </Anchors>
+                                    <Scripts>
+                                        <OnEnter>
+                                            if(self.text) then
+                                                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                                                GameTooltip:SetText(self.text)
+                                                GameTooltip:Show()
+                                            end
+                                        </OnEnter>
+                                        <OnLeave>
+                                            GameTooltip:Hide()
+                                        </OnLeave>
+                                    </Scripts>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
                         <Frames>
                             <Frame parentKey="Keystone" inherits="BackdropTemplate">
                                 <Size x="200" y="20" />
                                 <Anchors>
-                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT"/>
                                 </Anchors>
 
                                 <Layers>
@@ -256,7 +294,7 @@
                                 </Scripts>
                             </StatusBar>
 
-                            <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true" frameStrata="HIGH">
+                            <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true" frameLevel="100">
                                 <Size x="370" y="380" />
 
                                 <Anchors>

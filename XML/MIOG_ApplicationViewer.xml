@@ -357,6 +357,12 @@
                                 <Anchor point="LEFT" relativeKey="$parent.Affixes" relativePoint="RIGHT" x="3" />
                             </Anchors>
                         </FontString>
+
+                        <FontString parentKey="TotalApplicants" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                            </Anchors>
+                        </FontString>
                     </Layer>
                 </Layers>
             </Frame>
@@ -368,12 +374,33 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
                 <Frames>
-                    <Frame parentKey="FilterPanel" hidden="true">
-                        <Size x="220" y="300" />
+                    <Button parentKey="RoleSort" inherits="MIOG_SortButtonTemplate">
+                        <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="156"/>
                         </Anchors>
-                    </Frame>
+                    </Button>
+
+                    <Button parentKey="PrimarySort" inherits="MIOG_SortButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.RoleSort" relativePoint="RIGHT" x="11"/>
+                        </Anchors>
+                    </Button>
+
+                    <Button parentKey="SecondarySort" inherits="MIOG_SortButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.PrimarySort" relativePoint="RIGHT" x="20"/>
+                        </Anchors>
+                    </Button>
+
+                    <Button parentKey="IlvlSort" inherits="MIOG_SortButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.SecondarySort" relativePoint="RIGHT" x="20"/>
+                        </Anchors>
+                    </Button>
 
                     <Button parentKey="ResetButton" inherits="IconButtonTemplate">
                         <KeyValues>

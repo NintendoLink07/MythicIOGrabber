@@ -17,7 +17,6 @@
 
             <Layer level="OVERLAY">
                 <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Title of the thingy" wordwrap="false">
-                    <FontHeight val="11"/>
 
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.Icon" relativePoint="CENTER" />

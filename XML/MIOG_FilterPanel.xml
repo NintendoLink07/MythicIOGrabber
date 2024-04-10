@@ -40,32 +40,14 @@
                         </Anchors>
 
                         <KeyValues>
-                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="global" />
+                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
                             <KeyValue key="iconSize" value="16" type="number" />
                         </KeyValues>
 
                         <Scripts>
-                            <OnLoad>
+                            <OnShow>
                                 self:OnLoad()
-                            </OnLoad>
-                        </Scripts>
-                    </Button>
-                    
-                    <Button parentKey="Check" inherits="IconButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="LEFT" x="-4" />
-                        </Anchors>
-
-                        <KeyValues>
-                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="global" />
-                            <KeyValue key="iconSize" value="16" type="number" />
-                        </KeyValues>
-
-                        <Scripts>
-                            <OnLoad>
-                                self:OnLoad()
-                            </OnLoad>
+                            </OnShow>
                         </Scripts>
                     </Button>
 

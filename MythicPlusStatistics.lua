@@ -219,3 +219,193 @@ miog.refreshKeystones = function()
 	miog.MPlusStatistics.KeystoneDropdown.List:MarkDirty()
 	miog.MPlusStatistics.KeystoneDropdown:MarkDirty()
 end
+
+miog.setUpMPlusStatistics = function()
+	local mapTable = C_ChallengeMode.GetMapTable()
+
+	table.sort(mapTable, function(k1, k2)
+		local mapName1 = miog.retrieveShortNameFromChallengeModeMap(k1)
+		local mapName2 = miog.retrieveShortNameFromChallengeModeMap(k2)
+
+		return mapName1 < mapName2
+
+	end)
+
+	for index, challengeMap in pairs(mapTable) do
+		if(miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMap] == nil) then
+			local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeMap)
+			local mapInfo = miog.MAP_INFO[mapID]
+
+			local dungeonColumn = CreateFrame("Frame", nil, miog.MPlusStatistics.DungeonColumns, "MIOG_MPlusStatisticsColumnTemplate")
+			dungeonColumn:SetHeight(miog.MPlusStatistics:GetHeight())
+			dungeonColumn.layoutIndex = index
+
+			miog.createFrameBorder(dungeonColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+			dungeonColumn.Background:SetTexture(mapInfo.vertical)
+
+			local shortName = miog.retrieveShortNameFromChallengeModeMap(challengeMap)
+			dungeonColumn.ShortName:SetText(shortName)
+
+			miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMap] = dungeonColumn
+		end
+	end
+
+	local selectionFrame = miog.MPlusStatistics.DungeonColumns.Selection
+	selectionFrame:SetHeight(miog.MPlusStatistics:GetHeight())
+	miog.createFrameBorder(selectionFrame, 1, CreateColorFromHexString(miog.CLRSCC.silver):GetRGBA())
+
+	miog.MPlusStatistics.DungeonColumns:MarkDirty()
+end
+
+miog.loadSavedMPlusDataForCharacter = function(playerGUID, mapTable)
+	local characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
+
+	for index, challengeMapID in pairs(mapTable or C_ChallengeMode.GetMapTable()) do
+		local dungeonFrame
+
+		if(characterFrame[challengeMapID] == nil) then
+			dungeonFrame = CreateFrame("Frame", nil, characterFrame.DungeonPanel, "MIOG_MPlusStatisticsDungeonTemplate")
+			dungeonFrame.layoutIndex = index
+
+			characterFrame[challengeMapID] = dungeonFrame
+
+		else
+
+			dungeonFrame = characterFrame[challengeMapID]
+		end
+		
+		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][challengeMapID]
+		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][challengeMapID]
+
+		dungeonFrame.Level1:SetText(thisWeek.level or 0)
+		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek.level == 0 or thisWeek.level) == nil and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
+
+		local desaturatedColors = CreateColorFromHexString((lastWeek.level == 0 or lastWeek.level) == nil and miog.CLRSCC.gray or lastWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green)
+
+		dungeonFrame.Level2:SetText(lastWeek.level or 0)
+		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
+
+		characterFrame.DungeonPanel:MarkDirty()
+
+	end
+end
+
+miog.fillMPlusCharacter = function(playerGUID, mapTable)
+	local characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
+
+	for index, challengeMapID in pairs(mapTable or C_ChallengeMode.GetMapTable()) do
+		local dungeonFrame
+
+		if(characterFrame[challengeMapID] == nil) then
+			dungeonFrame = CreateFrame("Frame", nil, characterFrame.DungeonPanel, "MIOG_MPlusStatisticsDungeonTemplate")
+			dungeonFrame.layoutIndex = index
+
+			characterFrame[challengeMapID] = dungeonFrame
+
+		else
+			dungeonFrame = characterFrame[challengeMapID]
+
+		end
+
+		local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
+
+		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[challengeMapID] = playerGUID == UnitGUID("player") and affixScores and affixScores[1] or {}
+		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[challengeMapID] = playerGUID == UnitGUID("player") and affixScores and affixScores[2] or {}
+
+		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][challengeMapID]
+		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][challengeMapID]
+
+		dungeonFrame.Level1:SetText(thisWeek.level or 0)
+		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek.level == 0 or thisWeek.level) == nil and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
+
+		local desaturatedColors = CreateColorFromHexString((lastWeek.level == 0 or lastWeek.level) == nil and miog.CLRSCC.gray or lastWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green)
+
+		dungeonFrame.Level2:SetText(lastWeek.level or 0)
+		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
+
+		characterFrame.DungeonPanel:MarkDirty()
+
+	end
+end
+
+miog.createMPlusCharacter = function(playerGUID)
+	local characterFrame
+
+	if(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID] == nil) then
+		characterFrame = CreateFrame("Frame", nil, miog.MPlusStatistics.CharacterScrollFrame.Rows, "MIOG_MPlusStatisticsCharacterTemplate")
+		characterFrame:SetWidth(miog.MPlusStatistics.CharacterScrollFrame:GetWidth())
+		characterFrame.layoutIndex = #miog.MPlusStatistics.CharacterScrollFrame.Rows:GetLayoutChildren() + 1
+
+		if(characterFrame.layoutIndex == 1) then
+			characterFrame:SetHeight(55)
+			local fontFile, height, flags = characterFrame.Name:GetFont()
+			characterFrame.Name:SetFont(fontFile, 14, flags)
+			characterFrame.TransparentDark:SetHeight(36)
+
+		else
+			characterFrame.TransparentDark:SetHeight(32)
+
+		end
+
+		miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID] = characterFrame
+	else
+
+		characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
+	end
+
+	local _, className = UnitClass("player")
+
+	MIOG_SavedSettings.mPlusStatistics.table[playerGUID] = MIOG_SavedSettings.mPlusStatistics.table[playerGUID] or {}
+	MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name = MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name or UnitName("player")
+	MIOG_SavedSettings.mPlusStatistics.table[playerGUID].class = MIOG_SavedSettings.mPlusStatistics.table[playerGUID].class or className
+	MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score = MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score or C_ChallengeMode.GetOverallDungeonScore()
+
+	MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical = MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical or {}
+	MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified = MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified or {}
+
+	characterFrame.Name:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name)
+	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].class):GetRGBA())
+	characterFrame.Score:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score)
+	characterFrame.Score:SetTextColor(miog.createCustomColorForScore(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score):GetRGBA())
+
+end
+
+miog.gatherMPlusStatistics = function()
+	local playerGUID = UnitGUID("player")
+	
+	local mapTable = C_ChallengeMode.GetMapTable()
+
+	table.sort(mapTable, function(k1, k2)
+		local mapName1 = miog.retrieveShortNameFromChallengeModeMap(k1)
+		local mapName2 = miog.retrieveShortNameFromChallengeModeMap(k2)
+
+		return mapName1 < mapName2
+
+	end)
+
+	miog.createMPlusCharacter(playerGUID)
+	miog.fillMPlusCharacter(playerGUID, mapTable)
+
+	local orderedTable = {}
+
+	for x, y in pairs(MIOG_SavedSettings.mPlusStatistics.table) do
+		local index = #orderedTable+1
+		orderedTable[index] = y
+		orderedTable[index].key = x
+	end
+
+	table.sort(orderedTable, function(k1, k2)
+		return k1.score > k2.score
+	end)
+
+	for x, y in pairs(orderedTable) do
+		if(y.key ~= playerGUID) then
+			miog.createMPlusCharacter(y.key)
+			miog.loadSavedMPlusDataForCharacter(y.key, mapTable)
+
+		end
+	end
+
+	miog.MPlusStatistics.CharacterScrollFrame.Rows:MarkDirty()
+end

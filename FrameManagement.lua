@@ -15,6 +15,7 @@ local function resetFrame(pool, childFrame)
 	childFrame.leftPadding = nil
 	childFrame.topPadding = nil
 	childFrame.rightPadding = nil
+	childFrame.encounterInfo = nil
 
 	local typeOfFrame = childFrame:GetObjectType()
 

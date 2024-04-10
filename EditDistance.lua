@@ -43,7 +43,15 @@
     Revisions:
         v1.00 - Initial.
 ]]
-function EditDistance( s, t, lim )
+function CalculateEditDistancePercentage(string1, string2)
+    local editDistance = EditDistance(string1, string2)
+    
+    local largerString = strlen(string1) > strlen(string2) and strlen(string1) or strlen(string2)
+
+    return (largerString - editDistance) / largerString
+end
+
+function EditDistance(s, t, lim )
     local s_len, t_len = #s, #t -- Calculate the sizes of the strings or arrays
     if lim and math.abs( s_len - t_len ) >= lim then -- If sizes differ by lim, we can stop here
         return lim

@@ -682,8 +682,6 @@ function LFGListEntryCreationActivityFinder_Accept(self)
 end
 
 local function initializeActivityDropdown(isDifferentCategory, isSeparateCategory)
-	print("INIT")
-
 	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory or 0
 
 	local frame = miog.entryCreation
@@ -723,10 +721,8 @@ local function listGroup()
 
 	if ( LFGListEntryCreation_IsEditMode(self) ) then
 		if activeEntryInfo.isCrossFactionListing == isCrossFaction then
-			print("UP1")
 			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
 		else
-			print("RE1")
 			-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
 			C_LFGList.RemoveListing();
 			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
@@ -735,11 +731,9 @@ local function listGroup()
 		LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
 	else
 		if(C_LFGList.HasActiveEntryInfo()) then
-			print("UP2")
 			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
 
 		else
-			print("CR1")
 			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
 
 		end
@@ -897,6 +891,8 @@ end
 local function createApplicationViewer()
 	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.MainTab.Plugin, "MIOG_ApplicationViewer") ---@class Frame
 	miog.applicationViewer = applicationViewer
+
+	MIOG_APP = miog.applicationViewer
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.InfoPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -953,152 +949,22 @@ local function createApplicationViewer()
 	applicationViewer.TitleBar.Faction:SetTexture(2437241)
 	applicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[10])
 
-	local buttonPanel = applicationViewer.ButtonPanel
-
-	buttonPanel.sortByCategoryButtons = {}
+	applicationViewer.ButtonPanel.sortByCategoryButtons = {}
 
 	for i = 1, 4, 1 do
+		local sortByCategoryButton = applicationViewer.ButtonPanel[i == 1 and "RoleSort" or i == 2 and "PrimarySort" or i == 3 and "SecondarySort" or i == 4 and "IlvlSort"]
+		sortByCategoryButton.panel = "ApplicationViewer"
+		sortByCategoryButton.category = i == 1 and "role" or i == 2 and "primary" or i == 3 and "secondary" or i == 4 and "ilvl"
 
-		local sortByCategoryButton = Mixin(miog.createBasicFrame("persistent", "UIButtonTemplate", buttonPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT), MultiStateButtonMixin)
-		sortByCategoryButton:OnLoad()
-		sortByCategoryButton:SetTexturesForBaseState("hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-disabled", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
-		sortByCategoryButton:SetTexturesForState1("hud-MainMenuBar-arrowdown-up", "hud-MainMenuBar-arrowdown-down", "hud-MainMenuBar-arrowdown-highlight", "hud-MainMenuBar-arrowdown-disabled")
-		sortByCategoryButton:SetTexturesForState2("hud-MainMenuBar-arrowup-up", "hud-MainMenuBar-arrowup-down", "hud-MainMenuBar-arrowup-highlight", "hud-MainMenuBar-arrowup-disabled")
-		sortByCategoryButton:SetStateName(0, "None")
-		sortByCategoryButton:SetStateName(1, "Descending")
-		sortByCategoryButton:SetStateName(2, "Ascending")
-		sortByCategoryButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-		sortByCategoryButton:SetState(false)
-		sortByCategoryButton:SetMouseMotionEnabled(true)
-		sortByCategoryButton:SetScript("OnEnter", function()
-			GameTooltip:SetOwner(sortByCategoryButton, "ANCHOR_CURSOR")
-			GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
-			GameTooltip:Show()
-
-		end)
-		sortByCategoryButton:SetScript("OnLeave", function()
-			GameTooltip:Hide()
-
+		sortByCategoryButton:SetScript("PostClick", function(self, button)
+			C_LFGList.RefreshApplicants()
 		end)
 
-		local sortByCategoryButtonString = miog.createBasicFontString("persistent", 9, sortByCategoryButton)
-		sortByCategoryButtonString:ClearAllPoints()
-		sortByCategoryButtonString:SetPoint("BOTTOMLEFT", sortByCategoryButton, "BOTTOMLEFT")
-
-		sortByCategoryButton.FontString = sortByCategoryButtonString
-
-		local currentCategory = ""
-
-		if(i == 1) then
-			currentCategory = "role"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.419, 0)
-
-		elseif(i == 2) then
-			currentCategory = "primary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.505, 0)
-
-		elseif(i == 3) then
-			currentCategory = "secondary"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.612, 0)
-
-		elseif(i == 4) then
-			currentCategory = "ilvl"
-			sortByCategoryButton:SetPoint("LEFT", buttonPanel, "LEFT", buttonPanel:GetWidth() * 0.724, 0)
-
-		end
-
-		sortByCategoryButton:SetScript("OnClick", function(_, button)
-			local activeState = sortByCategoryButton:GetActiveState()
-
-			if(button == "LeftButton") then
-
-				if(activeState == 0 and miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2) then
-					--TO 1
-					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
-
-					miog.F.SORT_METHODS[currentCategory].active = true
-					miog.F.SORT_METHODS[currentCategory].currentLayer = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS
-
-					sortByCategoryButton.FontString:SetText(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS)
-
-				elseif(activeState == 1) then
-					--TO 2
-
-
-				elseif(activeState == 2) then
-					--RESET TO 0
-					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
-
-					miog.F.SORT_METHODS[currentCategory].active = false
-					miog.F.SORT_METHODS[currentCategory].currentLayer = 0
-
-					sortByCategoryButton.FontString:SetText("")
-
-					for k, v in pairs(miog.F.SORT_METHODS) do
-						if(v.currentLayer == 2) then
-							v.currentLayer = 1
-							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
-							miog.F.SORT_METHODS[k].currentLayer = 1
-							MIOG_SavedSettings.lastActiveSortingMethods.value[k].currentLayer = 1
-						end
-					end
-				end
-
-				if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
-					sortByCategoryButton:AdvanceState()
-
-					miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
-
-					MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
-
-					if(GameTooltip:GetOwner() == sortByCategoryButton) then
-						GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
-					end
-				end
-
-				C_LFGList.RefreshApplicants()
-			elseif(button == "RightButton") then
-				if(activeState == 1 or activeState == 2) then
-
-					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS - 1
-
-					miog.F.SORT_METHODS[currentCategory].active = false
-					miog.F.SORT_METHODS[currentCategory].currentLayer = 0
-
-					sortByCategoryButton.FontString:SetText("")
-
-					for k, v in pairs(miog.F.SORT_METHODS) do
-						if(v.currentLayer == 2) then
-							v.currentLayer = 1
-							buttonPanel.sortByCategoryButtons[k].FontString:SetText(1)
-							miog.F.SORT_METHODS[k].currentLayer = 1
-							MIOG_SavedSettings.lastActiveSortingMethods.value[k].currentLayer = 1
-						end
-					end
-
-					sortByCategoryButton:SetState(false)
-
-					if(miog.F.CURRENTLY_ACTIVE_SORTING_METHODS < 2 or miog.F.CURRENTLY_ACTIVE_SORTING_METHODS == 2 and miog.F.SORT_METHODS[currentCategory].active == true) then
-
-						miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
-
-						MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
-
-						if(GameTooltip:GetOwner() == sortByCategoryButton) then
-							GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
-						end
-					end
-
-					C_LFGList.RefreshApplicants()
-				end
-			end
-		end)
-
-		buttonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
+		applicationViewer.ButtonPanel.sortByCategoryButtons[sortByCategoryButton.category] = sortByCategoryButton
 
 	end
 	
-	buttonPanel.ResetButton:SetScript("OnClick",
+	applicationViewer.ButtonPanel.ResetButton:SetScript("OnClick",
 		function()
 			C_LFGList.RefreshApplicants()
 
@@ -1151,13 +1017,6 @@ local function createApplicationViewer()
 	end)
 
 	miog.applicationViewer.editButton = editButton
-
-	local applicantNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, miog.applicationViewer)
-	applicantNumberFontString:SetPoint("RIGHT", miog.MainTab.Plugin.FooterBar, "RIGHT", -3, -1)
-	applicantNumberFontString:SetJustifyH("CENTER")
-	applicantNumberFontString:SetText(0)
-
-	miog.applicationViewer.applicantNumberFontString = applicantNumberFontString
 
 	miog.applicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
@@ -1290,11 +1149,6 @@ local function createSearchPanel()
 	searchBox:SetPoint(searchPanel.SearchBox:GetPoint())
 	searchPanel.SearchBox = searchBox
 
-	local autoCompleteFrame = LFGListFrame.SearchPanel.AutoCompleteFrame
-	autoCompleteFrame:ClearAllPoints()
-	autoCompleteFrame:SetParent(searchPanel)
-	searchPanel.AutoCompleteFrame = autoCompleteFrame
-
 	local searchingSpinner = LFGListFrame.SearchPanel.SearchingSpinner
 	searchingSpinner:ClearAllPoints()
 	searchingSpinner:SetParent(searchPanel)
@@ -1319,6 +1173,15 @@ local function createSearchPanel()
 	scrollBox:Hide()
 	searchPanel.ScrollBox = scrollBox
 
+	local autoCompleteFrame = LFGListFrame.SearchPanel.AutoCompleteFrame
+	autoCompleteFrame:ClearAllPoints()
+	autoCompleteFrame:SetParent(searchPanel)
+	autoCompleteFrame:SetFrameStrata("DIALOG")
+	autoCompleteFrame:SetWidth(searchBox:GetWidth())
+	autoCompleteFrame:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", -4, 1)
+	searchPanel.AutoCompleteFrame = autoCompleteFrame
+	
+
 	searchPanel.StartSearch:SetScript("OnClick", function( )
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 
@@ -1331,112 +1194,14 @@ local function createSearchPanel()
 
 	for i = 1, 3, 1 do
 		local sortByCategoryButton = searchPanel.ButtonPanel[i == 1 and "PrimarySort" or i == 2 and "SecondarySort" or "AgeSort"]
-		local currentCategory = i == 1 and "primary" or i == 2 and "secondary" or "age"
-		
-		sortByCategoryButton:SetScript("OnEnter", function()
-			GameTooltip:SetOwner(sortByCategoryButton, "ANCHOR_CURSOR")
-			GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
-			GameTooltip:Show()
+		sortByCategoryButton.panel = "SearchPanel"
+		sortByCategoryButton.category = i == 1 and "primary" or i == 2 and "secondary" or i == 3 and "age"
 
-		end)
-		sortByCategoryButton:SetScript("OnLeave", function()
-			GameTooltip:Hide()
-
-		end)
-
-		local sortByCategoryButtonString = miog.createBasicFontString("persistent", 9, sortByCategoryButton)
-		sortByCategoryButtonString:ClearAllPoints()
-		sortByCategoryButtonString:SetPoint("BOTTOMLEFT", sortByCategoryButton, "BOTTOMLEFT")
-
-		sortByCategoryButton.FontString = sortByCategoryButtonString
-
-		sortByCategoryButton:SetScript("OnClick", function(_, button)
-			local activeState = sortByCategoryButton:GetActiveState()
-
-			if(button == "LeftButton") then
-
-				if(activeState == 0 and MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods < 2) then
-					--TO 1
-					MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods + 1
-
-					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active = true
-					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentLayer = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods
-
-					sortByCategoryButton.FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods)
-
-				elseif(activeState == 1) then
-					--TO 2
-
-
-				elseif(activeState == 2) then
-					--RESET TO 0
-					MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods - 1
-
-					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active = false
-					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentLayer = 0
-
-					sortByCategoryButton.FontString:SetText("")
-
-					for k, v in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
-						if(type(v) == "table" and v.currentLayer == 2) then
-							v.currentLayer = 1
-							searchPanel.ButtonPanel.sortByCategoryButtons[k].FontString:SetText(1)
-							MIOG_SavedSettings.sortMethods_SearchPanel.table[k].currentLayer = 1
-						end
-					end
-				end
-
-				if(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods < 2 or MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods == 2 and MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active == true) then
-					sortByCategoryButton:AdvanceState()
-
-					--miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
-					--MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
-
-					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentState = sortByCategoryButton:GetActiveState()
-
-					if(GameTooltip:GetOwner() == sortByCategoryButton) then
-						GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
-					end
-				end
-
-			elseif(button == "RightButton") then
-				if(activeState == 1 or activeState == 2) then
-
-					MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods = MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods - 1
-
-					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active = false
-					MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentLayer = 0
-
-					sortByCategoryButton.FontString:SetText("")
-
-					for k, v in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
-						if(type(v) == "table" and v.currentLayer == 2) then
-							v.currentLayer = 1
-							searchPanel.ButtonPanel.sortByCategoryButtons[k].FontString:SetText(1)
-							MIOG_SavedSettings.sortMethods_SearchPanel.table[k].currentLayer = 1
-						end
-					end
-
-					sortByCategoryButton:SetState(false)
-
-					if(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods < 2 or MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods == 2 and MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].active == true) then
-
-						--miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
-						--MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
-
-						MIOG_SavedSettings.sortMethods_SearchPanel.table[currentCategory].currentState = sortByCategoryButton:GetActiveState()
-
-						if(GameTooltip:GetOwner() == sortByCategoryButton) then
-							GameTooltip:SetText("Current sort: "..sortByCategoryButton:GetStateName(sortByCategoryButton:GetActiveState()))
-						end
-					end
-				end
-			end
-
+		sortByCategoryButton:SetScript("PostClick", function(self, button)
 			miog.checkSearchResultListForEligibleMembers()
 		end)
 
-		searchPanel.ButtonPanel.sortByCategoryButtons[currentCategory] = sortByCategoryButton
+		searchPanel.ButtonPanel.sortByCategoryButtons[sortByCategoryButton.category] = sortByCategoryButton
 
 	end
 
@@ -2017,10 +1782,13 @@ miog.showUpgradedInvitePendingDialog = function(resultID)
 	--StaticPopupSpecial_Show(miog.ipDialog)
 end
 
+miog.ONCE = 0
+
 miog.createFrames = function()
-	EncounterJournal_LoadUI()
+		EncounterJournal_LoadUI()
+		EJ_SelectInstance(1207)
+
 	C_EncounterJournal.OnOpen = miog.dummyFunction
-	EJ_SelectInstance(1207)
 
 	miog.createPVEFrameReplacement()
 	createApplicationViewer()
@@ -2153,6 +1921,4 @@ miog.createFrames = function()
 	
 		end
 	end)
-	
-	--miog.loadRawData()
 end

@@ -104,7 +104,6 @@ local defaultOptionSettings = {
 			filterForDungeons = false,
 		}
 	},
-
 	searchPanel_FilterOptions = {
 		type = "variable",
 		title = "Filter options for the search panel",
@@ -124,12 +123,11 @@ local defaultOptionSettings = {
 			filterForArenaBracket = false,
 			filterForScore = false,
 			filterForRoles = {
-				TANK = false,
-				HEALER = false,
-				DAMAGER = false,
+				TANK = true,
+				HEALER = true,
+				DAMAGER = true,
 			},
-			filterForClassSpecs = false,
-
+			filterForClassSpecs = true,
 			minTanks = 0,
 			maxTanks = 0,
 			minHealers = 0,
@@ -142,6 +140,7 @@ local defaultOptionSettings = {
 			raidDifficultyID = 3,
 			bracketID = 1,
 			dungeons = {},
+			raids = {},
 			filterForDungeons = false,
 		},
 	},
@@ -167,6 +166,33 @@ local defaultOptionSettings = {
 		type = "variable",
 		title = "Last active sorting methods for the search panel",
 	},
+	sortMethods_ApplicationViewer = {
+		table = {
+			role = {
+				currentLayer = 0,
+				currentState = 0,
+				active = false,
+			},
+			primary = {
+				currentLayer = 0,
+				currentState = 0,
+				active = false,
+			},
+			secondary = {
+				currentLayer = 0,
+				currentState = 0,
+				active = false,
+			},
+			ilvl = {
+				currentLayer = 0,
+				currentState = 0,
+				active = false,
+			},
+			numberOfActiveMethods = 0,
+		},
+		type = "variable",
+		title = "Last active sorting methods for the application viewer",
+	},
 	searchPanel_DeclinedGroups = {
 		type = "variable",
 		title = "Last active sorting methods for the search panel",
@@ -175,6 +201,12 @@ local defaultOptionSettings = {
 		}
 	}
 }
+
+local function getBaseSettings(key)
+	return defaultOptionSettings[key]
+end
+
+miog.getBaseSettings = getBaseSettings
 
 local function compareSettings()
 	for key, optionEntry in pairs(defaultOptionSettings) do
@@ -482,22 +514,13 @@ miog.loadSettings = function()
 			end
 		end
 	end
-
-	if(MIOG_SavedSettings.lastActiveSortingMethods and MIOG_SavedSettings.lastActiveSortingMethods.value) then
-		for sortKey, row in pairs(MIOG_SavedSettings.lastActiveSortingMethods.value) do
-			
+	
+	if(MIOG_SavedSettings.sortMethods_ApplicationViewer and MIOG_SavedSettings.sortMethods_ApplicationViewer.table) then
+		for sortKey, row in pairs(MIOG_SavedSettings.sortMethods_ApplicationViewer.table) do
 			if(miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]) then
 				if(row.active == true) then
-					local active = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].active
-					local currentLayer = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentLayer
-					local currentState = MIOG_SavedSettings.lastActiveSortingMethods.value[sortKey].currentState
-			
-					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(active, currentState)
-			
-					miog.F.CURRENTLY_ACTIVE_SORTING_METHODS = miog.F.CURRENTLY_ACTIVE_SORTING_METHODS + 1
-					miog.F.SORT_METHODS[sortKey].active = true
-					miog.F.SORT_METHODS[sortKey].currentLayer = currentLayer
-					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(currentLayer)
+					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].active, MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentState)
+					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentLayer)
 
 				else
 					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
@@ -506,7 +529,7 @@ miog.loadSettings = function()
 			end
 		end
 	else
-		MIOG_SavedSettings.lastActiveSortingMethods.value = {}
+		MIOG_SavedSettings.sortMethods_ApplicationViewer.table = {}
 
 	end
 	

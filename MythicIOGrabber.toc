@@ -26,12 +26,14 @@ SlickDropDown.lua
 PVEFrame2.lua
 MythicPlusStatistics.lua
 EditDistance.lua
+QueueManagement.lua
 
 Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua
 Blizzard_WeeklyRewardsMixin.lua
 
 XML\MIOG_MultiStateButtonTemplate.xml
+XML\MIOG_SortButtonTemplate.xml
 
 XML\MIOG_ApplicantMemberFrameTemplate.xml
 XML\MIOG_ResultFrameTemplate.xml

@@ -193,18 +193,19 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="DifficultyZone" font="LibMono" justifyH="LEFT">
                             <FontHeight val="11"/>
-                            <Size x="150" y="20"/>
+                            <Size x="100" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="5" />
                             </Anchors>
                         </FontString>
                     </Layer>
+                </Layers>
 
-                    <Layer level="DIALOG">
+                <Layers>
+                    <Layer level="OVERLAY">
                         <FontString parentKey="RoleComposition" font="LibMono" justifyH="LEFT">
-                            <FontHeight val="11"/>
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="5" />
+                                <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" />
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -214,7 +215,7 @@
                     <Frame parentKey="MemberPanel" hidden="true">
                         <Size x="160" y="16"/>
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="5"/>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-21"/>
                         </Anchors>
 
                         <Frames>
@@ -256,70 +257,28 @@
 
                         <Layers>
                             <Layer level="ARTWORK" textureSubLevel="100">
-                                <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png">
+                                <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png" hidden="true">
                                     <Size x="14" y="14" />
                                 </Texture>
                             </Layer>
                         </Layers>
                     </Frame>
                     
-                    <Frame parentKey="BossPanel" inherits="ResizeLayoutFrame" hidden="true">
+                    <Frame parentKey="BossPanel" inherits="HorizontalLayoutFrame" hidden="true">
                         <KeyValues>
                             <KeyValue key="fixedHeight" value="16" />
+                            <KeyValue key="leftPadding" value="5" />
                         </KeyValues>
 
                         <Anchors>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="2"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="1"/>
                         </Anchors>
-
-                        <Frames>
-                            <Frame parentKey="1" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="2" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="3" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="4" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="5" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="6" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="7" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="8" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="9" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-
-                            <Frame parentKey="10" inherits="MIOG_ResultFrameBossFrameTemplate">
-                                <Size x="12" y="12" />
-                            </Frame>
-                        </Frames>
-
                     </Frame>
                 </Frames>
             </Frame>
             
-            <Frame parentKey="RaidInformation" hidden="true">
-                <Size y="12" />
+            <!--<Frame parentKey="RaidInformation" hidden="true">
+                <Size y="34" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.CategoryInformation" relativePoint="BOTTOMLEFT" />
@@ -327,19 +286,79 @@
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="SmallMemberPanel" inherits="HorizontalLayoutFrame">
+                    <Frame parentKey="TankPanel" inherits="HorizontalLayoutFrame">
                         <KeyValues>
                             <KeyValue key="spacing" value="1" />
                         </KeyValues>
 
-                        <Size y="12" />
+                        <Size y="16" />
+
                         <Anchors>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2"/>
+                            <Anchor point="LEFT" relativeKey="$parent.TankIcon" relativePoint="RIGHT" x="4"/>
                         </Anchors>
                     </Frame>
                 </Frames>
-            </Frame>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="HealerIcon" font="LibMono" justifyH="LEFT" text="|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png:16|t:">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.TankPanel" relativePoint="RIGHT" x="24"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="HealerPanel" inherits="HorizontalLayoutFrame">
+                        <KeyValues>
+                            <KeyValue key="spacing" value="1" />
+                        </KeyValues>
+
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.HealerIcon" relativePoint="RIGHT" x="4"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+
+                
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="DamagerIcon" font="LibMono" justifyH="LEFT" text="|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:16|t:">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.RoleComposition" relativePoint="BOTTOMLEFT" y="-4"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="DamagerPanel" inherits="HorizontalLayoutFrame">
+                        <KeyValues>
+                            <KeyValue key="spacing" value="1" />
+                        </KeyValues>
+
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.DamagerIcon" relativePoint="RIGHT" x="4"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="DamagerString" font="LibMono" justifyH="LEFT" text="FUCK">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.DamagerIcon" relativePoint="RIGHT" x="4"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>-->
 
             <EditBox parentKey="LinkBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" frameLevel="100" autoFocus="false" font="LibMono" hidden="true">
                 <FontHeight val="11"/>
