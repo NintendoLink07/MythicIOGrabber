@@ -927,6 +927,15 @@ miog.DUNGEON_ENCOUNTER_INFO = {
 
 }
 
+miog.CHALLENGE_MODE = {
+
+}
+
+for k, v in ipairs(C_ChallengeMode.GetMapTable()) do
+	miog.CHALLENGE_MODE[v] = true
+
+end
+
 local function loadRawData()
 	for k, v in pairs(miog.RAW["Map"]) do
 		if(miog.MAP_INFO[v[1]]) then
@@ -942,45 +951,6 @@ local function loadRawData()
 				mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. mapInfo.fileName .. ".png"
 			
 			end
-	
-			--[[local journalID = C_EncounterJournal.GetInstanceForGameMap(v[1])
-
-			if(journalID) then
-				--EJ_SelectInstance(journalID)
-
-			else
-				print(mapInfo.name, "has no journal ID data?")
-
-			end
-
-	
-			local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalID)
-	
-			for i = 1, 20, 1 do
-				local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfoByIndex(i, journalID)
-	
-				if(mapInfo.name == "Molten Core") then
-					print(bossName, dungeonEncounterID)
-
-				end
-				
-				if(bossName and dungeonEncounterID) then
-					mapInfo.bosses[i] = {
-						name = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].name,
-						encounterID = dungeonEncounterID,
-						journalInstanceID = journalInstanceID,
-						instanceID = instanceID,
-						orderIndex = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].orderIndex,
-						creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
-						icon = miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
-
-					}
-					
-				end
-			end
-	
-			mapInfo.background = loreImage
-			mapInfo.icon = button2]]
 		end
 	end
 

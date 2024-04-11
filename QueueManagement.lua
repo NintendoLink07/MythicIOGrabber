@@ -3,10 +3,110 @@ local wticc = WrapTextInColorCode
 
 local queuedList = {};
 
+local queueSystem = {}
+queueSystem.queueFrames = {}
+queueSystem.currentlyInUse = 0
+
+local queueFrameIndex = 0
+
+local function resetQueueFrame(_, frame)
+	frame:Hide()
+	frame.layoutIndex = nil
+
+	local objectType = frame:GetObjectType()
+
+	if(objectType == "Frame") then
+		frame:SetScript("OnMouseDown", nil)
+		frame.Name:SetText("")
+		frame.Age:SetText("")
+
+		if(frame.Age.Ticker) then
+			frame.Age.Ticker:Cancel()
+			frame.Age.Ticker = nil
+		end
+
+		frame:ClearBackdrop()
+
+		frame.Icon:SetTexture(nil)
+
+		frame.Wait:SetText("Wait")
+	end
+
+---@diagnostic disable-next-line: undefined-field
+	miog.MainTab.QueuePanel.ScrollFrame.Container:MarkDirty()
+end
+
+miog.loadQueueSystem = function()
+	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueuePanel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
+
+end
+
+local function createQueueFrame(queueInfo)
+	local queueFrame = queueSystem.queueFrames[queueInfo[18]]
+
+	if(not queueSystem.queueFrames[queueInfo[18]]) then
+		queueFrame = queueSystem.framePool:Acquire()
+		queueFrame.ActiveIDFrame:Hide()
+		queueFrame.CancelApplication:SetMouseClickEnabled(true)
+		queueFrame.CancelApplication:RegisterForClicks("LeftButtonDown")
+
+		--miog.createFrameBorder(queueFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+		queueSystem.queueFrames[queueInfo[18]] = queueFrame
+
+		queueFrameIndex = queueFrameIndex + 1
+		queueFrame.layoutIndex = queueInfo[21] or queueFrameIndex
+	
+	end
+
+	queueFrame:SetWidth(miog.MainTab.QueuePanel:GetWidth() - 7)
+	
+	--queueFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
+
+	queueFrame.Name:SetText(queueInfo[11])
+
+	local ageNumber = 0
+
+	if(queueInfo[17][1] == "queued") then
+		ageNumber = GetTime() - queueInfo[17][2]
+
+		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
+			ageNumber = ageNumber + 1
+			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+		end)
+	elseif(queueInfo[17][1] == "duration") then
+		ageNumber = queueInfo[17][2]
+
+		queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
+			ageNumber = ageNumber - 1
+			queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+		end)
+	
+	end
+
+	queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
+
+	if(queueInfo[20]) then
+		queueFrame.Icon:SetTexture(queueInfo[20])
+	end
+
+	queueFrame.Wait:SetText("(" .. (queueInfo[12] ~= -1 and miog.secondsToClock(queueInfo[12]) or "N/A") .. ")")
+
+	queueFrame:SetShown(true)
+
+---@diagnostic disable-next-line: undefined-field
+	miog.MainTab.QueuePanel.ScrollFrame.Container:MarkDirty()
+
+	return queueFrame
+end
+
+miog.createQueueFrame = createQueueFrame
+
 hooksecurefunc(QueueStatusFrame, "Update", function()
-	miog.queueSystem.queueFrames = {}
-	miog.queueSystem.framePool:ReleaseAll()
-	miog.inviteBox.framePool:ReleaseAll()
+	queueSystem.queueFrames = {}
+	queueSystem.framePool:ReleaseAll()
+	--miog.inviteBox.framePool:ReleaseAll()
 
 	local gotInvite = false
 
@@ -54,15 +154,15 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 						miog.createQueueFrame(frameData)
 
 						if(categoryID == 3 and activeID == queueID) then
-							miog.queueSystem.queueFrames[queueID].ActiveIDFrame:Show()
+							queueSystem.queueFrames[queueID].ActiveIDFrame:Show()
 
 						else
-							miog.queueSystem.queueFrames[queueID].ActiveIDFrame:Hide()
+							queueSystem.queueFrames[queueID].ActiveIDFrame:Hide()
 						
 						end
 
-						miog.queueSystem.queueFrames[queueID].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-						miog.queueSystem.queueFrames[queueID].CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
+						queueSystem.queueFrames[queueID].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+						queueSystem.queueFrames[queueID].CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
 
 					else
 						if(mode == "proposal") then
@@ -156,7 +256,7 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 						--DevTools_Dump({})
 						local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID)
 	
-						if (hasData and queuedTime and not miog.queueSystem.queueFrames[dungeonID]) then
+						if (hasData and queuedTime and not queueSystem.queueFrames[dungeonID]) then
 							miog.createQueueFrame(categoryID, {GetLFGDungeonInfo(dungeonID)}, {GetLFGQueueStats(categoryID)})
 						end
 					end
@@ -194,9 +294,9 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 			queueFrame.Icon:SetAtlas("Mobile-BonusIcon")
 		end
 
-		miog.queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-		miog.queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
-		miog.queueSystem.queueFrames["YOURLISTING"]:SetScript("OnMouseDown", function()
+		queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+		queueSystem.queueFrames["YOURLISTING"].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
+		queueSystem.queueFrames["YOURLISTING"]:SetScript("OnMouseDown", function()
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
 		end)
@@ -234,9 +334,9 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 
 				if(appStatus == "applied") then
 					miog.createQueueFrame(frameData)
-					miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-					miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
-					miog.queueSystem.queueFrames[identifier]:SetScript("OnMouseDown", function()
+					queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+					queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
+					queueSystem.queueFrames[identifier]:SetScript("OnMouseDown", function()
 						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 						LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
 						LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
@@ -245,7 +345,7 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 					end)
 
 				--[[elseif(appStatus == "invited") then
-					miog.queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+					queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
 			
 					local frame = miog.createInviteFrame(frameData)
 					
@@ -314,7 +414,7 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 
 					if (mapName and queuedTime) then
 						miog.createQueueFrame(frameData)
-						--miog.queueSystem.queueFrames[mapName].CancelApplication:SetScript("OnClick",  SecureActionButton_OnClick)
+						--queueSystem.queueFrames[mapName].CancelApplication:SetScript("OnClick",  SecureActionButton_OnClick)
 					end
 
 					local currentDeclineButton = "/click QueueStatusButton RightButton" .. "\r\n" ..
@@ -333,10 +433,10 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 						queueIndex == 12 and "/click [nocombat]DropDownList1Button24 Left Button"
 					)
 
-					if(miog.queueSystem.queueFrames[mapName]) then
+					if(queueSystem.queueFrames[mapName]) then
 						
-						miog.queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-						miog.queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("macrotext1", currentDeclineButton)
+						queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+						queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("macrotext1", currentDeclineButton)
 
 					end
 
@@ -427,9 +527,9 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 			if (status == "queued") then
 				miog.createQueueFrame(frameData)
 	
-				if(miog.queueSystem.queueFrames["PETBATTLE"]) then
-					miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
-					miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
+				if(queueSystem.queueFrames["PETBATTLE"]) then
+					queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
+					queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
 	
 				end
 	
@@ -468,9 +568,9 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 		if (pbStatus == "queued") then
 			miog.createQueueFrame(frameData)
 
-			if(miog.queueSystem.queueFrames["PETBATTLE"]) then
-				miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
-				miog.queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
+			if(queueSystem.queueFrames["PETBATTLE"]) then
+				queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
+				queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
 
 			end
 
@@ -487,5 +587,5 @@ hooksecurefunc(QueueStatusFrame, "Update", function()
 		end
 	end
 
-	miog.inviteBox:SetShown(gotInvite)
+	--miog.inviteBox:SetShown(gotInvite)
 end)

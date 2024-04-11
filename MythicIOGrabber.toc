@@ -28,6 +28,12 @@ MythicPlusStatistics.lua
 EditDistance.lua
 QueueManagement.lua
 
+ApplicationViewer.lua
+SearchPanel.lua
+EntryCreation.lua
+FilterPanel.lua
+SharedFunctions.lua
+
 Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua
 Blizzard_WeeklyRewardsMixin.lua

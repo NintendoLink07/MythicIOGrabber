@@ -42,7 +42,13 @@ You can click on the frame of a manual application to switch over to the group f
     - Instead of just a boring list of dungeons/raids I wrote my own dropdown menu so I can create the following:
     - Questing areas are sorted by expansion and usually the newest zone is automatically selected (right now it's the Emerald dream for example)
     - Dungeons are sorted by current M+ season, current expansion dungeons, dungeons sorted by expansion. The dungeon that will be selected is either the dungeon from your keystone or the top one.
-    - Raids are sorted by current raids (think current expansion) or legacy raids - these are sorted by expansion which can be expanded with the arrow buttons beside the expansion name.
+    - Raids are sorted by current raids (think current expansion) or legacy raids - these are sorted by expansion.
+
+- Already "integrated" Blizzard's upcoming 10.2.7 filter panel.
+    - If you change something in there it will get applied to MIOG's settings aswell.
+    - Also if you change something in the filter panel it gets applied to Blizzards filter panel aswell (if the option is supported, e.g. minimum rating is supported but maximum rating isn't so only minimum rating gets copied to Blizzards settings)
+
+
 
 ### Fixed
 

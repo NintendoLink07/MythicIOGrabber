@@ -1521,6 +1521,7 @@ local function updateSpecFrames()
 	}
 
 	local numOfMembers = GetNumGroupMembers()
+	numOfMembers = numOfMembers ~= 0 and numOfMembers or 1
 
 	for guid, groupMember in pairs(groupSystem.groupMember) do
 		if(groupMember.specID ~= nil and groupMember.specID ~= 0) then

@@ -20,6 +20,9 @@ function SlickDropDown:OnLoad()
 	self.deactivatedExtraButtons = {}
 	self.List.highestWidth = 0
 	self.List.ExpandButton = {}
+	self.List:SetScript("OnMouseDown", function()
+
+	end)
 
 	--miog.setStandardBackdrop(self.Selected)
 	--local color = CreateColorFromHexString(miog.C.BACKGROUND_COLOR)

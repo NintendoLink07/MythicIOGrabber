@@ -47,7 +47,7 @@ local defaultOptionSettings = {
 	backgroundOptions = {
 		type = "dropdown",
 		title = "Background options",
-		value = 11,
+		value = 10,
 		index = 1
 	},
 	-- Name + Realm, time of last invite
@@ -199,7 +199,8 @@ local defaultOptionSettings = {
 		table = {
 
 		}
-	}
+	},
+	currentBlizzardFilters = {}
 }
 
 local function getBaseSettings(key)
@@ -346,6 +347,8 @@ miog.checkForSavedSettings = function()
 end
 
 miog.loadSettings = function()
+	miog.convertAdvancedBlizzardFiltersToMIOGFilters()
+
 	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", miog.interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "FontString", 20)
 	titleFrame:SetPoint("TOP", miog.interfaceOptionsPanel, "TOP", 0, 0)
 	titleFrame.FontString:SetText("Mythic IO Grabber")
@@ -365,151 +368,153 @@ miog.loadSettings = function()
 	local lastOption = nil
 
 	for key, setting in pairs(MIOG_SavedSettings) do
-		for settingTypes in string.gmatch(setting.type, '([^,]+)') do
-			if(settingTypes == "checkbox") then
-				local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-				optionButton:SetNormalAtlas("checkbox-minimal")
-				optionButton:SetPushedAtlas("checkbox-minimal")
-				optionButton:SetCheckedTexture("checkmark-minimal")
-				optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-				optionButton:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-				optionButton:RegisterForClicks("LeftButtonDown")
-				optionButton:SetChecked(setting.value)
+		if(setting.type) then
+			for settingTypes in string.gmatch(setting.type, '([^,]+)') do
+				if(settingTypes == "checkbox") then
+					local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+					optionButton:SetNormalAtlas("checkbox-minimal")
+					optionButton:SetPushedAtlas("checkbox-minimal")
+					optionButton:SetCheckedTexture("checkmark-minimal")
+					optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+					optionButton:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+					optionButton:RegisterForClicks("LeftButtonDown")
+					optionButton:SetChecked(setting.value)
 
-				if(key == "keepSignUpNote") then
+					if(key == "keepSignUpNote") then
 
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+						optionButton:SetScript("OnClick", function()
+							setting.value = not setting.value
 
-						if(setting.value == true) then
-							LFGListApplicationDialog_Show = keepSignUpNote
+							if(setting.value == true) then
+								LFGListApplicationDialog_Show = keepSignUpNote
 
-						else
-							LFGListApplicationDialog_Show = clearSignUpNote
+							else
+								LFGListApplicationDialog_Show = clearSignUpNote
 
-						end
+							end
 
-						C_UI.Reload()
-					end)
-				elseif(key == "keepInfoFromGroupCreation") then
+							C_UI.Reload()
+						end)
+					elseif(key == "keepInfoFromGroupCreation") then
 
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+						optionButton:SetScript("OnClick", function()
+							setting.value = not setting.value
 
-						if(setting.value == true) then
-							LFGListEntryCreation_Clear = keepInfoFromGroupCreation
+							if(setting.value == true) then
+								LFGListEntryCreation_Clear = keepInfoFromGroupCreation
 
-						else
-							LFGListEntryCreation_Clear = clearEntryCreation
-							
+							else
+								LFGListEntryCreation_Clear = clearEntryCreation
+								
 
-						end
+							end
 
-						C_UI.Reload()
-					end)
-				elseif(key == "enableClassPanel") then
+							C_UI.Reload()
+						end)
+					elseif(key == "enableClassPanel") then
 
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+						optionButton:SetScript("OnClick", function()
+							setting.value = not setting.value
+							miog.applicationViewer.ClassPanel:SetShown(setting.value)
+							miog.applicationViewer.ClassPanel:MarkDirty()
+
+						end)
+
 						miog.applicationViewer.ClassPanel:SetShown(setting.value)
-						miog.applicationViewer.ClassPanel:MarkDirty()
 
-					end)
+					elseif(key == "favouredApplicants") then
+						optionButton:SetScript("OnClick", function()
+							setting.value = not setting.value
 
-					miog.applicationViewer.ClassPanel:SetShown(setting.value)
-
-				elseif(key == "favouredApplicants") then
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
-
-						C_UI.Reload()
-					end)
-
-				end
-
-				local optionButtonString = miog.createBasicFontString("persistent", 12, optionButton)
-				optionButtonString:SetWidth(optionPanelContainer:GetWidth() - optionButton:GetWidth() - 15)
-				optionButtonString:SetPoint("LEFT", optionButton, "RIGHT", 10, 0)
-				optionButtonString:SetText(setting.title)
-
-				optionButtonString:SetWordWrap(true)
-				optionButtonString:SetNonSpaceWrap(true)
-
-				lastOption = optionButton
-
-			elseif(settingTypes == "dropdown") then
-				if(key == "backgroundOptions") then
-					local backgroundOptionString = miog.createBasicFontString("persistent", 12, optionPanelContainer)
-					backgroundOptionString:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-					backgroundOptionString:SetText(setting.title)
-					backgroundOptionString:SetWordWrap(true)
-					backgroundOptionString:SetNonSpaceWrap(true)
-
-					local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", optionPanelContainer)
-					optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
-					UIDropDownMenu_SetWidth(optionDropdown, 200)
-
-					UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
-					UIDropDownMenu_Initialize(optionDropdown,
-						function(frame, level, menuList)
-							local info = UIDropDownMenu_CreateInfo()
-							info.func = function(_, arg1, _, _)
-								setting.value = arg1
-								miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
-								miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
-								UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
-								CloseDropDownMenus()
-			
-							end
-
-							for k, v in ipairs(miog.APPLICATION_VIEWER_BACKGROUNDS) do
-								if(v[1]) then
-									info.text, info.arg1 = v[1], k
-									info.checked = k == setting.value
-									UIDropDownMenu_AddButton(info)
-
-								end
-							end
-						end
-					)
-					
-					miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
-					miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
-
-					lastOption = optionDropdown
-				end
-			elseif(settingTypes == "list") then
-				if(key == "favouredApplicants" and setting.value == true) then
-					hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
-
-					local favouredApplicantsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanelContainer, 250, 140)
-					favouredApplicantsPanel:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-					miog.createFrameBorder(favouredApplicantsPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-					favouredApplicantsPanel.standardHeight = 140
-
-					optionPanelContainer.favouredApplicantsPanel = favouredApplicantsPanel
-
-					local favouredApplicantsScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", favouredApplicantsPanel)
-					favouredApplicantsScrollFrame:SetPoint("TOPLEFT", favouredApplicantsPanel, "TOPLEFT", 1, 0)
-					favouredApplicantsScrollFrame:SetPoint("BOTTOMRIGHT", favouredApplicantsPanel, "BOTTOMRIGHT", -2, 1)
-					favouredApplicantsPanel.scrollFrame = favouredApplicantsScrollFrame
-
-					local favouredApplicantsContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", favouredApplicantsScrollFrame)
-					favouredApplicantsContainer.fixedWidth = favouredApplicantsPanel:GetWidth()
-					favouredApplicantsContainer.minimumHeight = 1
-					favouredApplicantsContainer.spacing = 3
-					favouredApplicantsContainer.align = "top"
-					favouredApplicantsContainer:SetPoint("TOPLEFT", favouredApplicantsScrollFrame, "TOPLEFT")
-
-					favouredApplicantsScrollFrame.container = favouredApplicantsContainer
-					favouredApplicantsScrollFrame:SetScrollChild(favouredApplicantsContainer)
-
-					for _, v in pairs(setting.table) do
-						miog.addFavouredApplicant(v)
+							C_UI.Reload()
+						end)
 
 					end
-			
-					lastOption = favouredApplicantsPanel
+
+					local optionButtonString = miog.createBasicFontString("persistent", 12, optionButton)
+					optionButtonString:SetWidth(optionPanelContainer:GetWidth() - optionButton:GetWidth() - 15)
+					optionButtonString:SetPoint("LEFT", optionButton, "RIGHT", 10, 0)
+					optionButtonString:SetText(setting.title)
+
+					optionButtonString:SetWordWrap(true)
+					optionButtonString:SetNonSpaceWrap(true)
+
+					lastOption = optionButton
+
+				elseif(settingTypes == "dropdown") then
+					if(key == "backgroundOptions") then
+						local backgroundOptionString = miog.createBasicFontString("persistent", 12, optionPanelContainer)
+						backgroundOptionString:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+						backgroundOptionString:SetText(setting.title)
+						backgroundOptionString:SetWordWrap(true)
+						backgroundOptionString:SetNonSpaceWrap(true)
+
+						local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", optionPanelContainer)
+						optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
+						UIDropDownMenu_SetWidth(optionDropdown, 200)
+
+						UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
+						UIDropDownMenu_Initialize(optionDropdown,
+							function(frame, level, menuList)
+								local info = UIDropDownMenu_CreateInfo()
+								info.func = function(_, arg1, _, _)
+									setting.value = arg1
+									miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
+									miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
+									UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
+									CloseDropDownMenus()
+				
+								end
+
+								for k, v in ipairs(miog.APPLICATION_VIEWER_BACKGROUNDS) do
+									if(v[1]) then
+										info.text, info.arg1 = v[1], k
+										info.checked = k == setting.value
+										UIDropDownMenu_AddButton(info)
+
+									end
+								end
+							end
+						)
+						
+						miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
+						miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
+
+						lastOption = optionDropdown
+					end
+				elseif(settingTypes == "list") then
+					if(key == "favouredApplicants" and setting.value == true) then
+						hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
+
+						local favouredApplicantsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanelContainer, 250, 140)
+						favouredApplicantsPanel:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+						miog.createFrameBorder(favouredApplicantsPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+						favouredApplicantsPanel.standardHeight = 140
+
+						optionPanelContainer.favouredApplicantsPanel = favouredApplicantsPanel
+
+						local favouredApplicantsScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", favouredApplicantsPanel)
+						favouredApplicantsScrollFrame:SetPoint("TOPLEFT", favouredApplicantsPanel, "TOPLEFT", 1, 0)
+						favouredApplicantsScrollFrame:SetPoint("BOTTOMRIGHT", favouredApplicantsPanel, "BOTTOMRIGHT", -2, 1)
+						favouredApplicantsPanel.scrollFrame = favouredApplicantsScrollFrame
+
+						local favouredApplicantsContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", favouredApplicantsScrollFrame)
+						favouredApplicantsContainer.fixedWidth = favouredApplicantsPanel:GetWidth()
+						favouredApplicantsContainer.minimumHeight = 1
+						favouredApplicantsContainer.spacing = 3
+						favouredApplicantsContainer.align = "top"
+						favouredApplicantsContainer:SetPoint("TOPLEFT", favouredApplicantsScrollFrame, "TOPLEFT")
+
+						favouredApplicantsScrollFrame.container = favouredApplicantsContainer
+						favouredApplicantsScrollFrame:SetScrollChild(favouredApplicantsContainer)
+
+						for _, v in pairs(setting.table) do
+							miog.addFavouredApplicant(v)
+
+						end
+				
+						lastOption = favouredApplicantsPanel
+					end
 				end
 			end
 		end

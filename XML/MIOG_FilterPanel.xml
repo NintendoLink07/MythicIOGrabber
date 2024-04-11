@@ -6,7 +6,7 @@
 
     <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate" virtual="true" setAllPoints="true">
         <Frames>
-            <Frame parentKey="Lock" inherits="BackdropTemplate" setAllPoints="true" hidden="true" frameStrata="FULLSCREEN">
+            <Frame parentKey="Lock" inherits="BackdropTemplate" setAllPoints="true" hidden="true" frameStrata="HIGH">
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture parentKey="Background" setAllPoints="true">
