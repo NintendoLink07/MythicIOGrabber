@@ -363,9 +363,11 @@ local function updateDungeonCheckboxes()
 	local filterPanel = miog.pveFrame2.SidePanel.Container.FilterPanel
 	local sortedSeasonDungeons = {}
 
-	if(miog.F.CURRENT_SEASON and miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) then
-		for _, v in ipairs(miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) do
-			local activityInfo = miog.ACTIVITY_INFO[v]
+	local mapTable = C_ChallengeMode.GetMapTable()
+
+	if(mapTable) then
+		for _, v in ipairs(mapTable) do
+			local activityInfo = miog.ACTIVITY_INFO[miog.CHALLENGE_MODE[v]]
 			sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName}
 
 		end
@@ -397,7 +399,7 @@ local function updateDungeonCheckboxes()
 			currentButton.FontString:SetText(activityEntry.name)
 		end
 
-		miog.F.ADDED_DUNGEON_FILTERS = true
+		miog.UPDATED_DUNGEON_FILTERS = true
 	end
 end
 
@@ -441,42 +443,7 @@ local function updateRaidCheckboxes()
 		currentButton.FontString:SetText(activityEntry.name)
 	end
 
-	--[[if(miog.F.CURRENT_SEASON and miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) then
-		for _, v in ipairs(miog.SEASONAL_DUNGEONS[miog.F.CURRENT_SEASON]) do
-			local activityInfo = C_LFGList.GetActivityInfoTable(v)
-			sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {activityID = v, name = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].shortName}
-
-		end
-
-		table.sort(sortedSeasonDungeons, function(k1, k2)
-			return k1.name < k2.name
-		end)
-
-		for k, activityEntry in ipairs(sortedSeasonDungeons) do
-			local checked = MIOG_SavedSettings and MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID]
-			local currentButton = filterPanel.Panel.FilterOptions.DungeonPanel.Buttons[k]
-			currentButton:SetChecked(checked)
-
-			currentButton:HookScript("OnClick", function(self)
-				MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons[activityEntry.activityID] = self:GetChecked()
-
-				if(MIOG_SavedSettings["searchPanel_FilterOptions"].table.dungeons) then
-					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-						miog.checkSearchResultListForEligibleMembers()
-			
-					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-						C_LFGList.RefreshApplicants()
-			
-					end
-				end
-
-			end)
-			
-			currentButton.FontString:SetText(activityEntry.name)
-		end
-
-		miog.F.ADDED_DUNGEON_FILTERS = true
-	end]]
+	miog.UPDATED_RAID_FILTERS = true
 end
 
 miog.updateRaidCheckboxes = updateRaidCheckboxes

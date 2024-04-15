@@ -453,20 +453,20 @@ miog.loadSettings = function()
 						optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
 						UIDropDownMenu_SetWidth(optionDropdown, 200)
 
-						UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
+						UIDropDownMenu_SetText(optionDropdown, miog.EXPANSION_INFO[setting.value][1])
 						UIDropDownMenu_Initialize(optionDropdown,
 							function(frame, level, menuList)
 								local info = UIDropDownMenu_CreateInfo()
 								info.func = function(_, arg1, _, _)
 									setting.value = arg1
-									miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
-									miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
-									UIDropDownMenu_SetText(optionDropdown, miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][1])
+									miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[setting.value][2] .. ".png")
+									miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[setting.value][2] .. "_small.png")
+									UIDropDownMenu_SetText(optionDropdown, miog.EXPANSION_INFO[setting.value][1])
 									CloseDropDownMenus()
 				
 								end
 
-								for k, v in ipairs(miog.APPLICATION_VIEWER_BACKGROUNDS) do
+								for k, v in ipairs(miog.EXPANSION_INFO) do
 									if(v[1]) then
 										info.text, info.arg1 = v[1], k
 										info.checked = k == setting.value
@@ -477,8 +477,8 @@ miog.loadSettings = function()
 							end
 						)
 						
-						miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. ".png")
-						miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.APPLICATION_VIEWER_BACKGROUNDS[setting.value][2] .. "_small.png")
+						miog.pveFrame2.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[setting.value][2] .. ".png")
+						miog.pveFrame2.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[setting.value][2] .. "_small.png")
 
 						lastOption = optionDropdown
 					end

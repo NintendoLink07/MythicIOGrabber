@@ -516,7 +516,7 @@ miog.MAP_INFO = {
 	[2096] = {shortName = "COS", icon = "interface/lfgframe/lfgicon-crucibleofstorms.blp", fileName = "seapriestraid"},
 	[2164] = {shortName = "EP", icon = "interface/lfgframe/lfgicon-eternalpalace.blp", fileName = "eternalpalace"},
 	[2097] = {shortName = "MECH", icon = "interface/lfgframe/lfgicon-mechagon.blp", fileName = "mechagonzone"},
-	[2217] = {shortName = "NWK", icon = "interface/lfgframe/lfgicon-nyalotha.blp", fileName = "nyalotha"},
+	[2217] = {shortName = "NYA", icon = "interface/lfgframe/lfgicon-nyalotha.blp", fileName = "nyalotha"},
 	
 	[2289] = {shortName = "PF", icon = "interface/lfgframe/lfgicon-plaguefall.blp", fileName = "plaguefall"},
 	[2291] = {shortName = "DOS", icon = "interface/lfgframe/lfgicon-theotherside.blp", fileName = "theotherside"},
@@ -936,7 +936,10 @@ for k, v in ipairs(C_ChallengeMode.GetMapTable()) do
 
 end
 
+
 local function loadRawData()
+	local faction = UnitFactionGroup("player")
+
 	for k, v in pairs(miog.RAW["Map"]) do
 		if(miog.MAP_INFO[v[1]]) then
 			local mapInfo = miog.MAP_INFO[v[1]]
@@ -955,7 +958,7 @@ local function loadRawData()
 	end
 
 	for k, v in pairs(miog.RAW["DungeonEncounter"]) do
-		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5]}
+		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
 	end
 
 	for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
@@ -970,16 +973,18 @@ local function loadRawData()
 				
 				if(mapInfo) then
 					if(miog.JOURNAL_CREATURE_INFO[journalEncounterID]) then
-						mapInfo.bosses[#mapInfo.bosses+1] = {
-							name = dungeonEncounterInfo.name,
-							encounterID = v[2],
-							journalInstanceID = journalInstanceID,
-							instanceID = instanceID,
-							orderIndex = dungeonEncounterInfo.orderIndex,
-							creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
-							icon = miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
-		
-						}
+						if(dungeonEncounterInfo.faction == nil or dungeonEncounterInfo.faction == 1 and faction == "Alliance" or dungeonEncounterInfo.faction == 0 and faction == "Horde") then
+							mapInfo.bosses[#mapInfo.bosses+1] = {
+								name = dungeonEncounterInfo.name,
+								encounterID = v[2],
+								journalInstanceID = journalInstanceID,
+								instanceID = instanceID,
+								orderIndex = dungeonEncounterInfo.orderIndex,
+								creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
+								icon = miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
+			
+							}
+						end
 					else
 						--print("MISSING DATA:", v[2], bossName, journalEncounterID)
 					
@@ -1040,6 +1045,7 @@ local function loadRawData()
 		for x, y in pairs(miog.RAW["MapChallengeMode"]) do
 			if(y[3] == v.mapID) then
 				v.challengeModeID = y[2]
+				miog.CHALLENGE_MODE[y[2]] = k
 	
 			end
 		end
@@ -1086,6 +1092,13 @@ miog.CLASSFILE_TO_ID = {
 	["DEMONHUNTER"] = 12,
 	["EVOKER"] = 13,
 	["DUMMY"] = 20,
+}
+
+
+miog.roleRemainingKeyLookup = {
+	["TANK"] = "TANK_REMAINING",
+	["HEALER"] = "HEALER_REMAINING",
+	["DAMAGER"] = "DAMAGER_REMAINING",
 }
 
 miog.CLASSES = {
@@ -1291,17 +1304,17 @@ miog.ACTIVITY_BACKGROUNDS = {
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
 }
 
-miog.APPLICATION_VIEWER_BACKGROUNDS = {
-	[1] = {"Classic", "vanilla-bg-1"},
-	[2] = {"The Burning Crusade", "tbc-bg-1"},
-	[3] = {"Wrath of the Lich King", "wotlk-bg-1"},
-	[4] = {"Cataclysm", "cata-bg-1"},
-	[5] = {"Mists of Pandaria", "mop-bg-1"},
-	[6] = {"Warlords of Draenor", "wod-bg-1"},
-	[7] = {"Legion", "legion-bg-1"},
-	[8] = {"Battle for Azeroth", "bfa-bg-1"},
-	[9] = {"Shadowlands", "sl-bg-1"},
-	[10] = {"Dragonflight", "df-bg-1"},
+miog.EXPANSION_INFO = {
+	[1] = {"Classic", "vanilla-bg-1", GetExpansionDisplayInfo(0).logo},
+	[2] = {"The Burning Crusade", "tbc-bg-1", GetExpansionDisplayInfo(1).logo},
+	[3] = {"Wrath of the Lich King", "wotlk-bg-1", GetExpansionDisplayInfo(2).logo},
+	[4] = {"Cataclysm", "cata-bg-1", GetExpansionDisplayInfo(3).logo},
+	[5] = {"Mists of Pandaria", "mop-bg-1", GetExpansionDisplayInfo(4).logo},
+	[6] = {"Warlords of Draenor", "wod-bg-1", GetExpansionDisplayInfo(5).logo},
+	[7] = {"Legion", "legion-bg-1", GetExpansionDisplayInfo(6).logo},
+	[8] = {"Battle for Azeroth", "bfa-bg-1", GetExpansionDisplayInfo(7).logo},
+	[9] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
+	[10] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms

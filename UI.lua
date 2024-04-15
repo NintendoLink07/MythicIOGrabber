@@ -230,6 +230,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	local firstGroupID
 
 	local borFilters = bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters)
+	print(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters, borFilters)
 
 	-- DUNGEONS
 
@@ -244,7 +245,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			local expInfo = {}
 			expInfo.entryType = "arrow"
 			expInfo.index = i + 10000
-			expInfo.text = miog.APPLICATION_VIEWER_BACKGROUNDS[i + 1][1]
+			expInfo.text = miog.EXPANSION_INFO[i + 1][1]
 			expInfo.icon = expansionInfo and expansionInfo.logo
 
 			expansionTable[#expansionTable+1] = expInfo
@@ -1346,6 +1347,7 @@ miog.createFrames = function()
 	miog.createEntryCreation()
 	miog.loadFilterPanel()
 	miog.loadQueueSystem()
+
 	--createUpgradedInvitePendingDialog()
 
 	--miog.scriptReceiver:RegisterEvent("KeystoneUpdate")
@@ -1389,6 +1391,16 @@ miog.createFrames = function()
 				updateFilterDifficulties()
 				miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Enable()
 				miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Enable()
+				
+
+				if(miog.UPDATED_DUNGEON_FILTERS == nil) then
+					miog.updateDungeonCheckboxes()
+
+				end
+
+				if(miog.UPDATED_RAID_FILTERS == nil) then
+					miog.updateRaidCheckboxes()
+				end
 
 				if(LFGListFrame.SearchPanel.categoryID == 2) then
 					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Show()

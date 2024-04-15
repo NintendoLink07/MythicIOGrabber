@@ -193,7 +193,7 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="DifficultyZone" font="LibMono" justifyH="LEFT">
                             <FontHeight val="11"/>
-                            <Size x="100" y="20"/>
+                            <Size x="140" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="5" />
                             </Anchors>

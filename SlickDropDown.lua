@@ -358,6 +358,7 @@ function SlickDropDown:CreateEntryFrame(info)
 			DevTools_Dump(infoTable)
 
 		end
+		
 		tableIndex = #parent + 1
 		list = self.entryFrameTree[infoTable.parentIndex].List
 

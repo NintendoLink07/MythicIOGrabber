@@ -117,7 +117,6 @@ miog.refreshKeystones = function()
 		local keystoneInfo = miog.openRaidLib.GetKeystoneInfo(unitID)
 
 		if(keystoneInfo and keystoneInfo.mapID ~= 0) then
-			keystoneInfo.level = 30
 			local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
 			local className, classFile = GetClassInfo(keystoneInfo.classID)
 
@@ -148,13 +147,17 @@ miog.refreshKeystones = function()
 	
 					local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, playerGUID)
 	
-					miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
-					miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
+					if(lowestGain and highestGain) then
+						miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
+						miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
+					end
 				else
 					for k, v in pairs(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars) do
 						local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, k)
-						v.ScoreIncrease:Show()
-						v.ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
+						if(lowestGain and highestGain) then
+							v.ScoreIncrease:Show()
+							v.ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
+						end
 	
 					end
 				

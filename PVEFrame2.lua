@@ -32,26 +32,20 @@ local function createPVEFrameReplacement()
 		miog.setUpMPlusStatistics()
 		miog.gatherMPlusStatistics()
 		
-		if(not miog.F.ADDED_DUNGEON_FILTERS) then
+		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 			miog.F.CURRENT_SEASON = currentSeason
 			miog.F.PREVIOUS_SEASON = currentSeason - 1
-
-			miog.updateDungeonCheckboxes()
-			miog.updateRaidCheckboxes()
-
 		end
+
+		miog.F.CURRENT_REGION = miog.F.CURRENT_REGION or miog.C.REGIONS[GetCurrentRegion()]
 
 		local regularActivityID, regularGroupID, regularLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
 
 		if(regularActivityID) then
 			miog.MainTab.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
-			miog.MainTab.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())
-
-			--miog.MPlusStatistics.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
-			--miog.MPlusStatistics.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())
-			
+			miog.MainTab.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())			
 			
 		else
 			local timewalkingActivityID, timewalkingGroupID, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
@@ -59,16 +53,10 @@ local function createPVEFrameReplacement()
 			if(timewalkingActivityID) then
 				miog.MainTab.Keystone.Text:SetText("+" .. timewalkingLevel .. " " .. C_LFGList.GetActivityGroupInfo(timewalkingGroupID))
 				miog.MainTab.Keystone.Text:SetTextColor(miog.createCustomColorForScore(timewalkingLevel * 130):GetRGBA())
-
-				--miog.MPlusStatistics.Keystone.Text:SetText("+" .. timewalkingLevel .. " " .. C_LFGList.GetActivityGroupInfo(timewalkingGroupID))
-				--miog.MPlusStatistics.Keystone.Text:SetTextColor(miog.createCustomColorForScore(timewalkingLevel * 130):GetRGBA())
 				
 			else
 				miog.MainTab.Keystone.Text:SetText("NO KEYSTONE")
 				miog.MainTab.Keystone.Text:SetTextColor(1, 0, 0, 1)
-
-				--miog.MPlusStatistics.Keystone.Text:SetText("NO KEYSTONE")
-				--miog.MPlusStatistics.Keystone.Text:SetTextColor(1, 0, 0, 1)
 			
 			end
 		end
@@ -76,9 +64,9 @@ local function createPVEFrameReplacement()
 		for frameIndex = 1, 3, 1 do
 			local activities = C_WeeklyRewards.GetActivities(frameIndex)
 
-			activities[1].progress = random(0, activities[1].threshold) * 2
+			--[[activities[1].progress = random(0, activities[1].threshold) * 2
 			activities[2].progress = activities[1].progress >= activities[1].threshold and random(activities[1].progress, activities[3].threshold) or activities[1].progress
-			activities[3].progress = activities[2].progress >= activities[2].threshold and random(activities[2].progress, activities[3].threshold) or activities[2].progress
+			activities[3].progress = activities[2].progress >= activities[2].threshold and random(activities[2].progress, activities[3].threshold) or activities[2].progress]]
 
 			local firstThreshold = activities[1].progress >= activities[1].threshold
 			local secondThreshold = activities[2].progress >= activities[2].threshold
@@ -88,15 +76,6 @@ local function createPVEFrameReplacement()
 			dimColor[4] = 0.1
 
 			local currentFrame = frameIndex == 1 and miog.MainTab.MPlusStatus or frameIndex == 2 and miog.MainTab.HonorStatus or miog.MainTab.RaidStatus
-
-			if(currentFrame.ticks) then
-				for k, v in pairs(currentFrame.ticks) do
-					miog.persistentTexturePool:Release(v)
-					currentFrame.ticks[k] = nil
-
-				end
-
-			end
 
 			currentFrame:SetMinMaxValues(0, activities[3].threshold)
 			currentFrame.info = (thirdThreshold or secondThreshold) and activities[3] or firstThreshold and activities[2] or activities[1]
@@ -248,40 +227,6 @@ local function createPVEFrameReplacement()
 		
 			end)
 
-			--currentVaultFrame:SetScript("OnEnter", currentFrame:GetScript("OnEnter"))
-			--currentVaultFrame:SetScript("OnLeave", currentFrame:GetScript("OnLeave"))
-			
-			currentFrame.ticks = {}
-
-			--[[
-			if(not thirdThreshold) then
-				for tickIndex = 1, 2, 1 do
-					dimColor[4] = tickIndex == 1 and firstThreshold and 0.1 or tickIndex == 2 and secondThreshold and 0.1 or 1
-	
-					local tick = miog.createBasicTexture("persistent", "Interface\\ChatFrame\\ChatFrameBackground", currentFrame, 24, 3)
-					tick:SetColorTexture(0.8, 0.8, 0.8, 1)
-					tick:SetDrawLayer("OVERLAY")
-					tick:SetPoint("BOTTOMLEFT", currentFrame, "BOTTOMLEFT", 0, currentFrame:GetHeight() / (activities[3].threshold / activities[tickIndex].threshold))
-					currentFrame.ticks[#currentFrame.ticks+1] = tick
-				end
-
-				for tickIndex = 1, 2, 1 do
-					if(tickIndex == 1 and firstThreshold or tickIndex == 2 and secondThreshold) then
-						local tick = miog.createBasicTexture("persistent", "Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\checkmarkSmallIcon.png", currentFrame, 10, 10)
-						tick:SetPoint("BOTTOMRIGHT", currentFrame, "BOTTOMRIGHT", 5, currentFrame:GetHeight() / (activities[3].threshold / activities[tickIndex].threshold))
-						tick:SetDrawLayer("OVERLAY")
-						currentFrame.ticks[#currentFrame.ticks+1] = tick
-					end
-				end
-
-			else
-				local tick = miog.createBasicTexture("persistent", "Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\checkmarkSmallIcon.png", currentFrame, 10, 10)
-				tick:SetPoint("TOPRIGHT", currentFrame, "TOPRIGHT", 5, 5)
-				tick:SetDrawLayer("OVERLAY")
-				currentFrame.ticks[#currentFrame.ticks+1] = tick
-
-			end]]
-
 			currentFrame:SetValue(activities[3].progress)
 
 			currentFrame.Text:SetText(activities[3].progress .. "/" .. activities[3].threshold .. " " .. (frameIndex == 1 and "Dungeons" or frameIndex == 2 and "Honor" or frameIndex == 3 and "Bosses" or ""))
@@ -292,6 +237,7 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2 = pveFrame2
 	
 	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
+	miog.Teleports = pveFrame2.TabFramesPanel.Teleports
 	miog.pveFrame2.TitleBar.Expand:SetParent(miog.MainTab.Plugin)
 
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
@@ -313,9 +259,6 @@ local function createPVEFrameReplacement()
 	local filterPanel = pveFrame2.SidePanel.Container.FilterPanel
 	
 	filterPanel.Panel.FilterOptions = {}
-
-	--miog.createFrameBorder(filterPanel.Button, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	--filterPanel.Button:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	miog.createFrameBorder(pveFrame2.SidePanel.Container, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	pveFrame2.SidePanel.Container:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -386,9 +329,11 @@ local function createPVEFrameReplacement()
 	queueDropDown:SetText("Choose a queue")
 	frame.QueuePanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	frame.Plugin:SetHeight(pveFrame2:GetHeight() - pveFrame2.TitleBar:GetHeight() - frame.Plugin.FooterBar:GetHeight() - 2)
+	frame.Plugin:SetHeight(pveFrame2:GetHeight() - pveFrame2.TitleBar:GetHeight() - frame.Plugin.FooterBar:GetHeight() - 5)
 	miog.createFrameBorder(frame.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	frame.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	local standardWidth = frame.Plugin:GetWidth()
 
 	frame.Plugin.Resize:SetScript("OnMouseUp", function()
 		frame.Plugin:StopMovingOrSizing()
@@ -402,12 +347,11 @@ local function createPVEFrameReplacement()
 		end
 
 		--frame.Plugin:ClearAllPoints()
-		frame.Plugin:SetPoint("TOPLEFT", frame.Plugin:GetParent(), "TOPRIGHT", -370, 0)
+		frame.Plugin:SetPoint("TOPLEFT", frame.Plugin:GetParent(), "TOPRIGHT", -standardWidth, 0)
 		frame.Plugin:SetPoint("TOPRIGHT", frame.Plugin:GetParent(), "TOPRIGHT", 0, 0)
 
 	end)
 
-	local standardWidth = frame.Plugin:GetWidth()
 	frame.Plugin.standardHeight = frame.Plugin:GetHeight()
 	frame.Plugin.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight * 1.5
 
@@ -431,516 +375,120 @@ local function createPVEFrameReplacement()
 
 	--miog.setStandardBackdrop(frame.MPlusStatistics)
 	--frame.MPlusStatistics:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-end
 
-local function updateRandomDungeons()
-	local queueDropDown = miog.MainTab.QueueDropDown
-	local info = {}
-	info.entryType = "option"
-	info.level = 2
-	info.index = nil
+	local counter = 0
 
-	if(queueDropDown.entryFrameTree[1]) then
-		queueDropDown:ReleaseSpecificFrames("random", queueDropDown.entryFrameTree[1].List)
-	end
-	
-	if(queueDropDown.entryFrameTree[2]) then
-		queueDropDown:ReleaseSpecificFrames("random", queueDropDown.entryFrameTree[2].List)
-	end
+	--[[for i = 1, 1000, 1 do
+		local spellName, spellSubName, spellID = GetSpellBookItemName(i, BOOKTYPE_SPELL)
 
-	for i=1, GetNumRandomDungeons() do
-		local id, name, typeID, subtypeID, _, _, _, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon = GetLFGRandomDungeonInfo(i)
-		
-		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
+		if(spellName) then
+			if(string.find(spellName, "Path of")) then
+				local spellInfo = C_SpellBook.GetSpellInfo(spellID)
+				local tpButton = CreateFrame("Button", nil, miog.MainTab, "SecureActionButtonTemplate")
+				tpButton:SetSize(40, 40)
+				tpButton:SetPoint("TOPLEFT", WorldFrame, "TOPLEFT", counter * 40, 0)
+				tpButton:SetNormalTexture(spellInfo.iconID)
+				tpButton:SetAttribute("type", "spell")
+				tpButton:SetAttribute("spell", spellInfo.name)
+				tpButton:RegisterForClicks("LeftButtonDown")
+				counter = counter + 1
 
-		if((isAvailableForPlayer or not hideIfNotJoinable)) then
-			if(isAvailableForAll) then
-				local mode = GetLFGMode(1, id)
-				info.text = isHolidayDungeon and "(Event) " .. name or name
-
-				info.checked = mode == "queued"
-				info.icon = miog.MAP_INFO[id] and miog.MAP_INFO[id].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
-				info.parentIndex = subtypeID
-				info.index = 1
-				info.type2 = "random"
-
-				info.func = function()
-					ClearAllLFGDungeons(1);
-					SetLFGDungeon(1, id);
-					JoinSingleLFG(1, id);
-				end
-				
-				local tempFrame = queueDropDown:CreateEntryFrame(info)
-				tempFrame:SetScript("OnShow", function(self)
-					local tempMode = GetLFGMode(1, id)
-					self.Radio:SetChecked(tempMode == "queued")
-					
-				end)
+				--print(spellName, spellID)
 			end
 		end
-	end
-end
+	end]]
 
-miog.updateRandomDungeons = updateRandomDungeons
+	local offset = 35 + 22
 
-local function updateDungeons()
-	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.MainTab.QueueDropDown
-	if(queueDropDown.entryFrameTree[1].List.framePool) then
-		queueDropDown.entryFrameTree[1].List.framePool:ReleaseAll()
-	end
+	for i = 1, 100, 1 do
+		local spellType, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
 
-	if(queueDropDown.entryFrameTree[2].List.framePool) then
-		queueDropDown.entryFrameTree[2].List.framePool:ReleaseAll()
-	end
+		if(spellType == "FLYOUT") then
+			local name, description, numSlots, isKnown = GetFlyoutInfo(id)
 
-	if(queueDropDown.entryFrameTree[3].List.framePool) then
-		queueDropDown.entryFrameTree[3].List.framePool:ReleaseAll()
-	end
+			if(string.find(name, "Hero's Path")) then
+				local index
+				local expName
 
-	local info = {}
-	info.entryType = "option"
-	info.level = 2
-	info.index = nil
-
-	local dungeonList = GetLFDChoiceOrder() or {}
-
-	for _, dungeonID in ipairs(dungeonList) do
----@diagnostic disable-next-line: redundant-parameter
-		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
-		local name, typeID, subtypeID, _, _, _, _, _, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
-
-		local groupActivityID = miog.MAP_ID_TO_GROUP_ACTIVITY_ID[mapID]
-
-		if(groupActivityID and not miog.GROUP_ACTIVITY[groupActivityID]) then
-			miog.GROUP_ACTIVITY[groupActivityID] = {mapID = mapID, file = fileID}
-		end
-
-		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
-
-		if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon)) then
-			if(isAvailableForAll) then
-				local mode = GetLFGMode(1, dungeonID)
-				info.text = isHolidayDungeon and "(Event) " .. name or name
-				info.checked = mode == "queued"
-				info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or fileID or nil
-				info.parentIndex = isFollowerDungeon and 3 or subtypeID
-				info.func = function()
-					ClearAllLFGDungeons(1);
-					SetLFGDungeon(1, dungeonID);
-					JoinSingleLFG(1, dungeonID);
-
-				end
-
-				local tempFrame = queueDropDown:CreateEntryFrame(info)
-				tempFrame:SetScript("OnShow", function(self)
-					local tempMode = GetLFGMode(1, dungeonID)
-					self.Radio:SetChecked(tempMode == "queued")
-					
-				end)
-			end
-		end
-	end
-
-	--DevTools_Dump(miog.GROUP_ID_TO_LFG_ID)
-end
-
-miog.updateDungeons = updateDungeons
-
-local function updateRaidFinder()
-	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.MainTab.QueueDropDown
-
-	if(queueDropDown.entryFrameTree[4] and queueDropDown.entryFrameTree[4].List.framePool) then
-		queueDropDown.entryFrameTree[4].List.framePool:ReleaseAll()
-	end
-
-	local info = {}
-	info.entryType = "option"
-	info.level = 2
-	info.index = nil
-	info.parentIndex = 4
-
-	local nextLevel = nil;
-	local playerLevel = UnitLevel("player")
-
-
-	for rfIndex=1, GetNumRFDungeons() do
-		local id, name, typeID, subtypeID, minLevel, maxLevel, _, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon = GetRFDungeonInfo(rfIndex)
----@diagnostic disable-next-line: redundant-parameter
-		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
-
-		if((isAvailableForPlayer or not hideIfNotJoinable)) then
-			if(isAvailableForAll) then
-				if (playerLevel >= minLevel and playerLevel <= maxLevel) then
-					local mode = GetLFGMode(3, id)
-					info.text = isHolidayDungeon and "(Event) " .. name or name
-					info.checked = mode == "queued"
-					info.icon = miog.MAP_INFO[id] and miog.MAP_INFO[id].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
-					info.func = function()
-						--JoinSingleLFG(1, dungeonID)
-						ClearAllLFGDungeons(3);
-						SetLFGDungeon(3, id);
-						--JoinLFG(LE_LFG_CATEGORY_RF);
-						JoinSingleLFG(3, id);
+				for x, y in ipairs(miog.EXPANSION_INFO) do
+					if(y[1] == (string.sub(name, 14))) then
+						index = x
+						expName = string.sub(name, 14)
 					end
-					
-					local tempFrame = queueDropDown:CreateEntryFrame(info)
-					tempFrame:SetScript("OnShow", function(self)
-						local tempMode = GetLFGMode(3, id)
-						self.Radio:SetChecked(tempMode == "queued")
-						
+				end
+
+				local string = miog.Teleports:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+				string:SetFont(miog.FONTS["libMono"], 12, "OUTLINE")
+				string:SetPoint("TOPLEFT", miog.Teleports, "TOPLEFT", 0, (index - 4) * -offset)
+				string:SetText(expName)
+
+				for k = 1, numSlots, 1 do
+					local flyoutSpellID, overrideSpellID, spellKnown, spellName, slotSpecID = GetFlyoutSlotInfo(id, k)
+
+					local spellInfo = C_SpellBook.GetSpellInfo(flyoutSpellID)
+					local tpButton = CreateFrame("Button", nil, miog.Teleports, "SecureActionButtonTemplate")
+					tpButton:SetSize(35, 35)
+					tpButton:SetNormalTexture(spellInfo.iconID)
+					tpButton:GetNormalTexture():SetDesaturated(not spellKnown)
+					tpButton:SetPoint("TOPLEFT", miog.Teleports, "TOPLEFT", (k-1) * 37, -13 + (index - 4) * -offset)
+
+					if(spellKnown) then
+						tpButton:SetHighlightAtlas("communities-create-avatar-border-hover")
+						tpButton:SetAttribute("type", "spell")
+						tpButton:SetAttribute("spell", spellInfo.name)
+						tpButton:RegisterForClicks("LeftButtonDown")
+					end
+
+					local spell = Spell:CreateFromSpellID(flyoutSpellID)
+					spell:ContinueOnSpellLoad(function()
+						local desc = spell:GetSpellDescription()
+
+						tpButton:SetScript("OnEnter", function(self)
+							GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+							GameTooltip_AddHighlightLine(GameTooltip, spellName)
+							GameTooltip:AddLine(desc)
+							GameTooltip:Show()
+						end)
 					end)
 
-					nextLevel = nil
-
-				elseif ( playerLevel < minLevel and (not nextLevel or minLevel < nextLevel ) ) then
-					nextLevel = minLevel
-
+					tpButton:SetScript("OnLeave", function()
+						GameTooltip:Hide()
+					end)
 				end
+
+				counter = counter + 1
 			end
 		end
 	end
 end
-
-miog.updateRaidFinder = updateRaidFinder
-
-local function checkIfCanQueue()
-	local HonorFrame = HonorFrame;
-	local canQueue;
-	local arenaID;
-	local isBrawl;
-	local isSpecialBrawl;
-
-	if ( HonorFrame.type == "specific" ) then
-		if ( HonorFrame.SpecificScrollBox.selectionID ) then
-			canQueue = true;
-		end
-	elseif ( HonorFrame.type == "bonus" ) then
-		if ( HonorFrame.BonusFrame.selectedButton ) then
-			canQueue = HonorFrame.BonusFrame.selectedButton.canQueue;
-			arenaID = HonorFrame.BonusFrame.selectedButton.arenaID;
-			isBrawl = HonorFrame.BonusFrame.selectedButton.isBrawl;
-			isSpecialBrawl = HonorFrame.BonusFrame.selectedButton.isSpecialBrawl;
-		end
-	end
-
-	local disabledReason;
-
-	if arenaID then
-		local battlemasterListInfo = C_PvP.GetSkirmishInfo(arenaID);
-		if battlemasterListInfo then
-			local groupSize = GetNumGroupMembers();
-			local minPlayers = battlemasterListInfo.minPlayers;
-			local maxPlayers = battlemasterListInfo.maxPlayers;
-			if groupSize > maxPlayers then
-				canQueue = false;
-				disabledReason = PVP_ARENA_NEED_LESS:format(groupSize - maxPlayers);
-			elseif groupSize < minPlayers then
-				canQueue = false;
-				disabledReason = PVP_ARENA_NEED_MORE:format(minPlayers - groupSize);
-			end
-		end
-	end
-
-	return canQueue
-end
-
-local function updatePvP()
-	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.MainTab.QueueDropDown
-
-	if(queueDropDown.entryFrameTree[5].List.securePool) then
-		queueDropDown.entryFrameTree[5].List.securePool:ReleaseAll()
-	end
-
-	if(queueDropDown.entryFrameTree[5].List.framePool) then
-		queueDropDown.entryFrameTree[5].List.framePool:ReleaseAll()
-	end
-	local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
-
-	local token, loopMax, generalTooltip;
-	if (groupSize > (MAX_PARTY_MEMBERS + 1)) then
-		token = "raid";
-		loopMax = groupSize;
-	else
-		token = "party";
-		loopMax = groupSize - 1; -- player not included in party tokens, just raid tokens
-	end
-	
-	local maxLevel = GetMaxLevelForLatestExpansion();
-	for i = 1, loopMax do
-		if ( not UnitIsConnected(token..i) ) then
-			generalTooltip = PVP_NO_QUEUE_DISCONNECTED_GROUP
-			break;
-		elseif ( UnitLevel(token..i) < maxLevel ) then
-			generalTooltip = PVP_NO_QUEUE_GROUP
-			break;
-		end
-	end
-
-	local info = {}
-	info.level = 2
-	info.parentIndex = 5
-	info.text = PVP_RATED_SOLO_SHUFFLE
-
-	local minItemLevel = C_PvP.GetRatedSoloShuffleMinItemLevel()
-	local _, _, playerPvPItemLevel = GetAverageItemLevel();
-	info.disabled = playerPvPItemLevel < minItemLevel
-	info.icon = miog.findBrawlIconByName("Solo Shuffle")
-	info.tooltipOnButton = true
-	info.tooltipWhileDisabled = true
-	info.type2 = "rated"
-	info.tooltipTitle = "Unable to queue for this activity."
-	info.tooltipText = generalTooltip or format(_G["INSTANCE_UNAVAILABLE_SELF_PVP_GEAR_TOO_LOW"], "", minItemLevel, playerPvPItemLevel);
-	info.func = nil
-	--info.func = function()
-	--	JoinRatedSoloShuffle()
-	-- end
-	
-
-	local soloFrame = queueDropDown:CreateEntryFrame(info)
-	soloFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.RatedSoloShuffle, soloFrame)
-	
-	soloFrame:SetScript("OnShow", function(self)
-		--local tempMode = GetLFGMode(1, dungeonID)
-		--self.Radio:SetChecked(tempMode == "queued")
-		
-	end)
-
-	info = {}
-	info.level = 2
-	info.parentIndex = 5
-	info.text = ARENA_BATTLES_2V2
-	info.icon = miog.findBattlegroundIconByName("Arena (2v2)")
-	-- info.checked = false
-	info.type2 = "rated"
-	info.tooltipText = generalTooltip or groupSize > 2 and string.format(PVP_ARENA_NEED_LESS, groupSize - 2) or groupSize < 2 and string.format(PVP_ARENA_NEED_MORE, 2 - groupSize)
-	info.disabled = groupSize ~= 2
-	--info.func = function()
-	--	JoinArena()
-	--end
-
-	local twoFrame = queueDropDown:CreateEntryFrame(info)
-	twoFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.Arena2v2, twoFrame)
-
-	info = {}
-	info.level = 2
-	info.parentIndex = 5
-	info.text = ARENA_BATTLES_3V3
-	info.icon = miog.findBattlegroundIconByName("Arena (3v3)")
-	-- info.checked = false
-	info.type2 = "rated"
-	info.tooltipText = generalTooltip or groupSize > 3 and string.format(PVP_ARENA_NEED_LESS, groupSize - 3) or groupSize < 3 and string.format(PVP_ARENA_NEED_MORE, 3 - groupSize)
-	info.disabled = generalTooltip or groupSize ~= 3
-	--info.func = function()
-	--	JoinArena()
-	--end
-
-	-- UIDropDownMenu_AddButton(info, level)
-	local threeFrame = queueDropDown:CreateEntryFrame(info)
-	threeFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.Arena3v3, threeFrame)
-
-	info = {}
-	info.level = 2
-	info.parentIndex = 5
-	info.text = PVP_RATED_BATTLEGROUNDS
-	info.icon = miog.findBattlegroundIconByName("Rated Battlegrounds")
-	-- info.checked = false
-	info.type2 = "rated"
-	info.tooltipText = generalTooltip or groupSize > 10 and string.format(PVP_RATEDBG_NEED_LESS, groupSize - 10) or groupSize < 10 and string.format(PVP_RATEDBG_NEED_MORE, 10 - groupSize)
-	info.disabled = generalTooltip or groupSize ~= 10
-	--info.func = function()
-	--	JoinRatedBattlefield()
-	--end
-
-	-- UIDropDownMenu_AddButton(info, level)
-	local tenFrame = queueDropDown:CreateEntryFrame(info)
-	tenFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.RatedBG, tenFrame)
-
-	for index = 1, 5, 1 do
-		local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or index == 5 and C_PvP.GetSpecialEventBrawlInfo()
-
-		if(currentBGQueue and (index == 3 or currentBGQueue.canQueue)) then
-			info = {}
-			info.text = index == 1 and RANDOM_BATTLEGROUNDS or index == 2 and RANDOM_EPIC_BATTLEGROUND or index == 3 and "Skirmish" or currentBGQueue.name
-			info.entryType = "option"
-			info.checked = false
-			--info.disabled = index == 1 or index == 2
-			info.icon = index < 3 and miog.findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (miog.findBrawlIconByID(currentBGQueue.brawlID) or miog.findBrawlIconByName(currentBGQueue.name))
-			info.level = 2
-			info.parentIndex = 5
-			info.type2 = "unrated"
-			info.func = nil
-			info.disabled = index ~= 3 and currentBGQueue.canQueue == false or index == 3 and not HonorFrame.BonusFrame.Arena1Button.canQueue
-
-			-- UIDropDownMenu_AddButton(info, level)
-			local tempFrame = queueDropDown:CreateEntryFrame(info)
-
-			if(currentBGQueue.bgID) then
-				if(currentBGQueue.bgID == 32) then
-					tempFrame:SetAttribute("macrotext1", "/click HonorFrameQueueButton")
-					queueDropDown:CreateExtraButton(HonorFrame.BonusFrame.RandomBGButton, tempFrame)
-					
-
-				elseif(currentBGQueue.bgID == 901) then
-					--tempFrame:SetAttribute("macrotext1", "/click [nocombat] HonorFrame.BonusFrame.RandomEpicBGButton" .. "\r\n" .. "/click [nocombat] HonorFrameQueueButton")
-					tempFrame:SetAttribute("macrotext1", "/click HonorFrameQueueButton")
-					queueDropDown:CreateExtraButton(HonorFrame.BonusFrame.RandomEpicBGButton, tempFrame)
-
-				end
-
-				tempFrame:SetAttribute("original", tempFrame:GetAttribute("macrotext1"))
-			else
-				if(index == 3) then
-					--JoinSkirmish(4)
-					tempFrame:SetAttribute("macrotext1", "/run JoinSkirmish(4)")
-
-
-				elseif(index == 4) then
-					tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl()")
-					--C_PvP.JoinBrawl()
-
-				elseif(index == 5) then
-					tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl(true)")
-					--C_PvP.JoinBrawl(true)
-				
-				end
-			end
-		end
-
-	end
-
-	
-
-	info = {}
-	info.level = 2
-	info.parentIndex = 5
-	info.text = LFG_LIST_MORE
-	-- info.checked = false
-	--info.tooltipText = generalTooltip or groupSize > 10 and string.format(PVP_RATEDBG_NEED_LESS, groupSize - 10) or groupSize < 10 and string.format(PVP_RATEDBG_NEED_MORE, 10 - groupSize)
-	--info.disabled = generalTooltip or groupSize ~= 10
-	info.type2 = "more"
-	info.disabled = nil
-	--info.func = function()
-	--	JoinRatedBattlefield()
-	--end
-
-	-- UIDropDownMenu_AddButton(info, level)
-	local moreFrame = queueDropDown:CreateEntryFrame(info)
-	--[[moreFrame:SetAttribute("macrotext1", "/run PVEFrame_ShowFrame(\"PVPUIFrame\", \"HonorFrame\")" .. "\r\n" .. "/run HonorFrame.BonusFrame.Arena1Button:ClearAllPoints()" .. "\r\n" .. 
-	"/run HonorFrame.BonusFrame.Arena1Button:SetPoint(\"LEFT\", HonorFrame.BonusFrame, \"LEFT\", (HonorFrame.BonusFrame:GetWidth() - HonorFrame.BonusFrame.Arena1Button:GetWidth()) / 2, 0)")]]
-
-	moreFrame:SetAttribute("macrotext1", "/run PVEFrame_ShowFrame(\"PVPUIFrame\", \"HonorFrame\")")
-end
-
-miog.updatePvP = updatePvP
-
-local function updateQueueDropDown()
-	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.MainTab.QueueDropDown
-	queueDropDown:ResetDropDown()
-
-	local info = {}
-	info.text = "Dungeons (Normal)"
-	info.hasArrow = true
-	info.level = 1
-	info.index = 1
-	queueDropDown:CreateEntryFrame(info)
-
-	info.text = "Dungeons (Heroic)"
-	info.hasArrow = true
-	info.level = 1
-	info.index = 2
-	queueDropDown:CreateEntryFrame(info)
-
-	info.text = "Follower"
-	info.hasArrow = true
-	info.level = 1
-	info.index = 3
-	queueDropDown:CreateEntryFrame(info)
-
-	info.text = "Raid Finder"
-	info.hasArrow = true
-	info.level = 1
-	info.index = 4
-	queueDropDown:CreateEntryFrame(info)
-
-	info.text = "PvP"
-	info.hasArrow = true
-	info.level = 1
-	info.index = 5
-	queueDropDown:CreateEntryFrame(info)
-
-	info = {}
-
-	info.text = "Pet Battle"
-	info.checked = false
-	info.entryType = "option"
-	info.level = 1
-	info.value = "PETBATTLEQUEUEBUTTON"
-	info.index = 6
-	info.func = function()
-		C_PetBattles.StartPVPMatchmaking()
-	end
-
-	local tempFrame = queueDropDown:CreateEntryFrame(info)
-	tempFrame:SetScript("OnShow", function(self)
-		local pbStatus = C_PetBattles.GetPVPMatchmakingInfo()
-		self.Radio:SetChecked(pbStatus ~= nil)
-		
-	end)
-
-	info.entryType = "option"
-	info.level = 2
-	info.index = nil
-
-	updateRandomDungeons()
-	updateDungeons()
-	updateRaidFinder()
-	updatePvP()
-end
-
-miog.updateQueueDropDown = updateQueueDropDown
 
 miog.createPVEFrameReplacement = createPVEFrameReplacement
 
-miog.scriptReceiver = CreateFrame("Frame", "MythicIOGrabber_ScriptReceiver", miog.pveFrame2, "BackdropTemplate") ---@class Frame
-miog.scriptReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
-miog.scriptReceiver:RegisterEvent("PLAYER_LOGIN")
-miog.scriptReceiver:RegisterEvent("UPDATE_LFG_LIST")
-miog.scriptReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
 
-miog.scriptReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_SEARCH_FAILED")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
-miog.scriptReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
+eventReceiver:RegisterEvent("PLAYER_LOGIN")
+eventReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+eventReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
+eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+eventReceiver:SetScript("OnEvent", miog.OnEvent)
 
-miog.scriptReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+--[[
 
-miog.scriptReceiver:RegisterEvent("PARTY_LEADER_CHANGED")
-miog.scriptReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
-miog.scriptReceiver:RegisterEvent("GROUP_JOINED")
-miog.scriptReceiver:RegisterEvent("GROUP_LEFT")
-miog.scriptReceiver:RegisterEvent("INSPECT_READY")
-miog.scriptReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-miog.scriptReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+scriptReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+scriptReceiver:RegisterEvent("GROUP_JOINED")
+scriptReceiver:RegisterEvent("GROUP_LEFT")
+scriptReceiver:RegisterEvent("INSPECT_READY")
+scriptReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
-miog.scriptReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
-miog.scriptReceiver:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-miog.scriptReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
-miog.scriptReceiver:RegisterEvent("BATTLEFIELDS_SHOW")
 
-miog.scriptReceiver:RegisterEvent("LFG_UPDATE")
-miog.scriptReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-miog.scriptReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
-miog.scriptReceiver:SetScript("OnEvent", miog.OnEvent)
+scriptReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+scriptReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
+scriptReceiver:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
+scriptReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
+scriptReceiver:RegisterEvent("BATTLEFIELDS_SHOW")
+scriptReceiver:RegisterEvent("LFG_UPDATE")
+scriptReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+scriptReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
+
+]]

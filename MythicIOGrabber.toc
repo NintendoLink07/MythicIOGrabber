@@ -32,6 +32,7 @@ ApplicationViewer.lua
 SearchPanel.lua
 EntryCreation.lua
 FilterPanel.lua
+InspectCoroutine.lua
 SharedFunctions.lua
 
 Blizzard_ChallengesFrameMixin.lua
@@ -88,3 +89,5 @@ XML\MIOG_MPlusStatistics.xml
 XML\MIOG_MPlusStatisticsCharacterTemplate.xml
 XML\MIOG_MPlusStatisticsColumnTemplate.xml
 XML\MIOG_MPlusStatisticsDungeonTemplate.xml
+
+XML\MIOG_Teleports.xml

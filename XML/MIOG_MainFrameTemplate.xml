@@ -295,10 +295,10 @@
                             </StatusBar>
 
                             <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true" frameLevel="100">
-                                <Size x="370" y="380" />
+                                <Size x="372" y="370" />
 
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-370" />
+                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-372" />
                                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                                 </Anchors>
 
@@ -573,6 +573,9 @@
 
                     <Frame parentKey="MPlusStatistics" inherits="MIOG_MPlusStatistics" hidden="true" setAllPoints="true">
                     </Frame>
+
+                    <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true">
+                    </Frame>
                 </Frames>
             </Frame>
 
@@ -585,6 +588,7 @@
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 1)
                         parent.TabFramesPanel.MainTab:Show()
+                            parent.TabFramesPanel.Teleports:Hide()
                         parent.TabFramesPanel.MPlusStatistics:Hide()
                    </OnClick>
                </Scripts>
@@ -594,7 +598,7 @@
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT">
                         <Offset>
-                            <AbsDimension x="-16" y="0"/>
+                            <AbsDimension x="0" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -603,7 +607,27 @@
                             local parent = self:GetParent()
                             PanelTemplates_SetTab(parent, 2)
                             parent.TabFramesPanel.MainTab:Hide()
+                            parent.TabFramesPanel.Teleports:Hide()
                             parent.TabFramesPanel.MPlusStatistics:Show()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentTab3" inherits="PanelTabButtonTemplate" id="3" text="Teleports">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            local parent = self:GetParent()
+                            PanelTemplates_SetTab(parent, 3)
+                            parent.TabFramesPanel.MainTab:Hide()
+                            parent.TabFramesPanel.MPlusStatistics:Hide()
+                            parent.TabFramesPanel.Teleports:Show()
                     </OnClick>
                 </Scripts>
             </Button>
@@ -628,7 +652,7 @@
 
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 2)
+                PanelTemplates_SetNumTabs(self, 3)
                 PanelTemplates_SetTab(self, 1)
             </OnLoad>
 
