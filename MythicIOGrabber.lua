@@ -29,7 +29,7 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 		for k, v in pairs(miog.SPECIALIZATIONS) do
-			if(k > 20) then
+			if(k > 25) then
 				local _, localizedName, _, _, _, fileName = GetSpecializationInfoByID(k)
 
 				miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k

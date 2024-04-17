@@ -31,6 +31,9 @@ local function createPVEFrameReplacement()
 
 		miog.setUpMPlusStatistics()
 		miog.gatherMPlusStatistics()
+
+		miog.setupPVPStatistics()
+		miog.gatherPVPStatistics()
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -245,15 +248,15 @@ local function createPVEFrameReplacement()
 	miog.MPlusStatistics.KeystoneDropdown:SetListAnchorToTopleft()
 	miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars = {}
 	miog.MPlusStatistics.DungeonColumns.Dungeons = {}
+
 	miog.MPlusStatistics:HookScript("OnShow", function()
 		miog.MPlusStatistics.KeystoneDropdown:SetText("Party keystones")
 		miog.refreshKeystones()
 	end)
 
-	local texture = WorldFrame:CreateTexture("test", "OVERLAY")
-	texture:SetSize(50, 50)
-	texture:SetPoint("TOPLEFT")
-	texture:Show()
+	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
+	miog.PVPStatistics.BracketColumns.Brackets = {}
+	miog.PVPStatistics.CharacterScrollFrame.Rows.accountChars = {}
 
 	local frame = miog.MainTab
 	local filterPanel = pveFrame2.SidePanel.Container.FilterPanel
@@ -353,10 +356,10 @@ local function createPVEFrameReplacement()
 	end)
 
 	frame.Plugin.standardHeight = frame.Plugin:GetHeight()
-	frame.Plugin.extendedHeight = MIOG_SavedSettings and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight * 1.5
+	frame.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight * 1.5
 
 	frame.Plugin:SetResizeBounds(standardWidth, frame.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
-	frame.Plugin:SetHeight(MIOG_SavedSettings and MIOG_SavedSettings.frameExtended.value == true and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight)
+	frame.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value == true and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight)
 
 	miog.createFrameBorder(frame.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	frame.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -399,8 +402,9 @@ local function createPVEFrameReplacement()
 	end]]
 
 	local offset = 35 + 22
+	local _, _, _, numSlots = GetSpellTabInfo(1)
 
-	for i = 1, 100, 1 do
+	for i = 1, numSlots, 1 do
 		local spellType, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
 
 		if(spellType == "FLYOUT") then

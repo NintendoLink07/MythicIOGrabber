@@ -2,7 +2,7 @@
 ..\..\FrameXML\UI.xsd">
 	<Script file="Blizzard_WeeklyRewardsMixin.lua"/>
 
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL">
         <FontHeight val="11" />
     </Font>
 
@@ -574,6 +574,9 @@
                     <Frame parentKey="MPlusStatistics" inherits="MIOG_MPlusStatistics" hidden="true" setAllPoints="true">
                     </Frame>
 
+                    <Frame parentKey="PVPStatistics" inherits="MIOG_PVPStatistics" hidden="true" setAllPoints="true">
+                    </Frame>
+
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true">
                     </Frame>
                 </Frames>
@@ -587,8 +590,11 @@
                    <OnClick>
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 1)
+
                         parent.TabFramesPanel.MainTab:Show()
-                            parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+
                         parent.TabFramesPanel.MPlusStatistics:Hide()
                    </OnClick>
                </Scripts>
@@ -604,16 +610,19 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                            local parent = self:GetParent()
-                            PanelTemplates_SetTab(parent, 2)
-                            parent.TabFramesPanel.MainTab:Hide()
-                            parent.TabFramesPanel.Teleports:Hide()
-                            parent.TabFramesPanel.MPlusStatistics:Show()
+                        local parent = self:GetParent()
+                        PanelTemplates_SetTab(parent, 2)
+                        
+                        parent.TabFramesPanel.MainTab:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+
+                        parent.TabFramesPanel.MPlusStatistics:Show()
                     </OnClick>
                 </Scripts>
             </Button>
-
-            <Button name="$parentTab3" inherits="PanelTabButtonTemplate" id="3" text="Teleports">
+            
+            <Button name="$parentTab3" inherits="PanelTabButtonTemplate" id="3" text="PVP Statistics">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
                         <Offset>
@@ -623,14 +632,36 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                            local parent = self:GetParent()
-                            PanelTemplates_SetTab(parent, 3)
-                            parent.TabFramesPanel.MainTab:Hide()
-                            parent.TabFramesPanel.MPlusStatistics:Hide()
-                            parent.TabFramesPanel.Teleports:Show()
+                        local parent = self:GetParent()
+                        PanelTemplates_SetTab(parent, 3)
+
+                        parent.TabFramesPanel.MainTab:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.MPlusStatistics:Hide()
+
+                        parent.TabFramesPanel.PVPStatistics:Show()
                     </OnClick>
                 </Scripts>
             </Button>
+
+            <Button name="$parentTab4" inherits="PanelTabButtonTemplate" id="4" text="Teleports">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        local parent = self:GetParent()
+                        PanelTemplates_SetTab(parent, 4)
+
+                        parent.TabFramesPanel.MainTab:Hide()
+                        parent.TabFramesPanel.MPlusStatistics:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+
+                        parent.TabFramesPanel.Teleports:Show()
+                    </OnClick>
+                </Scripts>
+            </Button>
+        
         </Frames>
 
         <Layers>
@@ -652,7 +683,7 @@
 
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 3)
+                PanelTemplates_SetNumTabs(self, 4)
                 PanelTemplates_SetTab(self, 1)
             </OnLoad>
 

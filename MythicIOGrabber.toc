@@ -35,6 +35,8 @@ FilterPanel.lua
 InspectCoroutine.lua
 SharedFunctions.lua
 
+PVPStatistics.lua
+
 Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua
 Blizzard_WeeklyRewardsMixin.lua
@@ -91,3 +93,6 @@ XML\MIOG_MPlusStatisticsColumnTemplate.xml
 XML\MIOG_MPlusStatisticsDungeonTemplate.xml
 
 XML\MIOG_Teleports.xml
+
+XML\MIOG_PVPStatistics.xml
+XML\MIOG_PVPStatisticsCharacterTemplate.xml

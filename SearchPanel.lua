@@ -502,6 +502,55 @@ local function createResultTooltip(resultID, resultFrame, autoAccept)
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
+		local orderedList = {}
+		local specList = {}
+
+		for i = 1, searchResultInfo.numMembers, 1 do
+			local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
+
+			orderedList[i] = {role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
+
+			specList[orderedList[i].specID] = specList[orderedList[i].specID] and specList[orderedList[i].specID] + 1 or 1
+		end
+
+		table.sort(orderedList, function(k1, k2)
+			if(k1.role ~= k2.role) then
+				return k1.role > k2.role
+
+			elseif(k1.specID ~= k2.specID) then
+				return k1.specID < k2.specID
+
+			else
+				return k1.class < k2.class
+
+			end
+
+		end)
+
+		local newRole = nil
+
+		for k, v in ipairs(orderedList) do
+			local _, name, _, icon, _, classFile, className = GetSpecializationInfoByID(v.specID)
+
+			if(specList[v.specID]) then
+				if(newRole ~= v.role) then
+					if(newRole ~= nil) then 
+						GameTooltip_AddBlankLineToTooltip(GameTooltip)
+					end
+
+					newRole = v.role
+
+					GameTooltip:AddLine(v.role)
+				end
+
+				GameTooltip:AddLine(wticc(specList[v.specID] .. "x " .. "|T" .. icon .. ":11:11|t " .. name .. " " .. className, C_ClassColor.GetClassColor(classFile):GenerateHexColor()))
+
+				specList[v.specID] = nil
+			end
+
+		end
+
+
 		GameTooltip:AddLine(C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode))
 		
 		if(MIOG_SavedSettings.favouredApplicants.table[searchResultInfo.leaderName]) then
@@ -858,7 +907,7 @@ local function updatePersistentResultFrame(resultID)
 					if(k1.role ~= k2.role) then
 						return k1.role > k2.role
 	
-					elseif(k1.spec ~= k2.spec) then
+					elseif(k1.specID ~= k2.specID) then
 
 						if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
 							return false
@@ -867,7 +916,7 @@ local function updatePersistentResultFrame(resultID)
 							return true
 
 						else
-							return k1.spec > k2.spec
+							return k1.specID > k2.specID
 
 						end
 	

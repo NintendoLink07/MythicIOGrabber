@@ -304,51 +304,51 @@ local function checkQueues()
 		--for i=1, #apps do
 			local id, appStatus, pendingStatus, appDuration, role = C_LFGList.GetApplicationInfo(v)
 
-            print(id, appStatus)
+			if(id) then
+				local identifier = "APPLICATION_" .. id
+				if(appStatus == "applied" or appStatus == "invited") then
+					local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
+					--local activityName = C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode);
 
-			local identifier = "APPLICATION_" .. id
-			if(appStatus == "applied" or appStatus == "invited") then
-				local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-				--local activityName = C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode);
-
-				local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
-				local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
-		
-				local frameData = {
-					[1] = true,
-					[2] = groupInfo,
-					[11] = searchResultInfo.name,
-					[12] = -1,
-					[17] = {"duration", appDuration},
-					[18] = identifier,
-					[20] = miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil,
-					[21] = -1
-				}
-
-				if(appStatus == "applied") then
-					createQueueFrame(frameData)
-					queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-					queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
-					queueSystem.queueFrames[identifier]:SetScript("OnMouseDown", function()
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-						LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-						LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
-						LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-					end)
-
-				--[[elseif(appStatus == "invited") then
-					queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+					local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+					local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 			
-					local frame = miog.createInviteFrame(frameData)
-					
-					frame.Decline:SetAttribute("type", "macro") -- left click causes macro
-					frame.Decline:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+					local frameData = {
+						[1] = true,
+						[2] = groupInfo,
+						[11] = searchResultInfo.name,
+						[12] = -1,
+						[17] = {"duration", appDuration},
+						[18] = identifier,
+						[20] = miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil,
+						[21] = -1
+					}
 
-					frame.Accept:SetAttribute("type", "macro") -- left click causes macro
-					frame.Accept:SetAttribute("macrotext1", "/run C_LFGList.AcceptInvite(" .. id .. ")")
+					if(appStatus == "applied") then
+						createQueueFrame(frameData)
+						queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
+						queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
+						queueSystem.queueFrames[identifier]:SetScript("OnMouseDown", function()
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+							LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+							LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
+							LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+						end)
 
-					gotInvite = true]]
+					--[[elseif(appStatus == "invited") then
+						queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+				
+						local frame = miog.createInviteFrame(frameData)
+						
+						frame.Decline:SetAttribute("type", "macro") -- left click causes macro
+						frame.Decline:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
+
+						frame.Accept:SetAttribute("type", "macro") -- left click causes macro
+						frame.Accept:SetAttribute("macrotext1", "/run C_LFGList.AcceptInvite(" .. id .. ")")
+
+						gotInvite = true]]
+					end
 				end
 			end
 		end

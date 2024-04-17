@@ -9,51 +9,61 @@ local defaultOptionSettings = {
 	frameExtended = {
 		type = "variable",
 		title = "Extend the mainframe",
+		access = "read,write",
 		value = false,
 	},
 	frameManuallyResized = {
 		type = "variable",
 		title = "Resized the mainframe via resize button",
+		access = "read,write",
 		value = 0,
 	},
 	keepSignUpNote = {
 		type = "checkbox",
 		title = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up not.|cFFFF0000 REQUIRES A RELOAD |r",
 		value = true,
-		index = 6,
+		access = "read,write",
 	},
 	keepInfoFromGroupCreation = {
 		type = "checkbox",
 		title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields.|cFFFF0000 REQUIRES A RELOAD |r",
 		value = true,
-		index = 7,
+		access = "read,write",
 	},
 	mPlusStatistics = {
 		type = "variable",
 		title = "Mythic + Statistics for all your characters",
+		access = "read",
 		table = {},
-
+	},
+	pvpStatistics = {
+		type = "variable",
+		title = "PVP Statistics for all your characters",
+		access = "read",
+		table = {},
 	},
 	enableClassPanel = {
 		type = "checkbox",
 		title = "Enable the class panel for your group (shows class and spec data for your whole group after all inspects went through)",
+		access = "read,write",
 		value = true,
-		index = 2,
 	},
 	lastActiveSortingMethods = {
 		type = "variable",
 		title = "Last active sorting methods",
+		access = "read,write",
 	},
 	backgroundOptions = {
 		type = "dropdown",
 		title = "Background options",
+		access = "read,write",
 		value = 10,
-		index = 1
 	},
 	-- Name + Realm, time of last invite
 	lastInvitedApplicants = {
 		type = "variable",
 		title = "Last invited applicants",
+		access = "read",
 		table = {}
 	},
 	-- Name + Realm
@@ -61,8 +71,8 @@ local defaultOptionSettings = {
 		type = "checkbox,list",
 		title = "Enable favoured applicants (this also shows/hides the right click dropdown option).|cFFFF0000 REQUIRES A RELOAD |r",
 		table = {},
+		access = "read",
 		value = true,
-		index = 5,
 	},
 	applicationViewer_FilterOptions = {
 		type = "variable",
@@ -102,7 +112,8 @@ local defaultOptionSettings = {
 			bracketID = 1,
 			dungeons = {},
 			filterForDungeons = false,
-		}
+		},
+		access = "read",
 	},
 	searchPanel_FilterOptions = {
 		type = "variable",
@@ -143,6 +154,7 @@ local defaultOptionSettings = {
 			raids = {},
 			filterForDungeons = false,
 		},
+		access = "read",
 	},
 	sortMethods_SearchPanel = {
 		table = {
@@ -164,6 +176,7 @@ local defaultOptionSettings = {
 			numberOfActiveMethods = 0,
 		},
 		type = "variable",
+		access = "read,write",
 		title = "Last active sorting methods for the search panel",
 	},
 	sortMethods_ApplicationViewer = {
@@ -191,14 +204,14 @@ local defaultOptionSettings = {
 			numberOfActiveMethods = 0,
 		},
 		type = "variable",
+		access = "read,write",
 		title = "Last active sorting methods for the application viewer",
 	},
 	searchPanel_DeclinedGroups = {
 		type = "variable",
-		title = "Last active sorting methods for the search panel",
-		table = {
-
-		}
+		title = "Declined groups that are saved between loading screens / relogging",
+		table = {},
+		access = "read",
 	},
 	currentBlizzardFilters = {}
 }
@@ -211,7 +224,6 @@ miog.getBaseSettings = getBaseSettings
 
 local function compareSettings()
 	for key, optionEntry in pairs(defaultOptionSettings) do
-
 		if(not MIOG_SavedSettings[key]) then
 			MIOG_SavedSettings[key] = {}
 
@@ -219,50 +231,32 @@ local function compareSettings()
 				MIOG_SavedSettings[key][k] = v
 
 			end
-		elseif(MIOG_SavedSettings[key].table) then
-			for tableKey, tableEntry in pairs(optionEntry.table) do
-				if(not MIOG_SavedSettings[key].table[tableKey]) then
-					MIOG_SavedSettings[key].table[tableKey] = tableEntry
 
-				end
-			end
-		else
+		elseif(MIOG_SavedSettings[key]) then
 			if(MIOG_SavedSettings[key].title ~= optionEntry.title) then
 				MIOG_SavedSettings[key].title = optionEntry.title
+			end
 
-			elseif(MIOG_SavedSettings[key].type ~= optionEntry.type) then
+			if(MIOG_SavedSettings[key].type ~= optionEntry.type) then
 				MIOG_SavedSettings[key].type = optionEntry.type
-
-			elseif(MIOG_SavedSettings[key].index ~= optionEntry.index) then
-				MIOG_SavedSettings[key].index = optionEntry.index
-
-			elseif(optionEntry.table and MIOG_SavedSettings[key].table == nil) then
-				MIOG_SavedSettings[key].table = {}
+			end
+			
+			if(MIOG_SavedSettings[key].access == "read,write") then
+				MIOG_SavedSettings[key].table = optionEntry.table
+				MIOG_SavedSettings[key].value = optionEntry.value
 
 			else
-				if(MIOG_SavedSettings[key].type == "dropdown") then
-					MIOG_SavedSettings[key].table = optionEntry.table
+				MIOG_SavedSettings[key].table = MIOG_SavedSettings[key].table or {}
 
-				end
-			end
-		end
-	end
-end
-
-local function deleteOldSettings()
-	for key in pairs(MIOG_SavedSettings) do
-		if(defaultOptionSettings[key] == nil) then
-			MIOG_SavedSettings[key] = nil
-
-		--[[else
-			if(MIOG_SavedSettings[key].table) then
-				for tableKey in pairs(MIOG_SavedSettings[key].table) do
-					if(defaultOptionSettings[key].table[tableKey] == nil) then
-						MIOG_SavedSettings[key].table[tableKey] = nil
-
+				if(optionEntry.table) then
+					for tableKey, tableEntry in pairs(optionEntry.table) do
+						if(not MIOG_SavedSettings[key].table[tableKey]) then
+							MIOG_SavedSettings[key].table[tableKey] = tableEntry
+		
+						end
 					end
 				end
-			end]]
+			end
 		end
 	end
 end
@@ -334,7 +328,6 @@ miog.checkForSavedSettings = function()
 
 	else
 		compareSettings()
-		deleteOldSettings()
 
 	end
 	

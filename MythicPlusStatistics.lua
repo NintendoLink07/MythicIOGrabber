@@ -261,39 +261,6 @@ miog.setUpMPlusStatistics = function()
 	miog.MPlusStatistics.DungeonColumns:MarkDirty()
 end
 
-miog.loadSavedMPlusDataForCharacter = function(playerGUID, mapTable)
-	local characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
-
-	for index, challengeMapID in pairs(mapTable or C_ChallengeMode.GetMapTable()) do
-		local dungeonFrame
-
-		if(characterFrame[challengeMapID] == nil) then
-			dungeonFrame = CreateFrame("Frame", nil, characterFrame.DungeonPanel, "MIOG_MPlusStatisticsDungeonTemplate")
-			dungeonFrame.layoutIndex = index
-
-			characterFrame[challengeMapID] = dungeonFrame
-
-		else
-
-			dungeonFrame = characterFrame[challengeMapID]
-		end
-		
-		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][challengeMapID]
-		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][challengeMapID]
-
-		dungeonFrame.Level1:SetText(thisWeek.level or 0)
-		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek.level == 0 or thisWeek.level) == nil and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
-
-		local desaturatedColors = CreateColorFromHexString((lastWeek.level == 0 or lastWeek.level) == nil and miog.CLRSCC.gray or lastWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green)
-
-		dungeonFrame.Level2:SetText(lastWeek.level or 0)
-		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
-
-		characterFrame.DungeonPanel:MarkDirty()
-
-	end
-end
-
 miog.fillMPlusCharacter = function(playerGUID, mapTable)
 	local characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
 
@@ -311,10 +278,15 @@ miog.fillMPlusCharacter = function(playerGUID, mapTable)
 
 		end
 
-		local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
+		local isCurrentChar = playerGUID == UnitGUID("player")
 
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[challengeMapID] = playerGUID == UnitGUID("player") and affixScores and affixScores[1] or {}
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[challengeMapID] = playerGUID == UnitGUID("player") and affixScores and affixScores[2] or {}
+		if(isCurrentChar) then
+			local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
+
+			MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[challengeMapID] =  affixScores and affixScores[1] or {}
+			MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[challengeMapID] = affixScores and affixScores[2] or {}
+
+		end
 
 		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][challengeMapID]
 		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][challengeMapID]
@@ -405,7 +377,7 @@ miog.gatherMPlusStatistics = function()
 	for x, y in pairs(orderedTable) do
 		if(y.key ~= playerGUID) then
 			miog.createMPlusCharacter(y.key)
-			miog.loadSavedMPlusDataForCharacter(y.key, mapTable)
+			miog.fillMPlusCharacter(y.key, mapTable)
 
 		end
 	end
