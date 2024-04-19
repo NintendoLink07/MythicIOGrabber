@@ -1,10 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
-        <FontHeight val="11" />
-    </Font>
-
-    <Frame name="MIOG_PVPStatisticsCharacterTemplate" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_RaidStatisticsCharacterTemplate" inherits="BackdropTemplate" virtual="true">
         <Size y="40"/>
 
         <Layers>
@@ -53,17 +49,31 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="DungeonPanel" inherits="HorizontalLayoutFrame, BackdropTemplate">
-                <KeyValues>
-                    <KeyValue key="spacing" value="3" />
-                </KeyValues>
-
-                <Size y="40" />
-
+            <Frame parentKey="Bracket1" inherits="MIOG_PVPStatisticsBracketTemplate">
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="139"/>
-                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="130"/>
                 </Anchors>
+            </Frame>
+
+            <Frame parentKey="Bracket2" inherits="MIOG_PVPStatisticsBracketTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Bracket1" relativePoint="RIGHT" x="10"/>
+                </Anchors>
+
+            </Frame>
+
+            <Frame parentKey="Bracket3" inherits="MIOG_PVPStatisticsBracketTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Bracket2" relativePoint="RIGHT" x="10"/>
+                </Anchors>
+
+            </Frame>
+
+            <Frame parentKey="Bracket4" inherits="MIOG_PVPStatisticsBracketTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Bracket3" relativePoint="RIGHT" x="10"/>
+                </Anchors>
+
             </Frame>
         </Frames>
 
@@ -72,7 +82,7 @@
                 <Texture parentKey="Rank">
                     <Size x="25" y="25" />
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.DungeonPanel" relativePoint="LEFT" x="-3" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Bracket1" relativePoint="LEFT" />
                     </Anchors>
                 </Texture>
             </Layer>

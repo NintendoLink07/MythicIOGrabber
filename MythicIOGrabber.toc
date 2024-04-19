@@ -41,6 +41,8 @@ Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua
 Blizzard_WeeklyRewardsMixin.lua
 
+XML\MIOG_MainFrameTemplate.xml
+
 XML\MIOG_MultiStateButtonTemplate.xml
 XML\MIOG_SortButtonTemplate.xml
 
@@ -57,7 +59,6 @@ XML\MIOG_ResultFrameBossFrameTemplate.xml
 XML\MIOG_RaidPanelTemplate.xml
 XML\MIOG_RaidPanelTierTemplate.xml
 
-XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_SidePanel.xml
 XML\MIOG_VerticalButtonTemplate.xml
 XML\MIOG_QueueFrame.xml
@@ -70,15 +71,16 @@ XML\MIOG_SearchPanel.xml
 XML\MIOG_InviteBox.xml
 XML\MIOG_InviteBoxFrameTemplate.xml
 
-XML\MIOG_FilterOption.xml
-XML\MIOG_FilterPanel.xml
-XML\MIOG_FilterOptionSpinnerTemplate.xml
-XML\MIOG_FilterOptionDualSpinnerTemplate.xml
+XML\Filter\MIOG_FilterOption.xml
+XML\Filter\MIOG_FilterPanel.xml
+XML\Filter\MIOG_FilterOptionSpinnerTemplate.xml
+XML\Filter\MIOG_FilterOptionDualSpinnerTemplate.xml
+
 XML\MIOG_LastInvitesTemplate.xml
 
-XML\MIOG_ClassPanel.xml
-XML\MIOG_ClassPanelClassFrameTemplate.xml
-XML\MIOG_ClassPanelSpecFrameTemplate.xml
+XML\CLassPanel\MIOG_ClassPanel.xml
+XML\CLassPanel\MIOG_ClassPanelClassFrameTemplate.xml
+XML\CLassPanel\MIOG_ClassPanelSpecFrameTemplate.xml
 
 XML\MIOG_DropDownMenu.xml
 XML\MIOG_DropDownMenuEntry.xml
@@ -87,12 +89,14 @@ XML\MIOG_MinimalCheckButtonTemplate.xml
 XML\MIOG_ClassSpecFilterRowTemplate.xml
 XML\MIOG_ClassSpecSingleOptionTemplate.xml
 
-XML\MIOG_MPlusStatistics.xml
-XML\MIOG_MPlusStatisticsCharacterTemplate.xml
-XML\MIOG_MPlusStatisticsColumnTemplate.xml
-XML\MIOG_MPlusStatisticsDungeonTemplate.xml
+XML\MythicPlus\MIOG_MPlusStatistics.xml
+XML\MythicPlus\MIOG_MPlusStatisticsCharacterTemplate.xml
+XML\MythicPlus\MIOG_MPlusStatisticsColumnTemplate.xml
+XML\MythicPlus\MIOG_MPlusStatisticsDungeonTemplate.xml
 
 XML\MIOG_Teleports.xml
 
-XML\MIOG_PVPStatistics.xml
-XML\MIOG_PVPStatisticsCharacterTemplate.xml
+XML\PVP\MIOG_PVPStatistics.xml
+XML\PVP\MIOG_PVPStatisticsCharacterTemplate.xml
+XML\PVP\MIOG_PVPStatisticsBracketTemplate.xml
+XML\PVP\MIOG_PVPStatisticsColumnTemplate.xml

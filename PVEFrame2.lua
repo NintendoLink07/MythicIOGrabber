@@ -244,19 +244,19 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.Expand:SetParent(miog.MainTab.Plugin)
 
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
-	miog.MPlusStatistics.KeystoneDropdown:OnLoad()
-	miog.MPlusStatistics.KeystoneDropdown:SetListAnchorToTopleft()
-	miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars = {}
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:OnLoad()
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetListAnchorToTopleft()
+	miog.MPlusStatistics.ScrollFrame.Rows.accountChars = {}
 	miog.MPlusStatistics.DungeonColumns.Dungeons = {}
 
 	miog.MPlusStatistics:HookScript("OnShow", function()
-		miog.MPlusStatistics.KeystoneDropdown:SetText("Party keystones")
+		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetText("Party keystones")
 		miog.refreshKeystones()
 	end)
 
 	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
 	miog.PVPStatistics.BracketColumns.Brackets = {}
-	miog.PVPStatistics.CharacterScrollFrame.Rows.accountChars = {}
+	miog.PVPStatistics.ScrollFrame.Rows.accountChars = {}
 
 	local frame = miog.MainTab
 	local filterPanel = pveFrame2.SidePanel.Container.FilterPanel

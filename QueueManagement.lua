@@ -1184,7 +1184,7 @@ local function queueEvents(_, event, ...)
 			end	
 		end
 	elseif(event == "GROUP_ROSTER_UPDATE") then
-		miog.updateQueueDropDown()
+		updateQueueDropDown()
 		
 	end
 end

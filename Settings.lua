@@ -176,7 +176,7 @@ local defaultOptionSettings = {
 			numberOfActiveMethods = 0,
 		},
 		type = "variable",
-		access = "read,write",
+		access = "read",
 		title = "Last active sorting methods for the search panel",
 	},
 	sortMethods_ApplicationViewer = {
@@ -204,7 +204,7 @@ local defaultOptionSettings = {
 			numberOfActiveMethods = 0,
 		},
 		type = "variable",
-		access = "read,write",
+		access = "read",
 		title = "Last active sorting methods for the application viewer",
 	},
 	searchPanel_DeclinedGroups = {
@@ -242,6 +242,7 @@ local function compareSettings()
 			end
 			
 			if(MIOG_SavedSettings[key].access == "read,write") then
+				print(key)
 				MIOG_SavedSettings[key].table = optionEntry.table
 				MIOG_SavedSettings[key].value = optionEntry.value
 

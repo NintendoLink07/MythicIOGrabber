@@ -1,9 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
-        <FontHeight val="11" />
-    </Font>
-
     <Frame name="MIOG_InviteBox" inherits="BackdropTemplate" virtual="true" frameStrata="FULLSCREEN">
 
         <Size x="400" y="400" />

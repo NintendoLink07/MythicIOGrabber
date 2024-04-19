@@ -1,0 +1,90 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_PVPStatistics" inherits="BackdropTemplate" virtual="true">
+        <Frames>
+            <Frame parentKey="CharacterInfo">
+                <Size x="130" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Honor">
+                        <Size x="120" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-5"/>
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="Level" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="Honor Level 0" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                    <FontHeight val="12" />
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-1"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Frames>
+                            <StatusBar parentKey="Status" inherits="BackdropTemplate">
+                                <BarTexture atlas="ui-castingbar-filling-standard" />
+                                <BarColor r="1" g="0.5215686274509804" b="0.10588235294117647" a="1" />
+                                <Size x="120" y="12" />
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Level" relativePoint="BOTTOMLEFT" x="3"/>
+                                </Anchors>
+
+                                <Layers>
+                                    <Layer level="OVERLAY">
+                                        <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/0 Honor" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                            <FontHeight val="12" />
+                                            <Anchors>
+                                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1" x="3"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                            </StatusBar>
+                        </Frames>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="BracketColumns" inherits="HorizontalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="spacing" value="10" type="number"/>
+                </KeyValues>
+                
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CharacterInfo" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Selection" inherits="BackdropTemplate" frameStrata="HIGH">
+                        <Size x="50" />
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" topLevel="true">
+                <KeyValues>
+                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                    <KeyValue key="scrollBarTopY" value="-70" type="number" />
+                    <KeyValue key="scrollBarX" value="-5" type="number" />
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CharacterInfo.Honor" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="Rows" inherits="BackdropTemplate, VerticalLayoutFrame" setAllPoints="true">
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+        </Frames>
+    </Frame>
+</Ui>

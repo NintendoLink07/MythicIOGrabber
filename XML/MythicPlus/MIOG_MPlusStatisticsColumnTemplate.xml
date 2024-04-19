@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_MPlusStatisticsColumnTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size x="50" />
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" horizTile="true" vertTile="true" setAllPoints="true" />
+            </Layer>
+
+            <Layer level="BORDER">
+                <Texture parentKey="TransparentDark" setAllPoints="true">
+                    <Color r="0.1" g="0.1" b="0.1" a="0.4" />
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="ShortName" font="LibMono" justifyH="CENTER" text="TEXT" >
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-5" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-5" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

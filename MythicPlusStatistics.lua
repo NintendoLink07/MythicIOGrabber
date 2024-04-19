@@ -106,7 +106,7 @@ miog.retrieveScoreGain = function(mapID, level, charGUID)
 end
 
 miog.refreshKeystones = function()
-	miog.MPlusStatistics.KeystoneDropdown:ResetDropDown()
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
 
 	local groupMembers = GetNumGroupMembers()
 	local numMembers = groupMembers ~= 0 and groupMembers or 1
@@ -216,67 +216,63 @@ miog.refreshKeystones = function()
 			end
 		end
 
-		miog.MPlusStatistics.KeystoneDropdown:CreateEntryFrame(info)
+		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
 	end
 
-	miog.MPlusStatistics.KeystoneDropdown.List:MarkDirty()
-	miog.MPlusStatistics.KeystoneDropdown:MarkDirty()
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:MarkDirty()
 end
 
 miog.setUpMPlusStatistics = function()
-	local mapTable = C_ChallengeMode.GetMapTable()
+	if(miog.F.MPLUS_SETUP_COMPLETE ~= true) then
+		local mapTable = C_ChallengeMode.GetMapTable()
 
-	table.sort(mapTable, function(k1, k2)
-		local mapName1 = miog.retrieveShortNameFromChallengeModeMap(k1)
-		local mapName2 = miog.retrieveShortNameFromChallengeModeMap(k2)
+		table.sort(mapTable, function(k1, k2)
+			local mapName1 = miog.retrieveShortNameFromChallengeModeMap(k1)
+			local mapName2 = miog.retrieveShortNameFromChallengeModeMap(k2)
 
-		return mapName1 < mapName2
+			return mapName1 < mapName2
 
-	end)
+		end)
 
-	for index, challengeMap in pairs(mapTable) do
-		if(miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMap] == nil) then
-			local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeMap)
-			local mapInfo = miog.MAP_INFO[mapID]
+		for index, challengeMapID in pairs(mapTable) do
+			if(miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMapID] == nil) then
+				local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeMapID)
+				local mapInfo = miog.MAP_INFO[mapID]
 
-			local dungeonColumn = CreateFrame("Frame", nil, miog.MPlusStatistics.DungeonColumns, "MIOG_MPlusStatisticsColumnTemplate")
-			dungeonColumn:SetHeight(miog.MPlusStatistics:GetHeight())
-			dungeonColumn.layoutIndex = index
+				local dungeonColumn = CreateFrame("Frame", nil, miog.MPlusStatistics.DungeonColumns, "MIOG_MPlusStatisticsColumnTemplate")
+				dungeonColumn:SetHeight(miog.MPlusStatistics:GetHeight())
+				dungeonColumn.layoutIndex = index
 
-			miog.createFrameBorder(dungeonColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+				miog.createFrameBorder(dungeonColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-			dungeonColumn.Background:SetTexture(mapInfo.vertical)
+				dungeonColumn.Background:SetTexture(mapInfo.vertical)
 
-			local shortName = miog.retrieveShortNameFromChallengeModeMap(challengeMap)
-			dungeonColumn.ShortName:SetText(shortName)
+				local shortName = miog.retrieveShortNameFromChallengeModeMap(challengeMapID)
+				dungeonColumn.ShortName:SetText(shortName)
 
-			miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMap] = dungeonColumn
+				miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMapID] = dungeonColumn
+
+			end
 		end
+
+		local selectionFrame = miog.MPlusStatistics.DungeonColumns.Selection
+		selectionFrame:SetHeight(miog.MPlusStatistics:GetHeight())
+		miog.createFrameBorder(selectionFrame, 1, CreateColorFromHexString(miog.CLRSCC.silver):GetRGBA())
+
+		miog.MPlusStatistics.DungeonColumns:MarkDirty()
+
+		miog.F.MPLUS_SETUP_COMPLETE = true
 	end
-
-	local selectionFrame = miog.MPlusStatistics.DungeonColumns.Selection
-	selectionFrame:SetHeight(miog.MPlusStatistics:GetHeight())
-	miog.createFrameBorder(selectionFrame, 1, CreateColorFromHexString(miog.CLRSCC.silver):GetRGBA())
-
-	miog.MPlusStatistics.DungeonColumns:MarkDirty()
 end
 
 miog.fillMPlusCharacter = function(playerGUID, mapTable)
-	local characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
+	local characterFrame = miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID]
 
 	for index, challengeMapID in pairs(mapTable or C_ChallengeMode.GetMapTable()) do
-		local dungeonFrame
-
-		if(characterFrame[challengeMapID] == nil) then
-			dungeonFrame = CreateFrame("Frame", nil, characterFrame.DungeonPanel, "MIOG_MPlusStatisticsDungeonTemplate")
-			dungeonFrame.layoutIndex = index
-
-			characterFrame[challengeMapID] = dungeonFrame
-
-		else
-			dungeonFrame = characterFrame[challengeMapID]
-
-		end
+		local dungeonFrame = characterFrame["Dungeon" .. index]
+		dungeonFrame:SetWidth(miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMapID]:GetWidth())
+		dungeonFrame.layoutIndex = index
 
 		local isCurrentChar = playerGUID == UnitGUID("player")
 
@@ -299,18 +295,17 @@ miog.fillMPlusCharacter = function(playerGUID, mapTable)
 		dungeonFrame.Level2:SetText(lastWeek.level or 0)
 		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
 
-		characterFrame.DungeonPanel:MarkDirty()
-
 	end
 end
 
 miog.createMPlusCharacter = function(playerGUID)
 	local characterFrame
 
-	if(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID] == nil) then
-		characterFrame = CreateFrame("Frame", nil, miog.MPlusStatistics.CharacterScrollFrame.Rows, "MIOG_MPlusStatisticsCharacterTemplate")
-		characterFrame:SetWidth(miog.MPlusStatistics.CharacterScrollFrame:GetWidth())
-		characterFrame.layoutIndex = #miog.MPlusStatistics.CharacterScrollFrame.Rows:GetLayoutChildren() + 1
+	if(miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID] == nil) then
+		characterFrame = CreateFrame("Frame", nil, miog.MPlusStatistics.ScrollFrame.Rows, "MIOG_MPlusStatisticsCharacterTemplate")
+
+		characterFrame:SetWidth(miog.MPlusStatistics.ScrollFrame:GetWidth())
+		characterFrame.layoutIndex = #miog.MPlusStatistics.ScrollFrame.Rows:GetLayoutChildren() + 1
 
 		if(characterFrame.layoutIndex == 1) then
 			characterFrame:SetHeight(55)
@@ -323,10 +318,10 @@ miog.createMPlusCharacter = function(playerGUID)
 
 		end
 
-		miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID] = characterFrame
+		miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID] = characterFrame
 	else
 
-		characterFrame = miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
+		characterFrame = miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID]
 	end
 
 	local _, className = UnitClass("player")
@@ -382,5 +377,5 @@ miog.gatherMPlusStatistics = function()
 		end
 	end
 
-	miog.MPlusStatistics.CharacterScrollFrame.Rows:MarkDirty()
+	miog.MPlusStatistics.ScrollFrame.Rows:MarkDirty()
 end

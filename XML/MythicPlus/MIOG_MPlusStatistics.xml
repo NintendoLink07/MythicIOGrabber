@@ -1,0 +1,60 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_MPlusStatistics" inherits="BackdropTemplate" virtual="true" toplevel="true">
+        <Frames>
+            <Frame parentKey="CharacterInfo">
+                <Size x="130" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="KeystoneDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                        <KeyValues>
+                            <KeyValue key="minimumWidth" value="130" type="number" />
+                            <KeyValue key="minimumHeight" value="25" type="number" />
+                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            
+            </Frame>
+
+            <Frame parentKey="DungeonColumns" inherits="HorizontalLayoutFrame" frameStrata="LOW">
+                <KeyValues>
+                    <KeyValue key="spacing" value="3" type="number"/>
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CharacterInfo" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Selection" inherits="BackdropTemplate" frameStrata="HIGH">
+                        <Size x="50" />
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" topLevel="true">
+                <KeyValues>
+                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                    <KeyValue key="scrollBarTopY" value="-70" type="number" />
+                    <KeyValue key="scrollBarX" value="-5" type="number" />
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CharacterInfo.KeystoneDropdown" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="Rows" inherits="BackdropTemplate, VerticalLayoutFrame" setAllPoints="true">
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+        </Frames>
+    </Frame>
+</Ui>

@@ -1,0 +1,24 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_RaidStatisticsBracketTemplate" virtual="true">
+        <Size y="40" />
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Level1" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" justifyH="CENTER" text="Level1">
+                    <FontHeight val="14" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Level2" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" justifyH="CENTER" text="Level2">
+                    <FontHeight val="12" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-8" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

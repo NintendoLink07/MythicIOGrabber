@@ -548,70 +548,24 @@ local function gatherSortData()
 
 							if(applicantIndex == 1) then -- GET SORT DATA
 								local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
-								local profile, primarySortAttribute, secondarySortAttribute
+								local primarySortAttribute, secondarySortAttribute
 
-								if(miog.F.IS_RAIDERIO_LOADED) then
-									profile = RaiderIO.GetProfile(nameTable[1], nameTable[2], miog.F.CURRENT_REGION)
-
-								end
-
-								if(categoryID ~= 3 and categoryID ~= 4 or categoryID ~= 7 or categoryID ~= 8 or categoryID ~= 9) then
+								if(categoryID ~= 3 and categoryID ~= 4 and categoryID ~= 7 and categoryID ~= 8 and categoryID ~= 9) then
 									primarySortAttribute = dungeonScore
 									secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 								elseif(categoryID == 3) then
-									local raidData = {}
+									local raidData = miog.getRaidSortData(nameTable[1] .. "-" .. nameTable[2])
 
-									if(profile) then
-										if(profile.raidProfile) then
-											local lastDifficulty = nil
-											local lastOrdinal = nil
-
-											for i = 1, #profile.raidProfile.sortedProgress, 1 do
-												if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-													if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
-														local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-														local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
-
-														raidData[#raidData+1] = {
-															ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-															difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-															progress = kills,
-															bossCount = bossCount,
-															parsedString = kills .. "/" .. bossCount,
-															weight = kills / bossCount + miog.WEIGHTS_TABLE[profile.raidProfile.sortedProgress[i].progress.raid.ordinal][profile.raidProfile.sortedProgress[i].progress.difficulty]
-														}
-
-														if(#raidData == 2) then
-															break
-
-														end
-													end
-
-													lastOrdinal = raidData[i] and raidData[i].ordinal
-													lastDifficulty = raidData[i] and raidData[i].difficulty
-
-												end
-											end
-										end
+									if(raidData) then
+										primarySortAttribute = raidData[1].weight
+										secondarySortAttribute = raidData[2].weight
+				
+									else
+										primarySortAttribute = 0
+										secondarySortAttribute = 0
+									
 									end
-
-									for i = 1, 2, 1 do
-										if(not raidData[i]) then
-											raidData[i] = {
-												ordinal = 0,
-												difficulty = -1,
-												progress = 0,
-												bossCount = 0,
-												parsedString = "0/0",
-												weight = 0
-											}
-
-										end
-									end
-
-									primarySortAttribute = raidData[1].weight
-									secondarySortAttribute = raidData[2].weight
 
 								elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 									if(not miog.F.IS_IN_DEBUG_MODE) then

@@ -97,6 +97,10 @@ miog.round2 = function(num, factor)
 
 end
 
+miog.round3 = function(number, digits)
+	return math.floor(number / digits) * digits
+end
+
 miog.deepCopyTable = function(orig, copies)
 	copies = copies or {}
     local orig_type = type(orig)

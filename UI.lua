@@ -230,7 +230,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	local firstGroupID
 
 	local borFilters = bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters)
-	print(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters, borFilters)
 
 	-- DUNGEONS
 

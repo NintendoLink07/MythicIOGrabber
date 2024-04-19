@@ -1,11 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL">
-        <FontHeight val="11" />
-    </Font>
-
     <Frame name="MIOG_MPlusStatisticsDungeonTemplate" virtual="true">
-        <Size x="50" y="40" />
+        <Size y="40" />
 
         <Layers>
             <Layer level="OVERLAY">
@@ -16,16 +12,10 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Score" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" justifyH="CENTER" text="Score" hidden="true">
-                    <FontHeight val="14" />
+                <FontString parentKey="Level2" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" justifyH="CENTER" text="Level2">
+                    <FontHeight val="12" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" y="7" />
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Level2" font="LibMono" justifyH="CENTER" text="Level2">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.Level1" relativePoint="BOTTOM" />
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-8" />
                     </Anchors>
                 </FontString>
             </Layer>

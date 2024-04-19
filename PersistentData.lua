@@ -1035,18 +1035,13 @@ local function loadRawData()
 	
 	for k, v in pairs(miog.ACTIVITY_INFO) do
 		for x, y in pairs(miog.RAW["GroupFinderActivityGrp"]) do
-			if(y[1] == v.groupFinderActivityID) then
+			if(y[1] == v.groupFinderActivityGroupID) then
 				v.groupFinderActivityName = y[2] or C_LFGList.GetActivityGroupInfo(y[1])
-			end
-		end
-	end
-	
-	for k, v in pairs(miog.ACTIVITY_INFO) do
-		for x, y in pairs(miog.RAW["MapChallengeMode"]) do
-			if(y[3] == v.mapID) then
-				v.challengeModeID = y[2]
-				miog.CHALLENGE_MODE[y[2]] = k
-	
+
+				if(miog.GROUP_ACTIVITY[y[1]].challengeModeID) then
+					miog.CHALLENGE_MODE[miog.GROUP_ACTIVITY[y[1]].challengeModeID] = k
+				end
+
 			end
 		end
 	end

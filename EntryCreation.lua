@@ -5,7 +5,7 @@ local wticc = WrapTextInColorCode
 local function setUpRatingLevels()
 	local score = C_ChallengeMode.GetOverallDungeonScore()
 
-	local lowest = miog.round2(score, 50)
+	local lowest = miog.round3(score, 50)
 
 	local scoreTable = {}
 	scoreTable[1] = lowest - 200
@@ -38,7 +38,7 @@ local function setUpItemLevels()
 	local avgItemLevel, avgItemLevelEquipped, avgItemLevelPvp = GetAverageItemLevel()
 	local itemLevelTable = {}
 
-	local lowest = miog.round2(avgItemLevelEquipped, 5)
+	local lowest = miog.round3(avgItemLevelEquipped, 5)
 
 	itemLevelTable[1] = lowest - 20
 	itemLevelTable[2] = lowest - 15

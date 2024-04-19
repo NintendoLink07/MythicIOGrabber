@@ -79,7 +79,9 @@ miog.OnEvent = function(_, event, ...)
 
 		end
 
-		miog.gatherMPlusStatistics()
+		if(miog.F.MPLUS_SETUP_COMPLETE) then
+			miog.gatherMPlusStatistics()
+		end
 
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		if(not miog.F.WEEKLY_AFFIX) then

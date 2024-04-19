@@ -44,6 +44,8 @@ miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGro
 	end
 end
 
+miog.ONCE = 0
+
 local function getRaidSortData(playerName)
 	local raidData = {}
 
@@ -54,35 +56,26 @@ local function getRaidSortData(playerName)
 
 	end
 
-	if(profile) then
+	if(profile and profile.success == true) then
 		if(profile.raidProfile) then
 			local lastDifficulty = nil
 			local lastOrdinal = nil
 
-			for i = 1, #profile.raidProfile.sortedProgress, 1 do
-				if(profile.raidProfile.sortedProgress[i] and profile.raidProfile.sortedProgress[i].progress.raid.ordinal and not profile.raidProfile.sortedProgress[i].isMainProgress) then
-					if(profile.raidProfile.sortedProgress[i].progress.raid.ordinal ~= lastOrdinal or profile.raidProfile.sortedProgress[i].progress.difficulty ~= lastDifficulty) then
-						local bossCount = profile.raidProfile.sortedProgress[i].progress.raid.bossCount
-						local kills = profile.raidProfile.sortedProgress[i].progress.progressCount or 0
+			for i = 1, #profile.raidProfile.raidProgress, 1 do
+				if(profile.raidProfile.raidProgress[i].isMainProgress == false) then
+					local bossCount = profile.raidProfile.raidProgress[i].raid.bossCount
 
-						raidData[#raidData+1] = {
-							ordinal = profile.raidProfile.sortedProgress[i].progress.raid.ordinal,
-							difficulty = profile.raidProfile.sortedProgress[i].progress.difficulty,
-							progress = kills,
-							bossCount = bossCount,
-							parsedString = kills .. "/" .. bossCount,
-							weight = kills / bossCount + miog.WEIGHTS_TABLE[profile.raidProfile.sortedProgress[i].progress.raid.ordinal][profile.raidProfile.sortedProgress[i].progress.difficulty]
-						}
+					local highestIndex = profile.raidProfile.raidProgress[i].progress[2] and 2 or 1
+					local kills = profile.raidProfile.raidProgress[i].progress[highestIndex].kills or 0
 
-						if(#raidData == 2) then
-							break
-
-						end
-					end
-
-					lastOrdinal = raidData[i] and raidData[i].ordinal
-					lastDifficulty = raidData[i] and raidData[i].difficulty
-
+					raidData[#raidData+1] = {
+						ordinal = profile.raidProfile.raidProgress[i].raid.ordinal,
+						difficulty = profile.raidProfile.raidProgress[i].progress[highestIndex].difficulty,
+						progress = kills,
+						bossCount = bossCount,
+						parsedString = kills .. "/" .. bossCount,
+						weight = kills / bossCount + miog.WEIGHTS_TABLE[profile.raidProfile.raidProgress[i].raid.ordinal][profile.raidProfile.raidProgress[i].progress[highestIndex].difficulty]
+					}
 				end
 			end
 		end
@@ -209,7 +202,7 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 			textRowGeneralInfo.FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 
 			textRowGeneralInfo.FontString:SetScript("OnEnter", function(self)
-				if(self:GetText() ~= nil) then
+				if(self:GetText() ~= nil and self:IsTruncated()) then
 					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
 					GameTooltip:SetText(self:GetText(), nil, nil, nil, nil, true)
 					GameTooltip:Show()

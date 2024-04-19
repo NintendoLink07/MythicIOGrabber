@@ -2,14 +2,11 @@ local addonName, miog = ...
 
 miog.setupPVPStatistics = function()
     for i = 1, 4, 1 do
-        local bracketColumn = CreateFrame("Frame", nil, miog.PVPStatistics.BracketColumns, "MIOG_MPlusStatisticsColumnTemplate")
+        local bracketColumn = CreateFrame("Frame", nil, miog.PVPStatistics.BracketColumns, "MIOG_PVPStatisticsColumnTemplate")
         bracketColumn:SetHeight(miog.PVPStatistics:GetHeight())
-        bracketColumn:SetWidth(bracketColumn:GetWidth() * 2)
         bracketColumn.layoutIndex = i
 
         miog.createFrameBorder(bracketColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-       -- dungeonColumn.Background:SetTexture(mapInfo.vertical)
 
         local shortName = i == 1 and ARENA_2V2 or i == 2 and ARENA_3V3 or i == 3 and ARENA_5V5 or BATTLEGROUND_10V10
         bracketColumn.ShortName:SetText(shortName)
@@ -62,7 +59,7 @@ local function honorBar_OnEnter()
 	if rewardInfo then
 		local rewardText = select(11, GetAchievementInfo(rewardInfo.achievementRewardedID));
 		if rewardText and rewardText ~= "" then
-			GameTooltip:SetOwner(miog.PVPStatistics.Honor, "ANCHOR_RIGHT", -4, -4);
+			GameTooltip:SetOwner(miog.PVPStatistics.CharacterInfo.Honor, "ANCHOR_RIGHT", -4, -4);
 			GameTooltip:SetText(PVP_PRESTIGE_RANK_UP_NEXT_MAX_LEVEL_REWARD:format(nextHonorLevelForReward));
 			local WRAP = true;
 			GameTooltip_AddColoredLine(GameTooltip, rewardText, HIGHLIGHT_FONT_COLOR, WRAP);
@@ -75,10 +72,10 @@ end
 miog.createPVPCharacter = function(playerGUID)
     local characterFrame
 
-	if(miog.PVPStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID] == nil) then
-		characterFrame = CreateFrame("Frame", nil, miog.PVPStatistics.CharacterScrollFrame.Rows, "MIOG_PVPStatisticsCharacterTemplate")
-		characterFrame:SetWidth(miog.PVPStatistics.CharacterScrollFrame:GetWidth())
-		characterFrame.layoutIndex = #miog.PVPStatistics.CharacterScrollFrame.Rows:GetLayoutChildren() + 1
+	if(miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID] == nil) then
+		characterFrame = CreateFrame("Frame", nil, miog.PVPStatistics.ScrollFrame.Rows, "MIOG_PVPStatisticsCharacterTemplate")
+		characterFrame:SetWidth(miog.PVPStatistics:GetWidth())
+		characterFrame.layoutIndex = #miog.PVPStatistics.ScrollFrame.Rows:GetLayoutChildren() + 1
 
 		if(characterFrame.layoutIndex == 1) then
 			characterFrame:SetHeight(55)
@@ -91,10 +88,10 @@ miog.createPVPCharacter = function(playerGUID)
 
 		end
 
-		miog.PVPStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID] = characterFrame
+		miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID] = characterFrame
 	else
 
-		characterFrame = miog.PVPStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
+		characterFrame = miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID]
 	end
 
     local isCurrentChar = playerGUID == UnitGUID("player")
@@ -132,24 +129,15 @@ miog.createPVPCharacter = function(playerGUID)
 end
 
 miog.fillPVPCharacter = function(playerGUID)
-	local characterFrame = miog.PVPStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID]
+	local characterFrame = miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID]
 
     for i = 1, 4, 1 do
-		local bracketFrame
-
-		if(characterFrame[i] == nil) then
-			bracketFrame = CreateFrame("Frame", nil, characterFrame.DungeonPanel, "MIOG_MPlusStatisticsDungeonTemplate")
-            bracketFrame:SetWidth(bracketFrame:GetWidth() * 2)
-			bracketFrame.layoutIndex = i
-
-			characterFrame[i] = bracketFrame
-
-		else
-			bracketFrame = characterFrame[i]
-
-		end
+		local bracketFrame = characterFrame["Bracket" .. i]
+		bracketFrame:SetWidth(miog.PVPStatistics.BracketColumns.Brackets[i]:GetWidth())
+		bracketFrame.layoutIndex = i
 
         local rating = MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i].rating
+        local seasonBest = MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i].seasonBest
 
 		bracketFrame.Level1:SetText(rating)
 		bracketFrame.Level1:SetTextColor(CreateColorFromHexString(rating == 0 and miog.CLRSCC.gray or miog.CLRSCC.yellow):GetRGBA())
@@ -158,8 +146,6 @@ miog.fillPVPCharacter = function(playerGUID)
 
 		bracketFrame.Level2:SetText(seasonBest or 0)
 		bracketFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
-
-		characterFrame.DungeonPanel:MarkDirty()
 
 	end
 end
@@ -182,14 +168,14 @@ miog.gatherPVPStatistics = function()
 	--	return k1.rating > k2.rating
 	--end)
 
-    miog.PVPStatistics.Honor.Level:SetText("Honor Level " .. UnitHonorLevel("player"))
-    miog.PVPStatistics.Honor.Status:SetMinMaxValues(0, UnitHonorMax("player"))
-    miog.PVPStatistics.Honor.Status:SetValue(UnitHonor("player"))
-    miog.PVPStatistics.Honor.Status.Text:SetText(UnitHonor("player") .. "/" .. UnitHonorMax("player") .. " Honor")
+    miog.PVPStatistics.CharacterInfo.Honor.Level:SetText("Honor Level " .. UnitHonorLevel("player"))
+    miog.PVPStatistics.CharacterInfo.Honor.Status:SetMinMaxValues(0, UnitHonorMax("player"))
+    miog.PVPStatistics.CharacterInfo.Honor.Status:SetValue(UnitHonor("player"))
+    miog.PVPStatistics.CharacterInfo.Honor.Status.Text:SetText(UnitHonor("player") .. "/" .. UnitHonorMax("player") .. " Honor")
 
-    miog.PVPStatistics.Honor:SetScript("OnEnter", function() honorBar_OnEnter()
+    miog.PVPStatistics.CharacterInfo.Honor:SetScript("OnEnter", function() honorBar_OnEnter()
     end)
-    miog.PVPStatistics.Honor:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    miog.PVPStatistics.CharacterInfo.Honor:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
 	for x, y in pairs(orderedTable) do
 		if(y.key ~= playerGUID) then
@@ -199,5 +185,5 @@ miog.gatherPVPStatistics = function()
 		end
 	end
 
-	miog.PVPStatistics.CharacterScrollFrame.Rows:MarkDirty()
+	miog.PVPStatistics.ScrollFrame.Rows:MarkDirty()
 end
