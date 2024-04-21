@@ -46,6 +46,15 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                         </Anchors>
+                        <Scripts>
+                            <OnLoad>
+                                self:OnLoad()
+                                self:SetMaxStates(2)
+                                self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                                self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                                self:SetState(false)
+                            </OnLoad>
+                        </Scripts>
                     </Button>
 
                     <Button parentKey="Decline" inherits="IconButtonTemplate" hidden="true">
@@ -176,6 +185,8 @@
                 </Layers>
 
             </Frame>
+
+            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate" />
 
             <EditBox parentKey="LinkBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" frameLevel="100" autoFocus="false" font="LibMono" hidden="true">
                 <FontHeight val="11"/>

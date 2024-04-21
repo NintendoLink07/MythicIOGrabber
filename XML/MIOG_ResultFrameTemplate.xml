@@ -46,7 +46,7 @@
                 </KeyValues>
                 <Size x="16" y="16" />
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.Decline" relativePoint="LEFT" x="-2"/>
+                    <Anchor point="RIGHT" relativeKey="$parent.CancelApplication" relativePoint="LEFT" x="-2"/>
                 </Anchors>
             </Button>
 
@@ -54,26 +54,25 @@
                 <Size y="20" />
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="0"/>
                 </Anchors>
 
                 <Layers>
                     <Layer level="BORDER">
                         <Texture parentKey="IconBorder">
-                            <Size x="18" y="18" />
+                            <Size x="17" y="17" />
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2"/>
                             </Anchors>
                         </Texture>
                     </Layer>
 
                     <Layer level="ARTWORK">
                         <Texture parentKey="Icon" enableMouseClicks="true">
-                            <Size x="16" y="16" />
-
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.IconBorder" relativePoint="TOPLEFT" x="1" y="-1" />
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.IconBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                             </Anchors>
                         </Texture>
                     
@@ -171,6 +170,16 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
                         </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:OnLoad()
+                                self:SetMaxStates(2)
+                                self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                                self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                                self:SetState(false)
+                            </OnLoad>
+                        </Scripts>
                     </Button>
                 </Frames>
 
@@ -272,98 +281,8 @@
                     </Frame>
                 </Frames>
             </Frame>
-            
-            <!--<Frame parentKey="RaidInformation" hidden="true">
-                <Size y="34" />
 
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryInformation" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.CategoryInformation" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-
-                <Frames>
-                    <Frame parentKey="TankPanel" inherits="HorizontalLayoutFrame">
-                        <KeyValues>
-                            <KeyValue key="spacing" value="1" />
-                        </KeyValues>
-
-                        <Size y="16" />
-
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.TankIcon" relativePoint="RIGHT" x="4"/>
-                        </Anchors>
-                    </Frame>
-                </Frames>
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="HealerIcon" font="LibMono" justifyH="LEFT" text="|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png:16|t:">
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.TankPanel" relativePoint="RIGHT" x="24"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-
-                <Frames>
-                    <Frame parentKey="HealerPanel" inherits="HorizontalLayoutFrame">
-                        <KeyValues>
-                            <KeyValue key="spacing" value="1" />
-                        </KeyValues>
-
-                        <Size y="16" />
-
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.HealerIcon" relativePoint="RIGHT" x="4"/>
-                        </Anchors>
-                    </Frame>
-                </Frames>
-
-                
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="DamagerIcon" font="LibMono" justifyH="LEFT" text="|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:16|t:">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.RoleComposition" relativePoint="BOTTOMLEFT" y="-4"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-
-                <Frames>
-                    <Frame parentKey="DamagerPanel" inherits="HorizontalLayoutFrame">
-                        <KeyValues>
-                            <KeyValue key="spacing" value="1" />
-                        </KeyValues>
-
-                        <Size y="16" />
-
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.DamagerIcon" relativePoint="RIGHT" x="4"/>
-                        </Anchors>
-                    </Frame>
-                </Frames>
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="DamagerString" font="LibMono" justifyH="LEFT" text="FUCK">
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.DamagerIcon" relativePoint="RIGHT" x="4"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>-->
-
-            <EditBox parentKey="LinkBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" frameLevel="100" autoFocus="false" font="LibMono" hidden="true">
-                <FontHeight val="11"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" />
-                </Anchors>       
-                <Size y="20" />         
-            </EditBox>
+            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate" />
 
         </Frames>
     </Frame>

@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+    <Frame name="MIOG_ApplicantFrameTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
+        <KeyValues>
+			<KeyValue key="heightPadding" value="1" type="number"/>
+		</KeyValues>
+
+    </Frame>
+</Ui>

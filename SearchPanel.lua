@@ -705,8 +705,6 @@ local function updatePersistentResultFrame(resultID)
 
 			currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
 			currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
-
-				--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
 				EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
 
 			end)
@@ -715,19 +713,18 @@ local function updatePersistentResultFrame(resultID)
 
 			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 			
-			if(searchPanel_ExpandedFrameList[searchResultInfo.searchResultID]) then
+			if(searchPanel_ExpandedFrameList[searchResultInfo.leaderName]) then
 				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
+				currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
 		
 			end
 	
 			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function()
-				if(currentFrame.DetailedInformationPanel) then
-					currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
-					searchPanel_ExpandedFrameList[searchResultInfo.searchResultID] = not currentFrame.DetailedInformationPanel:IsVisible()
-					currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
-					currentFrame:MarkDirty()
-		
-				end
+				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
+				currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
+				
+				searchPanel_ExpandedFrameList[searchResultInfo.leaderName] = not currentFrame.DetailedInformationPanel:IsVisible()
+				currentFrame:MarkDirty()
 		
 			end)
 
@@ -786,17 +783,17 @@ local function updatePersistentResultFrame(resultID)
 			local secondaryIndicator = currentFrame.BasicInformation.Secondary
 			secondaryIndicator:SetText(nil)
 
-			currentFrame.DetailedInformationPanel.MythicPlusPanel.rows[1].FontString:SetText(nil)
-			currentFrame.DetailedInformationPanel.RaidPanel.rows[1].FontString:SetText(nil)
+			currentFrame.DetailedInformationPanel.PanelContainer.MythicPlus.Right["1"].FontString:SetText(nil)
+			currentFrame.DetailedInformationPanel.PanelContainer.Raid.Right["1"].FontString:SetText(nil)
 			
 			local nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
 
 			miog.gatherRaiderIODisplayData(nameTable[1], nameTable[2], currentFrame)
 
-			local generalInfoPanel = currentFrame.DetailedInformationPanel.GeneralInfoPanel
+			local generalInfoPanel = currentFrame.DetailedInformationPanel.PanelContainer.GeneralInfo
 			
-			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultInfo.comment and searchResultInfo.comment) or ""))
-			generalInfoPanel.rows[7].FontString:SetText("Role: ")
+			generalInfoPanel.Right["1"].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultInfo.comment and searchResultInfo.comment) or ""))
+			generalInfoPanel.Right["3"].FontString:SetText("Role: ")
 
 			local appCategory = activityInfo.categoryID
 
@@ -877,6 +874,10 @@ local function updatePersistentResultFrame(resultID)
 			currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
 			
 			if(appCategory == 3) then
+				local raidData = miog.getRaidSortData(searchResultInfo.leaderName)
+				primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
+				secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
+
 				memberPanel:Hide()
 				currentFrame.CategoryInformation.DifficultyZone:SetWidth(LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
 
@@ -1149,13 +1150,9 @@ local function createPersistentResultFrame(resultID)
 	miog.createFrameBorder(persistentFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGB())
 
 	persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_GroupMemberTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
 	searchResultSystem.persistentFrames[resultID] = persistentFrame
 
@@ -1192,13 +1189,14 @@ local function createPersistentResultFrame(resultID)
 		for k, v in ipairs(miog.MAP_INFO[mapID].bosses) do
 			local bossFrame = persistentFrame.framePool:Acquire("MIOG_ResultFrameBossFrameTemplate")
 			bossFrame:SetParent(CategoryInformation.BossPanel)
-			--bossFrame:SetPoint("RIGHT", i == 1 and CategoryInformation.BossPanel or CategoryInformation.BossPanel.bossFrames[i-1], i == 1 and "RIGHT" or "LEFT", -2, 0)
 			bossFrame.layoutIndex = k
 
-			bossFrame.BorderMask = bossFrame:CreateMaskTexture()
-			bossFrame.BorderMask:SetAllPoints(bossFrame.Border)
-			bossFrame.BorderMask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-			bossFrame.Border:AddMaskTexture(bossFrame.BorderMask)
+			if(bossFrame.BorderMask == nil) then
+				bossFrame.BorderMask = bossFrame:CreateMaskTexture()
+				bossFrame.BorderMask:SetAllPoints(bossFrame.Border)
+				bossFrame.BorderMask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+				bossFrame.Border:AddMaskTexture(bossFrame.BorderMask)
+			end
 
 			SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
 			bossFrame.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
@@ -1207,10 +1205,6 @@ local function createPersistentResultFrame(resultID)
 
 			CategoryInformation.BossPanel.bossFrames[k] = bossFrame
 		end
-
-		--persistentFrame.RaidInformation.TankPanel:MarkDirty()
-		--persistentFrame.RaidInformation.HealerPanel:MarkDirty()
-		--persistentFrame.RaidInformation.DamagerPanel:MarkDirty()
 	
 		CategoryInformation.BossPanel:MarkDirty()
 	end
@@ -1259,8 +1253,6 @@ miog.checkSearchResultListForEligibleMembers = checkSearchResultListForEligibleM
 local function releaseAllResultFrames()
 	for index, v in pairs(searchResultSystem.persistentFrames) do
 		v.framePool:ReleaseAll()
-		--v.fontStringPool:ReleaseAll()
-		--v.texturePool:ReleaseAll()
 
 		miog.searchResultFramePool:Release(v)
 

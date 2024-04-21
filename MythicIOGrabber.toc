@@ -46,10 +46,13 @@ XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_MultiStateButtonTemplate.xml
 XML\MIOG_SortButtonTemplate.xml
 
+XML\MIOG_ApplicantFrameTemplate.xml
 XML\MIOG_ApplicantMemberFrameTemplate.xml
+
 XML\MIOG_ResultFrameTemplate.xml
 XML\MIOG_DetailedInformationPanelTemplate.xml
 XML\MIOG_DetailedInformationPanelTextRowTemplate.xml
+XML\MIOG_DetailedInformationPanelSinglePanelTemplate.xml
 XML\MIOG_DungeonRowTemplate.xml
 XML\MIOG_RaidRowTemplate.xml
 XML\MIOG_RaidBossFrameTemplate.xml
@@ -94,9 +97,14 @@ XML\MythicPlus\MIOG_MPlusStatisticsCharacterTemplate.xml
 XML\MythicPlus\MIOG_MPlusStatisticsColumnTemplate.xml
 XML\MythicPlus\MIOG_MPlusStatisticsDungeonTemplate.xml
 
-XML\MIOG_Teleports.xml
+XML\Raid\MIOG_RaidStatistics.xml
+XML\Raid\MIOG_RaidStatisticsCharacterTemplate.xml
+XML\Raid\MIOG_RaidStatisticsBracketTemplate.xml
+XML\Raid\MIOG_RaidStatisticsColumnTemplate.xml
 
 XML\PVP\MIOG_PVPStatistics.xml
 XML\PVP\MIOG_PVPStatisticsCharacterTemplate.xml
-XML\PVP\MIOG_PVPStatisticsBracketTemplate.xml
+XML\PVP\MIOG_PVPStatisticsDifficultyTemplate.xml
 XML\PVP\MIOG_PVPStatisticsColumnTemplate.xml
+
+XML\MIOG_Teleports.xml

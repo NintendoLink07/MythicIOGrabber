@@ -15,6 +15,7 @@ local function resetFrame(pool, childFrame)
 	childFrame.leftPadding = nil
 	childFrame.topPadding = nil
 	childFrame.rightPadding = nil
+	
 	childFrame.encounterInfo = nil
 
 	local typeOfFrame = childFrame:GetObjectType()
@@ -39,9 +40,6 @@ local function resetFrame(pool, childFrame)
 
 		end
 
-		childFrame.framePool = nil
-		childFrame.texturePool = nil
-		childFrame.fontStringPool = nil
 		childFrame.background = nil
 
 		childFrame:SetMouseClickEnabled(false)
@@ -53,30 +51,11 @@ local function resetFrame(pool, childFrame)
 		childFrame.Texture = nil
 		childFrame.FontString = nil
 
-		childFrame.memberFrames = nil
-		childFrame.bossFrames = nil
-		childFrame.statusFrame = nil
-		childFrame.basicInformationPanel = nil
-		childFrame.detailedInformationPanel = nil
-		childFrame.border = nil
-
 		childFrame.declineButton = nil
 		childFrame.inviteButton = nil
 		childFrame.expandFrameButton = nil
 		childFrame.linkBox = nil
 		childFrame.titleString = nil
-
-		childFrame.mythicPlusPanel = nil
-		childFrame.raidPanel = nil
-		childFrame.generalInfoPanel = nil
-
-		childFrame.mythicPlusTabButton = nil
-		childFrame.raidTabButton = nil
-		childFrame.memberFrames = nil
-
-		childFrame.textRows = nil
-		childFrame.rows = nil
-		childFrame.textureRows = nil
 	end
 
 	childFrame:ClearAllPoints()
@@ -144,10 +123,7 @@ miog.persistentFramePool:GetOrCreatePool("Frame", nil, "LoadingSpinnerTemplate",
 miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
 
-miog.applicantFramePool = CreateFramePool("Frame", nil, "ResizeLayoutFrame, BackdropTemplate", resetFrame)
---miog.applicantFramePool = CreateFramePool("Frame", nil, "MIOGApplicantMemberFrameTemplate", resetFrame)
---miog.applicantFramePool = CreateFramePool("Frame", nil, "MIOGDetailedInformationPanelTemplate", resetFrame)
-
+miog.applicantFramePool = CreateFramePool("Frame", nil, "MIOG_ApplicantFrameTemplate", resetFrame)
 miog.searchResultFramePool = CreateFramePool("Frame", nil, "MIOG_ResultFrameTemplate", resetFrame)
 
 miog.raidRosterFramePool = CreateFramePool("Frame", nil, "BackdropTemplate", resetFrame)

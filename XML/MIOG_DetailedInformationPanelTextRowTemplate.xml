@@ -2,6 +2,7 @@
 ..\..\FrameXML\UI.xsd">
 
     <Frame name="MIOG_DetailedInformationPanelTextRowTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size y="20" />
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background" setAllPoints="true" />
@@ -18,68 +19,5 @@
                 </Texture>
             </Layer>
         </Layers>
-
-        <Frames>
-            <Frame parentKey="GeneralInfo">
-                <Size y="20" />
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER">
-                            <FontHeight val="11"/>
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
-
-            <Frame parentKey="MythicPlus">
-                <Size y="20" />
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" />
-                </Anchors>
-                
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER">
-                            <FontHeight val="11"/>
-                            <!--<Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
-                            </Anchors>-->
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
-
-            <Frame parentKey="Raid">
-                <Size y="20" />
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" />
-                </Anchors>
-                
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER">
-                            <FontHeight val="11"/>
-                            <!--<Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
-                            </Anchors>-->
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
-
-        </Frames>
     </Frame>
 </Ui>

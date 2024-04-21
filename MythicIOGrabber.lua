@@ -17,6 +17,8 @@ miog.OnEvent = function(_, event, ...)
 		miog.createFrames()
 		miog.loadSettings()
 		miog.loadRawData()
+		
+		EJ_SetDifficulty(8)
 
 		--LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.applicationViewer:Show() end)
 		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.searchPanel:Show() end)

@@ -241,8 +241,12 @@ local function compareSettings()
 				MIOG_SavedSettings[key].type = optionEntry.type
 			end
 			
+			if(MIOG_SavedSettings[key].access ~= optionEntry.access) then
+				MIOG_SavedSettings[key].access = optionEntry.access
+				
+			end
+
 			if(MIOG_SavedSettings[key].access == "read,write") then
-				print(key)
 				MIOG_SavedSettings[key].table = optionEntry.table
 				MIOG_SavedSettings[key].value = optionEntry.value
 

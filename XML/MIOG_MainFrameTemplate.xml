@@ -574,6 +574,9 @@
                     <Frame parentKey="MPlusStatistics" inherits="MIOG_MPlusStatistics" hidden="true" setAllPoints="true">
                     </Frame>
 
+                    <Frame parentKey="RaidStatistics" inherits="MIOG_RaidStatistics" hidden="true" setAllPoints="true">
+                    </Frame>
+
                     <Frame parentKey="PVPStatistics" inherits="MIOG_PVPStatistics" hidden="true" setAllPoints="true">
                     </Frame>
 
@@ -592,10 +595,11 @@
                         PanelTemplates_SetTab(parent, 1)
 
                         parent.TabFramesPanel.MainTab:Show()
-                        parent.TabFramesPanel.Teleports:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
-
+                        
                         parent.TabFramesPanel.MPlusStatistics:Hide()
+                        parent.TabFramesPanel.RaidStatistics:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
                    </OnClick>
                </Scripts>
             </Button>
@@ -612,17 +616,19 @@
                     <OnClick>
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 2)
-                        
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
 
                         parent.TabFramesPanel.MPlusStatistics:Show()
+                        
+                        parent.TabFramesPanel.MainTab:Hide()
+                        parent.TabFramesPanel.RaidStatistics:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
+
                     </OnClick>
                 </Scripts>
             </Button>
             
-            <Button name="$parentTab3" inherits="PanelTabButtonTemplate" id="3" text="PVP Statistics">
+            <Button name="$parentTab3" inherits="PanelTabButtonTemplate" id="3" text="Raid Statistics">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
                         <Offset>
@@ -634,30 +640,58 @@
                     <OnClick>
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 3)
+                        
+                        parent.TabFramesPanel.RaidStatistics:Show()
 
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
                         parent.TabFramesPanel.MPlusStatistics:Hide()
+                        parent.TabFramesPanel.MainTab:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
 
-                        parent.TabFramesPanel.PVPStatistics:Show()
                     </OnClick>
                 </Scripts>
             </Button>
-
-            <Button name="$parentTab4" inherits="PanelTabButtonTemplate" id="4" text="Teleports">
+            
+            <Button name="$parentTab4" inherits="PanelTabButtonTemplate" id="4" text="PVP Statistics">
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
                 </Anchors>
                 <Scripts>
                     <OnClick>
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 4)
 
+                        parent.TabFramesPanel.PVPStatistics:Show()
+
                         parent.TabFramesPanel.MainTab:Hide()
                         parent.TabFramesPanel.MPlusStatistics:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
+                        parent.TabFramesPanel.RaidStatistics:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
+
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentTab5" inherits="PanelTabButtonTemplate" id="5" text="Teleports">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        local parent = self:GetParent()
+                        PanelTemplates_SetTab(parent, 5)
 
                         parent.TabFramesPanel.Teleports:Show()
+
+                        parent.TabFramesPanel.MainTab:Hide()
+                        parent.TabFramesPanel.MPlusStatistics:Hide()
+                        parent.TabFramesPanel.RaidStatistics:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+
                     </OnClick>
                 </Scripts>
             </Button>
@@ -683,7 +717,7 @@
 
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 4)
+                PanelTemplates_SetNumTabs(self, 5)
                 PanelTemplates_SetTab(self, 1)
             </OnLoad>
 

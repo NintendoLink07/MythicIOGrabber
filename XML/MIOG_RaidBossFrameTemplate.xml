@@ -1,31 +1,26 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">    
     <Frame name="MIOG_RaidBossFrameTemplate" virtual="true">
+        <Size x="20" y="20" />
         <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="Icon" enableMouseClicks="true">
-                    <Size x="21" y="21" />
-
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1" />
-                    </Anchors>
-                </Texture>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true" />
             </Layer>
 
-            <Layer level="BORDER">
-                <Texture parentKey="Border">
-                    <Size x="25" y="25" />
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" enableMouseClicks="true">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPLEFT" x="-2" y="2" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="2" y="-2" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-2" y="2" />
                     </Anchors>
                 </Texture>
             </Layer>
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Index" font="LibMono" justifyH="LEFT">
-                    <FontHeight val="11"/>
+                    <FontHeight val="10"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPLEFT" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
                     </Anchors>
                 </FontString>
             </Layer>

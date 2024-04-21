@@ -37,13 +37,9 @@ local function showEditBox(name, parent, numeric, maxLetters)
 end
 
 local function releaseApplicantFrames()
-	for _,v in pairs(applicantSystem.applicantMember) do
-		if(v.frame) then
-			v.frame.fontStringPool:ReleaseAll()
-			v.frame.texturePool:ReleaseAll()
-			v.frame.framePool:ReleaseAll()
-
-		end
+	for widget in miog.applicantFramePool:EnumerateActive() do
+		widget.framePool:ReleaseAllByTemplate("MIOG_ApplicantMemberFrameTemplate")
+		widget.framePool:ReleaseAllByTemplate("MIOG_ApplicantMemberFrameTemplate")
 	end
 
 	applicantSystem.applicantMember = {}
@@ -179,18 +175,18 @@ local function createApplicantFrame(applicantID)
 
 		applicantViewer_ExpandedFrameList[applicantID] = applicantViewer_ExpandedFrameList[applicantID] or {}
 
-		local applicantFrame = miog.createBasicFrame("applicant", "ResizeLayoutFrame, BackdropTemplate", miog.applicationViewer.FramePanel.Container)
+		local applicantFrame = miog.applicantFramePool:Acquire("MIOG_ApplicantFrameTemplate")
+		applicantFrame:SetParent(miog.applicationViewer.FramePanel.Container)
 		applicantFrame.fixedWidth = miog.applicationViewer.FramePanel:GetWidth()
-		applicantFrame.heightPadding = 1
 		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 		applicantFrame.memberFrames = {}
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePoolCollection()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ApplicantMemberFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTextRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ApplicantMemberFrameTemplate", miog.resetFrame)
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTemplate", miog.resetFrame)
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTextRowTemplate", miog.resetFrame)
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame)
+		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame)
 
 		applicantFrame.fontStringPool = applicantFrame.fontStringPool or CreateFontStringPool(applicantFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
 		applicantFrame.texturePool = applicantFrame.texturePool or CreateTexturePool(applicantFrame, "ARTWORK", nil, nil, miog.resetTexture)
@@ -241,11 +237,6 @@ local function createApplicantFrame(applicantID)
 			applicantMemberStatusFrame:SetFrameStrata("FULLSCREEN")
 
 			local expandFrameButton = applicantMemberFrame.BasicInformationPanel.ExpandFrame
-			expandFrameButton:OnLoad()
-			expandFrameButton:SetMaxStates(2)
-			expandFrameButton:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
-			expandFrameButton:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
-			expandFrameButton:SetState(false)
 
 			if(applicantViewer_ExpandedFrameList[applicantID][applicantIndex]) then
 				expandFrameButton:AdvanceState()
@@ -308,14 +299,6 @@ local function createApplicantFrame(applicantID)
 				GameTooltip:Show()
 
 			end)
-
-			--[[applicantMemberFrame.LinkBox:SetScript("OnKeyDown", function(_, key)
-				if(key == "ESCAPE" or key == "ENTER") then
-					applicantMemberFrame.LinkBox:Hide()
-					applicantMemberFrame.LinkBox:ClearFocus()
-
-				end
-			end)]]
 
 			local specFrame = applicantMemberFrame.BasicInformationPanel.Spec
 
@@ -439,8 +422,8 @@ local function createApplicantFrame(applicantID)
 			end
 			
 
-			local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
-			local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
+			local activeEntry = C_LFGList.GetActiveEntryInfo()
+			local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
 
 			if(categoryID == 2) then
 				if(dungeonScore > 0) then

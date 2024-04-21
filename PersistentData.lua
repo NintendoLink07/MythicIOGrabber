@@ -1050,16 +1050,9 @@ end
 miog.loadRawData = loadRawData
 
 miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
-	[1] = { --CURRENT TIER
-		[3] = 9 * 100000 + 9,
-		[2] = 9 * 10000 + 9,
-		[1] = 9 * 1000 + 9,
-	},
-	[2] = { --LAST TIER
-		[3] = 9 * 100 + 9,
-		[2] = 9 * 10 + 9,
-		[1] = 9 * 1 + 9,
-	}
+	[1] = 1000000000,
+	[2] = 1000000,
+	[3] = 1000,
 }
 
 miog.FONTS = {
