@@ -42,6 +42,12 @@ local defaultOptionSettings = {
 		access = "read",
 		table = {},
 	},
+	raidStatistics = {
+		type = "variable",
+		title = "Raid Statistics for all your characters",
+		access = "read",
+		table = {},
+	},
 	enableClassPanel = {
 		type = "checkbox",
 		title = "Enable the class panel for your group (shows class and spec data for your whole group after all inspects went through)",

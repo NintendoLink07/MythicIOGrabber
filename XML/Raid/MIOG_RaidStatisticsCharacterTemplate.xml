@@ -10,12 +10,6 @@
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="6"/>
                     </Anchors>
                 </FontString>
-
-                <FontString parentKey="Score" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="CURRENT SCORE">
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="-8"/>
-                    </Anchors>
-                </FontString>
             </Layer>
 
             <Layer level="BACKGROUND">
@@ -49,42 +43,38 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="Bracket1" inherits="MIOG_PVPStatisticsBracketTemplate">
+            <Frame parentKey="Raid1" inherits="MIOG_RaidStatisticsRaidTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="130"/>
                 </Anchors>
             </Frame>
 
-            <Frame parentKey="Bracket2" inherits="MIOG_PVPStatisticsBracketTemplate">
+            <Frame parentKey="Raid2" inherits="MIOG_RaidStatisticsRaidTemplate">
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Bracket1" relativePoint="RIGHT" x="10"/>
+                    <Anchor point="LEFT" relativeKey="$parent.Raid1" relativePoint="RIGHT" x="10"/>
                 </Anchors>
-
             </Frame>
 
-            <Frame parentKey="Bracket3" inherits="MIOG_PVPStatisticsBracketTemplate">
+            <Frame parentKey="Raid3" inherits="MIOG_RaidStatisticsRaidTemplate">
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Bracket2" relativePoint="RIGHT" x="10"/>
+                    <Anchor point="LEFT" relativeKey="$parent.Raid2" relativePoint="RIGHT" x="10"/>
                 </Anchors>
-
-            </Frame>
-
-            <Frame parentKey="Bracket4" inherits="MIOG_PVPStatisticsBracketTemplate">
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Bracket3" relativePoint="RIGHT" x="10"/>
-                </Anchors>
-
             </Frame>
         </Frames>
 
         <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="Rank">
-                    <Size x="25" y="25" />
+            <Layer level="OVERLAY">
+                <FontString parentKey="Awakened" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="Awakened">
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Bracket1" relativePoint="LEFT" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="6"/>
                     </Anchors>
-                </Texture>
+                </FontString>
+
+                <FontString parentKey="Sleepy" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="Sleepy?">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="-8"/>
+                    </Anchors>
+                </FontString>
             </Layer>
         </Layers>
     </Frame>

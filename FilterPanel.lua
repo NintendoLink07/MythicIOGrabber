@@ -92,7 +92,7 @@ local function addOptionToFilterFrame(parent, _, text, name)
 	filterOption:SetWidth(parent:GetWidth())
 	filterOption:SetHeight(25)
 	filterOption.Button:HookScript("OnClick", function(self)
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[name] = self:GetChecked()
+		MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[name] = self:GetChecked()
 
 		convertFiltersToAdvancedBlizzardFilters()
 		
@@ -120,7 +120,7 @@ local function addNumericSpinnerToFilterFrame(text, name)
 	numericSpinner:SetNumeric(true)
 	numericSpinner:SetMaxLetters(1)
 	numericSpinner:SetMinMaxValues(0, 9)
-	numericSpinner:SetValue(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[name] or 0)
+	numericSpinner:SetValue(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[name] or 0)
 
 	local decrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
 	decrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Up")
@@ -137,7 +137,7 @@ local function addNumericSpinnerToFilterFrame(text, name)
 	end)
 	decrementButton:SetScript("OnMouseUp", function()
 		numericSpinner:EndIncrement()
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[name] = numericSpinner:GetValue()
+		MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[name] = numericSpinner:GetValue()
 		numericSpinner:ClearFocus()
 		
 		if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
@@ -166,7 +166,7 @@ local function addNumericSpinnerToFilterFrame(text, name)
 	end)
 	incrementButton:SetScript("OnMouseUp", function()
 		numericSpinner:EndIncrement()
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[name] = numericSpinner:GetValue()
+		MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[name] = numericSpinner:GetValue()
 		numericSpinner:ClearFocus()
 
 		if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
@@ -196,7 +196,7 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 	local filterOption = CreateFrame("Frame", nil, parent, "MIOG_FilterOptionDualSpinnerTemplate")
 	filterOption:SetSize(parent:GetWidth(), 25)
 	filterOption.Button:HookScript("OnClick", function(self)
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table["filterFor" .. name] = self:GetChecked()
+		MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table["filterFor" .. name] = self:GetChecked()
 
 		convertFiltersToAdvancedBlizzardFilters()
 
@@ -218,7 +218,7 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 
 		filterOption["Spinner" .. i]:SetWidth(15)
 		filterOption["Spinner" .. i]:SetMinMaxValues(range ~= nil and range or 0, 9)
-		--filterOption["Spinner" .. i]:SetValue(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[i == 1 and minName or maxName] or 0)
+		--filterOption["Spinner" .. i]:SetValue(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[i == 1 and minName or maxName] or 0)
 
 		filterOption["Spinner" .. i].DecrementButton:SetScript("OnMouseDown", function()
 			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -226,11 +226,11 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 
 			local spinnerValue = filterOption["Spinner" .. i]:GetValue()
 
-			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentName] = spinnerValue
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[currentName] = spinnerValue
 
 			if(filterPanel.Panel.FilterOptions[minName]:GetValue() > spinnerValue) then
 				filterPanel.Panel.FilterOptions[minName]:SetValue(spinnerValue)
-				MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[minName] = spinnerValue
+				MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[minName] = spinnerValue
 
 			end
 
@@ -253,11 +253,11 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 
 			local spinnerValue = filterOption["Spinner" .. i]:GetValue()
 
-			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentName] = spinnerValue
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[currentName] = spinnerValue
 
 			if(filterPanel.Panel.FilterOptions[maxName]:GetValue() < spinnerValue) then
 				filterPanel.Panel.FilterOptions[maxName]:SetValue(spinnerValue)
-				MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[maxName] = spinnerValue
+				MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[maxName] = spinnerValue
 
 			end
 
@@ -293,9 +293,9 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 	--optionButton:SetPoint("TOPLEFT", lastFilterOption, "BOTTOMLEFT", 0, -5)
 	optionButton:RegisterForClicks("LeftButtonDown")
-	--optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table["filterFor" .. name] or false)
+	--optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table["filterFor" .. name] or false)
 	optionButton:HookScript("OnClick", function()
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table["filterFor" .. name] = optionButton:GetChecked()
+		MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table["filterFor" .. name] = optionButton:GetChecked()
 
 		convertFiltersToAdvancedBlizzardFilters()
 		
@@ -328,14 +328,14 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		numericField.autoFocus = false
 		numericField:SetNumeric(true)
 		numericField:SetMaxLetters(4)
-		--numericField:SetText(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[i == 1 and minName or maxName] or 0)
+		--numericField:SetText(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[i == 1 and minName or maxName] or 0)
 		numericField:HookScript("OnTextChanged", function(self, ...)
 			local text = tonumber(self:GetText())
-			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[currentName] = text ~= nil and text or 0
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[currentName] = text ~= nil and text or 0
 
 			convertFiltersToAdvancedBlizzardFilters()
 
-			if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table["filterFor" .. name]) then
+			if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table["filterFor" .. name]) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 					miog.checkSearchResultListForEligibleMembers()
 		
@@ -473,11 +473,11 @@ local function addRaidCheckboxes()
 		optionButton:SetCheckedTexture("checkmark-minimal")
 		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 		optionButton:RegisterForClicks("LeftButtonDown")
-		--[[optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons[activityEntry.activityID])
+		--[[optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.dungeons[activityEntry.activityID])
 		optionButton:HookScript("OnClick", function()
-			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
 
-			if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons) then
+			if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.dungeons) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 					miog.checkSearchResultListForEligibleMembers()
 		
@@ -533,11 +533,11 @@ local function addDungeonCheckboxes()
 		optionButton:SetCheckedTexture("checkmark-minimal")
 		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 		optionButton:RegisterForClicks("LeftButtonDown")
-		--[[optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons[activityEntry.activityID])
+		--[[optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.dungeons[activityEntry.activityID])
 		optionButton:HookScript("OnClick", function()
-			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.dungeons[activityEntry.activityID] = optionButton:GetChecked()
 
-			if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.dungeons) then
+			if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.dungeons) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 					miog.checkSearchResultListForEligibleMembers()
 		
@@ -573,41 +573,41 @@ local function setupFiltersForActivePanel()
 	local filterPanel = container.FilterPanel
 
 	for i = 1, 3, 1 do
-		filterPanel.Panel.FilterOptions.Roles.RoleButtons[i]:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"])
+		filterPanel.Panel.FilterOptions.Roles.RoleButtons[i]:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"])
 	end
 
 	for k, v in pairs(filterPanel.Panel.FilterOptions) do
 		if(v.Button and v.Button:GetObjectType() == "CheckButton") then
-			v.Button:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[k])
+			v.Button:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[k])
 		end
 	end
 
-	filterPanel.Panel.FilterOptions.filterForTanks:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForTanks)
-	filterPanel.Panel.FilterOptions.minTanks:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.minTanks)
-	filterPanel.Panel.FilterOptions.maxTanks:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.maxTanks)
+	filterPanel.Panel.FilterOptions.filterForTanks:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForTanks)
+	filterPanel.Panel.FilterOptions.minTanks:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.minTanks)
+	filterPanel.Panel.FilterOptions.maxTanks:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.maxTanks)
 
-	filterPanel.Panel.FilterOptions.filterForHealers:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForHealers)
-	filterPanel.Panel.FilterOptions.minHealers:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.minHealers)
-	filterPanel.Panel.FilterOptions.maxHealers:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.maxHealers)
+	filterPanel.Panel.FilterOptions.filterForHealers:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForHealers)
+	filterPanel.Panel.FilterOptions.minHealers:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.minHealers)
+	filterPanel.Panel.FilterOptions.maxHealers:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.maxHealers)
 
-	filterPanel.Panel.FilterOptions.filterForDamager:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForDamager)
-	filterPanel.Panel.FilterOptions.minDamager:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.minDamager)
-	filterPanel.Panel.FilterOptions.maxDamager:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.maxDamager)
+	filterPanel.Panel.FilterOptions.filterForDamager:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForDamager)
+	filterPanel.Panel.FilterOptions.minDamager:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.minDamager)
+	filterPanel.Panel.FilterOptions.maxDamager:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.maxDamager)
 
-	filterPanel.Panel.FilterOptions.filterForScore:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForScore)
-	filterPanel.Panel.FilterOptions.minScore:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.minScore)
-	filterPanel.Panel.FilterOptions.maxScore:SetText(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.maxScore)
+	filterPanel.Panel.FilterOptions.filterForScore:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForScore)
+	filterPanel.Panel.FilterOptions.minScore:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.minScore)
+	filterPanel.Panel.FilterOptions.maxScore:SetText(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.maxScore)
 
-	--filterPanel.Panel.FilterOptions["filterForClassSpecs"].Button:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForClassSpecs)
+	--filterPanel.Panel.FilterOptions["filterForClassSpecs"].Button:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForClassSpecs)
 
 	for classIndex, classEntry in ipairs(miog.CLASSES) do
 		local currentClassPanel = filterPanel.Panel.FilterOptions.ClassPanels[classIndex]
 
-		if(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec) then
-			if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.class[classIndex] ~= nil) then
-				currentClassPanel.Class.Button:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.class[classIndex])
+		if(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec) then
+			if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.class[classIndex] ~= nil) then
+				currentClassPanel.Class.Button:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.class[classIndex])
 				
-				if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.class[classIndex] == false) then
+				if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.class[classIndex] == false) then
 					container.TitleBar.FontString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
 				end
 
@@ -635,10 +635,10 @@ local function setupFiltersForActivePanel()
 
 				end
 
-				MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.spec[specIndex] = state
+				MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.spec[specIndex] = state
 			end
 
-			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.class[classIndex] = state
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.class[classIndex] = state
 
 			if(not miog.checkForActiveFilters(filterPanel.Panel)) then
 				container.TitleBar.FontString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
@@ -650,7 +650,7 @@ local function setupFiltersForActivePanel()
 
 			convertFiltersToAdvancedBlizzardFilters()
 
-			if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForClassSpecs) then
+			if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForClassSpecs) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 					miog.checkSearchResultListForEligibleMembers()
 		
@@ -663,11 +663,11 @@ local function setupFiltersForActivePanel()
 
 		for specIndex, specID in pairs(classEntry.specs) do
 			local currentSpecFrame = currentClassPanel.SpecFrames[specID]
-			if(MIOG_SavedSettings and MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec) then
-				if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.spec[specID] ~= nil) then
-					currentSpecFrame.Button:SetChecked(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.spec[specID])
+			if(MIOG_SavedSettings and MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec) then
+				if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.spec[specID] ~= nil) then
+					currentSpecFrame.Button:SetChecked(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.spec[specID])
 
-					if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.spec[specID] == false) then
+					if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.spec[specID] == false) then
 						container.TitleBar.FontString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
 					end
 
@@ -697,11 +697,11 @@ local function setupFiltersForActivePanel()
 
 				end
 
-				MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.classSpec.spec[specID] = state
+				MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.classSpec.spec[specID] = state
 
 				convertFiltersToAdvancedBlizzardFilters()
 
-				if(MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForClassSpecs) then
+				if(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForClassSpecs) then
 					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 						miog.checkSearchResultListForEligibleMembers()
 			
@@ -726,7 +726,7 @@ local function createClassSpecFilters(parent)
 
 	parent.Uncheck:SetScript("OnClick", function()
 
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table = miog.getBaseSettings(miog.pveFrame2.activePanel .. "_FilterOptions").table
+		MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table = miog.getBaseSettings(miog.F.ACTIVE_PANEL .. "_FilterOptions").table
 
 		setupFiltersForActivePanel()
 
@@ -801,7 +801,7 @@ local function addRolePanel(parent)
 		toggleRoleButton:SetScript("OnClick", function()
 			local state = toggleRoleButton:GetChecked()
 
-			MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table.filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"] = state
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table.filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"] = state
 
 			if(not miog.checkForActiveFilters(parent)) then
 				container.TitleBar.FontString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))

@@ -140,7 +140,7 @@ miog.refreshKeystones = function()
 				if(unitID == "player") then
 					local playerGUID = UnitGUID("player")
 	
-					for _, v in pairs(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars) do
+					for _, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
 						v.ScoreIncrease:Hide()
 	
 					end
@@ -148,11 +148,11 @@ miog.refreshKeystones = function()
 					local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, playerGUID)
 	
 					if(lowestGain and highestGain) then
-						miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
-						miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
+						miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
+						miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
 					end
 				else
-					for k, v in pairs(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars) do
+					for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
 						local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, k)
 						if(lowestGain and highestGain) then
 							v.ScoreIncrease:Show()
@@ -196,17 +196,17 @@ miog.refreshKeystones = function()
 			if(unitID == "player") then
 				local playerGUID = UnitGUID("player")
 
-				for k, v in pairs(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars) do
+				for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
 					v.ScoreIncrease:Hide()
 
 				end
 
 				local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, playerGUID)
 
-				miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
-				miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
+				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
+				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
 			else
-				for k, v in pairs(miog.MPlusStatistics.CharacterScrollFrame.Rows.accountChars) do
+				for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
 					local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, k)
 					v.ScoreIncrease:Show()
 					v.ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)

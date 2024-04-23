@@ -173,7 +173,6 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 
 	panelContainer.rows = {}
 
-
 	for rowIndex = 1, 9, 1 do
 		local remainder = math.fmod(rowIndex, 2)
 

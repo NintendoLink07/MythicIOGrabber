@@ -3,10 +3,9 @@
     <Frame name="MIOG_MPlusStatistics" inherits="BackdropTemplate" virtual="true" toplevel="true">
         <Frames>
             <Frame parentKey="CharacterInfo">
-                <Size x="130" />
+                <Size x="130" y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
                 </Anchors>
 
                 <Frames>
@@ -46,7 +45,7 @@
                     <KeyValue key="scrollBarX" value="-5" type="number" />
                 </KeyValues>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.CharacterInfo.KeystoneDropdown" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CharacterInfo" relativePoint="BOTTOMLEFT"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 

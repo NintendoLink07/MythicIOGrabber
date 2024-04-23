@@ -1,26 +1,30 @@
 local addonName, miog = ...
 
 miog.setupRaidStatistics = function()
-	for k, v in pairs(miog.ACTIVITY_INFO) do
-        local difficultyColumn = CreateFrame("Frame", nil, miog.RaidStatistics.DifficultyColumns, "MIOG_RaidStatisticsColumnTemplate")
-        difficultyColumn:SetHeight(miog.RaidStatistics:GetHeight())
-        difficultyColumn.layoutIndex = k
-
-        miog.createFrameBorder(difficultyColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-		
-		if(v.expansionLevel == (GetAccountExpansionLevel()-1) and v.difficultyID == miog.RAID_DIFFICULTIES[3]) then
-			--sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = v.groupFinderActivityGroupID, name = v.shortName}
+	if(miog.RaidStatistics.RaidColumns.Raids[1] == nil) then
+		for k, v in pairs(miog.ACTIVITY_INFO) do
 			
-			difficultyColumn.ShortName:SetText(v.shortName)
+			if(v.expansionLevel == (GetAccountExpansionLevel()-1) and v.difficultyID == miog.RAID_DIFFICULTIES[3]) then
+				--sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = v.groupFinderActivityGroupID, name = v.shortName}
+				local raidColumn = CreateFrame("Frame", nil, miog.RaidStatistics.RaidColumns, "MIOG_RaidStatisticsColumnTemplate")
+				raidColumn.mapID = v.mapID
+				raidColumn:SetHeight(miog.RaidStatistics:GetHeight())
+				raidColumn.layoutIndex = k
+		
+				miog.createFrameBorder(raidColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-			difficultyColumn.Background:SetTexture(v.vertical)
-	
-			miog.RaidStatistics.DifficultyColumns.Difficulties[i] = difficultyColumn
+				raidColumn.ShortName:SetText(v.shortName)
+				raidColumn.Background:SetTexture(v.vertical)
+				raidColumn.Normal:SetTextColor(miog.DIFFICULTY[1].miogColors:GetRGBA())
+				raidColumn.Heroic:SetTextColor(miog.DIFFICULTY[2].miogColors:GetRGBA())
+				raidColumn.Mythic:SetTextColor(miog.DIFFICULTY[3].miogColors:GetRGBA())
+		
+				miog.RaidStatistics.RaidColumns.Raids[#miog.RaidStatistics.RaidColumns.Raids+1] = raidColumn
+			end
+		
+			--local shortName = i == 1 and PLAYER_DIFFICULTY1 or i == 2 and PLAYER_DIFFICULTY2 or i == 3 and PLAYER_DIFFICULTY6
 		end
-	
-
-        --local shortName = i == 1 and PLAYER_DIFFICULTY1 or i == 2 and PLAYER_DIFFICULTY2 or i == 3 and PLAYER_DIFFICULTY6
-    end
+	end
 end
 
 local function tierFrame_OnEnter(frame, tierTable)
@@ -65,8 +69,8 @@ local function honorBar_OnEnter()
 	if rewardInfo then
 		local rewardText = select(11, GetAchievementInfo(rewardInfo.achievementRewardedID));
 		if rewardText and rewardText ~= "" then
-			GameTooltip:SetOwner(miog.PVPStatistics.CharacterInfo.Honor, "ANCHOR_RIGHT", -4, -4);
-			GameTooltip:SetText(PVP_PRESTIGE_RANK_UP_NEXT_MAX_LEVEL_REWARD:format(nextHonorLevelForReward));
+			GameTooltip:SetOwner(miog.RaidStatistics.CharacterInfo.Honor, "ANCHOR_RIGHT", -4, -4);
+			GameTooltip:SetText(PVP_PRESTIGE_RANK_UP_NEXT_MAX_LEVEL_REWARD:format(nextHonorLevelForReward))
 			local WRAP = true;
 			GameTooltip_AddColoredLine(GameTooltip, rewardText, HIGHLIGHT_FONT_COLOR, WRAP);
 			GameTooltip:Show();
@@ -75,16 +79,16 @@ local function honorBar_OnEnter()
 
 end
 
-miog.createPVPCharacter = function(playerGUID)
+miog.createRaidCharacter = function(playerGUID)
     local characterFrame
 
-	if(miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID] == nil) then
-		characterFrame = CreateFrame("Frame", nil, miog.PVPStatistics.ScrollFrame.Rows, "MIOG_PVPStatisticsCharacterTemplate")
-		characterFrame:SetWidth(miog.PVPStatistics:GetWidth())
-		characterFrame.layoutIndex = #miog.PVPStatistics.ScrollFrame.Rows:GetLayoutChildren() + 1
+	if(miog.RaidStatistics.ScrollFrame.Rows.accountChars[playerGUID] == nil) then
+		characterFrame = CreateFrame("Frame", nil, miog.RaidStatistics.ScrollFrame.Rows, "MIOG_RaidStatisticsCharacterTemplate")
+		characterFrame:SetWidth(miog.RaidStatistics:GetWidth())
+		characterFrame.layoutIndex = #miog.RaidStatistics.ScrollFrame.Rows:GetLayoutChildren() + 1
 
 		if(characterFrame.layoutIndex == 1) then
-			characterFrame:SetHeight(55)
+			characterFrame:SetHeight(54)
 			local fontFile, height, flags = characterFrame.Name:GetFont()
 			characterFrame.Name:SetFont(fontFile, 14, flags)
 			characterFrame.TransparentDark:SetHeight(36)
@@ -94,10 +98,10 @@ miog.createPVPCharacter = function(playerGUID)
 
 		end
 
-		miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID] = characterFrame
+		miog.RaidStatistics.ScrollFrame.Rows.accountChars[playerGUID] = characterFrame
 	else
 
-		characterFrame = miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID]
+		characterFrame = miog.RaidStatistics.ScrollFrame.Rows.accountChars[playerGUID]
 	end
 
     local isCurrentChar = playerGUID == UnitGUID("player")
@@ -105,66 +109,123 @@ miog.createPVPCharacter = function(playerGUID)
     if(isCurrentChar) then
         local _, className = UnitClass("player")
 
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID] = {}
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].name = MIOG_SavedSettings.pvpStatistics.table[playerGUID].name or UnitName("player")
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].class = MIOG_SavedSettings.pvpStatistics.table[playerGUID].class or className
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets = {}
+        MIOG_SavedSettings.raidStatistics.table[playerGUID] = {}
+        MIOG_SavedSettings.raidStatistics.table[playerGUID].name = MIOG_SavedSettings.raidStatistics.table[playerGUID].name or UnitName("player")
+        MIOG_SavedSettings.raidStatistics.table[playerGUID].class = MIOG_SavedSettings.raidStatistics.table[playerGUID].class or className
 
-        for i = 1, 4, 1 do
-            local rating, seasonBest, weeklyBest, seasonPlayed, seasonWon, weeklyPlayed, weeklyWon, cap = GetPersonalRatedInfo(i) -- 1 == 2v2, 2 == 3v3, 3 == 5v5, 4 == 10v10
+        MIOG_SavedSettings.raidStatistics.table[playerGUID].raids = {}
 
-            MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i] = {rating = rating, seasonBest = seasonBest}
+		--for a = 1, 3, 1 do
+		for _, x in ipairs(miog.RaidStatistics.RaidColumns.Raids) do
+			--local currentTable = a == 1 and criteriaTable1 or a == 2 and criteriaTable2 or criteriaTable3
+			local mapID = x.mapID
 
-        end
+			MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID] = {{}, {}, {}}
 
-        local tierID, nextTierID = C_PvP.GetSeasonBestInfo();
+			if(miog.MAP_INFO[x.mapID].criteria) then
+				for i = miog.MAP_INFO[x.mapID].criteria[1], miog.MAP_INFO[x.mapID].criteria[2], 1 do
+				--for k, v in ipairs(criteriaTable) do
+					--local bossNumber = GetAchievementNumCriteria(v)
+					local id, name, points, completed, month, day, year, description, flags,
+					icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
+					= GetAchievementInfo(i)
 
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].tierInfo = {tierID, nextTierID}
+					if(isStatistic) then
+						local difficulty = string.find(name, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
+
+						if(difficulty) then
+							local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(i, 1, true)
+
+							table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty], completedCriteria)
+						end
+					end
+				end
+
+				for _, v in ipairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID]) do
+					if(v) then
+						for _, y in ipairs(v) do
+							if(y == true) then
+								v.kills = v.kills == nil and 1 or v.kills + 1
+							end
+
+						end
+					end
+				end
+			end
+
+			if(miog.MAP_INFO[x.mapID].criteriaAwakened) then
+				for k, v in ipairs(miog.MAP_INFO[x.mapID].criteriaAwakened) do
+					local id, name, points, completed, month, day, year, description, flags,
+					icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
+					= GetAchievementInfo(v)
+					local difficulty = string.find(description, "Normal") and 1 or string.find(description, "Heroic") and 2 or string.find(description, "Mythic") and 3
+					MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened or {}
+
+					local numCriteria = GetAchievementNumCriteria(v)
+
+					for i = 1, numCriteria, 1 do
+						local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(v, i, true)
+
+						table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened, completedCriteria)
+
+					end
+					
+				end
+			end
+
+		end
     end
 
-	characterFrame.Name:SetText(MIOG_SavedSettings.pvpStatistics.table[playerGUID].name)
-	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.pvpStatistics.table[playerGUID].class):GetRGBA())
-    characterFrame.Score:SetText("")
-
-    local tierInfo = C_PvP.GetPvpTierInfo(MIOG_SavedSettings.pvpStatistics.table[playerGUID].tierInfo[1])
-    characterFrame.Rank:SetTexture(tierInfo.tierIconID)
-
-    characterFrame.Rank:SetScript("OnEnter", function(self) tierFrame_OnEnter(self, MIOG_SavedSettings.pvpStatistics.table[playerGUID].tierInfo)
-    end)
-    characterFrame.Rank:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	characterFrame.Name:SetText(MIOG_SavedSettings.raidStatistics.table[playerGUID].name)
+	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.raidStatistics.table[playerGUID].class):GetRGBA())
 end
 
-miog.fillPVPCharacter = function(playerGUID)
-	local characterFrame = miog.PVPStatistics.ScrollFrame.Rows.accountChars[playerGUID]
+miog.fillRaidCharacter = function(playerGUID)
+	local characterFrame = miog.RaidStatistics.ScrollFrame.Rows.accountChars[playerGUID]
 
-    for i = 1, 4, 1 do
-		local bracketFrame = characterFrame["Bracket" .. i]
-		bracketFrame:SetWidth(miog.PVPStatistics.BracketColumns.Brackets[i]:GetWidth())
-		bracketFrame.layoutIndex = i
+	local counter = 1
 
-        local rating = MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i].rating
-        local seasonBest = MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i].seasonBest
+	--for k, v in pairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids) do
+	for _, x in ipairs(miog.RaidStatistics.RaidColumns.Raids) do
+		--for i = 1, 1, 1 do
+		local raidFrame = characterFrame["Raid" .. counter]
+		raidFrame:SetWidth(miog.RaidStatistics.RaidColumns.Raids[counter]:GetWidth())
+		raidFrame.layoutIndex = counter
 
-		bracketFrame.Level1:SetText(rating)
-		bracketFrame.Level1:SetTextColor(CreateColorFromHexString(rating == 0 and miog.CLRSCC.gray or miog.CLRSCC.yellow):GetRGBA())
+		for a = 1, 3, 1 do
 
-		local desaturatedColors = CreateColorFromHexString(seasonBest == 0 and miog.CLRSCC.gray or miog.CLRSCC.yellow)
+			local difficultyFontString2 = a == 1 and raidFrame.AwakenedNormal or a == 2 and raidFrame.AwakenedHeroic or a == 3 and raidFrame.AwakenedMythic
 
-		bracketFrame.Level2:SetText(seasonBest or 0)
-		bracketFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
+			local progress2 = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID][a].awakened
+			local text2 = (progress2.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+			difficultyFontString2:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
 
+			local difficultyFontString = a == 1 and raidFrame.Normal or a == 2 and raidFrame.Heroic or a == 3 and raidFrame.Mythic
+
+			local progress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID][a]
+			local text = (progress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+			difficultyFontString:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].desaturated))
+
+
+			for i = 1, #miog.MAP_INFO[x.mapID].bosses, 1 do
+				
+
+			end
+		end
+
+		counter = counter + 1
 	end
 end
 
-miog.gatherPVPStatistics = function()
+miog.gatherRaidStatistics = function()
 	local playerGUID = UnitGUID("player")
 
-	miog.createPVPCharacter(playerGUID)
-    miog.fillPVPCharacter(playerGUID)
+	miog.createRaidCharacter(playerGUID)
+    miog.fillRaidCharacter(playerGUID)
 
 	local orderedTable = {}
 
-	for x, y in pairs(MIOG_SavedSettings.pvpStatistics.table) do
+	for x, y in pairs(MIOG_SavedSettings.raidStatistics.table) do
 		local index = #orderedTable+1
 		orderedTable[index] = y
 		orderedTable[index].key = x
@@ -174,22 +235,13 @@ miog.gatherPVPStatistics = function()
 	--	return k1.rating > k2.rating
 	--end)
 
-    miog.PVPStatistics.CharacterInfo.Honor.Level:SetText("Honor Level " .. UnitHonorLevel("player"))
-    miog.PVPStatistics.CharacterInfo.Honor.Status:SetMinMaxValues(0, UnitHonorMax("player"))
-    miog.PVPStatistics.CharacterInfo.Honor.Status:SetValue(UnitHonor("player"))
-    miog.PVPStatistics.CharacterInfo.Honor.Status.Text:SetText(UnitHonor("player") .. "/" .. UnitHonorMax("player") .. " Honor")
-
-    miog.PVPStatistics.CharacterInfo.Honor:SetScript("OnEnter", function() honorBar_OnEnter()
-    end)
-    miog.PVPStatistics.CharacterInfo.Honor:SetScript("OnLeave", function() GameTooltip:Hide() end)
-
 	for x, y in pairs(orderedTable) do
 		if(y.key ~= playerGUID) then
-			miog.createPVPCharacter(y.key)
-			miog.fillPVPCharacter(y.key)
+			miog.createRaidCharacter(y.key)
+			miog.fillRaidCharacter(y.key)
 
 		end
 	end
 
-	miog.PVPStatistics.ScrollFrame.Rows:MarkDirty()
+	miog.RaidStatistics.ScrollFrame.Rows:MarkDirty()
 end

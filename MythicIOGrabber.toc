@@ -1,4 +1,4 @@
-## Interface: 100206
+## Interface: 100207
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO
@@ -36,12 +36,14 @@ InspectCoroutine.lua
 SharedFunctions.lua
 
 PVPStatistics.lua
+RaidStatistics.lua
 
 Blizzard_ChallengesFrameMixin.lua
 Blizzard_ChallengeModeWeeklyChestMixin.lua
 Blizzard_WeeklyRewardsMixin.lua
 
 XML\MIOG_MainFrameTemplate.xml
+XML\MIOG_Plugin.xml
 
 XML\MIOG_MultiStateButtonTemplate.xml
 XML\MIOG_SortButtonTemplate.xml
@@ -99,12 +101,12 @@ XML\MythicPlus\MIOG_MPlusStatisticsDungeonTemplate.xml
 
 XML\Raid\MIOG_RaidStatistics.xml
 XML\Raid\MIOG_RaidStatisticsCharacterTemplate.xml
-XML\Raid\MIOG_RaidStatisticsBracketTemplate.xml
+XML\Raid\MIOG_RaidStatisticsRaidTemplate.xml
 XML\Raid\MIOG_RaidStatisticsColumnTemplate.xml
 
 XML\PVP\MIOG_PVPStatistics.xml
 XML\PVP\MIOG_PVPStatisticsCharacterTemplate.xml
-XML\PVP\MIOG_PVPStatisticsDifficultyTemplate.xml
+XML\PVP\MIOG_PVPStatisticsBracketTemplate.xml
 XML\PVP\MIOG_PVPStatisticsColumnTemplate.xml
 
 XML\MIOG_Teleports.xml

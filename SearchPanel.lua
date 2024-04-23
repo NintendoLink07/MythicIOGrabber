@@ -1424,13 +1424,13 @@ local function searchPanelEvents(_, event, ...)
 end
 
 miog.createSearchPanel = function()
-	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.MainTab.Plugin, "MIOG_SearchPanel") ---@class Frame
+	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin, "MIOG_SearchPanel") ---@class Frame
 	miog.searchPanel = searchPanel
 	miog.searchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.searchPanel.FramePanel, "TOPRIGHT", -10, 0)
 	miog.applicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.applicationViewer.FramePanel, "TOPRIGHT", -10, 0)
 
 	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.searchPanel, 1, 20)
-	signupButton:SetPoint("LEFT", miog.MainTab.Plugin.FooterBar.Back, "RIGHT")
+	signupButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	signupButton:SetText("Signup")
 	signupButton:FitToText()
 	signupButton:RegisterForClicks("LeftButtonDown")
@@ -1444,7 +1444,7 @@ miog.createSearchPanel = function()
 	searchPanel.SignUpButton = signupButton
 
 	local groupNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, miog.searchPanel)
-	groupNumberFontString:SetPoint("RIGHT", miog.MainTab.Plugin.FooterBar, "RIGHT", -3, -1)
+	groupNumberFontString:SetPoint("RIGHT", miog.Plugin.FooterBar, "RIGHT", -3, -1)
 	groupNumberFontString:SetJustifyH("CENTER")
 	groupNumberFontString:SetText(0)
 
@@ -1513,73 +1513,75 @@ miog.createSearchPanel = function()
 
 	end
 
-	local searchPanelExtraFilter = miog.createBasicFrame("persistent", "BackdropTemplate", miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.Plugin, 220, 200)
-	searchPanelExtraFilter:SetPoint("TOPLEFT", miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.Plugin, "TOPLEFT")
+	if(addonName == "MythicIOGrabber") then
+		local searchPanelExtraFilter = miog.createBasicFrame("persistent", "BackdropTemplate", miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.Plugin, 220, 200)
+		searchPanelExtraFilter:SetPoint("TOPLEFT", miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.Plugin, "TOPLEFT")
 
-	miog.searchPanel.PanelFilters = searchPanelExtraFilter
+		miog.searchPanel.PanelFilters = searchPanelExtraFilter
 
-	--miog.createFrameBorder(searchPanelExtraFilter, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	--searchPanelExtraFilter:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+		--miog.createFrameBorder(searchPanelExtraFilter, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+		--searchPanelExtraFilter:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	local dropdownOptionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", searchPanelExtraFilter, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	dropdownOptionButton:SetNormalAtlas("checkbox-minimal")
-	dropdownOptionButton:SetPushedAtlas("checkbox-minimal")
-	dropdownOptionButton:SetCheckedTexture("checkmark-minimal")
-	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	dropdownOptionButton:SetPoint("TOPLEFT", searchPanelExtraFilter, "TOPLEFT", 0, 0)
-	dropdownOptionButton:HookScript("OnClick", function(self)
-		MIOG_SavedSettings[miog.pveFrame2.activePanel .. "_FilterOptions"].table[
-			LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
-			LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
-			(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] = self:GetChecked()
+		local dropdownOptionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", searchPanelExtraFilter, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+		dropdownOptionButton:SetNormalAtlas("checkbox-minimal")
+		dropdownOptionButton:SetPushedAtlas("checkbox-minimal")
+		dropdownOptionButton:SetCheckedTexture("checkmark-minimal")
+		dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+		dropdownOptionButton:SetPoint("TOPLEFT", searchPanelExtraFilter, "TOPLEFT", 0, 0)
+		dropdownOptionButton:HookScript("OnClick", function(self)
+			MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[
+				LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
+				LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
+				(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] = self:GetChecked()
 
-			if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-				miog.checkSearchResultListForEligibleMembers()
-	
-			elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-				C_LFGList.RefreshApplicants()
-	
-			end
-	end)
-	miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton = dropdownOptionButton
+				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+					miog.checkSearchResultListForEligibleMembers()
+		
+				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+					C_LFGList.RefreshApplicants()
+		
+				end
+		end)
+		miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton = dropdownOptionButton
 
-	local optionDropDown = Mixin(CreateFrame("Frame", nil, searchPanelExtraFilter, "MIOG_DropDownMenu"), SlickDropDown)
-	optionDropDown:OnLoad()
-	optionDropDown.minimumWidth = searchPanelExtraFilter:GetWidth() - dropdownOptionButton:GetWidth() - 3
-	optionDropDown.minimumHeight = 15
-	optionDropDown:SetPoint("TOPLEFT", dropdownOptionButton, "TOPRIGHT")
-	optionDropDown:SetText("Choose a difficulty")
-	miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown = optionDropDown
+		local optionDropDown = Mixin(CreateFrame("Frame", nil, searchPanelExtraFilter, "MIOG_DropDownMenu"), SlickDropDown)
+		optionDropDown:OnLoad()
+		optionDropDown.minimumWidth = searchPanelExtraFilter:GetWidth() - dropdownOptionButton:GetWidth() - 3
+		optionDropDown.minimumHeight = 15
+		optionDropDown:SetPoint("TOPLEFT", dropdownOptionButton, "TOPRIGHT")
+		optionDropDown:SetText("Choose a difficulty")
+		miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown = optionDropDown
 
-	local tanksSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Tanks")
-	tanksSpinner:SetPoint("TOPLEFT", dropdownOptionButton, "BOTTOMLEFT", 0, 0)
+		local tanksSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Tanks")
+		tanksSpinner:SetPoint("TOPLEFT", dropdownOptionButton, "BOTTOMLEFT", 0, 0)
 
-	local healerSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Healers")
-	healerSpinner:SetPoint("TOPLEFT", tanksSpinner, "BOTTOMLEFT", 0, 0)
+		local healerSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Healers")
+		healerSpinner:SetPoint("TOPLEFT", tanksSpinner, "BOTTOMLEFT", 0, 0)
 
-	local damagerSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Damager")
-	damagerSpinner:SetPoint("TOPLEFT", healerSpinner, "BOTTOMLEFT", 0, 0)
+		local damagerSpinner = miog.addDualNumericSpinnerToFilterFrame(searchPanelExtraFilter, "Damager")
+		damagerSpinner:SetPoint("TOPLEFT", healerSpinner, "BOTTOMLEFT", 0, 0)
 
-	local scoreField = miog.addDualNumericFieldsToFilterFrame(searchPanelExtraFilter, "Score")
-	scoreField:SetPoint("TOPLEFT", damagerSpinner, "BOTTOMLEFT", 0, 0)
+		local scoreField = miog.addDualNumericFieldsToFilterFrame(searchPanelExtraFilter, "Score")
+		scoreField:SetPoint("TOPLEFT", damagerSpinner, "BOTTOMLEFT", 0, 0)
 
-	local divider = miog.createBasicTexture("persistent", nil, searchPanelExtraFilter, searchPanelExtraFilter:GetWidth(), 1, "BORDER")
-	divider:SetAtlas("UI-LFG-DividerLine")
-	divider:SetPoint("BOTTOMLEFT", scoreField, "BOTTOMLEFT", 0, -5)
+		local divider = miog.createBasicTexture("persistent", nil, searchPanelExtraFilter, searchPanelExtraFilter:GetWidth(), 1, "BORDER")
+		divider:SetAtlas("UI-LFG-DividerLine")
+		divider:SetPoint("BOTTOMLEFT", scoreField, "BOTTOMLEFT", 0, -5)
 
-	local dungeonOptionsButton = miog.addOptionToFilterFrame(searchPanelExtraFilter, nil, "Dungeon options", "filterForDungeons")
-	dungeonOptionsButton:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 0, 0)
+		local dungeonOptionsButton = miog.addOptionToFilterFrame(searchPanelExtraFilter, nil, "Dungeon options", "filterForDungeons")
+		dungeonOptionsButton:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 0, 0)
 
-	local dungeonPanel = miog.addDungeonCheckboxes()
-	dungeonPanel:SetPoint("TOPLEFT", dungeonOptionsButton, "BOTTOMLEFT", 0, 0)
-	dungeonPanel.OptionsButton = dungeonOptionsButton
+		local dungeonPanel = miog.addDungeonCheckboxes()
+		dungeonPanel:SetPoint("TOPLEFT", dungeonOptionsButton, "BOTTOMLEFT", 0, 0)
+		dungeonPanel.OptionsButton = dungeonOptionsButton
 
-	local raidOptionsButton = miog.addOptionToFilterFrame(searchPanelExtraFilter, nil, "Raid options", "filterForRaids")
-	raidOptionsButton:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 0, 0)
+		local raidOptionsButton = miog.addOptionToFilterFrame(searchPanelExtraFilter, nil, "Raid options", "filterForRaids")
+		raidOptionsButton:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 0, 0)
 
-	local raidPanel = miog.addRaidCheckboxes()
-	raidPanel:SetPoint("TOPLEFT", raidOptionsButton, "BOTTOMLEFT", 0, 0)
-	raidPanel.OptionsButton = raidOptionsButton
+		local raidPanel = miog.addRaidCheckboxes()
+		raidPanel:SetPoint("TOPLEFT", raidOptionsButton, "BOTTOMLEFT", 0, 0)
+		raidPanel.OptionsButton = raidOptionsButton
+	end
 
 	miog.searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	miog.searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")

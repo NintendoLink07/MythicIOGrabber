@@ -17,8 +17,25 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="ShortName" font="LibMono" justifyH="CENTER" text="TEXT" >
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-5" />
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-5" />
+                        <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-5" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Normal" font="LibMono" justifyH="CENTER" text="N" >
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="7" y="-20" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Heroic" font="LibMono" justifyH="CENTER" text="H" >
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-20" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Mythic" font="LibMono" justifyH="CENTER" text="M" >
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-7" y="-20" />
                     </Anchors>
                 </FontString>
             </Layer>

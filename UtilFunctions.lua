@@ -18,8 +18,11 @@ miog.setAffixes = function()
 		end
 
 		miog.applicationViewer.CreationSettings.Affixes:SetText(affixString)
-		miog.MainTab.Affixes:SetText(affixString)
-		miog.MainTab.Affixes.text = miog.applicationViewer.CreationSettings.Affixes.tooltipText
+
+		if(addonName == "MythicIOGrabber") then
+			miog.MainTab.Affixes:SetText(affixString)
+			miog.MainTab.Affixes.text = miog.applicationViewer.CreationSettings.Affixes.tooltipText
+		end
 
 	else
 		return nil

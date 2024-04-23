@@ -396,7 +396,7 @@ local function createApplicantFrame(applicantID)
 
 			miog.gatherRaiderIODisplayData(nameTable[1], nameTable[2], applicantFrame, applicantMemberFrame)
 
-			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.GeneralInfoPanel
+			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.PanelContainer.GeneralInfo
 
 			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
 			generalInfoPanel.rows[7].FontString:SetText("Role: ")
@@ -989,7 +989,7 @@ end
 
 
 miog.createApplicationViewer = function()
-	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.MainTab.Plugin, "MIOG_ApplicationViewer") ---@class Frame
+	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin, "MIOG_ApplicationViewer") ---@class Frame
 	miog.applicationViewer = applicationViewer
 
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -1072,7 +1072,7 @@ miog.createApplicationViewer = function()
 	)
 
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
-	browseGroupsButton:SetPoint("LEFT", miog.MainTab.Plugin.FooterBar.Back, "RIGHT")
+	browseGroupsButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	browseGroupsButton:SetText("Browse Groups")
 	browseGroupsButton:FitToText()
 	browseGroupsButton:RegisterForClicks("LeftButtonDown")

@@ -87,9 +87,9 @@
                     </Button>
 
                     <Button parentKey="Expand">
-                        <Size x="20" y="20"/>
+                        <Size x="12" y="12"/>
                         <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2" y="-5"/>
+                            <Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2" y="-3"/>
                         </Anchors>
                         <NormalTexture file="interface/buttons/arrow-down-up.blp" />
                         <PushedTexture file="interface/buttons/arrow-down-down.blp" />
@@ -293,65 +293,6 @@
                                     </OnMouseDown>
                                 </Scripts>
                             </StatusBar>
-
-                            <Frame parentKey="Plugin" inherits="BackdropTemplate" resizable="true" frameLevel="100">
-                                <Size x="372" y="370" />
-
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-372" />
-                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                                </Anchors>
-
-                                <Frames>
-                                    <Frame parentKey="FooterBar" inherits="BackdropTemplate">
-                                        <Size y="25" />
-                                        <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                                        </Anchors>
-
-                                        <Frames>
-                                            <Button parentKey="Back" inherits="UIPanelDynamicResizeButtonTemplate" text="Main Menu">
-                                                <Size x="1" y="20" />
-                                                <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
-                                                </Anchors>
-                                                
-                                                <Scripts>
-                                                    <OnLoad>
-                                                        self:FitToText()
-
-                                                    </OnLoad>
-                                                    <OnClick>
-                                                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-                                                        LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.CategorySelection);
-                                                        LFGListFrame.SearchPanel.shouldAlwaysShowCreateGroupButton = false;
-
-                                                    </OnClick>
-                                                </Scripts>
-                                            </Button>
-                                        </Frames>
-                                    </Frame>
-
-                                    <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true">
-                                        <Size x="20" y="20" />
-                                        <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                                        </Anchors>
-                                        <Scripts>
-                                            <OnMouseDown>
-                                                self:GetParent():StartSizing()
-                                            </OnMouseDown>
-                                        </Scripts>
-                                    </Button>
-                                </Frames>
-
-                                <Scripts>
-                                    <OnEnter>
-
-                                    </OnEnter>
-                                </Scripts>
-                            </Frame>
 
                             <Frame parentKey="QueueRolePanel">
                                 <Size x="188" y="30" />

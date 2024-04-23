@@ -34,6 +34,9 @@ local function createPVEFrameReplacement()
 
 		miog.setupPVPStatistics()
 		miog.gatherPVPStatistics()
+
+		miog.setupRaidStatistics()
+		miog.gatherRaidStatistics()
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -62,6 +65,44 @@ local function createPVEFrameReplacement()
 				miog.MainTab.Keystone.Text:SetTextColor(1, 0, 0, 1)
 			
 			end
+		end
+
+		if(miog.F.CURRENT_SEASON and miog.F.CURRENT_SEASON == 12) then
+			local currentServerTime = C_DateAndTime.GetServerTimeLocal()
+			local seasonData = miog.C.SEASON_AVAILABLE[miog.F.CURRENT_SEASON]
+
+			if(currentServerTime >= seasonData.sinceEpoch + miog.C.REGION_DATE_DIFFERENCE[GetCurrentRegion()]) then
+				miog.MainTab.Awakened.Text:SetTextColor(1,1,1,1)
+
+				if(currentServerTime >= seasonData.awakened.vaultDate1 and currentServerTime < seasonData.awakened.aberrusDate1) then
+					miog.MainTab.Awakened.Text:SetText("VAULT AWAKENED")
+
+				elseif(currentServerTime >= seasonData.awakened.aberrusDate1 and currentServerTime < seasonData.awakened.amirdrassilDate1) then
+					miog.MainTab.Awakened.Text:SetText("ABERRUS AWAKENED")
+
+				elseif(currentServerTime >= seasonData.awakened.amirdrassilDate1 and currentServerTime < seasonData.awakened.vaultDate2) then
+					miog.MainTab.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
+
+				elseif(currentServerTime >= seasonData.awakened.vaultDate2 and currentServerTime < seasonData.awakened.aberrusDate2) then
+					miog.MainTab.Awakened.Text:SetText("VAULT AWAKENED")
+
+				elseif(currentServerTime >= seasonData.awakened.aberrusDate2 and currentServerTime < seasonData.awakened.amirdrassilDate2) then
+					miog.MainTab.Awakened.Text:SetText("ABERRUS AWAKENED")
+
+				elseif(currentServerTime >= seasonData.awakened.amirdrassilDate2 and currentServerTime < seasonData.awakened.fullRelease) then
+					miog.MainTab.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
+
+				elseif(currentServerTime >= seasonData.awakened.fullRelease) then
+					miog.MainTab.Awakened.Text:SetText("ALL RAIDS AWAKENED")
+
+				end
+
+			else
+				miog.MainTab.Awakened.Text:SetTextColor(1,0,0,1)
+				miog.MainTab.Awakened.Text:SetText("NO RAID AWAKENED")
+			
+			end
+
 		end
 		
 		for frameIndex = 1, 3, 1 do
@@ -241,7 +282,7 @@ local function createPVEFrameReplacement()
 	
 	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
 	miog.Teleports = pveFrame2.TabFramesPanel.Teleports
-	miog.pveFrame2.TitleBar.Expand:SetParent(miog.MainTab.Plugin)
+	miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
 
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:OnLoad()
@@ -257,6 +298,10 @@ local function createPVEFrameReplacement()
 	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
 	miog.PVPStatistics.BracketColumns.Brackets = {}
 	miog.PVPStatistics.ScrollFrame.Rows.accountChars = {}
+
+	miog.RaidStatistics = pveFrame2.TabFramesPanel.RaidStatistics
+	miog.RaidStatistics.RaidColumns.Raids = {}
+	miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
 
 	local frame = miog.MainTab
 	local filterPanel = pveFrame2.SidePanel.Container.FilterPanel
@@ -277,10 +322,10 @@ local function createPVEFrameReplacement()
 		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
 
 		if(MIOG_SavedSettings.frameExtended.value == true) then
-			frame.Plugin:SetHeight(frame.Plugin.extendedHeight)
+			miog.Plugin:SetHeight(miog.Plugin.extendedHeight)
 
 		elseif(MIOG_SavedSettings.frameExtended.value == false) then
-			frame.Plugin:SetHeight(frame.Plugin.standardHeight)
+			miog.Plugin:SetHeight(miog.Plugin.standardHeight)
 
 		end
 	end)
@@ -331,38 +376,6 @@ local function createPVEFrameReplacement()
 	queueDropDown:OnLoad()
 	queueDropDown:SetText("Choose a queue")
 	frame.QueuePanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	frame.Plugin:SetHeight(pveFrame2:GetHeight() - pveFrame2.TitleBar:GetHeight() - frame.Plugin.FooterBar:GetHeight() - 5)
-	miog.createFrameBorder(frame.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	frame.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	local standardWidth = frame.Plugin:GetWidth()
-
-	frame.Plugin.Resize:SetScript("OnMouseUp", function()
-		frame.Plugin:StopMovingOrSizing()
-
-		MIOG_SavedSettings.frameManuallyResized.value = frame.Plugin:GetHeight()
-
-		if(MIOG_SavedSettings.frameManuallyResized.value > frame.Plugin.standardHeight) then
-			MIOG_SavedSettings.frameExtended.value = true
-			frame.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
-
-		end
-
-		--frame.Plugin:ClearAllPoints()
-		frame.Plugin:SetPoint("TOPLEFT", frame.Plugin:GetParent(), "TOPRIGHT", -standardWidth, 0)
-		frame.Plugin:SetPoint("TOPRIGHT", frame.Plugin:GetParent(), "TOPRIGHT", 0, 0)
-
-	end)
-
-	frame.Plugin.standardHeight = frame.Plugin:GetHeight()
-	frame.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight * 1.5
-
-	frame.Plugin:SetResizeBounds(standardWidth, frame.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
-	frame.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value == true and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or frame.Plugin.standardHeight)
-
-	miog.createFrameBorder(frame.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	frame.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	--miog.createFrameBorder(frame.LastInvites.Button, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	--frame.LastInvites.Button:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())

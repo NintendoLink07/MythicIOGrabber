@@ -1,0 +1,127 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_RaidStatisticsRaidTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size y="32" />
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="AwakenedNormal" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="0/8">
+                    <FontHeight val="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" y="6"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="AwakenedHeroic" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="0/8">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="6"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="AwakenedMythic" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="0/8">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" y="6"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Normal" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" y="-8"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Heroic" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="HEROIC">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-8"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Mythic" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="MYTHIC">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" y="-8"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+            <!--<Layer level="ARTWORK">
+                <Texture parentKey="Boss1">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.TransparentDark" relativePoint="TOPLEFT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss2">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Boss1" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss3">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Boss2" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss4">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Boss3" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss5">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Boss4" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss6">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Boss1" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss7">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Boss6" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss8">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Boss7" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Boss9">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Boss8" relativePoint="RIGHT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>-->
+        </Layers>
+    </Frame>
+</Ui>
