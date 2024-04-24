@@ -25,6 +25,7 @@ local function createPVEFrameReplacement()
 	
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
 		local allKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromParty()
+		local raidKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromRaid
 
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()

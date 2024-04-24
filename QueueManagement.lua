@@ -159,16 +159,7 @@ local function checkQueues()
 
 					else
 						if(mode == "proposal") then
-							local frame = miog.createInviteFrame(frameData)
-							frame.Decline:SetAttribute("type", "macro") -- left click causes macro
-							frame.Decline:SetAttribute("macrotext1", "/run RejectProposal()")
-
-							frame.Accept:SetAttribute("type", "macro") -- left click causes macro
-							frame.Accept:SetAttribute("macrotext1", "/run AcceptProposal()")
 							
-							--LFGListInviteDialog_Accept(self:GetParent());
-
-							gotInvite = true
 						end
 
 					end
@@ -335,19 +326,6 @@ local function checkQueues()
 							LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 						end)
-
-					--[[elseif(appStatus == "invited") then
-						queueSystem.queueFrames[identifier].CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
-				
-						local frame = miog.createInviteFrame(frameData)
-						
-						frame.Decline:SetAttribute("type", "macro") -- left click causes macro
-						frame.Decline:SetAttribute("macrotext1", "/run C_LFGList.DeclineInvite(" .. id .. ")")
-
-						frame.Accept:SetAttribute("type", "macro") -- left click causes macro
-						frame.Accept:SetAttribute("macrotext1", "/run C_LFGList.AcceptInvite(" .. id .. ")")
-
-						gotInvite = true]]
 					end
 				end
 			end
@@ -466,24 +444,7 @@ local function checkQueues()
 				or queueIndex == 11 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button22 Left Button"
 				or queueIndex == 12 and "/click QueueStatusButton RightButton" .. "\r\n" .. "/click [nocombat]DropDownList1Button24 Left Button"
 
-				local frame = miog.createInviteFrame(frameData)
-				frame.activeIndex = i
-				frame.Decline:SetAttribute("type", "macro") -- left click causes macro
-				--frame.Decline = Mixin(frame.Decline, PVPReadyDialogLeaveButtonMixin)
-				--frame.Decline:SetAttribute("macrotext1", currentDeclineButton)
-
-				frame.Accept:SetAttribute("type", "macro") -- left click causes macro
-				frame.Accept:SetAttribute("macrotext1", currentAcceptButton)
-
-				if(allowsDecline) then
-					frame.Decline:Show()
-
-				else
-					frame.Decline:Hide()
-				
-				end
-
-				gotInvite = true
+			
 			elseif ( status == "active" ) then
 				if (mapName) then
 					--local hasLongDescription = longDescription and longDescription ~= "";
@@ -529,12 +490,7 @@ local function checkQueues()
 				queueIndex = queueIndex + 1
 	
 			elseif(status == "proposal") then
-				local frame = miog.createInviteFrame(frameData)
-				frame.Decline:SetAttribute("type", "macro")
-				frame.Decline:SetAttribute("macrotext1", "/run C_PetBattles.DeclineQueuedPVPMatch()")
-	
-				frame.Accept:SetAttribute("type", "macro")
-				frame.Accept:SetAttribute("macrotext1", "/run QueueStatusDropDown_AcceptQueuedPVPMatch()")
+				
 			
 			end
 		end
@@ -570,12 +526,6 @@ local function checkQueues()
 			queueIndex = queueIndex + 1
 
 		elseif(pbStatus == "proposal") then
-			local frame = miog.createInviteFrame(frameData)
-			frame.Decline:SetAttribute("type", "macro")
-			frame.Decline:SetAttribute("macrotext1", "/run C_PetBattles.DeclineQueuedPVPMatch()")
-
-			frame.Accept:SetAttribute("type", "macro")
-			frame.Accept:SetAttribute("macrotext1", "/run QueueStatusDropDown_AcceptQueuedPVPMatch()")
 		
 		end
 	end
@@ -1184,7 +1134,7 @@ local function queueEvents(_, event, ...)
 			end	
 		end
 	elseif(event == "GROUP_ROSTER_UPDATE") then
-		updateQueueDropDown()
+		--updateQueueDropDown()
 		
 	end
 end

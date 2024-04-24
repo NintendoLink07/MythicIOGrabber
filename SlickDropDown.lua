@@ -94,7 +94,7 @@ function SlickDropDown:ResetButton(button)
 end
 
 function SlickDropDown:ResetFrame(frame)
-	frame:Hide()
+	--frame:Hide()
 	frame.layoutIndex = nil
 	frame.Name:SetText("")
 	frame.Icon:SetTexture(nil)

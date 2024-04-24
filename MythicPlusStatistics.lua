@@ -164,11 +164,11 @@ miog.refreshKeystones = function()
 				end
 			end
 
-			miog.MPlusStatistics.KeystoneDropdown:CreateEntryFrame(info)
+			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
 		end
 	end
 
-	local keystoneInfo = {mapID = 1501, level = 26, challengeMapID = 199}
+	--[[local keystoneInfo = {mapID = 1501, level = 26, challengeMapID = 199}
 
 	if(keystoneInfo) then
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
@@ -217,7 +217,7 @@ miog.refreshKeystones = function()
 		end
 
 		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
-	end
+	end]]
 
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:MarkDirty()
@@ -287,12 +287,12 @@ miog.fillMPlusCharacter = function(playerGUID, mapTable)
 		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][challengeMapID]
 		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][challengeMapID]
 
-		dungeonFrame.Level1:SetText(thisWeek.level or 0)
-		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek.level == 0 or thisWeek.level) == nil and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
+		dungeonFrame.Level1:SetText(thisWeek and thisWeek.level or 0)
+		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek == nil or (thisWeek.level == 0 or thisWeek.level) == nil) and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
 
-		local desaturatedColors = CreateColorFromHexString((lastWeek.level == 0 or lastWeek.level) == nil and miog.CLRSCC.gray or lastWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green)
+		local desaturatedColors = CreateColorFromHexString((lastWeek == nil or (lastWeek.level == 0 or lastWeek.level) == nil) and miog.CLRSCC.gray or lastWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green)
 
-		dungeonFrame.Level2:SetText(lastWeek.level or 0)
+		dungeonFrame.Level2:SetText(lastWeek and lastWeek.level or 0)
 		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
 
 	end

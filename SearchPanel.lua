@@ -391,23 +391,6 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 	local resultFrame = searchResultSystem.persistentFrames[resultID]
 
 	local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
-	if (appStatus == "invited") then
-
-		if(not pendingStatus) then
-			--miog.showUpgradedInvitePendingDialog(resultID)
-		
-		end
-
-		if(miog.currentInvites[resultID]) then
-			--miog.updateInviteFrame(resultID, newStatus)
-		end
-
-	elseif(appStatus ~= "none") then
-		if(miog.currentInvites[resultID]) then
-			--miog.updateInviteFrame(resultID, newStatus)
-
-		end
-	end
 
 	newStatus = newStatus or appStatus
 

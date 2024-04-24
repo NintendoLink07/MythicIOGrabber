@@ -2,18 +2,20 @@ local addonName, miog = ...
 
 miog.setupPVPStatistics = function()
     for i = 1, 4, 1 do
-        local bracketColumn = CreateFrame("Frame", nil, miog.PVPStatistics.BracketColumns, "MIOG_PVPStatisticsColumnTemplate")
-        bracketColumn:SetHeight(miog.PVPStatistics:GetHeight())
-        bracketColumn.layoutIndex = i
+		if( miog.PVPStatistics.BracketColumns.Brackets[i] == nil) then
+			local bracketColumn = CreateFrame("Frame", nil, miog.PVPStatistics.BracketColumns, "MIOG_PVPStatisticsColumnTemplate")
+			bracketColumn:SetHeight(miog.PVPStatistics:GetHeight())
+			bracketColumn.layoutIndex = i
 
-        miog.createFrameBorder(bracketColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+			miog.createFrameBorder(bracketColumn, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-        local shortName = i == 1 and ARENA_2V2 or i == 2 and ARENA_3V3 or i == 3 and ARENA_5V5 or BATTLEGROUND_10V10
-        bracketColumn.ShortName:SetText(shortName)
+			local shortName = i == 1 and ARENA_2V2 or i == 2 and ARENA_3V3 or i == 3 and ARENA_5V5 or BATTLEGROUND_10V10
+			bracketColumn.ShortName:SetText(shortName)
 
-        bracketColumn.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. shortName .. ".png")
+			bracketColumn.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. shortName .. ".png")
 
-        miog.PVPStatistics.BracketColumns.Brackets[i] = bracketColumn
+			miog.PVPStatistics.BracketColumns.Brackets[i] = bracketColumn
+		end
     end
 end
 
