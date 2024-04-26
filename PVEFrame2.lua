@@ -19,8 +19,6 @@ local function createPVEFrameReplacement()
 	end
 	pveFrame2:SetScale(0.64)
 
-	_G[pveFrame2:GetName()] = pveFrame2
-
 	miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
@@ -283,7 +281,7 @@ local function createPVEFrameReplacement()
 	
 	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
 	miog.Teleports = pveFrame2.TabFramesPanel.Teleports
-	miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
+	--miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
 
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:OnLoad()
@@ -340,34 +338,36 @@ local function createPVEFrameReplacement()
 
 	local leader, tank, healer, damager = LFDQueueFrame_GetRoles()
 
-	queueRolePanel.Leader.Checkbox:SetChecked(leader)
-	queueRolePanel.Leader.Checkbox:SetScript("OnClick", function(self)
+	local function setRoles()
 		SetLFGRoles(queueRolePanel.Leader.Checkbox:GetChecked(), queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
 		SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
+
+	end
+
+	queueRolePanel.Leader.Checkbox:SetChecked(leader)
+	queueRolePanel.Leader.Checkbox:SetScript("OnClick", function(self)
+		setRoles()
 	end)
 
 	queueRolePanel.Tank.Checkbox:SetChecked(tank)
 	queueRolePanel.Tank.Checkbox:SetEnabled(miog.C.AVAILABLE_ROLES["TANK"])
 	queueRolePanel.Tank.Icon:SetDesaturated(not miog.C.AVAILABLE_ROLES["TANK"])
 	queueRolePanel.Tank.Checkbox:SetScript("OnClick", function(self)
-		SetLFGRoles(queueRolePanel.Leader.Checkbox:GetChecked(), queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
-		SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
+		setRoles()
 	end)
 
 	queueRolePanel.Healer.Checkbox:SetChecked(healer)
 	queueRolePanel.Healer.Checkbox:SetEnabled(miog.C.AVAILABLE_ROLES["HEALER"])
 	queueRolePanel.Healer.Icon:SetDesaturated(not miog.C.AVAILABLE_ROLES["HEALER"])
 	queueRolePanel.Healer.Checkbox:SetScript("OnClick", function(self)
-		SetLFGRoles(queueRolePanel.Leader.Checkbox:GetChecked(), queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
-		SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
+		setRoles()
 	end)
 
 	queueRolePanel.Damager.Checkbox:SetChecked(damager)
 	queueRolePanel.Damager.Checkbox:SetEnabled(miog.C.AVAILABLE_ROLES["DAMAGER"])
 	queueRolePanel.Damager.Icon:SetDesaturated(not miog.C.AVAILABLE_ROLES["DAMAGER"])
 	queueRolePanel.Damager.Checkbox:SetScript("OnClick", function(self)
-		SetLFGRoles(queueRolePanel.Leader.Checkbox:GetChecked(), queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
-		SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
+		setRoles()
 	end)
 
 	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
@@ -459,12 +459,10 @@ local function createPVEFrameReplacement()
 
 					local spell = Spell:CreateFromSpellID(flyoutSpellID)
 					spell:ContinueOnSpellLoad(function()
-						local desc = spell:GetSpellDescription()
-
 						tpButton:SetScript("OnEnter", function(self)
 							GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
 							GameTooltip_AddHighlightLine(GameTooltip, spellName)
-							GameTooltip:AddLine(desc)
+							GameTooltip:AddLine(spell:GetSpellDescription())
 							GameTooltip:Show()
 						end)
 					end)

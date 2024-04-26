@@ -196,6 +196,7 @@ miog.C = {
 		[3] = 0,
 		[4] = 0,
 		[5] = 0,
+		[72] = 0,
 	},
 }
 
@@ -339,7 +340,7 @@ miog.MAP_INFO = {
 	--DRAGONFLIGHT
 	[2451] = {shortName = "ULOT", icon = "interface/lfgframe/lfgicon-uldaman-legacyoftyr", fileName = "uldamanlegacyoftyr"},
 	[2515] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-arcanevaults", fileName = "azurevault"},
-	[2516] = {shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains", fileName = "centaurplains"},
+	[2516] = {shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains", fileName = "nokhudoffensive"},
 	[2519] = {shortName = "NELT", icon = "interface/lfgframe/lfgicon-neltharus", fileName = "neltharus"},
 	[2520] = {shortName = "BH", icon = "interface/lfgframe/lfgicon-brackenhidehollow", fileName = "brackenhidehollow"},
 	[2521] = {shortName = "RLP", icon = "interface/lfgframe/lfgicon-lifepools", fileName = "rubylifepools"},
@@ -1102,9 +1103,12 @@ miog.MAP_INFO[2569].criteriaAwakened = {19570, 19571, 19572}
 end]]
 
 miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
-	[1] = 1000000000,
-	[2] = 1000000,
-	[3] = 1000,
+	[1] = 10000000000,
+	[2] = 100000000,
+	[3] = 1000000,
+	[4] = 10000,
+	[5] = 100,
+	[6] = 1,
 }
 
 miog.FONTS = {

@@ -19,7 +19,7 @@
 
                 <FontString parentKey="ScoreIncrease" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="SCORE INC" hidden="true">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="5" />
+                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="10" />
                     </Anchors>
                 </FontString>
             </Layer>

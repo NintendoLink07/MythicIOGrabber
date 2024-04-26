@@ -197,13 +197,13 @@ miog.fillRaidCharacter = function(playerGUID)
 			local difficultyFontString2 = a == 1 and raidFrame.AwakenedNormal or a == 2 and raidFrame.AwakenedHeroic or a == 3 and raidFrame.AwakenedMythic
 
 			local progress2 = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID][a].awakened
-			local text2 = (progress2.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+			local text2 = (progress2 and progress2.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
 			difficultyFontString2:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
 
 			local difficultyFontString = a == 1 and raidFrame.Normal or a == 2 and raidFrame.Heroic or a == 3 and raidFrame.Mythic
 
 			local progress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID][a]
-			local text = (progress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+			local text = (progress and progress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
 			difficultyFontString:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].desaturated))
 
 

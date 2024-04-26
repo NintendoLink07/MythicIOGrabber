@@ -660,6 +660,7 @@
                 self:RegisterForDrag("LeftButton")
                 PanelTemplates_SetNumTabs(self, 5)
                 PanelTemplates_SetTab(self, 1)
+                tinsert(UISpecialFrames, self:GetName());
             </OnLoad>
 
             <OnMouseDown>         
@@ -670,9 +671,13 @@
                 end
             </OnMouseDown>
 
-           <OnShow>
-               --self.MPlusStatistics:Hide()
-           </OnShow>
+            <OnShow>
+                PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+            </OnShow>
+
+            <OnHide>
+                PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
+            </OnHide>
         </Scripts>
     </Frame>
 </Ui>

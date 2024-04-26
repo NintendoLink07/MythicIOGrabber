@@ -186,8 +186,10 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 
 		end
 	end
-	generalInfoPanel.Right["1"].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 
+	generalInfoPanel.Right["1"].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
+	generalInfoPanel.Right["1"].FontString:SetWordWrap(true)
+	generalInfoPanel.Right["1"].FontString:SetNonSpaceWrap(true)
 	generalInfoPanel.Right["1"].FontString:SetScript("OnEnter", function(self)
 		if(self:GetText() ~= nil and self:IsTruncated()) then
 			GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -283,7 +285,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 			end
 
-			mythicPlusPanel.Right["5"].FontString:SetText(previousScoreString)
+			mythicPlusPanel.CategoryRow1.FontString:SetText(previousScoreString)
 
 			local mainScoreString = ""
 
@@ -305,28 +307,26 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 					end
 
 				end
+
+				mainScoreString = wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex)
+			
 			end
 
-			mythicPlusPanel.Right["2"].FontString:SetText(mainScoreString)
+			mythicPlusPanel.CategoryRow2.FontString:SetText(mainScoreString)
 
-			generalInfoPanel.Right["4"].FontString:SetText(
+			generalInfoPanel.Right["5"].FontString:SetText(
 				wticc(mythicKeystoneProfile.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
 				wticc(mythicKeystoneProfile.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
 				wticc(mythicKeystoneProfile.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
 				wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
 			)
 
-			mythicPlusPanel.Right["1"].FontString:SetText("")
 		else
-			mythicPlusPanel.Right["1"].FontString:SetText(wticc("NO M+ DATA", miog.CLRSCC["red"]))
+			mythicPlusPanel.CategoryRow1.FontString:SetText(wticc("NO M+ DATA", miog.CLRSCC["red"]))
 
 		end
 
-		local primarySet = false
-		local secondarySet = false
-
 		if(raidProfile) then
-
 			local raidData = {}
 			local currentTierFrame
 			local mainProgressText = ""
@@ -356,19 +356,16 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			end
 
 			if(mainProgressText ~= "") then
-				raidPanel.Right["2"].FontString:SetText(wticc("Main: " .. mainProgressText, miog.ITEM_QUALITY_COLORS[6].pureHex))
+				raidPanel.CategoryRow2.FontString:SetText(wticc("Main: " .. mainProgressText, miog.ITEM_QUALITY_COLORS[6].pureHex))
 
 			else
-				raidPanel.Right["2"].FontString:SetText(wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex))
+				raidPanel.CategoryRow2.FontString:SetText(wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex))
 
 			end
-
 
 			for k, v in ipairs(raidData) do
 				local panelProgressString = ""
 				local raidProgress = profile.raidProfile.raidProgress[v.raidProgressIndex]
-
-				local shortDifficulty = miog.DIFFICULTY[v.difficulty].shortName
 				local instanceID = C_EncounterJournal.GetInstanceForGameMap(v.mapId)
 
 				currentTierFrame = raidPanel[k == 1 and "HighestTier" or k == 2 and "MiddleTier" or "LowestTier"]
@@ -442,7 +439,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		end
 	end
 
-	generalInfoPanel.Right["5"].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
+	generalInfoPanel.Right["6"].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
 end
 
 miog.gatherRaiderIODisplayData = gatherRaiderIODisplayData

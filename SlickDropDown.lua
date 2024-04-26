@@ -10,7 +10,8 @@ local addonName, miog = ...
 SlickDropDown = {}
 
 function SlickDropDown:OnLoad()
-	self.List.framePool = CreateFramePool("Button", self.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
+	--self.List.framePool = CreateFramePool("Button", self.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
+	self.List.framePool = CreateFramePool("Button", self.List, "PVPCasualActivityButton, MIOG_DropDownMenuEntry", SlickDropDown.ResetFrame)
 	self.List.fontStringPool = CreateFontStringPool(self.List, "OVERLAY", nil, "GameTooltipText", SlickDropDown.ResetFontString)
 	self.List.texturePool = CreateTexturePool(self.List, "ARTWORK", nil, nil, SlickDropDown.ResetTexture)
 	self.List.buttonPool = CreateFramePool("Button", self.List, "UIButtonTemplate", SlickDropDown.ResetButton)
@@ -94,23 +95,26 @@ function SlickDropDown:ResetButton(button)
 end
 
 function SlickDropDown:ResetFrame(frame)
-	--frame:Hide()
-	frame.layoutIndex = nil
-	frame.Name:SetText("")
-	frame.Icon:SetTexture(nil)
-	frame.infoTable = nil
-	frame.info = nil
-	frame.type2 = nil
-	frame.value = nil
-	frame.parentIndex = nil
+	if(miog.F.QUEUE_STOP ~= true) then
+		frame:Hide()
+		frame.layoutIndex = nil
+		frame.Name:SetText("")
+		frame.Icon:SetTexture(nil)
+		frame.infoTable = nil
+		frame.info = nil
+		frame.type2 = nil
+		frame.value = nil
+		frame.parentIndex = nil
 
-	frame:SetScript("OnShow", nil)
+		frame:SetScript("OnShow", nil)
+		frame:SetScript("OnClick", nil)
 
-	frame:SetAttribute("macrotext1", "")
-	frame:SetAttribute("original", "")
+		--frame:SetAttribute("macrotext1", "")
+		--frame:SetAttribute("original", "")
 
-	--self.List:MarkDirty()
-	--self:MarkDirty()
+		--self.List:MarkDirty()
+		--self:MarkDirty()
+	end
 end
 
 function SlickDropDown:ResetFontString(fontString)
@@ -345,110 +349,114 @@ end
 local color = "FFAAAAAA"
 
 function SlickDropDown:CreateEntryFrame(info)
-	local frame = nil
-	local list = nil
-	local tableIndex = 0
+	if(miog.F.QUEUE_STOP ~= true) then
+		local frame = nil
+		local list = nil
+		local tableIndex = 0
 
-	local infoTable = info
-
-	if(infoTable.parentIndex) then
-		local parent = self.entryFrameTree[infoTable.parentIndex]
-
-		if(parent == nil) then
-			DevTools_Dump(infoTable)
-
-		end
-		
-		tableIndex = #parent + 1
-		list = self.entryFrameTree[infoTable.parentIndex].List
-
-		list.framePool = list.framePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
-		list.securePool = list.securePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
-
-		if(infoTable.func) then
-			frame = list.framePool:Acquire()
-
-		else
-			frame = list.securePool:Acquire()
-
-		end
-
-		frame.layoutIndex = infoTable.index or tableIndex
-
-		self.entryFrameTree[infoTable.parentIndex][frame.layoutIndex] = frame
-
-		frame:SetParent(list)
-		list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-		list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-		list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+		local infoTable = info
 
 		if(infoTable.parentIndex) then
+			local parent = self.entryFrameTree[infoTable.parentIndex]
+
+			if(parent == nil) then
+				DevTools_Dump(infoTable)
+
+			end
+			
+			tableIndex = #parent + 1
+			list = self.entryFrameTree[infoTable.parentIndex].List
+
+			list.framePool = list.framePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
+			--list.securePool = list.securePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
+			list.securePool = list.securePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry", SlickDropDown.ResetFrame)
+
+			if(infoTable.func) then
+				frame = list.framePool:Acquire()
+
+			else
+				frame = list.securePool:Acquire()
+
+			end
+
+			frame.layoutIndex = infoTable.index or tableIndex
+
+			self.entryFrameTree[infoTable.parentIndex][frame.layoutIndex] = frame
+
+			frame:SetParent(list)
+			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+
+			if(infoTable.parentIndex) then
+				frame.Difficulty1:Hide()
+			end
+
+		else
+			tableIndex = infoTable.index or #self.entryFrameTree + 1
+			list = self.List
+
+			frame = list.framePool:Acquire()
+			frame.layoutIndex = tableIndex
+			self.entryFrameTree[tableIndex] = frame
+
+			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
 			frame.Difficulty1:Hide()
+			frame.List.highestWidth = 0
+
 		end
 
-	else
-		tableIndex = infoTable.index or #self.entryFrameTree + 1
-		list = self.List
+		if(list.ExpandButton and #list.ExpandButton > 0) then
+			table.insert(list.ExpandButton[#list.ExpandButton], frame)
+		end
 
-		frame = list.framePool:Acquire()
-		frame.layoutIndex = tableIndex
-		self.entryFrameTree[tableIndex] = frame
+		frame.Name:SetText(infoTable.text)
+		frame.Icon:SetTexture(infoTable.icon)
+		frame.type2 = infoTable.type2
+		frame.value = infoTable.value
+		frame.hasArrow = infoTable.hasArrow
+		frame.activities = infoTable.activities
 
-		list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-		list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-		list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
-		frame.Difficulty1:Hide()
-		frame.List.highestWidth = 0
+		local stringWidth = frame.Name:GetStringWidth()
+		list.highestWidth = (stringWidth  > list.highestWidth and stringWidth or list.highestWidth)
 
+		if(infoTable.disabled) then
+			frame.Radio:Hide()
+
+		else
+			frame.Radio:SetShown(not infoTable.hasArrow)
+			frame.Radio:SetChecked(infoTable.checked)
+		
+		end
+		
+		frame.ParentDropDown = self
+		frame.parentIndex = infoTable.parentIndex
+
+		if(infoTable.func) then
+			frame:SetScript("OnClick", infoTable.func)
+
+		else
+			frame:SetMouseClickEnabled(not infoTable.disabled)
+			frame:RegisterForClicks("LeftButtonDown")
+			frame:SetAttribute("type", "macro") -- left click causes macro
+		end
+
+		if(infoTable.disabled) then
+			frame.Name:SetTextColor(0.5, 0.5, 0.5, 1)
+
+		else
+			frame.Name:SetTextColor(1, 1, 1, 1)
+
+		end
+
+		frame:Show()
+
+		self:SetWidthToWidestFrame(infoTable)
+
+		return frame
 	end
-
-	if(list.ExpandButton and #list.ExpandButton > 0) then
-		table.insert(list.ExpandButton[#list.ExpandButton], frame)
-	end
-
-	frame.Name:SetText(infoTable.text)
-	frame.Icon:SetTexture(infoTable.icon)
-	frame.type2 = infoTable.type2
-	frame.value = infoTable.value
-	frame.hasArrow = infoTable.hasArrow
-	frame.activities = infoTable.activities
-
-	local stringWidth = frame.Name:GetStringWidth()
-	list.highestWidth = (stringWidth  > list.highestWidth and stringWidth or list.highestWidth)
-
-	if(infoTable.disabled) then
-		frame.Radio:Hide()
-
-	else
-		frame.Radio:SetShown(not infoTable.hasArrow)
-		frame.Radio:SetChecked(infoTable.checked)
-	
-	end
-	
-	frame.ParentDropDown = self
-	frame.parentIndex = infoTable.parentIndex
-
-	if(infoTable.func) then
-		frame:SetScript("OnClick", infoTable.func)
-	else
-		frame:SetMouseClickEnabled(not infoTable.disabled)
-		frame:RegisterForClicks("LeftButtonDown")
-		frame:SetAttribute("type", "macro") -- left click causes macro
-	end
-
-	if(infoTable.disabled) then
-		frame.Name:SetTextColor(0.5, 0.5, 0.5, 1)
-
-	else
-		frame.Name:SetTextColor(1, 1, 1, 1)
-
-	end
-
-	frame:Show()
-
-	self:SetWidthToWidestFrame(infoTable)
-
-	return frame
 end
 
 function SlickDropDown:CreateExtraButton(baseButton, entryFrame)

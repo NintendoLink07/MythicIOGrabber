@@ -83,20 +83,24 @@ local function setUpDifficultyDropDown(categoryID, groupID, filters)
 		local info = {}
 
 		local activityID = v;
-		local activityInfo = C_LFGList.GetActivityInfoTable(activityID);
-		local shortName = activityInfo and activityInfo.shortName;
+		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+		local shortName = activityInfo and activityInfo.shortName
 
-		info.entryType = "option"
-		info.index = k
-		info.text = shortName
-		info.value = activityID
 
-		info.func = function()
-			LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), LFGListFrame.EntryCreation.selectedCategory, nil, activityID)
-			--frame.DifficultyDropDown:SelectFrame(entryFrame)
+		if(shortName) then
+
+			info.entryType = "option"
+			info.index = k
+			info.text = shortName
+			info.value = activityID
+
+			info.func = function()
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), LFGListFrame.EntryCreation.selectedCategory, nil, activityID)
+				DevTools_Dump(activityInfo)
+			end
+
+			entryFrame = frame.DifficultyDropDown:CreateEntryFrame(info)
 		end
-
-		entryFrame = frame.DifficultyDropDown:CreateEntryFrame(info)
 	end
 
 	if(miog.entryCreation.ActivityDropDown:IsShown() == false) then

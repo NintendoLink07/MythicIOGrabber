@@ -4,10 +4,6 @@ local wticc = WrapTextInColorCode
 local applicantSystem = {}
 applicantSystem.applicantMember = {}
 
-local applicantViewer_ExpandedFrameList = {}
-
-local fmod = math.fmod
-local rep = string.rep
 local applicationFrameIndex = 0
 local queueTimer
 
@@ -173,8 +169,6 @@ local function createApplicantFrame(applicantID)
 	if(applicantData) then
 		local activityID = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.activityID or 0
 
-		applicantViewer_ExpandedFrameList[applicantID] = applicantViewer_ExpandedFrameList[applicantID] or {}
-
 		local applicantFrame = miog.applicantFramePool:Acquire("MIOG_ApplicantFrameTemplate")
 		applicantFrame:SetParent(miog.applicationViewer.FramePanel.Container)
 		applicantFrame.fixedWidth = miog.applicationViewer.FramePanel:GetWidth()
@@ -238,16 +232,10 @@ local function createApplicantFrame(applicantID)
 
 			local expandFrameButton = applicantMemberFrame.BasicInformationPanel.ExpandFrame
 
-			if(applicantViewer_ExpandedFrameList[applicantID][applicantIndex]) then
-				expandFrameButton:AdvanceState()
-
-			end
-
 			expandFrameButton:RegisterForClicks("LeftButtonDown")
 			expandFrameButton:SetScript("OnClick", function()
 				if(applicantMemberFrame.DetailedInformationPanel) then
 					expandFrameButton:AdvanceState()
-					applicantViewer_ExpandedFrameList[applicantID][applicantIndex] = not applicantMemberFrame.DetailedInformationPanel:IsVisible()
 					applicantMemberFrame.DetailedInformationPanel:SetShown(not applicantMemberFrame.DetailedInformationPanel:IsVisible())
 
 					applicantFrame:MarkDirty()
@@ -398,26 +386,26 @@ local function createApplicantFrame(applicantID)
 
 			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.PanelContainer.GeneralInfo
 
-			generalInfoPanel.rows[1].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
-			generalInfoPanel.rows[7].FontString:SetText("Role: ")
+			generalInfoPanel.Right["1"].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
+			generalInfoPanel.Right["4"].FontString:SetText("Role: ")
 
 			if(tank) then
-				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() .. miog.C.TANK_TEXTURE)
+				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() .. miog.C.TANK_TEXTURE)
 
 			end
 
 			if(healer) then
-				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() .. miog.C.HEALER_TEXTURE)
+				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() .. miog.C.HEALER_TEXTURE)
 
 			end
 
 			if(damager) then
-				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() .. miog.C.DPS_TEXTURE)
+				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() .. miog.C.DPS_TEXTURE)
 
 			end
 
 			if(raceID and miog.RACES[raceID]) then
-				generalInfoPanel.rows[7].FontString:SetText(generalInfoPanel.rows[7].FontString:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
+				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
 
 			end
 			

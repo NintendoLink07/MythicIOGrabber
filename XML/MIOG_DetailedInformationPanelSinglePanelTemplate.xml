@@ -16,7 +16,7 @@
                 </Anchors>
                 <Frames>
                     <Frame parentKey="1">
-                        <Size y="100" />
+                        <Size y="80" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                             <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
@@ -27,8 +27,10 @@
                                 <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="TOP" wordwrap="true" nonspacewrap="true">
                                     <FontHeight val="11"/>
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-3"/>
+                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-4" />
+                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                                     </Anchors>
+
                                 </FontString>
                             </Layer>
                         </Layers>
@@ -96,6 +98,25 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.4" relativePoint="BOTTOMLEFT" />
                             <Anchor point="TOPRIGHT" relativeKey="$parent.4" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
+                                    <FontHeight val="11"/>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    
+                    <Frame parentKey="6">
+                        <Size y="20" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.5" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.5" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
 
                         <Layers>

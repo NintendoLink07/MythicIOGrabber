@@ -1,7 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local searchPanel_ExpandedFrameList = {}
 local searchResultSystem = {}
 searchResultSystem.persistentFrames = {}
 searchResultSystem.declinedGroups = {}
@@ -476,14 +475,15 @@ local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 	end
 end
 
-local function createResultTooltip(resultID, resultFrame, autoAccept)
+local function createResultTooltip(resultID, resultFrame)
 	if(C_LFGList.HasSearchResultInfo(resultID)) then
+		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
 		GameTooltip:SetOwner(resultFrame, "ANCHOR_RIGHT", 0, 0)
-		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID, autoAccept == true and LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE)
+		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID, searchResultInfo.autoAccept and LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE)
 
 		GameTooltip:AddLine(" ")
 
-		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 		local orderedList = {}
 		local specList = {}
@@ -695,18 +695,10 @@ local function updatePersistentResultFrame(resultID)
 			local color = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID] or {r = 1, g = 1, b = 1}
 
 			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
-			
-			if(searchPanel_ExpandedFrameList[searchResultInfo.leaderName]) then
-				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
-				currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
-		
-			end
 	
 			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function()
 				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
 				currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
-				
-				searchPanel_ExpandedFrameList[searchResultInfo.leaderName] = not currentFrame.DetailedInformationPanel:IsVisible()
 				currentFrame:MarkDirty()
 		
 			end)
@@ -766,8 +758,8 @@ local function updatePersistentResultFrame(resultID)
 			local secondaryIndicator = currentFrame.BasicInformation.Secondary
 			secondaryIndicator:SetText(nil)
 
-			currentFrame.DetailedInformationPanel.PanelContainer.MythicPlus.Right["1"].FontString:SetText(nil)
-			currentFrame.DetailedInformationPanel.PanelContainer.Raid.Right["1"].FontString:SetText(nil)
+			currentFrame.DetailedInformationPanel.PanelContainer.MythicPlus.CategoryRow1.FontString:SetText(nil)
+			currentFrame.DetailedInformationPanel.PanelContainer.Raid.CategoryRow1.FontString:SetText(nil)
 			
 			local nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
 
@@ -776,7 +768,7 @@ local function updatePersistentResultFrame(resultID)
 			local generalInfoPanel = currentFrame.DetailedInformationPanel.PanelContainer.GeneralInfo
 			
 			generalInfoPanel.Right["1"].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultInfo.comment and searchResultInfo.comment) or ""))
-			generalInfoPanel.Right["3"].FontString:SetText("Role: ")
+			generalInfoPanel.Right["4"].FontString:SetText("Role: ")
 
 			local appCategory = activityInfo.categoryID
 
@@ -900,8 +892,21 @@ local function updatePersistentResultFrame(resultID)
 							return true
 
 						else
-							return k1.specID > k2.specID
+							if(k1.specID and k2.specID) then
+								return k1.specID > k2.specID
 
+							else
+								if(k1.specID) then
+									return false
+
+								elseif(k2.specID) then
+									return true
+
+								else
+									return k1.class > k2.class
+
+								end
+							end
 						end
 	
 					else
