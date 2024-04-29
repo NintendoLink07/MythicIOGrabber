@@ -67,7 +67,7 @@ local function setUpItemLevels()
 end
 
 miog.createEntryCreation = function()
-	local frame = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.Plugin or miog.MainFrame, "MIOG_EntryCreation") ---@class Frame
+	local frame = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.Plugin.InsertFrame or miog.MainFrame, "MIOG_EntryCreation") ---@class Frame
 	frame:GetParent().EntryCreation = frame
 	miog.entryCreation = frame
 

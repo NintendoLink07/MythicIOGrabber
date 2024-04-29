@@ -2,17 +2,10 @@ local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-miog.pveFrame2 = nil
-
-hooksecurefunc("PVEFrame_ToggleFrame", function()
-	HideUIPanel(PVEFrame)
-	miog.pveFrame2:SetShown(not miog.pveFrame2:IsVisible())
-end)
 
 local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", WorldFrame, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
-	pveFrame2.SidePanel:SetHeight(pveFrame2:GetHeight() * 1.45)
 
 	if(pveFrame2:GetPoint() == nil) then
 		pveFrame2:SetPoint(PVEFrame:GetPoint())
@@ -22,8 +15,13 @@ local function createPVEFrameReplacement()
 	miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
-		local allKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromParty()
-		local raidKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromRaid
+		if(IsInRaid()) then
+			local raidKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromRaid()
+			
+		elseif(IsInGroup()) then
+			local allKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromParty()
+
+		end
 
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
@@ -272,13 +270,18 @@ local function createPVEFrameReplacement()
 
 			currentFrame:SetValue(activities[3].progress)
 
-			currentFrame.Text:SetText(activities[3].progress .. "/" .. activities[3].threshold .. " " .. (frameIndex == 1 and "Dungeons" or frameIndex == 2 and "Honor" or frameIndex == 3 and "Bosses" or ""))
+			currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (frameIndex == 1 and "Dungeons" or frameIndex == 2 and "Honor" or frameIndex == 3 and "Bosses" or ""))
 			currentFrame.Text:SetTextColor(CreateColorFromHexString(not firstThreshold and currentColor or "FFFFFFFF"):GetRGBA())
 		end
 	end)
 
+	hooksecurefunc("PVEFrame_ToggleFrame", function()
+		HideUIPanel(PVEFrame)
+		
+		miog.MainFrame:SetShown(not miog.MainFrame:IsVisible())
+	end)
+
 	miog.pveFrame2 = pveFrame2
-	
 	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
 	miog.Teleports = pveFrame2.TabFramesPanel.Teleports
 	--miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
@@ -303,18 +306,6 @@ local function createPVEFrameReplacement()
 	miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
 
 	local frame = miog.MainTab
-	local filterPanel = pveFrame2.SidePanel.Container.FilterPanel
-	
-	filterPanel.Panel.FilterOptions = {}
-
-	miog.createFrameBorder(pveFrame2.SidePanel.Container, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	pveFrame2.SidePanel.Container:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	miog.createFrameBorder(pveFrame2.SidePanel.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	pveFrame2.SidePanel.ButtonPanel.FilterButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	miog.createFrameBorder(pveFrame2.SidePanel.ButtonPanel.LastInvitesButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	pveFrame2.SidePanel.ButtonPanel.LastInvitesButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	pveFrame2.TitleBar.Expand:SetScript("OnClick", function()
 
@@ -377,43 +368,8 @@ local function createPVEFrameReplacement()
 	queueDropDown:OnLoad()
 	queueDropDown:SetText("Choose a queue")
 	frame.QueuePanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	--miog.createFrameBorder(frame.LastInvites.Button, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	--frame.LastInvites.Button:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	local lastInvitesPanel = pveFrame2.SidePanel.Container.LastInvites
-
-	miog.createFrameBorder(lastInvitesPanel.Panel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	miog.createFrameBorder(pveFrame2.SidePanel.Container.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	--frame.SidePanel.Container.TitleBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	--miog.createFrameBorder(frame.SidePanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	--miog.setStandardBackdrop(frame.MPlusStatistics)
-	--frame.MPlusStatistics:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
+	
 	local counter = 0
-
-	--[[for i = 1, 1000, 1 do
-		local spellName, spellSubName, spellID = GetSpellBookItemName(i, BOOKTYPE_SPELL)
-
-		if(spellName) then
-			if(string.find(spellName, "Path of")) then
-				local spellInfo = C_SpellBook.GetSpellInfo(spellID)
-				local tpButton = CreateFrame("Button", nil, miog.MainTab, "SecureActionButtonTemplate")
-				tpButton:SetSize(40, 40)
-				tpButton:SetPoint("TOPLEFT", WorldFrame, "TOPLEFT", counter * 40, 0)
-				tpButton:SetNormalTexture(spellInfo.iconID)
-				tpButton:SetAttribute("type", "spell")
-				tpButton:SetAttribute("spell", spellInfo.name)
-				tpButton:RegisterForClicks("LeftButtonDown")
-				counter = counter + 1
-
-				--print(spellName, spellID)
-			end
-		end
-	end]]
 
 	local offset = 35 + 22
 	local _, _, _, numSlots = GetSpellTabInfo(1)

@@ -11,6 +11,7 @@
                                 <KeyValues>
                                     <KeyValue key="spacing" value="3" type="number" />
                                     <KeyValue key="align" value="top" type="global" />
+                                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                                 </KeyValues>
 
                                 <Anchors>

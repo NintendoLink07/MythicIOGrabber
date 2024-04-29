@@ -253,9 +253,9 @@ local function createApplicantFrame(applicantID)
 
 			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
-			local nameString = applicantMemberFrame.BasicInformationPanel.Name
-			nameString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
-			nameString:SetScript("OnMouseDown", function(_, button)
+			local nameFontString = applicantMemberFrame.BasicInformationPanel.Name
+			nameFontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
+			nameFontString:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
 
 					applicantMemberFrame.LinkBox:SetAutoFocus(true)
@@ -267,15 +267,15 @@ local function createApplicantFrame(applicantID)
 
 				end
 			end)
-			nameString:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(nameString, "ANCHOR_CURSOR")
+			nameFontString:SetScript("OnEnter", function()
+				GameTooltip:SetOwner(nameFontString, "ANCHOR_CURSOR")
 
 				if(playerIsIgnored) then
 					GameTooltip:SetText("Player is on your ignore list")
 
 				else
-					if(nameString:IsTruncated()) then
-						GameTooltip:SetText(nameString:GetText())
+					if(nameFontString:IsTruncated()) then
+						GameTooltip:SetText(nameFontString:GetText())
 					end
 
 					if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
@@ -287,6 +287,10 @@ local function createApplicantFrame(applicantID)
 				GameTooltip:Show()
 
 			end)
+
+			if(miog.F.LITE_MODE) then
+				nameFontString:SetWidth(100)
+			end
 
 			local specFrame = applicantMemberFrame.BasicInformationPanel.Spec
 
@@ -384,7 +388,7 @@ local function createApplicantFrame(applicantID)
 
 			miog.gatherRaiderIODisplayData(nameTable[1], nameTable[2], applicantFrame, applicantMemberFrame)
 
-			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.PanelContainer.GeneralInfo
+			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo
 
 			generalInfoPanel.Right["1"].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
 			generalInfoPanel.Right["4"].FontString:SetText("Role: ")
@@ -589,31 +593,31 @@ local function addOrShowApplicant(applicantID)
 end
 
 local function checkApplicantListForEligibleMembers(listEntry)
-	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.filterForRoles[listEntry.role] ~= true) then
+	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForRoles[listEntry.role] ~= true) then
 		return false
 
 	end
 
-	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.filterForClassSpecs == true) then
-		if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
+	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForClassSpecs == true) then
+		if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
 			return false
 		
 		end
 
-		if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.classSpec.spec[listEntry.specID] ~= true) then
+		if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[listEntry.specID] ~= true) then
 			return false
 
 		end
 	end
 
-	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.lustFit) then
+	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].lustFit) then
 		if(listEntry.class ~= "HUNTER" and listEntry.class ~= "SHAMAN" and listEntry.class ~= "MAGE" and listEntry.class ~= "EVOKER") then
 			return false
 
 		end
 	end
 	
-	if(MIOG_SavedSettings.applicationViewer_FilterOptions.table.ressFit) then
+	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].ressFit) then
 		if(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
 			return false
 
@@ -626,22 +630,8 @@ end
 local function checkApplicantList(forceReorder, applicantID)
 	local unsortedList = gatherSortData()
 
-	local allSystemMembers = {}
-	--print("LISTTTTTT")
-
 	if(forceReorder) then
 		local updatedFrames = {}
-
-		--[===[for k, v in pairs(applicantSystem.applicantMember) do
-			--[[if(v.frame) then
-				v.frame:Hide()
-				v.frame.layoutIndex = nil
-
-			end]]
-
-			allSystemMembers[k] = true
-
-		end]===]
 
 		applicationFrameIndex = 0
 
@@ -678,7 +668,6 @@ local function checkApplicantList(forceReorder, applicantID)
 	miog.applicationViewer.CreationSettings.TotalApplicants:SetText(applicationFrameIndex .. "(" .. #unsortedList .. ")")
 	miog.applicationViewer.FramePanel.Container:MarkDirty()
 end
-
 
 local function createAVSelfEntry(pvpBracket)
 	resetArrays()
@@ -955,8 +944,8 @@ local function applicationViewerEvents(_, event, ...)
 
 		for _,v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
-				v.frame.memberFrames[1].BasicInformationPanel.inviteButton:SetShown(canInvite)
-				v.frame.memberFrames[1].BasicInformationPanel.declineButton:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.Invite:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.Decline:SetShown(canInvite)
 
 			end
 		end
@@ -965,8 +954,8 @@ local function applicationViewerEvents(_, event, ...)
 
 		for _,v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
-				v.frame.memberFrames[1].BasicInformationPanel.inviteButton:SetShown(canInvite)
-				v.frame.memberFrames[1].BasicInformationPanel.declineButton:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.Invite:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformationPanel.Decline:SetShown(canInvite)
 
 			end
 		end
@@ -974,10 +963,8 @@ local function applicationViewerEvents(_, event, ...)
 
 end
 
-
-
 miog.createApplicationViewer = function()
-	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin, "MIOG_ApplicationViewer") ---@class Frame
+	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin.InsertFrame, "MIOG_ApplicationViewer") ---@class Frame
 	miog.applicationViewer = applicationViewer
 
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -988,19 +975,22 @@ miog.createApplicationViewer = function()
 
 	local classPanel = applicationViewer.ClassPanel
 
+	classPanel:SetHeight(miog.F.LITE_MODE and 22 or 25)
+
 	classPanel.classFrames = {}
 
 	for classID, classEntry in ipairs(miog.CLASSES) do
 		local classFrame = CreateFrame("Frame", nil, classPanel, "MIOG_ClassPanelClassFrameTemplate")
 		classFrame.layoutIndex = classID
-		classFrame:SetSize(25, 25)
+		classFrame:SetSize(classPanel:GetHeight(), classPanel:GetHeight())
+
 		classFrame.Icon:SetTexture(classEntry.icon)
 		classFrame.rightPadding = 3
 		classPanel.classFrames[classID] = classFrame
 
 		local specPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", classFrame)
 		specPanel:SetPoint("TOP", classFrame, "BOTTOM", 0, -5)
-		specPanel.fixedHeight = 22
+		specPanel.fixedHeight = classFrame:GetHeight() - 3
 		specPanel.specFrames = {}
 		specPanel:Hide()
 		classFrame.specPanel = specPanel
@@ -1050,6 +1040,8 @@ miog.createApplicationViewer = function()
 		applicationViewer.ButtonPanel.sortByCategoryButtons[sortByCategoryButton.category] = sortByCategoryButton
 
 	end
+
+	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset(miog.Plugin:GetWidth() * 0.418, 0)
 	
 	applicationViewer.ButtonPanel.ResetButton:SetScript("OnClick",
 		function()

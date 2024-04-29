@@ -2,68 +2,97 @@ local addonName, miog = ...
 
 local DUNGEON_BASE_SCORES = {
 	--Key Level	Base Score	Min Score	Max Score
-	[2] = {40, 30, 45},
-	[3] = {45, 35, 50},
-	[4] = {55, 45, 60},
-	[5] = {60, 50, 65},
-	[6] = {65, 55, 70},
-	[7] = {75, 65, 80},
-	[8] = {80, 70, 85},
-	[9] = {85, 75, 90},
-	[10] = {100, 90, 105},
-	[11] = {107, 97, 112},
-	[12] = {114, 104, 119},
-	[13] = {121, 111, 126},
-	[14] = {128, 118, 133},
-	[15] = {135, 125, 140},
-	[16] = {142, 132, 147},
-	[17] = {149, 139, 154},
-	[18] = {156, 146, 161},
-	[19] = {163, 153, 168},
-	[20] = {170, 160, 175},
-	[21] = {177, 167, 182},
-	[22] = {184, 174, 189},
-	[23] = {191, 181, 196},
-	[24] = {198, 188, 203},
-	[25] = {205, 195, 210},
-	[26] = {212, 202, 217},
-	[27] = {219, 209, 224},
-	[28] = {226, 216, 231},
-	[29] = {233, 223, 238},
-	[30] = {240, 230, 245},
+	[1] = 0,
+	[2] = 40,
+	[3] = 45,
+	[4] = 55,
+	[5] = 60,
+	[6] = 65,
+	[7] = 75,
+	[8] = 80,
+	[9] = 85,
+	[10] = 100,
+	[11] = 107,
+	[12] = 114,
+	[13] = 121,
+	[14] = 128,
+	[15] = 135,
+	[16] = 142,
+	[17] = 149,
+	[18] = 156,
+	[19] = 163,
+	[20] = 170,
+	[21] = 177,
+	[22] = 184,
+	[23] = 191,
+	[24] = 198,
+	[25] = 205,
+	[26] = 212,
+	[27] = 219,
+	[28] = 226,
+	[29] = 233,
+	[30] = 240,
 }
 
-miog.calculateDualRating = function(fortified, tyrannical)
-	return ((tyrannical > fortified and tyrannical or fortified) * 1.5) + ((tyrannical < fortified and tyrannical or fortified) * 0.5)
-
-end
-
-miog.calculateSpread = function(scores, level, name)
-	local lowestDualRating, highestDualRating
-	local oldDualRating = miog.calculateDualRating(scores[1].score, scores[2].score)
-
-	for i = 1, 2, 1 do
-		local newRating = DUNGEON_BASE_SCORES[level][1] + ((i == 1 and 0 or 0.4) * 12.5)
-		local newDualRating = miog.calculateDualRating(miog.F.WEEKLY_AFFIX == 10 and newRating or scores[1].score, miog.F.WEEKLY_AFFIX == 9 and newRating or scores[2].score)
-
-		if(i == 1) then
-			lowestDualRating = newDualRating - oldDualRating
-
-		else
-			highestDualRating = newDualRating - oldDualRating
-
-		end
+local function round(n)
+	return math.floor(n+0.5)
+ end
+ 
+ local function GetAffixCount(level)
+	if level >= 14 then
+	   return 3
+	elseif level >= 7 then
+	   return 2
+	else
+	   return 1
 	end
-
-	return lowestDualRating and lowestDualRating > 0 and lowestDualRating or 0, highestDualRating and highestDualRating > 0 and highestDualRating or 0
-end
+ end
+ 
+ 
+ local function GetTimerBonus(mapID, info)
+	local _, _, mapTimer = C_ChallengeMode.GetMapUIInfo(mapID)
+	local maxBonusTime = mapTimer * 0.4
+	local beatTimerBy = mapTimer - info.durationSec -- can be negative
+	local bonus = beatTimerBy/maxBonusTime
+	return Clamp(bonus, -1, 1)
+ end
+ 
+ local function CalculateScore(mapID, info)
+	local naffix = GetAffixCount(info.level)
+ 
+	-- Gain or lose up to one level worth of score for being -40% to +40% timer
+	local timerBonus = GetTimerBonus(mapID, info)
+	
+	-- Levels above 10 are worth 2 extra points (7 instead of 5)
+	local nAboveTen = max(info.level-10, 0)
+	
+	-- The bonus (or penalty) for the timer does not get the 2 bonus
+	local level = info.level + timerBonus
+	
+	-- Subtract one level for not timing it (not penalised the 2 points).
+	if timerBonus <= 0 then
+	   level = level - 1
+	end
+	
+	return 20 + level*5 + nAboveTen*2 + naffix*10
+ end
 
 miog.calculateScoreGain = function(mapID, level, charGUID)
     --local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(mapID)
-    local scores
+    local scores = {}
+	local blizzardScores, blizzardOverall = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID)
 	
 	if(charGUID == UnitGUID("player")) then
-		scores = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID) or {} -- 1 FORT, 2 TYRA
+
+		for k, v in ipairs(blizzardScores) do
+			if(v.name == "Tyrannical") then
+				scores[1] = v
+
+			else
+				scores[2] = v
+			
+			end
+		end
 
 		scores[1] = scores[1] or {}
 		scores[1].score = scores[1].score or 0
@@ -72,17 +101,26 @@ miog.calculateScoreGain = function(mapID, level, charGUID)
 		scores[2].score = scores[2].score or 0
 
 	else
-		scores = {}
-		scores[1] = MIOG_SavedSettings.mPlusStatistics.table[charGUID].fortified[mapID] or {}
-		scores[2] = MIOG_SavedSettings.mPlusStatistics.table[charGUID].tyrannical[mapID] or {}
+		scores[1] = MIOG_SavedSettings.mPlusStatistics.table[charGUID]["tyrannical"][mapID] or {}
+		scores[2] = MIOG_SavedSettings.mPlusStatistics.table[charGUID]["fortified"][mapID] or {}
 	
 		scores[1].score = scores[1].score ~= nil and scores[1].score or 0
 		scores[2].score = scores[2].score ~= nil and scores[2].score or 0
 		
 	end
 
-	return miog.calculateSpread(scores, level)
+	local originalScore = CalculateScore(mapID, blizzardScores[1].level)
+
+	return CalculateScore(mapID, 10, true) / (originalScore / blizzardScores[1].score), CalculateScore(mapID, 10) / (originalScore / blizzardScores[1].score)
 end
+
+for _, mapID in pairs(C_ChallengeMode.GetMapTable()) do
+	local scores, overallScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID)
+	for _, info in ipairs(scores) do
+	   local score = CalculateScore(mapID, info)
+	   --print(miog.MAP_INFO[miog.retrieveMapIDFromChallengeModeMap(mapID)].shortName , overallScore, info.score, round(score))
+	end
+ end
 
 miog.retrieveScoreGain = function(mapID, level, charGUID)
     --local intime, overtime =  C_MythicPlus.GetSeasonBestForMap(mapID)
@@ -125,7 +163,7 @@ miog.refreshKeystones = function()
 			info.text = WrapTextInColorCode(UnitName(unitID), C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForScore(keystoneInfo.level * 130):GenerateHexColor())
 			info.value = keystoneInfo.level
 			info.icon = texture
-			info.func = function()
+			--[[info.func = function()
 
 				if(miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark) then
 					miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Show()
@@ -148,21 +186,21 @@ miog.refreshKeystones = function()
 					local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, playerGUID)
 	
 					if(lowestGain and highestGain) then
-						miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
 						miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText("+ " .. lowestGain .. " - " .. highestGain)
+						miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
 					end
 				else
 					for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
 						local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, k)
 						if(lowestGain and highestGain) then
-							v.ScoreIncrease:Show()
 							v.ScoreIncrease:SetText("+ " .. lowestGain .. " - " .. highestGain)
+							v.ScoreIncrease:Show()
 						end
 	
 					end
 				
 				end
-			end
+			end]]
 
 			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
 		end
@@ -318,8 +356,8 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 		if(isCurrentChar) then
 			local affixScores = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
 
-			MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[challengeMapID] =  affixScores and affixScores[2] or {}
 			MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[challengeMapID] = affixScores and affixScores[1] or {}
+			MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[challengeMapID] =  affixScores and affixScores[2] or {}
 
 		end
 
@@ -332,7 +370,7 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 		local desaturatedColors = CreateColorFromHexString((lastWeek == nil or (lastWeek.level == 0 or lastWeek.level) == nil) and miog.CLRSCC.gray or lastWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green)
 
 		dungeonFrame.Level2:SetText(lastWeek and lastWeek.level or 0)
-		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
+		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.5, desaturatedColors.g * 0.5, desaturatedColors.b * 0.5, 1)
 
 	end
 end

@@ -232,8 +232,10 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	activityDropDown:ResetDropDown()
 
 	local firstGroupID
+	
+	local customFilters = categoryID == 1 and 4 or LFGListFrame.CategorySelection.selectedFilters ~= 2 and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.NotRecommended
 
-	local borFilters = bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters)
+	local borFilters = bit.bor(LFGListFrame.EntryCreation.baseFilters, customFilters)
 
 	-- DUNGEONS
 
@@ -789,76 +791,17 @@ function LFGListEntryCreation_UpdateAuthenticatedState(self)
 	LFGListFrame.EntryCreation.VoiceChat.EditBox:SetEnabled(isAuthenticated)
 end
 
-local function updateFilterDifficulties()
-	local difficultyDropDown = miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown
-	difficultyDropDown:ResetDropDown()
-
-	local isPvp = LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9
-	local isDungeon = LFGListFrame.SearchPanel.categoryID == 2
-	local isRaid = LFGListFrame.SearchPanel.categoryID == 3
-	
-	local currentValue = isDungeon and "dungeonDifficultyID" or isRaid and "raidDifficultyID" or isPvp and "bracketID" or nil
-
-	for k, v in ipairs(isRaid and miog.RAID_DIFFICULTIES or isPvp and {6, 7} or miog.DUNGEON_DIFFICULTIES) do
-		local info = {}
-		info.entryType = "option"
-		info.text = isPvp and (v == 6 and "2v2" or "3v3") or miog.DIFFICULTY_ID_INFO[v].name
-		info.level = 1
-		info.value = v
-		info.func = function()
-			if(currentValue) then
-				MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[currentValue] = v
-	
-				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-					miog.checkSearchResultListForEligibleMembers()
-		
-				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-					C_LFGList.RefreshApplicants()
-		
-				end
-			end
-		end
-		
-		difficultyDropDown:CreateEntryFrame(info)
-
-	end
-
-	difficultyDropDown:MarkDirty()
-	difficultyDropDown.List:MarkDirty()
-
-	local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_SavedSettings[miog.F.ACTIVE_PANEL .. "_FilterOptions"].table[currentValue])
-end
-
-local function createUpgradedInvitePendingDialog()
-	local inviteBox = CreateFrame("Frame", "MythicIOGrabber_InviteBox", WorldFrame, "MIOG_InviteBox")
-	miog.inviteBox = inviteBox
-	StaticPopup_SetUpPosition(inviteBox)
-	--inviteBox:Hide()
-
-	--miog.createFrameBorder(inviteBox, 1, CreateColorFromHexString(miog.CLRSCC.yellow):GetRGBA())
-	--inviteBox:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-	miog.createFrameBorder(inviteBox.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	inviteBox.framePool = CreateFramePool("Frame", inviteBox.Container, "MIOG_InviteBoxFrameTemplate", function(self)
-		self.layoutIndex = nil
-	end)
-
-	inviteBox.Container:MarkDirty()
-end
-
-miog.ONCE = 0
-
 miog.createFrames = function()
 	EncounterJournal_LoadUI()
 	EJ_SelectInstance(1207)
 
 	C_EncounterJournal.OnOpen = miog.dummyFunction
-	
 
-	if(addonName == "MythicIOGrabber_Lite") then
+	if(miog.F.LITE_MODE == true) then
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", LFGListFrame, "MIOG_Plugin")
 		miog.Plugin:SetPoint("TOPLEFT", PVEFrameLeftInset, "TOPRIGHT")
 		miog.Plugin:SetSize(LFGListFrame:GetWidth(), LFGListFrame:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 7)
+		miog.Plugin:SetFrameStrata("HIGH")
 
 	else
 		miog.createPVEFrameReplacement()
@@ -867,47 +810,50 @@ miog.createFrames = function()
 		miog.Plugin:SetPoint("TOPRIGHT", miog.MainTab, "TOPRIGHT")
 		miog.Plugin:SetSize(372, 370)
 		
-		miog.Plugin:SetHeight(miog.pveFrame2:GetHeight() - miog.pveFrame2.TitleBar:GetHeight() - miog.Plugin.FooterBar:GetHeight() - 5)
-		miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-		miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-		local standardWidth = miog.Plugin:GetWidth()
-
-		miog.Plugin.Resize:SetScript("OnMouseUp", function()
-			miog.Plugin:StopMovingOrSizing()
-
-			MIOG_SavedSettings.frameManuallyResized.value = miog.Plugin:GetHeight()
-
-			if(MIOG_SavedSettings.frameManuallyResized.value > miog.Plugin.standardHeight) then
-				MIOG_SavedSettings.frameExtended.value = true
-				miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
-
-			end
-
-			--frame.Plugin:ClearAllPoints()
-			miog.Plugin:SetPoint("TOPLEFT", miog.Plugin:GetParent(), "TOPRIGHT", -standardWidth, 0)
-			miog.Plugin:SetPoint("TOPRIGHT", miog.Plugin:GetParent(), "TOPRIGHT", 0, 0)
-
-		end)
-
-		miog.Plugin.standardHeight = miog.Plugin:GetHeight()
-		miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or miog.Plugin.standardHeight * 1.5
-
-		miog.Plugin:SetResizeBounds(standardWidth, miog.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
-		miog.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value == true and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or miog.Plugin.standardHeight)
+		miog.Plugin:SetHeight(miog.pveFrame2:GetHeight() - miog.pveFrame2.TitleBar:GetHeight() - 5)
 
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 		
 	end
 
+	local standardWidth = miog.Plugin:GetWidth()
+
+	miog.Plugin.Resize:SetScript("OnMouseUp", function()
+		miog.Plugin:StopMovingOrSizing()
+
+		MIOG_SavedSettings.frameManuallyResized.value = miog.Plugin:GetHeight()
+
+		if(MIOG_SavedSettings.frameManuallyResized.value > miog.Plugin.standardHeight) then
+			MIOG_SavedSettings.frameExtended.value = true
+			miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
+
+		end
+
+		--[[miog.Plugin:ClearAllPoints()
+		miog.Plugin:SetPoint("TOPLEFT", miog.Plugin:GetParent(), "TOPRIGHT", -standardWidth, 0)
+		miog.Plugin:SetPoint("TOPRIGHT", miog.Plugin:GetParent(), "TOPRIGHT", 0, 0)]]
+
+	end)
+
+	miog.Plugin.standardHeight = miog.Plugin:GetHeight()
+	miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or miog.Plugin.standardHeight * 1.5
+
+	miog.Plugin:SetResizeBounds(standardWidth, miog.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
+	miog.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value == true and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or miog.Plugin.standardHeight)
+	
+	miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+
+	miog.MainFrame = miog.F.LITE_MODE and miog.Plugin or miog.pveFrame2
+
 	miog.createApplicationViewer()
 	miog.createSearchPanel()
 	miog.createEntryCreation()
+	miog.loadFilterPanel()
 
-	if(miog.MainTab) then
+	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
-		miog.loadFilterPanel()
 	end
 
 	-- IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
@@ -922,18 +868,19 @@ miog.createFrames = function()
 			miog.Plugin:Show()
 			miog.applicationViewer:Show()
 
-			if(addonName == "MythicIOGrabber") then
+			if(not miog.F.LITE_MODE) then
 				miog.MainTab.CategoryPanel:Hide()
-				miog.searchPanel.PanelFilters:Hide()
-				miog.setupFiltersForActivePanel()
 				miog.pveFrame2:Show()
-				miog.pveFrame2.SidePanel.Container.FilterPanel:Show()
-				miog.pveFrame2.SidePanel.Container.FilterPanel.Lock:Hide()
 
 			else
 				LFGListFrame.ApplicationViewer:Hide()
 			
 			end
+
+			miog.searchPanel.PanelFilters:Hide()
+			miog.setupFiltersForActivePanel()
+			miog.SidePanel.Container.FilterPanel:Show()
+			miog.SidePanel.Container.FilterPanel.Lock:Hide()
 	
 		elseif(panel == LFGListFrame.SearchPanel) then
 			miog.F.ACTIVE_PANEL = "searchPanel"
@@ -942,76 +889,76 @@ miog.createFrames = function()
 			miog.Plugin:Show()
 			miog.searchPanel:Show()
 	
-			if(addonName == "MythicIOGrabber") then
+			if(not miog.F.LITE_MODE) then
 				miog.pveFrame2:Show()
 				miog.MainTab.CategoryPanel:Hide()
-				miog.setupFiltersForActivePanel()
-				miog.searchPanel.PanelFilters:Show()
-				miog.pveFrame2.SidePanel.Container.FilterPanel:Show()
-				miog.pveFrame2.SidePanel.Container.FilterPanel.Lock:Hide()
-
-				if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
-					updateFilterDifficulties()
-					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Enable()
-					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Enable()
-					
-
-					if(miog.UPDATED_DUNGEON_FILTERS == nil) then
-						miog.updateDungeonCheckboxes()
-
-					end
-
-					if(miog.UPDATED_RAID_FILTERS == nil) then
-						miog.updateRaidCheckboxes()
-					end
-
-					if(LFGListFrame.SearchPanel.categoryID == 2) then
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Show()
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel.OptionsButton:Show()
-
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel:Hide()
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel.OptionsButton:Hide()
-						
-					elseif(LFGListFrame.SearchPanel.categoryID == 3) then
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Hide()
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel.OptionsButton:Hide()
-
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel:Show()
-						miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel.OptionsButton:Show()
-
-					end
-		
-				else
-					--miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Hide()
-					--miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Hide()
-				
-					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Disable()
-					miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Disable()
-				end
-	
-				miog.pveFrame2.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.searchPanel_FilterOptions.table[
-					LFGListFrame.SearchPanel.categoryID == 2 and "filterForDungeonDifficulty" or
-					LFGListFrame.SearchPanel.categoryID == 3 and "filterForRaidDifficulty" or
-					(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) and "filterForArenaBracket"] or false)
-			
 
 			else
 				LFGListFrame.SearchPanel:Hide()
 			end
+
+			miog.setupFiltersForActivePanel()
+			miog.searchPanel.PanelFilters:Show()
+			miog.SidePanel.Container.FilterPanel:Show()
+			miog.SidePanel.Container.FilterPanel.Lock:Hide()
+
+			if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
+				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Enable()
+				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Enable()
+				
+				if(miog.UPDATED_DUNGEON_FILTERS == nil) then
+					miog.updateDungeonCheckboxes()
+
+				end
+
+				if(miog.UPDATED_RAID_FILTERS == nil) then
+					miog.updateRaidCheckboxes()
+				end
+
+				if(LFGListFrame.SearchPanel.categoryID == 2) then
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Show()
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel.OptionsButton:Show()
+
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel:Hide()
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel.OptionsButton:Hide()
+					
+				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Hide()
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel.OptionsButton:Hide()
+
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel:Show()
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel.OptionsButton:Show()
+
+				else
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel:Hide()
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DungeonPanel.OptionsButton:Hide()
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel:Hide()
+					miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.RaidPanel.OptionsButton:Hide()
+				
+				end
+	
+			else
+				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Disable()
+				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Disable()
+
+				miog.searchPanel.PanelFilters:Hide()
+			end
+
+			miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:SetChecked(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory or LFGListFrame.SearchPanel.categoryID].filterForDifficulty or false)
+			
 	
 		elseif(panel == LFGListFrame.EntryCreation) then
-			--LFGListFrame.EntryCreation.editMode = false
 			miog.applicationViewer:Hide()
 			miog.searchPanel:Hide()
 	
 			miog.Plugin:Show()
 			miog.entryCreation:Show()
+			miog.SidePanel.Container.FilterPanel.Lock:Show()
+			miog.searchPanel.PanelFilters:Hide()
 
-			if(addonName == "MythicIOGrabber") then
+			if(not miog.F.LITE_MODE) then
 				miog.pveFrame2:Show()
 				miog.MainTab.CategoryPanel:Hide()
-				miog.pveFrame2.SidePanel.Container.FilterPanel.Lock:Show()
-				miog.searchPanel.PanelFilters:Hide()
 
 			else
 				LFGListFrame.EntryCreation:Hide()
@@ -1024,11 +971,11 @@ miog.createFrames = function()
 			--miog.searchPanel:Hide()
 			--miog.entryCreation:Hide()
 			miog.Plugin:Hide()
+			miog.SidePanel.Container.FilterPanel.Lock:Show()
+			miog.searchPanel.PanelFilters:Hide()
 
-			if(addonName == "MythicIOGrabber") then
+			if(not miog.F.LITE_MODE) then
 				miog.MainTab.CategoryPanel:Show()
-				miog.pveFrame2.SidePanel.Container.FilterPanel.Lock:Show()
-				miog.searchPanel.PanelFilters:Hide()
 			end
 	
 		end

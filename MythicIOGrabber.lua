@@ -14,7 +14,11 @@ miog.OnEvent = function(_, event, ...)
 		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
 		
 		miog.checkForSavedSettings()
+
+		miog.F.LITE_MODE = MIOG_SavedSettings.liteMode.value
+
 		miog.createFrames()
+
 		miog.loadSettings()
 		miog.loadRawData()
 		
@@ -26,13 +30,19 @@ miog.OnEvent = function(_, event, ...)
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
 
-			miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
+			if(not miog.F.LITE_MODE) then
+				miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
+			end
 
 		end
 		
 		for k, v in pairs(miog.SPECIALIZATIONS) do
 			if(k > 25) then
 				local _, localizedName, _, _, _, fileName = GetSpecializationInfoByID(k)
+
+				if(localizedName == "") then
+					localizedName = "Initial"
+				end
 
 				miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k
 			end
@@ -98,6 +108,14 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		miog.openRaidLib.RequestKeystoneDataFromParty()
 
+		
+	elseif(event == "PLAYER_REGEN_DISABLED") then
+		miog.pveFrame2:Hide()
+		
+		miog.F.QUEUE_STOP = true
+
+	elseif(event == "PLAYER_REGEN_ENABLED") then
+		miog.F.QUEUE_STOP = false
 	end
 end
 

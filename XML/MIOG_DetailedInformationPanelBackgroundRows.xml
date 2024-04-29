@@ -1,0 +1,123 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_DetailedInformationPanelBackgroundRows" virtual="true">
+        <Frames>
+            <Frame parentKey="1" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.22745098039215686, 0.23137254901960785, 0.23529411764705882, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="2" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.1" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.1" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.1411764705882353, 0.1450980392156863, 0.14901960784313725, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="3" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.2" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.2" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.22745098039215686, 0.23137254901960785, 0.23529411764705882, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="4" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.3" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.3" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.1411764705882353, 0.1450980392156863, 0.14901960784313725, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="5" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.4" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.4" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.22745098039215686, 0.23137254901960785, 0.23529411764705882, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="6" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.5" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.5" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.1411764705882353, 0.1450980392156863, 0.14901960784313725, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="7" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.6" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.6" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.22745098039215686, 0.23137254901960785, 0.23529411764705882, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="8" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.7" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.7" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.1411764705882353, 0.1450980392156863, 0.14901960784313725, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="9" inherits="MIOG_DetailedInformationPanelTextRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.8" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.8" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.Background:SetColorTexture(0.22745098039215686, 0.23137254901960785, 0.23529411764705882, 1)
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

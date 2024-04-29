@@ -3,6 +3,10 @@
     <Button name="MIOG_DropDownMenuEntry" virtual="true">
         <Size y="20" />
 
+        <NormalTexture parentKey="NormalTexture" atlas="pvpqueue-button-casual-up"/>
+		<PushedTexture atlas="pvpqueue-button-casual-down"/>
+		<HighlightTexture parentKey="HighlightTexture" atlas="pvpqueue-button-casual-highlight" alphaMode="ADD"/>
+        
         <Frames>
             <CheckButton parentKey="Radio" inherits="UIRadioButtonTemplate" checked="false">
                 <Size x="16" y="16" />

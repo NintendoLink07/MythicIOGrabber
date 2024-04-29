@@ -15,21 +15,23 @@
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="LibMono" justifyH="LEFT">
-                    <Size x="52" />
+                    <Size x="50" />
                     <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
                     </Anchors>
                 </FontString>
+
                 <FontString parentKey="Primary" font="LibMono" justifyH="LEFT">
-                    <Size x="48" />
+                    <Size x="40" />
                     <FontHeight val="11"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
                     </Anchors>
                 </FontString>
+                
                 <FontString parentKey="Secondary" font="LibMono" justifyH="CENLEFTTER">
-                    <Size x="48" />
+                    <Size x="40" />
                     <FontHeight val="11"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT"/>

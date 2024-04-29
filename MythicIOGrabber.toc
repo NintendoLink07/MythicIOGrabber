@@ -52,7 +52,9 @@ XML\MIOG_ApplicantFrameTemplate.xml
 XML\MIOG_ApplicantMemberFrameTemplate.xml
 
 XML\MIOG_ResultFrameTemplate.xml
+
 XML\MIOG_DetailedInformationPanelTemplate.xml
+XML\MIOG_DetailedInformationPanelBackgroundRows.xml
 XML\MIOG_DetailedInformationPanelTextRowTemplate.xml
 XML\MIOG_DetailedInformationPanelSinglePanelTemplate.xml
 XML\MIOG_DungeonRowTemplate.xml

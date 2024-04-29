@@ -157,35 +157,18 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
 	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
 
+
 	local panelContainer = detailedInformationPanel.PanelContainer
+	panelContainer.ForegroundRows:SetFrameStrata("HIGH")
 
-	local raidPanel = panelContainer.Raid
+	local raidPanel = panelContainer.ForegroundRows.Raid
 	raidPanel:SetShown(categoryID == 3 and true)
-	raidPanel.rows = raidPanel.rows or {}
 
-	local mythicPlusPanel = panelContainer.MythicPlus
+	local mythicPlusPanel = panelContainer.ForegroundRows.MythicPlus
 	mythicPlusPanel:SetShown(not raidPanel:IsShown())
-	mythicPlusPanel.rows = mythicPlusPanel.rows or {}
 	mythicPlusPanel.dungeonFrames = mythicPlusPanel.dungeonFrames or {}
 
-	local generalInfoPanel = panelContainer.GeneralInfo
-	generalInfoPanel.rows = generalInfoPanel.rows or {}
-
-	panelContainer.rows = {}
-
-	for rowIndex = 1, 9, 1 do
-		local remainder = math.fmod(rowIndex, 2)
-
-		local textRowFrame =  panelContainer[tostring(rowIndex)]
-
-		if(remainder == 1) then
-			textRowFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
-
-		else
-			textRowFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.CARD_COLOR):GetRGBA())
-
-		end
-	end
+	local generalInfoPanel = panelContainer.ForegroundRows.GeneralInfo
 
 	generalInfoPanel.Right["1"].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 	generalInfoPanel.Right["1"].FontString:SetWordWrap(true)
@@ -215,13 +198,10 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 	end
 
 	local profile, mythicKeystoneProfile, raidProfile
-	local BasicInformationPanel = memberFrame.BasicInformationPanel or memberFrame.BasicInformation
 	local detailedInformationPanel = memberFrame.DetailedInformationPanel
-	local primaryIndicator = BasicInformationPanel.Primary
-	local secondaryIndicator = BasicInformationPanel.Secondary
-	local mythicPlusPanel = detailedInformationPanel.PanelContainer.MythicPlus
-	local raidPanel = detailedInformationPanel.PanelContainer.Raid
-	local generalInfoPanel = detailedInformationPanel.PanelContainer.GeneralInfo
+	local mythicPlusPanel = detailedInformationPanel.PanelContainer.ForegroundRows.MythicPlus
+	local raidPanel = detailedInformationPanel.PanelContainer.ForegroundRows.Raid
+	local generalInfoPanel = detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo
 
 	if(miog.F.IS_RAIDERIO_LOADED) then
 		profile = RaiderIO.GetProfile(playerName, realm, miog.F.CURRENT_REGION)
@@ -336,11 +316,21 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 				local highestIndex = v.progress[2] and 2 or 1
 				local kills = v.progress[highestIndex].kills or 0
 
+				local mapID
+
+				if(string.find(v.raid.mapId, 10000)) then
+					mapID = tonumber(strsub(v.raid.mapId, strlen(v.raid.mapId) - 3))
+
+				else
+					mapID = v.raid.mapId
+
+				end
+
 				if(v.isMainProgress == false) then
 					raidData[#raidData+1] = {
 						ordinal = v.raid.ordinal,
 						raidProgressIndex = k,
-						mapId = v.raid.mapId,
+						mapId = mapID,
 						current = v.current,
 						shortName = v.raid.shortName,
 						difficulty = v.progress[highestIndex].difficulty,

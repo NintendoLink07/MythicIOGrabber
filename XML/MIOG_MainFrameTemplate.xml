@@ -7,16 +7,7 @@
     </Font>
 
     <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true" enableMouse="true">
-        <Frames>
-            <Frame parentKey="SidePanel" inherits="MIOG_SidePanel">
-                <Size x="220" y="300" />
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
-            </Frame>
-
-            
+        <Frames>            
             <Frame parentKey="TitleBar">
                 <Size y="23" />
                 <Anchors>

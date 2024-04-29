@@ -731,6 +731,10 @@ end
 local function findGroup(categoryFrame)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+
+	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID;
+	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters;
+	
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
 	
 	miog.searchPanel.categoryID = LFGListFrame.SearchPanel.categoryID
@@ -738,15 +742,26 @@ local function findGroup(categoryFrame)
 	miog.searchPanel.preferredFilters = LFGListFrame.SearchPanel.preferredFilters
 
 	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+	--LFGListCategorySelection_StartFindGroup(LFGListFrame.CategorySelection)
 end
 
 miog.loadQueueSystem = function()
 	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueuePanel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
 
+	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
+
+	eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+	eventReceiver:RegisterEvent("LFG_UPDATE")
+	eventReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
+	eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+	eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+	eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
+	eventReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
+	eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
+	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
+	eventReceiver:SetScript("OnEvent", miog.queueEvents)
 end
-
-
 
 local function updateRandomDungeons()
 	local queueDropDown = miog.MainTab.QueueDropDown
@@ -1233,8 +1248,6 @@ local function updateQueueDropDown()
 	end
 end
 
-
-
 local function queueEvents(_, event, ...)
 	if(event == "LFG_UPDATE_RANDOM_INFO") then
 		--miog.updateRandomDungeons()
@@ -1330,12 +1343,7 @@ local function queueEvents(_, event, ...)
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		--updateQueueDropDown()
 		
-	elseif(event == "PLAYER_REGEN_DISABLED") then
-		miog.F.QUEUE_STOP = true
-
 	elseif(event == "PLAYER_REGEN_ENABLED") then
-		miog.F.QUEUE_STOP = false
-
 		if(miog.F.UPDATE_QUEUE_DROPDOWN) then
 			updateQueueDropDown()
 
@@ -1343,15 +1351,4 @@ local function queueEvents(_, event, ...)
 	end
 end
 
-local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
-
-eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-eventReceiver:RegisterEvent("LFG_UPDATE")
-eventReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
-eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
-eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
-eventReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
-eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
-eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
-eventReceiver:SetScript("OnEvent", queueEvents)
+miog.queueEvents = queueEvents

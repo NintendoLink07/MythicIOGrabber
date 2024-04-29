@@ -9,7 +9,8 @@
         <Frames>
             <Frame parentKey="ClassPanel" inherits="MIOG_ClassPanel">
                 <Anchors>
-                    <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-2"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2"/>
                 </Anchors>
 
                 <Frames>
@@ -33,8 +34,8 @@
             <Frame parentKey="TitleBar" inherits="BackdropTemplate">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-30" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-30" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 
                 <Layers>
@@ -373,7 +374,7 @@
                     <Button parentKey="RoleSort" inherits="MIOG_SortButtonTemplate">
                         <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="156"/>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                         </Anchors>
                     </Button>
 

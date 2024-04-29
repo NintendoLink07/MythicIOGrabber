@@ -6,13 +6,6 @@
     </Font>
 
     <Frame name="MIOG_Plugin" inherits="BackdropTemplate" resizable="true" virtual="true" frameLevel="100">
-        <Size x="372" y="370" />
-
-        <Anchors>
-            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-372" />
-            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-        </Anchors>
-
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/dungeonrewardsbackground.png" setAllPoints="true" hidden="true"/>
@@ -23,8 +16,8 @@
             <Frame parentKey="FooterBar" inherits="BackdropTemplate">
                 <Size y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 
                 <Frames>
@@ -50,6 +43,13 @@
                 </Frames>
             </Frame>
 
+            <Frame parentKey="InsertFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.FooterBar" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
+
             <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true">
                 <Size x="20" y="20" />
                 <Anchors>
@@ -62,11 +62,5 @@
                 </Scripts>
             </Button>
         </Frames>
-
-        <Scripts>
-            <OnEnter>
-
-            </OnEnter>
-        </Scripts>
     </Frame>
 </Ui>

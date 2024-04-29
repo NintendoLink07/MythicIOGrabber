@@ -48,7 +48,7 @@
                 </Scripts>
             </Frame>
 
-            <EditBox parentKey="SearchBox" hidden="true">
+            <EditBox parentKey="SearchBoxBase" hidden="true">
                 <Size x="280" y="20"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" y="-2" />
@@ -79,7 +79,7 @@
                     <Button parentKey="PrimarySort" inherits="MIOG_SortButtonTemplate">
                         <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="186"/>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                         </Anchors>
                     </Button>
 

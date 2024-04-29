@@ -14,12 +14,12 @@ miog.setAffixes = function()
 			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, 0, 1, 0, 1)
 			miog.applicationViewer.CreationSettings.Affixes.tooltipText = miog.applicationViewer.CreationSettings.Affixes.tooltipText .. name .. (index < #affixIDs and ", " or "")
 
-			miog.F.WEEKLY_AFFIX = affixIDs[1].id
 		end
 
+		miog.F.WEEKLY_AFFIX = affixIDs[1].id
 		miog.applicationViewer.CreationSettings.Affixes:SetText(affixString)
 
-		if(addonName == "MythicIOGrabber") then
+		if(not miog.F.LITE_MODE) then
 			miog.MainTab.Affixes:SetText(affixString)
 			miog.MainTab.Affixes.text = miog.applicationViewer.CreationSettings.Affixes.tooltipText
 		end
@@ -297,7 +297,7 @@ miog.createCustomColorForScore = function(score)
 end
 
 miog.addLastInvitedApplicant = function(currentApplicant)
-	local container = miog.pveFrame2.SidePanel.Container.LastInvites.Panel.ScrollFrame.Container
+	local container = miog.SidePanel.Container.LastInvites.Panel.ScrollFrame.Container
 	miog.F.LAST_INVITES_COUNTER = miog.F.LAST_INVITES_COUNTER + 1
 
 	local invitedApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", container)
@@ -494,7 +494,7 @@ miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 
 		if(dropdownMenu.unit or dropdownParent and dropdownParent.unit) then
 			local unit = dropdownMenu and (dropdownMenu.unit or dropdownMenu:GetParent().unit)
-			if(UnitIsPlayer(unit)) then --  and dropdownMenu.which ~= "SELF"
+			if(UnitIsPlayer(unit) and dropdownMenu.which ~= "SELF") then --  
 				local name = dropdownMenu.name
 				local server = dropdownMenu.server or GetRealmName()
 				local fullName = name .. "-" .. server
