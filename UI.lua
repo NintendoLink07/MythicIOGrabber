@@ -1,60 +1,30 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local function createPlaystyleEntry(playstyle, activityInfo, playstyleDropDown)
+    local info = {
+        entryType = "option",
+        text = C_LFGList.GetPlaystyleString(playstyle, activityInfo),
+        value = playstyle,
+        checked = false,
+        func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, playstyle) end
+    }
+    playstyleDropDown:CreateEntryFrame(info)
+end
+
 local function setUpPlaystyleDropDown()
-	local playstyleDropDown = miog.entryCreation.PlaystyleDropDown
-	playstyleDropDown:ResetDropDown()
+    miog.entryCreation.PlaystyleDropDown:ResetDropDown()
 
-	local info = {}
-		
-	info.entryType = "option"
+    local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity)
+    local playstyles = {
+        Enum.LFGEntryPlaystyle.Standard,
+        Enum.LFGEntryPlaystyle.Casual,
+        Enum.LFGEntryPlaystyle.Hardcore
+    }
 
-	local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity);
-
-	if (activityInfo.isRatedPvpActivity) then
-		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
-		info.value = Enum.LFGEntryPlaystyle.Standard;
-		info.checked = false;
-		info.func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, Enum.LFGEntryPlaystyle.Standard); end;
-		--UIDropDownMenu_AddButton(info);
-		playstyleDropDown:CreateEntryFrame(info)
-
-		info.text =  C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
-		info.value = Enum.LFGEntryPlaystyle.Casual;
-		info.checked = false;
-		info.func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, Enum.LFGEntryPlaystyle.Casual); end;
-		--UIDropDownMenu_AddButton(info);
-		playstyleDropDown:CreateEntryFrame(info)
-
-		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
-		info.value = Enum.LFGEntryPlaystyle.Hardcore;
-		info.checked = false;
-		info.func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
-		--UIDropDownMenu_AddButton(info);
-		playstyleDropDown:CreateEntryFrame(info)
-
-	else
-		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Standard, activityInfo);
-		info.value = Enum.LFGEntryPlaystyle.Standard;
-		info.checked = false;
-		info.func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, Enum.LFGEntryPlaystyle.Standard); end;
-		--UIDropDownMenu_AddButton(info);
-		playstyleDropDown:CreateEntryFrame(info)
-
-		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Casual, activityInfo);
-		info.value = Enum.LFGEntryPlaystyle.Casual;
-		info.checked = false;
-		info.func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, Enum.LFGEntryPlaystyle.Casual); end;
-		--UIDropDownMenu_AddButton(info);
-		playstyleDropDown:CreateEntryFrame(info)
-
-		info.text = C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.Hardcore, activityInfo);
-		info.value = Enum.LFGEntryPlaystyle.Hardcore;
-		info.func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, Enum.LFGEntryPlaystyle.Hardcore); end;
-		info.checked = false;
-		--UIDropDownMenu_AddButton(info);
-		playstyleDropDown:CreateEntryFrame(info)
-	end
+    for _, playstyle in ipairs(playstyles) do
+        createPlaystyleEntry(playstyle, activityInfo, miog.entryCreation.PlaystyleDropDown)
+    end
 end
 
 local function setUpDifficultyDropDown(categoryID, groupID, filters)
@@ -279,7 +249,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			info.value = activityID
 			info.activities = activities
 			info.func = function()
-				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, v, activityID)
 				
 			end
 			
@@ -304,7 +274,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 		local currentExpansionDungeons = {}
 		local legacyDungeonsTable = {}
 
-		if(C_LFGList.GetAdvancedFilter) then
+		if(C_LFGList.GetAdvancedFilter ~= nil) then
 
 			local seasonGroups = C_LFGList.GetAvailableActivityGroups(categoryID, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
 
@@ -321,7 +291,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				info.value = activityID
 				info.activities = activities
 				info.func = function()
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, v, activityID)
 					
 				end
 
@@ -364,7 +334,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				info.value = activityID
 				info.activities = activities
 				info.func = function()
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, v, activityID)
 					
 				end
 
@@ -407,7 +377,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 					info.text = C_LFGList.GetActivityGroupInfo(v)
 					info.value = activityID
 					info.func = function()
-						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, v, activityID)
 						
 					end
 
@@ -444,7 +414,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				info.value = activityID
 				info.activities = activities
 				info.func = function()
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, v, activityID)
 					
 				end
 	
@@ -502,7 +472,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 					info.text = C_LFGList.GetActivityGroupInfo(v)
 					info.value = activityID
 					info.func = function()
-						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, v, activityID)
 						
 					end
 	
@@ -525,7 +495,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				info.text = activityInfo.shortName
 				info.value = activityID
 				info.func = function()
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, 0, activityID)
 					
 				end
 				info.icon = miog.ACTIVITY_INFO[activityID].icon
@@ -564,7 +534,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			info.value = activityID
 			info.activities = activities
 			info.func = function()
-				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, v, activityID)
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, v, activityID)
 				
 			end
 			info.icon = miog.ACTIVITY_INFO[activityID].icon
@@ -598,7 +568,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 					info.activities = worldBossActivity
 
 					info.func = function()
-						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, activityInfo.groupFinderActivityGroupID, activityID)
+						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, activityInfo.groupFinderActivityGroupID, activityID)
 						
 					end
 
@@ -626,7 +596,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 					info.value = activityID
 					info.activities = activities
 					info.func = function()
-						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
+						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, 0, activityID)
 						
 					end
 
@@ -652,7 +622,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 		local pvpTable = {}
 
-		local pvpActivities = C_LFGList.GetAvailableActivities(categoryID, 0, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters));
+		local pvpActivities = C_LFGList.GetAvailableActivities(categoryID, 0, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters));
 		firstGroupID = 0
 	
 		for _, v in ipairs(pvpActivities) do
@@ -665,7 +635,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			info.text = activityInfo.fullName
 			info.value = activityID
 			info.func = function()
-				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, 0, activityID)
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, 0, activityID)
 			end
 			
 			local mapID = miog.retrieveMapIDFromGFID(activityInfo.groupFinderActivityGroupID)
@@ -693,7 +663,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 	info.index = 100000
 	info.text = "More..."
 	info.func = function()
-		LFGListEntryCreationActivityFinder_Show(LFGListFrame.EntryCreation.ActivityFinder, categoryID, nil, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters))
+		LFGListEntryCreationActivityFinder_Show(LFGListFrame.EntryCreation.ActivityFinder, categoryID, nil, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters))
 	end
 
 	listTable[#listTable+1] = info
@@ -707,30 +677,30 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 		local entryInfo = C_LFGList.GetActiveEntryInfo()
 		local activityInfo = C_LFGList.GetActivityInfoTable(entryInfo.activityID)
 		
-		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), activityInfo, activityInfo.groupFinderActivityGroupID, entryInfo.activityID)
+		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), activityInfo, activityInfo.groupFinderActivityGroupID, entryInfo.activityID)
 
 	else
 		if(categoryID == 2) then
 			local regularActivityID, regularGroupID = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
 
 			if(regularActivityID) then
-				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, regularGroupID, regularActivityID)
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, regularGroupID, regularActivityID)
 
 			else
 				local timewalkingActivityID, timewalkingGroupID = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
 
 				if(timewalkingActivityID) then
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, timewalkingGroupID, timewalkingActivityID)
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, timewalkingGroupID, timewalkingActivityID)
 
 				else
 					local firstFrame = activityDropDown:GetFrameAtLayoutIndex(1)
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, firstGroupID, firstFrame and firstFrame.value or nil)
+					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, firstGroupID, firstFrame and firstFrame.value or nil)
 				
 				end
 			end
 		else
 			local firstFrame = activityDropDown:GetFrameAtLayoutIndex(1)
-			LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.CategorySelection.selectedFilters), categoryID, firstGroupID, firstFrame and firstFrame.value or nil)
+			LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, LFGListFrame.EntryCreation.selectedFilters), categoryID, firstGroupID, firstFrame and firstFrame.value or nil)
 
 		end
 	end
@@ -962,7 +932,7 @@ miog.createFrames = function()
 
 			else
 				LFGListFrame.EntryCreation:Hide()
-				miog.initializeActivityDropdown(true, C_LFGList.GetLfgCategoryInfo(LFGListFrame.CategorySelection.selectedCategory).separateRecommended)
+				miog.initializeActivityDropdown(true, C_LFGList.GetLfgCategoryInfo(LFGListFrame.CategorySelection.selectedCategory or C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID).separateRecommended)
 			
 			end
 			

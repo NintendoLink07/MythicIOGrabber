@@ -65,6 +65,8 @@ You can click on the frame of a manual application to switch over to the group f
 
 - [Application Viewer] While looking for members for your manually listed group you can edit rating and ilvl requirement by double clicking and setting the group private or public by clicking the exclamation mark. Saves pressing the edit button, though you can still do that if you prefer that.
 
+- [Application Viewer] There is now a loading bar for the group panel at the top. This indicates how many group members have been inspected for their specialization.
+
 - [Filter Panel] All filters are now separated for each category. Filters you apply while looking for a raid group will get saved and reapplied when you, once again, look for a raid.
 
 
@@ -79,16 +81,20 @@ While there is still some stuff to fix (e.g. if you only use the Search Panel fo
 
 - [Search Panel] Split dungeons (like Dawn of the Infinite) will now show up correctly with "RISE", "FALL", etc. instead of "DOTI".
 
-- [Search Panel] Awakened raids are now included in the detailed information panel.
+- [Search Panel] Better application status management. It will now also actually show if the group has been filled up instead of delisted.
+
+- [Application Viewer & Search Panel] Awakened raids are now included in the detailed information panel.
 
 
 ### Next release (2.1)
 
-- Calendar events (like Timewalking, Holidays with a dungeon) will be implemented. Some are already included in the queue selector but not all of them. 
+- Calendar events (like Timewalking, Holidays with a dungeon) will be implemented. Some are already included in the queue selector but not all of them. Also gonna include some sort of "Hey, this holiday is currently ongoing", maybe also some progress stuff for mount farming.
 
 - Character statistics will be improved. More data, more useful functions.
 
 - Seasonal gearing charts. How much crests do you need for what, what bosses drop what level of gear, that kind of stuff.
+
+- [Application Viewer] Class panel inspection algorithm improvements, better detection at specsw and keeping that info between /reloads.
 
 - [M+ Statistics] You can select any keystone in the dropdown to show potential score gains from your key or the ones of your party / raid.
 

@@ -322,7 +322,7 @@ local function createApplicantFrame(applicantID)
 			applicantMemberFrame.BasicInformationPanel.Friend:SetShown(relationship and true or false)
 
 			if(applicantIndex > 1) then
-				applicantMemberFrame.BasicInformationPanel.Group:SetScript("OnEnter", function(self)
+				applicantMemberFrame.BasicInformationPanel.Premade:SetScript("OnEnter", function(self)
 					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
 					GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].BasicInformationPanel.nameFrame:GetText())
 					GameTooltip:Show()
@@ -593,31 +593,31 @@ local function addOrShowApplicant(applicantID)
 end
 
 local function checkApplicantListForEligibleMembers(listEntry)
-	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForRoles[listEntry.role] ~= true) then
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].filterForRoles[listEntry.role] ~= true) then
 		return false
 
 	end
 
-	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForClassSpecs == true) then
-		if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].filterForClassSpecs == true) then
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
 			return false
 		
 		end
 
-		if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[listEntry.specID] ~= true) then
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[listEntry.specID] ~= true) then
 			return false
 
 		end
 	end
 
-	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].lustFit) then
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].lustFit) then
 		if(listEntry.class ~= "HUNTER" and listEntry.class ~= "SHAMAN" and listEntry.class ~= "MAGE" and listEntry.class ~= "EVOKER") then
 			return false
 
 		end
 	end
 	
-	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].ressFit) then
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].ressFit) then
 		if(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
 			return false
 

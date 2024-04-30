@@ -1,5 +1,15 @@
 local addonName, miog = ...
 
+miog.startTime = function()
+	miog.F.START_TIME = GetTimePreciseSec()
+end
+
+miog.endTime = function()
+	miog.F.END_TIME = GetTimePreciseSec()
+
+	print(miog.F.END_TIME - miog.F.START_TIME)
+end
+
 miog.setAffixes = function()
 	local affixIDs = C_MythicPlus.GetCurrentAffixes()
 

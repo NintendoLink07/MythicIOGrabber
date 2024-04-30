@@ -724,6 +724,8 @@ local function startNewGroup(categoryFrame)
 	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters;
 
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+
+	LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
 	
 	miog.initializeActivityDropdown(isDifferentCategory, isSeparateCategory)
 end
@@ -1294,6 +1296,7 @@ local function queueEvents(_, event, ...)
 				categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
 				
 				categoryFrame.StartGroup:SetScript("OnClick", function(self)
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 					local button = self:GetParent()
 					startNewGroup(button)
 
@@ -1324,12 +1327,14 @@ local function queueEvents(_, event, ...)
 					notRecommendedFrame.BackgroundImage:SetHorizTile(true)
 					notRecommendedFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
 					notRecommendedFrame.StartGroup:SetScript("OnClick", function(self)
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 						local button = self:GetParent()
 						startNewGroup(button)
 
 						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 					end)
 					notRecommendedFrame.FindGroup:SetScript("OnClick", function(self)
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 						local button = self:GetParent()
 						findGroup(button)
 

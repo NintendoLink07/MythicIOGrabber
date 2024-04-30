@@ -21,7 +21,7 @@
                 </Anchors>
 
                 <Frames>
-                    <Button parentKey="Back" inherits="UIPanelDynamicResizeButtonTemplate" text="Main Menu">
+                    <Button parentKey="Back" inherits="UIPanelDynamicResizeButtonTemplate" text="Back">
                         <Size x="1" y="20" />
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />

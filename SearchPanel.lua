@@ -354,17 +354,22 @@ local function setResultFrameColors(resultID)
 	end
 end
 
-local function updateResultFrameStatus(resultID, oldStatus, newStatus)
+--[[local function updateResultFrameStatus(resultID, newStatus, oldStatus)
 	local resultFrame = searchResultSystem.persistentFrames[resultID]
 
 	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 	local id, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(resultID)
 
+	local hasActualAppStatus = appStatus and appStatus ~= "none"
+	local isNormalDelist = oldStatus == nil and newStatus == nil and searchResultInfo.isDelisted
+
+	local actualStatus = hasActualAppStatus and appStatus or isNormalDelist and "declined_delisted" or newStatus
+
 	if(resultFrame) then
 		resultFrame.StatusFrame:Hide()
 
-		if(newStatus == "applied" or newStatus == "none") then
+		if(actualStatus == "applied" or actualStatus == "none") then
 
 			if(resultFrame.BasicInformation.Age.ageTicker) then
 				resultFrame.BasicInformation.Age.ageTicker:Cancel()
@@ -390,24 +395,100 @@ local function updateResultFrameStatus(resultID, oldStatus, newStatus)
 		else
 			resultFrame.CancelApplication:Hide()
 
-			if(newStatus == nil and searchResultInfo.isDelisted) then
-				newStatus = "declined_delisted"
-			end
-
-			if(newStatus) then
+			if(actualStatus) then
 				if(resultFrame.BasicInformation.Age.ageTicker) then
 					resultFrame.BasicInformation.Age.ageTicker:Cancel()
 
 				end
 
 				resultFrame.StatusFrame:Show()
-				resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[newStatus].statusString, miog.APPLICANT_STATUS_INFO[newStatus].color))
+				resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[actualStatus].statusString, miog.APPLICANT_STATUS_INFO[actualStatus].color))
 
-				
-				if(searchResultInfo.leaderName and newStatus ~= "declined_full") then
-					MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] = {timestamp = time(), activeDecline = newStatus == "declined"}
+				if(searchResultInfo.leaderName and actualStatus ~= "declined_full") then
+					MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] = {timestamp = time(), activeDecline = actualStatus == "declined"}
 
 				end
+			end
+		end
+
+		setResultFrameColors(resultID)
+	end
+end
+]]
+
+local function updateSearchResultFrameApplicationStatus(resultID, new, old)
+	local resultFrame = searchResultSystem.persistentFrames[resultID]
+	local id, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(resultID)
+
+	appStatus = new or appStatus
+
+	if(appStatus and appStatus ~= "none") then
+		if(appStatus == "applied") then
+			if(resultFrame.BasicInformation.Age.ageTicker) then
+				resultFrame.BasicInformation.Age.ageTicker:Cancel()
+
+			end
+
+			resultFrame.CancelApplication:Show()
+
+			local ageNumber = appDuration or 0
+			resultFrame.BasicInformation.Age:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
+			resultFrame.BasicInformation.Age:SetTextColor(CreateColorFromHexString(miog.CLRSCC.purple):GetRGBA())
+
+			resultFrame.BasicInformation.Age.ageTicker = C_Timer.NewTicker(1, function()
+				ageNumber = ageNumber - 1
+				resultFrame.BasicInformation.Age:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
+
+			end)
+
+			resultFrame.layoutIndex = -1
+
+			miog.searchPanel.FramePanel.Container:MarkDirty()
+
+		else
+			resultFrame.CancelApplication:Hide()
+			
+			if(resultFrame.BasicInformation.Age.ageTicker) then
+				resultFrame.BasicInformation.Age.ageTicker:Cancel()
+
+			end
+
+			resultFrame.StatusFrame:Show()
+			resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[appStatus].statusString, miog.APPLICANT_STATUS_INFO[appStatus].color))
+
+			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+			if(searchResultInfo.leaderName and appStatus ~= "declined_full") then
+				MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] = {timestamp = time(), activeDecline = appStatus == "declined"}
+
+			end
+		end
+
+		return true
+	end
+
+	return false
+end
+
+local function updateResultFrameStatus(resultID)
+	local resultFrame = searchResultSystem.persistentFrames[resultID]
+
+	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+	if(resultFrame) then
+		resultFrame.StatusFrame:Hide()
+
+		if(updateSearchResultFrameApplicationStatus(resultID) == false) then
+			resultFrame.CancelApplication:Hide()
+
+			if(searchResultInfo.isDelisted) then
+				if(resultFrame.BasicInformation.Age.ageTicker) then
+					resultFrame.BasicInformation.Age.ageTicker:Cancel()
+
+				end
+
+				resultFrame.StatusFrame:Show()
+				resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO["declined_delisted"].statusString, miog.APPLICANT_STATUS_INFO["declined_delisted"].color))
 			end
 		end
 
@@ -825,50 +906,33 @@ local function updatePersistentResultFrame(resultID)
 				end
 	
 				table.sort(orderedList, function(k1, k2)
-					if(k1.role ~= k2.role) then
+					-- Sort by role first
+					if k1.role ~= k2.role then
 						return k1.role > k2.role
-	
-					elseif(k1.specID ~= k2.specID) then
-
-						if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
-							return false
-
-						elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
-							return true
-
-						else
-							if(k1.specID and k2.specID) then
-								return k1.specID > k2.specID
-
-							else
-								if(k1.specID) then
-									return false
-
-								elseif(k2.specID) then
-									return true
-
-								else
-									return k1.class > k2.class
-
-								end
-							end
-						end
-	
-					else
-
-						if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
-							return false
-
-						elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
-							return true
-
-						else
-							return k1.class > k2.class
-
-						end
-	
 					end
-	
+				
+					-- Sort by specID if role and class are the same
+					if k1.specID and k2.specID then
+						return k1.specID > k2.specID
+					elseif k1.specID then
+						return false
+					elseif k2.specID then
+						return true
+					end
+				
+					-- Sort by class if role is the same
+					if k1.class ~= k2.class then
+						-- "DUMMY" class should always come last
+						if k1.class == "DUMMY" then
+							return false
+						elseif k2.class == "DUMMY" then
+							return true
+						end
+						return k1.class > k2.class
+					end
+				
+					-- If everything else is equal, maintain the existing order
+					return false
 				end)
 
 				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
@@ -1330,7 +1394,9 @@ local function searchPanelEvents(_, event, ...)
 
 		--local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
 
-		updateResultFrameStatus(resultID, new, old)
+		print(old, new)
+
+		updateSearchResultFrameApplicationStatus(resultID, new, old)
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then
 		--print(event, ...)
