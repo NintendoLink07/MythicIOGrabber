@@ -10,7 +10,7 @@
             
             <Frame parentKey="Status" frameStrata="FULLSCREEN">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-1" y="-25" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 

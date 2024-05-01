@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_PVPStatistics" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_PVPStatistics" inherits="BackdropTemplate" virtual="true" toplevel="true">
         <Frames>
             <Frame parentKey="CharacterInfo">
                 <Size x="130" />
@@ -52,7 +52,7 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="BracketColumns" inherits="HorizontalLayoutFrame">
+            <Frame parentKey="BracketColumns" inherits="HorizontalLayoutFrame" frameStrata="LOW">
                 <KeyValues>
                     <KeyValue key="spacing" value="10" type="number"/>
                 </KeyValues>

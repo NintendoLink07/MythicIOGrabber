@@ -6,7 +6,7 @@
         <FontHeight val="11" />
     </Font>
 
-    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true" enableMouse="true">
+    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true" toplevel="true" enableMouse="true" parent="UIParent">
         <Frames>            
             <Frame parentKey="TitleBar">
                 <Size y="23" />
@@ -57,9 +57,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-                                if(not InCombatLockdown()) then
-								    PVEFrame_ToggleFrame()
-                                end
+                                self:GetParent():GetParent():Hide()
 							</OnClick>
 						</Scripts>
 					</Button>

@@ -69,6 +69,10 @@ You can click on the frame of a manual application to switch over to the group f
 
 - [Filter Panel] All filters are now separated for each category. Filters you apply while looking for a raid group will get saved and reapplied when you, once again, look for a raid.
 
+- [Filter Panel] Added raid options for filtering.
+
+- [Filter Panel] Added an option to hide groups that have hard declined you (actual decline of the application instead of just delisting or full group)
+
 
 ### Fixed
 

@@ -15,7 +15,7 @@
 
                 <Frames>
                     <StatusBar parentKey="InspectStatus" inherits="BackdropTemplate" orientation="HORIZONTAL" frameStrata="DIALOG">
-                        <Size y="5" />
+                        <Size y="3" />
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMLEFT"/>
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ClassPanel" relativePoint="BOTTOMRIGHT"/>

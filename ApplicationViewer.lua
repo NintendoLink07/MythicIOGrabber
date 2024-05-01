@@ -229,6 +229,7 @@ local function createApplicantFrame(applicantID)
 
 			local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
 			applicantMemberStatusFrame:SetFrameStrata("FULLSCREEN")
+			applicantMemberStatusFrame:Hide()
 
 			local expandFrameButton = applicantMemberFrame.BasicInformationPanel.ExpandFrame
 
@@ -387,6 +388,10 @@ local function createApplicantFrame(applicantID)
 			]]
 
 			miog.gatherRaiderIODisplayData(nameTable[1], nameTable[2], applicantFrame, applicantMemberFrame)
+
+			local raidData = miog.getRaidSortData(nameTable[1] .. "-" .. nameTable[2])
+			primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
+			secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
 
 			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo
 
@@ -593,31 +598,32 @@ local function addOrShowApplicant(applicantID)
 end
 
 local function checkApplicantListForEligibleMembers(listEntry)
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].filterForRoles[listEntry.role] ~= true) then
+	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForRoles[listEntry.role] ~= true) then
 		return false
 
 	end
 
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].filterForClassSpecs == true) then
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForClassSpecs == true) then
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
 			return false
 		
 		end
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[listEntry.specID] ~= true) then
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.spec[listEntry.specID] ~= true) then
 			return false
 
 		end
 	end
 
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].lustFit) then
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].lustFit) then
 		if(listEntry.class ~= "HUNTER" and listEntry.class ~= "SHAMAN" and listEntry.class ~= "MAGE" and listEntry.class ~= "EVOKER") then
 			return false
 
 		end
 	end
 	
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][LFGListFrame.CategorySelection.selectedCategory].ressFit) then
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].ressFit) then
 		if(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
 			return false
 
@@ -879,7 +885,6 @@ local function applicationViewerEvents(_, event, ...)
 		else
 			if(... == true) then --NEW LISTING
 				MIOG_QueueUpTime = GetTimePreciseSec()
-				applicantViewer_ExpandedFrameList = {}
 
 			elseif(... == false) then --RELOAD, LOADING SCREENS OR SETTINGS EDIT
 				MIOG_QueueUpTime = (MIOG_QueueUpTime and MIOG_QueueUpTime > 0) and MIOG_QueueUpTime or GetTimePreciseSec()
@@ -1053,7 +1058,7 @@ miog.createApplicationViewer = function()
 
 	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
 	browseGroupsButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
-	browseGroupsButton:SetText("Browse Groups")
+	browseGroupsButton:SetText("Browse")
 	browseGroupsButton:FitToText()
 	browseGroupsButton:RegisterForClicks("LeftButtonDown")
 	browseGroupsButton:SetScript("OnClick", function()

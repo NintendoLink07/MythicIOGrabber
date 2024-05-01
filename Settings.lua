@@ -136,7 +136,9 @@ local defaultOptionSettings = {
 				maxScore = 0,
 				difficultyID = 0,
 				dungeons = {},
-				raids = {}
+				raids = {},
+				hardDecline = false,
+				softDecline = false
 			},
 			["LFGListFrame.ApplicationViewer"] = {},
 			["LFGListFrame.SearchPanel"] = {},

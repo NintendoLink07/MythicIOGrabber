@@ -131,8 +131,6 @@ end
 
 miog.getRaidSortData = getRaidSortData
 
-miog.ONCE = true
-
 local function printOnce(string)
 	if(miog.ONCE) then
 		miog.ONCE = false

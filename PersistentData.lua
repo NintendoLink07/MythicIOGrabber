@@ -177,18 +177,20 @@ miog.C = {
 
 	SEASON_AVAILABLE = {
 		[12] = {
-			sinceEpoch = 1713949200,
+			sinceEpoch = 1713942000,
 			awakened = {
-				vaultDate1 = 1713949200,
-				aberrusDate1 = 1713949200 + 604800 * 1,
-				amirdrassilDate1 = 1713949200 + 604800 * 2,
-				vaultDate2 = 1713949200 + 604800 * 3,
-				aberrusDate2 = 1713949200 + 604800 * 4,
-				amirdrassilDate2 = 1713949200 + 604800 * 5,
-				fullRelease = 1713949200 + 604800 * 6,
+				vaultDate1 = 1713942000,
+				aberrusDate1 = 1713942000 + 604800 * 1,
+				amirdrassilDate1 = 1713942000 + 604800 * 2,
+				vaultDate2 = 1713942000 + 604800 * 3,
+				aberrusDate2 = 1713942000 + 604800 * 4,
+				amirdrassilDate2 = 1713942000 + 604800 * 5,
+				fullRelease = 1713942000 + 604800 * 6,
 			}
 		}
 	},
+
+	
 
 	REGION_DATE_DIFFERENCE = {
 		[1] = -86400,
@@ -209,6 +211,7 @@ miog.MPLUS_SEASONS = {
 	[13] = "S1", --8
 	[99] = "DUMMY SEASON"
 }
+
 
 --CHANGING VARIABLES
 miog.F = {
@@ -1077,30 +1080,10 @@ miog.MAP_INFO[2522].criteria = {16359, 16394}
 miog.MAP_INFO[2522].criteriaAwakened = {19564, 19565, 19566}
 
 miog.MAP_INFO[2549].criteria = {19348, 19386}
-miog.MAP_INFO[2549].criteriaAwakened = {19567, 19568, 19569}
+miog.MAP_INFO[2549].criteriaAwakened = {19570, 19571, 19572}
 
 miog.MAP_INFO[2569].criteria = {18180, 18227}
-miog.MAP_INFO[2569].criteriaAwakened = {19570, 19571, 19572}
-
---[[for i = miog.MAP_INFO[x.mapID].criteria[1], miog.MAP_INFO[x.mapID].criteria[2], 1 do
-	--for k, v in ipairs(criteriaTable) do
-		--local bossNumber = GetAchievementNumCriteria(v)
-	local id, name, points, completed, month, day, year, description, flags,
-	icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
-	= GetAchievementInfo(i)
-
-	if(isStatistic) then
-		local difficulty = string.find(name, "Raid Finder") and 1 or string.find(name, "Normal") and 2 or string.find(name, "Heroic") and 3 or string.find(name, "Mythic") and 4
-
-		if(difficulty) then
-			local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(i, 1, true)
-
-			--table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty], completedCriteria)
-
-			INSERT KILL DATA INTO MAP INFO
-		end
-	end
-end]]
+miog.MAP_INFO[2569].criteriaAwakened = {19567, 19568, 19569}
 
 miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
 	[1] = 10000000000,

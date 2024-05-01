@@ -218,8 +218,8 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 	for i = 1, 2, 1 do
 		local currentName = i == 1 and minName or maxName
 
-		filterOption["Spinner" .. i]:SetWidth(15)
-		filterOption["Spinner" .. i]:SetMinMaxValues(range ~= nil and range or 0, 9)
+		filterOption["Spinner" .. i]:SetWidth(21)
+		filterOption["Spinner" .. i]:SetMinMaxValues(range ~= nil and range or 0, 40)
 		--filterOption["Spinner" .. i]:SetValue(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].table[i == 1 and minName or maxName] or 0)
 
 		filterOption["Spinner" .. i].DecrementButton:SetScript("OnMouseDown", function()
@@ -535,40 +535,45 @@ local function updateFilterDifficulties()
 
 		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory] = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory] or MIOG_SavedSettings.filterOptions.table.default
 
-		local isPvp = LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9
-		local isDungeon = LFGListFrame.SearchPanel.categoryID == 2
-		local isRaid = LFGListFrame.SearchPanel.categoryID == 3
+		local categoryID = LFGListFrame.SearchPanel.categoryID or C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID
 
-		for k, v in ipairs(isRaid and miog.RAID_DIFFICULTIES or isPvp and {6, 7} or miog.DUNGEON_DIFFICULTIES) do
-			local info = {}
-			info.entryType = "option"
-			info.text = isPvp and (v == 6 and "2v2" or "3v3") or miog.DIFFICULTY_ID_INFO[v].name
-			info.level = 1
-			info.value = v
-			info.func = function()
-				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].difficultyID = v
+		local isPvp = categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9
+		local isDungeon = categoryID == 2
+		local isRaid = categoryID == 3
 
-				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-					miog.checkSearchResultListForEligibleMembers()
-		
-				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-					C_LFGList.RefreshApplicants()
-		
-				end
-			end
+		if(isPvp or isDungeon or isRaid) then
+
+			for k, v in ipairs(isRaid and miog.RAID_DIFFICULTIES or isPvp and {6, 7} or isDungeon and miog.DUNGEON_DIFFICULTIES) do
+				local info = {}
+				info.entryType = "option"
+				info.text = isPvp and (v == 6 and "2v2" or "3v3") or miog.DIFFICULTY_ID_INFO[v].name
+				info.level = 1
+				info.value = v
+				info.func = function()
+					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].difficultyID = v
+
+					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+						miog.checkSearchResultListForEligibleMembers()
 			
-			difficultyDropDown:CreateEntryFrame(info)
+					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+						C_LFGList.RefreshApplicants()
+			
+					end
+				end
+				
+				difficultyDropDown:CreateEntryFrame(info)
 
-		end
+			end
 
-		difficultyDropDown:MarkDirty()
-		difficultyDropDown.List:MarkDirty()
+			difficultyDropDown:MarkDirty()
+			difficultyDropDown.List:MarkDirty()
 
-		local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].difficultyID)
-		
-		if(not success) then
-			difficultyDropDown:SelectFrameAtLayoutIndex(1)
+			local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].difficultyID)
+			
+			if(not success) then
+				difficultyDropDown:SelectFrameAtLayoutIndex(1)
 
+			end
 		end
 	end
 end
@@ -578,7 +583,7 @@ local function setupFiltersForActivePanel(reset)
 	local isRaid =  LFGListFrame.CategorySelection.selectedCategory == 3
 	local isPvp =  LFGListFrame.CategorySelection.selectedCategory == 4 or LFGListFrame.CategorySelection.selectedCategory == 7
 
-	miog.SidePanel:SetSize(230, (miog.F.LITE_MODE and 430 or miog.pveFrame2:GetHeight()) * (LFGListFrame.activePanel:GetDebugName() == "LFGListFrame.SearchPanel" and (isDungeon or isRaid) and 1.45 or isPvp and 1.25 or 1))
+	miog.SidePanel:SetSize(230, (miog.F.LITE_MODE and 450 or miog.pveFrame2:GetHeight()) * (LFGListFrame.activePanel:GetDebugName() == "LFGListFrame.SearchPanel" and (isDungeon or isRaid) and 1.5 or isPvp and 1.3 or 1))
 	local container = miog.SidePanel.Container
 	local filterPanel = container.FilterPanel
 
@@ -905,8 +910,8 @@ end
 
 miog.loadFilterPanel = function()
 	local sidePanel = CreateFrame("Frame", "MythicIOGrabber_SidePanel", miog.MainFrame, "MIOG_SidePanel") ---@class Frame
-	sidePanel:SetSize(230, (miog.F.LITE_MODE and 420 or miog.pveFrame2:GetHeight()) * (LFGListFrame.activePanel:GetDebugName() == "searchPanel" and 1.45 or 1))
-	sidePanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", miog.F.LITE_MODE and 3 or 0, 0)
+	sidePanel:SetSize(230, (miog.F.LITE_MODE and 430 or miog.pveFrame2:GetHeight()) * (LFGListFrame.activePanel:GetDebugName() == "searchPanel" and 1.45 or 1))
+	sidePanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", miog.F.LITE_MODE and 5, 0)
 	miog.SidePanel = sidePanel
 
 	miog.createFrameBorder(sidePanel.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -945,8 +950,11 @@ miog.loadFilterPanel = function()
 	local lustFitButton = miog.addOptionToFilterFrame(filterPanel.Panel, nil, "Lust fit", "lustFit")
 	lustFitButton:SetPoint("TOPLEFT", ressFitButton, "BOTTOMLEFT", 0, 0)
 
+	local hideHardDecline = miog.addOptionToFilterFrame(filterPanel.Panel, nil, "Hide hard decline", "hardDecline")
+	hideHardDecline:SetPoint("TOPLEFT", lustFitButton, "BOTTOMLEFT", 0, 0)
+
 	filterPanel.Panel.Plugin:SetWidth(filterPanel.Panel:GetWidth())
-	filterPanel.Panel.Plugin:SetPoint("TOPLEFT", lustFitButton, "BOTTOMLEFT", 0, 0)
+	filterPanel.Panel.Plugin:SetPoint("TOPLEFT", hideHardDecline, "BOTTOMLEFT", 0, 0)
 
 	local searchPanelExtraFilter = miog.createBasicFrame("persistent", "BackdropTemplate", miog.SidePanel.Container.FilterPanel.Panel.Plugin, 220, 200)
 	searchPanelExtraFilter:SetPoint("TOPLEFT", miog.SidePanel.Container.FilterPanel.Panel.Plugin, "TOPLEFT")

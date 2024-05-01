@@ -4,13 +4,12 @@ local wticc = WrapTextInColorCode
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
 local function createPVEFrameReplacement()
-	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", WorldFrame, "MIOG_MainFrameTemplate")
+	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
 
 	if(pveFrame2:GetPoint() == nil) then
 		pveFrame2:SetPoint(PVEFrame:GetPoint())
 	end
-	pveFrame2:SetScale(0.64)
 
 	miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	
@@ -275,10 +274,21 @@ local function createPVEFrameReplacement()
 		end
 	end)
 
+	--[[PVEFrame:SetScript("OnShow", function(self)
+		HideUIPanel(self)
+		miog.pveFrame2:SetShown(not miog.pveFrame2:IsVisible())
+	end)]]
+
 	hooksecurefunc("PVEFrame_ToggleFrame", function()
 		HideUIPanel(PVEFrame)
+
+		if(miog.pveFrame2:IsVisible()) then
+			HideUIPanel(miog.pveFrame2)
+
+		else
+			ShowUIPanel(miog.pveFrame2)
 		
-		miog.MainFrame:SetShown(not miog.MainFrame:IsVisible())
+		end
 	end)
 
 	miog.pveFrame2 = pveFrame2
@@ -443,6 +453,8 @@ eventReceiver:RegisterEvent("PLAYER_LOGIN")
 eventReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
 eventReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
+eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:SetScript("OnEvent", miog.OnEvent)
 
 --[[

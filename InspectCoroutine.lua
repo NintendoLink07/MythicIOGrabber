@@ -13,13 +13,6 @@ local function updateSpecFrames()
 
 	local indexedGroup = {}
 	groupSystem.specCount = {}
-
-	groupSystem.roleCount = {
-		["TANK"] = 0,
-		["HEALER"] = 0,
-		["DAMAGER"] = 0,
-	}
-
 	local numOfMembers = GetNumGroupMembers()
 	numOfMembers = numOfMembers ~= 0 and numOfMembers or 1
 
@@ -85,7 +78,7 @@ local function updateSpecFrames()
 
 	miog.applicationViewer.ClassPanel:MarkDirty()
 
-	if(#indexedGroup < 5) then
+	if(numOfMembers < 5) then
 		if(groupSystem.roleCount["TANK"] < 1) then
 			indexedGroup[#indexedGroup + 1] = {guid = "emptyTank", unitID = "emptyTank", name = "afkTank", classID = 20, role = "TANK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
 			groupSystem.roleCount["TANK"] = groupSystem.roleCount["TANK"] + 1
@@ -105,7 +98,6 @@ local function updateSpecFrames()
 			end
 
 		end
-
 	end
 
 	table.sort(indexedGroup, function(k1, k2)
@@ -241,6 +233,12 @@ local function updateRosterInfoData()
 		[13] = 0,
 	}
 
+	groupSystem.roleCount = {
+		["TANK"] = 0,
+		["HEALER"] = 0,
+		["DAMAGER"] = 0,
+	}
+
 	miog.F.LFG_STATE = miog.checkLFGState()
 	local numOfMembers = GetNumGroupMembers()
 
@@ -261,6 +259,8 @@ local function updateRosterInfoData()
 				role = role == "NONE" and "DAMAGER" or UnitGroupRolesAssigned(unitID) or GetSpecializationRoleByID(specID) or role,
 				specID = groupSystem.inspectedGUIDs[guid] or specID ~= 0 and specID or nil
 			}
+
+			groupSystem.roleCount[groupSystem.groupMember[guid].role] = groupSystem.roleCount[groupSystem.groupMember[guid].role] + 1
 
 			local member = groupSystem.groupMember[guid]
 

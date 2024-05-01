@@ -110,7 +110,7 @@ miog.OnEvent = function(_, event, ...)
 
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
-		miog.pveFrame2:Hide()
+		HideUIPanel(miog.pveFrame2)
 		
 		miog.F.QUEUE_STOP = true
 

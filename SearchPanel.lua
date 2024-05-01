@@ -20,13 +20,19 @@ local function sortSearchResultList(result1, result2)
 
 					elseif(result1.appStatus ~= "applied" and result2.appStatus == "applied") then
 						return false
+			
+					elseif(result1.favoured and not result2.favoured) then
+						return true
+					
+					elseif(not result1.favoured and result2.favoured) then
+						return false
 
 					else
 						if(result1[key] == result2[key]) then
 							return secondState == 1 and result1[innerKey] > result2[innerKey] or secondState == 2 and result1[innerKey] < result2[innerKey]
 
 						elseif(result1[key] ~= result2[key]) then
-							return firstState == 1 and result1[key] > result2[key] or firstState == 2 and result1[key] < result2[key]
+							return firstState == 1 and result1[innerKey] > result2[innerKey] or firstState == 2 and result1[innerKey] < result2[innerKey]
 
 						end
 					end
@@ -170,136 +176,147 @@ local function HasRemainingSlotsForLocalPlayerRole(resultID) -- LFGList.lua loca
 end
 
 local function isGroupEligible(resultID, bordermode)
-	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-	local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+	if(C_LFGList.HasSearchResultInfo(resultID)) then
+		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+		local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 
-	if(activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not bordermode) then
-		return false
+		if(activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not bordermode) then
+			return false
 
-	end
+		end
 
-	local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7
-	local isDungeon = activityInfo.categoryID == 2
-	local isRaid = activityInfo.categoryID == 3
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].hardDecline and searchResultInfo.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] ~= nil) then
+			return false
 
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDifficulty) then
-		if(isDungeon or isRaid) then
-			if(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].difficultyID
-			)then
-				return false
+		end
 
+		local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7
+		local isDungeon = activityInfo.categoryID == 2
+		local isRaid = activityInfo.categoryID == 3
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDifficulty) then
+			if(isDungeon or isRaid) then
+				if(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].difficultyID
+				)then
+					return false
+
+				end
+			elseif(isPvp) then
+				if(searchResultInfo.activityID ~= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].difficultyID) then
+					return false
+
+				end
+			
 			end
-		elseif(isPvp) then
-			if(searchResultInfo.activityID ~= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].difficultyID) then
-				return false
+		end
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].partyFit == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
+			return false
+
+		end
+		
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].ressFit == true and not HasRemainingSlotsForBattleResurrection(resultID)) then
+			return false
+
+		end
+		
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].lustFit == true and not HasRemainingSlotsForBloodlust(resultID)) then
+			return false
+
+		end
+
+		local roleCount = {
+			["TANK"] = 0,
+			["HEALER"] = 0,
+			["DAMAGER"] = 0,
+			["NONE"] = 0
+		}
+
+		for i = 1, searchResultInfo.numMembers, 1 do
+			local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(resultID, i)
+			local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
+
+			if(specID) then
+				roleCount[role or "NONE"] = roleCount[role] + 1
+
+				
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
+					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[class]] == false
+					or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.spec[specID] == false) then
+						return false
+
+					end
+		
+				end
+			end
+		end
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks > 0
+		and not (roleCount["TANK"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minTanks and roleCount["TANK"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks)
+
+		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers > 0
+		and not (roleCount["HEALER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers)
+
+		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager > 0
+		and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager)) then
+			return false
+
+		end
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["TANK"] == false and roleCount["TANK"] > 0
+		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["HEALER"] == false and roleCount["HEALER"] > 0
+		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["DAMAGER"] == false and roleCount["DAMAGER"] > 0) then
+			return false
+
+		end
+
+		local score = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForScore) then
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore >= 0
+				and not (score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore
+				and score <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore)) then
+					return false
+
+				end
+			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0) then
+				if(score < MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore) then
+					return false
+
+				end
+			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
+				if(score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore) then
+					return false
+					
+				end
 
 			end
 		
 		end
-	end
-
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].partyFit == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
-		return false
-
-	end
-	
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].ressFit == true and not HasRemainingSlotsForBattleResurrection(resultID)) then
-		return false
-
-	end
-	
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].lustFit == true and not HasRemainingSlotsForBloodlust(resultID)) then
-		return false
-
-	end
-
-	local roleCount = {
-		["TANK"] = 0,
-		["HEALER"] = 0,
-		["DAMAGER"] = 0,
-		["NONE"] = 0
-	}
-
-	for i = 1, searchResultInfo.numMembers, 1 do
-		local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(resultID, i)
-		local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
-
-		if(specID) then
-			roleCount[role or "NONE"] = roleCount[role] + 1
-
-			
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
-				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[class]] == false
-				or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.spec[specID] == false) then
-					return false
-
-				end
-	
-			end
-		end
-	end
-
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks > 0
-	and not (roleCount["TANK"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minTanks and roleCount["TANK"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks)
-
-	or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers > 0
-	and not (roleCount["HEALER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers)
-
-	or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager > 0
-	and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager)) then
-		return false
-
-	end
-
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["TANK"] == false and roleCount["TANK"] > 0
-	or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["HEALER"] == false and roleCount["HEALER"] > 0
-	or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["DAMAGER"] == false and roleCount["DAMAGER"] > 0) then
-		return false
-
-	end
-
-	local score = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
-
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForScore) then
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore >= 0
-			and not (score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore
-			and score <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore)) then
+		
+		if(isDungeon and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDungeons) then
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].dungeons[activityInfo.groupFinderActivityGroupID] ~= true) then
 				return false
 
 			end
-		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0) then
-			if(score < MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore) then
+
+		end
+		
+		if(isRaid and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRaids) then
+			if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].raids[activityInfo.groupFinderActivityGroupID]) then
 				return false
 
 			end
-		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
-			if(score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore) then
-				return false
-				
-			end
-
-		end
-	
-	end
-	
-	if(isDungeon and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDungeons) then
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].dungeons[activityInfo.groupFinderActivityGroupID] ~= true) then
-			return false
 
 		end
 
-	end
-	
-	if(isRaid and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRaids) then
-		if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].raids[activityInfo.groupFinderActivityGroupID]) then
-			return false
+		return true
 
-		end
+	else
+		return false
 
 	end
-
-	return true
 end
 
 local function setResultFrameColors(resultID)
@@ -422,7 +439,7 @@ local function updateSearchResultFrameApplicationStatus(resultID, new, old)
 
 	appStatus = new or appStatus
 
-	if(appStatus and appStatus ~= "none") then
+	if(resultFrame and appStatus and appStatus ~= "none") then
 		if(appStatus == "applied") then
 			if(resultFrame.BasicInformation.Age.ageTicker) then
 				resultFrame.BasicInformation.Age.ageTicker:Cancel()
@@ -673,6 +690,7 @@ local function gatherSearchResultSortData(singleResultID)
 					appStatus = appStatus,
 					secondary = secondarySortAttribute,
 					resultID = resultID,
+					age = searchResultInfo.age,
 					favoured = searchResultInfo.leaderName and MIOG_SavedSettings.favouredApplicants.table[searchResultInfo.leaderName] and true or false
 				}
 
@@ -777,10 +795,11 @@ local function updatePersistentResultFrame(resultID)
 
 			local difficultyID = miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID
 			local difficultyName = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
-			local questType = searchResultInfo.questID and miog.RAW["QuestInfo"][C_QuestLog.GetQuestType(searchResultInfo.questID)][1]
+			local questType = searchResultInfo.questID and C_QuestLog.GetQuestType(searchResultInfo.questID)
+			local questDesc = questType and miog.RAW["QuestInfo"][questType] and miog.RAW["QuestInfo"][questType][1]
 			local shortName = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].shortName
 
-			local difficultyZoneText = difficultyID and difficultyName or questType or nil
+			local difficultyZoneText = difficultyID and difficultyName or questDesc or nil
 			
 			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor)
 			)
@@ -1393,8 +1412,6 @@ local function searchPanelEvents(_, event, ...)
 		local resultID, new, old, name = ...
 
 		--local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
-
-		print(old, new)
 
 		updateSearchResultFrameApplicationStatus(resultID, new, old)
 

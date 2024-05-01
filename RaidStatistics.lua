@@ -154,22 +154,33 @@ miog.createRaidCharacter = function(playerGUID)
 			end
 
 			if(miog.MAP_INFO[x.mapID].criteriaAwakened) then
-				for k, v in ipairs(miog.MAP_INFO[x.mapID].criteriaAwakened) do
+				for a, b in ipairs(miog.MAP_INFO[x.mapID].criteriaAwakened) do
 					local id, name, points, completed, month, day, year, description, flags,
 					icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
-					= GetAchievementInfo(v)
+					= GetAchievementInfo(b)
 					local difficulty = string.find(description, "Normal") and 1 or string.find(description, "Heroic") and 2 or string.find(description, "Mythic") and 3
 					MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened or {}
 
-					local numCriteria = GetAchievementNumCriteria(v)
+					local numCriteria = GetAchievementNumCriteria(b)
 
 					for i = 1, numCriteria, 1 do
-						local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(v, i, true)
+						local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(b, i, true)
 
 						table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened, completedCriteria)
 
 					end
 					
+				end
+
+				for _, v in ipairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID]) do
+					if(v.awakened) then
+						for _, y in ipairs(v.awakened) do
+							if(y == true) then
+								v.awakened.kills = v.awakened.kills == nil and 1 or v.awakened.kills + 1
+							end
+
+						end
+					end
 				end
 			end
 

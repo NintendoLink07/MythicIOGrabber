@@ -203,13 +203,13 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 	local firstGroupID
 	
-	local customFilters = categoryID == 1 and 4 or LFGListFrame.CategorySelection.selectedFilters ~= 2 and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.NotRecommended
+	local customFilters = categoryID == 1 and 4 or (LFGListFrame.EntryCreation.selectedFilters) ~= 2 and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.NotRecommended
 
 	local borFilters = bit.bor(LFGListFrame.EntryCreation.baseFilters, customFilters)
 
 	-- DUNGEONS
 
-	if(categoryID == 2 or categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
+	if(categoryID == 2 or categoryID == 3 and LFGListFrame.EntryCreation.selectedFilters == Enum.LFGListFilter.NotRecommended) then
 		local expansionTable = {}
 
 		activityDropDown:CreateSeparator(9999)
