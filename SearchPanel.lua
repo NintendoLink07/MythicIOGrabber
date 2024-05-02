@@ -560,16 +560,18 @@ local function createResultTooltip(resultID, resultFrame)
 
 				if(specList[v.specID]) then
 					if(newRole ~= v.role) then
-						if(newRole ~= nil) then 
-							GameTooltip_AddBlankLineToTooltip(GameTooltip)
+						if(newRole ~= nil) then
+							--GameTooltip_AddBlankLineToTooltip(GameTooltip)
 						end
 
 						newRole = v.role
 
-						GameTooltip:AddLine(v.role)
+						--GameTooltip:AddLine(v.role)
 					end
 
-					GameTooltip:AddLine(wticc(specList[v.specID] .. "x " .. "|T" .. icon .. ":11:11|t " .. name .. " " .. className, C_ClassColor.GetClassColor(classFile):GenerateHexColor()))
+					local roleIcon = v.role == "TANK" and "groupfinder-icon-role-micro-tank" or v.role == "HEALER" and "groupfinder-icon-role-micro-heal" or "groupfinder-icon-role-micro-dps"
+
+					GameTooltip:AddLine("|A:" .. roleIcon .. ":16:16|a" .. wticc(specList[v.specID] .. "x " .. "|T" .. icon .. ":11:11|t " .. name .. " " .. className, C_ClassColor.GetClassColor(classFile):GenerateHexColor()))
 
 					specList[v.specID] = nil
 				end
@@ -1271,7 +1273,7 @@ local function checkSearchResultListForEligibleMembers()
 
 		miog.searchPanel.FramePanel.Container:MarkDirty()
 
-		miog.searchPanel.groupNumberFontString:SetText(actualResultsCounter .. "(" .. #lastOrderedList .. ")")
+		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #lastOrderedList .. ")")
 	end
 end
 
@@ -1324,7 +1326,7 @@ local function updateSearchResultList()
 
 		miog.searchPanel.FramePanel.Container:MarkDirty()
 
-		miog.searchPanel.groupNumberFontString:SetText(actualResultsCounter .. "(" .. #orderedList .. ")")
+		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #orderedList .. ")")
 
 	end
 end
@@ -1443,13 +1445,6 @@ miog.createSearchPanel = function()
 	end)
 
 	searchPanel.SignUpButton = signupButton
-
-	local groupNumberFontString = miog.createBasicFontString("persistent", miog.C.LISTING_INFO_FONT_SIZE, miog.searchPanel)
-	groupNumberFontString:SetPoint("RIGHT", miog.Plugin.FooterBar, "RIGHT", -3, -1)
-	groupNumberFontString:SetJustifyH("CENTER")
-	groupNumberFontString:SetText(0)
-
-	searchPanel.groupNumberFontString = groupNumberFontString
 
 	local searchBox = LFGListFrame.SearchPanel.SearchBox
 	searchBox:ClearAllPoints()

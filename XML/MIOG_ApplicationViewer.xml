@@ -354,12 +354,6 @@
                                 <Anchor point="LEFT" relativeKey="$parent.Affixes" relativePoint="RIGHT" x="3" />
                             </Anchors>
                         </FontString>
-
-                        <FontString parentKey="TotalApplicants" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0">
-                            <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
-                            </Anchors>
-                        </FontString>
                     </Layer>
                 </Layers>
             </Frame>

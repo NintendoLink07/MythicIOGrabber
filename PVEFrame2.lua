@@ -417,6 +417,15 @@ local function createPVEFrameReplacement()
 					tpButton:SetPoint("TOPLEFT", miog.Teleports, "TOPLEFT", (k-1) * 37, -13 + (index - 4) * -offset)
 
 					if(spellKnown) then
+						local myCooldown = CreateFrame("Cooldown", nil, miog.Teleports, "CooldownFrameTemplate")
+						myCooldown:SetPoint("TOPLEFT", tpButton, "TOPLEFT")
+						myCooldown:SetPoint("BOTTOMRIGHT", tpButton, "BOTTOMRIGHT")
+						
+						tpButton:HookScript("OnShow", function()
+							local start, duration, _, modrate = GetSpellCooldown(flyoutSpellID)
+							myCooldown:SetCooldown(start, duration, modrate)
+						end)
+
 						tpButton:SetHighlightAtlas("communities-create-avatar-border-hover")
 						tpButton:SetAttribute("type", "spell")
 						tpButton:SetAttribute("spell", spellInfo.name)

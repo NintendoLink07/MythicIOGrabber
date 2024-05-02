@@ -118,7 +118,7 @@ local function updateSpecFrames()
 
 		for index, groupMember in ipairs(indexedGroup) do
 			local specIcon = groupMember.icon or miog.SPECIALIZATIONS[groupMember.specID].squaredIcon
-			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.applicationViewer.TitleBar.GroupComposition.Party, width - 2, height - 2, "Texture", specIcon)
+			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.applicationViewer.TitleBar.GroupComposition.Party, width - 3, height - 3, "Texture", specIcon)
 			classIconFrame.layoutIndex = index
 			--classIconFrame:SetPoint("LEFT", lastIcon or miog.applicationViewer.TitleBar.GroupComposition, lastIcon and "RIGHT" or "LEFT")
 			classIconFrame:SetFrameStrata("DIALOG")

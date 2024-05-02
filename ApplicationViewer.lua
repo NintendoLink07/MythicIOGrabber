@@ -42,7 +42,7 @@ local function releaseApplicantFrames()
 
 	miog.applicantFramePool:ReleaseAll()
 
-	miog.applicationViewer.CreationSettings.TotalApplicants:SetText(0)
+	miog.Plugin.FooterBar.Results:SetText("0(0)")
 	miog.applicationViewer.FramePanel.Container:MarkDirty()
 
 	applicantSystem = {}
@@ -63,7 +63,7 @@ local function hideAllApplicantFrames()
 		end
 	end
 
-	miog.applicationViewer.CreationSettings.TotalApplicants:SetText(0)
+	miog.Plugin.FooterBar.Results:SetText("0(0)")
 	miog.applicationViewer.FramePanel.Container:MarkDirty()
 
 end
@@ -671,7 +671,7 @@ local function checkApplicantList(forceReorder, applicantID)
 
 	end
 
-	miog.applicationViewer.CreationSettings.TotalApplicants:SetText(applicationFrameIndex .. "(" .. #unsortedList .. ")")
+	miog.Plugin.FooterBar.Results:SetText(applicationFrameIndex .. "(" .. #unsortedList .. ")")
 	miog.applicationViewer.FramePanel.Container:MarkDirty()
 end
 

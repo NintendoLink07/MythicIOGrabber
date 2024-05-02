@@ -99,6 +99,9 @@ miog.OnEvent = function(_, event, ...)
 		if(not miog.F.WEEKLY_AFFIX) then
 			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 
+			miog.F.AFFIX_INFO[9] = {C_ChallengeMode.GetAffixInfo(9)} --TYRA
+			miog.F.AFFIX_INFO[10] = {C_ChallengeMode.GetAffixInfo(10)} --FORT
+
 			if(miog.applicationViewer and miog.applicationViewer.InfoPanel) then
 				miog.setAffixes()
 

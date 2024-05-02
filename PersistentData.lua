@@ -261,6 +261,8 @@ miog.F = {
 	SEARCH_IS_THROTTLED = false,
 
 	ADDED_DUNGEON_FILTERS = false,
+
+	AFFIX_INFO = {},
 }
 
 local color = "FF1eff00"

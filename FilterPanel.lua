@@ -66,22 +66,23 @@ miog.convertAdvancedBlizzardFiltersToMIOGFilters = convertAdvancedBlizzardFilter
 local function convertFiltersToAdvancedBlizzardFilters()
 	if(C_LFGList.GetAdvancedFilter) then
 		local miogFilters = {}
+		local categoryID = LFGListFrame.SearchPanel.categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-		miogFilters.minimumRating = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].minScore
-		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].minHealers > 0 and true or false
-		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].minTanks > 0 and true or false
+		miogFilters.minimumRating = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minScore
+		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minHealers > 0 and true or false
+		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minTanks > 0 and true or false
 
-		miogFilters.difficultyNormal = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].difficultyID == DifficultyUtil.ID.DungeonNormal
-		miogFilters.difficultyHeroic = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].difficultyID == DifficultyUtil.ID.DungeonHeroic
-		miogFilters.difficultyMythic = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].difficultyID == DifficultyUtil.ID.DungeonMythic
-		miogFilters.difficultyMythicPlus = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].difficultyID == DifficultyUtil.ID.DungeonChallenge
+		miogFilters.difficultyNormal = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonNormal
+		miogFilters.difficultyHeroic = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonHeroic
+		miogFilters.difficultyMythic = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonMythic
+		miogFilters.difficultyMythicPlus = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonChallenge
 
 		local _, id = UnitClassBase("player")
 
-		miogFilters.needsMyClass = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[id] == false
-		miogFilters.needsTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].filterForRoles["TANK"] == false
-		miogFilters.needsHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].filterForRoles["HEALER"] == false
-		miogFilters.needsDamage = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory].filterForRoles["DAMAGER"] == false
+		miogFilters.needsMyClass = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].classSpec.class[id] == false
+		miogFilters.needsTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForRoles["TANK"] == false
+		miogFilters.needsHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForRoles["HEALER"] == false
+		miogFilters.needsDamage = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForRoles["DAMAGER"] == false
 
 		local blizzardFilter = C_LFGList.GetAdvancedFilter()
 		miogFilters.activities = blizzardFilter.activities
@@ -583,7 +584,7 @@ local function setupFiltersForActivePanel(reset)
 	local isRaid =  LFGListFrame.CategorySelection.selectedCategory == 3
 	local isPvp =  LFGListFrame.CategorySelection.selectedCategory == 4 or LFGListFrame.CategorySelection.selectedCategory == 7
 
-	miog.SidePanel:SetSize(230, (miog.F.LITE_MODE and 450 or miog.pveFrame2:GetHeight()) * (LFGListFrame.activePanel:GetDebugName() == "LFGListFrame.SearchPanel" and (isDungeon or isRaid) and 1.5 or isPvp and 1.3 or 1))
+	miog.SidePanel:SetSize(230, 450 * (LFGListFrame.activePanel:GetDebugName() == "LFGListFrame.SearchPanel" and (isDungeon or isRaid) and 1.5 or isPvp and 1.3 or 1))
 	local container = miog.SidePanel.Container
 	local filterPanel = container.FilterPanel
 
@@ -910,7 +911,7 @@ end
 
 miog.loadFilterPanel = function()
 	local sidePanel = CreateFrame("Frame", "MythicIOGrabber_SidePanel", miog.MainFrame, "MIOG_SidePanel") ---@class Frame
-	sidePanel:SetSize(230, (miog.F.LITE_MODE and 430 or miog.pveFrame2:GetHeight()) * (LFGListFrame.activePanel:GetDebugName() == "searchPanel" and 1.45 or 1))
+	sidePanel:SetSize(230, 450 * (LFGListFrame.activePanel:GetDebugName() == "searchPanel" and 1.45 or 1))
 	sidePanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", miog.F.LITE_MODE and 5, 0)
 	miog.SidePanel = sidePanel
 

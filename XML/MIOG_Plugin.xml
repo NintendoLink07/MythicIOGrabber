@@ -14,7 +14,7 @@
 
         <Frames>
             <Frame parentKey="FooterBar" inherits="BackdropTemplate">
-                <Size y="25" />
+                <Size y="24" />
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
@@ -41,6 +41,17 @@
                         </Scripts>
                     </Button>
                 </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Results" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
+                            <FontHeight val="13" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </Frame>
 
             <Frame parentKey="InsertFrame">
