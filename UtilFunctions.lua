@@ -45,6 +45,13 @@ miog.checkLFGState = function()
 
 end
 
+miog.printTableAsLines = function(table)
+	for k, v in pairs(table) do
+		print(k, v)
+		
+	end
+end
+
 miog.setStandardBackdrop = function(frame)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false, edgeSize = 1} )
 end

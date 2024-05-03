@@ -251,14 +251,36 @@ local function isGroupEligible(resultID, bordermode)
 			end
 		end
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks > 0
+		local tanksBanned = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks > 0
 		and not (roleCount["TANK"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minTanks and roleCount["TANK"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks)
 
-		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers > 0
+		local healersBanned = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers > 0
 		and not (roleCount["HEALER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers)
 
-		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager > 0
-		and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager)) then
+		local damagerBanned = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager > 0
+		and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager)
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned and
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned
+			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
+	 	) then
+			return false
+
+		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned and
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
+			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
+	 	) then
+			return false
+
+		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned and
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
+			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned)
+	 	) then
+			return false
+
+		elseif(tanksBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks
+		or healersBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers
+		or damagerBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager) then
 			return false
 
 		end
@@ -296,7 +318,7 @@ local function isGroupEligible(resultID, bordermode)
 		end
 		
 		if(isDungeon and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDungeons) then
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].dungeons[activityInfo.groupFinderActivityGroupID] ~= true) then
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].dungeons[activityInfo.groupFinderActivityGroupID] == false) then
 				return false
 
 			end
@@ -304,7 +326,7 @@ local function isGroupEligible(resultID, bordermode)
 		end
 		
 		if(isRaid and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRaids) then
-			if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].raids[activityInfo.groupFinderActivityGroupID]) then
+			if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].raids[activityInfo.groupFinderActivityGroupID] == false) then
 				return false
 
 			end
@@ -318,6 +340,8 @@ local function isGroupEligible(resultID, bordermode)
 
 	end
 end
+
+miog.isGroupEligible = isGroupEligible
 
 local function setResultFrameColors(resultID)
 	local resultFrame = searchResultSystem.persistentFrames[resultID]
@@ -736,6 +760,7 @@ local function updatePersistentResultFrame(resultID)
 			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 	
 			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function()
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
 				currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
 				currentFrame:MarkDirty()
@@ -779,9 +804,13 @@ local function updatePersistentResultFrame(resultID)
 			
 			end
 
-			currentFrame.BasicInformation.Title:SetText((searchResultInfo.isWarMode and "|A:pvptalents-warmode-swords:12:12|a" or "") .. wticc(searchResultInfo.name, titleZoneColor))
+			local warmodeString = searchResultInfo.isWarMode and "|A:pvptalents-warmode-swords:12:12|a" or ""
+			local bnetFriends = searchResultInfo.numBNetFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\battlenetfriend.png:14|t" or ""
+			local charFriends = searchResultInfo.numCharFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\friend.png:14|t" or ""
+			local guildFriends = searchResultInfo.numGuildMates > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\guildmate.png:14|t" or ""
+
+			currentFrame.BasicInformation.Title:SetText(warmodeString .. bnetFriends .. charFriends .. guildFriends .. wticc(searchResultInfo.name, titleZoneColor))
 			currentFrame.CategoryInformation.Comment:SetShown(searchResultInfo.comment ~= "" and searchResultInfo.comment ~= nil and true or false)
-			currentFrame.BasicInformation.Friend:SetShown((searchResultInfo.numBNetFriends > 0 or searchResultInfo.numCharFriends > 0 or searchResultInfo.numGuildMates > 0) and true or false)
 
 			currentFrame.CancelApplication:SetScript("OnClick", function(self, button)
 				if(button == "LeftButton") then
@@ -1179,7 +1208,7 @@ local function createPersistentResultFrame(resultID)
 	persistentFrame.StatusFrame:SetFrameStrata("FULLSCREEN")
 
 	if(miog.F.LITE_MODE) then
-		persistentFrame.BasicInformation.Title:SetWidth(100)
+		persistentFrame.BasicInformation.Title:SetWidth(90)
 		persistentFrame.CategoryInformation.RoleComposition:ClearAllPoints()
 		persistentFrame.CategoryInformation.RoleComposition:SetPoint("LEFT", persistentFrame.BasicInformation.Title, "RIGHT", 3, 0)
 
@@ -1236,8 +1265,6 @@ local function createPersistentResultFrame(resultID)
 	
 		persistentFrame.CategoryInformation.BossPanel:MarkDirty()
 	end
-
-	persistentFrame.BasicInformation.Friend:Show()
 
 	miog.createDetailedInformationPanel(persistentFrame)
 end
@@ -1417,6 +1444,17 @@ local function searchPanelEvents(_, event, ...)
 
 		updateSearchResultFrameApplicationStatus(resultID, new, old)
 
+		if(not miog.F.LITE_MODE and new == "inviteaccepted") then
+			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+
+			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityID].name or activityInfo.fullName
+			miog.MainTab.LastGroup:SetText(lastGroup)
+
+			MIOG_SavedSettings.lastGroup = lastGroup
+
+		end
+
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then
 		--print(event, ...)
 		--Happens when in a group and group is at max members after inviting a person
@@ -1429,8 +1467,8 @@ end
 miog.createSearchPanel = function()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel") ---@class Frame
 	miog.searchPanel = searchPanel
-	miog.searchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.searchPanel.FramePanel, "TOPRIGHT", -8, 0)
-	miog.applicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.applicationViewer.FramePanel, "TOPRIGHT", -8, 0)
+	miog.searchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.searchPanel.FramePanel, "TOPRIGHT", -7, 0)
+	miog.applicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.applicationViewer.FramePanel, "TOPRIGHT", -7, 0)
 
 	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.searchPanel, 1, 20)
 	signupButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
@@ -1520,7 +1558,7 @@ miog.createSearchPanel = function()
 
 	end
 
-	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(186, 0)
+	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(miog.Plugin:GetWidth() * 0.52, 0)
 
 	miog.searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	miog.searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")

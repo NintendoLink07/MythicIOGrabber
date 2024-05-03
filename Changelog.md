@@ -67,12 +67,17 @@ You can click on the frame of a manual application to switch over to the group f
 
 - [Application Viewer] There is now a loading bar for the group panel at the top. This indicates how many group members have been inspected for their specialization.
 
+- [Search Panel] Added separate icons indicating what type of friend is in a specific listing: for battle net friends orange, character (normal) friends blue or guild mates green
+
 - [Filter Panel] All filters are now separated for each category. Filters you apply while looking for a raid group will get saved and reapplied when you, once again, look for a raid.
 
 - [Filter Panel] Added raid options for filtering.
 
-- [Filter Panel] Added an option to hide groups that have hard declined you (actual decline of the application instead of just delisting or full group)
+- [Filter Panel] Added an option to hide groups that have hard declined you (actual decline of the application instead of just delisting or full group).
 
+- [Filter Panel] Added role "link" options to filter groups that e.g. either have a tank or a healer or either have already 2 tanks or no healers.
+
+- Sounds have been added to most buttons to get a bit more feedback
 
 ### Fixed
 

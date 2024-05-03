@@ -874,7 +874,7 @@ miog.createFrames = function()
 
 			if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
 				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Enable()
-				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Enable()
+				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.filterForDifficulty:Enable()
 				
 				if(miog.UPDATED_DUNGEON_FILTERS == nil) then
 					miog.updateDungeonCheckboxes()
@@ -908,13 +908,13 @@ miog.createFrames = function()
 				end
 	
 			else
-				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:Disable()
+				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.filterForDifficulty:Disable()
 				miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown:Disable()
 
 				miog.searchPanel.PanelFilters:Hide()
 			end
 
-			miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton:SetChecked(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory or LFGListFrame.SearchPanel.categoryID].filterForDifficulty or false)
+			miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.filterForDifficulty:SetChecked(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory or LFGListFrame.SearchPanel.categoryID].filterForDifficulty or false)
 			
 	
 		elseif(panel == LFGListFrame.EntryCreation) then

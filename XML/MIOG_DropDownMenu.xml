@@ -10,6 +10,7 @@
                 
                 <Scripts>
                     <OnClick>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
 
                         for k,v in pairs(parent.List:GetLayoutChildren()) do
@@ -71,6 +72,7 @@
                 
                 <Scripts>
                     <OnMouseDown>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
 
                         for k,v in pairs(parent.List:GetLayoutChildren()) do

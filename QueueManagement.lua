@@ -7,6 +7,8 @@ local queueSystem = {}
 queueSystem.queueFrames = {}
 queueSystem.currentlyInUse = 0
 
+local frameQueue = {}
+
 local queueFrameIndex = 0
 
 local function resetQueueFrame(_, frame)
@@ -18,6 +20,7 @@ local function resetQueueFrame(_, frame)
 	if(objectType == "Frame") then
 		frame:SetScript("OnMouseDown", nil)
 		frame.Name:SetText("")
+		frame.Name:SetTextColor(1,1,1,1)
 		frame.Age:SetText("")
 
 		if(frame.Age.Ticker) then
@@ -491,6 +494,11 @@ local function checkQueues()
 
 						
 
+						if(miog.isGroupEligible(id) == false) then
+							frame.Name:SetTextColor(1, 0, 0, 1)
+
+						end
+
 						frame:SetScript("OnEnter", function(self)
 							miog.createResultTooltip(id, frame)
 
@@ -714,16 +722,15 @@ local function checkQueues()
 end
 
 local function startNewGroup(categoryFrame)
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 	LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
 
 	local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
 	local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
 
-	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID;
-	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters;
+	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
+	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
 
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
 
 	LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
 	
@@ -731,21 +738,19 @@ local function startNewGroup(categoryFrame)
 end
 
 local function findGroup(categoryFrame)
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-
-	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID;
-	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters;
 	
+	LFGListCategorySelection_SelectCategory(LFGListFrame.CategorySelection, categoryFrame.categoryID, categoryFrame.filters)
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
-	
+
+	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+end
+
+hooksecurefunc("LFGListSearchPanel_SetCategory", function()
 	miog.searchPanel.categoryID = LFGListFrame.SearchPanel.categoryID
 	miog.searchPanel.filters = LFGListFrame.SearchPanel.filters
 	miog.searchPanel.preferredFilters = LFGListFrame.SearchPanel.preferredFilters
-
-	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-	--LFGListCategorySelection_StartFindGroup(LFGListFrame.CategorySelection)
-end
+end)
 
 miog.loadQueueSystem = function()
 	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueuePanel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)

@@ -93,7 +93,7 @@
                     <Button parentKey="AgeSort" inherits="MIOG_SortButtonTemplate">
                         <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.SecondarySort" relativePoint="RIGHT" x="37"/>
+                            <Anchor point="LEFT" relativeKey="$parent.SecondarySort" relativePoint="RIGHT" x="36"/>
                         </Anchors>
                     </Button>
                 </Frames>

@@ -131,6 +131,10 @@
                 end
             </OnEnter>
 
+            <OnClick>
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            </OnClick>
+
             <PostClick>
                 if(not self.hasArrow) then
                     self.ParentDropDown.Selected.Name:SetText(self.Name:GetText())

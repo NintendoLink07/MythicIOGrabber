@@ -103,6 +103,12 @@ local defaultOptionSettings = {
 		value = true,
 		index = 2,
 	},
+	lastGroup = {
+		type = "variable",
+		title = "Activity name of the last group you got invited to",
+		access = "read",
+		value = "",
+	},
 	filterOptions = {
 		type = "variable",
 		title = "Filter options for both the search panel and the application viewer",
@@ -118,14 +124,20 @@ local defaultOptionSettings = {
 				filterForTanks = false,
 				filterForHealers = false,
 				filterForDamager = false,
+				linkedTanks = false,
+				linkedHealers = false,
+				linkedDamager = false,
 				filterForDifficulty = false,
 				filterForScore = false,
+				filterForActivities = true,
+				filterForDungeons = true,
+				filterForRaids = true,
 				filterForRoles = {
 					TANK = true,
 					HEALER = true,
 					DAMAGER = true,
 				},
-				filterForClassSpecs = false,
+				filterForClassSpecs = true,
 				minTanks = 0,
 				maxTanks = 0,
 				minHealers = 0,
@@ -210,6 +222,16 @@ local function getBaseSettings(key)
 end
 
 miog.getBaseSettings = getBaseSettings
+
+miog.resetSpecificFilterToDefault = function(table)
+	table = {}
+
+	for k,v in pairs(defaultOptionSettings.filterOptions.table.default) do
+		table[k] = v
+	end
+
+	return table
+end
 
 local function compareSettings()
 	for key, optionEntry in pairs(MIOG_SavedSettings) do

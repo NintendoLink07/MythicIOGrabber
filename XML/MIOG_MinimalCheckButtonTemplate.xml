@@ -5,5 +5,11 @@
         <PushedTexture atlas="checkbox-minimal" />
         <CheckedTexture atlas="checkmark-minimal" />
         <DisabledCheckedTexture atlas="checkmark-minimal-disabled" />
+
+        <Scripts>
+            <OnClick>
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            </OnClick>
+        </Scripts>
     </CheckButton>
 </Ui>

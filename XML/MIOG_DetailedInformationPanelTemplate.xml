@@ -22,6 +22,7 @@
                         </Anchors>
                         <Scripts>
                             <OnClick>
+					            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.MythicPlus:Show()
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.Raid:Hide()
                                 self:GetParent():GetParent():MarkDirty()
@@ -37,6 +38,7 @@
                         </Anchors>
                         <Scripts>
                             <OnClick>
+					            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.MythicPlus:Hide()
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.Raid:Show()
                                 self:GetParent():GetParent():MarkDirty()

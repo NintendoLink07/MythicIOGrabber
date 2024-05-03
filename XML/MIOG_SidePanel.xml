@@ -24,6 +24,7 @@
                             </OnLoad>
 
                             <OnClick>
+		                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                                 local parent = self:GetParent():GetParent()
 
                                 parent.Container.LastInvites:SetShown(false)
@@ -57,6 +58,7 @@
                                 self.FontString:SetText(string.gsub(self.FontString:GetText(), "(.)", function(x) return x.."\n" end))
                             </OnLoad>
                             <OnClick>
+		                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                                 local parent = self:GetParent():GetParent()
 
                                 parent.Container.FilterPanel:SetShown(false)
@@ -95,6 +97,7 @@
                                         self:GetDisabledTexture():SetRotation(-math.pi/2)
                                     </OnLoad>
                                     <OnClick>
+				                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                                         self:GetParent():GetParent():Hide()
                                         self:GetParent():GetParent():GetParent().ButtonPanel:Show()
                                     </OnClick>

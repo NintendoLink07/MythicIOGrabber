@@ -132,6 +132,13 @@
                                         </OnLeave>
                                     </Scripts>
                                 </FontString>
+
+                                <FontString parentKey="LastGroup" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
+                                    <FontHeight val="12"/>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                                    </Anchors>
+                                </FontString>
                             </Layer>
                         </Layers>
 
@@ -521,6 +528,7 @@
                </Anchors>
                <Scripts>
                    <OnClick>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 1)
 
@@ -544,6 +552,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 2)
 
@@ -568,6 +577,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 3)
                         
@@ -592,6 +602,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 4)
 
@@ -612,6 +623,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
                         PanelTemplates_SetTab(parent, 5)
 

@@ -236,6 +236,8 @@ local function createApplicantFrame(applicantID)
 			expandFrameButton:RegisterForClicks("LeftButtonDown")
 			expandFrameButton:SetScript("OnClick", function()
 				if(applicantMemberFrame.DetailedInformationPanel) then
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+					
 					expandFrameButton:AdvanceState()
 					applicantMemberFrame.DetailedInformationPanel:SetShown(not applicantMemberFrame.DetailedInformationPanel:IsVisible())
 
@@ -599,18 +601,19 @@ end
 
 local function checkApplicantListForEligibleMembers(listEntry)
 	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+
 	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForRoles[listEntry.role] ~= true) then
 		return false
 
 	end
 
 	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForClassSpecs == true) then
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] ~= true) then
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] == false) then
 			return false
 		
 		end
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.spec[listEntry.specID] ~= true) then
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.spec[listEntry.specID] == false) then
 			return false
 
 		end
@@ -1046,7 +1049,7 @@ miog.createApplicationViewer = function()
 
 	end
 
-	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset(miog.Plugin:GetWidth() * 0.418, 0)
+	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset(miog.Plugin:GetWidth() * 0.402, 0)
 	
 	applicationViewer.ButtonPanel.ResetButton:SetScript("OnClick",
 		function()

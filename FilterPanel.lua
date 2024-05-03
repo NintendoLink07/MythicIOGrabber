@@ -95,7 +95,10 @@ local function addOptionToFilterFrame(parent, _, text, name)
 	filterOption:SetWidth(parent:GetWidth())
 	filterOption:SetHeight(25)
 	filterOption.Button:HookScript("OnClick", function(self)
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][name] = self:GetChecked()
+		local currentPanel = LFGListFrame.activePanel:GetDebugName()
+		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+	
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][name] = self:GetChecked()
 
 		convertFiltersToAdvancedBlizzardFilters()
 		
@@ -117,79 +120,6 @@ end
 
 miog.addOptionToFilterFrame = addOptionToFilterFrame
 
-local function addNumericSpinnerToFilterFrame(text, name)
-	local numericSpinner = Mixin(miog.createBasicFrame("persistent", "InputBoxTemplate", miog.searchPanel.FilterPanel.FilterFrame, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 5, miog.C.INTERFACE_OPTION_BUTTON_SIZE), NumericInputSpinnerMixin)
-	numericSpinner:SetAutoFocus(false)
-	numericSpinner:SetNumeric(true)
-	numericSpinner:SetMaxLetters(1)
-	numericSpinner:SetMinMaxValues(0, 9)
-	numericSpinner:SetValue(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][name] or 0)
-
-	local decrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	decrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Up")
-	decrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Down")
-	decrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-PrevPage-Disabled")
-	decrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
-	decrementButton:SetPoint("TOPLEFT", miog.searchPanel.FilterPanel.FilterFrame, "BOTTOMLEFT", 0, -5)
-	decrementButton:SetScript("OnMouseDown", function()
-		if decrementButton:IsEnabled() then
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			numericSpinner:StartDecrement()
-
-		end
-	end)
-	decrementButton:SetScript("OnMouseUp", function()
-		numericSpinner:EndIncrement()
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].table[name] = numericSpinner:GetValue()
-		numericSpinner:ClearFocus()
-		
-		if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-			miog.checkSearchResultListForEligibleMembers()
-
-		elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-			C_LFGList.RefreshApplicants()
-
-		end
-
-	end)
-
-	numericSpinner:SetPoint("LEFT", decrementButton, "RIGHT", 6, 0)
-
-	local incrementButton = miog.createBasicFrame("persistent", "UIButtonTemplate", numericSpinner, miog.C.INTERFACE_OPTION_BUTTON_SIZE - 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	incrementButton:SetNormalTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Up")
-	incrementButton:SetPushedTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Down")
-	incrementButton:SetDisabledTexture("Interface/Buttons/UI-SpellbookIcon-NextPage-Disabled")
-	incrementButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight")
-	incrementButton:SetPoint("LEFT", numericSpinner, "RIGHT")
-	incrementButton:SetScript("OnMouseDown", function()
-		if incrementButton:IsEnabled() then
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			numericSpinner:StartIncrement()
-		end
-	end)
-	incrementButton:SetScript("OnMouseUp", function()
-		numericSpinner:EndIncrement()
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].table[name] = numericSpinner:GetValue()
-		numericSpinner:ClearFocus()
-
-		if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-			miog.checkSearchResultListForEligibleMembers()
-
-		elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-			C_LFGList.RefreshApplicants()
-
-		end
-
-	end)
-
-	miog.searchPanel.FilterPanel.FilterFrame[name] = numericSpinner
-
-	local optionString = miog.createBasicFontString("persistent", 12, miog.searchPanel.FilterPanel.FilterFrame)
-	optionString:SetPoint("LEFT", incrementButton, "RIGHT")
-	optionString:SetText(text)
-
-end
-
 local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 	local filterPanel = miog.SidePanel.Container.FilterPanel
 
@@ -199,7 +129,10 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 	local filterOption = CreateFrame("Frame", nil, parent, "MIOG_FilterOptionDualSpinnerTemplate")
 	filterOption:SetSize(parent:GetWidth(), 25)
 	filterOption.Button:HookScript("OnClick", function(self)
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory]["filterFor" .. name] = self:GetChecked()
+		local currentPanel = LFGListFrame.activePanel:GetDebugName()
+		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+	
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["filterFor" .. name] = self:GetChecked()
 
 		convertFiltersToAdvancedBlizzardFilters()
 
@@ -215,25 +148,84 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 	filterOption.Name:SetText(name)
 
 	filterPanel.Panel.FilterOptions["filterFor" .. name] = filterOption.Button
+	filterPanel.Panel.FilterOptions["linked" .. name] = filterOption.Link
+
+	filterOption.Link:SetScript("OnClick", function(self)
+		local currentPanel = LFGListFrame.activePanel:GetDebugName()
+		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+	
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["linked" .. name] = self:GetChecked()
+
+		if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+			miog.checkSearchResultListForEligibleMembers()
+
+		elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+			C_LFGList.RefreshApplicants()
+
+		end
+	end)
 
 	for i = 1, 2, 1 do
 		local currentName = i == 1 and minName or maxName
 
 		filterOption["Spinner" .. i]:SetWidth(21)
 		filterOption["Spinner" .. i]:SetMinMaxValues(range ~= nil and range or 0, 40)
-		--filterOption["Spinner" .. i]:SetValue(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].table[i == 1 and minName or maxName] or 0)
+		
+		filterOption["Spinner" .. i]:SetScript("OnTextChanged", function(self, userInput)
+			if(userInput) then
+				local spinnerValue = self:GetNumber()
 
-		filterOption["Spinner" .. i].DecrementButton:SetScript("OnMouseDown", function()
-			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+				if(spinnerValue) then
+
+					local currentPanel = LFGListFrame.activePanel:GetDebugName()
+					local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+
+					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
+
+					self:SetValue(spinnerValue)
+
+					if(i == 1) then
+						if(filterPanel.Panel.FilterOptions[maxName]:GetValue() < spinnerValue) then
+							filterPanel.Panel.FilterOptions[maxName]:SetValue(spinnerValue)
+							MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][maxName] = spinnerValue
+
+						end
+
+					else
+						if(filterPanel.Panel.FilterOptions[minName]:GetValue() > spinnerValue) then
+							filterPanel.Panel.FilterOptions[minName]:SetValue(spinnerValue)
+							MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][minName] = spinnerValue
+
+						end
+					end
+
+					convertFiltersToAdvancedBlizzardFilters()
+				
+					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+						miog.checkSearchResultListForEligibleMembers()
+			
+					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+						C_LFGList.RefreshApplicants()
+			
+					end
+				end
+			end
+		end)
+
+		filterOption["Spinner" .. i].DecrementButton:SetScript("OnMouseDown", function(self)
 			filterOption["Spinner" .. i]:Decrement()
 
 			local spinnerValue = filterOption["Spinner" .. i]:GetValue()
 
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][currentName] = spinnerValue
+			local currentPanel = LFGListFrame.activePanel:GetDebugName()
+			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+		
+
+			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
 
 			if(filterPanel.Panel.FilterOptions[minName]:GetValue() > spinnerValue) then
 				filterPanel.Panel.FilterOptions[minName]:SetValue(spinnerValue)
-				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][minName] = spinnerValue
+				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][minName] = spinnerValue
 
 			end
 
@@ -251,16 +243,18 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 		end)
 
 		filterOption["Spinner" .. i].IncrementButton:SetScript("OnMouseDown", function()
-			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			filterOption["Spinner" .. i]:Increment()
 
 			local spinnerValue = filterOption["Spinner" .. i]:GetValue()
 
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][currentName] = spinnerValue
+			local currentPanel = LFGListFrame.activePanel:GetDebugName()
+			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+
+			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
 
 			if(filterPanel.Panel.FilterOptions[maxName]:GetValue() < spinnerValue) then
 				filterPanel.Panel.FilterOptions[maxName]:SetValue(spinnerValue)
-				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][maxName] = spinnerValue
+				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][maxName] = spinnerValue
 
 			end
 
@@ -294,11 +288,12 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 	optionButton:SetPushedAtlas("checkbox-minimal")
 	optionButton:SetCheckedTexture("checkmark-minimal")
 	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	--optionButton:SetPoint("TOPLEFT", lastFilterOption, "BOTTOMLEFT", 0, -5)
 	optionButton:RegisterForClicks("LeftButtonDown")
-	--optionButton:SetChecked(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].table["filterFor" .. name] or false)
 	optionButton:HookScript("OnClick", function()
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory]["filterFor" .. name] = optionButton:GetChecked()
+		local currentPanel = LFGListFrame.activePanel:GetDebugName()
+		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+	
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["filterFor" .. name] = optionButton:GetChecked()
 
 		convertFiltersToAdvancedBlizzardFilters()
 		
@@ -331,14 +326,16 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		numericField.autoFocus = false
 		numericField:SetNumeric(true)
 		numericField:SetMaxLetters(4)
-		--numericField:SetText(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].table[i == 1 and minName or maxName] or 0)
 		numericField:HookScript("OnTextChanged", function(self, ...)
 			local text = tonumber(self:GetText())
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][currentName] = text ~= nil and text or 0
+			local currentPanel = LFGListFrame.activePanel:GetDebugName()
+			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+		
+			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = text ~= nil and text or 0
 
 			convertFiltersToAdvancedBlizzardFilters()
 
-			if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory]["filterFor" .. name]) then
+			if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["filterFor" .. name]) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 					miog.checkSearchResultListForEligibleMembers()
 		
@@ -513,6 +510,9 @@ local function addDungeonCheckboxes()
 		optionButton:SetCheckedTexture("checkmark-minimal")
 		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 		optionButton:RegisterForClicks("LeftButtonDown")
+		optionButton:SetScript("OnClick", function()
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		end)
 		
 		dungeonPanel.Buttons[i] = optionButton
 	
@@ -529,12 +529,16 @@ end
 
 miog.addDungeonCheckboxes = addDungeonCheckboxes
 
-local function updateFilterDifficulties()
+local function updateFilterDifficulties(reset)
+	local currentPanel = LFGListFrame.activePanel:GetDebugName()
+	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+
 	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()]) then
 		local difficultyDropDown = miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.Dropdown
 		difficultyDropDown:ResetDropDown()
 
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory] = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory] or MIOG_SavedSettings.filterOptions.table.default
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID] = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]
+		or miog.resetSpecificFilterToDefault(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID])
 
 		local categoryID = LFGListFrame.SearchPanel.categoryID or C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID
 
@@ -551,7 +555,7 @@ local function updateFilterDifficulties()
 				info.level = 1
 				info.value = v
 				info.func = function()
-					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].difficultyID = v
+					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID = v
 
 					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 						miog.checkSearchResultListForEligibleMembers()
@@ -569,9 +573,15 @@ local function updateFilterDifficulties()
 			difficultyDropDown:MarkDirty()
 			difficultyDropDown.List:MarkDirty()
 
-			local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].difficultyID)
-			
-			if(not success) then
+			if(not reset) then
+				local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID)
+				
+				if(not success) then
+					difficultyDropDown:SelectFrameAtLayoutIndex(1)
+
+				end
+
+			else
 				difficultyDropDown:SelectFrameAtLayoutIndex(1)
 
 			end
@@ -580,58 +590,69 @@ local function updateFilterDifficulties()
 end
 
 local function setupFiltersForActivePanel(reset)
-	local isDungeon = LFGListFrame.CategorySelection.selectedCategory == 2
-	local isRaid =  LFGListFrame.CategorySelection.selectedCategory == 3
-	local isPvp =  LFGListFrame.CategorySelection.selectedCategory == 4 or LFGListFrame.CategorySelection.selectedCategory == 7
+	local currentPanel = LFGListFrame.activePanel:GetDebugName()
+	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+
+	local isDungeon = categoryID == 2
+	local isRaid =  categoryID == 3
+	local isPvp =  categoryID == 4 or categoryID == 7
 
 	miog.SidePanel:SetSize(230, 450 * (LFGListFrame.activePanel:GetDebugName() == "LFGListFrame.SearchPanel" and (isDungeon or isRaid) and 1.5 or isPvp and 1.3 or 1))
+
 	local container = miog.SidePanel.Container
 	local filterPanel = container.FilterPanel
 
-	if(LFGListFrame.CategorySelection.selectedCategory) then
-		if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory] == nil) then
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory] = MIOG_SavedSettings.filterOptions.table.default
+	if(categoryID) then
+		if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID] == nil) then
+			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID] = miog.resetSpecificFilterToDefault(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID])
 			
 		end
 
-		updateFilterDifficulties()
+		updateFilterDifficulties(reset)
 
 		for i = 1, 3, 1 do
-			filterPanel.Panel.FilterOptions.Roles.RoleButtons[i]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"])
+			filterPanel.Panel.FilterOptions.Roles.RoleButtons[i]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"])
 		end
 
 		for k, v in pairs(filterPanel.Panel.FilterOptions) do
 			if(v.Button and v.Button:GetObjectType() == "CheckButton") then
-				v.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory][k])
+				v.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][k])
 			end
 		end
 
-		filterPanel.Panel.FilterOptions.filterForTanks:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForTanks)
-		filterPanel.Panel.FilterOptions.minTanks:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].minTanks)
-		filterPanel.Panel.FilterOptions.maxTanks:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].maxTanks)
+		filterPanel.Panel.FilterOptions.filterForDifficulty:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDifficulty)
 
-		filterPanel.Panel.FilterOptions.filterForHealers:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForHealers)
-		filterPanel.Panel.FilterOptions.minHealers:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].minHealers)
-		filterPanel.Panel.FilterOptions.maxHealers:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].maxHealers)
+		filterPanel.Panel.FilterOptions.linkedTanks:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedTanks)
+		filterPanel.Panel.FilterOptions.linkedHealers:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedHealers)
+		filterPanel.Panel.FilterOptions.linkedDamager:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedDamager)
 
-		filterPanel.Panel.FilterOptions.filterForDamager:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForDamager)
-		filterPanel.Panel.FilterOptions.minDamager:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].minDamager)
-		filterPanel.Panel.FilterOptions.maxDamager:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].maxDamager)
+		filterPanel.Panel.FilterOptions.filterForTanks:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForTanks)
+		filterPanel.Panel.FilterOptions.minTanks:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minTanks)
+		filterPanel.Panel.FilterOptions.maxTanks:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxTanks)
 
-		filterPanel.Panel.FilterOptions.filterForScore:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForScore)
-		filterPanel.Panel.FilterOptions.minScore:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].minScore)
-		filterPanel.Panel.FilterOptions.maxScore:SetText(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].maxScore)
+		filterPanel.Panel.FilterOptions.filterForHealers:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForHealers)
+		filterPanel.Panel.FilterOptions.minHealers:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minHealers)
+		filterPanel.Panel.FilterOptions.maxHealers:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxHealers)
 
-		--filterPanel.Panel.FilterOptions["filterForClassSpecs"].Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForClassSpecs)
+		filterPanel.Panel.FilterOptions.filterForDamager:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDamager)
+		filterPanel.Panel.FilterOptions.minDamager:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minDamager)
+		filterPanel.Panel.FilterOptions.maxDamager:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxDamager)
+
+		filterPanel.Panel.FilterOptions.filterForScore:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForScore)
+		filterPanel.Panel.FilterOptions.minScore:SetNumber(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minScore)
+		filterPanel.Panel.FilterOptions.maxScore:SetNumber(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxScore)
+
+		--filterPanel.Panel.FilterOptions["filterForClassSpecs"].Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs)
+		filterPanel.Panel.FilterOptions.filterForClassSpecs.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs)
 
 		for classIndex, classEntry in ipairs(miog.CLASSES) do
 			local currentClassPanel = filterPanel.Panel.FilterOptions.ClassPanels[classIndex]
 
-			if(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec) then
-				if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[classIndex] ~= nil) then
-					currentClassPanel.Class.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[classIndex])
+			if(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec) then
+				if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.class[classIndex] ~= nil) then
+					currentClassPanel.Class.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.class[classIndex])
 					
-					if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[classIndex] == false) then
+					if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.class[classIndex] == false) then
 						container.TitleBar.FontString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
 					end
 
@@ -646,6 +667,8 @@ local function setupFiltersForActivePanel(reset)
 			end
 			
 			currentClassPanel.Class.Button:SetScript("OnClick", function()
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
 				local state = currentClassPanel.Class.Button:GetChecked()
 
 				for specIndex, specFrame in pairs(currentClassPanel.SpecFrames) do
@@ -659,10 +682,10 @@ local function setupFiltersForActivePanel(reset)
 
 					end
 
-					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[specIndex] = state
+					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.spec[specIndex] = state
 				end
 
-				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.class[classIndex] = state
+				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.class[classIndex] = state
 
 				if(not miog.checkForActiveFilters(filterPanel.Panel)) then
 					container.TitleBar.FontString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
@@ -674,7 +697,7 @@ local function setupFiltersForActivePanel(reset)
 
 				convertFiltersToAdvancedBlizzardFilters()
 
-				if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForClassSpecs) then
+				if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs) then
 					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 						miog.checkSearchResultListForEligibleMembers()
 			
@@ -687,11 +710,11 @@ local function setupFiltersForActivePanel(reset)
 
 			for specIndex, specID in pairs(classEntry.specs) do
 				local currentSpecFrame = currentClassPanel.SpecFrames[specID]
-				if(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec) then
-					if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[specID] ~= nil) then
-						currentSpecFrame.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[specID])
+				if(MIOG_SavedSettings and MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec) then
+					if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.spec[specID] ~= nil) then
+						currentSpecFrame.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.spec[specID])
 
-						if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[specID]) then
+						if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.spec[specID]) then
 							container.TitleBar.FontString:SetText(WrapTextInColorCode("Filter active", "FFFFFF00"))
 						end
 
@@ -706,6 +729,8 @@ local function setupFiltersForActivePanel(reset)
 				end
 				
 				currentSpecFrame.Button:SetScript("OnClick", function()
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
 					local state = currentSpecFrame.Button:GetChecked()
 
 					if(state) then
@@ -721,11 +746,11 @@ local function setupFiltersForActivePanel(reset)
 
 					end
 
-					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].classSpec.spec[specID] = state
+					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.spec[specID] = state
 
 					convertFiltersToAdvancedBlizzardFilters()
 
-					if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForClassSpecs) then
+					if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs) then
 						if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 							miog.checkSearchResultListForEligibleMembers()
 				
@@ -738,27 +763,8 @@ local function setupFiltersForActivePanel(reset)
 				end)
 			end
 		end
-
-		if(LFGListFrame.CategorySelection.selectedCategory == 3) then
-			local sortedExpansionRaids = {}
-
-			for k, v in pairs(miog.ACTIVITY_INFO) do
-				if(v.expansionLevel == (GetAccountExpansionLevel()-1) and v.difficultyID == miog.RAID_DIFFICULTIES[3]) then
-					sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = v.groupFinderActivityGroupID, name = v.shortName}
-				end
-
-			end
-
-			table.sort(sortedExpansionRaids, function(k1, k2)
-				return k1.groupFinderActivityGroupID < k2.groupFinderActivityGroupID
-			end)
-
-			for k, activityEntry in ipairs(sortedExpansionRaids) do
-				local checked = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID]
-				--currentButton:SetChecked(checked)
-				local currentButton = filterPanel.Panel.FilterOptions.RaidPanel.Buttons[k]:SetChecked(checked)
-			end
-		elseif(LFGListFrame.CategorySelection.selectedCategory == 2) then
+		if(categoryID == 2) then
+			filterPanel.Panel.FilterOptions.filterForDungeons.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDungeons)
 
 			local sortedSeasonDungeons = {}
 
@@ -776,10 +782,28 @@ local function setupFiltersForActivePanel(reset)
 				end)
 
 				for k, activityEntry in ipairs(sortedSeasonDungeons) do
-					local checked = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons[activityEntry.groupFinderActivityGroupID]
-					local currentButton = filterPanel.Panel.FilterOptions.DungeonPanel.Buttons[k]
-					currentButton:SetChecked(checked)
+					local notChecked = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons[activityEntry.groupFinderActivityGroupID] == false
+					filterPanel.Panel.FilterOptions.DungeonPanel.Buttons[k]:SetChecked(reset or not notChecked)
 				end
+			end
+		elseif(categoryID == 3) then
+			local sortedExpansionRaids = {}
+			filterPanel.Panel.FilterOptions.filterForRaids.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRaids)
+
+			for k, v in pairs(miog.ACTIVITY_INFO) do
+				if(v.expansionLevel == (GetAccountExpansionLevel()-1) and v.difficultyID == miog.RAID_DIFFICULTIES[3]) then
+					sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = v.groupFinderActivityGroupID, name = v.shortName}
+				end
+
+			end
+
+			table.sort(sortedExpansionRaids, function(k1, k2)
+				return k1.groupFinderActivityGroupID < k2.groupFinderActivityGroupID
+			end)
+
+			for k, activityEntry in ipairs(sortedExpansionRaids) do
+				local checked = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID]
+				filterPanel.Panel.FilterOptions.RaidPanel.Buttons[k]:SetChecked(reset or checked)
 			end
 		end
 	end
@@ -791,8 +815,12 @@ local function createClassSpecFilters(parent)
 	local container = miog.SidePanel.Container
 
 	parent.Uncheck:SetScript("OnClick", function()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory] = MIOG_SavedSettings.filterOptions.table.default
+		local currentPanel = LFGListFrame.activePanel:GetDebugName()
+		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+
+		MIOG_SavedSettings.filterOptions.table[currentPanel][categoryID] = miog.resetSpecificFilterToDefault(MIOG_SavedSettings.filterOptions.table[currentPanel][categoryID])
 
 		setupFiltersForActivePanel(true)
 
@@ -865,9 +893,14 @@ local function addRolePanel(parent)
 		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
 
 		toggleRoleButton:SetScript("OnClick", function()
-			local state = toggleRoleButton:GetChecked()
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"] = state
+			local state = toggleRoleButton:GetChecked()
+			local currentPanel = LFGListFrame.activePanel:GetDebugName()
+			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+		
+
+			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"] = state
 
 			if(not miog.checkForActiveFilters(parent)) then
 				container.TitleBar.FontString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
@@ -972,7 +1005,10 @@ miog.loadFilterPanel = function()
 	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 	dropdownOptionButton:SetPoint("TOPLEFT", searchPanelExtraFilter, "TOPLEFT", 0, 0)
 	dropdownOptionButton:HookScript("OnClick", function(self)
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][LFGListFrame.CategorySelection.selectedCategory].filterForDifficulty = self:GetChecked()
+		local currentPanel = LFGListFrame.activePanel:GetDebugName()
+		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+	
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDifficulty = self:GetChecked()
 
 			if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 				miog.checkSearchResultListForEligibleMembers()
@@ -982,7 +1018,7 @@ miog.loadFilterPanel = function()
 	
 			end
 	end)
-	miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.DifficultyButton = dropdownOptionButton
+	miog.SidePanel.Container.FilterPanel.Panel.FilterOptions.filterForDifficulty = dropdownOptionButton
 
 	local optionDropDown = Mixin(CreateFrame("Frame", nil, searchPanelExtraFilter, "MIOG_DropDownMenu"), SlickDropDown)
 	optionDropDown:OnLoad()

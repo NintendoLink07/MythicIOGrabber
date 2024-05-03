@@ -33,6 +33,8 @@ local function createPVEFrameReplacement()
 
 		miog.setupRaidStatistics()
 		miog.gatherRaidStatistics()
+
+		miog.MainTab.LastGroup:SetText(MIOG_SavedSettings.lastGroup.value)
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -47,7 +49,7 @@ local function createPVEFrameReplacement()
 
 		if(regularActivityID) then
 			miog.MainTab.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
-			miog.MainTab.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())			
+			miog.MainTab.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())
 			
 		else
 			local timewalkingActivityID, timewalkingGroupID, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
@@ -382,9 +384,9 @@ local function createPVEFrameReplacement()
 	local counter = 0
 
 	local offset = 35 + 22
-	local _, _, _, numSlots = GetSpellTabInfo(1)
+	local _, _, _, tabSlots = GetSpellTabInfo(1)
 
-	for i = 1, numSlots, 1 do
+	for i = 1, tabSlots, 1 do
 		local spellType, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
 
 		if(spellType == "FLYOUT") then
