@@ -30,8 +30,8 @@ miog.setAffixes = function()
 		miog.applicationViewer.CreationSettings.Affixes:SetText(affixString)
 
 		if(not miog.F.LITE_MODE) then
-			miog.MainTab.Affixes:SetText(affixString)
-			miog.MainTab.Affixes.text = miog.applicationViewer.CreationSettings.Affixes.tooltipText
+			miog.MainTab.Information.Affixes:SetText(affixString)
+			miog.MainTab.Information.Affixes.text = miog.applicationViewer.CreationSettings.Affixes.tooltipText
 		end
 
 	else

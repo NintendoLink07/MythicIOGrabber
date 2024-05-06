@@ -1,0 +1,34 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+        <FontHeight val="11" />
+    </Font>
+
+    <Frame name="MIOG_CurrencySingleTemplate" virtual="true">
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Icon">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0/0">
+                    <FontHeight val="12"/>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Frame>
+</Ui>

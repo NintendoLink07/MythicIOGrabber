@@ -1,7 +1,7 @@
 ## Interface: 100206
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
-## OptionalDeps: RaiderIO, Blizzard_ChallengesUI
+## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
 ## Version: 2.0.0
@@ -14,6 +14,8 @@
 
 Libs\libs.xml
 RawBlizzardData.lua
+
+Blizzard_WeeklyRewards2.lua
 
 MythicIOGrabber.lua
 Settings.lua
@@ -37,9 +39,6 @@ SharedFunctions.lua
 
 PVPStatistics.lua
 RaidStatistics.lua
-
-Blizzard_ChallengeModeWeeklyChestMixin.lua
-Blizzard_WeeklyRewardsMixin.lua
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -111,3 +110,5 @@ XML\PVP\MIOG_PVPStatisticsBracketTemplate.xml
 XML\PVP\MIOG_PVPStatisticsColumnTemplate.xml
 
 XML\MIOG_Teleports.xml
+
+XML\MIOG_CurrencySingleTemplate.xml

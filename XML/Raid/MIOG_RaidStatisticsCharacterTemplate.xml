@@ -64,16 +64,17 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Awakened" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="S4">
+                <FontString parentKey="Awakened" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="S4" outline="NORMAL" >
+                    <FontHeight val="14" />
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="6"/>
+                        <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="5"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Previous" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="S3">
                     <Color r="0.4" g="0.4" b="0.4" a="1" />
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="-8"/>
+                        <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="-10"/>
                     </Anchors>
                 </FontString>
             </Layer>

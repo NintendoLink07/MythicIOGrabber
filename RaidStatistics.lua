@@ -106,84 +106,84 @@ miog.createRaidCharacter = function(playerGUID)
 
     local isCurrentChar = playerGUID == UnitGUID("player")
 
+	--[[local vaultNormal = 16343
+	local vaultHeroic = 16345
+	local vaultMythic = 16354
+	
+	local id, name, points, completed, month, day, year, description, flags,
+	icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
+	= GetAchievementInfo(vaultHeroic)
+
+	local max = GetAchievementNumCriteria(vaultHeroic)
+
+	for i = 1, max, 1 do
+		local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(vaultHeroic, i, true)
+		print("ACHIEV", id, name, completed)
+		print("CRITERIA", criteriaID, criteriaString, completedCriteria)
+	end]]
+
+	local totalAchievements = GetCategoryNumAchievements(15469)
+
     if(isCurrentChar) then
         local _, className = UnitClass("player")
 
         MIOG_SavedSettings.raidStatistics.table[playerGUID] = {}
         MIOG_SavedSettings.raidStatistics.table[playerGUID].name = MIOG_SavedSettings.raidStatistics.table[playerGUID].name or UnitName("player")
         MIOG_SavedSettings.raidStatistics.table[playerGUID].class = MIOG_SavedSettings.raidStatistics.table[playerGUID].class or className
-
         MIOG_SavedSettings.raidStatistics.table[playerGUID].raids = {}
 
-		--for a = 1, 3, 1 do
 		for _, x in ipairs(miog.RaidStatistics.RaidColumns.Raids) do
-			--local currentTable = a == 1 and criteriaTable1 or a == 2 and criteriaTable2 or criteriaTable3
 			local mapID = x.mapID
 
-			MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID] = {{}, {}, {}}
+			MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID] = {regular = {}, awakened = {}}
 
-			if(miog.MAP_INFO[x.mapID].criteria) then
-				for i = miog.MAP_INFO[x.mapID].criteria[1], miog.MAP_INFO[x.mapID].criteria[2], 1 do
-				--for k, v in ipairs(criteriaTable) do
-					--local bossNumber = GetAchievementNumCriteria(v)
-					local id, name, points, completed, month, day, year, description, flags,
-					icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
-					= GetAchievementInfo(i)
-
-					if(isStatistic) then
-						local difficulty = string.find(name, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
-
-						if(difficulty) then
-							local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(i, 1, true)
-
-							table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty], completedCriteria)
-						end
-					end
-				end
-
-				for _, v in ipairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID]) do
-					if(v) then
-						for _, y in ipairs(v) do
-							if(y == true) then
-								v.kills = v.kills == nil and 1 or v.kills + 1
-							end
-
-						end
-					end
-				end
-			end
-
-			if(miog.MAP_INFO[x.mapID].criteriaAwakened) then
-				for a, b in ipairs(miog.MAP_INFO[x.mapID].criteriaAwakened) do
+			if(miog.MAP_INFO[x.mapID].achievementsAwakened) then
+				for a, b in ipairs(miog.MAP_INFO[x.mapID].achievementsAwakened) do
 					local id, name, points, completed, month, day, year, description, flags,
 					icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
 					= GetAchievementInfo(b)
+
 					local difficulty = string.find(description, "Normal") and 1 or string.find(description, "Heroic") and 2 or string.find(description, "Mythic") and 3
-					MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened or {}
-
-					local numCriteria = GetAchievementNumCriteria(b)
-
-					for i = 1, numCriteria, 1 do
-						local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(b, i, true)
-
-						table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][difficulty].awakened, completedCriteria)
-
-					end
 					
-				end
+					if(difficulty) then
+						MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty] = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty] or {kills = 0, bosses = {}}
 
-				for _, v in ipairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID]) do
-					if(v.awakened) then
-						for _, y in ipairs(v.awakened) do
-							if(y == true) then
-								v.awakened.kills = v.awakened.kills == nil and 1 or v.awakened.kills + 1
+						local numCriteria = GetAchievementNumCriteria(b)
+
+						for i = 1, numCriteria, 1 do
+							local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(b, i, true)
+
+							if(completedCriteria) then
+								MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].kills = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].kills + 1
+
 							end
+
+							table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].bosses, {id = b, criteriaID = criteriaID, killed = completedCriteria, })
 
 						end
 					end
 				end
 			end
+			
+			--for d = 1, totalAchievements, 1 do
+			for k, d in ipairs(miog.MAP_INFO[mapID].achievementTable) do
+				local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(d)
 
+				local difficulty = string.find(name, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
+
+				if(difficulty) then
+					MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty] = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty] or {kills = 0, bosses = {}}
+
+					local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, 1, true)
+
+					if(completedCriteria) then
+						MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].kills = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].kills + 1
+
+					end
+
+					table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, })
+				end
+			end
 		end
     end
 
@@ -191,37 +191,64 @@ miog.createRaidCharacter = function(playerGUID)
 	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.raidStatistics.table[playerGUID].class):GetRGBA())
 end
 
+local function raidFrame_OnEnter(self, playerGUID, mapID, difficulty, type)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+	GameTooltip_AddHighlightLine(GameTooltip, miog.MAP_INFO[mapID].name)
+	GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+	for k, v in ipairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][type][difficulty].bosses) do
+		local bossInfo = v
+		local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfoByID(bossInfo.id, bossInfo.criteriaID, true)
+		local id, name, points, completed, month, day, year, description, flags,
+		icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
+		= GetAchievementInfo(bossInfo.id)
+
+		GameTooltip:AddDoubleLine(quantity, type == "awakened" and criteriaString .. " kills" or name)
+	end
+
+	GameTooltip:Show()
+end
+
 miog.fillRaidCharacter = function(playerGUID)
 	local characterFrame = miog.RaidStatistics.ScrollFrame.Rows.accountChars[playerGUID]
 
 	local counter = 1
 
-	--for k, v in pairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids) do
 	for _, x in ipairs(miog.RaidStatistics.RaidColumns.Raids) do
-		--for i = 1, 1, 1 do
 		local raidFrame = characterFrame["Raid" .. counter]
 		raidFrame:SetWidth(miog.RaidStatistics.RaidColumns.Raids[counter]:GetWidth())
 		raidFrame.layoutIndex = counter
 
 		for a = 1, 3, 1 do
+			local current = a == 1 and raidFrame.Normal.Current or a == 2 and raidFrame.Heroic.Current or a == 3 and raidFrame.Mythic.Current
+			local previous = a == 1 and raidFrame.Normal.Previous or a == 2 and raidFrame.Heroic.Previous or a == 3 and raidFrame.Mythic.Previous
 
-			local difficultyFontString2 = a == 1 and raidFrame.AwakenedNormal or a == 2 and raidFrame.AwakenedHeroic or a == 3 and raidFrame.AwakenedMythic
+			local currentProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].awakened[a]
+			local text2 = (currentProgress and currentProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+			current:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
 
-			local progress2 = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID][a].awakened
-			local text2 = (progress2 and progress2.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
-			difficultyFontString2:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
-
-			local difficultyFontString = a == 1 and raidFrame.Normal or a == 2 and raidFrame.Heroic or a == 3 and raidFrame.Mythic
-
-			local progress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID][a]
-			local text = (progress and progress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
-			difficultyFontString:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].desaturated))
-
-
-			for i = 1, #miog.MAP_INFO[x.mapID].bosses, 1 do
-				
-
+			if(previous) then
+				local previousProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].regular[a]
+				local text = (previousProgress and previousProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+				previous:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].desaturated))
+				previous:Show()
 			end
+
+			current:SetScript("OnEnter", function(self)
+				raidFrame_OnEnter(self, playerGUID, x.mapID, a, "awakened")
+			end)
+
+			current:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+			end)
+
+			previous:SetScript("OnEnter", function(self)
+				raidFrame_OnEnter(self, playerGUID, x.mapID, a, "regular")
+			end)
+
+			previous:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+			end)
 		end
 
 		counter = counter + 1

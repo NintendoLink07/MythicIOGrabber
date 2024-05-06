@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-
     <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
         <FontHeight val="11" />
     </Font>
@@ -61,7 +60,7 @@
                 </Anchors>
             </Frame>
 
-            <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true">
+            <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.FooterBar" relativePoint="TOPRIGHT" />

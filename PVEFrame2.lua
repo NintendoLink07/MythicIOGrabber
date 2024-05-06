@@ -34,7 +34,7 @@ local function createPVEFrameReplacement()
 		miog.setupRaidStatistics()
 		miog.gatherRaidStatistics()
 
-		miog.MainTab.LastGroup:SetText(MIOG_SavedSettings.lastGroup.value)
+		miog.MainTab.Information.LastGroup:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -48,19 +48,19 @@ local function createPVEFrameReplacement()
 		local regularActivityID, regularGroupID, regularLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
 
 		if(regularActivityID) then
-			miog.MainTab.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
-			miog.MainTab.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())
+			miog.MainTab.Information.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
+			miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())
 			
 		else
 			local timewalkingActivityID, timewalkingGroupID, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
 
 			if(timewalkingActivityID) then
-				miog.MainTab.Keystone.Text:SetText("+" .. timewalkingLevel .. " " .. C_LFGList.GetActivityGroupInfo(timewalkingGroupID))
-				miog.MainTab.Keystone.Text:SetTextColor(miog.createCustomColorForScore(timewalkingLevel * 130):GetRGBA())
+				miog.MainTab.Information.Keystone.Text:SetText("+" .. timewalkingLevel .. " " .. C_LFGList.GetActivityGroupInfo(timewalkingGroupID))
+				miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForScore(timewalkingLevel * 130):GetRGBA())
 				
 			else
-				miog.MainTab.Keystone.Text:SetText("NO KEYSTONE")
-				miog.MainTab.Keystone.Text:SetTextColor(1, 0, 0, 1)
+				miog.MainTab.Information.Keystone.Text:SetText("NO KEYSTONE")
+				miog.MainTab.Information.Keystone.Text:SetTextColor(1, 0, 0, 1)
 			
 			end
 		end
@@ -70,45 +70,77 @@ local function createPVEFrameReplacement()
 			local seasonData = miog.C.SEASON_AVAILABLE[miog.F.CURRENT_SEASON]
 
 			if(currentServerTime >= seasonData.sinceEpoch + miog.C.REGION_DATE_DIFFERENCE[GetCurrentRegion()]) then
-				miog.MainTab.Awakened.Text:SetTextColor(1,1,1,1)
+				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
 
 				if(currentServerTime >= seasonData.awakened.vaultDate1 and currentServerTime < seasonData.awakened.aberrusDate1) then
-					miog.MainTab.Awakened.Text:SetText("VAULT AWAKENED")
+					miog.MainTab.Information.Awakened.Text:SetText("VAULT AWAKENED")
 
 				elseif(currentServerTime >= seasonData.awakened.aberrusDate1 and currentServerTime < seasonData.awakened.amirdrassilDate1) then
-					miog.MainTab.Awakened.Text:SetText("ABERRUS AWAKENED")
+					miog.MainTab.Information.Awakened.Text:SetText("ABERRUS AWAKENED")
 
 				elseif(currentServerTime >= seasonData.awakened.amirdrassilDate1 and currentServerTime < seasonData.awakened.vaultDate2) then
-					miog.MainTab.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
+					miog.MainTab.Information.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
 
 				elseif(currentServerTime >= seasonData.awakened.vaultDate2 and currentServerTime < seasonData.awakened.aberrusDate2) then
-					miog.MainTab.Awakened.Text:SetText("VAULT AWAKENED")
+					miog.MainTab.Information.Awakened.Text:SetText("VAULT AWAKENED")
 
 				elseif(currentServerTime >= seasonData.awakened.aberrusDate2 and currentServerTime < seasonData.awakened.amirdrassilDate2) then
-					miog.MainTab.Awakened.Text:SetText("ABERRUS AWAKENED")
+					miog.MainTab.Information.Awakened.Text:SetText("ABERRUS AWAKENED")
 
 				elseif(currentServerTime >= seasonData.awakened.amirdrassilDate2 and currentServerTime < seasonData.awakened.fullRelease) then
-					miog.MainTab.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
+					miog.MainTab.Information.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
 
 				elseif(currentServerTime >= seasonData.awakened.fullRelease) then
-					miog.MainTab.Awakened.Text:SetText("ALL RAIDS AWAKENED")
+					miog.MainTab.Information.Awakened.Text:SetText("ALL RAIDS AWAKENED")
 
 				end
 
 			else
-				miog.MainTab.Awakened.Text:SetTextColor(1,0,0,1)
-				miog.MainTab.Awakened.Text:SetText("NO RAID AWAKENED")
+				miog.MainTab.Information.Awakened.Text:SetTextColor(1,0,0,1)
+				miog.MainTab.Information.Awakened.Text:SetText("NO RAID AWAKENED")
 			
 			end
 
 		end
+
+		local aspectInfo = C_CurrencyInfo.GetCurrencyInfo(2812)
+		miog.MainTab.Information.Currency.Aspect.Text:SetText(aspectInfo.quantity .. " (" .. aspectInfo.totalEarned .. "/" .. aspectInfo.maxQuantity .. ")")
+		miog.MainTab.Information.Currency.Aspect.Icon:SetTexture(aspectInfo.iconFileID)
+		miog.MainTab.Information.Currency.Aspect:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+			GameTooltip:SetCurrencyByID(2812)
+			GameTooltip:Show()
+		end)
+
+		local wyrmInfo = C_CurrencyInfo.GetCurrencyInfo(2809)
+		miog.MainTab.Information.Currency.Wyrm.Text:SetText(wyrmInfo.quantity .. " (" .. wyrmInfo.totalEarned .. "/" .. wyrmInfo.maxQuantity .. ")")
+		miog.MainTab.Information.Currency.Wyrm.Icon:SetTexture(wyrmInfo.iconFileID)
+		miog.MainTab.Information.Currency.Wyrm:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+			GameTooltip:SetCurrencyByID(2809)
+			GameTooltip:Show()
+		end)
+
+		local drakeInfo = C_CurrencyInfo.GetCurrencyInfo(2807)
+		miog.MainTab.Information.Currency.Drake.Text:SetText(drakeInfo.quantity .. " (" .. drakeInfo.totalEarned .. "/" .. drakeInfo.maxQuantity .. ")")
+		miog.MainTab.Information.Currency.Drake.Icon:SetTexture(drakeInfo.iconFileID)
+		miog.MainTab.Information.Currency.Drake:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+			GameTooltip:SetCurrencyByID(2807)
+			GameTooltip:Show()
+		end)
+
+		local whelplingInfo = C_CurrencyInfo.GetCurrencyInfo(2806)
+		miog.MainTab.Information.Currency.Whelpling.Text:SetText(whelplingInfo.quantity .. " (" .. whelplingInfo.totalEarned .. "/" .. whelplingInfo.maxQuantity .. ")")
+		miog.MainTab.Information.Currency.Whelpling.Icon:SetTexture(whelplingInfo.iconFileID)
+		miog.MainTab.Information.Currency.Whelpling:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+			GameTooltip:SetCurrencyByID(2806)
+			GameTooltip:Show()
+		end)
 		
 		for frameIndex = 1, 3, 1 do
 			local activities = C_WeeklyRewards.GetActivities(frameIndex)
-
-			--[[activities[1].progress = random(0, activities[1].threshold) * 2
-			activities[2].progress = activities[1].progress >= activities[1].threshold and random(activities[1].progress, activities[3].threshold) or activities[1].progress
-			activities[3].progress = activities[2].progress >= activities[2].threshold and random(activities[2].progress, activities[3].threshold) or activities[2].progress]]
 
 			local firstThreshold = activities[1].progress >= activities[1].threshold
 			local secondThreshold = activities[2].progress >= activities[2].threshold
@@ -117,32 +149,28 @@ local function createPVEFrameReplacement()
 			local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
 			dimColor[4] = 0.1
 
-			local currentFrame = frameIndex == 1 and miog.MainTab.MPlusStatus or frameIndex == 2 and miog.MainTab.HonorStatus or miog.MainTab.RaidStatus
+			local currentFrame = frameIndex == 1 and miog.MainTab.Information.MPlusStatus or frameIndex == 2 and miog.MainTab.Information.HonorStatus or miog.MainTab.Information.RaidStatus
 
 			currentFrame:SetMinMaxValues(0, activities[3].threshold)
 			currentFrame.info = (thirdThreshold or secondThreshold) and activities[3] or firstThreshold and activities[2] or activities[1]
+			currentFrame.activities = activities
 			currentFrame.unlocked = currentFrame.info.progress >= currentFrame.info.threshold;
 
 			currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
 			miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
 
 			currentFrame:SetScript("OnEnter", function(self)
-
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11);
 
 				if self.info then
 					local itemLink, upgradeItemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.info.id);
-					local itemLevel, upgradeItemLevel;
+
+					local itemLevel, upgradeItemLevel, previewLevel, sparse;
 					if itemLink then
-						itemLevel = GetDetailedItemLevelInfo(itemLink);
+						itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
 					end
 					if upgradeItemLink then
-						upgradeItemLevel = GetDetailedItemLevelInfo(upgradeItemLink);
-					end
-					if not itemLevel then
-						--GameTooltip_AddErrorLine(GameTooltip, RETRIEVING_ITEM_INFO);
-						--self.UpdateTooltip = self.ShowPreviewItemTooltip;
-					
+						upgradeItemLevel, previewLevel, sparse = C_Item.GetDetailedItemLevelInfo(upgradeItemLink);
 					end
 
 					local canShow = self:CanShowPreviewItemTooltip()
@@ -151,6 +179,7 @@ local function createPVEFrameReplacement()
 					GameTooltip_AddBlankLineToTooltip(GameTooltip);
 				
 					local hasRewards = C_WeeklyRewards.HasAvailableRewards();
+
 					if hasRewards then
 						GameTooltip_AddColoredLine(GameTooltip, GREAT_VAULT_REWARDS_WAITING, GREEN_FONT_COLOR);
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
@@ -164,17 +193,33 @@ local function createPVEFrameReplacement()
 							else
 								nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(self.info.level);
 							end
+							
 							self:HandlePreviewMythicRewardTooltip(itemLevel, upgradeItemLevel, nextLevel);
 
 						else
 							self:ShowIncompleteMythicTooltip();
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
 
 						end
 
+						local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[1].id))
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. activities1Lvl)
+
+						local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[2].id))
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. activities2Lvl)
+
+						local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[3].id))
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. activities3Lvl)
+
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
+						
 						GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
 
 					elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
+						if(canShow) then
+							--self:HandlePreviewRaidRewardTooltip(itemLevel, upgradeItemLevel);
+						end
+
 						local currentDifficultyID = self.info.level;
 
 						if(itemLevel) then
@@ -208,8 +253,8 @@ local function createPVEFrameReplacement()
 								local name, description, encounterID, rootSectionID, link, instanceID = EJ_GetEncounterInfo(encounter.encounterID);
 								if instanceID ~= lastInstanceID then
 									local instanceName = EJ_GetInstanceInfo(instanceID);
-									--GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_ENCOUNTER_LIST, instanceName));
-									--GameTooltip_AddBlankLineToTooltip(GameTooltip);	
+									GameTooltip_AddBlankLineToTooltip(GameTooltip);	
+									GameTooltip_AddHighlightLine(GameTooltip, instanceName);
 									lastInstanceID = instanceID;
 								end
 								if name then
@@ -222,6 +267,18 @@ local function createPVEFrameReplacement()
 								end
 							end
 						end
+						
+						GameTooltip_AddBlankLineToTooltip(GameTooltip);
+
+						local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[1].id))
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. activities1Lvl)
+
+						local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[2].id))
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. activities2Lvl)
+						
+						local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[3].id))
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. activities3Lvl)
+
 
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
 						GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
@@ -263,10 +320,6 @@ local function createPVEFrameReplacement()
 					GameTooltip:Show()
 
 				end
-			end)
-			currentFrame:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-		
 			end)
 
 			currentFrame:SetValue(activities[3].progress)
@@ -317,8 +370,6 @@ local function createPVEFrameReplacement()
 	miog.RaidStatistics.RaidColumns.Raids = {}
 	miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
 
-	local frame = miog.MainTab
-
 	pveFrame2.TitleBar.Expand:SetScript("OnClick", function()
 
 		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
@@ -336,7 +387,7 @@ local function createPVEFrameReplacement()
 	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
 ---@diagnostic disable-next-line: undefined-field
-	local queueRolePanel = frame.QueueRolePanel
+	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
 	--queueRolePanel:SetPoint("BOTTOM", frame.QueueDropdown, "TOP", 0, 5)
 
 	local leader, tank, healer, damager = LFDQueueFrame_GetRoles()
@@ -376,15 +427,18 @@ local function createPVEFrameReplacement()
 	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
 ---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = frame.QueueDropDown
+	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	queueDropDown:OnLoad()
 	queueDropDown:SetText("Choose a queue")
-	frame.QueuePanel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	miog.MainTab.QueueInformation.Panel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 	
 	local counter = 0
 
 	local offset = 35 + 22
 	local _, _, _, tabSlots = GetSpellTabInfo(1)
+
+	local formatter = CreateFromMixins(SecondsFormatterMixin)
+	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
 
 	for i = 1, tabSlots, 1 do
 		local spellType, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
@@ -413,6 +467,7 @@ local function createPVEFrameReplacement()
 
 					local spellInfo = C_SpellBook.GetSpellInfo(flyoutSpellID)
 					local tpButton = CreateFrame("Button", nil, miog.Teleports, "SecureActionButtonTemplate")
+					tpButton:SetFrameStrata("MEDIUM")
 					tpButton:SetSize(35, 35)
 					tpButton:SetNormalTexture(spellInfo.iconID)
 					tpButton:GetNormalTexture():SetDesaturated(not spellKnown)
@@ -420,12 +475,18 @@ local function createPVEFrameReplacement()
 
 					if(spellKnown) then
 						local myCooldown = CreateFrame("Cooldown", nil, miog.Teleports, "CooldownFrameTemplate")
+						myCooldown:SetFrameStrata("HIGH")
 						myCooldown:SetPoint("TOPLEFT", tpButton, "TOPLEFT")
 						myCooldown:SetPoint("BOTTOMRIGHT", tpButton, "BOTTOMRIGHT")
 						
 						tpButton:HookScript("OnShow", function()
 							local start, duration, _, modrate = GetSpellCooldown(flyoutSpellID)
 							myCooldown:SetCooldown(start, duration, modrate)
+
+							local secondsLeft = duration - (GetTime() - start)
+							local text = secondsLeft > 0 and WrapTextInColorCode("Remaining CD: " .. formatter:Format(secondsLeft), miog.CLRSCC.red) or WrapTextInColorCode("Ready", miog.CLRSCC.green)
+
+							miog.Teleports.Remaining:SetText(text)
 						end)
 
 						tpButton:SetHighlightAtlas("communities-create-avatar-border-hover")

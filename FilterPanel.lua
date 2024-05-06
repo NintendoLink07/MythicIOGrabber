@@ -984,11 +984,8 @@ miog.loadFilterPanel = function()
 	local lustFitButton = miog.addOptionToFilterFrame(filterPanel.Panel, nil, "Lust fit", "lustFit")
 	lustFitButton:SetPoint("TOPLEFT", ressFitButton, "BOTTOMLEFT", 0, 0)
 
-	local hideHardDecline = miog.addOptionToFilterFrame(filterPanel.Panel, nil, "Hide hard decline", "hardDecline")
-	hideHardDecline:SetPoint("TOPLEFT", lustFitButton, "BOTTOMLEFT", 0, 0)
-
 	filterPanel.Panel.Plugin:SetWidth(filterPanel.Panel:GetWidth())
-	filterPanel.Panel.Plugin:SetPoint("TOPLEFT", hideHardDecline, "BOTTOMLEFT", 0, 0)
+	filterPanel.Panel.Plugin:SetPoint("TOPLEFT", lustFitButton, "BOTTOMLEFT", 0, 0)
 
 	local searchPanelExtraFilter = miog.createBasicFrame("persistent", "BackdropTemplate", miog.SidePanel.Container.FilterPanel.Panel.Plugin, 220, 200)
 	searchPanelExtraFilter:SetPoint("TOPLEFT", miog.SidePanel.Container.FilterPanel.Panel.Plugin, "TOPLEFT")
@@ -997,13 +994,16 @@ miog.loadFilterPanel = function()
 
 	--miog.createFrameBorder(searchPanelExtraFilter, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	--searchPanelExtraFilter:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	
+	local hideHardDecline = miog.addOptionToFilterFrame(searchPanelExtraFilter, nil, "Hide hard decline", "hardDecline")
+	hideHardDecline:SetPoint("TOPLEFT", searchPanelExtraFilter, "TOPLEFT", 0, 0)
 
 	local dropdownOptionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", searchPanelExtraFilter, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
 	dropdownOptionButton:SetNormalAtlas("checkbox-minimal")
 	dropdownOptionButton:SetPushedAtlas("checkbox-minimal")
 	dropdownOptionButton:SetCheckedTexture("checkmark-minimal")
 	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	dropdownOptionButton:SetPoint("TOPLEFT", searchPanelExtraFilter, "TOPLEFT", 0, 0)
+	dropdownOptionButton:SetPoint("TOPLEFT", hideHardDecline, "BOTTOMLEFT", 0, 0)
 	dropdownOptionButton:HookScript("OnClick", function(self)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory

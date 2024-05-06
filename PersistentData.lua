@@ -1011,6 +1011,7 @@ local function loadRawData()
 								orderIndex = dungeonEncounterInfo.orderIndex,
 								creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
 								icon = miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
+								achievements = {},
 			
 							}
 						end
@@ -1046,7 +1047,6 @@ local function loadRawData()
 	
 			maxPlayers = v[12],
 		}
-	
 		
 		if(miog.MAP_INFO[v[9]]) then
 			miog.ACTIVITY_INFO[k].instanceType = miog.MAP_INFO[v[9]].instanceType
@@ -1058,6 +1058,28 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[k].background = miog.MAP_INFO[v[9]].background
 			miog.ACTIVITY_INFO[k].icon = miog.MAP_INFO[v[9]].icon
 			miog.ACTIVITY_INFO[k].shortName = miog.GROUP_ACTIVITY[v[5]] and miog.GROUP_ACTIVITY[v[5]].shortName or miog.MAP_INFO[v[9]].shortName
+
+			if(miog.MAP_INFO[v[9]].achievementCategory) then
+				miog.MAP_INFO[v[9]].achievementTable = {}
+
+				local totalAchievements = GetCategoryNumAchievements(miog.MAP_INFO[v[9]].achievementCategory)
+
+				for i = 1, totalAchievements, 1 do
+					local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(miog.MAP_INFO[v[9]].achievementCategory, i)
+
+					if(strfind(name, miog.MAP_INFO[v[9]].name)) then
+						table.insert(miog.MAP_INFO[v[9]].achievementTable, id)
+
+						for x, y in ipairs(miog.MAP_INFO[v[9]].bosses) do
+							if(strfind(name, y.name)) then
+								table.insert(y.achievements, id)
+	
+							end
+	
+						end
+					end
+				end
+			end
 		end
 	
 	end
@@ -1078,14 +1100,14 @@ end
 
 miog.loadRawData = loadRawData
 
-miog.MAP_INFO[2522].criteria = {16359, 16394}
-miog.MAP_INFO[2522].criteriaAwakened = {19564, 19565, 19566}
+miog.MAP_INFO[2522].achievementCategory = 15469
+miog.MAP_INFO[2522].achievementsAwakened = {19564, 19565, 19566}
 
-miog.MAP_INFO[2549].criteria = {19348, 19386}
-miog.MAP_INFO[2549].criteriaAwakened = {19570, 19571, 19572}
+miog.MAP_INFO[2549].achievementCategory = 15469
+miog.MAP_INFO[2549].achievementsAwakened = {19570, 19571, 19572}
 
-miog.MAP_INFO[2569].criteria = {18180, 18227}
-miog.MAP_INFO[2569].criteriaAwakened = {19567, 19568, 19569}
+miog.MAP_INFO[2569].achievementCategory = 15469
+miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
 
 miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
 	[1] = 10000000000,

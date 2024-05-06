@@ -6,6 +6,11 @@ local clearSignUpNote = LFGListApplicationDialog_Show
 local clearEntryCreation = LFGListEntryCreation_Clear
 
 local defaultOptionSettings = {
+	newVersion = {
+		type = "interal",
+		title = "Newest version",
+		value = 200,
+	},
 	frameExtended = {
 		type = "variable",
 		title = "Extend the mainframe",
@@ -364,6 +369,22 @@ miog.checkForSavedSettings = function()
 		value = time(),
 		visual = date("%d/%m/%y %H:%M:%S")
 	}
+
+	--[[if(MIOG_SavedSettings.newVersion) then
+		if(not MIOG_SavedSettings.currentVersion and MIOG_SavedSettings.currentVersion.value < MIOG_SavedSettings.newVersion.value) then
+			
+		else
+			MIOG_SavedSettings.currentVersion = {
+				type = "interal",
+				title = "Currently used version",
+				value = ,
+				visual = date("%d/%m/%y %H:%M:%S")
+
+			}
+		end
+
+	end]]
+
 end
 
 miog.loadSettings = function()

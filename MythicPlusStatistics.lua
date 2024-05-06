@@ -229,9 +229,6 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name = UnitName("player")
 		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].class = className
 		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score = C_ChallengeMode.GetOverallDungeonScore()
-
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical = {}
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified = {}
 	end
 
 	characterFrame.Name:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name)
@@ -251,15 +248,27 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 		dungeonFrame.layoutIndex = index
 
 		if(isCurrentChar) then
-			local affixScores = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
+			MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID] = {}
 
-			MIOG_SavedSettings.mPlusStatistics.table[playerGUID].tyrannical[challengeMapID] = affixScores and affixScores[1] or {}
-			MIOG_SavedSettings.mPlusStatistics.table[playerGUID].fortified[challengeMapID] =  affixScores and affixScores[2] or {}
+			local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
+
+			if(affixScores) then
+				for k, v in ipairs(affixScores) do
+					MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][v.name] = v
+
+				end
+
+				local inTimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID);
+
+				MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overAllScore = overAllScore
+				MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].inTimeInfo = inTimeInfo
+				MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overtimeInfo = overtimeInfo
+			end
 
 		end
 
-		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "tyrannical" or "fortified"][challengeMapID]
-		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][miog.F.WEEKLY_AFFIX == 9 and "fortified" or "tyrannical"][challengeMapID]
+		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
+		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
 
 		dungeonFrame.Level1:SetText(thisWeek and thisWeek.level or 0)
 		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek == nil or (thisWeek.level == 0 or thisWeek.level) == nil) and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
@@ -268,6 +277,56 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 
 		dungeonFrame.Level2:SetText(lastWeek and lastWeek.level or 0)
 		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.5, desaturatedColors.g * 0.5, desaturatedColors.b * 0.5, 1)
+
+		dungeonFrame:SetScript("OnEnter", function(self) -- ChallengesDungeonIconMixin:OnEnter()
+			local name = C_ChallengeMode.GetMapUIInfo(challengeMapID);
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(name, 1, 1, 1);
+		
+			--local inTimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(self.mapID);
+			--local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(self.mapID);
+
+			local overAllScore = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overAllScore
+			local inTimeInfo = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].inTimeInfo
+			local overtimeInfo = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overtimeInfo
+		
+			if(overAllScore and (inTimeInfo or overtimeInfo)) then
+				local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(overAllScore);
+				if(not color) then
+					color = HIGHLIGHT_FONT_COLOR;
+				end
+				GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_TOTAL_SCORE:format(color:WrapTextInColorCode(overAllScore)), GREEN_FONT_COLOR);
+			end
+		
+			--if(affixScores and #affixScores > 0) then
+				--for _, affixInfo in ipairs(affixScores) do
+				for i = 1, 2, 1 do
+					local affixInfo = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][i == 1 and (miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified") or miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
+
+					if(affixInfo) then
+						GameTooltip_AddBlankLineToTooltip(GameTooltip);
+						GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_BEST_AFFIX:format(affixInfo.name));
+						GameTooltip_AddColoredLine(GameTooltip, MYTHIC_PLUS_POWER_LEVEL:format(affixInfo.level), HIGHLIGHT_FONT_COLOR);
+						if(affixInfo.overTime) then
+							if(affixInfo.durationSec >= SECONDS_PER_HOUR) then
+								GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(affixInfo.durationSec, true)), LIGHTGRAY_FONT_COLOR);
+							else
+								GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(affixInfo.durationSec, false)), LIGHTGRAY_FONT_COLOR);
+							end
+						else
+							if(affixInfo.durationSec >= SECONDS_PER_HOUR) then
+								GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(affixInfo.durationSec, true), HIGHLIGHT_FONT_COLOR);
+							else
+								GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(affixInfo.durationSec, false), HIGHLIGHT_FONT_COLOR);
+							end
+						end
+					end
+				end
+				--end
+			--end
+		
+			GameTooltip:Show();
+		end)
 
 	end
 end

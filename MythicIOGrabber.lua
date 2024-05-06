@@ -35,6 +35,15 @@ miog.OnEvent = function(_, event, ...)
 			end
 
 		end
+
+		if(C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards")) then
+			print("YE")
+			
+			miog.MainTab.MPlusStatus = Mixin(miog.MainTab.MPlusStatus, WeeklyRewardsActivityMixin)
+			miog.MainTab.HonorStatus = Mixin(miog.MainTab.HonorStatus, WeeklyRewardsActivityMixin)
+			miog.MainTab.RaidStatus = Mixin(miog.MainTab.RaidStatus, WeeklyRewardsActivityMixin)
+
+		end
 		
 		for k, v in pairs(miog.SPECIALIZATIONS) do
 			if(k > 25) then
@@ -110,7 +119,6 @@ miog.OnEvent = function(_, event, ...)
         end
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		miog.openRaidLib.RequestKeystoneDataFromParty()
-
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
 		HideUIPanel(miog.pveFrame2)

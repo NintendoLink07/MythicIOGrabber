@@ -110,7 +110,7 @@ local function HasRemainingSlotsForBloodlust(resultID)
 		end
 
 		for k, v in pairs(roles) do
-			if((k == "HUNTER" or k == "SHAMAN" or k == "MAGE" or k == "EVOKER") and v == 1) then
+			if((k == "HUNTER" or k == "SHAMAN" or k == "MAGE" or k == "EVOKER") and v > 0) then
 				return true
 
 			end
@@ -149,7 +149,7 @@ local function HasRemainingSlotsForBattleResurrection(resultID)
 		end
 
 		for k, v in pairs(roles) do
-			if((k == "PALADIN" or k == "DEATHKNIGHT" or k == "WARLOCK" or k == "DRUID") and v == 1) then
+			if((k == "PALADIN" or k == "DEATHKNIGHT" or k == "WARLOCK" or k == "DRUID") and v > 0) then
 				return true
 
 			end
@@ -177,16 +177,18 @@ end
 
 local function isGroupEligible(resultID, bordermode)
 	if(C_LFGList.HasSearchResultInfo(resultID)) then
+
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 		local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 
-		if(activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not bordermode) then
-			return false
+		if(LFGListFrame.SearchPanel.categoryID and activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not bordermode) then
+			return false, "Wrong category"
 
 		end
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].hardDecline and searchResultInfo.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] ~= nil) then
-			return false
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].hardDecline and searchResultInfo.leaderName
+		and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName].activeDecline) then
+			return false, "Hard declined"
 
 		end
 
@@ -198,12 +200,12 @@ local function isGroupEligible(resultID, bordermode)
 			if(isDungeon or isRaid) then
 				if(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].difficultyID
 				)then
-					return false
+					return false, "Wrong difficulty"
 
 				end
 			elseif(isPvp) then
 				if(searchResultInfo.activityID ~= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].difficultyID) then
-					return false
+					return false, "Wrong bracket"
 
 				end
 			
@@ -211,17 +213,17 @@ local function isGroupEligible(resultID, bordermode)
 		end
 
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].partyFit == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
-			return false
+			return false, "No slots for your role"
 
 		end
 		
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].ressFit == true and not HasRemainingSlotsForBattleResurrection(resultID)) then
-			return false
+			return false, "If you join there won't be anyone who can ress"
 
 		end
 		
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].lustFit == true and not HasRemainingSlotsForBloodlust(resultID)) then
-			return false
+			return false, "If you join there won't be anyone with a lust effect"
 
 		end
 
@@ -243,7 +245,7 @@ local function isGroupEligible(resultID, bordermode)
 				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
 					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[class]] == false
 					or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.spec[specID] == false) then
-						return false
+						return false, "Class and/or spec filtered"
 
 					end
 		
@@ -264,31 +266,31 @@ local function isGroupEligible(resultID, bordermode)
 			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
 	 	) then
-			return false
+			return false, "Incorrect number of healers/tanks/damager"
 
 		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned and
 			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
 	 	) then
-			return false
+			return false, "Incorrect number of healers/tanks/damager"
 
 		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned and
 			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned)
 	 	) then
-			return false
+			return false, "Incorrect number of healers/tanks/damager"
 
 		elseif(tanksBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks
 		or healersBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers
 		or damagerBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager) then
-			return false
+			return false, "Incorrect number of healers/tanks/damager"
 
 		end
 
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["TANK"] == false and roleCount["TANK"] > 0
 		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["HEALER"] == false and roleCount["HEALER"] > 0
 		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["DAMAGER"] == false and roleCount["DAMAGER"] > 0) then
-			return false
+			return false, "Not matching role filters"
 
 		end
 
@@ -299,17 +301,17 @@ local function isGroupEligible(resultID, bordermode)
 				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore >= 0
 				and not (score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore
 				and score <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore)) then
-					return false
+					return false, "Rating not matching filters"
 
 				end
 			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0) then
 				if(score < MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore) then
-					return false
+					return false, "Rating is lower than min"
 
 				end
 			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
 				if(score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore) then
-					return false
+					return false, "Rating is greater than max"
 					
 				end
 
@@ -319,7 +321,7 @@ local function isGroupEligible(resultID, bordermode)
 		
 		if(isDungeon and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDungeons) then
 			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].dungeons[activityInfo.groupFinderActivityGroupID] == false) then
-				return false
+				return false, "Dungeon not matching filter"
 
 			end
 
@@ -327,7 +329,7 @@ local function isGroupEligible(resultID, bordermode)
 		
 		if(isRaid and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRaids) then
 			if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].raids[activityInfo.groupFinderActivityGroupID] == false) then
-				return false
+				return false, "Raid not matching filter"
 
 			end
 
@@ -336,7 +338,7 @@ local function isGroupEligible(resultID, bordermode)
 		return true
 
 	else
-		return false
+		return false, "No result"
 
 	end
 end
@@ -609,6 +611,16 @@ local function createResultTooltip(resultID, resultFrame)
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(searchResultInfo.leaderName .. " is on your favoured player list.")
 		end
+
+		local success, reason = isGroupEligible(resultID)
+
+		if(not success and reason) then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(WrapTextInColorCode(reason, miog.CLRSCC.red))
+			
+
+		end
+
 		GameTooltip:Show()
 	end
 end
@@ -1449,9 +1461,9 @@ local function searchPanelEvents(_, event, ...)
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 
 			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityID].name or activityInfo.fullName
-			miog.MainTab.LastGroup:SetText(lastGroup)
+			miog.MainTab.Information.LastGroup:SetText(lastGroup)
 
-			MIOG_SavedSettings.lastGroup = lastGroup
+			MIOG_SavedSettings.lastGroup.value = lastGroup
 
 		end
 

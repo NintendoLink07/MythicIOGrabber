@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_RaidStatisticsColumnTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size x="100"/>
+        <Size x="135"/>
 
         <Layers>
             <Layer level="BACKGROUND">
@@ -15,27 +15,31 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="ShortName" font="LibMono" justifyH="CENTER" text="TEXT" >
+                <FontString parentKey="ShortName" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="NAME" outline="NORMAL" >
+                    <FontHeight val="13" />
                     <Anchors>
                         <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-5" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Normal" font="LibMono" justifyH="CENTER" text="N" >
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="7" y="-20" />
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Heroic" font="LibMono" justifyH="CENTER" text="H" >
+                <FontString parentKey="Heroic" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="H" outline="NORMAL" >
+                    <FontHeight val="13" />
                     <Anchors>
                         <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-20" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Mythic" font="LibMono" justifyH="CENTER" text="M" >
+                <FontString parentKey="Normal" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="N" outline="NORMAL" >
+                    <FontHeight val="13" />
                     <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-7" y="-20" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Heroic" relativePoint="LEFT" x="-35" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Mythic" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="M" outline="NORMAL" >
+                    <FontHeight val="13" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Heroic" relativePoint="RIGHT" x="35" />
                     </Anchors>
                 </FontString>
             </Layer>

@@ -19,6 +19,7 @@ local function resetQueueFrame(_, frame)
 
 	if(objectType == "Frame") then
 		frame:SetScript("OnMouseDown", nil)
+		frame:SetScript("OnEnter", nil)
 		frame.Name:SetText("")
 		frame.Name:SetTextColor(1,1,1,1)
 		frame.Age:SetText("")
@@ -39,7 +40,7 @@ local function resetQueueFrame(_, frame)
 	end
 
 ---@diagnostic disable-next-line: undefined-field
-	miog.MainTab.QueuePanel.ScrollFrame.Container:MarkDirty()
+	miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
 end
 
 local function createQueueFrame(queueInfo)
@@ -59,7 +60,7 @@ local function createQueueFrame(queueInfo)
 	
 	end
 
-	queueFrame:SetWidth(miog.MainTab.QueuePanel:GetWidth() - 7)
+	queueFrame:SetWidth(miog.MainTab.QueueInformation.Panel:GetWidth() - 7)
 	
 	--queueFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
@@ -99,7 +100,7 @@ local function createQueueFrame(queueInfo)
 	queueFrame:SetShown(true)
 
 ---@diagnostic disable-next-line: undefined-field
-	miog.MainTab.QueuePanel.ScrollFrame.Container:MarkDirty()
+	miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
 
 	return queueFrame
 end
@@ -261,20 +262,22 @@ local function checkQueues()
 								GameTooltip_AddNormalLine(tooltip, DUNGEON_SCORE_DUNGEON_RATING_OVERTIME:format(leaderDungeonScoreInfo.mapName, color:WrapTextInColorCode(leaderDungeonScoreInfo.mapScore), leaderDungeonScoreInfo.bestRunLevel));
 							end
 						end]]
-						if ( queuedTime > 0 ) then
-							tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime, false, false, 1, false)));
+						if(hasData) then
+							if ( queuedTime > 0 ) then
+								tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime, false, false, 1, false)));
+							end
+
+							if ( myWait > 0 ) then
+								tooltip:AddLine(string.format("Estimated wait time: |cffffffff%s|r", SecondsToTime(myWait, false, false, 1, false)));
+							end
+
+							if ( averageWait > 0 ) then
+								tooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(averageWait, false, false, 1, false)));
+							end
+
+
+							tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, tankNeeds .. "/" .. totalTanks, healerNeeds .. "/" .. totalHealers, dpsNeeds .. "/" .. totalDPS));
 						end
-
-						if ( myWait > 0 ) then
-							tooltip:AddLine(string.format("Estimated wait time: |cffffffff%s|r", SecondsToTime(myWait, false, false, 1, false)));
-						end
-
-						if ( averageWait > 0 ) then
-							tooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(averageWait, false, false, 1, false)));
-						end
-
-
-						tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, tankNeeds .. "/" .. totalTanks, healerNeeds .. "/" .. totalHealers, dpsNeeds .. "/" .. totalDPS));
 
 						--[[if ( searchResultInfo.leaderName or searchResultInfo.age > 0 ) then
 							tooltip:AddLine(" ");
@@ -425,7 +428,7 @@ local function checkQueues()
 
 		local frameData = {
 			[1] = true,
-			[2] = groupInfo and groupInfo or activityInfo.shortName,
+			[2] = groupInfo or activityInfo.shortName,
 			[11] = "YOUR LISTING",
 			[12] = -1,
 			[17] = {"duration", activeEntryInfo.duration},
@@ -491,8 +494,6 @@ local function checkQueues()
 							LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 						end)
-
-						
 
 						if(miog.isGroupEligible(id) == false) then
 							frame.Name:SetTextColor(1, 0, 0, 1)
@@ -753,7 +754,7 @@ hooksecurefunc("LFGListSearchPanel_SetCategory", function()
 end)
 
 miog.loadQueueSystem = function()
-	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueuePanel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
+	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
 
 	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
@@ -771,7 +772,7 @@ miog.loadQueueSystem = function()
 end
 
 local function updateRandomDungeons()
-	local queueDropDown = miog.MainTab.QueueDropDown
+	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	local info = {}
 	info.entryType = "option"
 	info.level = 2
@@ -822,7 +823,7 @@ miog.updateRandomDungeons = updateRandomDungeons
 
 local function updateDungeons()
 	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.MainTab.QueueDropDown
+	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	if(queueDropDown.entryFrameTree[1].List.framePool) then
 		queueDropDown.entryFrameTree[1].List.framePool:ReleaseAll()
 	end
@@ -886,7 +887,7 @@ miog.updateDungeons = updateDungeons
 
 local function updateRaidFinder()
 	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.MainTab.QueueDropDown
+	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
 	if(queueDropDown.entryFrameTree[4] and queueDropDown.entryFrameTree[4].List.framePool) then
 		queueDropDown.entryFrameTree[4].List.framePool:ReleaseAll()
@@ -984,7 +985,7 @@ end
 
 local function updatePvP()
 	---@diagnostic disable-next-line: undefined-field
-	local queueDropDown = miog.MainTab.QueueDropDown
+	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
 	if(queueDropDown.entryFrameTree[5].List.securePool) then
 		queueDropDown.entryFrameTree[5].List.securePool:ReleaseAll()
@@ -1158,13 +1159,13 @@ end
 
 miog.updatePvP = updatePvP
 
-local function updateQueueDropDown()
+local function updateDropDown()
 	if(miog.F.QUEUE_STOP == true) then
 		miog.F.UPDATE_QUEUE_DROPDOWN = true
 		
 	else
 		---@diagnostic disable-next-line: undefined-field
-		local queueDropDown = miog.MainTab.QueueDropDown
+		local queueDropDown = miog.MainTab.QueueInformation.DropDown
 		queueDropDown:ResetDropDown()
 
 		local info = {}
@@ -1258,20 +1259,20 @@ end
 local function queueEvents(_, event, ...)
 	if(event == "LFG_UPDATE_RANDOM_INFO") then
 		--miog.updateRandomDungeons()
-		updateQueueDropDown()
+		updateDropDown()
 
 	elseif(event == "LFG_UPDATE") then
 
 	elseif(event == "LFG_LOCK_INFO_RECEIVED") then
 		--miog.updateRaidFinder()
 		--miog.updateDungeons()
-		updateQueueDropDown()
+		updateDropDown()
 		
 	elseif(event == "PVP_BRAWL_INFO_UPDATED") then
-		updateQueueDropDown()
+		updateDropDown()
 
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
-		updateQueueDropDown()
+		updateDropDown()
 
 		if(C_LFGList.HasActiveEntryInfo() and not miog.entryCreation:IsVisible()) then
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
@@ -1294,8 +1295,8 @@ local function queueEvents(_, event, ...)
 				miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
 
 				categoryFrame:SetHeight(30)
-				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
-				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
+				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and -50 or -3)
+				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and -50 or -3)
 				categoryFrame.Title:SetText(categoryInfo.name)
 				categoryFrame.BackgroundImage:SetVertTile(true)
 				categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
@@ -1351,11 +1352,11 @@ local function queueEvents(_, event, ...)
 			end	
 		end
 	elseif(event == "GROUP_ROSTER_UPDATE") then
-		--updateQueueDropDown()
+		--updateDropDown()
 		
 	elseif(event == "PLAYER_REGEN_ENABLED") then
 		if(miog.F.UPDATE_QUEUE_DROPDOWN) then
-			updateQueueDropDown()
+			updateDropDown()
 
 		end
 	end

@@ -32,7 +32,11 @@ You can click on the frame of a manual application to switch over to the group f
 
 - All category buttons (questing, dungeon, arena skirmish, etc.) are visible by default, no more switching between PVE and PVP panels.
 
+- Underneath the category buttons will be the activity name of the last group you have joined, e.g. Algeth'ar Academy (Mythic Keystone). I always forget what group I joined so I found it useful.
+
 - Top right shows your current keystone, the current awakened raid and your current vault progress.
+
+- All current crests, descending from Aspect to Whelpling, with total earned and current max are shown right underneath the vault info.
 
 - Updated all of the background art, icons, new images for the M+ statistics, mostly dungeon/raids background images.
 
@@ -68,6 +72,8 @@ You can click on the frame of a manual application to switch over to the group f
 - [Application Viewer] There is now a loading bar for the group panel at the top. This indicates how many group members have been inspected for their specialization.
 
 - [Search Panel] Added separate icons indicating what type of friend is in a specific listing: for battle net friends orange, character (normal) friends blue or guild mates green
+
+- [Search Panel] When a group gets the orange "does not match your filters anymore" there will be now the first reason why ("class/spec wrong, not the correct amount of tanks, etc.)
 
 - [Filter Panel] All filters are now separated for each category. Filters you apply while looking for a raid group will get saved and reapplied when you, once again, look for a raid.
 
