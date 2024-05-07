@@ -36,9 +36,7 @@ miog.OnEvent = function(_, event, ...)
 
 		end
 
-		if(C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards")) then
-			print("YE")
-			
+		if(C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards")) then			
 			miog.MainTab.MPlusStatus = Mixin(miog.MainTab.MPlusStatus, WeeklyRewardsActivityMixin)
 			miog.MainTab.HonorStatus = Mixin(miog.MainTab.HonorStatus, WeeklyRewardsActivityMixin)
 			miog.MainTab.RaidStatus = Mixin(miog.MainTab.RaidStatus, WeeklyRewardsActivityMixin)

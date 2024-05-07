@@ -9,7 +9,14 @@ local defaultOptionSettings = {
 	newVersion = {
 		type = "interal",
 		title = "Newest version",
+		access = "read",
 		value = 200,
+	},
+	currentVersion = {
+		type = "interal",
+		title = "Currently used version",
+		access = "read",
+		value = 0, --SYNTAX VALUE, DOESN'T MATTER
 	},
 	frameExtended = {
 		type = "variable",
@@ -22,6 +29,12 @@ local defaultOptionSettings = {
 		title = "Resized the mainframe via resize button",
 		access = "read,write",
 		value = 0,
+	},
+	activeSidePanel = {
+		type = "variable",
+		title = "Currently active sidepanel",
+		access = "read",
+		value = "",
 	},
 	resetAllSettings = {
 		type = "button",
@@ -239,6 +252,10 @@ miog.resetSpecificFilterToDefault = function(table)
 end
 
 local function compareSettings()
+	if(MIOG_SavedSettings.currentVersion == nil) then
+		MIOG_SavedSettings = defaultOptionSettings
+	end
+
 	for key, optionEntry in pairs(MIOG_SavedSettings) do
 		if(not defaultOptionSettings[key]) then
 			MIOG_SavedSettings[key] = nil
@@ -291,6 +308,12 @@ local function compareSettings()
 			end
 		end
 	end
+
+	if(MIOG_SavedSettings.currentVersion.value < 200) then
+
+	end
+
+	MIOG_SavedSettings.currentVersion.value = defaultOptionSettings.newVersion.value
 end
 
 --https://github.com/0xbs/premade-groups-filter/commit/e31067e0ec1d1345dabc3de4c9282cc33c9aa18c courtesy of PGF
@@ -369,21 +392,6 @@ miog.checkForSavedSettings = function()
 		value = time(),
 		visual = date("%d/%m/%y %H:%M:%S")
 	}
-
-	--[[if(MIOG_SavedSettings.newVersion) then
-		if(not MIOG_SavedSettings.currentVersion and MIOG_SavedSettings.currentVersion.value < MIOG_SavedSettings.newVersion.value) then
-			
-		else
-			MIOG_SavedSettings.currentVersion = {
-				type = "interal",
-				title = "Currently used version",
-				value = ,
-				visual = date("%d/%m/%y %H:%M:%S")
-
-			}
-		end
-
-	end]]
 
 end
 
@@ -538,7 +546,7 @@ miog.loadSettings = function()
 				info.func = function(_, arg1, _, _)
 					MIOG_SavedSettings["backgroundOptions"].value = arg1
 					miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
-					miog.MainFrame.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
+					miog.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
 					UIDropDownMenu_SetText(optionDropdown, miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
 					CloseDropDownMenus()
 
@@ -556,7 +564,8 @@ miog.loadSettings = function()
 		)
 		
 		miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
-		miog.SidePanel.Container.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
+		miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
+		miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
 
 		lastOption = optionDropdown
 	end

@@ -12,6 +12,47 @@
         </Layers>
 
         <Frames>
+            <Frame parentKey="ButtonPanel">
+                <Size x="40" y="100" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Button parentKey="FilterButton" inherits="MIOG_VerticalButtonTemplate">
+                        <Size x="20" y="100" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.FontString:SetText("FILTERS")
+                                self.FontString:SetText(string.gsub(self.FontString:GetText(), "(.)", function(x) return x.."\n" end))
+                            </OnLoad>
+                        </Scripts>
+
+                    </Button>
+
+                    <Button parentKey="LastInvitesButton" inherits="MIOG_VerticalButtonTemplate">
+                        <Size x="20" y="100" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.FilterButton" relativePoint="RIGHT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.FontString:SetText("INVITES")
+                                self.FontString:SetText(string.gsub(self.FontString:GetText(), "(.)", function(x) return x.."\n" end))
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
             <Frame parentKey="FooterBar" inherits="BackdropTemplate">
                 <Size y="24" />
                 <Anchors>

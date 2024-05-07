@@ -12,6 +12,12 @@
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
                     </Anchors>
+
+                    <Scripts>
+                        <OnLeave>
+                            GameTooltip:Hide()
+                        </OnLeave>
+                    </Scripts>
                 </Texture>
             </Layer>
             
@@ -24,11 +30,5 @@
                 </FontString>
             </Layer>
         </Layers>
-
-        <Scripts>
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
-        </Scripts>
     </Frame>
 </Ui>

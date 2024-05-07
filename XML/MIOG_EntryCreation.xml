@@ -8,26 +8,26 @@
 
         <Frames>
             <Frame parentKey="ActivityDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                <Size y="25" />
+                <Size y="22" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-4"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-4"/>
                 </Anchors>
             </Frame>
             
             <Frame parentKey="DifficultyDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                <Size y="25" />
+                <Size y="22" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ActivityDropDown" relativePoint="TOPLEFT" y="-25"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ActivityDropDown" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="PlaystyleDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                <Size y="25" />
+                <Size y="22" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-50"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-50"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.DifficultyDropDown" relativePoint="TOPLEFT" y="-25"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropDown" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>
             </Frame>
 
@@ -148,11 +148,21 @@
         </Frames>
 
         <Layers>
-            <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND" textureSubLevel="-2">
+                <Texture parentKey="Border">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                        <Anchor point="BOTTOM" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOM" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="BACKGROUND" textureSubLevel="-1">
                 <Texture parentKey="Background" horizTile="true" vertTile="true">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.ActivityDropDown" relativePoint="TOPLEFT" x="1" y="-1" />
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOMRIGHT" x="-2" y="3" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                     </Anchors>
                 </Texture>
             </Layer>

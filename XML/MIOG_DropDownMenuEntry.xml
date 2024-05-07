@@ -50,15 +50,16 @@
 
                 <Scripts>
                     <OnShow>
-                        if(self.List) then
-                            for k,v in pairs(self.List:GetLayoutChildren()) do
-                                if(self.Selected.value == v.value) then
-                                    v.Radio:SetChecked(true)
-                                    
-                                else
-                                    v.Radio:SetChecked(false)
+                        for k, v in pairs(self:GetLayoutChildren()) do
+                            if(self:GetParent().ParentDropDown.Selected.value == v.value) then
+                                v.Radio:SetChecked(true)
+                                break
                                 
+                            else
+                                if(v.Radio) then
+                                    v.Radio:SetChecked(false)
                                 end
+                            
                             end
                         end
 

@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true">
+    <Frame name="MIOG_DropDownMenu" inherits="BackdropTemplate" virtual="true">
         <Frames>
             <Button parentKey="Button" inherits="UIPanelButtonTemplate" hidden="true">
                 <Size x="22" y="21" />
@@ -13,25 +13,11 @@
 		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
 
-                        for k,v in pairs(parent.List:GetLayoutChildren()) do
-                            if(v.Radio) then
-                                if(parent.Selected.value == v.value) then
-                                    v.Radio:SetChecked(true)
-                                    
-                                else
-                                    v.Radio:SetChecked(false)
-                                
-                                end
-                            end
-                        end
-
                         parent.List:SetShown(not parent.List:IsVisible())
 
                         if(parent.currentList) then
                             parent.currentList:Hide()
                         end
-
-                        parent:Raise()
 
                         parent:MarkDirty()
                     </OnClick>
@@ -44,6 +30,7 @@
                 </KeyValues>
 
                 <Size y="20" />
+                
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
@@ -108,6 +95,41 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>
+
+                <Scripts>
+                    <OnShow>
+                        for k, v in pairs(self:GetLayoutChildren()) do
+                            if(self:GetParent().Selected.value == v.value) then
+                                v.Radio:SetChecked(true)
+                                break
+                                
+                            else
+                                if(v.Radio) then
+                                    v.Radio:SetChecked(false)
+
+                                    if(v.List) then
+                                        for a, b in pairs(v.List:GetLayoutChildren()) do
+                                            if(self:GetParent().Selected.value == b.value) then
+                                                v.Radio:SetChecked(true)
+                                                break
+                                                
+                                            else
+                                                if(v.Radio) then
+                                                    v.Radio:SetChecked(false)
+                                                end
+                                            
+                                            end
+                                        end
+                                    end
+
+                                end
+                            
+                            end
+                        end
+
+                        self:Raise()
+                    </OnShow>
+                </Scripts>
             </Frame>
         </Frames>
     </Frame>

@@ -314,7 +314,7 @@ miog.createCustomColorForScore = function(score)
 end
 
 miog.addLastInvitedApplicant = function(currentApplicant)
-	local container = miog.SidePanel.Container.LastInvites.Panel.ScrollFrame.Container
+	local container = miog.LastInvites.Panel.ScrollFrame.Container
 	miog.F.LAST_INVITES_COUNTER = miog.F.LAST_INVITES_COUNTER + 1
 
 	local invitedApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", container)

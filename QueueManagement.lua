@@ -477,7 +477,7 @@ local function checkQueues()
 						[17] = {"duration", appDuration},
 						[18] = identifier,
 						[20] = miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil,
-						[21] = -1
+						[21] = id
 					}
 
 					if(appStatus == "applied") then
@@ -733,7 +733,9 @@ local function startNewGroup(categoryFrame)
 
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
 
-	LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
+	LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
+
+	--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
 	
 	miog.initializeActivityDropdown(isDifferentCategory, isSeparateCategory)
 end

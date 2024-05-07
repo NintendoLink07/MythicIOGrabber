@@ -106,15 +106,10 @@ function SlickDropDown:ResetFrame(frame)
 		frame.type2 = nil
 		frame.value = nil
 		frame.parentIndex = nil
+		frame.activities = nil
 
 		frame:SetScript("OnShow", nil)
 		frame:SetScript("OnClick", nil)
-
-		--frame:SetAttribute("macrotext1", "")
-		--frame:SetAttribute("original", "")
-
-		--self.List:MarkDirty()
-		--self:MarkDirty()
 	end
 end
 
@@ -166,11 +161,21 @@ function SlickDropDown:GetFrameAtIndex(index, parentIndex)
 	end
 end
 
+function SlickDropDown:GetFirstChildFrameFromLayoutFrame(index)
+	local baseFrame = self:GetFrameAtLayoutIndex(index)
+
+	if(baseFrame) then
+		local layoutChildren = baseFrame.List:GetLayoutChildren()
+
+		return layoutChildren[1]
+	end
+end
+
 function SlickDropDown:GetFrameAtLayoutIndex(index)
 	local layoutChildren = self.List:GetLayoutChildren()
 
-	for k,v in ipairs(layoutChildren) do
-		if(v.layoutIndex == index) then
+	for k, v in ipairs(layoutChildren) do
+		if(k == index) then
 			if(v.value) then
 				return v
 
@@ -210,17 +215,34 @@ function SlickDropDown:SelectFirstFrameWithValue(value)
 			local status = self:SelectFrame(v)
 			return status
 		else
+		--	print("---------------------------")
 			if(v.activities) then
 				for x, y in pairs(v.activities) do
+					--print(v.Name:GetText(), y, value)
 					if(y == value) then
-						local status = self:SelectFrame(v)
-						return status
+						return self:SelectFrame(v)
+					end
+				end
+			end
+
+			if(v.List) then
+				for _, y in ipairs(v.List:GetLayoutChildren()) do
+					if(y.value == value) then
+						return self:SelectFrame(y)
+					else
+						if(y.activities) then
+							--print("--")
+							for a, b in pairs(y.activities) do
+								if(b == value) then
+									return self:SelectFrame(y)
+								end
+							end
+						end
 					end
 
 				end
 
 			end
-
 		end
 	end
 
@@ -242,6 +264,12 @@ function SlickDropDown:SelectFrame(frame)
 		return false
 	
 	end
+end
+
+function SlickDropDown:SelectFirstChildFrameFromLayoutFrame(index)
+	local child = self:GetFirstChildFrameFromLayoutFrame(index)
+
+	return self:SelectFrame(child)
 end
 
 function SlickDropDown:SelectFrameAtLayoutIndex(index)
@@ -293,7 +321,6 @@ function SlickDropDown:SetWidthToWidestFrame(infoTable)
 	list.minimumWidth = width
 
 	list:MarkDirty()
-	self:MarkDirty()
 end
 
 function SlickDropDown:CreateTextLine(index, specificList, text, icon, expandable)

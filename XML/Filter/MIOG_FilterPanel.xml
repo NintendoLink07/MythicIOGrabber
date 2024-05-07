@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate" virtual="true" setAllPoints="true">
+    <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true">    
         <Frames>
             <Frame parentKey="Lock" inherits="BackdropTemplate" setAllPoints="true" hidden="true" frameStrata="HIGH">
                 <Layers>
@@ -27,31 +27,98 @@
                 </Scripts>
             </Frame>
 
-            <Frame parentKey="Panel" inherits="BackdropTemplate" setAllPoints="true">
+            <Frame parentKey="TitleBar" inherits="BackdropTemplate">
+                <Size x="230" y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                </Anchors>
+
                 <Frames>
-                    <Button parentKey="Uncheck" inherits="IconButtonTemplate">
+                    <Button parentKey="Retract" inherits="UIButtonTemplate">
                         <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2" />
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="-1"/>
                         </Anchors>
 
-                        <KeyValues>
-                            <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
-                            <KeyValue key="iconSize" value="16" type="number" />
-                        </KeyValues>
+                        <NormalTexture file="interface/buttons/arrow-down-up.blp" />
+                        <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
 
                         <Scripts>
-                            <OnShow>
-                                self:OnLoad()
-                            </OnShow>
-                        </Scripts>
+                            <OnLoad>
+                                self:GetNormalTexture():SetRotation(-math.pi/2)
+                                self:GetDisabledTexture():SetRotation(-math.pi/2)
+                            </OnLoad>
+                        </Scripts> 
                     </Button>
-
-                    <Frame parentKey="Plugin">
-                        <Size y="200" />
-                    </Frame>
                 </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="0">
+
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+            
+            <Button parentKey="Uncheck" inherits="IconButtonTemplate">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT" x="-2" y="-2" />
+                </Anchors>
+
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+
+                <Scripts>
+                    <OnShow>
+                        self:OnLoad()
+                    </OnShow>
+                </Scripts>
+            </Button>
+
+            <Frame parentKey="StandardOptions">
+                <Size y="390" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="SearchPanelOptions" hidden="true">
+                <Size y="155" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.StandardOptions" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.StandardOptions" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="CategoryOptions" hidden="true">
+                <Size y="80" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchPanelOptions" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchPanelOptions" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
             </Frame>
         </Frames>
+
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="TransparentDark" >
+                    <Color r="0.1" g="0.1" b="0.1" a="0.85" />
+
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" setAllPoints="true" />
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

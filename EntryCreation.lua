@@ -71,6 +71,10 @@ miog.createEntryCreation = function()
 	frame:GetParent().EntryCreation = frame
 	miog.entryCreation = frame
 
+	--miog.createFrameBorder(miog.entryCreation.Background, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	miog.entryCreation.Border:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
 	frame.selectedActivity = 0
 
 	local activityDropDown = frame.ActivityDropDown

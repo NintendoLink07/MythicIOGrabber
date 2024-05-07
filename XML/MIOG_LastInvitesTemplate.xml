@@ -1,42 +1,75 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_LastInvitesTemplate" inherits="BackdropTemplate" virtual="true" setAllPoints="true">
-
+    <Frame name="MIOG_LastInvitesTemplate" inherits="BackdropTemplate" virtual="true">
         <Frames>
-            <Frame parentKey="Panel" inherits="BackdropTemplate" setAllPoints="true">
-                <Frames>
-                    <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" setAllPoints="true">
-                        <Frames>
-                            <Frame parentKey="Container" inherits="VerticalLayoutFrame">
-                                <KeyValues>
-                                    <KeyValue key="spacing" value="3" type="number" />
-                                    <KeyValue key="align" value="top" type="global" />
-                                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
-                                </KeyValues>
+            <Frame parentKey="TitleBar" inherits="BackdropTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
 
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                                </Anchors>
-                            </Frame>
-                        </Frames>
-                        
+                <Frames>
+                    <Button parentKey="Retract" inherits="UIButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="-1"/>
+                        </Anchors>
+
+                        <NormalTexture file="interface/buttons/arrow-down-up.blp" />
+                        <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
+
                         <Scripts>
-                            <OnShow>
-                                self:SetScrollChild(self.Container)
-                            </OnShow>
+                            <OnLoad>
+                                self:GetNormalTexture():SetRotation(-math.pi/2)
+                                self:GetDisabledTexture():SetRotation(-math.pi/2)
+                            </OnLoad>
                         </Scripts>
-                    </ScrollFrame>
+                    </Button>
                 </Frames>
 
                 <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" setAllPoints="true">
-                            <TexCoords left="0" right="1" top="0.25" bottom="0.9" />
-                        </Texture>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="Last invites" wordwrap="true" nonspacewrap="true" spacing="0">
+
+                        </FontString>
                     </Layer>
                 </Layers>
             </Frame>
+
+            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame">
+                        <KeyValues>
+                            <KeyValue key="spacing" value="3" type="number" />
+                            <KeyValue key="align" value="top" type="global" />
+                            <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                        </KeyValues>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                </Frames>
+                
+                <Scripts>
+                    <OnShow>
+                        self:SetScrollChild(self.Container)
+                    </OnShow>
+                </Scripts>
+            </ScrollFrame>
         </Frames>
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" setAllPoints="true" />
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

@@ -406,7 +406,7 @@ miog.MAP_INFO = {
 	[1209] = {shortName = "SR", icon = "interface/lfgframe/lfgicon-skyreach.blp", fileName = "skyreach"},
 	[1208] = {shortName = "GD", icon = "interface/lfgframe/lfgicon-grimraildepot.blp", fileName = "blackrocktraindepot"},
 	[1358] = {shortName = "UBRS", icon = "interface/lfgframe/lfgicon-upperblackrockspire.blp", fileName = "upperblackrockspire"},
-	[1228] = {shortName = "HM", icon = "interface/lfgframe/lfgicon-highmaul.blp", fileName = "highmaul"},
+	[1228] = {shortName = "HM", icon = "interface/lfgframe/lfgicon-highmaul.blp", fileName = "highmaulraid"},
 	[1205] = {shortName = "BRF", icon = "interface/lfgframe/lfgicon-blackrockfoundry.blp", fileName = "blackrockfoundry"},
 
 	[409] = {shortName = "MC", fileName = "moltencore"},
@@ -430,7 +430,7 @@ miog.MAP_INFO = {
 	[556] = {shortName = "SETH", icon = "interface/lfgframe/lfgicon-auchindoun.blp", fileName = "auchindoun"},
 	[555] = {shortName = "SL", icon = "interface/lfgframe/lfgicon-auchindoun.blp", fileName = "auchindoun"},
 	[1001] = {shortName = "SH", icon = "interface/lfgframe/lfgicon-scarlethalls.blp", fileName = "scarlethalls"},
-	[1004] = {shortName = "SM", icon = "interface/lfgframe/lfgicon-scarletmonastery.blp", fileName = "scarletmonastery"},
+	[1004] = {shortName = "SM", icon = "interface/lfgframe/lfgicon-scarletmonastery.blp", fileName = "scarletmonastery2"},
 	[560] = {shortName = "EFD", icon = "interface/lfgframe/lfgicon-cavernsoftime.blp", fileName = "cavernstime"},
 	[269] = {shortName = "BM", icon = "interface/lfgframe/lfgicon-cavernsoftime.blp", fileName = "cavernstime"},
 	[554] = {shortName = "MECH", icon = "interface/lfgframe/lfgicon-tempestkeep.blp", fileName = "tempestkeep"},
@@ -442,7 +442,7 @@ miog.MAP_INFO = {
 	[544] = {shortName = "ML", icon = "interface/lfgframe/lfgicon-hellfireraid.blp", fileName = "hellfireraid"},
 	[548] = {shortName = "SSC", icon = "interface/lfgframe/lfgicon-serpentshrinecavern.blp", fileName = "coilfang"},
 	[550] = {shortName = "TK", icon = "interface/lfgframe/lfgicon-tempestkeep.blp", fileName = "tempestkeep"},
-	[564] = {shortName = "BT", icon = "interface/lfgframe/lfgicon-blacktemple.blp", fileName = "blacktemplte"},
+	[564] = {shortName = "BT", icon = "interface/lfgframe/lfgicon-blacktemple.blp", fileName = "blacktemple"},
 	[565] = {shortName = "GL", icon = "interface/lfgframe/lfgicon-gruulslair.blp", fileName = "gruulslair"},
 	[580] = {shortName = "SW", icon = "interface/lfgframe/lfgicon-sunwell.blp", fileName = "sunwell"},
 
@@ -454,7 +454,7 @@ miog.MAP_INFO = {
 	[599] = {shortName = "HOS", icon = "interface/lfgframe/lfgicon-hallsofstone.blp", fileName = "ulduar70"},
 	[595] = {shortName = "CULL", icon = "interface/lfgframe/lfgicon-oldstratholme.blp", fileName = "stratholme"},
 	[600] = {shortName = "DTK", icon = "interface/lfgframe/lfgicon-draktharon.blp", fileName = "draktharon"},
-	[604] = {shortName = "GUN", icon = "interface/lfgframe/lfgicon-gundrak.blp", fileName = "ulduar80"},
+	[604] = {shortName = "GUN", icon = "interface/lfgframe/lfgicon-gundrak.blp", fileName = "gundrak"},
 	[619] = {shortName = "ATOK", icon = "interface/lfgframe/lfgicon-ahnkalet.blp", fileName = "azjolnerub76"},
 	[608] = {shortName = "VH", icon = "interface/lfgframe/lfgicon-theviolethold.blp", fileName = "dalaranprison"},
 	[576] = {shortName = "NEX", icon = "interface/lfgframe/lfgicon-thenexus.blp", fileName = "nexus70"},
@@ -467,13 +467,13 @@ miog.MAP_INFO = {
 	[43] = {shortName = "WC", fileName = "wailingcaverns"},
 	[389] = {shortName = "RFC", fileName = "ragefirechasm"},
 	[48] = {shortName = "BFD", fileName = "blackfathomdeeps"},
-	[34] = {shortName = "SS", fileName = "coilfang"},
+	[34] = {shortName = "SS", fileName = "stormwindstockade"},
 	[90] = {shortName = "GR", fileName = "gnomeregan"},
 	[47] = {shortName = "RFK", fileName = "razorfenkraul"},
 	[129] = {shortName = "RFD", fileName = "razorfendowns"},
 	[70] = {shortName = "ULDA", fileName = "uldamanold"},
 	[209] = {shortName = "ZF", fileName = "zulfarrak"},
-	[349] = {shortName = "MAU", fileName = "mauradon"},
+	[349] = {shortName = "MAU", fileName = "maraudon"},
 	[109] = {shortName = "ST", fileName = "sunkentemple"},
 	[230] = {shortName = "BRD", fileName = "blackrockdepths"},
 	[229] = {shortName = "BRS", fileName = "blackrockspire"},
@@ -1035,6 +1035,7 @@ local function loadRawData()
 	end
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
+
 		miog.ACTIVITY_INFO[k] = {
 			fullName = v[1],
 			difficultyName = v[2],
@@ -1080,6 +1081,8 @@ local function loadRawData()
 					end
 				end
 			end
+		else
+			miog.ACTIVITY_INFO[k].horizontal = miog.ACTIVITY_BACKGROUNDS[v[3]]
 		end
 	
 	end

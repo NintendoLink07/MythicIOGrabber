@@ -85,6 +85,7 @@ You can click on the frame of a manual application to switch over to the group f
 
 - Sounds have been added to most buttons to get a bit more feedback
 
+
 ### Fixed
 
 - Way better memory management, lower end hardware will feel this the most, before the addon would use easily 150-200mb if you were listing your own group and looking through the group finder at the same time.
@@ -109,7 +110,7 @@ While there is still some stuff to fix (e.g. if you only use the Search Panel fo
 
 - Seasonal gearing charts. How much crests do you need for what, what bosses drop what level of gear, that kind of stuff.
 
-- [Application Viewer] Class panel inspection algorithm improvements, better detection at specsw and keeping that info between /reloads.
+- [Application Viewer] Class panel inspection algorithm improvements, better detection at specs and keeping that info between /reloads.
 
 - [M+ Statistics] You can select any keystone in the dropdown to show potential score gains from your key or the ones of your party / raid.
 
