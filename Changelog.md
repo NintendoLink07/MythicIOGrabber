@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [2.0] - 2024-04-28
+## [2.0] - 2024-05-08
 
 2.0 is here!
 Took me longer than I wanted but it was worth it (and quite a lot of work tbh).
@@ -1203,7 +1203,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/1.9.1...HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0..HEAD
+[2.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0
 [1.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.9.1
 [1.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.9
 [1.8.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/1.8.1
