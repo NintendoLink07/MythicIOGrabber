@@ -39,15 +39,15 @@
                 <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="true">
                     <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="1"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-18"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="1" y="2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-30" x="-18"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Age" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Age">
                     <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT" x="1" y="-2" />
                     </Anchors>
                 </FontString>
 

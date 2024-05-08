@@ -16,7 +16,7 @@
                 <Size x="40" y="100" />
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="5" />
                 </Anchors>
 
                 <Frames>

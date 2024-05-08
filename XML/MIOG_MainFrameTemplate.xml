@@ -22,8 +22,17 @@
                         <NormalTexture atlas="Battlenet-ClientIcon-WoW" />
 						<Scripts>
 							<OnClick>
-								PVEFrame_ShowFrame("GroupFinderFrame", LFGListPVEStub)
+								PVEFrame_ShowFrame("GroupFinderFrame")
 							</OnClick>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                                GameTooltip:SetText("Show the stock Blizzard frame")
+                                GameTooltip:Show()
+                            </OnEnter>
+
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
 						</Scripts>
 					</Button>
 
@@ -114,7 +123,7 @@
                             <Frame parentKey="QueueInformation">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"  />
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="185"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="200"/>
                                 </Anchors>
 
                                 <Frames>
@@ -328,8 +337,27 @@
                             <Frame parentKey="CategoryPanel" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.QueueInformation" relativePoint="BOTTOMRIGHT" x="200"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.QueueInformation" relativePoint="BOTTOMRIGHT" x="185"/>
                                 </Anchors>
+
+                                <Frames>
+                                    <Frame parentKey="LastGroup" inherits="BackdropTemplate">
+                                        <Size y="40" />
+
+                                        <Anchors>
+                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" y="3"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
+                                        </Anchors>
+
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
+                                                    <FontHeight val="12"/>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
+                                </Frames>
                             </Frame>
 
                             <Frame parentKey="Information" inherits="BackdropTemplate">
@@ -554,18 +582,6 @@
                                         </Frames>
                                     </Frame>
                                 </Frames>
-                                
-                                <Layers>
-                                    <Layer level="OVERLAY">
-                                        <FontString parentKey="LastGroup" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
-                                            <FontHeight val="12"/>
-                                            <Anchors>
-                                                <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" y="3"/>
-                                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
-                                            </Anchors>
-                                        </FontString>
-                                    </Layer>
-                                </Layers>
                             </Frame>
                         </Frames>
                     </Frame>

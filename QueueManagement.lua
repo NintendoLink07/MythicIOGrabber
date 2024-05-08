@@ -780,14 +780,6 @@ local function updateRandomDungeons()
 	info.level = 2
 	info.index = nil
 
-	if(queueDropDown.entryFrameTree[1]) then
-		queueDropDown:ReleaseSpecificFrames("random", queueDropDown.entryFrameTree[1].List)
-	end
-	
-	if(queueDropDown.entryFrameTree[2]) then
-		queueDropDown:ReleaseSpecificFrames("random", queueDropDown.entryFrameTree[2].List)
-	end
-
 	for i=1, GetNumRandomDungeons() do
 		local id, name, typeID, subtypeID, _, _, _, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon = GetLFGRandomDungeonInfo(i)
 		
@@ -826,17 +818,6 @@ miog.updateRandomDungeons = updateRandomDungeons
 local function updateDungeons()
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
-	if(queueDropDown.entryFrameTree[1].List.framePool) then
-		queueDropDown.entryFrameTree[1].List.framePool:ReleaseAll()
-	end
-
-	if(queueDropDown.entryFrameTree[2].List.framePool) then
-		queueDropDown.entryFrameTree[2].List.framePool:ReleaseAll()
-	end
-
-	if(queueDropDown.entryFrameTree[3].List.framePool) then
-		queueDropDown.entryFrameTree[3].List.framePool:ReleaseAll()
-	end
 
 	local info = {}
 	info.entryType = "option"
@@ -890,10 +871,6 @@ miog.updateDungeons = updateDungeons
 local function updateRaidFinder()
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
-
-	if(queueDropDown.entryFrameTree[4] and queueDropDown.entryFrameTree[4].List.framePool) then
-		queueDropDown.entryFrameTree[4].List.framePool:ReleaseAll()
-	end
 
 	local info = {}
 	info.entryType = "option"
@@ -989,13 +966,6 @@ local function updatePvP()
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
-	if(queueDropDown.entryFrameTree[5].List.securePool) then
-		queueDropDown.entryFrameTree[5].List.securePool:ReleaseAll()
-	end
-
-	if(queueDropDown.entryFrameTree[5].List.framePool) then
-		queueDropDown.entryFrameTree[5].List.framePool:ReleaseAll()
-	end
 	local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
 
 	local token, loopMax, generalTooltip;
@@ -1285,6 +1255,14 @@ local function queueEvents(_, event, ...)
 
 		local lastFrame = nil
 
+		local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+
+		local function showFailureReason(owner)
+			GameTooltip:SetOwner(owner, "ANCHOR_TOPRIGHT")
+			GameTooltip:SetText(failureReason)
+			GameTooltip:Show()
+		end
+
 		for k, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
 			local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
 
@@ -1297,26 +1275,47 @@ local function queueEvents(_, event, ...)
 				miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
 
 				categoryFrame:SetHeight(30)
-				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and -50 or -3)
+				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and -60 or -3)
 				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and -50 or -3)
 				categoryFrame.Title:SetText(categoryInfo.name)
 				categoryFrame.BackgroundImage:SetVertTile(true)
 				categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
+				categoryFrame.StartGroup.Icon:SetDesaturated(not canUse)
+				categoryFrame.FindGroup.Icon:SetDesaturated(not canUse)
+
+				if(not canUse) then
+					categoryFrame.StartGroup:SetScript("OnEnter", function(self)
+						showFailureReason(self)
+					end)
+					categoryFrame.StartGroup:SetScript("OnLeave", function(self)
+						GameTooltip:Hide()
+					end)
+
+					categoryFrame.FindGroup:SetScript("OnEnter", function(self)
+						showFailureReason(self)
+					end)
+					categoryFrame.FindGroup:SetScript("OnLeave", function(self)
+						GameTooltip:Hide()
+					end)
+
+				else
+					categoryFrame.StartGroup:SetScript("OnClick", function(self)
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+						local button = self:GetParent()
+						startNewGroup(button)
+	
+						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
+					end)
+	
+					categoryFrame.FindGroup:SetScript("OnClick", function(self)
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+						local button = self:GetParent()
+						findGroup(button)
+	
+						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+					end)
 				
-				categoryFrame.StartGroup:SetScript("OnClick", function(self)
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-					local button = self:GetParent()
-					startNewGroup(button)
-
-					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
-				end)
-				categoryFrame.FindGroup:SetScript("OnClick", function(self)
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-					local button = self:GetParent()
-					findGroup(button)
-
-					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-				end)
+				end
 			
 				lastFrame = categoryFrame
 		
@@ -1334,20 +1333,41 @@ local function queueEvents(_, event, ...)
 					notRecommendedFrame.BackgroundImage:SetVertTile(true)
 					notRecommendedFrame.BackgroundImage:SetHorizTile(true)
 					notRecommendedFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-					notRecommendedFrame.StartGroup:SetScript("OnClick", function(self)
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-						local button = self:GetParent()
-						startNewGroup(button)
+					notRecommendedFrame.StartGroup.Icon:SetDesaturated(not canUse)
+					notRecommendedFrame.FindGroup.Icon:SetDesaturated(not canUse)
 
-						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
-					end)
-					notRecommendedFrame.FindGroup:SetScript("OnClick", function(self)
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-						local button = self:GetParent()
-						findGroup(button)
-
-						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-					end)
+					if(not canUse) then
+						notRecommendedFrame.StartGroup:SetScript("OnEnter", function(self)
+							showFailureReason(self)
+						end)
+						notRecommendedFrame.StartGroup:SetScript("OnLeave", function(self)
+							GameTooltip:Hide()
+						end)
+	
+						notRecommendedFrame.FindGroup:SetScript("OnEnter", function(self)
+							showFailureReason(self)
+						end)
+						notRecommendedFrame.FindGroup:SetScript("OnLeave", function(self)
+							GameTooltip:Hide()
+						end)
+	
+					else
+						notRecommendedFrame.StartGroup:SetScript("OnClick", function(self)
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+							local button = self:GetParent()
+							startNewGroup(button)
+	
+							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
+						end)
+						notRecommendedFrame.FindGroup:SetScript("OnClick", function(self)
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+							local button = self:GetParent()
+							findGroup(button)
+	
+							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+						end)
+					
+					end
 			
 					lastFrame = notRecommendedFrame
 				end

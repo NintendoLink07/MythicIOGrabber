@@ -160,8 +160,9 @@ miog.secondsToClock = function(stringSeconds)
 	end
 end
 
-miog.checkForActiveFilters = function(filterPanel)
+miog.checkForActiveFilters = function()
 	local filtersActive = false
+	local filterPanel = miog.FilterPanel
 
 	for _, v in pairs(filterPanel.FilterOptions.ClassPanels) do
 		if(not v.Class.Button:GetChecked()) then

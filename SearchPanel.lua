@@ -1461,7 +1461,7 @@ local function searchPanelEvents(_, event, ...)
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 
 			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityID].name or activityInfo.fullName
-			miog.MainTab.Information.LastGroup:SetText(lastGroup)
+			miog.MainTab.CategoryPanel.LastGroup.Text:SetText(lastGroup)
 
 			MIOG_SavedSettings.lastGroup.value = lastGroup
 
@@ -1545,8 +1545,8 @@ miog.createSearchPanel = function()
 	autoCompleteFrame:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", -4, 1)
 	searchPanel.AutoCompleteFrame = autoCompleteFrame
 	
-
 	searchPanel.StartSearch:SetScript("OnClick", function( )
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 		--C_LFGList.Search(LFGListFrame.SearchPanel.categoryID, LFGListFrame.SearchPanel.filters, LFGListFrame.SearchPanel.preferredFilters, C_LFGList.GetLanguageSearchFilter());
 
@@ -1563,6 +1563,7 @@ miog.createSearchPanel = function()
 		sortByCategoryButton.category = i == 1 and "primary" or i == 2 and "secondary" or i == 3 and "age"
 
 		sortByCategoryButton:SetScript("PostClick", function(self, button)
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			miog.checkSearchResultListForEligibleMembers()
 		end)
 

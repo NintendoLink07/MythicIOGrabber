@@ -30,7 +30,7 @@
 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture atlas="tradeskills-icon-add" setAllPoints="true">
+                        <Texture parentKey="Icon" atlas="tradeskills-icon-add" setAllPoints="true">
 
                         </Texture>
                     </Layer>
@@ -45,7 +45,7 @@
                 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture atlas="uitools-icon-search" setAllPoints="true">
+                        <Texture parentKey="Icon" atlas="uitools-icon-search" setAllPoints="true">
 
                         </Texture>
                     </Layer>

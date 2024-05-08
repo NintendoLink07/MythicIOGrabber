@@ -21,13 +21,13 @@ local defaultOptionSettings = {
 	frameExtended = {
 		type = "variable",
 		title = "Extend the mainframe",
-		access = "read,write",
+		access = "read",
 		value = false,
 	},
 	frameManuallyResized = {
 		type = "variable",
 		title = "Resized the mainframe via resize button",
-		access = "read,write",
+		access = "read",
 		value = 0,
 	},
 	activeSidePanel = {
@@ -102,7 +102,7 @@ local defaultOptionSettings = {
 	backgroundOptions = {
 		type = "dropdown",
 		title = "Background options",
-		access = "read,write",
+		access = "read",
 		value = 10,
 	},
 	-- Name + Realm, time of last invite
@@ -170,8 +170,8 @@ local defaultOptionSettings = {
 				hardDecline = false,
 				softDecline = false
 			},
-			["LFGListFrame.ApplicationViewer"] = {},
-			["LFGListFrame.SearchPanel"] = {},
+			["LFGListFrame.ApplicationViewer"] = nil,
+			["LFGListFrame.SearchPanel"] = nil,
 		},
 		access = "read",
 	},
@@ -272,6 +272,7 @@ local function compareSettings()
 			end
 
 		elseif(MIOG_SavedSettings[key]) then
+			
 			if(MIOG_SavedSettings[key].title ~= optionEntry.title) then
 				MIOG_SavedSettings[key].title = optionEntry.title
 			end
@@ -293,11 +294,12 @@ local function compareSettings()
 			if(MIOG_SavedSettings[key].access == "read,write") then
 				MIOG_SavedSettings[key].table = optionEntry.table
 				MIOG_SavedSettings[key].value = optionEntry.value
+				MIOG_SavedSettings[key].table = optionEntry.table
 
 			else
-				MIOG_SavedSettings[key].table = MIOG_SavedSettings[key].table or {}
-
 				if(optionEntry.table) then
+					MIOG_SavedSettings[key].table = MIOG_SavedSettings[key].table or {}
+
 					for tableKey, tableEntry in pairs(optionEntry.table) do
 						if(not MIOG_SavedSettings[key].table[tableKey]) then
 							MIOG_SavedSettings[key].table[tableKey] = tableEntry

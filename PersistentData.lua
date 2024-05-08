@@ -1048,6 +1048,11 @@ local function loadRawData()
 	
 			maxPlayers = v[12],
 		}
+
+		if(miog.GROUP_ACTIVITY[v[5]]) then
+			miog.GROUP_ACTIVITY[v[5]].activityID = k
+			
+		end
 		
 		if(miog.MAP_INFO[v[9]]) then
 			miog.ACTIVITY_INFO[k].instanceType = miog.MAP_INFO[v[9]].instanceType

@@ -11,5 +11,8 @@
                 </FontString>
             </Layer>
         </Layers>
+        
+        <HighlightTexture atlas="BattleBar-SwapPetFrame-Highlight" >
+        </HighlightTexture>
     </Button>
 </Ui>

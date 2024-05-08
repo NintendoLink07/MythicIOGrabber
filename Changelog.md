@@ -26,8 +26,7 @@ Exception to this are Skirmish and both Brawls, those will be implemented in 2.1
 Not sure if I will re-implement those other buttons, there will always be atleast a queue link to the pvp frame.
 
 - See the status of the current "application" in the panel on the left side!
-You'll get a quick overview of the active queues, you can expand the window and see some additional stats like average wait time, what's currently needed, etc.
-While both queue applications and manual group applications(think applications to "485+++ Fyrakk" groups) will be visible here, your manual applications will always be at the top by default (order can be changed via the interface option settings).
+While both queue applications and manual group applications(think applications to "485+++ Fyrakk" groups) will be visible here, your manual applications will always be at the top by default.
 You can click on the frame of a manual application to switch over to the group finder.
 
 - All category buttons (questing, dungeon, arena skirmish, etc.) are visible by default, no more switching between PVE and PVP panels.
@@ -63,7 +62,7 @@ You can click on the frame of a manual application to switch over to the group f
     As I have no raid teleports yet they are not officially supported since I can't test it.
     But maybe they'll get auto included when I scan for teleports, I really don't know.
 
-- Already "integrated" Blizzard's upcoming 10.2.7 filter panel (sort of, have to look at Blizzards code to know how they exactly use it / where the filters get applied).
+- Already "integrated" Blizzard's 10.2.7 filter panel (sort of, have to look at Blizzards code to know how they exactly use it / where the filters get applied, pretty sure I got most things implemented correctly).
     - If you change something in there it will get applied to MIOG's settings aswell.
     - Also if you change something in the filter panel it gets applied to Blizzards filter panel aswell (if the option is supported, e.g. minimum rating is supported but maximum rating isn't so only minimum rating gets copied to Blizzards settings)
 
@@ -83,7 +82,7 @@ You can click on the frame of a manual application to switch over to the group f
 
 - [Filter Panel] Added role "link" options to filter groups that e.g. either have a tank or a healer or either have already 2 tanks or no healers.
 
-- Sounds have been added to most buttons to get a bit more feedback
+- Sounds have been added to most buttons to get a bit more feedback.
 
 
 ### Fixed
@@ -110,7 +109,7 @@ While there is still some stuff to fix (e.g. if you only use the Search Panel fo
 
 - Seasonal gearing charts. How much crests do you need for what, what bosses drop what level of gear, that kind of stuff.
 
-- [Application Viewer] Class panel inspection algorithm improvements, better detection at specs and keeping that info between /reloads.
+- [Application Viewer] Class panel inspection algorithm improvements, UI wise and better detection at specs and keeping that info between /reloads.
 
 - [M+ Statistics] You can select any keystone in the dropdown to show potential score gains from your key or the ones of your party / raid.
 

@@ -25,8 +25,12 @@ miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGro
 			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
 		else
 			-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
-			C_LFGList.RemoveListing();
-			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+
+
+			-- DOESNT WORK BECAUSE OF PROTECTION XD
+			--C_LFGList.RemoveListing();
+			--C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
 		end
 
 		LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);

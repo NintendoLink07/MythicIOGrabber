@@ -18,8 +18,6 @@
                         if(parent.currentList) then
                             parent.currentList:Hide()
                         end
-
-                        parent:MarkDirty()
                     </OnClick>
                 </Scripts>
             </Button>
@@ -100,8 +98,10 @@
                     <OnShow>
                         for k, v in pairs(self:GetLayoutChildren()) do
                             if(self:GetParent().Selected.value == v.value) then
-                                v.Radio:SetChecked(true)
-                                break
+                                if(v.Radio) then
+                                    v.Radio:SetChecked(true)
+                                    break
+                                end
                                 
                             else
                                 if(v.Radio) then

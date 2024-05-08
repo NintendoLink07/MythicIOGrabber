@@ -327,6 +327,8 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		numericField:SetNumeric(true)
 		numericField:SetMaxLetters(4)
 		numericField:HookScript("OnTextChanged", function(self, ...)
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			
 			local text = tonumber(self:GetText())
 			local currentPanel = LFGListFrame.activePanel:GetDebugName()
 			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
@@ -363,11 +365,11 @@ local function updateDungeonCheckboxes()
 	local filterPanel = miog.FilterPanel
 	local sortedSeasonDungeons = {}
 
-	local mapTable = C_ChallengeMode.GetMapTable()
+	local seasonGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
 
-	if(mapTable) then
-		for _, v in ipairs(mapTable) do
-			local activityInfo = miog.ACTIVITY_INFO[miog.CHALLENGE_MODE[v]]
+	if(seasonGroups) then
+		for _, v in ipairs(seasonGroups) do
+			local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
 			sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName}
 
 		end
@@ -406,42 +408,43 @@ miog.updateDungeonCheckboxes = updateDungeonCheckboxes
 local function updateRaidCheckboxes()
 	local filterPanel = miog.FilterPanel
 	local sortedExpansionRaids = {}
+	
+	local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
 
-	for k, v in pairs(miog.ACTIVITY_INFO) do
-		if(v.expansionLevel == (GetAccountExpansionLevel()-1) and v.difficultyID == miog.RAID_DIFFICULTIES[3]) then
-			sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = v.groupFinderActivityGroupID, name = v.shortName}
+	if(seasonGroups) then
+		for _, v in ipairs(seasonGroups) do
+			local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
+			sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName}
+
 		end
 
-	end
-
-	table.sort(sortedExpansionRaids, function(k1, k2)
-		return k1.groupFinderActivityGroupID < k2.groupFinderActivityGroupID
-	end)
-
-	for k, activityEntry in ipairs(sortedExpansionRaids) do
-		--local checked = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3] and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID]
-		--currentButton:SetChecked(checked)
-		local currentButton = filterPanel.FilterOptions.RaidPanel.Buttons[k]
-
-		currentButton:HookScript("OnClick", function(self)
-			MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] = self:GetChecked()
-
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids) then
-				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-					miog.checkSearchResultListForEligibleMembers()
-		
-				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-					C_LFGList.RefreshApplicants()
-		
-				end
-			end
-
+		table.sort(sortedExpansionRaids, function(k1, k2)
+			return k1.groupFinderActivityGroupID < k2.groupFinderActivityGroupID
 		end)
-		
-		currentButton.FontString:SetText(activityEntry.name)
-	end
 
-	miog.UPDATED_RAID_FILTERS = true
+		for k, activityEntry in ipairs(sortedExpansionRaids) do
+			local currentButton = filterPanel.FilterOptions.RaidPanel.Buttons[k]
+
+			currentButton:HookScript("OnClick", function(self)
+				MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] = self:GetChecked()
+
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids) then
+					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+						miog.checkSearchResultListForEligibleMembers()
+			
+					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+						C_LFGList.RefreshApplicants()
+			
+					end
+				end
+
+			end)
+			
+			currentButton.FontString:SetText(activityEntry.name)
+		end
+
+		miog.UPDATED_RAID_FILTERS = true
+	end
 end
 
 miog.updateRaidCheckboxes = updateRaidCheckboxes
@@ -718,7 +721,7 @@ local function setupFiltersForActivePanel(reset)
 
 				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].classSpec.class[classIndex] = state
 
-				if(not miog.checkForActiveFilters(filterPanel)) then
+				if(not miog.checkForActiveFilters()) then
 					miog.FilterPanel.TitleBar.FontString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 				else
@@ -767,7 +770,7 @@ local function setupFiltersForActivePanel(reset)
 					if(state) then
 						currentClassPanel.Class.Button:SetChecked(true)
 
-						if(not miog.checkForActiveFilters(filterPanel)) then
+						if(not miog.checkForActiveFilters()) then
 							miog.FilterPanel.TitleBar.FontString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 						end
@@ -799,21 +802,21 @@ local function setupFiltersForActivePanel(reset)
 
 			local sortedSeasonDungeons = {}
 
-			local mapTable = C_ChallengeMode.GetMapTable()
+			local seasonGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
 
-			if(mapTable) then
-				for _, v in ipairs(mapTable) do
-					local activityInfo = miog.ACTIVITY_INFO[miog.CHALLENGE_MODE[v]]
+			if(seasonGroups) then
+				for _, v in ipairs(seasonGroups) do
+					local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
 					sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName}
-
+		
 				end
-
+		
 				table.sort(sortedSeasonDungeons, function(k1, k2)
 					return k1.name < k2.name
 				end)
 
 				for k, activityEntry in ipairs(sortedSeasonDungeons) do
-					local notChecked = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons[activityEntry.groupFinderActivityGroupID] == false
+					local notChecked = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][2].dungeons[activityEntry.groupFinderActivityGroupID] == false
 					filterPanel.FilterOptions.DungeonPanel.Buttons[k]:SetChecked(reset or not notChecked)
 				end
 			end
@@ -834,7 +837,7 @@ local function setupFiltersForActivePanel(reset)
 				end)
 
 				for k, activityEntry in ipairs(sortedExpansionRaids) do
-					local checked = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID]
+					local checked = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][3].raids[activityEntry.groupFinderActivityGroupID]
 					filterPanel.FilterOptions.RaidPanel.Buttons[k]:SetChecked(reset or checked)
 				end
 			end
@@ -914,7 +917,7 @@ local function addRolePanel(parent)
 
 			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"] = state
 
-			if(not miog.checkForActiveFilters(parent)) then
+			if(not miog.checkForActiveFilters()) then
 				miog.FilterPanel.TitleBar.FontString:SetText(WrapTextInColorCode("No filters", "FFFFFFFF"))
 
 			else
@@ -1042,6 +1045,8 @@ miog.loadFilterPanel = function()
 	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 	dropdownOptionButton:SetPoint("TOPLEFT", hideHardDecline, "BOTTOMLEFT", 0, 0)
 	dropdownOptionButton:HookScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 	

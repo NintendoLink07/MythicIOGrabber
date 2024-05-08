@@ -158,7 +158,7 @@ miog.createRaidCharacter = function(playerGUID)
 
 							end
 
-							table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].bosses, {id = b, criteriaID = criteriaID, killed = completedCriteria, })
+							table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].bosses, {id = b, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 
 						end
 					end
@@ -181,7 +181,7 @@ miog.createRaidCharacter = function(playerGUID)
 
 					end
 
-					table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, })
+					table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 				end
 			end
 		end
@@ -203,7 +203,7 @@ local function raidFrame_OnEnter(self, playerGUID, mapID, difficulty, type)
 		icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
 		= GetAchievementInfo(bossInfo.id)
 
-		GameTooltip:AddDoubleLine(quantity, type == "awakened" and criteriaString .. " kills" or name)
+		GameTooltip:AddDoubleLine(bossInfo.quantity or 0, type == "awakened" and criteriaString .. " kills" or name)
 	end
 
 	GameTooltip:Show()

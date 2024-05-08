@@ -149,7 +149,6 @@ miog.refreshKeystones = function()
 	end]]
 
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
-	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:MarkDirty()
 end
 
 miog.setUpMPlusStatistics = function()

@@ -34,7 +34,7 @@ local function createPVEFrameReplacement()
 		miog.setupRaidStatistics()
 		miog.gatherRaidStatistics()
 
-		miog.MainTab.Information.LastGroup:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
+		miog.MainTab.CategoryPanel.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -203,13 +203,13 @@ local function createPVEFrameReplacement()
 						end
 
 						local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[1].id))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. activities1Lvl)
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
 
 						local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[2].id))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. activities2Lvl)
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
 
 						local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[3].id))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. activities3Lvl)
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
 
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
 						
@@ -271,13 +271,13 @@ local function createPVEFrameReplacement()
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
 
 						local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[1].id))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. activities1Lvl)
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
 
 						local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[2].id))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. activities2Lvl)
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
 						
 						local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[3].id))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. activities3Lvl)
+						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
 
 
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);

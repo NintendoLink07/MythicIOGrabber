@@ -419,12 +419,23 @@ local function createApplicantFrame(applicantID)
 				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
 
 			end
-			
 
 			local activeEntry = C_LFGList.GetActiveEntryInfo()
 			local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
 
-			if(categoryID == 2) then
+			if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
+				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForScore(pvpData.rating):GenerateHexColor()))
+
+				if(pvpData.tier and pvpData.tier ~= "N/A") then
+					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
+					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+
+				else
+					secondaryIndicator:SetText(0)
+				
+				end
+			
+			elseif(categoryID ~= 3) then
 				if(dungeonScore > 0) then
 					local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
 					local highestKeyForDungeon
@@ -457,13 +468,8 @@ local function createApplicantFrame(applicantID)
 					secondaryIndicator:SetText(wticc("0", difficulty.color))
 
 				end
-
-			elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
-				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForScore(pvpData.rating):GenerateHexColor()))
-
-				local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
-				secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
-
+			
+			
 			end
 
 			--BasicInformationPanel:MarkDirty()
@@ -1042,6 +1048,7 @@ miog.createApplicationViewer = function()
 		sortByCategoryButton.category = i == 1 and "role" or i == 2 and "primary" or i == 3 and "secondary" or i == 4 and "ilvl"
 
 		sortByCategoryButton:SetScript("PostClick", function(self, button)
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			C_LFGList.RefreshApplicants()
 		end)
 
@@ -1139,6 +1146,7 @@ miog.createApplicationViewer = function()
 	
 	miog.applicationViewer.CreationSettings.ItemLevel:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			showEditBox("ItemLevel", self.FontString, true, 3)
 		end
 	
@@ -1147,11 +1155,13 @@ miog.createApplicationViewer = function()
 
 	miog.applicationViewer.CreationSettings.Rating:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			showEditBox("Rating", self.FontString, true, 4)
 		end
 	
 		self.lastClick = GetTime()
 	end)
+	PlaySound(SOUNDKIT.UI_PROFESSION_HIDE_UNOWNED_REAGENTS_CHECKBOX)
 
 	miog.applicationViewer.CreationSettings.PrivateGroup:SetScript("OnMouseDown", function()
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
