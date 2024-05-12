@@ -60,25 +60,16 @@
 		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local parent = self:GetParent()
 
-                        for k,v in pairs(parent.List:GetLayoutChildren()) do
-                            if(v.Radio) then
-                                if(parent.Selected.value == v.value) then
-                                    v.Radio:SetChecked(true)
-                                    
-                                else
-                                    v.Radio:SetChecked(false)
-                                
-                                end
-                            end
-                        end
-
-                        parent.List:SetShown(not parent.List:IsShown())
+                        local visible = parent.List:IsShown()
+                        parent.List:SetShown(not visible)
 
                         if(parent.currentList) then
                             parent.currentList:Hide()
                         end
 
-                        parent.List:Raise()
+                        if(visible) then
+                            parent.List:Raise()
+                        end
 
                     </OnMouseDown>
                 </Scripts>
@@ -96,34 +87,37 @@
 
                 <Scripts>
                     <OnShow>
-                        for k, v in pairs(self:GetLayoutChildren()) do
-                            if(self:GetParent().Selected.value == v.value) then
-                                if(v.Radio) then
-                                    v.Radio:SetChecked(true)
-                                    break
-                                end
-                                
-                            else
-                                if(v.Radio) then
-                                    v.Radio:SetChecked(false)
+                        if(not self.selfCheck) then
+                            for k, v in pairs(self:GetLayoutChildren()) do
+                                if(v.value and self:GetParent().Selected.value == v.value) then
+                                    if(v.Radio) then
+                                        v.Radio:SetChecked(true)
+                                        break
+                                    end
+                                    
+                                else
+                                    if(v.Radio) then
+                                        v.Radio:SetChecked(false)
 
-                                    if(v.List) then
-                                        for a, b in pairs(v.List:GetLayoutChildren()) do
-                                            if(self:GetParent().Selected.value == b.value) then
-                                                v.Radio:SetChecked(true)
-                                                break
+                                        if(v.List and not v.List.selfCheck) then
+                                            for a, b in pairs(v.List:GetLayoutChildren()) do
+                                                if(b.value and self:GetParent().Selected.value == b.value) then
+                                                    b.Radio:SetChecked(true)
+                                                    v.Radio:SetChecked(true)
+                                                    break
+                                                    
+                                                else
+                                                    if(b.Radio) then
+                                                        b.Radio:SetChecked(false)
+                                                    end
                                                 
-                                            else
-                                                if(v.Radio) then
-                                                    v.Radio:SetChecked(false)
                                                 end
-                                            
                                             end
                                         end
-                                    end
 
+                                    end
+                                
                                 end
-                            
                             end
                         end
 

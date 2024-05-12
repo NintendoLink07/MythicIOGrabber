@@ -49,7 +49,10 @@ local function convertAdvancedBlizzardFiltersToMIOGFilters()
 
 				v.filterForTanks = v.minTanks > 0 and true
 				v.filterForHealers = v.minHealers > 0 and true
-				v.filterForScore = v.minScore > 0 and true
+
+				if(k == 2) then
+					v.filterForScore = v.minScore > 0 and true
+				end
 
 				local _, id = UnitClassBase("player")
 				v.classSpec.class[id] = not (blizzardFilters.needsMyClass == true)
@@ -289,11 +292,11 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 	optionButton:SetCheckedTexture("checkmark-minimal")
 	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
 	optionButton:RegisterForClicks("LeftButtonDown")
-	optionButton:HookScript("OnClick", function()
+	optionButton:HookScript("OnClick", function(self)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
-	
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["filterFor" .. name] = optionButton:GetChecked()
+
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["filterFor" .. name] = self:GetChecked()
 
 		convertFiltersToAdvancedBlizzardFilters()
 		

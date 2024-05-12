@@ -8,12 +8,12 @@ searchResultSystem.declinedGroups = {}
 local function sortSearchResultList(result1, result2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
 		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
-			local firstState = miog.searchPanel.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
+			local firstState = miog.SearchPanel.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
 
 			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
 
 				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
-					local secondState = miog.searchPanel.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
+					local secondState = miog.SearchPanel.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
 
 					if(result1.appStatus == "applied" and result2.appStatus ~= "applied") then
 						return true
@@ -433,7 +433,7 @@ end
 
 			resultFrame.layoutIndex = -1
 
-			miog.searchPanel.FramePanel.Container:MarkDirty()
+			miog.SearchPanel.FramePanel.Container:MarkDirty()
 
 		else
 			resultFrame.CancelApplication:Hide()
@@ -486,7 +486,7 @@ local function updateSearchResultFrameApplicationStatus(resultID, new, old)
 
 			resultFrame.layoutIndex = -1
 
-			miog.searchPanel.FramePanel.Container:MarkDirty()
+			miog.SearchPanel.FramePanel.Container:MarkDirty()
 
 		else
 			resultFrame.CancelApplication:Hide()
@@ -757,7 +757,7 @@ local function updatePersistentResultFrame(resultID)
 
 			end)
 			currentFrame:SetScript("OnEnter", function()
-				createResultTooltip(searchResultInfo.searchResultID, currentFrame, searchResultInfo.autoAccept)
+				createResultTooltip(searchResultInfo.searchResultID, currentFrame)
 
 			end)
 
@@ -1201,8 +1201,8 @@ local function createPersistentResultFrame(resultID)
 	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 	local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
 
-	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", miog.searchPanel.FramePanel.Container)
-	persistentFrame.fixedWidth = miog.searchPanel.FramePanel:GetWidth()
+	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", miog.SearchPanel.FramePanel.Container)
+	persistentFrame.fixedWidth = miog.SearchPanel.FramePanel:GetWidth()
 	--persistentFrame:SetFrameStrata("DIALOG")
 	persistentFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
@@ -1310,7 +1310,7 @@ local function checkSearchResultListForEligibleMembers()
 			end
 		end
 
-		miog.searchPanel.FramePanel.Container:MarkDirty()
+		miog.SearchPanel.FramePanel.Container:MarkDirty()
 
 		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #lastOrderedList .. ")")
 	end
@@ -1363,7 +1363,7 @@ local function updateSearchResultList()
 			end
 		end
 
-		miog.searchPanel.FramePanel.Container:MarkDirty()
+		miog.SearchPanel.FramePanel.Container:MarkDirty()
 
 		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #orderedList .. ")")
 
@@ -1375,9 +1375,9 @@ miog.updateSearchResultList = updateSearchResultList
 local blocked = false
 
 local function searchResultsReceived()
-	miog.searchPanel.Status:Show()
-	miog.searchPanel.Status.FontString:Hide()
-	miog.searchPanel.Status.LoadingSpinner:Show()
+	miog.SearchPanel.Status:Show()
+	miog.SearchPanel.Status.FontString:Hide()
+	miog.SearchPanel.Status.LoadingSpinner:Show()
 
 	local totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
 
@@ -1385,20 +1385,20 @@ local function searchResultsReceived()
 		if(totalResults > 0) then
 			if(not blocked) then
 				blocked = true
-				miog.searchPanel.FramePanel:SetVerticalScroll(0)
+				miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 				
 				C_Timer.After(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods > 0 and 0.45 or 0, function()
-					miog.searchPanel.Status:Hide()
-					miog.searchPanel.Status.LoadingSpinner:Hide()
+					miog.SearchPanel.Status:Hide()
+					miog.SearchPanel.Status.LoadingSpinner:Hide()
 					updateSearchResultList()
 					blocked = false
 				end)
 			end
 		else
 			if(not miog.F.SEARCH_IS_THROTTLED) then
-				miog.searchPanel.Status.LoadingSpinner:Hide()
-				miog.searchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
-				miog.searchPanel.Status.FontString:Show()
+				miog.SearchPanel.Status.LoadingSpinner:Hide()
+				miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
+				miog.SearchPanel.Status.FontString:Show()
 
 			end
 		end
@@ -1426,25 +1426,25 @@ local function searchPanelEvents(_, event, ...)
 				miog.F.SEARCH_IS_THROTTLED = true
 				local timestamp = GetTime()
 
-				miog.searchPanel.Status.FontString:Hide()
-				miog.searchPanel.Status.LoadingSpinner:Hide()
-				miog.searchPanel.StartSearch:Disable()
-				miog.searchPanel.Status.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
+				miog.SearchPanel.Status.FontString:Hide()
+				miog.SearchPanel.Status.LoadingSpinner:Hide()
+				miog.SearchPanel.StartSearch:Disable()
+				miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
 
 				C_Timer.NewTicker(0.2, function(self)
 					local timeUntil = timestamp + 3 - GetTime()
-					miog.searchPanel.Status.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
+					miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
 
 					if(timeUntil <= 0) then
-						miog.searchPanel.StartSearch:Enable()
-						miog.searchPanel.Status.FontString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
+						miog.SearchPanel.StartSearch:Enable()
+						miog.SearchPanel.Status.FontString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
 						miog.F.SEARCH_IS_THROTTLED = false
 						self:Cancel()
 					end
 				end)
 			
-				miog.searchPanel.Status:Show()
-				miog.searchPanel.Status.FontString:Show()
+				miog.SearchPanel.Status:Show()
+				miog.SearchPanel.Status.FontString:Show()
 
 			end
 		end
@@ -1478,11 +1478,11 @@ end
 
 miog.createSearchPanel = function()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel") ---@class Frame
-	miog.searchPanel = searchPanel
-	miog.searchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.searchPanel.FramePanel, "TOPRIGHT", -7, 0)
-	miog.applicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.applicationViewer.FramePanel, "TOPRIGHT", -7, 0)
+	miog.SearchPanel = searchPanel
+	miog.SearchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.SearchPanel.FramePanel, "TOPRIGHT", -7, 0)
+	miog.ApplicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.ApplicationViewer.FramePanel, "TOPRIGHT", -7, 0)
 
-	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.searchPanel, 1, 20)
+	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.SearchPanel, 1, 20)
 	signupButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	signupButton:SetText("Signup")
 	signupButton:FitToText()
@@ -1550,7 +1550,7 @@ miog.createSearchPanel = function()
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 		--C_LFGList.Search(LFGListFrame.SearchPanel.categoryID, LFGListFrame.SearchPanel.filters, LFGListFrame.SearchPanel.preferredFilters, C_LFGList.GetLanguageSearchFilter());
 
-		miog.searchPanel.FramePanel:SetVerticalScroll(0)
+		miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 	end)
 
 	miog.createFrameBorder(searchPanel.ButtonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -1573,14 +1573,14 @@ miog.createSearchPanel = function()
 
 	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(miog.Plugin:GetWidth() * 0.52, 0)
 
-	miog.searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-	miog.searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
-	miog.searchPanel:RegisterEvent("LFG_LIST_SEARCH_FAILED")
-	miog.searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
-	miog.searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
-	miog.searchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-	miog.searchPanel:SetScript("OnEvent", searchPanelEvents)
-	miog.searchPanel:SetScript("OnShow", function()
+	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
+	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_FAILED")
+	miog.SearchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
+	miog.SearchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
+	miog.SearchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+	miog.SearchPanel:SetScript("OnEvent", searchPanelEvents)
+	miog.SearchPanel:SetScript("OnShow", function()
 		searchBox:ClearAllPoints()
 		searchBox:SetParent(searchPanel)
 		LFGListFrame.SearchPanel.SearchBox:SetWidth(searchPanel.standardSearchBox - 70)

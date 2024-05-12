@@ -2,7 +2,7 @@ local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
 miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGroupInternal
-	local frame = miog.entryCreation
+	local frame = miog.EntryCreation
 
 	local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0;
 	local rating = tonumber(frame.Rating:GetText()) or 0;
@@ -442,24 +442,24 @@ local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo() or miog.F.ACTIVE_ENTRY_INFO
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityID)
 
-	miog.applicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
+	miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
 
 	if(activityInfo.categoryID == 2) then --Dungeons
 		miog.F.CURRENT_DUNGEON_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DUNGEON_DIFFICULTY
-		miog.applicationViewer.CreationSettings.Affixes:Show()
+		miog.ApplicationViewer.CreationSettings.Affixes:Show()
 
 	elseif(activityInfo.categoryID == 3) then --Raids
 		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
-		miog.applicationViewer.CreationSettings.Affixes:Hide()
+		miog.ApplicationViewer.CreationSettings.Affixes:Hide()
 	end
 
-	miog.applicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityID].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
+	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityID].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
-	miog.applicationViewer.TitleBar.FontString:SetText(entryInfo.name)
-	miog.applicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
+	miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
+	miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
 
-	miog.applicationViewer.CreationSettings.PrivateGroup.active = entryInfo.privateGroup
-	miog.applicationViewer.CreationSettings.PrivateGroup:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.privateGroup and "/infoIcons/questionMark_Yellow.png" or "/infoIcons/questionMark_Grey.png"))
+	miog.ApplicationViewer.CreationSettings.PrivateGroup.active = entryInfo.privateGroup
+	miog.ApplicationViewer.CreationSettings.PrivateGroup:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.privateGroup and "/infoIcons/questionMark_Yellow.png" or "/infoIcons/questionMark_Grey.png"))
 
 	if(entryInfo.playstyle) then
 		local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..entryInfo.playstyle]) or
@@ -467,32 +467,32 @@ local function insertLFGInfo(activityID)
 		(activityInfo.isCurrentRaidActivity and miog.PLAYSTYLE_STRINGS["raid"..entryInfo.playstyle]) or
 		((activityInfo.isRatedPvpActivity or activityInfo.isPvpActivity) and miog.PLAYSTYLE_STRINGS["pvp"..entryInfo.playstyle])
 
-		miog.applicationViewer.CreationSettings.Playstyle.tooltipText = playStyleString
+		miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = playStyleString
 
 	else
-		miog.applicationViewer.CreationSettings.Playstyle.tooltipText = ""
+		miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = ""
 
 	end
 
 	if(entryInfo.requiredDungeonScore and activityInfo.categoryID == 2 or entryInfo.requiredPvpRating and activityInfo.categoryID == (4 or 7 or 8 or 9)) then
-		miog.applicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating
-		miog.applicationViewer.CreationSettings.Rating.FontString:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating)
+		miog.ApplicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating
+		miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating)
 
-		miog.applicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.requiredDungeonScore and "/infoIcons/skull.png" or entryInfo.requiredPvpRating and "/infoIcons/spear.png"))
+		miog.ApplicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.requiredDungeonScore and "/infoIcons/skull.png" or entryInfo.requiredPvpRating and "/infoIcons/spear.png"))
 
 	else
-		miog.applicationViewer.CreationSettings.Rating.FontString:SetText("----")
-		miog.applicationViewer.CreationSettings.Rating.tooltipText = ""
+		miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText("----")
+		miog.ApplicationViewer.CreationSettings.Rating.tooltipText = ""
 
 	end
 
 	if(entryInfo.requiredItemLevel > 0) then
-		miog.applicationViewer.CreationSettings.ItemLevel.FontString:SetText(entryInfo.requiredItemLevel)
-		miog.applicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. entryInfo.requiredItemLevel
+		miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText(entryInfo.requiredItemLevel)
+		miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. entryInfo.requiredItemLevel
 
 	else
-		miog.applicationViewer.CreationSettings.ItemLevel.FontString:SetText("---")
-		miog.applicationViewer.CreationSettings.ItemLevel.tooltipText = ""
+		miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText("---")
+		miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = ""
 
 	end
 
@@ -502,30 +502,30 @@ local function insertLFGInfo(activityID)
 	end
 
 	if(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked()) then
-		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = entryInfo.voiceChat
-		miog.applicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOn.png")
+		miog.ApplicationViewer.CreationSettings.VoiceChat.tooltipText = entryInfo.voiceChat
+		miog.ApplicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOn.png")
 
 	else
-		miog.applicationViewer.CreationSettings.VoiceChat.tooltipText = ""
-		miog.applicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
+		miog.ApplicationViewer.CreationSettings.VoiceChat.tooltipText = ""
+		miog.ApplicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
 
 	end
 
 	if(entryInfo.isCrossFactionListing == true) then
-		miog.applicationViewer.TitleBar.Faction:SetTexture(2437241)
+		miog.ApplicationViewer.TitleBar.Faction:SetTexture(2437241)
 
 	else
 		local playerFaction = UnitFactionGroup("player")
-		miog.applicationViewer.TitleBar.Faction:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
+		miog.ApplicationViewer.TitleBar.Faction:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
 
 	end
 
 	if(entryInfo.comment ~= "") then
-		miog.applicationViewer.InfoPanel.Description.Container.FontString:SetText("Description: " .. entryInfo.comment)
-		miog.applicationViewer.InfoPanel.Description.Container:SetHeight(miog.applicationViewer.InfoPanel.Description.Container.FontString:GetStringHeight())
+		miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("Description: " .. entryInfo.comment)
+		miog.ApplicationViewer.InfoPanel.Description.Container:SetHeight(miog.ApplicationViewer.InfoPanel.Description.Container.FontString:GetStringHeight())
 
 	else
-		miog.applicationViewer.InfoPanel.Description.Container.FontString:SetText("")
+		miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("")
 
 	end
 end

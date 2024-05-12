@@ -137,7 +137,7 @@ miog.createRaidCharacter = function(playerGUID)
 
 			MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID] = {regular = {}, awakened = {}}
 
-			if(miog.MAP_INFO[x.mapID].achievementsAwakened) then
+			--[[if(miog.MAP_INFO[x.mapID].achievementsAwakened) then
 				for a, b in ipairs(miog.MAP_INFO[x.mapID].achievementsAwakened) do
 					local id, name, points, completed, month, day, year, description, flags,
 					icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic
@@ -161,6 +161,28 @@ miog.createRaidCharacter = function(playerGUID)
 							table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].bosses, {id = b, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 
 						end
+					end
+				end
+			end]]
+			
+			for k, d in ipairs(miog.MAP_INFO[mapID].achievementsAwakened) do
+				local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(d)
+
+				local difficulty = string.find(description, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
+
+				if(difficulty) then
+					MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty] = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty] or {kills = 0, bosses = {}}
+
+					local numCriteria = GetAchievementNumCriteria(d)
+					for i = 1, numCriteria, 1 do
+						local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, i, true)
+
+						if(completedCriteria) then
+							MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].kills = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].kills + 1
+
+						end
+
+						table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 					end
 				end
 			end

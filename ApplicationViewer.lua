@@ -16,7 +16,7 @@ end
 miog.resetArrays = resetArrays
 
 local function showEditBox(name, parent, numeric, maxLetters)
-	local editbox = miog.applicationViewer.CreationSettings.EditBox
+	local editbox = miog.ApplicationViewer.CreationSettings.EditBox
 
 	parent:Hide()
 
@@ -43,7 +43,7 @@ local function releaseApplicantFrames()
 	miog.applicantFramePool:ReleaseAll()
 
 	miog.Plugin.FooterBar.Results:SetText("0(0)")
-	miog.applicationViewer.FramePanel.Container:MarkDirty()
+	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
 
 	applicantSystem = {}
 	applicantSystem.applicantMember = {}
@@ -64,7 +64,7 @@ local function hideAllApplicantFrames()
 	end
 
 	miog.Plugin.FooterBar.Results:SetText("0(0)")
-	miog.applicationViewer.FramePanel.Container:MarkDirty()
+	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
 
 end
 
@@ -103,12 +103,12 @@ local function sortApplicantList(applicant1, applicant2)
 
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods_ApplicationViewer.table) do
 		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
-			local firstState = miog.applicationViewer.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
+			local firstState = miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
 
 			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods_ApplicationViewer.table) do
 
 				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
-					local secondState = miog.applicationViewer.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
+					local secondState = miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
 
 					if(applicant1Member1.favoured and not applicant2Member1.favoured) then
 						return true
@@ -170,8 +170,8 @@ local function createApplicantFrame(applicantID)
 		local activityID = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.activityID or 0
 
 		local applicantFrame = miog.applicantFramePool:Acquire("MIOG_ApplicantFrameTemplate")
-		applicantFrame:SetParent(miog.applicationViewer.FramePanel.Container)
-		applicantFrame.fixedWidth = miog.applicationViewer.FramePanel:GetWidth()
+		applicantFrame:SetParent(miog.ApplicationViewer.FramePanel.Container)
+		applicantFrame.fixedWidth = miog.ApplicationViewer.FramePanel:GetWidth()
 		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 		applicantFrame.memberFrames = {}
 
@@ -681,7 +681,7 @@ local function checkApplicantList(forceReorder, applicantID)
 	end
 
 	miog.Plugin.FooterBar.Results:SetText(applicationFrameIndex .. "(" .. #unsortedList .. ")")
-	miog.applicationViewer.FramePanel.Container:MarkDirty()
+	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
 end
 
 local function createAVSelfEntry(pvpBracket)
@@ -882,9 +882,9 @@ local function applicationViewerEvents(_, event, ...)
 				resetArrays()
 				releaseApplicantFrames()
 
-				miog.applicationViewer.CreationSettings.Timer:SetText("00:00:00")
+				miog.ApplicationViewer.CreationSettings.Timer:SetText("00:00:00")
 
-				miog.applicationViewer:Hide()
+				miog.ApplicationViewer:Hide()
 
 				if(miog.F.WEEKLY_AFFIX == nil) then
 					miog.setAffixes()
@@ -901,11 +901,11 @@ local function applicationViewerEvents(_, event, ...)
 			end
 
 			queueTimer = C_Timer.NewTicker(1, function()
-				miog.applicationViewer.CreationSettings.Timer:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_QueueUpTime))
+				miog.ApplicationViewer.CreationSettings.Timer:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_QueueUpTime))
 
 			end)
 
-			miog.applicationViewer:Show()
+			miog.ApplicationViewer:Show()
 
 		end
 
@@ -979,7 +979,7 @@ end
 
 miog.createApplicationViewer = function()
 	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin.InsertFrame, "MIOG_ApplicationViewer") ---@class Frame
-	miog.applicationViewer = applicationViewer
+	miog.ApplicationViewer = applicationViewer
 
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -1062,11 +1062,11 @@ miog.createApplicationViewer = function()
 		function()
 			C_LFGList.RefreshApplicants()
 
-			miog.applicationViewer.FramePanel:SetVerticalScroll(0)
+			miog.ApplicationViewer.FramePanel:SetVerticalScroll(0)
 		end
 	)
 
-	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
+	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
 	browseGroupsButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	browseGroupsButton:SetText("Browse")
 	browseGroupsButton:FitToText()
@@ -1086,9 +1086,9 @@ miog.createApplicationViewer = function()
 		end
 	end)
 
-	miog.applicationViewer.browseGroupsButton = browseGroupsButton
+	miog.ApplicationViewer.browseGroupsButton = browseGroupsButton
 
-	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
+	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
 	delistButton:SetPoint("LEFT", browseGroupsButton, "RIGHT")
 	delistButton:SetText("Delist")
 	delistButton:FitToText()
@@ -1097,9 +1097,9 @@ miog.createApplicationViewer = function()
 		C_LFGList.RemoveListing()
 	end)
 
-	miog.applicationViewer.delistButton = delistButton
+	miog.ApplicationViewer.delistButton = delistButton
 
-	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.applicationViewer, 1, 20)
+	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
 	editButton:SetPoint("LEFT", delistButton, "RIGHT")
 	editButton:SetText("Edit")
 	editButton:FitToText()
@@ -1110,12 +1110,12 @@ miog.createApplicationViewer = function()
 		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation)
 	end)
 
-	miog.applicationViewer.editButton = editButton
+	miog.ApplicationViewer.editButton = editButton
 
-	miog.applicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
+	miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 
-		local editbox = miog.applicationViewer.CreationSettings.EditBox
+		local editbox = miog.ApplicationViewer.CreationSettings.EditBox
 		editbox:Hide()
 
 		if(editbox.hiddenElement) then
@@ -1124,27 +1124,27 @@ miog.createApplicationViewer = function()
 
 		if(editbox.name) then
 			local text = editbox:GetText()
-			miog.entryCreation[editbox.name]:SetText(text)
+			miog.EntryCreation[editbox.name]:SetText(text)
 		end
 
 		miog.listGroup()
 		miog.insertLFGInfo()
 	end)
 
-	miog.applicationViewer.CreationSettings.EditBox:SetScript("OnEnterPressed", miog.applicationViewer.CreationSettings.EditBox.UpdateButton:GetScript("OnClick"))
+	miog.ApplicationViewer.CreationSettings.EditBox:SetScript("OnEnterPressed", miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:GetScript("OnClick"))
 
-	miog.applicationViewer.InfoPanel.Description.Container:SetSize(miog.applicationViewer.InfoPanel.Description:GetSize())
+	miog.ApplicationViewer.InfoPanel.Description.Container:SetSize(miog.ApplicationViewer.InfoPanel.Description:GetSize())
 
-	miog.applicationViewer.InfoPanel.Description:SetScript("OnMouseDown", function(self)
+	miog.ApplicationViewer.InfoPanel.Description:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
-			--miog.entryCreation.Description:SetParent(miog.applicationViewer.InfoPanel)
-			--miog.applicationViewer.CreationSettings.EditBox.UpdateButton:SetPoint("LEFT", miog.entryCreation.Description, "RIGHT")
+			--miog.EntryCreation.Description:SetParent(miog.ApplicationViewer.InfoPanel)
+			--miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetPoint("LEFT", miog.EntryCreation.Description, "RIGHT")
 		end
 	
 		self.lastClick = GetTime()
 	end)
 	
-	miog.applicationViewer.CreationSettings.ItemLevel:SetScript("OnMouseDown", function(self)
+	miog.ApplicationViewer.CreationSettings.ItemLevel:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			showEditBox("ItemLevel", self.FontString, true, 3)
@@ -1153,7 +1153,7 @@ miog.createApplicationViewer = function()
 		self.lastClick = GetTime()
 	end)
 
-	miog.applicationViewer.CreationSettings.Rating:SetScript("OnMouseDown", function(self)
+	miog.ApplicationViewer.CreationSettings.Rating:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			showEditBox("Rating", self.FontString, true, 4)
@@ -1163,17 +1163,19 @@ miog.createApplicationViewer = function()
 	end)
 	PlaySound(SOUNDKIT.UI_PROFESSION_HIDE_UNOWNED_REAGENTS_CHECKBOX)
 
-	miog.applicationViewer.CreationSettings.PrivateGroup:SetScript("OnMouseDown", function()
+	miog.ApplicationViewer.CreationSettings.PrivateGroup:SetScript("OnMouseDown", function()
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 
-		miog.entryCreation.PrivateGroup:SetChecked(not miog.entryCreation.PrivateGroup:GetChecked())
+		miog.EntryCreation.PrivateGroup:SetChecked(not miog.EntryCreation.PrivateGroup:GetChecked())
 		miog.listGroup()
 		miog.insertLFGInfo()
 	end)
 
-	miog.applicationViewer:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-	miog.applicationViewer:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
-	miog.applicationViewer:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
-	miog.applicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
-	miog.applicationViewer:SetScript("OnEvent", applicationViewerEvents)
+	miog.ApplicationViewer:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
+	miog.ApplicationViewer:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
+	miog.ApplicationViewer:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+	miog.ApplicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
+	miog.ApplicationViewer:SetScript("OnEvent", applicationViewerEvents)
+
+	MIOG_SYSTEM = miog
 end

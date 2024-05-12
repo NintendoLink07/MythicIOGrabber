@@ -15,23 +15,23 @@ miog.setAffixes = function()
 
 	if(affixIDs) then
 		local affixString = ""
-		miog.applicationViewer.CreationSettings.Affixes.tooltipText = affixString
+		miog.ApplicationViewer.CreationSettings.Affixes.tooltipText = affixString
 
 		for index, affix in ipairs(affixIDs) do
 
 			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
 
 			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, 0, 1, 0, 1)
-			miog.applicationViewer.CreationSettings.Affixes.tooltipText = miog.applicationViewer.CreationSettings.Affixes.tooltipText .. name .. (index < #affixIDs and ", " or "")
+			miog.ApplicationViewer.CreationSettings.Affixes.tooltipText = miog.ApplicationViewer.CreationSettings.Affixes.tooltipText .. name .. (index < #affixIDs and ", " or "")
 
 		end
 
 		miog.F.WEEKLY_AFFIX = affixIDs[1].id
-		miog.applicationViewer.CreationSettings.Affixes:SetText(affixString)
+		miog.ApplicationViewer.CreationSettings.Affixes:SetText(affixString)
 
 		if(not miog.F.LITE_MODE) then
 			miog.MainTab.Information.Affixes:SetText(affixString)
-			miog.MainTab.Information.Affixes.text = miog.applicationViewer.CreationSettings.Affixes.tooltipText
+			miog.MainTab.Information.Affixes.text = miog.ApplicationViewer.CreationSettings.Affixes.tooltipText
 		end
 
 	else
@@ -263,18 +263,18 @@ end
 
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		miog.applicationViewer.browseGroupsButton:Show()
-		miog.applicationViewer.delistButton:Show()
-		miog.applicationViewer.editButton:Show()
+		miog.ApplicationViewer.browseGroupsButton:Show()
+		miog.ApplicationViewer.delistButton:Show()
+		miog.ApplicationViewer.editButton:Show()
 
 		miog.F.CAN_INVITE = true
 
 		return true
 
 	else
-		miog.applicationViewer.browseGroupsButton:Hide()
-		miog.applicationViewer.delistButton:Hide()
-		miog.applicationViewer.editButton:Hide()
+		miog.ApplicationViewer.browseGroupsButton:Hide()
+		miog.ApplicationViewer.delistButton:Hide()
+		miog.ApplicationViewer.editButton:Hide()
 
 		miog.F.CAN_INVITE = false
 
@@ -416,7 +416,7 @@ end
 miog.addFavouredApplicant = function(currentApplicant)
 	miog.F.FAVOURED_APPLICANTS_COUNTER = miog.F.FAVOURED_APPLICANTS_COUNTER + 1
 
-	local favouredApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.applicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container, miog.applicationViewer.optionPanel.container.favouredApplicantsPanel:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
+	local favouredApplicant = miog.createBasicFrame("persistent", "BackdropTemplate", miog.ApplicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container, miog.ApplicationViewer.optionPanel.container.favouredApplicantsPanel:GetWidth(), miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 	favouredApplicant.layoutIndex = miog.F.FAVOURED_APPLICANTS_COUNTER
 
 	miog.createFrameBorder(favouredApplicant, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
@@ -478,7 +478,7 @@ miog.addFavouredApplicant = function(currentApplicant)
 
 	miog.F.FAVOURED_APPLICANTS[currentApplicant.fullName] = favouredApplicant
 
-	miog.applicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
+	miog.ApplicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
 
 	MIOG_SavedSettings.favouredApplicants.table[currentApplicant.fullName] = currentApplicant
 end
@@ -493,7 +493,7 @@ miog.deleteFavouredApplicant = function(name)
 	miog.persistentFramePool:Release(favouredApplicant.deleteButton)
 	miog.persistentFramePool:Release(favouredApplicant)
 
-	miog.applicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
+	miog.ApplicationViewer.optionPanel.container.favouredApplicantsPanel.scrollFrame.container:MarkDirty()
 
 	MIOG_SavedSettings.favouredApplicants.table[name] = nil
 

@@ -168,7 +168,7 @@
                             <FontHeight val="11"/>
                             <Size x="140" y="20"/>
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="5" />
+                                <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="0" />
                             </Anchors>
                         </FontString>
                     </Layer>

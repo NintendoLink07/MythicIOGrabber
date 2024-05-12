@@ -548,7 +548,7 @@
                                     <Frame parentKey="Currency">
                                         <Size x="40" y="80" />
                                         <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.HonorStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
                                         </Anchors>
 
                                         <Frames>

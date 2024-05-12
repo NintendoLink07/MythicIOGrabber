@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name="MIOG_DropDownMenuEntry" virtual="true">
+    <Button name="MIOG_DropDownMenuEntry" inherits="BackdropTemplate" virtual="true">
         <Size y="20" />
 
         <NormalTexture parentKey="NormalTexture" atlas="pvpqueue-button-casual-up"/>
@@ -20,23 +20,6 @@
                     </OnLoad>
                 </Scripts>
             </CheckButton>
-            
-            <Frame parentKey="Difficulty1">
-                <Size x="14" y="14" />
-                <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="D1" wordwrap="false">
-                            <FontHeight val="11"/>
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
 
             <Frame parentKey="List" inherits="VerticalLayoutFrame, BackdropTemplate" hidden="true" frameStrata="HIGH" topLevel="true">
                 <KeyValues>
@@ -50,20 +33,6 @@
 
                 <Scripts>
                     <OnShow>
-                        for k, v in pairs(self:GetLayoutChildren()) do
-                            if(self:GetParent().ParentDropDown.Selected.value == v.value) then
-                                v.Radio:SetChecked(true)
-                                break
-                                
-                            else
-                                if(v.Radio) then
-                                    v.Radio:SetChecked(false)
-                                end
-                            
-                            end
-                        end
-
-                        self:Raise()
                     </OnShow>
                 </Scripts>
             </Frame>       
@@ -92,55 +61,14 @@
         </Layers>
 
         <Scripts>
-        	<OnEnter>
-                if(self.ParentDropDown.currentList) then
-                    local parent = self:GetParent():GetParent()
-
-                    if(self.parentIndex and parent.layoutIndex) then
-                        if(self.parentIndex ~= parent.layoutIndex) then
-                            self.ParentDropDown.currentList:Hide()
-
-                        elseif(self.parentIndex == nil and parent.layoutIndex == nil)then
-                            self.ParentDropDown.currentList:Hide()
-                        
-                        end
-                    else
-                        self.ParentDropDown.currentList:Hide()
-                    
-                    end
-                end
-
-                if(self.List and #self.List:GetLayoutChildren() > 1) then
-                    self.List:Show()
-                    self.ParentDropDown.currentList = self.List
-                    
-                end
-
-                if(self.tooltip) then
-
-                end
-
-                
-                if(self:GetTop() and GetScreenHeight() / 2 > self:GetTop()) then
-                    self.List:ClearAllPoints()
-                    self.List:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT")
-
-                else
-                    self.List:ClearAllPoints()
-                    self.List:SetPoint("TOPLEFT", self, "TOPRIGHT")
-
-                end
-            </OnEnter>
-
             <OnClick>
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             </OnClick>
 
-            <PostClick>
-                if(not self.hasArrow) then
+            <PostClick>                
+                if(not self.hasArrow and self:GetParent().hideOnClick ~= false) then
                     self.ParentDropDown.Selected.Name:SetText(self.Name:GetText())
                     self.ParentDropDown.Selected.value = self.value
-                    self.Radio:SetChecked(true)
 
                     if(self.ParentDropDown.currentList)  then
                         self.ParentDropDown.currentList:Hide()
@@ -152,6 +80,8 @@
                         self.List:Hide()
                     end
                 end
+
+                self.Radio:SetChecked(not self.Radio:GetChecked())
 
             </PostClick>
         </Scripts>

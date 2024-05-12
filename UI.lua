@@ -13,7 +13,7 @@ local function createPlaystyleEntry(playstyle, activityInfo, playstyleDropDown)
 end
 
 local function setUpPlaystyleDropDown()
-    miog.entryCreation.PlaystyleDropDown:ResetDropDown()
+    miog.EntryCreation.PlaystyleDropDown:ResetDropDown()
 
     local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity)
     local playstyles = {
@@ -23,12 +23,12 @@ local function setUpPlaystyleDropDown()
     }
 
     for _, playstyle in ipairs(playstyles) do
-        createPlaystyleEntry(playstyle, activityInfo, miog.entryCreation.PlaystyleDropDown)
+        createPlaystyleEntry(playstyle, activityInfo, miog.EntryCreation.PlaystyleDropDown)
     end
 end
 
 local function setUpDifficultyDropDown(categoryID, groupID, filters)
-	local frame = miog.entryCreation
+	local frame = miog.EntryCreation
 	frame.DifficultyDropDown:ResetDropDown()
 
 	local unsortedActivities = C_LFGList.GetAvailableActivities(categoryID or LFGListFrame.EntryCreation.selectedCategory, groupID or LFGListFrame.EntryCreation.selectedGroup, filters or LFGListFrame.EntryCreation.selectedFilters);
@@ -69,7 +69,7 @@ local function setUpDifficultyDropDown(categoryID, groupID, filters)
 		end
 	end
 
-	if(miog.entryCreation.ActivityDropDown:IsShown() == false) then
+	if(miog.EntryCreation.ActivityDropDown:IsShown() == false) then
 		local info = {}
 		info.entryType = "option"
 		info.index = 100000
@@ -83,7 +83,7 @@ local function setUpDifficultyDropDown(categoryID, groupID, filters)
 end
 
 local function setUpEntryCreation()
-	local frame = miog.entryCreation
+	local frame = miog.EntryCreation
 
 	---@diagnostic disable-next-line: undefined-field
 	local activityDropDown = frame.ActivityDropDown
@@ -122,7 +122,7 @@ local function setUpEntryCreation()
 		playstyleDropDown:Enable()
 
 	elseif(not shouldShowPlayStyleDropdown) then
-		miog.entryCreation.selectedPlaystyle = nil
+		miog.EntryCreation.selectedPlaystyle = nil
 		playstyleDropDown:Disable()
 
 	end
@@ -171,14 +171,14 @@ local function setUpEntryCreation()
 
 	end
 
-	miog.entryCreation.ActivityDropDown.List:MarkDirty()
+	miog.EntryCreation.ActivityDropDown.List:MarkDirty()
 
 	if(C_LFGList.HasActiveEntryInfo()) then
 		local entryInfo = C_LFGList.GetActiveEntryInfo()
 
-		miog.entryCreation.PrivateGroup:SetChecked(entryInfo.privateGroup)
-		miog.entryCreation.ItemLevel:SetText(entryInfo.requiredItemLevel)
-		miog.entryCreation.Rating:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating or "")
+		miog.EntryCreation.PrivateGroup:SetChecked(entryInfo.privateGroup)
+		miog.EntryCreation.ItemLevel:SetText(entryInfo.requiredItemLevel)
+		miog.EntryCreation.Rating:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating or "")
 
 	end
 
@@ -189,7 +189,7 @@ hooksecurefunc("LFGListEntryCreation_Select", function(_, filters, categoryID, g
 end)
 
 local function gatherGroupsAndActivitiesForCategory(categoryID)
-	local activityDropDown = miog.entryCreation.ActivityDropDown
+	local activityDropDown = miog.EntryCreation.ActivityDropDown
 	activityDropDown:ResetDropDown()
 
 	local firstGroupID
@@ -755,7 +755,7 @@ end
 local function initializeActivityDropdown(isDifferentCategory, isSeparateCategory)
 	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory or 0
 
-	local frame = miog.entryCreation
+	local frame = miog.EntryCreation
 
 	if(isDifferentCategory or isSeparateCategory) then
 		local activityDropDown = frame.ActivityDropDown
@@ -763,7 +763,7 @@ local function initializeActivityDropdown(isDifferentCategory, isSeparateCategor
 
 		gatherGroupsAndActivitiesForCategory(categoryID)
 
-		miog.entryCreation.ActivityDropDown.List:MarkDirty()
+		miog.EntryCreation.ActivityDropDown.List:MarkDirty()
 	end
 end
 
@@ -881,10 +881,10 @@ miog.createFrames = function()
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		if(panel == LFGListFrame.ApplicationViewer) then
 			miog.F.ACTIVE_PANEL = "applicationViewer"
-			miog.searchPanel:Hide()
-			miog.entryCreation:Hide()
+			miog.SearchPanel:Hide()
+			miog.EntryCreation:Hide()
 			miog.Plugin:Show()
-			miog.applicationViewer:Show()
+			miog.ApplicationViewer:Show()
 
 			if(not miog.F.LITE_MODE) then
 				miog.MainTab.CategoryPanel:Hide()
@@ -911,10 +911,10 @@ miog.createFrames = function()
 
 		elseif(panel == LFGListFrame.SearchPanel) then
 			miog.F.ACTIVE_PANEL = "searchPanel"
-			miog.applicationViewer:Hide()
-			miog.entryCreation:Hide()
+			miog.ApplicationViewer:Hide()
+			miog.EntryCreation:Hide()
 			miog.Plugin:Show()
-			miog.searchPanel:Show()
+			miog.SearchPanel:Show()
 
 			if(not miog.F.LITE_MODE) then
 				miog.pveFrame2:Show()
@@ -983,11 +983,11 @@ miog.createFrames = function()
 
 
 		elseif(panel == LFGListFrame.EntryCreation) then
-			miog.applicationViewer:Hide()
-			miog.searchPanel:Hide()
+			miog.ApplicationViewer:Hide()
+			miog.SearchPanel:Hide()
 
 			miog.Plugin:Show()
-			miog.entryCreation:Show()
+			miog.EntryCreation:Show()
 
 			miog.FilterPanel.Lock:Show()
 

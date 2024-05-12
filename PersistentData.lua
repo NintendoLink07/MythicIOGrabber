@@ -392,7 +392,7 @@ miog.MAP_INFO = {
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
-		shortName = "VotI", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png", fileName = "vaultoftheincarnates",
+		shortName = "VOTI", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png", fileName = "vaultoftheincarnates",
 	},
 
 	[1136] = {shortName = "SOO", icon = "interface/lfgframe/lfgicon-orgrimmargates", fileName = "siegeoforgrimmar"},

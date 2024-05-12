@@ -418,7 +418,7 @@ miog.loadSettings = function()
 	local optionPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", miog.interfaceOptionsPanel)
 	optionPanel:SetPoint("TOPLEFT", titleFrame, "BOTTOMLEFT", 0, 0)
 	optionPanel:SetSize(SettingsPanel.Container:GetWidth(), SettingsPanel.Container:GetHeight())
-	miog.applicationViewer.optionPanel = optionPanel
+	miog.ApplicationViewer.optionPanel = optionPanel
 
 	local optionPanelContainer = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanel)
 	optionPanelContainer:SetSize(optionPanel:GetWidth(), optionPanel:GetHeight() - titleFrame:GetHeight())
@@ -491,12 +491,12 @@ miog.loadSettings = function()
 
 						optionButton:SetScript("OnClick", function()
 							setting.value = not setting.value
-							miog.applicationViewer.ClassPanel:SetShown(setting.value)
-							miog.applicationViewer.ClassPanel:MarkDirty()
+							miog.ApplicationViewer.ClassPanel:SetShown(setting.value)
+							miog.ApplicationViewer.ClassPanel:MarkDirty()
 
 						end)
 
-						miog.applicationViewer.ClassPanel:SetShown(setting.value)
+						miog.ApplicationViewer.ClassPanel:SetShown(setting.value)
 
 					elseif(key == "favouredApplicants") then
 						optionButton:SetScript("OnClick", function()
@@ -607,13 +607,13 @@ miog.loadSettings = function()
 	
 	if(MIOG_SavedSettings.sortMethods_ApplicationViewer and MIOG_SavedSettings.sortMethods_ApplicationViewer.table) then
 		for sortKey, row in pairs(MIOG_SavedSettings.sortMethods_ApplicationViewer.table) do
-			if(miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]) then
+			if(miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]) then
 				if(row.active == true) then
-					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].active, MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentState)
-					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentLayer)
+					miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].active, MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentState)
+					miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentLayer)
 
 				else
-					miog.applicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+					miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
 
 				end
 			end
@@ -625,13 +625,13 @@ miog.loadSettings = function()
 	
 	if(MIOG_SavedSettings.sortMethods_SearchPanel and MIOG_SavedSettings.sortMethods_SearchPanel.table) then
 		for sortKey, row in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
-			if(miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey]) then
+			if(miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey]) then
 				if(row.active == true) then
-					miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].active, MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentState)
-					miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentLayer)
+					miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].active, MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentState)
+					miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentLayer)
 
 				else
-					miog.searchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+					miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
 
 				end
 			end

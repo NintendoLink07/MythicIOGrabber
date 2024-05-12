@@ -26,9 +26,9 @@ local function setUpRatingLevels()
 			info.text = v
 			info.value = v
 			info.checked = false
-			info.func = function() miog.entryCreation.Rating:SetText(v) end
+			info.func = function() miog.EntryCreation.Rating:SetText(v) end
 
-			miog.entryCreation.Rating.DropDown:CreateEntryFrame(info)
+			miog.EntryCreation.Rating.DropDown:CreateEntryFrame(info)
 		end
 		
 	end
@@ -58,9 +58,9 @@ local function setUpItemLevels()
 			info.text = v
 			info.value = v
 			info.checked = false
-			info.func = function() miog.entryCreation.ItemLevel:SetText(v) end
+			info.func = function() miog.EntryCreation.ItemLevel:SetText(v) end
 
-			miog.entryCreation.ItemLevel.DropDown:CreateEntryFrame(info)
+			miog.EntryCreation.ItemLevel.DropDown:CreateEntryFrame(info)
 		end
 
 	end
@@ -69,11 +69,11 @@ end
 miog.createEntryCreation = function()
 	local frame = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.Plugin.InsertFrame or miog.MainFrame, "MIOG_EntryCreation") ---@class Frame
 	frame:GetParent().EntryCreation = frame
-	miog.entryCreation = frame
+	miog.EntryCreation = frame
 
-	--miog.createFrameBorder(miog.entryCreation.Background, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	--miog.createFrameBorder(miog.EntryCreation.Background, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	miog.entryCreation.Border:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	miog.EntryCreation.Border:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	frame.selectedActivity = 0
 
@@ -121,7 +121,7 @@ miog.createEntryCreation = function()
 	--miogDropdown.List:MarkDirty()
 	--miogDropdown:MarkDirty()
 
-	local startGroup = CreateFrame("Button", nil, miog.entryCreation, "UIPanelDynamicResizeButtonTemplate, LFGListMagicButtonTemplate")
+	local startGroup = CreateFrame("Button", nil, miog.EntryCreation, "UIPanelDynamicResizeButtonTemplate, LFGListMagicButtonTemplate")
 	startGroup:SetSize(1, 20)
 	startGroup:SetPoint("RIGHT", miog.Plugin.FooterBar, "RIGHT")
 	startGroup:SetText("Start Group")
@@ -131,7 +131,7 @@ miog.createEntryCreation = function()
 	startGroup:SetScript("OnClick", function()
 		miog.listGroup()
 	end)
-	miog.entryCreation.StartGroup = startGroup
+	miog.EntryCreation.StartGroup = startGroup
 
 	frame:HookScript("OnShow", function()
 		if(C_LFGList.HasActiveEntryInfo()) then

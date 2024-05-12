@@ -24,8 +24,8 @@ miog.OnEvent = function(_, event, ...)
 		
 		EJ_SetDifficulty(8)
 
-		--LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.applicationViewer:Show() end)
-		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.searchPanel:Show() end)
+		--LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.ApplicationViewer:Show() end)
+		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.SearchPanel:Show() end)
 
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
@@ -150,7 +150,7 @@ local function handler(msg, editBox)
 
 			miog.createFullEntries(33)
 
-			miog.applicationViewer:Show()
+			miog.ApplicationViewer:Show()
 		end
 	elseif(command == "debugon_av_self") then
 		if(IsInGroup()) then
@@ -166,7 +166,7 @@ local function handler(msg, editBox)
 
 			miog.createAVSelfEntry(rest)
 
-			miog.applicationViewer:Show()
+			miog.ApplicationViewer:Show()
 		end
 	elseif(command == "debugoff_av") then
 		miog.releaseApplicantFrames()
@@ -303,7 +303,7 @@ local function handler(msg, editBox)
 		MIOG_SavedSettings.favouredApplicants.table[rest] = {name = nameTable[1], fullName = rest}
 	
 	else
-		--miog.applicationViewer:Show()
+		--miog.ApplicationViewer:Show()
 
 	end
 end
