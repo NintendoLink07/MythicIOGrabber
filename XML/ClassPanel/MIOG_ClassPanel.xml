@@ -1,5 +1,48 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ClassPanel" inherits="BackdropTemplate, HorizontalLayoutFrame" virtual="true">
+    <Frame name="MIOG_ClassPanel" inherits="BackdropTemplate" virtual="true" frameStrata="DIALOG">
+        <Size y="32" />
+        <Frames>
+            <Frame parentKey="Container" inherits="HorizontalLayoutFrame">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <StatusBar parentKey="InspectStatus" inherits="BackdropTemplate" orientation="HORIZONTAL" frameStrata="DIALOG">
+                <Size y="4" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Container" relativePoint="BOTTOMLEFT" y="-4"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Container" relativePoint="BOTTOMRIGHT" y="-4"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+                        self:SetMinMaxValues(0, 40)
+                        self:SetValue(0)
+                    </OnLoad>
+                </Scripts>
+            </StatusBar>
+                        
+            <Frame parentKey="LoadingSpinner" inherits="LoadingSpinnerTemplate" hidden="true">
+                <Size x="27" y="27" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Container" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="StatusString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
+                    <FontHeight val="10" />
+                    <Size y="27" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LoadingSpinner" relativePoint="BOTTOMLEFT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

@@ -224,10 +224,8 @@ function SlickDropDown:SelectFirstFrameWithValue(value)
 			local status = self:SelectFrame(v)
 			return status
 		else
-		--	print("---------------------------")
 			if(v.activities) then
 				for x, y in pairs(v.activities) do
-					--print(v.Name:GetText(), y, value)
 					if(y == value) then
 						return self:SelectFrame(v)
 					end
@@ -240,7 +238,6 @@ function SlickDropDown:SelectFirstFrameWithValue(value)
 						return self:SelectFrame(y)
 					else
 						if(y.activities) then
-							--print("--")
 							for a, b in pairs(y.activities) do
 								if(b == value) then
 									return self:SelectFrame(y)

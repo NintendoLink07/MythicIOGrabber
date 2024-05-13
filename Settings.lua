@@ -487,16 +487,15 @@ miog.loadSettings = function()
 							setting.value = not setting.value
 						end)
 						
-					elseif(key == "enableClassPanel") then
-
+					elseif(key == "enableClassPanel" and not miog.F.LITE_MODE) then
 						optionButton:SetScript("OnClick", function()
 							setting.value = not setting.value
-							miog.ApplicationViewer.ClassPanel:SetShown(setting.value)
-							miog.ApplicationViewer.ClassPanel:MarkDirty()
+							miog.ClassPanel:SetShown(setting.value)
+							miog.ClassPanel:MarkDirty()
 
 						end)
 
-						miog.ApplicationViewer.ClassPanel:SetShown(setting.value)
+						miog.ClassPanel:SetShown(setting.value)
 
 					elseif(key == "favouredApplicants") then
 						optionButton:SetScript("OnClick", function()

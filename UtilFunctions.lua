@@ -40,6 +40,10 @@ miog.setAffixes = function()
 	end
 end
 
+miog.printDebug = function(string)
+	print("[MIOG]: " .. (string or "No message attached"))
+end
+
 miog.checkLFGState = function()
 	return UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "solo"
 
@@ -263,18 +267,18 @@ end
 
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		miog.ApplicationViewer.browseGroupsButton:Show()
-		miog.ApplicationViewer.delistButton:Show()
-		miog.ApplicationViewer.editButton:Show()
+		miog.ApplicationViewer.BrowseGroupsButton:Show()
+		miog.ApplicationViewer.DelistButton:Show()
+		miog.ApplicationViewer.EditButton:Show()
 
 		miog.F.CAN_INVITE = true
 
 		return true
 
 	else
-		miog.ApplicationViewer.browseGroupsButton:Hide()
-		miog.ApplicationViewer.delistButton:Hide()
-		miog.ApplicationViewer.editButton:Hide()
+		miog.ApplicationViewer.BrowseGroupsButton:Hide()
+		miog.ApplicationViewer.DelistButton:Hide()
+		miog.ApplicationViewer.EditButton:Hide()
 
 		miog.F.CAN_INVITE = false
 

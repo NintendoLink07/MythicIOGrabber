@@ -104,8 +104,8 @@ miog.C = {
 	-- 1.5 seconds seems to be the internal throttle of the inspect function / Blizzard's inspect data provider.
 	-- 1.4 locks up the inspects after a maximum of ~15 inspects.
 	-- First 6 inspects are not affected by this throttle.
-	-- I have played around with many different delays or different request "sets" (e.g. every 3 seconds 2 applicants, every 5 seconds 4 applicants) but nothing seems to work as well as: if number of members < 6 all instantly, otherwise every 1.5 seconds
-	BLIZZARD_INSPECT_THROTTLE = 1.65,
+	-- I have played around with many different delays or different request "sets" (e.g. every 3 seconds 2 applicants, every 5 seconds 4 applicants) but nothing seems to work as well as: if number of members < 6 all instantly, otherwise every 1.5 seconds (?????????)
+	BLIZZARD_INSPECT_THROTTLE = 1.9,
 
 
 	PLAYER_GUID = UnitGUID("player"),
@@ -1108,13 +1108,13 @@ end
 
 miog.loadRawData = loadRawData
 
-miog.MAP_INFO[2522].achievementCategory = 15469
+miog.MAP_INFO[2522].achievementCategory = 15469 --VOTI
 miog.MAP_INFO[2522].achievementsAwakened = {19564, 19565, 19566}
 
-miog.MAP_INFO[2549].achievementCategory = 15469
+miog.MAP_INFO[2549].achievementCategory = 15469 --ATDH
 miog.MAP_INFO[2549].achievementsAwakened = {19570, 19571, 19572}
 
-miog.MAP_INFO[2569].achievementCategory = 15469
+miog.MAP_INFO[2569].achievementCategory = 15469 --ATSC
 miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
 
 miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER

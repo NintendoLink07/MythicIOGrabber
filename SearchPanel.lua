@@ -628,7 +628,7 @@ end
 miog.createResultTooltip = createResultTooltip
 
 local function groupSignup(resultID)
-	if(resultID) then
+	if(resultID and (UnitIsGroupLeader("player") or not IsInGroup() or not IsInRaid())) then
 		local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
@@ -1191,7 +1191,9 @@ local function updatePersistentResultFrame(resultID)
 
 			--currentFrame.DetailedInformationPanel:SetPoint("TOPLEFT", currentFrame.BasicInformationPanel or (currentFrame.RaidInformation:IsVisible() and currentFrame.RaidInformation or currentFrame.CategoryInformation), "BOTTOMLEFT")
 			--currentFrame.DetailedInformationPanel:SetPoint("TOPRIGHT", currentFrame.BasicInformationPanel or (currentFrame.RaidInformation:IsVisible() and currentFrame.RaidInformation or currentFrame.CategoryInformation), "BOTTOMRIGHT")
+			generalInfoPanel.Right["1"].FontString:SetText(resultID)
 		end
+
 
 		updateResultFrameStatus(resultID)
 	end

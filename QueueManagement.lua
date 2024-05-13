@@ -492,8 +492,11 @@ local function checkQueues()
 
 		frame.Background:SetTexture(miog.ACTIVITY_INFO[activeEntryInfo.activityID] and miog.ACTIVITY_INFO[activeEntryInfo.activityID].horizontal)
 
-		frame.CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-		frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
+		frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
+		frame.CancelApplication:SetScript("OnClick", function()
+			C_LFGList.RemoveListing()
+		end)
+
 		frame:SetScript("OnMouseDown", function()
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)

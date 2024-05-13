@@ -987,56 +987,6 @@ miog.createApplicationViewer = function()
 	miog.createFrameBorder(applicationViewer.CreationSettings, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.ButtonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	local classPanel = applicationViewer.ClassPanel
-
-	classPanel:SetHeight(miog.F.LITE_MODE and 22 or 25)
-
-	classPanel.classFrames = {}
-
-	for classID, classEntry in ipairs(miog.CLASSES) do
-		local classFrame = CreateFrame("Frame", nil, classPanel, "MIOG_ClassPanelClassFrameTemplate")
-		classFrame.layoutIndex = classID
-		classFrame:SetSize(classPanel:GetHeight(), classPanel:GetHeight())
-
-		classFrame.Icon:SetTexture(classEntry.icon)
-		classFrame.rightPadding = 3
-		classPanel.classFrames[classID] = classFrame
-
-		local specPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", classFrame)
-		specPanel:SetPoint("TOP", classFrame, "BOTTOM", 0, -5)
-		specPanel.fixedHeight = classFrame:GetHeight() - 3
-		specPanel.specFrames = {}
-		specPanel:Hide()
-		classFrame.specPanel = specPanel
-
-		local specCounter = 1
-
-		for _, specID in ipairs(classEntry.specs) do
-			local specFrame = CreateFrame("Frame", nil, specPanel, "MIOG_ClassPanelSpecFrameTemplate")
-			specFrame:SetSize(specPanel.fixedHeight, specPanel.fixedHeight)
-			specFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
-			specFrame.layoutIndex = specCounter
-			specFrame.leftPadding = 0
-
-			specPanel.specFrames[specID] = specFrame
-
-			specCounter = specCounter + 1
-		end
-
-		specPanel:MarkDirty()
-
-		classFrame:SetScript("OnEnter", function()
-			specPanel:Show()
-
-		end)
-		classFrame:SetScript("OnLeave", function()
-			specPanel:Hide()
-
-		end)
-	end
-
-	classPanel:MarkDirty()
-
 	applicationViewer.TitleBar.Faction:SetTexture(2437241)
 	applicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[10])
 
@@ -1086,7 +1036,7 @@ miog.createApplicationViewer = function()
 		end
 	end)
 
-	miog.ApplicationViewer.browseGroupsButton = browseGroupsButton
+	miog.ApplicationViewer.BrowseGroupsButton = browseGroupsButton
 
 	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
 	delistButton:SetPoint("LEFT", browseGroupsButton, "RIGHT")
@@ -1097,7 +1047,7 @@ miog.createApplicationViewer = function()
 		C_LFGList.RemoveListing()
 	end)
 
-	miog.ApplicationViewer.delistButton = delistButton
+	miog.ApplicationViewer.DelistButton = delistButton
 
 	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
 	editButton:SetPoint("LEFT", delistButton, "RIGHT")
@@ -1110,7 +1060,7 @@ miog.createApplicationViewer = function()
 		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation)
 	end)
 
-	miog.ApplicationViewer.editButton = editButton
+	miog.ApplicationViewer.EditButton = editButton
 
 	miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)

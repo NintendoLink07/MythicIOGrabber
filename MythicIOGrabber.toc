@@ -36,6 +36,7 @@ EntryCreation.lua
 FilterPanel.lua
 InspectCoroutine.lua
 SharedFunctions.lua
+ClassPanel.lua
 
 PVPStatistics.lua
 RaidStatistics.lua

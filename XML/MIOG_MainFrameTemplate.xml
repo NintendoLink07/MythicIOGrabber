@@ -5,7 +5,7 @@
     </Font>
 
     <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true" toplevel="true" enableMouse="true" parent="UIParent">
-        <Frames>            
+        <Frames>
             <Frame parentKey="TitleBar">
                 <Size y="23" />
                 <Anchors>
@@ -714,15 +714,12 @@
 
                     </OnClick>
                 </Scripts>
-            </Button>
-        
+            </Button>        
         </Frames>
 
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="1">
-                <Texture parentKey="Background" setAllPoints="true">
-
-                </Texture>
+                <Texture parentKey="Background" setAllPoints="true" />
             </Layer>
         </Layers>
 

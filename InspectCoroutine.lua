@@ -3,52 +3,18 @@ local wticc = WrapTextInColorCode
 
 local groupSystem = {}
 groupSystem.groupMember = {}
-local lastNotifyTime = 0
-local inspectCoroutine
 
-MIOG_InspectQueue = {}
+local lastNotifyTime = 0
+
+local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_InspectCoroutineEventReceiver")
+
 MIOG_InspectedGUIDs = {}
 MIOG_SavedSpecIDs = {}
 
-local function requestInspectData()
-	for guid, v in pairs(MIOG_InspectQueue) do
-		C_Timer.After((lastNotifyTime - GetTimePreciseSec()) > miog.C.BLIZZARD_INSPECT_THROTTLE and 0 or miog.C.BLIZZARD_INSPECT_THROTTLE,
-		function()
-			if(UnitIsConnected(v) and UnitGUID(v)) then
-				NotifyInspect(v)
+local timers = {}
 
-				-- LAST NOTIFY SAVED SO THE MAX TIME BETWEEN NOTIFY CALLS IS ~1.5s
-				lastNotifyTime = GetTimePreciseSec()
-
-			else
-				--GUID gone
-
-			end
-		end)
-
-		coroutine.yield(inspectCoroutine)
-	end
-
-	coroutine.yield(inspectCoroutine)
-
-end
-
-local function checkCoroutineStatus(newInspectData)
-	if(inspectCoroutine == nil) then
-		inspectCoroutine = coroutine.create(requestInspectData)
-		miog.handleCoroutineReturn({coroutine.resume(inspectCoroutine)})
-
-	else
-		if(coroutine.status(inspectCoroutine) == "dead") then
-			inspectCoroutine = coroutine.create(requestInspectData)
-			miog.handleCoroutineReturn({coroutine.resume(inspectCoroutine)})
-
-		elseif(newInspectData) then
-			miog.handleCoroutineReturn({coroutine.resume(inspectCoroutine)})
-
-		end
-	end
-end
+local currentInspection = nil
+local currentInspectionName = nil
 
 local function createGroupMemberEntry(guid, unitID)
 	local _, classFile, _, _, _, name = GetPlayerInfoByGUID(guid)
@@ -69,6 +35,12 @@ end
 
 local function updateRosterInfoData()
 	miog.releaseRaidRosterPool()
+	
+	if(currentInspection and GetTimePreciseSec() - lastNotifyTime > 7) then
+		ClearInspectPlayer(true)
+		updateRosterInfoData()
+
+	end
 
 	groupSystem.groupMember = {}
 
@@ -96,31 +68,81 @@ local function updateRosterInfoData()
 
 	groupSystem.specCount = {}
 
-	--SHOW CURRENTLY INSPECTED DUDE FOR MANUAL LOOKUP
-
 	miog.F.LFG_STATE = miog.checkLFGState()
 	local numOfMembers = GetNumGroupMembers()
 
-	for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
+	local indexedGroup = {}
+	local inspectableMembers = 0
+	local currentInspectionStillInGroup = false
+
+	miog.F.LFG_STATE = miog.checkLFGState()
+
+	for groupIndex = 1, numOfMembers, 1 do
 		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
 		if(name) then
-			local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= 5))) and miog.F.LFG_STATE..groupIndex) or "player"
+			local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and miog.F.LFG_STATE..groupIndex) or "player"
+			--local unitID = ((miog.F.LFG_STATE == "raid" or (miog.F.LFG_STATE == "party" and groupIndex ~= miog.MAX_GROUP_SIZES["party"])) and miog.F.LFG_STATE..groupIndex) or "player"
 			local guid = UnitGUID(unitID)
 
 			if(guid) then
 				groupSystem.groupMember[guid] = {
 					unitID = unitID,
 					name = name,
+					shortName = UnitName(unitID),
 					classID = fileName and miog.CLASSFILE_TO_ID[fileName],
 					role = combatRole,
 				}
 
-				if(guid ~= UnitGUID("player") and not MIOG_InspectQueue[guid] and not MIOG_InspectedGUIDs[guid]) then
-					if(not MIOG_InspectedGUIDs[guid] or GetTimePreciseSec() - MIOG_InspectedGUIDs[guid] > 300) then
-						MIOG_InspectQueue[guid] = unitID
-					end
+				if(guid ~= UnitGUID("player") and (not MIOG_InspectedGUIDs[guid] or GetTimePreciseSec() - MIOG_InspectedGUIDs[guid] > 300)) then
 
+					if(currentInspection == nil and UnitIsConnected(unitID) and CanInspect(unitID)) then
+
+						--print(lastNotifyTime + miog.C.BLIZZARD_INSPECT_THROTTLE, GetTimePreciseSec(), miog.C.BLIZZARD_INSPECT_THROTTLE)
+						
+						currentInspectionName = name
+						currentInspection = guid
+			
+						--C_Timer.After(lastNotifyTime + miog.C.BLIZZARD_INSPECT_THROTTLE < GetTimePreciseSec() and 0 or lastNotifyTime - GetTimePreciseSec() + miog.C.BLIZZARD_INSPECT_THROTTLE,
+
+						if(timers[guid]) then
+							timers[guid]:Cancel()
+						end
+
+						local timer = C_Timer.NewTimer(10,
+						function()
+							--print("CHECK FOR", guid)
+							if(currentInspection and GetTimePreciseSec() - lastNotifyTime > 7) then
+								currentInspection = nil
+								ClearInspectPlayer(true)
+								updateRosterInfoData()
+							end
+						end)
+
+						timers[guid] = timer
+
+						C_Timer.After(numOfMembers <= 20 and miog.C.BLIZZARD_INSPECT_THROTTLE or 2,
+						function()
+							if(groupSystem.groupMember[guid]) then
+								lastNotifyTime = GetTimePreciseSec()
+								--print("INSPECT", currentInspectionName)
+			
+
+								NotifyInspect(unitID) -- 2nd argument for hook to check if own or other addons' notify
+			
+								local color = C_ClassColor.GetClassColor(fileName)
+								name = color and WrapTextInColorCode(groupSystem.groupMember[guid].shortName, color:GenerateHexColor()) or groupSystem.groupMember[guid].shortName
+								
+								miog.ClassPanel.LoadingSpinner:Show()
+								miog.ClassPanel.StatusString:SetText(name .. "\n(" .. #indexedGroup .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
+							end
+						end)
+					else
+						--GUID gone
+						MIOG_InspectedGUIDs[guid] = nil
+						MIOG_SavedSpecIDs[guid] = nil
+			
+					end
 				end
 
 				if(groupSystem.classCount[miog.CLASSFILE_TO_ID[fileName]]) then
@@ -128,13 +150,24 @@ local function updateRosterInfoData()
 
 				end
 	
+				if(guid == currentInspection) then
+					currentInspectionStillInGroup = true
+				end
+			end
+
+			if(UnitIsConnected(unitID) and CanInspect(unitID)) then
+				inspectableMembers = inspectableMembers + 1
+
 			end
 
 		end
 
 	end
 
-	local indexedGroup = {}
+	if(currentInspectionStillInGroup == false) then
+		currentInspection = nil
+		ClearInspectPlayer(true)
+	end
 
 	for guid, member in pairs(groupSystem.groupMember) do
 		if(MIOG_InspectedGUIDs[guid]) then
@@ -146,6 +179,7 @@ local function updateRosterInfoData()
 			local specID, _, _, _, role = GetSpecializationInfo(GetSpecialization())
 			member.specID = specID
 			member.role = role
+		
 		end
 
 		if(member.specID) then
@@ -165,23 +199,30 @@ local function updateRosterInfoData()
 		end
 	end
 
-	local percentageInspected = #indexedGroup / numOfMembers
+	local percentageInspected = #indexedGroup / inspectableMembers
+
+	if(not currentInspection) then
+		miog.ClassPanel.LoadingSpinner:Hide()
+		miog.ClassPanel.StatusString:SetText("(" .. #indexedGroup .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
+		
+
+	end
 
 	if(percentageInspected >= 1) then
-		miog.ApplicationViewer.ClassPanel.InspectStatus:Hide()
+		miog.ClassPanel.InspectStatus:Hide()
 
 	else
-		miog.ApplicationViewer.ClassPanel.InspectStatus:Show()
+		miog.ClassPanel.InspectStatus:Show()
 	
 	end
 
-	miog.ApplicationViewer.ClassPanel.InspectStatus:SetMinMaxValues(0, numOfMembers)
-	miog.ApplicationViewer.ClassPanel.InspectStatus:SetValue(#indexedGroup)
-	miog.ApplicationViewer.ClassPanel.InspectStatus:SetStatusBarColor(1 - percentageInspected, percentageInspected, 0, 1)
+	miog.ClassPanel.InspectStatus:SetMinMaxValues(0, inspectableMembers)
+	miog.ClassPanel.InspectStatus:SetValue(#indexedGroup)
+	miog.ClassPanel.InspectStatus:SetStatusBarColor(1 - percentageInspected, percentageInspected, 0, 1)
 
 	for classID, classEntry in ipairs(miog.CLASSES) do
 		local classCount = groupSystem.classCount[classID]
-		local currentClassFrame = miog.ApplicationViewer.ClassPanel.classFrames[classID]
+		local currentClassFrame = miog.ClassPanel.Container.classFrames[classID]
 		currentClassFrame.layoutIndex = classID
 		currentClassFrame.FontString:SetText(classCount > 0 == true and classCount or "")
 		currentClassFrame.Icon:SetDesaturated(classCount > 0 == false and true or false)
@@ -197,7 +238,7 @@ local function updateRosterInfoData()
 		end
 
 		for _, v in ipairs(classEntry.specs) do
-			local currentSpecFrame = miog.ApplicationViewer.ClassPanel.classFrames[classID].specPanel.specFrames[v]
+			local currentSpecFrame = miog.ClassPanel.Container.classFrames[classID].specPanel.specFrames[v]
 
 			if(groupSystem.specCount[v]) then
 				currentSpecFrame.layoutIndex = v
@@ -218,11 +259,11 @@ local function updateRosterInfoData()
 
 		end
 
-		miog.ApplicationViewer.ClassPanel.classFrames[classID].specPanel:MarkDirty()
+		miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
 
 	end
 
-	miog.ApplicationViewer.ClassPanel:MarkDirty()
+	miog.ClassPanel.Container:MarkDirty()
 
 	if(numOfMembers < 5) then
 		if(groupSystem.roleCount["TANK"] < 1) then
@@ -302,7 +343,16 @@ local function updateRosterInfoData()
 	end
 end
 
--- IMPLEMENT QUEUE SAVING
+local function resetInspectCoroutine()
+	MIOG_InspectedGUIDs = {}
+	MIOG_SavedSpecIDs = {}
+
+	ClearInspectPlayer(true)
+
+	updateRosterInfoData()
+end
+
+miog.resetInspectCoroutine = resetInspectCoroutine
 
 local function inspectCoroutineEvents(_, event, ...)
     if(event == "PLAYER_ENTERING_WORLD") then
@@ -312,42 +362,40 @@ local function inspectCoroutineEvents(_, event, ...)
         if(isInitialLogin or isReloadingUi) then
 			if(isInitialLogin) then
 				MIOG_InspectedGUIDs = {}
-				MIOG_InspectQueue = {}
 				MIOG_SavedSpecIDs = {}
 			end
+
             updateRosterInfoData()
 
         end
-
-		checkCoroutineStatus()
-
-    elseif(event == "GROUP_JOINED" or event == "GROUP_LEFT") then
-		--print("JOINED")
-        miog.checkIfCanInvite()
 
     elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
 		local guid = UnitGUID(...)
 
 		if(guid) then
-			if(groupSystem.groupMember[guid] and not MIOG_InspectQueue[guid]) then
+			if(groupSystem.groupMember[guid]) then
 				MIOG_InspectedGUIDs[guid] = nil
 				MIOG_SavedSpecIDs[guid] = nil
-				MIOG_InspectQueue[guid] = ...
-				checkCoroutineStatus()
 
 			end
 		end
 
 	elseif(event == "INSPECT_READY") then
-		if(groupSystem.groupMember[...] or MIOG_InspectQueue[...]) then
+		local name = select(6, GetPlayerInfoByGUID(...))
+		--print("READY", name)
+
+		if(currentInspection == ...) then
+			ClearInspectPlayer(true)
+		end
+
+		if(groupSystem.groupMember[...]) then
 			MIOG_InspectedGUIDs[...] = GetTimePreciseSec()
-			MIOG_InspectQueue[...] = nil
 			
+			if(timers[...]) then
+				timers[...]:Cancel()
+			end
+
 			updateRosterInfoData()
-
-			ClearInspectPlayer()
-
-			checkCoroutineStatus(true)
 
 		else
 			local unitID = UnitTokenFromGUID(...)
@@ -360,23 +408,38 @@ local function inspectCoroutineEvents(_, event, ...)
 			end
 
 		end
+	elseif(event == "GROUP_JOINED") then
+		updateRosterInfoData()
+
+	elseif(event == "GROUP_LEFT") then
+		updateRosterInfoData()
+	
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		updateRosterInfoData()
-		checkCoroutineStatus()
 
     end
 end
 
-hooksecurefunc("NotifyInspect", function()
+hooksecurefunc("NotifyInspect", function(unitID)
 	lastNotifyTime = GetTimePreciseSec()
 end)
 
-local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_InspectCoroutineEventReceiver")
+hooksecurefunc("ClearInspectPlayer", function(own)
+	if(own) then
+		--print("CLEAR", currentInspectionName)
+		currentInspection = nil
+		currentInspectionName = nil
+		--miog.pveFrame2.ClassPanelStatusString:SetText("Waiting for next inspect...")
+	end
+end)
 
-eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
-eventReceiver:RegisterEvent("GROUP_JOINED")
-eventReceiver:RegisterEvent("GROUP_LEFT")
-eventReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-eventReceiver:RegisterEvent("INSPECT_READY")
-eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
-eventReceiver:SetScript("OnEvent", inspectCoroutineEvents)
+miog.createInspectCoroutine = function()
+	eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
+	eventReceiver:RegisterEvent("GROUP_JOINED")
+	eventReceiver:RegisterEvent("GROUP_LEFT")
+	eventReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	eventReceiver:RegisterEvent("INSPECT_READY")
+	eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+	eventReceiver:SetScript("OnEvent", inspectCoroutineEvents)
+end
+

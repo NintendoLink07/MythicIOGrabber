@@ -827,6 +827,7 @@ miog.createFrames = function()
 		local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
 
 		miog.MainTab.CategoryPanel.LastGroup:SetBackdropColor(r, g, b, 0.9)
+
 	end
 		
 	miog.createFrameBorder(miog.Plugin.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -869,6 +870,13 @@ miog.createFrames = function()
 	miog.createSearchPanel()
 	miog.createEntryCreation()
 	miog.loadFilterPanel()
+		
+	miog.ClassPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.pveFrame2 or PVEFrame, "MIOG_ClassPanel")
+	miog.ClassPanel:SetPoint("BOTTOMRIGHT", miog.ClassPanel:GetParent(), "TOPRIGHT", 0, 1)
+	miog.ClassPanel:SetPoint("BOTTOMLEFT", miog.ClassPanel:GetParent(), "TOPLEFT", 0, 1)
+
+	miog.createClassPanel()
+	miog.createInspectCoroutine()
 
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
@@ -893,6 +901,14 @@ miog.createFrames = function()
 			else
 				LFGListFrame.ApplicationViewer:Hide()
 
+			end
+
+			if(UnitIsGroupLeader("player")) then
+				miog.ApplicationViewer.DelistButton:Show()
+
+			else
+				miog.ApplicationViewer.DelistButton:Hide()
+				
 			end
 
 			miog.setupFiltersForActivePanel()
