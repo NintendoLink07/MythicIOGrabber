@@ -1513,7 +1513,7 @@ miog.createSearchPanel = function()
 		searchBox:SetPoint(searchPanel.SearchBoxBase:GetPoint())
 
 	else
-		LFGListFrame.SearchPanel.SearchBox:SetWidth(searchPanel.standardSearchBoxWidth - 70)
+		LFGListFrame.SearchPanel.SearchBox:SetWidth(searchPanel.standardSearchBoxWidth - 80)
 	
 	end
 

@@ -155,7 +155,7 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function()
 		LFGListFrame.SearchPanel.FilterButton:Hide()
 
 	else
-		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 70)
+		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 80)
 	
 	end
 end)

@@ -342,6 +342,12 @@ local function createPVEFrameReplacement()
 
 		else
 			ShowUIPanel(miog.pveFrame2)
+			C_Calendar.CloseEvent();
+
+			local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime();
+			C_Calendar.SetAbsMonth(currentCalendarTime.month, currentCalendarTime.year);
+
+			C_Calendar.OpenCalendar();
 		
 		end
 	end)
@@ -527,6 +533,12 @@ eventReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
+
+eventReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
+eventReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT")
+eventReceiver:RegisterEvent("CALENDAR_OPEN_EVENT");
+
+
 eventReceiver:SetScript("OnEvent", miog.OnEvent)
 
 --[[

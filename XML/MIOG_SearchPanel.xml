@@ -49,9 +49,9 @@
             </Frame>
 
             <EditBox parentKey="SearchBoxBase" hidden="true">
-                <Size x="280" y="20"/>
+                <Size x="270" y="20"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" y="-2" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="8" y="-2" />
                 </Anchors>
             </EditBox>
 

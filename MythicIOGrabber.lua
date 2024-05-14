@@ -8,6 +8,26 @@ miog.debug.timer = nil
 local wticc = WrapTextInColorCode
 
 local calendarBacklog = {}
+local calendarCoroutine = nil
+
+local lastOffset, lastMonthDay, lastIndex
+
+local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
+	print("REQUEST STARTED")
+	
+	for i = 1, numEvents, 1 do
+		lastOffset, lastMonthDay, lastIndex = offsetMonths, monthDay, i
+		local success = C_Calendar.OpenEvent(offsetMonths, monthDay, i)
+
+		print(i)
+
+		if(success) then
+			coroutine.yield()
+		end
+	end
+
+	--CHECK FOR RESUME STATUS; DOESN'T WORK
+end
 
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
@@ -24,6 +44,8 @@ miog.OnEvent = function(_, event, ...)
 		
 		EJ_SetDifficulty(8)
 
+		calendarCoroutine = coroutine.create(requestCalendarEventInfo)
+
 		--LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.ApplicationViewer:Show() end)
 		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.SearchPanel:Show() end)
 
@@ -36,7 +58,7 @@ miog.OnEvent = function(_, event, ...)
 
 		end
 
-		if(C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards")) then			
+		if(C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards")) then
 			miog.MainTab.MPlusStatus = Mixin(miog.MainTab.MPlusStatus, WeeklyRewardsActivityMixin)
 			miog.MainTab.HonorStatus = Mixin(miog.MainTab.HonorStatus, WeeklyRewardsActivityMixin)
 			miog.MainTab.RaidStatus = Mixin(miog.MainTab.RaidStatus, WeeklyRewardsActivityMixin)
@@ -55,37 +77,64 @@ miog.OnEvent = function(_, event, ...)
 			end
 		end
 
-	--elseif(event == "CALENDAR_UPDATE_EVENT_LIST") then
-		--[[print("UPDATE CALENDAR")
+	elseif(event == "CALENDAR_UPDATE_EVENT_LIST") then
+		print("UPDATE CALENDAR")
+		
+		local numEvents = C_Calendar.GetNumDayEvents(0, 15)
+		--print(numEvents)
 
-		local day = 12
+		if(calendarCoroutine) then
+			local status = coroutine.status(calendarCoroutine)
+			if(status == "dead") then
+				calendarCoroutine = coroutine.create(requestCalendarEventInfo)
+				
+			elseif(status == "suspended") then
+				coroutine.resume(calendarCoroutine, 0, 15, numEvents)
 
-		for i = day, day + 14, 1 do
-			local numEvents = C_Calendar.GetNumDayEvents(0, i)
-
-			for k = 1, numEvents, 1 do
-				local success = C_Calendar.OpenEvent(0, day, k)
-
-				if(success) then
-					tinsert(calendarBacklog, {i, k})
-				end
 			end
 		end
 
+	elseif(event == "CALENDAR_UPDATE_EVENT") then
+		print("UPDATE EVENT")
+
 	elseif(event == "CALENDAR_OPEN_EVENT") then
-		local info = C_Calendar.GetEventInfo()
+		print("OPEN EVENT", ...)
 
-		if(info) then
-			print(i, k, info.title)
+		if(... == "HOLIDAY") then
+			local info = C_Calendar.GetHolidayInfo(lastOffset, lastMonthDay, lastIndex)
 
-
+			if(info) then
+				print(info.name)
+			
+			end
 		end
+
+		if(calendarCoroutine) then
+			print("RESUME")
+			coroutine.resume(calendarCoroutine)
+		end
+		--[[	local numEvents = C_Calendar.GetNumDayEvents(0, 15)
+			for i = 1, numEvents, 1 do
+				local info = C_Calendar.GetHolidayInfo(0, 15, i)
+
+				if(info) then
+					print(info.name)
+				
+				end
+			end
+		end]]
+		--local info = C_Calendar.GetEventInfo()
+
+		--if(info) then
+			--print(i, k, info.title)
+
+
+		--end
 
 
 	--IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
 
 
-]]
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
 		if(not miog.F.ADDED_DUNGEON_FILTERS) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()

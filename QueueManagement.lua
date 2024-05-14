@@ -551,7 +551,7 @@ local function checkQueues()
 							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 						end)
 
-						local eligible, reason = miog.isGroupEligible(id)
+						local eligible, reason = miog.isGroupEligible(id, true)
 
 						if(eligible == false) then
 							frame.Name:SetTextColor(1, 0, 0, 1)
