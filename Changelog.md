@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.0.3] - 2024-05-14
+
+### Changed
+
+- When a group listing does not match your filters anymore the frame in the queue panel will now list a shortened reason.
+
+### Fixed
+
+- Band-aid solution with addons like "World Quest Tracker" that move the search box of the group finder.
+After closing all windows that pop up through the quest addons and pressing the search button the search box will appear again.
+
+- Deleted a debug statement that popped up when checking for Blizzard LFG filters.
+
+
 ## [2.0.2] - 2024-05-13
 
 ### Added
@@ -1279,7 +1293,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.3..HEAD
+[2.0.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.3
 [2.0.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.2
 [2.0.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.1
 [2.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0

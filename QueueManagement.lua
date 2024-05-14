@@ -557,7 +557,7 @@ local function checkQueues()
 							frame.Name:SetTextColor(1, 0, 0, 1)
 
 							if(reason) then
-								frame.Name:SetText(frame.Name:GetText() .. " - " .. reason)
+								frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
 							end
 						end
 

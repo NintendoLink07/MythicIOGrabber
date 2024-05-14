@@ -43,6 +43,26 @@ miog.APPLICANT_STATUS_INFO = {
 	["none"] = {statusString = "NONE", color = miog.CLRSCC["green"]},
 }
 
+ miog.INELIGIBILITY_REASONS = {
+	[1] = {"No search result info.", "No result"},
+	[2] = {"Incorrect categoryID.", "Incorrect category"},
+	[3] = {"You have been hard declined from this group.", "Hard declined"},
+	[4] = {"The difficulty ID doesn't not match the one you selected.", "Incorrect difficulty"},
+	[5] = {"The bracket ID doesn't not match the one you selected.", "Incorrect bracket"},
+	[6] = {"No more slots for your role.", "No slots."},
+	[7] = {"If you join there won't be anyone who has a class ress ability.", "No ress."},
+	[8] = {"If you join there won't be anyone with a lust effect.", "No lust"},
+	[9] = {"Your class filters do not match with this listing.", "Class filtered"},
+	[10] = {"Your spec filters do not match with this listing.", "Spec filtered"},
+	[11] = {"Incorrect number of tanks/healers/damagers.", "Incorrect roles"},
+	[12] = {"Your role filters do not match with this listing.", "Incorrect roles"},
+	[13] = {"Your rating filters do not match with this listing.", "Rating mismatch"},
+	[14] = {"Your lowest rating filter do not match with this listing.", "Lowest Rating mismatch"},
+	[15] = {"Your highest rating filter do not match with this listing.", "Highest Rating mismatch"},
+	[16] = {"Your dungeon selection does not match with this listing.", "Dungeon mismatch"},
+	[17] = {"Your raid selection does not match with this listing.", "Raid mismatch"},
+ }
+
 miog.DIFFICULTY_ID_TO_COLOR = {
 	[DifficultyUtil.ID.DungeonNormal] = miog.ITEM_QUALITY_COLORS[2].color,
 	[DifficultyUtil.ID.DungeonHeroic] = miog.ITEM_QUALITY_COLORS[3].color,

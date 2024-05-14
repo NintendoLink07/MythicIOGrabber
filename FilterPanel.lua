@@ -50,8 +50,6 @@ local function convertAdvancedBlizzardFiltersToMIOGFilters()
 				v.filterForTanks = v.minTanks > 0 and true
 				v.filterForHealers = v.minHealers > 0 and true
 
-				print("FILTERCHECK", v.filterForTanks, v.filterForHealers)
-
 				if(k == 2) then
 					v.filterForScore = v.minScore > 0 and true
 				end

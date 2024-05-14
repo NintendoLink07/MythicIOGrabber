@@ -144,6 +144,22 @@ local function printOnce(string)
 	end
 end
 
+hooksecurefunc("LFGListSearchPanel_DoSearch", function()
+	if(not miog.F.LITE_MODE) then
+		LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
+		LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
+		LFGListFrame.SearchPanel.SearchBox:SetSize(miog.SearchPanel.SearchBoxBase:GetSize())
+		LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
+		LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("DIALOG")
+
+		LFGListFrame.SearchPanel.FilterButton:Hide()
+
+	else
+		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 70)
+	
+	end
+end)
+
 local function createDetailedInformationPanel(poolFrame, listFrame)
 	if (listFrame == nil) then
 		listFrame = poolFrame
