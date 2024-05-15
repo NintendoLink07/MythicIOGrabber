@@ -11,6 +11,20 @@ local calendarBacklog = {}
 local calendarCoroutine = nil
 
 local lastOffset, lastMonthDay, lastIndex
+local framePool
+local counter = 0
+
+local function resetHolidayFrame(_, frame)
+	frame:Hide()
+	frame.layoutIndex = nil
+
+	frame.Title:SetText()
+	--frame.Date:SetText()
+	frame.Icon:SetTexture(nil)
+
+---@diagnostic disable-next-line: undefined-field
+	miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
+end
 
 local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
 	print("REQUEST STARTED")
@@ -19,11 +33,12 @@ local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
 		lastOffset, lastMonthDay, lastIndex = offsetMonths, monthDay, i
 		local success = C_Calendar.OpenEvent(offsetMonths, monthDay, i)
 
-		print(i)
+		--print(i)
 
-		if(success) then
-			coroutine.yield()
-		end
+		--if(success) then
+			--print("YIELD")
+			--coroutine.yield()
+		--end
 	end
 
 	--CHECK FOR RESUME STATUS; DOESN'T WORK
@@ -77,18 +92,32 @@ miog.OnEvent = function(_, event, ...)
 			end
 		end
 
+		if(not miog.F.LITE_MODE) then
+			framePool = CreateFramePool("Frame", miog.MainTab.Information.Holiday, "MIOG_HolidayFrameTemplate", resetHolidayFrame)
+		end
+
 	elseif(event == "CALENDAR_UPDATE_EVENT_LIST") then
-		print("UPDATE CALENDAR")
+		--print("UPDATE CALENDAR")
+
+		framePool:ReleaseAll()
 		
 		local numEvents = C_Calendar.GetNumDayEvents(0, 15)
 		--print(numEvents)
 
 		if(calendarCoroutine) then
 			local status = coroutine.status(calendarCoroutine)
+
+			--print(1, status)
+
 			if(status == "dead") then
 				calendarCoroutine = coroutine.create(requestCalendarEventInfo)
+				coroutine.resume(calendarCoroutine, 0, 15, numEvents)
+
+			end
+
+			--print(2, status)
 				
-			elseif(status == "suspended") then
+			if(status == "suspended") then
 				coroutine.resume(calendarCoroutine, 0, 15, numEvents)
 
 			end
@@ -103,15 +132,35 @@ miog.OnEvent = function(_, event, ...)
 		if(... == "HOLIDAY") then
 			local info = C_Calendar.GetHolidayInfo(lastOffset, lastMonthDay, lastIndex)
 
-			if(info) then
-				print(info.name)
-			
+			if(info and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.endTime) >= 0) then
+				counter = counter + 1
+				
+				local cFrame = framePool:Acquire()
+				cFrame:SetWidth(165)
+				cFrame.layoutIndex = counter
+
+				cFrame.Icon:SetTexture(info.texture)
+				cFrame.Title:SetText(info.name)
+				--cFrame.Date:SetText(info.startTime.monthDay .. "." .. info.startTime.month .. " - " .. info.endTime.monthDay .. "." .. info.endTime.month)
+
+				cFrame:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+					GameTooltip:SetText(info.name, nil, nil, nil, nil, true)
+					GameTooltip:AddLine("Start: " .. CalendarUtil.FormatCalendarTimeWeekday(info.startTime))
+					GameTooltip:AddLine("End: " .. CalendarUtil.FormatCalendarTimeWeekday(info.endTime))
+					GameTooltip:AddLine(info.description, 1, 1, 1, true)
+					GameTooltip:Show()
+				end)
+
+				cFrame:Show()
+
+				miog.MainTab.Information.Holiday:MarkDirty()
 			end
 		end
 
 		if(calendarCoroutine) then
-			print("RESUME")
-			coroutine.resume(calendarCoroutine)
+			--print("RESUME")
+			--coroutine.resume(calendarCoroutine)
 		end
 		--[[	local numEvents = C_Calendar.GetNumDayEvents(0, 15)
 			for i = 1, numEvents, 1 do

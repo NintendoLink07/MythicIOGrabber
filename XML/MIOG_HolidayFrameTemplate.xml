@@ -1,0 +1,52 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd"> 
+    <Frame name="MIOG_HolidayFrameTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size x="165" y="25" />
+
+        <Frames>
+        </Frames>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="25" y="25" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" font="LibMono">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </FontString>
+                <!--<FontString parentKey="Date" font="LibMono" wordwrap="false" nonspacewrap="false">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                    </Anchors>
+                </FontString>
+                
+                
+                STATUS BAR "BACKGROUND"
+                
+                
+                
+                
+                
+                -->
+            </Layer>
+
+            
+        </Layers>
+
+        <Scripts>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Frame>
+</Ui>

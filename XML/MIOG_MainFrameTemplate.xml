@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">    
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
+    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="true">
         <FontHeight val="11" />
     </Font>
 
@@ -544,6 +544,17 @@
                                             </OnLeave>
                                         </Scripts>
                                     </StatusBar>
+
+                                    <Frame parentKey="Holiday" inherits="VerticalLayoutFrame">
+                                        <KeyValues>
+                                            <KeyValue key="spacing" value="5" />
+                                        </KeyValues>
+                                        <Size x="165" y="120" />
+
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.HonorStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                        </Anchors>
+                                    </Frame>
 
                                     <Frame parentKey="Currency">
                                         <Size x="40" y="80" />
