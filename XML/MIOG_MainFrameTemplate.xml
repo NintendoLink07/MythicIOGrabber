@@ -14,16 +14,27 @@
                 </Anchors>
 
                 <Frames>
-                    <Button parentKey="BlizzardFrame" inherits="UIButtonTemplate">
+                    <Button parentKey="BlizzardFrame" inherits="UIButtonTemplate" mixin="LFDMicroButtonMixin">
+                        <KeyValues>
+                            <KeyValue key="commandName" value="TOGGLEGROUPFINDER" type="string"/>
+                            <KeyValue key="newbieText" value="NEWBIE_TOOLTIP_LFGPARENT" type="global"/>
+                        </KeyValues>
+
                         <Size x="20" y="20"/>
+
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
 						</Anchors>
+
                         <NormalTexture atlas="Battlenet-ClientIcon-WoW" />
+                        
 						<Scripts>
 							<OnClick>
-								PVEFrame_ShowFrame("GroupFinderFrame")
+                                ConquestFrame.selectedButton = nil --entrypoint for Blizzard to fuck up
+
+                                LFGListUtil_OpenBestWindow(false)
 							</OnClick>
+
                             <OnEnter>
                                 GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
                                 GameTooltip:SetText("Show the stock Blizzard frame")
@@ -33,6 +44,28 @@
                             <OnLeave>
                                 GameTooltip:Hide()
                             </OnLeave>
+                            <OnLoad>
+                                self:RegisterForClicks("AnyUp");
+                                self:RegisterEvent("UPDATE_BINDINGS");
+                                self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT");
+                                self:RegisterEvent("QUEST_LOG_UPDATE");
+
+                                SetDesaturation(LFDMicroButton:GetDisabledTexture(), true);
+                                self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER");
+
+                                self.disabledTooltip =	function()
+                                    local canUse, failureReason = C_LFGInfo.CanPlayerUseGroupFinder();
+                                    return canUse and FEATURE_UNAVAILBLE_PLAYER_IS_NEUTRAL or failureReason;
+                                end
+
+                                self.IsActive =	function()
+                                    local factionGroup = UnitFactionGroup("player");
+                                    local canUse, failureReason = C_LFGInfo.CanPlayerUseGroupFinder();
+                                    return canUse and factionGroup ~= "Neutral" and not Kiosk.IsEnabled();
+                                end
+                            </OnLoad>
+                            <OnShow function="MicroButton_KioskModeDisable" inherit="append"/>
+                            <OnEvent method="OnEvent"/>
 						</Scripts>
 					</Button>
 

@@ -1,0 +1,39 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_FilterOptionDualFieldTemplate" virtual="true">
+        <Frames>
+            <CheckButton parentKey="Button" inherits="MIOG_MinimalCheckButtonTemplate">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                </Anchors>
+            </CheckButton>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="LibMono">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="2" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <EditBox parentKey="Field1" inherits="InputBoxTemplate">
+                <Size x="64" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="90" />
+                </Anchors>
+            </EditBox>
+
+            <EditBox parentKey="Field2" inherits="InputBoxTemplate">
+                <Size x="64" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Field1" relativePoint="RIGHT" x="10" />
+                </Anchors>
+            </EditBox>
+        </Frames>
+    </Frame>
+</Ui>

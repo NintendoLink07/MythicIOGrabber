@@ -880,6 +880,7 @@ miog.createFrames = function()
 
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
+		miog.loadCalendarSystem()
 	end
 
 	-- IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
@@ -895,8 +896,8 @@ miog.createFrames = function()
 			miog.ApplicationViewer:Show()
 
 			if(not miog.F.LITE_MODE) then
+				ShowUIPanel(miog.pveFrame2)
 				miog.MainTab.CategoryPanel:Hide()
-				miog.pveFrame2:Show()
 
 			else
 				LFGListFrame.ApplicationViewer:Hide()
@@ -933,7 +934,7 @@ miog.createFrames = function()
 			miog.SearchPanel:Show()
 
 			if(not miog.F.LITE_MODE) then
-				miog.pveFrame2:Show()
+				ShowUIPanel(miog.pveFrame2)
 				miog.MainTab.CategoryPanel:Hide()
 
 			else
@@ -971,22 +972,29 @@ miog.createFrames = function()
 				if(LFGListFrame.SearchPanel.categoryID == 2) then
 					miog.FilterPanel.FilterOptions.DungeonPanel:Show()
 					miog.FilterPanel.FilterOptions.DungeonPanel.OptionsButton:Show()
+					miog.FilterPanel.FilterOptions.filterForScore:Show()
 
 					miog.FilterPanel.FilterOptions.RaidPanel:Hide()
 					miog.FilterPanel.FilterOptions.RaidPanel.OptionsButton:Hide()
+					miog.FilterPanel.FilterOptions.filterForBossKills:Hide()
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
 					miog.FilterPanel.FilterOptions.DungeonPanel:Hide()
 					miog.FilterPanel.FilterOptions.DungeonPanel.OptionsButton:Hide()
+					miog.FilterPanel.FilterOptions.filterForScore:Hide()
 
 					miog.FilterPanel.FilterOptions.RaidPanel:Show()
 					miog.FilterPanel.FilterOptions.RaidPanel.OptionsButton:Show()
+					miog.FilterPanel.FilterOptions.filterForBossKills:Show()
 
 				else
 					miog.FilterPanel.FilterOptions.DungeonPanel:Hide()
 					miog.FilterPanel.FilterOptions.DungeonPanel.OptionsButton:Hide()
+					miog.FilterPanel.FilterOptions.filterForScore:Hide()
+					
 					miog.FilterPanel.FilterOptions.RaidPanel:Hide()
 					miog.FilterPanel.FilterOptions.RaidPanel.OptionsButton:Hide()
+					miog.FilterPanel.FilterOptions.filterForBossKills:Hide()
 
 				end
 
@@ -1008,7 +1016,7 @@ miog.createFrames = function()
 			miog.FilterPanel.Lock:Show()
 
 			if(not miog.F.LITE_MODE) then
-				miog.pveFrame2:Show()
+				ShowUIPanel(miog.pveFrame2)
 				miog.MainTab.CategoryPanel:Hide()
 
 			else

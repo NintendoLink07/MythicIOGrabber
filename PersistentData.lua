@@ -985,6 +985,23 @@ for k, v in ipairs(C_ChallengeMode.GetMapTable()) do
 
 end
 
+miog.LFG_DUNGEONS_INFO = {
+
+}
+
+for k, v in pairs(miog.RAW["LFGDungeons"]) do
+	miog.LFG_DUNGEONS_INFO[v[1]] = {
+		name = v[2],
+		description = v[3],
+		typeID = v[4],
+		subtypeID = v[5],
+		expansionLevel = v[10],
+		mapID = v[11],
+		difficultyID = v[12]
+	}
+	
+end
+
 
 local function loadRawData()
 	local faction = UnitFactionGroup("player")
@@ -997,13 +1014,33 @@ local function loadRawData()
 			mapInfo.expansionLevel = v[6]
 			mapInfo.loadingScreenID = v[8]
 			mapInfo.bosses = {}
+			mapInfo.exactName = v[2]
 		
 			if(mapInfo.fileName) then
 				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. mapInfo.fileName .. ".png"
 				mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. mapInfo.fileName .. ".png"
 			
 			end
+		else
+			miog.MAP_INFO[v[1]] = {
+				name = v[3],
+				instanceType = v[5],
+				expansionLevel = v[6],
+				loadingScreenID = v[8],
+				bosses = {},
+				exactName = v[2],
+			}
 		end
+	end
+
+	for k, v in pairs(miog.RAW["BattlemasterList"]) do
+		if(miog.MAP_INFO[v[18]]) then
+			print("GOT", miog.MAP_INFO[v[18]].exactName)
+			miog.MAP_INFO[v[18]].horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. miog.MAP_INFO[v[18]].exactName .. ".png"
+			miog.MAP_INFO[v[18]].vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. miog.MAP_INFO[v[18]].exactName .. ".png"
+			
+		end
+
 	end
 
 	for k, v in pairs(miog.RAW["DungeonEncounter"]) do

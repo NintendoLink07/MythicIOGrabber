@@ -300,7 +300,7 @@ local function isGroupEligible(resultID, bordermode)
 
 		local score = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForScore) then
+		if(isDungeon and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForScore) then
 			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
 				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore >= 0
 				and not (score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore
@@ -337,6 +337,36 @@ local function isGroupEligible(resultID, bordermode)
 
 			end
 
+		end
+
+		if(isRaid and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForBossKills) then
+			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
+
+			local numberOfSlainEncounters = encounterInfo and #encounterInfo or 0
+
+			local minKills = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minBossKills
+			local maxKills = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxBossKills
+
+			if(minKills ~= 0 and maxKills ~= 0) then
+				if(maxKills >= 0
+				and not (numberOfSlainEncounters >= minKills
+				and numberOfSlainEncounters <= maxKills)) then
+					return false, miog.INELIGIBILITY_REASONS[13]
+
+				end
+			elseif(minKills ~= 0) then
+				if(numberOfSlainEncounters < minKills) then
+					return false, miog.INELIGIBILITY_REASONS[14]
+
+				end
+			elseif(maxKills ~= 0) then
+				if(numberOfSlainEncounters >= maxKills) then
+					return false, miog.INELIGIBILITY_REASONS[15]
+					
+				end
+
+			end
+			
 		end
 
 		return true

@@ -3,9 +3,6 @@
     <Frame name="MIOG_HolidayFrameTemplate" inherits="BackdropTemplate" virtual="true">
         <Size x="165" y="25" />
 
-        <Frames>
-        </Frames>
-
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
@@ -14,34 +11,29 @@
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                     </Anchors>
                 </Texture>
-            </Layer>
-
-            <Layer level="OVERLAY">
-                <FontString parentKey="Title" font="LibMono">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                    </Anchors>
-                </FontString>
-                <!--<FontString parentKey="Date" font="LibMono" wordwrap="false" nonspacewrap="false">
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
-                    </Anchors>
-                </FontString>
-                
-                
-                STATUS BAR "BACKGROUND"
-                
-                
-                
-                
-                
-                -->
-            </Layer>
-
-            
+            </Layer>           
         </Layers>
+
+        <Frames>
+            <StatusBar parentKey="DateBar" inherits="BackdropTemplate">
+                <BarTexture atlas="ui-castingbar-filling-standard" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Title" font="LibMono">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer> 
+                </Layers>
+            </StatusBar>
+        </Frames>
 
         <Scripts>
             <OnLeave>

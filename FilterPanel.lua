@@ -121,7 +121,7 @@ end
 
 miog.addOptionToFilterFrame = addOptionToFilterFrame
 
-local function addDualNumericSpinnerToFilterFrame(parent, name, range)
+local function addDualNumericSpinnerToFilterFrame(parent, name, text, range)
 	local filterPanel = miog.FilterPanel
 
 	local minName = "min" .. name
@@ -146,9 +146,9 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 		end
 	end)
 
-	filterOption.Name:SetText(name)
+	filterOption.Name:SetText(text or name)
 
-	filterPanel.FilterOptions["filterFor" .. name] = filterOption.Button
+	filterPanel.FilterOptions["filterFor" .. name] = filterOption
 	filterPanel.FilterOptions["linked" .. name] = filterOption.Link
 
 	filterOption.Link:SetScript("OnClick", function(self)
@@ -220,7 +220,6 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, range)
 
 			local currentPanel = LFGListFrame.activePanel:GetDebugName()
 			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
-		
 
 			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
 
@@ -284,13 +283,11 @@ miog.addDualNumericSpinnerToFilterFrame = addDualNumericSpinnerToFilterFrame
 local function addDualNumericFieldsToFilterFrame(parent, name)
 	local filterPanel = miog.FilterPanel
 
-	local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", parent, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	optionButton:SetNormalAtlas("checkbox-minimal")
-	optionButton:SetPushedAtlas("checkbox-minimal")
-	optionButton:SetCheckedTexture("checkmark-minimal")
-	optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-	optionButton:RegisterForClicks("LeftButtonDown")
-	optionButton:HookScript("OnClick", function(self)
+	local filterOption = CreateFrame("Frame", nil, parent, "MIOG_FilterOptionDualFieldTemplate")
+	filterOption:SetSize(parent:GetWidth(), 25)
+
+	--local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", parent, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+	filterOption.Button:HookScript("OnClick", function(self)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
@@ -307,22 +304,17 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		end
 	end)
 
-	filterPanel.FilterOptions["filterFor" .. name] = optionButton
+	filterPanel.FilterOptions["filterFor" .. name] = filterOption
 
-	local optionString = miog.createBasicFontString("persistent", 11, parent)
-	optionString:SetPoint("LEFT", optionButton, "RIGHT", 2, 0)
-	optionString:SetText(name)
+	filterOption.Name:SetText(name)
 
 	local minName = "min" .. name
 	local maxName = "max" .. name
 
-	local lastNumericField = nil
-
 	for i = 1, 2, 1 do
 		local currentName = i == 1 and minName or maxName
 
-		local numericField = miog.createBasicFrame("persistent", "InputBoxTemplate", parent, miog.C.INTERFACE_OPTION_BUTTON_SIZE * 3, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-		numericField:SetPoint("LEFT", i == 1 and optionButton or lastNumericField, "RIGHT", i == 1 and 70 or 5, 0)
+		local numericField = filterOption["Field" .. i]
 		numericField:SetAutoFocus(false)
 		numericField.autoFocus = false
 		numericField:SetNumeric(true)
@@ -352,11 +344,9 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		
 
 		filterPanel.FilterOptions[currentName] = numericField
-
-		lastNumericField = numericField
 	end
 
-	return optionButton
+	return filterOption
 
 end
 
@@ -661,21 +651,25 @@ local function setupFiltersForActivePanel(reset)
 		filterPanel.FilterOptions.linkedHealers:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedHealers)
 		filterPanel.FilterOptions.linkedDamager:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedDamager)
 
-		filterPanel.FilterOptions.filterForTanks:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForTanks)
+		filterPanel.FilterOptions.filterForTanks.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForTanks)
 		filterPanel.FilterOptions.minTanks:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minTanks)
 		filterPanel.FilterOptions.maxTanks:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxTanks)
 
-		filterPanel.FilterOptions.filterForHealers:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForHealers)
+		filterPanel.FilterOptions.filterForHealers.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForHealers)
 		filterPanel.FilterOptions.minHealers:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minHealers)
 		filterPanel.FilterOptions.maxHealers:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxHealers)
 
-		filterPanel.FilterOptions.filterForDamager:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDamager)
+		filterPanel.FilterOptions.filterForDamager.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDamager)
 		filterPanel.FilterOptions.minDamager:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minDamager)
 		filterPanel.FilterOptions.maxDamager:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxDamager)
 
-		filterPanel.FilterOptions.filterForScore:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForScore)
+		filterPanel.FilterOptions.filterForScore.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForScore)
 		filterPanel.FilterOptions.minScore:SetNumber(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minScore)
 		filterPanel.FilterOptions.maxScore:SetNumber(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxScore)
+
+		filterPanel.FilterOptions.filterForBossKills.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForBossKills)
+		filterPanel.FilterOptions.minBossKills:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minBossKills)
+		filterPanel.FilterOptions.maxBossKills:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxBossKills)
 
 		--filterPanel.FilterOptions["filterForClassSpecs"].Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs)
 		filterPanel.FilterOptions.filterForClassSpecs.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs)
@@ -1082,6 +1076,10 @@ miog.loadFilterPanel = function()
 
 	local scoreField = miog.addDualNumericFieldsToFilterFrame(miog.FilterPanel.SearchPanelOptions, "Score")
 	scoreField:SetPoint("TOPLEFT", damagerSpinner, "BOTTOMLEFT", 0, 0)
+
+	local bossKillsSpinner = miog.addDualNumericSpinnerToFilterFrame(miog.FilterPanel.SearchPanelOptions, "BossKills", "Kills")
+	bossKillsSpinner.Link:Hide()
+	bossKillsSpinner:SetPoint("TOPLEFT", damagerSpinner, "BOTTOMLEFT", 0, 0)
 
 	local divider = miog.createBasicTexture("persistent", nil, miog.FilterPanel.CategoryOptions, miog.FilterPanel.CategoryOptions:GetWidth(), 1, "BORDER")
 	divider:SetAtlas("UI-LFG-DividerLine")

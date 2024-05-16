@@ -307,9 +307,19 @@ function SlickDropDown:SetWidthToWidestFrame(infoTable)
 
 	width = width > self:GetWidth() and width or self:GetWidth()
 
-	for _, v in ipairs(list:GetLayoutChildren()) do
-		v:SetWidth(width - 2)
+	local childrenList = list:GetLayoutChildren()
 
+	if(childrenList) then
+		for _, v in ipairs(childrenList) do
+			v:SetWidth(width - 2)
+
+		end
+	else
+		if(infoTable.parentIndex == 6) then
+			print("NOTHING BITCH")
+		end
+		local frame = self.entryFrameTree[infoTable.parentIndex][infoTable.index or 1]
+		frame:SetWidth(width - 2)
 	end
 
 	list.minimumWidth = width
@@ -445,7 +455,6 @@ function SlickDropDown:CreateEntryFrame(info)
 	if(miog.F.QUEUE_STOP ~= true) then
 		local frame = nil
 		local list = nil
-		local tableIndex = 0
 
 		local infoTable = info
 
@@ -461,7 +470,6 @@ function SlickDropDown:CreateEntryFrame(info)
 			--list.framePool = list.framePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
 			list.framePool = list.framePool or CreateFramePool("Button", list, "MIOG_DropDownMenuEntry", SlickDropDown.ResetFrame)
 			--list.securePool = list.securePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
-			list.securePool = list.securePool or CreateFramePool("Button", list, "MIOG_DropDownMenuEntry", SlickDropDown.ResetFrame)
 
 			frame = list.framePool:Acquire()
 
@@ -481,7 +489,7 @@ function SlickDropDown:CreateEntryFrame(info)
 			list = self.List
 
 			frame = list.framePool:Acquire()
-			frame.layoutIndex = infoTable.index or #list:GetLayoutChildren() + 1
+			frame.layoutIndex = infoTable.index or #list:GetLayoutChildren() +1
 			
 			self.entryFrameTree[frame.layoutIndex] = frame
 
@@ -523,10 +531,6 @@ function SlickDropDown:CreateEntryFrame(info)
 		if(infoTable.func) then
 			frame:SetScript("OnClick", infoTable.func)
 
-		else
-			frame:SetMouseClickEnabled(not infoTable.disabled)
-			frame:RegisterForClicks("LeftButtonDown")
-			frame:SetAttribute("type", "macro") -- left click causes macro
 		end
 
 		if(infoTable.disabled) then
@@ -538,6 +542,11 @@ function SlickDropDown:CreateEntryFrame(info)
 		end
 
 		setScriptsOnFrame(frame)
+
+
+		if(infoTable.parentIndex == 6) then
+
+		end
 
 		frame:Show()
 
@@ -589,29 +598,15 @@ function SlickDropDown:CreateExtraButton(baseButton, entryFrame)
 	end)
 
 	entryFrame.ExtraButton:HookScript("PostClick", function(selfButton)
-		for k, v in pairs(entryFrame.ParentDropDown.deactivatedExtraButtons) do
-			v:Show()
-			v:GetParent().Radio:Hide()
-		end
+		--for k, v in pairs(entryFrame.ParentDropDown.deactivatedExtraButtons) do
+		--	v:Show()
+		--	v:GetParent().Radio:Hide()
+		--end
 
-		selfButton:Hide()
-		table.insert(entryFrame.ParentDropDown.deactivatedExtraButtons, selfButton)
-		entryFrame.Radio:Show()
+		--selfButton:Hide()
+		--table.insert(entryFrame.ParentDropDown.deactivatedExtraButtons, selfButton)
+		--entryFrame.Radio:Show()
 	end)
 
 	entryFrame.Radio:Hide()
-
-	entryFrame:SetScript("OnShow", function()
-		if(entryFrame.type2 == "unrated") then
-			if(HonorFrame.type == "specific") then
-				entryFrame.Name:SetTextColor(1, 0, 0, 1)
-				entryFrame:SetAttribute("macrotext1", "/run PVEFrame_ShowFrame(\"PVPUIFrame\", \"HonorFrame\")")
-
-			else
-				entryFrame.Name:SetTextColor(1, 1, 1, 1)
-				entryFrame:SetAttribute("macrotext1", entryFrame:GetAttribute("original"))
-			
-			end
-		end
-	end)
 end

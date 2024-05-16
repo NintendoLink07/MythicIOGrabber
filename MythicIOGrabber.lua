@@ -2,48 +2,10 @@ local addonName, miog = ...
 
 miog.debug = {}
 
+miog.referencePVPButtons = {}
+
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
-
-local wticc = WrapTextInColorCode
-
-local calendarBacklog = {}
-local calendarCoroutine = nil
-
-local lastOffset, lastMonthDay, lastIndex
-local framePool
-local counter = 0
-
-local function resetHolidayFrame(_, frame)
-	frame:Hide()
-	frame.layoutIndex = nil
-
-	frame.Title:SetText()
-	--frame.Date:SetText()
-	frame.Icon:SetTexture(nil)
-
----@diagnostic disable-next-line: undefined-field
-	miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
-end
-
-local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
-	print("REQUEST STARTED")
-	
-	for i = 1, numEvents, 1 do
-		lastOffset, lastMonthDay, lastIndex = offsetMonths, monthDay, i
-		local success = C_Calendar.OpenEvent(offsetMonths, monthDay, i)
-
-		--print(i)
-
-		--if(success) then
-			--print("YIELD")
-			--coroutine.yield()
-		--end
-	end
-
-	--CHECK FOR RESUME STATUS; DOESN'T WORK
-end
-
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
 		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
@@ -58,8 +20,6 @@ miog.OnEvent = function(_, event, ...)
 		miog.loadRawData()
 		
 		EJ_SetDifficulty(8)
-
-		calendarCoroutine = coroutine.create(requestCalendarEventInfo)
 
 		--LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.ApplicationViewer:Show() end)
 		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.SearchPanel:Show() end)
@@ -92,97 +52,16 @@ miog.OnEvent = function(_, event, ...)
 			end
 		end
 
-		if(not miog.F.LITE_MODE) then
-			framePool = CreateFramePool("Frame", miog.MainTab.Information.Holiday, "MIOG_HolidayFrameTemplate", resetHolidayFrame)
-		end
-
-	elseif(event == "CALENDAR_UPDATE_EVENT_LIST") then
-		--print("UPDATE CALENDAR")
-
-		framePool:ReleaseAll()
 		
-		local numEvents = C_Calendar.GetNumDayEvents(0, 15)
-		--print(numEvents)
-
-		if(calendarCoroutine) then
-			local status = coroutine.status(calendarCoroutine)
-
-			--print(1, status)
-
-			if(status == "dead") then
-				calendarCoroutine = coroutine.create(requestCalendarEventInfo)
-				coroutine.resume(calendarCoroutine, 0, 15, numEvents)
-
-			end
-
-			--print(2, status)
-				
-			if(status == "suspended") then
-				coroutine.resume(calendarCoroutine, 0, 15, numEvents)
-
-			end
-		end
-
-	elseif(event == "CALENDAR_UPDATE_EVENT") then
-		print("UPDATE EVENT")
-
-	elseif(event == "CALENDAR_OPEN_EVENT") then
-		print("OPEN EVENT", ...)
-
-		if(... == "HOLIDAY") then
-			local info = C_Calendar.GetHolidayInfo(lastOffset, lastMonthDay, lastIndex)
-
-			if(info and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.endTime) >= 0) then
-				counter = counter + 1
-				
-				local cFrame = framePool:Acquire()
-				cFrame:SetWidth(165)
-				cFrame.layoutIndex = counter
-
-				cFrame.Icon:SetTexture(info.texture)
-				cFrame.Title:SetText(info.name)
-				--cFrame.Date:SetText(info.startTime.monthDay .. "." .. info.startTime.month .. " - " .. info.endTime.monthDay .. "." .. info.endTime.month)
-
-				cFrame:SetScript("OnEnter", function(self)
-					GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
-					GameTooltip:SetText(info.name, nil, nil, nil, nil, true)
-					GameTooltip:AddLine("Start: " .. CalendarUtil.FormatCalendarTimeWeekday(info.startTime))
-					GameTooltip:AddLine("End: " .. CalendarUtil.FormatCalendarTimeWeekday(info.endTime))
-					GameTooltip:AddLine(info.description, 1, 1, 1, true)
-					GameTooltip:Show()
-				end)
-
-				cFrame:Show()
-
-				miog.MainTab.Information.Holiday:MarkDirty()
-			end
-		end
-
-		if(calendarCoroutine) then
-			--print("RESUME")
-			--coroutine.resume(calendarCoroutine)
-		end
-		--[[	local numEvents = C_Calendar.GetNumDayEvents(0, 15)
-			for i = 1, numEvents, 1 do
-				local info = C_Calendar.GetHolidayInfo(0, 15, i)
-
-				if(info) then
-					print(info.name)
-				
-				end
-			end
-		end]]
-		--local info = C_Calendar.GetEventInfo()
-
-		--if(info) then
-			--print(i, k, info.title)
+		miog.referencePVPButtons = CONQUEST_BUTTONS
+		MIOG_REFERENCE_PVP_BUTTONS = CONQUEST_BUTTONS
 
 
-		--end
-
-
-	--IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
-
+		PVPUIFrame:HookScript("OnShow", function()
+			ConquestFrame.selectedButton = nil
+			ConquestFrame.ratedSoloShuffleEnabled = false
+			ConquestFrame.arenasEnabled = false
+		end)
 
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
 		if(not miog.F.ADDED_DUNGEON_FILTERS) then

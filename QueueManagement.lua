@@ -856,7 +856,7 @@ local function updateRandomDungeons()
 				info.text = isHolidayDungeon and "(Event) " .. name or name
 
 				info.checked = mode == "queued"
-				info.icon = miog.MAP_INFO[id] and miog.MAP_INFO[id].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
+				info.icon = miog.MAP_INFO[id] and miog.MAP_INFO[id].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
 				info.parentIndex = subtypeID
 				info.index = 1
 				info.type2 = "random"
@@ -934,6 +934,7 @@ local function updateDungeons(overwrittenParentIndex)
 				info.index = nil
 
 				info.text = isHolidayDungeon and "(Event) " .. name or name
+
 				info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or fileID or nil
 
 				info.parentIndex = overwrittenParentIndex or isFollowerDungeon and 3 or subtypeID
@@ -1014,8 +1015,8 @@ local function updateRaidFinder()
 
 	local lastRaidName
 
-	for rfIndex=1, GetNumRFDungeons() do
-		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, x1, x2, mapID = GetRFDungeonInfo(rfIndex)
+	for rfIndex = 1, GetNumRFDungeons() do
+		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(rfIndex)
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
 
 		if((isAvailableForPlayer or not hideIfNotJoinable)) then
@@ -1115,49 +1116,79 @@ end
 
 miog.updateRaidFinder = updateRaidFinder
 
-local function checkIfCanQueue()
-	local HonorFrame = HonorFrame;
-	local canQueue;
-	local arenaID;
-	local isBrawl;
-	local isSpecialBrawl;
+local function updatePVP2()
+	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
-	if ( HonorFrame.type == "specific" ) then
-		if ( HonorFrame.SpecificScrollBox.selectionID ) then
-			canQueue = true;
-		end
-	elseif ( HonorFrame.type == "bonus" ) then
-		if ( HonorFrame.BonusFrame.selectedButton ) then
-			canQueue = HonorFrame.BonusFrame.selectedButton.canQueue;
-			arenaID = HonorFrame.BonusFrame.selectedButton.arenaID;
-			isBrawl = HonorFrame.BonusFrame.selectedButton.isBrawl;
-			isSpecialBrawl = HonorFrame.BonusFrame.selectedButton.isSpecialBrawl;
+	local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
+
+	local token, loopMax, generalTooltip;
+	if (groupSize > (MAX_PARTY_MEMBERS + 1)) then
+		token = "raid";
+		loopMax = groupSize;
+	else
+		token = "party";
+		loopMax = groupSize - 1; -- player not included in party tokens, just raid tokens
+	end
+	
+	local maxLevel = GetMaxLevelForLatestExpansion();
+	for i = 1, loopMax do
+		if ( not UnitIsConnected(token..i) ) then
+			generalTooltip = PVP_NO_QUEUE_DISCONNECTED_GROUP
+			break;
+		elseif ( UnitLevel(token..i) < maxLevel ) then
+			generalTooltip = PVP_NO_QUEUE_GROUP
+			break;
 		end
 	end
 
-	local disabledReason;
+	local info = {}
+	info.entryType = "option"
+	info.level = 2
+	info.parentIndex = 6
+	info.text = PVP_RATED_SOLO_SHUFFLE
 
-	if arenaID then
-		local battlemasterListInfo = C_PvP.GetSkirmishInfo(arenaID);
-		if battlemasterListInfo then
-			local groupSize = GetNumGroupMembers();
-			local minPlayers = battlemasterListInfo.minPlayers;
-			local maxPlayers = battlemasterListInfo.maxPlayers;
-			if groupSize > maxPlayers then
-				canQueue = false;
-				disabledReason = PVP_ARENA_NEED_LESS:format(groupSize - maxPlayers);
-			elseif groupSize < minPlayers then
-				canQueue = false;
-				disabledReason = PVP_ARENA_NEED_MORE:format(minPlayers - groupSize);
-			end
-		end
-	end
+	local minItemLevel = C_PvP.GetRatedSoloShuffleMinItemLevel()
+	local _, _, playerPvPItemLevel = GetAverageItemLevel();
+	info.disabled = playerPvPItemLevel < minItemLevel
+	info.icon = miog.findBrawlIconByName("Solo Shuffle")
+	info.tooltipOnButton = true
+	info.tooltipWhileDisabled = true
+	info.tooltipTitle = "Unable to queue for this activity."
+	info.tooltipText = generalTooltip or format(_G["INSTANCE_UNAVAILABLE_SELF_PVP_GEAR_TOO_LOW"], "", minItemLevel, playerPvPItemLevel);
 
-	return canQueue
+	local soloFrame = queueDropDown:CreateEntryFrame(info)
+	soloFrame:SetScript("OnClick", function()
+		PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
+		ConquestJoinButton:Click()
+
+		--MACRO FOR CONQUEST JOIN BUTTON
+
+		HideUIPanel(PVEFrame)
+	end)
+
+	--SlickDropDown:CreateExtraButton(ConquestFrame.RatedSoloShuffle, soloFrame)
+
+
+	info = {}
+	info.entryType = "option"
+	info.level = 2
+	info.parentIndex = 6
+	info.text = ARENA_BATTLES_2V2
+	info.icon = miog.findBattlegroundIconByName("Arena (2v2)")
+	-- info.checked = false
+	info.type2 = "rated"
+	info.tooltipText = generalTooltip or groupSize > 2 and string.format(PVP_ARENA_NEED_LESS, groupSize - 2) or groupSize < 2 and string.format(PVP_ARENA_NEED_MORE, 2 - groupSize)
+	info.disabled = groupSize ~= 2
+	--info.func = function()
+	--	JoinArena()
+	--end
+
+	local twosFrame = queueDropDown:CreateEntryFrame(info)
+
+	
 end
 
-local function updatePvP()
-	---@diagnostic disable-next-line: undefined-field
+--[[local function updatePvP()
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
 	local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
@@ -1323,14 +1354,13 @@ local function updatePvP()
 	
 end
 
-miog.updatePvP = updatePvP
+miog.updatePvP = updatePvP]]
 
 local function updateDropDown()
 	if(miog.F.QUEUE_STOP == true) then
 		miog.F.UPDATE_QUEUE_DROPDOWN = true
 		
 	else
-		---@diagnostic disable-next-line: undefined-field
 		local queueDropDown = miog.MainTab.QueueInformation.DropDown
 		queueDropDown:ResetDropDown()
 
@@ -1372,11 +1402,12 @@ local function updateDropDown()
 		info.index = 5
 		queueDropDown:CreateEntryFrame(info)
 
-		--[[info.text = "PvP"
+		info = {}
+		info.text = "Custom PVP Menu"
 		info.hasArrow = true
 		info.level = 1
-		info.index = 5
-		queueDropDown:CreateEntryFrame(info)]]
+		info.index = 6
+		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
 		info.text = "Pet Battle"
@@ -1384,7 +1415,7 @@ local function updateDropDown()
 		info.entryType = "option"
 		info.level = 1
 		info.value = "PETBATTLEQUEUEBUTTON"
-		info.index = 6
+		info.index = 7
 		info.func = function()
 			C_PetBattles.StartPVPMatchmaking()
 		end
@@ -1395,6 +1426,18 @@ local function updateDropDown()
 			
 		end)
 
+		info = {}
+		info.level = 1
+		info.hasArrow = true
+		info.text = "PVP (Stock UI)"
+		info.type2 = "more"
+		info.index = 8
+		info.disabled = nil
+		local moreFrame = queueDropDown:CreateEntryFrame(info)
+		moreFrame:SetScript("OnClick", function()
+			PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
+		end)
+
 		info.entryType = "option"
 		info.level = 2
 		info.index = nil
@@ -1403,32 +1446,8 @@ local function updateDropDown()
 		updateDungeons()
 		updateDungeons(4)
 		updateRaidFinder()
+		updatePVP2()
 		--updatePvP()
-
-		info = {}
-		info.level = 1
-		info.hasArrow = true
-		--info.text = LFG_LIST_MORE
-		info.text = "PVP (Stock UI)"
-		-- info.checked = false
-		--info.tooltipText = generalTooltip or groupSize > 10 and string.format(PVP_RATEDBG_NEED_LESS, groupSize - 10) or groupSize < 10 and string.format(PVP_RATEDBG_NEED_MORE, 10 - groupSize)
-		--info.disabled = generalTooltip or groupSize ~= 10
-		info.type2 = "more"
-		info.index = 7
-		info.disabled = nil
-		--info.func = function()i
-		--	JoinRatedBattlefield()
-		--end
-
-		-- UIDropDownMenu_AddButton(info, level)
-		local moreFrame = queueDropDown:CreateEntryFrame(info)
-		--[[moreFrame:SetAttribute("macrotext1", "/run PVEFrame_ShowFrame(\"PVPUIFrame\", \"HonorFrame\")" .. "\r\n" .. "/run HonorFrame.BonusFrame.Arena1Button:ClearAllPoints()" .. "\r\n" .. 
-		"/run HonorFrame.BonusFrame.Arena1Button:SetPoint(\"LEFT\", HonorFrame.BonusFrame, \"LEFT\", (HonorFrame.BonusFrame:GetWidth() - HonorFrame.BonusFrame.Arena1Button:GetWidth()) / 2, 0)")]]
-
-		--moreFrame:SetAttribute("macrotext1", "/run PVEFrame_ShowFrame(\"PVPUIFrame\", \"HonorFrame\")")
-		moreFrame:SetScript("OnClick", function()
-			PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
-		end)
 	
 	end
 end
@@ -1441,8 +1460,6 @@ local function queueEvents(_, event, ...)
 	elseif(event == "LFG_UPDATE") then
 
 	elseif(event == "LFG_LOCK_INFO_RECEIVED") then
-		--miog.updateRaidFinder()
-		--miog.updateDungeons()
 		updateDropDown()
 		
 	elseif(event == "PVP_BRAWL_INFO_UPDATED") then

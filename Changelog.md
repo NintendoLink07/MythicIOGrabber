@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.0.4] - 2024-05-20
+
+### Added
+
+- Calendar events are implemented!
+Whenever a special event (timewalking, pvp brawl, etc.) is currently ongoing or going to start in the next 7 days there will be a notification in the main tab.
+
+- [Filter Panel] For raids you can now filter by killed bosses.
+Currently only via numbers, will implement selecting specific bosses soon.
+
+### Fixed
+
+- [Filter Panel] Rating will not be checked if you're not in the dungeon / arena search panel.
+
+- [Queue Selector] (All?) Event queues will now have an icon if they don't usually have one (like timewalking stuff).
+The icon will by default be the one from the expansion it's about.
+
+- [Stock Blizzard Panel] There won't be any error message anymore when switching to the stock UI with the topleft button in the title bar and then directly trying to join any rated pvp queue.
+
+
 ## [2.0.3] - 2024-05-14
 
 ### Changed

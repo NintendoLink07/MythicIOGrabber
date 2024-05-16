@@ -3,6 +3,8 @@ local wticc = WrapTextInColorCode
 
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
+
+
 local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
@@ -329,11 +331,6 @@ local function createPVEFrameReplacement()
 		end
 	end)
 
-	--[[PVEFrame:SetScript("OnShow", function(self)
-		HideUIPanel(self)
-		miog.pveFrame2:SetShown(not miog.pveFrame2:IsVisible())
-	end)]]
-
 	hooksecurefunc("PVEFrame_ToggleFrame", function()
 		HideUIPanel(PVEFrame)
 
@@ -342,6 +339,7 @@ local function createPVEFrameReplacement()
 
 		else
 			ShowUIPanel(miog.pveFrame2)
+			
 			C_Calendar.CloseEvent();
 
 			local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime();
@@ -533,11 +531,6 @@ eventReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
-
-eventReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
-eventReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT")
-eventReceiver:RegisterEvent("CALENDAR_OPEN_EVENT");
-
 
 eventReceiver:SetScript("OnEvent", miog.OnEvent)
 
