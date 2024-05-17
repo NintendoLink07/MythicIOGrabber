@@ -30,7 +30,7 @@
                         
 						<Scripts>
 							<OnClick>
-                                ConquestFrame.selectedButton = nil --entrypoint for Blizzard to fuck up
+                                --ConquestFrame.selectedButton = nil --entrypoint for Blizzard to fuck up
 
                                 LFGListUtil_OpenBestWindow(false)
 							</OnClick>

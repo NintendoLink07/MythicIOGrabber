@@ -828,6 +828,9 @@ miog.createFrames = function()
 
 		miog.MainTab.CategoryPanel.LastGroup:SetBackdropColor(r, g, b, 0.9)
 
+		ConquestFrame.selectedButton = nil
+		PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
+		HideUIPanel(PVEFrame)
 	end
 		
 	miog.createFrameBorder(miog.Plugin.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())

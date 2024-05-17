@@ -109,6 +109,8 @@ function SlickDropDown:ResetFrame(frame)
 		frame.info = nil
 		frame.type2 = nil
 		frame.value = nil
+		frame.tooltip = nil
+		frame.tooltipTitle = nil
 		frame.parentIndex = nil
 		frame.activeCheck = nil
 		frame.activities = nil
@@ -436,7 +438,15 @@ local function setScriptsOnFrame(self)
 		end
 
 		if(self.tooltip) then
-
+			self:SetScript("OnEnter", function()
+				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+				GameTooltip:SetText(self.tooltipTitle)
+				GameTooltip:AddLine(self.tooltip)
+				GameTooltip:Show()
+			end)
+			self:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+			end)
 		end
 
 		if(self:GetTop() and GetScreenHeight() / 2 > self:GetTop()) then
@@ -449,6 +459,62 @@ local function setScriptsOnFrame(self)
 
 		end
 	end)
+end
+
+function SlickDropDown:InsertCustomFrame(info, frame)
+	if(miog.F.QUEUE_STOP ~= true) then
+		local list = nil
+	
+		local infoTable = info
+
+		frame:ClearAllPoints()
+
+		if(infoTable.parentIndex) then
+			local parent = self.entryFrameTree[infoTable.parentIndex]
+			list = self.entryFrameTree[infoTable.parentIndex].List
+
+			if(parent == nil) then
+				DevTools_Dump(infoTable)
+
+			end
+
+			frame.layoutIndex = infoTable.index or #list:GetLayoutChildren() + 1
+
+			self.entryFrameTree[infoTable.parentIndex][frame.layoutIndex] = frame
+
+			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+
+		else
+			list = self.List
+
+			frame.layoutIndex = infoTable.index or #list:GetLayoutChildren() +1
+			
+			self.entryFrameTree[frame.layoutIndex] = frame
+
+			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+
+		end
+
+		frame:SetParent(list)
+
+		if(list.ExpandButton and #list.ExpandButton > 0) then
+			table.insert(list.ExpandButton[#list.ExpandButton], frame)
+		end
+		
+		frame.parentIndex = infoTable.parentIndex
+		
+		frame:SetHeight(20)
+
+		frame:Show()
+
+		self:SetWidthToWidestFrame(infoTable)
+
+		return frame
+	end
 end
 
 function SlickDropDown:CreateEntryFrame(info)
@@ -524,6 +590,9 @@ function SlickDropDown:CreateEntryFrame(info)
 			frame.Radio:SetChecked(infoTable.checked)
 		
 		end
+
+		frame.tooltip = infoTable.tooltip
+		frame.tooltipTitle = infoTable.tooltipTitle
 		
 		frame.ParentDropDown = self
 		frame.parentIndex = infoTable.parentIndex
@@ -542,11 +611,6 @@ function SlickDropDown:CreateEntryFrame(info)
 		end
 
 		setScriptsOnFrame(frame)
-
-
-		if(infoTable.parentIndex == 6) then
-
-		end
 
 		frame:Show()
 

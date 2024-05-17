@@ -226,13 +226,23 @@ end
 
 
 miog.findBattlegroundIconByName = function(mapName)
-	for bgID, bgEntry in pairs(miog.RAW["BattlemasterList"]) do
-		if(bgEntry[2] == mapName) then
-			return bgEntry[16] ~= 0 and bgEntry[16] or 525915
+	for bgID, bgEntry in pairs(miog.BATTLEMASTER_INFO) do
+		if(mapName == bgEntry.name) then
+			return bgEntry.icon ~= 0 and bgEntry.icon or 525915
 		end
 	end
 
 	return 525915
+end
+
+miog.findBattlegroundMapIDsByName = function(mapName)
+	for bgID, bgEntry in pairs(miog.BATTLEMASTER_INFO) do
+		if(mapName == bgEntry.name) then
+			return bgEntry.possibleBGs
+		end
+	end
+
+	return nil
 end
 
 miog.findBattlegroundIconByID = function(mapID)
@@ -243,6 +253,11 @@ miog.findBattlegroundIconByID = function(mapID)
 	end
 
 	return 525915
+end
+
+miog.findBattlegroundMapIDsByID = function(battlemasterID)
+	DevTools_Dump(miog.BATTLEMASTER_INFO[battlemasterID].possibleBGs)
+	return miog.BATTLEMASTER_INFO[battlemasterID].possibleBGs
 end
 
 miog.findBrawlIconByName = function(mapName)
@@ -264,6 +279,18 @@ miog.findBrawlIconByID = function(mapID)
 
 	return nil
 end
+
+miog.findBrawlMapIDsByName = function(mapName)
+	for brawlID, brawlEntry in pairs(miog.RAW["PvpBrawl"]) do
+		if(brawlEntry[2] == mapName) then
+			print("FOUND", mapName)
+			return miog.findBattlegroundMapIDsByID(brawlEntry[4])
+		end
+	end
+
+	return nil
+end
+
 
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then

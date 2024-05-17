@@ -59,8 +59,9 @@ miog.OnEvent = function(_, event, ...)
 
 		PVPUIFrame:HookScript("OnShow", function()
 			ConquestFrame.selectedButton = nil
-			ConquestFrame.ratedSoloShuffleEnabled = false
-			ConquestFrame.arenasEnabled = false
+			ConquestFrame.RatedBG.SelectedTexture:Hide()
+			--ConquestFrame.ratedSoloShuffleEnabled = false
+			--ConquestFrame.arenasEnabled = false
 		end)
 
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then

@@ -336,6 +336,43 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 }
 
 miog.MAP_INFO = {
+	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground"},
+	[489] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
+	[529] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
+	[559] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg"},
+	[562] = {shortName = "BEA", icon = "interface/lfgframe/lfgicon-bladesedgearena.blp", fileName = "bladesedgearena"},
+	[566] = {shortName = "EOTS", icon = "interface/lfgframe/lfgicon-netherbattlegrounds.blp", fileName = "netherbattleground"},
+	[572] = {shortName = "ROL", icon = "interface/lfgframe/lfgicon-ruinsoflordaeron.blp", fileName = "ruinsoflordaeronbg"},
+	[607] = {shortName = "SOTA", icon = "interface/lfgframe/lfgicon-strandoftheancients.blp", fileName = "northrendbg"},
+	[617] = {shortName = "DS", icon = "interface/lfgframe/lfgicon-dalaransewers.blp", fileName = "dalaransewersarena"},
+	[618] = {shortName = "ROV", icon = "interface/lfgframe/lfgicon-ringofvalor.blp", fileName = "orgrimmararena"},
+	[628] = {shortName = "IOC", icon = "interface/lfgframe/lfgicon-isleofconquest.blp", fileName = "isleofconquest"},
+	[726] = {shortName = "TP", icon = "interface/lfgframe/lfgicon-twinpeaksbg.blp", fileName = "twinpeaksbg"},
+	[727] = {shortName = "SSM", icon = "interface/lfgframe/lfgicon-silvershardmines.blp", fileName = "silvershardmines"},
+	[761] = {shortName = "BFG", icon = "interface/lfgframe/lfgicon-thebattleforgilneas.blp", fileName = "gilneasbg2"},
+	[968] = {shortName = "EOTS", icon = "interface/lfgframe/lfgicon-netherbattlegrounds.blp", fileName = "netherbattleground"},
+	[980] = {shortName = "TVA", icon = "interface/lfgframe/lfgicon-tolvirarena.blp", fileName = "tolvirarena"},
+	[998] = {shortName = "TOK", icon = "interface/lfgframe/lfgicon-templeofkotmogu.blp", fileName = "templeofkotmogu"},
+	[1105] = {shortName = "DWD", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush"},
+	[1134] = {shortName = "TP", icon = "interface/lfgframe/lfgicon-shadopanbg.blp", fileName = "shadowpan_bg"},
+	[1191] = {shortName = "ASH", icon = "interface/lfgframe/lfgicon-ashran.blp", fileName = "shadowpan_bg"},
+	[1504] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookholdarena.blp", fileName = "blackrookholdarena"},
+	[1505] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg"},
+	[1552] = {shortName = "AF", icon = "interface/lfgframe/lfgicon-valsharraharena.blp", fileName = "arenavalsharah"},
+	[1672] = {shortName = "BEA", icon = "interface/lfgframe/lfgicon-bladesedgearena.blp", fileName = "bladesedgearena"},
+	[1681] = {shortName = "AB-W", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasinwinter"},
+	[1715] = {shortName = "BBM", icon = "interface/lfgframe/lfgicon-blackrockdepths.blp", fileName = "blackrockdepths"},
+	[1782] = {shortName = "SST", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore"},
+	[1803] = {shortName = "SSH", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore"},
+	[2106] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
+	[2107] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
+	[2118] = {shortName = "BFW", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "wintergrasp"},
+	[2245] = {shortName = "DWG", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush"},
+
+	--ASHRAN BACKGROUND=??????Wd0aßwdiawd
+
+
+
 	--CATACLYSM
 	[643] = {shortName = "TOTT", icon = "interface/lfgframe/lfgicon-throneofthetides", fileName = "throneofthetides"},
 	[657] = {shortName = "VP", icon = "interface/lfgframe/lfgicon-thevortexpinnacle", fileName = "vortexpinnacle"},
@@ -416,9 +453,6 @@ miog.MAP_INFO = {
 	},
 
 	[1136] = {shortName = "SOO", icon = "interface/lfgframe/lfgicon-orgrimmargates", fileName = "siegeoforgrimmar"},
-	--[602] = {gfID = 2, shortName = "", icon = ""},
-	--[599] = {gfID = 3, shortName = "", icon = ""},
-	--[595] = {gfID = 4, shortName = "", icon = ""},
 	[36] = {shortName = "DM", icon = "interface/lfgframe/lfgicon-deadmines.blp", fileName = "deadmines"},
 	[1175] = {shortName = "BSM", icon = "interface/lfgframe/lfgicon-bloodmaulslagmines.blp", fileName = "ogrecompound"},
 	[1195] = {shortName = "ID", icon = "interface/lfgframe/lfgicon-irondocks.blp", fileName = "irondocks"},
@@ -1002,6 +1036,35 @@ for k, v in pairs(miog.RAW["LFGDungeons"]) do
 	
 end
 
+miog.BATTLEMASTER_INFO = {
+
+}
+
+for k, v in pairs(miog.RAW["BattlemasterList"]) do
+	miog.BATTLEMASTER_INFO[v[1]] = {
+		name = v[2],
+		icon = v[16],
+		possibleBGs = {
+			[1] = v[18] ~= -1 and v[18] or nil,
+			[2] = v[19] ~= -1 and v[19] or nil,
+			[3] = v[20] ~= -1 and v[20] or nil,
+			[4] = v[21] ~= -1 and v[21] or nil,
+			[5] = v[22] ~= -1 and v[22] or nil,
+			[6] = v[23] ~= -1 and v[23] or nil,
+			[7] = v[24] ~= -1 and v[24] or nil,
+			[8] = v[25] ~= -1 and v[25] or nil,
+			[9] = v[26] ~= -1 and v[26] or nil,
+			[10] = v[27] ~= -1 and v[27] or nil,
+			[11] = v[28] ~= -1 and v[28] or nil,
+			[12] = v[29] ~= -1 and v[29] or nil,
+			[13] = v[30] ~= -1 and v[30] or nil,
+			[14] = v[31] ~= -1 and v[31] or nil,
+			[15] = v[32] ~= -1 and v[32] or nil,
+			[16] = v[33] ~= -1 and v[33] or nil,
+		}
+	}
+end
+
 
 local function loadRawData()
 	local faction = UnitFactionGroup("player")
@@ -1035,9 +1098,11 @@ local function loadRawData()
 
 	for k, v in pairs(miog.RAW["BattlemasterList"]) do
 		if(miog.MAP_INFO[v[18]]) then
-			print("GOT", miog.MAP_INFO[v[18]].exactName)
-			miog.MAP_INFO[v[18]].horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. miog.MAP_INFO[v[18]].exactName .. ".png"
-			miog.MAP_INFO[v[18]].vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. miog.MAP_INFO[v[18]].exactName .. ".png"
+			--local isNotNumber = type(miog.MAP_INFO[v[18]].exactName) ~= "number"
+			--local subbedString = string.gsub(miog.MAP_INFO[v[18]].name, "%s+", "")
+
+			--miog.MAP_INFO[v[18]].horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. (isNotNumber and miog.MAP_INFO[v[18]].exactName or subbedString) .. ".png"
+			--miog.MAP_INFO[v[18]].vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. (isNotNumber and miog.MAP_INFO[v[18]].exactName or subbedString) .. ".png"
 			
 		end
 

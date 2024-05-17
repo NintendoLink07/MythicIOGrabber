@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning].
 
 ### Added
 
+- PVP queues added to the queue selector.
+Since PVP queues have multiple checks in place I can't have you just click on them and queue up.
+You'll have to select the type of pvp queue you wanna join and then click "Join Battle."
+There is (to my knowledge) no current way of both selecting the button and joining at the same time, let alone programmatically join any commonly played pvp queue.
+
+Arena Skirmish, the normal brawl and the special brawl are exceptions, they can be queued for programatically.
+
 - Calendar events are implemented!
 Whenever a special event (timewalking, pvp brawl, etc.) is currently ongoing or going to start in the next 7 days there will be a notification in the main tab.
 
