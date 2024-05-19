@@ -118,6 +118,72 @@ local function HasRemainingSlotsForBloodlust(resultID)
 	end
 end
 
+local function CanDealWithThisWeeksAffixes(resultID)
+	local currentAffixes = C_MythicPlus.GetCurrentAffixes()
+
+	local affixesSolved = {}
+
+	for x, y in pairs(miog.CLASS_SPEC_FOR_AFFIXES) do
+		for a, b in pairs(currentAffixes) do
+			if(x == b.id) then
+				affixesSolved[x] = false
+
+				local _, fileName, playerClassID = UnitClass("player")
+
+				if(y.classIDs[playerClassID]) then
+					affixesSolved[x] = true
+
+				end
+
+				local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
+				if roles then
+					if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
+						affixesSolved[x] = true
+					end
+
+					local playerRole = GetSpecializationRole(GetSpecialization())
+
+					if(playerRole == "DAMAGER" and (roles["HEALER_REMAINING"] > 0 or roles["DAMAGER_REMAINING"] > 1)) then
+						affixesSolved[x] = true
+
+					end
+
+					if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0 or roles["TANK_REMAINING"] > 0) then
+						affixesSolved[x] = true
+
+					end
+
+					if(playerRole == "TANK" and roles["DAMAGER_REMAINING"] > 0 or roles["HEALER_REMAINING"] > 0) then
+						affixesSolved[x] = true
+
+					end
+
+					for k, v in pairs(roles) do
+						if(y.classes[k] and v > 0) then
+							affixesSolved[x] = true
+
+						end
+					end
+				end
+			end
+		end
+	end
+
+	if(affixesSolved == {}) then
+		return true
+
+	else
+		for _, v in pairs(affixesSolved) do
+			if(v == false) then
+				return false
+			end
+		
+		end
+
+		return true
+	end
+end
+
 local function HasRemainingSlotsForBattleResurrection(resultID)
 	local _, _, playerClassID = UnitClass("player")
 	if(playerClassID == 2 or playerClassID == 6 or playerClassID == 9 or playerClassID == 11) then
@@ -227,6 +293,10 @@ local function isGroupEligible(resultID, bordermode)
 
 		end
 
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(resultID)) then
+			return false, miog.INELIGIBILITY_REASONS[8]
+		end
+
 		local roleCount = {
 			["TANK"] = 0,
 			["HEALER"] = 0,
@@ -240,7 +310,6 @@ local function isGroupEligible(resultID, bordermode)
 
 			if(specID) then
 				roleCount[role or "NONE"] = roleCount[role] + 1
-
 				
 				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
 					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[class]] == false) then
@@ -351,17 +420,17 @@ local function isGroupEligible(resultID, bordermode)
 				if(maxKills >= 0
 				and not (numberOfSlainEncounters >= minKills
 				and numberOfSlainEncounters <= maxKills)) then
-					return false, miog.INELIGIBILITY_REASONS[13]
+					return false, miog.INELIGIBILITY_REASONS[19]
 
 				end
 			elseif(minKills ~= 0) then
 				if(numberOfSlainEncounters < minKills) then
-					return false, miog.INELIGIBILITY_REASONS[14]
+					return false, miog.INELIGIBILITY_REASONS[20]
 
 				end
 			elseif(maxKills ~= 0) then
 				if(numberOfSlainEncounters >= maxKills) then
-					return false, miog.INELIGIBILITY_REASONS[15]
+					return false, miog.INELIGIBILITY_REASONS[21]
 					
 				end
 

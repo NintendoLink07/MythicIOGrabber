@@ -22,6 +22,9 @@ Whenever a special event (timewalking, pvp brawl, etc.) is currently ongoing or 
 - [Filter Panel] For raids you can now filter by killed bosses.
 Currently only via numbers, will implement selecting specific bosses soon.
 
+- [Filter Panel] Integrated a new filter option for affix checks.
+If the current affixes include either raging or incorporeal checking this option will make sure there is atleast 1 person who can deal with the affix.
+
 ### Fixed
 
 - [Filter Panel] Rating will not be checked if you're not in the dungeon / arena search panel.

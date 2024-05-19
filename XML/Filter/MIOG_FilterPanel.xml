@@ -1,6 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true">    
+    <Frame name="MIOG_FilterPanel" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="fixedWidth" value="230" type="number" />
+        </KeyValues>
         <Frames>
             <Frame parentKey="Lock" inherits="BackdropTemplate" setAllPoints="true" hidden="true" frameStrata="HIGH">
                 <Layers>
@@ -28,9 +31,10 @@
             </Frame>
 
             <Frame parentKey="TitleBar" inherits="BackdropTemplate">
-                <Size x="230" y="20" />
+                <Size y="20" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                 </Anchors>
 
                 <Frames>
@@ -79,15 +83,32 @@
                 </Scripts>
             </Button>
 
-            <Frame parentKey="StandardOptions">
-                <Size y="390" />
+            <Frame parentKey="ClassSpecOptions" inherits="VerticalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+                </KeyValues>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
             </Frame>
 
-            <Frame parentKey="SearchPanelOptions" hidden="true">
+            <Frame parentKey="IndexedOptions" inherits="VerticalLayoutFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassSpecOptions" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ClassSpecOptions" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <!--<Frame parentKey="StandardOptions">
+                <Size y="420" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="SearchPanelOptions">
                 <Size y="155" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.StandardOptions" relativePoint="BOTTOMLEFT"/>
@@ -95,13 +116,13 @@
                 </Anchors>
             </Frame>
 
-            <Frame parentKey="CategoryOptions" hidden="true">
+            <Frame parentKey="CategoryOptions">
                 <Size y="80" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.SearchPanelOptions" relativePoint="BOTTOMLEFT"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.SearchPanelOptions" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
-            </Frame>
+            </Frame>-->
         </Frames>
 
         <Layers>

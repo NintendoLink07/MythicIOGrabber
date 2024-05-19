@@ -49,18 +49,22 @@ miog.APPLICANT_STATUS_INFO = {
 	[3] = {"You have been hard declined from this group.", "Hard declined"},
 	[4] = {"The difficulty ID doesn't not match the one you selected.", "Incorrect difficulty"},
 	[5] = {"The bracket ID doesn't not match the one you selected.", "Incorrect bracket"},
-	[6] = {"No more slots for your role.", "No slots."},
-	[7] = {"If you join there won't be anyone who has a class ress ability.", "No ress."},
+	[6] = {"No more slots for your role.", "No slots"},
+	[7] = {"If you join there won't be anyone who has a class ress ability.", "No ress"},
 	[8] = {"If you join there won't be anyone with a lust effect.", "No lust"},
-	[9] = {"Your class filters do not match with this listing.", "Class filtered"},
-	[10] = {"Your spec filters do not match with this listing.", "Spec filtered"},
-	[11] = {"Incorrect number of tanks/healers/damagers.", "Incorrect roles"},
-	[12] = {"Your role filters do not match with this listing.", "Incorrect roles"},
-	[13] = {"Your rating filters do not match with this listing.", "Rating mismatch"},
-	[14] = {"Your lowest rating filter do not match with this listing.", "Lowest Rating mismatch"},
-	[15] = {"Your highest rating filter do not match with this listing.", "Highest Rating mismatch"},
-	[16] = {"Your dungeon selection does not match with this listing.", "Dungeon mismatch"},
-	[17] = {"Your raid selection does not match with this listing.", "Raid mismatch"},
+	[9] = {"If you join there won't be anyone to deal with this weeks affixes.", "No affix coverage"},
+	[10] = {"Your class filters do not match with this listing.", "Class filtered"},
+	[11] = {"Your spec filters do not match with this listing.", "Spec filtered"},
+	[12] = {"Incorrect number of tanks/healers/damagers.", "Incorrect roles"},
+	[13] = {"Your role filters do not match with this listing.", "Incorrect roles"},
+	[14] = {"Your rating filters do not match with this listing.", "Rating mismatch"},
+	[15] = {"Your lowest rating filter do not match with this listing.", "Lowest Rating mismatch"},
+	[16] = {"Your highest rating filter do not match with this listing.", "Highest Rating mismatch"},
+	[17] = {"Your dungeon selection does not match with this listing.", "Dungeon mismatch"},
+	[18] = {"Your raid selection does not match with this listing.", "Raid mismatch"},
+	[19] = {"Your boss kills filters do not match with this listing.", "Boss kills mismatch"},
+	[20] = {"Your lowest boss kills filter do not match with this listing.", "Lowest boss kills mismatch"},
+	[21] = {"Your highest boss kills filter do not match with this listing.", "Highest boss kills mismatch"},
  }
 
 miog.DIFFICULTY_ID_TO_COLOR = {
@@ -1411,6 +1415,26 @@ miog.RACES = {
 	[70] = "raceicon-dracthyr-male",
 
 }
+
+miog.CLASS_SPEC_FOR_AFFIXES = {
+	[6] = {
+		classIDs = {3, 4, 11, 13},
+		specs = {},
+	},
+	[135] = {
+		classIDs = {2, 5, 7, 8, 10, 11, 13},
+		specs = {},
+	},
+
+}
+
+for k, v in pairs(miog.CLASS_SPEC_FOR_AFFIXES) do
+	v.classes = {}
+
+	for x, y in pairs(v.classIDs) do
+		v.classes[miog.CLASSES[y].name] = true
+	end
+end
 
 miog.INSTANCE_SHORT_NAME = {
 

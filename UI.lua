@@ -960,8 +960,8 @@ miog.createFrames = function()
 
 
 			if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
-				miog.FilterPanel.FilterOptions.Dropdown:Enable()
-				miog.FilterPanel.FilterOptions.filterForDifficulty:Enable()
+				miog.FilterPanel.IndexedOptions.Difficulty.Dropdown:Enable()
+				miog.FilterPanel.IndexedOptions.Difficulty:Enable()
 
 				if(miog.UPDATED_DUNGEON_FILTERS == nil) then
 					miog.updateDungeonCheckboxes()
@@ -973,40 +973,34 @@ miog.createFrames = function()
 				end
 
 				if(LFGListFrame.SearchPanel.categoryID == 2) then
-					miog.FilterPanel.FilterOptions.DungeonPanel:Show()
-					miog.FilterPanel.FilterOptions.DungeonPanel.OptionsButton:Show()
-					miog.FilterPanel.FilterOptions.filterForScore:Show()
+					miog.FilterPanel.IndexedOptions.Dungeons:Show()
+					miog.FilterPanel.IndexedOptions.Score:Show()
 
-					miog.FilterPanel.FilterOptions.RaidPanel:Hide()
-					miog.FilterPanel.FilterOptions.RaidPanel.OptionsButton:Hide()
-					miog.FilterPanel.FilterOptions.filterForBossKills:Hide()
+					miog.FilterPanel.IndexedOptions.Raids:Hide()
+					miog.FilterPanel.IndexedOptions.BossKills:Hide()
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
-					miog.FilterPanel.FilterOptions.DungeonPanel:Hide()
-					miog.FilterPanel.FilterOptions.DungeonPanel.OptionsButton:Hide()
-					miog.FilterPanel.FilterOptions.filterForScore:Hide()
+					miog.FilterPanel.IndexedOptions.Dungeons:Hide()
+					miog.FilterPanel.IndexedOptions.Score:Hide()
 
-					miog.FilterPanel.FilterOptions.RaidPanel:Show()
-					miog.FilterPanel.FilterOptions.RaidPanel.OptionsButton:Show()
-					miog.FilterPanel.FilterOptions.filterForBossKills:Show()
+					miog.FilterPanel.IndexedOptions.Raids:Show()
+					miog.FilterPanel.IndexedOptions.BossKills:Show()
 
 				else
-					miog.FilterPanel.FilterOptions.DungeonPanel:Hide()
-					miog.FilterPanel.FilterOptions.DungeonPanel.OptionsButton:Hide()
-					miog.FilterPanel.FilterOptions.filterForScore:Hide()
+					miog.FilterPanel.IndexedOptions.Dungeons:Hide()
+					miog.FilterPanel.IndexedOptions.Score:Hide()
 					
-					miog.FilterPanel.FilterOptions.RaidPanel:Hide()
-					miog.FilterPanel.FilterOptions.RaidPanel.OptionsButton:Hide()
-					miog.FilterPanel.FilterOptions.filterForBossKills:Hide()
+					miog.FilterPanel.IndexedOptions.Raids:Hide()
+					miog.FilterPanel.IndexedOptions.BossKills:Hide()
 
 				end
 
 			else
-				miog.FilterPanel.FilterOptions.filterForDifficulty:Disable()
-				miog.FilterPanel.FilterOptions.Dropdown:Disable()
+				miog.FilterPanel.IndexedOptions.Difficulty:Disable()
+				miog.FilterPanel.IndexedOptions.Difficulty.Dropdown:Disable()
 			end
 
-			miog.FilterPanel.FilterOptions.filterForDifficulty:SetChecked(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory or LFGListFrame.SearchPanel.categoryID].filterForDifficulty or false)
+			miog.FilterPanel.IndexedOptions.Difficulty:SetChecked(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][LFGListFrame.CategorySelection.selectedCategory or LFGListFrame.SearchPanel.categoryID].filterForDifficulty or false)
 
 
 		elseif(panel == LFGListFrame.EntryCreation) then

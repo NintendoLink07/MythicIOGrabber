@@ -8,6 +8,7 @@ queueSystem.queueFrames = {}
 queueSystem.currentlyInUse = 0
 
 local frameQueue = {}
+local textureLog = {}
 
 local queueFrameIndex = 0
 
@@ -24,7 +25,6 @@ local function resetQueueFrame(_, frame)
 		frame.Name:SetTextColor(1,1,1,1)
 		frame.Age:SetText("")
 		frame.Background:SetTexture(nil)
-		frame.firstTexture = nil
 
 		if(frame.Age.Ticker) then
 			frame.Age.Ticker:Cancel()
@@ -92,6 +92,11 @@ local function createQueueFrame(queueInfo)
 		end
 	end
 
+	if(queueInfo[30]) then
+		queueFrame.Background:SetTexture(queueInfo[30])
+
+	end
+
 	queueFrame.Age:SetText(miog.secondsToClock(ageNumber or 0))
 
 	--if(queueInfo[20]) then
@@ -150,7 +155,8 @@ local function checkQueues()
 						[17] = {"queued", queuedTime},
 						[18] = queueID,
 						[20] = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
-						or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil
+						or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
+						[30] = isSpecificQueue and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID].horizontal
 					}
 
 					local frame
@@ -183,14 +189,6 @@ local function checkQueues()
 							LeaveSingleLFG(categoryID, queueID)
 						end)
 
-					end
-
-					if(isSpecificQueue) then
-						frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png")
-
-					elseif(mapID) then
-						frame.Background:SetTexture(miog.MAP_INFO[mapID].horizontal)
-					
 					end
 
 					frame:SetScript("OnEnter", function(self)
@@ -481,17 +479,11 @@ local function checkQueues()
 			[17] = {"duration", activeEntryInfo.duration},
 			[18] = "YOURLISTING",
 			[20] = miog.ACTIVITY_INFO[activeEntryInfo.activityID].icon or nil,
-			[21] = -2
+			[21] = -2,
+			[30] = activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.ACTIVITY_INFO[activeEntryInfo.activityID] and miog.ACTIVITY_INFO[activeEntryInfo.activityID].horizontal or nil
 		}
 
 		local frame = createQueueFrame(frameData)
-
-		if(activityInfo.groupFinderActivityGroupID == 0) then
-			--queueFrame.Icon:SetAtlas("Mobile-BonusIcon")
-			frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png")
-		end
-
-		frame.Background:SetTexture(miog.ACTIVITY_INFO[activeEntryInfo.activityID] and miog.ACTIVITY_INFO[activeEntryInfo.activityID].horizontal)
 
 		frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
 		frame.CancelApplication:SetScript("OnClick", function()
@@ -530,7 +522,8 @@ local function checkQueues()
 						[17] = {"duration", appDuration},
 						[18] = identifier,
 						[20] = miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil,
-						[21] = id
+						[21] = id,
+						[30] = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal or nil
 					}
 
 					if(appStatus == "applied") then
@@ -561,8 +554,6 @@ local function checkQueues()
 								frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
 							end
 						end
-
-						frame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal)
 
 						frame:SetScript("OnEnter", function(self)
 							miog.createResultTooltip(id, frame)
@@ -611,6 +602,36 @@ local function checkQueues()
 				[18] = mapName,
 				[20] = miog.findBattlegroundIconByName(mapName) or miog.findBrawlIconByName(mapName) or 525915
 			}
+
+			if (mapName and queuedTime) then
+				local frame = createQueueFrame(frameData)
+				frame.CancelApplication:Hide()
+
+				local mapIDTable = miog.findBattlegroundMapIDsByName(mapName) or miog.findBrawlMapIDsByName(mapName)
+
+				--local battleInfo = miog.BATTLEMASTER_INFO[v[1]]
+
+				if(mapIDTable and #mapIDTable > 0) then
+					local counter = 0
+					local randomNumber = random(1, #mapIDTable)
+
+					for k, v in pairs(mapIDTable) do
+						counter = counter + 1
+
+						if(counter == randomNumber) then
+							print(v, mapName)
+							frame.Background:SetTexture(miog.MAP_INFO[v].horizontal)
+							break
+						end
+					end
+				else
+					frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png")
+				
+				end
+				
+				--queueSystem.queueFrames[mapName].CancelApplication:SetScript("OnClick",  SecureActionButton_OnClick)
+			end
+
 			
 			if ( status == "queued" ) then
 				if ( suspend ) then
@@ -628,35 +649,6 @@ local function checkQueues()
 
 					--BattlemasterList
 					--PvpBrawl
-
-					if (mapName and queuedTime) then
-						local frame = createQueueFrame(frameData)
-						frame.CancelApplication:Hide()
-
-						local mapIDTable = miog.findBattlegroundMapIDsByName(mapName) or miog.findBrawlMapIDsByName(mapName)
-
-						--local battleInfo = miog.BATTLEMASTER_INFO[v[1]]
-
-						if(mapIDTable and #mapIDTable > 0) then
-							local counter = 0
-							local randomNumber = random(1, #mapIDTable)
-
-							for k, v in pairs(mapIDTable) do
-								counter = counter + 1
-
-								if(counter == randomNumber) then
-									print(v, mapName)
-									frame.Background:SetTexture(miog.MAP_INFO[v].horizontal)
-									break
-								end
-							end
-						else
-							frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png")
-						
-						end
-						
-						--queueSystem.queueFrames[mapName].CancelApplication:SetScript("OnClick",  SecureActionButton_OnClick)
-					end
 
 					--[[local currentDeclineButton = "/click QueueStatusButton RightButton" .. "\r\n" ..
 					(
@@ -784,12 +776,12 @@ local function checkQueues()
 			[12] = estimate,
 			[17] = {"queued", queued},
 			[18] = "PETBATTLE",
-			[20] = miog.C.STANDARD_FILE_PATH .. "/infoIcons/petbattle.png"
+			[20] = miog.C.STANDARD_FILE_PATH .. "/infoIcons/petbattle.png",
+			[30] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/petbattle.png",
 		}
 
 		if (pbStatus == "queued") then
 			local frame = createQueueFrame(frameData)
-			frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/petbattle.png")
 			--frame.Icon:Show()
 
 			if(frame) then

@@ -139,6 +139,7 @@ local defaultOptionSettings = {
 				partyFit = false,
 				ressFit = false,
 				lustFit = false,
+				affixFit = false,
 				filterForTanks = false,
 				filterForHealers = false,
 				filterForDamager = false,
