@@ -62,9 +62,10 @@ miog.APPLICANT_STATUS_INFO = {
 	[16] = {"Your highest rating filter do not match with this listing.", "Highest Rating mismatch"},
 	[17] = {"Your dungeon selection does not match with this listing.", "Dungeon mismatch"},
 	[18] = {"Your raid selection does not match with this listing.", "Raid mismatch"},
-	[19] = {"Your boss kills filters do not match with this listing.", "Boss kills mismatch"},
-	[20] = {"Your lowest boss kills filter do not match with this listing.", "Lowest boss kills mismatch"},
-	[21] = {"Your highest boss kills filter do not match with this listing.", "Highest boss kills mismatch"},
+	[18] = {"Your boss selection does not match with this listing.", "Boss selection mismatch"},
+	[20] = {"Your boss kills filters do not match with this listing.", "Boss kills mismatch"},
+	[21] = {"Your lowest boss kills filter do not match with this listing.", "Lowest boss kills mismatch"},
+	[22] = {"Your highest boss kills filter do not match with this listing.", "Highest boss kills mismatch"},
  }
 
 miog.DIFFICULTY_ID_TO_COLOR = {

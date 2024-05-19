@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">    
-    <Frame name="MIOG_ResultFrameTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
+    <Frame name="MIOG_ResultFrameTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background">
@@ -51,12 +51,11 @@
             </Button>
 
             <Frame parentKey="BasicInformation">
-                <Size y="20" />
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="1" type="number" />
+                </KeyValues>
 
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="0"/>
-                </Anchors>
+                <Size y="20" />
 
                 <Layers>
                     <Layer level="BORDER">
@@ -127,10 +126,9 @@
             <Frame parentKey="CategoryInformation">
                 <Size y="20" />
 
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="2" type="number" />
+                </KeyValues>
 
                 <Frames>
                     <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
@@ -250,8 +248,11 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate" />
-
+            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="3" type="number" />
+                </KeyValues>
+            </Frame>
         </Frames>
     </Frame>
 </Ui>

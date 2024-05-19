@@ -124,7 +124,7 @@
 
                                         <Layers>
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" setAllPoints="true" text="TEST">
+                                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" setAllPoints="true">
                                                     <FontHeight val="11"/>
                                                 </FontString>
                                             </Layer>

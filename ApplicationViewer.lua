@@ -424,7 +424,7 @@ local function createApplicantFrame(applicantID)
 			local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
 
 			if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
-				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForScore(pvpData.rating):GenerateHexColor()))
+				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
 
 				if(pvpData.tier and pvpData.tier ~= "N/A") then
 					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
@@ -444,7 +444,7 @@ local function createApplicantFrame(applicantID)
 						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC["red"]))
 
 					else
-						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForScore(dungeonScore):GenerateHexColor()))
+						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
 
 					end
 

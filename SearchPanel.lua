@@ -294,7 +294,7 @@ local function isGroupEligible(resultID, bordermode)
 		end
 
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(resultID)) then
-			return false, miog.INELIGIBILITY_REASONS[8]
+			return false, miog.INELIGIBILITY_REASONS[9]
 		end
 
 		local roleCount = {
@@ -304,24 +304,25 @@ local function isGroupEligible(resultID, bordermode)
 			["NONE"] = 0
 		}
 
-		for i = 1, searchResultInfo.numMembers, 1 do
-			local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(resultID, i)
-			local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
+		local memberInfo = searchResultSystem.persistentFrames[resultID].memberInfo
 
-			if(specID) then
-				roleCount[role or "NONE"] = roleCount[role] + 1
-				
-				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
-					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[class]] == false) then
-						return false, miog.INELIGIBILITY_REASONS[9]
+		if(memberInfo) then
+			for k, v in pairs(memberInfo) do
+				if(v.specID) then
+					roleCount[v.role or "NONE"] = roleCount[v.role] + 1
+					
+					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
+						if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[v.class]] == false) then
+							return false, miog.INELIGIBILITY_REASONS[10]
 
+						end
+
+						if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.spec[v.specID] == false) then
+							return false, miog.INELIGIBILITY_REASONS[11]
+							
+						end
+			
 					end
-
-					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.spec[specID] == false) then
-						return false, miog.INELIGIBILITY_REASONS[10]
-						
-					end
-		
 				end
 			end
 		end
@@ -339,103 +340,131 @@ local function isGroupEligible(resultID, bordermode)
 			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
 	 	) then
-			return false, miog.INELIGIBILITY_REASONS[11]
+			return false, miog.INELIGIBILITY_REASONS[12]
 
 		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned and
 			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
 	 	) then
-			return false, miog.INELIGIBILITY_REASONS[11]
+			return false, miog.INELIGIBILITY_REASONS[12]
 
 		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned and
 			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned)
 	 	) then
-			return false, miog.INELIGIBILITY_REASONS[11]
+			return false, miog.INELIGIBILITY_REASONS[12]
 
 		elseif(tanksBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks
 		or healersBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers
 		or damagerBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager) then
-			return false, miog.INELIGIBILITY_REASONS[11]
+			return false, miog.INELIGIBILITY_REASONS[12]
 
 		end
 
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["TANK"] == false and roleCount["TANK"] > 0
 		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["HEALER"] == false and roleCount["HEALER"] > 0
 		or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRoles["DAMAGER"] == false and roleCount["DAMAGER"] > 0) then
-			return false, miog.INELIGIBILITY_REASONS[12]
+			return false, miog.INELIGIBILITY_REASONS[13]
 
 		end
 
-		local score = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
+		local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonRating or 0
 
-		if(isDungeon and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForScore) then
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
-				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore >= 0
-				and not (score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore
-				and score <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore)) then
-					return false, miog.INELIGIBILITY_REASONS[13]
+		if(isDungeon) then
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRating) then
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minRating ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxRating ~= 0) then
+					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxRating >= 0
+					and not (rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minRating
+					and rating <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxRating)) then
+						return false, miog.INELIGIBILITY_REASONS[14]
 
-				end
-			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore ~= 0) then
-				if(score < MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minScore) then
-					return false, miog.INELIGIBILITY_REASONS[14]
+					end
+				elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minRating ~= 0) then
+					if(rating < MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minRating) then
+						return false, miog.INELIGIBILITY_REASONS[15]
 
-				end
-			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore ~= 0) then
-				if(score >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxScore) then
-					return false, miog.INELIGIBILITY_REASONS[15]
-					
-				end
-
-			end
-		
-		end
-		
-		if(isDungeon and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDungeons) then
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].dungeons[activityInfo.groupFinderActivityGroupID] == false) then
-				return false, miog.INELIGIBILITY_REASONS[16]
-
-			end
-
-		end
-		
-		if(isRaid and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRaids) then
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].raids[activityInfo.groupFinderActivityGroupID] == false) then
-				return false, miog.INELIGIBILITY_REASONS[17]
-
-			end
-
-		end
-
-		if(isRaid and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForBossKills) then
-			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
-
-			local numberOfSlainEncounters = encounterInfo and #encounterInfo or 0
-
-			local minKills = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minBossKills
-			local maxKills = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxBossKills
-
-			if(minKills ~= 0 and maxKills ~= 0) then
-				if(maxKills >= 0
-				and not (numberOfSlainEncounters >= minKills
-				and numberOfSlainEncounters <= maxKills)) then
-					return false, miog.INELIGIBILITY_REASONS[19]
+					end
+				elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxRating ~= 0) then
+					if(rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxRating) then
+						return false, miog.INELIGIBILITY_REASONS[16]
+						
+					end
 
 				end
-			elseif(minKills ~= 0) then
-				if(numberOfSlainEncounters < minKills) then
-					return false, miog.INELIGIBILITY_REASONS[20]
-
-				end
-			elseif(maxKills ~= 0) then
-				if(numberOfSlainEncounters >= maxKills) then
-					return false, miog.INELIGIBILITY_REASONS[21]
-					
-				end
-
+			
 			end
 			
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDungeons) then
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].dungeons[activityInfo.groupFinderActivityGroupID] == false) then
+					return false, miog.INELIGIBILITY_REASONS[17]
+
+				end
+
+			end
+		elseif(isRaid) then
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRaids and LFGListFrame.SearchPanel.filters == 1) then
+				if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].raids[activityInfo.groupFinderActivityGroupID]) then
+					return false, miog.INELIGIBILITY_REASONS[18]
+
+				else
+					local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
+					
+					local encountersDefeated = {}
+		
+					if(encounterInfo) then
+						for k, v in ipairs(encounterInfo) do
+							encountersDefeated[v] = true
+						end
+					end
+		
+					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityInfo.groupFinderActivityGroupID]) then
+		
+						for k, v in pairs(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityInfo.groupFinderActivityGroupID]) do
+							local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityID].bosses[k]
+		
+							-- 0 either defeated or alive
+							-- 1 defeated
+							-- 2 alive
+							if(v == 2 and encountersDefeated[bossInfo.name] or v == 1 and not encountersDefeated[bossInfo.name]) then
+								return false, miog.INELIGIBILITY_REASONS[19]
+		
+							end
+		
+						end
+					end
+				end
+
+			end
+
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForBossKills) then
+				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
+
+				local numberOfSlainEncounters = encounterInfo and #encounterInfo or 0
+
+				local minKills = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minBossKills
+				local maxKills = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxBossKills
+
+				if(minKills ~= 0 and maxKills ~= 0) then
+					if(maxKills >= 0
+					and not (numberOfSlainEncounters >= minKills
+					and numberOfSlainEncounters <= maxKills)) then
+						return false, miog.INELIGIBILITY_REASONS[20]
+
+					end
+				elseif(minKills ~= 0) then
+					if(numberOfSlainEncounters < minKills) then
+						return false, miog.INELIGIBILITY_REASONS[21]
+
+					end
+				elseif(maxKills ~= 0) then
+					if(numberOfSlainEncounters >= maxKills) then
+						return false, miog.INELIGIBILITY_REASONS[22]
+						
+					end
+
+				end
+				
+			end
 		end
 
 		return true
@@ -499,68 +528,6 @@ local function setResultFrameColors(resultID)
 	
 	end
 end
-
---[[local function updateResultFrameStatus(resultID, newStatus, oldStatus)
-	local resultFrame = searchResultSystem.persistentFrames[resultID]
-
-	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-
-	local id, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(resultID)
-
-	local hasActualAppStatus = appStatus and appStatus ~= "none"
-	local isNormalDelist = oldStatus == nil and newStatus == nil and searchResultInfo.isDelisted
-
-	local actualStatus = hasActualAppStatus and appStatus or isNormalDelist and "declined_delisted" or newStatus
-
-	if(resultFrame) then
-		resultFrame.StatusFrame:Hide()
-
-		if(actualStatus == "applied" or actualStatus == "none") then
-
-			if(resultFrame.BasicInformation.Age.ageTicker) then
-				resultFrame.BasicInformation.Age.ageTicker:Cancel()
-	
-			end
-
-			resultFrame.CancelApplication:Show()
-
-			local ageNumber = appDuration or 0
-			resultFrame.BasicInformation.Age:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
-			resultFrame.BasicInformation.Age:SetTextColor(CreateColorFromHexString(miog.CLRSCC.purple):GetRGBA())
-
-			resultFrame.BasicInformation.Age.ageTicker = C_Timer.NewTicker(1, function()
-				ageNumber = ageNumber - 1
-				resultFrame.BasicInformation.Age:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
-
-			end)
-
-			resultFrame.layoutIndex = -1
-
-			miog.SearchPanel.FramePanel.Container:MarkDirty()
-
-		else
-			resultFrame.CancelApplication:Hide()
-
-			if(actualStatus) then
-				if(resultFrame.BasicInformation.Age.ageTicker) then
-					resultFrame.BasicInformation.Age.ageTicker:Cancel()
-
-				end
-
-				resultFrame.StatusFrame:Show()
-				resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[actualStatus].statusString, miog.APPLICANT_STATUS_INFO[actualStatus].color))
-
-				if(searchResultInfo.leaderName and actualStatus ~= "declined_full") then
-					MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] = {timestamp = time(), activeDecline = actualStatus == "declined"}
-
-				end
-			end
-		end
-
-		setResultFrameColors(resultID)
-	end
-end
-]]
 
 local function updateSearchResultFrameApplicationStatus(resultID, new, old)
 	local resultFrame = searchResultSystem.persistentFrames[resultID]
@@ -804,15 +771,19 @@ local function gatherSearchResultSortData(singleResultID)
 				end
 
 				if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
-					primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
-					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo.bestRunLevel or 0
+					primarySortAttribute = searchResultInfo.leaderOverallDungeonRating or 0
+					secondarySortAttribute = searchResultInfo.leaderDungeonRatingInfo and searchResultInfo.leaderDungeonRatingInfo.bestRunLevel or 0
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
-					local raidData = miog.getRaidSortData(searchResultInfo.leaderName)
+					local currentData, nonCurrentData = miog.getRaidSortData(searchResultInfo.leaderName)
 
-					if(raidData) then
-						primarySortAttribute = raidData[1].weight
-						secondarySortAttribute = raidData[2].weight
+					if(currentData) then
+						primarySortAttribute = currentData[1].weight
+						secondarySortAttribute = currentData[2].weight
+
+					elseif(nonCurrentData) then
+						primarySortAttribute = nonCurrentData[1].weight
+						secondarySortAttribute = nonCurrentData[2].weight
 
 					else
 						primarySortAttribute = 0
@@ -961,55 +932,6 @@ local function updatePersistentResultFrame(resultID)
 			generalInfoPanel.Right["1"].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultInfo.comment and searchResultInfo.comment) or ""))
 			generalInfoPanel.Right["4"].FontString:SetText("Role: ")
 
-			local appCategory = activityInfo.categoryID
-
-			if(appCategory == 2) then
-				if(searchResultInfo.leaderOverallDungeonScore > 0) then
-					local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
-					local highestKeyForDungeon
-
-					if(reqScore > searchResultInfo.leaderOverallDungeonScore) then
-						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.CLRSCC["red"]))
-
-					else
-						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.createCustomColorForScore(searchResultInfo.leaderOverallDungeonScore):GenerateHexColor()))
-
-					end
-
-					if(searchResultInfo.leaderDungeonScoreInfo) then
-						if(searchResultInfo.leaderDungeonScoreInfo.finishedSuccess == true) then
-							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonScoreInfo.bestRunLevel), miog.C.GREEN_COLOR)
-
-						elseif(searchResultInfo.leaderDungeonScoreInfo.finishedSuccess == false) then
-							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonScoreInfo.bestRunLevel), miog.CLRSCC["red"])
-
-						end
-					else
-						highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
-
-					end
-
-					secondaryIndicator:SetText(highestKeyForDungeon)
-				else
-					local difficulty = miog.DIFFICULTY[-1] -- NO DATA
-					primaryIndicator:SetText(wticc("0", difficulty.color))
-					secondaryIndicator:SetText(wticc("0", difficulty.color))
-
-				end
-			elseif(appCategory == 4 or appCategory == 7 or appCategory == 8 or appCategory == 9) then
-				if(searchResultInfo.leaderPvpRatingInfo) then
-					primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderPvpRatingInfo.rating), miog.createCustomColorForScore(searchResultInfo.leaderPvpRatingInfo.rating):GenerateHexColor()))
-
-					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(searchResultInfo.leaderPvpRatingInfo.tier), " ")
-					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
-					
-				else
-					primaryIndicator:SetText(0)
-					secondaryIndicator:SetText("Unra")
-
-				end
-			end
-
 			local orderedList = {}
 
 			local roleCount = {
@@ -1031,6 +953,8 @@ local function updatePersistentResultFrame(resultID)
 				end
 			end
 
+			currentFrame.memberInfo = orderedList
+
 			local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
 			local groupSize = #orderedList
 
@@ -1038,67 +962,14 @@ local function updatePersistentResultFrame(resultID)
 			local bossPanel = currentFrame.CategoryInformation.BossPanel
 
 			currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
-			
-			if(appCategory == 3) then
-				local raidData = miog.getRaidSortData(searchResultInfo.leaderName)
+
+			if(activityInfo.categoryID == 3) then
+				local raidData, nonCurrentRaidData = miog.getRaidSortData(searchResultInfo.leaderName)
 				primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
 				secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
 
 				memberPanel:Hide()
 				currentFrame.CategoryInformation.DifficultyZone:SetWidth(LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
-
-				for i = 1, 2, 1 do
-					if(roleCount["TANK"] < 2 and groupSize < groupLimit) then
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
-						roleCount["TANK"] = roleCount["TANK"] + 1
-						groupSize = groupSize + 1
-					end
-				end
-	
-				for i = 1, 6, 1 do
-					if(roleCount["HEALER"] < 6 and groupSize < groupLimit) then
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
-						roleCount["HEALER"] = roleCount["HEALER"] + 1
-						groupSize = groupSize + 1
-		
-					end
-				end
-	
-				for i = groupSize, groupLimit, 1 do
-					orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
-					roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
-					groupSize = groupSize + 1
-				end
-	
-				table.sort(orderedList, function(k1, k2)
-					-- Sort by role first
-					if k1.role ~= k2.role then
-						return k1.role > k2.role
-					end
-				
-					-- Sort by specID if role and class are the same
-					if k1.specID and k2.specID then
-						return k1.specID > k2.specID
-					elseif k1.specID then
-						return false
-					elseif k2.specID then
-						return true
-					end
-				
-					-- Sort by class if role is the same
-					if k1.class ~= k2.class then
-						-- "DUMMY" class should always come last
-						if k1.class == "DUMMY" then
-							return false
-						elseif k2.class == "DUMMY" then
-							return true
-						end
-						return k1.class > k2.class
-					end
-				
-					-- If everything else is equal, maintain the existing order
-					return false
-				end)
 
 				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
 
@@ -1143,107 +1014,213 @@ local function updatePersistentResultFrame(resultID)
 				
 				end
 
-				--[[for i = 1, 40, 1 do
-					local groupMemberFrame = currentFrame.RaidInformation.SpecFrames[i]
-
-					if(i <= groupLimit) then
-						if(groupMemberFrame.Icon:GetTexture() ~= miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon) then
-							groupMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
-
-							if(orderedList[i].class ~= "DUMMY") then
-								groupMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
-								groupMemberFrame.Border:Show()
-	
-							else
-								groupMemberFrame.Border:Hide()
-							
-							end
-						else
-							groupMemberFrame.Border:Hide()
-						
-						end
-
-						if(orderedList[i].role ~= "DAMAGER") then
-							groupMemberFrame:Show()
-
-						else
-							damagerString = damagerString .. " |T" .. groupMemberFrame.Icon:GetTexture() .. ":16|t"
-						end
-
-					else
-						groupMemberFrame:Hide()
-					
-					end
-					
-				end]]
-
 				bossPanel:SetShown(true)
 				--currentFrame.RaidInformation:SetShown(true)
 
-			elseif(appCategory ~= 0 and appCategory ~= 8 and appCategory ~= 9) then
-				--currentFrame.RaidInformation:Hide()
+			elseif(activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9) then
+				bossPanel:Hide()
+
+				if(searchResultInfo.leaderPvpRatingInfo) then
+					primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderPvpRatingInfo.rating), miog.createCustomColorForRating(searchResultInfo.leaderPvpRatingInfo.rating):GenerateHexColor()))
+
+					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(searchResultInfo.leaderPvpRatingInfo.tier), " ")
+					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+					
+				else
+					primaryIndicator:SetText(0)
+					secondaryIndicator:SetText("Unra")
+
+				end
+			elseif(activityInfo.categoryID ~= 0 and activityInfo.categoryID ~= 8 and activityInfo.categoryID ~= 9) then
 				currentFrame.CategoryInformation.DifficultyZone:SetWidth(100)
 				bossPanel:Hide()
 
-				for i = 1, 1, 1 do
-					if(roleCount["TANK"] < 1 and groupSize < groupLimit) then
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
-						roleCount["TANK"] = roleCount["TANK"] + 1
-						groupSize = groupSize + 1
-					end
-				end
-	
-				for i = 1, 1, 1 do
-					if(roleCount["HEALER"] < 1 and groupSize < groupLimit) then
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
-						roleCount["HEALER"] = roleCount["HEALER"] + 1
-						groupSize = groupSize + 1
-		
-					end
-				end
-	
-				for i = 3, 5, 1 do
-					orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
-					roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
-					groupSize = groupSize + 1
-				end
-	
-				table.sort(orderedList, function(k1, k2)
-					if(k1.role ~= k2.role) then
-						return k1.role > k2.role
-	
-					elseif(k1.spec ~= k2.spec) then
+				if(searchResultInfo.leaderOverallDungeonRating and searchResultInfo.leaderOverallDungeonRating > 0) then
+					local reqRating = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonRating or 0
+					local highestKeyForDungeon
 
-						if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
-							return false
+					if(reqRating > searchResultInfo.leaderOverallDungeonRating) then
+						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonRating), miog.CLRSCC["red"]))
 
-						elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
-							return true
-
-						else
-							return k1.spec > k2.spec
-
-						end
-	
 					else
+						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonRating), miog.createCustomColorForRating(searchResultInfo.leaderOverallDungeonRating):GenerateHexColor()))
 
-						if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
-							return false
+					end
 
-						elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
-							return true
+					if(searchResultInfo.leaderDungeonRatingInfo) then
+						if(searchResultInfo.leaderDungeonRatingInfo.finishedSuccess == true) then
+							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonRatingInfo.bestRunLevel), miog.C.GREEN_COLOR)
 
-						else
-							return k1.class > k2.class
+						elseif(searchResultInfo.leaderDungeonRatingInfo.finishedSuccess == false) then
+							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonRatingInfo.bestRunLevel), miog.CLRSCC["red"])
 
 						end
-	
+					else
+						highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
+
 					end
+
+					secondaryIndicator:SetText(highestKeyForDungeon)
+				else
+					local difficulty = miog.DIFFICULTY[-1] -- NO DATA
+					primaryIndicator:SetText(wticc("0", difficulty.color))
+					secondaryIndicator:SetText(wticc("0", difficulty.color))
+
+				end
+
+				if(searchResultInfo.numMembers < 6) then
+					for i = 1, 1, 1 do
+						if(roleCount["TANK"] < 1 and groupSize < groupLimit) then
+							orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
+							roleCount["TANK"] = roleCount["TANK"] + 1
+							groupSize = groupSize + 1
+						end
+					end
+		
+					for i = 1, 1, 1 do
+						if(roleCount["HEALER"] < 1 and groupSize < groupLimit) then
+							orderedList[groupSize + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
+							roleCount["HEALER"] = roleCount["HEALER"] + 1
+							groupSize = groupSize + 1
+			
+						end
+					end
+		
+					for i = 3, 5, 1 do
+						orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
+						roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+						groupSize = groupSize + 1
+					end
+		
+					table.sort(orderedList, function(k1, k2)
+						if(k1.role ~= k2.role) then
+							return k1.role > k2.role
+		
+						elseif(k1.spec ~= k2.spec) then
+
+							if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
+								return false
+
+							elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
+								return true
+
+							else
+								return k1.spec > k2.spec
+
+							end
+		
+						else
+
+							if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
+								return false
+
+							elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
+								return true
+
+							else
+								return k1.class > k2.class
+
+							end
+		
+						end
+		
+					end)
+					
+					for i = 1, 5, 1 do
+						if(i <= groupLimit) then
+							local currentMemberFrame = memberPanel[tostring(i)]
+
+							currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
+
+							if(orderedList[i].class ~= "DUMMY") then
+								currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
+
+							else
+								currentMemberFrame.Border:SetColorTexture(0, 0, 0, 0)
+							
+							end
+
+							if(orderedList[i].leader) then
+								memberPanel.LeaderCrown:ClearAllPoints()
+								memberPanel.LeaderCrown:SetParent(currentMemberFrame)
+								memberPanel.LeaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
+								memberPanel.LeaderCrown:SetShown(true)
+
+								currentMemberFrame:SetMouseMotionEnabled(true)
+								currentMemberFrame:SetScript("OnEnter", function()
+									GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_CURSOR")
+									GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultInfo.leaderName))
+									GameTooltip:Show()
+
+								end)
+							else
+								currentMemberFrame:SetScript("OnEnter", nil)
+							
+							end
+
+							--orderedListIndex = orderedListIndex + 1
+							memberPanel[tostring(i)]:Show()
+
+						else
+							memberPanel[tostring(i)]:Hide()
+						
+						end
+					end
+				else
+					for i = 1, 2, 1 do
+						if(roleCount["TANK"] < 2 and groupSize < groupLimit) then
+							orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
+							roleCount["TANK"] = roleCount["TANK"] + 1
+							groupSize = groupSize + 1
+						end
+					end
+		
+					for i = 1, 6, 1 do
+						if(roleCount["HEALER"] < 6 and groupSize < groupLimit) then
+							orderedList[groupSize + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
+							roleCount["HEALER"] = roleCount["HEALER"] + 1
+							groupSize = groupSize + 1
+			
+						end
+					end
+		
+					for i = groupSize, groupLimit, 1 do
+						orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
+						roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+						groupSize = groupSize + 1
+					end
+		
+					table.sort(orderedList, function(k1, k2)
+						-- Sort by role first
+						if k1.role ~= k2.role then
+							return k1.role > k2.role
+						end
+					
+						-- Sort by specID if role and class are the same
+						if k1.specID and k2.specID then
+							return k1.specID > k2.specID
+						elseif k1.specID then
+							return false
+						elseif k2.specID then
+							return true
+						end
+					
+						-- Sort by class if role is the same
+						if k1.class ~= k2.class then
+							-- "DUMMY" class should always come last
+							if k1.class == "DUMMY" then
+								return false
+							elseif k2.class == "DUMMY" then
+								return true
+							end
+							return k1.class > k2.class
+						end
+					
+						-- If everything else is equal, maintain the existing order
+						return false
+					end)
 	
-				end)
-				
-				for i = 1, 5, 1 do
-					if(i <= groupLimit) then
+					for i = 1, 40, 1 do
 						local currentMemberFrame = memberPanel[tostring(i)]
 
 						currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
@@ -1276,10 +1253,6 @@ local function updatePersistentResultFrame(resultID)
 
 						--orderedListIndex = orderedListIndex + 1
 						memberPanel[tostring(i)]:Show()
-
-					else
-						memberPanel[tostring(i)]:Hide()
-					
 					end
 				end
 				
@@ -1294,9 +1267,9 @@ local function updatePersistentResultFrame(resultID)
 
 			--currentFrame.DetailedInformationPanel:SetPoint("TOPLEFT", currentFrame.BasicInformationPanel or (currentFrame.RaidInformation:IsVisible() and currentFrame.RaidInformation or currentFrame.CategoryInformation), "BOTTOMLEFT")
 			--currentFrame.DetailedInformationPanel:SetPoint("TOPRIGHT", currentFrame.BasicInformationPanel or (currentFrame.RaidInformation:IsVisible() and currentFrame.RaidInformation or currentFrame.CategoryInformation), "BOTTOMRIGHT")
-			generalInfoPanel.Right["1"].FontString:SetText(resultID)
-		end
 
+			currentFrame:MarkDirty()
+		end
 
 		updateResultFrameStatus(resultID)
 	end
@@ -1308,6 +1281,11 @@ local function createPersistentResultFrame(resultID)
 
 	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", miog.SearchPanel.FramePanel.Container)
 	persistentFrame.fixedWidth = miog.SearchPanel.FramePanel:GetWidth()
+
+	for k, v in pairs(persistentFrame:GetLayoutChildren()) do
+		v:SetWidth(persistentFrame.fixedWidth)
+	end
+
 	--persistentFrame:SetFrameStrata("DIALOG")
 	persistentFrame:SetScript("OnLeave", function()
 		GameTooltip:Hide()
@@ -1384,6 +1362,8 @@ local function createPersistentResultFrame(resultID)
 	end
 
 	miog.createDetailedInformationPanel(persistentFrame)
+
+	persistentFrame:MarkDirty()
 end
 
 local lastOrderedList = nil

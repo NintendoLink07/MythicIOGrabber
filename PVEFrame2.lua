@@ -51,14 +51,14 @@ local function createPVEFrameReplacement()
 
 		if(regularActivityID) then
 			miog.MainTab.Information.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
-			miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForScore(regularLevel * 130):GetRGBA())
+			miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForRating(regularLevel * 130):GetRGBA())
 			
 		else
 			local timewalkingActivityID, timewalkingGroupID, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
 
 			if(timewalkingActivityID) then
 				miog.MainTab.Information.Keystone.Text:SetText("+" .. timewalkingLevel .. " " .. C_LFGList.GetActivityGroupInfo(timewalkingGroupID))
-				miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForScore(timewalkingLevel * 130):GetRGBA())
+				miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForRating(timewalkingLevel * 130):GetRGBA())
 				
 			else
 				miog.MainTab.Information.Keystone.Text:SetText("NO KEYSTONE")

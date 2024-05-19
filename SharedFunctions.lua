@@ -51,8 +51,6 @@ end
 miog.ONCE = 0
 
 local function getRaidSortData(playerName)
-	local raidData = {}
-
 	local profile
 
 	if(miog.F.IS_RAIDERIO_LOADED) then
@@ -60,77 +58,204 @@ local function getRaidSortData(playerName)
 
 	end
 
+	--[[
+
+		raidProgress table
+			1 table
+				current bool
+				isMainProgress bool
+
+				raid table
+					bossCount number
+					id number
+					mapID number
+					ordinal number
+					name string
+					shortName string
+
+				progress table
+					1
+						cleared bool
+						obsolete bool
+						difficulty number
+						kills number
+						progress table
+							1
+								killed bool
+								count number
+								difficulty number
+								index number
+
+				
+
+
+
+	]]
+
+	local currentData = {}
+	local nonCurrentData = {}
+	local mainData = {}
+
 	if(profile and profile.success == true) then
 		if(profile.raidProfile) then
+
 			for k, d in ipairs(profile.raidProfile.raidProgress) do
 				if(d.isMainProgress == false) then
-					local bossCount = d.raid.bossCount
+					if(d.current == true) then
+						local highestDifficulty = 1
 
-					for x, y in ipairs(d.progress) do
+						for x, y in ipairs(d.progress) do
+							local mapID
+							local awakened = false
 
-						local kills = y.kills or 0
-
-						local tempData = {
-							ordinal = d.raid.ordinal,
-							raidProgressIndex = k,
-							mapId = d.raid.mapId,
-							current = d.current,
-							shortName = d.raid.shortName,
-							difficulty = y.difficulty,
-							progress = kills,
-							bossCount = bossCount,
-							parsedString = kills .. "/" .. bossCount,
-							weight = kills / bossCount + (miog.WEIGHTS_TABLE[d.raid.ordinal] * y.difficulty)
-						}
-
-						if(d.current) then
-							if(#d.progress == 2 and x == 1) then
-								raidData[2] = tempData
+							if(string.find(d.raid.mapId, 10000)) then
+								mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
+								awakened = true
 
 							else
-								raidData[1] = tempData
+								mapID = d.raid.mapId
 
 							end
+
+							if(highestDifficulty < y.difficulty) then
+								highestDifficulty = y.difficulty
+							end
+
+							currentData[#currentData+1] = {
+								ordinal = d.raid.ordinal,
+								raidProgressIndex = k,
+								mapId = mapID,
+								difficulty = y.difficulty,
+								current = d.current,
+								shortName = d.raid.shortName,
+								progress = y.kills,
+								bossCount = d.raid.bossCount,
+								parsedString = y.kills .. "/" .. d.raid.bossCount,
+								--weight = y.kills / d.raid.bossCount + ((awakened and miog.WEIGHTS_TABLE[1] * miog.WEIGHTS_TABLE[1] or miog.WEIGHTS_TABLE[d.raid.ordinal]) * y.difficulty)
+								weight = (awakened and 10000 or 1) * y.difficulty + (awakened and d.raid.ordinal * y.difficulty or 0) - d.raid.bossCount - y.kills
+
+								--FIND OUT ALGORITHM FOR AWAKENED SHIT
+							}
+						end
+					elseif(d.current == false) then
+
+						local highestDifficulty = 1
+
+						for x, y in ipairs(d.progress) do
+							local mapID
+							local awakened = false
+
+							if(string.find(d.raid.mapId, 10000)) then
+								mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
+								awakened = true
+
+							else
+								mapID = d.raid.mapId
+
+							end
+
+							if(highestDifficulty < y.difficulty) then
+								highestDifficulty = y.difficulty
+							end
+
+							nonCurrentData[#nonCurrentData+1] = {
+								ordinal = d.raid.ordinal,
+								raidProgressIndex = k,
+								mapId = mapID,
+								difficulty = y.difficulty,
+								current = d.current,
+								shortName = d.raid.shortName,
+								progress = y.kills,
+								bossCount = d.raid.bossCount,
+								parsedString = y.kills .. "/" .. d.raid.bossCount,
+								--weight = y.kills / d.raid.bossCount + ((awakened and miog.WEIGHTS_TABLE[1] * miog.WEIGHTS_TABLE[1] or miog.WEIGHTS_TABLE[d.raid.ordinal]) * y.difficulty),
+								weight = y.kills * (awakened and 10000 or 1) * y.difficulty + (awakened and d.raid.ordinal * y.difficulty or 0) - d.raid.bossCount
+							}
+						end
+					end
+				else
+
+					for x, y in ipairs(d.progress) do
+						local mapID
+						local awakened = false
+
+						if(string.find(d.raid.mapId, 10000)) then
+							mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
+							awakened = true
+
 						else
-							if(raidData[1] == nil) then
-								if(#d.progress == 2 and x == 1) then
-									raidData[2] = tempData
-
-								else
-									raidData[1] = tempData
-
-								end
-
-							elseif(raidData[2] == nil) then
-								if(#d.progress == 1 or #d.progress == 2 and x == 2) then
-									raidData[2] = tempData
-
-								end
-
-							end
+							mapID = d.raid.mapId
 
 						end
+
+						mainData[#mainData+1] = {
+							ordinal = d.raid.ordinal,
+							raidProgressIndex = k,
+							mapId = mapID,
+							difficulty = y.difficulty,
+							current = d.current,
+							shortName = d.raid.shortName,
+							progress = y.kills,
+							bossCount = d.raid.bossCount,
+							parsedString = y.kills .. "/" .. d.raid.bossCount,
+							weight = y.kills * (awakened and 10000 or 1) * y.difficulty + (awakened and d.raid.ordinal * y.difficulty or 0) - d.raid.bossCount
+						}
 					end
 				end
 			end
 		end
 	end
 
-	for i = 1, 2, 1 do
-		if(not raidData[i]) then
-			raidData[i] = {
-				ordinal = 0,
+
+	for i = 1, 3, 1 do
+		if(currentData[i] == nil) then
+			currentData[i] = {
 				difficulty = -1,
 				progress = 0,
 				bossCount = 0,
 				parsedString = "0/0",
 				weight = 0
 			}
-
 		end
 	end
 
-	return raidData
+	for i = 1, 3, 1 do
+		if(nonCurrentData[i] == nil) then
+			nonCurrentData[i] = {
+				difficulty = -1,
+				progress = 0,
+				bossCount = 0,
+				parsedString = "0/0",
+				weight = 0
+			}
+		end
+	end
+	
+	for i = 1, 3, 1 do
+		if(mainData[i] == nil) then
+			mainData[i] = {
+				difficulty = -1,
+				progress = 0,
+				bossCount = 0,
+				parsedString = "0/0",
+				weight = 0
+			}
+		end
+	end
+
+	table.sort(currentData, function(k1, k2)
+		return k1.difficulty > k2.difficulty
+	end)
+
+	table.sort(nonCurrentData, function(k1, k2)
+		return k1.difficulty > k2.difficulty
+	end)
+
+	table.sort(mainData, function(k1, k2)
+		return k1.difficulty > k2.difficulty
+	end)
+
+	return currentData, nonCurrentData
 end
 
 miog.getRaidSortData = getRaidSortData
@@ -167,6 +292,7 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	end
 
 	local detailedInformationPanel = listFrame.DetailedInformationPanel
+	detailedInformationPanel.fixedWidth = listFrame.fixedWidth
 	detailedInformationPanel:SetPoint("TOPLEFT", listFrame.BasicInformationPanel or listFrame.CategoryInformation, "BOTTOMLEFT")
 	detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.BasicInformationPanel or listFrame.CategoryInformation, "BOTTOMRIGHT")
 	detailedInformationPanel:SetShown((listFrame.BasicInformationPanel or listFrame.CategoryInformation).ExpandFrame:GetActiveState() > 0 and true or false)
@@ -279,7 +405,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			local previousSeason = miog.MPLUS_SEASONS[miog.F.PREVIOUS_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
 
 			if(mythicKeystoneProfile.previousScore and mythicKeystoneProfile.previousScore > 0) then
-				previousScoreString = previousSeason .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForScore(mythicKeystoneProfile.previousScore):GenerateHexColor())
+				previousScoreString = previousSeason .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForRating(mythicKeystoneProfile.previousScore):GenerateHexColor())
 
 			end
 
@@ -293,14 +419,14 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 				else
 					if(mythicKeystoneProfile.mainCurrentScore > 0 and mythicKeystoneProfile.mainPreviousScore > 0) then
-						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
-						" " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
+						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
+						" " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 					elseif(mythicKeystoneProfile.mainCurrentScore > 0) then
-						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
+						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
 
 					elseif(mythicKeystoneProfile.mainPreviousScore > 0) then
-						mainScoreString = "Main " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForScore(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
+						mainScoreString = "Main " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
 
 					end
 
@@ -325,43 +451,10 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		end
 
 		if(raidProfile) then
-			local raidData = {}
 			local currentTierFrame
 			local mainProgressText = ""
 
-			for k, v in ipairs(profile.raidProfile.raidProgress) do
-				local bossCount = v.raid.bossCount
-				local highestIndex = v.progress[2] and 2 or 1
-				local kills = v.progress[highestIndex].kills or 0
-
-				local mapID
-
-				if(string.find(v.raid.mapId, 10000)) then
-					mapID = tonumber(strsub(v.raid.mapId, strlen(v.raid.mapId) - 3))
-
-				else
-					mapID = v.raid.mapId
-
-				end
-
-				if(v.isMainProgress == false) then
-					raidData[#raidData+1] = {
-						ordinal = v.raid.ordinal,
-						raidProgressIndex = k,
-						mapId = mapID,
-						current = v.current,
-						shortName = v.raid.shortName,
-						difficulty = v.progress[highestIndex].difficulty,
-						progress = kills,
-						bossCount = bossCount,
-						parsedString = kills .. "/" .. bossCount,
-						weight = kills / bossCount + (miog.WEIGHTS_TABLE[v.raid.ordinal] * v.progress[highestIndex].difficulty)
-					}
-				else
-					mainProgressText = mainProgressText .. wticc(miog.DIFFICULTY[v.progress[highestIndex].difficulty].shortName .. ":" .. kills .. "/" .. bossCount, miog.DIFFICULTY[v.progress[highestIndex].difficulty].color) .. " "
-
-				end
-			end
+			local currentData, nonCurrentData = getRaidSortData(playerName .. (realm and "-" .. realm or ""))
 
 			if(mainProgressText ~= "") then
 				raidPanel.CategoryRow2.FontString:SetText(wticc("Main: " .. mainProgressText, miog.ITEM_QUALITY_COLORS[6].pureHex))
@@ -371,67 +464,98 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 			end
 
-			for k, v in ipairs(raidData) do
-				local panelProgressString = ""
-				local raidProgress = profile.raidProfile.raidProgress[v.raidProgressIndex]
-				local instanceID = C_EncounterJournal.GetInstanceForGameMap(v.mapId)
+			local slotsFilled = {}
 
-				currentTierFrame = raidPanel[k == 1 and "HighestTier" or k == 2 and "MiddleTier" or "LowestTier"]
-				currentTierFrame:Show()
-				currentTierFrame.Icon:SetTexture(miog.MAP_INFO[v.mapId].icon)
-				currentTierFrame.Icon:SetScript("OnMouseDown", function()
-					local difficulty = v.difficulty == 1 and 14 or v.difficulty == 2 and 15 or 16
-					--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-					EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+			for n = 1, 2, 1 do
+				local raidData = n == 1 and currentData or nonCurrentData
+				local gotThree = 0
 
-				end)
+				if(raidData) then
+					for a, b in ipairs(raidData) do
+						local slot = b.ordinal == 4 and 1 or b.ordinal == 5 and 2 or b.ordinal == 6 and 3 or b.ordinal
 
-				currentTierFrame.Name:SetText(v.shortName .. ":")
+						if(slot and slotsFilled[slot] == nil) then
+							slotsFilled[slot] = true
 
-				local setLowestBorder = {}
+							local panelProgressString = ""
+							local raidProgress = profile.raidProfile.raidProgress[b.raidProgressIndex]
+							local mapId
 
-				for x, y in ipairs(raidProgress.progress) do
-					panelProgressString = wticc(miog.DIFFICULTY[y.difficulty].shortName .. ":" .. y.kills .. "/" .. v.bossCount, miog.DIFFICULTY[y.difficulty].color) .. " " .. panelProgressString
-
-					for i = 1, 10, 1 do
-						local bossInfo = y.progress[i]
-						local currentBoss = currentTierFrame.BossFrames[i < 6 and "UpperRow" or "LowerRow"][tostring(i)]
-
-						if(bossInfo) then
-							currentBoss.Index:SetText(i)
-							
-							if(bossInfo.killed) then
-								currentBoss.Border:SetColorTexture(miog.DIFFICULTY[bossInfo.difficulty].miogColors:GetRGBA())
-								currentBoss.Icon:SetDesaturated(false)
+							if(string.find(raidProgress.raid.mapId, 10000)) then
+								mapId = tonumber(strsub(raidProgress.raid.mapId, strlen(raidProgress.raid.mapId) - 3))
+								gotThree = gotThree + 1
+							else
+								mapId = raidProgress.raid.mapId
 
 							end
 
-							if(not setLowestBorder[i]) then
-								if(not bossInfo.killed) then
-									currentBoss.Border:SetColorTexture(0,0,0,0)
-									currentBoss.Icon:SetDesaturated(not bossInfo.killed)
-
-								end
-
-								setLowestBorder[i] = true
+							if(gotThree == 3) then
+								detailedInformationPanel:GetParent().BasicInformation.Title:SetText("GOT THREEEEEEEE")
 							end
 
-							currentBoss.Icon:SetTexture(miog.MAP_INFO[v.mapId][i].icon)
-							currentBoss.Icon:SetScript("OnMouseDown", function()
-								local difficulty = bossInfo.difficulty == 1 and 14 or bossInfo.difficulty == 2 and 15 or 16
-								EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
+							local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapId)
+
+							currentTierFrame = raidPanel[slot == 1 and "HighestTier" or slot == 2 and "MiddleTier" or slot == 3 and "LowestTier"]
+							currentTierFrame:Show()
+							currentTierFrame.Icon:SetTexture(miog.MAP_INFO[mapId].icon)
+							currentTierFrame.Icon:SetScript("OnMouseDown", function()
+								local difficulty = b.difficulty == 1 and 14 or b.difficulty == 2 and 15 or 16
+								--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+								EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
 							end)
 
-							currentBoss:Show()
+							currentTierFrame.Name:SetText(raidProgress.raid.shortName .. ":")
 
-						else
-							currentBoss:Hide()
+							local setLowestBorder = {}
 
+							for x, y in ipairs(raidProgress.progress) do
+								if(y.difficulty == b.difficulty and y.obsolete == false) then
+									panelProgressString = wticc(miog.DIFFICULTY[y.difficulty].shortName .. ":" .. y.kills .. "/" .. raidProgress.raid.bossCount, miog.DIFFICULTY[y.difficulty].color) .. " " .. panelProgressString
+
+									for i = 1, 10, 1 do
+										local bossInfo = y.progress[i]
+										local currentBoss = currentTierFrame.BossFrames[i < 6 and "UpperRow" or "LowerRow"][tostring(i)]
+
+										if(bossInfo) then
+											currentBoss.Index:SetText(i)
+											
+											if(bossInfo.killed) then
+												currentBoss.Border:SetColorTexture(miog.DIFFICULTY[bossInfo.difficulty].miogColors:GetRGBA())
+												currentBoss.Icon:SetDesaturated(false)
+
+											end
+
+											if(not setLowestBorder[i]) then
+												if(not bossInfo.killed) then
+													currentBoss.Border:SetColorTexture(0,0,0,0)
+													currentBoss.Icon:SetDesaturated(not bossInfo.killed)
+
+												end
+
+												setLowestBorder[i] = true
+											end
+
+											currentBoss.Icon:SetTexture(miog.MAP_INFO[mapId][i].icon)
+											currentBoss.Icon:SetScript("OnMouseDown", function()
+												local difficulty = bossInfo.difficulty == 1 and 14 or bossInfo.difficulty == 2 and 15 or 16
+												EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
+											end)
+
+											currentBoss:Show()
+
+										else
+											currentBoss:Hide()
+
+										end
+									end
+								end
+							end
+							
+							currentTierFrame.Progress:SetText(panelProgressString)
 						end
 					end
 				end
-				
-				currentTierFrame.Progress:SetText(panelProgressString)
 			end
 		else --NO RAIDING DATA
 			if(categoryID == 3) then

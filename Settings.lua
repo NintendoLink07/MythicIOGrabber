@@ -147,11 +147,11 @@ local defaultOptionSettings = {
 				linkedHealers = false,
 				linkedDamager = false,
 				filterForDifficulty = false,
-				filterForScore = false,
+				filterForRating = false,
 				filterForBossKills = false,
-				filterForActivities = true,
-				filterForDungeons = true,
-				filterForRaids = true,
+				filterForActivities = false,
+				filterForDungeons = false,
+				filterForRaids = false,
 				filterForRoles = {
 					TANK = true,
 					HEALER = true,
@@ -164,18 +164,19 @@ local defaultOptionSettings = {
 				maxHealers = 0,
 				minDamager = 0,
 				maxDamager = 0,
-				minScore = 0,
-				maxScore = 0,
+				minRating = 0,
+				maxRating = 0,
 				minBossKills = 0,
 				maxBossKills = 0,
 				difficultyID = 0,
 				dungeons = {},
 				raids = {},
+				raidBosses = {},
 				hardDecline = false,
 				softDecline = false
 			},
-			["LFGListFrame.ApplicationViewer"] = nil,
-			["LFGListFrame.SearchPanel"] = nil,
+			["LFGListFrame.ApplicationViewer"] = {},
+			["LFGListFrame.SearchPanel"] = {},
 		},
 		access = "read",
 	},
@@ -239,6 +240,8 @@ local defaultOptionSettings = {
 	currentBlizzardFilters = {}
 }
 
+miog.defaultOptionSettings = defaultOptionSettings
+
 local function getBaseSettings(key)
 	return defaultOptionSettings[key]
 end
@@ -246,11 +249,7 @@ end
 miog.getBaseSettings = getBaseSettings
 
 miog.resetSpecificFilterToDefault = function(table)
-	table = {}
-
-	for k,v in pairs(defaultOptionSettings.filterOptions.table.default) do
-		table[k] = v
-	end
+	table = defaultOptionSettings.filterOptions.table.default
 
 	return table
 end
@@ -307,7 +306,26 @@ local function compareSettings()
 					for tableKey, tableEntry in pairs(optionEntry.table) do
 						if(not MIOG_SavedSettings[key].table[tableKey]) then
 							MIOG_SavedSettings[key].table[tableKey] = tableEntry
-		
+
+						else
+							if(type(tableEntry) == "table") then
+								for innerTableKey, innerTableEntry in pairs(tableEntry) do
+									if(not MIOG_SavedSettings[key].table[tableKey][innerTableKey]) then
+										MIOG_SavedSettings[key].table[tableKey][innerTableKey] = innerTableEntry
+
+									else
+										if(type(innerTableEntry) == "table") then
+											for innererTableKey, innererTableEntry in pairs(innerTableEntry) do
+												if(not MIOG_SavedSettings[key].table[tableKey][innerTableKey][innererTableKey]) then
+													MIOG_SavedSettings[key].table[tableKey][innerTableKey][innererTableKey] = innererTableEntry
+												else
+												
+												end
+											end
+										end
+									end
+								end
+							end
 						end
 					end
 				end

@@ -51,7 +51,7 @@ miog.refreshKeystones = function()
 
 			local info = {}
 			info.entryType = "option"
-			info.text = WrapTextInColorCode(UnitName(unitID), C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForScore(keystoneInfo.level * 130):GenerateHexColor())
+			info.text = WrapTextInColorCode(UnitName(unitID), C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
 			info.value = keystoneInfo.level
 			info.icon = texture
 			--[[info.func = function()
@@ -105,7 +105,7 @@ miog.refreshKeystones = function()
 
 		local info = {}
 		info.entryType = "option"
-		info.text = WrapTextInColorCode("PARTY1", C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForScore(keystoneInfo.level * 130):GenerateHexColor())
+		info.text = WrapTextInColorCode("PARTY1", C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
 		info.value = keystoneInfo.level
 		info.icon = texture
 		info.func = function()
@@ -233,7 +233,7 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 	characterFrame.Name:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name)
 	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].class):GetRGBA())
 	characterFrame.Score:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score)
-	characterFrame.Score:SetTextColor(miog.createCustomColorForScore(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score):GetRGBA())
+	characterFrame.Score:SetTextColor(miog.createCustomColorForRating(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score):GetRGBA())
 
 	if(miog.F.WEEKLY_AFFIX) then
 		characterFrame.Affix1:SetTexture(miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX][3])

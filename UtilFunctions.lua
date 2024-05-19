@@ -168,7 +168,7 @@ miog.checkForActiveFilters = function()
 	local filtersActive = false
 	local filterPanel = miog.FilterPanel
 
-	for _, v in pairs(filterPanel.FilterOptions.ClassPanels) do
+	for _, v in pairs(filterPanel.ClassSpecOptions.Panels) do
 		if(not v.Class.Button:GetChecked()) then
 			filtersActive = true
 			break
@@ -187,7 +187,7 @@ miog.checkForActiveFilters = function()
 	end
 
 	if(filterPanel.roleFilterPanel) then
-		for _, v in pairs(filterPanel.roleFilterPanel.RoleButtons) do
+		for _, v in pairs(filterPanel.Roles.Buttons) do
 			if(not v:GetChecked()) then
 				filtersActive = true
 				break
@@ -327,7 +327,7 @@ miog.changeDrawLayer = function(regionType, oldDrawLayer, newDrawLayer, ...)
 	end
 end
 
-miog.createCustomColorForScore = function(score)
+miog.createCustomColorForRating = function(score)
 	if(score > 0) then
 		for k, v in ipairs(miog.COLOR_BREAKPOINTS) do
 			if(score < v.breakpoint) then

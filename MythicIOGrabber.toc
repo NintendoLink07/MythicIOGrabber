@@ -82,7 +82,7 @@ XML\Filter\MIOG_FilterOption.xml
 XML\Filter\MIOG_FilterOptionSpinnerTemplate.xml
 XML\Filter\MIOG_FilterOptionDualSpinnerTemplate.xml
 XML\Filter\MIOG_FilterOptionDualFieldTemplate.xml
-
+XML\Filter\MIOG_FilterPanelBossFrameTemplate.xml
 XML\MIOG_LastInvitesTemplate.xml
 
 XML\CLassPanel\MIOG_ClassPanel.xml

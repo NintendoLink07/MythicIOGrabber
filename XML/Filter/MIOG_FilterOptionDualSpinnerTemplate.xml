@@ -26,10 +26,12 @@
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="75" />
                 </Anchors>
+
                 <NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\filterLinkGray.png" />
                 <PushedTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\filterLinkGray.png" />
                 <CheckedTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\filterLink.png" />
                 <HighlightTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\filterLinkHover.png" alphaMode="ADD" />
+                
             </CheckButton>
 
             <EditBox parentKey="Minimum" inherits="NumericInputSpinnerTemplate">

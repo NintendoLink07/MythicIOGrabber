@@ -225,3 +225,21 @@ function MultiStateButtonMixin:SetSingleTextureForSpecificState(state, texture, 
 
     end
 end
+
+--[[
+    1. Normal
+    2. Pushed
+    3. Highlight
+    4. Disabled
+]]
+function MultiStateButtonMixin:GetSingleTextureObjectsOfSpecificState(state, type)
+    if(self.stateList[state].singleTexture == true) then
+        return {
+            self:GetNormalTexture(),
+            self:GetPushedTexture(),
+            self:GetHighlightTexture(),
+            self:GetDisabledTexture(),
+        }
+
+    end
+end
