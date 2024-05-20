@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [2.0.4] - 2024-05-20
+## [2.0.4] - 2024-05-21
 
 ### Added
 
@@ -76,6 +76,9 @@ The icon will by default be the one from the expansion it's about.
 
 - There is currently no good way of showing larger groups like Rated BG groups or custom groups with over 5 members.
 Currently figuring out a good / performant way to do that.
+
+- The raid statistics for awakened raids are getting superceded by higher difficulties, e.g. if you have 2/9 normal and 9/9 heroic it shows up as 9/9 normal.
+Don't think I can really do something about that, Blizzard's limitation of achievement tracking.
 
 
 ## [2.0.3] - 2024-05-14
@@ -1366,7 +1369,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.4..HEAD
+[2.0.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.4
 [2.0.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.3
 [2.0.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.2
 [2.0.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.1
