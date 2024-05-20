@@ -1,4 +1,4 @@
-## [2.0.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.4) - 2024-05-21
+## [2.0.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.4) - 2024-05-20
 
 ### Added
 
