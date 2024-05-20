@@ -830,7 +830,7 @@ local function findGroup(categoryFrame)
 	
 	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
 	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
-	
+
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
 
 	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
@@ -1560,28 +1560,28 @@ local function updateDropDown()
 		queueDropDown.List.selfCheck = true
 
 		local info = {}
-		info.text = "Dungeons (Normal)"
+		info.text = LFG_TYPE_DUNGEON
 		info.hasArrow = true
 		info.level = 1
 		info.index = 1
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
-		info.text = "Dungeons (Heroic)"
+		info.text = LFG_TYPE_HEROIC_DUNGEON
 		info.hasArrow = true
 		info.level = 1
 		info.index = 2
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
-		info.text = "Follower"
+		info.text = LFG_TYPE_FOLLOWER_DUNGEON
 		info.hasArrow = true
 		info.level = 1
 		info.index = 3
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
-		info.text = "Specific Dungeons"
+		info.text = SPECIFIC_DUNGEONS
 		info.hasArrow = true
 		info.level = 1
 		info.index = 4
@@ -1589,21 +1589,21 @@ local function updateDropDown()
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
-		info.text = "Raid Finder"
+		info.text = RAID_FINDER
 		info.hasArrow = true
 		info.level = 1
 		info.index = 5
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
-		info.text = "Custom PVP Menu"
+		info.text = PLAYER_V_PLAYER
 		info.hasArrow = true
 		info.level = 1
 		info.index = 6
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
-		info.text = "Pet Battle"
+		info.text = PET_BATTLE_PVP_QUEUE
 		info.checked = false
 		info.entryType = "option"
 		info.level = 1
@@ -1619,7 +1619,7 @@ local function updateDropDown()
 			
 		end)
 
-		info = {}
+		--[[info = {}
 		info.level = 1
 		info.hasArrow = true
 		info.text = "PVP (Stock UI)"
@@ -1629,8 +1629,9 @@ local function updateDropDown()
 		local moreFrame = queueDropDown:CreateEntryFrame(info)
 		moreFrame:SetScript("OnClick", function()
 			PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
-		end)
+		end)]]
 
+		info = {}
 		info.entryType = "option"
 		info.level = 2
 		info.index = nil

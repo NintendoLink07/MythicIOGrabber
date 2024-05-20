@@ -28,6 +28,8 @@ You can set a number range (e.g. 0-3 bosses killed) or when having the raid opti
 - [Filter Panel] Integrated a new filter option for affix checks.
 If the current affixes include either raging or incorporeal checking this option will make sure there is atleast 1 person who can deal with the affix.
 
+- [Active Queues] PVP queue frames will now have an appropriate PVP background. Either from th
+
 ### Changed
 
 - All queue frames should now have an cancel button in the "Active queues" panel.
@@ -72,3 +74,8 @@ Currently figuring out a good / performant way to do that.
 
 - The raid statistics for awakened raids are getting superceded by higher difficulties, e.g. if you have 2/9 normal and 9/9 heroic it shows up as 9/9 normal.
 Don't think I can really do something about that, Blizzard's limitation of achievement tracking.
+
+- If you want to queue for specific battlegrounds like Arathi Basin or Seething Shore you will have to go to the stock ui, select the battleground, go to MIOG's queue selector, go to PVP and "Join Battle".
+This issue is resolved in the next version (2.0.5).
+
+- [Active Queues] Arathi Basin has no background texture and Ashran has the wrong background texture.
