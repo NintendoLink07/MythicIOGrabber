@@ -10,14 +10,38 @@
 
                 <Frames>
                     <Frame parentKey="KeystoneDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                        <KeyValues>
-                            <KeyValue key="minimumWidth" value="130" type="number" />
-                            <KeyValue key="minimumHeight" value="25" type="number" />
-                        </KeyValues>
+                        <Size x="130" y="20" />
+
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
                         </Anchors>
                     </Frame>
+
+                    <Slider parentKey="TimelimitSlider" inherits="UISliderTemplate" virtual="true">
+                        <Size x="90" y="15"/>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.KeystoneDropdown" relativePoint="BOTTOMLEFT"/>
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="RIGHT" x="5"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:SetMinMaxValues(1, 40)
+                                self:SetValue(40)
+	                            self.Text:SetText(self:GetValue() .. "%")
+                            </OnLoad>
+                        </Scripts>
+                    </Slider>
                 </Frames>
             
             </Frame>

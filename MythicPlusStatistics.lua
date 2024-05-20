@@ -1,38 +1,109 @@
 local addonName, miog = ...
 
-local DUNGEON_BASE_SCORES = {
-	--Key Level	Base Score	Min Score	Max Score
-	[1] = 0,
-	[2] = 40,
-	[3] = 45,
-	[4] = 55,
-	[5] = 60,
-	[6] = 65,
-	[7] = 75,
-	[8] = 80,
-	[9] = 85,
-	[10] = 100,
-	[11] = 107,
-	[12] = 114,
-	[13] = 121,
-	[14] = 128,
-	[15] = 135,
-	[16] = 142,
-	[17] = 149,
-	[18] = 156,
-	[19] = 163,
-	[20] = 170,
-	[21] = 177,
-	[22] = 184,
-	[23] = 191,
-	[24] = 198,
-	[25] = 205,
-	[26] = 212,
-	[27] = 219,
-	[28] = 226,
-	[29] = 233,
-	[30] = 240,
-}
+local currentUnitID, currentChallengeMapID, currentLevel
+
+-- ALGO FROM https://www.reddit.com/r/wow/comments/13vqsbw/an_accurate_formula_for_m_score_calculation_in/
+
+local function round(n)
+	return math.floor(n+0.5)
+ end
+
+ local function GetAffixCount(level)
+	if level >= 10 then
+	   return 3
+	elseif level >= 7 then
+	   return 2
+	else
+	   return 1
+	end
+ end
+ 
+ local function GetTimerBonus(mapID, info)
+	local _, _, mapTimer = C_ChallengeMode.GetMapUIInfo(mapID)
+	local maxBonusTime = mapTimer * 0.4
+	local beatTimerBy = mapTimer - info.durationSec -- can be negative
+	local bonus = beatTimerBy/maxBonusTime
+	return Clamp(bonus, -1, 1)
+ end
+ 
+ local function CalculateSingleScore(mapID, info, oldLevel)
+	local naffix = GetAffixCount(info.level)
+ 
+	-- Gain or lose up to one level worth of score for being -40% to +40% timer
+	local timerBonus = GetTimerBonus(mapID, info)
+	
+	-- The bonus (or penalty) for the timer does not get the 2 bonus
+	local level = info.level + timerBonus
+
+	local nAboveTen = max(info.level-10, 0)
+	
+	-- Subtract one level for not timing it (not penalised the 2 points).
+	if timerBonus <= 0 then
+	   level = level - 1
+	end
+	
+	return (90 + level * 5 + nAboveTen * 2 + naffix * 10) * (timerBonus <= 0 and nAboveTen >= 0 and oldLevel >= 10 and 0 or 1)
+ end
+
+ local function CalculateCombinedScore(mapID)
+	local calcScores = {0, 0}
+
+	local scores, overallScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID)
+
+	for k, info in ipairs(scores) do
+		calcScores[k] = CalculateSingleScore(mapID, info)
+	end
+
+	return max(calcScores[1] , calcScores[2]) * 1.5 + min(calcScores[1] , calcScores[2]) * 0.5
+ end
+
+ local function CalculateNewScore(mapID, newLevel, guid, customTimer)
+
+	local scores, overallScore
+	
+	if(guid) then
+		overallScore = MIOG_SavedSettings.mPlusStatistics.table[guid][mapID].overAllScore
+
+		scores = {}
+		scores[1] = MIOG_SavedSettings.mPlusStatistics.table[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
+		scores[2] = MIOG_SavedSettings.mPlusStatistics.table[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
+		
+	else
+		scores, overallScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID)
+
+	end
+
+	local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(mapID)
+
+	local overTimeGain, lowGain, highGain = 0, 0, 0
+	local otherAffixScore = 0
+	overallScore = overallScore or 0
+
+	if(#scores > 0) then
+		for k, info in ipairs(scores) do
+			if(info.name == (miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or miog.F.WEEKLY_AFFIX == 10 and "Fortified")) then
+				overTimeGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit}, info.level)
+				lowGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, info.level)
+				highGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, info.level)
+
+			else
+				otherAffixScore = CalculateSingleScore(mapID, info)
+			
+			end
+		end
+	else
+		overTimeGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit}, 0)
+		lowGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, 0)
+		highGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, 0)
+	
+	end
+
+	local overtimeScore = max(overTimeGain , otherAffixScore) * 1.5 + min(overTimeGain , otherAffixScore) * 0.5
+	local lowerScore = max(lowGain , otherAffixScore) * 1.5 + min(lowGain , otherAffixScore) * 0.5
+	local higherScore = max(highGain , otherAffixScore) * 1.5 + min(highGain , otherAffixScore) * 0.5
+
+	return max(round(overtimeScore - overallScore), 0), max(round(lowerScore - overallScore), 0), max(round(higherScore - overallScore), 0)
+ end
 
 miog.refreshKeystones = function()
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
@@ -54,7 +125,12 @@ miog.refreshKeystones = function()
 			info.text = WrapTextInColorCode(UnitName(unitID), C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
 			info.value = keystoneInfo.level
 			info.icon = texture
-			--[[info.func = function()
+			info.func = function()
+				currentUnitID = unitID
+				currentChallengeMapID = keystoneInfo.challengeMapID
+				currentLevel = keystoneInfo.level
+
+				local currentTimerValue = miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue()
 
 				if(miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark) then
 					miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Show()
@@ -67,6 +143,8 @@ miog.refreshKeystones = function()
 				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
 	
 				if(unitID == "player") then
+					local overtimeScore, minScore, maxScore = CalculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, nil, currentTimerValue)
+
 					local playerGUID = UnitGUID("player")
 	
 					for _, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
@@ -74,32 +152,33 @@ miog.refreshKeystones = function()
 	
 					end
 	
-					local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, playerGUID)
-	
-					if(lowestGain and highestGain) then
-						miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText("+ " .. lowestGain .. " - " .. highestGain)
-						miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
-					end
+					miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+					miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
 				else
 					for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
-						local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, k)
-						if(lowestGain and highestGain) then
-							v.ScoreIncrease:SetText("+ " .. lowestGain .. " - " .. highestGain)
-							v.ScoreIncrease:Show()
-						end
+						local overtimeScore, minScore, maxScore = CalculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, k, currentTimerValue)
+
+						v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+						v.ScoreIncrease:Show()
 	
 					end
 				
 				end
-			end]]
+			end
 
 			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
 		end
 	end
 
-	--[[local keystoneInfo = {mapID = 1501, level = 26, challengeMapID = 199}
+	local table = {
+		[1] = {mapID = 2519, level = 10, challengeMapID = 404},
+		[2] = {mapID = 2519, level = 13, challengeMapID = 404},
+		[3] = {mapID = 2519, level = 16, challengeMapID = 404},
+		[4] = {mapID = 2519, level = 19, challengeMapID = 404},
+		[5] = {mapID = 2519, level = 22, challengeMapID = 404},
+	}
 
-	if(keystoneInfo) then
+	for _, keystoneInfo in ipairs(table) do
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
 		local classFile = "WARRIOR"
 
@@ -109,36 +188,42 @@ miog.refreshKeystones = function()
 		info.value = keystoneInfo.level
 		info.icon = texture
 		info.func = function()
+			local unitID = "PARTY1"
+
+			currentUnitID = unitID
+			currentChallengeMapID = keystoneInfo.challengeMapID
+			currentLevel = keystoneInfo.level
+
+			local currentTimerValue = miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue()
 
 			if(miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark) then
 				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Show()
 
 			end
 
-			miog.MPlusStatistics.DungeonColumns.Selection:SetSize(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]:GetSize())
+			--miog.MPlusStatistics.DungeonColumns.Selection:SetSize(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]:GetSize())
 			miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID], "TOPLEFT")
 			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID].TransparentDark
 			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
 
-			local unitID = "PARTY1"
-
 			if(unitID == "player") then
+				local overtimeScore, minScore, maxScore = CalculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, nil, currentTimerValue)
+
 				local playerGUID = UnitGUID("player")
 
-				for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
+				for _, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
 					v.ScoreIncrease:Hide()
 
 				end
 
-				local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, playerGUID)
-
+				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
 				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
-				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
 			else
 				for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
-					local lowestGain, highestGain = miog.retrieveScoreGain(keystoneInfo.challengeMapID, keystoneInfo.level, k)
+					local overtimeScore, minScore, maxScore = CalculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, k, currentTimerValue)
+
+					v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
 					v.ScoreIncrease:Show()
-					v.ScoreIncrease:SetText(lowestGain .. " - " .. highestGain)
 
 				end
 			
@@ -146,12 +231,54 @@ miog.refreshKeystones = function()
 		end
 
 		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
-	end]]
+		
+	end
 
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
 end
 
 miog.setUpMPlusStatistics = function()
+	miog.MPlusStatistics.CharacterInfo.TimelimitSlider:SetScript("OnValueChanged", function(self)
+		self.Text:SetText(round(self:GetValue()) .. "%")
+
+		if(currentUnitID) then
+			local currentTimerValue = miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue()
+
+			if(miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark) then
+				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Show()
+
+			end
+
+			--miog.MPlusStatistics.DungeonColumns.Selection:SetSize(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]:GetSize())
+			miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[currentChallengeMapID], "TOPLEFT")
+			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[currentChallengeMapID].TransparentDark
+			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
+
+			if(currentUnitID == "player") then
+				local overtimeScore, minScore, maxScore = CalculateNewScore(currentChallengeMapID, currentLevel, nil, currentTimerValue)
+
+				local playerGUID = UnitGUID("player")
+
+				for _, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
+					v.ScoreIncrease:Hide()
+
+				end
+
+				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
+			else
+				for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
+					local overtimeScore, minScore, maxScore = CalculateNewScore(currentChallengeMapID, currentLevel, k, currentTimerValue)
+
+					v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+					v.ScoreIncrease:Show()
+
+				end
+			
+			end
+		end
+	end)
+
 	if(miog.F.MPLUS_SETUP_COMPLETE ~= true) then
 		local mapTable = C_ChallengeMode.GetMapTable()
 

@@ -1,6 +1,8 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+miog.ONCE = 0
+
 miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
 
@@ -48,7 +50,10 @@ miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGro
 	end
 end
 
-miog.ONCE = 0
+local function calculateWeightedScore(difficulty, kills, bossCount, current, ordinal)
+	return (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount)
+
+end
 
 local function getRaidSortData(playerName)
 	local profile
@@ -95,6 +100,7 @@ local function getRaidSortData(playerName)
 	local currentData = {}
 	local nonCurrentData = {}
 	local mainData = {}
+	local orderedData = {}
 
 	if(profile and profile.success == true) then
 		if(profile.raidProfile) then
@@ -110,8 +116,7 @@ local function getRaidSortData(playerName)
 
 							if(string.find(d.raid.mapId, 10000)) then
 								mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
-								awakened = true
-
+								awakened = d.current
 							else
 								mapID = d.raid.mapId
 
@@ -131,11 +136,9 @@ local function getRaidSortData(playerName)
 								progress = y.kills,
 								bossCount = d.raid.bossCount,
 								parsedString = y.kills .. "/" .. d.raid.bossCount,
-								--weight = y.kills / d.raid.bossCount + ((awakened and miog.WEIGHTS_TABLE[1] * miog.WEIGHTS_TABLE[1] or miog.WEIGHTS_TABLE[d.raid.ordinal]) * y.difficulty)
-								weight = (awakened and 10000 or 1) * y.difficulty + (awakened and d.raid.ordinal * y.difficulty or 0) - d.raid.bossCount - y.kills
-
-								--FIND OUT ALGORITHM FOR AWAKENED SHIT
+								weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
 							}
+							
 						end
 					elseif(d.current == false) then
 
@@ -168,8 +171,7 @@ local function getRaidSortData(playerName)
 								progress = y.kills,
 								bossCount = d.raid.bossCount,
 								parsedString = y.kills .. "/" .. d.raid.bossCount,
-								--weight = y.kills / d.raid.bossCount + ((awakened and miog.WEIGHTS_TABLE[1] * miog.WEIGHTS_TABLE[1] or miog.WEIGHTS_TABLE[d.raid.ordinal]) * y.difficulty),
-								weight = y.kills * (awakened and 10000 or 1) * y.difficulty + (awakened and d.raid.ordinal * y.difficulty or 0) - d.raid.bossCount
+								weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
 							}
 						end
 					end
@@ -198,11 +200,48 @@ local function getRaidSortData(playerName)
 							progress = y.kills,
 							bossCount = d.raid.bossCount,
 							parsedString = y.kills .. "/" .. d.raid.bossCount,
-							weight = y.kills * (awakened and 10000 or 1) * y.difficulty + (awakened and d.raid.ordinal * y.difficulty or 0) - d.raid.bossCount
+							weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
 						}
 					end
 				end
 			end
+		end
+	end
+
+
+	table.sort(currentData, function(k1, k2)
+		return k1.difficulty > k2.difficulty
+	end)
+
+	table.sort(nonCurrentData, function(k1, k2)
+		return k1.difficulty > k2.difficulty
+	end)
+
+	table.sort(mainData, function(k1, k2)
+		return k1.difficulty > k2.difficulty
+	end)
+
+	if(currentData) then
+		for k, v in ipairs(currentData) do
+			orderedData[#orderedData+1] = v
+		end
+	end
+
+	if(nonCurrentData) then
+		for k, v in ipairs(nonCurrentData) do
+			orderedData[#orderedData+1] = v
+		end
+	end
+
+	if(#orderedData < 3) then
+		for i = #orderedData + 1, 3, 1 do
+			orderedData[i] = {
+				difficulty = -1,
+				progress = 0,
+				bossCount = 0,
+				parsedString = "0/0",
+				weight = 0
+			}
 		end
 	end
 
@@ -243,19 +282,7 @@ local function getRaidSortData(playerName)
 		end
 	end
 
-	table.sort(currentData, function(k1, k2)
-		return k1.difficulty > k2.difficulty
-	end)
-
-	table.sort(nonCurrentData, function(k1, k2)
-		return k1.difficulty > k2.difficulty
-	end)
-
-	table.sort(mainData, function(k1, k2)
-		return k1.difficulty > k2.difficulty
-	end)
-
-	return currentData, nonCurrentData
+	return currentData, nonCurrentData, orderedData
 end
 
 miog.getRaidSortData = getRaidSortData
@@ -454,7 +481,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			local currentTierFrame
 			local mainProgressText = ""
 
-			local currentData, nonCurrentData = getRaidSortData(playerName .. (realm and "-" .. realm or ""))
+			local currentData, nonCurrentData, orderedData = getRaidSortData(playerName .. (realm and "-" .. realm or ""))
 
 			if(mainProgressText ~= "") then
 				raidPanel.CategoryRow2.FontString:SetText(wticc("Main: " .. mainProgressText, miog.ITEM_QUALITY_COLORS[6].pureHex))
@@ -468,7 +495,6 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 			for n = 1, 2, 1 do
 				local raidData = n == 1 and currentData or nonCurrentData
-				local gotThree = 0
 
 				if(raidData) then
 					for a, b in ipairs(raidData) do
@@ -483,15 +509,12 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 							if(string.find(raidProgress.raid.mapId, 10000)) then
 								mapId = tonumber(strsub(raidProgress.raid.mapId, strlen(raidProgress.raid.mapId) - 3))
-								gotThree = gotThree + 1
 							else
 								mapId = raidProgress.raid.mapId
 
 							end
 
-							if(gotThree == 3) then
-								detailedInformationPanel:GetParent().BasicInformation.Title:SetText("GOT THREEEEEEEE")
-							end
+							--detailedInformationPanel:GetParent().BasicInformation.Title:SetText(math.floor(orderedData[1].weight + 0.5) .. "/" .. math.floor(orderedData[2].weight + 0.5))
 
 							local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapId)
 

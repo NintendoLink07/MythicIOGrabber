@@ -5,21 +5,21 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="NAME">
+                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" text="NAME">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="6"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Score" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="CURRENT SCORE">
+                <FontString parentKey="Score" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" text="CURRENT SCORE">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="-8"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="ScoreIncrease" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="SCORE INC" hidden="true">
+                <FontString parentKey="ScoreIncrease" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" text="SCORE INC" hidden="true">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="10" />
+                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="LEFT" x="35" />
                     </Anchors>
                 </FontString>
             </Layer>
@@ -109,14 +109,14 @@
                 <Texture parentKey="Affix1">
                     <Size x="14" y="14" />
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Dungeon1" relativePoint="LEFT" x="-1" y="7" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Dungeon1" relativePoint="LEFT" x="3" y="7" />
                     </Anchors>
                 </Texture>
 
                 <Texture parentKey="Affix2">
                     <Size x="14" y="14" />
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Dungeon1" relativePoint="LEFT" x="-1" y="-9" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Dungeon1" relativePoint="LEFT" x="3" y="-9" />
                     </Anchors>
                 </Texture>
             </Layer>

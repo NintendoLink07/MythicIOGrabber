@@ -156,7 +156,7 @@ local function checkQueues()
 						[18] = queueID,
 						[20] = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
 						or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
-						[30] = isSpecificQueue and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID].horizontal
+						[30] = (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID].horizontal
 					}
 
 					local frame
@@ -603,9 +603,11 @@ local function checkQueues()
 				[20] = miog.findBattlegroundIconByName(mapName) or miog.findBrawlIconByName(mapName) or 525915
 			}
 
+			local frame
+
 			if (mapName and queuedTime) then
-				local frame = createQueueFrame(frameData)
-				frame.CancelApplication:Hide()
+				frame = createQueueFrame(frameData)
+				--frame.CancelApplication:Hide()
 
 				local mapIDTable = miog.findBattlegroundMapIDsByName(mapName) or miog.findBrawlMapIDsByName(mapName)
 
@@ -619,7 +621,6 @@ local function checkQueues()
 						counter = counter + 1
 
 						if(counter == randomNumber) then
-							print(v, mapName)
 							frame.Background:SetTexture(miog.MAP_INFO[v].horizontal)
 							break
 						end
@@ -633,7 +634,7 @@ local function checkQueues()
 			end
 
 			
-			if ( status == "queued" ) then
+			if (frame and status == "queued" ) then
 				if ( suspend ) then
 					--QueueStatusEntry_SetMinimalDisplay(entry, mapName, QUEUED_STATUS_SUSPENDED);
 				else
@@ -646,34 +647,33 @@ local function checkQueues()
 					--		1		2			3			4			5			6			7				8		9				10				11				12			13			14			15		16			17
 					--local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime
 
+					------
+					---- CHECK IF SECURE BUTTON IS NEEDED
+					-----
 
-					--BattlemasterList
-					--PvpBrawl
-
+					local currentButton = queueIndex == 1 and DropDownList1Button2 or
+					queueIndex == 2 and DropDownList1Button4 or
+					queueIndex == 3 and DropDownList1Button6 or
+					queueIndex == 4 and DropDownList1Button8 or
+					queueIndex == 5 and DropDownList1Button10 or
+					queueIndex == 6 and DropDownList1Button12 or
+					queueIndex == 7 and DropDownList1Button14 or
+					queueIndex == 8 and DropDownList1Button16 or
+					queueIndex == 9 and DropDownList1Button18 or
+					queueIndex == 10 and DropDownList1Button20 or
+					queueIndex == 11 and DropDownList1Button22 or
+					queueIndex == 12 and DropDownList1Button24
 					--[[local currentDeclineButton = "/click QueueStatusButton RightButton" .. "\r\n" ..
 					(
-						queueIndex == 1 and "/click [nocombat]DropDownList1Button2 Left Button" or
-						queueIndex == 2 and "/click [nocombat]DropDownList1Button4 Left Button" or
-						queueIndex == 3 and "/click [nocombat]DropDownList1Button6 Left Button" or
-						queueIndex == 4 and "/click [nocombat]DropDownList1Button8 Left Button" or
-						queueIndex == 5 and "/click [nocombat]DropDownList1Button10 Left Button" or
-						queueIndex == 6 and "/click [nocombat]DropDownList1Button12 Left Button" or
-						queueIndex == 7 and "/click [nocombat]DropDownList1Button14 Left Button" or
-						queueIndex == 8 and "/click [nocombat]DropDownList1Button16 Left Button" or
-						queueIndex == 9 and "/click [nocombat]DropDownList1Button18 Left Button" or
-						queueIndex == 10 and "/click [nocombat]DropDownList1Button20 Left Button" or
-						queueIndex == 11 and "/click [nocombat]DropDownList1Button22 Left Button" or
-						queueIndex == 12 and "/click [nocombat]DropDownList1Button24 Left Button"
-					)
-
-					if(queueSystem.queueFrames[mapName]) then
 						
-						queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("type", "macro") -- left click causes macro
-						queueSystem.queueFrames[mapName].CancelApplication:SetAttribute("macrotext1", currentDeclineButton)
+					)]]
 
-					end
+					frame.CancelApplication:SetScript("OnClick", function()
+						QueueStatusButton:Click("RightButton")
+						currentButton:Click("LeftButton")
+					end)
 
-					queueIndex = queueIndex + 1]]
+					queueIndex = queueIndex + 1
 					
 
 				end

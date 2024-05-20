@@ -1244,13 +1244,10 @@ miog.MAP_INFO[2549].achievementsAwakened = {19570, 19571, 19572}
 miog.MAP_INFO[2569].achievementCategory = 15469 --ATSC
 miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
 
-miog.WEIGHTS_TABLE = { --USED FOR ORDERING CURRENT TIER OVER LAST TIER
-	[1] = 10000000000,
-	[2] = 100000000,
-	[3] = 1000000,
-	[4] = 10000,
-	[5] = 100,
-	[6] = 1,
+miog.WEIGHTS_TABLE = {
+	[1] = 10000,
+	[2] = 100,
+	[3] = 1,
 }
 
 miog.FONTS = {

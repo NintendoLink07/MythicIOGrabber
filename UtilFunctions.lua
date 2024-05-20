@@ -256,7 +256,6 @@ miog.findBattlegroundIconByID = function(mapID)
 end
 
 miog.findBattlegroundMapIDsByID = function(battlemasterID)
-	DevTools_Dump(miog.BATTLEMASTER_INFO[battlemasterID].possibleBGs)
 	return miog.BATTLEMASTER_INFO[battlemasterID].possibleBGs
 end
 
@@ -283,7 +282,6 @@ end
 miog.findBrawlMapIDsByName = function(mapName)
 	for brawlID, brawlEntry in pairs(miog.RAW["PvpBrawl"]) do
 		if(brawlEntry[2] == mapName) then
-			print("FOUND", mapName)
 			return miog.findBattlegroundMapIDsByID(brawlEntry[4])
 		end
 	end

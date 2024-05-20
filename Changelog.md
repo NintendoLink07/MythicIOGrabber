@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning].
 
 ### Added
 
+- [M+ Statistics] Keystone dropdown will now show potential score gains after clicking on your or a party members key from the dropdown.
+Everyone who has either this addon or Details will be able to see keys from their party/raid.
+After clicking on a key of yourself you will see the score your character could gain.
+If you click on a partymember's key you will see the score all of your characters could gain (since you could theoretically team up with this party member and one of your alts).
+Score increase's syntax: Score gain when not in time | Score gain with 0.1 seconds left | Score gain with 40% time left (this is the max bonus you can get)
+Right under the dropdown there's a new timelimit slider, you can set the time left of the key timer (in %) for calculations.
+
 - PVP queues added to the queue selector.
 Since PVP queues have multiple checks in place I can't have you just click on them and queue up.
 You'll have to select the type of pvp queue you wanna join and then click "Join Battle."
@@ -25,7 +32,15 @@ You can set a number range (e.g. 0-3 bosses killed) or when having the raid opti
 - [Filter Panel] Integrated a new filter option for affix checks.
 If the current affixes include either raging or incorporeal checking this option will make sure there is atleast 1 person who can deal with the affix.
 
+### Changed
+
+- The algorithm to calculate raid progress has been adjusted to better differenciate between awakened and non-awakened raids.
+
 ### Fixed
+
+- [M+ Statistics] The key dropdown is once again visible.
+
+- [Detailed Information Panel] If a player has progress in all 3 awakened raids the progress should now reflect all 3 instead of the 2 highest ones.
 
 - [Detailed Information Panel] The comment should now display text instead of a search result ID, mb.
 

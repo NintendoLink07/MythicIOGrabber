@@ -8,12 +8,11 @@ searchResultSystem.declinedGroups = {}
 local function sortSearchResultList(result1, result2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
 		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
-			local firstState = miog.SearchPanel.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
+			local firstState = tableElement.currentState
 
 			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
-
 				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
-					local secondState = miog.SearchPanel.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
+					local secondState = innerTableElement.currentState
 
 					if(result1.appStatus == "applied" and result2.appStatus ~= "applied") then
 						return true
@@ -31,8 +30,8 @@ local function sortSearchResultList(result1, result2)
 						if(result1[key] == result2[key]) then
 							return secondState == 1 and result1[innerKey] > result2[innerKey] or secondState == 2 and result1[innerKey] < result2[innerKey]
 
-						elseif(result1[key] ~= result2[key]) then
-							return firstState == 1 and result1[innerKey] > result2[innerKey] or firstState == 2 and result1[innerKey] < result2[innerKey]
+						else
+							return firstState == 1 and result1[key] > result2[key] or firstState == 2 and result1[key] < result2[key]
 
 						end
 					end
@@ -368,7 +367,7 @@ local function isGroupEligible(resultID, bordermode)
 
 		end
 
-		local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonRating or 0
+		local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
 
 		if(isDungeon) then
 			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRating) then
@@ -771,25 +770,30 @@ local function gatherSearchResultSortData(singleResultID)
 				end
 
 				if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
-					primarySortAttribute = searchResultInfo.leaderOverallDungeonRating or 0
-					secondarySortAttribute = searchResultInfo.leaderDungeonRatingInfo and searchResultInfo.leaderDungeonRatingInfo.bestRunLevel or 0
+					primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
+					print(primarySortAttribute)
+					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo.bestRunLevel or 0
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
-					local currentData, nonCurrentData = miog.getRaidSortData(searchResultInfo.leaderName)
+					local currentData, nonCurrentData, orderedData = miog.getRaidSortData(searchResultInfo.leaderName)
 
-					if(currentData) then
-						primarySortAttribute = currentData[1].weight
-						secondarySortAttribute = currentData[2].weight
+					--primarySortAttribute = currentData[1].weight + currentData[2].weight + currentData[3].weight
+					--secondarySortAttribute = nonCurrentData[1].weight + nonCurrentData[2].weight + nonCurrentData[3].weight
 
-					elseif(nonCurrentData) then
-						primarySortAttribute = nonCurrentData[1].weight
-						secondarySortAttribute = nonCurrentData[2].weight
-
-					else
-						primarySortAttribute = 0
-						secondarySortAttribute = 0
+					primarySortAttribute = orderedData[1].weight
+					secondarySortAttribute = orderedData[2].weight
 					
-					end
+					--if(currentData) then
+						--secondarySortAttribute = currentData[2].weight
+
+					--elseif(nonCurrentData) then
+						--primarySortAttribute = nonCurrentData[1].weight
+
+					--else
+						--primarySortAttribute = 0
+						--secondarySortAttribute = 0
+					
+					--end
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9) then
 					primarySortAttribute = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0
@@ -964,9 +968,10 @@ local function updatePersistentResultFrame(resultID)
 			currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
 
 			if(activityInfo.categoryID == 3) then
-				local raidData, nonCurrentRaidData = miog.getRaidSortData(searchResultInfo.leaderName)
-				primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
-				secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
+				local raidData, nonCurrentRaidData, orderedData = miog.getRaidSortData(searchResultInfo.leaderName)
+
+				primaryIndicator:SetText(wticc(orderedData[1].parsedString, orderedData[1].current and miog.DIFFICULTY[orderedData[1].difficulty].color or miog.DIFFICULTY[orderedData[1].difficulty].desaturated))
+				secondaryIndicator:SetText(wticc(orderedData[2].parsedString, orderedData[2].current and miog.DIFFICULTY[orderedData[2].difficulty].color or miog.DIFFICULTY[orderedData[2].difficulty].desaturated))
 
 				memberPanel:Hide()
 				currentFrame.CategoryInformation.DifficultyZone:SetWidth(LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
@@ -1035,24 +1040,24 @@ local function updatePersistentResultFrame(resultID)
 				currentFrame.CategoryInformation.DifficultyZone:SetWidth(100)
 				bossPanel:Hide()
 
-				if(searchResultInfo.leaderOverallDungeonRating and searchResultInfo.leaderOverallDungeonRating > 0) then
+				if(searchResultInfo.leaderOverallDungeonScore and searchResultInfo.leaderOverallDungeonScore > 0) then
 					local reqRating = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonRating or 0
 					local highestKeyForDungeon
 
-					if(reqRating > searchResultInfo.leaderOverallDungeonRating) then
-						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonRating), miog.CLRSCC["red"]))
+					if(reqRating > searchResultInfo.leaderOverallDungeonScore) then
+						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.CLRSCC["red"]))
 
 					else
-						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonRating), miog.createCustomColorForRating(searchResultInfo.leaderOverallDungeonRating):GenerateHexColor()))
+						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.createCustomColorForRating(searchResultInfo.leaderOverallDungeonScore):GenerateHexColor()))
 
 					end
 
-					if(searchResultInfo.leaderDungeonRatingInfo) then
-						if(searchResultInfo.leaderDungeonRatingInfo.finishedSuccess == true) then
-							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonRatingInfo.bestRunLevel), miog.C.GREEN_COLOR)
+					if(searchResultInfo.leaderDungeonScoreInfo) then
+						if(searchResultInfo.leaderDungeonScoreInfo.finishedSuccess == true) then
+							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonScoreInfo.bestRunLevel), miog.C.GREEN_COLOR)
 
-						elseif(searchResultInfo.leaderDungeonRatingInfo.finishedSuccess == false) then
-							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonRatingInfo.bestRunLevel), miog.CLRSCC["red"])
+						elseif(searchResultInfo.leaderDungeonScoreInfo.finishedSuccess == false) then
+							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonScoreInfo.bestRunLevel), miog.CLRSCC["red"])
 
 						end
 					else
