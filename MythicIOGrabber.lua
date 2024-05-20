@@ -53,16 +53,15 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 		
-		miog.referencePVPButtons = CONQUEST_BUTTONS
-		MIOG_REFERENCE_PVP_BUTTONS = CONQUEST_BUTTONS
-
-
-		PVPUIFrame:HookScript("OnShow", function()
-			ConquestFrame.selectedButton = nil
-			ConquestFrame.RatedBG.SelectedTexture:Hide()
-			--ConquestFrame.ratedSoloShuffleEnabled = false
-			--ConquestFrame.arenasEnabled = false
-		end)
+		
+		if(not miog.F.LITE_MODE) then
+			PVPUIFrame:HookScript("OnShow", function()
+				ConquestFrame.selectedButton = nil
+				ConquestFrame.RatedBG.SelectedTexture:Hide()
+				--ConquestFrame.ratedSoloShuffleEnabled = false
+				--ConquestFrame.arenasEnabled = false
+			end)
+		end
 
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
 		if(not miog.F.ADDED_DUNGEON_FILTERS) then

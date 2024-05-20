@@ -296,20 +296,21 @@ local function printOnce(string)
 	end
 end
 
-hooksecurefunc("LFGListSearchPanel_DoSearch", function()
-	if(not miog.F.LITE_MODE) then
-		LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
-		LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
-		LFGListFrame.SearchPanel.SearchBox:SetSize(miog.SearchPanel.SearchBoxBase:GetSize())
-		LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
-		LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("DIALOG")
+hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
+	LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
+	LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
+	LFGListFrame.SearchPanel.FilterButton:Hide()
 
-		LFGListFrame.SearchPanel.FilterButton:Hide()
+	if(not miog.F.LITE_MODE) then
+		LFGListFrame.SearchPanel.SearchBox:SetSize(miog.SearchPanel.SearchBoxBase:GetSize())
 
 	else
-		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 80)
+		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 100)
 	
 	end
+
+	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
+	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("DIALOG")
 end)
 
 local function createDetailedInformationPanel(poolFrame, listFrame)

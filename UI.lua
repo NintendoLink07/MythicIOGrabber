@@ -571,6 +571,8 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 				currentRaidTable[#currentRaidTable+1] = info
 
+				print(info.text)
+
 				if(k == 1) then
 					firstGroupID = groups[1]
 				end
@@ -804,12 +806,22 @@ miog.createFrames = function()
 
 	C_EncounterJournal.OnOpen = miog.dummyFunction
 
+	local settingsButton = CreateFrame("Button")
+	settingsButton:SetSize(20, 20)
+	settingsButton:SetNormalTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/settingGear.png")
+	settingsButton:SetScript("OnClick", function()
+		Settings.OpenToCategory("MythicIOGrabber")
+	end)
+
 	if(miog.F.LITE_MODE == true) then
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", LFGListFrame, "MIOG_Plugin")
 		miog.Plugin:SetPoint("TOPLEFT", PVEFrameLeftInset, "TOPRIGHT")
 		miog.Plugin:SetSize(LFGListFrame:GetWidth(), LFGListFrame:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 7)
 		miog.Plugin:SetFrameStrata("HIGH")
 
+		settingsButton:SetParent(PVEFrame)
+		settingsButton:SetFrameStrata("HIGH")
+		settingsButton:SetPoint("RIGHT", PVEFrameCloseButton, "LEFT", -2, 0)
 	else
 		miog.createPVEFrameReplacement()
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
@@ -831,8 +843,15 @@ miog.createFrames = function()
 		ConquestFrame.selectedButton = nil
 		PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
 		HideUIPanel(PVEFrame)
+
+		settingsButton:SetParent(miog.pveFrame2.TitleBar)
+		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
 	end
-		
+
+	miog.Plugin:SetScript("OnEnter", function()
+	
+	end)
+
 	miog.createFrameBorder(miog.Plugin.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.ButtonPanel.FilterButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
@@ -915,8 +934,6 @@ miog.createFrames = function()
 				
 			end
 
-			miog.setupFiltersForActivePanel()
-
 			if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
 				miog.Plugin.ButtonPanel:Hide()
 				miog.FilterPanel.Lock:Hide()
@@ -928,6 +945,8 @@ miog.createFrames = function()
 				miog.LastInvites:Show()
 
 			end
+
+			miog.setupFiltersForActivePanel()
 
 		elseif(panel == LFGListFrame.SearchPanel) then
 			miog.F.ACTIVE_PANEL = "searchPanel"
@@ -944,8 +963,6 @@ miog.createFrames = function()
 				LFGListFrame.SearchPanel:Hide()
 			end
 
-			miog.setupFiltersForActivePanel()
-
 			if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
 				miog.Plugin.ButtonPanel:Hide()
 				miog.FilterPanel.Lock:Hide()
@@ -958,7 +975,6 @@ miog.createFrames = function()
 
 			end
 
-
 			if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
 				if(miog.UPDATED_DUNGEON_FILTERS == nil) then
 					miog.updateDungeonCheckboxes()
@@ -969,6 +985,8 @@ miog.createFrames = function()
 					miog.updateRaidCheckboxes()
 				end
 			end
+
+			miog.setupFiltersForActivePanel()
 
 		elseif(panel == LFGListFrame.EntryCreation) then
 			miog.ApplicationViewer:Hide()

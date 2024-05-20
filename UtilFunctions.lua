@@ -164,42 +164,6 @@ miog.secondsToClock = function(stringSeconds)
 	end
 end
 
-miog.checkForActiveFilters = function()
-	local filtersActive = false
-	local filterPanel = miog.FilterPanel
-
-	for _, v in pairs(filterPanel.ClassSpecOptions.Panels) do
-		if(not v.Class.Button:GetChecked()) then
-			filtersActive = true
-			break
-
-		end
-
-		for _, y in pairs(v.SpecFrames) do
-			if(not y.Button:GetChecked()) then
-				filtersActive = true
-				break
-
-			end
-
-		end
-
-	end
-
-	if(filterPanel.roleFilterPanel) then
-		for _, v in pairs(filterPanel.Roles.Buttons) do
-			if(not v:GetChecked()) then
-				filtersActive = true
-				break
-
-			end
-
-		end
-	end
-
-	return filtersActive
-end
-
 miog.retrieveMapIDFromGFID = function(groupFinderID)
 	for k, v in pairs(miog.MAP_INFO) do
 		if(v.gfID == groupFinderID) then

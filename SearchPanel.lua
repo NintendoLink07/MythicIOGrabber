@@ -733,15 +733,7 @@ miog.groupSignup = groupSignup
 local function gatherSearchResultSortData(singleResultID)
 	local unsortedMainApplicantsList = {}
 
-	local resultTable
-
-	if(miog.F.IS_PGF1_LOADED) then
-		_, resultTable = LFGListFrame.SearchPanel.totalResults, LFGListFrame.SearchPanel.results
-
-	else
-		_, resultTable = C_LFGList.GetFilteredSearchResults()
-
-	end
+	local total, resultTable = C_LFGList.GetFilteredSearchResults()
 
 	local counter = 1
 
@@ -771,7 +763,6 @@ local function gatherSearchResultSortData(singleResultID)
 
 				if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
 					primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
-					print(primarySortAttribute)
 					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo.bestRunLevel or 0
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
@@ -965,6 +956,11 @@ local function updatePersistentResultFrame(resultID)
 			local memberPanel = currentFrame.CategoryInformation.MemberPanel
 			local bossPanel = currentFrame.CategoryInformation.BossPanel
 
+			
+			memberPanel:SetShown(activityInfo.categoryID ~= 3)
+			bossPanel:SetShown(activityInfo.categoryID == 3)
+			currentFrame.CategoryInformation.DifficultyZone:SetWidth(activityInfo.categoryID ~= 3 and 100 or LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
+
 			currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
 
 			if(activityInfo.categoryID == 3) then
@@ -973,8 +969,6 @@ local function updatePersistentResultFrame(resultID)
 				primaryIndicator:SetText(wticc(orderedData[1].parsedString, orderedData[1].current and miog.DIFFICULTY[orderedData[1].difficulty].color or miog.DIFFICULTY[orderedData[1].difficulty].desaturated))
 				secondaryIndicator:SetText(wticc(orderedData[2].parsedString, orderedData[2].current and miog.DIFFICULTY[orderedData[2].difficulty].color or miog.DIFFICULTY[orderedData[2].difficulty].desaturated))
 
-				memberPanel:Hide()
-				currentFrame.CategoryInformation.DifficultyZone:SetWidth(LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
 
 				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
 
@@ -1018,12 +1012,9 @@ local function updatePersistentResultFrame(resultID)
 					--bossPanel:MarkDirty()
 				
 				end
+			end
 
-				bossPanel:SetShown(true)
-				--currentFrame.RaidInformation:SetShown(true)
-
-			elseif(activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9) then
-				bossPanel:Hide()
+			if(activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9) then
 
 				if(searchResultInfo.leaderPvpRatingInfo) then
 					primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderPvpRatingInfo.rating), miog.createCustomColorForRating(searchResultInfo.leaderPvpRatingInfo.rating):GenerateHexColor()))
@@ -1036,9 +1027,9 @@ local function updatePersistentResultFrame(resultID)
 					secondaryIndicator:SetText("Unra")
 
 				end
-			elseif(activityInfo.categoryID ~= 0 and activityInfo.categoryID ~= 8 and activityInfo.categoryID ~= 9) then
-				currentFrame.CategoryInformation.DifficultyZone:SetWidth(100)
-				bossPanel:Hide()
+			end
+
+			if(activityInfo.categoryID ~= 3) then
 
 				if(searchResultInfo.leaderOverallDungeonScore and searchResultInfo.leaderOverallDungeonScore > 0) then
 					local reqRating = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonRating or 0
@@ -1073,7 +1064,7 @@ local function updatePersistentResultFrame(resultID)
 
 				end
 
-				if(searchResultInfo.numMembers < 6) then
+				--if(searchResultInfo.numMembers < 6) then
 					for i = 1, 1, 1 do
 						if(roleCount["TANK"] < 1 and groupSize < groupLimit) then
 							orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
@@ -1171,8 +1162,8 @@ local function updatePersistentResultFrame(resultID)
 						
 						end
 					end
-				else
-					for i = 1, 2, 1 do
+				--else
+					--[[for i = 1, 2, 1 do
 						if(roleCount["TANK"] < 2 and groupSize < groupLimit) then
 							orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
 							roleCount["TANK"] = roleCount["TANK"] + 1
@@ -1258,16 +1249,8 @@ local function updatePersistentResultFrame(resultID)
 
 						--orderedListIndex = orderedListIndex + 1
 						memberPanel[tostring(i)]:Show()
-					end
-				end
-				
-				memberPanel:Show()
-
-			else
-				bossPanel:Hide()
-				memberPanel:Hide()
-				currentFrame.CategoryInformation.DifficultyZone:SetWidth(144)
-			
+					end]]
+				--end
 			end
 
 			--currentFrame.DetailedInformationPanel:SetPoint("TOPLEFT", currentFrame.BasicInformationPanel or (currentFrame.RaidInformation:IsVisible() and currentFrame.RaidInformation or currentFrame.CategoryInformation), "BOTTOMLEFT")
@@ -1403,6 +1386,15 @@ local function checkSearchResultListForEligibleMembers()
 		miog.SearchPanel.FramePanel.Container:MarkDirty()
 
 		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #lastOrderedList .. ")")
+		miog.Plugin.FooterBar.Results:SetScript("OnEnter", #lastOrderedList >= 100 and function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+			GameTooltip:SetText("There might be more groups listed.")
+			GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
+			GameTooltip:Show()
+		end or nil)
+		miog.Plugin.FooterBar.Results:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
 	end
 end
 
@@ -1456,6 +1448,16 @@ local function updateSearchResultList()
 		miog.SearchPanel.FramePanel.Container:MarkDirty()
 
 		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #orderedList .. ")")
+		
+		miog.Plugin.FooterBar.Results:SetScript("OnEnter", #orderedList >= 100 and function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+			GameTooltip:SetText("There might be more groups listed.")
+			GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
+			GameTooltip:Show()
+		end or nil)
+		miog.Plugin.FooterBar.Results:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
 
 	end
 end
@@ -1591,15 +1593,18 @@ miog.createSearchPanel = function()
 	searchBox:SetParent(searchPanel)
 
 	searchPanel.standardSearchBoxWidth = LFGListFrame.SearchPanel.SearchBox:GetWidth()
+	LFGListFrame.SearchPanel.FilterButton:Hide()
 
 	if(not miog.F.LITE_MODE) then
-		searchBox:SetSize(searchPanel.SearchBoxBase:GetSize())
-		searchBox:SetPoint(searchPanel.SearchBoxBase:GetPoint())
+		LFGListFrame.SearchPanel.SearchBox:SetSize(miog.SearchPanel.SearchBoxBase:GetSize())
 
 	else
-		LFGListFrame.SearchPanel.SearchBox:SetWidth(searchPanel.standardSearchBoxWidth - 80)
+		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 100)
 	
 	end
+
+	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
+	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("DIALOG")
 
 	searchPanel.SearchBox = searchBox
 

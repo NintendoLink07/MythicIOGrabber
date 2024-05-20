@@ -26,6 +26,9 @@ Arena Skirmish, the normal brawl and the special brawl are exceptions, they can 
 - Calendar events are implemented!
 Whenever a special event (timewalking, pvp brawl, etc.) is currently ongoing or going to start in the next 7 days there will be a notification in the main tab.
 
+- [Filter Panel] All expansion dungeons are now included in the dungeon filter options (currently DOTI, RISE and FALL were missing).
+Next expansion starting in season two there will be the current season dungeons and right beneath there will be the expansion dungeons (since currently 8 of the DF dungeons are also in the current seasonal dungeon rotation).
+
 - [Filter Panel] For raids you can now filter by killed bosses.
 You can set a number range (e.g. 0-3 bosses killed) or when having the raid options enabled you can filter single bosses out (e.g. set Volcoross to "slain (red border)" and only groups that have atleast slain Volcoross will show up or set Gnarlroot to "alive (green border)" to get fresh groups)
 
@@ -34,9 +37,13 @@ If the current affixes include either raging or incorporeal checking this option
 
 ### Changed
 
+- All queue frames should now have an cancel button in the "Active queues" panel.
+
 - The algorithm to calculate raid progress has been adjusted to better differenciate between awakened and non-awakened raids.
 
 ### Fixed
+
+- [Blizzard LFG filter] Rewrote my code so Blizzard will actually recognize MIOG's lfg filters
 
 - [M+ Statistics] The key dropdown is once again visible.
 
@@ -48,14 +55,27 @@ If the current affixes include either raging or incorporeal checking this option
 
 - [Filter Panel] Rating will not be checked if you're not in the dungeon / arena search panel.
 
+- [Filter Panel] MIOG's filters will now be correctly applied to Blizzards dungeon lfg filters.
+
+- [Filter Panel] Some issues with class and role filters have been resolved.
+
 - [Queue Selector] (All?) Event queues will now have an icon if they don't usually have one (like timewalking stuff).
 The icon will by default be the one from the expansion it's about.
 
 - [Stock Blizzard Panel] There won't be any error message anymore when switching to the stock UI with the topleft button in the title bar and then directly trying to join any rated pvp queue.
 
+- [Search Panel] After switching to a different category all frames will be refreshed correctly.
+
 - [Search Panel] PVP categories will now have the correct function associated with coloring the rating.
 
 - [Search Panel] Questing and custom categories will now use dungeon score as their go-to sorting value.
+
+- [Interface options] The background image can now be changed again without errors popping up.
+
+### Known issues
+
+- There is currently no good way of showing larger groups like Rated BG groups or custom groups with over 5 members.
+Currently figuring out a good / performant way to do that.
 
 
 ## [2.0.3] - 2024-05-14

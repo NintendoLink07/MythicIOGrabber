@@ -10,7 +10,12 @@ queueSystem.currentlyInUse = 0
 local frameQueue = {}
 local textureLog = {}
 
-local queueFrameIndex = 0
+local queueFrameIndex = 1
+
+function MIOG_GetCurrentDropdownButton(queueIndex)
+	return _G["DropDownList1Button" .. (queueIndex * 2)]
+
+end
 
 local function resetQueueFrame(_, frame)
 	frame:Hide()
@@ -33,8 +38,11 @@ local function resetQueueFrame(_, frame)
 
 		frame:ClearBackdrop()
 		
-		frame.CancelApplication:SetScript("OnClick", nil)
-		frame.CancelApplication:SetScript("OnEnter", nil)
+		--frame.CancelApplication:SetScript("OnClick", nil)
+		--frame.CancelApplication:SetScript("OnEnter", nil)
+		frame.CancelApplication:RegisterForClicks("LeftButtonDown")
+		frame.CancelApplication:SetAttribute("type", nil)
+		frame.CancelApplication:SetAttribute("macrotext1", nil)
 		frame.CancelApplication:Show()
 
 		--frame.Icon:SetTexture(nil)
@@ -174,20 +182,24 @@ local function checkQueues()
 						else
 							frame.ActiveIDFrame:Hide()
 
-							if(categoryID == 1) then
+							--[[if(categoryID == 1) then
 								frame.CancelApplication:SetScript("OnEnter", function(self)
 									GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
 									GameTooltip_AddErrorLine(GameTooltip, "This will also cancel all group finder applications!")
 									GameTooltip:Show()
 								end)
 
-							end
+							end]]
 						
 						end
 
-						frame.CancelApplication:SetScript("OnClick", function()
+						--[[frame.CancelApplication:SetScript("OnClick", function()
 							LeaveSingleLFG(categoryID, queueID)
-						end)
+						end)]]
+						
+					
+						frame.CancelApplication:SetAttribute("type", "macro")
+						frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
 
 					end
 
@@ -486,9 +498,12 @@ local function checkQueues()
 		local frame = createQueueFrame(frameData)
 
 		frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
-		frame.CancelApplication:SetScript("OnClick", function()
+		--[[frame.CancelApplication:SetScript("OnClick", function()
 			C_LFGList.RemoveListing()
-		end)
+		end)]]
+
+		frame.CancelApplication:SetAttribute("type", "macro")
+		frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
 
 		frame:SetScript("OnMouseDown", function()
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -529,9 +544,12 @@ local function checkQueues()
 					if(appStatus == "applied") then
 						local frame = createQueueFrame(frameData)
 
-						frame.CancelApplication:SetScript("OnClick", function()
+						--[[frame.CancelApplication:SetScript("OnClick", function()
 							C_LFGList.CancelApplication(id)
-						end)
+						end)]]
+
+						frame.CancelApplication:SetAttribute("type", "macro")
+						frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
 
 						frame:SetScript("OnMouseDown", function()
 							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -563,6 +581,8 @@ local function checkQueues()
 						frame:SetScript("OnLeave", function()
 							GameTooltip:Hide()
 						end)
+
+						queueIndex = queueIndex + 1
 					end
 				end
 			end
@@ -650,28 +670,9 @@ local function checkQueues()
 					------
 					---- CHECK IF SECURE BUTTON IS NEEDED
 					-----
-
-					local currentButton = queueIndex == 1 and DropDownList1Button2 or
-					queueIndex == 2 and DropDownList1Button4 or
-					queueIndex == 3 and DropDownList1Button6 or
-					queueIndex == 4 and DropDownList1Button8 or
-					queueIndex == 5 and DropDownList1Button10 or
-					queueIndex == 6 and DropDownList1Button12 or
-					queueIndex == 7 and DropDownList1Button14 or
-					queueIndex == 8 and DropDownList1Button16 or
-					queueIndex == 9 and DropDownList1Button18 or
-					queueIndex == 10 and DropDownList1Button20 or
-					queueIndex == 11 and DropDownList1Button22 or
-					queueIndex == 12 and DropDownList1Button24
-					--[[local currentDeclineButton = "/click QueueStatusButton RightButton" .. "\r\n" ..
-					(
-						
-					)]]
-
-					frame.CancelApplication:SetScript("OnClick", function()
-						QueueStatusButton:Click("RightButton")
-						currentButton:Click("LeftButton")
-					end)
+					
+					frame.CancelApplication:SetAttribute("type", "macro")
+					frame.CancelApplication:SetAttribute("macrotext1", "/click QueueStatusButton RightButton" .. "\r\n" .. "/click " .. MIOG_GetCurrentDropdownButton(queueIndex):GetDebugName() .." LeftButton")
 
 					queueIndex = queueIndex + 1
 					
@@ -787,9 +788,12 @@ local function checkQueues()
 			if(frame) then
 				--queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
 				--queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
-				frame.CancelApplication:SetScript("OnClick", function()
+				--[[frame.CancelApplication:SetScript("OnClick", function()
 					C_PetBattles.StopPVPMatchmaking()
-				end)
+				end)]]
+
+				frame.CancelApplication:SetAttribute("type", "macro")
+				frame.CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
 
 			end
 
@@ -824,7 +828,9 @@ end
 local function findGroup(categoryFrame)
 	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
 	
-	LFGListCategorySelection_SelectCategory(LFGListFrame.CategorySelection, categoryFrame.categoryID, categoryFrame.filters)
+	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
+	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
+	
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
 
 	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)

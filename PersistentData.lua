@@ -1162,7 +1162,6 @@ local function loadRawData()
 	end
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
-
 		miog.ACTIVITY_INFO[k] = {
 			fullName = v[1],
 			difficultyName = v[2],

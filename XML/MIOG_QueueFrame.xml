@@ -4,7 +4,7 @@
         <Size y="43" />
 
         <Frames>
-            <Button parentKey="CancelApplication">
+            <Button parentKey="CancelApplication" inherits="SecureActionButtonTemplate">
                 <Size x="14" y="14" />
                 <Anchors>
                     <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" />

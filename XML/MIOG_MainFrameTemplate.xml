@@ -102,19 +102,6 @@
 						</Scripts>
 					</Button>
 
-                    <Button parentKey="Settings">
-                        <Size x="20" y="20"/>
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.CloseButton" relativePoint="LEFT" x="-2" />
-                        </Anchors>
-                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/settingGear.png" />
-                        <Scripts>
-							<OnClick>
-		                        Settings.OpenToCategory("MythicIOGrabber")
-							</OnClick>
-						</Scripts>
-                    </Button>
-
                     <Button parentKey="Expand">
                         <Size x="12" y="12"/>
                         <Anchors>

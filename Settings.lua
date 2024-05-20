@@ -248,8 +248,12 @@ end
 
 miog.getBaseSettings = getBaseSettings
 
-miog.resetSpecificFilterToDefault = function(table)
-	table = defaultOptionSettings.filterOptions.table.default
+miog.getDefaultFilters = function()
+	local table = {}
+
+	for k, v in pairs(defaultOptionSettings.filterOptions.table.default) do
+		table[k] = v
+	end
 
 	return table
 end
@@ -569,7 +573,7 @@ miog.loadSettings = function()
 				info.func = function(_, arg1, _, _)
 					MIOG_SavedSettings["backgroundOptions"].value = arg1
 					miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
-					miog.LastInvites.Panel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
+					miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
 					UIDropDownMenu_SetText(optionDropdown, miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
 					CloseDropDownMenus()
 

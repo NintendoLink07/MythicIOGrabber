@@ -474,7 +474,7 @@ function SlickDropDown:InsertCustomFrame(info, frame)
 			list = self.entryFrameTree[infoTable.parentIndex].List
 
 			if(parent == nil) then
-				DevTools_Dump(infoTable)
+				--DevTools_Dump(infoTable)
 
 			end
 
@@ -529,7 +529,7 @@ function SlickDropDown:CreateEntryFrame(info)
 			list = self.entryFrameTree[infoTable.parentIndex].List
 
 			if(parent == nil) then
-				DevTools_Dump(infoTable)
+				--DevTools_Dump(infoTable)
 
 			end
 
