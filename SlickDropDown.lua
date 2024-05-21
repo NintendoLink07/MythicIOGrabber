@@ -317,11 +317,9 @@ function SlickDropDown:SetWidthToWidestFrame(infoTable)
 
 		end
 	else
-		if(infoTable.parentIndex == 6) then
-			print("NOTHING BITCH")
-		end
 		local frame = self.entryFrameTree[infoTable.parentIndex][infoTable.index or 1]
 		frame:SetWidth(width - 2)
+		
 	end
 
 	list.minimumWidth = width

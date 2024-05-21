@@ -571,8 +571,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 				currentRaidTable[#currentRaidTable+1] = info
 
-				print(info.text)
-
 				if(k == 1) then
 					firstGroupID = groups[1]
 				end
