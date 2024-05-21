@@ -87,6 +87,6 @@ Currently figuring out a good / performant way to do that.
 Don't think I can really do something about that, Blizzard's limitation of achievement tracking.
 
 - If you want to queue for specific battlegrounds like Arathi Basin or Seething Shore you will have to go to the stock ui, select the battleground, go to MIOG's queue selector, go to PVP and "Join Battle".
-This issue is resolved in the next version (2.0.5).
+This issue is resolved in an upcoming non hotfix version (2.0.6).
 
 - [Active Queues] Arathi Basin has no background texture and Ashran has the wrong background texture.
