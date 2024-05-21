@@ -41,8 +41,8 @@ local function convertAdvancedBlizzardFiltersToMIOGFilters()
 		for k, v in pairs(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"]) do
 			if(k == 2) then
 				v.minRating = blizzardFilters.minimumRating
-				v.minHealers = blizzardFilters.hasHealer == true and 1 or 0
-				v.minTanks = blizzardFilters.hasTank == true and 1 or 0
+				v.minHealers = v.minHealers == 0 and blizzardFilters.hasHealer == true and 1 or v.minHealers or 0
+				v.minTanks = v.minTanks == 0 and blizzardFilters.hasTank == true and 1 or v.minTanks or 0
 
 				v.filterForTanks = blizzardFilters.hasTank
 				v.filterForHealers = blizzardFilters.hasHealer
@@ -68,8 +68,13 @@ local function convertFiltersToAdvancedBlizzardFilters()
 		local miogFilters = {}
 
 		miogFilters.minimumRating = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minRating
-		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minHealers > 0
-		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minTanks > 0
+		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForHealers
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == true
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minHealers > 0
+
+		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForTanks
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == true
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minTanks > 0
 
 		local difficultyFiltered = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForDifficulty
 		miogFilters.difficultyNormal = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonNormal and difficultyFiltered
@@ -814,6 +819,8 @@ local function setupFiltersForActivePanel(reset)
 
 		updateFilterDifficulties(reset)
 
+		--/run print(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].linkedTanks)
+
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[1]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles["TANK"])
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[2]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles["HEALER"])
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[3]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles["DAMAGER"])
@@ -822,7 +829,7 @@ local function setupFiltersForActivePanel(reset)
 
 		miog.FilterPanel.IndexedOptions.LinkedTanks:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedTanks)
 		miog.FilterPanel.IndexedOptions.LinkedHealers:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedHealers)
-		miog.FilterPanel.IndexedOptions.LinkedTanks:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedDamager)
+		miog.FilterPanel.IndexedOptions.LinkedDamager:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].linkedDamager)
 
 		miog.FilterPanel.IndexedOptions.Tanks.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForTanks)
 		miog.FilterPanel.IndexedOptions.Tanks.Minimum:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minTanks)

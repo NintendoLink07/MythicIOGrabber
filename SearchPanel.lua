@@ -303,59 +303,54 @@ local function isGroupEligible(resultID, bordermode)
 			["NONE"] = 0
 		}
 
-		local orderedList = {}
-
 		for i = 1, searchResultInfo.numMembers, 1 do
 			local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
-
-			orderedList[i] = {leader = i == 1 and true or false, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
+			local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
 
 			if(role) then
 				roleCount[role] = roleCount[role] + 1
 
-			else
-				orderedList[i].role = "DAMAGER"
 			end
-		end
-
-		if(orderedList and #orderedList > 1) then
-			for k, v in pairs(orderedList) do
-				if(v.specID) then
-					roleCount[v.role or "NONE"] = roleCount[v.role] + 1
 					
-					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
-						if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[v.class]] == false) then
-							return false, miog.INELIGIBILITY_REASONS[10]
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForClassSpecs) then
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.class[miog.CLASSFILE_TO_ID[class]] == false) then
+					return false, miog.INELIGIBILITY_REASONS[10]
 
-						end
-
-						if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.spec[v.specID] == false) then
-							return false, miog.INELIGIBILITY_REASONS[11]
-							
-						end
-			
-					end
 				end
+
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].classSpec.spec[specID] == false) then
+					return false, miog.INELIGIBILITY_REASONS[11]
+					
+				end
+	
 			end
 		end
 
-		local tanksOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks == false or (MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks > 0
-		and roleCount["TANK"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minTanks and roleCount["TANK"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks)
+		local tankCountInRange = roleCount["TANK"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minTanks and roleCount["TANK"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks
+		local healerCountInRange = roleCount["HEALER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers
+		local damagerCountInRange = roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager
 
-		local healersOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers == false or (MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers > 0
-		and roleCount["HEALER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers)
+		local tanksOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks == false or
+		MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and tankCountInRange == true
 
-		local damagerOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager == false or (MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager > 0
-		and roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager)
+		local healersOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers == false or
+		MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and healerCountInRange == true
+
+		local damagerOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager == false or
+		MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and damagerCountInRange == true
+
+		print("TANKS", tanksOk, tankCountInRange)
+		print("HEALERS", healersOk, healerCountInRange)
+		print("DAMAGER", damagerOk, damagerCountInRange)
 
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and not tanksOk and
-			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersOk
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and not healersOk
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and not damagerOk)
 	 	) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
 		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and not healersOk and
-			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksOk
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and not tanksOk
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and not damagerOk)
 	 	) then
 			return false, miog.INELIGIBILITY_REASONS[12]
@@ -368,7 +363,7 @@ local function isGroupEligible(resultID, bordermode)
 
 		elseif(not tanksOk and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks
 		or not healersOk and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers
-		or not damagerOk and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager) then
+		or not damagerOk and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
 		end
