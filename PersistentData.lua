@@ -364,7 +364,7 @@ miog.MAP_INFO = {
 	[998] = {shortName = "TOK", icon = "interface/lfgframe/lfgicon-templeofkotmogu.blp", fileName = "templeofkotmogu"},
 	[1105] = {shortName = "DWD", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush"},
 	[1134] = {shortName = "TP", icon = "interface/lfgframe/lfgicon-shadopanbg.blp", fileName = "shadowpan_bg"},
-	[1191] = {shortName = "ASH", icon = "interface/lfgframe/lfgicon-ashran.blp", fileName = "shadowpan_bg"},
+	[1191] = {shortName = "ASH", icon = "interface/lfgframe/lfgicon-ashran.blp", fileName = "ashran"},
 	[1504] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookholdarena.blp", fileName = "blackrookholdarena"},
 	[1505] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg"},
 	[1552] = {shortName = "AF", icon = "interface/lfgframe/lfgicon-valsharraharena.blp", fileName = "arenavalsharah"},
@@ -375,12 +375,9 @@ miog.MAP_INFO = {
 	[1803] = {shortName = "SSH", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore"},
 	[2106] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
 	[2107] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
+	[2177] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
 	[2118] = {shortName = "BFW", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "wintergrasp"},
 	[2245] = {shortName = "DWG", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush"},
-
-	--ASHRAN BACKGROUND=??????Wd0aßwdiawd
-
-
 
 	--CATACLYSM
 	[643] = {shortName = "TOTT", icon = "interface/lfgframe/lfgicon-throneofthetides", fileName = "throneofthetides"},
@@ -1146,9 +1143,6 @@ local function loadRawData()
 			
 							}
 						end
-					else
-						--print("MISSING DATA:", v[2], bossName, journalEncounterID)
-					
 					end
 			
 					local name, desc, bgImage, button1, loreImage, button2, areaMapID, link, displayDifficulty, mapID = EJ_GetInstanceInfo(journalInstanceID)

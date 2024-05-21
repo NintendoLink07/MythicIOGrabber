@@ -21,46 +21,30 @@ local function resetHolidayFrame(_, frame)
 end
 
 local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
-	--print("REQUEST STARTED")
 	
 	for i = 1, numEvents, 1 do
 		lastOffset, lastMonthDay, lastIndex = offsetMonths, monthDay, i
 		local success = C_Calendar.OpenEvent(offsetMonths, monthDay, i)
 
-		--print(i)
-
-		--if(success) then
-			--print("YIELD")
-			--coroutine.yield()
-		--end
 	end
-
-	--CHECK FOR RESUME STATUS; DOESN'T WORK
 end
 
 local function calendarOnEvent(_, event, ...)
     if(event == "CALENDAR_UPDATE_EVENT_LIST") then
-        --print("UPDATE CALENDAR")
-
         if(framePool) then
             framePool:ReleaseAll()
         end
         
         local numEvents = C_Calendar.GetNumDayEvents(0, 15)
-        --print(numEvents)
 
         if(calendarCoroutine) then
             local status = coroutine.status(calendarCoroutine)
-
-            --print(1, status)
 
             if(status == "dead") then
                 calendarCoroutine = coroutine.create(requestCalendarEventInfo)
                 coroutine.resume(calendarCoroutine, 0, 15, numEvents)
 
             end
-
-            --print(2, status)
                 
             if(status == "suspended") then
                 coroutine.resume(calendarCoroutine, 0, 15, numEvents)
@@ -69,7 +53,6 @@ local function calendarOnEvent(_, event, ...)
         end
 
     elseif(event == "CALENDAR_UPDATE_EVENT") then
-        --print("UPDATE EVENT")
 
     elseif(event == "CALENDAR_OPEN_EVENT") then
         if(... == "HOLIDAY") then

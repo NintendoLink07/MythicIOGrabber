@@ -52,7 +52,27 @@ miog.OnEvent = function(_, event, ...)
 			end
 		end
 
-		
+		hooksecurefunc("HonorFrame_InitSpecificButton", function(button, elementData)
+			button:SetHeight(40)
+			button.Bg:Hide()
+			button.Border:Hide()
+			button.Icon:Hide()
+			button.InfoText:Hide()
+			--button.SelectedTexture:Hide()
+
+			button:SetNormalAtlas("pvpqueue-button-casual-up")
+			button:SetPushedAtlas("pvpqueue-button-casual-down")
+			button:SetHighlightAtlas("pvpqueue-button-casual-highlight", "ADD")
+
+			button.SizeText:ClearAllPoints()
+			button.SizeText:SetFont(miog.FONTS["libMono"], 11, "OUTLINE")
+			button.SizeText:SetPoint("LEFT", button, "LEFT", 5, 0)
+
+			button.NameText:ClearAllPoints()
+			button.NameText:SetFont(miog.FONTS["libMono"], 11, "OUTLINE")
+			button.NameText:SetTextColor(1, 1, 1, 1)
+			button.NameText:SetPoint("LEFT", button.SizeText, "RIGHT", 5, 0)
+		end)
 		
 		if(not miog.F.LITE_MODE) then
 			PVPUIFrame:HookScript("OnShow", function()

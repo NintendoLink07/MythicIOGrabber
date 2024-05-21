@@ -98,12 +98,8 @@ local function updateRosterInfoData()
 
 					if(currentInspection == nil and UnitIsConnected(unitID) and CanInspect(unitID)) then
 
-						--print(lastNotifyTime + miog.C.BLIZZARD_INSPECT_THROTTLE, GetTimePreciseSec(), miog.C.BLIZZARD_INSPECT_THROTTLE)
-						
 						currentInspectionName = name
 						currentInspection = guid
-			
-						--C_Timer.After(lastNotifyTime + miog.C.BLIZZARD_INSPECT_THROTTLE < GetTimePreciseSec() and 0 or lastNotifyTime - GetTimePreciseSec() + miog.C.BLIZZARD_INSPECT_THROTTLE,
 
 						if(timers[guid]) then
 							timers[guid]:Cancel()
@@ -111,7 +107,6 @@ local function updateRosterInfoData()
 
 						local timer = C_Timer.NewTimer(10,
 						function()
-							--print("CHECK FOR", guid)
 							if(currentInspection and GetTimePreciseSec() - lastNotifyTime > 7) then
 								currentInspection = nil
 								ClearInspectPlayer(true)
@@ -125,7 +120,6 @@ local function updateRosterInfoData()
 						function()
 							if(groupSystem.groupMember[guid]) then
 								lastNotifyTime = GetTimePreciseSec()
-								--print("INSPECT", currentInspectionName)
 			
 
 								NotifyInspect(unitID) -- 2nd argument for hook to check if own or other addons' notify
@@ -382,7 +376,6 @@ local function inspectCoroutineEvents(_, event, ...)
 
 	elseif(event == "INSPECT_READY") then
 		local name = select(6, GetPlayerInfoByGUID(...))
-		--print("READY", name)
 
 		if(currentInspection == ...) then
 			ClearInspectPlayer(true)
@@ -426,7 +419,6 @@ end)
 
 hooksecurefunc("ClearInspectPlayer", function(own)
 	if(own) then
-		--print("CLEAR", currentInspectionName)
 		currentInspection = nil
 		currentInspectionName = nil
 		--miog.pveFrame2.ClassPanelStatusString:SetText("Waiting for next inspect...")

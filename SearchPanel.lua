@@ -339,10 +339,6 @@ local function isGroupEligible(resultID, bordermode)
 		local damagerOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager == false or
 		MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and damagerCountInRange == true
 
-		print("TANKS", tanksOk, tankCountInRange)
-		print("HEALERS", healersOk, healerCountInRange)
-		print("DAMAGER", damagerOk, damagerCountInRange)
-
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and not tanksOk and
 			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and not healersOk
 			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and not damagerOk)
@@ -1011,11 +1007,6 @@ local function updatePersistentResultFrame(resultID)
 
 					currentFrame.encounterInfo = encounterInfo
 				else
-					--OPTIMIZE RAID FRAMES, UGHGHGHGHGHGHHGGHG
-
-					--print("NO NEW BOSS INFO", GetTimePreciseSec())
-
-					--bossPanel:MarkDirty()
 				
 				end
 			end
@@ -1498,8 +1489,10 @@ local function searchResultsReceived()
 				miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
 				miog.SearchPanel.Status.FontString:Show()
 
-				releaseAllResultFrames()
-				miog.Plugin.FooterBar.Results:SetText("0(0)")
+				if(LFGListFrame.SearchPanel.searchFailed) then
+					releaseAllResultFrames()
+					miog.Plugin.FooterBar.Results:SetText("0(0)")
+				end
 
 			end
 		end
@@ -1520,7 +1513,6 @@ local function searchPanelEvents(_, event, ...)
 
 		end
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
-		--print("Search failed because of " .. ...)
 
 		if(... == "throttled") then
 			if(not miog.F.SEARCH_IS_THROTTLED) then
@@ -1569,9 +1561,6 @@ local function searchPanelEvents(_, event, ...)
 		end
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then
-		--print(event, ...)
-		--Happens when in a group and group is at max members after inviting a person
-		--Not decided if it's needed
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TIMEOUT") then
 	end

@@ -170,7 +170,7 @@ miog.refreshKeystones = function()
 		end
 	end
 
-	local table = {
+	--[[local table = {
 		[1] = {mapID = 2519, level = 10, challengeMapID = 404},
 		[2] = {mapID = 2519, level = 13, challengeMapID = 404},
 		[3] = {mapID = 2519, level = 16, challengeMapID = 404},
@@ -232,7 +232,7 @@ miog.refreshKeystones = function()
 
 		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
 		
-	end
+	end]]
 
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
 end

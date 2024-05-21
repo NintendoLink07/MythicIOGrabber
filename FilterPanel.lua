@@ -819,8 +819,6 @@ local function setupFiltersForActivePanel(reset)
 
 		updateFilterDifficulties(reset)
 
-		--/run print(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].linkedTanks)
-
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[1]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles["TANK"])
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[2]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles["HEALER"])
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[3]:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles["DAMAGER"])
