@@ -1492,6 +1492,9 @@ local function searchResultsReceived()
 				miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
 				miog.SearchPanel.Status.FontString:Show()
 
+				releaseAllResultFrames()
+				miog.Plugin.FooterBar.Results:SetText("0(0)")
+
 			end
 		end
 	--end

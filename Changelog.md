@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.0.5] - 2024-05-21
+
+### Fixed
+
+- Issues where dungeon filter button and raid filter buttons could not be found have been resolved.
+
+- [Search Panel] There won't be any leftover frames when the search has failed for some reason.
+
+
 ## [2.0.4] - 2024-05-20
 
 ### Added
@@ -1376,7 +1385,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.5..HEAD
+[2.0.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.5
 [2.0.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.4
 [2.0.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.3
 [2.0.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.2

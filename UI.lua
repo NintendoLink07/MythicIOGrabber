@@ -975,15 +975,13 @@ miog.createFrames = function()
 
 			end
 
-			if(LFGListFrame.SearchPanel.categoryID == 2 or LFGListFrame.SearchPanel.categoryID == 3 or LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7) then
-				if(miog.UPDATED_DUNGEON_FILTERS == nil) then
-					miog.updateDungeonCheckboxes()
+			if(miog.UPDATED_DUNGEON_FILTERS ~= true) then
+				miog.updateDungeonCheckboxes()
 
-				end
+			end
 
-				if(miog.UPDATED_RAID_FILTERS == nil) then
-					miog.updateRaidCheckboxes()
-				end
+			if(miog.UPDATED_RAID_FILTERS ~= true) then
+				miog.updateRaidCheckboxes()
 			end
 
 			miog.setupFiltersForActivePanel()

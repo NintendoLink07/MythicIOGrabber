@@ -370,8 +370,12 @@ local function updateRaidCheckboxes()
 	local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
 	local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
-	if(seasonGroups and LFGListFrame.activePanel == LFGListFrame.SearchPanel and LFGListFrame.SearchPanel.categoryID == 3) then
+	if(seasonGroups and #seasonGroups > 0) then
 		sortedExpansionRaids = {}
+		
+		if(miog.ADDED_RAID_FILTERS ~= true) then
+			miog.addRaidCheckboxes()
+		end
 
 		for _, v in ipairs(seasonGroups) do
 			local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
@@ -516,7 +520,51 @@ end
 
 miog.updateRaidCheckboxes = updateRaidCheckboxes
 
-local function addRaidCheckboxes(parent)
+local function addRaidCheckboxes()
+	local raidPanel = miog.FilterPanel.IndexedOptions.Raids
+
+	local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
+	local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
+	local maxGroups = #seasonGroups + #worldBossActivity
+
+	if(seasonGroups and #seasonGroups > 0) then
+		for i = 1, maxGroups, 1 do
+			local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", raidPanel, 20, 20)
+			optionButton.layoutIndex = i + 1
+			optionButton:SetNormalAtlas("checkbox-minimal")
+			optionButton:SetPushedAtlas("checkbox-minimal")
+			optionButton:SetCheckedTexture("checkmark-minimal")
+			optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+			optionButton:RegisterForClicks("LeftButtonDown")
+		
+			raidPanel.Buttons[i] = optionButton
+		
+			local optionString = miog.createBasicFontString("persistent", 12, raidPanel)
+			optionString:SetPoint("LEFT", optionButton, "RIGHT")
+
+			optionButton.FontString = optionString
+
+
+			local raidBossRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", raidPanel, raidPanel:GetWidth(), 24)
+			raidBossRow:SetPoint("LEFT", optionButton, "RIGHT", 36, 0)
+			raidBossRow.BossFrames = {}
+			raidPanel.Rows[i] = raidBossRow
+
+			local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate", raidBossRow, 20, 20)
+			resetButton.icon = "Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\xSmallIcon.png"
+			resetButton.iconSize = 16
+			resetButton:OnLoad()
+			resetButton:SetPoint("LEFT", raidBossRow, "RIGHT")
+			raidBossRow.Reset = resetButton
+		end
+
+		miog.ADDED_RAID_FILTERS = true
+	end
+
+	raidPanel:MarkDirty()
+end
+
+local function createRaidPanel(parent)
 	local raidPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", parent, 220, 24)
 	raidPanel.Buttons = {}
 	raidPanel.Rows = {}
@@ -528,47 +576,6 @@ local function addRaidCheckboxes(parent)
 	raidOptionsButton.layoutIndex = 1
 	raidPanel.Option = raidOptionsButton
 
-	local counter = 0
-
-	local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
-	local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
-	local maxGroups = #seasonGroups + #worldBossActivity
-
-	for i = 1, maxGroups, 1 do
-		local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", raidPanel, 20, 20)
-		--optionButton:SetPoint("LEFT", counter < 4 and raidPanelFirstRow or counter > 4 and raidPanelSecondRow, "LEFT", counter < 4 and counter * 57 or (counter - 4) * 57, 0)
-		optionButton.layoutIndex = i + 1
-		optionButton:SetNormalAtlas("checkbox-minimal")
-		optionButton:SetPushedAtlas("checkbox-minimal")
-		optionButton:SetCheckedTexture("checkmark-minimal")
-		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-		optionButton:RegisterForClicks("LeftButtonDown")
-	
-		raidPanel.Buttons[i] = optionButton
-	
-		local optionString = miog.createBasicFontString("persistent", 12, raidPanel)
-		optionString:SetPoint("LEFT", optionButton, "RIGHT")
-
-		optionButton.FontString = optionString
-
-		counter = counter + 1
-
-		local raidBossRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", raidPanel, raidPanel:GetWidth(), 24)
-		--raidBossRow.layoutIndex = i
-		raidBossRow:SetPoint("LEFT", optionButton, "RIGHT", 36, 0)
-		raidBossRow.BossFrames = {}
-		raidPanel.Rows[i] = raidBossRow
-
-		local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate", raidBossRow, 20, 20)
-		resetButton.icon = "Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\xSmallIcon.png"
-		resetButton.iconSize = 16
-		resetButton:OnLoad()
-		resetButton:SetPoint("LEFT", raidBossRow, "RIGHT")
-		raidBossRow.Reset = resetButton
-	end
-
-	raidPanel:MarkDirty()
-
 	return raidPanel
 end
 
@@ -579,24 +586,28 @@ local function updateDungeonCheckboxes()
 	local addedIDs = {}
 
 	local seasonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
-	local expansionGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
+	local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
 
 	table.sort(seasonGroup, function(k1, k2)
 		return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
 	end)
 
-	table.sort(expansionGroup, function(k1, k2)
+	table.sort(expansionGroups, function(k1, k2)
 		return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
 	end)
 
-	if(expansionGroup) then
+	if(expansionGroups and #expansionGroups > 0) then
+		if(miog.ADDED_DUNGEON_FILTERS ~= true) then
+			miog.addDungeonCheckboxes()
+		end
+
 		for k, v in ipairs(seasonGroup) do
 			local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
 			sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName}
 			addedIDs[v] = true
 		end
 
-		for k, v in ipairs(expansionGroup) do
+		for k, v in ipairs(expansionGroups) do
 			if(not addedIDs[v]) then
 				local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
 				sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName}
@@ -632,7 +643,7 @@ end
 
 miog.updateDungeonCheckboxes = updateDungeonCheckboxes
 
-local function addDungeonCheckboxes(parent)
+local function createDungeonPanel(parent)
 	local dungeonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", parent, 220, 72)
 	dungeonPanel.Buttons = {}
 
@@ -645,40 +656,50 @@ local function addDungeonCheckboxes(parent)
 	local dungeonPanelFirstRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", dungeonPanel, dungeonPanel:GetWidth(), 24)
 	dungeonPanelFirstRow.spacing = 38
 	dungeonPanelFirstRow:SetPoint("TOPLEFT", dungeonOptionsButton, "BOTTOMLEFT")
+	dungeonPanel.FirstRow = dungeonPanelFirstRow
 
 	local dungeonPanelSecondRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", dungeonPanel, dungeonPanel:GetWidth(), 24)
 	dungeonPanelSecondRow.spacing = 38
 	dungeonPanelSecondRow:SetPoint("TOPLEFT", dungeonPanelFirstRow, "BOTTOMLEFT")
+	dungeonPanel.SecondRow = dungeonPanelSecondRow
 
 	local dungeonPanelThirdRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", dungeonPanel, dungeonPanel:GetWidth(), 24)
 	dungeonPanelThirdRow.spacing = 38
 	dungeonPanelThirdRow:SetPoint("TOPLEFT", dungeonPanelSecondRow, "BOTTOMLEFT")
-	
-	local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
-
-	--for i = 1, #seasonGroups, 1 do
-	for k, v in ipairs(expansionGroups) do
-		local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", k < 5 and dungeonPanelFirstRow or k < 9 and dungeonPanelSecondRow or dungeonPanelThirdRow, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-		optionButton.layoutIndex = k
-		--optionButton:SetPoint("LEFT", k < 5 , "LEFT", counter < 4 and counter * 57 or (counter - 4) * 57, 0)
-		optionButton:SetNormalAtlas("checkbox-minimal")
-		optionButton:SetPushedAtlas("checkbox-minimal")
-		optionButton:SetCheckedTexture("checkmark-minimal")
-		optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-		optionButton:RegisterForClicks("LeftButtonDown")
-		optionButton:SetScript("OnClick", function()
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		end)
-		
-		dungeonPanel.Buttons[k] = optionButton
-	
-		local optionString = miog.createBasicFontString("persistent", 12, dungeonPanel)
-		optionString:SetPoint("LEFT", optionButton, "RIGHT")
-
-		optionButton.FontString = optionString
-	end
+	dungeonPanel.ThirdRow = dungeonPanelThirdRow
 
 	return dungeonPanel
+end
+
+local function addDungeonCheckboxes()
+	local dungeonPanel = miog.FilterPanel.IndexedOptions.Dungeons
+	local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
+
+	if(expansionGroups and #expansionGroups > 0) then
+		--for i = 1, #seasonGroups, 1 do
+		for k, v in ipairs(expansionGroups) do
+			local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", k < 5 and dungeonPanel.FirstRow or k < 9 and dungeonPanel.SecondRow or dungeonPanel.ThirdRow, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+			optionButton.layoutIndex = k
+			--optionButton:SetPoint("LEFT", k < 5 , "LEFT", counter < 4 and counter * 57 or (counter - 4) * 57, 0)
+			optionButton:SetNormalAtlas("checkbox-minimal")
+			optionButton:SetPushedAtlas("checkbox-minimal")
+			optionButton:SetCheckedTexture("checkmark-minimal")
+			optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+			optionButton:RegisterForClicks("LeftButtonDown")
+			optionButton:SetScript("OnClick", function()
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			end)
+			
+			dungeonPanel.Buttons[k] = optionButton
+		
+			local optionString = miog.createBasicFontString("persistent", 12, dungeonPanel)
+			optionString:SetPoint("LEFT", optionButton, "RIGHT")
+
+			optionButton.FontString = optionString
+		end
+
+		miog.ADDED_DUNGEON_FILTERS = true
+	end
 end
 
 miog.addDungeonCheckboxes = addDungeonCheckboxes
@@ -1255,12 +1276,14 @@ miog.loadFilterPanel = function()
 	divider:SetAtlas("UI-LFG-DividerLine")
 	divider.layoutIndex = 12
 
-	local dungeonPanel = miog.addDungeonCheckboxes(miog.FilterPanel.IndexedOptions)
+	local dungeonPanel = createDungeonPanel(miog.FilterPanel.IndexedOptions)
 	dungeonPanel.layoutIndex = 13
+	miog.addDungeonCheckboxes()
 	--dungeonPanel:SetPoint("TOPLEFT", dungeonOptionsButton, "BOTTOMLEFT", 0, 0)
 
-	local raidPanel = miog.addRaidCheckboxes(miog.FilterPanel.IndexedOptions)
+	local raidPanel = createRaidPanel(miog.FilterPanel.IndexedOptions)
 	raidPanel.layoutIndex = 13
+	miog.addRaidCheckboxes()
 	--raidPanel:SetPoint("TOPLEFT", raidOptionsButton, "BOTTOMLEFT", 0, 0)
 	--raidPanel.OptionsButton = raidOptionsButton
 
