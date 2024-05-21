@@ -303,10 +303,23 @@ local function isGroupEligible(resultID, bordermode)
 			["NONE"] = 0
 		}
 
-		local memberInfo = searchResultSystem.persistentFrames[resultID].memberInfo
+		local orderedList = {}
 
-		if(memberInfo) then
-			for k, v in pairs(memberInfo) do
+		for i = 1, searchResultInfo.numMembers, 1 do
+			local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
+
+			orderedList[i] = {leader = i == 1 and true or false, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
+
+			if(role) then
+				roleCount[role] = roleCount[role] + 1
+
+			else
+				orderedList[i].role = "DAMAGER"
+			end
+		end
+
+		if(orderedList and #orderedList > 1) then
+			for k, v in pairs(orderedList) do
 				if(v.specID) then
 					roleCount[v.role or "NONE"] = roleCount[v.role] + 1
 					
@@ -326,36 +339,40 @@ local function isGroupEligible(resultID, bordermode)
 			end
 		end
 
-		local tanksBanned = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks > 0
-		and not (roleCount["TANK"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minTanks and roleCount["TANK"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks)
+		local tanksOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks == false or (MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks > 0
+		and roleCount["TANK"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minTanks and roleCount["TANK"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxTanks)
 
-		local healersBanned = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers > 0
-		and not (roleCount["HEALER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers)
+		local healersOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers == false or (MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers > 0
+		and roleCount["HEALER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers and roleCount["HEALER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers)
 
-		local damagerBanned = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager > 0
-		and not (roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager)
+		local damagerOk = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager == false or (MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForDamager and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager > 0
+		and roleCount["DAMAGER"] >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minDamager and roleCount["DAMAGER"] <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxDamager)
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned and
-			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned
-			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
+		print(healersOk,
+		MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForHealers,
+		roleCount["HEALER"],
+		MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minHealers,
+		MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxHealers)
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and not tanksOk and
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersOk
+			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and not damagerOk)
 	 	) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
-		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned and
-			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
-			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned)
+		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and not healersOk and
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksOk
+			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and not damagerOk)
 	 	) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
-		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and damagerBanned and
-			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and tanksBanned
-			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and healersBanned)
+		elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager == true and not damagerOk and
+			(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks == true and not tanksOk
+			or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers == true and not healersOk)
 	 	) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
-		elseif(tanksBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks
-		or healersBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers
-		or damagerBanned and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager) then
+		elseif(not tanksOk or not healersOk or not damagerOk) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
 		end
@@ -947,8 +964,6 @@ local function updatePersistentResultFrame(resultID)
 					orderedList[i].role = "DAMAGER"
 				end
 			end
-
-			currentFrame.memberInfo = orderedList
 
 			local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
 			local groupSize = #orderedList

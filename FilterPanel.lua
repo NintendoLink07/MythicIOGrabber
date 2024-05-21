@@ -68,8 +68,8 @@ local function convertFiltersToAdvancedBlizzardFilters()
 		local miogFilters = {}
 
 		miogFilters.minimumRating = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minRating
-		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForHealers
-		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForTanks
+		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForHealers and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minHealers > 0
+		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForTanks and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minTanks > 0
 
 		local difficultyFiltered = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForDifficulty
 		miogFilters.difficultyNormal = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonNormal and difficultyFiltered
@@ -167,8 +167,10 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, text, range)
 	filterOption.Link:SetScript("OnClick", function(self)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
-	
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["Linked" .. name] = self:GetChecked()
+
+		convertFiltersToAdvancedBlizzardFilters()
+
+		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["linked" .. name] = self:GetChecked()
 
 		if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 			miog.checkSearchResultListForEligibleMembers()
