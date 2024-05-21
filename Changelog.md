@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning].
 
 - Issues where dungeon filter button and raid filter buttons could not be found have been resolved.
 
+- [Filter Panel] Issues with the tanks, healers and damager filter options have been resolved and should now function correctly again.
+
 - [Search Panel] There won't be any leftover frames when the search has failed for some reason.
 
 
