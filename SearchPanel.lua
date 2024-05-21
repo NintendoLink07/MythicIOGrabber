@@ -372,7 +372,9 @@ local function isGroupEligible(resultID, bordermode)
 	 	) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
-		elseif(not tanksOk or not healersOk or not damagerOk) then
+		elseif(not tanksOk and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedTanks
+		or not healersOk and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedHealers
+		or not damagerOk and not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].linkedDamager) then
 			return false, miog.INELIGIBILITY_REASONS[12]
 
 		end
