@@ -599,35 +599,16 @@ miog.loadSettings = function()
 	
 	if(MIOG_SavedSettings["favouredApplicants"] and MIOG_SavedSettings["favouredApplicants"].value == true) then
 		hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
+		local scrollBox = miog.loadFavouredPlayersPanel(optionPanelContainer, lastOption)
 
-		local favouredApplicantsPanel = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanelContainer, 250, 140)
-		favouredApplicantsPanel:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-		miog.createFrameBorder(favouredApplicantsPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-		favouredApplicantsPanel.standardHeight = 140
-
-		optionPanelContainer.favouredApplicantsPanel = favouredApplicantsPanel
-
-		local favouredApplicantsScrollFrame = miog.createBasicFrame("persistent", "ScrollFrameTemplate", favouredApplicantsPanel)
-		favouredApplicantsScrollFrame:SetPoint("TOPLEFT", favouredApplicantsPanel, "TOPLEFT", 1, 0)
-		favouredApplicantsScrollFrame:SetPoint("BOTTOMRIGHT", favouredApplicantsPanel, "BOTTOMRIGHT", -2, 1)
-		favouredApplicantsPanel.scrollFrame = favouredApplicantsScrollFrame
-
-		local favouredApplicantsContainer = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", favouredApplicantsScrollFrame)
-		favouredApplicantsContainer.fixedWidth = favouredApplicantsPanel:GetWidth()
-		favouredApplicantsContainer.minimumHeight = 1
-		favouredApplicantsContainer.spacing = 3
-		favouredApplicantsContainer.align = "top"
-		favouredApplicantsContainer:SetPoint("TOPLEFT", favouredApplicantsScrollFrame, "TOPLEFT")
-
-		favouredApplicantsScrollFrame.container = favouredApplicantsContainer
-		favouredApplicantsScrollFrame:SetScrollChild(favouredApplicantsContainer)
-
-		for _, v in pairs(MIOG_SavedSettings["favouredApplicants"].table) do
-			miog.addFavouredApplicant(v)
+		for _, v in pairs(MIOG_SavedSettings.favouredApplicants.table) do
+			miog.addFavouredPlayer(v)
 
 		end
 
-		lastOption = favouredApplicantsPanel
+		miog.refreshFavouredPlayers()
+
+		lastOption = scrollBox
 	end
 	
 	if(MIOG_SavedSettings.sortMethods_ApplicationViewer and MIOG_SavedSettings.sortMethods_ApplicationViewer.table) then
@@ -691,7 +672,7 @@ miog.loadSettings = function()
 	if(MIOG_SavedSettings.lastInvitedApplicants) then
 		for k, v in pairs(MIOG_SavedSettings.lastInvitedApplicants.table) do
 			if(v.timestamp and difftime(time(), v.timestamp) < 259200) then
-				miog.addLastInvitedApplicant(v)
+				miog.addInvitedPlayer(v)
 
 			else
 				MIOG_SavedSettings.lastInvitedApplicants.table[k] = nil
@@ -699,6 +680,8 @@ miog.loadSettings = function()
 			end
 
 		end
+
+		miog.refreshLastInvites()
 
 	end
 

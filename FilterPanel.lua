@@ -69,11 +69,13 @@ local function convertFiltersToAdvancedBlizzardFilters()
 
 		miogFilters.minimumRating = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minRating
 		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForHealers
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == true
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false
 		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minHealers > 0
 
 		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForTanks
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == true
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false
+		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false
 		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minTanks > 0
 
 		local difficultyFiltered = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForDifficulty
@@ -401,7 +403,7 @@ local function updateRaidCheckboxes()
 
 			for k, activityEntry in ipairs(sortedExpansionRaids) do
 				local currentButton = miog.FilterPanel.IndexedOptions.Raids.Buttons[k]
-				MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] or {}
+				MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] or false
 
 				currentButton:HookScript("OnClick", function(self)
 					MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] = self:GetChecked()
@@ -440,15 +442,11 @@ local function updateRaidCheckboxes()
 							
 						end
 
-						for _, v in pairs(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityEntry.groupFinderActivityGroupID]) do
-							v = {}
-							
-						end
+						MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityEntry.groupFinderActivityGroupID] = {}
 
 						miog.checkSearchResultListForEligibleMembers()
 					end)
 
-					--miog.FilterPanel.IndexedOptions.Raids.Rows[k]:SetShown(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID])
 					MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityEntry.groupFinderActivityGroupID] = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityEntry.groupFinderActivityGroupID] or {}
 					
 					for x, y in ipairs(activityEntry.bosses) do
@@ -979,8 +977,8 @@ local function setupFiltersForActivePanel(reset)
 				end
 
 				for k, activityEntry in ipairs(sortedSeasonDungeons) do
-					local notChecked = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][2].dungeons[activityEntry.groupFinderActivityGroupID] == false
-					miog.FilterPanel.IndexedOptions.Dungeons.Buttons[k]:SetChecked(reset or not notChecked)
+					local checked = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][2].dungeons[activityEntry.groupFinderActivityGroupID]
+					miog.FilterPanel.IndexedOptions.Dungeons.Buttons[k]:SetChecked(reset or checked)
 				end
 			end
 		elseif(categoryID == 3) then
@@ -1008,8 +1006,7 @@ local function setupFiltersForActivePanel(reset)
 					end)
 
 					for k, activityEntry in ipairs(sortedExpansionRaids) do
-						local checked = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][3].raids[activityEntry.groupFinderActivityGroupID]
-						miog.FilterPanel.IndexedOptions.Raids.Buttons[k]:SetChecked(reset or checked)
+						miog.FilterPanel.IndexedOptions.Raids.Buttons[k]:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][3].raids[activityEntry.groupFinderActivityGroupID])
 
 						MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][3].raidBosses[activityEntry.groupFinderActivityGroupID] = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][3].raidBosses[activityEntry.groupFinderActivityGroupID] or {}
 
@@ -1017,6 +1014,8 @@ local function setupFiltersForActivePanel(reset)
 							for x, y in ipairs(activityEntry.bosses) do
 								local bossFrame = miog.FilterPanel.IndexedOptions.Raids.Rows[k].BossFrames[x]
 								bossFrame.Icon:SetDesaturated(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityEntry.groupFinderActivityGroupID][x] or true)
+
+								miog.FilterPanel.IndexedOptions.Dungeons.Buttons[k]:SetChecked(reset or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityEntry.groupFinderActivityGroupID])
 								
 							end
 						end
@@ -1147,55 +1146,9 @@ miog.loadFilterPanel = function()
 	miog.FilterPanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
 	miog.FilterPanel:Hide()
 	miog.createFrameBorder(miog.FilterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	
-	miog.LastInvites = CreateFrame("Frame", "MythicIOGrabber_LastInvitesPanel", miog.Plugin, "MIOG_LastInvitesTemplate") ---@class Frame
-	miog.LastInvites:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
-	miog.LastInvites:SetSize(230, miog.MainFrame:GetHeight())
-	miog.LastInvites:Hide()
-	miog.createFrameBorder(miog.LastInvites, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	local function hideSidePanel(self)
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		self:GetParent():GetParent():Hide()
-		self:GetParent():GetParent():GetParent().ButtonPanel:Show()
-
-		MIOG_SavedSettings.activeSidePanel.value = ""
-	end
 
 	miog.FilterPanel.TitleBar.Retract:SetScript("OnClick", function(self)
-		hideSidePanel(self)
-	end)
-
-	miog.LastInvites.TitleBar.Retract:SetScript("OnClick", function(self)
-		hideSidePanel(self)
-	end)
-
-	miog.Plugin.ButtonPanel.FilterButton:SetScript("OnClick", function()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		miog.Plugin.ButtonPanel:Hide()
-
-		miog.LastInvites:Hide()
-		miog.FilterPanel:Show()
-
-		MIOG_SavedSettings.activeSidePanel.value = "filter"
-
-		if(LFGListFrame.activePanel ~= LFGListFrame.SearchPanel and LFGListFrame.activePanel ~= LFGListFrame.ApplicationViewer) then
-			miog.FilterPanel.Lock:Show()
-
-		else
-			miog.FilterPanel.Lock:Hide()
-		
-		end
-	end)
-
-	miog.Plugin.ButtonPanel.LastInvitesButton:SetScript("OnClick", function()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		miog.Plugin.ButtonPanel:Hide()
-
-		MIOG_SavedSettings.activeSidePanel.value = "invites"
-
-		miog.LastInvites:Show()
-		miog.FilterPanel:Hide()
+		miog.hideSidePanel(self)
 	end)
 
 	local firstClassPanel, lastClassPanel = createClassSpecFilters(miog.FilterPanel.ClassSpecOptions)

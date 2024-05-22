@@ -317,6 +317,9 @@ local function updateRosterInfoData()
 				local color = C_ClassColor.GetClassColor(miog.CLASSES[groupMember.classID].name)
 				miog.createFrameBorder(classIconFrame, 1, color.r, color.g, color.b, 1)
 
+			else
+				classIconFrame:ClearBackdrop()
+			
 			end
 
 			if(index == 5) then

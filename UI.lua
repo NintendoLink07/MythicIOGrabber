@@ -851,6 +851,35 @@ miog.createFrames = function()
 	miog.Plugin:SetScript("OnEnter", function()
 	
 	end)
+	
+
+	miog.Plugin.ButtonPanel.FilterButton:SetScript("OnClick", function()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		miog.Plugin.ButtonPanel:Hide()
+
+		miog.LastInvites:Hide()
+		miog.FilterPanel:Show()
+
+		MIOG_SavedSettings.activeSidePanel.value = "filter"
+
+		if(LFGListFrame.activePanel ~= LFGListFrame.SearchPanel and LFGListFrame.activePanel ~= LFGListFrame.ApplicationViewer) then
+			miog.FilterPanel.Lock:Show()
+
+		else
+			miog.FilterPanel.Lock:Hide()
+		
+		end
+	end)
+
+	miog.Plugin.ButtonPanel.LastInvitesButton:SetScript("OnClick", function()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		miog.Plugin.ButtonPanel:Hide()
+
+		MIOG_SavedSettings.activeSidePanel.value = "invites"
+
+		miog.LastInvites:Show()
+		miog.FilterPanel:Hide()
+	end)
 
 	miog.createFrameBorder(miog.Plugin.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.ButtonPanel.FilterButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -892,6 +921,7 @@ miog.createFrames = function()
 	miog.createSearchPanel()
 	miog.createEntryCreation()
 	miog.loadFilterPanel()
+	miog.loadLastInvitesPanel()
 		
 	miog.ClassPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.pveFrame2 or PVEFrame, "MIOG_ClassPanel")
 	miog.ClassPanel:SetPoint("BOTTOMRIGHT", miog.ClassPanel:GetParent(), "TOPRIGHT", 0, 1)
@@ -903,6 +933,7 @@ miog.createFrames = function()
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
 		miog.loadCalendarSystem()
+		
 	end
 
 	-- IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1

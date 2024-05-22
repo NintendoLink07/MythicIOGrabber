@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.0.7] - 2024-05-22
+
+### Changed
+
+- The current group leader's name will be shown instead of "YOUR LISTING".
+
+### Fixed
+
+- [Last Invites] Restored the functionality to the "Last Invites" function and simplified it code-wise, making it easier to maintain in future.
+
+- [Search Panel & Application Viewer] Adjusted the sort button's position to match in both lite mode and normal mode.
+
+- [Application Viewer] Adjusted button sizes so the number of applicants is more visible.
+
+- [Active Queues] There shouldn't be anymore errors popping up being in a currently listed group and being infight.
+
+- [Filter Panel] When using the "linked" option for healer and tanks MIOG won't set Blizzards stock lfg filter to "hasTank" and "hasHealer", since you wanna see both with either a healer or a tank.
+
+- [Filter Panel] Resetting all boss filters via the "X" button now actually resets the setting instead of just letting the borders disappear.
+
+- [Filter Panel] Raid options now also get saved when selecting/deselecting the respective option.
+
+- [Calendar] Adjusted the month day of the calendar functions so it gets all holidays from the current day and not just from the day I implemented the feature...lol
+
+
 ## [2.0.6] - 2024-05-21
 
 ### Added
@@ -1407,7 +1432,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.6..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.7..HEAD
+[2.0.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.7
 [2.0.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.6
 [2.0.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.5
 [2.0.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.4

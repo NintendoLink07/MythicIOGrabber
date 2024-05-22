@@ -37,14 +37,27 @@
                 </Layers>
             </Frame>
 
-            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate">
+            <Frame parentKey="SpecificScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+            <EventFrame parentKey="SpecificScrollBar" inherits="MinimalScrollBar" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SpecificScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent-SpecificScrollBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
+
+            <!--<ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 
-                <Frames>
-                    <Frame parentKey="Container" inherits="VerticalLayoutFrame">
+                <ScrollChild>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate">
                         <KeyValues>
                             <KeyValue key="spacing" value="3" type="number" />
                             <KeyValue key="align" value="top" type="global" />
@@ -56,14 +69,8 @@
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
                     </Frame>
-                </Frames>
-                
-                <Scripts>
-                    <OnShow>
-                        self:SetScrollChild(self.Container)
-                    </OnShow>
-                </Scripts>
-            </ScrollFrame>
+                </ScrollChild>
+            </ScrollFrame>-->
         </Frames>
 
         <Layers>

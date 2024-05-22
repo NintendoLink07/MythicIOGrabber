@@ -89,7 +89,7 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 			currentApplicant.status = "removable"
 
 			if(C_PartyInfo.CanInvite() and (applicantStatus == "inviteaccepted" or applicantStatus == "debug")) then
-				miog.addLastInvitedApplicant(currentApplicant.memberData[1])
+				miog.addInvitedPlayer(currentApplicant.memberData[1])
 
 			end
 
@@ -220,7 +220,7 @@ local function createApplicantFrame(applicantID)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
 
 			if(MIOG_SavedSettings.favouredApplicants.table[name]) then
-				miog.createFrameBorder(applicantMemberFrame, 2, CreateColorFromHexString("FFe1ad21"):GetRGBA())
+				miog.createFrameBorder(applicantMemberFrame, 1, CreateColorFromHexString("FFe1ad21"):GetRGBA())
 
 			else
 				--miog.createFrameBorder(applicantMemberFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
@@ -996,6 +996,7 @@ miog.createApplicationViewer = function()
 		local sortByCategoryButton = applicationViewer.ButtonPanel[i == 1 and "RoleSort" or i == 2 and "PrimarySort" or i == 3 and "SecondarySort" or i == 4 and "IlvlSort"]
 		sortByCategoryButton.panel = "ApplicationViewer"
 		sortByCategoryButton.category = i == 1 and "role" or i == 2 and "primary" or i == 3 and "secondary" or i == 4 and "ilvl"
+		--sortByCategoryButton:SetPoint()
 
 		sortByCategoryButton:SetScript("PostClick", function(self, button)
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -1006,7 +1007,7 @@ miog.createApplicationViewer = function()
 
 	end
 
-	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset(miog.Plugin:GetWidth() * 0.402, 0)
+	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset((miog.F.LITE_MODE and -20 or 0) + 156, 0)
 	
 	applicationViewer.ButtonPanel.ResetButton:SetScript("OnClick",
 		function()

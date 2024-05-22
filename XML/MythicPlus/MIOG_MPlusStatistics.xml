@@ -57,7 +57,7 @@
 
                 <Frames>
                     <Frame parentKey="Selection" inherits="BackdropTemplate" frameStrata="HIGH">
-                        <Size x="50" />
+                        <Size x="51" />
                     </Frame>
                 </Frames>
             </Frame>

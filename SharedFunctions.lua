@@ -287,6 +287,15 @@ end
 
 miog.getRaidSortData = getRaidSortData
 
+
+miog.hideSidePanel = function(self)
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	self:GetParent():GetParent():Hide()
+	self:GetParent():GetParent():GetParent().ButtonPanel:Show()
+
+	MIOG_SavedSettings.activeSidePanel.value = ""
+end
+
 local function printOnce(string)
 	if(miog.ONCE) then
 		miog.ONCE = false
@@ -295,6 +304,21 @@ local function printOnce(string)
 
 	end
 end
+
+miog.getGroupLeader = function()
+	local numOfMembers = GetNumGroupMembers()
+	miog.F.LFG_STATE = miog.checkLFGState()
+
+	for groupIndex = 1, numOfMembers, 1 do
+		local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and miog.F.LFG_STATE..groupIndex) or "player"
+
+		if(UnitIsGroupLeader(unitID)) then
+			return UnitName(unitID), (UnitGUID(unitID) == UnitGUID("player") and "player" or unitID)
+
+		end
+	end
+end
+
 
 hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 	LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()

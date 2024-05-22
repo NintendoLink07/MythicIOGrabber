@@ -1,0 +1,58 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_LastInvitesPlayerTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size x="120" y="20" />
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" setAllPoints="true">
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="100" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Spec">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="Role">
+                    <Size x="15" y="15" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Primary" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Button parentKey="Delete" inherits="IconButtonTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="Favour" inherits="MIOG_MultiStateButtonTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.Delete" relativePoint="LEFT" x="-3"/>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+</Ui>

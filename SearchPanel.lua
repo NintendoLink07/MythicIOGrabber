@@ -1664,7 +1664,7 @@ miog.createSearchPanel = function()
 
 	end
 
-	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(miog.Plugin:GetWidth() * 0.52, 0)
+	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(176, 0)
 
 	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")

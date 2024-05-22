@@ -34,20 +34,22 @@ local function calendarOnEvent(_, event, ...)
         if(framePool) then
             framePool:ReleaseAll()
         end
+
+        local currentTime = C_DateAndTime.GetCurrentCalendarTime()
         
-        local numEvents = C_Calendar.GetNumDayEvents(0, 15)
+        local numEvents = C_Calendar.GetNumDayEvents(0, currentTime.monthDay)
 
         if(calendarCoroutine) then
             local status = coroutine.status(calendarCoroutine)
 
             if(status == "dead") then
                 calendarCoroutine = coroutine.create(requestCalendarEventInfo)
-                coroutine.resume(calendarCoroutine, 0, 15, numEvents)
+                coroutine.resume(calendarCoroutine, 0, currentTime.monthDay, numEvents)
 
             end
                 
             if(status == "suspended") then
-                coroutine.resume(calendarCoroutine, 0, 15, numEvents)
+                coroutine.resume(calendarCoroutine, 0, currentTime.monthDay, numEvents)
 
             end
         end
@@ -71,7 +73,7 @@ local function calendarOnEvent(_, event, ...)
                 
                 local startTimeSeconds = time({year = info.startTime.year, month = info.startTime.month, day = info.startTime.monthDay, hour = info.startTime.hour, minute = info.startTime.minute})
                 local endTimeSeconds = time({year = info.endTime.year, month = info.endTime.month, day = info.endTime.monthDay, hour = info.endTime.hour, minute = info.endTime.minute})
-                local totalDuration = endTimeSeconds - startTimeSeconds
+                local totalDurationInSeconds = endTimeSeconds - startTimeSeconds
                 local currentProgress = time() - startTimeSeconds
                 local timeTillEnd = endTimeSeconds - time()
 
@@ -79,13 +81,11 @@ local function calendarOnEvent(_, event, ...)
                 formatter:SetStripIntervalWhitespace(true)
                 formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
                 
-                local timeTillEndPerc = currentProgress / totalDuration
+                local timeTillEndPerc = currentProgress / totalDurationInSeconds
 
                 cFrame.DateBar:SetStatusBarColor(timeTillEndPerc, 1 - timeTillEndPerc, 0, 1)
                 cFrame.DateBar:SetMinMaxValues(0, 1)
                 cFrame.DateBar:SetValue(timeTillEndPerc)
-                --miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))i
-                --cFrame.Date:SetText(info.startTime.monthDay .. "." .. info.startTime.month .. " - " .. info.endTime.monthDay .. "." .. info.endTime.month)
 
                 cFrame.DateBar.Title:SetText(cFrame.DateBar.Title:GetText() .. ": " .. formatter:Format(timeTillEnd))
 
