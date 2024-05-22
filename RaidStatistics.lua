@@ -27,58 +27,6 @@ miog.setupRaidStatistics = function()
 	end
 end
 
-local function tierFrame_OnEnter(frame, tierTable)
-    local tierInfo = C_PvP.GetPvpTierInfo(tierTable[1])
-    local nextTierInfo = C_PvP.GetPvpTierInfo(tierTable[2])
-
-    GameTooltip:SetOwner(frame, "ANCHOR_RIGHT");
-    GameTooltip:SetMinimumWidth(260);
-    --GameTooltip_SetTitle(GameTooltip, tierName);
-	local tierName = tierInfo and tierInfo.pvpTierEnum and PVPUtil.GetTierName(tierInfo.pvpTierEnum);
-	if tierName then
-        GameTooltip:AddLine(tierName)
-
-		local activityItemLevel, weeklyItemLevel = C_PvP.GetRewardItemLevelsByTierEnum(tierInfo.pvpTierEnum);
-		if weeklyItemLevel > 0 then
-			GameTooltip_AddColoredLine(GameTooltip, PVP_GEAR_REWARD_BY_RANK:format(weeklyItemLevel), NORMAL_FONT_COLOR);
-		end
-	end
-
-    local nextTierName = nextTierInfo and nextTierInfo.pvpTierEnum and PVPUtil.GetTierName(nextTierInfo.pvpTierEnum);
-	if nextTierName then
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
-		GameTooltip:AddLine(TOOLTIP_PVP_NEXT_RANK:format(nextTierName));
-		local tierDescription = PVPUtil.GetTierDescription(nextTierInfo.pvpTierEnum);
-		if tierDescription then
-			GameTooltip_AddNormalLine(GameTooltip, tierDescription);
-		end
-		local activityItemLevel, weeklyItemLevel = C_PvP.GetRewardItemLevelsByTierEnum(nextTierInfo.pvpTierEnum);
-		if activityItemLevel > 0 then
-			GameTooltip_AddBlankLineToTooltip(GameTooltip);
-			GameTooltip_AddColoredLine(GameTooltip, PVP_GEAR_REWARD_BY_NEXT_RANK:format(weeklyItemLevel), NORMAL_FONT_COLOR);
-		end
-	end
-
-    GameTooltip:Show();
-end
-
-local function honorBar_OnEnter()
-	local honorLevel = UnitHonorLevel("player");
-	local nextHonorLevelForReward = C_PvP.GetNextHonorLevelForReward(honorLevel);
-	local rewardInfo = nextHonorLevelForReward and C_PvP.GetHonorRewardInfo(nextHonorLevelForReward);
-	if rewardInfo then
-		local rewardText = select(11, GetAchievementInfo(rewardInfo.achievementRewardedID));
-		if rewardText and rewardText ~= "" then
-			GameTooltip:SetOwner(miog.RaidStatistics.CharacterInfo.Honor, "ANCHOR_RIGHT", -4, -4);
-			GameTooltip:SetText(PVP_PRESTIGE_RANK_UP_NEXT_MAX_LEVEL_REWARD:format(nextHonorLevelForReward))
-			local WRAP = true;
-			GameTooltip_AddColoredLine(GameTooltip, rewardText, HIGHLIGHT_FONT_COLOR, WRAP);
-			GameTooltip:Show();
-		end
-	end
-
-end
-
 miog.createRaidCharacter = function(playerGUID)
     local characterFrame
 

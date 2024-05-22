@@ -158,7 +158,7 @@
                             <Scripts>
 
                                 <OnEnter>
-                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 					                GameTooltip:SetText("On your friendlist")
 					                GameTooltip:Show()
                                 </OnEnter>

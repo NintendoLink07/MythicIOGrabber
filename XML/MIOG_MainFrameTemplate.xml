@@ -36,7 +36,7 @@
 							</OnClick>
 
                             <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                 GameTooltip:SetText("Show the stock Blizzard frame")
                                 GameTooltip:Show()
                             </OnEnter>
@@ -80,7 +80,7 @@
 
                         <Scripts>
                             <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                 GameTooltip:SetText(self.text)
                                 GameTooltip:Show()
                             </OnEnter>
@@ -396,7 +396,7 @@
                                             <Scripts>
                                                 <OnEnter>
                                                     if(self.text) then
-                                                        GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                                         GameTooltip:SetText(self.text)
                                                         GameTooltip:Show()
                                                     end

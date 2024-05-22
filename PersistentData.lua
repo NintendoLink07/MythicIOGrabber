@@ -1210,8 +1210,14 @@ local function loadRawData()
 					end
 				end
 			end
+
+			if(miog.ACTIVITY_INFO[k].horizontal == nil) then
+				miog.ACTIVITY_INFO[k].horizontal = miog.ACTIVITY_BACKGROUNDS[v[3]]
+				
+			end
 		else
 			miog.ACTIVITY_INFO[k].horizontal = miog.ACTIVITY_BACKGROUNDS[v[3]]
+
 		end
 	
 	end

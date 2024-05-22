@@ -256,18 +256,18 @@ end
 
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		miog.ApplicationViewer.BrowseGroupsButton:Show()
-		miog.ApplicationViewer.DelistButton:Show()
-		miog.ApplicationViewer.EditButton:Show()
+		miog.ApplicationViewer.Browse:Show()
+		miog.ApplicationViewer.Delist:Show()
+		miog.ApplicationViewer.Edit:Show()
 
 		miog.F.CAN_INVITE = true
 
 		return true
 
 	else
-		miog.ApplicationViewer.BrowseGroupsButton:Hide()
-		miog.ApplicationViewer.DelistButton:Hide()
-		miog.ApplicationViewer.EditButton:Hide()
+		miog.ApplicationViewer.Browse:Hide()
+		miog.ApplicationViewer.Delist:Hide()
+		miog.ApplicationViewer.Edit:Hide()
 
 		miog.F.CAN_INVITE = false
 

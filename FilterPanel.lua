@@ -791,11 +791,10 @@ local function setupFiltersForActivePanel(reset)
 	miog.FilterPanel.IndexedOptions.Tanks:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
 	miog.FilterPanel.IndexedOptions.Healers:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
 	miog.FilterPanel.IndexedOptions.Damager:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
+	miog.FilterPanel.IndexedOptions.hardDecline:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
 
-	miog.FilterPanel.IndexedOptions.Rating:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 and true or false)
 	miog.FilterPanel.IndexedOptions.BossKills:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
 	miog.FilterPanel.IndexedOptions.Dungeons:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 and true or false)
-	miog.FilterPanel.IndexedOptions.AffixFit:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 and true or false)
 	miog.FilterPanel.IndexedOptions.Raids:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
 	miog.FilterPanel.IndexedOptions.Difficulty:SetShown((currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
 	miog.FilterPanel.IndexedOptions.Difficulty.Dropdown:SetShown((currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
@@ -839,6 +838,7 @@ local function setupFiltersForActivePanel(reset)
 		miog.FilterPanel.IndexedOptions.Damager.Minimum:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minDamager)
 		miog.FilterPanel.IndexedOptions.Damager.Maximum:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxDamager)
 
+		miog.FilterPanel.IndexedOptions.Rating:SetShown((categoryID == 2 or categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) and true or false)
 		miog.FilterPanel.IndexedOptions.Rating.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRating)
 		miog.FilterPanel.IndexedOptions.Rating.Minimum:SetNumber(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minRating or 0)
 		miog.FilterPanel.IndexedOptions.Rating.Maximum:SetNumber(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxRating or 0)
@@ -846,6 +846,15 @@ local function setupFiltersForActivePanel(reset)
 		miog.FilterPanel.IndexedOptions.BossKills.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForBossKills)
 		miog.FilterPanel.IndexedOptions.BossKills.Minimum:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].minBossKills)
 		miog.FilterPanel.IndexedOptions.BossKills.Maximum:SetValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].maxBossKills)
+
+		miog.FilterPanel.IndexedOptions.partyFit:SetShown(currentPanel == "LFGListFrame.SearchPanel")
+		miog.FilterPanel.IndexedOptions.partyFit.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].partyFit)
+
+		miog.FilterPanel.IndexedOptions.ressFit.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].ressFit)
+		miog.FilterPanel.IndexedOptions.lustFit.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].lustFit)
+
+		miog.FilterPanel.IndexedOptions.AffixFit:SetShown(categoryID == 2 and true or false)
+		miog.FilterPanel.IndexedOptions.AffixFit.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].affixFit)
 
 		--filterPanel.FilterOptions["filterForClassSpecs"].Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs)
 		miog.FilterPanel.ClassSpecOptions.Option.Button:SetChecked(reset or MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForClassSpecs)
@@ -1024,7 +1033,6 @@ local function setupFiltersForActivePanel(reset)
 			end
 		end
 	end
-
 
 	miog.FilterPanel.IndexedOptions:MarkDirty()
 	miog.FilterPanel:MarkDirty()

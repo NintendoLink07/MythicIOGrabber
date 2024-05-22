@@ -214,6 +214,7 @@ local function createApplicantFrame(applicantID)
 			end
 
 			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOG_ApplicantMemberFrameTemplate", applicantFrame)
+			applicantMemberFrame:ClearBackdrop()
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.minimumHeight = 20
 			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
@@ -271,7 +272,7 @@ local function createApplicantFrame(applicantID)
 				end
 			end)
 			nameFontString:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(nameFontString, "ANCHOR_CURSOR")
+				GameTooltip:SetOwner(nameFontString, "ANCHOR_RIGHT")
 
 				if(playerIsIgnored) then
 					GameTooltip:SetText("Player is on your ignore list")
@@ -326,7 +327,7 @@ local function createApplicantFrame(applicantID)
 
 			if(applicantIndex > 1) then
 				applicantMemberFrame.BasicInformationPanel.Premade:SetScript("OnEnter", function(self)
-					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 					GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].BasicInformationPanel.nameFrame:GetText())
 					GameTooltip:Show()
 
@@ -469,7 +470,6 @@ local function createApplicantFrame(applicantID)
 
 				end
 			
-			
 			end
 
 			--BasicInformationPanel:MarkDirty()
@@ -508,6 +508,7 @@ local function gatherSortData()
 
 						for applicantIndex = 1, applicantData.numMembers, 1 do
 							local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo
+							local favourPrimary
 
 							if(miog.F.IS_IN_DEBUG_MODE) then
 								name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -548,10 +549,12 @@ local function gatherSortData()
 									if(raidData) then
 										primarySortAttribute = raidData[1].weight
 										secondarySortAttribute = raidData[2].weight
+										favourPrimary = wticc(miog.DIFFICULTY[raidData[1].difficulty].shortName .. ":" .. raidData[1].progress .. "/" .. raidData[1].bossCount, miog.DIFFICULTY[raidData[1].difficulty].color)
 				
 									else
 										primarySortAttribute = 0
 										secondarySortAttribute = 0
+										favourPrimary = 0
 									
 									end
 
@@ -568,6 +571,7 @@ local function gatherSortData()
 
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].primary = primarySortAttribute
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].secondary = secondarySortAttribute
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].index = applicantID
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favoured = MIOG_SavedSettings.favouredApplicants.table[applicantSystem.applicantMember[applicantID].memberData[applicantIndex].fullName] and true or false
 							end
@@ -605,6 +609,46 @@ local function addOrShowApplicant(applicantID)
 	end
 end
 
+local function CanDealWithThisWeeksAffixes(listEntry)
+	local currentAffixes = C_MythicPlus.GetCurrentAffixes()
+
+	local affixesSolved = {}
+
+	for x, y in pairs(miog.CLASS_SPEC_FOR_AFFIXES) do
+		for a, b in pairs(currentAffixes) do
+			if(x == b.id) then
+				affixesSolved[x] = false
+
+				local _, fileName, playerClassID = UnitClass("player")
+
+				if(y.classIDs[playerClassID]) then
+					affixesSolved[x] = true
+
+				end
+
+				if(y.classes[miog.CLASSFILE_TO_ID[listEntry.class]]) then
+					affixesSolved[x] = true
+
+				end
+			end
+		end
+	end
+
+	if(affixesSolved == {}) then
+		return true
+
+	else
+		for _, v in pairs(affixesSolved) do
+			if(v == false) then
+				return false
+			end
+		
+		end
+
+		return true
+	end
+end
+
 local function checkApplicantListForEligibleMembers(listEntry)
 	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
@@ -636,6 +680,40 @@ local function checkApplicantListForEligibleMembers(listEntry)
 		if(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
 			return false
 
+		end
+	end
+
+	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(listEntry)) then
+		return false
+	end
+
+	local isPvp = categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9
+	local isDungeon = categoryID == 2
+
+	if(isDungeon or isPvp) then
+		local rating = listEntry.primary
+
+		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForRating) then
+			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].maxRating ~= 0) then
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating >= 0
+				and not (rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating
+				and rating <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating)) then
+					return false, miog.INELIGIBILITY_REASONS[14]
+
+				end
+			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0) then
+				if(rating < MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating) then
+					return false, miog.INELIGIBILITY_REASONS[15]
+
+				end
+			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
+				if(rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating) then
+					return false, miog.INELIGIBILITY_REASONS[16]
+					
+				end
+
+			end
+		
 		end
 	end
 
@@ -1017,51 +1095,7 @@ miog.createApplicationViewer = function()
 		end
 	)
 
-	local browseGroupsButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
-	browseGroupsButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
-	browseGroupsButton:SetText("Browse")
-	browseGroupsButton:FitToText()
-	browseGroupsButton:RegisterForClicks("LeftButtonDown")
-	browseGroupsButton:SetScript("OnClick", function()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		local baseFilters = LFGListFrame.baseFilters
-		local searchPanel = LFGListFrame.SearchPanel
-		local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
-		if(activeEntryInfo) then
-			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
-			if(activityInfo) then
-				LFGListSearchPanel_SetCategory(searchPanel, activityInfo.categoryID, activityInfo.filters, baseFilters)
-				LFGListSearchPanel_DoSearch(searchPanel)
-				LFGListFrame_SetActivePanel(LFGListFrame, searchPanel)
-			end
-		end
-	end)
-
-	miog.ApplicationViewer.BrowseGroupsButton = browseGroupsButton
-
-	local delistButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
-	delistButton:SetPoint("LEFT", browseGroupsButton, "RIGHT")
-	delistButton:SetText("Delist")
-	delistButton:FitToText()
-	delistButton:RegisterForClicks("LeftButtonDown")
-	delistButton:SetScript("OnClick", function()
-		C_LFGList.RemoveListing()
-	end)
-
-	miog.ApplicationViewer.DelistButton = delistButton
-
-	local editButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.ApplicationViewer, 1, 20)
-	editButton:SetPoint("LEFT", delistButton, "RIGHT")
-	editButton:SetText("Edit")
-	editButton:FitToText()
-	editButton:RegisterForClicks("LeftButtonDown")
-	editButton:SetScript("OnClick", function()
-		local entryCreation = LFGListFrame.EntryCreation
-		LFGListEntryCreation_SetEditMode(entryCreation, true)
-		LFGListFrame_SetActivePanel(LFGListFrame, entryCreation)
-	end)
-
-	miog.ApplicationViewer.EditButton = editButton
+	applicationViewer.Browse:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 
 	miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)

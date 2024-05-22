@@ -437,7 +437,7 @@ local function setScriptsOnFrame(self)
 
 		if(self.tooltip) then
 			self:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				GameTooltip:SetText(self.tooltipTitle)
 				GameTooltip:AddLine(self.tooltip)
 				GameTooltip:Show()

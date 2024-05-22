@@ -25,7 +25,7 @@
                             <Scripts>
                                 <OnEnter>
                                     if(self:IsTruncated()) then
-                                        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                         GameTooltip:SetText(self:GetText())
                                         GameTooltip:Show()
                                     end
@@ -170,7 +170,7 @@
                             <Scripts>
                                 <OnEnter>
                                     if(self.active) then
-                                        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                         GameTooltip:SetText("Group listing is set to private")
                                         GameTooltip:Show()
 
@@ -196,7 +196,7 @@
                             </Anchors>
                             <Scripts>
                                 <OnEnter>
-                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                     GameTooltip:SetText(self.tooltipText)
                                     GameTooltip:Show()
                                 </OnEnter>
@@ -217,7 +217,7 @@
                             </Anchors>
                             <Scripts>
                                 <OnEnter>
-                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                     GameTooltip:SetText(self.tooltipText)
                                     GameTooltip:Show()
                                 </OnEnter>
@@ -256,7 +256,7 @@
 
                         <Scripts>
                             <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                 GameTooltip:SetText(self.tooltipText)
                                 GameTooltip:Show()
                             </OnEnter>
@@ -291,7 +291,7 @@
 
                         <Scripts>
                             <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                 GameTooltip:SetText(self.tooltipText)
                                 GameTooltip:Show()
                             </OnEnter>
@@ -315,7 +315,7 @@
 
                             <Scripts>
                                 <OnEnter>
-                                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                     GameTooltip:SetText(self.tooltipText)
                                     GameTooltip:Show()
                                 </OnEnter>
@@ -404,14 +404,63 @@
                             <KeyValue key="spacing" value="3" type="number" />
                             <KeyValue key="align" value="top" type="string" />
                         </KeyValues>
-
-                        <Scripts>
-                            <OnLoad>
-                            </OnLoad>
-                        </Scripts>
                     </Frame>
                 </ScrollChild>
             </ScrollFrame>
+
+            <Button parentKey="Browse" inherits="UIPanelDynamicResizeButtonTemplate" mixin="LFGApplicationBrowseGroupsButtonMixin" text="BROWSE">
+                <Scripts>
+                    <OnShow>
+                        self:FitToText()
+                        self:SetWidth(self:GetWidth() - 6)
+                    </OnShow>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                        local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+                        if(activeEntryInfo) then
+                            local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
+                            if(activityInfo) then
+                                LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
+                                LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+                                LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+                            end
+                        end
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="Delist" inherits="UIPanelDynamicResizeButtonTemplate" text="GROUP_FINDER_DELIST">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Browse" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:FitToText()
+                        self:SetWidth(self:GetWidth() - 6)
+                    </OnShow>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		                C_LFGList.RemoveListing()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="Edit" inherits="UIPanelDynamicResizeButtonTemplate" text="EDIT">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Delist" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:FitToText()
+                        self:SetWidth(self:GetWidth() - 6)
+                    </OnShow>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                        LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
+                        LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation)
+                    </OnClick>
+                </Scripts>
+            </Button>
         </Frames>
     </Frame>
 </Ui>

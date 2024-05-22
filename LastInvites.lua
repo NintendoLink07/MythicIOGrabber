@@ -55,7 +55,7 @@ miog.loadLastInvitesPanel = function()
         button.Name:SetText(WrapTextInColorCode(elementData.name, select(4, GetClassColor(elementData.class))))
         button.Spec:SetTexture(miog.SPECIALIZATIONS[elementData.specID].icon)
         button.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. elementData.role .. "Icon.png")
-        button.Primary:SetText(elementData.primary)
+        button.Primary:SetText(elementData.favourPrimary or elementData.primary)
         
         button.Delete.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
         button.Delete.iconSize = 12
@@ -75,13 +75,8 @@ miog.loadLastInvitesPanel = function()
             self:AdvanceState()
     
             if(self:GetActiveState() == 0) then
-                MIOG_SavedSettings.favouredApplicants.table[elementData.name] = nil
-                miog.F.FAVOURED_APPLICANTS[elementData.name] = nil
-
-                if(miog.F.LAST_INVITED_APPLICANTS[elementData.name]) then
-                    miog.F.LAST_INVITED_APPLICANTS[elementData.name].favourButton:SetState(false)
-
-                end
+                MIOG_SavedSettings.favouredApplicants.table[elementData.fullName] = nil
+                miog.refreshFavouredPlayers()
     
             else
                 miog.addFavouredPlayer(elementData)
@@ -90,8 +85,6 @@ miog.loadLastInvitesPanel = function()
     
     
         end)
-    
-        miog.F.LAST_INVITED_APPLICANTS[elementData.fullName] = button
 
         button:Show()
         miog.createFrameBorder(button, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGB())
@@ -122,7 +115,7 @@ miog.loadFavouredPlayersPanel = function(parent, lastOption)
         button.Name:SetText(WrapTextInColorCode(elementData.name, select(4, GetClassColor(elementData.class))))
         button.Spec:SetTexture(elementData.specID and miog.SPECIALIZATIONS[elementData.specID].icon)
         button.Role:SetTexture(elementData.role and miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. elementData.role .. "Icon.png")
-        button.Primary:SetText(elementData.primary)
+        button.Primary:SetText(elementData.favourPrimary or elementData.primary)
         
         button.Delete.icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/xSmallIcon.png"
         button.Delete.iconSize = 12
@@ -164,14 +157,14 @@ miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 						miog.addFavouredPlayer(arg1)
 
 					else
-                        MIOG_SavedSettings.favouredApplicants.table[arg1.fullName] = nil
+                        MIOG_SavedSettings.favouredApplicants.table[arg1] = nil
                         miog.refreshFavouredPlayers()
 
 					end
 
 				end
 
-				if(miog.F.FAVOURED_APPLICANTS[fullName]) then
+				if(MIOG_SavedSettings.favouredApplicants.table[fullName]) then
 					info.text = "[MIOG] Unfavour"
 					info.arg1 = fullName
 

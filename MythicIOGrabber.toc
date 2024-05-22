@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 2.0.6
+## Version: 2.0.7
 ## SavedVariables: MIOG_SavedSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_InspectQueue, MIOG_InspectedGUIDs, MIOG_SavedSpecIDs
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions

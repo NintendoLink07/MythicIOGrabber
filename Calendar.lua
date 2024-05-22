@@ -21,7 +21,6 @@ local function resetHolidayFrame(_, frame)
 end
 
 local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
-	
 	for i = 1, numEvents, 1 do
 		lastOffset, lastMonthDay, lastIndex = offsetMonths, monthDay, i
 		local success = C_Calendar.OpenEvent(offsetMonths, monthDay, i)
@@ -36,8 +35,24 @@ local function calendarOnEvent(_, event, ...)
         end
 
         local currentTime = C_DateAndTime.GetCurrentCalendarTime()
-        
-        local numEvents = C_Calendar.GetNumDayEvents(0, currentTime.monthDay)
+        local offset = 0
+
+       --[[ if(CalendarFrame and CalendarFrame.viewedYear) then
+            local viewedInSeconds = time({year = CalendarFrame.viewedYear, month = CalendarFrame.viewedMonth, day = 0})
+            local currentInSeconds = time({year = currentTime.year, month = currentTime.month, day = 0})
+
+            if(viewedInSeconds > currentInSeconds) then
+                offset = - (viewedInSeconds - currentInSeconds) / 2629746
+                
+            end
+
+            local formatter = CreateFromMixins(SecondsFormatterMixin)
+            formatter:SetStripIntervalWhitespace(true)
+            formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
+            print(offset, viewedInSeconds, currentInSeconds)
+        end]]
+
+        local numEvents = C_Calendar.GetNumDayEvents(offset, currentTime.monthDay)
 
         if(calendarCoroutine) then
             local status = coroutine.status(calendarCoroutine)
@@ -60,7 +75,7 @@ local function calendarOnEvent(_, event, ...)
         if(... == "HOLIDAY") then
             local info = C_Calendar.GetHolidayInfo(lastOffset, lastMonthDay, lastIndex)
 
-            if(info and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.endTime) >= 0) then
+            if(info and info.endTime and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.endTime) >= 0 and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.startTime) < 0) then
                 counter = counter + 1
                 
                 local cFrame = framePool:Acquire()
@@ -90,7 +105,7 @@ local function calendarOnEvent(_, event, ...)
                 cFrame.DateBar.Title:SetText(cFrame.DateBar.Title:GetText() .. ": " .. formatter:Format(timeTillEnd))
 
                 cFrame:SetScript("OnEnter", function(self)
-                    GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                     GameTooltip:SetText(info.name, nil, nil, nil, nil, true)
                     GameTooltip:AddLine("Start: " .. CalendarUtil.FormatCalendarTimeWeekday(info.startTime))
                     GameTooltip:AddLine("End: " .. CalendarUtil.FormatCalendarTimeWeekday(info.endTime))

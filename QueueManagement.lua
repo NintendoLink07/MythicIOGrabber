@@ -745,29 +745,27 @@ local function checkQueues()
 	end
 
 	--Try all World PvP queues
-	--[[for i=1, MAX_WORLD_PVP_QUEUES do
+	for i=1, MAX_WORLD_PVP_QUEUES do
 		local status, mapName, queueID, expireTime, averageWaitTime, queuedTime, suspended = GetWorldPVPQueueStatus(i)
 		if ( status and status ~= "none" ) then
 			--QueueStatusEntry_SetUpWorldPvP(entry, i);
 			local frameData = {
 				[1] = true,
-				[2] = "World PvP",
-				[11] = mapName,
+				[2] = "",
+				[11] = "World PvP",
 				[12] = averageWaitTime,
 				[17] = {"queued", queuedTime},
-				[18] = mapName,
-				[20] = "interface/icons/inv_currency_petbattle.blp"
+				[18] = mapName or ("WORLDPVP" .. i),
+				[30] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png",
 			}
 	
 			if (status == "queued") then
-				createQueueFrame(frameData)
+				local frame = createQueueFrame(frameData)
+				--frame.Icon:Show()
 	
-				if(queueSystem.queueFrames["PETBATTLE"]) then
-					--queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("type", "macro")
-					--queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetAttribute("macrotext1", "/run C_PetBattles.StopPVPMatchmaking()")
-					queueSystem.queueFrames["PETBATTLE"].CancelApplication:SetScript("OnClick", function()
-						C_PetBattles.StopPVPMatchmaking()
-					end)
+				if(frame) then
+					frame.CancelApplication:SetAttribute("type", "macro")
+					frame.CancelApplication:SetAttribute("macrotext1", "/run BattlefieldMgrExitRequest(" .. queueID .. ")")
 	
 				end
 	
@@ -778,11 +776,31 @@ local function checkQueues()
 			
 			end
 		end
-	end]]
+	end
 
 	--World PvP areas we're currently in
 	if ( CanHearthAndResurrectFromArea() ) then
-		--QueueStatusEntry_SetUpActiveWorldPVP(entry);
+		local frameData = {
+			[1] = true,
+			[2] = "",
+			[11] = "Open World PvP",
+			[12] = 0,
+			[17] = {"queued", GetTime()},
+			[18] = GetRealZoneText(),
+			[30] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png",
+		}
+
+		local frame = createQueueFrame(frameData)
+		--frame.Icon:Show()
+
+		if(frame) then
+			frame.CancelApplication:SetAttribute("type", "macro")
+			frame.CancelApplication:SetAttribute("macrotext1", "/run HearthAndResurrectFromArea()")
+
+		end
+
+		queueIndex = queueIndex + 1
+
 	end
 
 	--Pet Battle PvP Queue
@@ -1134,7 +1152,7 @@ local function updateRaidFinder()
 					end)
 
 					tempFrame:HookScript("OnEnter", function(self)
-						GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 						GameTooltip:SetText(RAID_BOSSES)
 						GameTooltip:AddLine(encounters .. modifiedInstanceTooltipText, 1, 1, 1, true)
 						GameTooltip:Show()
@@ -1735,7 +1753,7 @@ local function queueEvents(_, event, ...)
 		local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
 
 		local function showFailureReason(owner)
-			GameTooltip:SetOwner(owner, "ANCHOR_TOPRIGHT")
+			GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
 			GameTooltip:SetText(failureReason)
 			GameTooltip:Show()
 		end

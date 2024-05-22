@@ -94,7 +94,7 @@
                 end
             </OnClick>
             <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 GameTooltip:SetText("Current sort: "..self:GetStateName(self:GetActiveState()))
                 GameTooltip:Show()
             </OnEnter>

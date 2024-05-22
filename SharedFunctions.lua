@@ -371,7 +371,7 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	generalInfoPanel.Right["1"].FontString:SetNonSpaceWrap(true)
 	generalInfoPanel.Right["1"].FontString:SetScript("OnEnter", function(self)
 		if(self:GetText() ~= nil and self:IsTruncated()) then
-			GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText(self:GetText(), nil, nil, nil, nil, true)
 			GameTooltip:Show()
 		end

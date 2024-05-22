@@ -304,7 +304,7 @@ local function updateRosterInfoData()
 				classIconFrame:SetScript("OnEnter", function()
 					local _, _, _, _, _, name, realm = GetPlayerInfoByGUID(groupMember.guid)
 
-					GameTooltip:SetOwner(classIconFrame, "ANCHOR_CURSOR")
+					GameTooltip:SetOwner(classIconFrame, "ANCHOR_RIGHT")
 					GameTooltip:AddLine(name .. " - " .. (realm ~= "" and realm or GetRealmName()))
 					GameTooltip:Show()
 

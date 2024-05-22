@@ -958,10 +958,10 @@ miog.createFrames = function()
 			end
 
 			if(UnitIsGroupLeader("player")) then
-				miog.ApplicationViewer.DelistButton:Show()
+				miog.ApplicationViewer.Delist:Show()
 
 			else
-				miog.ApplicationViewer.DelistButton:Hide()
+				miog.ApplicationViewer.Delist:Hide()
 				
 			end
 

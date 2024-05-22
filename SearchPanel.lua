@@ -373,7 +373,7 @@ local function isGroupEligible(resultID, bordermode)
 
 		local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
 
-		if(isDungeon) then
+		if(isDungeon or isPvp) then
 			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].filterForRating) then
 				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].minRating ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxRating ~= 0) then
 					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][activityInfo.categoryID].maxRating >= 0
@@ -1141,7 +1141,7 @@ local function updatePersistentResultFrame(resultID)
 
 								currentMemberFrame:SetMouseMotionEnabled(true)
 								currentMemberFrame:SetScript("OnEnter", function()
-									GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_CURSOR")
+									GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_RIGHT")
 									GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultInfo.leaderName))
 									GameTooltip:Show()
 
@@ -1384,7 +1384,7 @@ local function checkSearchResultListForEligibleMembers()
 
 		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #lastOrderedList .. ")")
 		miog.Plugin.FooterBar.Results:SetScript("OnEnter", #lastOrderedList >= 100 and function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText("There might be more groups listed.")
 			GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
 			GameTooltip:Show()
@@ -1447,7 +1447,7 @@ local function updateSearchResultList()
 		miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #orderedList .. ")")
 		
 		miog.Plugin.FooterBar.Results:SetScript("OnEnter", #orderedList >= 100 and function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText("There might be more groups listed.")
 			GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
 			GameTooltip:Show()
@@ -1504,6 +1504,7 @@ local function searchPanelEvents(_, event, ...)
 
 	elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
 		local totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
+
 		LFGListFrame.SearchPanel.searching = true
 		searchResultsReceived()
 
