@@ -629,6 +629,9 @@
 
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true">
                     </Frame>
+
+                    <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true">
+                    </Frame>
                 </Frames>
             </Frame>
 
@@ -648,6 +651,7 @@
                         parent.TabFramesPanel.RaidStatistics:Hide()
                         parent.TabFramesPanel.PVPStatistics:Hide()
                         parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.Gearing:Hide()
                    </OnClick>
                </Scripts>
             </Button>
@@ -672,6 +676,7 @@
                         parent.TabFramesPanel.RaidStatistics:Hide()
                         parent.TabFramesPanel.PVPStatistics:Hide()
                         parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.Gearing:Hide()
 
                     </OnClick>
                 </Scripts>
@@ -697,6 +702,7 @@
                         parent.TabFramesPanel.MainTab:Hide()
                         parent.TabFramesPanel.PVPStatistics:Hide()
                         parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.Gearing:Hide()
 
                     </OnClick>
                 </Scripts>
@@ -722,6 +728,7 @@
                         parent.TabFramesPanel.MPlusStatistics:Hide()
                         parent.TabFramesPanel.RaidStatistics:Hide()
                         parent.TabFramesPanel.Teleports:Hide()
+                        parent.TabFramesPanel.Gearing:Hide()
 
                     </OnClick>
                 </Scripts>
@@ -743,10 +750,33 @@
                         parent.TabFramesPanel.MPlusStatistics:Hide()
                         parent.TabFramesPanel.RaidStatistics:Hide()
                         parent.TabFramesPanel.PVPStatistics:Hide()
+                        parent.TabFramesPanel.Gearing:Hide()
 
                     </OnClick>
                 </Scripts>
             </Button>        
+
+            <Button name="$parentTab6" inherits="PanelTabButtonTemplate" id="6" text="Gearing Chart">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                        local parent = self:GetParent()
+                        PanelTemplates_SetTab(parent, 6)
+
+                        parent.TabFramesPanel.Gearing:Show()
+
+                        parent.TabFramesPanel.MainTab:Hide()
+                        parent.TabFramesPanel.MPlusStatistics:Hide()
+                        parent.TabFramesPanel.RaidStatistics:Hide()
+                        parent.TabFramesPanel.PVPStatistics:Hide()
+                        parent.TabFramesPanel.Teleports:Hide()
+
+                    </OnClick>
+                </Scripts>
+            </Button>    
         </Frames>
 
         <Layers>

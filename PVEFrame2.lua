@@ -158,6 +158,12 @@ local function createPVEFrameReplacement()
 			currentFrame.activities = activities
 			currentFrame.unlocked = currentFrame.info.progress >= currentFrame.info.threshold;
 
+			local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[1].id))
+			local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[2].id))
+			local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[3].id))
+			
+			miog.VAULT_PROGRESS[frameIndex] = {activities1Lvl, activities2Lvl, activities3Lvl}
+
 			currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
 			miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
 
@@ -204,13 +210,10 @@ local function createPVEFrameReplacement()
 
 						end
 
-						local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[1].id))
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
 
-						local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[2].id))
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
 
-						local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[3].id))
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
 
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
@@ -272,15 +275,11 @@ local function createPVEFrameReplacement()
 						
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
 
-						local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[1].id))
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
 
-						local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[2].id))
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
 						
-						local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.activities[3].id))
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
-
 
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
 						GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
@@ -329,6 +328,8 @@ local function createPVEFrameReplacement()
 			currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (frameIndex == 1 and "Dungeons" or frameIndex == 2 and "Honor" or frameIndex == 3 and "Bosses" or ""))
 			currentFrame.Text:SetTextColor(CreateColorFromHexString(not firstThreshold and currentColor or "FFFFFFFF"):GetRGBA())
 		end
+
+		miog.insertGearingData()
 	end)
 
 	hooksecurefunc("PVEFrame_ToggleFrame", function()

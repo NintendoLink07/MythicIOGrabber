@@ -43,6 +43,7 @@ PVPStatistics.lua
 RaidStatistics.lua
 
 LastInvites.lua
+GearingChart.lua
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -115,6 +116,7 @@ XML\PVP\MIOG_PVPStatisticsBracketTemplate.xml
 XML\PVP\MIOG_PVPStatisticsColumnTemplate.xml
 
 XML\MIOG_Teleports.xml
+XML\MIOG_GearingChart.xml
 
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_HolidayFrameTemplate.xml
