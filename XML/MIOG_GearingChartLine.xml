@@ -1,0 +1,59 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GearingChartLine" inherits="GridLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="isHorizontal" value="true" type="boolean" />
+            <KeyValue key="layoutFramesGoingRight" value="true" type="boolean" />
+            <KeyValue key="stride" value="6" type="number" />
+            <KeyValue key="childXPadding" value="7" type="number" />
+        </KeyValues>
+
+        <Frames>
+        
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="ItemLevel" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="40" />
+                    <FontHeight val="11"/>
+                </FontString>
+
+                <FontString parentKey="Raid" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="65" />
+                    <FontHeight val="11"/>
+                </FontString>
+
+                <FontString parentKey="Dungeon" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="65" />
+                    <FontHeight val="11"/>
+                </FontString>
+
+                <FontString parentKey="DungeonVault" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="65" />
+                    <FontHeight val="11"/>
+                </FontString>
+
+                <FontString parentKey="Other" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="120" />
+                    <FontHeight val="11"/>
+                </FontString>
+
+                <FontString parentKey="Progress" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="200" />
+                    <FontHeight val="11"/>
+                </FontString>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Divider" atlas="dragonflight-weeklyrewards-divider">
+                    <Size y="5" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

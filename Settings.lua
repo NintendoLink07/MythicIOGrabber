@@ -517,7 +517,6 @@ miog.loadSettings = function()
 						optionButton:SetScript("OnClick", function()
 							setting.value = not setting.value
 							miog.ClassPanel:SetShown(setting.value)
-							miog.ClassPanel:MarkDirty()
 
 						end)
 

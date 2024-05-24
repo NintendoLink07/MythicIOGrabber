@@ -90,12 +90,6 @@ miog.DIFFICULTY_ID_TO_COLOR = {
 
 miog.DIFFICULTY_ID_INFO = {}
 
-miog.VAULT_PROGRESS = {
-	[1] = {},
-	[2] = {},
-	[3] = {},
-}
-
 miog.DIFFICULTY = {
 	[4] = {shortName = "M+", description = "Mythic+", color = miog.ITEM_QUALITY_COLORS[5].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[5].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[5].color},
 	[3] = {shortName = "M", description = _G["PLAYER_DIFFICULTY6"], color = miog.ITEM_QUALITY_COLORS[4].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[4].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[4].color},
@@ -1267,14 +1261,34 @@ miog.GEARING_CHART = {
 	[12] = {
 		baseItemLevel = 454,
 		maxVaultItemLevel = 522,
+		maxItemLevel = 535,
 		normalDungeon = 2,
 		heroicDungeon = 7,
 		lfr = 8,
 		normal = 12,
 		heroic = 16,
-		mythic = 20
+		mythic = 20,
+		tracks = {}
+	},
+	[13] = {
+		baseItemLevel = 574,
+		maxVaultItemLevel = 642,
+		maxItemLevel = 655,
+		normalDungeon = 2,
+		heroicDungeon = 7,
+		lfr = 8,
+		normal = 12,
+		heroic = 16,
+		mythic = 20,
+		tracks = {}
 	}
 
+}
+
+miog.VAULT_PROGRESS = {
+	[1] = {},
+	[2] = {},
+	[3] = {},
 }
 
 

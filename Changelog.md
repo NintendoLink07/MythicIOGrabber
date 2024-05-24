@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.0.8] - 2024-05-26
+
+### Added
+
+- Implemented a very basic version of the gearing chart.
+It's more for me to test how code the algorithms and ideally have it automatically retrieve the item levels for each new raid tier so all the info you need is available day 1.
+1. Ilvl, 2. raid source, 3. dungeon source, 4. dungeon vault source, 5. other source, 6. progress (which ilvls you've reach in each category so R[1] at 506 for the first raid vault slot at item level 506)
+
+Still very rudimentary but it's "working" already so here ya go.
+
+### Fixed
+
+- [Options] The show/hide class panel option now actually work.
+
+
 ## [2.0.7] - 2024-05-22
 
 ### Added
