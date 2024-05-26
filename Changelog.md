@@ -12,13 +12,17 @@ and this project adheres to [Semantic Versioning].
 
 - Implemented a very basic version of the gearing chart.
 It's more for me to test how code the algorithms and ideally have it automatically retrieve the item levels for each new raid tier so all the info you need is available day 1.
-1. Ilvl, 2. raid source, 3. dungeon source, 4. dungeon vault source, 5. other source, 6. progress (which ilvls you've reach in each category so R[1] at 506 for the first raid vault slot at item level 506)
+1. Ilvl, 2. Track, 3. Raid source, 4. Dungeon, 5. Dungeon vault source, 6. Other source, 7. progress (which ilvls you've reach in each category so R1 at 506 for the first raid vault slot at item level 506)
 
 Still very rudimentary but it's "working" already so here ya go.
 
 ### Fixed
 
 - [Options] The show/hide class panel option now actually work.
+
+- [Filter Panel & Active Queues] When the boss kills change on a listing it will show the correct ineligbility reason.
+
+- [Category Selection] When selecting the same category as before (e.g. first trying to search for a dungeon group then creating one yourself) shouldn't cause any more errors.
 
 
 ## [2.0.7] - 2024-05-22
@@ -1457,7 +1461,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.7..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.8..HEAD
+[2.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.8
 [2.0.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.7
 [2.0.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.6
 [2.0.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.5

@@ -7,6 +7,59 @@
 				    <KeyValue key="spacing" value="7" type="number" />
 			    </KeyValues>
             </Frame>
+
+            <Frame parentKey="Legend">
+                <Size x="180" y="25" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Explorer" inherits="MIOG_GearingChartLegendTextureTemplate">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="Adventurer" inherits="MIOG_GearingChartLegendTextureTemplate">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Explorer" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="Veteran" inherits="MIOG_GearingChartLegendTextureTemplate">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Adventurer" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="Champion" inherits="MIOG_GearingChartLegendTextureTemplate">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Veteran" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="Hero" inherits="MIOG_GearingChartLegendTextureTemplate">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Champion" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="Myth" inherits="MIOG_GearingChartLegendTextureTemplate">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Hero" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="Awakened" inherits="MIOG_GearingChartLegendTextureTemplate">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Myth" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
         </Frames>
     </Frame>
 </Ui>

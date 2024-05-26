@@ -1,33 +1,17 @@
-## [2.0.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.7) - 2024-05-22
+## [2.0.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.8) - 2024-05-26
 
 ### Added
 
-- World PVP and Open World PVP "queues" have been implemented for Active Queues.
+- Implemented a very basic version of the gearing chart.
+It's more for me to test how code the algorithms and ideally have it automatically retrieve the item levels for each new raid tier so all the info you need is available day 1.
+1. Ilvl, 2. Track, 3. Raid source, 4. Dungeon, 5. Dungeon vault source, 6. Other source, 7. progress (which ilvls you've reach in each category so R1 at 506 for the first raid vault slot at item level 506)
 
-### Changed
-
-- [Active Queues] The current group leader's name will be shown instead of "YOUR LISTING".
+Still very rudimentary but it's "working" already so here ya go.
 
 ### Fixed
 
-- [Last Invites] Restored the functionality to the "Last Invites" function and simplified it code-wise, making it easier to maintain in future.
+- [Options] The show/hide class panel option now actually work.
 
-- [Entry Creation] Added the default backgrounds for all PVP categories and questing/custom.
+- [Filter Panel & Active Queues] When the boss kills change on a listing it will show the correct ineligbility reason.
 
-- [Search Panel & Application Viewer] Adjusted the sort button's position to match in both lite mode and normal mode.
-
-- [Application Viewer] Adjusted button sizes so the number of applicants is more visible.
-
-- [Application Viewer] The filters "Affix fit" and "Rating" are now also present in the application viewer.
-
-- [Filter Panel] Party, ress, lust and affix will now also be checked while loading the settings. 
-
-- [Active Queues] There shouldn't be anymore errors popping up being in a currently listed group and being infight.
-
-- [Filter Panel] When using the "linked" option for healer and tanks MIOG won't set Blizzards stock lfg filter to "hasTank" and "hasHealer", since you wanna see both with either a healer or a tank.
-
-- [Filter Panel] Resetting all boss filters via the "X" button now actually resets the setting instead of just letting the borders disappear.
-
-- [Filter Panel] Raid options now also get saved when selecting/deselecting the respective option.
-
-- [Calendar] Adjusted the month day of the calendar functions so it gets all holidays from the current day and not just from the day I implemented the feature...lol
+- [Category Selection] When selecting the same category as before (e.g. first trying to search for a dungeon group then creating one yourself) shouldn't cause any more errors.

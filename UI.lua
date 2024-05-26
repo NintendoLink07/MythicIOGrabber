@@ -752,19 +752,17 @@ function LFGListEntryCreationActivityFinder_Accept(self)
 	self:Hide();
 end
 
-local function initializeActivityDropdown(isDifferentCategory, isSeparateCategory)
+local function initializeActivityDropdown()
 	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory or 0
 
 	local frame = miog.EntryCreation
 
-	if(isDifferentCategory or isSeparateCategory) then
-		local activityDropDown = frame.ActivityDropDown
-		activityDropDown:ResetDropDown()
+	local activityDropDown = frame.ActivityDropDown
+	activityDropDown:ResetDropDown()
 
-		gatherGroupsAndActivitiesForCategory(categoryID)
+	gatherGroupsAndActivitiesForCategory(categoryID)
 
-		miog.EntryCreation.ActivityDropDown.List:MarkDirty()
-	end
+	miog.EntryCreation.ActivityDropDown.List:MarkDirty()
 end
 
 miog.initializeActivityDropdown = initializeActivityDropdown
@@ -1033,7 +1031,7 @@ miog.createFrames = function()
 
 			else
 				LFGListFrame.EntryCreation:Hide()
-				miog.initializeActivityDropdown(true, C_LFGList.GetLfgCategoryInfo(LFGListFrame.CategorySelection.selectedCategory or C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or 0).separateRecommended)
+				miog.initializeActivityDropdown()
 
 			end
 

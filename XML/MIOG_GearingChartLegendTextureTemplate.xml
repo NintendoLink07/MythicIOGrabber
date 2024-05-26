@@ -1,0 +1,12 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Texture name="MIOG_GearingChartLegendTextureTemplate" virtual="true">
+        <Size x="20" y="20" />
+        <Color r="1" g="1" b="1" a="1" />
+        <Scripts>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Texture>
+</Ui>

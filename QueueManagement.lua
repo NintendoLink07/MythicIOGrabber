@@ -846,8 +846,8 @@ end
 local function startNewGroup(categoryFrame)
 	LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
 
-	local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
-	local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
+	--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
+	--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
 
 	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
 	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
@@ -855,10 +855,9 @@ local function startNewGroup(categoryFrame)
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
 
 	LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
-
 	--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
 	
-	miog.initializeActivityDropdown(isDifferentCategory, isSeparateCategory)
+	miog.initializeActivityDropdown()
 end
 
 local function findGroup(categoryFrame)

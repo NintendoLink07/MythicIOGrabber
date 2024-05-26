@@ -796,7 +796,7 @@
 
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 5)
+                PanelTemplates_SetNumTabs(self, 6)
                 PanelTemplates_SetTab(self, 1)
                 tinsert(UISpecialFrames, self:GetName());
             </OnLoad>

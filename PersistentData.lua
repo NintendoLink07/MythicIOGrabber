@@ -62,7 +62,7 @@ miog.APPLICANT_STATUS_INFO = {
 	[16] = {"Your highest rating filter do not match with this listing.", "Highest Rating mismatch"},
 	[17] = {"Your dungeon selection does not match with this listing.", "Dungeon mismatch"},
 	[18] = {"Your raid selection does not match with this listing.", "Raid mismatch"},
-	[18] = {"Your boss selection does not match with this listing.", "Boss selection mismatch"},
+	[19] = {"Your boss selection does not match with this listing.", "Boss selection mismatch"},
 	[20] = {"Your boss kills filters do not match with this listing.", "Boss kills mismatch"},
 	[21] = {"Your lowest boss kills filter do not match with this listing.", "Lowest boss kills mismatch"},
 	[22] = {"Your highest boss kills filter do not match with this listing.", "Highest boss kills mismatch"},
@@ -1257,40 +1257,270 @@ miog.ITEM_LEVEL_JUMPS = {
 	3, 3, 3, 4
 }
 
+miog.BASE_ITEM_TRACK_INFO = {
+	[1] = {length = 8},
+	[2] = {length = 8},
+	[3] = {length = 8},
+	[4] = {length = 8},
+	[5] = {length = 6},
+	[6] = {length = 4},
+}
+
 miog.GEARING_CHART = {
 	[12] = {
+		maxJumps = 0,
 		baseItemLevel = 454,
-		maxVaultItemLevel = 522,
+		--maxVaultItemLevel = 522,
 		maxItemLevel = 535,
-		normalDungeon = 2,
-		heroicDungeon = 7,
-		lfr = 8,
-		normal = 12,
-		heroic = 16,
-		mythic = 20,
-		tracks = {}
+		dungeon = {
+			info = {
+				[1] = {jumps = 2, name="Normal"},
+				[2] = {jumps = 7, name="Heroic/TW"},
+				[3] = {jumps = 12, name="Mythic"},
+				[4] = {jumps = 13, name="+2"},
+				[5] = {jumps = 14, name="+3"},
+				[6] = {jumps = 14, name="+4"},
+				[7] = {jumps = 15, name="+5"},
+				[8] = {jumps = 15, name="+6"},
+				[9] = {jumps = 16, name="+7"},
+				[10] = {jumps = 16, name="+8"},
+				[11] = {jumps = 17, name="+9"},
+				[12] = {jumps = 17, name="+10"},
+			},
+			itemLevels = {
+
+			},
+			vaultJumpsOffset = 4,
+			vaultLevels = {
+
+			},
+		},
+		raid = {
+			info = {
+				[1] = {jumps = 8, name="LFR"},
+				[2] = {jumps = 12, name="Normal"},
+				[3] = {jumps = 16, name="Heroic"},
+				[4] = {jumps = 20, name="Mythic"},
+			},
+			itemLevels = {
+
+			},
+		},
+		other = {
+			info = {
+				[1] = {jumps = 19, name="Wyrm5"},
+				[2] = {jumps = 22, name="Aspect5"},
+			},
+			itemLevels = {
+
+			},
+		},
+		awakenedInfo = {
+			start = "normal",
+			maxLength = 14,
+		},
+		trackDistance = 4,
+		trackInfo = {
+			[1] = {},
+			[2] = {},
+			[3] = {},
+			[4] = {},
+			[5] = {length = 6},
+			[6] = {length = 4},
+		},
+		itemLevelInfo = {
+
+		}
 	},
+
+
+
 	[13] = {
-		baseItemLevel = 574,
-		maxVaultItemLevel = 642,
-		maxItemLevel = 655,
-		normalDungeon = 2,
-		heroicDungeon = 7,
-		lfr = 8,
-		normal = 12,
-		heroic = 16,
-		mythic = 20,
-		tracks = {}
+		maxJumps = 0,
+		baseItemLevel = 545,
+		--maxVaultItemLevel = 642,
+		maxItemLevel = 626,
+		dungeon = {
+			info = {
+				[1] = {jumps = 2, name="Normal"},
+				[2] = {jumps = 4, name="Heroic/TW"},
+				[3] = {jumps = 7, name="Mythic"},
+				[4] = {jumps = 8, name="+2"},
+				[5] = {jumps = 9, name="+3"},
+				[6] = {jumps = 9, name="+4"},
+				[7] = {jumps = 10, name="+5"},
+				[8] = {jumps = 10, name="+6"},
+				[9] = {jumps = 11, name="+7"},
+				[10] = {jumps = 11, name="+8"},
+				[11] = {jumps = 12, name="+9"},
+				[12] = {jumps = 12, name="+10"},
+			},
+			itemLevels = {
+
+			},
+			vaultJumpsOffset = 4,
+			vaultLevels = {
+
+			},
+			names = {},
+		},
+		raid = {
+			info = {
+				[1] = {jumps = 3, name="LFR"},
+				[2] = {jumps = 7, name="Normal"},
+				[3] = {jumps = 11, name="Heroic"},
+				[4] = {jumps = 15, name="Mythic"},
+			},
+			itemLevels = {
+
+			},
+			names = {},
+		},
+		other = {
+			info = {
+				[1] = {jumps = 14, name="Wyrm5"},
+				[2] = {jumps = 18, name="Aspect5"},
+			},
+			itemLevels = {
+
+			},
+		},
+		trackDistance = 3,
+		trackInfo = {
+			[1] = {},
+			[2] = {},
+			[3] = {},
+			[4] = {},
+			[5] = {length = 6},
+			[6] = {length = 4},
+		},
+		itemLevelInfo = {
+			
+		}
 	}
 
 }
+
+miog.getAdjustedItemLevel = function(seasonID, jumps, start)
+    local jumpsCompleted = 1
+    local newItemLevel = miog.GEARING_CHART[seasonID].baseItemLevel
+
+    for i = 1, jumps, 1 do
+        newItemLevel = newItemLevel + miog.ITEM_LEVEL_JUMPS[jumpsCompleted]
+
+        jumpsCompleted = jumpsCompleted + 1
+
+        if(jumpsCompleted == 5) then
+            jumpsCompleted = 1
+        end
+    end
+
+    return newItemLevel
+end
+
+miog.getJumpsForItemLevel = function(seasonID, itemLevel, startIndex)
+	local totalJumps = 0
+	startIndex = startIndex or 1
+	local jumpsCompleted = startIndex or 1
+
+	local tempItemLevel = miog.GEARING_CHART[seasonID].baseItemLevel
+
+    while(itemLevel > tempItemLevel) do
+        tempItemLevel = tempItemLevel + miog.ITEM_LEVEL_JUMPS[jumpsCompleted]
+
+        jumpsCompleted = jumpsCompleted + 1
+		totalJumps = totalJumps + 1
+
+		if(tempItemLevel == itemLevel) then
+			return totalJumps
+
+		end
+
+        if(jumpsCompleted == 5) then
+            jumpsCompleted = 1
+        end
+    end
+
+    return nil
+end
+
+for k, v in pairs(miog.GEARING_CHART) do
+	for x, y in ipairs(v.trackInfo) do
+		y.data = {}
+
+		if(y.length == nil) then
+			if(x == #v.trackInfo) then
+				y.length = v.trackDistance
+
+			else
+				y.length = v.trackDistance * 2
+
+			end
+		end
+
+		for i = 1, y.length, 1 do
+			local jumps = (i - 1) + (x - 1) * v.trackDistance
+			y.data[i] = miog.getAdjustedItemLevel(k, jumps)
+		end
+
+		y.baseItemLevel = y.data[1]
+
+		y.maxItemLevel = y.data[y.length]
+
+		if(x == #v.trackInfo) then
+			v.maxUpgradeItemLevel = y.maxItemLevel
+		end
+	end
+	
+	for a, b in ipairs(v.dungeon.info) do
+		v.dungeon.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
+		v.dungeon.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + v.dungeon.vaultJumpsOffset)
+	end
+
+	for a, b in ipairs(v.raid.info) do
+		v.raid.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 1)] = true
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 2)] = true
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 3)] = true
+
+		-- RARE LEVELS
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 4)] = true
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 5)] = true
+			
+	end
+
+	for a, b in ipairs(v.other.info) do
+		v.other.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
+	end
+
+	v.maxVaultItemLevel = v.trackInfo[#v.trackInfo][#v.trackInfo[#v.trackInfo].data - 2]
+
+	if(v.awakenedInfo) then
+		table.insert(v.trackInfo, {
+			length = v.awakenedInfo.maxLength,
+			data = {},
+		})
+
+		local awakenedTrackTable = v.trackInfo[#v.trackInfo]
+
+		for i = 1, awakenedTrackTable.length, 1 do
+			awakenedTrackTable.data[i] = miog.getAdjustedItemLevel(k, v.raid.info[2].jumps + (i - 1))
+
+		end
+
+		awakenedTrackTable.baseItemLevel = awakenedTrackTable.data[1]
+		awakenedTrackTable.maxItemLevel = awakenedTrackTable.data[awakenedTrackTable.length]
+	end
+end
 
 miog.VAULT_PROGRESS = {
 	[1] = {},
 	[2] = {},
 	[3] = {},
 }
-
 
 miog.FONTS = {
 	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
