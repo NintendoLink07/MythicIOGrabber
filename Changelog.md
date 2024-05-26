@@ -11,9 +11,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Implemented a very basic version of the gearing chart.
-It's more for me to test how code the algorithms and ideally have it automatically retrieve the item levels for each new raid tier so all the info you need is available day 1.
-1. Ilvl, 2. Track, 3. Raid source, 4. Dungeon, 5. Dungeon vault source, 6. Other source, 7. progress (which ilvls you've reach in each category so R1 at 506 for the first raid vault slot at item level 506)
-
+It's more for me to test how code the algorithms and ideally have it automatically retrieve the item levels for each new raid tier so all the info you need is available day 1 even if this addon is not updated right away.
 Still very rudimentary but it's "working" already so here ya go.
 
 ### Fixed
