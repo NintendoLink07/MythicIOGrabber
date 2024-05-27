@@ -1118,12 +1118,51 @@ local function loadRawData()
 		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
 	end
 
+	--[[local firstDungeonEncounter
+	local regex1 = "%d %w damage"
+	local regex2 = "%d damage"
+
+	local function checkForAllRegex(string, pattern)
+		local b=1
+		while true do
+			local x,y= strfind(string,pattern,b,true)
+			if x==nil then break end
+			b=y+1
+		end
+	end]]
+
 	for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
 		if(v[6] == 0) then
 			miog.JOURNAL_CREATURE_INFO[v[3]] = {name = v[1], id = v[2], creatureDisplayInfoID = v[4], icon = v[5]}
 
+
+			
 			local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfo(v[3])
 			local dungeonEncounterInfo = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID]
+
+			--[[if(rootSectionID and (firstDungeonEncounter == nil or firstDungeonEncounter == journalEncounterID)) then
+				local info = C_EncounterJournal.GetSectionInfo(rootSectionID)
+
+				if(info.firstChildSectionID) then
+					info = C_EncounterJournal.GetSectionInfo(info.firstChildSectionID)
+
+					local subString, count = string.gsub(info.description, regex1, "")
+					subString, count = string.gsub(info.description, regex2, "")
+					checkForAllRegex(info.description, regex1)
+					checkForAllRegex(info.description, regex2)
+
+					info = C_EncounterJournal.GetSectionInfo(info.siblingSectionID)
+
+					subString, count = string.gsub(info.description, regex1, "")
+					subString, count = string.gsub(info.description, regex2, "")
+					checkForAllRegex(info.description, regex1)
+					checkForAllRegex(info.description, regex2)
+				end
+
+				miog.ONCE = false
+
+				firstDungeonEncounter = journalEncounterID
+			end]]
 
 			if(dungeonEncounterInfo) then
 				local mapInfo = miog.MAP_INFO[dungeonEncounterInfo.mapID]

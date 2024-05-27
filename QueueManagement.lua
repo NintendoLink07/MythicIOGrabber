@@ -616,11 +616,10 @@ local function checkQueues()
 
 	--Try all PvP queues
 	for i=1, GetMaxBattlefieldID() do
-		local status, mapName, teamSize, registeredMatch, suspend, queueType, gameType, _, _, _, longDescription, x1 = GetBattlefieldStatus(i);
+		local status, mapName, teamSize, registeredMatch, suspend, queueType, gameType, role, asGroup, shortDescription, longDescription, isSoloQueue = GetBattlefieldStatus(i);
 		if ( status and status ~= "none" and status ~= "error" ) then
 			local queuedTime = GetTime() - GetBattlefieldTimeWaited(i) / 1000
 			local estimatedTime = GetBattlefieldEstimatedWaitTime(i) / 1000
-			local isTank, isHealer, isDPS, totalTanks, totalHealers, totalDPS, tankNeeds, healerNeeds, dpsNeeds, subTitle, extraText = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil;
 			local assignedSpec = C_PvP.GetAssignedSpecForBattlefieldQueue(i);
 			local allowsDecline = PVPHelper_QueueAllowsLeaveQueueWithMatchReady(queueType)
 			
@@ -645,7 +644,13 @@ local function checkQueues()
 
 					--local battleInfo = miog.BATTLEMASTER_INFO[v[1]]
 
-					if(mapIDTable and #mapIDTable > 0) then
+					if(mapName == "Random Epic Battleground") then
+						frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/epicbgs.png")
+
+					elseif(mapName == "Random Battleground") then
+						frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/normalbgs.png")
+
+					elseif(mapIDTable and #mapIDTable > 0) then
 						local counter = 0
 						local randomNumber = random(1, #mapIDTable)
 
@@ -662,10 +667,43 @@ local function checkQueues()
 					
 					end
 
-					if(mapName == "Random Epic Battleground") then
-						frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/epicbgs.png")
+					frame:SetScript("OnEnter", function(self)
+						local tooltip = GameTooltip
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0)
 
-					end
+						--DevTools_Dump(mapInfo)
+						--local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
+						--local activityInfo = C_LFGList.GetActivityInfoTable(miog.MAP_INFO[mapID].activityID);
+						--local allowsCrossFaction = (categoryInfo and categoryInfo.allowCrossFaction) and (activityInfo and activityInfo.allowCrossFaction);
+
+						tooltip:SetText(mapName, 1, 1, 1, true);
+
+
+						if(role ~= "") then
+							tooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper));
+						end
+
+						GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+						if ( queuedTime > 0 ) then
+							tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime, false, false, 1, false)));
+						end
+
+						if ( estimatedTime > 0 ) then
+							tooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(estimatedTime, false, false, 1, false)));
+						end
+
+						if(teamSize > 0) then
+							tooltip:AddLine(teamSize);
+						end
+
+
+						GameTooltip:Show()
+					end)
+
+					frame:SetScript("OnLeave", function()
+						GameTooltip:Hide()
+					end)
 					
 					--queueSystem.queueFrames[mapName].CancelApplication:SetScript("OnClick",  SecureActionButton_OnClick)
 				end

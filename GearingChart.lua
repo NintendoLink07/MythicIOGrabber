@@ -66,7 +66,7 @@ end
 miog.insertGearingData = function()
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
 
-    if(not seasonID) then
+    if(not seasonID or seasonID == -1) then
         seasonID = 12
         
     end
@@ -149,119 +149,6 @@ miog.insertGearingData = function()
         end
 
     end
-
-   --[[ while(currentItemLevel < gearingData.maxItemLevel) do
-        currentItemLevel = miog.getAdjustedItemLevel(seasonID, counter)
-
-        local dungeonText = ""
-        local raidText = ""
-
-        local hasData = false
-
-        for k, v in pairs(gearingData.dungeon.itemLevels) do
-            if(v == currentItemLevel) then
-                dungeonText = v
-                hasData = true
-            end
-
-        end
-
-        for k, v in pairs(gearingData.raid.itemLevels) do
-            if(v == currentItemLevel) then
-                raidText = v
-                hasData = true
-
-                if(allowance == 0) then
-                    allowance = 3
-                    
-                else
-                    allowance = allowance - 1
-
-                end
-            end
-
-        end
-
-        if(hasData or allowance > 0) then
-            local currentChild = rowChildren[counter]
-            currentChild.ItemLevel:SetText(currentItemLevel)
-            currentChild.Dungeon:SetText(dungeonText)
-            currentChild.Raid:SetText(raidText)
-        end
-
-        counter = counter + 1
-    end]]
-
-    
-   --[[ for i = gearingData.baseItemLevel, gearingData.maxItemLevel, 1 do
-        if(gearingData.itemLevelInfo[i] or allowance > 0) then
-            local currentLine = rowChildren[counter]
-            currentLine.ItemLevel:SetText(i)
-            local jumpsNeeded = miog.getJumpsForItemLevel(seasonID, i)
-
-            for k, v in pairs(miog.GEARING_CHART[seasonID]) do
-                if(type(v) == "number") then
-                    print(v, i)
-                    currentLine.Raid:SetText(v == miog.getJumpsForItemLevel(seasonID, i) and (k == "normal" and "Normal" or k == "heroic" and "Heroic" or k == "mythic" and "Mythic" or k == "lfr" and "LFR") or "")
-                    
-                end
-
-            end
-
-            counter = counter + 1
-        end
-    end]]
-
-    --[[for i = 1, #rowChildren, 1 do
-        local id = i > 15 and 16 or i > 11 and 15 or i > 7 and 14 or i > 3 and 17
-        local itemLevel = i == 2 and miog.getAdjustedItemLevel(seasonID, gearingData.normalDungeon) or i == 3 and miog.getAdjustedItemLevel(seasonID, gearingData.heroicDungeon) or i == 1 and "ILvl" or miog.getAdjustedItemLevel(seasonID, gearingData.heroicDungeon + (i - 3))
-        r, g, b = nil, nil, nil
-
-        if(i > 1) then
-            for k, v in ipairs(miog.GEARING_CHART[seasonID].trackInfo) do
-                --if(v.baseItemLevel <= itemLevel and (miog.GEARING_CHART[seasonID].awakenedInfo and (k == #miog.GEARING_CHART[seasonID].trackInfo and itemLevel > miog.GEARING_CHART[seasonID].trackInfo[k - 1].maxItemLevel or k ~= #miog.GEARING_CHART[seasonID].trackInfo) or not miog.GEARING_CHART[seasonID].awakenedInfo)) then
-                --if(itemLevel <= v.maxItemLevel and (k == 1 and v.baseItemLevel <= itemLevel or itemLevel > miog.GEARING_CHART[seasonID].trackInfo[k - 1].maxItemLevel)) then
-
-                if(itemLevel > miog.GEARING_CHART[seasonID].maxUpgradeItemLevel) then
-                    r, g, b =  miog.ITEM_QUALITY_COLORS[6].color:GetRGB()
-                    
-                else
-                    for n = 1, v.length, 1 do
-                        if(not miog.GEARING_CHART[seasonID].awakenedInfo and itemLevel == v.data[n] or k ~= #miog.GEARING_CHART[seasonID].trackInfo and itemLevel == v.data[n]) then
-                            r, g, b =  miog.ITEM_QUALITY_COLORS[k - 1].color:GetRGB()
-
-                        end
-                    end
-                end
-            end
-        end
-
-        if(r == nil) then
-            r, g, b = 1, 1, 1
-
-        end
-
-        rowChildren[i].ItemLevel:SetText(itemLevel)
-        rowChildren[i].ItemLevel:SetTextColor(r,g,b,1)
-
-        rowChildren[i].Track:SetText(i == 1 and "Track" or miog.createTrackString(seasonID, tonumber(itemLevel)))
-        --rowChildren[i].Track:SetTextColor(r,g,b,1)
-
-        rowChildren[i].Raid:SetText(i > 7 and miog.DIFFICULTY_ID_INFO[id].name or i > 3 and miog.DIFFICULTY_ID_INFO[id].shortName or i == 1 and "Raid" or "")
-        rowChildren[i].Raid:SetTextColor(r,g,b,1)
-
-        rowChildren[i].Dungeon:SetText(i == 13 and "+9/+10" or i == 12 and "+7/+8" or i == 11 and "+5/+6" or i == 10 and "+3/+4" or i == 9 and "+2" or i == 8 and "M0" or i == 3 and "Heroic/TW" or i == 2 and "Normal" or i == 1 and "Dng Loot" or "")
-        rowChildren[i].Dungeon:SetTextColor(r,g,b,1)
-
-        rowChildren[i].DungeonVault:SetText(i == 17 and "+9/+10" or i == 16 and "+7/+8" or i == 15 and "+5/+6" or i == 14 and "+3/+4" or i == 13 and "+2" or i == 12 and "M0" or i == 7 and "Heroic/TW" or i == 1 and "Dng Vault" or "")
-        rowChildren[i].DungeonVault:SetTextColor(r,g,b,1)
-
-        rowChildren[i].Other:SetText(i == 18 and "Aspect R5" or i == 15 and "Wyrm R5" or i == 1 and "Other" or "")
-        rowChildren[i].Other:SetTextColor(r,g,b,1)
-
-        rowChildren[i].Progress:SetText(i == 1 and "Progress" or miog.getVaultProgress(tonumber(rowChildren[i].ItemLevel:GetText())))
-        rowChildren[i].Progress:SetTextColor(r,g,b,1)
-    end]]
 end
 
 miog.loadGearingChart = function()
@@ -293,7 +180,7 @@ miog.loadGearingChart = function()
     
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
 
-    if(not seasonID) then
+    if(not seasonID or seasonID == -1) then
         seasonID = 12
         
     end

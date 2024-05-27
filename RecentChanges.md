@@ -1,15 +1,11 @@
-## [2.0.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.8) - 2024-05-26
+## [2.0.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.8) - 2024-05-27
 
 ### Added
 
-- Implemented a very basic version of the gearing chart.
-It's more for me to test how code the algorithms and ideally have it automatically retrieve the item levels for each new raid tier so all the info you need is available day 1 even if this addon is not updated right away.
-Still very rudimentary but it's "working" already so here ya go.
+- [Active Queues] Random Battlegrounds now also have a non-rotating background.
+
+- [Active Queues] PVP queues now also have a minimalistic tooltip.
 
 ### Fixed
 
-- [Options] The show/hide class panel option now actually work.
-
-- [Filter Panel & Active Queues] When the boss kills change on a listing it will show the correct ineligbility reason.
-
-- [Category Selection] When selecting the same category as before (e.g. first trying to search for a dungeon group then creating one yourself) shouldn't cause any more errors.
+- No more errors should pop up when starting WoW fresh after the cache has been cleared (code checked for an ongoing season but after a cache clear or fresh WoW start after the pc has been shutdown it doesn't have that data right away).

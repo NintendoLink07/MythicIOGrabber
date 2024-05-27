@@ -1,7 +1,7 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-miog.ONCE = 0
+miog.ONCE = true
 
 miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
