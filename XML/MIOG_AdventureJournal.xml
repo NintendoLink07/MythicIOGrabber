@@ -1,0 +1,81 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+
+    <Frame name="MIOG_AdventureJournal" inherits="BackdropTemplate" virtual="true">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+        </KeyValues>
+
+        <Size x="300" y="300" />
+
+        <Frames>
+            <Frame parentKey="InstanceDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                <Size x="260" y="22" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="BossDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                <Size x="260" y="22" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+
+            <Button parentKey="Model" inherits="UIPanelButtonTemplate">
+                <Size x="30" y="30" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                </Anchors>
+            </Button>
+
+            <Button parentKey="Loot" inherits="UIPanelButtonTemplate">
+                <Size x="30" y="30" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.Model" relativePoint="LEFT"/>
+                </Anchors>
+            </Button>
+
+            <Button parentKey="Abilities" inherits="UIPanelButtonTemplate">
+                <Size x="30" y="30" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.Loot" relativePoint="LEFT"/>
+                </Anchors>
+            </Button>
+                                        
+            <ScrollFrame parentKey="ScrollFrame" inherits="BackdropTemplate, ScrollFrameTemplate">
+                <KeyValues>
+                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                        <KeyValues>
+                            <KeyValue key="align" value="top" />
+                            <KeyValue key="spacing" value="10" />
+                        </KeyValues>
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+
+            <!--<Frame parentKey="SpecificScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+            <EventFrame parentKey="SpecificScrollBar" inherits="MinimalScrollBar" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SpecificScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.SpecificScrollBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>-->
+        </Frames>
+    </Frame>
+</Ui>

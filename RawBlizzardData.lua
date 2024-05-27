@@ -6052,7 +6052,6 @@ miog.RAW["DungeonEncounter"] = { --https://wago.tools/db2/DungeonEncounter
     {"The Power of Temptation", 2740, 2653, 0, 0, 24466, 0, 4, 0, -1},
 }
 
-
 miog.RAW["LFGDungeons"] = {  --https://wago.tools/db2/LFGDungeons}
 {1, "Wailing Caverns", "", 1, 1, -1, 136364, 0, 340702, 0, 43, 1, 0, 1, 0, 0, 258, 0, 481, 1, 1, 3, 1, 1, 3, 0, 0, 0, 193, 67, 16},
 {2, "Scholomance", "", 1, 1, -1, 136355, 0, 340686, 0, 1007, 1, 0, 1, 0, 0, 258, 0, 684, 1, 1, 3, 1, 1, 3, 0, 0, 0, 212, 323, 16},

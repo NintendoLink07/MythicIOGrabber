@@ -46,7 +46,7 @@
             <EventFrame parentKey="SpecificScrollBar" inherits="MinimalScrollBar" frameStrata="HIGH">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.SpecificScrollBox" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent-SpecificScrollBox" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.SpecificScrollBox" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
             </EventFrame>
 

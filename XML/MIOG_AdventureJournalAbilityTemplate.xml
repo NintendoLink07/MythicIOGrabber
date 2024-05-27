@@ -1,0 +1,104 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+    <Frame name="MIOG_AdventureJournalAbilityTemplate" inherits="ResizeLayoutFrame" virtual="true">
+        <KeyValues>
+			<KeyValue key="fixedWidth" value="300" type="number"/>
+			<KeyValue key="minimumHeight" value="20" type="number"/>
+		</KeyValues>
+
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+        </Anchors>
+
+        <Frames>
+            <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-2"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self:OnLoad()
+                        self:SetMaxStates(2)
+                        self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                        self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                        self:SetState(false)
+                    </OnLoad>
+                    <OnClick>
+					    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+					    self:AdvanceState()
+                        self:GetParent().DetailedInformation:SetShown(not self:GetParent().DetailedInformation:IsShown())
+                        self:GetParent():MarkDirty()
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="AbilityName">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="DetailedInformation" inherits="ResizeLayoutFrame" hidden="true">
+                <KeyValues>
+                    <KeyValue key="maximumHeight" value="280" type="number"/>
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="LFR" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
+                        <Size y="70" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Normal" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
+                        <Size y="70" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.LFR" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.LFR" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Heroic" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
+                        <Size y="70" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Normal" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Normal" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Mythic" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
+                        <Size y="70" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Heroic" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Heroic" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                </Frames>
+
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

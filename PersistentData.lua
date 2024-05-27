@@ -1046,6 +1046,9 @@ miog.BATTLEMASTER_INFO = {
 
 }
 
+miog.JOURNAL_INSTANCE_INFO = {
+}
+
 for k, v in pairs(miog.RAW["BattlemasterList"]) do
 	miog.BATTLEMASTER_INFO[v[1]] = {
 		name = v[2],
@@ -1118,51 +1121,29 @@ local function loadRawData()
 		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
 	end
 
-	--[[local firstDungeonEncounter
-	local regex1 = "%d %w damage"
-	local regex2 = "%d damage"
-
-	local function checkForAllRegex(string, pattern)
-		local b=1
-		while true do
-			local x,y= strfind(string,pattern,b,true)
-			if x==nil then break end
-			b=y+1
-		end
-	end]]
+	local firstDungeonEncounter
 
 	for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
 		if(v[6] == 0) then
 			miog.JOURNAL_CREATURE_INFO[v[3]] = {name = v[1], id = v[2], creatureDisplayInfoID = v[4], icon = v[5]}
-
-
 			
 			local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfo(v[3])
 			local dungeonEncounterInfo = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID]
 
-			--[[if(rootSectionID and (firstDungeonEncounter == nil or firstDungeonEncounter == journalEncounterID)) then
-				local info = C_EncounterJournal.GetSectionInfo(rootSectionID)
 
-				if(info.firstChildSectionID) then
-					info = C_EncounterJournal.GetSectionInfo(info.firstChildSectionID)
 
-					local subString, count = string.gsub(info.description, regex1, "")
-					subString, count = string.gsub(info.description, regex2, "")
-					checkForAllRegex(info.description, regex1)
-					checkForAllRegex(info.description, regex2)
+			--[[info = {}
+			--info.icon = miog.ACTIVITY_INFO[activityID].icon
 
-					info = C_EncounterJournal.GetSectionInfo(info.siblingSectionID)
+			info.entryType = "option"
+			info.text = bossName
+			info.value = journalEncounterID
+			info.func = function()
+				--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
 
-					subString, count = string.gsub(info.description, regex1, "")
-					subString, count = string.gsub(info.description, regex2, "")
-					checkForAllRegex(info.description, regex1)
-					checkForAllRegex(info.description, regex2)
-				end
-
-				miog.ONCE = false
-
-				firstDungeonEncounter = journalEncounterID
 			end]]
+
+			--adventureJournalBossTable[#adventureJournalBossTable+1] = info
 
 			if(dungeonEncounterInfo) then
 				local mapInfo = miog.MAP_INFO[dungeonEncounterInfo.mapID]
@@ -1197,6 +1178,82 @@ local function loadRawData()
 		end
 	
 	end
+
+	local expansionTable = {}
+
+
+	for x = 1, EJ_GetNumTiers() - 1, 1 do
+			local name, link = EJ_GetTierInfo(x)
+	
+			local expInfo = {}
+			expInfo.entryType = "arrow"
+			expInfo.index = x + 10000
+			expInfo.text = name
+	
+			expansionTable[#expansionTable+1] = expInfo
+			
+	end
+
+	for k, v in ipairs(expansionTable) do
+		miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
+
+	end
+
+	local adventureJournalDungeonTable = {}
+	local adventureJournalRaidTable = {}
+
+	for x = 1, EJ_GetNumTiers() - 1, 1 do
+		EJ_SelectTier(x)
+			for k = 1, 2, 1 do
+				local isRaid = k == 1 and true or false
+
+				for i = 1, 5000, 1 do
+					local instanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
+
+					if(instanceID) then
+						local info = {}
+						--info.icon = miog.ACTIVITY_INFO[activityID].icon
+					
+						info.index = i + (isRaid and 1 or 300)
+						info.entryType = "option"
+						info.text = name
+						info.parentIndex = x + 10000
+						info.value = instanceID
+						info.func = function()
+							EJ_SelectTier(x)
+							miog.selectInstance(info.value)
+							--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
+					
+						end
+
+						if(isRaid) then
+							adventureJournalRaidTable[#adventureJournalRaidTable+1] = info
+
+						else
+							adventureJournalDungeonTable[#adventureJournalDungeonTable+1] = info
+						
+						end
+					end
+				end
+
+				if(not isRaid) then
+					miog.AdventureJournal.InstanceDropdown:CreateSeparator(299, x + 10000)
+					
+				end
+			end
+	end
+
+	for k, v in ipairs(adventureJournalRaidTable) do
+		miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
+
+	end
+
+	for k, v in ipairs(adventureJournalDungeonTable) do
+		miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
+
+	end
+
+	miog.AdventureJournal.InstanceDropdown.List:MarkDirty()
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
 		miog.ACTIVITY_INFO[k] = {

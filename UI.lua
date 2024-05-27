@@ -932,6 +932,7 @@ miog.createFrames = function()
 		miog.loadQueueSystem()
 		miog.loadCalendarSystem()
 		miog.loadGearingChart()
+		miog.loadAdventureJournal()
 		
 	end
 

@@ -45,6 +45,8 @@ RaidStatistics.lua
 LastInvites.lua
 GearingChart.lua
 
+AdventureJournal.lua
+
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
 
@@ -122,3 +124,7 @@ XML\MIOG_GearingChartLegendTextureTemplate.xml
 
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_HolidayFrameTemplate.xml
+
+XML\MIOG_AdventureJournal.xml
+XML\MIOG_AdventureJournalAbilityTemplate.xml
+XML\MIOG_AdventureJournalAbilityDifficultyTemplate.xml
