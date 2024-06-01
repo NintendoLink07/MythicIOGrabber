@@ -61,11 +61,8 @@
         </Layers>
 
         <Scripts>
-            <OnClick>
+            <PreClick>  
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            </OnClick>
-
-            <PostClick>                
                 if(not self.hasArrow and self:GetParent().hideOnClick ~= false) then
                     self.ParentDropDown.Selected.Name:SetText(self.Name:GetText())
                     self.ParentDropDown.Selected.value = self.value
@@ -83,7 +80,7 @@
 
                 self.Radio:SetChecked(not self.Radio:GetChecked())
 
-            </PostClick>
+            </PreClick>
         </Scripts>
     </Button>
 </Ui>

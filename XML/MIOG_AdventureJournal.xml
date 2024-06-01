@@ -22,23 +22,30 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
             </Frame>
+            
+            <Frame parentKey="KeylevelDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
+                <Size x="44" y="22" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="TOPRIGHT"/>
+                </Anchors>
+            </Frame>
 
             <Button parentKey="Model" inherits="UIPanelButtonTemplate">
-                <Size x="30" y="30" />
+                <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                 </Anchors>
             </Button>
 
             <Button parentKey="Loot" inherits="UIPanelButtonTemplate">
-                <Size x="30" y="30" />
+                <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="RIGHT" relativeKey="$parent.Model" relativePoint="LEFT"/>
                 </Anchors>
             </Button>
 
             <Button parentKey="Abilities" inherits="UIPanelButtonTemplate">
-                <Size x="30" y="30" />
+                <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="RIGHT" relativeKey="$parent.Loot" relativePoint="LEFT"/>
                 </Anchors>
@@ -77,5 +84,16 @@
                 </Anchors>
             </EventFrame>-->
         </Frames>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Status" file="Interface\ChatFrame\ChatFrameBackground">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="TOPRIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

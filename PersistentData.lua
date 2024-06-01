@@ -28,6 +28,19 @@ miog.CLRSCC = { -- from clrs.cc
 	["white"] = "FFFFFFFF",
 }
 
+miog.AJ_CLRSCC = {
+	[1] = miog.CLRSCC.blue,
+	[2] = miog.CLRSCC.purple,
+	[3] = miog.CLRSCC.yellow,
+	[4] = miog.CLRSCC.aqua,
+	[5] = miog.CLRSCC.lime,
+	[6] = miog.CLRSCC.red,
+	[7] = miog.CLRSCC.teal,
+	[8] = miog.CLRSCC.fuchsia,
+	[9] = miog.CLRSCC.orange,
+	[10] = miog.CLRSCC.green,
+}
+
 miog.APPLICANT_STATUS_INFO = {
 	["applied"] = {statusString = "APPLIED", color = "FF3D9970"},
 	["invited"] = {statusString = "INVITED", color = "FFFFFF00"},
@@ -1208,9 +1221,15 @@ local function loadRawData()
 				local isRaid = k == 1 and true or false
 
 				for i = 1, 5000, 1 do
-					local instanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
+					local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
 
-					if(instanceID) then
+					if(journalInstanceID) then
+						miog.JOURNAL_INSTANCE_INFO[journalInstanceID] = {
+							name = name,
+							isRaid = isRaid,
+							mapID = mapID,
+						}
+
 						local info = {}
 						--info.icon = miog.ACTIVITY_INFO[activityID].icon
 					
@@ -1218,9 +1237,10 @@ local function loadRawData()
 						info.entryType = "option"
 						info.text = name
 						info.parentIndex = x + 10000
-						info.value = instanceID
+						info.value = journalInstanceID
 						info.func = function()
 							EJ_SelectTier(x)
+							miog.AdventureJournal.currentInstanceID = journalInstanceID
 							miog.selectInstance(info.value)
 							--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
 					

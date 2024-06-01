@@ -53,18 +53,6 @@
                             <Anchor point="RIGHT" relativeKey="$parent.Faction" relativePoint="LEFT" x="-2" y="-1"/>
                         </Anchors>
 
-                        <Frames>
-                            <Frame parentKey="Party" inherits="HorizontalLayoutFrame">
-                                <KeyValues>
-                                    <KeyValue key="fixedHeight" value="19" type="number" />
-                                    <KeyValue key="minimumWidth" value="20" type="number" />
-                                </KeyValues>
-                                <Anchors>
-                                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
-                                </Anchors>
-                            </Frame>
-                        </Frames>
-
                         <Layers>
                             <Layer level="OVERLAY">
                                 <FontString parentKey="Roles" font="LibMono" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="0/0/0" wordwrap="false">

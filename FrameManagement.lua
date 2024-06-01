@@ -127,17 +127,6 @@ miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire(
 miog.applicantFramePool = CreateFramePool("Frame", nil, "MIOG_ApplicantFrameTemplate", resetFrame)
 miog.searchResultFramePool = CreateFramePool("Frame", nil, "MIOG_ResultFrameTemplate", resetFrame)
 
-miog.raidRosterFramePool = CreateFramePool("Frame", nil, "BackdropTemplate", resetFrame)
-miog.raidRosterFontStringPool = CreateFontStringPool(miog.raidRosterFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
-miog.raidRosterTexturePool = CreateTexturePool(miog.raidRosterFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
-
-miog.releaseRaidRosterPool = function()
-	miog.raidRosterFramePool:ReleaseAll()
-	miog.raidRosterFontStringPool:ReleaseAll()
-	miog.raidRosterTexturePool:ReleaseAll()
-end
-
-
 local createBasicFontString = function(poolType, fontSize, parent, width, height, text)
 	local fontString
 

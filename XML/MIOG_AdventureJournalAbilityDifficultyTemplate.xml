@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">    
-    <Frame name="MIOG_AdventureJournalAbilityDifficultyTemplate" virtual="true">
+    <Frame name="MIOG_AdventureJournalAbilityDifficultyTemplate" inherits="ResizeLayoutFrame" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
@@ -10,10 +10,11 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Description" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Description" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true" nonspacewrap="false">
+                    <Size x="240" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT" />
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                     </Anchors>
                 </FontString>
             </Layer>

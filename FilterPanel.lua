@@ -27,6 +27,7 @@ local wticc = WrapTextInColorCode
 	activities {groupFinderActivityID}
 ]]
 local function convertAdvancedBlizzardFiltersToMIOGFilters()
+	
 	local blizzardFilters = C_LFGList.GetAdvancedFilter()
 	local missingFilters = MIOG_SavedSettings.currentBlizzardFilters == nil and true or false
 	local filtersUpToDate = blizzardFilters == MIOG_SavedSettings.currentBlizzardFilters
@@ -44,8 +45,8 @@ local function convertAdvancedBlizzardFiltersToMIOGFilters()
 				v.minHealers = v.minHealers == 0 and blizzardFilters.hasHealer == true and 1 or v.minHealers or 0
 				v.minTanks = v.minTanks == 0 and blizzardFilters.hasTank == true and 1 or v.minTanks or 0
 
-				v.filterForTanks = blizzardFilters.hasTank
-				v.filterForHealers = blizzardFilters.hasHealer
+				--v.filterForTanks = blizzardFilters.hasTank
+				--v.filterForHealers = blizzardFilters.hasHealer
 
 				v.filterForRating = v.minRating > 0 and true
 
@@ -852,6 +853,8 @@ local function setupFiltersForActivePanel(reset)
 
 		miog.FilterPanel.IndexedOptions.ressFit.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].ressFit)
 		miog.FilterPanel.IndexedOptions.lustFit.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].lustFit)
+
+		miog.FilterPanel.IndexedOptions.hardDecline.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].hardDecline)
 
 		miog.FilterPanel.IndexedOptions.AffixFit:SetShown(categoryID == 2 and true or false)
 		miog.FilterPanel.IndexedOptions.AffixFit.Button:SetChecked(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].affixFit)

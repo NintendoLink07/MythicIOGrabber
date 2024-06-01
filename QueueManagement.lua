@@ -564,9 +564,9 @@ local function checkQueues()
 							frame:SetScript("OnMouseDown", function()
 								PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 								--LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-								LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, LFGListFrame.SearchPanel.preferredFilters, LFGListFrame.baseFilters)
+								LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, LFGListFrame.SearchPanel.preferredFilters or 0, LFGListFrame.baseFilters)
 
-								if(LFGListFrame.SearchPanel.filters == nil) then
+								if(LFGListFrame.SearchPanel.filters == nil or LFGListFrame.SearchPanel.preferredFilters == nil) then
 									LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 								end
 								

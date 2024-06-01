@@ -33,9 +33,7 @@ local function createGroupMemberEntry(guid, unitID)
 
 end
 
-local function updateRosterInfoData()
-	miog.releaseRaidRosterPool()
-	
+local function updateRosterInfoData()	
 	if(currentInspection and GetTimePreciseSec() - lastNotifyTime > 7) then
 		ClearInspectPlayer(true)
 		updateRosterInfoData()
@@ -291,53 +289,8 @@ local function updateRosterInfoData()
 		end
 	end)
 
-	if(numOfMembers <= 5) then
-		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:Hide()
-
-		for index, groupMember in ipairs(indexedGroup) do
-			local specIcon = groupMember.icon or miog.SPECIALIZATIONS[groupMember.specID].squaredIcon
-			local classIconFrame = miog.createBasicFrame("raidRoster", "BackdropTemplate", miog.ApplicationViewer.TitleBar.GroupComposition.Party, miog.ApplicationViewer.TitleBar.Faction:GetWidth() - 3, miog.ApplicationViewer.TitleBar.Faction:GetHeight() - 3, "Texture", specIcon)
-			classIconFrame.layoutIndex = index
-			classIconFrame:SetFrameStrata("DIALOG")
-
-			if(groupMember.classID <= 13) then
-				classIconFrame:SetScript("OnEnter", function()
-					local _, _, _, _, _, name, realm = GetPlayerInfoByGUID(groupMember.guid)
-
-					GameTooltip:SetOwner(classIconFrame, "ANCHOR_RIGHT")
-					GameTooltip:AddLine(name .. " - " .. (realm ~= "" and realm or GetRealmName()))
-					GameTooltip:Show()
-
-				end)
-				classIconFrame:SetScript("OnLeave", function()
-					GameTooltip:Hide()
-
-				end)
-
-				local color = C_ClassColor.GetClassColor(miog.CLASSES[groupMember.classID].name)
-				miog.createFrameBorder(classIconFrame, 1, color.r, color.g, color.b, 1)
-
-			else
-				classIconFrame:ClearBackdrop()
-			
-			end
-
-			if(index == 5) then
-				break
-			end
-
-		end
+	miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
 		
-		miog.ApplicationViewer.TitleBar.GroupComposition.Party:MarkDirty()
-		miog.ApplicationViewer.TitleBar.GroupComposition.Party:Show()
-
-	else
-		miog.ApplicationViewer.TitleBar.GroupComposition.Party:Hide()
-
-		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
-		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:Show()
-		
-	end
 end
 
 local function resetInspectCoroutine()

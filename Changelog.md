@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.0.10] - 2024-06-01
+
+### Fixed
+
+- [Filter Panel] The "hide hard decline" filter option now remembers it's setting.
+
+- [Application Viewer] There shouldn't be any more errors related to the rating setting.
+
+- [Filter Panel] Blizzard's LFG filters won't reset MIOG's filters anymore.
+
+
 ## [2.0.9] - 2024-05-27
 
 ### Added

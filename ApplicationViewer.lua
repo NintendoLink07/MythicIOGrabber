@@ -694,24 +694,29 @@ local function checkApplicantListForEligibleMembers(listEntry)
 		local rating = listEntry.primary
 
 		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForRating) then
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].maxRating ~= 0) then
-				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating >= 0
-				and not (rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating
-				and rating <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating)) then
-					return false, miog.INELIGIBILITY_REASONS[14]
+			if(rating) then
+				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].maxRating ~= 0) then
+					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating >= 0
+					and not (rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating
+					and rating <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating)) then
+						return false, miog.INELIGIBILITY_REASONS[14]
+
+					end
+				elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0) then
+					if(rating < MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating) then
+						return false, miog.INELIGIBILITY_REASONS[15]
+
+					end
+				elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
+					if(rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating) then
+						return false, miog.INELIGIBILITY_REASONS[16]
+						
+					end
 
 				end
-			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0) then
-				if(rating < MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating) then
-					return false, miog.INELIGIBILITY_REASONS[15]
-
-				end
-			elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
-				if(rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating) then
-					return false, miog.INELIGIBILITY_REASONS[16]
-					
-				end
-
+			else
+				return false
+			
 			end
 		
 		end

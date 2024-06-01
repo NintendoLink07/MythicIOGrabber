@@ -55,49 +55,47 @@
 
         <Frames>
             <Frame parentKey="DetailedInformation" inherits="ResizeLayoutFrame" hidden="true">
-                <KeyValues>
-                    <KeyValue key="maximumHeight" value="280" type="number"/>
-                </KeyValues>
-
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="LFR" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Size y="70" />
+                    <Frame parentKey="Base" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                             <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="Normal" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Size y="70" />
+                    <Frame parentKey="Difficulty1" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.LFR" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.LFR" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Base" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Base" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="Heroic" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Size y="70" />
+                    <Frame parentKey="Difficulty2" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Normal" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Normal" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty1" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Difficulty1" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="Mythic" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Size y="70" />
+                    <Frame parentKey="Difficulty3" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Heroic" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Heroic" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty2" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Difficulty2" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Difficulty4" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty3" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Difficulty3" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
                     </Frame>
                 </Frames>
-
             </Frame>
         </Frames>
     </Frame>

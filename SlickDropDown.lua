@@ -159,6 +159,10 @@ function SlickDropDown:IsEnabled()
 	return self.Button:IsEnabled()
 end
 
+function SlickDropDown:GetSelectedValue()
+	return self.Selected.value
+end
+
 function SlickDropDown:GetFrameAtIndex(index, parentIndex)
 	if(parentIndex) then
 		return self.entryFrameTree[parentIndex][index]
