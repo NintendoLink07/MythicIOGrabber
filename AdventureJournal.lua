@@ -160,8 +160,6 @@ local function stopAndGo(id, equal, forwardOrdered)
     local xCounter = 1
     local baseString = ""
 
-    --print(id, equal, forwardOrdered)
-
     if(frameData[id][lowestDifficulty]) then
         local lastIndex = 0
 
@@ -190,11 +188,7 @@ local function stopAndGo(id, equal, forwardOrdered)
     end
 
     if(equal) then
-        --print(id, "EQUAL")
-        --baseString = ""
-
         for n = lowestIndex, 4, 1 do
-            --frameData[id][currentDifficultyIDs[n]] and frameData[id][currentDifficultyIDs[n]].description
             local array1 = miog.simpleSplit(baseString, "%s") or {}
             local array2 = frameData[id][currentDifficultyIDs[n]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n]].description, "%s") or {}
     
@@ -242,12 +236,10 @@ local function stopAndGo(id, equal, forwardOrdered)
                                 if(maybeNumber and array2[i + 1] and array2[i + 2]) then
                                     local threeString = maybeNumber .. " " .. array2[i + 1] .. " " .. array2[i + 2]
                                     found = string.find(threeString, regex2)
-                                    --print(id, 2, c, d, number2)
 
                                 elseif(maybeNumber and array2[i + 1]) then
                                     local twoString = maybeNumber .. " " .. array2[i + 1]
                                     found = string.find(twoString, regex1)
-                                    --print(id, 1, a, b, number)
 
                                 end
 
@@ -263,16 +255,6 @@ local function stopAndGo(id, equal, forwardOrdered)
                                 table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = array2[i], colorIndex = xCounter})
                             
                             end
-
-                            
-                            --[[if(array2[i + 1] == "million" or array2[i + 1] == "billion") then
-                                shift = shift + 2
-
-                                table.insert(organizedFrameData[id][currentDifficultyIDs[n] ], {string = array2[i + 1], colorIndex = xCounter})
-
-                                break
-
-                            end]]
 
                             if(firstFutureValue == array2[i + 1]) then
                                 xCounter = xCounter + 1
@@ -295,8 +277,6 @@ local function stopAndGo(id, equal, forwardOrdered)
         end
     else
 
-        --IMPLEMENT FORWARD ARRAYS
-
         local frameDataArrays = {}
     
         for n = lowestIndex, 4, 1 do
@@ -308,8 +288,6 @@ local function stopAndGo(id, equal, forwardOrdered)
                 end
             end
         end
-
-        --print(id, "ORDERED EQUAL:", forwardOrdered, #frameDataArrays[4], #frameDataArrays[3], #frameDataArrays[2], #frameDataArrays[1])
 
         if(forwardOrdered) then
 
@@ -361,12 +339,10 @@ local function stopAndGo(id, equal, forwardOrdered)
                                     if(maybeNumber and array2[i + 1] and array2[i + 2]) then
                                         local threeString = maybeNumber .. " " .. array2[i + 1] .. " " .. array2[i + 2]
                                         found = string.find(threeString, regex2)
-                                        --print(id, 2, c, d, number2)
 
                                     elseif(maybeNumber and array2[i + 1]) then
                                         local twoString = maybeNumber .. " " .. array2[i + 1]
                                         found = string.find(twoString, regex1)
-                                        --print(id, 1, a, b, number)
 
                                     end
 
@@ -382,17 +358,7 @@ local function stopAndGo(id, equal, forwardOrdered)
                                     
                                 end
     
-                                --baseString = baseString .. "YYY "
-                                --baseArray[i] = false
-    
-                                --print(k, firstCurrentValue, higherArray[i])
-                            
-                                --stringArray[lowerLengthID] = stringArray[lowerLengthID] .. firstCurrentValue .. " "
-                                --stringArray[higherLengthID] = stringArray[higherLengthID] .. higherArray[i] .. " "
-    
-    
                                 if(firstFutureValue == array2[i + 1]) then
-                                    --print("BREAK")
                                     xCounter = xCounter + 1
                                     break
                                 else
@@ -436,8 +402,6 @@ local function stopAndGo(id, equal, forwardOrdered)
                 end
             end
         end
-
-        --print(id, "NOT EQUAL", arraySizes[1], arraySizes[2], arraySizes[3], arraySizes[4])
     end
 
 
@@ -815,15 +779,6 @@ local function stopAndGo(id, equal, forwardOrdered)
 
     end]]
 
-    --if(id == "Lightning Devastation") then
-        --print("B", baseString)
-        --print(1, stringArray[currentDifficultyIDs[1]])
-        --print(2, stringArray[currentDifficultyIDs[2]])
-        --print(3, stringArray[currentDifficultyIDs[3]])
-        --print(4, stringArray[currentDifficultyIDs[4]])
-
-    --end
-
     return baseString
 end
 
@@ -1043,15 +998,12 @@ miog.selectBoss = function(journalInstanceID, journalEncounterID)
             end
             
             if(hasNoDifficultyData) then
-                --frame = switchPool:Acquire()
 
                 if(baseString == "") then
-                    --print(id, "HAS NOTHING")
                     frame.SwitchPanel:Hide()
                     frame.ExpandFrame:SetShown(false)
 
                 else
-                    --print(id, "HAS ONLY BASE")
                     frame.SwitchPanel:Hide()
                     frame.DetailedInformation.Difficulty1:Hide()
                     frame.DetailedInformation.Base:Show()
@@ -1122,6 +1074,7 @@ miog.loadAdventureJournal = function()
     miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.pveFrame2, "MIOG_AdventureJournal")
     miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
     miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
+    miog.AdventureJournal:Hide()
 
     basePool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
     --switchPool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityWithSwitchTemplate", resetJournalFrames)

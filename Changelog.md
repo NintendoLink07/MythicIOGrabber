@@ -6,20 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [2.0.11] - 2024-06-02
-
-- Deleted debug prints relating to an upcoming feature.
-
-
-## [2.0.10] - 2024-06-01
+## [2.0.10] - 2024-06-02
 
 ### Fixed
 
 - [Filter Panel] The "hide hard decline" filter option now remembers it's setting.
 
+- [Filter Panel] Blizzard's LFG filters won't reset MIOG's filters anymore.
+
 - [Application Viewer] There shouldn't be any more errors related to the rating setting.
 
-- [Filter Panel] Blizzard's LFG filters won't reset MIOG's filters anymore.
+- Deleted debug prints relating to an upcoming feature.
 
 
 ## [2.0.9] - 2024-05-27
@@ -1488,8 +1485,7 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.11..HEAD
-[2.0.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.11
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.0.10..HEAD
 [2.0.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.10
 [2.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.9
 [2.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.8
