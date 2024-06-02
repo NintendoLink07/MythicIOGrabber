@@ -851,6 +851,7 @@ miog.loadAdventureJournal = function()
     miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.pveFrame2, "MIOG_AdventureJournal")
     miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
     miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
+    miog.AdventureJournal:Hide()
 
     basePool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
     switchPool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityWithSwitchTemplate", resetJournalFrames)
