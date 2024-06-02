@@ -1,14 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">    
-    <Frame name="MIOG_AdventureJournalAbilityTemplate" inherits="ResizeLayoutFrame" virtual="true">
+    <Frame name="MIOG_AdventureJournalAbilityTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
         <KeyValues>
-			<KeyValue key="fixedWidth" value="300" type="number"/>
+			<KeyValue key="fixedWidth" value="330" type="number"/>
 			<KeyValue key="minimumHeight" value="20" type="number"/>
 		</KeyValues>
-
-        <Anchors>
-            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-        </Anchors>
 
         <Frames>
             <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
@@ -34,10 +30,23 @@
             </Button>
         </Frames>
 
+        <Scripts>
+            <OnLoad>
+                self:SetBackdrop( {edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+                self:SetBackdropBorderColor(PAPER_FRAME_EXPANDED_COLOR:GetRGB())
+            </OnLoad>
+        </Scripts>
+
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true">
+                    <Size x="12" y="12"/>
+                </Texture>
+            </Layer>
+
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
-                    <Size x="20" y="20" />
+                    <Size x="16" y="16" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
                     </Anchors>
@@ -50,52 +59,152 @@
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" />
                     </Anchors>
                 </FontString>
-            </Layer>
+            </Layer>            
         </Layers>
 
         <Frames>
-            <Frame parentKey="DetailedInformation" inherits="ResizeLayoutFrame" hidden="true">
+            <Frame parentKey="SwitchPanel">
+                <Size x="100" y="20"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                </Anchors>
+
+                <Frames>
+                    <Button parentKey="Switch1" inherits="UIPanelButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
+                                detailedInformation.Difficulty1:Show()
+                                detailedInformation.Difficulty2:Hide()
+                                detailedInformation.Difficulty3:Hide()
+                                detailedInformation.Difficulty4:Hide()
+
+                                detailedInformation:MarkDirty()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Switch2" inherits="UIPanelButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Switch1" relativePoint="RIGHT"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
+                                detailedInformation.Difficulty1:Hide()
+                                detailedInformation.Difficulty2:Show()
+                                detailedInformation.Difficulty3:Hide()
+                                detailedInformation.Difficulty4:Hide()
+
+                                detailedInformation:MarkDirty()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Switch3" inherits="UIPanelButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Switch2" relativePoint="RIGHT"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
+                                detailedInformation.Difficulty1:Hide()
+                                detailedInformation.Difficulty2:Hide()
+                                detailedInformation.Difficulty3:Show()
+                                detailedInformation.Difficulty4:Hide()
+
+                                detailedInformation:MarkDirty()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Switch4" inherits="UIPanelButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Switch3" relativePoint="RIGHT"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
+                                detailedInformation.Difficulty1:Hide()
+                                detailedInformation.Difficulty2:Hide()
+                                detailedInformation.Difficulty3:Hide()
+                                detailedInformation.Difficulty4:Show()
+
+                                detailedInformation:MarkDirty()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="DetailedInformation" inherits="VerticalLayoutFrame" hidden="true">
+                <KeyValues>
+                    <KeyValue key="topPadding" value="5" type="number"/>
+                    <KeyValue key="bottomPadding" value="10" type="number"/>
+                    <KeyValue key="leftPadding" value="5" type="number"/>
+                    <KeyValue key="rightPadding" value="10" type="number"/>
+                    <KeyValue key="spacing" value="4" type="number"/>
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
 
                 <Frames>
                     <Frame parentKey="Base" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number"/>
+                        </KeyValues>
                     </Frame>
 
                     <Frame parentKey="Difficulty1" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Base" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Base" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number"/>
+                        </KeyValues>
                     </Frame>
 
                     <Frame parentKey="Difficulty2" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty1" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Difficulty1" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number"/>
+                        </KeyValues>
                     </Frame>
 
                     <Frame parentKey="Difficulty3" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty2" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Difficulty2" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number"/>
+                        </KeyValues>
                     </Frame>
 
                     <Frame parentKey="Difficulty4" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty3" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Difficulty3" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number"/>
+                        </KeyValues>
                     </Frame>
                 </Frames>
+
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">
+                            <Size y="5" />
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Frame>
         </Frames>
     </Frame>

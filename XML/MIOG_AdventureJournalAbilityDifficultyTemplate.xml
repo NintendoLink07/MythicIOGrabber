@@ -3,19 +3,22 @@
     <Frame name="MIOG_AdventureJournalAbilityDifficultyTemplate" inherits="ResizeLayoutFrame" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="60" />
+                <FontString parentKey="Name" inherits="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <FontHeight val="11" />
+                    <Size x="50" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Description" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true" nonspacewrap="false">
-                    <Size x="240" />
+                <FontString parentKey="Description" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true" nonspacewrap="true">
+                    <FontHeight val="11" />
+                    <Size x="280" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT" />
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                     </Anchors>
+					<!--<Color r="0.25" g="0.1484375" b=".02" a="1"/>-->
                 </FontString>
             </Layer>
         </Layers>

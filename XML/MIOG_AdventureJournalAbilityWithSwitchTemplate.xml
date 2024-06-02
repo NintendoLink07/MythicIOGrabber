@@ -2,7 +2,7 @@
 ..\..\FrameXML\UI.xsd">    
     <Frame name="MIOG_AdventureJournalAbilityWithSwitchTemplate" inherits="ResizeLayoutFrame" virtual="true">
         <KeyValues>
-			<KeyValue key="fixedWidth" value="300" type="number"/>
+			<KeyValue key="fixedWidth" value="330" type="number"/>
 			<KeyValue key="minimumHeight" value="20" type="number"/>
 		</KeyValues>
 
@@ -37,7 +37,7 @@
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
-                    <Size x="20" y="20" />
+                    <Size x="16" y="16" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
                     </Anchors>
@@ -69,6 +69,7 @@
                         <Scripts>
                             <OnClick>
                                 local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
                                 detailedInformation.Difficulty1:Show()
                                 detailedInformation.Difficulty2:Hide()
                                 detailedInformation.Difficulty3:Hide()
@@ -87,6 +88,7 @@
                         <Scripts>
                             <OnClick>
                                 local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
                                 detailedInformation.Difficulty1:Hide()
                                 detailedInformation.Difficulty2:Show()
                                 detailedInformation.Difficulty3:Hide()
@@ -105,6 +107,7 @@
                         <Scripts>
                             <OnClick>
                                 local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
                                 detailedInformation.Difficulty1:Hide()
                                 detailedInformation.Difficulty2:Hide()
                                 detailedInformation.Difficulty3:Show()
@@ -123,6 +126,7 @@
                         <Scripts>
                             <OnClick>
                                 local detailedInformation = self:GetParent():GetParent().DetailedInformation
+                                detailedInformation.Base:Hide()
                                 detailedInformation.Difficulty1:Hide()
                                 detailedInformation.Difficulty2:Hide()
                                 detailedInformation.Difficulty3:Hide()
@@ -137,11 +141,18 @@
 
             <Frame parentKey="DetailedInformation" inherits="ResizeLayoutFrame" hidden="true">
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" y="-5" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="-5" />
                 </Anchors>
 
                 <Frames>
+                    <Frame parentKey="Base" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                        </Anchors>
+                    </Frame>
+
                     <Frame parentKey="Difficulty1" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
@@ -170,6 +181,14 @@
                         </Anchors>
                     </Frame>
                 </Frames>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true">
+                            <Size x="12" y="12"/>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Frame>
         </Frames>
     </Frame>

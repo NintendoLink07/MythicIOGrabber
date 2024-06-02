@@ -1,13 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\..\FrameXML\UI.xsd">    
-
+..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_AdventureJournal" inherits="BackdropTemplate" virtual="true">
-        <KeyValues>
-            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
-        </KeyValues>
-
-        <Size x="300" y="300" />
-
         <Frames>
             <Frame parentKey="InstanceDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
                 <Size x="260" y="22" />
@@ -86,6 +79,10 @@
         </Frames>
 
         <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture parentKey="Background" setAllPoints="true" />
+            </Layer>
+
             <Layer level="ARTWORK">
                 <Texture parentKey="Status" file="Interface\ChatFrame\ChatFrameBackground">
                     <Size x="20" y="20" />

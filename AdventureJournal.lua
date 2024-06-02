@@ -1,13 +1,13 @@
 local addonName, miog = ...
 
-local regex1 = "%d+ %w+ damage"
-local regex2 = "%d+ damage"
+local regex1 = "%d+ damage"
+local regex2 = "%d+ %w+ damage"
 
-local basePool, switchPool
+local basePool --switchPool
 local isRaid
 local changingKeylevel = false
 
-local function resetJournalFrames(_, frame)
+local function resetJournalFrames(parent, frame)
     frame:Hide()
     frame.layoutIndex = nil
     frame.Name:SetText("")
@@ -20,22 +20,32 @@ local function resetJournalFrames(_, frame)
         frame.DetailedInformation:Hide()
     end
 
-    if(frame.DetailedInformation.Base) then
-        frame.DetailedInformation.Base.Name:SetText()
-        frame.DetailedInformation.Base.Description:SetText()
-    end
+    frame.SwitchPanel:Hide()
+    frame.DetailedInformation.Base:Show()
+    frame.DetailedInformation.Difficulty1:Show()
+    frame.DetailedInformation.Difficulty2:Show()
+    frame.DetailedInformation.Difficulty3:Show()
+    frame.DetailedInformation.Difficulty4:Show()
 
-    frame.DetailedInformation.Difficulty1.Name:SetText()
-    frame.DetailedInformation.Difficulty1.Description:SetText()
+    frame.DetailedInformation.Base.Name:SetText("")
+    frame.DetailedInformation.Base.Description:SetText("")
+    frame.DetailedInformation.Base.fixedWidth = frame.fixedWidth
 
-    frame.DetailedInformation.Difficulty2.Name:SetText()
-    frame.DetailedInformation.Difficulty2.Description:SetText()
+    frame.DetailedInformation.Difficulty1.Name:SetText("")
+    frame.DetailedInformation.Difficulty1.Description:SetText("")
+    frame.DetailedInformation.Difficulty1.fixedWidth = frame.fixedWidth
 
-    frame.DetailedInformation.Difficulty3.Name:SetText()
-    frame.DetailedInformation.Difficulty3.Description:SetText()
+    frame.DetailedInformation.Difficulty2.Name:SetText("")
+    frame.DetailedInformation.Difficulty2.Description:SetText("")
+    frame.DetailedInformation.Difficulty2.fixedWidth = frame.fixedWidth
 
-    frame.DetailedInformation.Difficulty4.Name:SetText()
-    frame.DetailedInformation.Difficulty4.Description:SetText()
+    frame.DetailedInformation.Difficulty3.Name:SetText("")
+    frame.DetailedInformation.Difficulty3.Description:SetText("")
+    frame.DetailedInformation.Difficulty3.fixedWidth = frame.fixedWidth
+
+    frame.DetailedInformation.Difficulty4.Name:SetText("")
+    frame.DetailedInformation.Difficulty4.Description:SetText("")
+    frame.DetailedInformation.Difficulty4.fixedWidth = frame.fixedWidth
 end
 
 local frameData = {}
@@ -59,78 +69,6 @@ local function calculateNumberIncrease(number)
     return FormatLargeNumber(miog.round(number, 0))
 end
 
-local function findStringDifferences(id, difficultyID1, difficultyID2) -- 
-    local lowestDifficultyID = frameData[id][currentDifficultyIDs[1]] and currentDifficultyIDs[1] or frameData[id][currentDifficultyIDs[2]] and currentDifficultyIDs[2] or frameData[id][currentDifficultyIDs[3]] and currentDifficultyIDs[3] or frameData[id][currentDifficultyIDs[4]] and currentDifficultyIDs[4]
-    local lowestDifficultyIndex = frameData[id][currentDifficultyIDs[1]] and 1 or frameData[id][currentDifficultyIDs[2]] and 2 or frameData[id][currentDifficultyIDs[3]] and 3 or frameData[id][currentDifficultyIDs[4]] and 4
-
-    --local firstArray = frameData[id][difficultyID1] and miog.simpleSplit(frameData[id][difficultyID1], "%s") or {}
-    --local secondArray = frameData[id][difficultyID2] and miog.simpleSplit(frameData[id][difficultyID2], "%s") or {}
-
-
-    local colorCounter
-
-   --[[ for i = lowestDifficultyIndex + 1, 4, 1 do
-        colorCounter = 1
-
-        if(frameData[id][currentDifficultyIDs[lowestDifficultyIndex] ] and frameData[id][currentDifficultyIDs[i] ]) then
-            local baseArray = miog.simpleSplit(frameData[id][currentDifficultyIDs[lowestDifficultyIndex] ], "%s") or {}
-            local checkArray = miog.simpleSplit(frameData[id][currentDifficultyIDs[i] ], "%s") or {}
-
-            for k, v in ipairs(baseArray) do
-                local baseValue = baseArray[k]
-                local checkValue = checkArray[k]
-
-                if(baseValue and checkValue) then
-                    if(baseValue ~= checkValue) then
-                        organizedFrameData[id][currentDifficultyIDs[lowestDifficultyIndex] ][k] = colorCounter
-
-                        colorCounter = colorCounter + 1
-
-                    end
-
-                else
-                    organizedFrameData[id][currentDifficultyIDs[lowestDifficultyIndex] ][k] = nil
-                
-                end
-            end
-        end
-    end
-
-    local longCheck = false
-    local longCheckString = ""
-
-    for i = 2, 4, 1 do
-        colorCounter = 1
-
-        if(frameData[id][currentDifficultyIDs[i] ] and frameData[id][currentDifficultyIDs[i - 1] ]) then
-            local baseArray = miog.simpleSplit(frameData[id][currentDifficultyIDs[i] ], "%s") or {}
-            local checkArray = miog.simpleSplit(frameData[id][currentDifficultyIDs[i - 1] ], "%s") or {}
-
-            for k, v in ipairs(baseArray) do
-                local baseValue = baseArray[k]
-                local checkValue = checkArray[k]
-
-                if(baseValue and checkValue) then
-                    if(id == "Lightning Devastation") then
-                        print(baseValue, checkValue)
-                    end
-
-                    if(baseValue ~= checkValue) then
-                        organizedFrameData[id][currentDifficultyIDs[i] ][k] = colorCounter
-
-                        colorCounter = colorCounter + 1
-
-                    end
-
-                else
-                    organizedFrameData[id][currentDifficultyIDs[i] ][k] = nil
-                
-                end
-            end
-        end
-    end]]
-end
-
 local function compareArrayValues(array, value)
     local equals = true
     local index  = 1
@@ -146,25 +84,124 @@ local function compareArrayValues(array, value)
     end
   
     return equals
-  end
+end
 
-local function stopAndGo(id, equal, smallest, largest)
+local function forwardOrderedValues(array)
+    local equals = true
+
+    if(#array > 1) then
+        for i = #array, 2, -1 do
+            if(array[i] >= array[i - 1]) then
+                
+            else
+                return false
+            end
+        end
+    end
+    
+    return equals
+end
+
+local function createBaseString(id, lowestIndex)
+    local baseArray = {}
+    local shift = 0
+
+    for n = lowestIndex, 3, 1 do
+        local array1 = frameData[id][currentDifficultyIDs[lowestIndex]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[lowestIndex]].description, "%s") or {}
+        local array2 = frameData[id][currentDifficultyIDs[n + 1]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n + 1]].description, "%s") or {}
+
+        for k, v in ipairs(array2) do
+            local firstCurrentValue = array1[k]
+            local firstFutureValue = array1[k + 1]
+
+            local thirdCurrentValue = array2[k + shift]
+
+            if(firstCurrentValue and thirdCurrentValue) then
+
+                for i = k + shift, #array2, 1 do
+                    if(firstCurrentValue == array2[i]) then
+                        --baseArray[k] = false
+
+                        break
+
+                    else
+                        baseArray[i] = false
+                        --else
+
+                        --end
+
+                        if(array2[i + 1] == "million" or array2[i + 1] == "billion") then
+                            --table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = array2[i] .. " " .. table.remove(array2, i + 1), colorIndex = xCounter})
+                            table.remove(array2, i + 1)
+                        
+                        end
+
+                        if(firstFutureValue == array2[i + 1]) then
+                            break
+                        else
+
+                            shift = shift + 1
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return baseArray
+end
+
+local function stopAndGo(id, equal, forwardOrdered)
     local lowestIndex = frameData[id][currentDifficultyIDs[1]] and 1 or frameData[id][currentDifficultyIDs[2]] and 2 or frameData[id][currentDifficultyIDs[3]] and 3 or frameData[id][currentDifficultyIDs[4]] and 4
     local lowestDifficulty = currentDifficultyIDs[lowestIndex]
 
-    local baseString
+    local baseArray = createBaseString(id, lowestIndex)
+
+    local xCounter = 1
+    local baseString = ""
+
+    --print(id, equal, forwardOrdered)
+
+    if(frameData[id][lowestDifficulty]) then
+        local lastIndex = 0
+
+        for k, v in ipairs(miog.simpleSplit(frameData[id][lowestDifficulty].description, "%s")) do
+            if(baseArray[k] ~= false) then
+                baseString = baseString .. v .. " "
+                
+            else
+                if(lastIndex == k - 1) then
+                    
+                else
+                    if(xCounter > 10) then
+                        xCounter = 1
+                    end
+
+                    baseString = baseString .. WrapTextInColorCode("[" .. xCounter .. "]", miog.AJ_CLRSCC[xCounter]) .. " "
+                    xCounter = xCounter + 1
+
+                end
+
+                lastIndex = k
+            
+            end
+
+        end
+    end
 
     if(equal) then
-        baseString = ""
+        --print(id, "EQUAL")
+        --baseString = ""
 
-        for n = 1, 3, 1 do
-            local array1 = frameData[id][currentDifficultyIDs[n]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n]].description, "%s") or {}
-            local array2 = frameData[id][currentDifficultyIDs[n + 1]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n + 1]].description, "%s") or {}
+        for n = lowestIndex, 4, 1 do
+            --frameData[id][currentDifficultyIDs[n]] and frameData[id][currentDifficultyIDs[n]].description
+            local array1 = miog.simpleSplit(baseString, "%s") or {}
+            local array2 = frameData[id][currentDifficultyIDs[n]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n]].description, "%s") or {}
     
             local shift = 0
 
             local xCounter = 1
-    
+
             for k, v in ipairs(array2) do
                 local firstCurrentValue = array1[k]
                 local firstFutureValue = array1[k + 1]
@@ -173,25 +210,60 @@ local function stopAndGo(id, equal, smallest, largest)
 
                 if(firstCurrentValue and thirdCurrentValue) then
                     for i = k + shift, #array2, 1 do
-                        local thirdFutureValue = array2[i]
+                        if(xCounter > 10) then
+                            xCounter = 1
+                        end
+
+                        --local thirdFutureValue = array2[i]
                         
                         if(firstCurrentValue == array2[i]) then
                             if(n == 1) then
-                                baseString = baseString .. firstCurrentValue .. " "
+                                --baseString = baseString .. firstCurrentValue .. " "
+                                --baseArray[i] = false
                             end
 
                             break
 
                         else
                             if(n == 1) then
-                                table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = array1[i], colorIndex = xCounter})
-                                baseString = baseString .. WrapTextInColorCode("[" .. xCounter .. "]", miog.AJ_CLRSCC[xCounter]) .. " "
+                                --table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = array1[i], colorIndex = xCounter})
+                                --baseString = baseString .. WrapTextInColorCode("[" .. xCounter .. "]", miog.AJ_CLRSCC[xCounter]) .. " "
+                                --baseArray[i] = true
                                 
                             end
 
-                            table.insert(organizedFrameData[id][currentDifficultyIDs[n + 1]], {string = array2[i], colorIndex = xCounter})
 
-                            xCounter = xCounter + 1
+                            if(n == 4 and currentDifficultyIDs[4] == 8) then
+                                local withoutComma = string.gsub(array2[i], ",", "")
+                                local maybeNumber = tonumber(withoutComma)
+
+                                local scaledNumber, found
+
+                                if(maybeNumber and array2[i + 1] and array2[i + 2]) then
+                                    local threeString = maybeNumber .. " " .. array2[i + 1] .. " " .. array2[i + 2]
+                                    found = string.find(threeString, regex2)
+                                    --print(id, 2, c, d, number2)
+
+                                elseif(maybeNumber and array2[i + 1]) then
+                                    local twoString = maybeNumber .. " " .. array2[i + 1]
+                                    found = string.find(twoString, regex1)
+                                    --print(id, 1, a, b, number)
+
+                                end
+
+                                if(found) then
+                                    scaledNumber = calculateNumberIncrease(maybeNumber)
+                                    
+                                end
+
+                                table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = scaledNumber or array2[i], colorIndex = xCounter})
+
+                            else
+                                
+                                table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = array2[i], colorIndex = xCounter})
+                            
+                            end
+
                             
                             --[[if(array2[i + 1] == "million" or array2[i + 1] == "billion") then
                                 shift = shift + 2
@@ -203,6 +275,7 @@ local function stopAndGo(id, equal, smallest, largest)
                             end]]
 
                             if(firstFutureValue == array2[i + 1]) then
+                                xCounter = xCounter + 1
                                 break
 
                             else
@@ -211,6 +284,12 @@ local function stopAndGo(id, equal, smallest, largest)
                             end
                         end
                     end
+                elseif(thirdCurrentValue) then
+                    table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = thirdCurrentValue, colorIndex = xCounter})
+
+                elseif(firstCurrentValue) then
+                    --table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = firstCurrentValue, colorIndex = xCounter})
+
                 end
             end
         end
@@ -218,13 +297,143 @@ local function stopAndGo(id, equal, smallest, largest)
 
         --IMPLEMENT FORWARD ARRAYS
 
-        local arraySizes = {}
+        local frameDataArrays = {}
     
-        for n = 1, 4, 1 do
+        for n = lowestIndex, 4, 1 do
             if(frameData[id][currentDifficultyIDs[n]]) then
-                table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = frameData[id][currentDifficultyIDs[n]].description})
+                local array = frameData[id][currentDifficultyIDs[n]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n]].description, "%s")
 
-                table.insert(arraySizes, #(miog.simpleSplit(frameData[id][currentDifficultyIDs[n]].description, "%s") or {}))
+                if(array) then
+                    frameDataArrays[n] = array
+                end
+            end
+        end
+
+        --print(id, "ORDERED EQUAL:", forwardOrdered, #frameDataArrays[4], #frameDataArrays[3], #frameDataArrays[2], #frameDataArrays[1])
+
+        if(forwardOrdered) then
+
+            for n = lowestIndex, 4, 1 do
+                --frameDataArrays[n]
+                local array1 = miog.simpleSplit(baseString, "%s") or {}
+                local array2 = frameDataArrays[n] or {}
+
+                local shift = 0
+                local xCounter = 1
+                
+                for k, v in ipairs(array2) do
+                    local firstCurrentValue = array1[k]
+                    local firstFutureValue = array1[k + 1]
+    
+                    local thirdCurrentValue = array2[k + shift]
+                    --local thirdFutureValue = higherArray[k + shift + 1]
+    
+                    if(firstCurrentValue and thirdCurrentValue) then
+                        for i = k + shift, #array2, 1 do
+                            if(xCounter > 10) then
+                                xCounter = 1
+                            end
+
+                            if(firstCurrentValue == array2[i]) then
+                                if(n == 1) then
+                                    --baseString = baseString .. firstCurrentValue .. " "
+                                    --baseArray[i] = false
+
+                                end
+    
+                                break
+    
+                            else
+
+                                if(n == 1) then
+                                    --table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = array1[i], colorIndex = xCounter})
+                                    --baseString = baseString .. WrapTextInColorCode("[" .. xCounter .. "]", miog.AJ_CLRSCC[xCounter]) .. " "
+                                    --baseArray[i] = true
+                                
+                                end
+
+                                if(n == 4 and currentDifficultyIDs[4] == 8) then
+                                    local withoutComma = string.gsub(array2[i], ",", "")
+                                    local maybeNumber = tonumber(withoutComma)
+
+                                    local scaledNumber, found
+
+                                    if(maybeNumber and array2[i + 1] and array2[i + 2]) then
+                                        local threeString = maybeNumber .. " " .. array2[i + 1] .. " " .. array2[i + 2]
+                                        found = string.find(threeString, regex2)
+                                        --print(id, 2, c, d, number2)
+
+                                    elseif(maybeNumber and array2[i + 1]) then
+                                        local twoString = maybeNumber .. " " .. array2[i + 1]
+                                        found = string.find(twoString, regex1)
+                                        --print(id, 1, a, b, number)
+
+                                    end
+
+                                    if(found) then
+                                        scaledNumber = calculateNumberIncrease(maybeNumber)
+                                        
+                                    end
+
+                                    table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = scaledNumber or array2[i], colorIndex = xCounter})
+
+                                else
+                                    table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = array2[i], colorIndex = xCounter})
+                                    
+                                end
+    
+                                --baseString = baseString .. "YYY "
+                                --baseArray[i] = false
+    
+                                --print(k, firstCurrentValue, higherArray[i])
+                            
+                                --stringArray[lowerLengthID] = stringArray[lowerLengthID] .. firstCurrentValue .. " "
+                                --stringArray[higherLengthID] = stringArray[higherLengthID] .. higherArray[i] .. " "
+    
+    
+                                if(firstFutureValue == array2[i + 1]) then
+                                    --print("BREAK")
+                                    xCounter = xCounter + 1
+                                    break
+                                else
+                                    shift = shift + 1
+                                end
+                            end
+                        end
+                    elseif(thirdCurrentValue) then
+                        table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = thirdCurrentValue, colorIndex = xCounter})
+
+                    elseif(firstCurrentValue) then
+                        --table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = firstCurrentValue, colorIndex = xCounter})
+
+                    end
+                end
+            end
+        else
+            for n = lowestIndex, 4, 1 do
+                xCounter = 1
+    
+                --table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = frameData[id][currentDifficultyIDs[n]].description})
+                
+                local array = frameDataArrays[n]
+
+                for k, v in ipairs(array) do
+                    if(xCounter > 10) then
+                        xCounter = 1
+                    end
+
+                    local withoutComma = string.gsub(v, ",", "")
+                    local maybeNumber = tonumber(withoutComma)
+
+                    if(maybeNumber) then
+                        table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = FormatLargeNumber(maybeNumber), colorIndex = xCounter})
+                        
+                    else
+                        table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = v})
+                    
+                    end
+                    
+                end
             end
         end
 
@@ -668,10 +877,31 @@ miog.selectInstance = function(journalInstanceID)
 
 	end
 
-    miog.AdventureJournal.BossDropdown.List:MarkDirty()
-
     miog.selectBoss(journalInstanceID, firstBossID)
     miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
+end
+
+local function EncounterJournal_IsHeaderTypeOverview(headerType)
+	return headerType == EJ_HTYPE_OVERVIEW;
+end
+
+local function EncounterJournal_GetRootAfterOverviews(rootSectionID)
+	local nextSectionID = rootSectionID;
+
+	repeat
+		local info = C_EncounterJournal.GetSectionInfo(nextSectionID);
+		local isOverview = info and EncounterJournal_IsHeaderTypeOverview(info.headerType);
+		if isOverview then
+			nextSectionID = info.siblingSectionID;
+		end
+	until not isOverview;
+
+	return nextSectionID;
+end
+
+local function EncounterJournal_CheckForOverview(rootSectionID)
+	local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+	return sectionInfo and EncounterJournal_IsHeaderTypeOverview(sectionInfo.headerType);
 end
 
 local difficultyIDs = {
@@ -690,85 +920,83 @@ local difficultyIDs = {
 }
 
 miog.selectBoss = function(journalInstanceID, journalEncounterID)
-    currentEncounterID = journalEncounterID
-
-    if(miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid) then
-        EJ_SetDifficulty(14)
-        isRaid = true
-        
-    else
-        EJ_SetDifficulty(1)
-        isRaid = false
-    
-    end
-
-    EJ_SelectEncounter(journalEncounterID)
-
     basePool:ReleaseAll()
-    switchPool:ReleaseAll()
+    --switchPool:ReleaseAll()
+
+    currentEncounterID = journalEncounterID
+    isRaid = miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid
+        
+    --EJ_SetDifficulty(currentDifficultyIDs[1])
+    EJ_SelectEncounter(journalEncounterID)
 
 	local stack = {}
     frameData = {}
     organizedFrameData = {}
 
     currentDifficultyIDs = difficultyIDs[isRaid and "raid" or "dungeon"]
+
     miog.AdventureJournal.Status:SetColorTexture(0, 1, 0)
 
-    local name, description, _, rootSectionID, link, journalInstanceID2, dungeonEncounterID, instanceID = EJ_GetEncounterInfo(journalEncounterID)
+    for i = 1, 4, 1 do
+        EJ_SetDifficulty(currentDifficultyIDs[i])
+        local _, _, _, rootSectionID = EJ_GetEncounterInfo(journalEncounterID)
 
-    local counter = 1
-
-    if(rootSectionID) then
-        repeat
-            local info = C_EncounterJournal.GetSectionInfo(rootSectionID)
-
-            if(info and info.title) then
-                frameData[info.title] = {}
-
-                if(info.description == nil) then
-                    miog.AdventureJournal.Status:SetColorTexture(1, 0, 0)
+        local counter = 1
+        if(rootSectionID) then
+            repeat
+                local info = C_EncounterJournal.GetSectionInfo(rootSectionID)
                 
-                end
-                
-                counter = counter + 1
+                if(info) then
+                    table.insert(stack, info.siblingSectionID)
 
-                table.insert(stack, info.siblingSectionID)
-                table.insert(stack, info.firstChildSectionID)
-                
-                for i = 1, 4, 1 do
-                    EJ_SetDifficulty(currentDifficultyIDs[i])
-                    local diffInfo = C_EncounterJournal.GetSectionInfo(rootSectionID)
-                    local text = not diffInfo.filteredByDifficulty and diffInfo.description
+                    if(info.title) then
+                        if(info.title == "Overview") then
 
-                    diffInfo.index = counter
-                    
-                    if(text and diffInfo.title) then
-                        frameData[diffInfo.title][currentDifficultyIDs[i]] = diffInfo
-                
+                        else
+                            frameData[info.title] = frameData[info.title] or {}
+                            
+                            counter = counter + 1
+                            table.insert(stack, info.firstChildSectionID)
+                            local diffInfo = C_EncounterJournal.GetSectionInfo(rootSectionID)
+                            local text = not diffInfo.filteredByDifficulty and diffInfo.description
+                            
+                            if(text) then
+                                local desc = string.gsub(diffInfo.description, "|[cC]%x%x%x%x%x%x%x%x", "")
+                                desc = string.gsub(desc, "$bullet; ", "")
+                                --desc = string.gsub(desc, "|T(.+)|t", "")
+
+                                frameData[diffInfo.title][currentDifficultyIDs[i]] = {
+                                    title = diffInfo.title,
+                                    description = desc,
+                                    headerType = diffInfo.headerType,
+                                    abilityIcon = diffInfo.abilityIcon,
+                                    index = counter
+                                }
+                        
+                            end
+                        end
+                    else
+                        miog.AdventureJournal.Status:SetColorTexture(1, 0, 0)
+
                     end
+                else
+                    miog.AdventureJournal.Status:SetColorTexture(1, 0, 0)
+
                 end
-            end
 
-            rootSectionID = table.remove(stack)
-        until not rootSectionID
-
-        
+                rootSectionID = table.remove(stack)
+            until not rootSectionID
+        end
     end
 
     for id, difficultyData in pairs(frameData) do
         local compareArray = {}
         local compareValue
 
-        local smallestValue = 10000
-        local largestValue = 0
-
         for i = 1, 4, 1 do
             local array = difficultyData[currentDifficultyIDs[i]] and miog.simpleSplit(difficultyData[currentDifficultyIDs[i]].description, "%s")
 
             if(array) then
-                smallestValue = min(smallestValue, #array)
-                largestValue = max(largestValue, #array)
-
                 if(compareValue) then
                     table.insert(compareArray, #array)
                     
@@ -780,67 +1008,110 @@ miog.selectBoss = function(journalInstanceID, journalEncounterID)
         end
         
         local equal = compareArrayValues(compareArray, compareValue)
-        local frame
+        local forwardOrdered = forwardOrderedValues(compareArray)
+        local lowestDifficulty = difficultyData[currentDifficultyIDs[1]] ~= nil and currentDifficultyIDs[1] or difficultyData[currentDifficultyIDs[2]] ~= nil and currentDifficultyIDs[2] or difficultyData[currentDifficultyIDs[3]] ~= nil and currentDifficultyIDs[3] or difficultyData[currentDifficultyIDs[4]] ~= nil and currentDifficultyIDs[4]
 
-        if(equal) then
+        if(lowestDifficulty) then
+            organizedFrameData[difficultyData[lowestDifficulty].title] = {
+                [currentDifficultyIDs[1]] = {},
+                [currentDifficultyIDs[2]] = {},
+                [currentDifficultyIDs[3]] = {},
+                [currentDifficultyIDs[4]] = {},
+            }
+
+            local baseString = stopAndGo(id, equal, forwardOrdered)
+
+
+            local concatString
+
+            local frame
+            local hasNoDifficultyData = compareArrayValues({#organizedFrameData[id][currentDifficultyIDs[1]], #organizedFrameData[id][currentDifficultyIDs[2]], #organizedFrameData[id][currentDifficultyIDs[3]], #organizedFrameData[id][currentDifficultyIDs[4]]}, 0)
+
             frame = basePool:Acquire()
 
-        else
-            frame = switchPool:Acquire()
+            if(not equal and not forwardOrdered) then
+                --frame = switchPool:Acquire()
+                frame.SwitchPanel:Show()
+                frame.DetailedInformation.Base:Hide()
+                frame.DetailedInformation.Difficulty2:Hide()
+                frame.DetailedInformation.Difficulty3:Hide()
+                frame.DetailedInformation.Difficulty4:Hide()
+
+            else
+                frame.SwitchPanel:Hide()
+            
+            end
+            
+            if(hasNoDifficultyData) then
+                --frame = switchPool:Acquire()
+
+                if(baseString == "") then
+                    --print(id, "HAS NOTHING")
+                    frame.SwitchPanel:Hide()
+                    frame.ExpandFrame:SetShown(false)
+
+                else
+                    --print(id, "HAS ONLY BASE")
+                    frame.SwitchPanel:Hide()
+                    frame.DetailedInformation.Difficulty1:Hide()
+                    frame.DetailedInformation.Base:Show()
+                
+                    frame.ExpandFrame:SetShown(true)
+                end
+            else
+                frame.ExpandFrame:SetShown(true)
+            
+            end
+
+            frame.layoutIndex = difficultyData[lowestDifficulty].index
+            --frame.leftPadding = (difficultyData[lowestDifficulty].headerType or 0) * 20
+            frame.fixedWidth = miog.AdventureJournal.ScrollFrame:GetWidth()
+            frame.Name:SetText(difficultyData[lowestDifficulty].title)
+            frame.Icon:SetTexture(difficultyData[lowestDifficulty].abilityIcon)
+            frame:Show()
+
+            frame.DetailedInformation.Difficulty1.Name:SetText(isRaid and "LFR" or "Normal")
+            frame.DetailedInformation.Difficulty2.Name:SetText(isRaid and "Normal" or "Heroic")
+            frame.DetailedInformation.Difficulty3.Name:SetText(isRaid and "Heroic" or "Mythic")
+            frame.DetailedInformation.Difficulty4.Name:SetText(isRaid and "Mythic" or "Mythic+")
 
             frame.SwitchPanel.Switch1:SetText(isRaid and "L" or "N")
             frame.SwitchPanel.Switch2:SetText(isRaid and "N" or "H")
             frame.SwitchPanel.Switch3:SetText(isRaid and "H" or "M")
             frame.SwitchPanel.Switch4:SetText(isRaid and "M" or "M+")
-        end
+            
+            if(frame.DetailedInformation.Base) then
+                frame.DetailedInformation.Base.Name:SetText("Base")
+                frame.DetailedInformation.Base.Description:SetText(baseString)
+            end
 
-        local lowestDifficulty = difficultyData[currentDifficultyIDs[1]] ~= nil and currentDifficultyIDs[1] or difficultyData[currentDifficultyIDs[2]] ~= nil and currentDifficultyIDs[2] or difficultyData[currentDifficultyIDs[3]] ~= nil and currentDifficultyIDs[3] or difficultyData[currentDifficultyIDs[4]] ~= nil and currentDifficultyIDs[4]
+            for i = 1, 4, 1 do
+                concatString = ""
 
-        frame.layoutIndex = difficultyData[lowestDifficulty].index
-        frame.leftPadding = (difficultyData[lowestDifficulty].headerType or 0) * 20
-        frame.Name:SetText(difficultyData[lowestDifficulty].title)
-        frame.Icon:SetTexture(difficultyData[lowestDifficulty].abilityIcon)
-        frame:Show()
+                if(difficultyData[currentDifficultyIDs[i]] ~= nil) then
+                    for k, v in ipairs(organizedFrameData[id][currentDifficultyIDs[i]]) do
+                        if(v.colorIndex) then
+                            concatString = concatString .. WrapTextInColorCode(v.string, miog.AJ_CLRSCC[v.colorIndex]) .. " "
 
-        frame.DetailedInformation.Difficulty1.Name:SetText(isRaid and "LFR" or "Normal")
-        frame.DetailedInformation.Difficulty2.Name:SetText(isRaid and "Normal" or "Heroic")
-        frame.DetailedInformation.Difficulty3.Name:SetText(isRaid and "Heroic" or "Mythic")
-        frame.DetailedInformation.Difficulty4.Name:SetText(isRaid and "Mythic" or "Mythic+")
+                        else
+                            concatString = concatString .. v.string .. " "
+
+                        end
+
+                    end
+
+                    if(concatString == "") then
+                        concatString = WrapTextInColorCode("Mechanic is implemented on " .. DifficultyUtil.GetDifficultyName(currentDifficultyIDs[i]), "FF00C200")
+
+                    end
         
-
-        organizedFrameData[difficultyData[lowestDifficulty].title] = {
-            [currentDifficultyIDs[1]] = {},
-            [currentDifficultyIDs[2]] = {},
-            [currentDifficultyIDs[3]] = {},
-            [currentDifficultyIDs[4]] = {},
-        }
+                else
+                    concatString = WrapTextInColorCode("Mechanic not implemented on " .. DifficultyUtil.GetDifficultyName(currentDifficultyIDs[i]), "FFB92D27")
         
-        frame.ExpandFrame:SetShown(difficultyData[currentDifficultyIDs[1]] ~= nil or difficultyData[currentDifficultyIDs[2]] ~= nil or difficultyData[currentDifficultyIDs[3]] ~= nil or difficultyData[currentDifficultyIDs[4]] ~= nil)
-
-        local baseString = stopAndGo(id, equal, smallestValue, largestValue)
-
-        if(frame.DetailedInformation.Base) then
-            frame.DetailedInformation.Base.Name:SetText("Base")
-            frame.DetailedInformation.Base.Description:SetText(baseString)
-        end
-
-        local concatString
-
-        for i = 1, 4, 1 do
-            concatString = ""
-
-            if(difficultyData[currentDifficultyIDs[i]] ~= nil) then
-                for k, v in ipairs(organizedFrameData[id][currentDifficultyIDs[i]]) do
-                    concatString = concatString .. WrapTextInColorCode(v.string, miog.AJ_CLRSCC[v.colorIndex] or "FFFFFFFF") .. " "
-
                 end
-     
-             else
-                 concatString = WrapTextInColorCode("Mechanic not implemented on " .. DifficultyUtil.GetDifficultyName(currentDifficultyIDs[i]), "FFB92D27")
-     
-             end
 
-             frame.DetailedInformation["Difficulty" .. i].Description:SetText(concatString)
+                frame.DetailedInformation["Difficulty" .. i].Description:SetText(concatString)
+            end
         end
     end
 
@@ -851,10 +1122,9 @@ miog.loadAdventureJournal = function()
     miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.pveFrame2, "MIOG_AdventureJournal")
     miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
     miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
-    miog.AdventureJournal:Hide()
 
     basePool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
-    switchPool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityWithSwitchTemplate", resetJournalFrames)
+    --switchPool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityWithSwitchTemplate", resetJournalFrames)
 
 	local instanceDropdown = miog.AdventureJournal.InstanceDropdown
 	instanceDropdown:OnLoad()
