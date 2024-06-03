@@ -130,5 +130,7 @@ XML\MIOG_AdventureJournal.xml
 XML\MIOG_AdventureJournalAbilityTemplate.xml
 XML\MIOG_AdventureJournalAbilityWithSwitchTemplate.xml
 XML\MIOG_AdventureJournalAbilityDifficultyTemplate.xml
+XML\MIOG_AdventureJournalLootItemTemplate.xml
+XML\MIOG_AdventureJournalLootSlotLineTemplate.xml
 
 FuzzyAlgorithm.lua

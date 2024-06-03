@@ -3,11 +3,41 @@ local addonName, miog = ...
 local regex1 = "%d+ damage"
 local regex2 = "%d+ %w+ damage"
 
-local basePool --switchPool
+local basePool, lootPool, slotLinePool --switchPool
 local isRaid
 local changingKeylevel = false
 
-local function resetJournalFrames(parent, frame)
+local function resetSlotLine(_, frame)
+    frame:Hide()
+    frame.layoutIndex = nil
+    frame.Name:SetText()
+end
+
+local function resetLootItemFrames(_, frame)
+    frame:Hide()
+    frame.layoutIndex = nil
+    frame.BasicInformation.Name:SetText("")
+    frame.BasicInformation.Icon:SetTexture(nil)
+    frame.BasicInformation.ExpandFrame:Show()
+
+    frame.fixedWidth = miog.AdventureJournal.LootFrame:GetWidth()
+
+    frame.BasicInformation.Difficulty1Icon:SetTexture(nil)
+    frame.BasicInformation.Difficulty1Icon:SetScript("OnEnter", nil)
+
+    frame.BasicInformation.Difficulty2Icon:SetTexture(nil)
+    frame.BasicInformation.Difficulty2Icon:SetScript("OnEnter", nil)
+
+    frame.BasicInformation.Difficulty3Icon:SetTexture(nil)
+    frame.BasicInformation.Difficulty3Icon:SetScript("OnEnter", nil)
+
+    frame.BasicInformation.Difficulty4Icon:SetTexture(nil)
+    frame.BasicInformation.Difficulty4Icon:SetScript("OnEnter", nil)
+end
+
+local frameWidth
+
+local function resetJournalFrames(_, frame)
     frame:Hide()
     frame.layoutIndex = nil
     frame.Name:SetText("")
@@ -20,7 +50,7 @@ local function resetJournalFrames(parent, frame)
         frame.DetailedInformation:Hide()
     end
 
-    frame.SwitchPanel:Hide()
+    frame.SwitchPanel:Show()
     frame.DetailedInformation.Base:Show()
     frame.DetailedInformation.Difficulty1:Show()
     frame.DetailedInformation.Difficulty2:Show()
@@ -29,26 +59,27 @@ local function resetJournalFrames(parent, frame)
 
     frame.DetailedInformation.Base.Name:SetText("")
     frame.DetailedInformation.Base.Description:SetText("")
-    frame.DetailedInformation.Base.fixedWidth = frame.fixedWidth
+    frame.DetailedInformation.Base.fixedWidth = frameWidth
 
     frame.DetailedInformation.Difficulty1.Name:SetText("")
     frame.DetailedInformation.Difficulty1.Description:SetText("")
-    frame.DetailedInformation.Difficulty1.fixedWidth = frame.fixedWidth
+    frame.DetailedInformation.Difficulty1.fixedWidth = frameWidth
 
     frame.DetailedInformation.Difficulty2.Name:SetText("")
     frame.DetailedInformation.Difficulty2.Description:SetText("")
-    frame.DetailedInformation.Difficulty2.fixedWidth = frame.fixedWidth
+    frame.DetailedInformation.Difficulty2.fixedWidth = frameWidth
 
     frame.DetailedInformation.Difficulty3.Name:SetText("")
     frame.DetailedInformation.Difficulty3.Description:SetText("")
-    frame.DetailedInformation.Difficulty3.fixedWidth = frame.fixedWidth
+    frame.DetailedInformation.Difficulty3.fixedWidth = frameWidth
 
     frame.DetailedInformation.Difficulty4.Name:SetText("")
     frame.DetailedInformation.Difficulty4.Description:SetText("")
-    frame.DetailedInformation.Difficulty4.fixedWidth = frame.fixedWidth
+    frame.DetailedInformation.Difficulty4.fixedWidth = frameWidth
 end
 
 local frameData = {}
+local lootData = {}
 local organizedFrameData = {}
 local currentDifficultyIDs
 local currentEncounterID
@@ -836,29 +867,6 @@ miog.selectInstance = function(journalInstanceID)
     miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
 end
 
-local function EncounterJournal_IsHeaderTypeOverview(headerType)
-	return headerType == EJ_HTYPE_OVERVIEW;
-end
-
-local function EncounterJournal_GetRootAfterOverviews(rootSectionID)
-	local nextSectionID = rootSectionID;
-
-	repeat
-		local info = C_EncounterJournal.GetSectionInfo(nextSectionID);
-		local isOverview = info and EncounterJournal_IsHeaderTypeOverview(info.headerType);
-		if isOverview then
-			nextSectionID = info.siblingSectionID;
-		end
-	until not isOverview;
-
-	return nextSectionID;
-end
-
-local function EncounterJournal_CheckForOverview(rootSectionID)
-	local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
-	return sectionInfo and EncounterJournal_IsHeaderTypeOverview(sectionInfo.headerType);
-end
-
 local difficultyIDs = {
     raid = {
         17,
@@ -873,6 +881,68 @@ local difficultyIDs = {
         8
     }
 }
+
+local function retrieveItemInfoFromCurrentEncounter()
+    lootPool:ReleaseAll()
+    slotLinePool:ReleaseAll()
+
+    lootData = {}
+
+    for i = 1, 4, 1 do
+        EJ_SetDifficulty(currentDifficultyIDs[i])
+
+        for n = 1, EJ_GetNumLoot(), 1 do
+            local itemInfo = C_EncounterJournal.GetLootInfoByIndex(n)
+
+            if(itemInfo and itemInfo.name) then
+                lootData[itemInfo.itemID] = lootData[itemInfo.itemID] or {
+                    name = itemInfo.name,
+                    icon = itemInfo.icon,
+                    index = itemInfo.filterType or 20,
+                    slot = itemInfo.slot == "" and "Other" or itemInfo.slot,
+                    links = {}
+                }
+
+                table.insert(lootData[itemInfo.itemID].links, itemInfo.link)
+
+            end
+        end
+    end
+
+    local slotLines = {}
+
+    print("-------------------------------")
+
+    for k, v in pairs(lootData) do
+        if(not slotLines[v.index]) then
+            local line = slotLinePool:Acquire()
+            line:SetWidth(frameWidth)
+            line.layoutIndex = v.index * 10
+            line.Name:SetText(v.slot)
+            line:Show()
+
+            slotLines[v.index] = true
+        end
+
+        local frame = lootPool:Acquire()
+        frame.BasicInformation.Name:SetText(v.name)
+        frame.BasicInformation.Icon:SetTexture(v.icon)
+        frame.layoutIndex = v.index * 10 + 1
+
+        for x = 1, #v.links, 1 do
+            frame.BasicInformation["Difficulty" .. x .. "Icon"]:SetTexture(v.icon)
+            frame.BasicInformation["Difficulty" .. x .. "Icon"]:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetHyperlink(v.links[x])
+            end)
+            
+        end
+
+        frame:Show()
+    end
+
+    miog.AdventureJournal.LootFrame.Container:MarkDirty()
+end
 
 miog.selectBoss = function(journalInstanceID, journalEncounterID)
     basePool:ReleaseAll()
@@ -892,8 +962,11 @@ miog.selectBoss = function(journalInstanceID, journalEncounterID)
 
     miog.AdventureJournal.Status:SetColorTexture(0, 1, 0)
 
+    retrieveItemInfoFromCurrentEncounter()
+
     for i = 1, 4, 1 do
         EJ_SetDifficulty(currentDifficultyIDs[i])
+
         local _, _, _, rootSectionID = EJ_GetEncounterInfo(journalEncounterID)
 
         local counter = 1
@@ -988,6 +1061,7 @@ miog.selectBoss = function(journalInstanceID, journalEncounterID)
                 --frame = switchPool:Acquire()
                 frame.SwitchPanel:Show()
                 frame.DetailedInformation.Base:Hide()
+                frame.DetailedInformation.Difficulty1:Hide()
                 frame.DetailedInformation.Difficulty2:Hide()
                 frame.DetailedInformation.Difficulty3:Hide()
                 frame.DetailedInformation.Difficulty4:Hide()
@@ -998,26 +1072,24 @@ miog.selectBoss = function(journalInstanceID, journalEncounterID)
             end
             
             if(hasNoDifficultyData) then
+                frame.SwitchPanel:Hide()
 
                 if(baseString == "") then
-                    frame.SwitchPanel:Hide()
                     frame.ExpandFrame:SetShown(false)
 
                 else
-                    frame.SwitchPanel:Hide()
-                    frame.DetailedInformation.Difficulty1:Hide()
                     frame.DetailedInformation.Base:Show()
-                
                     frame.ExpandFrame:SetShown(true)
                 end
             else
+                frame.DetailedInformation.Difficulty1:Show()
                 frame.ExpandFrame:SetShown(true)
             
             end
 
             frame.layoutIndex = difficultyData[lowestDifficulty].index
             --frame.leftPadding = (difficultyData[lowestDifficulty].headerType or 0) * 20
-            frame.fixedWidth = miog.AdventureJournal.ScrollFrame:GetWidth()
+            frame.fixedWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
             frame.Name:SetText(difficultyData[lowestDifficulty].title)
             frame.Icon:SetTexture(difficultyData[lowestDifficulty].abilityIcon)
             frame:Show()
@@ -1067,17 +1139,18 @@ miog.selectBoss = function(journalInstanceID, journalEncounterID)
         end
     end
 
-    miog.AdventureJournal.ScrollFrame.Container:MarkDirty()
+    miog.AdventureJournal.AbilitiesFrame.Container:MarkDirty()
 end
 
 miog.loadAdventureJournal = function()
     miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.pveFrame2, "MIOG_AdventureJournal")
     miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
     miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
-    miog.AdventureJournal:Hide()
+    frameWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
 
-    basePool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
-    --switchPool = CreateFramePool("Frame", miog.AdventureJournal.ScrollFrame.Container, "MIOG_AdventureJournalAbilityWithSwitchTemplate", resetJournalFrames)
+    basePool = CreateFramePool("Frame", miog.AdventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
+    lootPool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootItemTemplate", resetLootItemFrames)
+    slotLinePool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootSlotLineTemplate", resetSlotLine)
 
 	local instanceDropdown = miog.AdventureJournal.InstanceDropdown
 	instanceDropdown:OnLoad()
@@ -1087,9 +1160,71 @@ miog.loadAdventureJournal = function()
 
 	local keylevelDropdown = miog.AdventureJournal.KeylevelDropdown
     keylevelDropdown:OnLoad()
-    
-    local keytable = {}
 
+	local classSpecDropdown = miog.AdventureJournal.SettingsBar.ClassSpecDropdown
+    classSpecDropdown:OnLoad()
+
+    local info = {}
+    info.entryType = "option"
+    info.index = 0
+    info.text = ALL_CLASSES
+    info.value = 0
+    info.func = function()
+        EJ_SetLootFilter(0, 0)
+        retrieveItemInfoFromCurrentEncounter()
+    end
+
+    classSpecDropdown:CreateEntryFrame(info)
+
+    for k, v in ipairs(miog.CLASSES) do
+
+        local info = {}
+        info.entryType = "option"
+        info.index = k
+        info.text = GetClassInfo(k)
+        info.value = k
+        info.func = function()
+            EJ_SetLootFilter(k, GetSpecializationInfoForClassID(k, 1))
+            retrieveItemInfoFromCurrentEncounter()
+        end
+
+        classSpecDropdown:CreateEntryFrame(info)
+
+        for x, y in ipairs(v.specs) do
+            local id, name, description, icon, role, classFile, className = GetSpecializationInfoByID(y)
+
+            local specInfo = {}
+            specInfo.entryType = "option"
+            specInfo.parentIndex = k
+            specInfo.index = y
+            specInfo.text = name
+            specInfo.value = y
+            specInfo.func = function()
+                EJ_SetLootFilter(k, y)
+                retrieveItemInfoFromCurrentEncounter()
+            end
+
+            classSpecDropdown:CreateEntryFrame(specInfo)
+        end
+
+    end
+
+	local slotDropdown = miog.AdventureJournal.SettingsBar.SlotDropdown
+    slotDropdown:OnLoad()
+
+    for k, v in pairs(Enum.ItemSlotFilterType) do
+        local info = {}
+        info.entryType = "option"
+        info.index = v
+        info.text = k
+        info.value = v
+        info.func = function()
+            C_EncounterJournal.SetSlotFilter(v)
+            retrieveItemInfoFromCurrentEncounter()
+        end
+
+        miog.AdventureJournal.SettingsBar.SlotDropdown:CreateEntryFrame(info)
+    end
 
     for i = 2, 40, 1 do
         local keyInfo = {}

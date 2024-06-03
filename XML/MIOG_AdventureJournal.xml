@@ -23,34 +23,70 @@
                 </Anchors>
             </Frame>
 
-            <Button parentKey="Model" inherits="UIPanelButtonTemplate">
+            <Button parentKey="Model" inherits="UIPanelButtonTemplate" text="M">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Loot" inherits="UIPanelButtonTemplate">
+            <Button parentKey="Loot" inherits="UIPanelButtonTemplate" text="L">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="RIGHT" relativeKey="$parent.Model" relativePoint="LEFT"/>
                 </Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent().AbilitiesFrame:Hide()
+                        self:GetParent().LootFrame:Show()
+                    </OnClick>
+                </Scripts>
             </Button>
 
-            <Button parentKey="Abilities" inherits="UIPanelButtonTemplate">
+            <Button parentKey="Abilities" inherits="UIPanelButtonTemplate" text="A">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="RIGHT" relativeKey="$parent.Loot" relativePoint="LEFT"/>
                 </Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent().LootFrame:Hide()
+                        self:GetParent().AbilitiesFrame:Show()
+                    </OnClick>
+                </Scripts>
             </Button>
+
+            <Frame parentKey="SettingsBar">
+                <Size x="260" y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="ClassSpecDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                        <Size x="140" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="SlotDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                        <Size x="120" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.ClassSpecDropdown" relativePoint="RIGHT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
                                         
-            <ScrollFrame parentKey="ScrollFrame" inherits="BackdropTemplate, ScrollFrameTemplate">
+            <ScrollFrame parentKey="AbilitiesFrame" inherits="ScrollFrameTemplate">
                 <KeyValues>
                     <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                 </KeyValues>
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SettingsBar" relativePoint="BOTTOMLEFT"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
 
@@ -58,11 +94,32 @@
                     <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
                         <KeyValues>
                             <KeyValue key="align" value="top" />
-                            <KeyValue key="spacing" value="10" />
+                            <KeyValue key="spacing" value="4" />
                         </KeyValues>
                     </Frame>
                 </ScrollChild>
             </ScrollFrame>
+
+            <ScrollFrame parentKey="LootFrame" inherits="ScrollFrameTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SettingsBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                        <KeyValues>
+                            <KeyValue key="align" value="top" />
+                            <KeyValue key="spacing" value="4" />
+                        </KeyValues>
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+
 
             <!--<Frame parentKey="SpecificScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">
                 <Anchors>

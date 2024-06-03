@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\..\FrameXML\UI.xsd">    
+..\..\FrameXML\UI.xsd">
+
     <Frame name="MIOG_AdventureJournalAbilityTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
         <KeyValues>
-			<KeyValue key="fixedWidth" value="330" type="number"/>
 			<KeyValue key="minimumHeight" value="20" type="number"/>
 		</KeyValues>
 
@@ -54,9 +54,10 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="AbilityName">
+                <FontString parentKey="Name" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="AbilityName">
+                    <FontHeight val="11" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" />
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1" />
                     </Anchors>
                 </FontString>
             </Layer>            
@@ -153,7 +154,7 @@
                     <KeyValue key="topPadding" value="5" type="number"/>
                     <KeyValue key="bottomPadding" value="10" type="number"/>
                     <KeyValue key="leftPadding" value="5" type="number"/>
-                    <KeyValue key="rightPadding" value="10" type="number"/>
+                    <KeyValue key="rightPadding" value="5" type="number"/>
                     <KeyValue key="spacing" value="4" type="number"/>
                 </KeyValues>
 
@@ -199,8 +200,8 @@
                         <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">
                             <Size y="5" />
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1"/>
                             </Anchors>
                         </Texture>
                     </Layer>
