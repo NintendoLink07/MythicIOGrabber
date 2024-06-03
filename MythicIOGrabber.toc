@@ -10,7 +10,7 @@
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
 
 ## X-Curse-Project-ID: 916354
-## X-Wago-ID: mythiciograbber
+## X-Wago-ID: EGPXd3G1
 ## X-Website: https://github.com/NintendoLink07/MythicIOGrabber
 
 Libs\libs.xml
