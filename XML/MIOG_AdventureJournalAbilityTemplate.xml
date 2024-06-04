@@ -35,6 +35,11 @@
                 self:SetBackdrop( {edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
                 self:SetBackdropBorderColor(PAPER_FRAME_EXPANDED_COLOR:GetRGB())
             </OnLoad>
+            <OnMouseDown>
+                if(IsLeftShiftKeyDown()) then
+                    ChatEdit_InsertLink("|cff71d5ff|Haddon:MythicIOGrabber:aj:ability:" .. self.encounterID .. ":" .. self.abilityTitle .. "|h[MIOG_AJ: " .. GetSpellInfo(self.spellID) .. "]|h|r")
+                end
+            </OnMouseDown>
         </Scripts>
 
         <Layers>
@@ -86,6 +91,8 @@
                                 detailedInformation.Difficulty4:Hide()
 
                                 detailedInformation:MarkDirty()
+                                self:GetParent():GetParent().ExpandFrame:SetState(true)
+                                detailedInformation:Show()
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -105,6 +112,8 @@
                                 detailedInformation.Difficulty4:Hide()
 
                                 detailedInformation:MarkDirty()
+                                self:GetParent():GetParent().ExpandFrame:SetState(true)
+                                detailedInformation:Show()
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -124,6 +133,8 @@
                                 detailedInformation.Difficulty4:Hide()
 
                                 detailedInformation:MarkDirty()
+                                self:GetParent():GetParent().ExpandFrame:SetState(true)
+                                detailedInformation:Show()
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -143,6 +154,8 @@
                                 detailedInformation.Difficulty4:Show()
 
                                 detailedInformation:MarkDirty()
+                                self:GetParent():GetParent().ExpandFrame:SetState(true)
+                                detailedInformation:Show()
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -170,28 +183,8 @@
                         </KeyValues>
                     </Frame>
 
-                    <Frame parentKey="Difficulty1" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number"/>
-                        </KeyValues>
-                    </Frame>
-
-                    <Frame parentKey="Difficulty2" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="3" type="number"/>
-                        </KeyValues>
-                    </Frame>
-
-                    <Frame parentKey="Difficulty3" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="4" type="number"/>
-                        </KeyValues>
-                    </Frame>
-
-                    <Frame parentKey="Difficulty4" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="5" type="number"/>
-                        </KeyValues>
+                    <Frame parentKey="Difficulties" inherits="VerticalLayoutFrame">
+                    
                     </Frame>
                 </Frames>
 

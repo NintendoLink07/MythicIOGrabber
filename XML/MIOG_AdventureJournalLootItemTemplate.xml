@@ -45,11 +45,16 @@
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3"/>
                             </Anchors>
-
+                            
                             <Scripts>
                                 <OnLeave>
                                     GameTooltip:Hide()
                                 </OnLeave>
+                                <OnMouseDown>
+                                    if(IsLeftShiftKeyDown()) then
+                                        ChatEdit_InsertLink(self.itemLink)
+                                    end
+                                </OnMouseDown>
                             </Scripts>
                         </Texture>
 
@@ -63,6 +68,11 @@
                                 <OnLeave>
                                     GameTooltip:Hide()
                                 </OnLeave>
+                                <OnMouseDown>
+                                    if(IsLeftShiftKeyDown()) then
+                                        ChatEdit_InsertLink(self.itemLink)
+                                    end
+                                </OnMouseDown>
                             </Scripts>
                         </Texture>
 
@@ -76,6 +86,11 @@
                                 <OnLeave>
                                     GameTooltip:Hide()
                                 </OnLeave>
+                                <OnMouseDown>
+                                    if(IsLeftShiftKeyDown()) then
+                                        ChatEdit_InsertLink(self.itemLink)
+                                    end
+                                </OnMouseDown>
                             </Scripts>
                         </Texture>
 
@@ -89,6 +104,11 @@
                                 <OnLeave>
                                     GameTooltip:Hide()
                                 </OnLeave>
+                                <OnMouseDown>
+                                    if(IsLeftShiftKeyDown()) then
+                                        ChatEdit_InsertLink(self.itemLink)
+                                    end
+                                </OnMouseDown>
                             </Scripts>
                         </Texture>
                     </Layer>  
@@ -129,6 +149,17 @@
                 </Texture>
             </Layer>
         </Layers>
+                        
+        <Scripts>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+            <OnMouseDown>
+                if(IsLeftShiftKeyDown()) then
+                    ChatEdit_InsertLink(self.itemLink)
+                end
+            </OnMouseDown>
+        </Scripts>
 
         <Frames>
             <Frame parentKey="DetailedInformation" inherits="VerticalLayoutFrame" hidden="true">

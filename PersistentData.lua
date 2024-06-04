@@ -1217,50 +1217,50 @@ local function loadRawData()
 
 	for x = 1, EJ_GetNumTiers() - 1, 1 do
 		EJ_SelectTier(x)
-			for k = 1, 2, 1 do
-				local isRaid = k == 1 and true or false
+		
+		for k = 1, 2, 1 do
+			local isRaid = k == 1 and true or false
 
-				for i = 1, 5000, 1 do
-					local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
+			for i = 1, 5000, 1 do
+				local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
 
-					if(journalInstanceID) then
-						miog.JOURNAL_INSTANCE_INFO[journalInstanceID] = {
-							name = name,
-							isRaid = isRaid,
-							mapID = mapID,
-						}
+				if(journalInstanceID) then
+					miog.JOURNAL_INSTANCE_INFO[journalInstanceID] = {
+						name = name,
+						isRaid = isRaid,
+						mapID = mapID,
+					}
 
-						local info = {}
-						--info.icon = miog.ACTIVITY_INFO[activityID].icon
+					local info = {}
+					--info.icon = miog.ACTIVITY_INFO[activityID].icon
+				
+					info.index = i + (isRaid and 1 or 300)
+					info.entryType = "option"
+					info.text = name
+					info.parentIndex = x + 10000
+					info.value = journalInstanceID
+					info.func = function()
+						EJ_SelectTier(x)
+						miog.selectInstance(info.value)
+						--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
+				
+					end
+
+					if(isRaid) then
+						adventureJournalRaidTable[#adventureJournalRaidTable+1] = info
+
+					else
+						adventureJournalDungeonTable[#adventureJournalDungeonTable+1] = info
 					
-						info.index = i + (isRaid and 1 or 300)
-						info.entryType = "option"
-						info.text = name
-						info.parentIndex = x + 10000
-						info.value = journalInstanceID
-						info.func = function()
-							EJ_SelectTier(x)
-							miog.AdventureJournal.currentInstanceID = journalInstanceID
-							miog.selectInstance(info.value)
-							--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
-					
-						end
-
-						if(isRaid) then
-							adventureJournalRaidTable[#adventureJournalRaidTable+1] = info
-
-						else
-							adventureJournalDungeonTable[#adventureJournalDungeonTable+1] = info
-						
-						end
 					end
 				end
-
-				if(not isRaid) then
-					miog.AdventureJournal.InstanceDropdown:CreateSeparator(299, x + 10000)
-					
-				end
 			end
+
+			if(not isRaid) then
+				miog.AdventureJournal.InstanceDropdown:CreateSeparator(299, x + 10000)
+				
+			end
+		end
 	end
 
 	for k, v in ipairs(adventureJournalRaidTable) do

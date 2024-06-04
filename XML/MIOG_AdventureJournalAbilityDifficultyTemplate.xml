@@ -5,20 +5,18 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" inherits="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <FontHeight val="11" />
-                    <Size x="50" />
+                    <Size x="85" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Description" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true" nonspacewrap="true">
+                <FontString parentKey="Description" font="LibMono" justifyH="LEFT" justifyV="TOP" wordwrap="true" nonspacewrap="true">
                     <FontHeight val="11" />
-                    <Size x="280" />
+                    <Size x="270" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT" />
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                     </Anchors>
-					<!--<Color r="0.25" g="0.1484375" b=".02" a="1"/>-->
                 </FontString>
             </Layer>
         </Layers>

@@ -15,43 +15,45 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
             </Frame>
-            
-            <Frame parentKey="KeylevelDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
-                <Size x="44" y="22" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="TOPRIGHT"/>
-                </Anchors>
-            </Frame>
 
-            <Button parentKey="Model" inherits="UIPanelButtonTemplate" text="M">
-                <Size x="20" y="20" />
+            <Button parentKey="Abilities" inherits="UIPanelDynamicResizeButtonTemplate" text="Abilities">
+                <Size x="50" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                 </Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent().LootFrame:Hide()
+                        self:GetParent().ModelScene:Hide()
+                        self:GetParent().AbilitiesFrame:Show()
+                    </OnClick>
+                </Scripts>
             </Button>
 
-            <Button parentKey="Loot" inherits="UIPanelButtonTemplate" text="L">
-                <Size x="20" y="20" />
+            <Button parentKey="Loot" inherits="UIPanelDynamicResizeButtonTemplate" text="Loot">
+                <Size x="50" y="20" />
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.Model" relativePoint="LEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Abilities" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
                 <Scripts>
                     <OnClick>
                         self:GetParent().AbilitiesFrame:Hide()
+                        self:GetParent().ModelScene:Hide()
                         self:GetParent().LootFrame:Show()
                     </OnClick>
                 </Scripts>
             </Button>
 
-            <Button parentKey="Abilities" inherits="UIPanelButtonTemplate" text="A">
-                <Size x="20" y="20" />
+            <Button parentKey="Model" inherits="UIPanelDynamicResizeButtonTemplate" text="Model">
+                <Size x="50" y="20" />
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.Loot" relativePoint="LEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Loot" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
                 <Scripts>
                     <OnClick>
+                        self:GetParent().AbilitiesFrame:Hide()
                         self:GetParent().LootFrame:Hide()
-                        self:GetParent().AbilitiesFrame:Show()
+                        self:GetParent().ModelScene:Show()
                     </OnClick>
                 </Scripts>
             </Button>
@@ -75,6 +77,13 @@
                         <Size x="120" y="20" />
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.ClassSpecDropdown" relativePoint="RIGHT"/>
+                        </Anchors>
+                    </Frame>
+            
+                    <Frame parentKey="KeylevelDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
+                        <Size x="44" y="22" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                         </Anchors>
                     </Frame>
                 </Frames>
@@ -119,6 +128,103 @@
                     </Frame>
                 </ScrollChild>
             </ScrollFrame>
+
+            <Frame parentKey="ModelScene" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SettingsBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <ScrollFrame parentKey="List" inherits="ScrollFrameTemplate">
+                        <KeyValues>
+                            <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                        </KeyValues>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="40" />
+                        </Anchors>
+
+                        <ScrollChild>
+                            <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                                <KeyValues>
+                                    <KeyValue key="align" value="top" />
+                                    <KeyValue key="spacing" value="4" />
+                                </KeyValues>
+                            </Frame>
+                        </ScrollChild>
+                    </ScrollFrame>
+
+                    <ModelScene parentKey="Frame" inherits="ModelSceneMixinTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.List" relativePoint="TOPRIGHT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>6´ß
+                        </Anchors>
+                        <Layers>
+                            <Layer level="BACKGROUND" textureSubLevel="1">
+                                <Texture name="$parentDungeonBG" file="Interface\EncounterJournal\UI-EJ-BACKGROUND-Default" parentKey="dungeonBG" setAllPoints="true">
+                                    <TexCoords left="0.76953125" right="0" top="0" bottom="0.830078125"/>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY">
+                                <Texture name="$parentShadow" file="Interface\EncounterJournal\UI-EJ-BossModelPaperFrame" setAllPoints="true">
+                                    <TexCoords left="0.767578125" right="0" top="0" bottom="0.828125"/>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY" textureSubLevel="1">
+                                <Texture name="$parentTitleBG" inherits="UI-EJ-BossNameShadow">
+                                    <Anchors>
+                                        <Anchor point="BOTTOM" x="0" y="-2"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString name="$parentImageTile" inherits="QuestTitleFontBlackShadow" justifyH="CENTER" parentKey="imageTitle">
+                                    <Size x="380" y="10"/>
+                                    <Anchors>
+                                        <Anchor point="BOTTOM" x="0" y="6"/>
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="modelDisplayIdLabel" inherits="GameFontNormalSmall" justifyH="LEFT" hidden="true" text="Display ID:">
+                                    <Size x="60" y="0"/>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.imageTitle" relativePoint="TOPLEFT" x="30" y="6"/>
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="modelDisplayId" inherits="GameFontHighlightSmall" justifyH="LEFT" wordwrap="true" hidden="true">
+                                    <Size x="320" y="0"/>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.modelDisplayIdLabel" relativePoint="RIGHT" x="2" y="0"/>
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="modelName" inherits="GameFontHighlightSmall" justifyH="CENTER" wordwrap="true" hidden="true">
+                                    <Size x="320" y="0"/>
+                                    <Anchors>
+                                        <Anchor point="BOTTOM" relativeKey="$parent.imageTitle" relativePoint="TOP" x="0" y="26"/>
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="modelNameLabel" inherits="GameFontNormalSmall" justifyH="LEFT" hidden="true" text="Model Path:">
+                                    <Size x="320" y="0"/>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.modelName" relativePoint="TOPLEFT" x="0" y="6"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnShow>
+                                EncounterJournal.encounter.info.encounterTitle:Hide();
+                                EncounterJournal.encounter.info.rightShadow:Hide();
+                                EncounterJournal.encounter.info.difficulty:Hide();
+                            </OnShow>
+                            <OnLoad inherit="append">
+                                self:GetParent().imageTitle = self.imageTitle;
+                            </OnLoad>
+                        </Scripts>
+                    </ModelScene>
+                </Frames>
+            </Frame>
 
 
             <!--<Frame parentKey="SpecificScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">
