@@ -358,28 +358,16 @@
                             <Frame parentKey="CategoryPanel" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.QueueInformation" relativePoint="BOTTOMRIGHT" x="185"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.QueueInformation" relativePoint="BOTTOMRIGHT" x="185" y="45"/>
                                 </Anchors>
-
-                                <Frames>
-                                    <Frame parentKey="LastGroup" inherits="BackdropTemplate">
-                                        <Size y="40" />
-
-                                        <Anchors>
-                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" y="3"/>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
-                                                    <FontHeight val="12"/>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                    </Frame>
-                                </Frames>
                             </Frame>
+
+                            <!--<Button parentKey="AdventureJournal" inherits="MIOG_MenuButtonTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryPanel" relativePoint="BOTTOMLEFT"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.CategoryPanel" relativePoint="BOTTOMRIGHT"/>
+                                </Anchors>
+                            </Button>-->
 
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
@@ -576,11 +564,28 @@
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.HonorStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
                                         </Anchors>
                                     </Frame>
+                                    
+                                    <Frame parentKey="LastGroup" inherits="BackdropTemplate">
+                                        <Size y="50" />
+
+                                        <Anchors>
+                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="2"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                                        </Anchors>
+
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
+                                                    <FontHeight val="12"/>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
 
                                     <Frame parentKey="Currency">
                                         <Size x="40" y="80" />
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT" y="3"/>
                                         </Anchors>
 
                                         <Frames>

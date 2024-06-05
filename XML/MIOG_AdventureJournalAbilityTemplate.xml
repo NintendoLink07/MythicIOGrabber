@@ -69,100 +69,18 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="SwitchPanel">
-                <Size x="100" y="20"/>
+            <Frame parentKey="SwitchPanel" inherits="HorizontalLayoutFrame" hidden="true">
+                <KeyValues>
+                    <KeyValue key="spacing" value="1" type="number"/>
+                    <KeyValue key="fixedHeight" value="20" type="number"/>
+                </KeyValues>
+
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
                 </Anchors>
-
-                <Frames>
-                    <Button parentKey="Switch1" inherits="UIPanelButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
-                        </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
-                                detailedInformation.Base:Hide()
-                                detailedInformation.Difficulty1:Show()
-                                detailedInformation.Difficulty2:Hide()
-                                detailedInformation.Difficulty3:Hide()
-                                detailedInformation.Difficulty4:Hide()
-
-                                detailedInformation:MarkDirty()
-                                self:GetParent():GetParent().ExpandFrame:SetState(true)
-                                detailedInformation:Show()
-                            </OnClick>
-                        </Scripts>
-                    </Button>
-
-                    <Button parentKey="Switch2" inherits="UIPanelButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Switch1" relativePoint="RIGHT"/>
-                        </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
-                                detailedInformation.Base:Hide()
-                                detailedInformation.Difficulty1:Hide()
-                                detailedInformation.Difficulty2:Show()
-                                detailedInformation.Difficulty3:Hide()
-                                detailedInformation.Difficulty4:Hide()
-
-                                detailedInformation:MarkDirty()
-                                self:GetParent():GetParent().ExpandFrame:SetState(true)
-                                detailedInformation:Show()
-                            </OnClick>
-                        </Scripts>
-                    </Button>
-
-                    <Button parentKey="Switch3" inherits="UIPanelButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Switch2" relativePoint="RIGHT"/>
-                        </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
-                                detailedInformation.Base:Hide()
-                                detailedInformation.Difficulty1:Hide()
-                                detailedInformation.Difficulty2:Hide()
-                                detailedInformation.Difficulty3:Show()
-                                detailedInformation.Difficulty4:Hide()
-
-                                detailedInformation:MarkDirty()
-                                self:GetParent():GetParent().ExpandFrame:SetState(true)
-                                detailedInformation:Show()
-                            </OnClick>
-                        </Scripts>
-                    </Button>
-
-                    <Button parentKey="Switch4" inherits="UIPanelButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Switch3" relativePoint="RIGHT"/>
-                        </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                local detailedInformation = self:GetParent():GetParent().DetailedInformation
-                                detailedInformation.Base:Hide()
-                                detailedInformation.Difficulty1:Hide()
-                                detailedInformation.Difficulty2:Hide()
-                                detailedInformation.Difficulty3:Hide()
-                                detailedInformation.Difficulty4:Show()
-
-                                detailedInformation:MarkDirty()
-                                self:GetParent():GetParent().ExpandFrame:SetState(true)
-                                detailedInformation:Show()
-                            </OnClick>
-                        </Scripts>
-                    </Button>
-                </Frames>
             </Frame>
 
-            <Frame parentKey="DetailedInformation" inherits="VerticalLayoutFrame" hidden="true">
+            <Frame parentKey="DetailedInformation" inherits="VerticalLayoutFrame">
                 <KeyValues>
                     <KeyValue key="topPadding" value="5" type="number"/>
                     <KeyValue key="bottomPadding" value="10" type="number"/>
@@ -184,7 +102,9 @@
                     </Frame>
 
                     <Frame parentKey="Difficulties" inherits="VerticalLayoutFrame">
-                    
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number"/>
+                        </KeyValues>
                     </Frame>
                 </Frames>
 

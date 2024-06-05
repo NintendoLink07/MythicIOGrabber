@@ -796,6 +796,128 @@ function LFGListEntryCreation_UpdateAuthenticatedState(self)
 	LFGListFrame.EntryCreation.VoiceChat.EditBox:SetEnabled(isAuthenticated)
 end
 
+local function setActivePanel(_, panel)
+	if(panel == LFGListFrame.ApplicationViewer) then
+		miog.F.ACTIVE_PANEL = "applicationViewer"
+		miog.SearchPanel:Hide()
+		miog.EntryCreation:Hide()
+		miog.AdventureJournal:Hide()
+		miog.Plugin:Show()
+		miog.ApplicationViewer:Show()
+
+		if(not miog.F.LITE_MODE) then
+			ShowUIPanel(miog.pveFrame2)
+			miog.MainTab.CategoryPanel:Hide()
+
+		else
+			LFGListFrame.ApplicationViewer:Hide()
+
+		end
+
+		if(UnitIsGroupLeader("player")) then
+			miog.ApplicationViewer.Delist:Show()
+
+		else
+			miog.ApplicationViewer.Delist:Hide()
+			
+		end
+
+		if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
+			miog.Plugin.ButtonPanel:Hide()
+			miog.FilterPanel.Lock:Hide()
+
+			miog.FilterPanel:Show()
+
+		elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
+			miog.Plugin.ButtonPanel:Hide()
+			miog.LastInvites:Show()
+
+		end
+
+		miog.setupFiltersForActivePanel()
+
+	elseif(panel == LFGListFrame.SearchPanel) then
+		miog.F.ACTIVE_PANEL = "searchPanel"
+		miog.ApplicationViewer:Hide()
+		miog.EntryCreation:Hide()
+		miog.AdventureJournal:Hide()
+		miog.Plugin:Show()
+		miog.SearchPanel:Show()
+
+		if(not miog.F.LITE_MODE) then
+			ShowUIPanel(miog.pveFrame2)
+			miog.MainTab.CategoryPanel:Hide()
+
+		else
+			LFGListFrame.SearchPanel:Hide()
+		end
+
+		if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
+			miog.Plugin.ButtonPanel:Hide()
+			miog.FilterPanel.Lock:Hide()
+
+			miog.FilterPanel:Show()
+
+		elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
+			miog.Plugin.ButtonPanel:Hide()
+			miog.LastInvites:Show()
+
+		end
+
+		if(miog.UPDATED_DUNGEON_FILTERS ~= true) then
+			miog.updateDungeonCheckboxes()
+
+		end
+
+		if(miog.UPDATED_RAID_FILTERS ~= true) then
+			miog.updateRaidCheckboxes()
+		end
+
+		miog.setupFiltersForActivePanel()
+
+	elseif(panel == LFGListFrame.EntryCreation) then
+		miog.ApplicationViewer:Hide()
+		miog.SearchPanel:Hide()
+		miog.AdventureJournal:Hide()
+
+		miog.Plugin:Show()
+		miog.EntryCreation:Show()
+
+		miog.FilterPanel.Lock:Show()
+
+		if(not miog.F.LITE_MODE) then
+			ShowUIPanel(miog.pveFrame2)
+			miog.MainTab.CategoryPanel:Hide()
+
+		else
+			LFGListFrame.EntryCreation:Hide()
+			miog.initializeActivityDropdown()
+
+		end
+
+	elseif(panel == "AdventureJournal") then
+		miog.ApplicationViewer:Hide()
+		miog.SearchPanel:Hide()
+		miog.EntryCreation:Hide()
+
+		miog.Plugin:Show()
+		miog.AdventureJournal:Show()
+
+		miog.FilterPanel.Lock:Show()
+
+	else
+		miog.Plugin:Hide()
+		miog.FilterPanel.Lock:Show()
+
+		if(not miog.F.LITE_MODE) then
+			miog.MainTab.CategoryPanel:Show()
+		end
+
+	end
+end
+
+miog.setActivePanel = setActivePanel
+
 miog.createFrames = function()
 	EncounterJournal_LoadUI()
 	EJ_SelectInstance(1207)
@@ -830,11 +952,11 @@ miog.createFrames = function()
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-		miog.createFrameBorder(miog.MainTab.CategoryPanel.LastGroup, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+		miog.createFrameBorder(miog.MainTab.Information.LastGroup, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 		local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
 
-		miog.MainTab.CategoryPanel.LastGroup:SetBackdropColor(r, g, b, 0.9)
+		miog.MainTab.Information.LastGroup:SetBackdropColor(r, g, b, 0.9)
 
 		ConquestFrame.selectedButton = nil
 		PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
@@ -941,109 +1063,6 @@ miog.createFrames = function()
 	--miog.scriptReceiver:RegisterEvent("CALENDAR_OPEN_EVENT")
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
-		if(panel == LFGListFrame.ApplicationViewer) then
-			miog.F.ACTIVE_PANEL = "applicationViewer"
-			miog.SearchPanel:Hide()
-			miog.EntryCreation:Hide()
-			miog.Plugin:Show()
-			miog.ApplicationViewer:Show()
-
-			if(not miog.F.LITE_MODE) then
-				ShowUIPanel(miog.pveFrame2)
-				miog.MainTab.CategoryPanel:Hide()
-
-			else
-				LFGListFrame.ApplicationViewer:Hide()
-
-			end
-
-			if(UnitIsGroupLeader("player")) then
-				miog.ApplicationViewer.Delist:Show()
-
-			else
-				miog.ApplicationViewer.Delist:Hide()
-				
-			end
-
-			if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
-				miog.Plugin.ButtonPanel:Hide()
-				miog.FilterPanel.Lock:Hide()
-
-				miog.FilterPanel:Show()
-
-			elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
-				miog.Plugin.ButtonPanel:Hide()
-				miog.LastInvites:Show()
-
-			end
-
-			miog.setupFiltersForActivePanel()
-
-		elseif(panel == LFGListFrame.SearchPanel) then
-			miog.F.ACTIVE_PANEL = "searchPanel"
-			miog.ApplicationViewer:Hide()
-			miog.EntryCreation:Hide()
-			miog.Plugin:Show()
-			miog.SearchPanel:Show()
-
-			if(not miog.F.LITE_MODE) then
-				ShowUIPanel(miog.pveFrame2)
-				miog.MainTab.CategoryPanel:Hide()
-
-			else
-				LFGListFrame.SearchPanel:Hide()
-			end
-
-			if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
-				miog.Plugin.ButtonPanel:Hide()
-				miog.FilterPanel.Lock:Hide()
-
-				miog.FilterPanel:Show()
-
-			elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
-				miog.Plugin.ButtonPanel:Hide()
-				miog.LastInvites:Show()
-
-			end
-
-			if(miog.UPDATED_DUNGEON_FILTERS ~= true) then
-				miog.updateDungeonCheckboxes()
-
-			end
-
-			if(miog.UPDATED_RAID_FILTERS ~= true) then
-				miog.updateRaidCheckboxes()
-			end
-
-			miog.setupFiltersForActivePanel()
-
-		elseif(panel == LFGListFrame.EntryCreation) then
-			miog.ApplicationViewer:Hide()
-			miog.SearchPanel:Hide()
-
-			miog.Plugin:Show()
-			miog.EntryCreation:Show()
-
-			miog.FilterPanel.Lock:Show()
-
-			if(not miog.F.LITE_MODE) then
-				ShowUIPanel(miog.pveFrame2)
-				miog.MainTab.CategoryPanel:Hide()
-
-			else
-				LFGListFrame.EntryCreation:Hide()
-				miog.initializeActivityDropdown()
-
-			end
-
-		else
-			miog.Plugin:Hide()
-			miog.FilterPanel.Lock:Show()
-
-			if(not miog.F.LITE_MODE) then
-				miog.MainTab.CategoryPanel:Show()
-			end
-
-		end
+		setActivePanel(_, panel)
 	end)
 end

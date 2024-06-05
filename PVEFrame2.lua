@@ -36,7 +36,7 @@ local function createPVEFrameReplacement()
 		miog.setupRaidStatistics()
 		miog.gatherRaidStatistics()
 
-		miog.MainTab.CategoryPanel.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
+		miog.MainTab.Information.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -71,31 +71,11 @@ local function createPVEFrameReplacement()
 			local currentServerTime = C_DateAndTime.GetServerTimeLocal()
 			local seasonData = miog.C.SEASON_AVAILABLE[miog.F.CURRENT_SEASON]
 
-			if(currentServerTime >= seasonData.sinceEpoch + miog.C.REGION_DATE_DIFFERENCE[GetCurrentRegion()]) then
+			if(miog.F.AWAKENED_MAP) then
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
-
-				if(currentServerTime >= seasonData.awakened.vaultDate1 and currentServerTime < seasonData.awakened.aberrusDate1) then
-					miog.MainTab.Information.Awakened.Text:SetText("VAULT AWAKENED")
-
-				elseif(currentServerTime >= seasonData.awakened.aberrusDate1 and currentServerTime < seasonData.awakened.amirdrassilDate1) then
-					miog.MainTab.Information.Awakened.Text:SetText("ABERRUS AWAKENED")
-
-				elseif(currentServerTime >= seasonData.awakened.amirdrassilDate1 and currentServerTime < seasonData.awakened.vaultDate2) then
-					miog.MainTab.Information.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
-
-				elseif(currentServerTime >= seasonData.awakened.vaultDate2 and currentServerTime < seasonData.awakened.aberrusDate2) then
-					miog.MainTab.Information.Awakened.Text:SetText("VAULT AWAKENED")
-
-				elseif(currentServerTime >= seasonData.awakened.aberrusDate2 and currentServerTime < seasonData.awakened.amirdrassilDate2) then
-					miog.MainTab.Information.Awakened.Text:SetText("ABERRUS AWAKENED")
-
-				elseif(currentServerTime >= seasonData.awakened.amirdrassilDate2 and currentServerTime < seasonData.awakened.fullRelease) then
-					miog.MainTab.Information.Awakened.Text:SetText("AMIRDRASSIL AWAKENED")
-
-				elseif(currentServerTime >= seasonData.awakened.fullRelease) then
-					miog.MainTab.Information.Awakened.Text:SetText("ALL RAIDS AWAKENED")
-
-				end
+				miog.MainTab.Information.Awakened.Text:SetText(miog.MAP_INFO[miog.F.AWAKENED_MAP].name)
+				miog.MainTab.Information.Awakened.Icon:SetTexture(nil)
+				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAP].awakenedIcon .. "-large")
 
 			else
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,0,0,1)

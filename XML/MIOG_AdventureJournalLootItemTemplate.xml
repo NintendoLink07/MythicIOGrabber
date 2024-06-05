@@ -61,7 +61,7 @@
                         <Texture parentKey="Difficulty3Icon">
                             <Size x="16" y="16" />
                             <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty4Icon" relativePoint="LEFT" x="-2"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty4Icon" relativePoint="LEFT"/>
                             </Anchors>
                             
                             <Scripts>
@@ -79,7 +79,7 @@
                         <Texture parentKey="Difficulty2Icon">
                             <Size x="16" y="16" />
                             <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty3Icon" relativePoint="LEFT" x="-2"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty3Icon" relativePoint="LEFT"/>
                             </Anchors>
                             
                             <Scripts>
@@ -97,7 +97,7 @@
                         <Texture parentKey="Difficulty1Icon">
                             <Size x="16" y="16" />
                             <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty2Icon" relativePoint="LEFT" x="-2"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty2Icon" relativePoint="LEFT"/>
                             </Anchors>
                             
                             <Scripts>

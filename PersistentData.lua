@@ -101,6 +101,25 @@ miog.DIFFICULTY_ID_TO_COLOR = {
 	[DifficultyUtil.ID.RaidTimewalker] = miog.ITEM_QUALITY_COLORS[3].color,
 }
 
+miog.DIFFICULTY_ID_TO_SHORT_NAME = {
+	[DifficultyUtil.ID.DungeonNormal] = "N",
+	[DifficultyUtil.ID.DungeonHeroic] = "H",
+	[DifficultyUtil.ID.Raid10Normal] = "10N",
+	[DifficultyUtil.ID.Raid25Normal] = "25N",
+	[DifficultyUtil.ID.Raid10Heroic] = "10H",
+	[DifficultyUtil.ID.Raid25Heroic] = "25H",
+	[DifficultyUtil.ID.RaidLFR] = "25RF",
+	[DifficultyUtil.ID.DungeonChallenge] = "M+",
+	[DifficultyUtil.ID.Raid40] = "40",
+	[DifficultyUtil.ID.PrimaryRaidNormal] = "N",
+	[DifficultyUtil.ID.PrimaryRaidHeroic] = "H",
+	[DifficultyUtil.ID.PrimaryRaidMythic] = "M",
+	[DifficultyUtil.ID.PrimaryRaidLFR] = "LFR",
+	[DifficultyUtil.ID.DungeonMythic] = "M",
+	[DifficultyUtil.ID.DungeonTimewalker] = "TW",
+	[DifficultyUtil.ID.RaidTimewalker] = "TW",
+}
+
 miog.DIFFICULTY_ID_INFO = {}
 
 miog.DIFFICULTY = {
@@ -212,6 +231,8 @@ miog.C = {
 		["HEALER"] = false,
 		["DAMAGER"] = false
 	},
+
+	WEEK_IN_SECONDS = 604800,
 
 	SEASON_AVAILABLE = {
 		[12] = {
@@ -1100,6 +1121,12 @@ local function loadRawData()
 			mapInfo.loadingScreenID = v[8]
 			mapInfo.bosses = {}
 			mapInfo.exactName = v[2]
+
+			local modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(v[1])
+			if (modifiedInstanceInfo) then
+				mapInfo.awakenedIcon = modifiedInstanceInfo.uiTextureKit
+				miog.F.AWAKENED_MAP = v[1]
+			end
 		
 			if(mapInfo.fileName) then
 				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. mapInfo.fileName .. ".png"

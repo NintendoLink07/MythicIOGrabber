@@ -1555,7 +1555,7 @@ local function searchPanelEvents(_, event, ...)
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 
 			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityID].name or activityInfo.fullName
-			miog.MainTab.CategoryPanel.LastGroup.Text:SetText(lastGroup)
+			miog.MainTab.Information.LastGroup.Text:SetText(lastGroup)
 
 			MIOG_SavedSettings.lastGroup.value = lastGroup
 

@@ -49,7 +49,7 @@ local function calendarOnEvent(_, event, ...)
             local formatter = CreateFromMixins(SecondsFormatterMixin)
             formatter:SetStripIntervalWhitespace(true)
             formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
-            print(offset, viewedInSeconds, currentInSeconds)
+            --print(offset, viewedInSeconds, currentInSeconds)
         end]]
 
         local numEvents = C_Calendar.GetNumDayEvents(offset, currentTime.monthDay)

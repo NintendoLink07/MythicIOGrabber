@@ -2,11 +2,13 @@ local addonName, miog = ...
 
 local regex1 = "%d+ damage"
 local regex2 = "%d+ %w+ damage"
+local regex3 = "%d+ %w+ %w+ damage"
 
-local basePool, lootPool, slotLinePool, modelPool, difficultyPool --switchPool
+local basePool, lootPool, slotLinePool, modelPool, difficultyPool, switchPool
 local isRaid
 local changingKeylevel = false
 local currentModels = {}
+local receivedUpdates = 0
 
 local EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.DungeonNormal,
@@ -102,6 +104,7 @@ local function resetJournalFrames(_, frame)
     frame.Icon:SetTexture(nil)
     frame.ExpandFrame:Show()
     frame.leftPadding = nil
+    frame.difficultyFrames = nil
     frame.spellID = nil
 
     if(not changingKeylevel) then
@@ -109,14 +112,20 @@ local function resetJournalFrames(_, frame)
         frame.DetailedInformation:Hide()
     end
 
-    frame.SwitchPanel:Show()
+    frame.SwitchPanel:Hide()
     frame.DetailedInformation.Base:Show()
 
     frame.DetailedInformation.Base.Name:SetText("")
     frame.DetailedInformation.Base.Description:SetText("")
     frame.DetailedInformation.Base.fixedWidth = frameWidth
 
-    frame.DetailedInformation.SpecificScrollBox.fixedWidth = frameWidth
+    frame.DetailedInformation.Difficulties.fixedWidth = frameWidth
+end
+
+local function resetSwitchFrames(_, frame)
+    frame:Hide()
+    frame.layoutIndex = nil
+
 end
 
 local function resetDifficultyFrames(_, frame)
@@ -143,7 +152,7 @@ local function calculateNumberIncrease(number)
         end
     end
 
-    return FormatLargeNumber(miog.round(number, 0))
+    return miog.format_num(miog.round(number, 2))
 end
 
 local function compareArrayValues(array, value)
@@ -200,8 +209,8 @@ local function createBaseString(id, lowestIndex)
     local baseArray = {}
     local shift = 0
 
-    for n = lowestIndex, #currentDifficultyIDs - 1, 1 do
-        local array1 = frameData[id][currentDifficultyIDs[lowestIndex]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[lowestIndex]].description, "%s") or {}
+    for n = lowestIndex, #currentDifficultyIDs, 1 do
+        local array1 = frameData[id][currentDifficultyIDs[n]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n]].description, "%s") or {}
         local array2 = frameData[id][currentDifficultyIDs[n + 1]] and miog.simpleSplit(frameData[id][currentDifficultyIDs[n + 1]].description, "%s") or {}
 
         for k, v in ipairs(array2) do
@@ -328,7 +337,6 @@ local function stopAndGo(id, equal, forwardOrdered)
                                 
                             end
 
-
                             if(n == 4 and currentDifficultyIDs[4] == 8) then
                                 local withoutComma = string.gsub(array2[i], ",", "")
                                 local maybeNumber = tonumber(withoutComma)
@@ -392,7 +400,6 @@ local function stopAndGo(id, equal, forwardOrdered)
         end
 
         if(forwardOrdered) then
-
             for n = lowestIndex, #currentDifficultyIDs, 1 do
                 --frameDataArrays[n]
                 local array1 = miog.simpleSplit(baseString, "%s") or {}
@@ -438,19 +445,24 @@ local function stopAndGo(id, equal, forwardOrdered)
 
                                     local scaledNumber, found
 
-                                    if(maybeNumber and array2[i + 1] and array2[i + 2]) then
-                                        local threeString = maybeNumber .. " " .. array2[i + 1] .. " " .. array2[i + 2]
-                                        found = string.find(threeString, regex2)
+                                    if(maybeNumber) then
+                                        if(array2[i + 1] and array2[i + 2] and array2[i + 3]) then
+                                            local fourString = maybeNumber .. " " .. array2[i + 1] .. " " .. array2[i + 2] .. " " .. array2[i + 3]
+                                            found = string.find(fourString, regex3)
 
-                                    elseif(maybeNumber and array2[i + 1]) then
-                                        local twoString = maybeNumber .. " " .. array2[i + 1]
-                                        found = string.find(twoString, regex1)
+                                        elseif(array2[i + 1] and array2[i + 2]) then
+                                            local threeString = maybeNumber .. " " .. array2[i + 1] .. " " .. array2[i + 2]
+                                            found = string.find(threeString, regex2)
 
-                                    end
+                                        elseif(array2[i + 1]) then
+                                            local twoString = maybeNumber .. " " .. array2[i + 1]
+                                            found = string.find(twoString, regex1)
+                                        end
 
-                                    if(found) then
-                                        scaledNumber = calculateNumberIncrease(maybeNumber)
-                                        
+                                        if(found) then
+                                            scaledNumber = calculateNumberIncrease(maybeNumber)
+                                            
+                                        end
                                     end
 
                                     table.insert(organizedFrameData[id][currentDifficultyIDs[n]], {string = scaledNumber or array2[i], colorIndex = xCounter})
@@ -511,7 +523,7 @@ local function stopAndGo(id, equal, forwardOrdered)
 
     }
 
-    local blueprint = frameData[id][lowestDifficulty]
+    --local blueprint = frameData[id][lowestDifficulty]
 
     local stringArray = {
         [currentDifficultyIDs[1] ] = "",
@@ -789,14 +801,14 @@ local function stopAndGo(id, equal, forwardOrdered)
                             --baseString = baseString .. "YYY "
                             --baseArray[i] = false
 
-                            print(k, firstCurrentValue, higherArray[i])
+                            --print(k, firstCurrentValue, higherArray[i])
                         
                             stringArray[lowerLengthID] = stringArray[lowerLengthID] .. firstCurrentValue .. " "
                             stringArray[higherLengthID] = stringArray[higherLengthID] .. higherArray[i] .. " "
 
 
                             if(firstFutureValue == higherArray[i + 1]) then
-                                print("BREAK")
+                                --print("BREAK")
                                 break
                             else
                                 shift = shift + 1
@@ -884,7 +896,7 @@ local function stopAndGo(id, equal, forwardOrdered)
     return baseString
 end
 
-local function checkForBossInfo(journalInstanceID, lastIndex)
+local function checkForBossInfo(journalInstanceID)
     local bossTable = {}
     local firstBossID = nil
 
@@ -911,22 +923,6 @@ local function checkForBossInfo(journalInstanceID, lastIndex)
         end
     end
 
-    if(#bossTable == 0) then
-        local index = lastIndex == nil and 1 or lastIndex + 1
-
-        if(currentDifficultyIDs[index]) then
-            EJ_SetDifficulty(currentDifficultyIDs[index])
-            bossTable, firstBossID = checkForBossInfo(journalInstanceID, index)
-
-        elseif(not currentDifficultyIDs[index] and isRaid and currentDifficultyIDs[4] == 6) then
-            currentDifficultyIDs = difficultyIDs["raid"]
-
-            EJ_SetDifficulty(currentDifficultyIDs[1])
-            bossTable, firstBossID = checkForBossInfo(journalInstanceID, nil)
-
-        end
-    end
-
     return bossTable, firstBossID
 end
 
@@ -949,7 +945,6 @@ miog.selectInstance = function(journalInstanceID)
 
     retrieveDifficultyIDs()
 
-    EJ_SetDifficulty(currentDifficultyIDs[1])
     miog.AdventureJournal.SettingsBar.KeylevelDropdown:SetShown(not isRaid)
 
     miog.AdventureJournal.BossDropdown:ResetDropDown()
@@ -969,33 +964,10 @@ local function retrieveItemInfoFromCurrentEncounter()
     lootPool:ReleaseAll()
     slotLinePool:ReleaseAll()
 
-    lootData = {}
-
     if(currentDifficultyIDs and currentDifficultyIDs[1]) then
-        for i = 1, #currentDifficultyIDs, 1 do
-            EJ_SetDifficulty(currentDifficultyIDs[i])
-
-            for n = 1, EJ_GetNumLoot(), 1 do
-                local itemInfo = C_EncounterJournal.GetLootInfoByIndex(n)
-
-                if(itemInfo and itemInfo.name) then
-                    lootData[itemInfo.itemID] = lootData[itemInfo.itemID] or {
-                        name = itemInfo.name,
-                        icon = itemInfo.icon,
-                        index = itemInfo.filterType or 20,
-                        slot = itemInfo.slot == "" and "Other" or itemInfo.slot,
-                        links = {}
-                    }
-
-                    table.insert(lootData[itemInfo.itemID].links, itemInfo.link)
-
-                end
-            end
-        end
-
         local slotLines = {}
 
-        for k, v in pairs(lootData) do
+        for _, v in pairs(lootData) do
             if(not slotLines[v.index]) then
                 local line = slotLinePool:Acquire()
                 line:SetWidth(frameWidth)
@@ -1011,22 +983,31 @@ local function retrieveItemInfoFromCurrentEncounter()
             frame.BasicInformation.Icon:SetTexture(v.icon)
             frame.layoutIndex = v.index * 10 + 1
 
-            for x = 1, #v.links, 1 do
-                if(x == 1) then
-                    frame:SetScript("OnEnter", function(self)
-                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetHyperlink(v.links[x])
-                    end)
+            --for x = 1, #currentDifficultyIDs, 1 do
+            for x, y in ipairs(currentDifficultyIDs) do
+                if(v.links[y]) then
+                    if(x == 1) then
+                        frame:SetScript("OnEnter", function(self)
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetHyperlink(v.links[y])
+                        end)
 
-                    frame.itemLink = v.links[x]
+                        frame.itemLink = v.links[y]
+                    else
+                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:SetScript("OnEnter", function(self)
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetHyperlink(v.links[y])
+                        end)
+                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:SetTexture(v.icon)
+                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"].itemLink = v.links[y]
+                    
+                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:Show()
+                    end
                 else
-                    frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:SetScript("OnEnter", function(self)
-                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetHyperlink(v.links[x])
-                    end)
-                    frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:SetTexture(v.icon)
-                    frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"].itemLink = v.links[x]
-                
+                    if(frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]) then
+                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:Hide()
+
+                    end
                 end
                 
             end
@@ -1035,6 +1016,32 @@ local function retrieveItemInfoFromCurrentEncounter()
         end
 
         miog.AdventureJournal.LootFrame.Container:MarkDirty()
+    end
+end
+
+local function requestAllItemsFromCurrentEncounter(singleIteration)
+    for x = 1, singleIteration and 1 or #currentDifficultyIDs, 1 do
+        if(not singleIteration) then
+            EJ_SetDifficulty(currentDifficultyIDs[x])
+            
+        end
+
+        for n = 1, EJ_GetNumLoot(), 1 do
+            local itemInfo = C_EncounterJournal.GetLootInfoByIndex(n)
+
+            if(itemInfo and itemInfo.name) then
+                lootData[itemInfo.name] = lootData[itemInfo.name] or {
+                    name = itemInfo.name,
+                    icon = itemInfo.icon,
+                    index = itemInfo.filterType or 20,
+                    slot = itemInfo.slot == "" and "Other" or itemInfo.slot,
+                    links = {}
+                }
+
+                lootData[itemInfo.name].links[EJ_GetDifficulty()] = itemInfo.link
+
+            end
+        end
     end
 end
 
@@ -1084,16 +1091,20 @@ end
 
 miog.selectBoss = function(journalEncounterID, abilityTitle)
     if(not abilityTitle or abilityTitle and currentEncounterID ~= journalEncounterID) then
+        C_EncounterJournal.SetPreviewMythicPlusLevel(miog.AdventureJournal.SettingsBar.KeylevelDropdown:GetSelectedValue())
         basePool:ReleaseAll()
+        difficultyPool:ReleaseAll()
+        switchPool:ReleaseAll()
 
         currentEncounterID = journalEncounterID
         
-        EJ_SelectEncounter(journalEncounterID)
+        EJ_SelectEncounter(currentEncounterID)
 
-        local stack = {}
         frameData = {}
         organizedFrameData = {}
+        lootData = {}
         currentModels = {}
+        local stack = {}
 
         miog.AdventureJournal.Status:SetColorTexture(0, 1, 0)
 
@@ -1102,15 +1113,18 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
         if(#currentModels > 0) then
             showModel(currentModels[1].uiModelSceneID, currentModels[1].displayInfo, true)
         end
-        
-        retrieveItemInfoFromCurrentEncounter()
 
-        for i = 1, #currentDifficultyIDs, 1 do
-            EJ_SetDifficulty(currentDifficultyIDs[i])
+        for x = 1, #currentDifficultyIDs, 1 do
+            EJ_SetDifficulty(currentDifficultyIDs[x])
 
-            local _, _, _, rootSectionID = EJ_GetEncounterInfo(journalEncounterID)
+            requestAllItemsFromCurrentEncounter(true)
+
+            local _, _, _, originalRootID = EJ_GetEncounterInfo(currentEncounterID)
 
             local counter = 1
+
+            local rootSectionID = originalRootID
+
             if(rootSectionID) then
                 repeat
                     local info = C_EncounterJournal.GetSectionInfo(rootSectionID)
@@ -1126,32 +1140,60 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                                 
                                 counter = counter + 1
                                 table.insert(stack, info.firstChildSectionID)
-                                local diffInfo = C_EncounterJournal.GetSectionInfo(rootSectionID)
-                                local text = not diffInfo.filteredByDifficulty and diffInfo.description
-                                
-                                if(text) then
-                                    local desc = string.gsub(diffInfo.description, "|[cC]%x%x%x%x%x%x%x%x", "")
-                                    desc = string.gsub(desc, "$bullet; ", "")
-                                    --desc = string.gsub(desc, "|T(.+)|t", "")
+                                local notFiltered = not info.filteredByDifficulty
 
-                                    frameData[diffInfo.title][currentDifficultyIDs[i]] = {
-                                        title = diffInfo.title,
-                                        description = desc,
-                                        headerType = diffInfo.headerType,
-                                        abilityIcon = diffInfo.abilityIcon,
-                                        spellID = diffInfo.spellID,
+                                if(notFiltered) then
+                                    frameData[info.title][currentDifficultyIDs[x]] = {
+                                        title = info.title,
+                                        headerType = info.headerType,
+                                        abilityIcon = info.abilityIcon,
+                                        spellID = info.spellID,
                                         index = counter
                                     }
-                            
+
+                                    if(info.description ~= "") then
+                                        local desc = string.gsub(info.description, "|[cC]%x%x%x%x%x%x%x%x", "")
+                                        desc = string.gsub(desc, "|T(.+)|t", "")
+
+                                        
+                                        frameData[info.title][currentDifficultyIDs[x]].description = desc
+                                    
+                                    else
+                                        frameData[info.title][currentDifficultyIDs[x]].description = RETRIEVING_DATA
+                                        local currentSectionID, currentTitle, currentDifficultyID = rootSectionID, info.title, currentDifficultyIDs[x]
+                                    
+                                        C_Timer.After(0.1, function()
+                                            EJ_SetDifficulty(currentDifficultyID)
+                                            local newInfo = C_EncounterJournal.GetSectionInfo(currentSectionID)
+
+                                            if(newInfo.description ~= "") then
+                                                local desc = string.gsub(newInfo.description, "|[cC]%x%x%x%x%x%x%x%x", "")
+                                                --desc = string.gsub(desc, "|T(.+)|t", "")
+
+                                                frameData[currentTitle][currentDifficultyID] = {
+                                                    title = newInfo.title,
+                                                    headerType = newInfo.headerType,
+                                                    abilityIcon = newInfo.abilityIcon,
+                                                    spellID = newInfo.spellID,
+                                                    index = counter
+                                                }
+                                                frameData[currentTitle][currentDifficultyIDs[x]].description = desc
+                                            else
+                                                frameData[currentTitle][currentDifficultyID] = {
+                                                    title = newInfo.title,
+                                                    headerType = newInfo.headerType,
+                                                    abilityIcon = newInfo.abilityIcon,
+                                                    spellID = newInfo.spellID,
+                                                    description = "",
+                                                    index = counter
+                                                }
+                                            
+                                            end
+                                        end)
+                                    end
                                 end
                             end
-                        else
-                            miog.AdventureJournal.Status:SetColorTexture(1, 0, 0)
-
                         end
-                    else
-                        miog.AdventureJournal.Status:SetColorTexture(1, 0, 0)
-
                     end
 
                     rootSectionID = table.remove(stack)
@@ -1159,26 +1201,11 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
             end
         end
 
+        retrieveItemInfoFromCurrentEncounter()
+
+        miog.AdventureJournal.Status:SetColorTexture(0, 1, 0)
+
         for id, difficultyData in pairs(frameData) do
-            local compareArray = {}
-            local compareValue
-
-            for i = 1, #currentDifficultyIDs, 1 do
-                local array = difficultyData[currentDifficultyIDs[i]] and miog.simpleSplit(difficultyData[currentDifficultyIDs[i]].description, "%s")
-
-                if(array) then
-                    if(compareValue) then
-                        table.insert(compareArray, #array)
-                        
-                    else
-                        compareValue = #array
-
-                    end
-                end
-            end
-            
-            local equal = compareArrayValues(compareArray, compareValue)
-            local forwardOrdered = forwardOrderedValues(compareArray)
             local lowestDifficulty
 
             for k, v in pairs(difficultyData) do
@@ -1195,98 +1222,120 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                     organizedFrameData[difficultyData[lowestDifficulty].title][k] = {}
                 end
 
-                local baseString = stopAndGo(id, equal, forwardOrdered)
-
-                compareArray = {}
-
-                for k, v in pairs(organizedFrameData[id]) do
-                    table.insert(compareArray, #v)
-                end
-
-                local hasNoDifficultyData = compareArrayValues(compareArray, 0)
-
                 local frame = basePool:Acquire()
 
-                if(not equal and not forwardOrdered) then
-                    --frame = switchPool:Acquire()
-                    frame.SwitchPanel:Show()
-                    frame.DetailedInformation.Base:Hide()
-
-                else
-                    frame.SwitchPanel:Hide()
-                
-                end
-                
-                if(hasNoDifficultyData) then
-                    frame.SwitchPanel:Hide()
-
-                    if(baseString == "") then
-                        frame.ExpandFrame:SetShown(false)
-
-                    else
-                        frame.DetailedInformation.Base:Show()
-                        frame.ExpandFrame:SetShown(true)
-                    end
-                else
-                    frame.ExpandFrame:SetShown(true)
-                
-                end
-
-                local view = CreateScrollBoxListLinearView();
-                view:SetElementInitializer("MIOG_AdventureJournalAbilityDifficultyTemplate", function(viewFrame, elementData)
-                    
-                end);
-                
+                frame.ExpandFrame:SetShown(difficultyData[lowestDifficulty].description ~= "")
                 frame.layoutIndex = difficultyData[lowestDifficulty].index
-                --frame.leftPadding = (difficultyData[lowestDifficulty].headerType or 0) * 20
                 frame.fixedWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
                 frame.Name:SetText(difficultyData[lowestDifficulty].title)
                 frame.Icon:SetTexture(difficultyData[lowestDifficulty].abilityIcon)
                 frame.spellID = difficultyData[lowestDifficulty].spellID
-                frame.encounterID = journalEncounterID
+                frame.encounterID = currentEncounterID
                 frame.abilityTitle = difficultyData[lowestDifficulty].title
+                frame.difficultyFrames = {}
 
-                for i = 1, #currentDifficultyIDs, 1 do
-                    local difficultyFrame = difficultyPool:Acquire()
+                C_Timer.After(0.25, function()
+                    local compareArray = {}
+                    local compareValue
 
-                    local concatString = ""
+                    for i = 1, #currentDifficultyIDs, 1 do
+                        local array = difficultyData[currentDifficultyIDs[i] ] and miog.simpleSplit(difficultyData[currentDifficultyIDs[i] ].description, "%s")
 
-                    if(organizedFrameData[id][currentDifficultyIDs[i]] ~= nil) then
-                        for k, v in ipairs(organizedFrameData[id][currentDifficultyIDs[i]]) do
-                            if(v.colorIndex) then
-                                concatString = concatString .. WrapTextInColorCode(v.string, miog.AJ_CLRSCC[v.colorIndex]) .. " "
-
+                        if(array) then
+                            if(compareValue) then
+                                table.insert(compareArray, #array)
+                                
                             else
-                                concatString = concatString .. v.string .. " "
+                                compareValue = #array
+
+                            end
+                        end
+                    end
+                    
+                    local equal = compareArrayValues(compareArray, compareValue)
+                    local forwardOrdered = forwardOrderedValues(compareArray)
+
+                    local baseString = stopAndGo(id, equal, forwardOrdered)
+
+                    for i = 1, #currentDifficultyIDs, 1 do
+                        local difficultyFrame = difficultyPool:Acquire()
+
+                        local concatString = ""
+
+                        if(frameData[id][currentDifficultyIDs[i] ] ~= nil) then
+                            for k, v in ipairs(organizedFrameData[id][currentDifficultyIDs[i] ]) do
+                                if(v.colorIndex) then
+                                    concatString = concatString .. WrapTextInColorCode(v.string, miog.AJ_CLRSCC[v.colorIndex]) .. " "
+
+                                else
+                                    concatString = concatString .. v.string .. " "
+
+                                end
 
                             end
 
+                            if(concatString == "") then
+                                concatString = WrapTextInColorCode("Mechanic is implemented on " .. GetEJDifficultyString(currentDifficultyIDs[i]), "FF00C200")
+
+                            end
+                
+                        else
+                            concatString = WrapTextInColorCode("Mechanic not implemented on " .. GetEJDifficultyString(currentDifficultyIDs[i]), "FFB92D27")
+                
                         end
 
-                        if(concatString == "") then
-                            concatString = WrapTextInColorCode("Mechanic is implemented on " .. GetEJDifficultyString(currentDifficultyIDs[i]), "FF00C200")
+                        difficultyFrame.Description:SetText(concatString)
+                        difficultyFrame.Name:SetText(GetEJDifficultyString(currentDifficultyIDs[i]))
+                        difficultyFrame:SetParent(frame.DetailedInformation.Difficulties)
+                        difficultyFrame.layoutIndex = i
+                        difficultyFrame.fixedWidth = frameWidth
+                        difficultyFrame:SetShown(i == 1 or equal or forwardOrdered or false)
 
-                        end
-            
-                    else
-                        concatString = WrapTextInColorCode("Mechanic not implemented on " .. GetEJDifficultyString(currentDifficultyIDs[i]), "FFB92D27")
-            
+                        frame.difficultyFrames[i] = difficultyFrame
                     end
 
-                    difficultyFrame.Description:SetText(concatString)
-                    difficultyFrame.Name:SetText(GetEJDifficultyString(currentDifficultyIDs[i]))
-                    difficultyFrame.fixedWidth = frameWidth
-                end
-
-                frame.SwitchPanel.Switch1:SetText(isRaid and "L" or "N")
-                frame.SwitchPanel.Switch2:SetText(isRaid and "N" or "H")
-                frame.SwitchPanel.Switch3:SetText(isRaid and "H" or "M")
-                frame.SwitchPanel.Switch4:SetText(isRaid and "M" or "M+")
-                
-                if(frame.DetailedInformation.Base) then
+                    frame.DetailedInformation.Difficulties:MarkDirty()
+                    
                     frame.DetailedInformation.Base.Name:SetText("Base")
                     frame.DetailedInformation.Base.Description:SetText(baseString)
-                end
+
+                    frame.ExpandFrame:SetShown(difficultyData[lowestDifficulty].description ~= "")
+                    frame.DetailedInformation.Base:SetShown((equal or forwardOrdered) and baseString ~= "")
+
+                    if(not equal and not forwardOrdered) then
+                        frame.DetailedInformation.Base:Hide()
+                    
+                        for i = 1, #currentDifficultyIDs, 1 do
+                            local switchFrame = switchPool:Acquire()
+                            local shortName = miog.DIFFICULTY_ID_TO_SHORT_NAME[currentDifficultyIDs[i] ]
+                            switchFrame:SetParent(frame.SwitchPanel)
+                            switchFrame.layoutIndex = i
+                            switchFrame:SetText(shortName)
+                            switchFrame:SetWidth(switchFrame:GetTextWidth() + 15)
+                            switchFrame:SetScript("OnClick", function(self)
+                                for _, v in pairs(frame.difficultyFrames) do
+                                    v:SetShown(self.layoutIndex == v.layoutIndex)
+                                    
+                                end
+    
+                                frame.DetailedInformation.Difficulties:MarkDirty()
+                                frame.ExpandFrame:SetState(true)
+                                frame.DetailedInformation:Show()
+                            end)
+                            switchFrame:Show()
+    
+                        end
+    
+                        frame.SwitchPanel:MarkDirty()
+                    end
+    
+                    frame.SwitchPanel:SetShown(not equal and not forwardOrdered)
+    
+                    requestAllItemsFromCurrentEncounter()
+                    retrieveItemInfoFromCurrentEncounter()
+                end)
+                
+
                 
                 frame:Show()
             end
@@ -1310,13 +1359,15 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
 end
 
 miog.loadAdventureJournal = function()
-    miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.pveFrame2, "MIOG_AdventureJournal")
-    miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
-    miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
+    miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.Plugin.InsertFrame, "MIOG_AdventureJournal")
+    --miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
+    --miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
     frameWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
 
     basePool = CreateFramePool("Frame", miog.AdventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
-    difficultyPool = CreateFramePool("Frame", miog.AdventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityDifficultyTemplate", resetDifficultyFrames)
+    difficultyPool = CreateFramePool("Frame", nil, "MIOG_AdventureJournalAbilityDifficultyTemplate", resetDifficultyFrames)
+    switchPool = CreateFramePool("Button", nil, "MIOG_AdventureJournalAbilitySwitchTemplate", resetSwitchFrames)
+
     lootPool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootItemTemplate", resetLootItemFrames)
     slotLinePool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootSlotLineTemplate", resetSlotLine)
     modelPool = CreateFramePool("Button", miog.AdventureJournal.ModelScene.List.Container, "MIOG_AdventureJournalCreatureButtonTemplate", resetModelFrame)
@@ -1342,6 +1393,9 @@ miog.loadAdventureJournal = function()
     info.value = 0
     info.func = function()
         EJ_SetLootFilter(0, 0)
+
+        lootData = {}
+        requestAllItemsFromCurrentEncounter()
         retrieveItemInfoFromCurrentEncounter()
     end
 
@@ -1356,6 +1410,9 @@ miog.loadAdventureJournal = function()
         info.value = k
         info.func = function()
             EJ_SetLootFilter(k, GetSpecializationInfoForClassID(k, 1))
+
+            lootData = {}
+            requestAllItemsFromCurrentEncounter()
             retrieveItemInfoFromCurrentEncounter()
         end
 
@@ -1372,6 +1429,9 @@ miog.loadAdventureJournal = function()
             specInfo.value = y
             specInfo.func = function()
                 EJ_SetLootFilter(k, y)
+
+                lootData = {}
+                requestAllItemsFromCurrentEncounter()
                 retrieveItemInfoFromCurrentEncounter()
             end
 
@@ -1392,6 +1452,9 @@ miog.loadAdventureJournal = function()
         info.value = v
         info.func = function()
             C_EncounterJournal.SetSlotFilter(v)
+
+            lootData = {}
+            requestAllItemsFromCurrentEncounter()
             retrieveItemInfoFromCurrentEncounter()
         end
 
@@ -1406,7 +1469,8 @@ miog.loadAdventureJournal = function()
         keyInfo.value = i
         keyInfo.func = function()
             changingKeylevel = true
-            miog.selectBoss(miog.AdventureJournal.currentInstanceID, currentEncounterID)
+            C_EncounterJournal.SetPreviewMythicPlusLevel(i)
+            miog.selectBoss(currentEncounterID)
             changingKeylevel = false
         end
 
@@ -1414,10 +1478,6 @@ miog.loadAdventureJournal = function()
     end
 
     keylevelDropdown:SelectFirstFrameWithValue(3)
-
-    local instanceID = 1207
-    EJ_SelectInstance(instanceID)
-    EJ_SetDifficulty(14)
 
     local classID, specID = EJ_GetLootFilter()
 
@@ -1431,13 +1491,26 @@ miog.loadAdventureJournal = function()
     local filter = C_EncounterJournal.GetSlotFilter()
 
     miog.AdventureJournal.SettingsBar.SlotDropdown:SelectFirstFrameWithValue(filter)
+
+    local categoryFrame = CreateFrame("Button", "MythicIOGrabber_AdventureJournalButton", miog.MainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
+    miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
+    categoryFrame:SetHeight(30)
+    categoryFrame:SetPoint("TOPLEFT", miog.MainTab.CategoryPanel, "BOTTOMLEFT", 0, -3)
+    categoryFrame:SetPoint("TOPRIGHT", miog.MainTab.CategoryPanel, "BOTTOMRIGHT", 0, -3)
+    categoryFrame.Title:SetText(ENCOUNTER_JOURNAL)
+    categoryFrame.BackgroundImage:SetVertTile(true)
+    categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[111], nil, "CLAMPTOBLACKADDITIVE")
+    categoryFrame:SetScript("OnClick", function()
+        miog.setActivePanel(nil, "AdventureJournal")
+    end)
+    categoryFrame.StartGroup:Hide()
+    categoryFrame.FindGroup:Hide()
+
 end
 
 hooksecurefunc("SetItemRef", function(link)
 	local linkType, linkAddonName, system, feature, data1, data2 = strsplit(":", link)
 	if linkType == "addon" and linkAddonName == addonName then
-        print("Link clicked:", system, feature, data1, data2)
-
         if(system == "aj") then
             if(feature == "ability") then
                 miog.selectBoss(data1, data2)
@@ -1446,3 +1519,21 @@ hooksecurefunc("SetItemRef", function(link)
         end
 	end
 end)
+
+local function aj_events(_, event, ...)
+    --checkAllEncounterSections(...)
+
+    if(event == "EJ_LOOT_DATA_RECIEVED") then
+       -- lootData = {}
+        --requestAllItemsFromCurrentEncounter()
+    end
+end
+
+MIOG_AJ = aj_events
+
+
+local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
+
+--eventReceiver:RegisterEvent("EJ_DIFFICULTY_UPDATE")
+--eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
+eventReceiver:SetScript("OnEvent", aj_events)

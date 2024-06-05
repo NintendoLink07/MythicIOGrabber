@@ -1,6 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_AdventureJournal" inherits="BackdropTemplate" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+
         <Frames>
             <Frame parentKey="InstanceDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
                 <Size x="260" y="22" />
@@ -67,23 +72,23 @@
 
                 <Frames>
                     <Frame parentKey="ClassSpecDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                        <Size x="140" y="20" />
+                        <Size x="125" y="20" />
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="SlotDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                        <Size x="120" y="20" />
+                        <Size x="95" y="20" />
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.ClassSpecDropdown" relativePoint="RIGHT"/>
                         </Anchors>
                     </Frame>
             
                     <Frame parentKey="KeylevelDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
-                        <Size x="44" y="22" />
+                        <Size x="40" y="20" />
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                            <Anchor point="LEFT" relativeKey="$parent.SlotDropdown" relativePoint="RIGHT"/>
                         </Anchors>
                     </Frame>
                 </Frames>
@@ -159,7 +164,7 @@
                     <ModelScene parentKey="Frame" inherits="ModelSceneMixinTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.List" relativePoint="TOPRIGHT"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>6´ß
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
                         <Layers>
                             <Layer level="BACKGROUND" textureSubLevel="1">
@@ -243,11 +248,11 @@
 
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="1">
-                <Texture parentKey="Background" setAllPoints="true" />
+                <Texture parentKey="Background" setAllPoints="true" hidden="true" />
             </Layer>
 
             <Layer level="ARTWORK">
-                <Texture parentKey="Status" file="Interface\ChatFrame\ChatFrameBackground">
+                <Texture parentKey="Status" file="Interface\ChatFrame\ChatFrameBackground" hidden="true">
                     <Size x="20" y="20" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="TOPRIGHT"/>
