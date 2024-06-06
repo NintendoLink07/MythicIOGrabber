@@ -7,14 +7,14 @@
         </Anchors>
 
         <Frames>
-            <Frame parentKey="InstanceDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+            <Frame parentKey="InstanceDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="1000">
                 <Size x="260" y="22" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                 </Anchors>
             </Frame>
             
-            <Frame parentKey="BossDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+            <Frame parentKey="BossDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="1000">
                 <Size x="260" y="22" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT"/>
@@ -112,6 +112,33 @@
                         </KeyValues>
                     </Frame>
                 </ScrollChild>
+
+                <Frames>
+                    <Frame parentKey="Status" hidden="true" toplevel="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="BACKGROUND">
+                                <Texture parentKey="Background" setAllPoints="true">
+                                    <Color r="0.1" g="0.1" b="0.1" a="0.93"/>
+                                </Texture>
+                            </Layer>
+
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="No ability data found for this encounter (encounters before Cataclysm have no ability descriptions).">
+                                    <Anchors>
+                                        <Anchor point="TOP" relativeKey="$parent.Background" relativePoint="TOP" y="-20"/>
+                                        <Anchor point="LEFT" relativeKey="$parent.Background" relativePoint="LEFT"/>
+                                        <Anchor point="RIGHT" relativeKey="$parent.Background" relativePoint="RIGHT"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
             </ScrollFrame>
 
             <ScrollFrame parentKey="LootFrame" inherits="ScrollFrameTemplate" hidden="true">

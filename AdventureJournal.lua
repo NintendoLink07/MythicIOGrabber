@@ -8,7 +8,8 @@ local basePool, lootPool, slotLinePool, modelPool, difficultyPool, switchPool
 local isRaid
 local changingKeylevel = false
 local currentModels = {}
-local receivedUpdates = 0
+local lootWaitlist = {}
+local currentOffset = 0
 
 local EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.DungeonNormal,
@@ -81,17 +82,21 @@ local function resetLootItemFrames(_, frame)
 
     frame.fixedWidth = miog.AdventureJournal.LootFrame:GetWidth()
 
-    frame.BasicInformation.Difficulty1Icon:SetTexture(nil)
-    frame.BasicInformation.Difficulty1Icon:SetScript("OnEnter", nil)
-    frame.BasicInformation.Difficulty1Icon.itemLink = nil
+    frame.BasicInformation.Item1:SetTexture(nil)
+    frame.BasicInformation.Item1:SetScript("OnEnter", nil)
+    frame.BasicInformation.Item1.itemLink = nil
 
-    frame.BasicInformation.Difficulty2Icon:SetTexture(nil)
-    frame.BasicInformation.Difficulty2Icon:SetScript("OnEnter", nil)
-    frame.BasicInformation.Difficulty2Icon.itemLink = nil
+    frame.BasicInformation.Item2:SetTexture(nil)
+    frame.BasicInformation.Item2:SetScript("OnEnter", nil)
+    frame.BasicInformation.Item2.itemLink = nil
 
-    frame.BasicInformation.Difficulty3Icon:SetTexture(nil)
-    frame.BasicInformation.Difficulty3Icon:SetScript("OnEnter", nil)
-    frame.BasicInformation.Difficulty3Icon.itemLink = nil
+    frame.BasicInformation.Item3:SetTexture(nil)
+    frame.BasicInformation.Item3:SetScript("OnEnter", nil)
+    frame.BasicInformation.Item3.itemLink = nil
+
+    frame.BasicInformation.Item4:SetTexture(nil)
+    frame.BasicInformation.Item4:SetScript("OnEnter", nil)
+    frame.BasicInformation.Item4.itemLink = nil
 
 end
 
@@ -937,14 +942,10 @@ local function retrieveDifficultyIDs()
 end
 
 miog.selectInstance = function(journalInstanceID)
-    miog.AdventureJournal.currentInstanceID = journalInstanceID
-    --framePool:ReleaseAll()
     EJ_SelectInstance(journalInstanceID)
-
-    isRaid = miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid
-
     retrieveDifficultyIDs()
 
+    isRaid = miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid
     miog.AdventureJournal.SettingsBar.KeylevelDropdown:SetShown(not isRaid)
 
     miog.AdventureJournal.BossDropdown:ResetDropDown()
@@ -960,7 +961,7 @@ miog.selectInstance = function(journalInstanceID)
     miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
 end
 
-local function retrieveItemInfoFromCurrentEncounter()
+local function retrieveItemInfoFromCurrentEncounter(fromEvent)
     lootPool:ReleaseAll()
     slotLinePool:ReleaseAll()
 
@@ -983,31 +984,29 @@ local function retrieveItemInfoFromCurrentEncounter()
             frame.BasicInformation.Icon:SetTexture(v.icon)
             frame.layoutIndex = v.index * 10 + 1
 
-            --for x = 1, #currentDifficultyIDs, 1 do
-            for x, y in ipairs(currentDifficultyIDs) do
+            local counter = 0
+
+            for _, y in ipairs(currentDifficultyIDs) do
+                local currentItem = counter == 0 and frame or frame.BasicInformation["Item" .. (counter)]
+
                 if(v.links[y]) then
-                    if(x == 1) then
-                        frame:SetScript("OnEnter", function(self)
-                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                            GameTooltip:SetHyperlink(v.links[y])
-                        end)
+                    currentItem:SetScript("OnEnter", function(self)
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                        GameTooltip:SetHyperlink(v.links[y])
+                    end)
 
-                        frame.itemLink = v.links[y]
-                    else
-                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:SetScript("OnEnter", function(self)
-                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                            GameTooltip:SetHyperlink(v.links[y])
-                        end)
-                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:SetTexture(v.icon)
-                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"].itemLink = v.links[y]
-                    
-                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:Show()
-                    end
-                else
-                    if(frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]) then
-                        frame.BasicInformation["Difficulty" .. (x - 1) .. "Icon"]:Hide()
+                    currentItem.itemLink = v.links[y]
+
+                    if(currentItem ~= frame) then
+                        currentItem:SetTexture(v.icon)
+                        currentItem:Show()
 
                     end
+
+                    counter = counter + 1
+                elseif(currentItem) then
+                    currentItem:Hide()
+
                 end
                 
             end
@@ -1019,29 +1018,34 @@ local function retrieveItemInfoFromCurrentEncounter()
     end
 end
 
-local function requestAllItemsFromCurrentEncounter(singleIteration)
-    for x = 1, singleIteration and 1 or #currentDifficultyIDs, 1 do
-        if(not singleIteration) then
-            EJ_SetDifficulty(currentDifficultyIDs[x])
-            
+local function requestCurrentDifficultyItemsFromCurrentEncounter()
+    for n = 1, EJ_GetNumLoot(), 1 do
+        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(n)
+
+        if(itemInfo and itemInfo.name) then
+            lootData[itemInfo.name] = lootData[itemInfo.name] or {
+                name = itemInfo.name,
+                icon = itemInfo.icon,
+                itemID = itemInfo.itemID,
+                index = itemInfo.filterType or 20,
+                slot = itemInfo.slot == "" and "Other" or itemInfo.slot,
+                links = {}
+            }
+
+            lootData[itemInfo.name].links[EJ_GetDifficulty()] = itemInfo.link
+
+        else
+            lootWaitlist[itemInfo.itemID] = false
+
         end
+    end
+end
 
-        for n = 1, EJ_GetNumLoot(), 1 do
-            local itemInfo = C_EncounterJournal.GetLootInfoByIndex(n)
+local function requestAllItemsFromCurrentEncounter()
+    for x = 1, #currentDifficultyIDs, 1 do
+        EJ_SetDifficulty(currentDifficultyIDs[x])
 
-            if(itemInfo and itemInfo.name) then
-                lootData[itemInfo.name] = lootData[itemInfo.name] or {
-                    name = itemInfo.name,
-                    icon = itemInfo.icon,
-                    index = itemInfo.filterType or 20,
-                    slot = itemInfo.slot == "" and "Other" or itemInfo.slot,
-                    links = {}
-                }
-
-                lootData[itemInfo.name].links[EJ_GetDifficulty()] = itemInfo.link
-
-            end
-        end
+        requestCurrentDifficultyItemsFromCurrentEncounter()
     end
 end
 
@@ -1114,10 +1118,12 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
             showModel(currentModels[1].uiModelSceneID, currentModels[1].displayInfo, true)
         end
 
+        miog.AdventureJournal.AbilitiesFrame.Status:Hide()
+
         for x = 1, #currentDifficultyIDs, 1 do
             EJ_SetDifficulty(currentDifficultyIDs[x])
 
-            requestAllItemsFromCurrentEncounter(true)
+            requestCurrentDifficultyItemsFromCurrentEncounter()
 
             local _, _, _, originalRootID = EJ_GetEncounterInfo(currentEncounterID)
 
@@ -1125,7 +1131,7 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
 
             local rootSectionID = originalRootID
 
-            if(rootSectionID) then
+            if(rootSectionID and rootSectionID ~= 0) then
                 repeat
                     local info = C_EncounterJournal.GetSectionInfo(rootSectionID)
                     
@@ -1193,11 +1199,18 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                                     end
                                 end
                             end
+                        else
+                        
                         end
                     end
 
                     rootSectionID = table.remove(stack)
                 until not rootSectionID
+            else
+                miog.AdventureJournal.AbilitiesFrame.Status:Show()
+
+                break
+
             end
         end
 
@@ -1331,8 +1344,8 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
     
                     frame.SwitchPanel:SetShown(not equal and not forwardOrdered)
     
-                    requestAllItemsFromCurrentEncounter()
-                    retrieveItemInfoFromCurrentEncounter()
+                    --requestAllItemsFromCurrentEncounter()
+                    --retrieveItemInfoFromCurrentEncounter()
                 end)
                 
 
@@ -1468,6 +1481,7 @@ miog.loadAdventureJournal = function()
         keyInfo.text = "+" .. i
         keyInfo.value = i
         keyInfo.func = function()
+            currentOffset = miog.AdventureJournal.AbilitiesFrame:GetVerticalScroll()
             changingKeylevel = true
             C_EncounterJournal.SetPreviewMythicPlusLevel(i)
             miog.selectBoss(currentEncounterID)
@@ -1512,6 +1526,8 @@ hooksecurefunc("SetItemRef", function(link)
 	local linkType, linkAddonName, system, feature, data1, data2 = strsplit(":", link)
 	if linkType == "addon" and linkAddonName == addonName then
         if(system == "aj") then
+            miog.setActivePanel(nil, "AdventureJournal")
+            
             if(feature == "ability") then
                 miog.selectBoss(data1, data2)
 
@@ -1523,9 +1539,22 @@ end)
 local function aj_events(_, event, ...)
     --checkAllEncounterSections(...)
 
-    if(event == "EJ_LOOT_DATA_RECIEVED") then
-       -- lootData = {}
-        --requestAllItemsFromCurrentEncounter()
+    if(event == "EJ_LOOT_DATA_RECIEVED" and currentEncounterID and ...) then
+        lootWaitlist[...] = nil
+
+        local counter = 0
+
+        for k, v in pairs(lootWaitlist) do
+            counter = counter + 1
+            break
+
+        end
+
+        if(counter == 0) then
+            --print(GetTimePreciseSec(), "ZEROOOOOO")
+            requestAllItemsFromCurrentEncounter()
+            retrieveItemInfoFromCurrentEncounter(true)
+        end
     end
 end
 
@@ -1535,5 +1564,5 @@ MIOG_AJ = aj_events
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
 
 --eventReceiver:RegisterEvent("EJ_DIFFICULTY_UPDATE")
---eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
+eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
 eventReceiver:SetScript("OnEvent", aj_events)

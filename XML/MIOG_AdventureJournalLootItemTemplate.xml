@@ -40,7 +40,7 @@
 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="Difficulty4Icon">
+                        <Texture parentKey="Item4">
                             <Size x="16" y="16" />
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3"/>
@@ -58,10 +58,10 @@
                             </Scripts>
                         </Texture>
 
-                        <Texture parentKey="Difficulty3Icon">
+                        <Texture parentKey="Item3">
                             <Size x="16" y="16" />
                             <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty4Icon" relativePoint="LEFT"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Item4" relativePoint="LEFT"/>
                             </Anchors>
                             
                             <Scripts>
@@ -76,10 +76,10 @@
                             </Scripts>
                         </Texture>
 
-                        <Texture parentKey="Difficulty2Icon">
+                        <Texture parentKey="Item2">
                             <Size x="16" y="16" />
                             <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty3Icon" relativePoint="LEFT"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Item3" relativePoint="LEFT"/>
                             </Anchors>
                             
                             <Scripts>
@@ -94,10 +94,10 @@
                             </Scripts>
                         </Texture>
 
-                        <Texture parentKey="Difficulty1Icon">
+                        <Texture parentKey="Item1">
                             <Size x="16" y="16" />
                             <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty2Icon" relativePoint="LEFT"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.Item2" relativePoint="LEFT"/>
                             </Anchors>
                             
                             <Scripts>
@@ -127,7 +127,7 @@
                             <FontHeight val="11" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1" />
-                                <Anchor point="RIGHT" relativeKey="$parent.Difficulty1Icon" relativePoint="LEFT" x="-2" />
+                                <Anchor point="RIGHT" relativeKey="$parent.Item1" relativePoint="LEFT" x="-2" />
                             </Anchors>
                         </FontString>
                     </Layer>    

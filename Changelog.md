@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.1.1] - 2024-06-06
+
+### Changed
+
+- "Last Group" box is now below the "Active Queues" panel. Makes more sense and the right side got kinda crowded.
+
+### Fixed
+
+- Items from older raids / difficulties now get correctly applied to the frame template.
+
+- Loot data from older raids / dungeons should now gets correctly processed.
+
+- Reduced the lag when switching to a different boss / raid.
+
 
 ## [2.1] - 2024-06-05
 
@@ -1516,7 +1530,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1.1..HEAD
+[2.1.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.1
 [2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1
 [2.0.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.10
 [2.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.9

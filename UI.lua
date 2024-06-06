@@ -952,11 +952,11 @@ miog.createFrames = function()
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-		miog.createFrameBorder(miog.MainTab.Information.LastGroup, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+		miog.createFrameBorder(miog.MainTab.QueueInformation.LastGroup, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 		local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
 
-		miog.MainTab.Information.LastGroup:SetBackdropColor(r, g, b, 0.9)
+		miog.MainTab.QueueInformation.LastGroup:SetBackdropColor(r, g, b, 0.9)
 
 		ConquestFrame.selectedButton = nil
 		PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")

@@ -277,6 +277,23 @@
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
                                         </Anchors>
                                     </Frame>
+                                    
+                                    <Frame parentKey="LastGroup" inherits="BackdropTemplate">
+                                        <Size y="50" />
+
+                                        <Anchors>
+                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="2"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                                        </Anchors>
+
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
+                                                    <FontHeight val="12"/>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
 
                                     <Frame parentKey="Panel" inherits="BackdropTemplate" frameLevel="2">
                                         <KeyValues>
@@ -285,7 +302,7 @@
 
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.DropDown" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT"/>
                                         </Anchors>
 
                                         <Frames>
@@ -351,7 +368,6 @@
                                             </ScrollFrame>
                                         </Frames>
                                     </Frame>
-
                                 </Frames>
                             </Frame>
 
@@ -564,28 +580,11 @@
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.HonorStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
                                         </Anchors>
                                     </Frame>
-                                    
-                                    <Frame parentKey="LastGroup" inherits="BackdropTemplate">
-                                        <Size y="50" />
-
-                                        <Anchors>
-                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="2"/>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
-                                                    <FontHeight val="12"/>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                    </Frame>
 
                                     <Frame parentKey="Currency">
                                         <Size x="40" y="80" />
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT" y="3"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
                                         </Anchors>
 
                                         <Frames>

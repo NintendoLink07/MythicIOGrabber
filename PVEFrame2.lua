@@ -36,7 +36,7 @@ local function createPVEFrameReplacement()
 		miog.setupRaidStatistics()
 		miog.gatherRaidStatistics()
 
-		miog.MainTab.Information.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
+		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
