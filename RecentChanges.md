@@ -6,8 +6,8 @@
 
 ### Fixed
 
-- Items from older raids / difficulties now get correctly applied to the frame template.
+- [Adventure Journal] Items from older raids / difficulties now get correctly applied to the frame template.
 
-- Loot data from older raids / dungeons should now gets correctly processed.
+- [Adventure Journal] Loot data from older raids / dungeons should now gets correctly processed.
 
-- Reduced the lag when switching to a different boss / raid.
+- [Adventure Journal] Reduced the lag when switching to a different boss / raid.
