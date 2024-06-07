@@ -24,6 +24,8 @@ local function createPVEFrameReplacement()
 
 		end
 
+		local allPlayersGear = miog.openRaidLib.GetAllUnitsGear()
+
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
 

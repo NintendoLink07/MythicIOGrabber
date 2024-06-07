@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [2.1.2] - 2024-06-10
+
+### Added
+
+- A new tab has appeared! Partycheck is now available.
+You will see your group- / raid-members listed in a table, showing info like spec, role, itemlevel, repair%, missing enchants, keystone, score and raid progress.
+You can sort the whole table, except for missing enchants.
+
+### Changed
+
+
+
+### Fixed
+
+- [Filter Panel] You can now hide the filter panel when it's currently locked.
+
+
+
 ## [2.1.1] - 2024-06-06
 
 ### Changed
@@ -1531,6 +1550,7 @@ Basically just the rating for the bracket and the tier they're currently in
 
 <!-- Versions -->
 [unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1.1..HEAD
+[2.1.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.2
 [2.1.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.1
 [2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1
 [2.0.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.0.10

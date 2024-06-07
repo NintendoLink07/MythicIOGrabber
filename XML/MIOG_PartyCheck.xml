@@ -1,0 +1,102 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_PartyCheck" inherits="BackdropTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Name">
+                    <Size x="110" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="3" y="-3"/>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="Role" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Role">
+                    <Size x="30" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="Spec" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Spec">
+                    <Size x="30" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="ILvl" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="ILvl">
+                    <Size x="33" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="Durability" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Dur">
+                    <Size x="33" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="MissingEnchantSlots" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Missing Enchants">
+                    <Size x="120" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Durability" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="Keystone" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Keystone">
+                    <Size x="60" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.MissingEnchantSlots" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="Score" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Score">
+                    <Size x="40" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Keystone" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Progress">
+                    <Size x="100" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>                    
+            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate">
+                <KeyValues>
+                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                        <KeyValues>
+                            <KeyValue key="align" value="top" />
+                            <KeyValue key="spacing" value="4" />
+                        </KeyValues>
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+        </Frames>
+    </Frame>
+</Ui>

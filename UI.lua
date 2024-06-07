@@ -1,6 +1,8 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local pluginElements
+
 local function createPlaystyleEntry(playstyle, activityInfo, playstyleDropDown)
     local info = {
         entryType = "option",
@@ -1048,6 +1050,7 @@ miog.createFrames = function()
 	miog.ClassPanel:SetPoint("BOTTOMLEFT", miog.ClassPanel:GetParent(), "TOPLEFT", 0, 1)
 
 	miog.createClassPanel()
+	miog.loadPartyCheck()
 	miog.createInspectCoroutine()
 
 	if(not miog.F.LITE_MODE) then
@@ -1058,9 +1061,12 @@ miog.createFrames = function()
 		
 	end
 
-	-- IMPLEMENTING CALENDAR EVENTS IN VERSION 2.1
-	--miog.scriptReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
-	--miog.scriptReceiver:RegisterEvent("CALENDAR_OPEN_EVENT")
+	pluginElements = {
+		miog.ApplicationViewer,
+		miog.SearchPanel,
+		miog.EntryCreation,
+		miog.AdventureJournal
+	}
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		setActivePanel(_, panel)

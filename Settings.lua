@@ -393,15 +393,17 @@ local function keepInfoFromGroupCreation(self)
 end
 
 local function keepSignUpNote(self, resultID)
-	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+	if(resultID) then
+		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
-	if(searchResultInfo) then
+		if(searchResultInfo) then
 
-		self.resultID = resultID
-		self.activityID = searchResultInfo.activityID
+			self.resultID = resultID
+			self.activityID = searchResultInfo.activityID
 
-		LFGListApplicationDialog_UpdateRoles(self)
-		StaticPopupSpecial_Show(self)
+			LFGListApplicationDialog_UpdateRoles(self)
+			StaticPopupSpecial_Show(self)
+		end
 	end
 end
 

@@ -5,7 +5,12 @@
             <KeyValue key="fixedWidth" value="230" type="number" />
         </KeyValues>
         <Frames>
-            <Frame parentKey="Lock" inherits="BackdropTemplate" setAllPoints="true" hidden="true" frameStrata="HIGH">
+            <Frame parentKey="Lock" inherits="BackdropTemplate" hidden="true" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture parentKey="Background" setAllPoints="true">

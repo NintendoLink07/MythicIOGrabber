@@ -96,7 +96,7 @@ end
 -- add comma to separate thousands
 -- 
 local function comma_value(amount)
-	local formatted = amount
+	local formatted, k = amount, 0
 	while true do
 	  formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
 	  if (k==0) then
