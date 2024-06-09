@@ -3,13 +3,78 @@
     <Frame name="MIOG_PartyCheckPlayerTemplate" virtual="true">
         <Size y="17" />
 
+        <Scripts>
+            <OnEnter>
+                self.BackgroundHover:Show()
+
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(self.data.name)
+                GameTooltip:SetUnit(self.data.unitID)
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+                --GameTooltip:AddLine("Level " .. self.data.level .. " " .. WrapTextInColorCode((self.data.specID and self.data.specID ~= 0 and (select(2, GetSpecializationInfoForSpecID(self.data.specID)) .. " ") or "") .. UnitClass(self.data.unitID), C_ClassColor.GetClassColor(self.data.classFileName):GenerateHexColor()))
+                GameTooltip:AddLine(WrapTextInColorCode((self.data.specID and self.data.specID ~= 0 and (select(2, GetSpecializationInfoForSpecID(self.data.specID)) .. " ") or "") .. UnitClass(self.data.unitID), C_ClassColor.GetClassColor(self.data.classFileName):GenerateHexColor()))
+
+                if (self.data.rank == 2 ) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine("Rank: " .. RAID_LEADER)
+
+                elseif (self.data.rank == 1 ) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine("Rank: " .. RAID_ASSISTANT)
+
+                end
+
+                if (self.data.raidRole ~= nil) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+                    if ( self.data.raidRole == "MAINTANK" ) then
+                        GameTooltip:AddLine("Raid role: " .. MAIN_TANK);
+                    elseif ( self.data.raidRole == "MAINASSIST" ) then
+                        GameTooltip:AddLine("Raid role: " .. MAIN_ASSIST);
+                    end
+                end
+
+                if(self.data.keystone) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine("Keystone: +" .. self.data.keylevel .. " " .. self.data.keyname)
+
+                end
+
+                if(self.data.progressTooltipData) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine(self.data.progressTooltipData)
+
+                end
+
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                self.BackgroundHover:Hide()
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" atlas="pvpqueue-button-casual-up" setAllPoints="true" hidden="true" />
+                <Texture parentKey="BackgroundHover" atlas="pvpqueue-button-casual-highlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
+            </Layer>
+
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
-                    <Size x="110" />
+                <FontString parentKey="Group" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                    <Size x="35" />
                     <FontHeight val="11"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Name" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                    <Size x="100" />
+                    <FontHeight val="11"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Group" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -21,13 +86,11 @@
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </Texture>
-            </Layer>
 
-            <Layer level="ARTWORK">
                 <Texture parentKey="Spec">
                     <Size x="15" y="15" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="18"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="35"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -37,22 +100,22 @@
                     <Size x="33" />
                     <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="18"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="35"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Durability" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
-                    <Size x="33" />
+                    <Size x="25" />
                     <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="3"/>
+                        <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="20"/>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
 
         <Frames>
-            <Frame parentKey="MissingEnchantSlots" inherits="HorizontalLayoutFrame">
+            <!--<Frame parentKey="MissingEnchantSlots" inherits="HorizontalLayoutFrame">
                 <KeyValues>
                     <KeyValue key="fixedWidth" value="120" type="number" />
                     <KeyValue key="fixedHeight" value="17" type="number" />
@@ -127,7 +190,7 @@
                         </Texture>
                     </Layer>
                 </Layers>
-            </Frame>
+            </Frame>-->
         </Frames>
 
         <Layers>
@@ -135,14 +198,14 @@
                 <Texture parentKey="Keystone">
                     <Size x="15" y="15" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.MissingEnchantSlots" relativePoint="RIGHT" x="3"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Durability" relativePoint="RIGHT" x="20"/>
                     </Anchors>
                 </Texture>
             </Layer>
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Keylevel" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
-                    <Size x="41" />
+                    <Size x="30" />
                     <FontHeight val="11"/>
 
                     <Anchors>
@@ -155,7 +218,7 @@
                     <FontHeight val="11"/>
 
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Keylevel" relativePoint="RIGHT" x="3"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Keylevel" relativePoint="RIGHT" x="10"/>
                     </Anchors>
                 </FontString>
 
@@ -164,7 +227,7 @@
                     <FontHeight val="11"/>
                     
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="3"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="20"/>
                     </Anchors>
                 </FontString>
             </Layer>

@@ -115,8 +115,8 @@
                         <KeyValues>
                             <KeyValue key="minimumWidth" value="1" type="number" />
                             <KeyValue key="minimumHeight" value="1" type="number" />
-                            <KeyValue key="spacing" value="5" type="number" />
-                            <KeyValue key="align" value="top" type="global" />
+                            <KeyValue key="spacing" value="7" type="number" />
+                            <KeyValue key="leftPadding" value="2" type="number" />
                         </KeyValues>
 
                         <Scripts>

@@ -5,10 +5,10 @@ miog.checkSystem = {}
 miog.checkSystem.groupMember = {}
 miog.checkSystem.keystoneData = {}
 
-local partyPool
-
 miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 	miog.checkSystem.keystoneData[unitName] = keystoneInfo
+
+	miog.updateRosterInfoData()
 end
 
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
@@ -37,24 +37,7 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 		end
 	end
 
-	--[[if(allUnitsInfo and false) then
-		for unitNameKey, unitInfo in pairs(allUnitsInfo) do
-			local specId = unitInfo.specId
-			local specName = unitInfo.specName
-			local role = unitInfo.role
-			local renown = unitInfo.renown
-			local covenantId = unitInfo.covenantId
-			local talents = unitInfo.talents
-			local pvpTalents = unitInfo.pvpTalents
-			local conduits = unitInfo.conduits
-			local class = unitInfo.class
-			local classId = unitInfo.classId
-			local className = unitInfo.className
-			local unitName = unitInfo.name
-			local unitNameFull = unitInfo.nameFull
-
-		end
-	end]]
+	miog.updateRosterInfoData()
 end
 
 --[[function miog.OnUnitUpdate(singleUnitId, singleUnitInfo, allUnitsInfo)
@@ -100,7 +83,6 @@ end
 			local unitName = unitInfo.name
 			local unitNameFull = unitInfo.nameFull
 
-			--print(unitName, role, specName, className)
 
 			if(not groupSystem.groupMember[unitNameFull]) then
 				local memberFrame = partyPool:Acquire()
@@ -135,8 +117,6 @@ end
 	end
 
     miog.PartyCheck.ScrollFrame.Container:MarkDirty()
-
-	--print(unitInfo.unitName, unitInfo.role, unitInfo.specName, unitInfo.className)
 
 	miog.ClassPanel.StatusString:SetText("(" .. counter .. "/" .. GetNumGroupMembers() .. ")")
 
@@ -263,6 +243,8 @@ function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
 	local guid = UnitGUID(unitId)
 
 	if(guid) then
+
+		miog.checkSystem.groupMember[guid] = miog.checkSystem.groupMember[guid] or {}
 		miog.checkSystem.groupMember[guid].durability = durability
 
 	end
@@ -274,6 +256,22 @@ end
 
 miog.loadPartyCheck = function()
     miog.PartyCheck = miog.pveFrame2.TabFramesPanel.PartyCheck
+
+	miog.PartyCheck.SortButtons = {}
+
+	for k, v in pairs(miog.PartyCheck) do
+		if(type(v) == "table" and v.Button) then
+			v.Name:SetText(v:GetParentKey())
+			miog.PartyCheck.SortButtons[v:GetDebugName()] = v.Button
+			v.Button.panel = "partyCheck"
+			v.Button.category = v:GetDebugName()
+			v.Button:SetScript("PostClick", function()
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+				miog.updateRosterInfoData()
+			end)
+		end
+
+	end
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")

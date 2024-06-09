@@ -3,8 +3,14 @@
     <Frame name="MIOG_ResultFrameTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background">
-                    <Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />
+                <Texture parentKey="Background" horizTile="true" vertTile="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+                <Texture setAllPoints="true" alphaMode="MOD" hidden="true">
+                    <Color r="0.25" g="0.25" b="0.25" a="0.8" />
                 </Texture>
             </Layer>
         </Layers>
@@ -14,7 +20,7 @@
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture setAllPoints="true">
-                            <Color r="0.1" g="0.1" b="0.1" a="0.7" />
+                            <Color r="0.1" g="0.1" b="0.1" a="0.9" />
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">

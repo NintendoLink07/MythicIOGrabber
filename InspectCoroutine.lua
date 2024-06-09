@@ -17,21 +17,41 @@ local timers = {}
 
 local currentInspection = nil
 
-local function createGroupMemberEntry(guid, unitID)
-	local _, classFile, _, _, _, name = GetPlayerInfoByGUID(guid)
-	local classID = classFile and miog.CLASSFILE_TO_ID[classFile]
-	local specID = GetInspectSpecialization(unitID)
+--/run MIOG_SavedSettings.sortMethods.table.partyCheck = nil
 
-	MIOG_InspectedGUIDs[guid] = GetTimePreciseSec()
+local function sortPartyCheckList(k1, k2)
+	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
+		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
+			local firstState = miog.PartyCheck.SortButtons[key]:GetActiveState()
 
-	groupSystem.groupMember[guid] = {
-		unitID = unitID,
-		name = name or UnitName(unitID),
-		classID = classID or select(2, UnitClassBase(unitID)),
-		role = GetSpecializationRoleByID(specID),
-		specID = specID ~= 0 and specID or nil
-	}
+			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
 
+				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
+					local secondState = miog.PartyCheck.SortButtons[innerKey]:GetActiveState()
+
+					if(k1[key] == k2[key]) then
+						return secondState == 1 and k1[innerKey] > k2[innerKey] or secondState == 2 and k1[innerKey] < k2[innerKey]
+
+					elseif(k1[key] ~= k2[key]) then
+						return firstState == 1 and k1[key] > k2[key] or firstState == 2 and k1[key] < k2[key]
+
+					end
+				end
+			end
+
+			if(k1[key] == k2[key]) then
+				return firstState == 1 and k1.index > k2.index or firstState == 2 and k1.index < k2.index
+
+			elseif(k1[key] ~= k2[key]) then
+				return firstState == 1 and k1[key] > k2[key] or firstState == 2 and k1[key] < k2[key]
+
+			end
+
+		end
+
+	end
+
+	return k1.index < k2.index
 end
 
 local function updateRosterInfoData()
@@ -41,7 +61,9 @@ local function updateRosterInfoData()
 
 	end
 
-	partyPool:ReleaseAll()
+	if(partyPool) then
+		partyPool:ReleaseAll()
+	end
 
 	groupSystem.groupMember = {}
 
@@ -78,28 +100,39 @@ local function updateRosterInfoData()
 
 	miog.F.LFG_STATE = miog.checkLFGState()
 
+	local playersWithSpecData = 0
+
 	for groupIndex = 1, numOfMembers, 1 do
 		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
 		if(name) then
 			local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and miog.F.LFG_STATE..groupIndex) or "player"
-			--local unitID = ((miog.F.LFG_STATE == "raid" or (miog.F.LFG_STATE == "party" and groupIndex ~= miog.MAX_GROUP_SIZES["party"])) and miog.F.LFG_STATE..groupIndex) or "player"
 			local guid = UnitGUID(unitID)
+			local shortName = UnitName(unitID)
 
 			if(guid) then
 				groupSystem.groupMember[guid] = {
 					unitID = unitID,
-					name = name,
-					shortName = UnitName(unitID),
+					name = GetUnitName(unitID, true),
+					shortName = shortName,
 					classID = fileName and miog.CLASSFILE_TO_ID[fileName],
 					classFileName = fileName,
 					role = combatRole,
+					group = subgroup,
+					specID = 0,
+					rank = rank,
+					level = level,
+					zone = zone,
+					online = online,
+					dead = isDead,
+					raidRole = role,
+					masterLooter = isML,
+					index = groupIndex,
 				}
 
 				if(guid ~= UnitGUID("player") and (not MIOG_InspectedGUIDs[guid] or GetTimePreciseSec() - MIOG_InspectedGUIDs[guid] > 300)) then
 
 					if(currentInspection == nil and UnitIsConnected(unitID) and CanInspect(unitID)) then
-
 						currentInspection = guid
 
 						if(timers[guid]) then
@@ -125,10 +158,10 @@ local function updateRosterInfoData()
 								NotifyInspect(unitID) -- 2nd argument for hook to check if own or other addons' notify
 			
 								local color = C_ClassColor.GetClassColor(fileName)
-								name = color and WrapTextInColorCode(groupSystem.groupMember[guid].shortName, color:GenerateHexColor()) or groupSystem.groupMember[guid].shortName
+								shortName = color and WrapTextInColorCode(groupSystem.groupMember[guid].shortName, color:GenerateHexColor()) or groupSystem.groupMember[guid].shortName
 								
 								miog.ClassPanel.LoadingSpinner:Show()
-								miog.ClassPanel.StatusString:SetText(name .. "\n(" .. #indexedGroup .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
+								miog.ClassPanel.StatusString:SetText(shortName .. "\n(" .. playersWithSpecData .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
 							end
 						end)
 					else
@@ -164,6 +197,8 @@ local function updateRosterInfoData()
 	end
 
 	for guid, member in pairs(groupSystem.groupMember) do
+		local libData = miog.checkSystem.groupMember[guid]
+
 		if(MIOG_InspectedGUIDs[guid]) then
 			member.specID = MIOG_SavedSpecIDs[guid] or GetInspectSpecialization(member.unitID)
 
@@ -174,34 +209,107 @@ local function updateRosterInfoData()
 			member.specID = specID
 			member.role = role
 		
-		elseif(miog.checkSystem.groupMember[member.guid]) then
-			MIOG_SavedSpecIDs[guid] = miog.checkSystem.groupMember[member.guid].specId ~= 0 and miog.checkSystem.groupMember[member.guid].specId or nil
+		elseif(libData and not MIOG_InspectedGUIDs[guid] or MIOG_SavedSpecIDs[guid]) then
+			MIOG_SavedSpecIDs[guid] = libData.specId ~= 0 and libData.specId or nil
 			MIOG_InspectedGUIDs[guid] = MIOG_SavedSpecIDs[guid] and GetTimePreciseSec() or nil
+			member.specID = MIOG_SavedSpecIDs[guid] and libData.specId or nil
+		end
+			
+		if(libData) then
+			member.ilvl = libData.ilvl
+			member.durability = libData.durability
+		else
+			member.durability = 0
+			member.ilvl = 0
+		
+		end
+
+		local keystoneInfo = miog.checkSystem.keystoneData[member.name]
+
+		if(keystoneInfo) then
+			local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
+
+			member.keystone = texture
+			member.keylevel = keystoneInfo.level
+			member.keyname = mapName
+		else
+			member.keylevel = 0
+		
+		end
+		
+
+		local rioProfile
+
+		if(miog.F.IS_RAIDERIO_LOADED) then
+			rioProfile = RaiderIO.GetProfile(UnitFullName("player"))
+		end
+
+		member.progressWeight = 0
+
+		if(rioProfile) then
+			member.score = rioProfile.mythicKeystoneProfile and rioProfile.mythicKeystoneProfile.currentScore or 0
+			
+			local currentData, nonCurrentData, orderedData = miog.getRaidSortData(member.name)
+			
+			if(#orderedData > 0) then
+				member.progress = ""
+				member.progressTooltipData = ""
+				
+				for a, b in ipairs(orderedData) do
+					member.progress = (member.progress or "") .. wticc(b.parsedString, miog.DIFFICULTY[b.difficulty].color) .. " "
+
+					if(a == 3) then
+						break
+					end
+				
+					member.progressWeight = member.progressWeight + (b.weight or 0)
+
+					if(b.mapId) then
+
+						if(string.find(b.mapId, 10000)) then
+							b.mapId = tonumber(strsub(b.mapId, strlen(b.mapId) - 3))
+						end
+					
+						member.progressTooltipData = member.progressTooltipData .. b.shortName .. ": " .. wticc(miog.DIFFICULTY[b.difficulty].shortName .. ":" .. b.progress .. "/" .. b.bossCount, miog.DIFFICULTY[b.difficulty].color) .. "\r\n"
+					end
+				end
+
+				if(member.progressWeight == 0) then
+					member.progress = nil
+					member.progressTooltipData = nil
+				end
+			end
+		else
+			member.score = 0
 		
 		end
 
 		if(member.specID) then
 			groupSystem.specCount[member.specID] = groupSystem.specCount[member.specID] and groupSystem.specCount[member.specID] + 1 or 1
 
-			indexedGroup[#indexedGroup+1] = member
-			indexedGroup[#indexedGroup].guid = guid
-
 			if(member.role == nil) then
 				member.role = GetSpecializationRoleByID(member.specID)
 			end
 
-			if(groupSystem.roleCount[member.role]) then
-				groupSystem.roleCount[member.role] = groupSystem.roleCount[member.role] + 1
-
+			if(member.specID ~= 0) then
+				playersWithSpecData = playersWithSpecData + 1
 			end
 		end
+
+		if(groupSystem.roleCount[member.role]) then
+			groupSystem.roleCount[member.role] = groupSystem.roleCount[member.role] + 1
+
+		end
+
+		indexedGroup[#indexedGroup+1] = member
+		indexedGroup[#indexedGroup].guid = guid
 	end
 
 	local percentageInspected = #indexedGroup / inspectableMembers
 
 	if(not currentInspection) then
 		miog.ClassPanel.LoadingSpinner:Hide()
-		miog.ClassPanel.StatusString:SetText("(" .. #indexedGroup .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
+		miog.ClassPanel.StatusString:SetText("(" .. playersWithSpecData .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
 		
 
 	end
@@ -285,84 +393,57 @@ local function updateRosterInfoData()
 		end
 	end]]
 
-	table.sort(indexedGroup, function(k1, k2)
-		if(k1.role ~= k2.role) then
-			return k1.role > k2.role
-
-		else
-			return k1.classID > k2.classID
-
-		end
-	end)
+	table.sort(indexedGroup, sortPartyCheckList)
 
 	miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
 
-	for index, member in ipairs(indexedGroup) do
-		local memberFrame = partyPool:Acquire()
-		memberFrame:SetWidth(miog.PartyCheck:GetWidth())
-		memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
-		memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. member.role .. "Icon.png")
-		memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID].squaredIcon)
+	if(partyPool) then
+		for index, member in ipairs(indexedGroup) do
+			local memberFrame = partyPool:Acquire()
+			memberFrame.data = member
+			memberFrame:SetWidth(miog.PartyCheck:GetWidth())
+			memberFrame.Group:SetText(member.group)
+			memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
+			memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
+			memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
 
-		if(miog.checkSystem.groupMember[member.guid]) then
-			local checkData = miog.checkSystem.groupMember[member.guid]
-			memberFrame.ILvl:SetText(checkData.ilvl or "N/A")
-			memberFrame.Durability:SetText(checkData.durability or "N/A")
+			if(member.rank == 2) then
+				miog.PartyCheck.LeaderCrown:ClearAllPoints()
+				miog.PartyCheck.LeaderCrown:SetPoint("RIGHT", memberFrame.Group, "RIGHT")
+				miog.PartyCheck.LeaderCrown:Show()
 
-			for k, v in pairs(memberFrame.MissingEnchantSlots) do
-				if(type(v) == "table") then
-					if(checkData.missingEnchants and checkData.missingEnchants[k]) then
-						v.layoutIndex = k
-						v:Show()
+			end
 
-					else
-						v.layoutIndex = nil
-						v:Hide()
+			memberFrame.ILvl:SetText(member.ilvl or "N/A")
+			memberFrame.Durability:SetText(member.durability or "N/A")
+			memberFrame.Keystone:SetTexture(member.keystone)
+			memberFrame.Keylevel:SetText("+" .. member.keylevel)
+			memberFrame.Score:SetText(member.score or "0")
+			memberFrame.Progress:SetText(member.progress or "N/A")
 
+				--[[for k, v in pairs(memberFrame.MissingEnchantSlots) do
+					if(type(v) == "table") then
+						if(checkData.missingEnchants and checkData.missingEnchants[k]) then
+							v.layoutIndex = k
+							v:Show()
+
+						else
+							v.layoutIndex = nil
+							v:Hide()
+
+						end
 					end
+
 				end
 
-			end
+				memberFrame.MissingEnchantSlots:MarkDirty()]]
 
-			memberFrame.MissingEnchantSlots:MarkDirty()
-
-			local keystoneInfo = miog.checkSystem.keystoneData[member.name]
-
-			if(keystoneInfo) then
-				local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
-
-				memberFrame.Keystone:SetTexture(texture)
-				memberFrame.Keylevel:SetText("+" .. keystoneInfo.level)
-			end
-		end
-		
-
-		local rioProfile = RaiderIO.GetProfile(member.name)
-
-		if(rioProfile) then
-			memberFrame.Score:SetText(rioProfile.mythicKeystoneProfile and rioProfile.mythicKeystoneProfile.currentScore or "N/A")
-			memberFrame.Progress:SetText("")
-			
-			local currentData, nonCurrentData, orderedData = miog.getRaidSortData(member.name)
-			
-			for a, b in ipairs(orderedData) do
-				memberFrame.Progress:SetText((memberFrame.Progress:GetText() or "") .. b.parsedString .. " ")
-
-				if(a == 3) then
-					break
-				end
-			end
-		else
-			memberFrame.Score:SetText("N/A")
-			memberFrame.Progress:SetText("N/A")
-		
+			memberFrame.layoutIndex = index
+			memberFrame:Show()
 		end
 
-		memberFrame.layoutIndex = member.role == "TANK" and 1 or member.role == "HEALER" and 50 or 100
-		memberFrame:Show()
+		miog.PartyCheck.ScrollFrame.Container:MarkDirty()
 	end
-
-	miog.PartyCheck.ScrollFrame.Container:MarkDirty()
 end
 
 miog.updateRosterInfoData = updateRosterInfoData
@@ -389,6 +470,7 @@ local function inspectCoroutineEvents(_, event, ...)
 				MIOG_SavedSpecIDs = {}
 			end
 
+			miog.openRaidLib.GetAllUnitsInfo()
             updateRosterInfoData()
 
         end
@@ -405,8 +487,6 @@ local function inspectCoroutineEvents(_, event, ...)
 		end
 
 	elseif(event == "INSPECT_READY") then
-		local name = select(6, GetPlayerInfoByGUID(...))
-
 		if(currentInspection == ...) then
 			ClearInspectPlayer(true)
 		end
@@ -419,17 +499,6 @@ local function inspectCoroutineEvents(_, event, ...)
 			end
 
 			updateRosterInfoData()
-
-		else
-			local unitID = UnitTokenFromGUID(...)
-			miog.F.LFG_STATE = miog.checkLFGState()
-
-			---@diagnostic disable-next-line: param-type-mismatch
-			if(miog.F.LFG_STATE == "raid" and UnitInRaid(unitID) or miog.F.LFG_STATE == "party" and UnitInParty(unitID)) then
-				createGroupMemberEntry(..., unitID)
-
-			end
-
 		end
 	elseif(event == "GROUP_JOINED") then
 		updateRosterInfoData()
@@ -462,6 +531,22 @@ local function resetPartyFrames(_, frame)
     frame.Name:SetText("")
     frame.Role:SetTexture(nil)
     frame.Spec:SetTexture(nil)
+	frame.ILvl:SetText("")
+	frame.Durability:SetText("")
+	frame.Score:SetText("")
+	frame.Progress:SetText("")
+    frame.Keystone:SetTexture(nil)
+	frame.Keylevel:SetText("")
+	frame.data = nil
+
+	
+	--[[for k, v in pairs(frame.MissingEnchantSlots) do
+		if(type(v) == "table") then
+			v.layoutIndex = nil
+			v:Hide()
+		end
+
+	end]]
 end
 
 miog.createInspectCoroutine = function()
@@ -474,7 +559,9 @@ miog.createInspectCoroutine = function()
 	eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 	eventReceiver:SetScript("OnEvent", inspectCoroutineEvents)
 
-    partyPool = CreateFramePool("Frame", miog.PartyCheck.ScrollFrame.Container, "MIOG_PartyCheckPlayerTemplate", resetPartyFrames)
+	if(miog.PartyCheck) then
+   		partyPool = CreateFramePool("Frame", miog.PartyCheck.ScrollFrame.Container, "MIOG_PartyCheckPlayerTemplate", resetPartyFrames)
+	end
 
 	--local allUnitsInfo = miog.openRaidLib.GetAllUnitsInfo()
 end

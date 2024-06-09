@@ -101,16 +101,11 @@
                 </Anchors>
             </Frame>
 
-            <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH">
+            <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH" registerForDrag="LeftButton">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.FooterBar" relativePoint="TOPRIGHT" />
                 </Anchors>
-                <Scripts>
-                    <OnMouseDown>
-                        self:GetParent():StartSizing()
-                    </OnMouseDown>
-                </Scripts>
             </Button>
         </Frames>
     </Frame>

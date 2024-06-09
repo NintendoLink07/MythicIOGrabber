@@ -6,11 +6,11 @@ searchResultSystem.persistentFrames = {}
 searchResultSystem.declinedGroups = {}
 
 local function sortSearchResultList(result1, result2)
-	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
+	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.searchPanel) do
 		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
 			local firstState = tableElement.currentState
 
-			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
+			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.searchPanel) do
 				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
 					local secondState = innerTableElement.currentState
 
@@ -1265,7 +1265,10 @@ local function createPersistentResultFrame(resultID)
 	local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
 
 	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", miog.SearchPanel.FramePanel.Container)
-	persistentFrame.fixedWidth = miog.SearchPanel.FramePanel:GetWidth()
+	persistentFrame.fixedWidth = miog.SearchPanel.FramePanel:GetWidth() - 4
+	
+	--currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal)
+	--miog.createInvisibleFrameBorder(persistentFrame, 1)
 
 	for k, v in pairs(persistentFrame:GetLayoutChildren()) do
 		v:SetWidth(persistentFrame.fixedWidth)
@@ -1476,7 +1479,7 @@ local function searchResultsReceived()
 				blocked = true
 				miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 				
-				C_Timer.After(MIOG_SavedSettings.sortMethods_SearchPanel.table.numberOfActiveMethods > 0 and 0.45 or 0, function()
+				C_Timer.After(MIOG_SavedSettings.sortMethods.table.searchPanel.numberOfActiveMethods > 0 and 0.45 or 0, function()
 					miog.SearchPanel.Status:Hide()
 					miog.SearchPanel.Status.LoadingSpinner:Hide()
 					updateSearchResultList()
@@ -1653,7 +1656,7 @@ miog.createSearchPanel = function()
 
 	for i = 1, 3, 1 do
 		local sortByCategoryButton = searchPanel.ButtonPanel[i == 1 and "PrimarySort" or i == 2 and "SecondarySort" or "AgeSort"]
-		sortByCategoryButton.panel = "SearchPanel"
+		sortByCategoryButton.panel = "searchPanel"
 		sortByCategoryButton.category = i == 1 and "primary" or i == 2 and "secondary" or i == 3 and "age"
 
 		sortByCategoryButton:SetScript("PostClick", function(self, button)

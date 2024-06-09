@@ -60,6 +60,11 @@ miog.setStandardBackdrop = function(frame)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false, edgeSize = 1} )
 end
 
+miog.createInvisibleFrameBorder = function(frame, thickness, r, g, b, a)
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
+	frame:SetBackdropColor(r or 0, g or 0, b or 0, a or 0) -- main area color
+end
+
 miog.createFrameBorder = function(frame, thickness, r, g, b, a)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
 	frame:SetBackdropColor(0, 0, 0, 0) -- main area color

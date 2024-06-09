@@ -180,56 +180,101 @@ local defaultOptionSettings = {
 		},
 		access = "read",
 	},
-	sortMethods_SearchPanel = {
+	sortMethods = {
 		table = {
-			primary = {
-				currentLayer = 0,
-				currentState = 0,
-				active = false,
+			partyCheck = {
+				group = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				shortName = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				role = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				specID = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				ilvl = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				durability = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				keylevel = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				score = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				progressWeight = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				numberOfActiveMethods = 0,
 			},
-			secondary = {
-				currentLayer = 0,
-				currentState = 0,
-				active = false,
+			searchPanel = {
+				primary = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				secondary = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				age = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				numberOfActiveMethods = 0,
 			},
-			age = {
-				currentLayer = 0,
-				currentState = 0,
-				active = false,
-			},
-			numberOfActiveMethods = 0,
+			applicationViewer = {
+				role = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				primary = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				secondary = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				ilvl = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				numberOfActiveMethods = 0,
+			}
 		},
 		type = "variable",
 		access = "read",
-		title = "Last active sorting methods for the search panel",
-	},
-	sortMethods_ApplicationViewer = {
-		table = {
-			role = {
-				currentLayer = 0,
-				currentState = 0,
-				active = false,
-			},
-			primary = {
-				currentLayer = 0,
-				currentState = 0,
-				active = false,
-			},
-			secondary = {
-				currentLayer = 0,
-				currentState = 0,
-				active = false,
-			},
-			ilvl = {
-				currentLayer = 0,
-				currentState = 0,
-				active = false,
-			},
-			numberOfActiveMethods = 0,
-		},
-		type = "variable",
-		access = "read",
-		title = "Last active sorting methods for the application viewer",
+		title = "Currently active sort algorithms, each with settings",
 	},
 	searchPanel_DeclinedGroups = {
 		type = "variable",
@@ -576,7 +621,11 @@ miog.loadSettings = function()
 					miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
 					miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
 					miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
-					miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+					
+					if(miog.AdventureJournal) then
+						miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+					end
+
 					UIDropDownMenu_SetText(optionDropdown, miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
 					CloseDropDownMenus()
 
@@ -596,7 +645,10 @@ miog.loadSettings = function()
 		miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
 		miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
 		miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
-		miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+		
+		if(miog.AdventureJournal) then
+			miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+		end
 
 		lastOption = optionDropdown
 	end
@@ -614,41 +666,24 @@ miog.loadSettings = function()
 
 		lastOption = scrollBox
 	end
-	
-	if(MIOG_SavedSettings.sortMethods_ApplicationViewer and MIOG_SavedSettings.sortMethods_ApplicationViewer.table) then
-		for sortKey, row in pairs(MIOG_SavedSettings.sortMethods_ApplicationViewer.table) do
-			if(miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]) then
-				if(row.active == true) then
-					miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].active, MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentState)
-					miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_ApplicationViewer.table[sortKey].currentLayer)
 
-				else
-					miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
+	for k, v in pairs(MIOG_SavedSettings.sortMethods.table) do
+		local buttonArray = k == "applicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons or k == "searchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons or k == "partyCheck" and miog.PartyCheck and miog.PartyCheck.SortButtons
 
+		if(buttonArray) then
+			for sortKey, row in pairs(v) do
+				if(buttonArray[sortKey]) then
+					if(row.active == true) then
+						buttonArray[sortKey]:SetState(row.active, row.currentState)
+						buttonArray[sortKey].FontString:SetText(row.currentLayer)
+
+					else
+						buttonArray[sortKey]:SetState(false)
+
+					end
 				end
 			end
 		end
-	else
-		MIOG_SavedSettings.sortMethods_ApplicationViewer.table = {}
-
-	end
-	
-	if(MIOG_SavedSettings.sortMethods_SearchPanel and MIOG_SavedSettings.sortMethods_SearchPanel.table) then
-		for sortKey, row in pairs(MIOG_SavedSettings.sortMethods_SearchPanel.table) do
-			if(miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey]) then
-				if(row.active == true) then
-					miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].active, MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentState)
-					miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey].FontString:SetText(MIOG_SavedSettings.sortMethods_SearchPanel.table[sortKey].currentLayer)
-
-				else
-					miog.SearchPanel.ButtonPanel.sortByCategoryButtons[sortKey]:SetState(false)
-
-				end
-			end
-		end
-	else
-		MIOG_SavedSettings.sortMethods_SearchPanel.table = {}
-
 	end
 
 	if(MIOG_SavedSettings.keepSignUpNote and MIOG_SavedSettings.keepSignUpNote.value ==  true) then

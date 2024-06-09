@@ -101,11 +101,11 @@ local function sortApplicantList(applicant1, applicant2)
 	local applicant1Member1 = applicant1[1]
 	local applicant2Member1 = applicant2[1]
 
-	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods_ApplicationViewer.table) do
+	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.applicationViewer) do
 		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
 			local firstState = miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
 
-			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods_ApplicationViewer.table) do
+			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.applicationViewer) do
 
 				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
 					local secondState = miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
@@ -1077,7 +1077,7 @@ miog.createApplicationViewer = function()
 
 	for i = 1, 4, 1 do
 		local sortByCategoryButton = applicationViewer.ButtonPanel[i == 1 and "RoleSort" or i == 2 and "PrimarySort" or i == 3 and "SecondarySort" or i == 4 and "IlvlSort"]
-		sortByCategoryButton.panel = "ApplicationViewer"
+		sortByCategoryButton.panel = "applicationViewer"
 		sortByCategoryButton.category = i == 1 and "role" or i == 2 and "primary" or i == 3 and "secondary" or i == 4 and "ilvl"
 		--sortByCategoryButton:SetPoint()
 

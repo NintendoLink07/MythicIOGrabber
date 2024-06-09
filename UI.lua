@@ -803,9 +803,12 @@ local function setActivePanel(_, panel)
 		miog.F.ACTIVE_PANEL = "applicationViewer"
 		miog.SearchPanel:Hide()
 		miog.EntryCreation:Hide()
-		miog.AdventureJournal:Hide()
 		miog.Plugin:Show()
 		miog.ApplicationViewer:Show()
+
+		if(miog.AdventureJournal) then
+			miog.AdventureJournal:Hide()
+		end
 
 		if(not miog.F.LITE_MODE) then
 			ShowUIPanel(miog.pveFrame2)
@@ -842,9 +845,12 @@ local function setActivePanel(_, panel)
 		miog.F.ACTIVE_PANEL = "searchPanel"
 		miog.ApplicationViewer:Hide()
 		miog.EntryCreation:Hide()
-		miog.AdventureJournal:Hide()
 		miog.Plugin:Show()
 		miog.SearchPanel:Show()
+
+		if(miog.AdventureJournal) then
+			miog.AdventureJournal:Hide()
+		end
 
 		if(not miog.F.LITE_MODE) then
 			ShowUIPanel(miog.pveFrame2)
@@ -880,7 +886,10 @@ local function setActivePanel(_, panel)
 	elseif(panel == LFGListFrame.EntryCreation) then
 		miog.ApplicationViewer:Hide()
 		miog.SearchPanel:Hide()
-		miog.AdventureJournal:Hide()
+
+		if(miog.AdventureJournal) then
+			miog.AdventureJournal:Hide()
+		end
 
 		miog.Plugin:Show()
 		miog.EntryCreation:Show()
@@ -903,7 +912,10 @@ local function setActivePanel(_, panel)
 		miog.EntryCreation:Hide()
 
 		miog.Plugin:Show()
-		miog.AdventureJournal:Show()
+
+		if(miog.AdventureJournal) then
+			miog.AdventureJournal:Show()
+		end
 
 		miog.FilterPanel.Lock:Show()
 
@@ -946,10 +958,10 @@ miog.createFrames = function()
 		miog.createPVEFrameReplacement()
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
 		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.CategoryPanel, "TOPLEFT", 0, 0)
-		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.MainTab, "BOTTOMRIGHT")
+		--miog.Plugin:SetPoint("BOTTOMRIGHT", miog.MainTab, "BOTTOMRIGHT")
 		--miog.Plugin:SetSize(372, 370)
 
-		miog.Plugin:SetHeight(miog.pveFrame2:GetHeight() - miog.pveFrame2.TitleBar:GetHeight() - 5)
+		--miog.Plugin:SetHeight(miog.pveFrame2:GetHeight() - miog.pveFrame2.TitleBar:GetHeight() - 5)
 
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -1011,28 +1023,32 @@ miog.createFrames = function()
 
 	local standardWidth = miog.Plugin:GetWidth()
 
-	miog.Plugin.Resize:SetScript("OnMouseUp", function()
-		miog.Plugin:StopMovingOrSizing()
+	miog.Plugin.Resize:SetScript("OnDragStart", function(self, button)
+		self:GetParent():StartSizing()
+	end)
 
-		MIOG_SavedSettings.frameManuallyResized.value = miog.Plugin:GetHeight()
-
-		if(MIOG_SavedSettings.frameManuallyResized.value > miog.Plugin.standardHeight) then
-			MIOG_SavedSettings.frameExtended.value = true
-			miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
-
-		end
-
-		--[[miog.Plugin:ClearAllPoints()
-		miog.Plugin:SetPoint("TOPLEFT", miog.Plugin:GetParent(), "TOPRIGHT", -standardWidth, 0)
-		miog.Plugin:SetPoint("TOPRIGHT", miog.Plugin:GetParent(), "TOPRIGHT", 0, 0)]]
-
+	miog.Plugin.Resize:SetScript("OnDragStop", function(self)
+		self:GetParent():StopMovingOrSizing()
+	
+			MIOG_SavedSettings.frameManuallyResized.value = miog.Plugin:GetHeight()
+	
+			if(MIOG_SavedSettings.frameManuallyResized.value > miog.Plugin.standardHeight) then
+				MIOG_SavedSettings.frameExtended.value = true
+				miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
+	
+			end
+	
+			--[[miog.Plugin:ClearAllPoints()
+			miog.Plugin:SetPoint("TOPLEFT", miog.Plugin:GetParent(), "TOPRIGHT", -standardWidth, 0)
+			miog.Plugin:SetPoint("TOPRIGHT", miog.Plugin:GetParent(), "TOPRIGHT", 0, 0)]]
 	end)
 
 	miog.Plugin.standardHeight = miog.Plugin:GetHeight()
 	miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or miog.Plugin.standardHeight * 1.5
 
 	miog.Plugin:SetResizeBounds(standardWidth, miog.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
-	miog.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value == true and MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or miog.Plugin.standardHeight)
+
+	miog.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value and miog.Plugin.extendedHeight or miog.Plugin.standardHeight)
 
 	miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -1050,16 +1066,17 @@ miog.createFrames = function()
 	miog.ClassPanel:SetPoint("BOTTOMLEFT", miog.ClassPanel:GetParent(), "TOPLEFT", 0, 1)
 
 	miog.createClassPanel()
-	miog.loadPartyCheck()
-	miog.createInspectCoroutine()
 
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
 		miog.loadCalendarSystem()
 		miog.loadGearingChart()
 		miog.loadAdventureJournal()
+		miog.loadPartyCheck()
 		
 	end
+
+	miog.createInspectCoroutine()
 
 	pluginElements = {
 		miog.ApplicationViewer,
