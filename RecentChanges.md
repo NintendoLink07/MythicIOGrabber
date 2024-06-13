@@ -1,35 +1,30 @@
-## [2.1.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.2) - 2024-06-09
+## [2.1.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.2) - 2024-06-13
 
 ### Added
 
-- A new tab has appeared!
-Partycheck is now available.
-
-Here you will see your group- / raid-members listed in a table, showing info like spec, role, itemlevel, repair%, keystone, score and raid progress.
-The table is sortable with 2 active sort methods, e.g. 1. sorted by role and 2. sorted by ilvl.
-
-In version 2.1.3 I'll have missing enchants, missing gems and current talents (not sure what the layout is going to be) for every group member included.
-
-Role and spec are baseline available with WoW.
-Ilvl, durability and keystone info are only available if the other player(s) have either MythicIOGrabber or Details installed (or really any addon that used LibOpenRaid).
-Score and raid progress are dependant on RaiderIO being installed and them having raider io data.
+- [Party Check] Missing enchants and missing gems are now included in the tooltip.
 
 ### Changed
 
-- Changed the Halls of Infusion background image to appear brighter.
+- The category selection buttons and the journal button are now located in the title bar, more like in a traditional window.
+
+- Changed all fonts to Blizzard base fonts, since I don't need my own specific font anymore.
+This means korean, simplified and traditional chinese and russian characters should now be rendered correctly.
+
+- [Search Panel] All listings will now have their respective activity as a background.
+
+- [Adventure Journal] When you enter a raid the default instance selecting will be the one you're currently in.
 
 ### Fixed
 
-- [Main Tab] The "Expand frame" button works again.
+- Added an anchor point for the base frame of the search panel, application viewer, entry creation and dungeon journal.
 
-- [Search Panel] Adjusted the padding of the group listing frames, since the borders were sometimes wonky.
+- [Application Viewer] The "ress fit" and "lust fit" options will now consider the players class and spec.
 
-- [Filter Panel] You can now hide the filter panel when it's currently locked.
+- [Search Panel] Failed applications, e.g. when you have already 5 applications running, will not lead to a "delisted" state anymore.
 
-- [Adventure Journal] There should be no more errors about the AdventureJournal when lite mode is active.
+- [Active Queues] After a /reload and clicking on an active lfg application should now correctly load the search panel.
 
-### Upcoming
+- [Party Check] The score of your party/raid members will now show their score, not yours.
 
-- (2.1.3) Condensed Search Panel view: half height versions of the group listings with individual backgrounds (based on the activity).
-
-- (2.1.4) Overhauled main tab layout
+- Multiple code logic errors fixed.
