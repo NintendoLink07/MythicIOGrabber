@@ -21,18 +21,17 @@ miog.setAffixes = function()
 
 			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
 
-			affixString = affixString .. CreateTextureMarkup(filedataid, 64, 64, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT, 0, 1, 0, 1)
+			miog.ApplicationViewer.CreationSettings.Affixes["Affix" .. index]:SetTexture(filedataid)
 			miog.ApplicationViewer.CreationSettings.Affixes.tooltipText = miog.ApplicationViewer.CreationSettings.Affixes.tooltipText .. name .. (index < #affixIDs and ", " or "")
 
+			if(not miog.F.LITE_MODE) then
+				--miog.MainTab.Information.Affixes:SetText(affixString)
+				miog.MainTab.Information.Affixes["Affix" .. index]:SetTexture(filedataid)
+				miog.MainTab.Information.Affixes.tooltipText = miog.ApplicationViewer.CreationSettings.Affixes.tooltipText
+			end
 		end
 
 		miog.F.WEEKLY_AFFIX = affixIDs[1].id
-		miog.ApplicationViewer.CreationSettings.Affixes:SetText(affixString)
-
-		if(not miog.F.LITE_MODE) then
-			miog.MainTab.Information.Affixes:SetText(affixString)
-			miog.MainTab.Information.Affixes.text = miog.ApplicationViewer.CreationSettings.Affixes.tooltipText
-		end
 
 	else
 		return nil

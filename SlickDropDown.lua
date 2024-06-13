@@ -129,7 +129,7 @@ function SlickDropDown:ResetFontString(fontString)
 	fontString:SetJustifyH("CENTER")
 	fontString:SetText("")
 	fontString:SetTextColor(1,1,1,1)
-	fontString:SetFont(miog.FONTS["libMono"], 12, "OUTLINE")
+	fontString:SetFont("SystemFont_Shadow_Med1", 12, "OUTLINE")
 	fontString.layoutIndex = nil
 end
 

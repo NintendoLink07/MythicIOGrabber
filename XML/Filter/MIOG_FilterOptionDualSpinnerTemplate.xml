@@ -12,7 +12,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="2" />
                     </Anchors>

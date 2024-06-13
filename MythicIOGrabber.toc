@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 2.1.2
+## Version: 2.1.3
 ## SavedVariables: MIOG_SavedSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_InspectQueue, MIOG_InspectedGUIDs, MIOG_SavedSpecIDs
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -64,7 +64,6 @@ XML\MIOG_DetailedInformationPanelBackgroundRows.xml
 XML\MIOG_DetailedInformationPanelTextRowTemplate.xml
 XML\MIOG_DetailedInformationPanelSinglePanelTemplate.xml
 XML\MIOG_DungeonRowTemplate.xml
-XML\MIOG_RaidRowTemplate.xml
 XML\MIOG_RaidBossFrameTemplate.xml
 XML\MIOG_GroupMemberTemplate.xml
 XML\MIOG_SmallGroupMemberTemplate.xml
@@ -138,5 +137,7 @@ XML\MIOG_PartyCheck.xml
 XML\MIOG_PartyCheckPlayerTemplate.xml
 
 XML\MIOG_SortButtonWithTextTemplate.xml
+
+XML\MIOG_NavBarButtonTemplate.xml
 
 FuzzyAlgorithm.lua

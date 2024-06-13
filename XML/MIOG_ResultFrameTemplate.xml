@@ -9,9 +9,6 @@
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
                     </Anchors>
                 </Texture>
-                <Texture setAllPoints="true" alphaMode="MOD" hidden="true">
-                    <Color r="0.25" g="0.25" b="0.25" a="0.8" />
-                </Texture>
             </Layer>
         </Layers>
 
@@ -24,8 +21,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                            <FontHeight val="16"/>
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Large" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
@@ -45,17 +41,6 @@
                 </Anchors>
             </Button>
 
-            <Button parentKey="Invite" inherits="IconButtonTemplate" hidden="true">
-                <KeyValues>
-                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
-                    <KeyValue key="iconSize" value="16" type="number" />
-                </KeyValues>
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.CancelApplication" relativePoint="LEFT" x="-2"/>
-                </Anchors>
-            </Button>
-
             <Frame parentKey="BasicInformation">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="1" type="number" />
@@ -66,9 +51,17 @@
                 <Layers>
                     <Layer level="BORDER">
                         <Texture parentKey="IconBorder">
-                            <Size x="17" y="17" />
+                            <Size x="16" y="16" />
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2"/>
+                            </Anchors>
+                        </Texture>
+                        
+                        <Texture parentKey="Divider" atlas="dragonflight-weeklyrewards-divider">
+                            <Size y="5" />
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2"/>
                             </Anchors>
                         </Texture>
                     </Layer>
@@ -80,51 +73,36 @@
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent.IconBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                             </Anchors>
                         </Texture>
-                    
                     </Layer>
                     
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Title" font="LibMono" justifyH="LEFT">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Title" font="SystemFont_Shadow_Med1" justifyH="LEFT" outline="NORMAL">
                             <Size x="140" y="20"/>
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="5" />
+                                <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Primary" font="LibMono" justifyH="CENTER" text="0">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Primary" font="SystemFont_Shadow_Med1" justifyH="CENTER" text="0">
                             <Size x="37" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="4" />
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Secondary" font="LibMono" justifyH="CENTER" text="0">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Secondary" font="SystemFont_Shadow_Med1" justifyH="CENTER" text="0">
                             <Size x="37" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="3"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Age" font="LibMono" justifyH="CENTER" text="0:00:00">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Age" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="0:00:00">
                             <Size x="70" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" />
+                                <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="13"/>
                             </Anchors>
                         </FontString>
-                    </Layer>
-
-                    <Layer level="ARTWORK">                        
-                        <Texture parentKey="Divider" atlas="UI-LFG-DividerLine">
-                            <Size y="2" />
-                            <Anchors>
-                                <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                            </Anchors>
-                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>
@@ -168,19 +146,16 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="DifficultyZone" font="LibMono" justifyH="LEFT">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="DifficultyZone" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                             <Size x="140" y="20"/>
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="0" />
+                                <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="2" />
                             </Anchors>
                         </FontString>
                     </Layer>
-                </Layers>
 
-                <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="RoleComposition" font="LibMono" justifyH="LEFT">
+                        <FontString parentKey="RoleComposition" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" />
                             </Anchors>
@@ -190,42 +165,42 @@
 
                 <Frames>
                     <Frame parentKey="MemberPanel" hidden="true">
-                        <Size x="160" y="16"/>
+                        <Size x="145" y="20"/>
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-21"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="1" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="17" y="17" />
+                                <Size x="16" y="16" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                                 </Anchors>
                             </Frame>
 
                             <Frame parentKey="2" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="17" y="17" />
+                                <Size x="16" y="16" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent.1" relativePoint="RIGHT" x="13"/>
                                 </Anchors>
                             </Frame>
 
                             <Frame parentKey="3" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="17" y="17" />
+                                <Size x="16" y="16" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent.2" relativePoint="RIGHT" x="13"/>
                                 </Anchors>
                             </Frame>
 
                             <Frame parentKey="4" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="17" y="17" />
+                                <Size x="16" y="16" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent.3" relativePoint="RIGHT" x="13"/>
                                 </Anchors>
                             </Frame>
 
                             <Frame parentKey="5" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="17" y="17" />
+                                <Size x="16" y="16" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent.4" relativePoint="RIGHT" x="13"/>
                                 </Anchors>

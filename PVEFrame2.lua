@@ -3,7 +3,47 @@ local wticc = WrapTextInColorCode
 
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
+local function resetCategoryFrame(_, frame)
+	frame:Hide()
+	frame.layoutIndex = nil
+	frame.categoryID = nil
+	frame.filters = nil
+	frame.Title:SetText("")
+	frame.BackgroundImage:SetTexture(nil)
+	frame:SetScript("OnEnter", nil)
+	frame:SetScript("OnLeave", nil)
+	frame:SetScript("OnClick", nil)
+end
 
+local function startNewGroup(categoryFrame)
+	LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
+
+	--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
+	--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
+
+	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
+	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
+
+	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
+
+	LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
+	--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
+	
+	miog.initializeActivityDropdown()
+end
+
+miog.startNewGroup = startNewGroup
+
+local function findGroup(categoryFrame)
+	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+	
+	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
+	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
+
+	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
+
+	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+end
 
 local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
@@ -445,7 +485,7 @@ local function createPVEFrameReplacement()
 				end
 
 				local string = miog.Teleports:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-				string:SetFont(miog.FONTS["libMono"], 12, "OUTLINE")
+				string:SetFont("SystemFont_Shadow_Med1", 12, "OUTLINE")
 				string:SetPoint("TOPLEFT", miog.Teleports, "TOPLEFT", 0, (index - 4) * -offset)
 				string:SetText(expName)
 
@@ -501,6 +541,46 @@ local function createPVEFrameReplacement()
 			end
 		end
 	end
+
+	miog.pveFrame2.categoryFramePool = CreateFramePool("Button", miog.pveFrame2.CategoryHoverFrame, "MIOG_MenuButtonTemplate", resetCategoryFrame)
+	miog.pveFrame2.TitleBar.CreateGroup.Text:SetText("Create")
+	miog.pveFrame2.TitleBar.CreateGroup.setupFunction = function(self)
+		startNewGroup(self)
+
+		LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
+
+		PanelTemplates_SetTab(miog.pveFrame2, 1)
+
+		miog.MainTab:Show()
+		miog.PartyCheck:Hide()
+		miog.MPlusStatistics:Hide()
+		miog.RaidStatistics:Hide()
+		miog.PVPStatistics:Hide()
+		miog.Teleports:Hide()
+		miog.Gearing:Hide()
+	end
+
+	miog.pveFrame2.TitleBar.FindGroup.Text:SetText("Find")
+	miog.pveFrame2.TitleBar.FindGroup.setupFunction = function(self)
+		findGroup(self)
+
+		LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+
+		PanelTemplates_SetTab(miog.pveFrame2, 1)
+
+		miog.MainTab:Show()
+		miog.PartyCheck:Hide()
+		miog.MPlusStatistics:Hide()
+		miog.RaidStatistics:Hide()
+		miog.PVPStatistics:Hide()
+		miog.Teleports:Hide()
+		miog.Gearing:Hide()
+	end
+
+	miog.pveFrame2.TitleBar.DungeonJournal.Text:SetText("Journal")
+	miog.pveFrame2.TitleBar.DungeonJournal:SetScript("OnClick", function()
+		miog.setActivePanel(nil, "AdventureJournal")
+	end)
 end
 
 miog.createPVEFrameReplacement = createPVEFrameReplacement
@@ -514,6 +594,7 @@ eventReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
+eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 
 eventReceiver:SetScript("OnEvent", miog.OnEvent)
 

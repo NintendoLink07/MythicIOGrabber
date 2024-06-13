@@ -6,8 +6,7 @@
         
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="AbilityName" maxLines="1">
-                    <FontHeight val="11" />
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="AbilityName" maxLines="1">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                     </Anchors>

@@ -1,16 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_DetailedInformationPanelTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
-        <KeyValues>
-            <KeyValue key="minimumHeight" value="200" type="number" />
-        </KeyValues>
+    <Frame name="MIOG_DetailedInformationPanelTemplate" virtual="true">
+        <Size y="200" />
 
         <Frames>
-            <Frame parentKey="TabPanel" inherits="BackdropTemplate">
+            <Frame parentKey="TabPanel">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                 </Anchors>
 
                 <Frames>
@@ -25,7 +23,6 @@
 					            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.MythicPlus:Show()
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.Raid:Hide()
-                                self:GetParent():GetParent():MarkDirty()
 
                             </OnClick>
                         </Scripts>
@@ -41,7 +38,6 @@
 					            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.MythicPlus:Hide()
                                 self:GetParent():GetParent().PanelContainer.ForegroundRows.Raid:Show()
-                                self:GetParent():GetParent():MarkDirty()
 
                             </OnClick>
                         </Scripts>
@@ -57,7 +53,11 @@
                 <Frames>
                     <Frame parentKey="BackgroundRows" inherits="MIOG_DetailedInformationPanelBackgroundRows" setAllPoints="true"/>
 
-                    <Frame parentKey="ForegroundRows" setAllPoints="true" frameStrata="HIGH">
+                    <Frame parentKey="ForegroundRows" frameStrata="HIGH">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.BackgroundRows" relativePoint="TOPLEFT" y="1"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BackgroundRows" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
                         <Frames>
                             <Frame parentKey="GeneralInfo" inherits="MIOG_DetailedInformationPanelSinglePanelTemplate" topLevel="true" setAllPoints="true"/>
 
@@ -65,7 +65,7 @@
                                 <Frames>
                                     <Frame parentKey="DungeonRow1" inherits="MIOG_DungeonRowTemplate">
                                         <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
                                             <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                                         </Anchors>
                                     </Frame>
@@ -124,8 +124,7 @@
 
                                         <Layers>
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" setAllPoints="true">
-                                                    <FontHeight val="11"/>
+                                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" setAllPoints="true">
                                                 </FontString>
                                             </Layer>
                                         </Layers>
@@ -143,8 +142,7 @@
 
                                         <Layers>
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" setAllPoints="true">
-                                                    <FontHeight val="11"/>
+                                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" setAllPoints="true">
                                                 </FontString>
                                             </Layer>
                                         </Layers>
@@ -192,8 +190,7 @@
 
                                         <Layers>
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
-                                                    <FontHeight val="11"/>
+                                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                                                     <Anchors>
                                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                                                     </Anchors>
@@ -210,8 +207,7 @@
 
                                         <Layers>
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
-                                                    <FontHeight val="11"/>
+                                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                                                     <Anchors>
                                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                                                     </Anchors>

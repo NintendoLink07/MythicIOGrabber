@@ -5,7 +5,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="NAME">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="NAME">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="6"/>
                     </Anchors>
@@ -64,14 +64,13 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Awakened" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="S4" outline="NORMAL" >
-                    <FontHeight val="14" />
+                <FontString parentKey="Awakened" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="S4" outline="NORMAL" >
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="5"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Previous" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="S3">
+                <FontString parentKey="Previous" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="S3">
                     <Color r="0.4" g="0.4" b="0.4" a="1" />
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.Raid1" relativePoint="LEFT" x="-4" y="-10"/>

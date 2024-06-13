@@ -28,6 +28,33 @@ miog.CLRSCC = { -- from clrs.cc
 	["white"] = "FFFFFFFF",
 }
 
+miog.SLOT_ID_INFO = {
+	[0] = {slotName = "AMMOSLOT", localizedName = nil},
+	[1] = {slotName = "HEADSLOT", localizedName = nil},
+	[2] = {slotName = "NECKSLOT", localizedName = nil},
+	[3] = {slotName = "SHOULDERSLOT", localizedName = nil},
+	[4] = {slotName = "SHIRTSLOT", localizedName = nil},
+	[5] = {slotName = "CHESTSLOT", localizedName = nil},
+	[6] = {slotName = "WAISTSLOT", localizedName = nil},
+	[7] = {slotName = "LEGSSLOT", localizedName = nil},
+	[8] = {slotName = "FEETSLOT", localizedName = nil},
+	[9] = {slotName = "WRISTSLOT", localizedName = nil},
+	[10] = {slotName = "HANDSSLOT", localizedName = nil},
+	[11] = {slotName = "FINGER0SLOT", localizedName = nil},
+	[12] = {slotName = "FINGER1SLOT", localizedName = nil},
+	[13] = {slotName = "TRINKET0SLOT", localizedName = nil},
+	[14] = {slotName = "TRINKET1SLOT", localizedName = nil},
+	[15] = {slotName = "BACKSLOT", localizedName = nil},
+	[16] = {slotName = "MAINHANDSLOT", localizedName = nil},
+	[17] = {slotName = "SECONDARYHANDSLOT", localizedName = nil},
+	[18] = {slotName = "RANGEDSLOT", localizedName = nil},
+	[19] = {slotName = "TABARDSLOT", localizedName = nil},
+}
+
+for i = 0, #miog.SLOT_ID_INFO, 1 do
+	miog.SLOT_ID_INFO[i].localizedName = _G[miog.SLOT_ID_INFO[i].slotName]
+end
+
 miog.AJ_CLRSCC = {
 	[1] = miog.CLRSCC.blue,
 	[2] = miog.CLRSCC.purple,
@@ -1194,6 +1221,7 @@ local function loadRawData()
 		
 					mapInfo.background = loreImage
 					mapInfo.icon = button2
+					--mapInfo.journalInstanceID = journalInstanceID
 
 					table.sort(mapInfo.bosses, function(k1, k2)
 						return k1.orderIndex < k2.orderIndex
@@ -1400,7 +1428,6 @@ miog.GEARING_CHART = {
 	[12] = {
 		maxJumps = 0,
 		baseItemLevel = 454,
-		--maxVaultItemLevel = 522,
 		maxItemLevel = 535,
 		dungeon = {
 			info = {
@@ -1463,12 +1490,9 @@ miog.GEARING_CHART = {
 		}
 	},
 
-
-
 	[13] = {
 		maxJumps = 0,
 		baseItemLevel = 545,
-		--maxVaultItemLevel = 642,
 		maxItemLevel = 626,
 		dungeon = {
 			info = {
@@ -1653,7 +1677,7 @@ miog.VAULT_PROGRESS = {
 }
 
 miog.FONTS = {
-	libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
+	--libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
 }
 
 miog.MAX_GROUP_SIZES = {

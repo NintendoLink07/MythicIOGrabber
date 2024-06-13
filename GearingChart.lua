@@ -152,8 +152,10 @@ miog.insertGearingData = function()
 end
 
 miog.loadGearingChart = function()
-    local singleGrid = CreateFrame("Frame", nil, miog.pveFrame2.TabFramesPanel.Gearing.RowLayout, "MIOG_GearingChartLine")
-    singleGrid.fixedWidth = miog.pveFrame2.TabFramesPanel.Gearing.RowLayout:GetWidth()
+    miog.Gearing = miog.pveFrame2.TabFramesPanel.Gearing
+
+    local singleGrid = CreateFrame("Frame", nil, miog.Gearing.RowLayout, "MIOG_GearingChartLine")
+    singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
     singleGrid.layoutIndex = 1
     singleGrid.bottomPadding = 5
 
@@ -188,8 +190,8 @@ miog.loadGearingChart = function()
     for k, v in pairs(miog.GEARING_CHART) do
         if(k == seasonID) then
             for a, b in pairs(v.itemLevelInfo) do
-                singleGrid = CreateFrame("Frame", nil, miog.pveFrame2.TabFramesPanel.Gearing.RowLayout, "MIOG_GearingChartLine")
-                singleGrid.fixedWidth = miog.pveFrame2.TabFramesPanel.Gearing.RowLayout:GetWidth()
+                singleGrid = CreateFrame("Frame", nil, miog.Gearing.RowLayout, "MIOG_GearingChartLine")
+                singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
                 singleGrid.layoutIndex = a
                 singleGrid.bottomPadding = 5
     
@@ -211,7 +213,7 @@ miog.loadGearingChart = function()
             end
 
             for a, b in ipairs(v.trackInfo) do
-                local currentLegendFrame = miog.pveFrame2.TabFramesPanel.Gearing.Legend[a == 1 and "Explorer" or a == 2 and "Adventurer" or a == 3 and "Veteran" or a == 4 and "Champion" or a == 5 and "Hero" or a == 6 and "Myth" or a == 7 and "Awakened"]
+                local currentLegendFrame = miog.Gearing.Legend[a == 1 and "Explorer" or a == 2 and "Adventurer" or a == 3 and "Veteran" or a == 4 and "Champion" or a == 5 and "Hero" or a == 6 and "Myth" or a == 7 and "Awakened"]
 
                 if(currentLegendFrame) then
                     currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[a - 1].color:GetRGBA())
@@ -225,8 +227,8 @@ miog.loadGearingChart = function()
             end
 
             if(not v.awakenedInfo) then
-                miog.pveFrame2.TabFramesPanel.Gearing.Legend["Awakened"]:Hide()
-                miog.pveFrame2.TabFramesPanel.Gearing.Legend:SetWidth(miog.pveFrame2.TabFramesPanel.Gearing.Legend:GetWidth() - miog.pveFrame2.TabFramesPanel.Gearing.Legend["Awakened"]:GetWidth())
+                miog.Gearing.Legend["Awakened"]:Hide()
+                miog.Gearing.Legend:SetWidth(miog.Gearing.Legend:GetWidth() - miog.Gearing.Legend["Awakened"]:GetWidth())
             end
         end
     end

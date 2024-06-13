@@ -3,7 +3,7 @@
     <Button name="MIOG_SortButtonTemplate" inherits="MIOG_MultiStateButtonTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="FontString" font="LibMono" justifyH="CENTER">
+                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER">
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
                     </Anchors>

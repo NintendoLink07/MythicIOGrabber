@@ -227,12 +227,14 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 		miog.checkSystem.groupMember[guid].ilvl = unitGear.ilevel
 		miog.checkSystem.groupMember[guid].durability = unitGear.durability
 		miog.checkSystem.groupMember[guid].missingEnchants = {}
+		miog.checkSystem.groupMember[guid].missingGems = {}
 
 		for index, slotIdWithoutEnchant in ipairs (noEnchantTable) do
-			miog.checkSystem.groupMember[guid].missingEnchants[slotIdWithoutEnchant] = true
+			miog.checkSystem.groupMember[guid].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
 		end
 
 		for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
+			miog.checkSystem.groupMember[guid].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 		end
 
 		miog.updateRosterInfoData()

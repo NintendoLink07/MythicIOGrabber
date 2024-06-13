@@ -812,7 +812,6 @@ local function setActivePanel(_, panel)
 
 		if(not miog.F.LITE_MODE) then
 			ShowUIPanel(miog.pveFrame2)
-			miog.MainTab.CategoryPanel:Hide()
 
 		else
 			LFGListFrame.ApplicationViewer:Hide()
@@ -854,7 +853,6 @@ local function setActivePanel(_, panel)
 
 		if(not miog.F.LITE_MODE) then
 			ShowUIPanel(miog.pveFrame2)
-			miog.MainTab.CategoryPanel:Hide()
 
 		else
 			LFGListFrame.SearchPanel:Hide()
@@ -898,7 +896,6 @@ local function setActivePanel(_, panel)
 
 		if(not miog.F.LITE_MODE) then
 			ShowUIPanel(miog.pveFrame2)
-			miog.MainTab.CategoryPanel:Hide()
 
 		else
 			LFGListFrame.EntryCreation:Hide()
@@ -922,11 +919,6 @@ local function setActivePanel(_, panel)
 	else
 		miog.Plugin:Hide()
 		miog.FilterPanel.Lock:Show()
-
-		if(not miog.F.LITE_MODE) then
-			miog.MainTab.CategoryPanel:Show()
-		end
-
 	end
 end
 
@@ -957,11 +949,9 @@ miog.createFrames = function()
 	else
 		miog.createPVEFrameReplacement()
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
-		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.CategoryPanel, "TOPLEFT", 0, 0)
-		--miog.Plugin:SetPoint("BOTTOMRIGHT", miog.MainTab, "BOTTOMRIGHT")
-		--miog.Plugin:SetSize(372, 370)
-
-		--miog.Plugin:SetHeight(miog.pveFrame2:GetHeight() - miog.pveFrame2.TitleBar:GetHeight() - 5)
+		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
+		miog.Plugin:SetPoint("TOPRIGHT", miog.MainTab, "TOPRIGHT", 0, 0)
+		miog.Plugin:SetHeight(miog.pveFrame2:GetHeight() - miog.pveFrame2.TitleBar:GetHeight() - 5)
 
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -1049,6 +1039,7 @@ miog.createFrames = function()
 	miog.Plugin:SetResizeBounds(standardWidth, miog.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
 
 	miog.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value and miog.Plugin.extendedHeight or miog.Plugin.standardHeight)
+
 
 	miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())

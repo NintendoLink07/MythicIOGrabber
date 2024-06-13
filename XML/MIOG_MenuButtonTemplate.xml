@@ -3,8 +3,7 @@
     <Button name="MIOG_MenuButtonTemplate" inherits="BackdropTemplate, UIButtonTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Title" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
-                    <FontHeight val="12"/>
+                <FontString parentKey="Title" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                     </Anchors>
@@ -20,38 +19,6 @@
                 </Texture>
             </Layer>
         </Layers>
-
-        <Frames>
-            <Button parentKey="StartGroup">
-                <Size x="21" y="21" />
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5"/>
-                </Anchors>
-
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="Icon" atlas="tradeskills-icon-add" setAllPoints="true">
-
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
-
-            <Button parentKey="FindGroup">
-                <Size x="21" y="21" />
-                <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5"/>
-                </Anchors>
-                
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="Icon" atlas="uitools-icon-search" setAllPoints="true">
-
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
-        </Frames>
 
         --UI-CharacterCreate-LargeButton-Yellow-Highlight   yellow round x+3-3 y+1-1
         --communities-create-button-highlight               blue rounded x+5-5 y+1-1

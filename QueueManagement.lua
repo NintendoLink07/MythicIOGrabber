@@ -566,7 +566,7 @@ local function checkQueues()
 								--LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
 								LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, LFGListFrame.SearchPanel.preferredFilters or 0, LFGListFrame.baseFilters)
 
-								if(LFGListFrame.SearchPanel.filters == nil or LFGListFrame.SearchPanel.preferredFilters == nil) then
+								if(LFGListFrame.SearchPanel.filters == 0 or LFGListFrame.SearchPanel.filters == nil or LFGListFrame.SearchPanel.preferredFilters == nil) then
 									LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 								end
 								
@@ -879,34 +879,6 @@ local function checkQueues()
 	end
 
 	--miog.inviteBox:SetShown(gotInvite)
-end
-
-local function startNewGroup(categoryFrame)
-	LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
-
-	--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
-	--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
-
-	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
-	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
-
-	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
-
-	LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
-	--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
-	
-	miog.initializeActivityDropdown()
-end
-
-local function findGroup(categoryFrame)
-	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-	
-	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
-	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
-
-	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
-
-	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 end
 
 hooksecurefunc("LFGListSearchPanel_SetCategory", function()
@@ -1235,13 +1207,13 @@ local function hideAllPVPButtonAssets(button)
 	if(button.TeamSizeText) then
 		button.TeamSizeText:ClearAllPoints()
 		button.TeamSizeText:SetPoint("LEFT", button.Tier, "RIGHT")
-		button.TeamSizeText:SetFont(miog.FONTS["libMono"], 11, "OUTLINE")
+		button.TeamSizeText:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
 	end
 
 	if(button.TeamTypeText) then
 		button.TeamTypeText:ClearAllPoints()
 		button.TeamTypeText:SetPoint("LEFT", button.TeamSizeText, "RIGHT")
-		button.TeamTypeText:SetFont(miog.FONTS["libMono"], 11, "OUTLINE")
+		button.TeamTypeText:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
 	end
 
 	if(button.CurrentRating) then
@@ -1251,7 +1223,7 @@ local function hideAllPVPButtonAssets(button)
 	if(button.Title) then
 		button.Title:ClearAllPoints()
 		button.Title:SetPoint("LEFT", button, "LEFT", 20, 0)
-		button.Title:SetFont(miog.FONTS["libMono"], 11, "OUTLINE")
+		button.Title:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
 
 	end
 
@@ -1778,133 +1750,6 @@ local function queueEvents(_, event, ...)
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		updateDropDown()
 
-		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then
-			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
-			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
-
-			startNewGroup({categoryID = activityInfo.categoryID, filters = activityInfo.filters})
-		end
-
-		local lastFrame = nil
-
-		local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
-
-		local function showFailureReason(owner)
-			GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
-			GameTooltip:SetText(failureReason)
-			GameTooltip:Show()
-		end
-
-		for k, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-			local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID);
-
-			if(not _G["MythicIOGrabber_" .. categoryInfo.name .. "Button"]) then
-
-				local categoryFrame = CreateFrame("Button", "MythicIOGrabber_" .. categoryInfo.name .. "Button", miog.MainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
-				categoryFrame.categoryID = categoryID
-				categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
-
-				miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
-
-				categoryFrame:SetHeight(30)
-				categoryFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and -60 or -3)
-				categoryFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and -50 or -3)
-				categoryFrame.Title:SetText(categoryInfo.name)
-				categoryFrame.BackgroundImage:SetVertTile(true)
-				categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
-				categoryFrame.StartGroup.Icon:SetDesaturated(not canUse)
-				categoryFrame.FindGroup.Icon:SetDesaturated(not canUse)
-
-				if(not canUse) then
-					categoryFrame.StartGroup:SetScript("OnEnter", function(self)
-						showFailureReason(self)
-					end)
-					categoryFrame.StartGroup:SetScript("OnLeave", function(self)
-						GameTooltip:Hide()
-					end)
-
-					categoryFrame.FindGroup:SetScript("OnEnter", function(self)
-						showFailureReason(self)
-					end)
-					categoryFrame.FindGroup:SetScript("OnLeave", function(self)
-						GameTooltip:Hide()
-					end)
-
-				else
-					categoryFrame.StartGroup:SetScript("OnClick", function(self)
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-						local button = self:GetParent()
-						startNewGroup(button)
-	
-						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
-					end)
-	
-					categoryFrame.FindGroup:SetScript("OnClick", function(self)
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-						local button = self:GetParent()
-						findGroup(button)
-	
-						LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-					end)
-				
-				end
-			
-				lastFrame = categoryFrame
-		
-				if categoryInfo.separateRecommended then
-					local notRecommendedFrame = CreateFrame("Button", "MythicIOGrabber_" .. LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true) .. "Button", miog.MainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
-					notRecommendedFrame.categoryID = categoryID
-					notRecommendedFrame.filters = Enum.LFGListFilter.NotRecommended
-
-					miog.createFrameBorder(notRecommendedFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
-
-					notRecommendedFrame:SetHeight(30)
-					notRecommendedFrame:SetPoint("TOPLEFT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMLEFT" or "TOPLEFT", 0, k == 1 and 0 or -3)
-					notRecommendedFrame:SetPoint("TOPRIGHT", lastFrame or miog.MainTab.CategoryPanel, lastFrame and "BOTTOMRIGHT" or "TOPRIGHT", 0, k == 1 and 0 or -3)
-					notRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
-					notRecommendedFrame.BackgroundImage:SetVertTile(true)
-					notRecommendedFrame.BackgroundImage:SetHorizTile(true)
-					notRecommendedFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-					notRecommendedFrame.StartGroup.Icon:SetDesaturated(not canUse)
-					notRecommendedFrame.FindGroup.Icon:SetDesaturated(not canUse)
-
-					if(not canUse) then
-						notRecommendedFrame.StartGroup:SetScript("OnEnter", function(self)
-							showFailureReason(self)
-						end)
-						notRecommendedFrame.StartGroup:SetScript("OnLeave", function(self)
-							GameTooltip:Hide()
-						end)
-	
-						notRecommendedFrame.FindGroup:SetScript("OnEnter", function(self)
-							showFailureReason(self)
-						end)
-						notRecommendedFrame.FindGroup:SetScript("OnLeave", function(self)
-							GameTooltip:Hide()
-						end)
-	
-					else
-						notRecommendedFrame.StartGroup:SetScript("OnClick", function(self)
-							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-							local button = self:GetParent()
-							startNewGroup(button)
-	
-							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
-						end)
-						notRecommendedFrame.FindGroup:SetScript("OnClick", function(self)
-							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-							local button = self:GetParent()
-							findGroup(button)
-	
-							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-						end)
-					
-					end
-			
-					lastFrame = notRecommendedFrame
-				end
-			end
-		end
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		--updateDropDown()
 		

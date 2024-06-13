@@ -3,8 +3,7 @@
     <Button name="MIOG_VerticalButtonTemplate" inherits="UIButtonTemplate, BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <FontHeight val="13" />
+                <FontString parentKey="FontString" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
                     </Anchors>

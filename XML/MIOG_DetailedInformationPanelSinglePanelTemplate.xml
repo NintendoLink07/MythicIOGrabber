@@ -24,8 +24,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="TOP" wordwrap="true" nonspacewrap="true">
-                                    <FontHeight val="11"/>
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="TOP" wordwrap="true" nonspacewrap="true">
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-4" />
                                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
@@ -45,8 +44,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
-                                    <FontHeight val="11"/>
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                                     </Anchors>
@@ -64,8 +62,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
-                                    <FontHeight val="11"/>
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                                     </Anchors>
@@ -83,8 +80,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
-                                    <FontHeight val="11"/>
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                                     </Anchors>
@@ -102,8 +98,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
-                                    <FontHeight val="11"/>
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                                     </Anchors>
@@ -121,8 +116,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT">
-                                    <FontHeight val="11"/>
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                                     </Anchors>

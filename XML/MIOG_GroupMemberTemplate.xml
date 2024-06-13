@@ -1,24 +1,16 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_GroupMemberTemplate" virtual="true" flattenRenderLayers="true">
-        <Size x="17" y="17" />
-
         <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="Icon" enableMouseClicks="true">
-                    <Size x="13" y="13" />
-
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2" />
-                    </Anchors>
-                </Texture>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true" />
             </Layer>
 
-            <Layer level="BORDER">
-                <Texture parentKey="Border">
-                    <Size x="17" y="17" />
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" enableMouseClicks="true">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPLEFT" x="-2" y="2" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                     </Anchors>
                 </Texture>
             </Layer>

@@ -335,6 +335,7 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 
 	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
 	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("DIALOG")
+	LFGListFrame.SearchPanel.SearchBox:SetFrameLevel(9999)
 end)
 
 local function createDetailedInformationPanel(poolFrame, listFrame)
@@ -344,15 +345,15 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	end
 
 	local detailedInformationPanel = listFrame.DetailedInformationPanel
-	detailedInformationPanel.fixedWidth = listFrame.fixedWidth
-	detailedInformationPanel:SetPoint("TOPLEFT", listFrame.BasicInformationPanel or listFrame.CategoryInformation, "BOTTOMLEFT")
-	detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.BasicInformationPanel or listFrame.CategoryInformation, "BOTTOMRIGHT")
-	detailedInformationPanel:SetShown((listFrame.BasicInformationPanel or listFrame.CategoryInformation).ExpandFrame:GetActiveState() > 0 and true or false)
+	detailedInformationPanel:SetWidth(listFrame.fixedWidth)
+	--detailedInformationPanel:SetPoint("TOPLEFT", listFrame.BasicInformation or listFrame.Row, "BOTTOMLEFT")
+	--detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.BasicInformation or listFrame.CategoryInformation, "BOTTOMRIGHT")
+	
+	detailedInformationPanel:SetShown((listFrame.CategoryInformation or listFrame.BasicInformation).ExpandFrame:GetActiveState() > 0 and true or false)
 	listFrame.DetailedInformationPanel = detailedInformationPanel
 
 	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
 	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
-
 
 	local panelContainer = detailedInformationPanel.PanelContainer
 	panelContainer.ForegroundRows:SetFrameStrata("HIGH")
@@ -381,8 +382,6 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 		GameTooltip:Hide()
 
 	end)
-
-	detailedInformationPanel:MarkDirty()
 end
 
 miog.createDetailedInformationPanel = createDetailedInformationPanel
@@ -429,6 +428,8 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 					local dungeonRowFrame = mythicPlusPanel["DungeonRow" .. i]
 
+					--miog.createFrameBorder(dungeonRowFrame, 1)
+
 					local rowIndex = dungeonEntry.dungeon.index
 					local texture = miog.MAP_INFO[dungeonEntry.dungeon.instance_map_id].icon
 
@@ -443,10 +444,10 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 					dungeonRowFrame.Name:SetText(dungeonEntry.dungeon.shortName .. ":")
 
-					dungeonRowFrame.Primary:SetText(wticc(primaryDungeonLevel[rowIndex] .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or primaryDungeonChests[rowIndex]),
+					dungeonRowFrame.Primary:SetText(wticc(primaryDungeonLevel[rowIndex] .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or primaryDungeonChests[rowIndex]),
 					primaryDungeonChests[rowIndex] > 0 and miog.C.GREEN_COLOR or primaryDungeonChests[rowIndex] == 0 and miog.CLRSCC["red"] or "0"))
 
-					dungeonRowFrame.Secondary:SetText(wticc(secondaryDungeonLevel[rowIndex] .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests[rowIndex]),
+					dungeonRowFrame.Secondary:SetText(wticc(secondaryDungeonLevel[rowIndex] .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests[rowIndex]),
 					secondaryDungeonChests[rowIndex] > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests[rowIndex] == 0 and miog.CLRSCC["red"] or "0"))
 				end
 			end

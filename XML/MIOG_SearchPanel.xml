@@ -22,7 +22,7 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" hidden="true" justifyH="CENTER" wordwrap="true" nonspacewrap="true">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" hidden="true" justifyH="CENTER" wordwrap="true" nonspacewrap="true">
                             <Anchors>
                                 <Anchor point="TOP" relativeKey="$parent.Background" relativePoint="TOP" y="-20"/>
                                 <Anchor point="LEFT" relativeKey="$parent.Background" relativePoint="LEFT"/>
@@ -76,6 +76,33 @@
                 </Anchors>
 
                 <Frames>
+                    <Frame parentKey="Condensed" hidden="true">
+                        <Size x="100" y="20" />
+                
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2"/>
+                        </Anchors>
+
+                        <Frames>
+                            <CheckButton parentKey="Button" inherits="MIOG_MinimalCheckButtonTemplate">
+                                <Size x="20" y="20" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                                </Anchors>
+                            </CheckButton>
+                        </Frames>
+
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="Condensed View">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="3" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+
                     <Button parentKey="PrimarySort" inherits="MIOG_SortButtonTemplate">
                         <Size x="20" y="20" />
                         <Anchors>

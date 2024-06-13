@@ -14,15 +14,13 @@
             </Layer>
         
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="LEFT">
-                    <FontHeight val="11"/>
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Progress" font="LibMono" justifyH="LEFT">
-                    <FontHeight val="11"/>
+                <FontString parentKey="Progress" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
                     </Anchors>

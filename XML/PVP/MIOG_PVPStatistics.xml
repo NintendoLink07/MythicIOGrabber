@@ -18,8 +18,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="Level" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="Honor Level 0" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                    <FontHeight val="12" />
+                                <FontString parentKey="Level" font="SystemFont_Shadow_Med1" text="Honor Level 0" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                     <Anchors>
                                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-1"/>
                                     </Anchors>
@@ -38,8 +37,7 @@
 
                                 <Layers>
                                     <Layer level="OVERLAY">
-                                        <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/0 Honor" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                            <FontHeight val="12" />
+                                        <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="0/0 Honor" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                             <Anchors>
                                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1" x="3"/>
                                             </Anchors>

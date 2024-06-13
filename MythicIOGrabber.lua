@@ -6,6 +6,44 @@ miog.referencePVPButtons = {}
 
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
+
+local function createBaseCategoryFrame(categoryID, index, canUseLFG, failureReason)
+	local categoryFrame = miog.pveFrame2.categoryFramePool:Acquire()
+
+	categoryFrame.categoryID = categoryID
+	categoryFrame:SetFrameStrata("FULLSCREEN")
+
+	categoryFrame:SetSize(140, 20)
+	categoryFrame.layoutIndex = index
+	categoryFrame.BackgroundImage:SetVertTile(true)
+	categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
+	categoryFrame.BackgroundImage:SetDesaturated(not canUseLFG)
+
+	miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
+
+	categoryFrame:SetScript("OnShow", function(self)
+		if(not canUseLFG) then
+			self:SetScript("OnEnter", function()
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText(failureReason)
+				GameTooltip:Show()
+			end)
+			self:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+			end)
+		else
+			self:SetScript("OnClick", function()
+				self:GetParent().setupFunction(self)
+				self:GetParent():Hide()
+			end)
+		
+		end
+	end)
+
+	return categoryFrame
+end
+
+
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
 		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
@@ -73,11 +111,11 @@ miog.OnEvent = function(_, event, ...)
 				button:SetHighlightAtlas("pvpqueue-button-casual-highlight", "ADD")
 
 				button.SizeText:ClearAllPoints()
-				button.SizeText:SetFont(miog.FONTS["libMono"], 11, "OUTLINE")
+				button.SizeText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
 				button.SizeText:SetPoint("LEFT", button, "LEFT", 5, 0)
 
 				button.NameText:ClearAllPoints()
-				button.NameText:SetFont(miog.FONTS["libMono"], 11, "OUTLINE")
+				button.NameText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
 				button.NameText:SetTextColor(1, 1, 1, 1)
 				button.NameText:SetPoint("LEFT", button.SizeText, "RIGHT", 5, 0)
 			end)
@@ -122,8 +160,50 @@ miog.OnEvent = function(_, event, ...)
 
 	elseif(event == "PLAYER_REGEN_ENABLED") then
 		miog.F.QUEUE_STOP = false
+
+	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
+		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then
+			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
+		
+			miog.startNewGroup({categoryID = activityInfo.categoryID, filters = activityInfo.filters})
+		end
+
+		if(not miog.F.LITE_MODE) then
+			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+
+			local index = 0
+			
+			miog.pveFrame2.categoryFramePool:ReleaseAll()
+
+			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
+				index = index + 1
+
+				local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
+
+				local categoryFrame = createBaseCategoryFrame(categoryID, index, canUse, failureReason)
+				categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
+				categoryFrame.Title:SetText(categoryInfo.name)
+				categoryFrame:Show()
+
+				if(categoryInfo.separateRecommended) then
+					index = index + 1
+
+					local nonRecommendedFrame = createBaseCategoryFrame(categoryID, index, canUse)
+					nonRecommendedFrame.filters = categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended
+					nonRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
+					nonRecommendedFrame:Show()
+					
+				end
+			end
+
+			miog.pveFrame2.CategoryHoverFrame:MarkDirty()
+
+		end
+
 	end
 end
+
 
 SLASH_MIOG1 = '/miog'
 local function handler(msg, editBox)

@@ -15,7 +15,7 @@
                 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="You have been invited">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="You have been invited">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
                             </Anchors>

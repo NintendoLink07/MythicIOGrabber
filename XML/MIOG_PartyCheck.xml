@@ -59,7 +59,7 @@
             </Frame>
             
             <Frame name="score" parentKey="Score" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="55" y="18"/>
+                <Size x="50" y="18"/>
                 
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Key" relativePoint="RIGHT" x="5"/>

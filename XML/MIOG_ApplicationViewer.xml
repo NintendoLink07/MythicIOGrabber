@@ -16,8 +16,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
-                            <FontHeight val="13" />
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
                             </Anchors>
@@ -55,7 +54,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="Roles" font="LibMono" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="0/0/0" wordwrap="false">
+                                <FontString parentKey="Roles" font="SystemFont_Shadow_Med1" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="0/0/0" wordwrap="false">
                                     <Anchors>
                                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
                                     </Anchors>
@@ -109,7 +108,7 @@
                             <Frame parentKey="Container" setAllPoints="true">
                                 <Layers>
                                     <Layer level="OVERLAY">
-                                        <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true" />
+                                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true" />
                                     </Layer>
                                 </Layers>
                             </Frame>
@@ -126,7 +125,7 @@
                 </Anchors>
 
                 <Frames>
-                    <EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false" font="LibMono" hidden="true">
+                    <EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1" hidden="true">
                         <Frames>
                             <Button parentKey="UpdateButton" inherits="UIPanelButtonTemplate" text="Update">
                                 <Size x="60" y="20" />
@@ -234,7 +233,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" />
                                     </Anchors>
@@ -259,6 +258,7 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="3"/>
                         </Anchors>
+
                         <Layers>
                             <Layer level="ARTWORK">
                                 <Texture parentKey="Texture" file="Interface/Addons/MythicIOGrabber/res/infoIcons/itemsacks.png">
@@ -268,12 +268,55 @@
                                     </Anchors>
                                 </Texture>
                             </Layer>
+
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
                                     <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" />
+                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="2"/>
                                     </Anchors>
                                 </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(self.tooltipText)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+                    </Frame>
+                    <Frame parentKey="Affixes">
+                        <Size x="51" y="17" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="3" />
+                        </Anchors>
+                        
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Affix1">
+                                    <Size x="17" y="17" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                                    </Anchors>
+                                </Texture>
+
+                                <Texture parentKey="Affix2">
+                                    <Size x="17" y="17" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Affix1" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </Texture>
+
+                                <Texture parentKey="Affix3">
+                                    <Size x="17" y="17" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Affix2" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </Texture>
                             </Layer>
                         </Layers>
 
@@ -292,28 +335,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Affixes" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true">
-                            <KeyValues>
-                                <KeyValue key="tooltipText" value="" type="global" />
-                            </KeyValues>
-
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="3" />
-                            </Anchors>
-
-                            <Scripts>
-                                <OnEnter>
-                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                    GameTooltip:SetText(self.tooltipText)
-                                    GameTooltip:Show()
-                                </OnEnter>
-                                <OnLeave>
-                                    GameTooltip:Hide()
-                                </OnLeave>
-                            </Scripts>
-                        </FontString>
-                        
-                        <FontString parentKey="Timer" font="LibMono" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0:00:00" wordwrap="true" nonspacewrap="true">
+                        <FontString parentKey="Timer" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0:00:00" wordwrap="true" nonspacewrap="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Affixes" relativePoint="RIGHT" x="3" />
                             </Anchors>
@@ -389,7 +411,7 @@
                         <KeyValues>
                             <KeyValue key="minimumWidth" value="1" type="number" />
                             <KeyValue key="minimumHeight" value="1" type="number" />
-                            <KeyValue key="spacing" value="3" type="number" />
+                            <KeyValue key="spacing" value="5" type="number" />
                             <KeyValue key="align" value="top" type="string" />
                         </KeyValues>
                     </Frame>

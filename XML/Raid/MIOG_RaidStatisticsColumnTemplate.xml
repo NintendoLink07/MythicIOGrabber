@@ -15,29 +15,25 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="ShortName" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="NAME" outline="NORMAL" >
-                    <FontHeight val="13" />
+                <FontString parentKey="ShortName" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" text="NAME" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-5" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Heroic" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="H" outline="NORMAL" >
-                    <FontHeight val="13" />
+                <FontString parentKey="Heroic" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" text="H" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-20" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Normal" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="N" outline="NORMAL" >
-                    <FontHeight val="13" />
+                <FontString parentKey="Normal" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" text="N" outline="NORMAL">
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.Heroic" relativePoint="LEFT" x="-35" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Mythic" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="M" outline="NORMAL" >
-                    <FontHeight val="13" />
+                <FontString parentKey="Mythic" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" text="M" outline="NORMAL">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Heroic" relativePoint="RIGHT" x="35" />
                     </Anchors>

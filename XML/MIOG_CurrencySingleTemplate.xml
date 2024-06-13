@@ -1,9 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="false">
-        <FontHeight val="11" />
-    </Font>
-
     <Frame name="MIOG_CurrencySingleTemplate" virtual="true">
         <Layers>
             <Layer level="BACKGROUND">
@@ -22,10 +18,9 @@
             </Layer>
             
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0/0">
-                    <FontHeight val="12"/>
+                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0/0">
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT"/>
+                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-2"/>
                     </Anchors>
                 </FontString>
             </Layer>

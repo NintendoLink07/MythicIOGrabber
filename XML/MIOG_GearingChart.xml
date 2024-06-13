@@ -8,7 +8,7 @@
 			    </KeyValues>
             </Frame>
 
-            <Frame parentKey="Legend">
+            <Frame parentKey="Legend" frameStrata="HIGH">
                 <Size x="180" y="25" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />

@@ -1,11 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\..\FrameXML\UI.xsd">    
-    <Font name="LibMono" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" fixedSize="true">
-        <FontHeight val="11" />
-    </Font>
-
+..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true" toplevel="true" enableMouse="true" parent="UIParent">
         <Frames>
+            <Frame parentKey="CategoryHoverFrame" inherits="VerticalLayoutFrame" hidden="true" frameLevel="10000">
+                <KeyValues>
+                    <KeyValue key="align" value="top" />
+                    <KeyValue key="spacing" value="2" />
+                </KeyValues>
+            </Frame>
+
             <Frame parentKey="TitleBar">
                 <Size y="23" />
                 <Anchors>
@@ -14,6 +17,102 @@
                 </Anchors>
 
                 <Frames>
+                    <Button parentKey="CreateGroup" inherits="MIOG_NavBarButtonTemplate">
+                        <Size x="56" y="20" />
+
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2" />
+						</Anchors>
+
+                        <Scripts>
+                            <OnEnter>
+                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
+
+                                if(hoverFrame:IsShown()) then
+                                    hoverFrame:ClearAllPoints()
+                                    hoverFrame.setupFunction = self.setupFunction
+                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+                                    hoverFrame:SetFrameLevel(10000)
+                                end
+                            </OnEnter>
+
+                            <OnClick>
+                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
+                                hoverFrame:SetShown(not hoverFrame:IsShown())
+
+                                if(hoverFrame:IsShown()) then
+                                    hoverFrame:ClearAllPoints()
+                                    hoverFrame.setupFunction = self.setupFunction
+                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+                                    hoverFrame:SetFrameLevel(10000)
+                                end
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="FindGroup" inherits="MIOG_NavBarButtonTemplate">
+                        <Size x="50" y="20" />
+
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.CreateGroup" relativePoint="RIGHT" x="2" />
+						</Anchors>
+
+                        <Scripts>
+                            <OnEnter>
+                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
+
+                                if(hoverFrame:IsShown()) then
+                                    hoverFrame:ClearAllPoints()
+                                    hoverFrame.setupFunction = self.setupFunction
+                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+                                    hoverFrame:SetFrameLevel(10000)
+                                end
+                            </OnEnter>
+
+                            <OnClick>
+                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
+                                hoverFrame:SetShown(not hoverFrame:IsShown())
+
+                                if(hoverFrame:IsShown()) then
+                                    hoverFrame:ClearAllPoints()
+                                    hoverFrame.setupFunction = self.setupFunction
+                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+                                    hoverFrame:SetFrameLevel(10000)
+                                end
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    
+                    <Button parentKey="DungeonJournal" inherits="MIOG_NavBarButtonTemplate">
+                        <Size x="62" y="20" />
+
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.FindGroup" relativePoint="RIGHT" x="2" />
+						</Anchors>
+                    </Button>
+
+                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+                        <Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+                                self:GetParent():GetParent():Hide()
+							</OnClick>
+						</Scripts>
+					</Button>
+
+                    <Button parentKey="Expand">
+                        <Size x="12" y="12"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2" y="-3"/>
+                        </Anchors>
+                        <NormalTexture file="interface/buttons/arrow-down-up.blp" />
+                        <PushedTexture file="interface/buttons/arrow-down-down.blp" />
+                        <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
+                    </Button>
+
                     <Button parentKey="BlizzardFrame" inherits="UIButtonTemplate" mixin="LFDMicroButtonMixin">
                         <KeyValues>
                             <KeyValue key="commandName" value="TOGGLEGROUPFINDER" type="string"/>
@@ -23,7 +122,7 @@
                         <Size x="20" y="20"/>
 
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+							<Anchor point="RIGHT" relativeKey="$parent.Expand" relativePoint="LEFT" x="-2"/>
 						</Anchors>
 
                         <NormalTexture atlas="Battlenet-ClientIcon-WoW" />
@@ -72,7 +171,7 @@
                     <Button parentKey="KnownIssuesPanel" inherits="IconButtonTemplate" hidden="true">
                         <Size x="15" y="15"/>
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.BlizzardFrame" relativePoint="RIGHT" />
+							<Anchor point="RIGHT" relativeKey="$parent.BlizzardFrame" relativePoint="LEFT" x="-2"/>
 						</Anchors>
 
                         <NormalTexture atlas="glueannouncementpopup-icon-info" />
@@ -89,40 +188,17 @@
                             </OnLeave>
                         </Scripts>
                     </Button>
-
-                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
-                        <Size x="20" y="20"/>
-						<Anchors>
-							<Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
-						</Anchors>
-						<Scripts>
-							<OnClick>
-                                self:GetParent():GetParent():Hide()
-							</OnClick>
-						</Scripts>
-					</Button>
-
-                    <Button parentKey="Expand">
-                        <Size x="12" y="12"/>
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2" y="-3"/>
-                        </Anchors>
-                        <NormalTexture file="interface/buttons/arrow-down-up.blp" />
-                        <PushedTexture file="interface/buttons/arrow-down-down.blp" />
-                        <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
-                    </Button>
-                </Frames>    
+                </Frames>
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="TitleString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
-                            <FontHeight val="12"/>
+                        <FontString parentKey="TitleString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
                         </FontString>
                         
-                        <FontString parentKey="RaiderIOLoaded" font="LibMono" justifyH="RIGHT">
+                        <FontString parentKey="RaiderIOLoaded" font="SystemFont_Shadow_Med1" justifyH="RIGHT">
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent.TitleString" relativePoint="LEFT" x="-3" />
                             </Anchors>
@@ -288,8 +364,7 @@
 
                                         <Layers>
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
-                                                    <FontHeight val="12"/>
+                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
                                                 </FontString>
                                             </Layer>
                                         </Layers>
@@ -315,7 +390,7 @@
 
                                                 <Layers>
                                                     <Layer level="OVERLAY">
-                                                        <FontString parentKey="FontString" font="LibMono" text="Active queues">
+                                                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" text="Active queues">
                                                             <Anchors>
                                                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                                                             </Anchors>
@@ -371,49 +446,56 @@
                                 </Frames>
                             </Frame>
 
-                            <Frame parentKey="CategoryPanel" inherits="BackdropTemplate">
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.QueueInformation" relativePoint="BOTTOMRIGHT" x="185" y="45"/>
-                                </Anchors>
-                            </Frame>
-
-                            <!--<Button parentKey="AdventureJournal" inherits="MIOG_MenuButtonTemplate">
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryPanel" relativePoint="BOTTOMLEFT"/>
-                                    <Anchor point="TOPRIGHT" relativeKey="$parent.CategoryPanel" relativePoint="BOTTOMRIGHT"/>
-                                </Anchors>
-                            </Button>-->
-
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryPanel" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                                </Anchors>                      
-                                <Layers>
-                                    <Layer level="OVERLAY">
-                                        <FontString parentKey="Affixes" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
-                                            <FontHeight val="12"/>
-                                            <Anchors>
-                                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
-                                            </Anchors>
-                                            <Scripts>
-                                                <OnEnter>
-                                                    if(self.text) then
-                                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                                        GameTooltip:SetText(self.text)
-                                                        GameTooltip:Show()
-                                                    end
-                                                </OnEnter>
-                                                <OnLeave>
-                                                    GameTooltip:Hide()
-                                                </OnLeave>
-                                            </Scripts>
-                                        </FontString>
-                                    </Layer>
-                                </Layers>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-180"/>
+                                </Anchors>
 
                                 <Frames>
+                                    <Frame parentKey="Affixes">
+                                        <Size x="60" y="20" />
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                                        </Anchors>
+                                        
+                                        <Layers>
+                                            <Layer level="ARTWORK">
+                                                <Texture parentKey="Affix1">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                                                    </Anchors>
+                                                </Texture>
+
+                                                <Texture parentKey="Affix2">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Affix1" relativePoint="RIGHT" />
+                                                    </Anchors>
+                                                </Texture>
+
+                                                <Texture parentKey="Affix3">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Affix2" relativePoint="RIGHT" />
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+                                        </Layers>
+
+                                        <Scripts>
+                                            <OnEnter>
+                                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                                GameTooltip:SetText(self.tooltipText)
+                                                GameTooltip:Show()
+                                            </OnEnter>
+                                            <OnLeave>
+                                                GameTooltip:Hide()
+                                            </OnLeave>
+                                        </Scripts>
+                                    </Frame>
+
                                     <Frame parentKey="Keystone" inherits="BackdropTemplate">
                                         <Size x="200" y="20" />
                                         <Anchors>
@@ -431,8 +513,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <FontHeight val="12" />
+                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
@@ -459,8 +540,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <FontHeight val="12" />
+                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
@@ -483,8 +563,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/8 Dungeons" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <FontHeight val="12" />
+                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="0/8 Dungeons" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -516,8 +595,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/7 Bosses" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">        
-                                                    <FontHeight val="12" />
+                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="0/7 Bosses" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -549,8 +627,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" text="0/5000 Honor" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <FontHeight val="12" />
+                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="0/5000 Honor" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>

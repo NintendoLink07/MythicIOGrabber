@@ -7,8 +7,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Remaining" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="0" outline="NORMAL" >
-                    <FontHeight val="14" />
+                <FontString parentKey="Remaining" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0" outline="NORMAL" >
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-4"/>
                     </Anchors>

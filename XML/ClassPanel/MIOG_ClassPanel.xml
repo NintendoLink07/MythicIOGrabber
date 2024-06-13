@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ClassPanel" inherits="BackdropTemplate" virtual="true" frameStrata="DIALOG">
+    <Frame name="MIOG_ClassPanel" inherits="BackdropTemplate" virtual="true" frameStrata="FULLSCREEN">
         <Size y="32" />
         <Frames>
             <Frame parentKey="Container" inherits="HorizontalLayoutFrame">
@@ -34,8 +34,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="StatusString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
-                    <FontHeight val="10" />
+                <FontString parentKey="StatusString" font="SystemFont_Shadow_Med1" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
                     <Size y="27" />
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />

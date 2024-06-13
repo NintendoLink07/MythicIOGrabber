@@ -76,8 +76,8 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 			memberFrame.StatusFrame:Show()
 			memberFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[applicantStatus].statusString, miog.APPLICANT_STATUS_INFO[applicantStatus].color))
 
-			if(memberFrame.BasicInformationPanel.inviteButton) then
-				memberFrame.BasicInformationPanel.inviteButton:Disable()
+			if(memberFrame.BasicInformation.inviteButton) then
+				memberFrame.BasicInformation.inviteButton:Disable()
 
 			end
 		end
@@ -216,7 +216,7 @@ local function createApplicantFrame(applicantID)
 			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOG_ApplicantMemberFrameTemplate", applicantFrame)
 			applicantMemberFrame:ClearBackdrop()
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
-			applicantMemberFrame.minimumHeight = 20
+			applicantMemberFrame.BasicInformation:SetWidth(applicantMemberFrame.fixedWidth - 2)
 			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
 
@@ -232,7 +232,7 @@ local function createApplicantFrame(applicantID)
 			applicantMemberStatusFrame:SetFrameStrata("FULLSCREEN")
 			applicantMemberStatusFrame:Hide()
 
-			local expandFrameButton = applicantMemberFrame.BasicInformationPanel.ExpandFrame
+			local expandFrameButton = applicantMemberFrame.BasicInformation.ExpandFrame
 
 			expandFrameButton:RegisterForClicks("LeftButtonDown")
 			expandFrameButton:SetScript("OnClick", function()
@@ -249,7 +249,7 @@ local function createApplicantFrame(applicantID)
 			end)
 
 			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
-				applicantMemberFrame.BasicInformationPanel.Comment:Show()
+				applicantMemberFrame.BasicInformation.Comment:Show()
 
 			end
 
@@ -257,7 +257,7 @@ local function createApplicantFrame(applicantID)
 
 			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
-			local nameFontString = applicantMemberFrame.BasicInformationPanel.Name
+			local nameFontString = applicantMemberFrame.BasicInformation.Name
 			nameFontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
 			nameFontString:SetScript("OnMouseDown", function(_, button)
 				if(button == "RightButton") then
@@ -296,7 +296,7 @@ local function createApplicantFrame(applicantID)
 				nameFontString:SetWidth(100)
 			end
 
-			local specFrame = applicantMemberFrame.BasicInformationPanel.Spec
+			local specFrame = applicantMemberFrame.BasicInformation.Spec
 
 			if(miog.SPECIALIZATIONS[specID] and class == miog.SPECIALIZATIONS[specID].class.name) then
 				specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
@@ -306,12 +306,12 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			local roleFrame = applicantMemberFrame.BasicInformationPanel.Role
+			local roleFrame = applicantMemberFrame.BasicInformation.Role
 			roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
 
-			local primaryIndicator = applicantMemberFrame.BasicInformationPanel.Primary
-			local secondaryIndicator = applicantMemberFrame.BasicInformationPanel.Secondary
-			local itemLevelFrame = applicantMemberFrame.BasicInformationPanel.ItemLevel
+			local primaryIndicator = applicantMemberFrame.BasicInformation.Primary
+			local secondaryIndicator = applicantMemberFrame.BasicInformation.Secondary
+			local itemLevelFrame = applicantMemberFrame.BasicInformation.ItemLevel
 
 			local reqIlvl = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel or 0
 
@@ -323,19 +323,19 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			applicantMemberFrame.BasicInformationPanel.Friend:SetShown(relationship and true or false)
+			applicantMemberFrame.BasicInformation.Friend:SetShown(relationship and true or false)
 
 			if(applicantIndex > 1) then
-				applicantMemberFrame.BasicInformationPanel.Premade:SetScript("OnEnter", function(self)
+				applicantMemberFrame.BasicInformation.Premade:SetScript("OnEnter", function(self)
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-					GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].BasicInformationPanel.nameFrame:GetText())
+					GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].BasicInformation.nameFrame:GetText())
 					GameTooltip:Show()
 
 				end)
 
 			end
 
-			local declineButton = applicantMemberFrame.BasicInformationPanel.Decline
+			local declineButton = applicantMemberFrame.BasicInformation.Decline
 			declineButton:OnLoad()
 			declineButton:SetScript("OnClick", function()
 				if(applicantSystem.applicantMember[applicantID].status == "indexed") then
@@ -359,7 +359,7 @@ local function createApplicantFrame(applicantID)
 				end
 			end)
 
-			local inviteButton = applicantMemberFrame.BasicInformationPanel.Invite
+			local inviteButton = applicantMemberFrame.BasicInformation.Invite
 			inviteButton:OnLoad()
 			inviteButton:SetScript("OnClick", function()
 				C_LFGList.InviteApplicant(applicantID)
@@ -472,8 +472,7 @@ local function createApplicantFrame(applicantID)
 			
 			end
 
-			--BasicInformationPanel:MarkDirty()
-			applicantMemberFrame.DetailedInformationPanel:MarkDirty()
+			--BasicInformation:MarkDirty()
 			applicantMemberFrame:MarkDirty()
 
 		end
@@ -670,14 +669,22 @@ local function checkApplicantListForEligibleMembers(listEntry)
 	end
 
 	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].lustFit) then
-		if(listEntry.class ~= "HUNTER" and listEntry.class ~= "SHAMAN" and listEntry.class ~= "MAGE" and listEntry.class ~= "EVOKER") then
+		local _, _, playerClassID = UnitClass("player")
+		if(playerClassID == 3 or playerClassID == 7 or playerClassID == 8 or playerClassID == 13) then
+			return true
+
+		elseif(listEntry.class ~= "HUNTER" and listEntry.class ~= "SHAMAN" and listEntry.class ~= "MAGE" and listEntry.class ~= "EVOKER") then
 			return false
 
 		end
 	end
 	
 	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].ressFit) then
-		if(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
+		local _, _, playerClassID = UnitClass("player")
+		if(playerClassID == 2 or playerClassID == 6 or playerClassID == 9 or playerClassID == 11) then
+			return true
+
+		elseif(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
 			return false
 
 		end
@@ -1041,8 +1048,8 @@ local function applicationViewerEvents(_, event, ...)
 
 		for _,v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
-				v.frame.memberFrames[1].BasicInformationPanel.Invite:SetShown(canInvite)
-				v.frame.memberFrames[1].BasicInformationPanel.Decline:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformation.Invite:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformation.Decline:SetShown(canInvite)
 
 			end
 		end
@@ -1051,8 +1058,8 @@ local function applicationViewerEvents(_, event, ...)
 
 		for _,v in pairs(applicantSystem.applicantMember) do
 			if(v.frame) then
-				v.frame.memberFrames[1].BasicInformationPanel.Invite:SetShown(canInvite)
-				v.frame.memberFrames[1].BasicInformationPanel.Decline:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformation.Invite:SetShown(canInvite)
+				v.frame.memberFrames[1].BasicInformation.Decline:SetShown(canInvite)
 
 			end
 		end

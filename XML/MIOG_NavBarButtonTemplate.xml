@@ -1,0 +1,19 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_NavBarButtonTemplate" inherits="UIButtonTemplate, BackdropTemplate" virtual="true">
+
+        <NormalTexture parentKey="NormalTexture" atlas="pvpqueue-button-casual-up"/>
+        <PushedTexture atlas="pvpqueue-button-casual-down"/>
+        <HighlightTexture parentKey="HighlightTexture" atlas="pvpqueue-button-casual-highlight" alphaMode="ADD"/>
+        
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+</Ui>

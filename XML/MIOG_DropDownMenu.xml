@@ -45,8 +45,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="LibMono" justifyH="MIDDLE" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="false">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="MIDDLE" justifyV="MIDDLE" outline="NORMAL" text="Name" wordwrap="false">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" />
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" />

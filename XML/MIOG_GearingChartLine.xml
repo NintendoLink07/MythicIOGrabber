@@ -14,39 +14,32 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="ItemLevel" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="ItemLevel" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size x="35" />
-                    <FontHeight val="11"/>
                 </FontString>
 
-                <FontString parentKey="Track" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="110" />
-                    <FontHeight val="11"/>
+                <FontString parentKey="Track" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="115" />
                 </FontString>
 
-                <FontString parentKey="Raid" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="65" />
-                    <FontHeight val="11"/>
+                <FontString parentKey="Raid" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="55" />
                 </FontString>
 
-                <FontString parentKey="Dungeon" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="65" />
-                    <FontHeight val="11"/>
-                </FontString>
-
-                <FontString parentKey="DungeonVault" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="65" />
-                    <FontHeight val="11"/>
-                </FontString>
-
-                <FontString parentKey="Other" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Dungeon" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size x="70" />
-                    <FontHeight val="11"/>
                 </FontString>
 
-                <FontString parentKey="Progress" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="DungeonVault" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="70" />
+                </FontString>
+
+                <FontString parentKey="Other" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="60" />
+                </FontString>
+
+                <FontString parentKey="Progress" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size x="200" />
-                    <FontHeight val="11"/>
                 </FontString>
             </Layer>
 

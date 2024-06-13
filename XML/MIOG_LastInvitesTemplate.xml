@@ -30,7 +30,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="Last invites" wordwrap="true" nonspacewrap="true" spacing="0">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="Last invites" wordwrap="true" nonspacewrap="true" spacing="0">
 
                         </FontString>
                     </Layer>

@@ -15,7 +15,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="ShortName" font="LibMono" justifyH="CENTER" text="TEXT" >
+                <FontString parentKey="ShortName" font="SystemFont_Shadow_Med1" justifyH="CENTER" text="TEXT" >
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-5" />
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-5" />

@@ -19,7 +19,7 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="Filters are only available in the search panel or application viewer.">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="Filters are only available in the search panel or application viewer.">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
                                 <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
@@ -63,7 +63,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="0">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="0">
 
                         </FontString>
                     </Layer>

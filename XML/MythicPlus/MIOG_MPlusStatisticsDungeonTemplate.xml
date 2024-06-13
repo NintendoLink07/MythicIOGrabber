@@ -5,15 +5,13 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Level1" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" justifyH="CENTER" text="Level1">
-                    <FontHeight val="14" />
+                <FontString parentKey="Level1" font="SystemFont_Shadow_Med3" outline="NORMAL" justifyH="CENTER" text="Level1">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Level2" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" outline="NORMAL" justifyH="CENTER" text="Level2">
-                    <FontHeight val="12" />
+                <FontString parentKey="Level2" font="SystemFont_Shadow_Med1" outline="NORMAL" justifyH="CENTER" text="Level2">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-8" />
                     </Anchors>

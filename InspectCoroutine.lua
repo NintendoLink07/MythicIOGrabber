@@ -216,8 +216,12 @@ local function updateRosterInfoData()
 		end
 			
 		if(libData) then
-			member.ilvl = libData.ilvl
-			member.durability = libData.durability
+			member.ilvl = libData.ilvl or 0
+			member.durability = libData.durability or 0
+			member.missingEnchants = libData.missingEnchants
+			member.missingGems = libData.missingGems
+			member.classID = libData.classId or member.classID
+
 		else
 			member.durability = 0
 			member.ilvl = 0
@@ -236,12 +240,12 @@ local function updateRosterInfoData()
 			member.keylevel = 0
 		
 		end
-		
+
 
 		local rioProfile
 
 		if(miog.F.IS_RAIDERIO_LOADED) then
-			rioProfile = RaiderIO.GetProfile(UnitFullName("player"))
+			rioProfile = RaiderIO.GetProfile(UnitFullName(member.unitID))
 		end
 
 		member.progressWeight = 0
@@ -393,7 +397,9 @@ local function updateRosterInfoData()
 		end
 	end]]
 
-	table.sort(indexedGroup, sortPartyCheckList)
+	if(miog.PartyCheck) then
+		table.sort(indexedGroup, sortPartyCheckList)
+	end
 
 	miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
 

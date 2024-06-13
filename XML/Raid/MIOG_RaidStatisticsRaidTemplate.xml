@@ -12,14 +12,13 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL" >
-                            <FontHeight val="14" />
+                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Previous" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
+                        <FontString parentKey="Previous" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-10"/>
                             </Anchors>
@@ -36,14 +35,13 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL" >
-                            <FontHeight val="14" />
+                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Previous" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
+                        <FontString parentKey="Previous" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-10"/>
                             </Anchors>
@@ -60,14 +58,13 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL" >
-                            <FontHeight val="14" />
+                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Previous" font="LibMono" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
+                        <FontString parentKey="Previous" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-10"/>
                             </Anchors>

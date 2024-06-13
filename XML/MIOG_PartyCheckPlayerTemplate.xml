@@ -47,6 +47,42 @@
 
                 end
 
+                if(self.data.missingEnchants) then
+                    if(#self.data.missingEnchants > 0) then
+                        local missingEnchants = ""
+
+                        for k, v in ipairs(self.data.missingEnchants) do
+                            missingEnchants = missingEnchants .. v .. " "
+
+                        end 
+                        
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(WrapTextInColorCode("Unenchanted slots: " .. missingEnchants, "FFFF0000"))
+                    else
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(WrapTextInColorCode("Fully enchanted", "FF00FF00"))
+
+                    end
+                end
+
+                if(self.data.missingGems) then
+                    if(#self.data.missingGems > 0) then
+                        local missingGems = ""
+
+                        for k, v in ipairs(self.data.missingGems) do
+                            missingGems = missingGems .. v .. " "
+
+                        end 
+                        
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(WrapTextInColorCode("Unsocketed slots: " .. missingGems, "FFFF0000"))
+                    else
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(WrapTextInColorCode("All sockets filled", "FF00FF00"))
+
+                    end
+                end
+
                 GameTooltip:Show()
             </OnEnter>
             <OnLeave>
@@ -62,17 +98,15 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Group" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                <FontString parentKey="Group" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
                     <Size x="35" />
-                    <FontHeight val="11"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Name" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
                     <Size x="100" />
-                    <FontHeight val="11"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Group" relativePoint="RIGHT" x="3"/>
                     </Anchors>
@@ -96,102 +130,21 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="ILvl" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
+                <FontString parentKey="ILvl" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
                     <Size x="33" />
-                    <FontHeight val="11"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="35"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Durability" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
-                    <Size x="25" />
-                    <FontHeight val="11"/>
+                <FontString parentKey="Durability" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
+                    <Size x="33" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="20"/>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
-
-        <Frames>
-            <!--<Frame parentKey="MissingEnchantSlots" inherits="HorizontalLayoutFrame">
-                <KeyValues>
-                    <KeyValue key="fixedWidth" value="120" type="number" />
-                    <KeyValue key="fixedHeight" value="17" type="number" />
-                </KeyValues>
-
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Durability" relativePoint="RIGHT" x="3"/>
-                </Anchors>
-
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="1" file="interface/paperdoll/ui-paperdoll-slot-head" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="2" file="interface/paperdoll/ui-paperdoll-slot-neck" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="3" file="interface/paperdoll/ui-paperdoll-slot-shoulder" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="15" file="interface/paperdoll/ui-paperdoll-slot-rear" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="5" file="interface/paperdoll/ui-paperdoll-slot-chest" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-                        <Texture parentKey="9" file="interface/paperdoll/ui-paperdoll-slot-wrists" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="10" file="interface/paperdoll/ui-paperdoll-slot-hands" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="6" file="interface/paperdoll/ui-paperdoll-slot-waist" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="7" file="interface/paperdoll/ui-paperdoll-slot-legs" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="8" file="interface/paperdoll/ui-paperdoll-slot-feet" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-                        <Texture parentKey="11" file="interface/paperdoll/ui-paperdoll-slot-finger" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="12" file="interface/paperdoll/ui-paperdoll-slot-finger" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="13" file="interface/paperdoll/ui-paperdoll-slot-trinket" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="14" file="interface/paperdoll/ui-paperdoll-slot-trinket" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="16" file="interface/paperdoll/ui-paperdoll-slot-mainhand" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-
-                        <Texture parentKey="17" file="interface/paperdoll/ui-paperdoll-slot-secondaryhand" hidden="true">
-                            <Size x="15" y="15" />
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Frame>-->
-        </Frames>
 
         <Layers>
             <Layer level="ARTWORK">
@@ -204,27 +157,24 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Keylevel" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                <FontString parentKey="Keylevel" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
                     <Size x="30" />
-                    <FontHeight val="11"/>
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Keystone" relativePoint="RIGHT" x="4"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Score" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
+                <FontString parentKey="Score" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
                     <Size x="40" />
-                    <FontHeight val="11"/>
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Keylevel" relativePoint="RIGHT" x="10"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Progress" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
+                <FontString parentKey="Progress" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
                     <Size x="100" />
-                    <FontHeight val="11"/>
                     
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="20"/>

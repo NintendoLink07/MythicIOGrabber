@@ -1,10 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">    
-    <Frame name="MIOG_ApplicantMemberFrameTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
-        <KeyValues>
-			<KeyValue key="minimumHeight" value="20" type="number"/>
-			<KeyValue key="maximumHeight" value="20" type="number"/>
-		</KeyValues>
+    <Frame name="MIOG_ApplicantMemberFrameTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
+        <Size y="20" />
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background" setAllPoints="true">
@@ -22,8 +19,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                            <FontHeight val="16"/>
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
@@ -32,13 +28,12 @@
                 </Layers>
             </Frame>
 
-            <Frame parentKey="BasicInformationPanel">
+            <Frame parentKey="BasicInformation">
                 <Size y="20" />
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
+                
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="1" type="number" />
+                </KeyValues>
 
                 <Frames>
                     <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
@@ -93,8 +88,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="LibMono"  justifyH="LEFT" enableMouseMotion="true">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1"  justifyH="LEFT" enableMouseMotion="true">
                             <Size x="120" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
@@ -124,24 +118,21 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Primary" font="LibMono" justifyH="CENTER">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Primary" font="SystemFont_Shadow_Med1" justifyH="CENTER">
                             <Size x="37" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="4" />
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Secondary" font="LibMono" justifyH="CENTER" >
-                            <FontHeight val="11"/>
+                        <FontString parentKey="Secondary" font="SystemFont_Shadow_Med1" justifyH="CENTER">
                             <Size x="37" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="3"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="ItemLevel" font="LibMono" justifyH="CENTER">
-                            <FontHeight val="11"/>
+                        <FontString parentKey="ItemLevel" font="SystemFont_Shadow_Med1" justifyH="CENTER">
                             <Size x="44" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" />
@@ -186,10 +177,13 @@
 
             </Frame>
 
-            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate" />
+            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="2" type="number" />
+                </KeyValues>
+            </Frame>
 
-            <EditBox parentKey="LinkBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" frameLevel="100" autoFocus="false" font="LibMono" hidden="true">
-                <FontHeight val="11"/>
+            <EditBox parentKey="LinkBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" frameLevel="100" autoFocus="false" font="SystemFont_Shadow_Med1" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" />

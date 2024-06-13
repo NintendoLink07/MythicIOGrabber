@@ -138,7 +138,7 @@ local createBasicFontString = function(poolType, fontSize, parent, width, height
 
 	end
 
-	fontString:SetFont(miog.FONTS["libMono"], fontSize or 16, "OUTLINE")
+	fontString:SetFont("SystemFont_Shadow_Med1", fontSize or 16, "OUTLINE")
 	fontString:SetJustifyH("LEFT")
 	fontString:SetText(text or "")
 	fontString:SetSize(width or fontString:GetStringWidth() or 0, height or fontString:GetStringHeight() or 0)
@@ -244,7 +244,7 @@ end
 
 local function createFleetingFontString(pool, fontSize, parent, width, height)
 	local fontString = pool:Acquire()
-	fontString:SetFont(miog.FONTS["libMono"], fontSize or 16, "OUTLINE")
+	fontString:SetFont("SystemFont_Shadow_Med1", fontSize or 16, "OUTLINE")
 	fontString:SetJustifyH("LEFT")
 	fontString:SetSize(width or fontString:GetStringWidth() or 0, height or fontString:GetStringHeight() or 0)
 	fontString:SetParent(parent)

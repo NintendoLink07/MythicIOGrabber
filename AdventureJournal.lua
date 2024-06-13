@@ -1,8 +1,8 @@
 local addonName, miog = ...
 
-local regex1 = "%d+ damage"
-local regex2 = "%d+ %w+ damage"
-local regex3 = "%d+ %w+ %w+ damage"
+local regex1 = "%d+ [D-d]amage"
+local regex2 = "%d+ %w+ [D-d]amage"
+local regex3 = "%d+ %w+ %w+ [D-d]amage"
 
 local basePool, lootPool, slotLinePool, modelPool, difficultyPool, switchPool
 local isRaid
@@ -939,13 +939,15 @@ local function retrieveDifficultyIDs()
             table.insert(currentDifficultyIDs, difficultyID)
         end
     end
+
+    EJ_SetDifficulty(currentDifficultyIDs[1])
 end
 
 miog.selectInstance = function(journalInstanceID)
     EJ_SelectInstance(journalInstanceID)
     retrieveDifficultyIDs()
 
-    isRaid = miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid
+    isRaid = miog.JOURNAL_INSTANCE_INFO[journalInstanceID] and miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid or false
     miog.AdventureJournal.SettingsBar.KeylevelDropdown:SetShown(not isRaid)
 
     miog.AdventureJournal.BossDropdown:ResetDropDown()
@@ -1168,7 +1170,7 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                                         frameData[info.title][currentDifficultyIDs[x]].description = RETRIEVING_DATA
                                         local currentSectionID, currentTitle, currentDifficultyID = rootSectionID, info.title, currentDifficultyIDs[x]
                                     
-                                        C_Timer.After(0.1, function()
+                                        C_Timer.After(0.2, function()
                                             EJ_SetDifficulty(currentDifficultyID)
                                             local newInfo = C_EncounterJournal.GetSectionInfo(currentSectionID)
 
@@ -1247,7 +1249,7 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                 frame.abilityTitle = difficultyData[lowestDifficulty].title
                 frame.difficultyFrames = {}
 
-                C_Timer.After(0.25, function()
+                C_Timer.After(0.3, function()
                     local compareArray = {}
                     local compareValue
 
@@ -1281,7 +1283,7 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                                     concatString = concatString .. WrapTextInColorCode(v.string, miog.AJ_CLRSCC[v.colorIndex]) .. " "
 
                                 else
-                                    concatString = concatString .. v.string .. " "
+                                    concatString = concatString .. v.string .. "  "
 
                                 end
 
@@ -1376,6 +1378,16 @@ miog.loadAdventureJournal = function()
     --miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
     --miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
     frameWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
+
+    miog.AdventureJournal:SetScript("OnShow", function()
+        local journalInstanceID = AdventureGuideUtil.GetCurrentJournalInstance()
+
+        if(journalInstanceID) then
+            miog.selectInstance(journalInstanceID)
+            miog.AdventureJournal.InstanceDropdown:SelectFirstFrameWithValue(journalInstanceID)
+            
+        end
+    end)
 
     basePool = CreateFramePool("Frame", miog.AdventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
     difficultyPool = CreateFramePool("Frame", nil, "MIOG_AdventureJournalAbilityDifficultyTemplate", resetDifficultyFrames)
@@ -1505,21 +1517,6 @@ miog.loadAdventureJournal = function()
     local filter = C_EncounterJournal.GetSlotFilter()
 
     miog.AdventureJournal.SettingsBar.SlotDropdown:SelectFirstFrameWithValue(filter)
-
-    local categoryFrame = CreateFrame("Button", "MythicIOGrabber_AdventureJournalButton", miog.MainTab.CategoryPanel, "MIOG_MenuButtonTemplate")
-    miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
-    categoryFrame:SetHeight(30)
-    categoryFrame:SetPoint("TOPLEFT", miog.MainTab.CategoryPanel, "BOTTOMLEFT", 0, -3)
-    categoryFrame:SetPoint("TOPRIGHT", miog.MainTab.CategoryPanel, "BOTTOMRIGHT", 0, -3)
-    categoryFrame.Title:SetText(ENCOUNTER_JOURNAL)
-    categoryFrame.BackgroundImage:SetVertTile(true)
-    categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[111], nil, "CLAMPTOBLACKADDITIVE")
-    categoryFrame:SetScript("OnClick", function()
-        miog.setActivePanel(nil, "AdventureJournal")
-    end)
-    categoryFrame.StartGroup:Hide()
-    categoryFrame.FindGroup:Hide()
-
 end
 
 hooksecurefunc("SetItemRef", function(link)

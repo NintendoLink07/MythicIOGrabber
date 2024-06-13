@@ -50,8 +50,7 @@
                     </Anchors>
                 </Texture>
 
-                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title of the thingy" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title of the thingy" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />

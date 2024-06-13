@@ -168,56 +168,49 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="NameString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="NameString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Name" relativePoint="TOPLEFT" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="DescriptionString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Description" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="DescriptionString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Description" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Description" relativePoint="TOPLEFT" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="RatingString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Rating" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="RatingString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Rating" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Rating" relativePoint="TOPLEFT" x="-5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="ItemLevelString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Item level" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="ItemLevelString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Item level" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.ItemLevel" relativePoint="TOPLEFT" x="-5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="VoiceChatString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Voice Chat" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="VoiceChatString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Voice Chat" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.VoiceChat" relativePoint="TOPLEFT" x="-5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="PrivateGroupString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to private" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="PrivateGroupString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to private" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.PrivateGroup" relativePoint="RIGHT" x="5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="CrossFactionString" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to your faction only" wordwrap="false">
-                    <FontHeight val="11"/>
+                <FontString parentKey="CrossFactionString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to your faction only" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.CrossFaction" relativePoint="RIGHT" x="5" />

@@ -1,11 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_DungeonRowTemplate" virtual="true">
+    <Frame name="MIOG_DungeonRowTemplate" inherits="BackdropTemplate" virtual="true">
         <Size y="20" />
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
-                    <Size x="18" y="18" />
+                    <Size x="16" y="16" />
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
@@ -14,27 +14,24 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="LEFT">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                     <Size x="50" />
-                    <FontHeight val="11"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Primary" font="LibMono" justifyH="LEFT">
-                    <Size x="40" />
-                    <FontHeight val="11"/>
+                <FontString parentKey="Primary" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size x="45" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="65"/>
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="Secondary" font="LibMono" justifyH="CENLEFTTER">
-                    <Size x="40" />
-                    <FontHeight val="11"/>
+                <FontString parentKey="Secondary" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size x="45" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="105"/>
                     </Anchors>
                 </FontString>
             </Layer>

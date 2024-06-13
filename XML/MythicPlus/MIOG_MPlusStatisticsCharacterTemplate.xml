@@ -5,19 +5,19 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" text="NAME">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" text="NAME">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="6"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Score" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" text="CURRENT SCORE">
+                <FontString parentKey="Score" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" text="CURRENT SCORE">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="-8"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="ScoreIncrease" font="LibMono" justifyH="LEFT" justifyV="MIDDLE" text="SCORE INC" hidden="true">
+                <FontString parentKey="ScoreIncrease" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" text="SCORE INC" hidden="true">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="LEFT" x="35" />
                     </Anchors>

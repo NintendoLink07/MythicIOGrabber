@@ -11,7 +11,7 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="LibMono" justifyH="CENTER">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
                             </Anchors>
@@ -76,14 +76,14 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Title" font="LibMono" text="TITLE" justifyH="LEFT">
+                <FontString parentKey="Title" font="SystemFont_Shadow_Med1" text="TITLE" justifyH="LEFT">
                     <Size x="150" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="5" y="-2"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Activity" font="LibMono" text="ACTIVITY" justifyH="LEFT">
+                <FontString parentKey="Activity" font="SystemFont_Shadow_Med1" text="ACTIVITY" justifyH="LEFT">
                     <Size x="150" />
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT" x="5"/>

@@ -13,8 +13,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="FontString" font="Interface\Addons\MythicIOGrabber\res\fonts\LiberationMono-Regular.ttf" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
-                    <FontHeight val="12" />
+                <FontString parentKey="FontString" font="SystemFont_Shadow_Med3_Outline" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.Icon" relativePoint="CENTER" />
                     </Anchors>
