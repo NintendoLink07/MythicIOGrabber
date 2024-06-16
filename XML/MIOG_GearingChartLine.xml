@@ -5,7 +5,7 @@
             <KeyValue key="isHorizontal" value="true" type="boolean" />
             <KeyValue key="layoutFramesGoingRight" value="true" type="boolean" />
             <KeyValue key="stride" value="7" type="number" />
-            <KeyValue key="childXPadding" value="10" type="number" />
+            <KeyValue key="childXPadding" value="10" type="number" /> 
         </KeyValues>
 
         <Layers>
