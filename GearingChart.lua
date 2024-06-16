@@ -75,7 +75,7 @@ miog.insertGearingData = function()
     local r, g, b
 
     for k, v in pairs(miog.GEARING_CHART) do
-        if(k == seasonID) then
+        if(k == seasonID and #currentChildren > 0) then
             for a in pairs(v.itemLevelInfo) do
                 currentChildren[a].ItemLevel:SetText(a)
                 local fullDungeonText, fullDungeonVaultText = "", ""

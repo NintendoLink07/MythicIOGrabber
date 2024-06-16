@@ -59,22 +59,12 @@ miog.OnEvent = function(_, event, ...)
 		
 		EJ_SetDifficulty(8)
 
-		--LFGListFrame.ApplicationViewer:HookScript("OnShow", function(self) self:Hide() miog.ApplicationViewer:Show() end)
-		--LFGListFrame.SearchPanel:HookScript("OnShow", function(self) miog.SearchPanel:Show() end)
-
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
 
 			if(not miog.F.LITE_MODE) then
 				miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
 			end
-
-		end
-
-		if(C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards")) then
-			miog.MainTab.MPlusStatus = Mixin(miog.MainTab.MPlusStatus, WeeklyRewardsActivityMixin)
-			miog.MainTab.HonorStatus = Mixin(miog.MainTab.HonorStatus, WeeklyRewardsActivityMixin)
-			miog.MainTab.RaidStatus = Mixin(miog.MainTab.RaidStatus, WeeklyRewardsActivityMixin)
 
 		end
 		
@@ -91,34 +81,36 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 		if(not miog.F.LITE_MODE) then
-			PVPUIFrame:HookScript("OnShow", function()
-				ConquestFrame.selectedButton = nil
-				ConquestFrame.RatedBG.SelectedTexture:Hide()
-				--ConquestFrame.ratedSoloShuffleEnabled = false
-				--ConquestFrame.arenasEnabled = false
-			end)
-			
-			hooksecurefunc("HonorFrame_InitSpecificButton", function(button, elementData)
-				button:SetHeight(40)
-				button.Bg:Hide()
-				button.Border:Hide()
-				button.Icon:Hide()
-				button.InfoText:Hide()
-				--button.SelectedTexture:Hide()
+			if(PVPUIFrame) then
+				PVPUIFrame:HookScript("OnShow", function()
+					ConquestFrame.selectedButton = nil
+					ConquestFrame.RatedBG.SelectedTexture:Hide()
+					--ConquestFrame.ratedSoloShuffleEnabled = false
+					--ConquestFrame.arenasEnabled = false
+				end)
+				
+				hooksecurefunc("HonorFrame_InitSpecificButton", function(button, elementData)
+					button:SetHeight(40)
+					button.Bg:Hide()
+					button.Border:Hide()
+					button.Icon:Hide()
+					button.InfoText:Hide()
+					--button.SelectedTexture:Hide()
 
-				button:SetNormalAtlas("pvpqueue-button-casual-up")
-				button:SetPushedAtlas("pvpqueue-button-casual-down")
-				button:SetHighlightAtlas("pvpqueue-button-casual-highlight", "ADD")
+					button:SetNormalAtlas("pvpqueue-button-casual-up")
+					button:SetPushedAtlas("pvpqueue-button-casual-down")
+					button:SetHighlightAtlas("pvpqueue-button-casual-highlight", "ADD")
 
-				button.SizeText:ClearAllPoints()
-				button.SizeText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
-				button.SizeText:SetPoint("LEFT", button, "LEFT", 5, 0)
+					button.SizeText:ClearAllPoints()
+					button.SizeText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
+					button.SizeText:SetPoint("LEFT", button, "LEFT", 5, 0)
 
-				button.NameText:ClearAllPoints()
-				button.NameText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
-				button.NameText:SetTextColor(1, 1, 1, 1)
-				button.NameText:SetPoint("LEFT", button.SizeText, "RIGHT", 5, 0)
-			end)
+					button.NameText:ClearAllPoints()
+					button.NameText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
+					button.NameText:SetTextColor(1, 1, 1, 1)
+					button.NameText:SetPoint("LEFT", button.SizeText, "RIGHT", 5, 0)
+				end)
+			end
 		end
 
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
@@ -154,7 +146,7 @@ miog.OnEvent = function(_, event, ...)
 		miog.openRaidLib.RequestKeystoneDataFromParty()
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
-		HideUIPanel(miog.pveFrame2)
+		miog.pveFrame2:Hide()
 		
 		miog.F.QUEUE_STOP = true
 
@@ -170,37 +162,38 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 		if(not miog.F.LITE_MODE) then
-			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+			if(miog.pveFrame2.categoryFramePool) then
 
-			local index = 0
-			
-			miog.pveFrame2.categoryFramePool:ReleaseAll()
+				local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
 
-			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-				index = index + 1
+				local index = 0
+				miog.pveFrame2.categoryFramePool:ReleaseAll()
 
-				local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
-
-				local categoryFrame = createBaseCategoryFrame(categoryID, index, canUse, failureReason)
-				categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
-				categoryFrame.Title:SetText(categoryInfo.name)
-				categoryFrame:Show()
-
-				if(categoryInfo.separateRecommended) then
+				for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
 					index = index + 1
 
-					local nonRecommendedFrame = createBaseCategoryFrame(categoryID, index, canUse)
-					nonRecommendedFrame.filters = categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended
-					nonRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
-					nonRecommendedFrame:Show()
-					
+					local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
+
+					local categoryFrame = createBaseCategoryFrame(categoryID, index, canUse, failureReason)
+					categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
+					categoryFrame.Title:SetText(categoryInfo.name)
+					categoryFrame:Show()
+
+					if(categoryInfo.separateRecommended) then
+						index = index + 1
+
+						local nonRecommendedFrame = createBaseCategoryFrame(categoryID, index, canUse)
+						nonRecommendedFrame.filters = categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended
+						nonRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
+						nonRecommendedFrame:Show()
+						
+					end
 				end
+
+				miog.pveFrame2.CategoryHoverFrame:MarkDirty()
+
 			end
-
-			miog.pveFrame2.CategoryHoverFrame:MarkDirty()
-
 		end
-
 	end
 end
 
@@ -378,9 +371,6 @@ local function handler(msg, editBox)
 		end
 
 		MIOG_SavedSettings.favouredApplicants.table[rest] = {name = nameTable[1], fullName = rest}
-	
-	else
-		--miog.ApplicationViewer:Show()
 
 	end
 end

@@ -418,7 +418,7 @@
                 </ScrollChild>
             </ScrollFrame>
 
-            <Button parentKey="Browse" inherits="UIPanelDynamicResizeButtonTemplate" mixin="LFGApplicationBrowseGroupsButtonMixin" text="BROWSE">
+            <Button parentKey="Browse" inherits="UIPanelDynamicResizeButtonTemplate" text="BROWSE">
                 <Scripts>
                     <OnShow>
                         self:FitToText()

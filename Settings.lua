@@ -491,7 +491,6 @@ miog.loadSettings = function()
 	local optionPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", miog.interfaceOptionsPanel)
 	optionPanel:SetPoint("TOPLEFT", titleFrame, "BOTTOMLEFT", 0, 0)
 	optionPanel:SetSize(SettingsPanel.Container:GetWidth(), SettingsPanel.Container:GetHeight())
-	miog.ApplicationViewer.optionPanel = optionPanel
 
 	local optionPanelContainer = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanel)
 	optionPanelContainer:SetSize(optionPanel:GetWidth(), optionPanel:GetHeight() - titleFrame:GetHeight())
@@ -560,7 +559,7 @@ miog.loadSettings = function()
 							setting.value = not setting.value
 						end)
 						
-					elseif(key == "enableClassPanel" and not miog.F.LITE_MODE) then
+					elseif(key == "enableClassPanel" and not miog.F.LITE_MODE and miog.ClassPanel) then
 						optionButton:SetScript("OnClick", function()
 							setting.value = not setting.value
 							miog.ClassPanel:SetShown(setting.value)
@@ -608,39 +607,37 @@ miog.loadSettings = function()
 		backgroundOptionString:SetWordWrap(true)
 		backgroundOptionString:SetNonSpaceWrap(true)
 
-		local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", optionPanelContainer)
+		local optionDropdown = Mixin(CreateFrame("Frame", "MythicIOGrabber_BackgroundDropdown", optionPanelContainer, "MIOG_DropDownMenu"), SlickDropDown)
+		optionDropdown:OnLoad()
+		--local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", optionPanelContainer)
 		optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
-		UIDropDownMenu_SetWidth(optionDropdown, 200)
+		optionDropdown:SetSize(200, 20)
 
-		UIDropDownMenu_SetText(optionDropdown, miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
-		UIDropDownMenu_Initialize(optionDropdown,
-			function(frame, level, menuList)
-				local info = UIDropDownMenu_CreateInfo()
-				info.func = function(_, arg1, _, _)
-					MIOG_SavedSettings["backgroundOptions"].value = arg1
+		for k, v in ipairs(miog.EXPANSION_INFO) do
+			if(v[1]) then
+				local info = {}
+				info.text = v[1]
+				info.checked = k == MIOG_SavedSettings["backgroundOptions"].value
+				info.value = k
+				info.index = k
+				info.func = function()
+					MIOG_SavedSettings["backgroundOptions"].value = k
 					miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
 					miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
 					miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
 					
 					if(miog.AdventureJournal) then
 						miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
-					end
-
-					UIDropDownMenu_SetText(optionDropdown, miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
-					CloseDropDownMenus()
-
+					end		
 				end
 
-				for k, v in ipairs(miog.EXPANSION_INFO) do
-					if(v[1]) then
-						info.text, info.arg1 = v[1], k
-						info.checked = k == MIOG_SavedSettings["backgroundOptions"].value
-						UIDropDownMenu_AddButton(info)
-
-					end
-				end
+				optionDropdown:CreateEntryFrame(info)
 			end
-		)
+		end
+
+		optionDropdown.List:MarkDirty()
+
+		optionDropdown:SelectFirstFrameWithValue(miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
 		
 		miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
 		miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")

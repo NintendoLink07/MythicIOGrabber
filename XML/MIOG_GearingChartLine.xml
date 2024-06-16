@@ -8,10 +8,6 @@
             <KeyValue key="childXPadding" value="10" type="number" />
         </KeyValues>
 
-        <Frames>
-        
-        </Frames>
-
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="ItemLevel" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">

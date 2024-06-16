@@ -1375,8 +1375,6 @@ end
 
 miog.loadAdventureJournal = function()
     miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.Plugin.InsertFrame, "MIOG_AdventureJournal")
-    --miog.AdventureJournal:SetSize(miog.Plugin:GetSize())
-    --miog.AdventureJournal:SetPoint("TOPLEFT", miog.pveFrame2, "TOPRIGHT")
     frameWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
 
     miog.AdventureJournal:SetScript("OnShow", function()

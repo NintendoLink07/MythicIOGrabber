@@ -9,7 +9,7 @@
                 </Anchors>
             </Frame>
 
-            <StatusBar parentKey="InspectStatus" inherits="BackdropTemplate" orientation="HORIZONTAL" frameStrata="DIALOG">
+            <StatusBar parentKey="InspectStatus" inherits="BackdropTemplate" orientation="HORIZONTAL" frameStrata="DIALOG" hidden="true">
                 <Size y="4" />
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.Container" relativePoint="BOTTOMLEFT" y="-4"/>
@@ -35,10 +35,9 @@
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="StatusString" font="SystemFont_Shadow_Med1" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
-                    <Size y="27" />
+                    <Size x="145" y="27" />
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LoadingSpinner" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="RIGHT" relativeKey="$parent.LoadingSpinner" relativePoint="LEFT" />
                     </Anchors>
                 </FontString>
             </Layer>

@@ -1231,242 +1231,244 @@ local function hideAllPVPButtonAssets(button)
 end
 
 local function updatePVP2()
-	local queueDropDown = miog.MainTab.QueueInformation.DropDown
+	if(HonorFrame and ConquestFrame) then
+		local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
-	local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
+		local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
 
-	local token, loopMax, generalTooltip;
-	if (groupSize > (MAX_PARTY_MEMBERS + 1)) then
-		token = "raid";
-		loopMax = groupSize;
-	else
-		token = "party";
-		loopMax = groupSize - 1; -- player not included in party tokens, just raid tokens
-	end
-	
-	local maxLevel = GetMaxLevelForLatestExpansion();
-	for i = 1, loopMax do
-		if ( not UnitIsConnected(token..i) ) then
-			generalTooltip = PVP_NO_QUEUE_DISCONNECTED_GROUP
-			break;
-		elseif ( UnitLevel(token..i) < maxLevel ) then
-			generalTooltip = PVP_NO_QUEUE_GROUP
-			break;
+		local token, loopMax, generalTooltip;
+		if (groupSize > (MAX_PARTY_MEMBERS + 1)) then
+			token = "raid";
+			loopMax = groupSize;
+		else
+			token = "party";
+			loopMax = groupSize - 1; -- player not included in party tokens, just raid tokens
 		end
-	end
+		
+		local maxLevel = GetMaxLevelForLatestExpansion();
+		for i = 1, loopMax do
+			if ( not UnitIsConnected(token..i) ) then
+				generalTooltip = PVP_NO_QUEUE_DISCONNECTED_GROUP
+				break;
+			elseif ( UnitLevel(token..i) < maxLevel ) then
+				generalTooltip = PVP_NO_QUEUE_GROUP
+				break;
+			end
+		end
 
-	local info = {}
-	info.entryType = "option"
-	info.index = 1
-	info.level = 2
-	info.parentIndex = 6
-	hideAllPVPButtonAssets(ConquestFrame.RatedSoloShuffle)
-	local soloFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedSoloShuffle)
-	soloFrame:HookScript("OnShow", function(self)
-		hideAllPVPButtonAssets(self)
-	end)
-	--ConquestFrame.RatedSoloShuffle:SetAttribute("type", "macro")
-	--ConquestFrame.RatedSoloShuffle:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
+		local info = {}
+		info.entryType = "option"
+		info.index = 1
+		info.level = 2
+		info.parentIndex = 6
+		hideAllPVPButtonAssets(ConquestFrame.RatedSoloShuffle)
+		local soloFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedSoloShuffle)
+		soloFrame:HookScript("OnShow", function(self)
+			hideAllPVPButtonAssets(self)
+		end)
+		--ConquestFrame.RatedSoloShuffle:SetAttribute("type", "macro")
+		--ConquestFrame.RatedSoloShuffle:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
 
-	info = {}
-	info.entryType = "option"
-	info.index = 2
-	info.level = 2
-	info.parentIndex = 6
-	hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
-	local twosFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.Arena2v2)
-	twosFrame:HookScript("OnShow", function(self)
-		hideAllPVPButtonAssets(self)
-	end)
+		info = {}
+		info.entryType = "option"
+		info.index = 2
+		info.level = 2
+		info.parentIndex = 6
+		hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
+		local twosFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.Arena2v2)
+		twosFrame:HookScript("OnShow", function(self)
+			hideAllPVPButtonAssets(self)
+		end)
 
-	info = {}
-	info.entryType = "option"
-	info.index = 3
-	info.level = 2
-	info.parentIndex = 6
-	hideAllPVPButtonAssets(ConquestFrame.Arena3v3)
-	local threesFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.Arena3v3)
-	threesFrame:HookScript("OnShow", function(self)
-		hideAllPVPButtonAssets(self)
-	end)
+		info = {}
+		info.entryType = "option"
+		info.index = 3
+		info.level = 2
+		info.parentIndex = 6
+		hideAllPVPButtonAssets(ConquestFrame.Arena3v3)
+		local threesFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.Arena3v3)
+		threesFrame:HookScript("OnShow", function(self)
+			hideAllPVPButtonAssets(self)
+		end)
 
-	info = {}
-	info.entryType = "option"
-	info.index = 4
-	info.level = 2
-	info.parentIndex = 6
-	hideAllPVPButtonAssets(ConquestFrame.RatedBG)
-	local ratedBGFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedBG)
-	ratedBGFrame:HookScript("OnShow", function(self)
-		hideAllPVPButtonAssets(self)
-	end)
+		info = {}
+		info.entryType = "option"
+		info.index = 4
+		info.level = 2
+		info.parentIndex = 6
+		hideAllPVPButtonAssets(ConquestFrame.RatedBG)
+		local ratedBGFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedBG)
+		ratedBGFrame:HookScript("OnShow", function(self)
+			hideAllPVPButtonAssets(self)
+		end)
 
-	info = {}
-	info.entryType = "option"
-	info.index = 5
-	info.level = 2
-	info.parentIndex = 6
-	--hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
-	queueDropDown:InsertCustomFrame(info, ConquestFrame.JoinButton)
+		info = {}
+		info.entryType = "option"
+		info.index = 5
+		info.level = 2
+		info.parentIndex = 6
+		--hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
+		queueDropDown:InsertCustomFrame(info, ConquestFrame.JoinButton)
 
-	--[[soloFrame:SetScript("OnClick", function()
-		--PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
-		ConquestJoinButton:Click()
+		--[[soloFrame:SetScript("OnClick", function()
+			--PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
+			ConquestJoinButton:Click()
 
-		--HideUIPanel(PVEFrame)
-	end)]]
+			--HideUIPanel(PVEFrame)
+		end)]]
 
-	--SlickDropDown:CreateExtraButton(ConquestFrame.RatedSoloShuffle, soloFrame)
+		--SlickDropDown:CreateExtraButton(ConquestFrame.RatedSoloShuffle, soloFrame)
 
-	--info.func = function()
-	--	JoinArena()
-	--end
+		--info.func = function()
+		--	JoinArena()
+		--end
 
-	--HonorFrame.BonusFrame.Arena1Button:Hide()
-	--HonorFrame.BonusFrame.BrawlButton:Hide()
-	--HonorFrame.BonusFrame.BrawlButton2:Hide()
+		--HonorFrame.BonusFrame.Arena1Button:Hide()
+		--HonorFrame.BonusFrame.BrawlButton:Hide()
+		--HonorFrame.BonusFrame.BrawlButton2:Hide()
 
-	info = {}
-	info.entryType = "option"
-	info.index = 10
-	info.level = 2
-	info.parentIndex = 6
-	HonorFrameTypeDropDown:SetHeight(20)
-	local dropdown = queueDropDown:InsertCustomFrame(info, HonorFrameTypeDropDown)
-	dropdown.topPadding = 8
-	dropdown.bottomPadding = 8
-	dropdown.leftPadding = -15
-	UIDropDownMenu_SetWidth(HonorFrameTypeDropDown, 190)
-	dropdown:SetHeight(20)
+		info = {}
+		info.entryType = "option"
+		info.index = 10
+		info.level = 2
+		info.parentIndex = 6
+		HonorFrameTypeDropDown:SetHeight(20)
+		local dropdown = queueDropDown:InsertCustomFrame(info, HonorFrameTypeDropDown)
+		dropdown.topPadding = 8
+		dropdown.bottomPadding = 8
+		dropdown.leftPadding = -15
+		UIDropDownMenu_SetWidth(HonorFrameTypeDropDown, 190)
+		dropdown:SetHeight(20)
 
-	for index = 1, 5, 1 do
-		local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or index == 5 and C_PvP.GetSpecialEventBrawlInfo()
+		for index = 1, 5, 1 do
+			local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or index == 5 and C_PvP.GetSpecialEventBrawlInfo()
 
-		if(currentBGQueue and (index == 3 or currentBGQueue.canQueue)) then
-			info = {}
-			info.text = index == 1 and RANDOM_BATTLEGROUNDS or index == 2 and RANDOM_EPIC_BATTLEGROUND or index == 3 and SKIRMISH or currentBGQueue.name
-			info.entryType = "option"
-			info.checked = false
-			info.index = index == 1 and 11 or index == 2 and 12 or index + 4
-			--info.disabled = index == 1 or index == 2
-			info.icon = index < 3 and miog.findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (miog.findBrawlIconByID(currentBGQueue.brawlID) or miog.findBrawlIconByName(currentBGQueue.name))
-			info.level = 2
-			info.parentIndex = 6
-			info.disabled = index ~= 3 and currentBGQueue.canQueue == false or index == 3 and not HonorFrame.BonusFrame.Arena1Button.canQueue
+			if(currentBGQueue and (index == 3 or currentBGQueue.canQueue)) then
+				info = {}
+				info.text = index == 1 and RANDOM_BATTLEGROUNDS or index == 2 and RANDOM_EPIC_BATTLEGROUND or index == 3 and SKIRMISH or currentBGQueue.name
+				info.entryType = "option"
+				info.checked = false
+				info.index = index == 1 and 11 or index == 2 and 12 or index + 4
+				--info.disabled = index == 1 or index == 2
+				info.icon = index < 3 and miog.findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (miog.findBrawlIconByID(currentBGQueue.brawlID) or miog.findBrawlIconByName(currentBGQueue.name))
+				info.level = 2
+				info.parentIndex = 6
+				info.disabled = index ~= 3 and currentBGQueue.canQueue == false or index == 3 and not HonorFrame.BonusFrame.Arena1Button.canQueue
 
-			if(currentBGQueue.bgID) then
-				if(currentBGQueue.bgID == 32) then
-					hideAllPVPButtonAssets(HonorFrame.BonusFrame.RandomBGButton)
-					randomBGFrame = queueDropDown:InsertCustomFrame(info, HonorFrame.BonusFrame.RandomBGButton)
-					randomBGFrame:HookScript("OnShow", function(self)
-						hideAllPVPButtonAssets(self)
-						self:SetHeight(20)
-					end)
+				if(currentBGQueue.bgID) then
+					if(currentBGQueue.bgID == 32) then
+						hideAllPVPButtonAssets(HonorFrame.BonusFrame.RandomBGButton)
+						randomBGFrame = queueDropDown:InsertCustomFrame(info, HonorFrame.BonusFrame.RandomBGButton)
+						randomBGFrame:HookScript("OnShow", function(self)
+							hideAllPVPButtonAssets(self)
+							self:SetHeight(20)
+						end)
 
-				elseif(currentBGQueue.bgID == 901) then
-					hideAllPVPButtonAssets(HonorFrame.BonusFrame.RandomEpicBGButton)
-					randomEpicBGFrame = queueDropDown:InsertCustomFrame(info, HonorFrame.BonusFrame.RandomEpicBGButton)
-					randomEpicBGFrame:HookScript("OnShow", function(self)
-						hideAllPVPButtonAssets(self)
-						self:SetHeight(20)
-					end)
+					elseif(currentBGQueue.bgID == 901) then
+						hideAllPVPButtonAssets(HonorFrame.BonusFrame.RandomEpicBGButton)
+						randomEpicBGFrame = queueDropDown:InsertCustomFrame(info, HonorFrame.BonusFrame.RandomEpicBGButton)
+						randomEpicBGFrame:HookScript("OnShow", function(self)
+							hideAllPVPButtonAssets(self)
+							self:SetHeight(20)
+						end)
 
-				end
-			else
-				if(index == 3) then
-					--JoinSkirmish(4)
-					--tempFrame:SetAttribute("macrotext1", "/run JoinSkirmish(4)")
-
-					info.func = function()
-						JoinSkirmish(4)
 					end
+				else
+					if(index == 3) then
+						--JoinSkirmish(4)
+						--tempFrame:SetAttribute("macrotext1", "/run JoinSkirmish(4)")
 
-					--info.tooltipTitle = info.text
-					--info.tooltip = info.text
+						info.func = function()
+							JoinSkirmish(4)
+						end
 
-					skirmish = queueDropDown:CreateEntryFrame(info)
-					skirmish:SetScript("OnEnter", function(self)
-						PVPCasualActivityButton_OnEnter(self)
-					end)
-					skirmish.tooltipTableKey = "Skirmish"
+						--info.tooltipTitle = info.text
+						--info.tooltip = info.text
 
-				elseif(index == 4) then
-					--tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl()")
-					--C_PvP.JoinBrawl()
+						skirmish = queueDropDown:CreateEntryFrame(info)
+						skirmish:SetScript("OnEnter", function(self)
+							PVPCasualActivityButton_OnEnter(self)
+						end)
+						skirmish.tooltipTableKey = "Skirmish"
 
-					info.func = function()
-						C_PvP.JoinBrawl()
-					end
+					elseif(index == 4) then
+						--tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl()")
+						--C_PvP.JoinBrawl()
 
-					--info.tooltipTitle = info.text
-					--info.tooltip = info.text
+						info.func = function()
+							C_PvP.JoinBrawl()
+						end
+
+						--info.tooltipTitle = info.text
+						--info.tooltip = info.text
+						
+						brawl1 = queueDropDown:CreateEntryFrame(info)
+						brawl1:SetScript("OnEnter", function(self)
+							PVPCasualActivityButton_OnEnter(self)
+						end)
+						brawl1.tooltipTableKey = "Brawl"
+
+					elseif(index == 5) then
+						--tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl(true)")
+						--C_PvP.JoinBrawl(true)
+
+						info.func = function()
+							C_PvP.JoinBrawl(true)
+						end
+						
+						brawl2 = queueDropDown:CreateEntryFrame(info)
+
+						brawl2:SetScript("OnEnter", function(self)
+							PVPCasualActivityButton_OnEnter(self)
+						end)
+						brawl2.tooltipTableKey = "SpecialEventBrawl"
+						--info.tooltipTitle = info.text
+						--info.tooltip = info.text
 					
-					brawl1 = queueDropDown:CreateEntryFrame(info)
-					brawl1:SetScript("OnEnter", function(self)
-						PVPCasualActivityButton_OnEnter(self)
-					end)
-					brawl1.tooltipTableKey = "Brawl"
-
-				elseif(index == 5) then
-					--tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl(true)")
-					--C_PvP.JoinBrawl(true)
-
-					info.func = function()
-						C_PvP.JoinBrawl(true)
 					end
-					
-					brawl2 = queueDropDown:CreateEntryFrame(info)
-
-					brawl2:SetScript("OnEnter", function(self)
-						PVPCasualActivityButton_OnEnter(self)
-					end)
-					brawl2.tooltipTableKey = "SpecialEventBrawl"
-					--info.tooltipTitle = info.text
-					--info.tooltip = info.text
-				
 				end
 			end
 		end
+
+		info = {}
+		info.entryType = "option"
+		info.index = 15
+		info.level = 2
+		info.parentIndex = 6
+		specificBox = queueDropDown:InsertCustomFrame(info, HonorFrame.SpecificScrollBox)
+		specificBox.leftPadding = -3
+		specificBox:SetHeight(120)
+
+		HonorFrame.SpecificScrollBar:ClearAllPoints()
+		HonorFrame.SpecificScrollBar:SetPoint("TOPLEFT", HonorFrame.SpecificScrollBox, "TOPRIGHT", -10, 0)
+		HonorFrame.SpecificScrollBar:SetPoint("BOTTOMLEFT", HonorFrame.SpecificScrollBox, "BOTTOMRIGHT", -10, 0)
+		HonorFrame.SpecificScrollBar:SetParent(HonorFrame.SpecificScrollBox)
+
+		randomBGFrame:SetShown(HonorFrame.type == "bonus")
+		randomEpicBGFrame:SetShown(HonorFrame.type == "bonus")
+
+		specificBox:SetShown(HonorFrame.type == "specific")
+		specificBox:GetParent():MarkDirty()
+
+		--[[info = {}
+		info.entryType = "option"
+		info.index = 15
+		info.level = 2
+		info.parentIndex = 6
+		hideAllPVPButtonAssets(ConquestFrame.RatedBG)
+		local specific1 = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedBG)
+		ratedBGFrame:HookScript("OnShow", function(self)
+			hideAllPVPButtonAssets(self)
+		end)]]
+
+		info = {}
+		info.entryType = "option"
+		info.index = 30
+		info.level = 2
+		info.parentIndex = 6
+		--hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
+		queueDropDown:InsertCustomFrame(info, HonorFrame.QueueButton)
 	end
-
-	info = {}
-	info.entryType = "option"
-	info.index = 15
-	info.level = 2
-	info.parentIndex = 6
-	specificBox = queueDropDown:InsertCustomFrame(info, HonorFrame.SpecificScrollBox)
-	specificBox.leftPadding = -3
-	specificBox:SetHeight(120)
-
-	HonorFrame.SpecificScrollBar:ClearAllPoints()
-	HonorFrame.SpecificScrollBar:SetPoint("TOPLEFT", HonorFrame.SpecificScrollBox, "TOPRIGHT", -10, 0)
-	HonorFrame.SpecificScrollBar:SetPoint("BOTTOMLEFT", HonorFrame.SpecificScrollBox, "BOTTOMRIGHT", -10, 0)
-	HonorFrame.SpecificScrollBar:SetParent(HonorFrame.SpecificScrollBox)
-
-	randomBGFrame:SetShown(HonorFrame.type == "bonus")
-	randomEpicBGFrame:SetShown(HonorFrame.type == "bonus")
-
-	specificBox:SetShown(HonorFrame.type == "specific")
-	specificBox:GetParent():MarkDirty()
-
-	--[[info = {}
-	info.entryType = "option"
-	info.index = 15
-	info.level = 2
-	info.parentIndex = 6
-	hideAllPVPButtonAssets(ConquestFrame.RatedBG)
-	local specific1 = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedBG)
-	ratedBGFrame:HookScript("OnShow", function(self)
-		hideAllPVPButtonAssets(self)
-	end)]]
-
-	info = {}
-	info.entryType = "option"
-	info.index = 30
-	info.level = 2
-	info.parentIndex = 6
-	--hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
-	queueDropDown:InsertCustomFrame(info, HonorFrame.QueueButton)
 end
 
 --[[local function updatePvP()

@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" mixin="WeeklyRewardsMixin" movable="true" hidden="true" virtual="true" toplevel="true" enableMouse="true" parent="UIParent">
+    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" movable="true" hidden="true" virtual="true" toplevel="true" enableMouse="true" parent="UIParent"> <!-- mixin="WeeklyRewardsMixin" -->
         <Frames>
             <Frame parentKey="CategoryHoverFrame" inherits="VerticalLayoutFrame" hidden="true" frameLevel="10000">
                 <KeyValues>
@@ -550,7 +550,7 @@
                                         </Layers>
                                     </Frame>
 
-                                    <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin">
+                                    <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate"> <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>
@@ -582,7 +582,7 @@
                                         </Scripts>
                                     </StatusBar>
 
-                                    <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin">
+                                    <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate"> <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>
@@ -614,7 +614,7 @@
                                         </Scripts>
                                     </StatusBar>
 
-                                    <StatusBar parentKey="HonorStatus" inherits="BackdropTemplate" mixin="WeeklyRewardsActivityMixin">
+                                    <StatusBar parentKey="HonorStatus" inherits="BackdropTemplate">  <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>

@@ -1070,6 +1070,7 @@ end
 miog.createApplicationViewer = function()
 	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin.InsertFrame, "MIOG_ApplicationViewer") ---@class Frame
 	miog.ApplicationViewer = applicationViewer
+	miog.ApplicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.ApplicationViewer.FramePanel, "TOPRIGHT", -1, 0)
 
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -1173,6 +1174,4 @@ miog.createApplicationViewer = function()
 	miog.ApplicationViewer:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
 	miog.ApplicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
 	miog.ApplicationViewer:SetScript("OnEvent", applicationViewerEvents)
-
-	MIOG_SYSTEM = miog
 end

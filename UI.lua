@@ -1,8 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local pluginElements
-
 local function createPlaystyleEntry(playstyle, activityInfo, playstyleDropDown)
     local info = {
         entryType = "option",
@@ -811,7 +809,7 @@ local function setActivePanel(_, panel)
 		end
 
 		if(not miog.F.LITE_MODE) then
-			ShowUIPanel(miog.pveFrame2)
+			miog.pveFrame2:Show()
 
 		else
 			LFGListFrame.ApplicationViewer:Hide()
@@ -852,7 +850,7 @@ local function setActivePanel(_, panel)
 		end
 
 		if(not miog.F.LITE_MODE) then
-			ShowUIPanel(miog.pveFrame2)
+			miog.pveFrame2:Show()
 
 		else
 			LFGListFrame.SearchPanel:Hide()
@@ -895,7 +893,7 @@ local function setActivePanel(_, panel)
 		miog.FilterPanel.Lock:Show()
 
 		if(not miog.F.LITE_MODE) then
-			ShowUIPanel(miog.pveFrame2)
+			miog.pveFrame2:Show()
 
 		else
 			LFGListFrame.EntryCreation:Hide()
@@ -962,9 +960,7 @@ miog.createFrames = function()
 
 		miog.MainTab.QueueInformation.LastGroup:SetBackdropColor(r, g, b, 0.9)
 
-		ConquestFrame.selectedButton = nil
-		PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
-		HideUIPanel(PVEFrame)
+		PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
 		settingsButton:SetParent(miog.pveFrame2.TitleBar)
 		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
@@ -976,7 +972,6 @@ miog.createFrames = function()
 	
 	end)
 	
-
 	miog.Plugin.ButtonPanel.FilterButton:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		miog.Plugin.ButtonPanel:Hide()
@@ -1020,17 +1015,13 @@ miog.createFrames = function()
 	miog.Plugin.Resize:SetScript("OnDragStop", function(self)
 		self:GetParent():StopMovingOrSizing()
 	
-			MIOG_SavedSettings.frameManuallyResized.value = miog.Plugin:GetHeight()
-	
-			if(MIOG_SavedSettings.frameManuallyResized.value > miog.Plugin.standardHeight) then
-				MIOG_SavedSettings.frameExtended.value = true
-				miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
-	
-			end
-	
-			--[[miog.Plugin:ClearAllPoints()
-			miog.Plugin:SetPoint("TOPLEFT", miog.Plugin:GetParent(), "TOPRIGHT", -standardWidth, 0)
-			miog.Plugin:SetPoint("TOPRIGHT", miog.Plugin:GetParent(), "TOPRIGHT", 0, 0)]]
+		MIOG_SavedSettings.frameManuallyResized.value = miog.Plugin:GetHeight()
+
+		if(MIOG_SavedSettings.frameManuallyResized.value > miog.Plugin.standardHeight) then
+			MIOG_SavedSettings.frameExtended.value = true
+			miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
+
+		end
 	end)
 
 	miog.Plugin.standardHeight = miog.Plugin:GetHeight()
@@ -1039,7 +1030,6 @@ miog.createFrames = function()
 	miog.Plugin:SetResizeBounds(standardWidth, miog.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
 
 	miog.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value and miog.Plugin.extendedHeight or miog.Plugin.standardHeight)
-
 
 	miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -1051,10 +1041,6 @@ miog.createFrames = function()
 	miog.createEntryCreation()
 	miog.loadFilterPanel()
 	miog.loadLastInvitesPanel()
-		
-	miog.ClassPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.pveFrame2 or PVEFrame, "MIOG_ClassPanel")
-	miog.ClassPanel:SetPoint("BOTTOMRIGHT", miog.ClassPanel:GetParent(), "TOPRIGHT", 0, 1)
-	miog.ClassPanel:SetPoint("BOTTOMLEFT", miog.ClassPanel:GetParent(), "TOPLEFT", 0, 1)
 
 	miog.createClassPanel()
 
@@ -1068,13 +1054,6 @@ miog.createFrames = function()
 	end
 
 	miog.createInspectCoroutine()
-
-	pluginElements = {
-		miog.ApplicationViewer,
-		miog.SearchPanel,
-		miog.EntryCreation,
-		miog.AdventureJournal
-	}
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		setActivePanel(_, panel)

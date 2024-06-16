@@ -2,11 +2,17 @@ local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
 miog.createClassPanel = function()
+    miog.ClassPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.pveFrame2 or PVEFrame, "MIOG_ClassPanel")
+	miog.ClassPanel:SetPoint("BOTTOMRIGHT", miog.ClassPanel:GetParent(), "TOPRIGHT", 0, 1)
+    miog.ClassPanel:SetPoint("BOTTOMLEFT", miog.ClassPanel:GetParent(), "TOPLEFT", 0, 1)
+
     local classPanel = miog.ClassPanel.Container
 
     classPanel:SetHeight(classPanel:GetParent():GetHeight() - 5)
 
     classPanel.classFrames = {}
+
+    --CLASS PANEL FUCKS UP SOMEWHERE, PLEASE FIX XD
 
     for classID, classEntry in ipairs(miog.CLASSES) do
         local classFrame = CreateFrame("Frame", nil, classPanel, "MIOG_ClassPanelClassFrameTemplate")
@@ -17,7 +23,7 @@ miog.createClassPanel = function()
         classFrame.leftPadding = 3
         classPanel.classFrames[classID] = classFrame
 
-        local specPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", classFrame)
+        local specPanel = CreateFrame("Frame", nil, classFrame, "VerticalLayoutFrame, BackdropTemplate")
         specPanel:SetPoint("TOP", classFrame, "BOTTOM", 0, -5)
         specPanel.fixedHeight = classFrame:GetHeight() - 3
         specPanel.specFrames = {}

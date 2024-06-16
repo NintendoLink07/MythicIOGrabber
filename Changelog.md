@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.1.4] - 2024-06-16
+
+### Fixed
+
+- Finally fixed the weird bug where you sometimes (but not always) couldn't upgrade an item when enabling my addon.
+It was the last instance where I was using a Blizzard dropdown, they're famous for their taint issues.
+I am so sorry, lol.
+
 
 ## [2.1.3] - 2024-06-13
 
@@ -1601,7 +1609,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1.4..HEAD
+[2.1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.4
 [2.1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.3
 [2.1.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.2
 [2.1.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.1

@@ -309,146 +309,148 @@ local function updateRosterInfoData()
 		indexedGroup[#indexedGroup].guid = guid
 	end
 
-	local percentageInspected = #indexedGroup / inspectableMembers
+	local percentageInspected = playersWithSpecData / inspectableMembers
 
-	if(not currentInspection) then
-		miog.ClassPanel.LoadingSpinner:Hide()
-		miog.ClassPanel.StatusString:SetText("(" .. playersWithSpecData .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
-		
+	if(miog.ClassPanel) then
+		if(not currentInspection) then
+			miog.ClassPanel.LoadingSpinner:Hide()
+			miog.ClassPanel.StatusString:SetText("(" .. playersWithSpecData .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
+			
 
-	end
+		end
 
-	if(percentageInspected >= 1) then
-		miog.ClassPanel.InspectStatus:Hide()
-
-	else
-		miog.ClassPanel.InspectStatus:Show()
-	
-	end
-
-	miog.ClassPanel.InspectStatus:SetMinMaxValues(0, inspectableMembers)
-	miog.ClassPanel.InspectStatus:SetValue(#indexedGroup)
-	miog.ClassPanel.InspectStatus:SetStatusBarColor(1 - percentageInspected, percentageInspected, 0, 1)
-
-	for classID, classEntry in ipairs(miog.CLASSES) do
-		local classCount = groupSystem.classCount[classID]
-		local currentClassFrame = miog.ClassPanel.Container.classFrames[classID]
-		currentClassFrame.layoutIndex = classID
-		currentClassFrame.FontString:SetText(classCount > 0 == true and classCount or "")
-		currentClassFrame.Icon:SetDesaturated(classCount > 0 == false and true or false)
-
-		if(classCount > 0) then
-			local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[classID].name)
-			miog.createFrameBorder(currentClassFrame, 1, rPerc, gPerc, bPerc, 1)
-			currentClassFrame.layoutIndex = currentClassFrame.layoutIndex - 100
+		--[[if(percentageInspected >= 1) then
+			miog.ClassPanel.InspectStatus:Hide()
 
 		else
-			miog.createFrameBorder(currentClassFrame, 1, 0, 0, 0, 1)
-
+			miog.ClassPanel.InspectStatus:Show()
+		
 		end
 
-		for _, v in ipairs(classEntry.specs) do
-			local currentSpecFrame = miog.ClassPanel.Container.classFrames[classID].specPanel.specFrames[v]
+		miog.ClassPanel.InspectStatus:SetMinMaxValues(0, inspectableMembers)
+		miog.ClassPanel.InspectStatus:SetValue(#indexedGroup)
+		miog.ClassPanel.InspectStatus:SetStatusBarColor(1 - percentageInspected, percentageInspected, 0, 1)]]
 
-			if(groupSystem.specCount[v]) then
-				currentSpecFrame.layoutIndex = v
-				currentSpecFrame.FontString:SetText(groupSystem.specCount[v])
+		for classID, classEntry in ipairs(miog.CLASSES) do
+			local classCount = groupSystem.classCount[classID]
+			local currentClassFrame = miog.ClassPanel.Container.classFrames[classID]
+			currentClassFrame.layoutIndex = classID
+			currentClassFrame.FontString:SetText(classCount > 0 == true and classCount or "")
+			currentClassFrame.Icon:SetDesaturated(classCount > 0 == false and true or false)
 
-				local color = C_ClassColor.GetClassColor(miog.CLASSES[classID].name)
-				miog.createFrameBorder(currentSpecFrame, 1, color.r, color.g, color.b, 1)
-
-				currentSpecFrame:Show()
+			if(classCount > 0) then
+				local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[classID].name)
+				miog.createFrameBorder(currentClassFrame, 1, rPerc, gPerc, bPerc, 1)
+				currentClassFrame.layoutIndex = currentClassFrame.layoutIndex - 100
 
 			else
-				currentSpecFrame.layoutIndex = nil
-				currentSpecFrame.FontString:SetText("")
-				currentSpecFrame:ClearBackdrop()
-				currentSpecFrame:Hide()
+				miog.createFrameBorder(currentClassFrame, 1, 0, 0, 0, 1)
 
 			end
 
-		end
+			for _, v in ipairs(classEntry.specs) do
+				local currentSpecFrame = miog.ClassPanel.Container.classFrames[classID].specPanel.specFrames[v]
 
-		miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
+				if(groupSystem.specCount[v]) then
+					currentSpecFrame.layoutIndex = v
+					currentSpecFrame.FontString:SetText(groupSystem.specCount[v])
 
-	end
+					local color = C_ClassColor.GetClassColor(miog.CLASSES[classID].name)
+					miog.createFrameBorder(currentSpecFrame, 1, color.r, color.g, color.b, 1)
 
-	miog.ClassPanel.Container:MarkDirty()
+					currentSpecFrame:Show()
 
-	--[[if(numOfMembers < 5) then
-		if(groupSystem.roleCount["TANK"] < 1) then
-			indexedGroup[#indexedGroup + 1] = {guid = "emptyTank", unitID = "emptyTank", name = "afkTank", classID = 20, role = "TANK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
-			groupSystem.roleCount["TANK"] = groupSystem.roleCount["TANK"] + 1
-		end
-
-		if(groupSystem.roleCount["HEALER"] < 1 and #indexedGroup < 5) then
-			indexedGroup[#indexedGroup + 1] = {guid = "emptyHealer", unitID = "emptyHealer", name = "afkHealer", classID = 21, role = "HEALER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
-			groupSystem.roleCount["HEALER"] = groupSystem.roleCount["HEALER"] + 1
-
-		end
-
-		for i = 1, 3 - groupSystem.roleCount["DAMAGER"], 1 do
-			if(groupSystem.roleCount["DAMAGER"] < 3 and #indexedGroup < 5) then
-				indexedGroup[#indexedGroup + 1] = {guid = "emptyDPS" .. i, unitID = "emptyDPS" .. i, name = "afkDPS" .. i, classID = 22, role = "DAMAGER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
-				groupSystem.roleCount["DAMAGER"] = groupSystem.roleCount["DAMAGER"] + 1
-
-			end
-
-		end
-	end]]
-
-	if(miog.PartyCheck) then
-		table.sort(indexedGroup, sortPartyCheckList)
-	end
-
-	miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
-
-	if(partyPool) then
-		for index, member in ipairs(indexedGroup) do
-			local memberFrame = partyPool:Acquire()
-			memberFrame.data = member
-			memberFrame:SetWidth(miog.PartyCheck:GetWidth())
-			memberFrame.Group:SetText(member.group)
-			memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
-			memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
-			memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
-
-			if(member.rank == 2) then
-				miog.PartyCheck.LeaderCrown:ClearAllPoints()
-				miog.PartyCheck.LeaderCrown:SetPoint("RIGHT", memberFrame.Group, "RIGHT")
-				miog.PartyCheck.LeaderCrown:Show()
-
-			end
-
-			memberFrame.ILvl:SetText(member.ilvl or "N/A")
-			memberFrame.Durability:SetText(member.durability or "N/A")
-			memberFrame.Keystone:SetTexture(member.keystone)
-			memberFrame.Keylevel:SetText("+" .. member.keylevel)
-			memberFrame.Score:SetText(member.score or "0")
-			memberFrame.Progress:SetText(member.progress or "N/A")
-
-				--[[for k, v in pairs(memberFrame.MissingEnchantSlots) do
-					if(type(v) == "table") then
-						if(checkData.missingEnchants and checkData.missingEnchants[k]) then
-							v.layoutIndex = k
-							v:Show()
-
-						else
-							v.layoutIndex = nil
-							v:Hide()
-
-						end
-					end
+				else
+					currentSpecFrame.layoutIndex = nil
+					currentSpecFrame.FontString:SetText("")
+					currentSpecFrame:ClearBackdrop()
+					currentSpecFrame:Hide()
 
 				end
 
-				memberFrame.MissingEnchantSlots:MarkDirty()]]
+			end
 
-			memberFrame.layoutIndex = index
-			memberFrame:Show()
+			miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
+
 		end
 
-		miog.PartyCheck.ScrollFrame.Container:MarkDirty()
+		miog.ClassPanel.Container:MarkDirty()
+
+		--[[if(numOfMembers < 5) then
+			if(groupSystem.roleCount["TANK"] < 1) then
+				indexedGroup[#indexedGroup + 1] = {guid = "emptyTank", unitID = "emptyTank", name = "afkTank", classID = 20, role = "TANK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+				groupSystem.roleCount["TANK"] = groupSystem.roleCount["TANK"] + 1
+			end
+
+			if(groupSystem.roleCount["HEALER"] < 1 and #indexedGroup < 5) then
+				indexedGroup[#indexedGroup + 1] = {guid = "emptyHealer", unitID = "emptyHealer", name = "afkHealer", classID = 21, role = "HEALER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+				groupSystem.roleCount["HEALER"] = groupSystem.roleCount["HEALER"] + 1
+
+			end
+
+			for i = 1, 3 - groupSystem.roleCount["DAMAGER"], 1 do
+				if(groupSystem.roleCount["DAMAGER"] < 3 and #indexedGroup < 5) then
+					indexedGroup[#indexedGroup + 1] = {guid = "emptyDPS" .. i, unitID = "emptyDPS" .. i, name = "afkDPS" .. i, classID = 22, role = "DAMAGER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
+					groupSystem.roleCount["DAMAGER"] = groupSystem.roleCount["DAMAGER"] + 1
+
+				end
+
+			end
+		end]]
+
+		if(miog.PartyCheck) then
+			table.sort(indexedGroup, sortPartyCheckList)
+		end
+
+		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
+
+		if(partyPool) then
+			for index, member in ipairs(indexedGroup) do
+				local memberFrame = partyPool:Acquire()
+				memberFrame.data = member
+				memberFrame:SetWidth(miog.PartyCheck:GetWidth())
+				memberFrame.Group:SetText(member.group)
+				memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
+				memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
+				memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
+
+				if(member.rank == 2) then
+					miog.PartyCheck.LeaderCrown:ClearAllPoints()
+					miog.PartyCheck.LeaderCrown:SetPoint("RIGHT", memberFrame.Group, "RIGHT")
+					miog.PartyCheck.LeaderCrown:Show()
+
+				end
+
+				memberFrame.ILvl:SetText(member.ilvl or "N/A")
+				memberFrame.Durability:SetText(member.durability or "N/A")
+				memberFrame.Keystone:SetTexture(member.keystone)
+				memberFrame.Keylevel:SetText("+" .. member.keylevel)
+				memberFrame.Score:SetText(member.score or "0")
+				memberFrame.Progress:SetText(member.progress or "N/A")
+
+					--[[for k, v in pairs(memberFrame.MissingEnchantSlots) do
+						if(type(v) == "table") then
+							if(checkData.missingEnchants and checkData.missingEnchants[k]) then
+								v.layoutIndex = k
+								v:Show()
+
+							else
+								v.layoutIndex = nil
+								v:Hide()
+
+							end
+						end
+
+					end
+
+					memberFrame.MissingEnchantSlots:MarkDirty()]]
+
+				memberFrame.layoutIndex = index
+				memberFrame:Show()
+			end
+
+			miog.PartyCheck.ScrollFrame.Container:MarkDirty()
+		end
 	end
 end
 
@@ -525,7 +527,6 @@ end)
 hooksecurefunc("ClearInspectPlayer", function(own)
 	if(own) then
 		currentInspection = nil
-		--miog.pveFrame2.ClassPanelStatusString:SetText("Waiting for next inspect...")
 	end
 end)
 

@@ -3,6 +3,105 @@ local wticc = WrapTextInColorCode
 
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
+local function CanShowPreviewItemTooltip(self)
+	return self.unlocked and not C_WeeklyRewards.CanClaimRewards();
+end
+
+local function IsCompletedAtHeroicLevel(self)
+	local difficultyID = C_WeeklyRewards.GetDifficultyIDForActivityTier(self.info.activityTierID);
+	return difficultyID == DifficultyUtil.ID.DungeonHeroic;
+end
+
+local function AddTopRunsToTooltip(self)
+	GameTooltip_AddBlankLineToTooltip(GameTooltip);
+	GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
+
+	local runHistory = C_MythicPlus.GetRunHistory(false, true);
+	if #runHistory > 0 then
+		local comparison = function(entry1, entry2)
+			if ( entry1.level == entry2.level ) then
+				return entry1.mapChallengeModeID < entry2.mapChallengeModeID;
+			else
+				return entry1.level > entry2.level;
+			end
+		end
+		table.sort(runHistory, comparison);
+		for i = 1, self.info.threshold do
+			if runHistory[i] then
+				local runInfo = runHistory[i];
+				local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID);
+				GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_RUN_INFO, runInfo.level, name));
+			end
+		end
+	end
+
+	local missingRuns = self.info.threshold - #runHistory;
+	if missingRuns > 0 then
+		local numHeroic, numMythic, numMythicPlus = C_WeeklyRewards.GetNumCompletedDungeonRuns();
+		while numMythic > 0 and missingRuns > 0 do
+			GameTooltip_AddHighlightLine(GameTooltip, WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel));
+			numMythic = numMythic - 1;
+			missingRuns = missingRuns - 1;
+		end
+		while numHeroic > 0 and missingRuns > 0 do
+			GameTooltip_AddHighlightLine(GameTooltip, WEEKLY_REWARDS_HEROIC);
+			numHeroic = numHeroic - 1;
+			missingRuns = missingRuns - 1;
+		end
+	end
+end
+
+local function HandlePreviewMythicRewardTooltip(itemLevel, upgradeItemLevel, nextLevel, self)
+	local isHeroicLevel = IsCompletedAtHeroicLevel(self);
+	if isHeroicLevel then
+		GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_HEROIC, itemLevel));
+	else
+		GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level));
+	end
+	GameTooltip_AddBlankLineToTooltip(GameTooltip);
+	if upgradeItemLevel then
+		GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
+		if self.info.threshold == 1 then
+			if isHeroicLevel then
+				GameTooltip_AddHighlightLine(GameTooltip, WEEKLY_REWARDS_COMPLETE_HEROIC_SHORT);
+			else
+				GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, nextLevel));
+			end
+		else
+			GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC, nextLevel, self.info.threshold));
+			AddTopRunsToTooltip(self);
+		end
+	end
+end
+
+local function ShowIncompleteMythicTooltip(self)
+	--GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11);
+	--GameTooltip_SetTitle(GameTooltip, WEEKLY_REWARDS_UNLOCK_REWARD);
+
+	if self.info.index == 1 then	-- 1st box in this row
+		GameTooltip_AddNormalLine(GameTooltip, GREAT_VAULT_REWARDS_MYTHIC_INCOMPLETE);
+	else
+		local globalString;
+		if self.info.index == 2 then	-- 2nd box in this row
+			globalString = GREAT_VAULT_REWARDS_MYTHIC_COMPLETED_FIRST;
+		else	-- 3rd box
+			globalString = GREAT_VAULT_REWARDS_MYTHIC_COMPLETED_SECOND;
+		end
+		GameTooltip_AddNormalLine(GameTooltip, globalString:format(self.info.threshold - self.info.progress));
+		if self.info.progress > 0 then
+			GameTooltip_AddBlankLineToTooltip(GameTooltip);
+			local lowestLevel = WeeklyRewardsUtil.GetLowestLevelInTopDungeonRuns(self.info.threshold);
+			if lowestLevel == WeeklyRewardsUtil.HeroicLevel then
+				GameTooltip_AddNormalLine(GameTooltip, GREAT_VAULT_REWARDS_CURRENT_LEVEL_HEROIC:format(self.info.threshold));
+			else
+				GameTooltip_AddNormalLine(GameTooltip, GREAT_VAULT_REWARDS_CURRENT_LEVEL_MYTHIC:format(self.info.threshold, lowestLevel));
+			end
+			AddTopRunsToTooltip(self);
+		end
+	end
+	GameTooltip:Show();
+end
+
 local function resetCategoryFrame(_, frame)
 	frame:Hide()
 	frame.layoutIndex = nil
@@ -203,7 +302,7 @@ local function createPVEFrameReplacement()
 						upgradeItemLevel, previewLevel, sparse = C_Item.GetDetailedItemLevelInfo(upgradeItemLink);
 					end
 
-					local canShow = self:CanShowPreviewItemTooltip()
+					local canShow = CanShowPreviewItemTooltip(self)
 					
 					GameTooltip_SetTitle(GameTooltip, GREAT_VAULT_REWARDS);
 					GameTooltip_AddBlankLineToTooltip(GameTooltip);
@@ -224,10 +323,10 @@ local function createPVEFrameReplacement()
 								nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(self.info.level);
 							end
 							
-							self:HandlePreviewMythicRewardTooltip(itemLevel, upgradeItemLevel, nextLevel);
+							HandlePreviewMythicRewardTooltip(itemLevel, upgradeItemLevel, nextLevel, self);
 
 						else
-							self:ShowIncompleteMythicTooltip();
+							ShowIncompleteMythicTooltip(self);
 							GameTooltip_AddBlankLineToTooltip(GameTooltip);
 
 						end
@@ -243,10 +342,6 @@ local function createPVEFrameReplacement()
 						GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
 
 					elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
-						if(canShow) then
-							--self:HandlePreviewRaidRewardTooltip(itemLevel, upgradeItemLevel);
-						end
-
 						local currentDifficultyID = self.info.level;
 
 						if(itemLevel) then
@@ -307,7 +402,7 @@ local function createPVEFrameReplacement()
 						GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
 
 					elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
-						if not ConquestFrame_HasActiveSeason() then
+						if(ConquestFrame and not ConquestFrame_HasActiveSeason()) then
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 							GameTooltip_AddDisabledLine(GameTooltip, UNAVAILABLE);
 							GameTooltip_AddNormalLine(GameTooltip, CONQUEST_REQUIRES_PVP_SEASON);
