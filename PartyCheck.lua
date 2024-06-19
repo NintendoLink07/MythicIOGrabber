@@ -228,7 +228,7 @@ function miog.OnUnitInfoWipe()
 end
 
 function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
-	local name = UnitFullName(unitId)
+	local name = GetUnitName(unitId, true)
 	if(name) then
 		--hasWeaponEnchant is 1 have enchant or 0 is don't
 		local hasWeaponEnchantNumber = unitGear.weaponEnchant
@@ -254,7 +254,7 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 end
 
 function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
-	local name = UnitFullName(unitId)
+	local name = GetUnitName(unitId, true)
 
 	if(name) then
 		miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
