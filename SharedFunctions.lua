@@ -296,6 +296,39 @@ miog.hideSidePanel = function(self)
 	MIOG_SavedSettings.activeSidePanel.value = ""
 end
 
+-- type == unitID or unitName
+-- value == (unitID) player, party3, raid29 or (unitName) Rhany, Merkuz, Solomeio-Ravencrest
+local function createFullNameFrom(type, value)
+	local name
+
+	if(type == "unitID") then
+		name = GetUnitName(value, true)
+
+		if(value == "player") then
+			name = name .. "-" .. GetNormalizedRealmName()
+		end
+	elseif(type == "unitName") then
+		local nameTable = miog.simpleSplit(value, "-")
+
+		if(not nameTable[2]) then
+			nameTable[2] = GetNormalizedRealmName()
+	
+			if(nameTable[2]) then
+				name = nameTable[1] .. "-" .. nameTable[2]
+	
+			end
+	
+		else
+			name = value
+			
+		end
+	end
+
+	return name
+end
+
+miog.createFullNameFrom = createFullNameFrom
+
 local function printOnce(string)
 	if(miog.ONCE) then
 		miog.ONCE = false

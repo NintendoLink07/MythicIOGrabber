@@ -6,17 +6,7 @@ miog.checkSystem.groupMember = {}
 miog.checkSystem.keystoneData = {}
 
 miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
-	local nameTable = miog.simpleSplit(unitName, "-")
-
-	if(not nameTable[2]) then
-		nameTable[2] = GetNormalizedRealmName()
-
-		if(nameTable[2]) then
-			unitName = nameTable[1] .. "-" .. nameTable[2]
-
-		end
-
-	end
+	unitName = miog.createFullNameFrom("unitName", unitName)
 	
 	miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
@@ -228,7 +218,8 @@ function miog.OnUnitInfoWipe()
 end
 
 function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
-	local name = GetUnitName(unitId, true)
+	local name = miog.createFullNameFrom("unitID", unitId)
+
 	if(name) then
 		--hasWeaponEnchant is 1 have enchant or 0 is don't
 		local hasWeaponEnchantNumber = unitGear.weaponEnchant
@@ -254,15 +245,14 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 end
 
 function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
-	local name = GetUnitName(unitId, true)
+	local name = miog.createFullNameFrom("unitID", unitId)
 
 	if(name) then
 		miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
 		miog.checkSystem.groupMember[name].durability = durability
 
+		miog.updateRosterInfoData()
 	end
-
-	miog.updateRosterInfoData()
 end
 
 --registering the callback:

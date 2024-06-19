@@ -1,6 +1,8 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
+
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
 local function CanShowPreviewItemTooltip(self)
@@ -148,33 +150,84 @@ local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
 
+	miog.pveFrame2 = pveFrame2
+	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
+	miog.Teleports = pveFrame2.TabFramesPanel.Teleports
+	
+
 	if(pveFrame2:GetPoint() == nil) then
 		pveFrame2:SetPoint(PVEFrame:GetPoint())
 	end
 
 	miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+	local setup = false
 	
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
 		if(IsInRaid()) then
-			local raidKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromRaid()
+			miog.openRaidLib.RequestKeystoneDataFromRaid()
+			miog.openRaidLib.GetAllUnitsGear()
 			
 		elseif(IsInGroup()) then
-			local allKeystoneInfo = miog.openRaidLib.RequestKeystoneDataFromParty()
+			miog.openRaidLib.RequestKeystoneDataFromParty()
+			miog.openRaidLib.GetAllUnitsGear()
+
+		else
+			miog.openRaidLib.RequestKeystoneDataFromParty()
 
 		end
-
-		local allPlayersGear = miog.openRaidLib.GetAllUnitsGear()
 
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
 
-		miog.setUpMPlusStatistics()
+		if(not setup) then
+			miog.setUpMPlusStatistics()
+			miog.setupPVPStatistics()
+			miog.setupRaidStatistics()
+
+			local aspectInfo = C_CurrencyInfo.GetCurrencyInfo(2812)
+			miog.MainTab.Information.Currency.Aspect.Text:SetText(aspectInfo.quantity .. " (" .. aspectInfo.totalEarned .. "/" .. aspectInfo.maxQuantity .. ")")
+			miog.MainTab.Information.Currency.Aspect.Icon:SetTexture(aspectInfo.iconFileID)
+			miog.MainTab.Information.Currency.Aspect.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetCurrencyByID(2812)
+				GameTooltip:Show()
+			end)
+
+			local wyrmInfo = C_CurrencyInfo.GetCurrencyInfo(2809)
+			miog.MainTab.Information.Currency.Wyrm.Text:SetText(wyrmInfo.quantity .. " (" .. wyrmInfo.totalEarned .. "/" .. wyrmInfo.maxQuantity .. ")")
+			miog.MainTab.Information.Currency.Wyrm.Icon:SetTexture(wyrmInfo.iconFileID)
+			miog.MainTab.Information.Currency.Wyrm.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetCurrencyByID(2809)
+				GameTooltip:Show()
+			end)
+
+			local drakeInfo = C_CurrencyInfo.GetCurrencyInfo(2807)
+			miog.MainTab.Information.Currency.Drake.Text:SetText(drakeInfo.quantity .. " (" .. drakeInfo.totalEarned .. "/" .. drakeInfo.maxQuantity .. ")")
+			miog.MainTab.Information.Currency.Drake.Icon:SetTexture(drakeInfo.iconFileID)
+			miog.MainTab.Information.Currency.Drake.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetCurrencyByID(2807)
+				GameTooltip:Show()
+			end)
+
+			local whelplingInfo = C_CurrencyInfo.GetCurrencyInfo(2806)
+			miog.MainTab.Information.Currency.Whelpling.Text:SetText(whelplingInfo.quantity .. " (" .. whelplingInfo.totalEarned .. "/" .. whelplingInfo.maxQuantity .. ")")
+			miog.MainTab.Information.Currency.Whelpling.Icon:SetTexture(whelplingInfo.iconFileID)
+			miog.MainTab.Information.Currency.Whelpling.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetCurrencyByID(2806)
+				GameTooltip:Show()
+			end)
+
+			miog.insertGearingData()
+
+			setup = true
+		end
+
 		miog.gatherMPlusStatistics()
-
-		miog.setupPVPStatistics()
 		miog.gatherPVPStatistics()
-
-		miog.setupRaidStatistics()
 		miog.gatherRaidStatistics()
 
 		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
@@ -225,42 +278,6 @@ local function createPVEFrameReplacement()
 			end
 
 		end
-
-		local aspectInfo = C_CurrencyInfo.GetCurrencyInfo(2812)
-		miog.MainTab.Information.Currency.Aspect.Text:SetText(aspectInfo.quantity .. " (" .. aspectInfo.totalEarned .. "/" .. aspectInfo.maxQuantity .. ")")
-		miog.MainTab.Information.Currency.Aspect.Icon:SetTexture(aspectInfo.iconFileID)
-		miog.MainTab.Information.Currency.Aspect.Icon:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetCurrencyByID(2812)
-			GameTooltip:Show()
-		end)
-
-		local wyrmInfo = C_CurrencyInfo.GetCurrencyInfo(2809)
-		miog.MainTab.Information.Currency.Wyrm.Text:SetText(wyrmInfo.quantity .. " (" .. wyrmInfo.totalEarned .. "/" .. wyrmInfo.maxQuantity .. ")")
-		miog.MainTab.Information.Currency.Wyrm.Icon:SetTexture(wyrmInfo.iconFileID)
-		miog.MainTab.Information.Currency.Wyrm.Icon:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetCurrencyByID(2809)
-			GameTooltip:Show()
-		end)
-
-		local drakeInfo = C_CurrencyInfo.GetCurrencyInfo(2807)
-		miog.MainTab.Information.Currency.Drake.Text:SetText(drakeInfo.quantity .. " (" .. drakeInfo.totalEarned .. "/" .. drakeInfo.maxQuantity .. ")")
-		miog.MainTab.Information.Currency.Drake.Icon:SetTexture(drakeInfo.iconFileID)
-		miog.MainTab.Information.Currency.Drake.Icon:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetCurrencyByID(2807)
-			GameTooltip:Show()
-		end)
-
-		local whelplingInfo = C_CurrencyInfo.GetCurrencyInfo(2806)
-		miog.MainTab.Information.Currency.Whelpling.Text:SetText(whelplingInfo.quantity .. " (" .. whelplingInfo.totalEarned .. "/" .. whelplingInfo.maxQuantity .. ")")
-		miog.MainTab.Information.Currency.Whelpling.Icon:SetTexture(whelplingInfo.iconFileID)
-		miog.MainTab.Information.Currency.Whelpling.Icon:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetCurrencyByID(2806)
-			GameTooltip:Show()
-		end)
 		
 		for frameIndex = 1, 3, 1 do
 			local activities = C_WeeklyRewards.GetActivities(frameIndex)
@@ -445,8 +462,6 @@ local function createPVEFrameReplacement()
 			currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (frameIndex == 1 and "Dungeons" or frameIndex == 2 and "Honor" or frameIndex == 3 and "Bosses" or ""))
 			currentFrame.Text:SetTextColor(CreateColorFromHexString(not firstThreshold and currentColor or "FFFFFFFF"):GetRGBA())
 		end
-
-		miog.insertGearingData()
 	end)
 
 	hooksecurefunc("PVEFrame_ToggleFrame", function()
@@ -467,10 +482,6 @@ local function createPVEFrameReplacement()
 		
 		end
 	end)
-
-	miog.pveFrame2 = pveFrame2
-	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
-	miog.Teleports = pveFrame2.TabFramesPanel.Teleports
 	--miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
 
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
@@ -680,8 +691,6 @@ end
 
 miog.createPVEFrameReplacement = createPVEFrameReplacement
 
-local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
-
 eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventReceiver:RegisterEvent("PLAYER_LOGIN")
 eventReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
@@ -690,6 +699,7 @@ eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 
 eventReceiver:SetScript("OnEvent", miog.OnEvent)
 

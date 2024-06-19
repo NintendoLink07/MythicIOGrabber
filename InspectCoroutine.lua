@@ -99,8 +99,7 @@ local function updateRosterInfoData()
 	miog.F.LFG_STATE = miog.checkLFGState()
 
 	local playersWithSpecData = 0
-	local playerName, playerRealm = UnitFullName("player")
-	local fullPlayerName = playerName .. "-" .. playerRealm
+	local fullPlayerName = miog.createFullNameFrom("unitID", "player")
 
 	if(miog.F.LFG_STATE == "solo") then
 		local fileName, id = UnitClassBase("player")
@@ -247,6 +246,7 @@ local function updateRosterInfoData()
 			member.durability = libData.durability or 0
 			member.missingEnchants = libData.missingEnchants
 			member.missingGems = libData.missingGems
+
 
 		else
 			member.durability = 0

@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.1.5b] - 2024-06-19
+
+### Fixed
+
+- [Party Check] Itemlevel and Durability will now also be correctly refreshed for the player (if the player is in a group).
+
+- Small performance increases, most notably when opening the mainframe for the first time.
+
+
 ## [2.1.5a] - 2024-06-19
 
 ### Fixed
@@ -1656,7 +1665,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1.5a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1.5b..HEAD
+[2.1.5b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5b
 [2.1.5a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5a
 [2.1.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5
 [2.1.4a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.4a
