@@ -32,11 +32,6 @@ local function resetQueueFrame(_, frame)
 			frame.Age:SetText("")
 			frame.Background:SetTexture(nil)
 
-			if(frame.Age.Ticker) then
-				frame.Age.Ticker:Cancel()
-				frame.Age.Ticker = nil
-			end
-
 			frame:ClearBackdrop()
 			
 			--frame.CancelApplication:SetScript("OnClick", nil)
@@ -84,6 +79,11 @@ local function createQueueFrame(queueInfo)
 		queueFrame.Name:SetText(queueInfo[11])
 
 		local ageNumber = 0
+
+		if(queueFrame.Age.Ticker) then
+			queueFrame.Age.Ticker:Cancel()
+			queueFrame.Age.Ticker = nil
+		end
 
 		if(queueInfo[17]) then
 			if(queueInfo[17][1] == "queued") then

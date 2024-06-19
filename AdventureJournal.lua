@@ -1378,12 +1378,16 @@ miog.loadAdventureJournal = function()
     frameWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
 
     miog.AdventureJournal:SetScript("OnShow", function()
-        local journalInstanceID = AdventureGuideUtil.GetCurrentJournalInstance()
+        local currentMapID = select(8, GetInstanceInfo());
+        
+        if(currentMapID and currentMapID ~= 0) then
+            local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(currentMapID) or nil
 
-        if(journalInstanceID) then
-            miog.selectInstance(journalInstanceID)
-            miog.AdventureJournal.InstanceDropdown:SelectFirstFrameWithValue(journalInstanceID)
-            
+            if(journalInstanceID) then
+                miog.selectInstance(journalInstanceID)
+                miog.AdventureJournal.InstanceDropdown:SelectFirstFrameWithValue(journalInstanceID)
+                
+            end
         end
     end)
 
@@ -1518,17 +1522,21 @@ miog.loadAdventureJournal = function()
 end
 
 hooksecurefunc("SetItemRef", function(link)
-	local linkType, linkAddonName, system, feature, data1, data2 = strsplit(":", link)
-	if linkType == "addon" and linkAddonName == addonName then
-        if(system == "aj") then
-            miog.setActivePanel(nil, "AdventureJournal")
-            
-            if(feature == "ability") then
-                miog.selectBoss(data1, data2)
+    local linkType, linkData = LinkUtil.SplitLinkData(link)
 
+	if(linkType == "addon") then
+        local linkAddonName, system, feature, data1, data2 = strsplit(":", linkData)
+        if(linkAddonName == addonName) then
+            if(system == "aj") then
+                miog.setActivePanel(nil, "AdventureJournal")
+                
+                if(feature == "ability") then
+                    miog.selectBoss(data1, data2)
+
+                end
             end
         end
-	end
+    end
 end)
 
 local function aj_events(_, event, ...)

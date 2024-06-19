@@ -44,7 +44,7 @@ miog.loadLastInvitesPanel = function()
 	miog.LastInvites:SetSize(230, miog.MainFrame:GetHeight())
 	miog.createFrameBorder(miog.LastInvites, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	miog.LastInvites.TitleBar.Retract:SetScript("OnClick", function(self)
+	miog.LastInvites.Retract:SetScript("OnClick", function(self)
 		miog.hideSidePanel(self)
 	end)
 

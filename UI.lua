@@ -818,9 +818,11 @@ local function setActivePanel(_, panel)
 
 		if(UnitIsGroupLeader("player")) then
 			miog.ApplicationViewer.Delist:Show()
+			miog.ApplicationViewer.Edit:Show()
 
 		else
 			miog.ApplicationViewer.Delist:Hide()
+			miog.ApplicationViewer.Edit:Hide()
 			
 		end
 

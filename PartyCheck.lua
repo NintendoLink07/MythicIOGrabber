@@ -6,15 +6,25 @@ miog.checkSystem.groupMember = {}
 miog.checkSystem.keystoneData = {}
 
 miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
+	local nameTable = miog.simpleSplit(unitName, "-")
+
+	if(not nameTable[2]) then
+		nameTable[2] = GetNormalizedRealmName()
+
+		if(nameTable[2]) then
+			unitName = nameTable[1] .. "-" .. nameTable[2]
+
+		end
+
+	end
+	
 	miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
 	miog.updateRosterInfoData()
 end
 
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
-	local guid = UnitGUID(singleUnitId)
-
-	if(guid) then
+	if(singleUnitInfo) then
 		local specId = singleUnitInfo.specId
 		local specName = singleUnitInfo.specName
 		local role = singleUnitInfo.role
@@ -29,12 +39,15 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 		local unitName = singleUnitInfo.name
 		local unitNameFull = singleUnitInfo.nameFull
 
-		miog.checkSystem.groupMember[guid] = miog.checkSystem.groupMember[guid] or {}
+		miog.checkSystem.groupMember[unitNameFull] = miog.checkSystem.groupMember[unitNameFull] or {}
 
 		for k, v in pairs(singleUnitInfo) do
-			miog.checkSystem.groupMember[guid][k] = v
+			miog.checkSystem.groupMember[unitNameFull][k] = v
 
 		end
+
+		MIOG_SavedSpecIDs[unitNameFull] = specId ~= 0 and specId
+		MIOG_InspectedNames[unitNameFull] = MIOG_SavedSpecIDs[unitNameFull] and GetTimePreciseSec() or nil
 	end
 
 	miog.updateRosterInfoData()
@@ -215,26 +228,25 @@ function miog.OnUnitInfoWipe()
 end
 
 function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
-	local guid = UnitGUID(unitId)
-
-	if(guid) then
+	local name = UnitFullName(unitId)
+	if(name) then
 		--hasWeaponEnchant is 1 have enchant or 0 is don't
 		local hasWeaponEnchantNumber = unitGear.weaponEnchant
 		local noEnchantTable = unitGear.noEnchants
 		local noGemsTable = unitGear.noGems
 
-		miog.checkSystem.groupMember[guid] = miog.checkSystem.groupMember[guid] or {}
-		miog.checkSystem.groupMember[guid].ilvl = unitGear.ilevel
-		miog.checkSystem.groupMember[guid].durability = unitGear.durability
-		miog.checkSystem.groupMember[guid].missingEnchants = {}
-		miog.checkSystem.groupMember[guid].missingGems = {}
+		miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
+		miog.checkSystem.groupMember[name].ilvl = unitGear.ilevel
+		miog.checkSystem.groupMember[name].durability = unitGear.durability
+		miog.checkSystem.groupMember[name].missingEnchants = {}
+		miog.checkSystem.groupMember[name].missingGems = {}
 
 		for index, slotIdWithoutEnchant in ipairs (noEnchantTable) do
-			miog.checkSystem.groupMember[guid].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+			miog.checkSystem.groupMember[name].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
 		end
 
 		for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
-			miog.checkSystem.groupMember[guid].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+			miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 		end
 
 		miog.updateRosterInfoData()
@@ -242,12 +254,11 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 end
 
 function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
-	local guid = UnitGUID(unitId)
+	local name = UnitFullName(unitId)
 
-	if(guid) then
-
-		miog.checkSystem.groupMember[guid] = miog.checkSystem.groupMember[guid] or {}
-		miog.checkSystem.groupMember[guid].durability = durability
+	if(name) then
+		miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
+		miog.checkSystem.groupMember[name].durability = durability
 
 	end
 
@@ -258,13 +269,12 @@ end
 
 miog.loadPartyCheck = function()
     miog.PartyCheck = miog.pveFrame2.TabFramesPanel.PartyCheck
-
-	miog.PartyCheck.SortButtons = {}
+	miog.PartyCheck.sortByCategoryButtons = {}
 
 	for k, v in pairs(miog.PartyCheck) do
 		if(type(v) == "table" and v.Button) then
 			v.Name:SetText(v:GetParentKey())
-			miog.PartyCheck.SortButtons[v:GetDebugName()] = v.Button
+			miog.PartyCheck.sortByCategoryButtons[v:GetDebugName()] = v.Button
 			v.Button.panel = "partyCheck"
 			v.Button.category = v:GetDebugName()
 			v.Button:SetScript("PostClick", function()
@@ -279,10 +289,4 @@ miog.loadPartyCheck = function()
 	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "GearDurabilityUpdate", "OnGearDurabilityUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
-	--miog.OnUnitUpdate()
-
-    --miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
-    --miog.openRaidLib.RegisterCallback(miog, "UnitInfoWipe", "OnUnitInfoWipe")
-
-	--local allUnitsInfo = miog.openRaidLib.GetAllUnitsInfo()
 end

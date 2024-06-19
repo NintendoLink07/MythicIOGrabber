@@ -35,7 +35,7 @@
             </Frame>
             
             <Frame name="ilvl" parentKey="ILvl" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="48" y="18"/>
+                <Size x="44" y="18"/>
                 
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="5"/>
@@ -43,7 +43,7 @@
             </Frame>
             
             <Frame name="durability" parentKey="Dur" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="40" y="18"/>
+                <Size x="44" y="18"/>
                 
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="5"/>

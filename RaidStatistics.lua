@@ -146,32 +146,34 @@ miog.fillRaidCharacter = function(playerGUID)
 			local current = a == 1 and raidFrame.Normal.Current or a == 2 and raidFrame.Heroic.Current or a == 3 and raidFrame.Mythic.Current
 			local previous = a == 1 and raidFrame.Normal.Previous or a == 2 and raidFrame.Heroic.Previous or a == 3 and raidFrame.Mythic.Previous
 
-			local currentProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].awakened[a]
-			local text2 = (currentProgress and currentProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
-			current:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
+			if(current and previous) then
+				local currentProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].awakened[a]
+				local text2 = (currentProgress and currentProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+				current:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
 
-			if(previous) then
-				local previousProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].regular[a]
-				local text = (previousProgress and previousProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
-				previous:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].desaturated))
-				previous:Show()
+				if(previous) then
+					local previousProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].regular[a]
+					local text = (previousProgress and previousProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
+					previous:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].desaturated))
+					previous:Show()
+				end
+
+				current:SetScript("OnEnter", function(self)
+					raidFrame_OnEnter(self, playerGUID, x.mapID, a, "awakened")
+				end)
+
+				current:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
+
+				previous:SetScript("OnEnter", function(self)
+					raidFrame_OnEnter(self, playerGUID, x.mapID, a, "regular")
+				end)
+
+				previous:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
 			end
-
-			current:SetScript("OnEnter", function(self)
-				raidFrame_OnEnter(self, playerGUID, x.mapID, a, "awakened")
-			end)
-
-			current:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-
-			previous:SetScript("OnEnter", function(self)
-				raidFrame_OnEnter(self, playerGUID, x.mapID, a, "regular")
-			end)
-
-			previous:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
 		end
 
 		counter = counter + 1

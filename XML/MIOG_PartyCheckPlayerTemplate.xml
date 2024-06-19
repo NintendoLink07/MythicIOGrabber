@@ -140,7 +140,7 @@
                 <FontString parentKey="Durability" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
                     <Size x="33" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="20"/>
+                        <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="16"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -151,7 +151,7 @@
                 <Texture parentKey="Keystone">
                     <Size x="15" y="15" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Durability" relativePoint="RIGHT" x="20"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Durability" relativePoint="RIGHT" x="16"/>
                     </Anchors>
                 </Texture>
             </Layer>

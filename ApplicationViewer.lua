@@ -163,7 +163,6 @@ local function sortApplicantList(applicant1, applicant2)
 end
 
 local function createApplicantFrame(applicantID)
-
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
 	if(applicantData) then
@@ -204,12 +203,16 @@ local function createApplicantFrame(applicantID)
 
 			end
 
+
 			local nameTable = miog.simpleSplit(name, "-")
 
 			if(not nameTable[2]) then
 				nameTable[2] = GetNormalizedRealmName()
 
-				name = nameTable[1] .. "-" .. nameTable[2]
+				if(nameTable[2]) then
+					name = nameTable[1] .. "-" .. nameTable[2]
+
+				end
 
 			end
 
@@ -521,6 +524,11 @@ local function gatherSortData()
 
 							if(not nameTable[2]) then
 								nameTable[2] = GetNormalizedRealmName()
+				
+								if(nameTable[2]) then
+									name = nameTable[1] .. "-" .. nameTable[2]
+				
+								end
 
 							end
 

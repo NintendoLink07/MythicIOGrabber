@@ -362,7 +362,7 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 	characterFrame.Score:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score)
 	characterFrame.Score:SetTextColor(miog.createCustomColorForRating(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score):GetRGBA())
 
-	if(miog.F.WEEKLY_AFFIX) then
+	if(miog.F.WEEKLY_AFFIX and miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX]) then
 		characterFrame.Affix1:SetTexture(miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX][3])
 		characterFrame.Affix2:SetTexture(miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX == 9 and 10 or 9][3])
 	end

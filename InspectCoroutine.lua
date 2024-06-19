@@ -10,24 +10,22 @@ local lastNotifyTime = 0
 
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_InspectCoroutineEventReceiver")
 
-MIOG_InspectedGUIDs = {}
+MIOG_InspectedNames = {}
 MIOG_SavedSpecIDs = {}
 
 local timers = {}
 
 local currentInspection = nil
 
---/run MIOG_SavedSettings.sortMethods.table.partyCheck = nil
-
 local function sortPartyCheckList(k1, k2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
 		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
-			local firstState = miog.PartyCheck.SortButtons[key]:GetActiveState()
+			local firstState = miog.PartyCheck.sortByCategoryButtons[key]:GetActiveState()
 
 			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
 
 				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
-					local secondState = miog.PartyCheck.SortButtons[innerKey]:GetActiveState()
+					local secondState = miog.PartyCheck.sortByCategoryButtons[innerKey]:GetActiveState()
 
 					if(k1[key] == k2[key]) then
 						return secondState == 1 and k1[innerKey] > k2[innerKey] or secondState == 2 and k1[innerKey] < k2[innerKey]
@@ -101,20 +99,55 @@ local function updateRosterInfoData()
 	miog.F.LFG_STATE = miog.checkLFGState()
 
 	local playersWithSpecData = 0
+	local playerName, playerRealm = UnitFullName("player")
+	local fullPlayerName = playerName .. "-" .. playerRealm
+
+	if(miog.F.LFG_STATE == "solo") then
+		local fileName, id = UnitClassBase("player")
+		local bestMap = C_Map.GetBestMapForUnit("player")
+
+		groupSystem.groupMember[fullPlayerName] = {
+			unitID = "player",
+			name = fullPlayerName,
+			shortName = UnitName("player"),
+			classID = id,
+			classFileName = fileName,
+			role = "DAMAGER",
+			group = 0,
+			specID = 0,
+			rank = rank,
+			level = UnitLevel("player"),
+			zone = bestMap and C_Map.GetMapInfo(bestMap).name or "N/A",
+			online = true,
+			dead = UnitIsDead("player"),
+			raidRole = role,
+			masterLooter = isML,
+			index = groupIndex,
+		}
+	end
 
 	for groupIndex = 1, numOfMembers, 1 do
 		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
 		if(name) then
 			local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and miog.F.LFG_STATE..groupIndex) or "player"
-			local guid = UnitGUID(unitID)
-			local shortName = UnitName(unitID)
 
-			if(guid) then
-				groupSystem.groupMember[guid] = {
+			local nameTable = miog.simpleSplit(name, "-")
+
+			if(not nameTable[2]) then
+				nameTable[2] = GetNormalizedRealmName()
+
+				if(nameTable[2]) then
+					name = nameTable[1] .. "-" .. nameTable[2]
+
+				end
+			end
+
+			if(name) then
+				groupSystem.groupMember[name] = {
 					unitID = unitID,
-					name = GetUnitName(unitID, true),
-					shortName = shortName,
+					name = name,
+					shortName = nameTable[1],
 					classID = fileName and miog.CLASSFILE_TO_ID[fileName],
 					classFileName = fileName,
 					role = combatRole,
@@ -130,13 +163,12 @@ local function updateRosterInfoData()
 					index = groupIndex,
 				}
 
-				if(guid ~= UnitGUID("player") and (not MIOG_InspectedGUIDs[guid] or GetTimePreciseSec() - MIOG_InspectedGUIDs[guid] > 300)) then
-
+				if(name ~= fullPlayerName and (not MIOG_InspectedNames[name] or GetTimePreciseSec() - MIOG_InspectedNames[name] > 300)) then
 					if(currentInspection == nil and UnitIsConnected(unitID) and CanInspect(unitID)) then
-						currentInspection = guid
+						currentInspection = name
 
-						if(timers[guid]) then
-							timers[guid]:Cancel()
+						if(timers[name]) then
+							timers[name]:Cancel()
 						end
 
 						local timer = C_Timer.NewTimer(10,
@@ -148,26 +180,25 @@ local function updateRosterInfoData()
 							end
 						end)
 
-						timers[guid] = timer
+						timers[name] = timer
 
-						C_Timer.After(numOfMembers <= 20 and miog.C.BLIZZARD_INSPECT_THROTTLE or 2,
+						C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE,
 						function()
-							if(groupSystem.groupMember[guid]) then
+							if(groupSystem.groupMember[name] and (not MIOG_SavedSpecIDs[name])) then
 								lastNotifyTime = GetTimePreciseSec()
 
-								NotifyInspect(unitID) -- 2nd argument for hook to check if own or other addons' notify
+								NotifyInspect(groupSystem.groupMember[name].unitID)
 			
-								local color = C_ClassColor.GetClassColor(fileName)
-								shortName = color and WrapTextInColorCode(groupSystem.groupMember[guid].shortName, color:GenerateHexColor()) or groupSystem.groupMember[guid].shortName
+								local color = C_ClassColor.GetClassColor(groupSystem.groupMember[name].classFileName)
+								local shortName = color and WrapTextInColorCode(groupSystem.groupMember[name].shortName, color:GenerateHexColor()) or groupSystem.groupMember[name].shortName
 								
 								miog.ClassPanel.LoadingSpinner:Show()
 								miog.ClassPanel.StatusString:SetText(shortName .. "\n(" .. playersWithSpecData .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
 							end
 						end)
 					else
-						--GUID gone
-						MIOG_InspectedGUIDs[guid] = nil
-						MIOG_SavedSpecIDs[guid] = nil
+						MIOG_InspectedNames[name] = nil
+						MIOG_SavedSpecIDs[name] = nil
 			
 					end
 				end
@@ -177,7 +208,7 @@ local function updateRosterInfoData()
 
 				end
 	
-				if(guid == currentInspection) then
+				if(name == currentInspection) then
 					currentInspectionStillInGroup = true
 				end
 			end
@@ -196,23 +227,19 @@ local function updateRosterInfoData()
 		ClearInspectPlayer(true)
 	end
 
-	for guid, member in pairs(groupSystem.groupMember) do
-		local libData = miog.checkSystem.groupMember[guid]
+	for name, member in pairs(groupSystem.groupMember) do
+		local libData = miog.checkSystem.groupMember[name]
 
-		if(MIOG_InspectedGUIDs[guid]) then
-			member.specID = MIOG_SavedSpecIDs[guid] or GetInspectSpecialization(member.unitID)
+		if(MIOG_InspectedNames[name]) then
+			member.specID = MIOG_SavedSpecIDs[name] or GetInspectSpecialization(member.unitID)
 
-			MIOG_SavedSpecIDs[guid] = member.specID ~= 0 and member.specID or nil
+			MIOG_SavedSpecIDs[name] = member.specID ~= 0 and member.specID or nil
 
-		elseif(guid == UnitGUID("player")) then
+		elseif(name == fullPlayerName) then
 			local specID, _, _, _, role = GetSpecializationInfo(GetSpecialization())
 			member.specID = specID
 			member.role = role
-		
-		elseif(libData and not MIOG_InspectedGUIDs[guid] or MIOG_SavedSpecIDs[guid]) then
-			MIOG_SavedSpecIDs[guid] = libData.specId ~= 0 and libData.specId or nil
-			MIOG_InspectedGUIDs[guid] = MIOG_SavedSpecIDs[guid] and GetTimePreciseSec() or nil
-			member.specID = MIOG_SavedSpecIDs[guid] and libData.specId or nil
+
 		end
 			
 		if(libData) then
@@ -220,7 +247,6 @@ local function updateRosterInfoData()
 			member.durability = libData.durability or 0
 			member.missingEnchants = libData.missingEnchants
 			member.missingGems = libData.missingGems
-			member.classID = libData.classId or member.classID
 
 		else
 			member.durability = 0
@@ -245,7 +271,7 @@ local function updateRosterInfoData()
 		local rioProfile
 
 		if(miog.F.IS_RAIDERIO_LOADED) then
-			rioProfile = RaiderIO.GetProfile(UnitFullName(member.unitID))
+			rioProfile = RaiderIO.GetProfile(member.name)
 		end
 
 		member.progressWeight = 0
@@ -261,10 +287,6 @@ local function updateRosterInfoData()
 				
 				for a, b in ipairs(orderedData) do
 					member.progress = (member.progress or "") .. wticc(b.parsedString, miog.DIFFICULTY[b.difficulty].color) .. " "
-
-					if(a == 3) then
-						break
-					end
 				
 					member.progressWeight = member.progressWeight + (b.weight or 0)
 
@@ -276,6 +298,10 @@ local function updateRosterInfoData()
 					
 						member.progressTooltipData = member.progressTooltipData .. b.shortName .. ": " .. wticc(miog.DIFFICULTY[b.difficulty].shortName .. ":" .. b.progress .. "/" .. b.bossCount, miog.DIFFICULTY[b.difficulty].color) .. "\r\n"
 					end
+
+					if(a == 3) then
+						break
+					end
 				end
 
 				if(member.progressWeight == 0) then
@@ -284,6 +310,7 @@ local function updateRosterInfoData()
 				end
 			end
 		else
+			member.progress = ""
 			member.score = 0
 		
 		end
@@ -306,7 +333,6 @@ local function updateRosterInfoData()
 		end
 
 		indexedGroup[#indexedGroup+1] = member
-		indexedGroup[#indexedGroup].guid = guid
 	end
 
 	local percentageInspected = playersWithSpecData / inspectableMembers
@@ -376,28 +402,6 @@ local function updateRosterInfoData()
 
 		miog.ClassPanel.Container:MarkDirty()
 
-		--[[if(numOfMembers < 5) then
-			if(groupSystem.roleCount["TANK"] < 1) then
-				indexedGroup[#indexedGroup + 1] = {guid = "emptyTank", unitID = "emptyTank", name = "afkTank", classID = 20, role = "TANK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
-				groupSystem.roleCount["TANK"] = groupSystem.roleCount["TANK"] + 1
-			end
-
-			if(groupSystem.roleCount["HEALER"] < 1 and #indexedGroup < 5) then
-				indexedGroup[#indexedGroup + 1] = {guid = "emptyHealer", unitID = "emptyHealer", name = "afkHealer", classID = 21, role = "HEALER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
-				groupSystem.roleCount["HEALER"] = groupSystem.roleCount["HEALER"] + 1
-
-			end
-
-			for i = 1, 3 - groupSystem.roleCount["DAMAGER"], 1 do
-				if(groupSystem.roleCount["DAMAGER"] < 3 and #indexedGroup < 5) then
-					indexedGroup[#indexedGroup + 1] = {guid = "emptyDPS" .. i, unitID = "emptyDPS" .. i, name = "afkDPS" .. i, classID = 22, role = "DAMAGER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"}
-					groupSystem.roleCount["DAMAGER"] = groupSystem.roleCount["DAMAGER"] + 1
-
-				end
-
-			end
-		end]]
-
 		if(miog.PartyCheck) then
 			table.sort(indexedGroup, sortPartyCheckList)
 		end
@@ -457,7 +461,7 @@ end
 miog.updateRosterInfoData = updateRosterInfoData
 
 local function resetInspectCoroutine()
-	MIOG_InspectedGUIDs = {}
+	MIOG_InspectedNames = {}
 	MIOG_SavedSpecIDs = {}
 
 	ClearInspectPlayer(true)
@@ -474,7 +478,7 @@ local function inspectCoroutineEvents(_, event, ...)
 
         if(isInitialLogin or isReloadingUi) then
 			if(isInitialLogin) then
-				MIOG_InspectedGUIDs = {}
+				MIOG_InspectedNames = {}
 				MIOG_SavedSpecIDs = {}
 			end
 
@@ -484,29 +488,39 @@ local function inspectCoroutineEvents(_, event, ...)
         end
 
     elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
-		local guid = UnitGUID(...)
+		local name = GetUnitName(..., true)
 
-		if(guid) then
-			if(groupSystem.groupMember[guid]) then
-				MIOG_InspectedGUIDs[guid] = nil
-				MIOG_SavedSpecIDs[guid] = nil
+		if(name) then
+			if(groupSystem.groupMember[name]) then
+				MIOG_InspectedNames[name] = nil
+				MIOG_SavedSpecIDs[name] = nil
 
 			end
 		end
 
 	elseif(event == "INSPECT_READY") then
-		if(currentInspection == ...) then
+		local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(...)
+		local fullName
+
+		if(realmName == "") then
+			realmName = GetNormalizedRealmName()
+		end
+
+		fullName = name .. "-" .. realmName
+
+		if(currentInspection == fullName) then
 			ClearInspectPlayer(true)
 		end
 
-		if(groupSystem.groupMember[...]) then
-			MIOG_InspectedGUIDs[...] = GetTimePreciseSec()
+		if(groupSystem.groupMember[fullName]) then
+			MIOG_InspectedNames[fullName] = GetTimePreciseSec()
 			
-			if(timers[...]) then
-				timers[...]:Cancel()
+			if(timers[fullName]) then
+				timers[fullName]:Cancel()
 			end
 
 			updateRosterInfoData()
+		
 		end
 	elseif(event == "GROUP_JOINED") then
 		updateRosterInfoData()

@@ -106,6 +106,9 @@ miog.APPLICANT_STATUS_INFO = {
 	[20] = {"Your boss kills filters do not match with this listing.", "Boss kills mismatch"},
 	[21] = {"Your lowest boss kills filter do not match with this listing.", "Lowest boss kills mismatch"},
 	[22] = {"Your highest boss kills filter do not match with this listing.", "Highest boss kills mismatch"},
+	[23] = {"Your age filters do not match with this listing.", "Age mismatch"},
+	[24] = {"Your lowest age filter do not match with this listing.", "Lowest age mismatch"},
+	[25] = {"Your highest rating age do not match with this listing.", "Highest age mismatch"},
  }
 
 miog.DIFFICULTY_ID_TO_COLOR = {
@@ -189,7 +192,8 @@ miog.C = {
 	-- 1.4 locks up the inspects after a maximum of ~15 inspects.
 	-- First 6 inspects are not affected by this throttle.
 	-- I have played around with many different delays or different request "sets" (e.g. every 3 seconds 2 applicants, every 5 seconds 4 applicants) but nothing seems to work as well as: if number of members < 6 all instantly, otherwise every 1.5 seconds (?????????)
-	BLIZZARD_INSPECT_THROTTLE = 1.9,
+	BLIZZARD_INSPECT_THROTTLE = 1.5,
+	BLIZZARD_INSPECT_THROTTLE_SAVE = 2,
 
 
 	PLAYER_GUID = UnitGUID("player"),

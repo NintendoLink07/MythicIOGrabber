@@ -1,0 +1,176 @@
+Changes since tag v10.2.0.118
+
+commit c609d3bf26e1e216aa8c306bc52d85a693e19f3f
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sat Jun 15 11:29:48 2024 -0300
+
+    More spellbook fixes
+
+commit f42d7b7f15bc1cd92359eeac8954d22be28d723b
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Thu Jun 13 14:37:24 2024 -0300
+
+    v11 fixes
+
+commit 21270aa10be3d2555e96c43b9cbf6dac44ae0bf8
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sun Jun 9 13:28:47 2024 -0300
+
+    GetOverrideSpell support for v10 and v11
+
+commit 1fe9a81c6e711e52d71b7632c96b830726787006
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sat Jun 8 21:21:03 2024 -0300
+
+    Fixing C_Traint
+
+commit 2760f7fcd7aa002bd58ae4c13c60080f255f3299
+Author: Vollmer <kristianvollmer@gmail.com>
+Date:   Fri Jun 7 16:03:45 2024 +0200
+
+    GetItemInfo is also being deprecated
+
+commit 2760f7fcd7aa002bd58ae4c13c60080f255f3299
+Author: Vollmer <kristianvollmer@gmail.com>
+Date:   Fri Jun 7 16:03:45 2024 +0200
+
+    GetItemInfo is also being deprecated
+
+commit 841697773b6cb35e2fc3ab53066d1d628636918b
+Author: Vollmer <kristianvollmer@gmail.com>
+Date:   Fri Jun 7 15:40:01 2024 +0200
+
+    add prelim ThingsToMantain for TWW
+
+commit a148a177fa1e58a7d95614edc9293732dd246e8e
+Author: Vollmer <kristianvollmer@gmail.com>
+Date:   Fri Jun 7 12:46:53 2024 +0200
+
+    Make GetItemStats local
+
+commit 0c267e0b93efecedd88a422c171e45a0ee9b3441
+Author: Vollmer <kristianvollmer@gmail.com>
+Date:   Fri Jun 7 12:45:03 2024 +0200
+
+    Remove unused local GetItemInfo fn
+
+commit df28b646b8130a4117430605e568981e9b4a159d
+Author: Vollmer <kristianvollmer@gmail.com>
+Date:   Fri Jun 7 12:44:12 2024 +0200
+
+    Add TWW compat functions for GetPlayerInformation
+
+commit 9b74ec1276ff25cf76142441c31f7f54d9161db3
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sat Apr 20 12:55:10 2024 -0300
+
+    Support to Cata Beta
+
+commit f2e7094604c52748533146de4e3f0698ba76b332
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Apr 5 17:53:28 2024 -0300
+
+    Added data for cataclysm
+
+commit 2f1eb2a0acf415cae93a36c081fddd30cd0872ec
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon Feb 5 20:05:42 2024 -0300
+
+    Adding LIB_OPEN_RAID_CROWDCONTROL to Wrath and Era to avoid errors
+
+commit a5f3fc9b5bcdb64189fd7d0ab29dc9ade463e930
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon Feb 5 19:58:23 2024 -0300
+
+    Added _G.LIB_OPEN_RAID_CROWDCONTROL, this is a list of crowd control spells (not shared on comms)
+
+commit 41c8eb96c20940be28bec096cdcdfe7aa4bba26c
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Jan 19 16:58:34 2024 -0300
+
+    Making sure that not in use code, do not run.
+
+commit 41c8eb96c20940be28bec096cdcdfe7aa4bba26c
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Jan 19 16:58:34 2024 -0300
+
+    Making sure that not in use code, do not run.
+
+commit 41c8eb96c20940be28bec096cdcdfe7aa4bba26c
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Jan 19 16:58:34 2024 -0300
+
+    Making sure that not in use code, do not run.
+
+commit 46095fa8989708d7929d186d964232a454ab6bc8
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jan 17 19:01:17 2024 -0300
+
+    Removed print debugstack error and let the errorhandler show the actual error instead of showing the path which leave the creation of the time that errored
+
+commit 46095fa8989708d7929d186d964232a454ab6bc8
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jan 17 19:01:17 2024 -0300
+
+    Removed print debugstack error and let the errorhandler show the actual error instead of showing the path which leave the creation of the time that errored
+
+commit 22b948ad7ed46ebb81d06bf46ae958284e94b7ff
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jan 17 11:38:13 2024 -0300
+
+    Make send keystone to guild faster, as it seems to not make part of the comm limitations.
+
+commit 51f79394de162a77d2618d57709512a0332f68e3
+Author: Allen Faure <afaure6@gmail.com>
+Date:   Tue Jan 16 16:35:14 2024 -0600
+
+    Fix Usage error
+
+commit 51f79394de162a77d2618d57709512a0332f68e3
+Author: Allen Faure <afaure6@gmail.com>
+Date:   Tue Jan 16 16:35:14 2024 -0600
+
+    Fix Usage error
+
+commit ef0f41755cf13fd5f8e07444494986bc9a8eb22b
+Author: Bruno Marcetic <bruno.marcetic@gmail.com>
+Date:   Tue Jan 16 23:16:51 2024 +0100
+
+    Added some comments
+
+commit a493ba17fa1b605d6835224c33779311276df3bb
+Author: Bruno Marcetic <bruno.marcetic@gmail.com>
+Date:   Tue Jan 16 14:22:21 2024 +0100
+
+    No need to queue for GUILD channel as its not throttled the same way
+
+commit 2a121ee5e851999c90d0c3a800da95256415019f
+Author: Bruno Marcetic <bruno.marcetic@gmail.com>
+Date:   Tue Jan 16 14:09:30 2024 +0100
+
+    Remove prints
+
+commit 43f8871979f3bbd12974368bdd0b93b6550c0402
+Author: Bruno Marcetic <bruno.marcetic@gmail.com>
+Date:   Tue Jan 16 13:52:06 2024 +0100
+
+    Use 9 as BURST MAX as we are not 100% sure when does the burst buffer start refilling
+
+commit ca43772cc22d4617e5430b288987364e76bea205
+Author: Bruno Marcetic <bruno.marcetic@gmail.com>
+Date:   Tue Jan 16 13:48:53 2024 +0100
+
+    Make use of Burst Buffer for network comms, as well swap to FIFO from FILO queue
+
+commit 1ade88cc95630e8522c02dd2af01181f53f2e414
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Jan 12 13:50:09 2024 -0300
+
+    Fixed the querying keystone data from the party, where sometimes would take a few seconds to receive results
+
+commit 95ceb1740108646c4079daddac4153e62ded9426
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Dec 29 17:20:08 2023 -0300
+
+    Update LibOpenRaid.lua
+

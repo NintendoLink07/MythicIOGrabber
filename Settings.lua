@@ -5,6 +5,10 @@ MIOG_SavedSettings = MIOG_SavedSettings
 local clearSignUpNote = LFGListApplicationDialog_Show
 local clearEntryCreation = LFGListEntryCreation_Clear
 
+miog.getSetting = function(name, subname, subSubName)
+	return subSubName and MIOG_SavedSettings[name].table[subname][subSubName] or subname and MIOG_SavedSettings[name].table[subname] or MIOG_SavedSettings[name]
+end
+
 local defaultOptionSettings = {
 	newVersion = {
 		type = "interal",
@@ -17,6 +21,12 @@ local defaultOptionSettings = {
 		title = "Currently used version",
 		access = "read",
 		value = 0, --SYNTAX VALUE, DOESN'T MATTER
+	},
+	resetSortSettings = {
+		type = "button",
+		title = "Reset all sorting settings (if sorting somehow isn't working anymore).|cFFFF0000 REQUIRES A RELOAD |r",
+		access = "read,write",
+		index = 7,
 	},
 	frameExtended = {
 		type = "variable",
@@ -37,7 +47,7 @@ local defaultOptionSettings = {
 		value = "",
 	},
 	resetAllSettings = {
-		type = "button",
+		type = "extraButton",
 		title = "Reset all settings",
 		access = "read,write",
 	},
@@ -148,6 +158,7 @@ local defaultOptionSettings = {
 				linkedDamager = false,
 				filterForDifficulty = false,
 				filterForRating = false,
+				filterForAge = false,
 				filterForBossKills = false,
 				filterForActivities = false,
 				filterForDungeons = false,
@@ -166,6 +177,8 @@ local defaultOptionSettings = {
 				maxDamager = 0,
 				minRating = 0,
 				maxRating = 0,
+				minAge = 0,
+				maxAge = 0,
 				minBossKills = 0,
 				maxBossKills = 0,
 				difficultyID = 0,
@@ -173,7 +186,8 @@ local defaultOptionSettings = {
 				raids = {},
 				raidBosses = {},
 				hardDecline = false,
-				softDecline = false
+				softDecline = false,
+				needsMyClass = true
 			},
 			["LFGListFrame.ApplicationViewer"] = {},
 			["LFGListFrame.SearchPanel"] = {},
@@ -511,93 +525,109 @@ miog.loadSettings = function()
 
 	for index, key in ipairs(orderedList) do
 		local setting = MIOG_SavedSettings[key]
-			for settingTypes in string.gmatch(setting.type, '([^,]+)') do
-				if(settingTypes == "checkbox") then
-					local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-					optionButton:SetNormalAtlas("checkbox-minimal")
-					optionButton:SetPushedAtlas("checkbox-minimal")
-					optionButton:SetCheckedTexture("checkmark-minimal")
-					optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-					optionButton:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-					optionButton:RegisterForClicks("LeftButtonDown")
-					optionButton:SetChecked(setting.value)
+		for settingTypes in string.gmatch(setting.type, '([^,]+)') do
+			if(settingTypes == "checkbox") then
+				local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+				optionButton:SetNormalAtlas("checkbox-minimal")
+				optionButton:SetPushedAtlas("checkbox-minimal")
+				optionButton:SetCheckedTexture("checkmark-minimal")
+				optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+				optionButton:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+				optionButton:RegisterForClicks("LeftButtonDown")
+				optionButton:SetChecked(setting.value)
 
-					if(key == "keepSignUpNote") then
+				if(key == "keepSignUpNote") then
 
-						optionButton:SetScript("OnClick", function()
-							setting.value = not setting.value
+					optionButton:SetScript("OnClick", function()
+						setting.value = not setting.value
 
-							if(setting.value == true) then
-								LFGListApplicationDialog_Show = keepSignUpNote
+						if(setting.value == true) then
+							LFGListApplicationDialog_Show = keepSignUpNote
 
-							else
-								LFGListApplicationDialog_Show = clearSignUpNote
+						else
+							LFGListApplicationDialog_Show = clearSignUpNote
 
-							end
+						end
 
-							C_UI.Reload()
-						end)
-					elseif(key == "keepInfoFromGroupCreation") then
+						C_UI.Reload()
+					end)
+				elseif(key == "keepInfoFromGroupCreation") then
 
-						optionButton:SetScript("OnClick", function()
-							setting.value = not setting.value
+					optionButton:SetScript("OnClick", function()
+						setting.value = not setting.value
 
-							if(setting.value == true) then
-								LFGListEntryCreation_Clear = keepInfoFromGroupCreation
+						if(setting.value == true) then
+							LFGListEntryCreation_Clear = keepInfoFromGroupCreation
 
-							else
-								LFGListEntryCreation_Clear = clearEntryCreation
-								
+						else
+							LFGListEntryCreation_Clear = clearEntryCreation
+							
 
-							end
+						end
 
-							C_UI.Reload()
-						end)
+						C_UI.Reload()
+					end)
 
-					elseif(key == "enableResultFrameClassSpecTooltip") then
-						optionButton:SetScript("OnClick", function()
-							setting.value = not setting.value
-						end)
-						
-					elseif(key == "enableClassPanel" and not miog.F.LITE_MODE and miog.ClassPanel) then
-						optionButton:SetScript("OnClick", function()
-							setting.value = not setting.value
-							miog.ClassPanel:SetShown(setting.value)
+				elseif(key == "enableResultFrameClassSpecTooltip") then
+					optionButton:SetScript("OnClick", function()
+						setting.value = not setting.value
+					end)
 
-						end)
-
+				elseif(key == "enableClassPanel" and not miog.F.LITE_MODE and miog.ClassPanel) then
+					optionButton:SetScript("OnClick", function()
+						setting.value = not setting.value
 						miog.ClassPanel:SetShown(setting.value)
 
-					elseif(key == "favouredApplicants") then
-						optionButton:SetScript("OnClick", function()
-							setting.value = not setting.value
+					end)
 
-							C_UI.Reload()
-						end)
+					miog.ClassPanel:SetShown(setting.value)
 
-					elseif(key == "liteMode") then
-						optionButton:SetScript("OnClick", function()
-							setting.value = not setting.value
+				elseif(key == "favouredApplicants") then
+					optionButton:SetScript("OnClick", function()
+						setting.value = not setting.value
 
-							miog.F.LITE_MODE = setting.value
+						C_UI.Reload()
+					end)
 
-							C_UI.Reload()
-						end)
+				elseif(key == "liteMode") then
+					optionButton:SetScript("OnClick", function()
+						setting.value = not setting.value
 
-					end
+						miog.F.LITE_MODE = setting.value
 
-					local optionButtonString = miog.createBasicFontString("persistent", 10, optionButton)
-					optionButtonString:SetWidth(optionPanelContainer:GetWidth() - optionButton:GetWidth() - 15)
-					optionButtonString:SetPoint("LEFT", optionButton, "RIGHT", 10, 0)
-					optionButtonString:SetText(setting.title)
+						C_UI.Reload()
+					end)
 
-					optionButtonString:SetWordWrap(true)
-					optionButtonString:SetNonSpaceWrap(true)
-
-					lastOption = optionButton
 				end
+
+				local optionButtonString = miog.createBasicFontString("persistent", 10, optionButton)
+				optionButtonString:SetWidth(optionPanelContainer:GetWidth() - optionButton:GetWidth() - 15)
+				optionButtonString:SetPoint("LEFT", optionButton, "RIGHT", 10, 0)
+				optionButtonString:SetText(setting.title)
+
+				optionButtonString:SetWordWrap(true)
+				optionButtonString:SetNonSpaceWrap(true)
+
+				lastOption = optionButton
+			elseif(settingTypes == "button") then
+				local button = CreateFrame("Button", nil, miog.interfaceOptionsPanel, "UIPanelButtonNoTooltipTemplate")
+				button:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+				button:SetText("Reset sorting settings")
+				button:FitToText()
+				
+				if(key == "resetSortSettings") then
+					button:SetScript("OnClick", function()
+						MIOG_SavedSettings.sortMethods = nil
+
+						C_UI.Reload()
+					end)
+				end
+						
+				button:Show()
+
+				lastOption = button
 			end
-		--end
+		end
 	end
 
 	if(MIOG_SavedSettings["backgroundOptions"]) then
@@ -628,7 +658,7 @@ miog.loadSettings = function()
 					
 					if(miog.AdventureJournal) then
 						miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
-					end		
+					end
 				end
 
 				optionDropdown:CreateEntryFrame(info)

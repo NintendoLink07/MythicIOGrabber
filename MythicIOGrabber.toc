@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 2.1.4a
+## Version: 2.1.5
 ## SavedVariables: MIOG_SavedSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_InspectQueue, MIOG_InspectedGUIDs, MIOG_SavedSpecIDs
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -116,6 +116,7 @@ XML\PVP\MIOG_PVPStatisticsBracketTemplate.xml
 XML\PVP\MIOG_PVPStatisticsColumnTemplate.xml
 
 XML\MIOG_Teleports.xml
+
 XML\MIOG_GearingChart.xml
 XML\MIOG_GearingChartLine.xml
 XML\MIOG_GearingChartLegendTextureTemplate.xml
@@ -123,13 +124,13 @@ XML\MIOG_GearingChartLegendTextureTemplate.xml
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_HolidayFrameTemplate.xml
 
-XML\MIOG_AdventureJournal.xml
-XML\MIOG_AdventureJournalAbilityTemplate.xml
-XML\MIOG_AdventureJournalAbilityDifficultyTemplate.xml
-XML\MIOG_AdventureJournalLootItemTemplate.xml
-XML\MIOG_AdventureJournalLootSlotLineTemplate.xml
-XML\MIOG_AdventureJournalCreatureButtonTemplate.xml
-XML\MIOG_AdventureJournalAbilitySwitchTemplate.xml
+XML\AdventureJournal\MIOG_AdventureJournal.xml
+XML\AdventureJournal\MIOG_AdventureJournalAbilityTemplate.xml
+XML\AdventureJournal\MIOG_AdventureJournalAbilityDifficultyTemplate.xml
+XML\AdventureJournal\MIOG_AdventureJournalLootItemTemplate.xml
+XML\AdventureJournal\MIOG_AdventureJournalLootSlotLineTemplate.xml
+XML\AdventureJournal\MIOG_AdventureJournalCreatureButtonTemplate.xml
+XML\AdventureJournal\MIOG_AdventureJournalAbilitySwitchTemplate.xml
 
 XML\MIOG_PartyCheck.xml
 XML\MIOG_PartyCheckPlayerTemplate.xml

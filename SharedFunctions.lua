@@ -290,8 +290,8 @@ miog.getRaidSortData = getRaidSortData
 
 miog.hideSidePanel = function(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-	self:GetParent():GetParent():Hide()
-	self:GetParent():GetParent():GetParent().ButtonPanel:Show()
+	self:GetParent():Hide()
+	self:GetParent():GetParent().ButtonPanel:Show()
 
 	MIOG_SavedSettings.activeSidePanel.value = ""
 end

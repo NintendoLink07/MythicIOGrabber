@@ -366,7 +366,10 @@ local function handler(msg, editBox)
 		if(not nameTable[2]) then
 			nameTable[2] = GetNormalizedRealmName()
 
-			rest = nameTable[1] .. "-" .. nameTable[2]
+			if(nameTable[2]) then
+				rest = nameTable[1] .. "-" .. nameTable[2]
+
+			end
 
 		end
 

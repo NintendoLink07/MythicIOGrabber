@@ -2,44 +2,26 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_LastInvitesTemplate" inherits="BackdropTemplate" virtual="true">
         <Frames>
-            <Frame parentKey="TitleBar" inherits="BackdropTemplate">
-                <Size y="20" />
+             <Button parentKey="Retract" inherits="UIButtonTemplate">
+                <Size x="15" y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-5" y="-3" />
                 </Anchors>
 
-                <Frames>
-                    <Button parentKey="Retract" inherits="UIButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="-1"/>
-                        </Anchors>
+                <NormalTexture file="interface/buttons/arrow-down-up.blp" />
+                <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
 
-                        <NormalTexture file="interface/buttons/arrow-down-up.blp" />
-                        <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
-
-                        <Scripts>
-                            <OnLoad>
-                                self:GetNormalTexture():SetRotation(-math.pi/2)
-                                self:GetDisabledTexture():SetRotation(-math.pi/2)
-                            </OnLoad>
-                        </Scripts>
-                    </Button>
-                </Frames>
-
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="TOP" outline="NORMAL" text="Last invites" wordwrap="true" nonspacewrap="true" spacing="0">
-
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
+                <Scripts>
+                    <OnLoad>
+                        self:GetNormalTexture():SetRotation(-math.pi/2)
+                        self:GetDisabledTexture():SetRotation(-math.pi/2)
+                    </OnLoad>
+                </Scripts> 
+            </Button>
 
             <Frame parentKey="SpecificScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Retract" relativePoint="BOTTOMLEFT"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
             </Frame>
