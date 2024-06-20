@@ -63,6 +63,51 @@ end
 
 --local forceSeasonID = 13
 
+miog.updateProgressData = function()
+    local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
+
+    if(not seasonID or seasonID == -1) then
+        seasonID = 12
+
+    end
+
+    local gearingData = miog.GEARING_CHART[seasonID]
+    local r, g, b
+
+    for k, v in pairs(miog.GEARING_CHART) do
+        if(k == seasonID) then
+            for a in pairs(v.itemLevelInfo) do
+                local progressValue = miog.getVaultProgress(a)
+                if(progressValue ~= "") then
+                    r, g, b = nil, nil, nil
+
+                    for x, y in ipairs(v.trackInfo) do
+                        if(a > v.maxUpgradeItemLevel) then
+                            r, g, b =  miog.ITEM_QUALITY_COLORS[6].color:GetRGB()
+                            
+                        else
+                            for n = 1, y.length, 1 do
+                                if(not v.awakenedInfo and a == y.data[n] or x ~= #v.trackInfo and a == y.data[n]) then
+                                    r, g, b =  miog.ITEM_QUALITY_COLORS[x - 1].color:GetRGB()
+
+                                end
+                            end
+                        end
+                    end
+            
+                    if(r == nil) then
+                        r, g, b = 1, 1, 1
+            
+                    end
+
+                    currentChildren[a].Progress:SetText(progressValue)
+                    currentChildren[a].Progress:SetTextColor(r,g,b,1)
+                end
+            end
+        end
+    end
+end
+
 miog.insertGearingData = function()
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
 
@@ -114,9 +159,6 @@ miog.insertGearingData = function()
                 r, g, b = nil, nil, nil
 
                 for x, y in ipairs(v.trackInfo) do
-                    --if(v.baseItemLevel <= itemLevel and (miog.GEARING_CHART[seasonID].awakenedInfo and (k == #miog.GEARING_CHART[seasonID].trackInfo and itemLevel > miog.GEARING_CHART[seasonID].trackInfo[k - 1].maxItemLevel or k ~= #miog.GEARING_CHART[seasonID].trackInfo) or not miog.GEARING_CHART[seasonID].awakenedInfo)) then
-                    --if(itemLevel <= v.maxItemLevel and (k == 1 and v.baseItemLevel <= itemLevel or itemLevel > miog.GEARING_CHART[seasonID].trackInfo[k - 1].maxItemLevel)) then
-
                     if(a > v.maxUpgradeItemLevel) then
                         r, g, b =  miog.ITEM_QUALITY_COLORS[6].color:GetRGB()
                         
@@ -142,8 +184,8 @@ miog.insertGearingData = function()
 
                 currentChildren[a].Other:SetTextColor(r,g,b,1)
         
-                currentChildren[a].Progress:SetText(miog.getVaultProgress(a))
-                currentChildren[a].Progress:SetTextColor(r,g,b,1)
+                --currentChildren[a].Progress:SetText(miog.getVaultProgress(a))
+                --currentChildren[a].Progress:SetTextColor(r,g,b,1)
             end
 
         end
@@ -157,27 +199,26 @@ miog.loadGearingChart = function()
     local singleGrid = CreateFrame("Frame", nil, miog.Gearing.RowLayout, "MIOG_GearingChartLine")
     singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
     singleGrid.layoutIndex = 1
-    singleGrid.bottomPadding = 5
 
-    singleGrid.ItemLevel.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+    singleGrid.ItemLevel.layoutIndex = 1
     singleGrid.ItemLevel:SetText("ILvl")
 
-    singleGrid.Track.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+    singleGrid.Track.layoutIndex = 2
     singleGrid.Track:SetText("Track")
 
-    singleGrid.Raid.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+    singleGrid.Raid.layoutIndex = 3
     singleGrid.Raid:SetText("Raid")
 
-    singleGrid.Dungeon.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+    singleGrid.Dungeon.layoutIndex = 4
     singleGrid.Dungeon:SetText("Dng Loot")
 
-    singleGrid.DungeonVault.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+    singleGrid.DungeonVault.layoutIndex = 5
     singleGrid.DungeonVault:SetText("Dng Vault")
 
-    singleGrid.Other.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+    singleGrid.Other.layoutIndex = 6
     singleGrid.Other:SetText("Other")
 
-    singleGrid.Progress.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+    singleGrid.Progress.layoutIndex = 7
     singleGrid.Progress:SetText("Progress")
     
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
@@ -193,21 +234,20 @@ miog.loadGearingChart = function()
                 singleGrid = CreateFrame("Frame", nil, miog.Gearing.RowLayout, "MIOG_GearingChartLine")
                 singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
                 singleGrid.layoutIndex = a
-                singleGrid.bottomPadding = 5
     
-                singleGrid.ItemLevel.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+                singleGrid.ItemLevel.layoutIndex = 1
     
-                singleGrid.Track.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+                singleGrid.Track.layoutIndex = 2
     
-                singleGrid.Raid.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+                singleGrid.Raid.layoutIndex = 3
     
-                singleGrid.Dungeon.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+                singleGrid.Dungeon.layoutIndex = 4
     
-                singleGrid.DungeonVault.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+                singleGrid.DungeonVault.layoutIndex = 5
     
-                singleGrid.Other.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+                singleGrid.Other.layoutIndex = 6
     
-                singleGrid.Progress.layoutIndex = #singleGrid:GetLayoutChildren() + 1
+                singleGrid.Progress.layoutIndex = 7
 
                 currentChildren[a] = singleGrid
             end

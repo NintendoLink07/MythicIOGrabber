@@ -5,7 +5,8 @@
             <KeyValue key="isHorizontal" value="true" type="boolean" />
             <KeyValue key="layoutFramesGoingRight" value="true" type="boolean" />
             <KeyValue key="stride" value="7" type="number" />
-            <KeyValue key="childXPadding" value="10" type="number" /> 
+            <KeyValue key="childXPadding" value="10" type="number" />
+            <KeyValue key="fixedHeight" value="13" type="number" />
         </KeyValues>
 
         <Layers>
@@ -15,7 +16,7 @@
                 </FontString>
 
                 <FontString parentKey="Track" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="115" />
+                    <Size x="95" />
                 </FontString>
 
                 <FontString parentKey="Raid" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
@@ -35,7 +36,7 @@
                 </FontString>
 
                 <FontString parentKey="Progress" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="200" />
+                    <Size x="80" />w
                 </FontString>
             </Layer>
 

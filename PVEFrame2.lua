@@ -229,6 +229,7 @@ local function createPVEFrameReplacement()
 		miog.gatherMPlusStatistics()
 		miog.gatherPVPStatistics()
 		miog.gatherRaidStatistics()
+		miog.updateProgressData()
 
 		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
 		
