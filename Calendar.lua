@@ -4,7 +4,6 @@ local wticc = WrapTextInColorCode
 
 local calendarCoroutine = nil
 
-local lastOffset, lastMonthDay, lastIndex
 local framePool
 local counter = 0
 
@@ -13,7 +12,6 @@ local function resetHolidayFrame(_, frame)
 	frame.layoutIndex = nil
 
 	frame.DateBar.Title:SetText()
-	--frame.Date:SetText()
 	frame.Icon:SetTexture(nil)
 
 ---@diagnostic disable-next-line: undefined-field
@@ -22,9 +20,55 @@ end
 
 local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
 	for i = 1, numEvents, 1 do
-		lastOffset, lastMonthDay, lastIndex = offsetMonths, monthDay, i
-		local success = C_Calendar.OpenEvent(offsetMonths, monthDay, i)
+        local info = C_Calendar.GetHolidayInfo(offsetMonths, monthDay, i)
 
+        if(info and info.endTime and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.endTime) >= 0 and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.startTime) < 0) then
+            counter = counter + 1
+            
+            local cFrame = framePool:Acquire()
+            cFrame:SetWidth(165)
+            cFrame.layoutIndex = counter
+
+            cFrame.Icon:SetTexture(info.texture)
+            cFrame.Icon:SetTexCoord(0, 0.70, 0, 0.70)
+            cFrame.DateBar.Title:SetText(info.name)
+            
+            local startTimeSeconds = time({year = info.startTime.year, month = info.startTime.month, day = info.startTime.monthDay, hour = info.startTime.hour, minute = info.startTime.minute})
+            local endTimeSeconds = time({year = info.endTime.year, month = info.endTime.month, day = info.endTime.monthDay, hour = info.endTime.hour, minute = info.endTime.minute})
+            local totalDurationInSeconds = endTimeSeconds - startTimeSeconds
+            local currentProgress = time() - startTimeSeconds
+            local timeTillEnd = endTimeSeconds - time()
+
+            local formatter = CreateFromMixins(SecondsFormatterMixin)
+            formatter:SetStripIntervalWhitespace(true)
+            formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
+            
+            local timeTillEndPerc = currentProgress / totalDurationInSeconds
+
+            cFrame.DateBar:SetStatusBarColor(timeTillEndPerc, 1 - timeTillEndPerc, 0, 1)
+            cFrame.DateBar:SetMinMaxValues(0, 1)
+            cFrame.DateBar:SetValue(timeTillEndPerc)
+
+            cFrame.DateBar.Title:SetText(cFrame.DateBar.Title:GetText() .. ": " .. formatter:Format(timeTillEnd))
+
+            cFrame:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(info.name, nil, nil, nil, nil, true)
+                GameTooltip:AddLine("Start: " .. CalendarUtil.FormatCalendarTimeWeekday(info.startTime))
+                GameTooltip:AddLine("End: " .. CalendarUtil.FormatCalendarTimeWeekday(info.endTime))
+
+                if(info.description ~= "") then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine(info.description, 1, 1, 1, true)
+                end
+
+                GameTooltip:Show()
+            end)
+
+            cFrame:Show()
+
+            miog.MainTab.Information.Holiday:MarkDirty()
+        end
 	end
 end
 
@@ -34,7 +78,7 @@ local function calendarOnEvent(_, event, ...)
             framePool:ReleaseAll()
         end
 
-        local currentTime = C_DateAndTime.GetCurrentCalendarTime()
+        local currentTime = miog.F.CURRENT_DATE or C_DateAndTime.GetCurrentCalendarTime()
         local offset = 0
 
        --[[ if(CalendarFrame and CalendarFrame.viewedYear) then
@@ -52,6 +96,10 @@ local function calendarOnEvent(_, event, ...)
             --print(offset, viewedInSeconds, currentInSeconds)
         end]]
 
+        local monthInfo = C_Calendar.GetMonthInfo(0)
+
+        offset = currentTime.month - monthInfo.month
+
         local numEvents = C_Calendar.GetNumDayEvents(offset, currentTime.monthDay)
 
         if(calendarCoroutine) then
@@ -59,68 +107,13 @@ local function calendarOnEvent(_, event, ...)
 
             if(status == "dead") then
                 calendarCoroutine = coroutine.create(requestCalendarEventInfo)
-                coroutine.resume(calendarCoroutine, 0, currentTime.monthDay, numEvents)
+                coroutine.resume(calendarCoroutine, offset, currentTime.monthDay, numEvents)
 
             end
                 
             if(status == "suspended") then
-                coroutine.resume(calendarCoroutine, 0, currentTime.monthDay, numEvents)
+                coroutine.resume(calendarCoroutine, offset, currentTime.monthDay, numEvents)
 
-            end
-        end
-
-    elseif(event == "CALENDAR_UPDATE_EVENT") then
-
-    elseif(event == "CALENDAR_OPEN_EVENT") then
-        if(... == "HOLIDAY") then
-            local info = C_Calendar.GetHolidayInfo(lastOffset, lastMonthDay, lastIndex)
-
-            if(info and info.endTime and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.endTime) >= 0 and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.startTime) < 0) then
-                counter = counter + 1
-                
-                local cFrame = framePool:Acquire()
-                cFrame:SetWidth(165)
-                cFrame.layoutIndex = counter
-
-                cFrame.Icon:SetTexture(info.texture)
-                cFrame.Icon:SetTexCoord(0, 0.70, 0, 0.70)
-                cFrame.DateBar.Title:SetText(info.name)
-                
-                local startTimeSeconds = time({year = info.startTime.year, month = info.startTime.month, day = info.startTime.monthDay, hour = info.startTime.hour, minute = info.startTime.minute})
-                local endTimeSeconds = time({year = info.endTime.year, month = info.endTime.month, day = info.endTime.monthDay, hour = info.endTime.hour, minute = info.endTime.minute})
-                local totalDurationInSeconds = endTimeSeconds - startTimeSeconds
-                local currentProgress = time() - startTimeSeconds
-                local timeTillEnd = endTimeSeconds - time()
-
-                local formatter = CreateFromMixins(SecondsFormatterMixin)
-                formatter:SetStripIntervalWhitespace(true)
-                formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
-                
-                local timeTillEndPerc = currentProgress / totalDurationInSeconds
-
-                cFrame.DateBar:SetStatusBarColor(timeTillEndPerc, 1 - timeTillEndPerc, 0, 1)
-                cFrame.DateBar:SetMinMaxValues(0, 1)
-                cFrame.DateBar:SetValue(timeTillEndPerc)
-
-                cFrame.DateBar.Title:SetText(cFrame.DateBar.Title:GetText() .. ": " .. formatter:Format(timeTillEnd))
-
-                cFrame:SetScript("OnEnter", function(self)
-                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    GameTooltip:SetText(info.name, nil, nil, nil, nil, true)
-                    GameTooltip:AddLine("Start: " .. CalendarUtil.FormatCalendarTimeWeekday(info.startTime))
-                    GameTooltip:AddLine("End: " .. CalendarUtil.FormatCalendarTimeWeekday(info.endTime))
-
-                    if(info.description ~= "") then
-                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                        GameTooltip:AddLine(info.description, 1, 1, 1, true)
-                    end
-
-                    GameTooltip:Show()
-                end)
-
-                cFrame:Show()
-
-                miog.MainTab.Information.Holiday:MarkDirty()
             end
         end
     end

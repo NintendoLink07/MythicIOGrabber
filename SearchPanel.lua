@@ -9,11 +9,11 @@ searchResultSystem.declinedGroups = {}
 
 local function sortSearchResultList(result1, result2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.searchPanel) do
-		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
+		if(tableElement.currentLayer == 1) then
 			local firstState = tableElement.currentState
 
 			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.searchPanel) do
-				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
+				if(innerTableElement.currentLayer == 2) then
 					local secondState = innerTableElement.currentState
 
 					if(result1.appStatus == "applied" and result2.appStatus ~= "applied") then
@@ -625,6 +625,10 @@ local function updateSearchResultFrameApplicationStatus(resultID, new, old)
 	end
 
 	return false
+end
+
+local function updateSearchResultFrameBlizzardStyle(resultID)
+
 end
 
 local function updateResultFrameStatus(resultID)
@@ -1523,7 +1527,7 @@ local function searchResultsReceived()
 				blocked = true
 				miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 
-				C_Timer.After(MIOG_SavedSettings.sortMethods.table.searchPanel.numberOfActiveMethods > 0 and 0.45 or 0, function()
+				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.45 or 0, function()
 					miog.SearchPanel.Status:Hide()
 					miog.SearchPanel.Status.LoadingSpinner:Hide()
 					updateSearchResultList()

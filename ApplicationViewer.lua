@@ -102,13 +102,13 @@ local function sortApplicantList(applicant1, applicant2)
 	local applicant2Member1 = applicant2[1]
 
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.applicationViewer) do
-		if(type(tableElement) == "table" and tableElement.currentLayer == 1) then
-			local firstState = miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[key]:GetActiveState()
+		if(tableElement.currentLayer == 1) then
+			local firstState = tableElement.currentState
 
 			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.applicationViewer) do
 
-				if(type(innerTableElement) == "table" and innerTableElement.currentLayer == 2) then
-					local secondState = miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons[innerKey]:GetActiveState()
+				if(innerTableElement.currentLayer == 2) then
+					local secondState = innerTableElement.currentState
 
 					if(applicant1Member1.favoured and not applicant2Member1.favoured) then
 						return true
@@ -180,6 +180,7 @@ local function createApplicantFrame(applicantID)
 		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTextRowTemplate", miog.resetFrame)
 		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame)
 		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame)
+		applicantFrame.applicantID = applicantID
 
 		applicantFrame.fontStringPool = applicantFrame.fontStringPool or CreateFontStringPool(applicantFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
 		applicantFrame.texturePool = applicantFrame.texturePool or CreateTexturePool(applicantFrame, "ARTWORK", nil, nil, miog.resetTexture)
@@ -216,18 +217,36 @@ local function createApplicantFrame(applicantID)
 
 			end
 
+			local playerIsIgnored = C_FriendList.IsIgnored(name)
+
+			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
+
 			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOG_ApplicantMemberFrameTemplate", applicantFrame)
 			applicantMemberFrame:ClearBackdrop()
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.BasicInformation:SetWidth(applicantMemberFrame.fixedWidth - 2)
+			applicantMemberFrame.memberIdx = applicantIndex
 			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
+			applicantMemberFrame:SetScript("OnEnter", function(self)
+				if(playerIsIgnored) then
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					GameTooltip:SetText("Player is on your ignore list")
+					GameTooltip:Show()
+
+				else
+					LFGListApplicantMember_OnEnter(self)
+
+					if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
+						GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
+
+					end
+				end
+			end)
+			applicantMemberFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
 
 			if(MIOG_SavedSettings.favouredApplicants.table[name]) then
 				miog.createFrameBorder(applicantMemberFrame, 1, CreateColorFromHexString("FFe1ad21"):GetRGBA())
-
-			else
-				--miog.createFrameBorder(applicantMemberFrame, 2, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 			
 			end
 
@@ -256,10 +275,6 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			local playerIsIgnored = C_FriendList.IsIgnored(name)
-
-			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
-
 			local nameFontString = applicantMemberFrame.BasicInformation.Name
 			nameFontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
 			nameFontString:SetScript("OnMouseDown", function(_, button)
@@ -273,26 +288,6 @@ local function createApplicantFrame(applicantID)
 					applicantMemberFrame.LinkBox:SetAutoFocus(false)
 
 				end
-			end)
-			nameFontString:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(nameFontString, "ANCHOR_RIGHT")
-
-				if(playerIsIgnored) then
-					GameTooltip:SetText("Player is on your ignore list")
-
-				else
-					if(nameFontString:IsTruncated()) then
-						GameTooltip:SetText(nameFontString:GetText())
-					end
-
-					if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
-						GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
-
-					end
-				end
-
-				GameTooltip:Show()
-
 			end)
 
 			if(miog.F.LITE_MODE) then

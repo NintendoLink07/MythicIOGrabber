@@ -1052,6 +1052,7 @@ miog.createFrames = function()
 		miog.loadGearingChart()
 		miog.loadAdventureJournal()
 		miog.loadPartyCheck()
+		miog.loadGuildFrame()
 		
 	end
 

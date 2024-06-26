@@ -16,6 +16,8 @@ local function resetFrame(pool, childFrame)
 	childFrame.topPadding = nil
 	childFrame.rightPadding = nil
 	childFrame.memberInfo = nil
+	childFrame.memberIdx = nil
+	childFrame.applicantID = nil
 	
 	childFrame.encounterInfo = nil
 

@@ -78,6 +78,7 @@ miog.updateProgressData = function()
         if(k == seasonID) then
             for a in pairs(v.itemLevelInfo) do
                 local progressValue = miog.getVaultProgress(a)
+                
                 if(progressValue ~= "") then
                     r, g, b = nil, nil, nil
 

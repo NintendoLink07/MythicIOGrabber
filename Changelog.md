@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.2] - 2024-06-26
+
+### Added
+
+- A [Guild Panel] has been added!
+Here you can see all guild members basic info, their RaiderIO progress (m+ and raid) and their current key and the level of it.
+Of course all of it can be sorted.
+Since guilds are usually over a hundred members big it might lag here and there if you try to sort the list.
+
+### Fixed
+
+- [Calendar] Guild events between holiday events should no longer cause the holiday info to be discarded.
+
+- [Gearing Chart] The chart fully fits into the actual window.
+
+- [PartyCheck] Reseting a secondary sorting method will not bug out the UI anymore.
+
+- [PartyCheck] Keystones of party/raid members only get checked when you actually switch to the PartyCheck tab.
+Decreases lag when calling the main window.
+
+- [PartyCheck] Hands won't be checked for enchants anymore.
+
+
 ## [2.1.5c] - 2024-06-20
 
 ### Fixed
@@ -1672,7 +1695,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.1.5c..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2..HEAD
+[2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2
 [2.1.5c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5c
 [2.1.5b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5b
 [2.1.5a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5a

@@ -46,11 +46,18 @@ end
 
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
+        miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()
+
 		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
 		
 		miog.checkForSavedSettings()
 
 		miog.F.LITE_MODE = MIOG_SavedSettings.liteMode.value
+
+		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
+			miog.F.IS_RAIDERIO_LOADED = true
+
+		end
 
 		miog.createFrames()
 
@@ -58,15 +65,6 @@ miog.OnEvent = function(_, event, ...)
 		miog.loadRawData()
 		
 		EJ_SetDifficulty(8)
-
-		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
-			miog.F.IS_RAIDERIO_LOADED = true
-
-			if(not miog.F.LITE_MODE) then
-				miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
-			end
-
-		end
 		
 		for k, v in pairs(miog.SPECIALIZATIONS) do
 			if(k > 25) then
@@ -144,7 +142,7 @@ miog.OnEvent = function(_, event, ...)
         end
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		--miog.openRaidLib.RequestKeystoneDataFromParty()
-
+	
 	elseif(event == "CURRENCY_DISPLAY_UPDATE") then
 		if(miog.MainTab) then
 			local aspectInfo = C_CurrencyInfo.GetCurrencyInfo(2812)
@@ -186,11 +184,6 @@ miog.OnEvent = function(_, event, ...)
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
 		miog.pveFrame2:Hide()
-		
-		miog.F.QUEUE_STOP = true
-
-	elseif(event == "PLAYER_REGEN_ENABLED") then
-		miog.F.QUEUE_STOP = false
 
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then

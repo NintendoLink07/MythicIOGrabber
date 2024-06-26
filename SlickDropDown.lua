@@ -99,7 +99,7 @@ function SlickDropDown:ResetButton(button)
 end
 
 function SlickDropDown:ResetFrame(frame)
-	if(miog.F.QUEUE_STOP ~= true) then
+	if(not InCombatLockdown()) then
 		frame:Hide()
 		frame.layoutIndex = nil
 		frame.Name:SetText("")
@@ -120,6 +120,9 @@ function SlickDropDown:ResetFrame(frame)
 		frame:SetScript("OnClick", nil)
 		frame:SetScript("OnEnter", nil)
 		frame:SetScript("OnLeave", nil)
+	else
+		miog.F.UPDATE_AFTER_COMBAT = true
+
 	end
 end
 
@@ -464,7 +467,7 @@ local function setScriptsOnFrame(self)
 end
 
 function SlickDropDown:InsertCustomFrame(info, frame)
-	if(miog.F.QUEUE_STOP ~= true) then
+	if(not InCombatLockdown()) then
 		local list = nil
 	
 		local infoTable = info
@@ -516,11 +519,14 @@ function SlickDropDown:InsertCustomFrame(info, frame)
 		self:SetWidthToWidestFrame(infoTable)
 
 		return frame
+	else
+		miog.F.UPDATE_AFTER_COMBAT = true
+
 	end
 end
 
 function SlickDropDown:CreateEntryFrame(info)
-	if(miog.F.QUEUE_STOP ~= true) then
+	if(not InCombatLockdown()) then
 		local frame = nil
 		local list = nil
 
@@ -619,6 +625,9 @@ function SlickDropDown:CreateEntryFrame(info)
 		self:SetWidthToWidestFrame(infoTable)
 
 		return frame
+	else
+		miog.F.UPDATE_AFTER_COMBAT = true
+		
 	end
 end
 

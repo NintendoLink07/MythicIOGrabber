@@ -31,7 +31,7 @@
                 <FontString parentKey="Secondary" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                     <Size x="45" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="105"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="115"/>
                     </Anchors>
                 </FontString>
             </Layer>

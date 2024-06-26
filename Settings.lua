@@ -13,113 +13,100 @@ local defaultOptionSettings = {
 	newVersion = {
 		type = "interal",
 		title = "Newest version",
-		access = "read",
 		value = 200,
 	},
 	currentVersion = {
 		type = "interal",
 		title = "Currently used version",
-		access = "read",
 		value = 0, --SYNTAX VALUE, DOESN'T MATTER
 	},
 	resetSortSettings = {
 		type = "button",
 		title = "Reset all sorting settings (if sorting somehow isn't working anymore).|cFFFF0000 REQUIRES A RELOAD |r",
-		access = "read,write",
 		index = 7,
 	},
 	frameExtended = {
 		type = "variable",
 		title = "Extend the mainframe",
-		access = "read",
 		value = false,
 	},
 	frameManuallyResized = {
 		type = "variable",
 		title = "Resized the mainframe via resize button",
-		access = "read",
 		value = 0,
 	},
 	activeSidePanel = {
 		type = "variable",
 		title = "Currently active sidepanel",
-		access = "read",
 		value = "",
 	},
 	resetAllSettings = {
 		type = "extraButton",
 		title = "Reset all settings",
-		access = "read,write",
 	},
 	keepSignUpNote = {
 		type = "checkbox",
 		title = "|cFFFFFF00(Experimental)|r Find a group: Don't discard the sign up not.|cFFFF0000 REQUIRES A RELOAD |r",
 		value = true,
-		access = "read",
 		index = 6,
 	},
 	enableResultFrameClassSpecTooltip = {
 		type = "checkbox",
 		title = "(Search Panel) Enable/disable detailed tooltip information about a group listing (class and spec)",
 		value = true,
-		access = "read",
 		index = 4,
 	},
 	keepInfoFromGroupCreation = {
 		type = "checkbox",
 		title = "|cFFFFFF00(Experimental)|r Start a group: Don't discard the info you've entered into the group creation fields.|cFFFF0000 REQUIRES A RELOAD |r",
 		value = true,
-		access = "read",
 		index = 5,
 	},
 	mPlusStatistics = {
 		type = "variable",
 		title = "Mythic + Statistics for all your characters",
-		access = "read",
 		table = {},
 	},
 	pvpStatistics = {
 		type = "variable",
 		title = "PVP Statistics for all your characters",
-		access = "read",
 		table = {},
 	},
 	raidStatistics = {
 		type = "variable",
 		title = "Raid Statistics for all your characters",
-		access = "read",
 		table = {},
 	},
 	enableClassPanel = {
 		type = "checkbox",
 		title = "(Application Viewer) Enable the class panel for your group (shows class and spec data for your whole group after all inspects went through)",
-		access = "read",
 		value = true,
 		index = 3,
 	},
 	liteMode = {
 		type = "checkbox",
 		title = "Enable/disable the lite mode of this addon (use Blizzards \"Dungeons and Raids\" Frame with this addon's frames layered on top)",
-		access = "read",
 		value = false,
 		index = 1,
 	},
 	lastActiveSortingMethods = {
 		type = "variable",
 		title = "Last active sorting methods",
-		access = "read",
 	},
 	backgroundOptions = {
 		type = "dropdown",
 		title = "Background options",
-		access = "read",
 		value = 10,
+	},
+	guildKeystoneInfo = {
+		type = "variable",
+		title = "Guild keystone info",
+		table = {}
 	},
 	-- Name + Realm, time of last invite
 	lastInvitedApplicants = {
 		type = "variable",
 		title = "Last invited applicants",
-		access = "read",
 		table = {}
 	},
 	-- Name + Realm
@@ -127,15 +114,18 @@ local defaultOptionSettings = {
 		type = "checkbox,list",
 		title = "(Side Panel) Enable favoured applicants (this also shows/hides the right click dropdown option).|cFFFF0000 REQUIRES A RELOAD |r",
 		table = {},
-		access = "read",
 		value = true,
 		index = 2,
 	},
 	lastGroup = {
 		type = "variable",
 		title = "Activity name of the last group you got invited to",
-		access = "read",
 		value = "",
+	},
+	lastReset = {
+		type = "variable",
+		title = "Last reset",
+		value = 0
 	},
 	filterOptions = {
 		type = "variable",
@@ -192,7 +182,6 @@ local defaultOptionSettings = {
 			["LFGListFrame.ApplicationViewer"] = {},
 			["LFGListFrame.SearchPanel"] = {},
 		},
-		access = "read",
 	},
 	sortMethods = {
 		table = {
@@ -242,7 +231,6 @@ local defaultOptionSettings = {
 					currentState = 0,
 					active = false,
 				},
-				numberOfActiveMethods = 0,
 			},
 			searchPanel = {
 				primary = {
@@ -260,7 +248,6 @@ local defaultOptionSettings = {
 					currentState = 0,
 					active = false,
 				},
-				numberOfActiveMethods = 0,
 			},
 			applicationViewer = {
 				role = {
@@ -283,18 +270,52 @@ local defaultOptionSettings = {
 					currentState = 0,
 					active = false,
 				},
-				numberOfActiveMethods = 0,
+			},
+			guild = {
+				level = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				rank = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				class = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				keystone = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				keylevel = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				score = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
+				progressWeight = {
+					currentLayer = 0,
+					currentState = 0,
+					active = false,
+				},
 			}
 		},
 		type = "variable",
-		access = "read",
 		title = "Currently active sort algorithms, each with settings",
 	},
 	searchPanel_DeclinedGroups = {
 		type = "variable",
 		title = "Declined groups that are saved between loading screens / relogging",
 		table = {},
-		access = "read",
 	},
 	currentBlizzardFilters = {}
 }
@@ -321,11 +342,11 @@ local function compareSettings()
 	if(MIOG_SavedSettings.currentVersion == nil) then
 		MIOG_SavedSettings = defaultOptionSettings
 	end
+	
+	if(MIOG_SavedSettings.lastReset.value < C_DateAndTime.GetSecondsUntilWeeklyReset()) then
+		MIOG_SavedSettings.guildKeystoneInfo = nil
+		MIOG_SavedSettings.lastReset.value = C_DateAndTime.GetSecondsUntilWeeklyReset()
 
-	for key, optionEntry in pairs(MIOG_SavedSettings) do
-		if(not defaultOptionSettings[key]) then
-			MIOG_SavedSettings[key] = nil
-		end
 	end
 
 	for key, optionEntry in pairs(defaultOptionSettings) do
@@ -351,37 +372,52 @@ local function compareSettings()
 				MIOG_SavedSettings[key].index = optionEntry.index
 
 			end
-			
-			if(MIOG_SavedSettings[key].access ~= optionEntry.access) then
-				MIOG_SavedSettings[key].access = optionEntry.access
-				
-			end
 
-			if(MIOG_SavedSettings[key].access == "read,write") then
-				MIOG_SavedSettings[key].table = optionEntry.table
-				MIOG_SavedSettings[key].value = optionEntry.value
-				MIOG_SavedSettings[key].table = optionEntry.table
+			if(optionEntry.table) then
+				MIOG_SavedSettings[key].table = MIOG_SavedSettings[key].table or {}
 
-			else
-				if(optionEntry.table) then
-					MIOG_SavedSettings[key].table = MIOG_SavedSettings[key].table or {}
+				for tableKey, tableEntry in pairs(optionEntry.table) do
+					if(not MIOG_SavedSettings[key].table[tableKey]) then
+						MIOG_SavedSettings[key].table[tableKey] = tableEntry
 
-					for tableKey, tableEntry in pairs(optionEntry.table) do
-						if(not MIOG_SavedSettings[key].table[tableKey]) then
-							MIOG_SavedSettings[key].table[tableKey] = tableEntry
+					else
+						if(type(tableEntry) == "table") then
+							for innerTableKey, innerTableEntry in pairs(tableEntry) do
+								if(not MIOG_SavedSettings[key].table[tableKey][innerTableKey]) then
+									MIOG_SavedSettings[key].table[tableKey][innerTableKey] = innerTableEntry
+
+								else
+									if(type(innerTableEntry) == "table") then
+										for innererTableKey, innererTableEntry in pairs(innerTableEntry) do
+											if(not MIOG_SavedSettings[key].table[tableKey][innerTableKey][innererTableKey]) then
+												MIOG_SavedSettings[key].table[tableKey][innerTableKey][innererTableKey] = innererTableEntry
+											else
+											
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+
+				if(key == "sortMethods") then
+					for tableKey, tableEntry in pairs(MIOG_SavedSettings[key].table) do
+						if(defaultOptionSettings[key].table[tableKey] == nil) then
+							MIOG_SavedSettings[key].table[tableKey] = nil
 
 						else
 							if(type(tableEntry) == "table") then
 								for innerTableKey, innerTableEntry in pairs(tableEntry) do
-									if(not MIOG_SavedSettings[key].table[tableKey][innerTableKey]) then
-										MIOG_SavedSettings[key].table[tableKey][innerTableKey] = innerTableEntry
-
+									if(defaultOptionSettings[key].table[tableKey][innerTableKey] == nil) then
+										MIOG_SavedSettings[key].table[tableKey][innerTableKey] = nil
+										
 									else
 										if(type(innerTableEntry) == "table") then
 											for innererTableKey, innererTableEntry in pairs(innerTableEntry) do
-												if(not MIOG_SavedSettings[key].table[tableKey][innerTableKey][innererTableKey]) then
-													MIOG_SavedSettings[key].table[tableKey][innerTableKey][innererTableKey] = innererTableEntry
-												else
+												if(defaultOptionSettings[key].table[tableKey][innerTableKey][innererTableKey] == nil) then
+													MIOG_SavedSettings[key].table[tableKey][innerTableKey][innererTableKey] = nil
 												
 												end
 											end
@@ -402,6 +438,8 @@ local function compareSettings()
 
 	MIOG_SavedSettings.currentVersion.value = defaultOptionSettings.newVersion.value
 end
+
+--/run MIOG_SavedSettings.sortMethods.table.searchPanel.numberOfActiveMethods = 99
 
 --https://github.com/0xbs/premade-groups-filter/commit/e31067e0ec1d1345dabc3de4c9282cc33c9aa18c courtesy of PGF
 ---@diagnostic disable-next-line: duplicate-set-field --overwriting Blizzard function
@@ -695,7 +733,10 @@ miog.loadSettings = function()
 	end
 
 	for k, v in pairs(MIOG_SavedSettings.sortMethods.table) do
-		local buttonArray = k == "applicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons or k == "searchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons or k == "partyCheck" and miog.PartyCheck and miog.PartyCheck.SortButtons
+		local buttonArray = k == "applicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons
+		or k == "searchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons
+		or k == "partyCheck" and miog.PartyCheck and miog.PartyCheck.sortByCategoryButtons
+		or k == "guild" and miog.Guild and miog.Guild.sortByCategoryButtons
 
 		if(buttonArray) then
 			for sortKey, row in pairs(v) do

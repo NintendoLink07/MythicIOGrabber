@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Detailed raider io output of applicants
-## Version: 2.1.5c
+## Version: 2.2
 ## SavedVariables: MIOG_SavedSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_InspectQueue, MIOG_InspectedGUIDs, MIOG_SavedSpecIDs
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -45,6 +45,7 @@ LastInvites.lua
 GearingChart.lua
 AdventureJournal.lua
 PartyCheck.lua
+Guild.lua
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -61,13 +62,15 @@ XML\MIOG_DetailedInformationPanelTemplate.xml
 XML\MIOG_DetailedInformationPanelBackgroundRows.xml
 XML\MIOG_DetailedInformationPanelTextRowTemplate.xml
 XML\MIOG_DetailedInformationPanelSinglePanelTemplate.xml
+XML\MIOG_DetailedInformationPanelSmallTemplate.xml
 XML\MIOG_DungeonRowTemplate.xml
+XML\MIOG_RaidPanelTemplate.xml
+XML\MIOG_RaidPanelTierTemplate.xml
 XML\MIOG_RaidBossFrameTemplate.xml
+
 XML\MIOG_GroupMemberTemplate.xml
 XML\MIOG_SmallGroupMemberTemplate.xml
 XML\MIOG_ResultFrameBossFrameTemplate.xml
-XML\MIOG_RaidPanelTemplate.xml
-XML\MIOG_RaidPanelTierTemplate.xml
 
 XML\MIOG_VerticalButtonTemplate.xml
 XML\MIOG_QueueFrame.xml
@@ -138,5 +141,10 @@ XML\MIOG_PartyCheckPlayerTemplate.xml
 XML\MIOG_SortButtonWithTextTemplate.xml
 
 XML\MIOG_NavBarButtonTemplate.xml
+
+XML\MIOG_Guild.xml
+XML\MIOG_GuildPlayerTemplate.xml
+
+XML\MIOG_TabButtonTemplate.xml
 
 FuzzyAlgorithm.lua

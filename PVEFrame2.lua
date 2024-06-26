@@ -164,21 +164,10 @@ local function createPVEFrameReplacement()
 	local setup = false
 	
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
-		if(IsInRaid()) then
-			miog.openRaidLib.RequestKeystoneDataFromRaid()
-			miog.openRaidLib.GetAllUnitsGear()
-			
-		elseif(IsInGroup()) then
-			miog.openRaidLib.RequestKeystoneDataFromParty()
-			miog.openRaidLib.GetAllUnitsGear()
-
-		else
-			miog.openRaidLib.RequestKeystoneDataFromParty()
-
-		end
-
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
+
+		miog.updateRosterInfoData()
 
 		if(not setup) then
 			miog.setUpMPlusStatistics()
@@ -263,9 +252,6 @@ local function createPVEFrameReplacement()
 		end
 
 		if(miog.F.CURRENT_SEASON and miog.F.CURRENT_SEASON == 12) then
-			local currentServerTime = C_DateAndTime.GetServerTimeLocal()
-			local seasonData = miog.C.SEASON_AVAILABLE[miog.F.CURRENT_SEASON]
-
 			if(miog.F.AWAKENED_MAP) then
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
 				miog.MainTab.Information.Awakened.Text:SetText(miog.MAP_INFO[miog.F.AWAKENED_MAP].name)
@@ -475,15 +461,14 @@ local function createPVEFrameReplacement()
 			ShowUIPanel(miog.pveFrame2)
 			
 			C_Calendar.CloseEvent();
-
-			local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime();
-			C_Calendar.SetAbsMonth(currentCalendarTime.month, currentCalendarTime.year);
-
 			C_Calendar.OpenCalendar();
-		
 		end
 	end)
 	--miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
+
+	if(not miog.F.LITE_MODE and miog.F.IS_RAIDERIO_LOADED) then
+		miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
+	end
 
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:OnLoad()
@@ -658,13 +643,12 @@ local function createPVEFrameReplacement()
 
 		PanelTemplates_SetTab(miog.pveFrame2, 1)
 
-		miog.MainTab:Show()
-		miog.PartyCheck:Hide()
-		miog.MPlusStatistics:Hide()
-		miog.RaidStatistics:Hide()
-		miog.PVPStatistics:Hide()
-		miog.Teleports:Hide()
-		miog.Gearing:Hide()
+		if(miog.pveFrame2.selectedTabFrame) then
+			miog.pveFrame2.selectedTabFrame:Hide()
+		end
+
+		miog.pveFrame2.TabFramesPanel.MainTab:Show()
+		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 	end
 
 	miog.pveFrame2.TitleBar.FindGroup.Text:SetText("Find")
@@ -675,13 +659,12 @@ local function createPVEFrameReplacement()
 
 		PanelTemplates_SetTab(miog.pveFrame2, 1)
 
-		miog.MainTab:Show()
-		miog.PartyCheck:Hide()
-		miog.MPlusStatistics:Hide()
-		miog.RaidStatistics:Hide()
-		miog.PVPStatistics:Hide()
-		miog.Teleports:Hide()
-		miog.Gearing:Hide()
+		if(miog.pveFrame2.selectedTabFrame) then
+			miog.pveFrame2.selectedTabFrame:Hide()
+		end
+
+		miog.pveFrame2.TabFramesPanel.MainTab:Show()
+		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 	end
 
 	miog.pveFrame2.TitleBar.DungeonJournal.Text:SetText("Journal")

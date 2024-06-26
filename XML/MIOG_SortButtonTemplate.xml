@@ -15,15 +15,22 @@
             <OnClick>
                 local activeState = self:GetActiveState()
 
+                local numberOfActiveMethods = 0
+
+                for k, v in pairs(MIOG_SavedSettings.sortMethods.table[self.panel]) do
+                    if(v.active) then
+                        numberOfActiveMethods = numberOfActiveMethods + 1
+                    end
+                end
+
                 if(button == "LeftButton") then
-                    if(activeState == 0 and 2 > MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods) then
+                    if(activeState == 0 and 2 > numberOfActiveMethods) then
                         --TO 1
-                        MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods = MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods + 1
 
                         MIOG_SavedSettings.sortMethods.table[self.panel][self.category].active = true
-                        MIOG_SavedSettings.sortMethods.table[self.panel][self.category].currentLayer = MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods
+                        MIOG_SavedSettings.sortMethods.table[self.panel][self.category].currentLayer = numberOfActiveMethods + 1
 
-                        self.FontString:SetText(MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods)
+                        self.FontString:SetText(numberOfActiveMethods + 1)
 
                     elseif(activeState == 1) then
                         --TO 2
@@ -31,7 +38,6 @@
 
                     elseif(activeState == 2) then
                         --RESET TO 0
-                        MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods = MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods - 1
 
                         MIOG_SavedSettings.sortMethods.table[self.panel][self.category].active = false
                         MIOG_SavedSettings.sortMethods.table[self.panel][self.category].currentLayer = 0
@@ -39,15 +45,18 @@
                         self.FontString:SetText("")
 
                         for k, v in pairs(MIOG_SavedSettings.sortMethods.table[self.panel]) do
-                            if(type(v) == "table" and v.currentLayer == 2) then
+                            if(v.currentLayer == 2) then
                                 v.currentLayer = 1
-                                self:GetParent().sortByCategoryButtons[k].FontString:SetText(1)
+
+                                local buttonParent = type(self:GetParent()) ~= "Button" and self:GetParent() or type(self:GetParent():GetParent()) ~= "Button" and self:GetParent():GetParent()
+
+                                buttonArray[k].FontString:SetText(1)
                                 MIOG_SavedSettings.sortMethods.table[self.panel][k].currentLayer = 1
                             end
                         end
                     end
 
-                    if(2 > MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods or MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods == 2 and MIOG_SavedSettings.sortMethods.table[self.panel][self.category].active == true) then
+                    if(2 > numberOfActiveMethods or numberOfActiveMethods == 2 and activeState ~= 0) then
                         self:AdvanceState()
 
                         MIOG_SavedSettings.sortMethods.table[self.panel][self.category].currentState = self:GetActiveState()
@@ -59,28 +68,25 @@
 
                 elseif(button == "RightButton") then
                     if(activeState == 1 or activeState == 2) then
-
-                        MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods = MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods - 1
-
                         MIOG_SavedSettings.sortMethods.table[self.panel][self.category].active = false
                         MIOG_SavedSettings.sortMethods.table[self.panel][self.category].currentLayer = 0
 
                         self.FontString:SetText("")
 
                         for k, v in pairs(MIOG_SavedSettings.sortMethods.table[self.panel]) do
-                            if(type(v) == "table" and v.currentLayer == 2) then
+                            if(v.currentLayer == 2) then
                                 v.currentLayer = 1
-                                self:GetParent().sortByCategoryButtons[k].FontString:SetText(1)
+
+                                local buttonArray = self:GetParent().sortByCategoryButtons or self:GetParent():GetParent().sortByCategoryButtons
+
+                                buttonArray[k].FontString:SetText(1)
                                 MIOG_SavedSettings.sortMethods.table[self.panel][k].currentLayer = 1
                             end
                         end
 
                         self:SetState(false)
 
-                        if(2 > MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods or MIOG_SavedSettings.sortMethods.table[self.panel].numberOfActiveMethods == 2 and MIOG_SavedSettings.sortMethods.table[self.panel][self.category].active == true) then
-
-                            --miog.F.SORT_METHODS[currentCategory].currentState = sortByCategoryButton:GetActiveState()
-                            --MIOG_SavedSettings.lastActiveSortingMethods.value[currentCategory] = miog.F.SORT_METHODS[currentCategory]
+                        if(2 > numberOfActiveMethods or numberOfActiveMethods == 2 and activeState ~= 0) then
 
                             MIOG_SavedSettings.sortMethods.table[self.panel][self.category].currentState = self:GetActiveState()
 

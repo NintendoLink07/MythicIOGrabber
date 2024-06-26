@@ -646,7 +646,7 @@
                                             </OnLeave>
                                         </Scripts>
                                     </StatusBar>
-
+                                    
                                     <Frame parentKey="Holiday" inherits="VerticalLayoutFrame">
                                         <KeyValues>
                                             <KeyValue key="spacing" value="5" />
@@ -699,7 +699,7 @@
                         </Frames>
                     </Frame>
 
-                    <Frame parentKey="PartyCheck" inherits="MIOG_PartyCheck" hidden="true" setAllPoints="true">
+                    <Frame parentKey="PartyCheck" inherits="MIOG_PartyCheck" hidden="true" id="2" setAllPoints="true">
                     </Frame>
 
                     <Frame parentKey="MPlusStatistics" inherits="MIOG_MPlusStatistics" hidden="true" setAllPoints="true">
@@ -716,179 +716,105 @@
 
                     <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true">
                     </Frame>
+
+                    <Frame parentKey="Guild" inherits="MIOG_Guild" hidden="true" setAllPoints="true">
+                    </Frame>
                 </Frames>
             </Frame>
 
-            <Button name="$parentTab1" inherits="PanelTabButtonTemplate" id="1" text="Main">
+            <Button name="$parentTab1" inherits="MIOG_TabButtonTemplate" id="1" text="Main">
                <Anchors>
                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
                </Anchors>
-               <Scripts>
-                   <OnClick>
-		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                        local parent = self:GetParent()
-                        PanelTemplates_SetTab(parent, 1)
 
-                        parent.TabFramesPanel.MainTab:Show()
-                        
-                        parent.TabFramesPanel.PartyCheck:Hide()
-                        parent.TabFramesPanel.MPlusStatistics:Hide()
-                        parent.TabFramesPanel.RaidStatistics:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
-                        parent.TabFramesPanel.Gearing:Hide()
-                   </OnClick>
-               </Scripts>
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "MainTab"
+                    </OnLoad>
+                </Scripts>
             </Button>
 
-            <Button name="$parentTab2" inherits="PanelTabButtonTemplate" id="2" text="PartyCheck">
+            <Button name="$parentTab2" inherits="MIOG_TabButtonTemplate" id="2" text="Party">
                <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" />
                </Anchors>
-               <Scripts>
-                   <OnClick>
-		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                        local parent = self:GetParent()
-                        PanelTemplates_SetTab(parent, 2)
 
-                        parent.TabFramesPanel.PartyCheck:Show()
-                        
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.MPlusStatistics:Hide()
-                        parent.TabFramesPanel.RaidStatistics:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
-                        parent.TabFramesPanel.Gearing:Hide()
-                   </OnClick>
-               </Scripts>
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "PartyCheck"
+                    </OnLoad>
+                </Scripts>
             </Button>
 
-            <Button name="$parentTab3" inherits="PanelTabButtonTemplate" id="3" text="Mythic+">
+            <Button name="$parentTab3" inherits="MIOG_TabButtonTemplate" id="3" text="M+">
                 <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
-                        <Offset>
-                            <AbsDimension x="0" y="0"/>
-                        </Offset>
-                    </Anchor>
+                    <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT"/>
                 </Anchors>
+                
                 <Scripts>
-                    <OnClick>
-		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                        local parent = self:GetParent()
-                        PanelTemplates_SetTab(parent, 3)
-
-                        parent.TabFramesPanel.MPlusStatistics:Show()
-                        
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.PartyCheck:Hide()
-                        parent.TabFramesPanel.RaidStatistics:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
-                        parent.TabFramesPanel.Gearing:Hide()
-
-                    </OnClick>
+                    <OnLoad>
+                        self.frameName = "MPlusStatistics"
+                    </OnLoad>
                 </Scripts>
             </Button>
             
-            <Button name="$parentTab4" inherits="PanelTabButtonTemplate" id="4" text="Raid">
+            <Button name="$parentTab4" inherits="MIOG_TabButtonTemplate" id="4" text="Raid">
                 <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT">
-                        <Offset>
-                            <AbsDimension x="0" y="0"/>
-                        </Offset>
-                    </Anchor>
+                    <Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT" />
                 </Anchors>
+
                 <Scripts>
-                    <OnClick>
-		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                        local parent = self:GetParent()
-                        PanelTemplates_SetTab(parent, 4)
-                        
-                        parent.TabFramesPanel.RaidStatistics:Show()
-
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.PartyCheck:Hide()
-                        parent.TabFramesPanel.MPlusStatistics:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
-                        parent.TabFramesPanel.Gearing:Hide()
-
-                    </OnClick>
+                    <OnLoad>
+                        self.frameName = "RaidStatistics"
+                    </OnLoad>
                 </Scripts>
             </Button>
             
-            <Button name="$parentTab5" inherits="PanelTabButtonTemplate" id="5" text="PVP">
+            <Button name="$parentTab5" inherits="MIOG_TabButtonTemplate" id="5" text="PVP">
                 <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT">
-                        <Offset>
-                            <AbsDimension x="0" y="0"/>
-                        </Offset>
-                    </Anchor>
+                    <Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" />
                 </Anchors>
+
                 <Scripts>
-                    <OnClick>
-		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                        local parent = self:GetParent()
-                        PanelTemplates_SetTab(parent, 5)
-
-                        parent.TabFramesPanel.PVPStatistics:Show()
-
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.PartyCheck:Hide()
-                        parent.TabFramesPanel.MPlusStatistics:Hide()
-                        parent.TabFramesPanel.RaidStatistics:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
-                        parent.TabFramesPanel.Gearing:Hide()
-
-                    </OnClick>
+                    <OnLoad>
+                        self.frameName = "PVPStatistics"
+                    </OnLoad>
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab6" inherits="PanelTabButtonTemplate" id="6" text="Teleports">
+            <Button name="$parentTab6" inherits="MIOG_TabButtonTemplate" id="6" text="Ports">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" />
                 </Anchors>
+
                 <Scripts>
-                    <OnClick>
-		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                        local parent = self:GetParent()
-                        PanelTemplates_SetTab(parent, 6)
-
-                        parent.TabFramesPanel.Teleports:Show()
-
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.PartyCheck:Hide()
-                        parent.TabFramesPanel.MPlusStatistics:Hide()
-                        parent.TabFramesPanel.RaidStatistics:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
-                        parent.TabFramesPanel.Gearing:Hide()
-
-                    </OnClick>
+                    <OnLoad>
+                        self.frameName = "Teleports"
+                    </OnLoad>
                 </Scripts>
-            </Button>        
+            </Button>
 
-            <Button name="$parentTab7" inherits="PanelTabButtonTemplate" id="7" text="Gearing Chart">
+            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Gearing">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
-                    <OnClick>
-		                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                        local parent = self:GetParent()
-                        PanelTemplates_SetTab(parent, 7)
-
-                        parent.TabFramesPanel.Gearing:Show()
-
-                        parent.TabFramesPanel.MainTab:Hide()
-                        parent.TabFramesPanel.PartyCheck:Hide()
-                        parent.TabFramesPanel.MPlusStatistics:Hide()
-                        parent.TabFramesPanel.RaidStatistics:Hide()
-                        parent.TabFramesPanel.PVPStatistics:Hide()
-                        parent.TabFramesPanel.Teleports:Hide()
-
-                    </OnClick>
+                    <OnLoad>
+                        self.frameName = "Gearing"
+                    </OnLoad>
                 </Scripts>
-            </Button>    
+            </Button>
+
+            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Guild">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "Guild"
+                    </OnLoad>
+                </Scripts>
+            </Button>
         </Frames>
 
         <Layers>
@@ -908,8 +834,9 @@
 
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 7)
+                PanelTemplates_SetNumTabs(self, 8)
                 PanelTemplates_SetTab(self, 1)
+                self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());
             </OnLoad>
 
@@ -923,6 +850,11 @@
 
             <OnShow>
                 PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+
+                for index = 1, self.numTabs, 1 do
+                    tab = self.Tabs and self.Tabs[index] or _G[self:GetName().."Tab"..index];
+                    tab:SetWidth(65)
+                end
             </OnShow>
 
             <OnHide>

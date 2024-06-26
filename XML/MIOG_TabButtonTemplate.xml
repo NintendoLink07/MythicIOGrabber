@@ -1,0 +1,19 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_TabButtonTemplate" inherits="PanelTabButtonTemplate" virtual="true">
+        <Scripts>
+            <OnClick>
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                local parent = self:GetParent()
+                PanelTemplates_SetTab(parent, self:GetID())
+
+                if(parent.selectedTabFrame) then
+                    parent.selectedTabFrame:Hide()
+                end
+
+                parent.TabFramesPanel[self.frameName]:Show()
+                parent.selectedTabFrame = parent.TabFramesPanel[self.frameName]
+            </OnClick>
+        </Scripts>
+    </Button>
+</Ui>

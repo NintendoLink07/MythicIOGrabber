@@ -2987,8 +2987,8 @@ miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms
 	["黑锋哨站"] = "ebon-watch",
 	["黑龙军团"] = "black-dragonflight",
 	["龙骨平原"] = "dragonblight",
-}
-
+  }
+  
 ---------
 -- DEBUG
 --------- 

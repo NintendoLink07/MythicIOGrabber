@@ -1,0 +1,90 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_Guild" inherits="BackdropTemplate" virtual="true">
+        <Frames>
+            <Frame name="class" parentKey="Class" inherits="MIOG_SortButtonWithTextTemplate">
+                <Size x="115" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="17" y="-3"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame name="level" parentKey="Level" inherits="MIOG_SortButtonWithTextTemplate">
+                <Size x="45" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Class" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame name="rank" parentKey="Rank" inherits="MIOG_SortButtonWithTextTemplate">
+                <Size x="105" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Level" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame name="keylevel" parentKey="Lvl" inherits="MIOG_SortButtonWithTextTemplate">
+                <Size x="30" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Rank" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame name="keystone" parentKey="Key" inherits="MIOG_SortButtonWithTextTemplate">
+                <Size x="40" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Lvl" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame name="score" parentKey="Score" inherits="MIOG_SortButtonWithTextTemplate">
+                <Size x="45" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Key" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame name="progressWeight" parentKey="Progress" inherits="MIOG_SortButtonWithTextTemplate">
+                <Size x="80" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+            
+            <CheckButton parentKey="IncludeOffline" inherits="UICheckButtonTemplate" text="Include Offline?">
+                <Size x="16" y="18"/>
+                
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Progress" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </CheckButton>
+
+            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate">
+                <KeyValues>
+                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                        <KeyValues>
+                            <KeyValue key="align" value="top" />
+                            <KeyValue key="spacing" value="4" />
+                        </KeyValues>
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+        </Frames>
+    </Frame>
+</Ui>

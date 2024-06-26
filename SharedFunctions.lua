@@ -378,10 +378,7 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	end
 
 	local detailedInformationPanel = listFrame.DetailedInformationPanel
-	detailedInformationPanel:SetWidth(listFrame.fixedWidth)
-	--detailedInformationPanel:SetPoint("TOPLEFT", listFrame.BasicInformation or listFrame.Row, "BOTTOMLEFT")
-	--detailedInformationPanel:SetPoint("TOPRIGHT", listFrame.BasicInformation or listFrame.CategoryInformation, "BOTTOMRIGHT")
-	
+	detailedInformationPanel:SetWidth(listFrame.fixedWidth or listFrame:GetWidth())	
 	detailedInformationPanel:SetShown((listFrame.CategoryInformation or listFrame.BasicInformation).ExpandFrame:GetActiveState() > 0 and true or false)
 	listFrame.DetailedInformationPanel = detailedInformationPanel
 
@@ -398,23 +395,25 @@ local function createDetailedInformationPanel(poolFrame, listFrame)
 	mythicPlusPanel:SetShown(not raidPanel:IsShown())
 	mythicPlusPanel.dungeonFrames = mythicPlusPanel.dungeonFrames or {}
 
-	local generalInfoPanel = panelContainer.ForegroundRows.GeneralInfo
+	if(panelContainer.ForegroundRows.GeneralInfo) then
+		local generalInfoPanel = panelContainer.ForegroundRows.GeneralInfo
 
-	generalInfoPanel.Right["1"].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
-	generalInfoPanel.Right["1"].FontString:SetWordWrap(true)
-	generalInfoPanel.Right["1"].FontString:SetNonSpaceWrap(true)
-	generalInfoPanel.Right["1"].FontString:SetScript("OnEnter", function(self)
-		if(self:GetText() ~= nil and self:IsTruncated()) then
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetText(self:GetText(), nil, nil, nil, nil, true)
-			GameTooltip:Show()
-		end
-	end)
+		generalInfoPanel.Right["1"].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
+		generalInfoPanel.Right["1"].FontString:SetWordWrap(true)
+		generalInfoPanel.Right["1"].FontString:SetNonSpaceWrap(true)
+		generalInfoPanel.Right["1"].FontString:SetScript("OnEnter", function(self)
+			if(self:GetText() ~= nil and self:IsTruncated()) then
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText(self:GetText(), nil, nil, nil, nil, true)
+				GameTooltip:Show()
+			end
+		end)
 
-	generalInfoPanel.Right["1"].FontString:SetScript("OnLeave", function()
-		GameTooltip:Hide()
+		generalInfoPanel.Right["1"].FontString:SetScript("OnLeave", function()
+			GameTooltip:Hide()
 
-	end)
+		end)
+	end
 end
 
 miog.createDetailedInformationPanel = createDetailedInformationPanel
@@ -429,7 +428,6 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 	local detailedInformationPanel = memberFrame.DetailedInformationPanel
 	local mythicPlusPanel = detailedInformationPanel.PanelContainer.ForegroundRows.MythicPlus
 	local raidPanel = detailedInformationPanel.PanelContainer.ForegroundRows.Raid
-	local generalInfoPanel = detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo
 
 	if(miog.F.IS_RAIDERIO_LOADED) then
 		profile = RaiderIO.GetProfile(playerName, realm, miog.F.CURRENT_REGION)
@@ -524,12 +522,14 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 			mythicPlusPanel.CategoryRow2.FontString:SetText(mainScoreString)
 
-			generalInfoPanel.Right["5"].FontString:SetText(
-				wticc(mythicKeystoneProfile.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
-				wticc(mythicKeystoneProfile.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
-				wticc(mythicKeystoneProfile.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
-				wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
-			)
+			if(detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo) then
+				detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo.Right["5"].FontString:SetText(
+					wticc(mythicKeystoneProfile.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
+					wticc(mythicKeystoneProfile.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
+					wticc(mythicKeystoneProfile.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
+					wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
+				)
+			end
 
 		else
 			mythicPlusPanel.CategoryRow1.FontString:SetText(wticc("NO M+ DATA", miog.CLRSCC["red"]))
@@ -568,6 +568,7 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 
 							if(string.find(raidProgress.raid.mapId, 10000)) then
 								mapId = tonumber(strsub(raidProgress.raid.mapId, strlen(raidProgress.raid.mapId) - 3))
+
 							else
 								mapId = raidProgress.raid.mapId
 
@@ -653,12 +654,24 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		end
 	end
 
-	generalInfoPanel.Right["6"].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
+	if(detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo) then
+		detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo.Right["6"].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
+	end
 end
 
 miog.gatherRaiderIODisplayData = gatherRaiderIODisplayData
 
+miog.getActiveSortMethods = function(panel)
+	local numberOfActiveMethods = 0
 
+	for k, v in pairs(MIOG_SavedSettings.sortMethods.table[panel]) do
+		if(v.active) then
+			numberOfActiveMethods = numberOfActiveMethods + 1
+		end
+	end
+
+	return numberOfActiveMethods
+end
 
 local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo() or miog.F.ACTIVE_ENTRY_INFO
