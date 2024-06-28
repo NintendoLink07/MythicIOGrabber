@@ -1,0 +1,38 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_InviteFrame" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true" hidden="true" frameStrata="FULLSCREEN">
+        <KeyValues>
+            <KeyValue key="align" value="top" type="boolean"/>
+            <KeyValue key="fixedWidth" value="360" type="number"/>
+            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+        </KeyValues>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="You have invites pending!" wordwrap="true">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        
+        <Frames>
+            <Frame parentKey="Container" inherits="BackdropTemplate, VerticalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="minimumWidth" value="1" type="number" />
+                    <KeyValue key="minimumHeight" value="1" type="number" />
+                    <KeyValue key="spacing" value="2" type="number" />
+                    <KeyValue key="leftPadding" value="2" type="number" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

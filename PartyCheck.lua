@@ -17,10 +17,9 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 
 	if(miog.guildFrames[unitName]) then
 		MIOG_SavedSettings.guildKeystoneInfo[unitName] = keystoneInfo
+		miog.guildSystem.keystoneData[unitName] = keystoneInfo
 
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
-
-		miog.guildSystem.keystoneData[unitName] = keystoneInfo
 
 		local currentFrame = miog.guildFrames[unitName]
 		currentFrame.BasicInformation.Keylevel:SetText("+" .. keystoneInfo.level)

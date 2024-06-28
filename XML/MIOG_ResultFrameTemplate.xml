@@ -2,7 +2,13 @@
 ..\..\FrameXML\UI.xsd">    
     <Frame name="MIOG_ResultFrameTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
         <Layers>
-            <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND" textureSubLevel="-3">
+                <Texture parentKey="InviteBackground" setAllPoints="true" hidden="true">
+                    <Color r="0.1" g="0.1" b="0.1" a="0.93"/>
+                </Texture>
+            </Layer>
+
+            <Layer level="BACKGROUND" textureSubLevel="-1">
                 <Texture parentKey="Background" horizTile="true" vertTile="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
@@ -38,6 +44,17 @@
                 <Size x="16" y="16" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-7" y="-2" />
+                </Anchors>
+            </Button>
+
+            <Button parentKey="AcceptInvite" inherits="IconButtonTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.CancelApplication" relativePoint="LEFT" x="-5" />
                 </Anchors>
             </Button>
 
@@ -229,7 +246,7 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate">
+            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate" hidden="true">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="3" type="number" />
                 </KeyValues>

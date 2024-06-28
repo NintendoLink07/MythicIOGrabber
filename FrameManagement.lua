@@ -18,6 +18,7 @@ local function resetFrame(pool, childFrame)
 	childFrame.memberInfo = nil
 	childFrame.memberIdx = nil
 	childFrame.applicantID = nil
+	childFrame.resultID = nil
 	
 	childFrame.encounterInfo = nil
 

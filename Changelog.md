@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.2.1] - 2024-06-28
+
+### Fixed
+
+- [PartyCheck] Itemlevel and durability now also always update for players on your realm.
+
+- [Guild] Saved keystone info from guild members will not have priority over new incoming data.
+
+### Upcoming
+
+- Revisiting my old custom "You've got an invite" panel idea, since I've learned quite a lot since October last year.
+Probably implementing it over the next few days, base code is already done.
+
+- After the custom invites I'll probably have a full version of performance optimizing shit, especially a better idea for the guild panel.
+
+
 ## [2.2] - 2024-06-26
 
 ### Added
@@ -1695,7 +1711,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.1..HEAD
+[2.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.1
 [2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2
 [2.1.5c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5c
 [2.1.5b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5b

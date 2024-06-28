@@ -301,26 +301,28 @@ end
 local function createFullNameFrom(type, value)
 	local name
 
-	if(type == "unitID") then
-		name = GetUnitName(value, true)
+	local realm = GetNormalizedRealmName()
 
-		if(value == "player") then
-			name = name .. "-" .. GetNormalizedRealmName()
-		end
-	elseif(type == "unitName") then
-		local nameTable = miog.simpleSplit(value, "-")
+	if(realm) then
+		if(type == "unitID") then
+			if(value == "player") then
+				name = UnitFullName(value)
 
-		if(not nameTable[2]) then
-			nameTable[2] = GetNormalizedRealmName()
-	
-			if(nameTable[2]) then
-				name = nameTable[1] .. "-" .. nameTable[2]
-	
+			else
+				name = GetUnitName(value, true)
+			
 			end
-	
-		else
+
+		elseif(type == "unitName") then
 			name = value
 			
+		end
+
+		local nameTable = miog.simpleSplit(name, "-")
+		
+		if(not nameTable[2]) then
+			name = nameTable[1] .. "-" .. realm
+
 		end
 	end
 
@@ -337,6 +339,8 @@ local function printOnce(string)
 
 	end
 end
+
+miog.printOnce = printOnce
 
 miog.getGroupLeader = function()
 	local numOfMembers = GetNumGroupMembers()

@@ -170,7 +170,7 @@ local function retrieveGuildMembers()
 
         miog.createDetailedInformationPanel(currentFrame)
 		miog.gatherRaiderIODisplayData(v.shortName, v.realm, currentFrame)
-        
+
         guildFrames[v.fullName] = currentFrame
         
     end
@@ -220,4 +220,6 @@ miog.loadGuildFrame = function()
 
 	eventReceiver:RegisterEvent("GUILD_ROSTER_UPDATE")
 	eventReceiver:SetScript("OnEvent", guildEvents)
+	
+	retrieveGuildMembers()
 end
