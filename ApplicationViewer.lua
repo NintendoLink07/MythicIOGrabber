@@ -4,6 +4,8 @@ local wticc = WrapTextInColorCode
 local applicantSystem = {}
 applicantSystem.applicantMember = {}
 
+local detailedList = {}
+
 local applicationFrameIndex = 0
 local queueTimer
 
@@ -234,7 +236,9 @@ local function createApplicantFrame(applicantID)
 					GameTooltip:Show()
 
 				else
-					LFGListApplicantMember_OnEnter(self)
+					if(not miog.F.IS_IN_DEBUG_MODE) then
+						LFGListApplicantMember_OnEnter(self)
+					end
 
 					if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
 						GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
@@ -257,18 +261,27 @@ local function createApplicantFrame(applicantID)
 			local expandFrameButton = applicantMemberFrame.BasicInformation.ExpandFrame
 
 			expandFrameButton:RegisterForClicks("LeftButtonDown")
-			expandFrameButton:SetScript("OnClick", function()
-				if(applicantMemberFrame.DetailedInformationPanel) then
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-					
-					expandFrameButton:AdvanceState()
-					applicantMemberFrame.DetailedInformationPanel:SetShown(not applicantMemberFrame.DetailedInformationPanel:IsVisible())
+			expandFrameButton:SetScript("OnClick", function(self)
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-					applicantFrame:MarkDirty()
+				local categoryID = miog.getCurrentCategoryID()
+				local baseFrame = self:GetParent():GetParent()
 
-				end
+				local infoData = baseFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
+
+				baseFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
+				baseFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
+
+				baseFrame.RaiderIOInformationPanel:SetShown(not baseFrame.RaiderIOInformationPanel:IsShown())
+				
+				detailedList[name] = baseFrame.RaiderIOInformationPanel:IsShown()
+				
+				self:AdvanceState()
+				baseFrame:MarkDirty()
 
 			end)
+			
+			applicantMemberFrame.RaiderIOInformationPanel:SetShown(detailedList[name] or false)
 
 			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
 				applicantMemberFrame.BasicInformation.Comment:Show()
@@ -374,48 +387,35 @@ local function createApplicantFrame(applicantID)
 
 			end
 
-			miog.createDetailedInformationPanel(applicantFrame, applicantMemberFrame)
-
-			--[[
-			ROW LAYOUT
-
-			1-4 Comment
-			5 Score for prev. season
-			6 Score for main current/prev. season
-			7 Applicant alternative roles + race
-			8 M+ keys done +5 +10 +15 +20 (+25 not available from Raider.IO addon data)
-			9 Region + Realm
- 
-			]]
-
-			miog.gatherRaiderIODisplayData(nameTable[1], nameTable[2], applicantFrame, applicantMemberFrame)
+			miog.retrieveRaiderIOData(nameTable[1], nameTable[2], applicantMemberFrame)
 
 			local raidData = miog.getRaidSortData(nameTable[1] .. "-" .. nameTable[2])
 			primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
 			secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
 
-			local generalInfoPanel = applicantMemberFrame.DetailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo
+			local infoPanel = applicantMemberFrame.RaiderIOInformationPanel.InfoPanel
 
-			generalInfoPanel.Right["1"].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
-			generalInfoPanel.Right["4"].FontString:SetText("Role: ")
+			infoPanel.Comment:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
+			infoPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
+			infoPanel.RaceRoles:SetText("Role: ")
 
 			if(tank) then
-				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() .. miog.C.TANK_TEXTURE)
+				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.TANK_TEXTURE)
 
 			end
 
 			if(healer) then
-				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() .. miog.C.HEALER_TEXTURE)
+				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.HEALER_TEXTURE)
 
 			end
 
 			if(damager) then
-				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() .. miog.C.DPS_TEXTURE)
+				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.DPS_TEXTURE)
 
 			end
 
 			if(raceID and miog.RACES[raceID]) then
-				generalInfoPanel.Right["4"].FontString:SetText(generalInfoPanel.Right["4"].FontString:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
+				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
 
 			end
 

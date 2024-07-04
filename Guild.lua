@@ -7,6 +7,8 @@ miog.guildSystem = {}
 miog.guildSystem.memberData = {}
 miog.guildSystem.keystoneData = {}
 
+local detailedList = {}
+
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_GuildEventReceiver")
 
 local guildPool
@@ -64,8 +66,11 @@ local function retrieveGuildMembers()
 
     local guildTable = {}
 
-    for i = 1, GetNumGuildMembers(), 1 do
-		local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class, _, _, isMobile, _, repStanding, guid = GetGuildRosterInfo(i)
+	local i = 1
+
+    --for i = 1, GetNumGuildMembers(), 1 do
+		local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class = "Rhany-Ravencrest", "Mythic1", 1, 70, nil, "Here", nil, nil, true, 0, "WARLOCK"
+		--local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class, _, _, isMobile, _, repStanding, guid = GetGuildRosterInfo(i)
 
         local nameTable = miog.simpleSplit(name, "-")
 
@@ -131,7 +136,7 @@ local function retrieveGuildMembers()
             progressText = progress,
         }
 
-	end
+	--end
 	
 
     table.sort(guildTable, sortGuildList)
@@ -154,25 +159,35 @@ local function retrieveGuildMembers()
 		end
 
         currentFrame.BasicInformation.Keystone:SetTexture(texture)
-
         currentFrame.BasicInformation.Score:SetText(v.score)
         currentFrame.BasicInformation.Progress:SetText(v.progressText)
 
         currentFrame.layoutIndex = includeOffline == false and (k + (not v.isOnline and 10000 or v.status == 0 and 0 or v.status == 1 and 1000 or 5000)) or k
-        currentFrame:SetWidth(miog.Guild:GetWidth())
-        currentFrame.BasicInformation:SetWidth(miog.Guild:GetWidth())
-        currentFrame.DetailedInformationPanel:SetWidth(miog.Guild:GetWidth())
+        --currentFrame:SetWidth(miog.Guild:GetWidth())
+		currentFrame.fixedWidth = miog.Guild:GetWidth()
+        --currentFrame.DetailedInformationPanel:SetWidth(miog.Guild:GetWidth())
         currentFrame.BasicInformation.ExpandFrame:SetScript("OnClick", function(self)
-            currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsShown())
-            currentFrame:MarkDirty()
+            local categoryID = miog.getCurrentCategoryID()
+
+			local infoData = currentFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
+
+			currentFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
+			currentFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
+
+			currentFrame.RaiderIOInformationPanel:SetShown(not currentFrame.RaiderIOInformationPanel:IsShown())
+			detailedList[v.fullName] = currentFrame.RaiderIOInformationPanel:IsShown()
+
+			self:AdvanceState()
+			currentFrame:MarkDirty()
         end)
+
+		currentFrame.RaiderIOInformationPanel:SetShown(detailedList[v.fullName] or false)
+
         currentFrame:Show()
 
-        miog.createDetailedInformationPanel(currentFrame)
-		miog.gatherRaiderIODisplayData(v.shortName, v.realm, currentFrame)
+		miog.retrieveRaiderIOData(v.shortName, v.realm, currentFrame)
 
         guildFrames[v.fullName] = currentFrame
-        
     end
 
     miog.Guild.ScrollFrame.Container:MarkDirty()

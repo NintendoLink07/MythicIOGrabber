@@ -3,6 +3,8 @@ local wticc = WrapTextInColorCode
 
 local partyPool
 
+local detailedList = {}
+
 local groupSystem = {}
 groupSystem.groupMember = {}
 
@@ -11,8 +13,6 @@ miog.groupSystem = groupSystem
 local lastNotifyTime = 0
 
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_InspectCoroutineEventReceiver")
-
-
 
 MIOG_InspectedNames = {}
 MIOG_SavedSpecIDs = {}
@@ -236,7 +236,7 @@ local function updateRosterInfoData()
 			if(MIOG_InspectedNames[name]) then
 				member.specID = MIOG_SavedSpecIDs[name] or GetInspectSpecialization(member.unitID)
 
-				MIOG_SavedSpecIDs[name] = member.specID ~= 0 and member.specID or nil
+				MIOG_SavedSpecIDs[name] = MIOG_SavedSpecIDs[name] or member.specID ~= 0 and member.specID or nil
 
 			elseif(name == fullPlayerName) then
 				local specID, _, _, _, role = GetSpecializationInfo(GetSpecialization())
@@ -250,7 +250,7 @@ local function updateRosterInfoData()
 				member.durability = libData.durability or 0
 				member.missingEnchants = libData.missingEnchants
 				member.missingGems = libData.missingGems
-
+				member.hasWeaponEnchant = libData.hasWeaponEnchant
 
 			else
 				member.durability = 0
@@ -339,7 +339,7 @@ local function updateRosterInfoData()
 			indexedGroup[#indexedGroup+1] = member
 		end
 
-		local percentageInspected = playersWithSpecData / inspectableMembers
+		--local percentageInspected = playersWithSpecData / inspectableMembers
 
 		if(miog.ClassPanel) then
 			if(not currentInspection) then
@@ -416,11 +416,28 @@ local function updateRosterInfoData()
 				for index, member in ipairs(indexedGroup) do
 					local memberFrame = partyPool:Acquire()
 					memberFrame.data = member
-					memberFrame:SetWidth(miog.PartyCheck:GetWidth())
+					memberFrame.fixedWidth = miog.PartyCheck:GetWidth()
 					memberFrame.Group:SetText(member.group)
 					memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
 					memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
 					memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
+
+					miog.retrieveRaiderIOData(member.shortName, member.realm, memberFrame)
+					
+					memberFrame.ExpandFrame:SetScript("OnClick", function(self)
+						local infoData = memberFrame.RaiderIOInformationPanel[miog.getCurrentCategoryID() == 3 and "raid" or "mplus"]
+
+						memberFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
+						memberFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
+
+						memberFrame.RaiderIOInformationPanel:SetShown(not memberFrame.RaiderIOInformationPanel:IsShown())
+						detailedList[memberFrame.data.name] = memberFrame.RaiderIOInformationPanel:IsShown()
+
+						self:AdvanceState()
+						memberFrame:MarkDirty()
+					end)
+					
+					memberFrame.RaiderIOInformationPanel:SetShown(detailedList[memberFrame.data.name] or false)
 
 					if(member.rank == 2) then
 						miog.PartyCheck.LeaderCrown:ClearAllPoints()
@@ -436,24 +453,8 @@ local function updateRosterInfoData()
 					memberFrame.Score:SetText(member.score or "0")
 					memberFrame.Progress:SetText(member.progress or "N/A")
 
-						--[[for k, v in pairs(memberFrame.MissingEnchantSlots) do
-							if(type(v) == "table") then
-								if(checkData.missingEnchants and checkData.missingEnchants[k]) then
-									v.layoutIndex = k
-									v:Show()
-
-								else
-									v.layoutIndex = nil
-									v:Hide()
-
-								end
-							end
-
-						end
-
-						memberFrame.MissingEnchantSlots:MarkDirty()]]
-
 					memberFrame.layoutIndex = index
+					memberFrame:MarkDirty()
 					memberFrame:Show()
 				end
 

@@ -19,7 +19,7 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" >
+            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true">
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture setAllPoints="true">
@@ -246,9 +246,12 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate" hidden="true">
+            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="3" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                    <KeyValue key="leftPadding" value="2" type="number"/>
+                    <KeyValue key="rightPadding" value="2" type="number"/>
                 </KeyValues>
             </Frame>
         </Frames>

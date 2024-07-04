@@ -3,11 +3,18 @@
     <Frame name="MIOG_GuildPlayerTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
         <Size y="15" />
 
+        <KeyValues>
+			<KeyValue key="expand" value="true" type="boolean"/>
+			<KeyValue key="minimumHeight" value="15" type="number"/>
+		</KeyValues>
+
         <Frames>
             <Frame parentKey="BasicInformation">
                 <Size y="15" />
+
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="1" type="number" />
+			        <KeyValue key="expand" value="true" type="boolean"/>
                 </KeyValues>
 
                 <Scripts>
@@ -121,9 +128,10 @@
                 </Layers>
             </Frame>
 
-            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelSmallTemplate" hidden="true">
+            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="2" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
             </Frame>
         </Frames>

@@ -359,7 +359,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
 			local activityID = activities[#activities]
 
-			--if(miog.ACTIVITY_INFO[activityID].expansionLevel == i) then
 			if(miog.ACTIVITY_INFO[activityID].expansionLevel < maxExpansions) then
 				local info = {}
 				info.icon = miog.ACTIVITY_INFO[activityID].icon

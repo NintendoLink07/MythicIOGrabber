@@ -81,21 +81,6 @@ local function calendarOnEvent(_, event, ...)
         local currentTime = miog.F.CURRENT_DATE or C_DateAndTime.GetCurrentCalendarTime()
         local offset = 0
 
-       --[[ if(CalendarFrame and CalendarFrame.viewedYear) then
-            local viewedInSeconds = time({year = CalendarFrame.viewedYear, month = CalendarFrame.viewedMonth, day = 0})
-            local currentInSeconds = time({year = currentTime.year, month = currentTime.month, day = 0})
-
-            if(viewedInSeconds > currentInSeconds) then
-                offset = - (viewedInSeconds - currentInSeconds) / 2629746
-                
-            end
-
-            local formatter = CreateFromMixins(SecondsFormatterMixin)
-            formatter:SetStripIntervalWhitespace(true)
-            formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
-            --print(offset, viewedInSeconds, currentInSeconds)
-        end]]
-
         local monthInfo = C_Calendar.GetMonthInfo(0)
 
         offset = currentTime.month - monthInfo.month

@@ -5,29 +5,31 @@ miog.ONCE = true
 
 miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
-
-	local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0;
-	local rating = tonumber(frame.Rating:GetText()) or 0;
-	local pvpRating = rating
-	local mythicPlusRating = rating
-	local autoAccept = false;
-	local privateGroup = frame.PrivateGroup:GetChecked();
-	local isCrossFaction =  frame.CrossFaction:IsShown() and not frame.CrossFaction:GetChecked();
-	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.Selected.value or nil;
-	local activityID = frame.DifficultyDropDown.Selected.value or frame.ActivityDropDown.Selected.value or 0
-
 	local self = LFGListFrame.EntryCreation
-
-	local honorLevel = 0;
 
 	local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 
+	local activityID = frame.DifficultyDropDown.Selected.value or frame.ActivityDropDown.Selected.value or 0
+
+	local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0
+	local rating = tonumber(frame.Rating:GetText()) or 0
+	local pvpRating = (LFGListFrame.EntryCreation.selectedCategory == 4 or LFGListFrame.EntryCreation.selectedCategory == 9) and rating or 0
+	local mythicPlusRating = LFGListFrame.EntryCreation.selectedCategory == 2 and rating or 0
+	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.Selected.value or nil
+
+	local autoAccept = activeEntryInfo and activeEntryInfo.autoAccept or false
+	local privateGroup = frame.PrivateGroup:GetChecked();
+	local isCrossFaction =  frame.CrossFaction:IsShown() and not frame.CrossFaction:GetChecked();
+	local questID = activeEntryInfo and activeEntryInfo.questID or 0
+
+	local honorLevel = 0
+
 	if ( LFGListEntryCreation_IsEditMode(self) ) then
 		if activeEntryInfo.isCrossFactionListing == isCrossFaction then
-			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
 		else
 			-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
-			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
 
 
 			-- DOESNT WORK BECAUSE OF PROTECTION XD
@@ -38,10 +40,10 @@ miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGro
 		LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
 	else
 		if(C_LFGList.HasActiveEntryInfo()) then
-			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
+			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
 
 		else
-			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, 0, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
+			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
 
 		end
 
@@ -176,7 +178,6 @@ local function getRaidSortData(playerName)
 						end
 					end
 				else
-
 					for x, y in ipairs(d.progress) do
 						local mapID
 						local awakened = false
@@ -282,7 +283,7 @@ local function getRaidSortData(playerName)
 		end
 	end
 
-	return currentData, nonCurrentData, orderedData
+	return currentData, nonCurrentData, orderedData, mainData
 end
 
 miog.getRaidSortData = getRaidSortData
@@ -375,63 +376,21 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 	LFGListFrame.SearchPanel.SearchBox:SetFrameLevel(9999)
 end)
 
-local function createDetailedInformationPanel(poolFrame, listFrame)
-	if (listFrame == nil) then
-		listFrame = poolFrame
-
-	end
-
-	local detailedInformationPanel = listFrame.DetailedInformationPanel
-	detailedInformationPanel:SetWidth(listFrame.fixedWidth or listFrame:GetWidth())	
-	detailedInformationPanel:SetShown((listFrame.CategoryInformation or listFrame.BasicInformation).ExpandFrame:GetActiveState() > 0 and true or false)
-	listFrame.DetailedInformationPanel = detailedInformationPanel
-
+miog.getCurrentCategoryID = function()
 	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
-	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
-
-	local panelContainer = detailedInformationPanel.PanelContainer
-	panelContainer.ForegroundRows:SetFrameStrata("HIGH")
-
-	local raidPanel = panelContainer.ForegroundRows.Raid
-	raidPanel:SetShown(categoryID == 3 and true)
-
-	local mythicPlusPanel = panelContainer.ForegroundRows.MythicPlus
-	mythicPlusPanel:SetShown(not raidPanel:IsShown())
-	mythicPlusPanel.dungeonFrames = mythicPlusPanel.dungeonFrames or {}
-
-	if(panelContainer.ForegroundRows.GeneralInfo) then
-		local generalInfoPanel = panelContainer.ForegroundRows.GeneralInfo
-
-		generalInfoPanel.Right["1"].FontString:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
-		generalInfoPanel.Right["1"].FontString:SetWordWrap(true)
-		generalInfoPanel.Right["1"].FontString:SetNonSpaceWrap(true)
-		generalInfoPanel.Right["1"].FontString:SetScript("OnEnter", function(self)
-			if(self:GetText() ~= nil and self:IsTruncated()) then
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(self:GetText(), nil, nil, nil, nil, true)
-				GameTooltip:Show()
-			end
-		end)
-
-		generalInfoPanel.Right["1"].FontString:SetScript("OnLeave", function()
-			GameTooltip:Hide()
-
-		end)
-	end
+	return activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
 end
 
-miog.createDetailedInformationPanel = createDetailedInformationPanel
-
-local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFrame)
-	if (memberFrame == nil) then
-		memberFrame = poolFrame
-
-	end
-
+local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 	local profile, mythicKeystoneProfile, raidProfile
-	local detailedInformationPanel = memberFrame.DetailedInformationPanel
-	local mythicPlusPanel = detailedInformationPanel.PanelContainer.ForegroundRows.MythicPlus
-	local raidPanel = detailedInformationPanel.PanelContainer.ForegroundRows.Raid
+	local mythicPlusPanel = frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel
+	local raidPanel = frameWithPanel.RaiderIOInformationPanel.RaidPanel
+	local infoPanel = frameWithPanel.RaiderIOInformationPanel.InfoPanel
+
+	local categoryID = miog.getCurrentCategoryID()
+
+	raidPanel:SetShown(categoryID == 3 and true)
+	mythicPlusPanel:SetShown(not raidPanel:IsShown())
 
 	if(miog.F.IS_RAIDERIO_LOADED) then
 		profile = RaiderIO.GetProfile(playerName, realm, miog.F.CURRENT_REGION)
@@ -443,11 +402,13 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 		end
 	end
 
-	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
-	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
+	frameWithPanel.RaiderIOInformationPanel.mplus = nil
+	frameWithPanel.RaiderIOInformationPanel.raid = nil
 
 	if(profile) then
 		if(mythicKeystoneProfile and mythicKeystoneProfile.currentScore > 0 and mythicKeystoneProfile.sortedDungeons) then
+			frameWithPanel.RaiderIOInformationPanel.mplus = {}
+
 			table.sort(mythicKeystoneProfile.sortedDungeons, function(k1, k2)
 				return k1.dungeon.shortName < k2.dungeon.shortName
 
@@ -462,8 +423,6 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 				for i, dungeonEntry in ipairs(mythicKeystoneProfile.sortedDungeons) do
 
 					local dungeonRowFrame = mythicPlusPanel["DungeonRow" .. i]
-
-					--miog.createFrameBorder(dungeonRowFrame, 1)
 
 					local rowIndex = dungeonEntry.dungeon.index
 					local texture = miog.MAP_INFO[dungeonEntry.dungeon.instance_map_id].icon
@@ -492,12 +451,12 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			local currentSeason = miog.MPLUS_SEASONS[miog.F.CURRENT_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
 			local previousSeason = miog.MPLUS_SEASONS[miog.F.PREVIOUS_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
 
-			if(mythicKeystoneProfile.previousScore and mythicKeystoneProfile.previousScore > 0) then
+			if(mythicKeystoneProfile.previousScore and mythicKeystoneProfile.previousScore > 0 and previousSeason) then
 				previousScoreString = previousSeason .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForRating(mythicKeystoneProfile.previousScore):GenerateHexColor())
 
 			end
 
-			mythicPlusPanel.CategoryRow1.FontString:SetText(previousScoreString)
+			frameWithPanel.RaiderIOInformationPanel.mplus.previous = previousScoreString
 
 			local mainScoreString = ""
 
@@ -524,33 +483,52 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			
 			end
 
-			mythicPlusPanel.CategoryRow2.FontString:SetText(mainScoreString)
+			frameWithPanel.RaiderIOInformationPanel.mplus.main = mainScoreString
 
-			if(detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo) then
-				detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo.Right["5"].FontString:SetText(
-					wticc(mythicKeystoneProfile.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
-					wticc(mythicKeystoneProfile.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
-					wticc(mythicKeystoneProfile.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
-					wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
-				)
-			end
+			infoPanel.MPlusKeys:SetText(
+				wticc(mythicKeystoneProfile.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
+				wticc(mythicKeystoneProfile.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
+				wticc(mythicKeystoneProfile.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
+				wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
+			)
 
 		else
-			mythicPlusPanel.CategoryRow1.FontString:SetText(wticc("NO M+ DATA", miog.CLRSCC["red"]))
+			--wticc("NO M+ DATA", miog.CLRSCC["red"])
 
 		end
 
 		if(raidProfile) then
+			frameWithPanel.RaiderIOInformationPanel.raid = {}
+
 			local currentTierFrame
 			local mainProgressText = ""
 
-			local currentData, nonCurrentData, orderedData = getRaidSortData(playerName .. (realm and "-" .. realm or ""))
+			local currentData, nonCurrentData, orderedData, mainData = getRaidSortData(playerName .. (realm and "-" .. realm or ""))
+
+			if(mainData[1].parsedString ~= "0/0") then
+				mainProgressText = mainData[1].shortName .. ": " .. wticc(miog.DIFFICULTY[mainData[1].difficulty].shortName .. ":" .. mainData[1].progress .. "/" .. mainData[1].bossCount, miog.DIFFICULTY[mainData[1].difficulty].color)
+
+				--[[
+				
+					ordinal = d.raid.ordinal,
+					raidProgressIndex = k,
+					mapId = mapID,
+					difficulty = y.difficulty,
+					current = d.current,
+					shortName = d.raid.shortName,
+					progress = y.kills,
+					bossCount = d.raid.bossCount,
+					parsedString = y.kills .. "/" .. d.raid.bossCount,
+					weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+				
+				]]
+			end
 
 			if(mainProgressText ~= "") then
-				raidPanel.CategoryRow2.FontString:SetText(wticc("Main: " .. mainProgressText, miog.ITEM_QUALITY_COLORS[6].pureHex))
+				frameWithPanel.RaiderIOInformationPanel.raid.main = wticc("Main: ", miog.ITEM_QUALITY_COLORS[7].pureHex) .. mainProgressText
 
 			else
-				raidPanel.CategoryRow2.FontString:SetText(wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex))
+				frameWithPanel.RaiderIOInformationPanel.raid.main = wticc("On his main char", miog.ITEM_QUALITY_COLORS[7].pureHex)
 
 			end
 
@@ -577,8 +555,6 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 								mapId = raidProgress.raid.mapId
 
 							end
-
-							--detailedInformationPanel:GetParent().BasicInformation.Title:SetText(math.floor(orderedData[1].weight + 0.5) .. "/" .. math.floor(orderedData[2].weight + 0.5))
 
 							local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapId)
 
@@ -646,24 +622,22 @@ local function gatherRaiderIODisplayData(playerName, realm, poolFrame, memberFra
 			end
 		else --NO RAIDING DATA
 			if(categoryID == 3) then
+				--frameWithPanel.RaiderIOInformationPanel.raid.noData = wticc("NO RAID DATA", miog.CLRSCC["red"])
 				--primaryIndicator:SetText(wticc("0/0", miog.CLRSCC.red))
 				--secondaryIndicator:SetText(wticc("0/0", miog.CLRSCC.red))
 			end
 		end
 
 	else -- If RaiderIO is not installed or no profile available
-		if(categoryID == 3) then
-			--primaryIndicator:SetText(wticc("0/0", miog.CLRSCC.red))
-			--secondaryIndicator:SetText(wticc("0/0", miog.CLRSCC.red))
-		end
+		--frameWithPanel.separateData.noData = wticc("NO RIO DATA", miog.CLRSCC["red"])
+		
 	end
 
-	if(detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo) then
-		detailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo.Right["6"].FontString:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
-	end
+	infoPanel.Realm:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
 end
 
-miog.gatherRaiderIODisplayData = gatherRaiderIODisplayData
+miog.retrieveRaiderIOData = retrieveRaiderIOData
+
 
 miog.getActiveSortMethods = function(panel)
 	local numberOfActiveMethods = 0

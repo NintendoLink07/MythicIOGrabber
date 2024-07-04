@@ -8,6 +8,8 @@ searchResultSystem.persistentFrames = {}
 searchResultSystem.declinedGroups = {}
 searchResultSystem.raidSortData = {}
 
+local detailedList = {}
+
 local function sortSearchResultList(result1, result2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.searchPanel) do
 		if(tableElement.currentLayer == 1) then
@@ -880,7 +882,8 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			local currentFrame = isInviteFrame and miog.inviteFrames[resultID] or searchResultSystem.persistentFrames[resultID]
 			local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
 			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-			local declineData = searchResultInfo.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName]
+			local saveID = searchResultInfo.activityID .. searchResultInfo.leaderName
+			local declineData = searchResultInfo.leaderName and MIOG_SavedSettings.searchPanel_DeclinedGroups.table[saveID]
 
 			currentFrame:SetScript("OnMouseDown", function(_, button)
 				groupSignup(searchResultInfo.searchResultID)
@@ -892,6 +895,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			end)
 
 			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal)
+			currentFrame.RaiderIOInformationPanel.Background:SetGradient("HORIZONTAL", CreateColor(0.3, 0.3, 0.3, 1), CreateColor(0.8, 0.8, 0.8, 1))
 			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.33)
 
 			currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
@@ -904,14 +908,25 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 
-			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function()
+			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function(self)
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+				local categoryID = miog.getCurrentCategoryID()
+				local baseFrame = self:GetParent():GetParent()
+
+				local infoData = baseFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
+
+				baseFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
+				baseFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
+
+				baseFrame.RaiderIOInformationPanel:SetShown(not baseFrame.RaiderIOInformationPanel:IsShown())
+				detailedList[saveID] = baseFrame.RaiderIOInformationPanel:IsShown()
+				
 				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
-				currentFrame.DetailedInformationPanel:SetShown(not currentFrame.DetailedInformationPanel:IsVisible())
 				currentFrame:MarkDirty()
-
 			end)
-
+			
+			currentFrame.RaiderIOInformationPanel:SetShown(detailedList[saveID] or false)
 
 			if(currentFrame.BasicInformation.Age.ageTicker) then
 				currentFrame.BasicInformation.Age.ageTicker:Cancel()
@@ -942,7 +957,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 				else
 					titleZoneColor = "FFFFFFFF"
-					MIOG_SavedSettings.searchPanel_DeclinedGroups.table[searchResultInfo.activityID .. searchResultInfo.leaderName] = nil
+					MIOG_SavedSettings.searchPanel_DeclinedGroups.table[saveID] = nil
 
 				end
 			else
@@ -999,12 +1014,12 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 				end
 			end
 
-			miog.gatherRaiderIODisplayData(nameTable[1], nameTable[2], currentFrame)
+			miog.retrieveRaiderIOData(nameTable[1], nameTable[2], currentFrame)
 
-			local generalInfoPanel = currentFrame.DetailedInformationPanel.PanelContainer.ForegroundRows.GeneralInfo
+			local infoPanel = currentFrame.RaiderIOInformationPanel.InfoPanel
 
-			generalInfoPanel.Right["1"].FontString:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultInfo.comment and searchResultInfo.comment) or ""))
-			generalInfoPanel.Right["4"].FontString:SetText("Role: ")
+			infoPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((searchResultInfo.comment and searchResultInfo.comment) or ""))
+			infoPanel.RaceRoles:SetText("Role: ")
 
 			local orderedList = {}
 
@@ -1383,6 +1398,8 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 
 	end
 
+	persistentFrame.RaiderIOInformationPanel.InfoPanel.Comment:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
+
 	local expandFrameButton = persistentFrame.CategoryInformation.ExpandFrame
 	expandFrameButton:OnLoad()
 	expandFrameButton:SetMaxStates(2)
@@ -1431,8 +1448,6 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 
 		persistentFrame.CategoryInformation.BossPanel:MarkDirty()
 	end
-
-	miog.createDetailedInformationPanel(persistentFrame)
 
 	persistentFrame:MarkDirty()
 

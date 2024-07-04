@@ -176,10 +176,11 @@
                 </Layers>
 
             </Frame>
-
-            <Frame parentKey="DetailedInformationPanel" inherits="MIOG_DetailedInformationPanelTemplate">
+            
+            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="2" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
             </Frame>
 

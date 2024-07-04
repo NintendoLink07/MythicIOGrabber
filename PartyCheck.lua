@@ -32,7 +32,7 @@ end
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 	if(singleUnitInfo) then
 		local specId = singleUnitInfo.specId
-		local specName = singleUnitInfo.specName
+		--[[local specName = singleUnitInfo.specName
 		local role = singleUnitInfo.role
 		local renown = singleUnitInfo.renown
 		local covenantId = singleUnitInfo.covenantId
@@ -42,8 +42,10 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 		local class = singleUnitInfo.class
 		local classId = singleUnitInfo.classId
 		local className = singleUnitInfo.className
-		local unitName = singleUnitInfo.name
+		local unitName = singleUnitInfo.name]]
+
 		local unitNameFull = singleUnitInfo.nameFull
+		singleUnitInfo.unitId = singleUnitId
 
 		miog.checkSystem.groupMember[unitNameFull] = miog.checkSystem.groupMember[unitNameFull] or {}
 
@@ -71,23 +73,22 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 	if(name) then
 		--hasWeaponEnchant is 1 have enchant or 0 is don't
 		local hasWeaponEnchantNumber = unitGear.weaponEnchant
-		local noEnchantTable = unitGear.noEnchants
-		local noGemsTable = unitGear.noGems
 
 		miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
 		miog.checkSystem.groupMember[name].ilvl = unitGear.ilevel
 		miog.checkSystem.groupMember[name].durability = unitGear.durability
 		miog.checkSystem.groupMember[name].missingEnchants = {}
+		miog.checkSystem.groupMember[name].hasWeaponEnchant = hasWeaponEnchantNumber == 1 and true or false
 		miog.checkSystem.groupMember[name].missingGems = {}
 
-		for index, slotIdWithoutEnchant in ipairs (noEnchantTable) do
+		for index, slotIdWithoutEnchant in ipairs (unitGear.noEnchants) do
 			if(slotIdWithoutEnchant ~= 10) then
 				miog.checkSystem.groupMember[name].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
 				
 			end
 		end
 
-		for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
+		for index, slotIdWithEmptyGemSocket in ipairs (unitGear.noGems) do
 			miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 		end
 
@@ -137,6 +138,8 @@ miog.loadPartyCheck = function()
 			miog.openRaidLib.RequestKeystoneDataFromParty()
 
 		end
+
+		miog.updateRosterInfoData()
 	end)
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")

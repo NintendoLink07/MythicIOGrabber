@@ -1,14 +1,16 @@
-## [2.2.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.1) - 2024-06-28
+## [2.2.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.2) - 2024-07-04
+
+### Changed
+
+- The detailed raider io information panel has been simplified, resulting in better performance and a lower memory requirement.
+Doesn't save alot of memory (around 1-2 megabytes) but it's the first step.
 
 ### Fixed
 
-- [PartyCheck] Itemlevel and durability now also always update for players on your realm.
+- The detailed information panel will now display the main's highest raid progress in the raid tab.
 
-- [Guild] Saved keystone info from guild members will not have priority over new incoming data.
+- [PartyCheck] Specs and classes will now be identified more reliably.
 
-### Upcoming
+- [PartyCheck] Weapon enchants will now also be checked.
 
-- Revisiting my old custom "You've got an invite" panel idea, since I've learned quite a lot since October last year.
-Probably implementing it over the next few days, base code is already done.
-
-- After the custom invites I'll probably have a full version of performance optimizing shit, especially a better idea for the guild panel.
+- [Entry Creation] Setting an mythic plus or pvp rating will not set the other rating to the same value.

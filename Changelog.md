@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.2.2] - 2024-07-04
+
+### Changed
+
+- The detailed raider io information panel has been simplified, resulting in better performance and a lower memory requirement.
+Doesn't save alot of memory (around 1-2 megabytes) but it's the first step.
+
+### Fixed
+
+- The detailed information panel will now display the main's highest raid progress in the raid tab.
+
+- [PartyCheck] Specs and classes will now be identified more reliably.
+
+- [PartyCheck] Weapon enchants will now also be checked.
+
+- [Entry Creation] Setting an mythic plus or pvp rating will not set the other rating to the same value.
+
 
 ## [2.2.1] - 2024-06-28
 
@@ -1711,7 +1728,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.2..HEAD
+[2.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.2
 [2.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.1
 [2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2
 [2.1.5c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.1.5c
