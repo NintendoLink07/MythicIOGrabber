@@ -19,7 +19,7 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true">
+            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture setAllPoints="true">
@@ -61,6 +61,7 @@
             <Frame parentKey="BasicInformation">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="1" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
 
                 <Size y="20" />
@@ -129,6 +130,7 @@
 
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="2" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
 
                 <Frames>
@@ -255,5 +257,11 @@
                 </KeyValues>
             </Frame>
         </Frames>
+
+        <Scripts>
+            <OnLeave>
+		        GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
     </Frame>
 </Ui>

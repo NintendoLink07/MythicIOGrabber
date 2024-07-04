@@ -1,16 +1,23 @@
-## [2.2.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.2) - 2024-07-04
+## [2.2.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.3) - 2024-07-04
 
-### Changed
+### Added
 
-- The detailed raider io information panel has been simplified, resulting in better performance and a lower memory requirement.
-Doesn't save alot of memory (around 1-2 megabytes) but it's the first step.
+- Above the currencies there is now a bullion tracker.
 
 ### Fixed
 
-- The detailed information panel will now display the main's highest raid progress in the raid tab.
+- [ApplicationViewer] The applicant's tooltip will now hide correctly after leaving the applicant frame.
 
-- [PartyCheck] Specs and classes will now be identified more reliably.
+- [PartyCheck] While in a group the tooltips shouldn't get mixed up anymore.
 
-- [PartyCheck] Weapon enchants will now also be checked.
+- [PartyCheck] The leader icon isn't floating around the world anymore when you scroll down.
 
-- [Entry Creation] Setting an mythic plus or pvp rating will not set the other rating to the same value.
+- [PartyCheck] There won't be any error anymore when someone leaves the raid/group while it's currently checking for their gear.
+
+- More performance fixes.
+
+- Fixed an error when the leader tries to queue the group while in combat.
+
+- The raider io info's background is now back in business.
+
+- The mainframe won't open anymore when something in the application viewer changes.

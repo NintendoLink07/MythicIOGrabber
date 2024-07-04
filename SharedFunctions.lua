@@ -317,6 +317,9 @@ local function createFullNameFrom(type, value)
 		elseif(type == "unitName") then
 			name = value
 			
+		else
+			return nil
+			
 		end
 
 		local nameTable = miog.simpleSplit(name, "-")

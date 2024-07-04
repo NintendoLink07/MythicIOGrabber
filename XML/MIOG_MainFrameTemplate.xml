@@ -659,16 +659,23 @@
                                     </Frame>
 
                                     <Frame parentKey="Currency">
-                                        <Size x="40" y="80" />
+                                        <Size x="40" y="100" />
                                         <Anchors>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
                                         </Anchors>
 
                                         <Frames>
-                                            <Frame parentKey="Aspect" inherits="MIOG_CurrencySingleTemplate">
+                                            <Frame parentKey="Bullion" inherits="MIOG_CurrencySingleTemplate">
                                                 <Size x="40" y="20" />
                                                 <Anchors>
                                                     <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP"/>
+                                                </Anchors>
+                                            </Frame>
+
+                                            <Frame parentKey="Aspect" inherits="MIOG_CurrencySingleTemplate">
+                                                <Size x="40" y="20" />
+                                                <Anchors>
+                                                    <Anchor point="TOP" relativeKey="$parent.Bullion" relativePoint="BOTTOM"/>
                                                 </Anchors>
                                             </Frame>
 

@@ -4,10 +4,20 @@ local wticc = WrapTextInColorCode
 local applicantSystem = {}
 applicantSystem.applicantMember = {}
 
+local applicantFramePool
+
 local detailedList = {}
 
 local applicationFrameIndex = 0
 local queueTimer
+
+local function resetFrame(pool, childFrame)
+    childFrame:Hide()
+	childFrame.layoutIndex = nil
+
+	childFrame.memberIdx = nil
+	childFrame.applicantID = nil
+end
 
 local function resetArrays()
 	miog.DEBUG_APPLICANT_DATA = {}
@@ -35,14 +45,14 @@ local function showEditBox(name, parent, numeric, maxLetters)
 end
 
 local function releaseApplicantFrames()
-	for widget in miog.applicantFramePool:EnumerateActive() do
+	for widget in applicantFramePool:EnumerateActive() do
 		widget.framePool:ReleaseAllByTemplate("MIOG_ApplicantMemberFrameTemplate")
 		widget.framePool:ReleaseAllByTemplate("MIOG_ApplicantMemberFrameTemplate")
 	end
 
 	applicantSystem.applicantMember = {}
 
-	miog.applicantFramePool:ReleaseAll()
+	applicantFramePool:ReleaseAll()
 
 	miog.Plugin.FooterBar.Results:SetText("0(0)")
 	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
@@ -170,18 +180,14 @@ local function createApplicantFrame(applicantID)
 	if(applicantData) then
 		local activityID = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.activityID or 0
 
-		local applicantFrame = miog.applicantFramePool:Acquire("MIOG_ApplicantFrameTemplate")
+		local applicantFrame = applicantFramePool:Acquire()
 		applicantFrame:SetParent(miog.ApplicationViewer.FramePanel.Container)
 		applicantFrame.fixedWidth = miog.ApplicationViewer.FramePanel:GetWidth()
-		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
+		--applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 		applicantFrame.memberFrames = {}
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePoolCollection()
 		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ApplicantMemberFrameTemplate", miog.resetFrame)
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTemplate", miog.resetFrame)
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DetailedInformationPanelTextRowTemplate", miog.resetFrame)
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_DungeonRowTemplate", miog.resetFrame)
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_RaidPanelTemplate", miog.resetFrame)
 		applicantFrame.applicantID = applicantID
 
 		applicantFrame.fontStringPool = applicantFrame.fontStringPool or CreateFontStringPool(applicantFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
@@ -226,7 +232,6 @@ local function createApplicantFrame(applicantID)
 			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOG_ApplicantMemberFrameTemplate", applicantFrame)
 			applicantMemberFrame:ClearBackdrop()
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
-			applicantMemberFrame.BasicInformation:SetWidth(applicantMemberFrame.fixedWidth - 2)
 			applicantMemberFrame.memberIdx = applicantIndex
 			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
 			applicantMemberFrame:SetScript("OnEnter", function(self)
@@ -246,7 +251,6 @@ local function createApplicantFrame(applicantID)
 					end
 				end
 			end)
-			applicantMemberFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
 
 			if(MIOG_SavedSettings.favouredApplicants.table[name]) then
@@ -255,12 +259,9 @@ local function createApplicantFrame(applicantID)
 			end
 
 			local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
-			applicantMemberStatusFrame:SetFrameStrata("FULLSCREEN")
 			applicantMemberStatusFrame:Hide()
 
 			local expandFrameButton = applicantMemberFrame.BasicInformation.ExpandFrame
-
-			expandFrameButton:RegisterForClicks("LeftButtonDown")
 			expandFrameButton:SetScript("OnClick", function(self)
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
@@ -282,11 +283,7 @@ local function createApplicantFrame(applicantID)
 			end)
 			
 			applicantMemberFrame.RaiderIOInformationPanel:SetShown(detailedList[name] or false)
-
-			if(applicantData.comment ~= "" and applicantData.comment ~= nil) then
-				applicantMemberFrame.BasicInformation.Comment:Show()
-
-			end
+			applicantMemberFrame.BasicInformation.Comment:SetShown(applicantData.comment ~= "" and applicantData.comment ~= nil)
 
 			local nameFontString = applicantMemberFrame.BasicInformation.Name
 			nameFontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
@@ -1177,4 +1174,6 @@ miog.createApplicationViewer = function()
 	miog.ApplicationViewer:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
 	miog.ApplicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
 	miog.ApplicationViewer:SetScript("OnEvent", applicationViewerEvents)
+
+	applicantFramePool = CreateFramePool("Frame", nil, "MIOG_ApplicantFrameTemplate", resetFrame)
 end

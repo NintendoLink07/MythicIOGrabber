@@ -144,6 +144,15 @@ miog.OnEvent = function(_, event, ...)
 	
 	elseif(event == "CURRENCY_DISPLAY_UPDATE") then
 		if(miog.MainTab) then
+			local bullionInfo = C_CurrencyInfo.GetCurrencyInfo(3010)
+			miog.MainTab.Information.Currency.Bullion.Text:SetText(bullionInfo.quantity .. " (" .. bullionInfo.totalEarned .. "/" .. bullionInfo.maxQuantity .. ")")
+			miog.MainTab.Information.Currency.Bullion.Icon:SetTexture(4555657)
+			miog.MainTab.Information.Currency.Bullion.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetCurrencyByID(3010)
+				GameTooltip:Show()
+			end)
+
 			local aspectInfo = C_CurrencyInfo.GetCurrencyInfo(2812)
 			miog.MainTab.Information.Currency.Aspect.Text:SetText(aspectInfo.quantity .. " (" .. aspectInfo.totalEarned .. "/" .. aspectInfo.maxQuantity .. ")")
 			miog.MainTab.Information.Currency.Aspect.Icon:SetTexture(aspectInfo.iconFileID)

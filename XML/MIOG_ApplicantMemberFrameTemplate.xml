@@ -2,8 +2,14 @@
 ..\..\FrameXML\UI.xsd">    
     <Frame name="MIOG_ApplicantMemberFrameTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
         <Size y="20" />
+
+        <KeyValues>
+            <KeyValue key="minimumHeight" value="20" type="number" />
+            <KeyValue key="expand" value="true" type="boolean" />
+        </KeyValues>
+
         <Layers>
-            <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND" textureSubLevel="-1">
                 <Texture parentKey="Background" setAllPoints="true">
                     <Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />
                 </Texture>
@@ -11,7 +17,7 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" >
+            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture setAllPoints="true">
@@ -33,6 +39,7 @@
                 
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="1" type="number" />
+            <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
 
                 <Frames>
@@ -204,5 +211,11 @@
             </EditBox>
 
         </Frames>
+
+        <Scripts>
+            <OnLeave>
+			    GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
     </Frame>
 </Ui>

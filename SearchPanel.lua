@@ -1363,18 +1363,9 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 	persistentFrame.resultID = resultID
 	persistentFrame.InviteBackground:Hide()
 
-	for k, v in pairs(persistentFrame:GetLayoutChildren()) do
-		v:SetWidth(persistentFrame.fixedWidth)
-	end
-
-	persistentFrame:SetScript("OnLeave", function()
-		GameTooltip:Hide()
-
-	end)
 	miog.createInvisibleFrameBorder(persistentFrame, 2)
 
 	persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_GroupMemberTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
 
@@ -1385,8 +1376,6 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 		searchResultSystem.persistentFrames[resultID] = persistentFrame
 
 	end
-
-	persistentFrame.StatusFrame:SetFrameStrata("FULLSCREEN")
 
 	if(miog.F.LITE_MODE) then
 		persistentFrame.BasicInformation.Title:SetWidth(90)
@@ -1408,7 +1397,6 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 	expandFrameButton:SetState(false)
 
 	persistentFrame.CancelApplication:OnLoad()
-
 
 	--for i = 1, #, 1 do
 	if(miog.MAP_INFO[mapID]) then

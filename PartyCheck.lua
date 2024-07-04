@@ -8,25 +8,26 @@ miog.checkSystem.keystoneData = {}
 local stopUpdates = false
 
 miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
-	unitName = miog.createFullNameFrom("unitName", unitName)
+	if(unitName) then
+		unitName = miog.createFullNameFrom("unitName", unitName)
 
-	if(miog.groupSystem.groupMember[unitName] or unitName == miog.createFullNameFrom("unitID", "player")) then
-		miog.checkSystem.keystoneData[unitName] = keystoneInfo
+		if(miog.groupSystem.groupMember[unitName] or unitName == miog.createFullNameFrom("unitID", "player")) then
+			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
+			miog.updateRosterInfoData()
+		end
+
+		if(miog.guildFrames[unitName]) then
+			MIOG_SavedSettings.guildKeystoneInfo[unitName] = keystoneInfo
+			miog.guildSystem.keystoneData[unitName] = keystoneInfo
+
+			local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
+
+			local currentFrame = miog.guildFrames[unitName]
+			currentFrame.BasicInformation.Keylevel:SetText("+" .. keystoneInfo.level)
+			currentFrame.BasicInformation.Keystone:SetTexture(texture)
+		end
 	end
-
-	if(miog.guildFrames[unitName]) then
-		MIOG_SavedSettings.guildKeystoneInfo[unitName] = keystoneInfo
-		miog.guildSystem.keystoneData[unitName] = keystoneInfo
-
-		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
-
-		local currentFrame = miog.guildFrames[unitName]
-		currentFrame.BasicInformation.Keylevel:SetText("+" .. keystoneInfo.level)
-        currentFrame.BasicInformation.Keystone:SetTexture(texture)
-	end
-
-	miog.updateRosterInfoData()
 end
 
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
@@ -38,7 +39,7 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 		local covenantId = singleUnitInfo.covenantId
 		local talents = singleUnitInfo.talents
 		local pvpTalents = singleUnitInfo.pvpTalents
-		local conduits = singleUnitInfo.conduits
+		local conduits = singleUnitInfo.conduitsw
 		local class = singleUnitInfo.class
 		local classId = singleUnitInfo.classId
 		local className = singleUnitInfo.className
@@ -68,42 +69,46 @@ function miog.OnUnitInfoWipe()
 end
 
 function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
-	local name = miog.createFullNameFrom("unitID", unitId)
+	if(unitId) then
+		local name = miog.createFullNameFrom("unitID", unitId)
 
-	if(name) then
-		--hasWeaponEnchant is 1 have enchant or 0 is don't
-		local hasWeaponEnchantNumber = unitGear.weaponEnchant
+		if(name) then
+			--hasWeaponEnchant is 1 have enchant or 0 is don't
+			local hasWeaponEnchantNumber = unitGear.weaponEnchant
 
-		miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
-		miog.checkSystem.groupMember[name].ilvl = unitGear.ilevel
-		miog.checkSystem.groupMember[name].durability = unitGear.durability
-		miog.checkSystem.groupMember[name].missingEnchants = {}
-		miog.checkSystem.groupMember[name].hasWeaponEnchant = hasWeaponEnchantNumber == 1 and true or false
-		miog.checkSystem.groupMember[name].missingGems = {}
+			miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
+			miog.checkSystem.groupMember[name].ilvl = unitGear.ilevel
+			miog.checkSystem.groupMember[name].durability = unitGear.durability
+			miog.checkSystem.groupMember[name].missingEnchants = {}
+			miog.checkSystem.groupMember[name].hasWeaponEnchant = hasWeaponEnchantNumber == 1 and true or false
+			miog.checkSystem.groupMember[name].missingGems = {}
 
-		for index, slotIdWithoutEnchant in ipairs (unitGear.noEnchants) do
-			if(slotIdWithoutEnchant ~= 10) then
-				miog.checkSystem.groupMember[name].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
-				
+			for index, slotIdWithoutEnchant in ipairs (unitGear.noEnchants) do
+				if(slotIdWithoutEnchant ~= 10) then
+					miog.checkSystem.groupMember[name].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+					
+				end
 			end
-		end
 
-		for index, slotIdWithEmptyGemSocket in ipairs (unitGear.noGems) do
-			miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
-		end
+			for index, slotIdWithEmptyGemSocket in ipairs (unitGear.noGems) do
+				miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+			end
 
-		miog.updateRosterInfoData()
+			miog.updateRosterInfoData()
+		end
 	end
 end
 
 function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
-	local name = miog.createFullNameFrom("unitID", unitId)
+	if(unitId) then
+		local name = miog.createFullNameFrom("unitID", unitId)
 
-	if(name) then
-		miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
-		miog.checkSystem.groupMember[name].durability = durability
+		if(name) then
+			miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
+			miog.checkSystem.groupMember[name].durability = durability
 
-		miog.updateRosterInfoData()
+			miog.updateRosterInfoData()
+		end
 	end
 end
 

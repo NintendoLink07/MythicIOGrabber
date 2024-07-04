@@ -104,6 +104,7 @@ local function updateRosterInfoData()
 
 		local playersWithSpecData = 0
 		local fullPlayerName = miog.createFullNameFrom("unitID", "player")
+		local shortName = GetUnitName("player", false)
 
 		if(miog.F.LFG_STATE == "solo") then
 			local fileName, id = UnitClassBase("player")
@@ -129,11 +130,24 @@ local function updateRosterInfoData()
 			}
 		end
 
-		for groupIndex = 1, numOfMembers, 1 do
+		local groupOffset = 0
+
+		for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
 			local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
 			if(name) then
-				local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and miog.F.LFG_STATE..groupIndex) or "player"
+				local unitID
+				
+				if(IsInRaid()) then
+					unitID = "raid" .. groupIndex
+
+				elseif(IsInGroup() and name ~= shortName) then
+					unitID = "party" .. groupIndex + groupOffset
+				
+				elseif(name == shortName) then
+					unitID = "player"
+					groupOffset = -1
+				end
 
 				local nameTable = miog.simpleSplit(name, "-")
 
@@ -166,7 +180,7 @@ local function updateRosterInfoData()
 						index = groupIndex,
 					}
 
-					if(name ~= fullPlayerName and (not MIOG_InspectedNames[name] or GetTimePreciseSec() - MIOG_InspectedNames[name] > 300)) then
+					if(name ~= UnitName("player") and (not MIOG_InspectedNames[name] or GetTimePreciseSec() - MIOG_InspectedNames[name] > 600)) then
 						if(currentInspection == nil and UnitIsConnected(unitID) and CanInspect(unitID)) then
 							currentInspection = name
 
@@ -412,6 +426,8 @@ local function updateRosterInfoData()
 
 			miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
 
+			local categoryID = miog.getCurrentCategoryID()
+
 			if(partyPool) then
 				for index, member in ipairs(indexedGroup) do
 					local memberFrame = partyPool:Acquire()
@@ -425,7 +441,7 @@ local function updateRosterInfoData()
 					miog.retrieveRaiderIOData(member.shortName, member.realm, memberFrame)
 					
 					memberFrame.ExpandFrame:SetScript("OnClick", function(self)
-						local infoData = memberFrame.RaiderIOInformationPanel[miog.getCurrentCategoryID() == 3 and "raid" or "mplus"]
+						local infoData = memberFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
 
 						memberFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
 						memberFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
@@ -442,6 +458,7 @@ local function updateRosterInfoData()
 					if(member.rank == 2) then
 						miog.PartyCheck.LeaderCrown:ClearAllPoints()
 						miog.PartyCheck.LeaderCrown:SetPoint("RIGHT", memberFrame.Group, "RIGHT")
+						miog.PartyCheck.LeaderCrown:SetParent(memberFrame)
 						miog.PartyCheck.LeaderCrown:Show()
 
 					end

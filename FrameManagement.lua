@@ -2,9 +2,8 @@ local addonName, miog = ...
 
 local function resetFrame(pool, childFrame)
     childFrame:Hide()
-	childFrame:SetFrameStrata("LOW")
-
 	childFrame.layoutIndex = nil
+
 	childFrame.fixedHeight = nil
 	childFrame.fixedWidth = nil
 	childFrame.minimumHeight = nil
@@ -126,7 +125,6 @@ miog.persistentFramePool:GetOrCreatePool("EditBox", nil, "InputBoxTemplate", res
 miog.persistentFontStringPool = CreateFontStringPool(miog.persistentFramePool:Acquire("BackdropTemplate"), "OVERLAY", nil, "GameTooltipText", resetFontString)
 miog.persistentTexturePool = CreateTexturePool(miog.persistentFramePool:Acquire("BackdropTemplate"), "ARTWORK", nil, nil, resetTexture)
 
-miog.applicantFramePool = CreateFramePool("Frame", nil, "MIOG_ApplicantFrameTemplate", resetFrame)
 miog.searchResultFramePool = CreateFramePool("Frame", nil, "MIOG_ResultFrameTemplate", resetFrame)
 
 local createBasicFontString = function(poolType, fontSize, parent, width, height, text)

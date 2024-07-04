@@ -808,7 +808,7 @@ local function setActivePanel(_, panel)
 		end
 
 		if(not miog.F.LITE_MODE) then
-			miog.pveFrame2:Show()
+			--ShowUIPanel(miog.pveFrame2)
 
 		else
 			LFGListFrame.ApplicationViewer:Hide()
@@ -851,7 +851,7 @@ local function setActivePanel(_, panel)
 		end
 
 		if(not miog.F.LITE_MODE) then
-			miog.pveFrame2:Show()
+			--ShowUIPanel(miog.pveFrame2)
 
 		else
 			LFGListFrame.SearchPanel:Hide()
@@ -894,7 +894,7 @@ local function setActivePanel(_, panel)
 		miog.FilterPanel.Lock:Show()
 
 		if(not miog.F.LITE_MODE) then
-			miog.pveFrame2:Show()
+			--ShowUIPanel(miog.pveFrame2)
 
 		else
 			LFGListFrame.EntryCreation:Hide()
