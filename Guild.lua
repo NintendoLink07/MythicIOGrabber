@@ -66,11 +66,8 @@ local function retrieveGuildMembers()
 
     local guildTable = {}
 
-	local i = 1
-
-    --for i = 1, GetNumGuildMembers(), 1 do
-		local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class = "Rhany-Ravencrest", "Mythic1", 1, 70, nil, "Here", nil, nil, true, 0, "WARLOCK"
-		--local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class, _, _, isMobile, _, repStanding, guid = GetGuildRosterInfo(i)
+    for i = 1, GetNumGuildMembers(), 1 do
+		local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class, _, _, isMobile, _, repStanding, guid = GetGuildRosterInfo(i)
 
         local nameTable = miog.simpleSplit(name, "-")
 
@@ -108,7 +105,6 @@ local function retrieveGuildMembers()
 
 				if(progressWeight == 0) then
 					progress = ""
-					--progressTooltipData = nil
 				end
 			end
 		else
@@ -136,7 +132,7 @@ local function retrieveGuildMembers()
             progressText = progress,
         }
 
-	--end
+	end
 	
 
     table.sort(guildTable, sortGuildList)
