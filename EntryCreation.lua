@@ -121,26 +121,19 @@ miog.createEntryCreation = function()
 	--miogDropdown.List:MarkDirty()
 	--miogDropdown:MarkDirty()
 
-	local startGroup = CreateFrame("Button", nil, miog.EntryCreation, "UIPanelDynamicResizeButtonTemplate, LFGListMagicButtonTemplate")
-	startGroup:SetSize(1, 20)
-	startGroup:SetPoint("RIGHT", miog.Plugin.FooterBar, "RIGHT")
-	startGroup:SetText("Start Group")
-	startGroup:FitToText()
-	startGroup:RegisterForClicks("LeftButtonDown")
-	startGroup:Show()
-	startGroup:SetScript("OnClick", function()
+	miog.EntryCreation.StartGroup:SetPoint("RIGHT", miog.Plugin.FooterBar, "RIGHT")
+	miog.EntryCreation.StartGroup:SetScript("OnClick", function()
 		miog.listGroup()
 	end)
-	miog.EntryCreation.StartGroup = startGroup
 
-	frame:HookScript("OnShow", function()
+	frame:HookScript("OnShow", function(self)
 		if(C_LFGList.HasActiveEntryInfo()) then
 			LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
-			startGroup:SetText("Update")
+			self.StartGroup:SetText("Update")
 
 		else
 			LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)
-			startGroup:SetText("Start Group")
+			self.StartGroup:SetText("Start Group")
 
 		end
 	end)

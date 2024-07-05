@@ -38,7 +38,7 @@ hooksecurefunc("LFGListInviteDialog_Show", function(blizzDialog, resultID, kstri
         
                                 self:GetParent().framePool:ReleaseAll()
 
-                                miog.searchResultFramePool:Release(self:GetParent())
+                                framePool:Release(self:GetParent())
 
                                 miog.inviteFrames[resultID] = nil
 

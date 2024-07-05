@@ -46,8 +46,7 @@ end
 
 local function releaseApplicantFrames()
 	for widget in applicantFramePool:EnumerateActive() do
-		widget.framePool:ReleaseAllByTemplate("MIOG_ApplicantMemberFrameTemplate")
-		widget.framePool:ReleaseAllByTemplate("MIOG_ApplicantMemberFrameTemplate")
+		widget.framePool:ReleaseAll()
 	end
 
 	applicantSystem.applicantMember = {}
@@ -59,8 +58,6 @@ local function releaseApplicantFrames()
 
 	applicantSystem = {}
 	applicantSystem.applicantMember = {}
-
-	--collectgarbage()
 
 end
 
@@ -183,15 +180,11 @@ local function createApplicantFrame(applicantID)
 		local applicantFrame = applicantFramePool:Acquire()
 		applicantFrame:SetParent(miog.ApplicationViewer.FramePanel.Container)
 		applicantFrame.fixedWidth = miog.ApplicationViewer.FramePanel:GetWidth()
-		--applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
+		applicantFrame.minimumHeight = applicantData.numMembers * (miog.C.APPLICANT_MEMBER_HEIGHT + miog.C.APPLICANT_PADDING)
 		applicantFrame.memberFrames = {}
 
-		applicantFrame.framePool = applicantFrame.framePool or CreateFramePoolCollection()
-		applicantFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ApplicantMemberFrameTemplate", miog.resetFrame)
+		applicantFrame.framePool = applicantFrame.framePool or CreateFramePool("Frame", applicantFrame, "MIOG_ApplicantMemberFrameTemplate", resetFrame)
 		applicantFrame.applicantID = applicantID
-
-		applicantFrame.fontStringPool = applicantFrame.fontStringPool or CreateFontStringPool(applicantFrame, "OVERLAY", nil, "GameTooltipText", miog.resetFontString)
-		applicantFrame.texturePool = applicantFrame.texturePool or CreateTexturePool(applicantFrame, "ARTWORK", nil, nil, miog.resetTexture)
 
 		miog.createFrameBorder(applicantFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
 
@@ -229,7 +222,9 @@ local function createApplicantFrame(applicantID)
 
 			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
 
-			local applicantMemberFrame = miog.createFleetingFrame(applicantFrame.framePool, "MIOG_ApplicantMemberFrameTemplate", applicantFrame)
+			local applicantMemberFrame = applicantFrame.framePool:Acquire()
+			applicantMemberFrame.layoutIndex = applicantIndex
+			applicantMemberFrame:Show()
 			applicantMemberFrame:ClearBackdrop()
 			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
 			applicantMemberFrame.memberIdx = applicantIndex
@@ -1087,27 +1082,12 @@ miog.createApplicationViewer = function()
 		local sortByCategoryButton = applicationViewer.ButtonPanel[i == 1 and "RoleSort" or i == 2 and "PrimarySort" or i == 3 and "SecondarySort" or i == 4 and "IlvlSort"]
 		sortByCategoryButton.panel = "applicationViewer"
 		sortByCategoryButton.category = i == 1 and "role" or i == 2 and "primary" or i == 3 and "secondary" or i == 4 and "ilvl"
-		--sortByCategoryButton:SetPoint()
-
-		sortByCategoryButton:SetScript("PostClick", function(self, button)
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			C_LFGList.RefreshApplicants()
-		end)
 
 		applicationViewer.ButtonPanel.sortByCategoryButtons[sortByCategoryButton.category] = sortByCategoryButton
 
 	end
 
 	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset((miog.F.LITE_MODE and -20 or 0) + 156, 0)
-	
-	applicationViewer.ButtonPanel.ResetButton:SetScript("OnClick",
-		function()
-			C_LFGList.RefreshApplicants()
-
-			miog.ApplicationViewer.FramePanel:SetVerticalScroll(0)
-		end
-	)
-
 	applicationViewer.Browse:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 
 	miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
@@ -1159,7 +1139,6 @@ miog.createApplicationViewer = function()
 	
 		self.lastClick = GetTime()
 	end)
-	PlaySound(SOUNDKIT.UI_PROFESSION_HIDE_UNOWNED_REAGENTS_CHECKBOX)
 
 	miog.ApplicationViewer.CreationSettings.PrivateGroup:SetScript("OnMouseDown", function()
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)

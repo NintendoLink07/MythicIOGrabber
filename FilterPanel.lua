@@ -271,7 +271,6 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 	filterOption:SetSize(220, 25)
 	local settingName = "filterFor" .. name
 
-	--local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", parent, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
 	filterOption.Button:HookScript("OnClick", function(self)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
@@ -491,28 +490,24 @@ local function addRaidCheckboxes()
 
 	if(seasonGroups and #seasonGroups > 0) then
 		for i = 1, maxGroups, 1 do
-			local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", raidPanel, 20, 20)
+			local optionButton = CreateFrame("CheckButton", nil, raidPanel, "MIOG_MinimalCheckButtonTemplate")
+			optionButton:SetSize(20, 20)
 			optionButton.layoutIndex = i + 1
-			optionButton:SetNormalAtlas("checkbox-minimal")
-			optionButton:SetPushedAtlas("checkbox-minimal")
-			optionButton:SetCheckedTexture("checkmark-minimal")
-			optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-			optionButton:RegisterForClicks("LeftButtonDown")
 		
 			raidPanel.Buttons[i] = optionButton
 		
-			local optionString = miog.createBasicFontString("persistent", 12, raidPanel)
-			optionString:SetPoint("LEFT", optionButton, "RIGHT")
+			optionButton.FontString = optionButton:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+			optionButton.FontString:SetFont("SystemFont_Shadow_Med1", 12, "OUTLINE")
+			optionButton.FontString:SetPoint("LEFT", optionButton, "RIGHT")
 
-			optionButton.FontString = optionString
-
-
-			local raidBossRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", raidPanel, raidPanel:GetWidth(), 24)
+			local raidBossRow = CreateFrame("Frame", nil, raidPanel, "HorizontalLayoutFrame, BackdropTemplate")
+			raidBossRow:SetSize(raidPanel:GetWidth(), 24)
 			raidBossRow:SetPoint("LEFT", optionButton, "RIGHT", 36, 0)
 			raidBossRow.BossFrames = {}
 			raidPanel.Rows[i] = raidBossRow
 
-			local resetButton = miog.createBasicFrame("persistent", "IconButtonTemplate", raidBossRow, 20, 20)
+			local resetButton = CreateFrame("Button", nil, raidBossRow, "IconButtonTemplate")
+			resetButton:SetSize(20, 20)
 			resetButton.icon = "Interface\\Addons\\MythicIOGrabber\\res\\infoIcons\\xSmallIcon.png"
 			resetButton.iconSize = 16
 			resetButton:OnLoad()
@@ -527,7 +522,8 @@ local function addRaidCheckboxes()
 end
 
 local function createRaidPanel(parent)
-	local raidPanel = miog.createBasicFrame("persistent", "VerticalLayoutFrame, BackdropTemplate", parent, 220, 24)
+	local raidPanel = CreateFrame("Frame", nil, parent, "VerticalLayoutFrame, BackdropTemplate")
+	raidPanel:SetSize(220, 24)
 	raidPanel.Buttons = {}
 	raidPanel.Rows = {}
 
@@ -606,7 +602,8 @@ end
 miog.updateDungeonCheckboxes = updateDungeonCheckboxes
 
 local function createDungeonPanel(parent)
-	local dungeonPanel = miog.createBasicFrame("persistent", "BackdropTemplate", parent, 220, 72)
+	local dungeonPanel = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+	dungeonPanel:SetSize(220, 72)
 	dungeonPanel.Buttons = {}
 
 	parent.Dungeons = dungeonPanel
@@ -615,17 +612,20 @@ local function createDungeonPanel(parent)
 	dungeonOptionsButton:SetPoint("TOPLEFT", dungeonPanel, "TOPLEFT", 0, 0)
 	dungeonPanel.Option = dungeonOptionsButton
 
-	local dungeonPanelFirstRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", dungeonPanel, dungeonPanel:GetWidth(), 24)
+	local dungeonPanelFirstRow = CreateFrame("Frame", nil, dungeonPanel, "HorizontalLayoutFrame, BackdropTemplate")
+	dungeonPanelFirstRow:SetSize(dungeonPanel:GetWidth(), 24)
 	dungeonPanelFirstRow.spacing = 38
 	dungeonPanelFirstRow:SetPoint("TOPLEFT", dungeonOptionsButton, "BOTTOMLEFT")
 	dungeonPanel.FirstRow = dungeonPanelFirstRow
 
-	local dungeonPanelSecondRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", dungeonPanel, dungeonPanel:GetWidth(), 24)
+	local dungeonPanelSecondRow = CreateFrame("Frame", nil, dungeonPanel, "HorizontalLayoutFrame, BackdropTemplate")
+	dungeonPanelSecondRow:SetSize(dungeonPanel:GetWidth(), 24)
 	dungeonPanelSecondRow.spacing = 38
 	dungeonPanelSecondRow:SetPoint("TOPLEFT", dungeonPanelFirstRow, "BOTTOMLEFT")
 	dungeonPanel.SecondRow = dungeonPanelSecondRow
 
-	local dungeonPanelThirdRow = miog.createBasicFrame("persistent", "HorizontalLayoutFrame, BackdropTemplate", dungeonPanel, dungeonPanel:GetWidth(), 24)
+	local dungeonPanelThirdRow = CreateFrame("Frame", nil, dungeonPanel, "HorizontalLayoutFrame, BackdropTemplate")
+	dungeonPanelThirdRow:SetSize(dungeonPanel:GetWidth(), 24)
 	dungeonPanelThirdRow.spacing = 38
 	dungeonPanelThirdRow:SetPoint("TOPLEFT", dungeonPanelSecondRow, "BOTTOMLEFT")
 	dungeonPanel.ThirdRow = dungeonPanelThirdRow
@@ -640,21 +640,18 @@ local function addDungeonCheckboxes()
 	if(expansionGroups and #expansionGroups > 0) then
 		--for i = 1, #seasonGroups, 1 do
 		for k, v in ipairs(expansionGroups) do
-			local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", k < 5 and dungeonPanel.FirstRow or k < 9 and dungeonPanel.SecondRow or dungeonPanel.ThirdRow, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
+			local optionButton = CreateFrame("CheckButton", nil, k < 5 and dungeonPanel.FirstRow or k < 9 and dungeonPanel.SecondRow or dungeonPanel.ThirdRow, "MIOG_MinimalCheckButtonTemplate")
+			optionButton:SetSize(miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
 			optionButton.layoutIndex = k
 			--optionButton:SetPoint("LEFT", k < 5 , "LEFT", counter < 4 and counter * 57 or (counter - 4) * 57, 0)
-			optionButton:SetNormalAtlas("checkbox-minimal")
-			optionButton:SetPushedAtlas("checkbox-minimal")
-			optionButton:SetCheckedTexture("checkmark-minimal")
-			optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-			optionButton:RegisterForClicks("LeftButtonDown")
 			optionButton:SetScript("OnClick", function()
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			end)
 			
 			dungeonPanel.Buttons[k] = optionButton
 		
-			local optionString = miog.createBasicFontString("persistent", 12, dungeonPanel)
+			local optionString = dungeonPanel:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+			optionString:SetFont("SystemFont_Shadow_Med1", 12, "OUTLINE")
 			optionString:SetPoint("LEFT", optionButton, "RIGHT")
 
 			optionButton.FontString = optionString
@@ -1090,7 +1087,8 @@ local function createClassSpecFilters(parent)
 end
 
 local function addRolePanel(parent)
-	local roleFilterPanel = miog.createBasicFrame("persistent", "BackdropTemplate", parent, 150, 20)
+	local roleFilterPanel = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+	roleFilterPanel:SetSize(150, 20)
 	roleFilterPanel.Buttons = {}
 
 	local lastTexture = nil
@@ -1098,15 +1096,12 @@ local function addRolePanel(parent)
 	parent.Roles = roleFilterPanel
 
 	for i = 1, 3, 1 do
-		local toggleRoleButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", roleFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
-		toggleRoleButton:SetNormalAtlas("checkbox-minimal")
-		toggleRoleButton:SetPushedAtlas("checkbox-minimal")
-		toggleRoleButton:SetCheckedTexture("checkmark-minimal")
-		toggleRoleButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+		local toggleRoleButton = CreateFrame("CheckButton", nil, roleFilterPanel, "MIOG_MinimalCheckButtonTemplate")
+		toggleRoleButton:SetSize(miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT)
 		toggleRoleButton:SetPoint("LEFT", lastTexture or roleFilterPanel, lastTexture and "RIGHT" or "LEFT", lastTexture and 7 or 0, 0)
-		toggleRoleButton:RegisterForClicks("LeftButtonDown")
 
-		local roleTexture = miog.createBasicTexture("persistent", nil, roleFilterPanel, miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3, "ARTWORK")
+		local roleTexture = roleFilterPanel:CreateTexture(nil, "ARTWORK")
+		roleTexture:SetSize(miog.C.APPLICANT_MEMBER_HEIGHT - 3, miog.C.APPLICANT_MEMBER_HEIGHT - 3)
 		roleTexture:SetPoint("LEFT", toggleRoleButton, "RIGHT", 0, 0)
 
 		toggleRoleButton:SetScript("OnClick", function(self)
@@ -1186,11 +1181,8 @@ miog.loadFilterPanel = function()
 	--hideHardDecline:SetPoint("TOPLEFT", miog.FilterPanel.SearchPanelOptions, "TOPLEFT", 0, 0)
 	hideHardDecline.layoutIndex = 5
 
-	local dropdownOptionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", miog.FilterPanel.IndexedOptions, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-	dropdownOptionButton:SetNormalAtlas("checkbox-minimal")
-	dropdownOptionButton:SetPushedAtlas("checkbox-minimal")
-	dropdownOptionButton:SetCheckedTexture("checkmark-minimal")
-	dropdownOptionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
+	local dropdownOptionButton = CreateFrame("CheckButton", nil, miog.FilterPanel.IndexedOptions, "MIOG_MinimalCheckButtonTemplate")
+	dropdownOptionButton:SetSize(miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
 	dropdownOptionButton.layoutIndex = 6
 	--dropdownOptionButton:SetPoint("TOPLEFT", hideHardDecline, "BOTTOMLEFT", 0, 0)
 	dropdownOptionButton:HookScript("OnClick", function(self)
@@ -1247,7 +1239,8 @@ miog.loadFilterPanel = function()
 	local affixFitButton = addOptionToFilterFrame(miog.FilterPanel.IndexedOptions, nil, "Affix fit", "AffixFit")
 	affixFitButton.layoutIndex = 12
 
-	local divider = miog.createBasicTexture("persistent", nil, miog.FilterPanel.IndexedOptions, miog.FilterPanel.fixedWidth, 1, "BORDER")
+	local divider = miog.FilterPanel.IndexedOptions:CreateTexture(nil, "BORDER")
+	divider:SetSize(miog.FilterPanel.fixedWidth, 1)
 	divider:SetAtlas("UI-LFG-DividerLine")
 	divider.layoutIndex = 13
 

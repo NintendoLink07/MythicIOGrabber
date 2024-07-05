@@ -10,6 +10,14 @@ searchResultSystem.raidSortData = {}
 
 local detailedList = {}
 
+local framePool
+
+local function resetFrame(pool, childFrame)
+    childFrame:Hide()
+	childFrame.layoutIndex = nil
+	childFrame.resultID = nil
+end
+
 local function sortSearchResultList(result1, result2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.searchPanel) do
 		if(tableElement.currentLayer == 1) then
@@ -1358,7 +1366,8 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 	local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 	local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
 
-	local persistentFrame = miog.createBasicFrame("searchResult", "MIOG_ResultFrameTemplate", isInviteFrame and miog.InviteFrame.Container or miog.SearchPanel.FramePanel.Container)
+	local persistentFrame = framePool:Acquire("MIOG_ResultFrameTemplate")
+	persistentFrame:SetParent(isInviteFrame and miog.InviteFrame.Container or miog.SearchPanel.FramePanel.Container)
 	persistentFrame.fixedWidth = isInviteFrame and miog.InviteFrame.fixedWidth - 4 or miog.SearchPanel.FramePanel:GetWidth() - 4
 	persistentFrame.resultID = resultID
 	persistentFrame.InviteBackground:Hide()
@@ -1366,8 +1375,8 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 	miog.createInvisibleFrameBorder(persistentFrame, 2)
 
 	persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", miog.resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", miog.resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", resetFrame):SetResetDisallowedIfNew()
 
 	if(isInviteFrame) then
 		miog.inviteFrames[resultID] = persistentFrame
@@ -1494,7 +1503,7 @@ local function releaseAllResultFrames()
 	for index, v in pairs(searchResultSystem.persistentFrames) do
 		v.framePool:ReleaseAll()
 
-		miog.searchResultFramePool:Release(v)
+		framePool:Release(v)
 
 		searchResultSystem.persistentFrames[index] = nil
 
@@ -1665,19 +1674,13 @@ miog.createSearchPanel = function()
 	miog.SearchPanel = searchPanel
 	miog.SearchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.SearchPanel.FramePanel, "TOPRIGHT", -1, 0)
 
-	local signupButton = miog.createBasicFrame("persistent", "UIPanelDynamicResizeButtonTemplate", miog.SearchPanel, 1, 20)
-	signupButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
-	signupButton:SetText("Signup")
-	signupButton:FitToText()
-	signupButton:RegisterForClicks("LeftButtonDown")
-	signupButton:SetScript("OnClick", function(self)
+	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
+	searchPanel.SignUpButton:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		LFGListApplicationDialog_Show(LFGListApplicationDialog, LFGListFrame.SearchPanel.selectedResult)
 
 		miog.groupSignup(LFGListFrame.SearchPanel.selectedResult)
 	end)
-
-	searchPanel.SignUpButton = signupButton
 
 	local searchBox = LFGListFrame.SearchPanel.SearchBox
 	searchBox:ClearAllPoints()
@@ -1768,4 +1771,7 @@ miog.createSearchPanel = function()
 	miog.SearchPanel:SetScript("OnEvent", searchPanelEvents)
 	miog.SearchPanel:SetScript("OnShow", function()
 	end)
+
+	framePool = CreateFramePool("Frame", nil, "MIOG_ResultFrameTemplate", resetFrame)
+	miog.searchResultFramePool = framePool
 end

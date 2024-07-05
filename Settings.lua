@@ -523,283 +523,262 @@ miog.checkForSavedSettings = function()
 end
 
 miog.loadSettings = function()
-	miog.convertAdvancedBlizzardFiltersToMIOGFilters()
+	if(Settings) then
+		miog.convertAdvancedBlizzardFiltersToMIOGFilters()
 
-	local titleFrame = miog.createBasicFrame("persistent", "BackdropTemplate", miog.interfaceOptionsPanel, SettingsPanel.Container:GetWidth(), 20, "FontString", 20)
-	titleFrame:SetPoint("TOP", miog.interfaceOptionsPanel, "TOP", 0, 0)
-	titleFrame.FontString:SetText("Mythic IO Grabber")
-	titleFrame.FontString:SetJustifyH("CENTER")
-	
-	local resetButton = CreateFrame("Button", nil, miog.interfaceOptionsPanel, "UIPanelButtonNoTooltipTemplate")
-	resetButton:SetPoint("TOPRIGHT", miog.interfaceOptionsPanel, "TOPRIGHT", 0, 0)
-	resetButton:SetText("Reset all settings")
-	resetButton:FitToText()
-	resetButton:SetScript("OnClick", function()
-		MIOG_SavedSettings = nil
-		C_UI.Reload()
-	end)
-	resetButton:Show()
-	
-	local optionPanel = miog.createBasicFrame("persistent", "ScrollFrameTemplate", miog.interfaceOptionsPanel)
-	optionPanel:SetPoint("TOPLEFT", titleFrame, "BOTTOMLEFT", 0, 0)
-	optionPanel:SetSize(SettingsPanel.Container:GetWidth(), SettingsPanel.Container:GetHeight())
+		local interfaceOptionsPanel = CreateFrame("Frame", nil, nil, "MIOG_OptionsPanel")
+		local category, layout = Settings.RegisterCanvasLayoutCategory(interfaceOptionsPanel, "MythicIOGrabber")
+		category.ID = "MythicIOGrabber"
+		layout:AddAnchorPoint("TOPLEFT", 10, -10);
+		layout:AddAnchorPoint("BOTTOMRIGHT", -10, 10);
+		Settings.RegisterAddOnCategory(category)
 
-	local optionPanelContainer = miog.createBasicFrame("persistent", "BackdropTemplate", optionPanel)
-	optionPanelContainer:SetSize(optionPanel:GetWidth(), optionPanel:GetHeight() - titleFrame:GetHeight())
-	optionPanelContainer:SetPoint("TOPLEFT", optionPanel, "TOPLEFT", 0, 0)
-	optionPanel.container = optionPanelContainer
-	optionPanel:SetScrollChild(optionPanelContainer)
+		interfaceOptionsPanel.Reset:SetScript("OnClick", function()
+			MIOG_SavedSettings = nil
+			C_UI.Reload()
+		end)
 
-	local lastOption = nil
+		local lastOption = nil
+		local orderedList = {}
 
-	local orderedList = {}
+		for key, setting in pairs(MIOG_SavedSettings) do
+			if(setting.index) then
+				orderedList[setting.index] = key
 
-	for key, setting in pairs(MIOG_SavedSettings) do
-		if(setting.index) then
-			orderedList[setting.index] = key
-
+			end
 		end
-	end
 
-	for index, key in ipairs(orderedList) do
-		local setting = MIOG_SavedSettings[key]
-		for settingTypes in string.gmatch(setting.type, '([^,]+)') do
-			if(settingTypes == "checkbox") then
-				local optionButton = miog.createBasicFrame("persistent", "UICheckButtonTemplate", optionPanelContainer, miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
-				optionButton:SetNormalAtlas("checkbox-minimal")
-				optionButton:SetPushedAtlas("checkbox-minimal")
-				optionButton:SetCheckedTexture("checkmark-minimal")
-				optionButton:SetDisabledCheckedTexture("checkmark-minimal-disabled")
-				optionButton:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-				optionButton:RegisterForClicks("LeftButtonDown")
-				optionButton:SetChecked(setting.value)
+		for index, key in ipairs(orderedList) do
+			local setting = MIOG_SavedSettings[key]
+			for settingTypes in string.gmatch(setting.type, '([^,]+)') do
+				if(settingTypes == "checkbox") then
+					local panelSetting = CreateFrame("Frame", nil, interfaceOptionsPanel.ScrollFrame.Container, "MIOG_OptionsPanelSettingTemplate")
 
-				if(key == "keepSignUpNote") then
+					panelSetting.layoutIndex = index
+					panelSetting.Text:SetText(setting.title)
+					panelSetting.Button:SetChecked(setting.value)
 
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+					if(key == "keepSignUpNote") then
 
-						if(setting.value == true) then
-							LFGListApplicationDialog_Show = keepSignUpNote
+						panelSetting.Button:SetScript("OnClick", function()
+							setting.value = not setting.value
 
-						else
-							LFGListApplicationDialog_Show = clearSignUpNote
+							if(setting.value == true) then
+								LFGListApplicationDialog_Show = keepSignUpNote
 
-						end
+							else
+								LFGListApplicationDialog_Show = clearSignUpNote
 
-						C_UI.Reload()
-					end)
-				elseif(key == "keepInfoFromGroupCreation") then
+							end
 
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+							C_UI.Reload()
+						end)
+					elseif(key == "keepInfoFromGroupCreation") then
 
-						if(setting.value == true) then
-							LFGListEntryCreation_Clear = keepInfoFromGroupCreation
+						panelSetting.Button:SetScript("OnClick", function()
+							setting.value = not setting.value
 
-						else
-							LFGListEntryCreation_Clear = clearEntryCreation
-							
+							if(setting.value == true) then
+								LFGListEntryCreation_Clear = keepInfoFromGroupCreation
 
-						end
+							else
+								LFGListEntryCreation_Clear = clearEntryCreation
+								
 
-						C_UI.Reload()
-					end)
+							end
 
-				elseif(key == "enableResultFrameClassSpecTooltip") then
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
-					end)
+							C_UI.Reload()
+						end)
 
-				elseif(key == "enableClassPanel" and not miog.F.LITE_MODE and miog.ClassPanel) then
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+					elseif(key == "enableResultFrameClassSpecTooltip") then
+						panelSetting.Button:SetScript("OnClick", function()
+							setting.value = not setting.value
+						end)
+
+					elseif(key == "enableClassPanel" and not miog.F.LITE_MODE and miog.ClassPanel) then
+						panelSetting.Button:SetScript("OnClick", function()
+							setting.value = not setting.value
+							miog.ClassPanel:SetShown(setting.value)
+
+						end)
+
 						miog.ClassPanel:SetShown(setting.value)
 
-					end)
+					elseif(key == "favouredApplicants") then
+						panelSetting.Button:SetScript("OnClick", function()
+							setting.value = not setting.value
 
-					miog.ClassPanel:SetShown(setting.value)
+							C_UI.Reload()
+						end)
 
-				elseif(key == "favouredApplicants") then
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+					elseif(key == "liteMode") then
+						panelSetting.Button:SetScript("OnClick", function()
+							setting.value = not setting.value
 
-						C_UI.Reload()
-					end)
+							miog.F.LITE_MODE = setting.value
 
-				elseif(key == "liteMode") then
-					optionButton:SetScript("OnClick", function()
-						setting.value = not setting.value
+							C_UI.Reload()
+						end)
 
-						miog.F.LITE_MODE = setting.value
+					end
 
-						C_UI.Reload()
-					end)
-
-				end
-
-				local optionButtonString = miog.createBasicFontString("persistent", 10, optionButton)
-				optionButtonString:SetWidth(optionPanelContainer:GetWidth() - optionButton:GetWidth() - 15)
-				optionButtonString:SetPoint("LEFT", optionButton, "RIGHT", 10, 0)
-				optionButtonString:SetText(setting.title)
-
-				optionButtonString:SetWordWrap(true)
-				optionButtonString:SetNonSpaceWrap(true)
-
-				lastOption = optionButton
-			elseif(settingTypes == "button") then
-				local button = CreateFrame("Button", nil, miog.interfaceOptionsPanel, "UIPanelButtonNoTooltipTemplate")
-				button:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-				button:SetText("Reset sorting settings")
-				button:FitToText()
-				
-				if(key == "resetSortSettings") then
-					button:SetScript("OnClick", function()
-						MIOG_SavedSettings.sortMethods = nil
-
-						C_UI.Reload()
-					end)
-				end
-						
-				button:Show()
-
-				lastOption = button
-			end
-		end
-	end
-
-	if(MIOG_SavedSettings["backgroundOptions"]) then
-		local backgroundOptionString = miog.createBasicFontString("persistent", 12, optionPanelContainer)
-		backgroundOptionString:SetPoint("TOPLEFT", lastOption or optionPanelContainer, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
-		backgroundOptionString:SetText(MIOG_SavedSettings["backgroundOptions"].title)
-		backgroundOptionString:SetWordWrap(true)
-		backgroundOptionString:SetNonSpaceWrap(true)
-
-		local optionDropdown = Mixin(CreateFrame("Frame", "MythicIOGrabber_BackgroundDropdown", optionPanelContainer, "MIOG_DropDownMenu"), SlickDropDown)
-		optionDropdown:OnLoad()
-		--local optionDropdown = miog.createBasicFrame("persistent", "UIDropDownMenuTemplate", optionPanelContainer)
-		optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
-		optionDropdown:SetSize(200, 20)
-
-		for k, v in ipairs(miog.EXPANSION_INFO) do
-			if(v[1]) then
-				local info = {}
-				info.text = v[1]
-				info.checked = k == MIOG_SavedSettings["backgroundOptions"].value
-				info.value = k
-				info.index = k
-				info.func = function()
-					MIOG_SavedSettings["backgroundOptions"].value = k
-					miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
-					miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
-					miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+					lastOption = panelSetting.Button
+				elseif(settingTypes == "button") then
+					--[[local button = CreateFrame("Button", nil, interfaceOptionsPanel, "UIPanelButtonNoTooltipTemplate")
+					button:SetPoint("TOPLEFT", lastOption or interfaceOptionsPanel.Scr, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+					button:SetText("Reset sorting settings")
+					button:FitToText()
 					
-					if(miog.AdventureJournal) then
-						miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+					if(key == "resetSortSettings") then
+						button:SetScript("OnClick", function()
+							MIOG_SavedSettings.sortMethods = nil
+
+							C_UI.Reload()
+						end)
 					end
-				end
+							
+					button:Show()
 
-				optionDropdown:CreateEntryFrame(info)
-			end
-		end
-
-		optionDropdown.List:MarkDirty()
-
-		optionDropdown:SelectFirstFrameWithValue(miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
-		
-		miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
-		miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
-		miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
-		
-		if(miog.AdventureJournal) then
-			miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
-		end
-
-		lastOption = optionDropdown
-	end
-	
-	if(MIOG_SavedSettings["favouredApplicants"] and MIOG_SavedSettings["favouredApplicants"].value == true) then
-		hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
-		local scrollBox = miog.loadFavouredPlayersPanel(optionPanelContainer, lastOption)
-
-		for _, v in pairs(MIOG_SavedSettings.favouredApplicants.table) do
-			miog.addFavouredPlayer(v)
-
-		end
-
-		miog.refreshFavouredPlayers()
-
-		lastOption = scrollBox
-	end
-
-	for k, v in pairs(MIOG_SavedSettings.sortMethods.table) do
-		local buttonArray = k == "applicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons
-		or k == "searchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons
-		or k == "partyCheck" and miog.PartyCheck and miog.PartyCheck.sortByCategoryButtons
-		or k == "guild" and miog.Guild and miog.Guild.sortByCategoryButtons
-
-		if(buttonArray) then
-			for sortKey, row in pairs(v) do
-				if(buttonArray[sortKey]) then
-					if(row.active == true) then
-						buttonArray[sortKey]:SetState(row.active, row.currentState)
-						buttonArray[sortKey].FontString:SetText(row.currentLayer)
-
-					else
-						buttonArray[sortKey]:SetState(false)
-
-					end
+					lastOption = button]]
 				end
 			end
 		end
-	end
 
-	if(MIOG_SavedSettings.keepSignUpNote and MIOG_SavedSettings.keepSignUpNote.value ==  true) then
-		LFGListApplicationDialog_Show = keepSignUpNote
+		if(MIOG_SavedSettings["backgroundOptions"]) then
+			local backgroundOptionString = interfaceOptionsPanel.ScrollFrame.Container:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+			backgroundOptionString:SetFont("SystemFont_Shadow_Med1", 12, "OUTLINE")
+			backgroundOptionString:SetPoint("TOPLEFT", lastOption, lastOption and "BOTTOMLEFT", 0, -15)
+			backgroundOptionString:SetText(MIOG_SavedSettings["backgroundOptions"].title)
+			backgroundOptionString:SetWordWrap(true)
+			backgroundOptionString:SetNonSpaceWrap(true)
 
-	else
-		LFGListApplicationDialog_Show = clearSignUpNote
+			local optionDropdown = Mixin(CreateFrame("Frame", "MythicIOGrabber_BackgroundDropdown", interfaceOptionsPanel.ScrollFrame.Container, "MIOG_DropDownMenu"), SlickDropDown)
+			optionDropdown:OnLoad()
+			optionDropdown:SetPoint("TOPLEFT", backgroundOptionString, "BOTTOMLEFT", 0, -5)
+			optionDropdown:SetSize(200, 20)
 
-	end
+			for k, v in ipairs(miog.EXPANSION_INFO) do
+				if(v[1]) then
+					local info = {}
+					info.text = v[1]
+					info.checked = k == MIOG_SavedSettings["backgroundOptions"].value
+					info.value = k
+					info.index = k
+					info.func = function()
+						MIOG_SavedSettings["backgroundOptions"].value = k
+						miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
+						miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. "_small.png")
+						miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+						
+						if(miog.AdventureJournal) then
+							miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+						end
+					end
 
-	if(MIOG_SavedSettings.keepInfoFromGroupCreation and MIOG_SavedSettings.keepInfoFromGroupCreation.value ==  true) then
-		LFGListEntryCreation_Clear = keepInfoFromGroupCreation
-	else
-		LFGListEntryCreation_Clear = clearEntryCreation
-	end
+					optionDropdown:CreateEntryFrame(info)
+				end
+			end
 
-	if(MIOG_SavedSettings.disableBackgroundImages and MIOG_SavedSettings.disableBackgroundImages.value ==  true) then
-		miog.MainFrame.Background:SetShown(false)
+			optionDropdown.List:MarkDirty()
 
-	else
-		miog.MainFrame.Background:SetShown(true)
-	
-	end
-
-	if(MIOG_SavedSettings.lastInvitedApplicants) then
-		for k, v in pairs(MIOG_SavedSettings.lastInvitedApplicants.table) do
-			if(v.timestamp and difftime(time(), v.timestamp) < 259200) then
-				miog.addInvitedPlayer(v)
-
-			else
-				MIOG_SavedSettings.lastInvitedApplicants.table[k] = nil
+			optionDropdown:SelectFirstFrameWithValue(miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][1])
 			
+			miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
+			miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png")
+			miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
+			
+			if(miog.AdventureJournal) then
+				miog.AdventureJournal.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_SavedSettings["backgroundOptions"].value][2] .. ".png", "REPEAT", "REPEAT")
 			end
+
+			lastOption = optionDropdown
+		end
+
+		interfaceOptionsPanel.ScrollFrame.Container:MarkDirty()
+		
+		if(MIOG_SavedSettings["favouredApplicants"] and MIOG_SavedSettings["favouredApplicants"].value == true) then
+			hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
+			local scrollBox = miog.loadFavouredPlayersPanel(interfaceOptionsPanel.ScrollFrame.Container, lastOption)
+
+			for _, v in pairs(MIOG_SavedSettings.favouredApplicants.table) do
+				miog.addFavouredPlayer(v)
+
+			end
+
+			miog.refreshFavouredPlayers()
+
+			lastOption = scrollBox
+		end
+
+		for k, v in pairs(MIOG_SavedSettings.sortMethods.table) do
+			local buttonArray = k == "applicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons
+			or k == "searchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons
+			or k == "partyCheck" and miog.PartyCheck and miog.PartyCheck.sortByCategoryButtons
+			or k == "guild" and miog.Guild and miog.Guild.sortByCategoryButtons
+
+			if(buttonArray) then
+				for sortKey, row in pairs(v) do
+					if(buttonArray[sortKey]) then
+						if(row.active == true) then
+							buttonArray[sortKey]:SetState(row.active, row.currentState)
+							buttonArray[sortKey].FontString:SetText(row.currentLayer)
+
+						else
+							buttonArray[sortKey]:SetState(false)
+
+						end
+					end
+				end
+			end
+		end
+
+		if(MIOG_SavedSettings.keepSignUpNote and MIOG_SavedSettings.keepSignUpNote.value ==  true) then
+			LFGListApplicationDialog_Show = keepSignUpNote
+
+		else
+			LFGListApplicationDialog_Show = clearSignUpNote
 
 		end
 
-		miog.refreshLastInvites()
+		if(MIOG_SavedSettings.keepInfoFromGroupCreation and MIOG_SavedSettings.keepInfoFromGroupCreation.value ==  true) then
+			LFGListEntryCreation_Clear = keepInfoFromGroupCreation
+		else
+			LFGListEntryCreation_Clear = clearEntryCreation
+		end
 
-	end
+		if(MIOG_SavedSettings.disableBackgroundImages and MIOG_SavedSettings.disableBackgroundImages.value ==  true) then
+			miog.MainFrame.Background:SetShown(false)
 
-	if(MIOG_SavedSettings.searchPanel_DeclinedGroups and MIOG_SavedSettings.searchPanel_DeclinedGroups.table) then
-		for k, v in pairs(MIOG_SavedSettings.searchPanel_DeclinedGroups.table) do
-			if(v.timestamp < time() - 900) then
-				MIOG_SavedSettings.searchPanel_DeclinedGroups.table[k] = nil
+		else
+			miog.MainFrame.Background:SetShown(true)
+		
+		end
+
+		if(MIOG_SavedSettings.lastInvitedApplicants) then
+			for k, v in pairs(MIOG_SavedSettings.lastInvitedApplicants.table) do
+				if(v.timestamp and difftime(time(), v.timestamp) < 259200) then
+					miog.addInvitedPlayer(v)
+
+				else
+					MIOG_SavedSettings.lastInvitedApplicants.table[k] = nil
 				
+				end
+
 			end
+
+			miog.refreshLastInvites()
+
 		end
 
+		if(MIOG_SavedSettings.searchPanel_DeclinedGroups and MIOG_SavedSettings.searchPanel_DeclinedGroups.table) then
+			for k, v in pairs(MIOG_SavedSettings.searchPanel_DeclinedGroups.table) do
+				if(v.timestamp < time() - 900) then
+					MIOG_SavedSettings.searchPanel_DeclinedGroups.table[k] = nil
+					
+				end
+			end
+
+		end
 	end
 end
 

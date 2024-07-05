@@ -356,6 +356,13 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                         </Anchors>
+
+                        <Scripts>
+                            <PostClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                C_LFGList.RefreshApplicants()
+                            </PostClick>
+                        </Scripts>
                     </Button>
 
                     <Button parentKey="PrimarySort" inherits="MIOG_SortButtonTemplate">
@@ -363,6 +370,13 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.RoleSort" relativePoint="RIGHT" x="11"/>
                         </Anchors>
+
+                        <Scripts>
+                            <PostClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                C_LFGList.RefreshApplicants()
+                            </PostClick>
+                        </Scripts>
                     </Button>
 
                     <Button parentKey="SecondarySort" inherits="MIOG_SortButtonTemplate">
@@ -370,6 +384,13 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.PrimarySort" relativePoint="RIGHT" x="20"/>
                         </Anchors>
+
+                        <Scripts>
+                            <PostClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                C_LFGList.RefreshApplicants()
+                            </PostClick>
+                        </Scripts>
                     </Button>
 
                     <Button parentKey="IlvlSort" inherits="MIOG_SortButtonTemplate">
@@ -377,6 +398,13 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.SecondarySort" relativePoint="RIGHT" x="20"/>
                         </Anchors>
+
+                        <Scripts>
+                            <PostClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                C_LFGList.RefreshApplicants()
+                            </PostClick>
+                        </Scripts>
                     </Button>
 
                     <Button parentKey="ResetButton" inherits="IconButtonTemplate">
@@ -384,14 +412,21 @@
                             <KeyValue key="iconAtlas" value="UI-RefreshButton" />
                             <KeyValue key="iconSize" value="20" />
                         </KeyValues>
+
                         <Size x="20" y="20" />
+                        
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
                         </Anchors>
+
                         <Scripts>
                             <OnShow>
                                 self:OnLoad()
                             </OnShow>
+                            <OnClick>
+			                    C_LFGList.RefreshApplicants()
+                                self:GetParent():GetParent().FramePanel:SetVerticalScroll(0)
+                            </OnClick>
                         </Scripts>
                     </Button>
                 </Frames>

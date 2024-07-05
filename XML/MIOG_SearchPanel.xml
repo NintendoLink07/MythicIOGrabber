@@ -153,6 +153,16 @@
                     </Frame>
                 </Frames>
             </ScrollFrame>
+            
+            <Button parentKey="SignUpButton" inherits="UIPanelDynamicResizeButtonTemplate" text="Signup">
+                <Size y="20" />
+
+                <Scripts>
+                    <OnLoad>
+                        self:FitToText()
+                    </OnLoad>
+                </Scripts>
+            </Button>
         </Frames>
     </Frame>
 </Ui>

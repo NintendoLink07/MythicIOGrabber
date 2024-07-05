@@ -7,6 +7,16 @@
         </Anchors>
 
         <Frames>
+            <Button parentKey="StartGroup" inherits="UIPanelDynamicResizeButtonTemplate, LFGListMagicButtonTemplate" text="Start Group">
+                <Size y="20" />
+
+                <Scripts>
+                    <OnLoad>
+                        self:FitToText()
+                    </OnLoad>
+                </Scripts>
+            </Button>
+
             <Frame parentKey="ActivityDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
                 <Size y="22" />
                 <Anchors>
