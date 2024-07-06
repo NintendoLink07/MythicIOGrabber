@@ -1,23 +1,9 @@
-## [2.2.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.3) - 2024-07-04
-
-### Added
-
-- Above the currencies there is now a bullion tracker.
+## [2.2.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.4) - 2024-07-06
 
 ### Fixed
 
-- [ApplicationViewer] The applicant's tooltip will now hide correctly after leaving the applicant frame.
+- Performance update, Application Viewer and Search Panel performance increased by around 25%.
 
-- [PartyCheck] While in a group the tooltips shouldn't get mixed up anymore.
+- Pushed more of the memory management to WoW's engine, which should make everything feel a little bit snappier.
 
-- [PartyCheck] The leader icon isn't floating around the world anymore when you scroll down.
-
-- [PartyCheck] There won't be any error anymore when someone leaves the raid/group while it's currently checking for their gear.
-
-- More performance fixes.
-
-- Fixed an error when the leader tries to queue the group while in combat.
-
-- The raider io info's background is now back in business.
-
-- The mainframe won't open anymore when something in the application viewer changes.
+- Deleted some now unneccessary files

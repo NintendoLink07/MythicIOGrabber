@@ -1376,7 +1376,10 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 
 	persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
 	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", resetFrame):SetResetDisallowedIfNew()
-	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", resetFrame):SetResetDisallowedIfNew()
+	persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", function(_, childFrame)
+		childFrame:Hide()
+		childFrame.layoutIndex = nil
+	end):SetResetDisallowedIfNew()
 
 	if(isInviteFrame) then
 		miog.inviteFrames[resultID] = persistentFrame
@@ -1407,7 +1410,6 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 
 	persistentFrame.CancelApplication:OnLoad()
 
-	--for i = 1, #, 1 do
 	if(miog.MAP_INFO[mapID]) then
 		--[[persistentFrame.RaidInformation.SpecFrames = {}
 
@@ -1427,13 +1429,6 @@ local function createPersistentResultFrame(resultID, isInviteFrame)
 			local bossFrame = persistentFrame.framePool:Acquire("MIOG_ResultFrameBossFrameTemplate")
 			bossFrame:SetParent(persistentFrame.CategoryInformation.BossPanel)
 			bossFrame.layoutIndex = k
-
-			if(bossFrame.BorderMask == nil) then
-				bossFrame.BorderMask = bossFrame:CreateMaskTexture()
-				bossFrame.BorderMask:SetAllPoints(bossFrame.Border)
-				bossFrame.BorderMask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-				bossFrame.Border:AddMaskTexture(bossFrame.BorderMask)
-			end
 
 			SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
 			bossFrame.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
@@ -1578,7 +1573,7 @@ local function searchResultsReceived()
 				blocked = true
 				miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 
-				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.45 or 0, function()
+				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.5 or 0, function()
 					miog.SearchPanel.Status:Hide()
 					miog.SearchPanel.Status.LoadingSpinner:Hide()
 					updateSearchResultList()

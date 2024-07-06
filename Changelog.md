@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.2.4] - 2024-07-06
+
+### Fixed
+
+- Performance update, Application Viewer and Search Panel performance increased by around 25%.
+
+- Pushed more of the memory management to WoW's engine, which should make everything feel a little bit snappier.
+
+- Deleted some now unneccessary files
+
+
 ## [2.2.3] - 2024-07-04
 
 ### Added
@@ -1753,7 +1764,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.4..HEAD
+[2.2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.4
 [2.2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.3
 [2.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.2
 [2.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.1
