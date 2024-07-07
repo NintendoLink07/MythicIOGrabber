@@ -21,7 +21,7 @@
 
             <Frame parentKey="SpecificScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Retract" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
             </Frame>

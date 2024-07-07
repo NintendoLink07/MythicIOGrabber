@@ -5,7 +5,7 @@
             <Frame parentKey="CategoryHoverFrame" inherits="VerticalLayoutFrame" hidden="true" frameLevel="10000">
                 <KeyValues>
                     <KeyValue key="align" value="top" />
-                    <KeyValue key="spacing" value="2" />
+                    <KeyValue key="spacing" value="1" />
                 </KeyValues>
             </Frame>
 
@@ -88,6 +88,14 @@
 
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent.FindGroup" relativePoint="RIGHT" x="2" />
+						</Anchors>
+                    </Button>
+                    
+                    <Button parentKey="RaiderIOChecker" inherits="MIOG_NavBarButtonTemplate" hidden="true">
+                        <Size x="40" y="20" />
+
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.DungeonJournal" relativePoint="RIGHT" x="2" />
 						</Anchors>
                     </Button>
 

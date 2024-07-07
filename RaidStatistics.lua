@@ -24,6 +24,10 @@ miog.setupRaidStatistics = function()
 		
 			--local shortName = i == 1 and PLAYER_DIFFICULTY1 or i == 2 and PLAYER_DIFFICULTY2 or i == 3 and PLAYER_DIFFICULTY6
 		end
+	
+		miog.RaidStatistics:SetScript("OnShow", function()
+			miog.gatherRaidStatistics()
+		end)
 	end
 end
 

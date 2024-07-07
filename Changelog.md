@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.2.5] - 2024-07-07
+
+### Fixed
+
+- [LastInvites] The player frames should now be placed inside the panel.
+
+- [ApplicationViewer] When you invite a premade group all players will now appear in the [LastInvites] list
+
+- A rare error when checking for heroic dungeons to queue for shouldn't occur anymore.
+
+- A rare error changing the order of the queue finder dungeons shouldn't occur anymore.
+
+
 ## [2.2.4] - 2024-07-06
 
 ### Fixed
@@ -1764,7 +1777,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.5..HEAD
+[2.2.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.5
 [2.2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.4
 [2.2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.3
 [2.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.2

@@ -1,9 +1,11 @@
-## [2.2.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.4) - 2024-07-06
+## [2.2.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.5) - 2024-07-07
 
 ### Fixed
 
-- Performance update, Application Viewer and Search Panel performance increased by around 25%.
+- [LastInvites] The player frames should now be placed inside the panel.
 
-- Pushed more of the memory management to WoW's engine, which should make everything feel a little bit snappier.
+- [ApplicationViewer] When you invite a premade group all players will now appear in the [LastInvites] list
 
-- Deleted some now unneccessary files
+- A rare error when checking for heroic dungeons to queue for shouldn't occur anymore.
+
+- A rare error changing the order of the queue finder dungeons shouldn't occur anymore.

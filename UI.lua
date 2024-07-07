@@ -1,25 +1,38 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local panels
+
 local function setActivePanel(_, panel)
+	for k, v in pairs(panels) do
+		if(v) then
+			v:Hide()
+		end
+	end
+
+	miog.Plugin:Show()
+
+	if(miog.F.LITE_MODE) then
+		panel:Hide()
+
+	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
+		miog.Plugin.ButtonPanel:Hide()
+
+		if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
+			miog.FilterPanel.Lock:Hide()
+			miog.FilterPanel:Show()
+
+		elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
+			miog.LastInvites:Show()
+
+		end
+
+		miog.setupFiltersForActivePanel()
+
+	end
+
 	if(panel == LFGListFrame.ApplicationViewer) then
-		miog.F.ACTIVE_PANEL = "applicationViewer"
-		miog.SearchPanel:Hide()
-		miog.EntryCreation:Hide()
-		miog.Plugin:Show()
 		miog.ApplicationViewer:Show()
-
-		if(miog.AdventureJournal) then
-			miog.AdventureJournal:Hide()
-		end
-
-		if(not miog.F.LITE_MODE) then
-			--ShowUIPanel(miog.pveFrame2)
-
-		else
-			LFGListFrame.ApplicationViewer:Hide()
-
-		end
 
 		if(UnitIsGroupLeader("player")) then
 			miog.ApplicationViewer.Delist:Show()
@@ -31,49 +44,8 @@ local function setActivePanel(_, panel)
 			
 		end
 
-		if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
-			miog.Plugin.ButtonPanel:Hide()
-			miog.FilterPanel.Lock:Hide()
-
-			miog.FilterPanel:Show()
-
-		elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
-			miog.Plugin.ButtonPanel:Hide()
-			miog.LastInvites:Show()
-
-		end
-
-		miog.setupFiltersForActivePanel()
-
 	elseif(panel == LFGListFrame.SearchPanel) then
-		miog.F.ACTIVE_PANEL = "searchPanel"
-		miog.ApplicationViewer:Hide()
-		miog.EntryCreation:Hide()
-		miog.Plugin:Show()
 		miog.SearchPanel:Show()
-
-		if(miog.AdventureJournal) then
-			miog.AdventureJournal:Hide()
-		end
-
-		if(not miog.F.LITE_MODE) then
-			--ShowUIPanel(miog.pveFrame2)
-
-		else
-			LFGListFrame.SearchPanel:Hide()
-		end
-
-		if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
-			miog.Plugin.ButtonPanel:Hide()
-			miog.FilterPanel.Lock:Hide()
-
-			miog.FilterPanel:Show()
-
-		elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
-			miog.Plugin.ButtonPanel:Hide()
-			miog.LastInvites:Show()
-
-		end
 
 		if(miog.UPDATED_DUNGEON_FILTERS ~= true) then
 			miog.updateDungeonCheckboxes()
@@ -84,46 +56,27 @@ local function setActivePanel(_, panel)
 			miog.updateRaidCheckboxes()
 		end
 
-		miog.setupFiltersForActivePanel()
-
 	elseif(panel == LFGListFrame.EntryCreation) then
-		miog.ApplicationViewer:Hide()
-		miog.SearchPanel:Hide()
-
-		if(miog.AdventureJournal) then
-			miog.AdventureJournal:Hide()
-		end
-
-		miog.Plugin:Show()
+		miog.FilterPanel.Lock:Show()
 		miog.EntryCreation:Show()
 
-		miog.FilterPanel.Lock:Show()
-
-		if(not miog.F.LITE_MODE) then
-			--ShowUIPanel(miog.pveFrame2)
-
-		else
-			LFGListFrame.EntryCreation:Hide()
+		if(miog.F.LITE_MODE) then
 			miog.initializeActivityDropdown()
 
 		end
 
 	elseif(panel == "AdventureJournal") then
-		miog.ApplicationViewer:Hide()
-		miog.SearchPanel:Hide()
-		miog.EntryCreation:Hide()
+		miog.AdventureJournal:Show()
+		miog.FilterPanel.Lock:Show()
 
-		miog.Plugin:Show()
-
-		if(miog.AdventureJournal) then
-			miog.AdventureJournal:Show()
-		end
-
+	elseif(panel == "RaiderIOChecker") then
+		miog.RaiderIOChecker:Show()
 		miog.FilterPanel.Lock:Show()
 
 	else
 		miog.Plugin:Hide()
 		miog.FilterPanel.Lock:Show()
+
 	end
 end
 
@@ -270,4 +223,13 @@ miog.createFrames = function()
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		setActivePanel(_, panel)
 	end)
+
+
+	panels = {
+		miog.ApplicationViewer,
+		miog.SearchPanel,
+		miog.EntryCreation,
+		miog.AdventureJournal,
+		--miog.RaiderIOChecker
+	}
 end

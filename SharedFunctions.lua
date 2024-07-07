@@ -465,7 +465,7 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 
 			if(mythicKeystoneProfile.mainCurrentScore) then
 				if((mythicKeystoneProfile.mainCurrentScore > 0) == false and (mythicKeystoneProfile.mainPreviousScore > 0) == false) then
-					mainScoreString = wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex)
+					mainScoreString = wticc("On his main char", miog.ITEM_QUALITY_COLORS[7].pureHex)
 
 				else
 					if(mythicKeystoneProfile.mainCurrentScore > 0 and mythicKeystoneProfile.mainPreviousScore > 0) then
@@ -481,9 +481,6 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 					end
 
 				end
-
-				mainScoreString = wticc("Main Char", miog.ITEM_QUALITY_COLORS[7].pureHex)
-			
 			end
 
 			frameWithPanel.RaiderIOInformationPanel.mplus.main = mainScoreString

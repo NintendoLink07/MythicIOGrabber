@@ -100,6 +100,10 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 			if(C_PartyInfo.CanInvite() and (applicantStatus == "inviteaccepted" or applicantStatus == "debug")) then
 				miog.addInvitedPlayer(currentApplicant.memberData[1])
 
+				for k, v in ipairs(currentApplicant.memberData) do
+					miog.addInvitedPlayer(v)
+
+				end
 			end
 
 		end
@@ -373,7 +377,7 @@ local function createApplicantFrame(applicantID)
 
 			end)
 
-			if(applicantIndex == 1 and miog.F.CAN_INVITE or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
+			if(applicantIndex == 1 and miog.F.CAN_INVITE == true or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
 				declineButton:Show()
 				inviteButton:Show()
 

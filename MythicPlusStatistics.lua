@@ -317,6 +317,10 @@ miog.setUpMPlusStatistics = function()
 
 		miog.MPlusStatistics.DungeonColumns:MarkDirty()
 
+		miog.MPlusStatistics:SetScript("OnShow", function()
+			miog.gatherMPlusStatistics()
+		end)
+
 		miog.F.MPLUS_SETUP_COMPLETE = true
 	end
 end

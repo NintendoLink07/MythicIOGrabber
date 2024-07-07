@@ -224,9 +224,6 @@ local function createPVEFrameReplacement()
 			setup = true
 		end
 
-		miog.gatherMPlusStatistics()
-		miog.gatherPVPStatistics()
-		miog.gatherRaidStatistics()
 		miog.updateProgressData()
 
 		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
@@ -679,6 +676,11 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.DungeonJournal.Text:SetText("Journal")
 	miog.pveFrame2.TitleBar.DungeonJournal:SetScript("OnClick", function()
 		miog.setActivePanel(nil, "AdventureJournal")
+	end)
+
+	miog.pveFrame2.TitleBar.RaiderIOChecker.Text:SetText("IO")
+	miog.pveFrame2.TitleBar.RaiderIOChecker:SetScript("OnClick", function()
+		miog.setActivePanel(nil, "RaiderIOChecker")
 	end)
 end
 

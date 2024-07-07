@@ -62,6 +62,7 @@ miog.OnEvent = function(_, event, ...)
 
 		miog.loadSettings()
 		miog.loadRawData()
+		--miog.loadRaiderIOChecker()
 		
 		EJ_SetDifficulty(8)
 		

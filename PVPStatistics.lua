@@ -1,8 +1,8 @@
 local addonName, miog = ...
 
 miog.setupPVPStatistics = function()
-    for i = 1, 4, 1 do
-		if( miog.PVPStatistics.BracketColumns.Brackets[i] == nil) then
+	if( miog.PVPStatistics.BracketColumns.Brackets[1] == nil) then
+    	for i = 1, 4, 1 do
 			local bracketColumn = CreateFrame("Frame", nil, miog.PVPStatistics.BracketColumns, "MIOG_PVPStatisticsColumnTemplate")
 			bracketColumn:SetHeight(miog.PVPStatistics:GetHeight())
 			bracketColumn.layoutIndex = i
@@ -16,6 +16,10 @@ miog.setupPVPStatistics = function()
 
 			miog.PVPStatistics.BracketColumns.Brackets[i] = bracketColumn
 		end
+	
+		miog.PVPStatistics:SetScript("OnShow", function()
+			miog.gatherPVPStatistics()
+		end)
     end
 end
 

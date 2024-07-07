@@ -926,7 +926,7 @@ local function updateRandomDungeons()
 				info.checked = mode == "queued"
 				info.icon = miog.MAP_INFO[id] and miog.MAP_INFO[id].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
 				info.parentIndex = subtypeID
-				info.index = 1
+				info.index = -1
 				info.type2 = "random"
 
 				info.func = function()
@@ -999,7 +999,6 @@ local function updateDungeons(overwrittenParentIndex)
 				info.entryType = "option"
 				info.level = 2
 				info.id = dungeonID
-				info.index = nil
 
 				info.text = isHolidayDungeon and "(Event) " .. name or name
 
