@@ -1,11 +1,9 @@
-## [2.2.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.5) - 2024-07-07
+## [2.2.6](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.6) - 2024-07-09
 
 ### Fixed
 
-- [LastInvites] The player frames should now be placed inside the panel.
+- When leaving a group and teleporting away right after there won't be any errors popping up anymore.
 
-- [ApplicationViewer] When you invite a premade group all players will now appear in the [LastInvites] list
+- Improved filter panel load time and removed redundant checks.
 
-- A rare error when checking for heroic dungeons to queue for shouldn't occur anymore.
-
-- A rare error changing the order of the queue finder dungeons shouldn't occur anymore.
+- First pass for TWW, fix most egregious bugs from Beta.

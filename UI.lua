@@ -25,6 +25,9 @@ local function setActivePanel(_, panel)
 		elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
 			miog.LastInvites:Show()
 
+		else
+			miog.Plugin.ButtonPanel:Show()
+		
 		end
 
 		miog.setupFiltersForActivePanel()
@@ -46,15 +49,6 @@ local function setActivePanel(_, panel)
 
 	elseif(panel == LFGListFrame.SearchPanel) then
 		miog.SearchPanel:Show()
-
-		if(miog.UPDATED_DUNGEON_FILTERS ~= true) then
-			miog.updateDungeonCheckboxes()
-
-		end
-
-		if(miog.UPDATED_RAID_FILTERS ~= true) then
-			miog.updateRaidCheckboxes()
-		end
 
 	elseif(panel == LFGListFrame.EntryCreation) then
 		miog.FilterPanel.Lock:Show()

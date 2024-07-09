@@ -350,12 +350,6 @@ miog.F = {
 
 	SEARCH_IS_THROTTLED = false,
 
-	ADDED_DUNGEON_FILTERS = false,
-	UPDATED_DUNGEON_FILTERS = false, 
-
-	ADDED_RAID_FILTERS = false,
-	UPDATED_RAID_FILTERS = false, 
-
 	AFFIX_INFO = {},
 }
 

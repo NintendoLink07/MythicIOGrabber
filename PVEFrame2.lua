@@ -566,9 +566,17 @@ local function createPVEFrameReplacement()
 	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
 
 	for i = 1, tabSlots, 1 do
-		local spellType, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
+		local spellType, id
 
-		if(spellType == "FLYOUT") then
+		if(GetSpellBookItemInfo) then
+			spellType, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
+
+		else
+			local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(i, Enum.SpellBookSpellBank.Player)
+			spellType, id = spellBookItemInfo.itemType, spellBookItemInfo.actionID
+		end
+
+		if(spellType == "FLYOUT" or spellType == 4) then
 			local name, description, numSlots, isKnown = GetFlyoutInfo(id)
 
 			if(string.find(name, "Hero's Path")) then
@@ -590,7 +598,7 @@ local function createPVEFrameReplacement()
 				for k = 1, numSlots, 1 do
 					local flyoutSpellID, overrideSpellID, spellKnown, spellName, slotSpecID = GetFlyoutSlotInfo(id, k)
 
-					local spellInfo = C_SpellBook.GetSpellInfo(flyoutSpellID)
+					local spellInfo = C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(flyoutSpellID) or C_SpellBook.GetSpellInfo(flyoutSpellID)
 					local tpButton = CreateFrame("Button", nil, miog.Teleports, "SecureActionButtonTemplate")
 					tpButton:SetFrameStrata("MEDIUM")
 					tpButton:SetSize(35, 35)

@@ -112,17 +112,6 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
-		if(not miog.F.ADDED_DUNGEON_FILTERS) then
-			local currentSeason = C_MythicPlus.GetCurrentSeason()
-
-			miog.F.CURRENT_SEASON = currentSeason
-			miog.F.PREVIOUS_SEASON = currentSeason - 1
-
-			miog.updateDungeonCheckboxes()
-			miog.updateRaidCheckboxes()
-
-		end
-
 		if(miog.F.MPLUS_SETUP_COMPLETE) then
 			miog.gatherMPlusStatistics()
 		end
@@ -203,7 +192,7 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 		if(not miog.F.LITE_MODE) then
-			if(miog.pveFrame2.categoryFramePool) then
+			if(miog.pveFrame2 and miog.pveFrame2.categoryFramePool) then
 
 				local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
 

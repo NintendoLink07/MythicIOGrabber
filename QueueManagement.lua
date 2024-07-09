@@ -897,13 +897,15 @@ miog.loadQueueSystem = function()
 	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 	eventReceiver:SetScript("OnEvent", miog.queueEvents)
 
-	hooksecurefunc("HonorFrameTypeDropDown_OnClick", function(self)
-		randomBGFrame:SetShown(self.value == "bonus")
-		randomEpicBGFrame:SetShown(self.value == "bonus")
+	if(HonorFrameTypeDropDown_OnClick) then
+		hooksecurefunc("HonorFrameTypeDropDown_OnClick", function(self)
+			randomBGFrame:SetShown(self.value == "bonus")
+			randomEpicBGFrame:SetShown(self.value == "bonus")
 
-		specificBox:SetShown(self.value == "specific")
-		specificBox:GetParent():MarkDirty()
-	end)
+			specificBox:SetShown(self.value == "specific")
+			specificBox:GetParent():MarkDirty()
+		end)
+	end
 end
 
 local function updateRandomDungeons()
@@ -1719,7 +1721,10 @@ local function updateDropDown()
 		updateDungeons()
 		updateDungeons(4)
 		updateRaidFinder()
-		updatePVP2()
+
+		if(HonorFrameTypeDropDown) then
+			updatePVP2()
+		end
 		--updatePvP()
 	
 	else

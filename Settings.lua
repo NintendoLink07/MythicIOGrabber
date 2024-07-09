@@ -173,8 +173,10 @@ local defaultOptionSettings = {
 				maxBossKills = 0,
 				difficultyID = 0,
 				dungeons = {},
-				raids = {},
-				raidBosses = {},
+				raids = {
+					setting = false,
+					bosses = {}
+				},
 				hardDecline = false,
 				softDecline = false,
 				needsMyClass = true
@@ -343,7 +345,7 @@ local function compareSettings()
 		MIOG_SavedSettings = defaultOptionSettings
 	end
 	
-	if(MIOG_SavedSettings.lastReset.value < C_DateAndTime.GetSecondsUntilWeeklyReset()) then
+	if(MIOG_SavedSettings.lastReset and MIOG_SavedSettings.lastReset.value < C_DateAndTime.GetSecondsUntilWeeklyReset()) then
 		MIOG_SavedSettings.guildKeystoneInfo = nil
 		MIOG_SavedSettings.lastReset.value = C_DateAndTime.GetSecondsUntilWeeklyReset()
 

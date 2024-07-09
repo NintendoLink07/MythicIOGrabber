@@ -447,7 +447,7 @@ local function isGroupEligible(resultID, bordermode)
 				end
 			elseif(isRaid) then
 				if(currentSettings.filterForRaids and LFGListFrame.SearchPanel.filters == 1) then
-					if(not currentSettings.raids[activityInfo.groupFinderActivityGroupID]) then
+					if(not currentSettings.raids[activityInfo.groupFinderActivityGroupID].setting) then
 						return false, miog.INELIGIBILITY_REASONS[18]
 
 					else
@@ -461,9 +461,8 @@ local function isGroupEligible(resultID, bordermode)
 							end
 						end
 
-						if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityInfo.groupFinderActivityGroupID]) then
-
-							for k, v in pairs(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses[activityInfo.groupFinderActivityGroupID]) do
+						if(currentSettings.raids[activityInfo.groupFinderActivityGroupID].setting) then
+							for k, v in pairs(currentSettings.raids[activityInfo.groupFinderActivityGroupID].bosses) do
 								local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityID].bosses[k]
 
 								-- 0 either defeated or alive

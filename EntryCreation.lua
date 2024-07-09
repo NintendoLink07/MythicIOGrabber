@@ -164,7 +164,7 @@ local function setUpEntryCreation()
 
 	activityDropDown:SetShown((groupName or activityInfo.shortName) and not categoryInfo.autoChooseActivity)
 
-	if(self.ActivityDropDown:IsShown() == false and activityDropDown:IsShown() == true) then
+	if(activityDropDown:IsShown() == false and activityDropDown:IsShown() == true) then
 		difficultyDropDown:Hide()
 
 	else
@@ -366,9 +366,12 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 		end
 
-		activityDropDown:CreateSeparator(9)
-
 		local currentExpansionGroups = C_LFGList.GetAvailableActivityGroups(categoryID, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE))
+
+		if(currentExpansionGroups and #currentExpansionGroups > 0) then
+			activityDropDown:CreateSeparator(9)
+			
+		end
 
 		for k, v in ipairs(currentExpansionGroups) do
 			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
@@ -410,7 +413,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 		--local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(categoryID)
 
 		
-		local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(categoryID, bit.bor(Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE))
+		local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(categoryID, Enum.LFGListFilter.PvE)
 
 		local maxExpansions = GetNumExpansions() - 1
 
