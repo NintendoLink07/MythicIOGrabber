@@ -79,6 +79,8 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 		if(not miog.F.LITE_MODE) then
+			miog.insertGearingData()
+
 			if(PVPUIFrame) then
 				PVPUIFrame:HookScript("OnShow", function()
 					ConquestFrame.selectedButton = nil

@@ -137,7 +137,6 @@ miog.refreshKeystones = function()
 	
 				end
 	
-				--miog.MPlusStatistics.DungeonColumns.Selection:SetSize(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]:GetSize())
 				miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID], "TOPLEFT")
 				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID].TransparentDark
 				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
@@ -170,74 +169,12 @@ miog.refreshKeystones = function()
 		end
 	end
 
-	--[[local table = {
-		[1] = {mapID = 2519, level = 10, challengeMapID = 404},
-		[2] = {mapID = 2519, level = 13, challengeMapID = 404},
-		[3] = {mapID = 2519, level = 16, challengeMapID = 404},
-		[4] = {mapID = 2519, level = 19, challengeMapID = 404},
-		[5] = {mapID = 2519, level = 22, challengeMapID = 404},
-	}
-
-	for _, keystoneInfo in ipairs(table) do
-		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
-		local classFile = "WARRIOR"
-
-		local info = {}
-		info.entryType = "option"
-		info.text = WrapTextInColorCode("PARTY1", C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
-		info.value = keystoneInfo.level
-		info.icon = texture
-		info.func = function()
-			local unitID = "PARTY1"
-
-			currentUnitID = unitID
-			currentChallengeMapID = keystoneInfo.challengeMapID
-			currentLevel = keystoneInfo.level
-
-			local currentTimerValue = miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue()
-
-			if(miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark) then
-				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Show()
-
-			end
-
-			--miog.MPlusStatistics.DungeonColumns.Selection:SetSize(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]:GetSize())
-			miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID], "TOPLEFT")
-			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID].TransparentDark
-			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
-
-			if(unitID == "player") then
-				local overtimeScore, minScore, maxScore = CalculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, nil, currentTimerValue)
-
-				local playerGUID = UnitGUID("player")
-
-				for _, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
-					v.ScoreIncrease:Hide()
-
-				end
-
-				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
-				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
-			else
-				for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
-					local overtimeScore, minScore, maxScore = CalculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, k, currentTimerValue)
-
-					v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
-					v.ScoreIncrease:Show()
-
-				end
-			
-			end
-		end
-
-		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
-		
-	end]]
-
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
 end
 
 miog.setUpMPlusStatistics = function()
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetText("Party keystones")
+
 	miog.MPlusStatistics.CharacterInfo.TimelimitSlider:SetScript("OnValueChanged", function(self)
 		self.Text:SetText(round(self:GetValue()) .. "%")
 
@@ -319,6 +256,7 @@ miog.setUpMPlusStatistics = function()
 
 		miog.MPlusStatistics:SetScript("OnShow", function()
 			miog.gatherMPlusStatistics()
+			miog.refreshKeystones()
 		end)
 
 		miog.F.MPLUS_SETUP_COMPLETE = true

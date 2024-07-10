@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [2.2.7] - 2024-07-10
+
+### Fixed
+
+- When leaving a group and teleporting away right after there won't be any errors popping up anymore.
+
+- The keystone dropdown in the M+ panel should now be refreshed whenever you switch to the panel.
+
+- Less lag when opening the mainframe for the first time.
+
+
 ## [2.2.6] - 2024-07-09
 
 ### Fixed
@@ -1788,7 +1800,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.6..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.7..HEAD
+[2.2.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.7
 [2.2.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.6
 [2.2.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.5
 [2.2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.4

@@ -15,6 +15,8 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
 			miog.updateRosterInfoData()
+
+			miog.refreshKeystones()
 		end
 
 		if(miog.guildFrames[unitName]) then
@@ -73,7 +75,6 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 		local name = miog.createFullNameFrom("unitID", unitId)
 
 		if(name) then
-			--hasWeaponEnchant is 1 have enchant or 0 is don't
 			local hasWeaponEnchantNumber = unitGear.weaponEnchant
 
 			miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}

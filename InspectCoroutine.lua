@@ -18,8 +18,9 @@ MIOG_InspectedNames = {}
 MIOG_SavedSpecIDs = {}
 
 local timers = {}
-
 local currentInspection = nil
+
+local fullPlayerName, shortName
 
 local function sortPartyCheckList(k1, k2)
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
@@ -103,8 +104,6 @@ local function updateRosterInfoData()
 		miog.F.LFG_STATE = miog.checkLFGState()
 
 		local playersWithSpecData = 0
-		local fullPlayerName = miog.createFullNameFrom("unitID", "player")
-		local shortName = GetUnitName("player", false)
 
 		if(miog.F.LFG_STATE == "solo") then
 			local fileName, id = UnitClassBase("player")
@@ -616,6 +615,9 @@ miog.createInspectCoroutine = function()
 	if(miog.PartyCheck) then
    		partyPool = CreateFramePool("Frame", miog.PartyCheck.ScrollFrame.Container, "MIOG_PartyCheckPlayerTemplate", resetPartyFrames)
 	end
+
+	fullPlayerName = miog.createFullNameFrom("unitID", "player")
+	shortName = GetUnitName("player", false)
 
 	--local allUnitsInfo = miog.openRaidLib.GetAllUnitsInfo()
 end

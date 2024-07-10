@@ -219,8 +219,6 @@ local function createPVEFrameReplacement()
 				GameTooltip:Show()
 			end)
 
-			miog.insertGearingData()
-
 			setup = true
 		end
 
@@ -342,9 +340,7 @@ local function createPVEFrameReplacement()
 						end
 
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
-
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
-
 						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
 
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
@@ -481,11 +477,6 @@ local function createPVEFrameReplacement()
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetListAnchorToTopleft()
 	miog.MPlusStatistics.ScrollFrame.Rows.accountChars = {}
 	miog.MPlusStatistics.DungeonColumns.Dungeons = {}
-
-	miog.MPlusStatistics:HookScript("OnShow", function()
-		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetText("Party keystones")
-		miog.refreshKeystones()
-	end)
 
 	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
 	miog.PVPStatistics.BracketColumns.Brackets = {}
