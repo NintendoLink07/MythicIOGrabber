@@ -351,6 +351,7 @@ miog.F = {
 	SEARCH_IS_THROTTLED = false,
 
 	AFFIX_INFO = {},
+	AWAKENED_MAPS = {}
 }
 
 local color = "FF1eff00"
@@ -1133,7 +1134,6 @@ for k, v in pairs(miog.RAW["BattlemasterList"]) do
 	}
 end
 
-
 local function loadRawData()
 	local faction = UnitFactionGroup("player")
 
@@ -1150,7 +1150,7 @@ local function loadRawData()
 			local modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(v[1])
 			if (modifiedInstanceInfo) then
 				mapInfo.awakenedIcon = modifiedInstanceInfo.uiTextureKit
-				miog.F.AWAKENED_MAP = v[1]
+				table.insert(miog.F.AWAKENED_MAPS, v[1])
 			end
 		
 			if(mapInfo.fileName) then

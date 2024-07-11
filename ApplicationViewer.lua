@@ -244,10 +244,7 @@ local function createApplicantFrame(applicantID)
 						LFGListApplicantMember_OnEnter(self)
 					end
 
-					if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
-						GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
-
-					end
+					miog.checkEgoTrip(name)
 				end
 			end)
 			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame

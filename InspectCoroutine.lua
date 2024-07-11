@@ -206,10 +206,10 @@ local function updateRosterInfoData()
 									NotifyInspect(groupSystem.groupMember[name].unitID)
 				
 									local color = C_ClassColor.GetClassColor(groupSystem.groupMember[name].classFileName)
-									local shortName = color and WrapTextInColorCode(groupSystem.groupMember[name].shortName, color:GenerateHexColor()) or groupSystem.groupMember[name].shortName
+									local currentInspectionName = color and WrapTextInColorCode(groupSystem.groupMember[name].shortName, color:GenerateHexColor()) or groupSystem.groupMember[name].shortName
 									
 									miog.ClassPanel.LoadingSpinner:Show()
-									miog.ClassPanel.StatusString:SetText(shortName .. "\n(" .. playersWithSpecData .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
+									miog.ClassPanel.StatusString:SetText(currentInspectionName .. "\n(" .. playersWithSpecData .. "/" .. inspectableMembers .. "/" .. numOfMembers .. ")")
 								end
 							end)
 						else
@@ -283,7 +283,6 @@ local function updateRosterInfoData()
 				member.keylevel = 0
 			
 			end
-
 
 			local rioProfile
 

@@ -749,8 +749,9 @@ local function createResultTooltip(resultID, resultFrame)
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(WrapTextInColorCode(reason[1], miog.CLRSCC.red))
 
-
 		end
+
+		miog.checkEgoTrip(searchResultInfo.leaderName)
 
 		GameTooltip:Show()
 	end
@@ -1572,7 +1573,7 @@ local function searchResultsReceived()
 				blocked = true
 				miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 
-				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.5 or 0, function()
+				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.48 or 0, function()
 					miog.SearchPanel.Status:Hide()
 					miog.SearchPanel.Status.LoadingSpinner:Hide()
 					updateSearchResultList()
@@ -1599,9 +1600,6 @@ local function searchPanelEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
 
 	elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
-		local totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
-
-		LFGListFrame.SearchPanel.searching = true
 		searchResultsReceived()
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then --update to title, ilvl, group members, etc

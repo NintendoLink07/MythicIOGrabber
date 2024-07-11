@@ -1,9 +1,11 @@
-## [2.2.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.7) - 2024-07-10
+## [2.2.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.8) - 2024-07-11
+
+### Changed
+
+- Updated the Curseforge readme to accurately describe the addon.
 
 ### Fixed
 
-- When leaving a group and teleporting away right after there won't be any errors popping up anymore.
+- Even less lag when opening the mainframe for the first time.
 
-- The keystone dropdown in the M+ panel should now be refreshed whenever you switch to the panel.
-
-- Less lag when opening the mainframe for the first time.
+- Some preparations for TWW.

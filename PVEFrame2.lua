@@ -170,10 +170,6 @@ local function createPVEFrameReplacement()
 		miog.updateRosterInfoData()
 
 		if(not setup) then
-			miog.setUpMPlusStatistics()
-			miog.setupPVPStatistics()
-			miog.setupRaidStatistics()
-
 			local bullionInfo = C_CurrencyInfo.GetCurrencyInfo(3010)
 			miog.MainTab.Information.Currency.Bullion.Text:SetText(bullionInfo.quantity .. " (" .. bullionInfo.totalEarned .. "/" .. bullionInfo.maxQuantity .. ")")
 			miog.MainTab.Information.Currency.Bullion.Icon:SetTexture(4555657)
@@ -256,18 +252,23 @@ local function createPVEFrameReplacement()
 		end
 
 		if(miog.F.CURRENT_SEASON and miog.F.CURRENT_SEASON == 12) then
-			if(miog.F.AWAKENED_MAP) then
+			if(#miog.F.AWAKENED_MAPS == 1) then
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
-				miog.MainTab.Information.Awakened.Text:SetText(miog.MAP_INFO[miog.F.AWAKENED_MAP].name)
+				miog.MainTab.Information.Awakened.Text:SetText(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1]].name)
 				miog.MainTab.Information.Awakened.Icon:SetTexture(nil)
-				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAP].awakenedIcon .. "-large")
+				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1]].awakenedIcon .. "-large")
+
+			elseif(#miog.F.AWAKENED_MAPS > 1) then
+				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
+				miog.MainTab.Information.Awakened.Text:SetText("All raids awakened")
+				miog.MainTab.Information.Awakened.Icon:SetTexture(nil)
+				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1]].awakenedIcon .. "-large")
 
 			else
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,0,0,1)
-				miog.MainTab.Information.Awakened.Text:SetText("NO RAID AWAKENED")
-			
-			end
+				miog.MainTab.Information.Awakened.Text:SetText("No awakened raids")
 
+			end
 		end
 		
 		for frameIndex = 1, 3, 1 do

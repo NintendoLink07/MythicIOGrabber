@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.2.8] - 2024-07-11
+
+### Changed
+
+- Updated the Curseforge readme to accurately describe the addon.
+
+### Fixed
+
+- Even less lag when opening the mainframe for the first time.
+
+- Some preparations for TWW.
+
+
 ## [2.2.7] - 2024-07-10
 
 ### Fixed
@@ -1800,7 +1813,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.7..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.2.8..HEAD
+[2.2.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.8
 [2.2.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.7
 [2.2.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.6
 [2.2.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.5

@@ -63,6 +63,8 @@
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                     </Anchors>
                 </Texture>
+
+                <Texture parentKey="BackgroundHover" atlas="pvpqueue-button-casual-highlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
             </Layer>
         </Layers>
     </Button>

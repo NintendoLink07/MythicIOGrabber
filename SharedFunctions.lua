@@ -651,6 +651,13 @@ miog.getActiveSortMethods = function(panel)
 	return numberOfActiveMethods
 end
 
+miog.checkEgoTrip = function(name)
+	if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
+		GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
+
+	end
+end
+
 local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo() or miog.F.ACTIVE_ENTRY_INFO
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityID)
