@@ -1,132 +1,51 @@
-# Mythic IO Grabber
-This addon replaces the standard application viewer with a much more detailed version.  
-It shows you the applicants for your group finder listing in a clear but more extensive way.  
-With the Raider.IO addon it expands the functionality of this addon massively and shows you Raider.IO M+ and raid stats of the applicants.
+## MythicIOGrabber is a standalone addon which replaces the standard Blizzard dungeon and raids frame.
 
-## Addon features
+It started out as a simple Application Viewer replacement but it quickly turned into an All-In-One package for anything PVE and PVP related.
 
-![Settings#1](https://i.imgur.com/MLyEsHo.png)
+Some functionality of the addon:
 
-1. Class panel: Shows you which class you have in your group right now and after a few seconds the spec of this person (requesting spec data from Blizzard takes time).
-2. No r.io text: if you have no Raider.IO installed or it is currently disabled it shows you a warning in the title container of the parent frame (Dungeons & Raids).
-3. Expand: the frame height increases by 50% since I find the standard application viewer way too small when you have more than 10 applicants.  
-   When you have manually increased the size with the grabber in the bottom right corner it will expand to your set size.
-4. Setting button to access the interface options quickly.
-###  
-****
-###  
-## Addon settings
+1. See the current affixes, your keystone, the currently awakened raid and your vault progress in the mainframe.
 
-### Information shown while your group is listed:
+2. Currently ongoing calendar events show up in a small list on the right side of the mainframe.
 
-![Settings#2](https://i.imgur.com/1Kz5pLH.png)
+3. All important seasonal currencies are in the bottomleft of the mainframe.
 
-1. Title
-2. If under or at 5 members: current group with specs they're currently in. Hovering over the icons reveals the person who's playing the spec.
-   Over 5 members: shows the number of tanks/healers/dps in the standard way: 2/4/14.
-3. Listed for cross faction or just your faction.
-4. Activity name (Dungeon/raid, what difficulty, etc.).
-5. Description: If too long it's scrollable.
-6. Exclamation mark/point: If your group is set to private it glows.
-7. Voice Chat: always shows an icon, either normal or stricken through, hovering over it shows the info you've added.
-8. Playstyle: Hovering over it shows the current playstyle you've chosen (Completion, Beat timer, standard, etc.).
-9. Rating threshold: For both PvE or PvP.
-10. Itemlevel threshold.
-11. Current affixes: hovering of the frames shows a tooltip with the affix names.
-12. Queue timer: timer for how long you've been in queue (saves between reloads and relogs for the same group).
-13. Last invites panel: You can check your last invites and set them to favoured, making them show up at the top of your applicant list all the time.
-    Last invited applicants stay on the list for 3 days, then they get deleted on your next login / reload.
-14. Last invited applicants: Name, Spec, Role, Score or Raid progress
-15. Button to switch the applicant between favoured or normal "mode".
-16. Delete applicants from the last invites list.
-17. Background image changes based on your dungeon (implemented every dungeon/raid DF S2 and forward).
-###  
-****
-###  
-### Options for applicant filtering and sorting:
+4. In the new search panel you can sort groups by their dungeon/pvp or raid rating/progress, see what specs the group currently has, if it's a warmode group, etc.
+Also via the expand button you can see their M+ and raid progress and some additional info.
+When you use a filter and the group doesn't match your filter anymore the group gets a orange border and hovering over the group shows you the reason why it's not matching anymore.
 
-![Settings#3](https://i.imgur.com/SMP4549.png)
 
-1. Role/class/spec filter: Filters out the applicant leaders (and their premades!).
-2. Sort for role, score, highest key done or ilvl: You can have 2 methods active at a time, most used way is sort 1. for role and 2. for score. You can sort ascending or descending, e.g. if you wanna list the tanks with the lowest key done first you'd do 1. descending role and 2. ascending highest key.
-3. Manual refresh button.
-###  
-****
-###  
-### Applicant information:
+5. The new application viewer shows you a sortable (rating/raid progress, highest key/secondary progress, role and ilvl) list with some additional info (affixes, how long the group has been listed, etc.)
+Also via the expand button you can see their M+ and raid progress and some additional info.
+You can change the itemlevel and the rating by double clicking it.
 
-![Settings#4](https://i.imgur.com/zwVNZmY.png)
+6. Both the application viewer and the search panel have a extensive filter panel right beside it where you can even filter out single specs from listings/applicants.
 
-1. Extend (arrow down button): Opens the detailed view.
-2. Comment (letter icon): If they have entered a comment with their application.
-3. Name: Class colored, if too long it has a tooltip with full name.
-4. Specialization.
-5. Role.
-6. Dungeon score / raid progress / PVP rating: colored with the standard Blizzard colors or bright red if they're under the rating threshold you've set. Shows (depending on the category your group is listed in) their dungeon score, raid progress or pvp rating.
-7. Highest key done / pvp tier / raid progress for your listed dungeon, green if in time, red if not in time Shows (depending on the category your group is listed in) their highest key done for your listed dungeon, raid progress of their 2nd highest tier or PVP tier they're in (Combatant II, Rival I, Elite, etc.).
-8. Item level: White if no ilvl threshold set / over the threshold, red otherwise.
-9. Friend: Only shows up if they're a friend of yours- Accept/Decline buttons.
-10. Invite / decline buttons.
-11. Turquoise circle: When they're a premade of someone else (they're grouped together anyway but this makes it more clear).  
-###  
-****
-###  
-### Detailed view -  Buttons to show either M+ or raid data:
+7. Creating a group is super simple with the new entry creation.
+The dungeons and raids are listed under each expansion, the dungeon list shows you the current seasonal dungeons first, then expansion dungeons, then the expansions itself.
+You can quick-set a rating and itemlevel by clicking the red buttons on the right side of each field.
 
-### Left side (Raider.IO data):
+8. The adventure journal gives you a quick overview of each ability without having to switch to a different difficulty (most of the time anyway...).
+Sometimes the way they've written the descriptions for the abilities is a bit weird, so there are some abilities that don't work perfectly, yet.
 
-### Mythic+
+9. An active queues list where you see for what you're currently in queue for, how long the queue is currently active, how long the estimated wait time is, etc.
 
-![Settings#5](https://i.imgur.com/3yxiaAA.png)
+10. A party checker, where you can see your current group/raid mates, their role, spec, ilvl, M+/Raid progress, keystone, etc.
 
-1. All current season dungeons, listed in alphabetical order: icons are clickable and open up the journal for that specific dungeon.
-2. Shows the applicants' individual dungeons highest keys done, green if in time, red otherwise.
-   Keys on the left are always for the current weekly affix (Tyr/Fort), right side is the other one.
-###  
-### Raid
+11. Statistics panels for M+, raid and PVP, shared across all characters. The M+ statistics for example show highest and lowest keys for fort/tyr and there's a dropdown in the topleft where you can select a key of one of your group mates and see how much score you or any of your alts would gain.
 
-![Settings#6](https://i.imgur.com/4caKaQO.png)
+12. A dedicated teleport tab where all M+ teleports are listed, no more cluttering your bars.
 
-1. Current and last tier raid: icons are clickable and open up the journal for that specific raid.
-2. The 2 highest difficulties, where they've completed atleast 1 encounter, Mythic > Heroic > Normal.
-   Not displaying LFR data for the moment (Raider.IO addon doesn't have the data).
-3. All raid bosses ordered from left to right, top to bottom and for the "only M+" players: numbered!
-   All bosses icons are clickable and open up the journal for that specific boss.
-   Icons have a colored border for the difficulty the applicant has completed the encounter.
-###  
-### Right side (General info):
+13. A full gearing table (which will be updated for TWW when the info is out). Shows you where you get what itemlevel of gear, which track it is on and shows your vault progress.
 
-![Settings#7](https://i.imgur.com/lkE2I4c.png)
+14. The (still kinda laggy) guild page, where you can see all of your guilds M+ and raid progress and check their keystones.
 
-1. Comment: if they've entered a comment it will display here
-2. (With Raider.IO) 
-2a. M+ tab selected: will show previous season score, main's current score and main's previous season score (depends on RaiderIO data, they might have a main but haven't logged into the char for a while so it doesn't show anything, can't change that).
-2b. Raid tab selected: Shows if it's their main char or the main char's progress for the 2 highest difficulties.
-3. Roles: shows their current and alternative roles they can play (if they've chosen them while applying).
-   Race: Shows an icon with their race, has a tooltip when you hover over it.
-4. (With Raider.IO) Key count: number of +5, +10, +15 and +20 keys they've done.
-5. Realm.
-###  
-****
-###  
-### Footer bar:
+15. A class panel above the frame which shows all classes in your group and when you hover over them, how many of each spec are in your group.
 
-![Settings#8](https://i.imgur.com/G9IYY0w.png)
+There is also a lite mode which you can enable in the interface addon settings (accessible via the cogwheel icon in the topright or via Escape and Interface options.
+In lite mode only the search panel, the application viewer, the entry creation and the class panel are active, everything else is turned off.
 
-1. If you're the leader of the group you will see the standard "Browse Groups", "Delist" and "Edit" buttons.
-2. If Raider.IO is installed their icon, where you can copy the applicants which you can paste on their website, will be shown.
-3. How many applicants (a premade group counts as 1) you currently have.
-4. Manual frame resizer.
-###  
-****
-###  
-
-### Interface option settings:
-1. Background options, if you don't like the default background.
-2. Hide the background image completely (mostly for ElvUI users so it works with the semi-transparent style of ElvUI).
-3. Show/Hide the class panel, which shows you the class and specs of your current group.
-4. (Experimental, might break any time) Keep the comment you've entered when applying to another group in the group finder.
-5. (Experimental, might break any time) Keep the settings you've entered when creating your group.
-6. Enable(disable the favoured applicant setting.
-
-Created this addon because I hate to manually look up all applicants on raider.io, having to wait for their site to respond, sift through non condensed information, then tab back into the game.
+**This addon also uses the [Open Raid Library](https://www.curseforge.com/wow/addons/openraid)<br/>
+Needed for all the keystone actions and some additional enchant info of party members.<br/>
+The other group members need either MythicIOGrabber or another addon with this library, otherwise these features won't work correctly.<br/>
+Luckily the addon [Details!](https://www.curseforge.com/wow/addons/details) has this library included.**
