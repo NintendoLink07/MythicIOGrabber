@@ -1,11 +1,9 @@
-## [2.2.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.8) - 2024-07-11
-
-### Changed
-
-- Updated the Curseforge readme to accurately describe the addon.
+## [2.2.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.9) - 2024-07-13
 
 ### Fixed
 
-- Even less lag when opening the mainframe for the first time.
+- [M+ Statistics] The keystone dropdown will now be refreshed when you switch to the M+ Statistics.
 
-- Some preparations for TWW.
+- [M+ Statistics] The keystone dropdown should now also reliably list all raid members' keystones.
+
+- [Mainframe] Should now almost be lag free when opening it the first time after logging in or a /reload.

@@ -167,8 +167,6 @@ local function createPVEFrameReplacement()
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
 
-		miog.updateRosterInfoData()
-
 		if(not setup) then
 			local bullionInfo = C_CurrencyInfo.GetCurrencyInfo(3010)
 			miog.MainTab.Information.Currency.Bullion.Text:SetText(bullionInfo.quantity .. " (" .. bullionInfo.totalEarned .. "/" .. bullionInfo.maxQuantity .. ")")

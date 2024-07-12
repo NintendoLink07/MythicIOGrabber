@@ -335,6 +335,25 @@ end
 
 miog.createFullNameFrom = createFullNameFrom
 
+local function createShortNameFrom(type, value)
+	if(type == "unitID") then
+		return UnitName(value)
+
+	else
+		local nameTable = miog.simpleSplit(value, "-")
+
+		if(not nameTable[2]) then
+			return value
+
+		else
+			return nameTable[1]
+
+		end
+	end
+end
+
+miog.createShortNameFrom = createShortNameFrom
+
 local function printOnce(string)
 	if(miog.ONCE) then
 		miog.ONCE = false

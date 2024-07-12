@@ -71,7 +71,6 @@ miog.updateProgressData = function()
 
     end
 
-    local gearingData = miog.GEARING_CHART[seasonID]
     local r, g, b
 
     for k, v in pairs(miog.GEARING_CHART) do
@@ -184,9 +183,6 @@ miog.insertGearingData = function()
                 currentChildren[a].DungeonVault:SetTextColor(r, g, b, 1)
 
                 currentChildren[a].Other:SetTextColor(r,g,b,1)
-        
-                --currentChildren[a].Progress:SetText(miog.getVaultProgress(a))
-                --currentChildren[a].Progress:SetTextColor(r,g,b,1)
             end
 
         end

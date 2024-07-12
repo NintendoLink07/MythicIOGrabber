@@ -1573,7 +1573,7 @@ local function searchResultsReceived()
 				blocked = true
 				miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 
-				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.48 or 0, function()
+				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.5 or 0, function()
 					miog.SearchPanel.Status:Hide()
 					miog.SearchPanel.Status.LoadingSpinner:Hide()
 					updateSearchResultList()

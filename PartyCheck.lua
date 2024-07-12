@@ -11,12 +11,10 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 	if(unitName) then
 		unitName = miog.createFullNameFrom("unitName", unitName)
 
-		if(miog.groupSystem.groupMember[unitName] or unitName == miog.createFullNameFrom("unitID", "player")) then
+		if(miog.groupSystem.groupMember[unitName] or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitName("player")) then
 			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
 			miog.updateRosterInfoData()
-
-			miog.refreshKeystones()
 		end
 
 		if(miog.guildFrames[unitName]) then
@@ -30,6 +28,14 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 			currentFrame.BasicInformation.Keystone:SetTexture(texture)
 		end
 	end
+
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
+
+	for name, singleKeystoneInfo in pairs(allKeystoneData) do
+		miog.insertInfoIntoDropdown(name, singleKeystoneInfo)
+	end
+
+	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
 end
 
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
@@ -140,12 +146,7 @@ miog.loadPartyCheck = function()
 			miog.openRaidLib.RequestKeystoneDataFromParty()
 			miog.openRaidLib.GetAllUnitsGear()
 
-		else
-			miog.openRaidLib.RequestKeystoneDataFromParty()
-
 		end
-
-		miog.updateRosterInfoData()
 	end)
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")

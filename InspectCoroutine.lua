@@ -64,6 +64,8 @@ local function updateRosterInfoData()
 
 		end
 
+		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
+
 		if(partyPool) then
 			partyPool:ReleaseAll()
 		end
@@ -127,6 +129,9 @@ local function updateRosterInfoData()
 				masterLooter = isML,
 				index = groupIndex,
 			}
+			local keystoneInfo = miog.openRaidLib.GetKeystoneInfo("player")
+
+			miog.insertInfoIntoDropdown(fullPlayerName, keystoneInfo)
 		end
 
 		local groupOffset = 0
@@ -160,6 +165,10 @@ local function updateRosterInfoData()
 				end
 
 				if(name) then
+					local keystoneInfo = miog.openRaidLib.GetKeystoneInfo(unitID)
+
+					miog.insertInfoIntoDropdown(name, keystoneInfo)
+
 					groupSystem.groupMember[name] = {
 						unitID = unitID,
 						name = name,
@@ -436,6 +445,8 @@ local function updateRosterInfoData()
 					memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
 					memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
 
+					miog.insertInfoIntoDropdown(member.fullName, miog.checkSystem.keystoneData[member.fullName])
+
 					miog.retrieveRaiderIOData(member.shortName, member.realm, memberFrame)
 					
 					memberFrame.ExpandFrame:SetScript("OnClick", function(self)
@@ -507,9 +518,10 @@ local function inspectCoroutineEvents(_, event, ...)
 			end
 
 			miog.openRaidLib.GetAllUnitsInfo()
-            updateRosterInfoData()
 
         end
+
+		updateRosterInfoData()
 
     elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
 		local name = GetUnitName(..., true)
@@ -589,15 +601,6 @@ local function resetPartyFrames(_, frame)
     frame.Keystone:SetTexture(nil)
 	frame.Keylevel:SetText("")
 	frame.data = nil
-
-	
-	--[[for k, v in pairs(frame.MissingEnchantSlots) do
-		if(type(v) == "table") then
-			v.layoutIndex = nil
-			v:Hide()
-		end
-
-	end]]
 end
 
 miog.createInspectCoroutine = function()
@@ -617,6 +620,7 @@ miog.createInspectCoroutine = function()
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	shortName = GetUnitName("player", false)
+	miog.fullPlayerName, miog.shortPlayerName = fullPlayerName, shortName
 
 	--local allUnitsInfo = miog.openRaidLib.GetAllUnitsInfo()
 end
