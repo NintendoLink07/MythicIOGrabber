@@ -785,5 +785,5 @@ miog.loadSettings = function()
 end
 
 function MIOG_OpenInterfaceOptions()
-	Settings.OpenToAddonCategory("MythicIOGrabber")
+	Settings.OpenToCategory("MythicIOGrabber")
 end

@@ -36,8 +36,9 @@
 
                         <Scripts>
                             <OnLoad>
-                                self:SetMinMaxValues(1, 40)
+                                self:SetMinMaxValues(1.00, 40.00)
                                 self:SetValue(40)
+                                self:SetValueStep(0.25)
 	                            self.Text:SetText(self:GetValue() .. "%")
                             </OnLoad>
                         </Scripts>

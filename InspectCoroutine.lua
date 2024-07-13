@@ -562,6 +562,8 @@ local function inspectCoroutineEvents(_, event, ...)
 		updateRosterInfoData()
 
 	elseif(event == "GROUP_LEFT") then
+		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetText("Party keystones")
+
 		updateRosterInfoData()
 	
 	elseif(event == "GROUP_ROSTER_UPDATE") then

@@ -501,10 +501,7 @@ local function createPVEFrameReplacement()
 	pveFrame2.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
----@diagnostic disable-next-line: undefined-field
 	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
-	--queueRolePanel:SetPoint("BOTTOM", frame.QueueDropdown, "TOP", 0, 5)
-
 	local leader, tank, healer, damager = LFDQueueFrame_GetRoles()
 
 	local function setRoles()
@@ -541,12 +538,11 @@ local function createPVEFrameReplacement()
 
 	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
----@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	queueDropDown:OnLoad()
 	queueDropDown:SetText("Choose a queue")
 	miog.MainTab.QueueInformation.Panel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-	
+
 	local counter = 0
 
 	local offset = 35 + 22

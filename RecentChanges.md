@@ -2,8 +2,10 @@
 
 ### Fixed
 
+- [M+ Statistics] The keystone dropdown will not show keys of your last ~~lovers~~ party members
+
 - [M+ Statistics] The keystone dropdown will now be refreshed when you switch to the M+ Statistics.
 
 - [M+ Statistics] The keystone dropdown should now also reliably list all raid members' keystones.
 
-- [Mainframe] Should now almost be lag free when opening it the first time after logging in or a /reload.
+- [Mainframe] Even less lag when opening the main frame the first time after logging in or a /reload.
