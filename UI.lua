@@ -12,8 +12,6 @@ local function setActivePanel(_, panel)
 
 	miog.Plugin:Show()
 
-	print(panel:GetDebugName())
-
 	if(miog.F.LITE_MODE and panel ~= LFGListFrame.CategorySelection) then
 		panel:Hide()
 
