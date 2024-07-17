@@ -379,7 +379,7 @@ miog.createCustomColorForRating = function(score)
 	if(score > 0) then
 		for k, v in ipairs(miog.COLOR_BREAKPOINTS) do
 			if(score < v.breakpoint) then
-				local percentage = (v.breakpoint - score) / 600
+				local percentage = (v.breakpoint - score) / 700
 
 				return CreateColor(v.r + (miog.COLOR_BREAKPOINTS[k - 1].r - v.r) * percentage, v.g + (miog.COLOR_BREAKPOINTS[k - 1].g - v.g) * percentage, v.b + (miog.COLOR_BREAKPOINTS[k - 1].b - v.b) * percentage)
 

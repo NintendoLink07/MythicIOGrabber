@@ -116,7 +116,7 @@ local function convertAndRefresh()
 	convertFiltersToAdvancedBlizzardFilters()
 		
 	if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-		miog.checkSearchResultListForEligibleMembers()
+		miog.newUpdateFunction()
 
 	elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 		C_LFGList.RefreshApplicants()
@@ -303,7 +303,7 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 
 			if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName]) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-					miog.checkSearchResultListForEligibleMembers()
+					miog.newUpdateFunction()
 		
 				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 					C_LFGList.RefreshApplicants()
@@ -364,7 +364,7 @@ local function updateRaidCheckboxes(reset)
 					miog.FilterPanel.IndexedOptions:MarkDirty()
 					miog.FilterPanel:MarkDirty()
 
-					miog.checkSearchResultListForEligibleMembers()
+					miog.newUpdateFunction()
 		
 				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 					C_LFGList.RefreshApplicants()
@@ -391,7 +391,7 @@ local function updateRaidCheckboxes(reset)
 
 				MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses = {}
 
-				miog.checkSearchResultListForEligibleMembers()
+				miog.newUpdateFunction()
 			end)
 
 			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses) then
@@ -452,7 +452,7 @@ local function updateRaidCheckboxes(reset)
 						
 						self:SetDesaturated(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] < 2 and true or false)
 
-						miog.checkSearchResultListForEligibleMembers()
+						miog.newUpdateFunction()
 					end)
 
 					currentBossListRow.BossFrames[x] = bossFrame
@@ -568,7 +568,7 @@ local function updateDungeonCheckboxes(reset)
 
 			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-					miog.checkSearchResultListForEligibleMembers()
+					miog.newUpdateFunction()
 		
 				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 					C_LFGList.RefreshApplicants()
@@ -677,7 +677,7 @@ local function updateFilterDifficulties(reset)
 					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID = v
 
 					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-						miog.checkSearchResultListForEligibleMembers()
+						miog.newUpdateFunction()
 			
 					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 						C_LFGList.RefreshApplicants()
@@ -875,7 +875,7 @@ local function setupFiltersForActivePanel(reset)
 
 				if(currentSettings.filterForClassSpecs) then
 					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-						miog.checkSearchResultListForEligibleMembers()
+						miog.newUpdateFunction()
 			
 					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 						C_LFGList.RefreshApplicants()
@@ -928,7 +928,7 @@ local function setupFiltersForActivePanel(reset)
 
 					if(currentSettings.filterForClassSpecs) then
 						if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-							miog.checkSearchResultListForEligibleMembers()
+							miog.newUpdateFunction()
 				
 						elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 							C_LFGList.RefreshApplicants()
@@ -1033,7 +1033,7 @@ local function addRolePanel(parent)
 			convertFiltersToAdvancedBlizzardFilters()
 
 			if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-				miog.checkSearchResultListForEligibleMembers()
+				miog.newUpdateFunction()
 	
 			elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 				C_LFGList.RefreshApplicants()
@@ -1118,7 +1118,7 @@ miog.loadFilterPanel = function()
 		convertFiltersToAdvancedBlizzardFilters()
 
 		if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-			miog.checkSearchResultListForEligibleMembers()
+			miog.newUpdateFunction()
 
 		elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 			C_LFGList.RefreshApplicants()

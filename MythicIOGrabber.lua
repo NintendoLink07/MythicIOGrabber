@@ -237,6 +237,7 @@ end
 SLASH_MIOG1 = '/miog'
 local function handler(msg, editBox)
 	local command, rest = msg:match("^(%S*)%s*(.-)$")
+	print(command)
 	if(command == "") then
 
 	elseif(command == "options") then
@@ -354,7 +355,7 @@ local function handler(msg, editBox)
 		miog.debug.debugTimer = C_Timer.NewTicker(tickRate, function(self)
 
 			local startTime = GetTimePreciseSec()
-			miog.updateSearchResultList(true)
+			miog.newUpdateFunction()
 			local endTime = GetTimePreciseSec()
 		
 			miog.debug.currentAverageExecuteTime[#miog.debug.currentAverageExecuteTime+1] = endTime - startTime

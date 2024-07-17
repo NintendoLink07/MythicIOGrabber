@@ -1,11 +1,13 @@
-## [2.2.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.9) - 2024-07-13
+## [2.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3) - 2024-07-17
+
+### Changed
+
+- Switch to a different method of displaying the groups in the search panel, increasing performance by a shit ton.
+There should basically be no more micro stutters and scrolling should be buttery smooth.
+Throughout the 2.3 version I'll apply it to the whole addon, making it need way less memory and way more snappy.
 
 ### Fixed
 
-- [M+ Statistics] The keystone dropdown will not show keys of your last ~~lovers~~ party members
+- [InspectCoroutine - Lite Mode] Various errors have been fixed for lite mode.
 
-- [M+ Statistics] The keystone dropdown will now be refreshed when you switch to the M+ Statistics.
-
-- [M+ Statistics] The keystone dropdown should now also reliably list all raid members' keystones.
-
-- [Mainframe] Even less lag when opening the main frame the first time after logging in or a /reload.
+- [Category selection - Lite Mode] When trying to look for a group the category buttons should now be visible again.

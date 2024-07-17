@@ -126,7 +126,7 @@
                 </Frames>
             </Frame>
 
-            <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate">
+            <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
@@ -153,6 +153,20 @@
                     </Frame>
                 </Frames>
             </ScrollFrame>
+
+            <Frame parentKey="ScrollBox2" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox2" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
             
             <Button parentKey="SignUpButton" inherits="UIPanelDynamicResizeButtonTemplate" text="Signup">
                 <Size y="20" />

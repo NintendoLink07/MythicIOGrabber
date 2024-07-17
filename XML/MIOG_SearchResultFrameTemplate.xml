@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">    
-    <Frame name="MIOG_ResultFrameTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
-        <Size y="20" />
+    <Frame name="MIOG_SearchResultFrameTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size y="40" />
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-3">
                 <Texture parentKey="InviteBackground" setAllPoints="true" hidden="true">
@@ -60,12 +60,12 @@
             </Button>
 
             <Frame parentKey="BasicInformation">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="1" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-
                 <Size y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
 
                 <Layers>
                     <Layer level="BORDER">
@@ -129,10 +129,10 @@
             <Frame parentKey="CategoryInformation">
                 <Size y="20" />
 
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="2" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
 
                 <Frames>
                     <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
@@ -247,15 +247,6 @@
                         </Anchors>
                     </Frame>
                 </Frames>
-            </Frame>
-
-            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="3" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                    <KeyValue key="leftPadding" value="2" type="number"/>
-                    <KeyValue key="rightPadding" value="2" type="number"/>
-                </KeyValues>
             </Frame>
         </Frames>
 

@@ -56,7 +56,7 @@ XML\MIOG_SortButtonTemplate.xml
 XML\MIOG_ApplicantFrameTemplate.xml
 XML\MIOG_ApplicantMemberFrameTemplate.xml
 
-XML\MIOG_ResultFrameTemplate.XML
+XML\MIOG_SearchResultFrameTemplate.xml
 
 XML\MIOG_DungeonRowTemplate.xml
 XML\MIOG_RaidPanelTemplate.xml

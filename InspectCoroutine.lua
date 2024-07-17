@@ -64,7 +64,9 @@ local function updateRosterInfoData()
 
 		end
 
-		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
+		if(miog.MPlusStatistics) then
+			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
+		end
 
 		if(partyPool) then
 			partyPool:ReleaseAll()
@@ -129,9 +131,12 @@ local function updateRosterInfoData()
 				masterLooter = isML,
 				index = groupIndex,
 			}
-			local keystoneInfo = miog.openRaidLib.GetKeystoneInfo("player")
 
-			miog.insertInfoIntoDropdown(fullPlayerName, keystoneInfo)
+			if(miog.MPlusStatistics) then
+				local keystoneInfo = miog.openRaidLib.GetKeystoneInfo("player")
+
+				miog.insertInfoIntoDropdown(fullPlayerName, keystoneInfo)
+			end
 		end
 
 		local groupOffset = 0
@@ -562,7 +567,10 @@ local function inspectCoroutineEvents(_, event, ...)
 		updateRosterInfoData()
 
 	elseif(event == "GROUP_LEFT") then
-		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetText("Party keystones")
+
+		if(miog.MPlusStatistics) then
+			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetText("Party keystones")
+		end
 
 		updateRosterInfoData()
 	

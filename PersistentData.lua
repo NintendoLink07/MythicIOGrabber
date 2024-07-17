@@ -1879,12 +1879,12 @@ miog.ICON_COORDINATES = {
 
 miog.COLOR_BREAKPOINTS = {
 	[0] = {breakpoint = 0, hex = "ff9d9d9d", r = 0.62, g = 0.62, b = 0.62},
-	[1] = {breakpoint = 600, hex = "ffffffff", r = 1, g = 1, b = 1},
-	[2] = {breakpoint = 1200, hex = "ff1eff00", r = 0.12, g = 1, b = 0},
-	[3] = {breakpoint = 1800, hex = "ff0070dd", r = 0, g = 0.44, b = 0.87},
-	[4] = {breakpoint = 2400, hex = "ffa335ee", r = 0.64, g = 0.21, b = 0.93},
-	[5] = {breakpoint = 3000, hex = "ffff8000", r = 1, g = 0.5, b = 0},
-	[6] = {breakpoint = 3600, hex = "ffe6cc80", r = 0.9, g = 0.8, b = 0.5},
+	[1] = {breakpoint = 700, hex = "ffffffff", r = 1, g = 1, b = 1},
+	[2] = {breakpoint = 1400, hex = "ff1eff00", r = 0.12, g = 1, b = 0},
+	[3] = {breakpoint = 2100, hex = "ff0070dd", r = 0, g = 0.44, b = 0.87},
+	[4] = {breakpoint = 2800, hex = "ffa335ee", r = 0.64, g = 0.21, b = 0.93},
+	[5] = {breakpoint = 3500, hex = "ffff8000", r = 1, g = 0.5, b = 0},
+	[6] = {breakpoint = 4200, hex = "ffe6cc80", r = 0.9, g = 0.8, b = 0.5},
 }
 
 miog.PLAYSTYLE_STRINGS = {

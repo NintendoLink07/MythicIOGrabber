@@ -657,6 +657,16 @@ end
 
 miog.retrieveRaiderIOData = retrieveRaiderIOData
 
+miog.createSplitName = function(name)
+	local nameTable = miog.simpleSplit(name, "-")
+
+	if(not nameTable[2]) then
+		nameTable[2] = GetNormalizedRealmName()
+
+	end
+
+	return nameTable[1], nameTable[2]
+end
 
 miog.getActiveSortMethods = function(panel)
 	local numberOfActiveMethods = 0

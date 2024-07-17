@@ -12,7 +12,9 @@ local function setActivePanel(_, panel)
 
 	miog.Plugin:Show()
 
-	if(miog.F.LITE_MODE) then
+	print(panel:GetDebugName())
+
+	if(miog.F.LITE_MODE and panel ~= LFGListFrame.CategorySelection) then
 		panel:Hide()
 
 	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
@@ -195,7 +197,6 @@ miog.createFrames = function()
 	miog.createEntryCreation()
 	miog.loadFilterPanel()
 	miog.loadLastInvitesPanel()
-
 	miog.createClassPanel()
 
 	if(not miog.F.LITE_MODE) then
@@ -217,7 +218,6 @@ miog.createFrames = function()
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		setActivePanel(_, panel)
 	end)
-
 
 	panels = {
 		miog.ApplicationViewer,

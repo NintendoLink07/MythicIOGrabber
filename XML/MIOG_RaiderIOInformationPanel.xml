@@ -10,12 +10,11 @@
         </Layers>
 
         <Frames>
-
             <Button parentKey="MythicPlusTabButton" inherits="UIPanelButtonTemplate" text="Mythic+">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-10" y="4"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" y="4"/>
                 </Anchors>
                 <Scripts>
                     <OnClick>
@@ -37,8 +36,8 @@
             <Button parentKey="RaidTabButton" inherits="UIPanelButtonTemplate" text="Raid">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" y="4"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="4" />
                 </Anchors>
                 <Scripts>
                     <OnClick>
@@ -150,7 +149,7 @@
                 </Layers>
             </Frame>
 
-            <Frame parentKey="MythicPlusPanel">
+            <Frame parentKey="MythicPlusPanel" toplevel="true">
                 <Size y="160" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusTabButton" relativePoint="BOTTOMLEFT" />
@@ -216,7 +215,7 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="RaidPanel">
+            <Frame parentKey="RaidPanel" toplevel="true">
                 <Size y="160" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusTabButton" relativePoint="BOTTOMLEFT" />
