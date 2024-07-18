@@ -13,8 +13,8 @@
             <Button parentKey="MythicPlusTabButton" inherits="UIPanelButtonTemplate" text="Mythic+">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-10" y="4"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" y="4"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" y="2"/>
                 </Anchors>
                 <Scripts>
                     <OnClick>
@@ -36,8 +36,8 @@
             <Button parentKey="RaidTabButton" inherits="UIPanelButtonTemplate" text="Raid">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" y="4"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="4" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" y="2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="2" />
                 </Anchors>
                 <Scripts>
                     <OnClick>

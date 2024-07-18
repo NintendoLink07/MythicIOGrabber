@@ -2,6 +2,7 @@
 ..\..\FrameXML\UI.xsd">    
     <Frame name="MIOG_SearchResultFrameTemplate" inherits="BackdropTemplate" virtual="true">
         <Size y="40" />
+
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-3">
                 <Texture parentKey="InviteBackground" setAllPoints="true" hidden="true">

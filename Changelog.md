@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.3.1] - 2024-07-18
+
+### Changed
+
+- [Application Viewer] The new display method for the applicant frames has been implemented.
+
+^^^^ THIS
+
+### Fixed
+
+- The position of the raider io panel below search panel frames, applicant frames, etc. has been corrected.
+
+- [Application Viewer] Borders around applicant frames should be consistently 1px tall/wide now.
+
+- [Search Panel] The flag indicating the leader should be above the actual leader now (Blizzard changed a function, before it was always the first person).
+
+
 ## [2.3] - 2024-07-17
 
 ### Changed

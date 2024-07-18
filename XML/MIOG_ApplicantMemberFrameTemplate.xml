@@ -4,13 +4,16 @@
         <Size y="20" />
 
         <KeyValues>
-            <KeyValue key="minimumHeight" value="20" type="number" />
-            <KeyValue key="expand" value="true" type="boolean" />
-        </KeyValues>
+            <KeyValue key="expand" value="true" type="boolean"/>
+            <KeyValue key="topPadding" value="1" type="number"/>
+            <KeyValue key="bottomPadding" value="1" type="number"/>
+            <KeyValue key="leftPadding" value="1" type="number"/>
+            <KeyValue key="rightPadding" value="1" type="number"/>
+		</KeyValues>
 
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1">
-                <Texture parentKey="Background" setAllPoints="true">
+                <Texture parentKey="Background" setAllPoints="true" hidden="true">
                     <Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />
                 </Texture>
             </Layer>
@@ -36,10 +39,10 @@
 
             <Frame parentKey="BasicInformation">
                 <Size y="20" />
-                
+
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="1" type="number" />
-            <KeyValue key="expand" value="true" type="boolean" />
+                    <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
 
                 <Frames>
@@ -183,13 +186,6 @@
                 </Layers>
 
             </Frame>
-            
-            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="2" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>
 
             <EditBox parentKey="LinkBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" frameLevel="100" autoFocus="false" font="SystemFont_Shadow_Med1" hidden="true">
                 <Anchors>
@@ -209,6 +205,13 @@
                     </OnKeyDown>
                 </Scripts>    
             </EditBox>
+
+            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="2" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>
 
         </Frames>
 

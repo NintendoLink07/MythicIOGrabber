@@ -3,6 +3,8 @@ local wticc = WrapTextInColorCode
 
 local applicantSystem = {}
 applicantSystem.applicantMember = {}
+applicantSystem.baseFrames = {}
+applicantSystem.raiderIOPanels = {}
 
 local applicantFramePool
 
@@ -10,72 +12,6 @@ local detailedList = {}
 
 local applicationFrameIndex = 0
 local queueTimer
-
-local function resetFrame(pool, childFrame)
-    childFrame:Hide()
-	childFrame.layoutIndex = nil
-
-	childFrame.memberIdx = nil
-	childFrame.applicantID = nil
-end
-
-local function resetArrays()
-	miog.DEBUG_APPLICANT_DATA = {}
-	miog.DEBUG_APPLICANT_MEMBER_INFO = {}
-
-end
-
-miog.resetArrays = resetArrays
-
-local function showEditBox(name, parent, numeric, maxLetters)
-	local editbox = miog.ApplicationViewer.CreationSettings.EditBox
-
-	parent:Hide()
-
-	editbox.name = name
-	editbox.hiddenElement = parent
-	editbox:SetSize(parent:GetWidth() + 5, parent:GetHeight())
-	editbox:SetPoint("LEFT", parent, "LEFT", 0, 0)
-	editbox:SetNumeric(numeric)
-	editbox:SetMaxLetters(maxLetters)
-	editbox:SetText(parent:GetText())
-	editbox:Show()
-
-	LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
-end
-
-local function releaseApplicantFrames()
-	for widget in applicantFramePool:EnumerateActive() do
-		widget.framePool:ReleaseAll()
-	end
-
-	applicantSystem.applicantMember = {}
-
-	applicantFramePool:ReleaseAll()
-
-	miog.Plugin.FooterBar.Results:SetText("0(0)")
-	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
-
-	applicantSystem = {}
-	applicantSystem.applicantMember = {}
-
-end
-
-miog.releaseApplicantFrames = releaseApplicantFrames
-
-local function hideAllApplicantFrames()
-	for _, v in pairs(applicantSystem.applicantMember) do
-		if(v.frame) then
-			v.frame:Hide()
-			v.frame.layoutIndex = nil
-
-		end
-	end
-
-	miog.Plugin.FooterBar.Results:SetText("0(0)")
-	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
-
-end
 
 local function updateApplicantStatusFrame(applicantID, applicantStatus)
 	local currentApplicant = applicantSystem.applicantMember[applicantID]
@@ -110,9 +46,389 @@ local function updateApplicantStatusFrame(applicantID, applicantStatus)
 	end
 end
 
+local function resetFrame(pool, childFrame)
+    --childFrame:Hide()
+	childFrame.layoutIndex = nil
+
+	childFrame.memberIdx = nil
+	childFrame.applicantID = nil
+end
+
+local function createApplicantMemberFrame(applicantID, applicantIndex)
+	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
+	local activeEntry = C_LFGList.GetActiveEntryInfo()
+	
+	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID
+	local dungeonData, pvpData, rioProfile
+
+	if(miog.F.IS_IN_DEBUG_MODE) then
+		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
+
+	else
+		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
+		dungeonData = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, applicantIndex, activeEntry.activityID)
+		pvpData = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, applicantIndex, activeEntry.activityID)
+
+	end
+
+	local nameTable = miog.simpleSplit(name, "-")
+
+	if(not nameTable[2]) then
+		nameTable[2] = GetNormalizedRealmName()
+
+		if(nameTable[2]) then
+			name = nameTable[1] .. "-" .. nameTable[2]
+
+		end
+
+	end
+
+	local playerIsIgnored = C_FriendList.IsIgnored(name)
+
+	local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
+
+	local applicantFrame = applicantSystem.baseFrames[applicantID]
+
+	local applicantMemberFrame = applicantFrame.framePool:Acquire()
+	applicantMemberFrame.fixedWidth = applicantSystem.baseFrames[applicantID].Container.fixedWidth
+	applicantMemberFrame:Show()
+	applicantMemberFrame.memberIdx = applicantIndex
+	applicantMemberFrame.layoutIndex = applicantIndex
+	applicantMemberFrame:SetScript("OnEnter", function(self)
+		if(playerIsIgnored) then
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText("Player is on your ignore list")
+			GameTooltip:Show()
+
+		else
+			if(not miog.F.IS_IN_DEBUG_MODE) then
+				LFGListApplicantMember_OnEnter(self)
+			end
+
+			miog.checkEgoTrip(name)
+		end
+	end)
+	applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
+
+	if(MIOG_SavedSettings.favouredApplicants.table[name]) then
+		miog.createFrameBorder(applicantMemberFrame, 1, CreateColorFromHexString("FFe1ad21"):GetRGBA())
+	
+	end
+
+	local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
+	applicantMemberStatusFrame:Hide()
+
+	local expandFrameButton = applicantMemberFrame.BasicInformation.ExpandFrame
+	expandFrameButton:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+		local categoryID = miog.getCurrentCategoryID()
+		local baseFrame = self:GetParent():GetParent()
+
+		local infoData = baseFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
+
+		baseFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
+		baseFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
+
+		baseFrame.RaiderIOInformationPanel:SetShown(not baseFrame.RaiderIOInformationPanel:IsShown())
+		
+		self:AdvanceState()
+
+		baseFrame.fixedHeight = 80
+
+		baseFrame:MarkDirty()
+
+	end)
+	
+	--applicantMemberFrame.RaiderIOInformationPanel:SetShown(detailedList[name] or false)
+	applicantMemberFrame.BasicInformation.Comment:SetShown(applicantData.comment ~= "" and applicantData.comment ~= nil)
+
+	local nameFontString = applicantMemberFrame.BasicInformation.Name
+	nameFontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
+	nameFontString:SetScript("OnMouseDown", function(_, button)
+		if(button == "RightButton") then
+
+			applicantMemberFrame.LinkBox:SetAutoFocus(true)
+			applicantMemberFrame.LinkBox:SetText(rioLink)
+			applicantMemberFrame.LinkBox:HighlightText()
+
+			applicantMemberFrame.LinkBox:Show()
+			applicantMemberFrame.LinkBox:SetAutoFocus(false)
+
+		end
+	end)
+
+	if(miog.F.LITE_MODE) then
+		nameFontString:SetWidth(100)
+	end
+
+	local specFrame = applicantMemberFrame.BasicInformation.Spec
+
+	if(miog.SPECIALIZATIONS[specID] and class == miog.SPECIALIZATIONS[specID].class.name) then
+		specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
+
+	else
+		specFrame:SetTexture(miog.SPECIALIZATIONS[0].icon)
+
+	end
+
+	local roleFrame = applicantMemberFrame.BasicInformation.Role
+	roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
+
+	local primaryIndicator = applicantMemberFrame.BasicInformation.Primary
+	local secondaryIndicator = applicantMemberFrame.BasicInformation.Secondary
+	local itemLevelFrame = applicantMemberFrame.BasicInformation.ItemLevel
+
+	local reqIlvl = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel or 0
+
+	if(reqIlvl > itemLevel) then
+		itemLevelFrame:SetText(wticc(miog.round(itemLevel, 1), miog.CLRSCC["red"]))
+
+	else
+		itemLevelFrame:SetText(miog.round(itemLevel, 1))
+
+	end
+
+	applicantMemberFrame.BasicInformation.Friend:SetShown(relationship and true or false)
+
+	if(applicantIndex > 1) then
+		applicantMemberFrame.BasicInformation.Premade:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].BasicInformation.nameFrame:GetText())
+			GameTooltip:Show()
+
+		end)
+
+	end
+
+	local declineButton = applicantMemberFrame.BasicInformation.Decline
+	declineButton:OnLoad()
+	declineButton:SetScript("OnClick", function()
+		if(applicantSystem.baseFrames[applicantID].status == "indexed") then
+			if(not miog.F.IS_IN_DEBUG_MODE) then
+				C_LFGList.DeclineApplicant(applicantID)
+
+			else
+				miog.debug_DeclineApplicant(applicantID)
+
+			end
+
+		elseif(applicantSystem.baseFrames[applicantID].status == "removable") then
+			if(not miog.F.IS_IN_DEBUG_MODE) then
+				C_LFGList.RefreshApplicants()
+
+			else
+				miog.debug_DeclineApplicant(applicantID)
+
+			end
+
+		end
+	end)
+
+	local inviteButton = applicantMemberFrame.BasicInformation.Invite
+	inviteButton:OnLoad()
+	inviteButton:SetScript("OnClick", function()
+		C_LFGList.InviteApplicant(applicantID)
+
+		if(miog.F.IS_IN_DEBUG_MODE) then
+			updateApplicantStatusFrame(applicantID, "debug")
+		end
+
+	end)
+
+	if(applicantIndex == 1 and miog.F.CAN_INVITE == true or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
+		declineButton:Show()
+		inviteButton:Show()
+
+	end
+
+	--miog.retrieveRaiderIOData(nameTable[1], nameTable[2], applicantMemberFrame)
+
+	local raidData = miog.getRaidSortData(nameTable[1] .. "-" .. nameTable[2])
+	primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
+	secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
+
+	--[[local infoPanel = applicantMemberFrame.RaiderIOInformationPanel.InfoPanel
+
+	infoPanel.Comment:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
+	infoPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
+	infoPanel.RaceRoles:SetText("Role: ")
+
+	if(tank) then
+		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.TANK_TEXTURE)
+
+	end
+
+	if(healer) then
+		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.HEALER_TEXTURE)
+
+	end
+
+	if(damager) then
+		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.DPS_TEXTURE)
+
+	end
+
+	if(raceID and miog.RACES[raceID]) then
+		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
+
+	end
+
+	]]
+
+	--local activeEntry = C_LFGList.GetActiveEntryInfo()
+	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
+
+	if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
+		primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
+
+		if(pvpData.tier and pvpData.tier ~= "N/A") then
+			local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
+			secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+
+		else
+			secondaryIndicator:SetText(0)
+		
+		end
+	
+	elseif(categoryID ~= 3) then
+		if(dungeonScore > 0) then
+			local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
+			local highestKeyForDungeon
+
+			if(reqScore > dungeonScore) then
+				primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC["red"]))
+
+			else
+				primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
+
+			end
+
+			if(dungeonData) then
+				if(dungeonData.finishedSuccess == true) then
+					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.C.GREEN_COLOR)
+
+				elseif(dungeonData.finishedSuccess == false) then
+					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.CLRSCC["red"])
+
+				end
+			else
+				highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
+
+			end
+
+			secondaryIndicator:SetText(highestKeyForDungeon)
+		else
+			local difficulty = miog.DIFFICULTY[-1] -- NO DATA
+			primaryIndicator:SetText(wticc("0", difficulty.color))
+			secondaryIndicator:SetText(wticc("0", difficulty.color))
+
+		end
+	
+	end
+	
+	applicantMemberFrame:MarkDirty()
+	--BasicInformation:MarkDirty()
+end
+
+local function createNewApplicantFrame(applicantID)
+	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
+
+	if(applicantData) then
+		local applicantFrame = applicantSystem.baseFrames[applicantID]
+		applicantFrame.Container.fixedWidth = applicantFrame.Container:GetWidth()
+		
+		applicantFrame.memberFrames = {}
+
+		applicantFrame.framePool = applicantFrame.framePool or CreateFramePool("Frame", applicantFrame.Container, "MIOG_ApplicantMemberFrameTemplate", resetFrame)
+		applicantFrame.framePool:ReleaseAll()
+
+		applicantFrame.applicantID = applicantID
+
+		miog.createFrameBorder(applicantFrame, 1, CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
+
+		for applicantIndex = 1, applicantData.numMembers, 1 do
+			createApplicantMemberFrame(applicantID, applicantIndex)
+		end
+
+		applicantSystem.baseFrames[applicantID].status = "indexed"
+
+		applicantFrame.Container:MarkDirty()
+	end
+end
+	
+local function Initializer(frame, node)
+	local data = node:GetData()
+
+	frame.node = node
+
+	applicantSystem.baseFrames[data.applicantID] = frame
+
+	createNewApplicantFrame(data.applicantID)
+	
+end
+
+local function resetDebugArrays()
+	miog.DEBUG_APPLICANT_DATA = {}
+	miog.DEBUG_APPLICANT_MEMBER_INFO = {}
+
+end
+
+miog.resetDebugArrays = resetDebugArrays
+
+local function showEditBox(name, parent, numeric, maxLetters)
+	local editbox = miog.ApplicationViewer.CreationSettings.EditBox
+
+	parent:Hide()
+
+	editbox.name = name
+	editbox.hiddenElement = parent
+	editbox:SetSize(parent:GetWidth() + 5, parent:GetHeight())
+	editbox:SetPoint("LEFT", parent, "LEFT", 0, 0)
+	editbox:SetNumeric(numeric)
+	editbox:SetMaxLetters(maxLetters)
+	editbox:SetText(parent:GetText())
+	editbox:Show()
+
+	LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
+end
+
+local function releaseApplicantFrames()
+	for widget in applicantFramePool:EnumerateActive() do
+		widget.framePool:ReleaseAll()
+	end
+
+	applicantFramePool:ReleaseAll()
+
+	miog.Plugin.FooterBar.Results:SetText("0(0)")
+	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
+
+	applicantSystem = {}
+	applicantSystem.applicantMember = {}
+	applicantSystem.baseFrames = {}
+	applicantSystem.raiderIOPanels = {}
+
+end
+
+miog.releaseApplicantFrames = releaseApplicantFrames
+
+local function hideAllApplicantFrames()
+	for _, v in pairs(applicantSystem.applicantMember) do
+		if(v.frame) then
+			v.frame:Hide()
+			v.frame.layoutIndex = nil
+
+		end
+	end
+
+	miog.Plugin.FooterBar.Results:SetText("0(0)")
+	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
+
+end
+
 local function sortApplicantList(applicant1, applicant2)
-	local applicant1Member1 = applicant1[1]
-	local applicant2Member1 = applicant2[1]
+	local applicant1Member1 = applicant1
+	local applicant2Member1 = applicant2
 
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.applicationViewer) do
 		if(tableElement.currentLayer == 1) then
@@ -195,277 +511,7 @@ local function createApplicantFrame(applicantID)
 		applicantSystem.applicantMember[applicantID].frame = applicantFrame
 
 		for applicantIndex = 1, applicantData.numMembers, 1 do
-
-			local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID
-			local dungeonData, pvpData, rioProfile
-
-			if(miog.F.IS_IN_DEBUG_MODE) then
-				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
-
-			else
-				name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
-				dungeonData = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, applicantIndex, activityID)
-				pvpData = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, applicantIndex, activityID)
-
-			end
-
-
-			local nameTable = miog.simpleSplit(name, "-")
-
-			if(not nameTable[2]) then
-				nameTable[2] = GetNormalizedRealmName()
-
-				if(nameTable[2]) then
-					name = nameTable[1] .. "-" .. nameTable[2]
-
-				end
-
-			end
-
-			local playerIsIgnored = C_FriendList.IsIgnored(name)
-
-			local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[nameTable[2]] .. "/" .. nameTable[1]
-
-			local applicantMemberFrame = applicantFrame.framePool:Acquire()
-			applicantMemberFrame.layoutIndex = applicantIndex
-			applicantMemberFrame:Show()
-			applicantMemberFrame:ClearBackdrop()
-			applicantMemberFrame.fixedWidth = applicantFrame.fixedWidth - 2
-			applicantMemberFrame.memberIdx = applicantIndex
-			applicantMemberFrame:SetPoint("TOP", applicantFrame.memberFrames[applicantIndex-1] or applicantFrame, applicantFrame.memberFrames[applicantIndex-1] and "BOTTOM" or "TOP", 0, applicantIndex > 1 and -miog.C.APPLICANT_PADDING or -1)
-			applicantMemberFrame:SetScript("OnEnter", function(self)
-				if(playerIsIgnored) then
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-					GameTooltip:SetText("Player is on your ignore list")
-					GameTooltip:Show()
-
-				else
-					if(not miog.F.IS_IN_DEBUG_MODE) then
-						LFGListApplicantMember_OnEnter(self)
-					end
-
-					miog.checkEgoTrip(name)
-				end
-			end)
-			applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
-
-			if(MIOG_SavedSettings.favouredApplicants.table[name]) then
-				miog.createFrameBorder(applicantMemberFrame, 1, CreateColorFromHexString("FFe1ad21"):GetRGBA())
-			
-			end
-
-			local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
-			applicantMemberStatusFrame:Hide()
-
-			local expandFrameButton = applicantMemberFrame.BasicInformation.ExpandFrame
-			expandFrameButton:SetScript("OnClick", function(self)
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-				local categoryID = miog.getCurrentCategoryID()
-				local baseFrame = self:GetParent():GetParent()
-
-				local infoData = baseFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
-
-				baseFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
-				baseFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
-
-				baseFrame.RaiderIOInformationPanel:SetShown(not baseFrame.RaiderIOInformationPanel:IsShown())
-				
-				detailedList[name] = baseFrame.RaiderIOInformationPanel:IsShown()
-				
-				self:AdvanceState()
-				baseFrame:MarkDirty()
-
-			end)
-			
-			applicantMemberFrame.RaiderIOInformationPanel:SetShown(detailedList[name] or false)
-			applicantMemberFrame.BasicInformation.Comment:SetShown(applicantData.comment ~= "" and applicantData.comment ~= nil)
-
-			local nameFontString = applicantMemberFrame.BasicInformation.Name
-			nameFontString:SetText(playerIsIgnored and wticc(nameTable[1], "FFFF0000") or wticc(nameTable[1], select(4, GetClassColor(class))))
-			nameFontString:SetScript("OnMouseDown", function(_, button)
-				if(button == "RightButton") then
-
-					applicantMemberFrame.LinkBox:SetAutoFocus(true)
-					applicantMemberFrame.LinkBox:SetText(rioLink)
-					applicantMemberFrame.LinkBox:HighlightText()
-
-					applicantMemberFrame.LinkBox:Show()
-					applicantMemberFrame.LinkBox:SetAutoFocus(false)
-
-				end
-			end)
-
-			if(miog.F.LITE_MODE) then
-				nameFontString:SetWidth(100)
-			end
-
-			local specFrame = applicantMemberFrame.BasicInformation.Spec
-
-			if(miog.SPECIALIZATIONS[specID] and class == miog.SPECIALIZATIONS[specID].class.name) then
-				specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
-
-			else
-				specFrame:SetTexture(miog.SPECIALIZATIONS[0].icon)
-
-			end
-
-			local roleFrame = applicantMemberFrame.BasicInformation.Role
-			roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
-
-			local primaryIndicator = applicantMemberFrame.BasicInformation.Primary
-			local secondaryIndicator = applicantMemberFrame.BasicInformation.Secondary
-			local itemLevelFrame = applicantMemberFrame.BasicInformation.ItemLevel
-
-			local reqIlvl = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel or 0
-
-			if(reqIlvl > itemLevel) then
-				itemLevelFrame:SetText(wticc(miog.round(itemLevel, 1), miog.CLRSCC["red"]))
-
-			else
-				itemLevelFrame:SetText(miog.round(itemLevel, 1))
-
-			end
-
-			applicantMemberFrame.BasicInformation.Friend:SetShown(relationship and true or false)
-
-			if(applicantIndex > 1) then
-				applicantMemberFrame.BasicInformation.Premade:SetScript("OnEnter", function(self)
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-					GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].BasicInformation.nameFrame:GetText())
-					GameTooltip:Show()
-
-				end)
-
-			end
-
-			local declineButton = applicantMemberFrame.BasicInformation.Decline
-			declineButton:OnLoad()
-			declineButton:SetScript("OnClick", function()
-				if(applicantSystem.applicantMember[applicantID].status == "indexed") then
-					if(not miog.F.IS_IN_DEBUG_MODE) then
-						C_LFGList.DeclineApplicant(applicantID)
-
-					else
-						miog.debug_DeclineApplicant(applicantID)
-
-					end
-
-				elseif(applicantSystem.applicantMember[applicantID].status == "removable") then
-					if(not miog.F.IS_IN_DEBUG_MODE) then
-						C_LFGList.RefreshApplicants()
-
-					else
-						miog.debug_DeclineApplicant(applicantID)
-
-					end
-
-				end
-			end)
-
-			local inviteButton = applicantMemberFrame.BasicInformation.Invite
-			inviteButton:OnLoad()
-			inviteButton:SetScript("OnClick", function()
-				C_LFGList.InviteApplicant(applicantID)
-
-				if(miog.F.IS_IN_DEBUG_MODE) then
-					updateApplicantStatusFrame(applicantID, "debug")
-				end
-
-			end)
-
-			if(applicantIndex == 1 and miog.F.CAN_INVITE == true or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
-				declineButton:Show()
-				inviteButton:Show()
-
-			end
-
-			miog.retrieveRaiderIOData(nameTable[1], nameTable[2], applicantMemberFrame)
-
-			local raidData = miog.getRaidSortData(nameTable[1] .. "-" .. nameTable[2])
-			primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
-			secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
-
-			local infoPanel = applicantMemberFrame.RaiderIOInformationPanel.InfoPanel
-
-			infoPanel.Comment:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
-			infoPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
-			infoPanel.RaceRoles:SetText("Role: ")
-
-			if(tank) then
-				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.TANK_TEXTURE)
-
-			end
-
-			if(healer) then
-				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.HEALER_TEXTURE)
-
-			end
-
-			if(damager) then
-				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.DPS_TEXTURE)
-
-			end
-
-			if(raceID and miog.RACES[raceID]) then
-				infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
-
-			end
-
-			local activeEntry = C_LFGList.GetActiveEntryInfo()
-			local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
-
-			if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
-				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
-
-				if(pvpData.tier and pvpData.tier ~= "N/A") then
-					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
-					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
-
-				else
-					secondaryIndicator:SetText(0)
-				
-				end
-			
-			elseif(categoryID ~= 3) then
-				if(dungeonScore > 0) then
-					local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
-					local highestKeyForDungeon
-
-					if(reqScore > dungeonScore) then
-						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC["red"]))
-
-					else
-						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
-
-					end
-
-					if(dungeonData) then
-						if(dungeonData.finishedSuccess == true) then
-							highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.C.GREEN_COLOR)
-
-						elseif(dungeonData.finishedSuccess == false) then
-							highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.CLRSCC["red"])
-
-						end
-					else
-						highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
-
-					end
-
-					secondaryIndicator:SetText(highestKeyForDungeon)
-				else
-					local difficulty = miog.DIFFICULTY[-1] -- NO DATA
-					primaryIndicator:SetText(wticc("0", difficulty.color))
-					secondaryIndicator:SetText(wticc("0", difficulty.color))
-
-				end
-			
-			end
-
-			--BasicInformation:MarkDirty()
-			applicantMemberFrame:MarkDirty()
-
+			createApplicantMemberFrame(applicantID, applicantIndex)
 		end
 
 		applicantFrame:MarkDirty()
@@ -728,9 +774,54 @@ local function checkApplicantListForEligibleMembers(listEntry)
 	return true
 end
 
-local function checkApplicantList(forceReorder, applicantID)
+local function checkNewApplicantList(applicantID)
 	local unsortedList = gatherSortData()
 
+	local DataProvider = CreateTreeDataProvider()
+	DataProvider:SetSortComparator(sortApplicantList, false)
+	
+	local actualResultsCounter = 0
+
+	for i = 1, #unsortedList, 1 do
+		local listEntry = unsortedList[i]
+
+		for _, v in pairs(listEntry) do
+			if(checkApplicantListForEligibleMembers(v) == true) then
+
+				actualResultsCounter = actualResultsCounter + 1
+
+				local baseFrameData = DataProvider:Insert({
+					template = "MIOG_ApplicantFrameTemplate",
+					applicantID = listEntry[1].index,
+					primary = v.primary,
+					secondary = v.secondary,
+					favoured = v.favoured,
+					name = v.name,
+					realm = v.realm,
+					fullName = v.fullName,
+					role = v.role,
+					class = v.class,
+					specID = v.specID,
+					ilvl = v.ilvl,
+				})
+
+				break
+			end
+		end
+	end
+
+	DataProvider:SetAllCollapsed(true)
+
+	miog.ApplicationViewer.ScrollView:SetDataProvider(DataProvider)
+
+	miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #unsortedList .. ")")
+	miog.Plugin.FooterBar.Results:SetScript("OnEnter", nil)
+	miog.Plugin.FooterBar.Results:SetScript("OnLeave", nil)
+
+end
+
+local function checkApplicantList(forceReorder, applicantID)
+	local unsortedList = gatherSortData()
 	if(forceReorder) then
 		local updatedFrames = {}
 
@@ -738,8 +829,6 @@ local function checkApplicantList(forceReorder, applicantID)
 
 		if(unsortedList[1]) then
 			table.sort(unsortedList, sortApplicantList)
-
-			local time = GetTime()
 
 			for d, listEntry in ipairs(unsortedList) do
 
@@ -771,8 +860,8 @@ local function checkApplicantList(forceReorder, applicantID)
 end
 
 local function createAVSelfEntry(pvpBracket)
-	resetArrays()
-	releaseApplicantFrames()
+	resetDebugArrays()
+	--releaseApplicantFrames()
 
 	local applicantID = 99999
 
@@ -850,8 +939,8 @@ end
 miog.createAVSelfEntry = createAVSelfEntry
 
 local function createFullEntries(iterations)
-	resetArrays()
-	releaseApplicantFrames()
+	resetDebugArrays()
+	--releaseApplicantFrames()
 
 	local numbers = {}
 	for i = 1, #miog.DEBUG_RAIDER_IO_PROFILES do
@@ -948,7 +1037,7 @@ local function applicationViewerEvents(_, event, ...)
 
         if(isInitialLogin or isReloadingUi) then
         else
-            hideAllApplicantFrames()
+            --hideAllApplicantFrames()
 
         end
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
@@ -965,8 +1054,8 @@ local function applicationViewerEvents(_, event, ...)
 
 				end
 
-				resetArrays()
-				releaseApplicantFrames()
+				resetDebugArrays()
+				--releaseApplicantFrames()
 
 				miog.ApplicationViewer.CreationSettings.Timer:SetText("00:00:00")
 

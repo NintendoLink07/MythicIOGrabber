@@ -610,11 +610,6 @@ local function updateSearchResultFrameApplicationStatus(resultID, new, old)
 				resultFrame.BasicInformation.Age:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
 
 			end)
-
-			resultFrame.layoutIndex = -1
-
-			miog.SearchPanel.FramePanel.Container:MarkDirty()
-
 		else
 			resultFrame.CancelApplication:Hide()
 
@@ -1111,9 +1106,9 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			}
 
 			for i = 1, searchResultInfo.numMembers, 1 do
-				local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
+				local role, class, _, specLocalized, isLeader = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
 
-				orderedList[i] = {leader = i == 1 and true or false, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
+				orderedList[i] = {leader = isLeader, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
 
 				if(role) then
 					roleCount[role] = roleCount[role] + 1
@@ -1760,7 +1755,6 @@ local function searchResultsReceived()
 		if(totalResults > 0) then
 			if(not blocked) then
 				blocked = true
-				miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 
 				C_Timer.After(miog.getActiveSortMethods("searchPanel") > 0 and 0.5 or 0, function()
 					miog.SearchPanel.Status:Hide()
@@ -1881,7 +1875,6 @@ end
 miog.createSearchPanel = function()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel") ---@class Frame
 	miog.SearchPanel = searchPanel
-	miog.SearchPanel.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.SearchPanel.FramePanel, "TOPRIGHT", -1, 0)
 
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
@@ -1946,9 +1939,6 @@ miog.createSearchPanel = function()
 	searchPanel.StartSearch:SetScript("OnClick", function( )
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-		--C_LFGList.Search(LFGListFrame.SearchPanel.categoryID, LFGListFrame.SearchPanel.filters, LFGListFrame.SearchPanel.preferredFilters, C_LFGList.GetLanguageSearchFilter());
-
-		miog.SearchPanel.FramePanel:SetVerticalScroll(0)
 	end)
 
 	miog.createFrameBorder(searchPanel.ButtonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -1985,11 +1975,10 @@ miog.createSearchPanel = function()
 	miog.SearchPanel:SetScript("OnShow", function()
 	end)
 
-	local ScrollView = CreateScrollBoxListTreeListView()
+	local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
 
 	miog.SearchPanel.ScrollView = ScrollView
 	
-	--ScrollUtil.InitScrollBoxListWithScrollBar(ScrollBox, ScrollBar, ScrollView)
 	ScrollUtil.InitScrollBoxListWithScrollBar(miog.SearchPanel.ScrollBox2, miog.SearchPanel.ScrollBar, ScrollView)
 	
 	local function CustomFactory(factory, node)
@@ -1997,7 +1986,6 @@ miog.createSearchPanel = function()
 		local template = data.template
 		factory(template, Initializer)
 	end
-	
-	ScrollView:SetPadding(0, 0, 0, 0, 3)
+
 	ScrollView:SetElementFactory(CustomFactory)
 end
