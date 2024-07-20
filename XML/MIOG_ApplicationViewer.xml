@@ -432,21 +432,7 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="ScrollBox2" inherits="WowScrollBoxList">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </Frame>
-
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox2" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </EventFrame>
-
-            <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate" hidden="true">
+            <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate">
                 <KeyValues>
                     <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                 </KeyValues>
@@ -456,16 +442,28 @@
                 </Anchors>
 
                 <ScrollChild>
-                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
+                    <Frame parentKey="Container" inherits="VerticalLayoutFrame" setAllPoints="true">
                         <KeyValues>
-                            <KeyValue key="minimumWidth" value="1" type="number" />
-                            <KeyValue key="minimumHeight" value="1" type="number" />
-                            <KeyValue key="spacing" value="5" type="number" />
-                            <KeyValue key="align" value="top" type="string" />
+                            <KeyValue key="spacing" value="3" type="number" />
+                            <KeyValue key="align" value="center" type="string" />
                         </KeyValues>
                     </Frame>
                 </ScrollChild>
             </ScrollFrame>
+            
+            <EditBox parentKey="CopyBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="SystemFont_Shadow_Med1">
+                <Size y="20" />   
+                
+                <Scripts>
+                    <OnKeyDown>
+                        if(key == "ESCAPE" or key == "ENTER") then
+                            self:Hide()
+                            self:ClearFocus()
+
+                        end
+                    </OnKeyDown>
+                </Scripts>
+            </EditBox>
 
             <Button parentKey="Browse" inherits="UIPanelDynamicResizeButtonTemplate" text="BROWSE">
                 <Scripts>

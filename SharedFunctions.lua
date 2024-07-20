@@ -3,6 +3,57 @@ local wticc = WrapTextInColorCode
 
 miog.ONCE = true
 
+local function resetRaiderIOInformationPanel(childFrame)
+    childFrame:Hide()
+	childFrame.layoutIndex = nil
+
+	childFrame.memberIdx = nil
+	childFrame.applicantID = nil
+
+	for k, v in pairs(childFrame.RaiderIOInformationPanel.MythicPlusPanel) do
+		if(type(v) == "table") then
+			v.Name:SetText("")
+			v.Primary:SetText("")
+			v.Secondary:SetText("")
+			v.Icon:SetTexture(nil)
+		end
+	end
+
+	for k, v in pairs(childFrame.RaiderIOInformationPanel.RaidPanel) do
+		if(type(v) == "table") then
+			v.Name:SetText("")
+			v.Progress:SetText("")
+			v.Icon:SetTexture(nil)
+			
+			for x, y in pairs(v.BossFrames.UpperRow) do
+				if(type(y) == "table") then
+					y.Icon:SetTexture(nil)
+					y.Border:SetTexture(nil)
+					y.Index:SetText("")
+
+				end
+			end
+			
+			for x, y in pairs(v.BossFrames.LowerRow) do
+				if(type(y) == "table") then
+					y.Icon:SetTexture(nil)
+					y.Border:SetTexture(nil)
+					y.Index:SetText("")
+
+				end
+			end
+		end
+	end
+
+	childFrame.RaiderIOInformationPanel.InfoPanel.MPlusKeys:SetText("")
+
+	childFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText("")
+	childFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText("")
+	childFrame.RaiderIOInformationPanel.InfoPanel.Realm:SetText("")
+end
+
+miog.resetRaiderIOInformationPanel = resetRaiderIOInformationPanel
+
 miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
 	local self = LFGListFrame.EntryCreation

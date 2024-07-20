@@ -149,7 +149,7 @@
                 </Layers>
             </Frame>
 
-            <Frame parentKey="MythicPlusPanel" toplevel="true">
+            <Frame parentKey="MythicPlusPanel" frameStrata="DIALOG">
                 <Size y="160" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusTabButton" relativePoint="BOTTOMLEFT" />

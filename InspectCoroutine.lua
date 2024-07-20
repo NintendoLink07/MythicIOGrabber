@@ -158,16 +158,7 @@ local function updateRosterInfoData()
 					groupOffset = -1
 				end
 
-				local nameTable = miog.simpleSplit(name, "-")
-
-				if(not nameTable[2]) then
-					nameTable[2] = GetNormalizedRealmName()
-
-					if(nameTable[2]) then
-						name = nameTable[1] .. "-" .. nameTable[2]
-
-					end
-				end
+				local playerName, realm = miog.createSplitName(name)
 
 				if(name) then
 					local keystoneInfo = miog.openRaidLib.GetKeystoneInfo(unitID)
@@ -177,7 +168,7 @@ local function updateRosterInfoData()
 					groupSystem.groupMember[name] = {
 						unitID = unitID,
 						name = name,
-						shortName = nameTable[1],
+						shortName = playerName,
 						classID = fileName and miog.CLASSFILE_TO_ID[fileName],
 						classFileName = fileName,
 						role = combatRole,
@@ -611,6 +602,8 @@ local function resetPartyFrames(_, frame)
     frame.Keystone:SetTexture(nil)
 	frame.Keylevel:SetText("")
 	frame.data = nil
+
+	miog.resetRaiderIOInformationPanel(frame)
 end
 
 miog.createInspectCoroutine = function()

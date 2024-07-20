@@ -1,13 +1,16 @@
-## [2.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3) - 2024-07-17
+## [2.3.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.1) - 2024-07-19
 
 ### Changed
 
-- Switch to a different method of displaying the groups in the search panel, increasing performance by a shit ton.
-There should basically be no more micro stutters and scrolling should be buttery smooth.
-Throughout the 2.3 version I'll apply it to the whole addon, making it need way less memory and way more snappy.
+- The new display method has been integrated for the guild panel.
+Guild panel is loading much quicker, there is way less lag and when refreshes of the guild members come in there is basically no stuttering at all.
 
 ### Fixed
 
-- [InspectCoroutine - Lite Mode] Various errors have been fixed for lite mode.
+- The position of the raider io panel below search panel frames, applicant frames, etc. has been corrected.
 
-- [Category selection - Lite Mode] When trying to look for a group the category buttons should now be visible again.
+- [Search Panel] The flag indicating the leader should be above the actual leader now (Blizzard changed a function, before it was always the first person).
+
+- [Guild Panel] When the detailed raider io panel is currently open and a guild member info update comes in the panels won't close themselves automatically.
+
+- Memory usage has been lowered by around 2-7 megabytes, depending on how big your guild is and how much raider io information they have.

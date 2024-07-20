@@ -1,19 +1,24 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local guildFrames = {}
-miog.guildFrames = guildFrames
 miog.guildSystem = {}
 miog.guildSystem.memberData = {}
 miog.guildSystem.keystoneData = {}
+
+
+miog.guildSystem.baseFrames = {}
+miog.guildSystem.raiderIOPanels = {}
 
 local detailedList = {}
 
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_GuildEventReceiver")
 
-local guildPool
+local includeOffline
 
 local function sortGuildList(k1, k2)
+	k1 = k1.data
+	k2 = k2.data
+
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.guild) do
 		if(tableElement and tableElement.currentLayer == 1) then
 			local firstState = tableElement.currentState
@@ -44,34 +49,75 @@ local function sortGuildList(k1, k2)
 
 	end
 
+	if(not includeOffline) then
+		if(k1.isOnline ~= k2.isOnline) then
+			if(k1.isOnline) then
+				return true
+			else
+				return false
+			
+			end
+		
+		else
+			if(k1.status ~= k2.status) then
+				return k1.status < k2.status
+
+			end
+		end
+	end
+
 	return k1.index < k2.index
 end
 
-local function resetGuildFrames(_, frame)
-	frame:Hide()
-	frame.layoutIndex = nil
+local function createSingleGuildFrame(v)
+	local currentFrame = miog.guildSystem.baseFrames[v.fullName]
 
-	frame.BasicInformation.Status:SetTexture(nil)
-	frame.BasicInformation.Name:SetText("")
-	frame.BasicInformation.Rank:SetText("")
-	frame.BasicInformation.Level:SetText("")
-	frame.BasicInformation.Keylevel:SetText("")
-	frame.BasicInformation.Keystone:SetTexture(nil)
-	frame.BasicInformation.Score:SetText("")
-	frame.BasicInformation.Progress:SetText("")
+	currentFrame.BasicInformation.Status:SetTexture("interface/friendsframe/statusicon-" .. (not v.isOnline and "offline" or v.status == 0 and "online" or v.status == 1 and "away" or "dnd"))
+	currentFrame.BasicInformation.Name:SetText(WrapTextInColorCode(v.shortName, v.isOnline and C_ClassColor.GetClassColor(v.class):GenerateHexColor() or "FFAAAAAA"))
+	currentFrame.BasicInformation.Level:SetText(v.level)
+	currentFrame.BasicInformation.Rank:SetText(v.rankName)
+	currentFrame.BasicInformation.Keylevel:SetText("+" .. v.keylevel)
+
+	local texture
+
+	if(v.keystone ~= 0) then
+		_, _, _, texture = C_ChallengeMode.GetMapUIInfo(v.keystone)
+	end
+
+	currentFrame.BasicInformation.Keystone:SetTexture(texture)
+	currentFrame.BasicInformation.Score:SetText(v.score)
+	currentFrame.BasicInformation.Progress:SetText(v.progressText)
+
+	--currentFrame.layoutIndex = includeOffline == false and (k + (not v.isOnline and 10000 or v.status == 0 and 0 or v.status == 1 and 1000 or 5000)) or k
+	currentFrame.BasicInformation.ExpandFrame:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		
+		self:AdvanceState()
+
+		currentFrame.node:ToggleCollapsed()
+
+		detailedList[v.fullName] = currentFrame.node:IsCollapsed()
+	end)
 end
 
-local function retrieveGuildMembers()
-    guildPool:ReleaseAll()
+local testTable = {[1] = true, [2] = false}
 
-    local guildTable = {}
+local function retrieveGuildMembers()	
+	includeOffline = miog.Guild.IncludeOffline:GetChecked()
+
+	local DataProvider = CreateTreeDataProvider()
+	DataProvider:SetSortComparator(sortGuildList, false)
+
+	miog.Guild.currentDataProvider = DataProvider
 
     for i = 1, GetNumGuildMembers(), 1 do
+    --for i = 1, 40, 1 do
 		local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class, _, _, isMobile, _, repStanding, guid = GetGuildRosterInfo(i)
+		--local name, rankName, rankIndex, level, _, zone, publicNote, officerNote, isOnline, status, class = "Rhany-Ravencrest", "Master", 1, 70, nil, "Here", "PublicNote", "OfficerNote", testTable[random(1, 2)], random(0,2), "WARLOCK"
 
-        local nameTable = miog.simpleSplit(name, "-")
+        local playerName, realm = miog.createSplitName(name)
 
-		local rioProfile = RaiderIO.GetProfile(nameTable[1], nameTable[2])
+		local rioProfile = RaiderIO.GetProfile(playerName, realm)
 
 		local score, progress
 		local progressWeight = 0
@@ -113,10 +159,11 @@ local function retrieveGuildMembers()
 		
 		end
 
-		guildTable[i] = {
+		local baseFrameData = DataProvider:Insert({
+			template = "MIOG_GuildPlayerTemplate",
             index = name,
-            shortName = nameTable[1],
-			realm = nameTable[2],
+            shortName = playerName,
+			realm = realm,
             fullName = name,
             rank = rankIndex,
 			rankName = rankName,
@@ -130,63 +177,26 @@ local function retrieveGuildMembers()
 			score = score,
             progressWeight = progressWeight,
             progressText = progress,
-        }
+		})
 
+		baseFrameData:Insert({
+			template = "MIOG_RaiderIOInformationPanel",
+			fullName = name,
+		})
 	end
-	
 
-    table.sort(guildTable, sortGuildList)
-
-	local includeOffline = miog.Guild.IncludeOffline:GetChecked()
-
-    for k, v in ipairs(guildTable) do
-        local currentFrame = guildPool:Acquire()
-
-        currentFrame.BasicInformation.Status:SetTexture("interface/friendsframe/statusicon-" .. (not v.isOnline and "offline" or v.status == 0 and "online" or v.status == 1 and "away" or "dnd"))
-        currentFrame.BasicInformation.Name:SetText(WrapTextInColorCode(v.shortName, v.isOnline and C_ClassColor.GetClassColor(v.class):GenerateHexColor() or "FFAAAAAA"))
-        currentFrame.BasicInformation.Level:SetText(v.level)
-        currentFrame.BasicInformation.Rank:SetText(v.rankName)
-        currentFrame.BasicInformation.Keylevel:SetText("+" .. v.keylevel)
-
-		local texture
-
-		if(v.keystone ~= 0) then
-			_, _, _, texture = C_ChallengeMode.GetMapUIInfo(v.keystone)
+	for index, child in ipairs(DataProvider.node.nodes) do
+		if(detailedList[child.data.fullName] == false) then
+			child:SetCollapsed(false)
+			
+		else
+			child:SetCollapsed(true)
+		
 		end
+	end
+	DataProvider:Invalidate();
 
-        currentFrame.BasicInformation.Keystone:SetTexture(texture)
-        currentFrame.BasicInformation.Score:SetText(v.score)
-        currentFrame.BasicInformation.Progress:SetText(v.progressText)
-
-        currentFrame.layoutIndex = includeOffline == false and (k + (not v.isOnline and 10000 or v.status == 0 and 0 or v.status == 1 and 1000 or 5000)) or k
-        --currentFrame:SetWidth(miog.Guild:GetWidth())
-		currentFrame.fixedWidth = miog.Guild:GetWidth()
-        --currentFrame.DetailedInformationPanel:SetWidth(miog.Guild:GetWidth())
-        currentFrame.BasicInformation.ExpandFrame:SetScript("OnClick", function(self)
-            local categoryID = miog.getCurrentCategoryID()
-
-			local infoData = currentFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
-
-			currentFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
-			currentFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
-
-			currentFrame.RaiderIOInformationPanel:SetShown(not currentFrame.RaiderIOInformationPanel:IsShown())
-			detailedList[v.fullName] = currentFrame.RaiderIOInformationPanel:IsShown()
-
-			self:AdvanceState()
-			currentFrame:MarkDirty()
-        end)
-
-		currentFrame.RaiderIOInformationPanel:SetShown(detailedList[v.fullName] or false)
-
-        currentFrame:Show()
-
-		miog.retrieveRaiderIOData(v.shortName, v.realm, currentFrame)
-
-        guildFrames[v.fullName] = currentFrame
-    end
-
-    miog.Guild.ScrollFrame.Container:MarkDirty()
+	miog.Guild.ScrollView:SetDataProvider(DataProvider)
 end
 
 local function guildEvents(_, event, ...)
@@ -227,10 +237,41 @@ miog.loadGuildFrame = function()
 
 	end)
 
-	guildPool = CreateFramePool("Frame", miog.Guild.ScrollFrame.Container, "MIOG_GuildPlayerTemplate", resetGuildFrames)
-
 	eventReceiver:RegisterEvent("GUILD_ROSTER_UPDATE")
 	eventReceiver:SetScript("OnEvent", guildEvents)
+
+	local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
+
+	miog.Guild.ScrollView = ScrollView
 	
+	ScrollUtil.InitScrollBoxListWithScrollBar(miog.Guild.ScrollBox, miog.Guild.ScrollBar, ScrollView)
+
+	local function initializeGuildFrames(frame, node)
+		local data = node:GetData()
+
+		if(data.template == "MIOG_GuildPlayerTemplate") then
+			frame.node = node
+	
+			miog.guildSystem.baseFrames[data.fullName] = frame
+	
+			createSingleGuildFrame(data)
+	
+		elseif(data.template == "MIOG_RaiderIOInformationPanel") then
+			miog.guildSystem.raiderIOPanels[data.fullName] = {RaiderIOInformationPanel = frame}
+			
+			local playerName, realm = miog.createSplitName(data.fullName)
+
+			miog.retrieveRaiderIOData(playerName, realm, miog.guildSystem.raiderIOPanels[data.fullName])
+		end
+	end
+	
+	local function CustomFactory(factory, node)
+		local data = node:GetData()
+		local template = data.template
+		factory(template, initializeGuildFrames)
+	end
+
+	ScrollView:SetElementFactory(CustomFactory)
+
 	retrieveGuildMembers()
 end

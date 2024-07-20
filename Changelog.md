@@ -6,21 +6,26 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [2.3.1] - 2024-07-18
+## [2.3.1] - 2024-07-19
 
 ### Changed
 
-- [Application Viewer] The new display method for the applicant frames has been implemented.
-
-^^^^ THIS
+- The new display method has been integrated for the guild panel.
+Guild panel is loading much quicker, there is way less lag and when refreshes of the guild members come in there is basically no stuttering at all.
 
 ### Fixed
 
+- [Guild Panel] When the detailed raider io panel is currently open and a guild member info update comes in the panels won't close themselves automatically.
+
+- [Search Panel] The flag indicating the leader should be above the actual leader now (Blizzard changed the function for this, before it was always the first player).
+
+- [Application Viewer] Time to iterate through 100 applicants reduced to around 0.03 seconds. Basically less lags when a ton of people apply.
+
+- [Application Viewer] The raider io panel will now be reset correctly so no leftover information is hanging around.
+
 - The position of the raider io panel below search panel frames, applicant frames, etc. has been corrected.
 
-- [Application Viewer] Borders around applicant frames should be consistently 1px tall/wide now.
-
-- [Search Panel] The flag indicating the leader should be above the actual leader now (Blizzard changed a function, before it was always the first person).
+- Memory usage has been lowered by around 2-7 megabytes, depending on how big your guild is and how much raider io information they have.
 
 
 ## [2.3] - 2024-07-17
@@ -1858,7 +1863,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.1..HEAD
+[2.3.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.1
 [2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3
 [2.2.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.9
 [2.2.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.8

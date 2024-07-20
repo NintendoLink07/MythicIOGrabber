@@ -238,6 +238,7 @@ SLASH_MIOG1 = '/miog'
 local function handler(msg, editBox)
 	local command, rest = msg:match("^(%S*)%s*(.-)$")
 	print(command)
+	
 	if(command == "") then
 
 	elseif(command == "options") then
@@ -398,19 +399,9 @@ local function handler(msg, editBox)
 
 	elseif(command == "favour") then
 
-		local nameTable = miog.simpleSplit(rest, "-")
+        local playerName, realm = miog.createSplitName(rest)
 
-		if(not nameTable[2]) then
-			nameTable[2] = GetNormalizedRealmName()
-
-			if(nameTable[2]) then
-				rest = nameTable[1] .. "-" .. nameTable[2]
-
-			end
-
-		end
-
-		MIOG_SavedSettings.favouredApplicants.table[rest] = {name = nameTable[1], fullName = rest}
+		MIOG_SavedSettings.favouredApplicants.table[rest] = {name = playerName, fullName = rest}
 
 	end
 end
