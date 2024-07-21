@@ -419,9 +419,8 @@ local function createPVEFrameReplacement()
 			HideUIPanel(miog.pveFrame2)
 
 		else
-			if(not InCombatLockdown()) then
-				miog.pveFrame2:Show()
-			end
+			ShowUIPanel(miog.pveFrame2)
+			
 		end
 	end)
 	--miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
