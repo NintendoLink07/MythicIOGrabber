@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_RaiderIOChecker" inherits="BackdropTemplate" virtual="true" setAllPoints="true">
+    <Frame name="MIOG_RaiderIOChecker" inherits="BackdropTemplate" virtual="true" setAllPoints="true" hidden="true">
         <Frames>
             <EditBox parentKey="NameSearchBox" inherits="InputBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1">
                 <Size x="100" y="20" />
@@ -41,7 +41,7 @@
 
        <Frames>
             <Frame parentKey="MythicPlusPanel">
-                <Size x="150" y="160" />
+                <Size x="160" y="160" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Rating" relativePoint="BOTTOMLEFT" />
                 </Anchors>
@@ -100,6 +100,66 @@
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMLEFT" />
                             <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="RaidPanel" toplevel="true">
+                <Size x="160" y="160" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusPanel" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="HighestTier" inherits="MIOG_RaidPanelTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="MiddleTier" inherits="MIOG_RaidPanelTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="LowestTier" inherits="MIOG_RaidPanelTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="MainRaidPanel" toplevel="true">
+                <Size x="150" y="160" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.RaidPanel" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="HighestTier" inherits="MIOG_RaidPanelTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="MiddleTier" inherits="MIOG_RaidPanelTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="LowestTier" inherits="MIOG_RaidPanelTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
                     </Frame>
                 </Frames>

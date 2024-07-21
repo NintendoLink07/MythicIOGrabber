@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.3.2] - 2024-07-21
+
+### Added
+
+- Flightstones and the equivalent for TWW have been implemented in the currency tracker in the mainframe.
+
+### Changed
+
+- The currencies in the mainframe now have a black semi-transparent background.
+
+### Known problems
+
+- Calendar events are only visible after manually open the calendar frame the usual way (Blizzard changed something in the code so I'll have a look if I can fix that rq).
+
 
 ## [2.3.1] - 2024-07-20
 
@@ -1863,7 +1877,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.2..HEAD
+[2.3.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.2
 [2.3.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.1
 [2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3
 [2.2.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.2.9

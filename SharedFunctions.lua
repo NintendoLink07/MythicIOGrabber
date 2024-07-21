@@ -3,50 +3,86 @@ local wticc = WrapTextInColorCode
 
 miog.ONCE = true
 
+miog.updateCurrencies = function()
+	local currentSeason = C_MythicPlus.GetCurrentSeason()
+	local currencyTable = miog.CURRENCY_INFO[currentSeason]
+
+	if(currencyTable) then
+		for k, v in ipairs(currencyTable) do
+			local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
+			local currentFrame = miog.MainTab.Information.Currency[tostring(k)]
+
+			currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. "/" .. currencyInfo.maxQuantity .. ")")
+			currentFrame.Icon:SetTexture(v.icon or currencyInfo.iconFileID)
+			currentFrame.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetCurrencyByID(v.id)
+				GameTooltip:Show()
+			end)
+			currentFrame:Show()
+			
+		end
+
+		for i = #currencyTable + 1, 6, 1 do
+			miog.MainTab.Information.Currency[tostring(i)]:Hide()
+
+		end
+	else
+		miog.printDebug("No currencies for current season found. Current season:" .. currentSeason)
+
+	end
+end
+
 local function resetRaiderIOInformationPanel(childFrame)
     childFrame:Hide()
-	childFrame.layoutIndex = nil
-
-	childFrame.memberIdx = nil
-	childFrame.applicantID = nil
 
 	for k, v in pairs(childFrame.RaiderIOInformationPanel.MythicPlusPanel) do
 		if(type(v) == "table") then
-			v.Name:SetText("")
-			v.Primary:SetText("")
-			v.Secondary:SetText("")
-			v.Icon:SetTexture(nil)
+			if(k == "Status") then
+				v:Hide()
+				
+			else
+				v.Name:SetText("")
+				v.Primary:SetText("")
+				v.Secondary:SetText("")
+				v.Icon:SetTexture(nil)
+			
+			end
 		end
 	end
 
 	for k, v in pairs(childFrame.RaiderIOInformationPanel.RaidPanel) do
 		if(type(v) == "table") then
-			v.Name:SetText("")
-			v.Progress:SetText("")
-			v.Icon:SetTexture(nil)
-			
-			for x, y in pairs(v.BossFrames.UpperRow) do
-				if(type(y) == "table") then
-					y.Icon:SetTexture(nil)
-					y.Border:SetTexture(nil)
-					y.Index:SetText("")
+			if(k == "Status") then
+				v:Hide()
+				
+			else
+				v.Name:SetText("")
+				v.Progress:SetText("")
+				v.Icon:SetTexture(nil)
+				
+				for x, y in pairs(v.BossFrames.UpperRow) do
+					if(type(y) == "table") then
+						y.Icon:SetTexture(nil)
+						y.Border:SetTexture(nil)
+						y.Index:SetText("")
 
+					end
 				end
-			end
-			
-			for x, y in pairs(v.BossFrames.LowerRow) do
-				if(type(y) == "table") then
-					y.Icon:SetTexture(nil)
-					y.Border:SetTexture(nil)
-					y.Index:SetText("")
+				
+				for x, y in pairs(v.BossFrames.LowerRow) do
+					if(type(y) == "table") then
+						y.Icon:SetTexture(nil)
+						y.Border:SetTexture(nil)
+						y.Index:SetText("")
 
+					end
 				end
 			end
 		end
 	end
 
 	childFrame.RaiderIOInformationPanel.InfoPanel.MPlusKeys:SetText("")
-
 	childFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText("")
 	childFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText("")
 	childFrame.RaiderIOInformationPanel.InfoPanel.Realm:SetText("")
@@ -525,7 +561,7 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 			local previousSeason = miog.MPLUS_SEASONS[miog.F.PREVIOUS_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
 
 			if(mythicKeystoneProfile.previousScore and mythicKeystoneProfile.previousScore > 0 and previousSeason) then
-				previousScoreString = previousSeason .. ": " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForRating(mythicKeystoneProfile.previousScore):GenerateHexColor())
+				previousScoreString = "Best season so far: " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForRating(mythicKeystoneProfile.previousScore):GenerateHexColor())
 
 			end
 
@@ -564,6 +600,8 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 
 		else
 			--wticc("NO M+ DATA", miog.CLRSCC["red"])
+			--frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.DungeonRow1.Name:SetText(wticc("N/A", miog.CLRSCC.red))
+			frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.Status:Show()
 
 		end
 
@@ -608,6 +646,7 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 				local raidData = n == 1 and currentData or nonCurrentData
 
 				if(raidData) then
+
 					for a, b in ipairs(raidData) do
 						local slot = b.ordinal == 4 and 1 or b.ordinal == 5 and 2 or b.ordinal == 6 and 3 or b.ordinal
 
@@ -691,15 +730,16 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 				end
 			end
 		else --NO RAIDING DATA
-			if(categoryID == 3) then
-				--frameWithPanel.RaiderIOInformationPanel.raid.noData = wticc("NO RAID DATA", miog.CLRSCC["red"])
-				--primaryIndicator:SetText(wticc("0/0", miog.CLRSCC.red))
-				--secondaryIndicator:SetText(wticc("0/0", miog.CLRSCC.red))
-			end
+			--frameWithPanel.RaiderIOInformationPanel.RaidPanel.HighestTier.Name:SetText(wticc("N/A", miog.CLRSCC.red))
+			frameWithPanel.RaiderIOInformationPanel.RaidPanel.Status:Show()
 		end
 
 	else -- If RaiderIO is not installed or no profile available
 		--frameWithPanel.separateData.noData = wticc("NO RIO DATA", miog.CLRSCC["red"])
+		--frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.DungeonRow1.Name:SetText(wticc("N/A", miog.CLRSCC.red))
+		--frameWithPanel.RaiderIOInformationPanel.RaidPanel.HighestTier.Name:SetText(wticc("N/A", miog.CLRSCC.red))
+			frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.Status:Show()
+			frameWithPanel.RaiderIOInformationPanel.RaidPanel.Status:Show()
 		
 	end
 

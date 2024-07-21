@@ -140,50 +140,7 @@ miog.OnEvent = function(_, event, ...)
 	
 	elseif(event == "CURRENCY_DISPLAY_UPDATE") then
 		if(miog.MainTab) then
-			local bullionInfo = C_CurrencyInfo.GetCurrencyInfo(3010)
-			miog.MainTab.Information.Currency.Bullion.Text:SetText(bullionInfo.quantity .. " (" .. bullionInfo.totalEarned .. "/" .. bullionInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Bullion.Icon:SetTexture(4555657)
-			miog.MainTab.Information.Currency.Bullion.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(3010)
-				GameTooltip:Show()
-			end)
-
-			local aspectInfo = C_CurrencyInfo.GetCurrencyInfo(2812)
-			miog.MainTab.Information.Currency.Aspect.Text:SetText(aspectInfo.quantity .. " (" .. aspectInfo.totalEarned .. "/" .. aspectInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Aspect.Icon:SetTexture(aspectInfo.iconFileID)
-			miog.MainTab.Information.Currency.Aspect.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2812)
-				GameTooltip:Show()
-			end)
-
-			local wyrmInfo = C_CurrencyInfo.GetCurrencyInfo(2809)
-			miog.MainTab.Information.Currency.Wyrm.Text:SetText(wyrmInfo.quantity .. " (" .. wyrmInfo.totalEarned .. "/" .. wyrmInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Wyrm.Icon:SetTexture(wyrmInfo.iconFileID)
-			miog.MainTab.Information.Currency.Wyrm.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2809)
-				GameTooltip:Show()
-			end)
-
-			local drakeInfo = C_CurrencyInfo.GetCurrencyInfo(2807)
-			miog.MainTab.Information.Currency.Drake.Text:SetText(drakeInfo.quantity .. " (" .. drakeInfo.totalEarned .. "/" .. drakeInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Drake.Icon:SetTexture(drakeInfo.iconFileID)
-			miog.MainTab.Information.Currency.Drake.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2807)
-				GameTooltip:Show()
-			end)
-
-			local whelplingInfo = C_CurrencyInfo.GetCurrencyInfo(2806)
-			miog.MainTab.Information.Currency.Whelpling.Text:SetText(whelplingInfo.quantity .. " (" .. whelplingInfo.totalEarned .. "/" .. whelplingInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Whelpling.Icon:SetTexture(whelplingInfo.iconFileID)
-			miog.MainTab.Information.Currency.Whelpling.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2806)
-				GameTooltip:Show()
-			end)
+			miog.updateCurrencies()
 		end
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
@@ -238,7 +195,7 @@ SLASH_MIOG1 = '/miog'
 local function handler(msg, editBox)
 	local command, rest = msg:match("^(%S*)%s*(.-)$")
 	print(command)
-	
+
 	if(command == "") then
 
 	elseif(command == "options") then

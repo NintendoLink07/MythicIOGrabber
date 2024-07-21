@@ -291,26 +291,27 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		currentField:SetNumeric(true)
 		currentField:SetMaxLetters(4)
 		currentField:HookScript("OnTextChanged", function(self, ...)
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()]) then
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+				
+				local text = tonumber(self:GetText())
+				local currentPanel = LFGListFrame.activePanel:GetDebugName()
+				local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 			
-			local text = tonumber(self:GetText())
-			local currentPanel = LFGListFrame.activePanel:GetDebugName()
-			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
-		
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = text ~= nil and text or 0
+				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = text ~= nil and text or 0
 
-			convertFiltersToAdvancedBlizzardFilters()
+				convertFiltersToAdvancedBlizzardFilters()
 
-			if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName]) then
-				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-					miog.newUpdateFunction()
-		
-				elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
-					C_LFGList.RefreshApplicants()
-		
+				if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName]) then
+					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+						miog.newUpdateFunction()
+			
+					elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
+						C_LFGList.RefreshApplicants()
+			
+					end
 				end
 			end
-
 		end)
 	end
 

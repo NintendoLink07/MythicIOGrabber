@@ -104,6 +104,8 @@ local function calendarOnEvent(_, event, ...)
     end
 end
 
+miog.calendarOnEvent = calendarOnEvent
+
 miog.loadCalendarSystem = function()
     framePool = CreateFramePool("Frame", miog.MainTab.Information.Holiday, "MIOG_HolidayFrameTemplate", resetHolidayFrame)
 

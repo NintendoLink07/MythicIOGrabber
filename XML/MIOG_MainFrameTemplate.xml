@@ -667,44 +667,46 @@
                                     </Frame>
 
                                     <Frame parentKey="Currency">
-                                        <Size x="40" y="100" />
+                                        <Size x="40" y="120" />
+
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3" />
                                         </Anchors>
 
                                         <Frames>
-                                            <Frame parentKey="Bullion" inherits="MIOG_CurrencySingleTemplate">
-                                                <Size x="40" y="20" />
+                                            <Frame parentKey="1" inherits="MIOG_CurrencySingleTemplate">
                                                 <Anchors>
-                                                    <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP"/>
+                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                                                 </Anchors>
                                             </Frame>
 
-                                            <Frame parentKey="Aspect" inherits="MIOG_CurrencySingleTemplate">
-                                                <Size x="40" y="20" />
+                                            <Frame parentKey="2" inherits="MIOG_CurrencySingleTemplate">
                                                 <Anchors>
-                                                    <Anchor point="TOP" relativeKey="$parent.Bullion" relativePoint="BOTTOM"/>
+                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.1" relativePoint="TOPRIGHT" />
                                                 </Anchors>
                                             </Frame>
 
-                                            <Frame parentKey="Wyrm" inherits="MIOG_CurrencySingleTemplate">
-                                                <Size x="40" y="20" />
+                                            <Frame parentKey="3" inherits="MIOG_CurrencySingleTemplate">
                                                 <Anchors>
-                                                    <Anchor point="TOP" relativeKey="$parent.Aspect" relativePoint="BOTTOM"/>
+                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.2" relativePoint="TOPRIGHT" />
                                                 </Anchors>
                                             </Frame>
 
-                                            <Frame parentKey="Drake" inherits="MIOG_CurrencySingleTemplate">
-                                                <Size x="40" y="20" />
+                                            <Frame parentKey="4" inherits="MIOG_CurrencySingleTemplate">
                                                 <Anchors>
-                                                    <Anchor point="TOP" relativeKey="$parent.Wyrm" relativePoint="BOTTOM"/>
+                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.3" relativePoint="TOPRIGHT" />
                                                 </Anchors>
                                             </Frame>
 
-                                            <Frame parentKey="Whelpling" inherits="MIOG_CurrencySingleTemplate">
-                                                <Size x="40" y="20" />
+                                            <Frame parentKey="5" inherits="MIOG_CurrencySingleTemplate">
                                                 <Anchors>
-                                                    <Anchor point="TOP" relativeKey="$parent.Drake" relativePoint="BOTTOM"/>
+                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.4" relativePoint="TOPRIGHT" />
+                                                </Anchors>
+                                            </Frame>
+
+                                            <Frame parentKey="6" inherits="MIOG_CurrencySingleTemplate">
+                                                <Anchors>
+                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.5" relativePoint="TOPRIGHT" />
                                                 </Anchors>
                                             </Frame>
                                         </Frames>

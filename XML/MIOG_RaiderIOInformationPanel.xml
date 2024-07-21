@@ -213,6 +213,16 @@
                         </Anchors>
                     </Frame>
                 </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Status" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="N/A">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.DungeonRow1" relativePoint="LEFT" x="2" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </Frame>
 
             <Frame parentKey="RaidPanel" toplevel="true">
@@ -244,6 +254,16 @@
                         </Anchors>
                     </Frame>
                 </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Status" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="N/A">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.HighestTier.Icon" relativePoint="LEFT" x="2" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </Frame>
 
             <Frame parentKey="InfoPanel">

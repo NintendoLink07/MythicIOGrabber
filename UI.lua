@@ -204,6 +204,8 @@ miog.createFrames = function()
 		miog.loadAdventureJournal()
 		miog.loadPartyCheck()
 		miog.loadGuildFrame()
+		
+		miog.RaiderIOChecker = CreateFrame("Frame", "MythicIOGrabber_RaiderIOChecker", miog.Plugin.InsertFrame, "MIOG_RaiderIOChecker")
 
 		--miog.InviteFrame = CreateFrame("Frame", "MythicIOGrabber_InviteFrame", UIParent, "MIOG_InviteFrame")
 		--miog.InviteFrame:SetPoint("TOPLEFT", LFGListInviteDialog, "TOPLEFT")
@@ -222,6 +224,6 @@ miog.createFrames = function()
 		miog.SearchPanel,
 		miog.EntryCreation,
 		miog.AdventureJournal,
-		--miog.RaiderIOChecker
+		miog.RaiderIOChecker
 	}
 end

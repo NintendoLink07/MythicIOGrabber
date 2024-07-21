@@ -166,52 +166,12 @@ local function createPVEFrameReplacement()
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
+		
+		--C_Calendar.CloseEvent()
+		--C_Calendar.OpenCalendar()
 
 		if(not setup) then
-			local bullionInfo = C_CurrencyInfo.GetCurrencyInfo(3010)
-			miog.MainTab.Information.Currency.Bullion.Text:SetText(bullionInfo.quantity .. " (" .. bullionInfo.totalEarned .. "/" .. bullionInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Bullion.Icon:SetTexture(4555657)
-			miog.MainTab.Information.Currency.Bullion.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(3010)
-				GameTooltip:Show()
-			end)
-
-			local aspectInfo = C_CurrencyInfo.GetCurrencyInfo(2812)
-			miog.MainTab.Information.Currency.Aspect.Text:SetText(aspectInfo.quantity .. " (" .. aspectInfo.totalEarned .. "/" .. aspectInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Aspect.Icon:SetTexture(aspectInfo.iconFileID)
-			miog.MainTab.Information.Currency.Aspect.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2812)
-				GameTooltip:Show()
-			end)
-
-			local wyrmInfo = C_CurrencyInfo.GetCurrencyInfo(2809)
-			miog.MainTab.Information.Currency.Wyrm.Text:SetText(wyrmInfo.quantity .. " (" .. wyrmInfo.totalEarned .. "/" .. wyrmInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Wyrm.Icon:SetTexture(wyrmInfo.iconFileID)
-			miog.MainTab.Information.Currency.Wyrm.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2809)
-				GameTooltip:Show()
-			end)
-
-			local drakeInfo = C_CurrencyInfo.GetCurrencyInfo(2807)
-			miog.MainTab.Information.Currency.Drake.Text:SetText(drakeInfo.quantity .. " (" .. drakeInfo.totalEarned .. "/" .. drakeInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Drake.Icon:SetTexture(drakeInfo.iconFileID)
-			miog.MainTab.Information.Currency.Drake.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2807)
-				GameTooltip:Show()
-			end)
-
-			local whelplingInfo = C_CurrencyInfo.GetCurrencyInfo(2806)
-			miog.MainTab.Information.Currency.Whelpling.Text:SetText(whelplingInfo.quantity .. " (" .. whelplingInfo.totalEarned .. "/" .. whelplingInfo.maxQuantity .. ")")
-			miog.MainTab.Information.Currency.Whelpling.Icon:SetTexture(whelplingInfo.iconFileID)
-			miog.MainTab.Information.Currency.Whelpling.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(2806)
-				GameTooltip:Show()
-			end)
+			miog.updateCurrencies()
 
 			setup = true
 		end
@@ -459,18 +419,16 @@ local function createPVEFrameReplacement()
 			HideUIPanel(miog.pveFrame2)
 
 		else
-			ShowUIPanel(miog.pveFrame2)
-			
-			C_Calendar.CloseEvent();
-			C_Calendar.OpenCalendar();
+			if(not InCombatLockdown()) then
+				miog.pveFrame2:Show()
+			end
 		end
 	end)
 	--miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
 
-	if(not miog.F.LITE_MODE and miog.F.IS_RAIDERIO_LOADED) then
+	if(miog.F.IS_RAIDERIO_LOADED) then
 		miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
 	end
-
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:OnLoad()
 	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetListAnchorToTopleft()
@@ -484,6 +442,16 @@ local function createPVEFrameReplacement()
 	miog.RaidStatistics = pveFrame2.TabFramesPanel.RaidStatistics
 	miog.RaidStatistics.RaidColumns.Raids = {}
 	miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
+
+	local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
+
+	for i = 1, 6, 1 do
+		local currentFrame = miog.MainTab.Information.Currency[tostring(i)]
+
+		miog.createFrameBorder(currentFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+		currentFrame:SetBackdropColor(r, g, b, 0.8)
+
+	end
 
 	pveFrame2.TitleBar.Expand:SetScript("OnClick", function()
 
