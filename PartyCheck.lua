@@ -81,13 +81,13 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 		local name = miog.createFullNameFrom("unitID", unitId)
 
 		if(name) then
-			local hasWeaponEnchantNumber = unitGear.weaponEnchant
+			--local hasWeaponEnchantNumber = unitGear.weaponEnchant
 
 			miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
 			miog.checkSystem.groupMember[name].ilvl = unitGear.ilevel
 			miog.checkSystem.groupMember[name].durability = unitGear.durability
 			miog.checkSystem.groupMember[name].missingEnchants = {}
-			miog.checkSystem.groupMember[name].hasWeaponEnchant = hasWeaponEnchantNumber == 1 and true or false
+			--miog.checkSystem.groupMember[name].hasWeaponEnchant = hasWeaponEnchantNumber == 1 and true or false
 			miog.checkSystem.groupMember[name].missingGems = {}
 
 			for index, slotIdWithoutEnchant in ipairs (unitGear.noEnchants) do
@@ -146,6 +146,39 @@ miog.loadPartyCheck = function()
 			miog.openRaidLib.RequestKeystoneDataFromParty()
 			miog.openRaidLib.GetAllUnitsGear()
 
+		end
+
+		local unitId = "player"
+
+        local itemLevel = miog.openRaidLib.GearManager.GetPlayerItemLevel()
+        local gearDurability, lowestItemDurability = miog.openRaidLib.GearManager.GetPlayerGearDurability()
+        --local weaponEnchant, mainHandEnchantId, offHandEnchantId = miog.openRaidLib.GearManager.GetPlayerWeaponEnchant()
+        local slotsWithoutGems, slotsWithoutEnchant = miog.openRaidLib.GearManager.GetPlayerGemsAndEnchantInfo()
+		
+		if(unitId) then
+			local name = miog.createFullNameFrom("unitID", unitId)
+
+			if(name) then
+				miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
+				miog.checkSystem.groupMember[name].ilvl = itemLevel
+				miog.checkSystem.groupMember[name].durability = gearDurability
+				miog.checkSystem.groupMember[name].missingEnchants = {}
+				--miog.checkSystem.groupMember[name].hasWeaponEnchant = weaponEnchant == 1 and true or false
+				miog.checkSystem.groupMember[name].missingGems = {}
+
+				for index, slotIdWithoutEnchant in ipairs(slotsWithoutEnchant) do
+					if(slotIdWithoutEnchant ~= 10) then
+						miog.checkSystem.groupMember[name].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+						
+					end
+				end
+	
+				for index, slotIdWithEmptyGemSocket in ipairs (slotsWithoutGems) do
+					miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+				end
+
+				miog.updateRosterInfoData()
+			end
 		end
 	end)
 

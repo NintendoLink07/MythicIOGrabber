@@ -18,7 +18,6 @@ miog.setAffixes = function()
 		miog.ApplicationViewer.CreationSettings.Affixes.tooltipText = affixString
 
 		for index, affix in ipairs(affixIDs) do
-
 			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
 
 			miog.ApplicationViewer.CreationSettings.Affixes["Affix" .. index]:SetTexture(filedataid)

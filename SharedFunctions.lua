@@ -5,36 +5,41 @@ miog.ONCE = true
 
 miog.updateCurrencies = function()
 	local currentSeason = C_MythicPlus.GetCurrentSeason()
-	local currencyTable = miog.CURRENCY_INFO[currentSeason]
+	if(currentSeason > -1) then
+		local currencyTable = miog.CURRENCY_INFO[currentSeason]
 
-	if(currencyTable) then
-		for k, v in ipairs(currencyTable) do
-			local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
-			local currentFrame = miog.MainTab.Information.Currency[tostring(k)]
+		if(currencyTable) then
+			for k, v in ipairs(currencyTable) do
+				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
+				local currentFrame = miog.MainTab.Information.Currency[tostring(k)]
 
-			currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. "/" .. currencyInfo.maxQuantity .. ")")
-			currentFrame.Icon:SetTexture(v.icon or currencyInfo.iconFileID)
-			currentFrame.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetCurrencyByID(v.id)
-				GameTooltip:Show()
-			end)
-			currentFrame:Show()
-			
+				currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. "/" .. currencyInfo.maxQuantity .. ")")
+				currentFrame.Icon:SetTexture(v.icon or currencyInfo.iconFileID)
+				currentFrame.Icon:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					GameTooltip:SetCurrencyByID(v.id)
+					GameTooltip:Show()
+				end)
+				currentFrame:Show()
+				
+			end
+
+			for i = #currencyTable + 1, 6, 1 do
+				miog.MainTab.Information.Currency[tostring(i)]:Hide()
+
+			end
+		else
+			miog.printDebug("No currencies for current season found. Current season:" .. currentSeason)
+
 		end
-
-		for i = #currencyTable + 1, 6, 1 do
-			miog.MainTab.Information.Currency[tostring(i)]:Hide()
-
-		end
-	else
-		miog.printDebug("No currencies for current season found. Current season:" .. currentSeason)
-
 	end
 end
 
 local function resetRaiderIOInformationPanel(childFrame)
-    childFrame:Hide()
+	if(childFrame.Hide) then
+		childFrame:Hide()
+
+	end
 
 	for k, v in pairs(childFrame.RaiderIOInformationPanel.MythicPlusPanel) do
 		if(type(v) == "table") then
@@ -466,7 +471,6 @@ miog.getGroupLeader = function()
 	end
 end
 
-
 hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 	LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
 	LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
@@ -515,7 +519,7 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 	frameWithPanel.RaiderIOInformationPanel.raid = nil
 
 	if(profile) then
-		if(mythicKeystoneProfile and mythicKeystoneProfile.currentScore > 0 and mythicKeystoneProfile.sortedDungeons) then
+		if(mythicKeystoneProfile and mythicKeystoneProfile.sortedDungeons) then
 			frameWithPanel.RaiderIOInformationPanel.mplus = {}
 
 			table.sort(mythicKeystoneProfile.sortedDungeons, function(k1, k2)

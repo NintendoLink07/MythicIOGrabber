@@ -73,26 +73,20 @@
                     <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="5"/>
                 </Anchors>
             </Frame>
-                     
-            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate">
-                <KeyValues>
-                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
-                </KeyValues>
 
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
+            </Frame>
 
-                <ScrollChild>
-                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
-                        <KeyValues>
-                            <KeyValue key="align" value="top" />
-                            <KeyValue key="spacing" value="4" />
-                        </KeyValues>
-                    </Frame>
-                </ScrollChild>
-            </ScrollFrame>
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox2" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
         </Frames>
 
         <Layers>

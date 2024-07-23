@@ -7,6 +7,7 @@ local detailedList = {}
 
 local groupSystem = {}
 groupSystem.groupMember = {}
+groupSystem.raiderIOPanels = {}
 
 miog.groupSystem = groupSystem
 
@@ -22,7 +23,47 @@ local currentInspection = nil
 
 local fullPlayerName, shortName
 
+local function createSinglePartyCheckFrame(memberFrame, member)
+	memberFrame.data = member
+	memberFrame.fixedWidth = miog.PartyCheck:GetWidth()
+	memberFrame.Group:SetText(member.group)
+	memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
+	memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
+	memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
+
+	miog.insertInfoIntoDropdown(member.name, miog.checkSystem.keystoneData[member.name])
+	
+	memberFrame.ExpandFrame:SetScript("OnClick", function(self)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		self:AdvanceState()
+		memberFrame.node:ToggleCollapsed()
+		detailedList[member.name] = memberFrame.node:IsCollapsed()
+	end)
+
+	if(member.rank == 2) then
+		miog.PartyCheck.LeaderCrown:ClearAllPoints()
+		miog.PartyCheck.LeaderCrown:SetPoint("RIGHT", memberFrame.Group, "RIGHT")
+		miog.PartyCheck.LeaderCrown:SetParent(memberFrame)
+		miog.PartyCheck.LeaderCrown:Show()
+
+	end
+
+	memberFrame.ILvl:SetText(member.ilvl or "N/A")
+	memberFrame.Durability:SetText(member.durability or "N/A")
+	memberFrame.Keystone:SetTexture(member.keystone)
+	memberFrame.Keylevel:SetText("+" .. member.keylevel)
+	memberFrame.Score:SetText(member.score or "0")
+	memberFrame.Progress:SetText(member.progress or "N/A")
+
+	--memberFrame.layoutIndex = index
+	--memberFrame:MarkDirty()
+	--memberFrame:Show()
+end
+
 local function sortPartyCheckList(k1, k2)
+	k1 = k1.data
+	k2 = k2.data
+
 	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
 		if(tableElement.currentLayer == 1) then
 			local firstState = tableElement.currentState
@@ -99,7 +140,7 @@ local function updateRosterInfoData()
 		groupSystem.specCount = {}
 
 		miog.F.LFG_STATE = miog.checkLFGState()
-		local numOfMembers = GetNumGroupMembers()
+		local numOfMembers = miog.F.LFG_STATE == "solo" and 1 or GetNumGroupMembers()
 
 		local indexedGroup = {}
 		local inspectableMembers = 0
@@ -122,20 +163,30 @@ local function updateRosterInfoData()
 				role = "DAMAGER",
 				group = 0,
 				specID = 0,
-				rank = rank,
+				rank = nil,
 				level = UnitLevel("player"),
 				zone = bestMap and C_Map.GetMapInfo(bestMap).name or "N/A",
 				online = true,
 				dead = UnitIsDead("player"),
-				raidRole = role,
-				masterLooter = isML,
-				index = groupIndex,
+				raidRole = nil,
+				masterLooter = nil,
+				index = nil,
 			}
 
 			if(miog.MPlusStatistics) then
 				local keystoneInfo = miog.openRaidLib.GetKeystoneInfo("player")
 
 				miog.insertInfoIntoDropdown(fullPlayerName, keystoneInfo)
+			end
+
+			if(UnitIsConnected("player") and CanInspect("player")) then
+				inspectableMembers = inspectableMembers + 1
+
+			end
+
+			if(groupSystem.classCount[miog.CLASSFILE_TO_ID[fileName] ]) then
+				groupSystem.classCount[miog.CLASSFILE_TO_ID[fileName] ] = groupSystem.classCount[miog.CLASSFILE_TO_ID[fileName] ] + 1
+
 			end
 		end
 
@@ -423,64 +474,74 @@ local function updateRosterInfoData()
 
 			miog.ClassPanel.Container:MarkDirty()
 
-			if(miog.PartyCheck) then
-				table.sort(indexedGroup, sortPartyCheckList)
-			end
-
 			miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(groupSystem.roleCount["TANK"] .. "/" .. groupSystem.roleCount["HEALER"] .. "/" .. groupSystem.roleCount["DAMAGER"])
+			
+			if(miog.PartyCheck) then
+				local DataProvider = CreateTreeDataProvider()
+				DataProvider:SetSortComparator(sortPartyCheckList, true)
 
-			local categoryID = miog.getCurrentCategoryID()
-
-			if(partyPool) then
 				for index, member in ipairs(indexedGroup) do
-					local memberFrame = partyPool:Acquire()
-					memberFrame.data = member
-					memberFrame.fixedWidth = miog.PartyCheck:GetWidth()
-					memberFrame.Group:SetText(member.group)
-					memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
-					memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
-					memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
+					local baseFrameData = DataProvider:Insert({
+						template = "MIOG_PartyCheckPlayerTemplate",
+						unitID = member.unitID,
+						name = member.name,
+						shortName = member.shortName,
+						classID = member.classID,
+						classFileName = member.classFileName,
+						role = member.role,
+						group = member.group,
+						specID = member.specID,
+						rank = member.rank,
+						level = member.level,
+						zone = member.zone,
+						online = member.online,
+						dead = member.dead,
+						raidRole = member.raidRole,
+						masterLooter = member.masterLooter,
+						index = member.index,
+						ilvl = member.ilvl,
+						durability = member.durability,
+						missingEnchants = member.missingEnchants,
+						missingGems = member.missingGems,
+						hasWeaponEnchant = member.hasWeaponEnchant,
+						keystone = member.keystone,
+						keylevel = member.keylevel,
+						keyname = member.keyname,
+						progressWeight = member.progressWeight,
+						progress = member.progress,
+						progressTooltipData = member.progressTooltipData,
+						score = member.score
+					})
 
-					miog.insertInfoIntoDropdown(member.fullName, miog.checkSystem.keystoneData[member.fullName])
-
-					miog.retrieveRaiderIOData(member.shortName, member.realm, memberFrame)
-					
-					memberFrame.ExpandFrame:SetScript("OnClick", function(self)
-						local infoData = memberFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
-
-						memberFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
-						memberFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
-
-						memberFrame.RaiderIOInformationPanel:SetShown(not memberFrame.RaiderIOInformationPanel:IsShown())
-						detailedList[memberFrame.data.name] = memberFrame.RaiderIOInformationPanel:IsShown()
-
-						self:AdvanceState()
-						memberFrame:MarkDirty()
-					end)
-					
-					memberFrame.RaiderIOInformationPanel:SetShown(detailedList[memberFrame.data.name] or false)
-
-					if(member.rank == 2) then
-						miog.PartyCheck.LeaderCrown:ClearAllPoints()
-						miog.PartyCheck.LeaderCrown:SetPoint("RIGHT", memberFrame.Group, "RIGHT")
-						miog.PartyCheck.LeaderCrown:SetParent(memberFrame)
-						miog.PartyCheck.LeaderCrown:Show()
-
-					end
-
-					memberFrame.ILvl:SetText(member.ilvl or "N/A")
-					memberFrame.Durability:SetText(member.durability or "N/A")
-					memberFrame.Keystone:SetTexture(member.keystone)
-					memberFrame.Keylevel:SetText("+" .. member.keylevel)
-					memberFrame.Score:SetText(member.score or "0")
-					memberFrame.Progress:SetText(member.progress or "N/A")
-
-					memberFrame.layoutIndex = index
-					memberFrame:MarkDirty()
-					memberFrame:Show()
+					baseFrameData:Insert({
+						template = "MIOG_RaiderIOInformationPanel",
+						name = member.name,}
+					)
 				end
 
-				miog.PartyCheck.ScrollFrame.Container:MarkDirty()
+				miog.PartyCheck.ScrollView:SetDataProvider(DataProvider)
+
+				for index, child in ipairs(DataProvider.node.nodes) do
+					if(detailedList[child.data.name] == false) then
+						child:SetCollapsed(false)
+
+						for index2, child2 in ipairs(child.nodes) do
+							child2:SetCollapsed(false)
+
+						end
+
+						print(child.data.name)
+
+					else
+						child:SetCollapsed(true)
+
+						for index2, child2 in ipairs(child.nodes) do
+							child2:SetCollapsed(true)
+
+						end
+
+					end
+				end
 			end
 		end
 	else
@@ -566,6 +627,8 @@ local function inspectCoroutineEvents(_, event, ...)
 		updateRosterInfoData()
 	
 	elseif(event == "GROUP_ROSTER_UPDATE") then
+		miog.PartyCheck.ScrollView:Flush()
+
 		updateRosterInfoData()
 
 	elseif(event == "PLAYER_REGEN_ENABLED") then
@@ -587,25 +650,6 @@ hooksecurefunc("ClearInspectPlayer", function(own)
 	end
 end)
 
-
-local function resetPartyFrames(_, frame)
-    frame:Hide()
-    frame.layoutIndex = nil
-
-    frame.Name:SetText("")
-    frame.Role:SetTexture(nil)
-    frame.Spec:SetTexture(nil)
-	frame.ILvl:SetText("")
-	frame.Durability:SetText("")
-	frame.Score:SetText("")
-	frame.Progress:SetText("")
-    frame.Keystone:SetTexture(nil)
-	frame.Keylevel:SetText("")
-	frame.data = nil
-
-	miog.resetRaiderIOInformationPanel(frame)
-end
-
 miog.createInspectCoroutine = function()
 	--miog.OnUnitUpdate()
 	eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -618,7 +662,36 @@ miog.createInspectCoroutine = function()
 	eventReceiver:SetScript("OnEvent", inspectCoroutineEvents)
 
 	if(miog.PartyCheck) then
-   		partyPool = CreateFramePool("Frame", miog.PartyCheck.ScrollFrame.Container, "MIOG_PartyCheckPlayerTemplate", resetPartyFrames)
+		local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
+
+		miog.PartyCheck.ScrollView = ScrollView
+		
+		ScrollUtil.InitScrollBoxListWithScrollBar(miog.PartyCheck.ScrollBox, miog.PartyCheck.ScrollBar, ScrollView)
+
+		local function initializePartyFrames(frame, node)
+			local data = node:GetData()
+
+			if(data.template == "MIOG_PartyCheckPlayerTemplate") then
+				frame.node = node
+		
+				createSinglePartyCheckFrame(frame, data)
+		
+			elseif(data.template == "MIOG_RaiderIOInformationPanel") then
+				miog.groupSystem.raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
+				
+				local playerName, realm = miog.createSplitName(data.name)
+
+				miog.retrieveRaiderIOData(playerName, realm, miog.groupSystem.raiderIOPanels[data.name])
+			end
+		end
+		
+		local function CustomFactory(factory, node)
+			local data = node:GetData()
+			local template = data.template
+			factory(template, initializePartyFrames)
+		end
+
+		ScrollView:SetElementFactory(CustomFactory)
 	end
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")

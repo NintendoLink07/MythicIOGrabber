@@ -91,11 +91,8 @@ local function createSingleGuildFrame(v)
 	--currentFrame.layoutIndex = includeOffline == false and (k + (not v.isOnline and 10000 or v.status == 0 and 0 or v.status == 1 and 1000 or 5000)) or k
 	currentFrame.BasicInformation.ExpandFrame:SetScript("OnClick", function(self)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		
 		self:AdvanceState()
-
 		currentFrame.node:ToggleCollapsed()
-
 		detailedList[v.fullName] = currentFrame.node:IsCollapsed()
 	end)
 end

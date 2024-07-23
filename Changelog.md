@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.3.3] - 2024-07-23
+
+### Changed
+
+- The new display method has now also been implemented into the [PartyCheck] tab, less laggy and it won't jump between the M+ and raid tab around anymore
+
+### Fixed
+
+- [Class Panel] The players class is now always visible, instead of just when you're in a group.
+
+- [PartyCheck] The players itemlevel and durability should now always be refreshed.
+
+- [PartyCheck] Party members itemlevel, durability, keystone and keylevel should now be always refreshed when a group update occurs.
+
+- [PartyCheck] The keystone levels should now reflect the level of the keystone, not the players level.
+
+
 ## [2.3.2] - 2024-07-21
 
 ### Added
@@ -1877,7 +1894,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.3..HEAD
+[2.3.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.3
 [2.3.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.2
 [2.3.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.1
 [2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3

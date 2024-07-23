@@ -10,6 +10,8 @@ searchResultSystem.raidSortData = {}
 searchResultSystem.baseFrames = {}
 searchResultSystem.raiderIOPanels = {}
 
+local collapsedList = {}
+
 local function resetFrame(pool, childFrame)
     childFrame:Hide()
 	childFrame.layoutIndex = nil
@@ -972,7 +974,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			end)
 
 			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal)
-			--currentFrame.RaiderIOInformationPanel.Background:SetGradient("HORIZONTAL", CreateColor(0.3, 0.3, 0.3, 1), CreateColor(0.8, 0.8, 0.8, 1))
 			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.33)
 
 			currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
@@ -985,27 +986,14 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
 
-			--[[local categoryID = miog.getCurrentCategoryID()
-
-				local baseFrame = self:GetParent():GetParent()
-			local infoData = baseFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
-
-			baseFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
-			baseFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
-			
-
-				--baseFrame.RaiderIOInformationPanel:SetShown(not baseFrame.RaiderIOInformationPanel:IsShown())
-			
-				--currentFrame:MarkDirty()
-
-			]]
-
 			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function(self)
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 				
 				currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
 
 				currentFrame.node:ToggleCollapsed()
+
+				collapsedList[saveID] = currentFrame.node:IsCollapsed()
 			end)
 
 			if(currentFrame.BasicInformation.Age.ageTicker) then
@@ -1460,9 +1448,28 @@ local function newUpdateFunction()
 		end
 	end
 
-	DataProvider:SetAllCollapsed(true)
-
 	miog.SearchPanel.ScrollView:SetDataProvider(DataProvider)
+
+	DataProvider:CollapseAll()
+
+	for index, child in ipairs(DataProvider.node.nodes) do
+		if(C_LFGList.HasSearchResultInfo(child.data.resultID)) then
+			local searchResultInfo = C_LFGList.GetSearchResultInfo(child.data.resultID)
+
+			if(searchResultInfo.leaderName) then
+				local saveID = searchResultInfo.activityID .. searchResultInfo.leaderName
+
+				if(collapsedList[saveID] == false) then
+					child:SetCollapsed(false)
+
+					for index2, child2 in ipairs(child.nodes) do
+						child2:SetCollapsed(false)
+
+					end
+				end
+			end
+		end
+	end
 
 	miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #orderedList .. ")")
 	
