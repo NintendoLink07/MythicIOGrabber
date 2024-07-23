@@ -218,7 +218,7 @@ local function updateRosterInfoData()
 
 					groupSystem.groupMember[name] = {
 						unitID = unitID,
-						name = name,
+						name = playerName .. "-" .. realm,
 						shortName = playerName,
 						classID = fileName and miog.CLASSFILE_TO_ID[fileName],
 						classFileName = fileName,
@@ -627,7 +627,9 @@ local function inspectCoroutineEvents(_, event, ...)
 		updateRosterInfoData()
 	
 	elseif(event == "GROUP_ROSTER_UPDATE") then
-		miog.PartyCheck.ScrollView:Flush()
+		if(miog.PartyCheck) then
+			miog.PartyCheck.ScrollView:Flush()
+		end
 
 		updateRosterInfoData()
 

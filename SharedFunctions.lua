@@ -399,7 +399,15 @@ local function createFullNameFrom(type, value)
 	if(realm) then
 		if(type == "unitID") then
 			if(value == "player") then
-				name = UnitFullName(value) or UnitName("player") .. "-" .. GetNormalizedRealmName()
+				local shortName, realm2 = UnitFullName(value)
+
+				if(shortName and realm2) then
+					name = shortName .. "-" .. realm2
+
+				else
+					name = UnitName("player") .. "-" .. realm
+				
+				end
 
 			else
 				name = GetUnitName(value, true)

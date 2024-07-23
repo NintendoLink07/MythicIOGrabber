@@ -157,7 +157,9 @@ miog.insertInfoIntoDropdown = function(unitName, keystoneInfo)
 			end
 		end
 
-		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
+		if(miog.MPlusStatistics) then
+			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
+		end
 	end
 end
 
