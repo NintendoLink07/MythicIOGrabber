@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.3.5] - 2024-07-24
+
+### Changed
+
+- Updated the Open Raid Library.
+
+### Fixed
+
+- [Filter Panel] The raid options will now be populated again (technically the Dragonflight expansion is over so it didn't display any raids).
+
+- [Application Viewer] The number in the bottom right indicating how many applicants you currently have will now be correctly refreshed when displaying the application viewer.
+
+
 ## [2.3.4] - 2024-07-24
 
 ### Fixed
@@ -1905,7 +1918,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.5..HEAD
+[2.3.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.5
 [2.3.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.4
 [2.3.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.3
 [2.3.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.2

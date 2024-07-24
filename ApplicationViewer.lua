@@ -11,6 +11,8 @@ local detailedList = {}
 local applicationFrameIndex = 0
 local queueTimer
 
+local numOfApplicants, totalApplicants = 0, 0
+
 local function resetBaseFrame(pool, childFrame)
     childFrame:Hide()
 	childFrame.layoutIndex = nil
@@ -750,7 +752,9 @@ local function checkApplicantList(forceReorder, applicantID)
 
 	end
 
-	miog.Plugin.FooterBar.Results:SetText(applicationFrameIndex .. "(" .. #unsortedList .. ")")
+	numOfApplicants, totalApplicants = applicationFrameIndex, #unsortedList
+
+	miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
 	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
 end
 
@@ -1138,6 +1142,10 @@ miog.createApplicationViewer = function()
 	miog.ApplicationViewer:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
 	miog.ApplicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
 	miog.ApplicationViewer:SetScript("OnEvent", applicationViewerEvents)
+	miog.ApplicationViewer:SetScript("OnShow", function()
+		miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
+		
+	end)
 
 	applicantFramePool = CreateFramePool("Frame", miog.ApplicationViewer.FramePanel.Container, "MIOG_ApplicantFrameTemplate", resetBaseFrame)
 

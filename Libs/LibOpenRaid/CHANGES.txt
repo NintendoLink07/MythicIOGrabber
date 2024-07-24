@@ -1,5 +1,23 @@
 Changes since tag v10.2.0.118
 
+commit d13036727ee8700cd772f957e5663d12fe0dfcd9
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jul 24 16:08:52 2024 -0300
+
+    Check for V11 functions before V10
+
+commit de8eac448902e1b0b249a5ee214f1437a3229aba
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Tue Jul 9 12:49:53 2024 -0300
+
+    update
+
+commit 18dbeb1a0d6ed946b0b6a5ddc452348e9af6eb43
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jun 19 21:46:36 2024 -0300
+
+    Fix for GetSpellCharges
+
 commit c609d3bf26e1e216aa8c306bc52d85a693e19f3f
 Author: Tercio Jose <terciob19@hotmail.com>
 Date:   Sat Jun 15 11:29:48 2024 -0300

@@ -39,8 +39,8 @@ local GetSpellInfo = GetSpellInfo or function(spellID)
                 spellInfo.maxRange, spellInfo.spellID, spellInfo.originalIconID
     end
 end
-local GetSpellCooldown = GetSpellCooldown or C_Spell.GetSpellCooldown
-local GetDetailedItemLevelInfo = GetDetailedItemLevelInfo or C_Item.GetDetailedItemLevelInfo
+local GetSpellCooldown = C_Spell and C_Spell.GetSpellCooldown or GetSpellCooldown
+local GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo or GetDetailedItemLevelInfo
 local GetSpellTabInfo = GetSpellTabInfo or (function(tabLine)
     if not tabLine then return nil end
 
@@ -52,15 +52,21 @@ local GetSpellTabInfo = GetSpellTabInfo or (function(tabLine)
 end)
 
 
-local GetSpellBookItemInfo = GetSpellBookItemInfo or C_SpellBook.GetSpellBookItemType
-local IsPassiveSpell = IsPassiveSpell or C_SpellBook.IsSpellBookItemPassive
-local GetNumSpellTabs = GetNumSpellTabs or C_SpellBook.GetNumSpellBookSkillLines
+local GetSpellBookItemInfo = C_SpellBook and C_SpellBook.GetSpellBookItemType or GetSpellBookItemInfo
+local IsPassiveSpell = C_SpellBook and C_SpellBook.IsSpellBookItemPassive or IsPassiveSpell
+local GetNumSpellTabs = C_SpellBook and C_SpellBook.GetNumSpellBookSkillLines or GetNumSpellTabs
 local spellBookPlayerEnum = Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player or "player"
-local HasPetSpells = HasPetSpells or C_SpellBook.HasPetSpells
-local GetOverrideSpell = C_SpellBook.GetOverrideSpell or C_Spell.GetOverrideSpell
-local GetSpellCharges = GetSpellCharges or C_Spell.GetSpellCharges
-local GetSpellBookItemName = GetSpellBookItemName or C_SpellBook.GetSpellBookItemName
+local HasPetSpells = C_SpellBook and C_SpellBook.HasPetSpells or HasPetSpells
+local GetOverrideSpell = C_Spell and  C_Spell.GetOverrideSpell or C_SpellBook.GetOverrideSpell
+local GetSpellBookItemName = C_SpellBook and C_SpellBook.GetSpellBookItemName or GetSpellBookItemName 
 local spellBookPetEnum = Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Pet or "pet"
+
+local GetSpellCharges = GetSpellCharges or function(spellId)
+    local chargesInfo = C_Spell.GetSpellCharges(spellId)
+    if (chargesInfo) then
+        return chargesInfo.currentCharges, chargesInfo.maxCharges, chargesInfo.cooldownStartTime, chargesInfo.cooldownDuration, chargesInfo.chargeModRate
+    end
+end
 
 local _, _, _, buildInfo = GetBuildInfo()
 
@@ -553,6 +559,10 @@ local getSpellListAsHashTableFromSpellBook = function()
     --get racials from the general tab
     local generalIndex = Enum.SpellBookSkillLineIndex and Enum.SpellBookSkillLineIndex.General or CONST_SPELLBOOK_GENERAL_TABID
     local tabName, tabTexture, offset, numSpells, isGuild, offspecId = GetSpellTabInfo(generalIndex) --CONST_SPELLBOOK_GENERAL_TABID
+    if (not offset) then
+        return completeListOfSpells
+    end
+
     offset = offset + 1
     local tabEnd = offset + numSpells
     for entryOffset = offset, tabEnd - 1 do
@@ -828,21 +838,20 @@ function openRaidLib.CooldownManager.GetPlayerCooldownStatus(spellId)
     local spellData = LIB_OPEN_RAID_COOLDOWNS_INFO[spellId]
     if (spellData) then
         local buffDuration = getAuraDuration(spellId)
-        --local chargesAvailable, chargesTotal, start, duration = GetSpellCharges(spellId)
-        local chargeInfo  = C_Spell.GetSpellCharges(spellId)
-        if chargeInfo and chargeInfo.currentCharges then
-            if (chargeInfo.currentCharges == chargeInfo.maxCharges) then
-                return 0, chargeInfo.maxCharges, 0, 0, 0 --all charges are ready to use
+        local chargesAvailable, chargesTotal, start, duration = GetSpellCharges(spellId)
+        if chargesAvailable then
+            if (chargesAvailable == chargesTotal) then
+                return 0, chargesTotal, 0, 0, 0 --all charges are ready to use
             else
                 --return the time to the next charge
-                local timeLeft = chargeInfo.cooldownStartTime + chargeInfo.cooldownDuration - GetTime()
-                local startTimeOffset = chargeInfo.cooldownStartTime - GetTime()
-                return ceil(timeLeft), chargeInfo.currentCharges, startTimeOffset, chargeInfo.cooldownDuration, buffDuration
+                local timeLeft = start + duration - GetTime()
+                local startTimeOffset = start - GetTime()
+                return ceil(timeLeft), chargesAvailable, startTimeOffset, duration, buffDuration
             end
         else
 
             if (IsTWWExpansion()) then
-                local spellCooldownInfo = C_Spell.GetSpellCooldown(spellId)
+                local spellCooldownInfo = GetSpellCooldown(spellId)
                 local start = spellCooldownInfo.startTime
                 local duration = spellCooldownInfo.duration
                 if (start == 0) then --cooldown is ready
@@ -853,7 +862,7 @@ function openRaidLib.CooldownManager.GetPlayerCooldownStatus(spellId)
                     return ceil(timeLeft), 0, ceil(startTimeOffset), duration, buffDuration --time left, charges, startTime, duration, buffDuration
                 end
             else
-                local start, duration = C_Spell.GetSpellCooldown(spellId)
+                local start, duration = GetSpellCooldown(spellId)
                 if (start == 0) then --cooldown is ready
                     return 0, 1, 0, 0, 0 --time left, charges, startTime
                 else

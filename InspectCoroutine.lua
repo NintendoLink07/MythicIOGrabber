@@ -1,8 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local partyPool
-
 local detailedList = {}
 
 local groupSystem = {}
@@ -107,10 +105,6 @@ local function updateRosterInfoData()
 
 		if(miog.MPlusStatistics) then
 			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
-		end
-
-		if(partyPool) then
-			partyPool:ReleaseAll()
 		end
 
 		groupSystem.groupMember = {}

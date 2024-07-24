@@ -319,12 +319,19 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 
 end
 
+--[[
+	Recommended 1
+	NotRecommended 2
+	PVE 4
+	PVP 8
+	Timerunning 16
+	CurrentExpansion 32
+	CurrentSeason 64
+	NotCurrentSeason 128
+]]
+
 local function updateRaidCheckboxes(reset)
-	if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3]) then
-		--MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3] = miog.getDefaultFilters()
-	end
-	
-	local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
+	local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.Recommended);
 	local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
 	local sortedExpansionRaids = {}
