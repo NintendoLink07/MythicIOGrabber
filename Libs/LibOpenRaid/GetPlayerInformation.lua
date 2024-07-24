@@ -828,20 +828,21 @@ function openRaidLib.CooldownManager.GetPlayerCooldownStatus(spellId)
     local spellData = LIB_OPEN_RAID_COOLDOWNS_INFO[spellId]
     if (spellData) then
         local buffDuration = getAuraDuration(spellId)
-        local chargesAvailable, chargesTotal, start, duration = GetSpellCharges(spellId)
-        if chargesAvailable then
-            if (chargesAvailable == chargesTotal) then
-                return 0, chargesTotal, 0, 0, 0 --all charges are ready to use
+        --local chargesAvailable, chargesTotal, start, duration = GetSpellCharges(spellId)
+        local chargeInfo  = C_Spell.GetSpellCharges(spellId)
+        if chargeInfo and chargeInfo.currentCharges then
+            if (chargeInfo.currentCharges == chargeInfo.maxCharges) then
+                return 0, chargeInfo.maxCharges, 0, 0, 0 --all charges are ready to use
             else
                 --return the time to the next charge
-                local timeLeft = start + duration - GetTime()
-                local startTimeOffset = start - GetTime()
-                return ceil(timeLeft), chargesAvailable, startTimeOffset, duration, buffDuration
+                local timeLeft = chargeInfo.cooldownStartTime + chargeInfo.cooldownDuration - GetTime()
+                local startTimeOffset = chargeInfo.cooldownStartTime - GetTime()
+                return ceil(timeLeft), chargeInfo.currentCharges, startTimeOffset, chargeInfo.cooldownDuration, buffDuration
             end
         else
 
             if (IsTWWExpansion()) then
-                local spellCooldownInfo = GetSpellCooldown(spellId)
+                local spellCooldownInfo = C_Spell.GetSpellCooldown(spellId)
                 local start = spellCooldownInfo.startTime
                 local duration = spellCooldownInfo.duration
                 if (start == 0) then --cooldown is ready
@@ -852,7 +853,7 @@ function openRaidLib.CooldownManager.GetPlayerCooldownStatus(spellId)
                     return ceil(timeLeft), 0, ceil(startTimeOffset), duration, buffDuration --time left, charges, startTime, duration, buffDuration
                 end
             else
-                local start, duration = GetSpellCooldown(spellId)
+                local start, duration = C_Spell.GetSpellCooldown(spellId)
                 if (start == 0) then --cooldown is ready
                     return 0, 1, 0, 0, 0 --time left, charges, startTime
                 else

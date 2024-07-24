@@ -1511,24 +1511,25 @@ miog.GEARING_CHART = {
 		}
 	},
 
+	
 	[13] = {
 		maxJumps = 0,
-		baseItemLevel = 545,
-		maxItemLevel = 626,
+		baseItemLevel = 558,
+		maxItemLevel = 639,
 		dungeon = {
 			info = {
-				[1] = {jumps = 2, name="Normal"},
-				[2] = {jumps = 4, name="Heroic/TW"},
-				[3] = {jumps = 7, name="Mythic"},
-				[4] = {jumps = 8, name="+2"},
-				[5] = {jumps = 9, name="+3"},
-				[6] = {jumps = 9, name="+4"},
-				[7] = {jumps = 10, name="+5"},
-				[8] = {jumps = 10, name="+6"},
-				[9] = {jumps = 11, name="+7"},
-				[10] = {jumps = 11, name="+8"},
-				[11] = {jumps = 12, name="+9"},
-				[12] = {jumps = 12, name="+10"},
+				[1] = {jumps = 1, name="Normal"},
+				[2] = {jumps = 6, name="Heroic/TW"},
+				[3] = {jumps = 11, name="Mythic"},
+				[4] = {jumps = 12, name="+2"},
+				[5] = {jumps = 13, name="+3"},
+				[6] = {jumps = 13, name="+4"},
+				[7] = {jumps = 14, name="+5"},
+				[8] = {jumps = 14, name="+6"},
+				[9] = {jumps = 15, name="+7"},
+				[10] = {jumps = 15, name="+8"},
+				[11] = {jumps = 16, name="+9"},
+				[12] = {jumps = 16, name="+10"},
 			},
 			itemLevels = {
 
@@ -1537,43 +1538,40 @@ miog.GEARING_CHART = {
 			vaultLevels = {
 
 			},
-			names = {},
 		},
 		raid = {
 			info = {
-				[1] = {jumps = 3, name="LFR"},
-				[2] = {jumps = 7, name="Normal"},
-				[3] = {jumps = 11, name="Heroic"},
-				[4] = {jumps = 15, name="Mythic"},
+				[1] = {jumps = 4, name="LFR"},
+				[2] = {jumps = 8, name="Normal"},
+				[3] = {jumps = 12, name="Heroic"},
+				[4] = {jumps = 16, name="Mythic"},
 			},
 			itemLevels = {
 
 			},
-			names = {},
 		},
 		other = {
 			info = {
-				[1] = {jumps = 14, name="Wyrm5"},
-				[2] = {jumps = 18, name="Aspect5"},
+				[1] = {jumps = 18, name="Wyrm5"},
+				[2] = {jumps = 21, name="Aspect5"},
 			},
 			itemLevels = {
 
 			},
 		},
-		trackDistance = 3,
+		trackDistance = 4,
 		trackInfo = {
 			[1] = {},
 			[2] = {},
 			[3] = {},
 			[4] = {},
 			[5] = {length = 6},
-			[6] = {length = 4},
+			[6] = {length = 6},
 		},
 		itemLevelInfo = {
-			
-		}
-	}
 
+		}
+	},
 }
 
 miog.getAdjustedItemLevel = function(seasonID, jumps, start)

@@ -890,11 +890,11 @@ local function initializeSearchResultFrame(resultID)
 		miog.createInvisibleFrameBorder(persistentFrame, 2)
 
 		persistentFrame.framePool = persistentFrame.framePool or CreateFramePoolCollection()
-		persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", resetFrame):SetResetDisallowedIfNew()
+		persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", resetFrame)
 		persistentFrame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", function(_, childFrame)
 			childFrame:Hide()
 			childFrame.layoutIndex = nil
-		end):SetResetDisallowedIfNew()
+		end)
 
 		persistentFrame.framePool:ReleaseAll()
 			

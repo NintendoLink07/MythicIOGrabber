@@ -61,8 +61,6 @@ miog.createTrackString = function(seasonID, itemLevel)
     return trackString
 end
 
---local forceSeasonID = 13
-
 miog.updateProgressData = function()
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
 
@@ -122,6 +120,7 @@ miog.insertGearingData = function()
     for k, v in pairs(miog.GEARING_CHART) do
         if(k == seasonID) then
             for a in pairs(v.itemLevelInfo) do
+
                 currentChildren[a].ItemLevel:SetText(a)
                 local fullDungeonText, fullDungeonVaultText = "", ""
 

@@ -5,7 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [2.3.3] - 2024-07-23
+## [2.3.4] - 2024-07-24
+
+### Fixed
+
+- [SearchPanel] There should be no more "reset disallowed" errors.
+
+- [PartyCheck] The player should now be "inspectable" both in a group and solo.
+
+- Multiple issues with the library "Open Raid Library" have been fixed.
+
+
+## [2.3.3] - 2024-07-24
 
 ### Changed
 
@@ -1894,7 +1905,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.4..HEAD
+[2.3.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.4
 [2.3.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.3
 [2.3.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.2
 [2.3.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.1

@@ -53,18 +53,17 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 		local className = singleUnitInfo.className
 		local unitName = singleUnitInfo.name]]
 
-		local unitNameFull = singleUnitInfo.nameFull
 		singleUnitInfo.unitId = singleUnitId
 
-		miog.checkSystem.groupMember[unitNameFull] = miog.checkSystem.groupMember[unitNameFull] or {}
+		miog.checkSystem.groupMember[singleUnitInfo.nameFull] = miog.checkSystem.groupMember[singleUnitInfo.nameFull] or {}
 
 		for k, v in pairs(singleUnitInfo) do
-			miog.checkSystem.groupMember[unitNameFull][k] = v
+			miog.checkSystem.groupMember[singleUnitInfo.nameFull][k] = v
 
 		end
 
-		MIOG_SavedSpecIDs[unitNameFull] = specId ~= 0 and specId
-		MIOG_InspectedNames[unitNameFull] = MIOG_SavedSpecIDs[unitNameFull] and GetTimePreciseSec() or nil
+		MIOG_SavedSpecIDs[singleUnitInfo.nameFull] = specId ~= 0 and specId
+		MIOG_InspectedNames[singleUnitInfo.nameFull] = MIOG_SavedSpecIDs[singleUnitInfo.nameFull] and GetTimePreciseSec() or nil
 	end
 
 	miog.updateRosterInfoData()

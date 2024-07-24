@@ -210,15 +210,16 @@ local function updateRosterInfoData()
 				end
 
 				local playerName, realm = miog.createSplitName(name)
+				local fullName = playerName .. "-" .. realm
 
 				if(name) then
 					local keystoneInfo = miog.openRaidLib.GetKeystoneInfo(unitID)
 
 					miog.insertInfoIntoDropdown(name, keystoneInfo)
 
-					groupSystem.groupMember[name] = {
+					groupSystem.groupMember[fullName] = {
 						unitID = unitID,
-						name = playerName .. "-" .. realm,
+						name = fullName,
 						shortName = playerName,
 						classID = fileName and miog.CLASSFILE_TO_ID[fileName],
 						classFileName = fileName,
@@ -529,8 +530,6 @@ local function updateRosterInfoData()
 							child2:SetCollapsed(false)
 
 						end
-
-						print(child.data.name)
 
 					else
 						child:SetCollapsed(true)
