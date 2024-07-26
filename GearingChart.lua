@@ -116,7 +116,7 @@ miog.insertGearingData = function()
             for a in pairs(v.itemLevelInfo) do
 
                 currentChildren[a].ItemLevel:SetText(a)
-                local fullDungeonText, fullDungeonVaultText, fullDelvesText = "", "", ""
+                local fullDungeonText, fullDungeonVaultText, fullDelvesText, fullDelvesVaultText = "", "", "", ""
 
                 for x, y in pairs(gearingData.dungeon.itemLevels) do
                     if(y == a) then
@@ -145,10 +145,15 @@ miog.insertGearingData = function()
         
                 end
 
-                
                 for x, y in pairs(gearingData.delves.itemLevels) do
                     if(y == a) then
                         fullDelvesText = fullDelvesText .. (fullDelvesText == "" and gearingData.delves.info[x].name or "/" .. gearingData.delves.info[x].name)
+                    end
+                end
+
+                for x, y in pairs(gearingData.delves.vaultLevels) do
+                    if(y == a) then
+                        fullDelvesVaultText = fullDelvesVaultText .. (fullDelvesVaultText == "" and gearingData.delves.info[x].name or "/" .. gearingData.delves.info[x].name)
                     end
                 end
         
@@ -159,7 +164,11 @@ miog.insertGearingData = function()
 
                 end
 
-                currentChildren[a].Delves:SetText(fullDelvesText)
+                if(fullDelvesText ~= "") then
+                    currentChildren[a].Delves:SetText(fullDelvesText .. "(?)")
+                end
+                
+                currentChildren[a].DelvesVault:SetText(fullDelvesVaultText)
                 currentChildren[a].Dungeon:SetText(fullDungeonText)
                 currentChildren[a].DungeonVault:SetText(fullDungeonVaultText)
                 currentChildren[a].Track:SetText(miog.createTrackString(seasonID, tonumber(a)))
@@ -188,6 +197,7 @@ miog.insertGearingData = function()
                 currentChildren[a].ItemLevel:SetTextColor(r, g, b, 1)
                 currentChildren[a].Dungeon:SetTextColor(r, g, b, 1)
                 currentChildren[a].Delves:SetTextColor(r, g, b, 1)
+                currentChildren[a].DelvesVault:SetTextColor(r, g, b, 1)
                 currentChildren[a].Raid:SetTextColor(r, g, b, 1)
                 currentChildren[a].DungeonVault:SetTextColor(r, g, b, 1)
 
@@ -208,7 +218,8 @@ miog.loadGearingChart = function()
 
     singleGrid.ItemLevel:SetText("ILvl")
     singleGrid.Track:SetText("Track")
-    singleGrid.Delves:SetText("Delves Vault")
+    singleGrid.Delves:SetText("Delves")
+    singleGrid.DelvesVault:SetText("Delves Vault")
     singleGrid.Raid:SetText("Raid")
     singleGrid.Dungeon:SetText("Dng Loot")
     singleGrid.DungeonVault:SetText("Dng Vault")

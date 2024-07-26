@@ -1497,12 +1497,11 @@ miog.GEARING_CHART = {
 			start = "normal",
 			maxLength = 14,
 		},
-		trackDistance = 4,
 		trackInfo = {
-			[1] = {name = "Explorer"},
-			[2] = {name = "Adventurer"},
-			[3] = {name = "Veteran"},
-			[4] = {name = "Champion"},
+			[1] = {name = "Explorer", length = 8},
+			[2] = {name = "Adventurer", length = 8},
+			[3] = {name = "Veteran", length = 8},
+			[4] = {name = "Champion", length = 8},
 			[5] = {name = "Hero", length = 6},
 			[6] = {name = "Myth", length = 4},
 		},
@@ -1563,16 +1562,20 @@ miog.GEARING_CHART = {
 		},
 		delves = {
 			info = {
-				[1] = {jumps = 8, name="L1"},
-				[2] = {jumps = 8, name="L2"},
-				[3] = {jumps = 9, name="L3"},
-				[4] = {jumps = 12, name="L4"},
-				[5] = {jumps = 13, name="L5"},
-				[6] = {jumps = 14, name="L6"},
-				[7] = {jumps = 15, name="L7"},
-				[8] = {jumps = 16, name="L8"},
+				[1] = {jumps = 4, name="L1"},
+				[2] = {jumps = 4, name="L2"},
+				[3] = {jumps = 5, name="L3"},
+				[4] = {jumps = 8, name="L4"},
+				[5] = {jumps = 10, name="L5"},
+				[6] = {jumps = 11, name="L6"},
+				[7] = {jumps = 12, name="L7"},
+				[8] = {jumps = 14, name="L8"},
 			},
 			itemLevels = {
+
+			},
+			vaultJumpsOffset = 4,
+			vaultLevels = {
 
 			},
 		},
@@ -1587,12 +1590,11 @@ miog.GEARING_CHART = {
 			},
 		},
 		trackStartJumpsOffset = 4,
-		trackDistance = 4,
 		trackInfo = {
-			[1] = {name = "Explorer"},
-			[2] = {name = "Adventurer"},
-			[3] = {name = "Veteran"},
-			[4] = {name = "Champion"},
+			[1] = {name = "Explorer", length = 8},
+			[2] = {name = "Adventurer", length = 8},
+			[3] = {name = "Veteran", length = 8},
+			[4] = {name = "Champion", length = 8},
 			[5] = {name = "Hero", length = 6},
 			[6] = {name = "Myth", length = 6},
 		},
@@ -1651,18 +1653,8 @@ for k, v in pairs(miog.GEARING_CHART) do
 	for x, y in ipairs(v.trackInfo) do
 		y.data = {}
 
-		if(y.length == nil) then
-			if(x == #v.trackInfo) then
-				y.length = v.trackDistance
-
-			else
-				y.length = v.trackDistance * 2
-
-			end
-		end
-
 		for i = 1, y.length, 1 do
-			local jumps = (i - 1) + (x - 1) * v.trackDistance
+			local jumps = (i - 1) + (x - 1) * 4
 
 			y.data[i] = miog.getAdjustedItemLevel(k, jumps)
 		end
@@ -1689,6 +1681,8 @@ for k, v in pairs(miog.GEARING_CHART) do
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 1)] = true
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 2)] = true
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 3)] = true
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 4)] = true
+		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 5)] = true
 		
 	end
 
@@ -1704,6 +1698,8 @@ for k, v in pairs(miog.GEARING_CHART) do
 		for a, b in ipairs(v.delves.info) do
 			v.delves.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
 			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
+
+			v.delves.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (v.delves.vaultJumpsOffset))
 		end
 	end
 
