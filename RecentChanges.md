@@ -3,3 +3,7 @@
 ### Changed
 
 - Updated the gearing chart tab with all the TWW info that is available.
+
+### Fixed
+
+- Less lag when opening the mainframe.
