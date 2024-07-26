@@ -23,14 +23,6 @@ miog.createTrackString = function(seasonID, itemLevel)
 
 	for x, y in pairs(miog.GEARING_CHART) do
         if(x == seasonID) then
-            --[[for k, v in ipairs(y.trackInfo) do
-                for i = 1, v.length, 1 do
-                    if(v.data[i] == itemLevel) then
-                        trackString = trackString .. WrapTextInColorCode(i .. "/" .. v.length, miog.ITEM_QUALITY_COLORS[k - 1].color:GenerateHexColor()) .. " "
-                    end
-                end
-            end]]
-
             --REVERSED, SO NEW TRACKS ARE INFRONT
             for k = #y.trackInfo, 1, -1 do
                 if(y.awakenedInfo and k == #y.trackInfo) then
@@ -60,6 +52,8 @@ miog.createTrackString = function(seasonID, itemLevel)
 
     return trackString
 end
+
+local forceSeasonID = 13
 
 miog.updateProgressData = function()
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
@@ -122,7 +116,7 @@ miog.insertGearingData = function()
             for a in pairs(v.itemLevelInfo) do
 
                 currentChildren[a].ItemLevel:SetText(a)
-                local fullDungeonText, fullDungeonVaultText = "", ""
+                local fullDungeonText, fullDungeonVaultText, fullDelvesText = "", "", ""
 
                 for x, y in pairs(gearingData.dungeon.itemLevels) do
                     if(y == a) then
@@ -144,6 +138,20 @@ miog.insertGearingData = function()
         
                 end
         
+                for x, y in pairs(gearingData.raid.veryRare.itemLevels) do
+                    if(y == a) then
+                        currentChildren[a].Raid:SetText(gearingData.raid.veryRare.info[x].name)
+                    end
+        
+                end
+
+                
+                for x, y in pairs(gearingData.delves.itemLevels) do
+                    if(y == a) then
+                        fullDelvesText = fullDelvesText .. (fullDelvesText == "" and gearingData.delves.info[x].name or "/" .. gearingData.delves.info[x].name)
+                    end
+                end
+        
                 for x, y in pairs(gearingData.other.itemLevels) do
                     if(y == a) then
                         currentChildren[a].Other:SetText(gearingData.other.info[x].name)
@@ -151,6 +159,7 @@ miog.insertGearingData = function()
 
                 end
 
+                currentChildren[a].Delves:SetText(fullDelvesText)
                 currentChildren[a].Dungeon:SetText(fullDungeonText)
                 currentChildren[a].DungeonVault:SetText(fullDungeonVaultText)
                 currentChildren[a].Track:SetText(miog.createTrackString(seasonID, tonumber(a)))
@@ -178,6 +187,7 @@ miog.insertGearingData = function()
 
                 currentChildren[a].ItemLevel:SetTextColor(r, g, b, 1)
                 currentChildren[a].Dungeon:SetTextColor(r, g, b, 1)
+                currentChildren[a].Delves:SetTextColor(r, g, b, 1)
                 currentChildren[a].Raid:SetTextColor(r, g, b, 1)
                 currentChildren[a].DungeonVault:SetTextColor(r, g, b, 1)
 
@@ -196,26 +206,14 @@ miog.loadGearingChart = function()
     singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
     singleGrid.layoutIndex = 1
 
-    singleGrid.ItemLevel.layoutIndex = 1
     singleGrid.ItemLevel:SetText("ILvl")
-
-    singleGrid.Track.layoutIndex = 2
     singleGrid.Track:SetText("Track")
-
-    singleGrid.Raid.layoutIndex = 3
+    singleGrid.Delves:SetText("Delves Vault")
     singleGrid.Raid:SetText("Raid")
-
-    singleGrid.Dungeon.layoutIndex = 4
     singleGrid.Dungeon:SetText("Dng Loot")
-
-    singleGrid.DungeonVault.layoutIndex = 5
     singleGrid.DungeonVault:SetText("Dng Vault")
-
-    singleGrid.Other.layoutIndex = 6
     singleGrid.Other:SetText("Other")
-
-    singleGrid.Progress.layoutIndex = 7
-    singleGrid.Progress:SetText("Progress")
+    --singleGrid.Progress:SetText("Progress")
     
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
 
@@ -230,32 +228,18 @@ miog.loadGearingChart = function()
                 singleGrid = CreateFrame("Frame", nil, miog.Gearing.RowLayout, "MIOG_GearingChartLine")
                 singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
                 singleGrid.layoutIndex = a
-    
-                singleGrid.ItemLevel.layoutIndex = 1
-    
-                singleGrid.Track.layoutIndex = 2
-    
-                singleGrid.Raid.layoutIndex = 3
-    
-                singleGrid.Dungeon.layoutIndex = 4
-    
-                singleGrid.DungeonVault.layoutIndex = 5
-    
-                singleGrid.Other.layoutIndex = 6
-    
-                singleGrid.Progress.layoutIndex = 7
 
                 currentChildren[a] = singleGrid
             end
 
             for a, b in ipairs(v.trackInfo) do
-                local currentLegendFrame = miog.Gearing.Legend[a == 1 and "Explorer" or a == 2 and "Adventurer" or a == 3 and "Veteran" or a == 4 and "Champion" or a == 5 and "Hero" or a == 6 and "Myth" or a == 7 and "Awakened"]
+                local currentLegendFrame = miog.Gearing.Legend["Track" .. a]
 
                 if(currentLegendFrame) then
                     currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[a - 1].color:GetRGBA())
                     currentLegendFrame:SetScript("OnEnter", function(self)
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetText(self:GetParentKey())
+                        GameTooltip:SetText(b.name)
                         GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. b.baseItemLevel .. " - " .. b.maxItemLevel)
                         GameTooltip:Show()
                     end)
@@ -263,8 +247,8 @@ miog.loadGearingChart = function()
             end
 
             if(not v.awakenedInfo) then
-                miog.Gearing.Legend["Awakened"]:Hide()
-                miog.Gearing.Legend:SetWidth(miog.Gearing.Legend:GetWidth() - miog.Gearing.Legend["Awakened"]:GetWidth())
+                miog.Gearing.Legend["Track7"]:Hide()
+                miog.Gearing.Legend:SetWidth(miog.Gearing.Legend:GetWidth() - miog.Gearing.Legend["Track7"]:GetWidth())
             end
         end
     end

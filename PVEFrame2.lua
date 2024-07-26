@@ -176,7 +176,7 @@ local function createPVEFrameReplacement()
 			setup = true
 		end
 
-		miog.updateProgressData()
+		--miog.updateProgressData()
 
 		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
 		

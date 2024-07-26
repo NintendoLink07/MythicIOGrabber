@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.3.6] - 2024-07-26
+
+### Changed
+
+- Updated the gearing chart tab with all the TWW info that is available.
+
+### Fixed
+
+- Less lag when opening the mainframe.
+
+
 ## [2.3.5] - 2024-07-24
 
 ### Changed
@@ -1918,7 +1929,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.5..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.6..HEAD
+[2.3.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.6
 [2.3.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.5
 [2.3.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.4
 [2.3.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.3

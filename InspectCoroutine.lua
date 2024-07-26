@@ -170,7 +170,7 @@ local function updateRosterInfoData()
 			if(miog.MPlusStatistics) then
 				local keystoneInfo = miog.openRaidLib.GetKeystoneInfo("player")
 
-				miog.insertInfoIntoDropdown(fullPlayerName, keystoneInfo)
+				--miog.insertInfoIntoDropdown(fullPlayerName, keystoneInfo)
 			end
 
 			if(UnitIsConnected("player") and CanInspect("player")) then
@@ -208,8 +208,6 @@ local function updateRosterInfoData()
 
 				if(name) then
 					local keystoneInfo = miog.openRaidLib.GetKeystoneInfo(unitID)
-
-					miog.insertInfoIntoDropdown(name, keystoneInfo)
 
 					groupSystem.groupMember[fullName] = {
 						unitID = unitID,

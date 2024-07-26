@@ -1499,12 +1499,12 @@ miog.GEARING_CHART = {
 		},
 		trackDistance = 4,
 		trackInfo = {
-			[1] = {},
-			[2] = {},
-			[3] = {},
-			[4] = {},
-			[5] = {length = 6},
-			[6] = {length = 4},
+			[1] = {name = "Explorer"},
+			[2] = {name = "Adventurer"},
+			[3] = {name = "Veteran"},
+			[4] = {name = "Champion"},
+			[5] = {name = "Hero", length = 6},
+			[6] = {name = "Myth", length = 4},
 		},
 		itemLevelInfo = {
 
@@ -1518,18 +1518,18 @@ miog.GEARING_CHART = {
 		maxItemLevel = 639,
 		dungeon = {
 			info = {
-				[1] = {jumps = 1, name="Normal"},
-				[2] = {jumps = 6, name="Heroic/TW"},
-				[3] = {jumps = 11, name="Mythic"},
-				[4] = {jumps = 12, name="+2"},
-				[5] = {jumps = 13, name="+3"},
-				[6] = {jumps = 13, name="+4"},
-				[7] = {jumps = 14, name="+5"},
-				[8] = {jumps = 14, name="+6"},
-				[9] = {jumps = 15, name="+7"},
-				[10] = {jumps = 15, name="+8"},
-				[11] = {jumps = 16, name="+9"},
-				[12] = {jumps = 16, name="+10"},
+				[1] = {jumps = -1, name="Normal"},
+				[2] = {jumps = 7, name="Heroic/TW"},
+				[3] = {jumps = 11, vaultOffset = 3, name="Mythic"},
+				[4] = {jumps = 12, vaultOffset = 3, name="+2"},
+				[5] = {jumps = 12, name="+3"},
+				[6] = {jumps = 13, vaultOffset = 3, name="+4"},
+				[7] = {jumps = 14, vaultOffset = 3, name="+5"},
+				[8] = {jumps = 15, vaultOffset = 2, name="+6"},
+				[9] = {jumps = 16, vaultOffset = 2, name="+7"},
+				[10] = {jumps = 16, vaultOffset = 3, name="+8"},
+				[11] = {jumps = 17, vaultOffset = 2, name="+9"},
+				[12] = {jumps = 17, vaultOffset = 3, name="+10"},
 			},
 			itemLevels = {
 
@@ -1541,10 +1541,36 @@ miog.GEARING_CHART = {
 		},
 		raid = {
 			info = {
-				[1] = {jumps = 4, name="LFR"},
-				[2] = {jumps = 8, name="Normal"},
-				[3] = {jumps = 12, name="Heroic"},
-				[4] = {jumps = 16, name="Mythic"},
+				[1] = {jumps = 8, name="LFR"},
+				[2] = {jumps = 12, name="Normal"},
+				[3] = {jumps = 16, name="Heroic"},
+				[4] = {jumps = 20, name="Mythic"},
+			},
+			itemLevels = {
+
+			},
+			veryRare = {
+				info = {
+					[1] = {jumps = 13, name="(Rare) LFR"},
+					[2] = {jumps = 17, name="(Rare) Normal"},
+					[3] = {jumps = 21, name="(Rare) Heroic"},
+					[4] = {jumps = 25, name="(Rare) Mythic"},
+				},
+				itemLevels = {
+	
+				},
+			}
+		},
+		delves = {
+			info = {
+				[1] = {jumps = 8, name="L1"},
+				[2] = {jumps = 8, name="L2"},
+				[3] = {jumps = 9, name="L3"},
+				[4] = {jumps = 12, name="L4"},
+				[5] = {jumps = 13, name="L5"},
+				[6] = {jumps = 14, name="L6"},
+				[7] = {jumps = 15, name="L7"},
+				[8] = {jumps = 16, name="L8"},
 			},
 			itemLevels = {
 
@@ -1552,21 +1578,23 @@ miog.GEARING_CHART = {
 		},
 		other = {
 			info = {
-				[1] = {jumps = 18, name="Wyrm5"},
-				[2] = {jumps = 21, name="Aspect5"},
+				[1] = {jumps = 12, name="Spark5"},
+				[2] = {jumps = 19, name="Harbr5"},
+				[3] = {jumps = 22, name="Gilded5"},
 			},
 			itemLevels = {
 
 			},
 		},
+		trackStartJumpsOffset = 4,
 		trackDistance = 4,
 		trackInfo = {
-			[1] = {},
-			[2] = {},
-			[3] = {},
-			[4] = {},
-			[5] = {length = 6},
-			[6] = {length = 6},
+			[1] = {name = "Explorer"},
+			[2] = {name = "Adventurer"},
+			[3] = {name = "Veteran"},
+			[4] = {name = "Champion"},
+			[5] = {name = "Hero", length = 6},
+			[6] = {name = "Myth", length = 6},
 		},
 		itemLevelInfo = {
 
@@ -1574,12 +1602,14 @@ miog.GEARING_CHART = {
 	},
 }
 
-miog.getAdjustedItemLevel = function(seasonID, jumps, start)
+miog.getAdjustedItemLevel = function(seasonID, jumps)
     local jumpsCompleted = 1
     local newItemLevel = miog.GEARING_CHART[seasonID].baseItemLevel
+	local start = jumps < 0 and -1 or 1
+	local step = start
 
-    for i = 1, jumps, 1 do
-        newItemLevel = newItemLevel + miog.ITEM_LEVEL_JUMPS[jumpsCompleted]
+    for i = start, jumps, step do
+        newItemLevel = newItemLevel + (miog.ITEM_LEVEL_JUMPS[jumps < 0 and #miog.ITEM_LEVEL_JUMPS - (i + 1)  or jumpsCompleted] * start)
 
         jumpsCompleted = jumpsCompleted + 1
 
@@ -1633,6 +1663,7 @@ for k, v in pairs(miog.GEARING_CHART) do
 
 		for i = 1, y.length, 1 do
 			local jumps = (i - 1) + (x - 1) * v.trackDistance
+
 			y.data[i] = miog.getAdjustedItemLevel(k, jumps)
 		end
 
@@ -1647,8 +1678,9 @@ for k, v in pairs(miog.GEARING_CHART) do
 	
 	for a, b in ipairs(v.dungeon.info) do
 		v.dungeon.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
+
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-		v.dungeon.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + v.dungeon.vaultJumpsOffset)
+		v.dungeon.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.dungeon.vaultJumpsOffset))
 	end
 
 	for a, b in ipairs(v.raid.info) do
@@ -1657,11 +1689,22 @@ for k, v in pairs(miog.GEARING_CHART) do
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 1)] = true
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 2)] = true
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 3)] = true
+		
+	end
 
-		-- RARE LEVELS
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 4)] = true
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 5)] = true
+	if(v.raid.veryRare) then
+		for a, b in pairs(v.raid.veryRare.info) do
+			v.raid.veryRare.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
+			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
 			
+		end
+	end
+
+	if(v.delves) then
+		for a, b in ipairs(v.delves.info) do
+			v.delves.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
+			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
+		end
 	end
 
 	for a, b in ipairs(v.other.info) do
@@ -1673,6 +1716,7 @@ for k, v in pairs(miog.GEARING_CHART) do
 
 	if(v.awakenedInfo) then
 		table.insert(v.trackInfo, {
+			name = "Awakened",
 			length = v.awakenedInfo.maxLength,
 			data = {},
 		})
