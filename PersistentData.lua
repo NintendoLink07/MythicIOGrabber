@@ -1550,10 +1550,10 @@ miog.GEARING_CHART = {
 			},
 			veryRare = {
 				info = {
-					[1] = {jumps = 13, name="(Rare) LFR"},
-					[2] = {jumps = 17, name="(Rare) Normal"},
-					[3] = {jumps = 21, name="(Rare) Heroic"},
-					[4] = {jumps = 25, name="(Rare) Mythic"},
+					[1] = {jumps = 13, name="Rare LFR"},
+					[2] = {jumps = 17, name="Rare Normal"},
+					[3] = {jumps = 21, name="Rare Heroic"},
+					[4] = {jumps = 25, name="Rare Mythic"},
 				},
 				itemLevels = {
 	
