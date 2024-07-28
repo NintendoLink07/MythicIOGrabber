@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning].
 
 - All rated queues in the queue selector should work again without any errors.
 
+- Deleted season 3 M+ background images.
+
 ### Known issues
 
 - Blizzard introduced new Menus with 11.0 and these broke the way I handled canceling PVP queues (since Blizzard doesn't allow that).
