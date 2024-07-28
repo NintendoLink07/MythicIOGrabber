@@ -907,8 +907,6 @@ miog.loadQueueSystem = function()
 
 			specificBox:SetShown(self.value == "specific")
 			specificBox:GetParent():MarkDirty()
-
-			print(self.value)
 		end)
 	end
 
