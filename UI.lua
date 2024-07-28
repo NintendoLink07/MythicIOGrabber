@@ -115,6 +115,11 @@ miog.createFrames = function()
 		miog.MainTab.QueueInformation.LastGroup:SetBackdropColor(r, g, b, 0.9)
 
 		PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
+		PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
+
+		hooksecurefunc("ConquestFrame_Update", function()
+			print("CF")
+		end)
 
 		settingsButton:SetParent(miog.pveFrame2.TitleBar)
 		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)

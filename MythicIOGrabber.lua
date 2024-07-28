@@ -43,6 +43,7 @@ local function createBaseCategoryFrame(categoryID, index, canUseLFG, failureReas
 	return categoryFrame
 end
 
+
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
         miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()
@@ -87,8 +88,8 @@ miog.OnEvent = function(_, event, ...)
 
 			if(PVPUIFrame) then
 				PVPUIFrame:HookScript("OnShow", function()
-					ConquestFrame.selectedButton = nil
-					ConquestFrame.RatedBG.SelectedTexture:Hide()
+					--ConquestFrame.selectedButton = nil
+					--ConquestFrame.RatedBG.SelectedTexture:Hide()
 					--ConquestFrame.ratedSoloShuffleEnabled = false
 					--ConquestFrame.arenasEnabled = false
 				end)

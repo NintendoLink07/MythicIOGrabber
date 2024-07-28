@@ -720,13 +720,9 @@ local function checkQueues()
 
 						--		1		2			3			4			5			6			7				8		9				10				11				12			13			14			15		16			17
 						--local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime
-
-						------
-						---- CHECK IF SECURE BUTTON IS NEEDED
-						-----
 						
 						frame.CancelApplication:SetAttribute("type", "macro")
-						frame.CancelApplication:SetAttribute("macrotext1", "/click QueueStatusButton RightButton" .. "\r\n" .. "/click " .. MIOG_GetCurrentDropdownButton(queueIndex):GetDebugName() .." LeftButton")
+						frame.CancelApplication:SetAttribute("macrotext1", "/click QueueStatusButton RightButton")
 
 						queueIndex = queueIndex + 1
 						
@@ -904,12 +900,24 @@ miog.loadQueueSystem = function()
 	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 	eventReceiver:SetScript("OnEvent", miog.queueEvents)
 
-	if(HonorFrameTypeDropDown_OnClick) then
-		hooksecurefunc("HonorFrameTypeDropDown_OnClick", function(self)
+	if(HonorFrameTypeDropdown_OnClick) then
+		hooksecurefunc("HonorFrameTypeDropdown_OnClick", function(self)
 			randomBGFrame:SetShown(self.value == "bonus")
 			randomEpicBGFrame:SetShown(self.value == "bonus")
 
 			specificBox:SetShown(self.value == "specific")
+			specificBox:GetParent():MarkDirty()
+
+			print(self.value)
+		end)
+	end
+
+	if(HonorFrame.TypeDropdown) then
+		hooksecurefunc("HonorFrame_SetTypeInternal", function(value)
+			randomBGFrame:SetShown(value == "bonus")
+			randomEpicBGFrame:SetShown(value == "bonus")
+
+			specificBox:SetShown(value == "specific")
 			specificBox:GetParent():MarkDirty()
 		end)
 	end
@@ -993,12 +1001,6 @@ local function updateDungeons(overwrittenParentIndex)
 	for _, dungeonID in pairs(dungeonList) do
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
 		local name, typeID, subtypeID, _, _, _, _, _, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
-
-		local groupActivityID = miog.MAP_ID_TO_GROUP_ACTIVITY_ID[mapID]
-
-		if(groupActivityID and not miog.GROUP_ACTIVITY[groupActivityID]) then
-			miog.GROUP_ACTIVITY[groupActivityID] = {mapID = mapID, file = fileID}
-		end
 
 		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
@@ -1333,12 +1335,12 @@ local function updatePVP2()
 		info.index = 10
 		info.level = 2
 		info.parentIndex = 6
-		HonorFrameTypeDropDown:SetHeight(20)
-		local dropdown = queueDropDown:InsertCustomFrame(info, HonorFrameTypeDropDown)
+		HonorFrameTypeDropdown:SetHeight(20)
+		local dropdown = queueDropDown:InsertCustomFrame(info, HonorFrameTypeDropdown)
 		dropdown.topPadding = 8
 		dropdown.bottomPadding = 8
-		dropdown.leftPadding = -15
-		UIDropDownMenu_SetWidth(HonorFrameTypeDropDown, 190)
+		dropdown.leftPadding = 0
+		--UIDropDownMenu_SetWidth(HonorFrameTypeDropdown, 190)
 		dropdown:SetHeight(20)
 
 		for index = 1, 5, 1 do
@@ -1729,7 +1731,7 @@ local function updateDropDown()
 		updateDungeons(4)
 		updateRaidFinder()
 
-		if(HonorFrameTypeDropDown) then
+		if(HonorFrameTypeDropdown) then
 			updatePVP2()
 		end
 		--updatePvP()
@@ -1739,6 +1741,8 @@ local function updateDropDown()
 	
 	end
 end
+
+miog.updateDropDown = updateDropDown
 
 local function queueEvents(_, event, ...)
 	if(event == "LFG_UPDATE_RANDOM_INFO") then

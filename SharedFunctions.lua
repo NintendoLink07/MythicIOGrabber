@@ -720,7 +720,7 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 												setLowestBorder[i] = true
 											end
 
-											currentBoss.Icon:SetTexture(miog.MAP_INFO[mapId][i].icon)
+											currentBoss.Icon:SetTexture(miog.MAP_INFO[mapId].bosses[i].icon)
 											currentBoss.Icon:SetScript("OnMouseDown", function()
 												local difficulty = bossInfo.difficulty == 1 and 14 or bossInfo.difficulty == 2 and 15 or 16
 												EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
