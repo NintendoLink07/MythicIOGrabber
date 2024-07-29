@@ -699,7 +699,7 @@ miog.loadSettings = function()
 		interfaceOptionsPanel.ScrollFrame.Container:MarkDirty()
 		
 		if(MIOG_SavedSettings["favouredApplicants"] and MIOG_SavedSettings["favouredApplicants"].value == true) then
-			hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
+			--hooksecurefunc("UIDropDownMenu_Initialize", miog.addFavouredButtonsToUnitPopup)
 			local scrollBox = miog.loadFavouredPlayersPanel(interfaceOptionsPanel.ScrollFrame.Container, lastOption)
 
 			for _, v in pairs(MIOG_SavedSettings.favouredApplicants.table) do

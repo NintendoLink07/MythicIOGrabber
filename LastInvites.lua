@@ -137,6 +137,40 @@ miog.loadFavouredPlayersPanel = function(parent, lastOption)
     return scrollBox
 end
 
+Menu.ModifyMenu("MENU_UNIT_PLAYER", function(ownerRegion, rootDescription, contextData)
+    rootDescription:CreateDivider()
+    rootDescription:CreateTitle(addonName)
+
+    local name = contextData.name
+    local server = contextData.server or GetRealmName()
+    local fullName = name .. "-" .. server
+    
+    rootDescription:CreateButton(MIOG_SavedSettings.favouredApplicants.table[fullName] and "Unfavour" or "Favour", function()
+        if(not MIOG_SavedSettings.favouredApplicants.table[fullName]) then
+            
+            local profile = miog.F.IS_RAIDERIO_LOADED and RaiderIO.GetProfile(name, server, miog.F.CURRENT_REGION)
+
+            local applicantData = {
+                name = name,
+                class = UnitClassBase("target"),
+                --spec = spec,
+                --role = role,
+                primary = profile and profile.mythicKeystoneProfile and profile.mythicKeystoneProfile.currentScore and profile.mythicKeystoneProfile.currentScore > 0 and profile.mythicKeystoneProfile.currentScore or "No score",
+                fullName = fullName,
+            }
+
+            miog.addFavouredPlayer(applicantData)
+
+        else
+            MIOG_SavedSettings.favouredApplicants.table[fullName] = nil
+            miog.refreshFavouredPlayers()
+
+        end
+
+    end)
+
+end)
+
 miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 	if(UIDROPDOWNMENU_MENU_LEVEL == 1) then
 		local dropdownParent =  dropdownMenu:GetParent()

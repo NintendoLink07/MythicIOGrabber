@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.3.8] - 2024-07-29
+
+### Fixed
+
+- Favouring a player should be possible again.
+
+- The specific dungeon queue selections should work properly again.
+
+
 ## [2.3.7] - 2024-07-28
 
 ### Fixed
@@ -1949,7 +1958,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.7..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.8..HEAD
+[2.3.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.8
 [2.3.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.7
 [2.3.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.6
 [2.3.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.5

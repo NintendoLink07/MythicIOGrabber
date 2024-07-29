@@ -1494,10 +1494,10 @@ local function searchResultsReceived()
 	miog.SearchPanel.Status.FontString:Hide()
 	miog.SearchPanel.Status.LoadingSpinner:Show()
 
-	local totalResults = LFGListFrame.SearchPanel.totalResults or C_LFGList.GetFilteredSearchResults()
+	LFGListFrame.SearchPanel.totalResults, LFGListFrame.SearchPanel.results = C_LFGList.GetFilteredSearchResults()
 
 	--if(not LFGListFrame.SearchPanel.searching) then
-		if(totalResults > 0) then
+		if(LFGListFrame.SearchPanel.totalResults > 0) then
 			if(not blocked) then
 				blocked = true
 

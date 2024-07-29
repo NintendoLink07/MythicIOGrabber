@@ -121,6 +121,13 @@ miog.createFrames = function()
 		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
 
 		miog.pveFrame2.TitleBar.Expand:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
+
+		--[[local blizzardDropDown = CreateFrame("DropdownButton", nil, miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation, "WowStyle1DropdownTemplate")
+		blizzardDropDown:SetDefaultText("Select a queue")
+		blizzardDropDown:SetPoint("TOPLEFT", blizzardDropDown:GetParent().DropDown, "BOTTOMLEFT")
+		blizzardDropDown:SetPoint("TOPRIGHT", blizzardDropDown:GetParent().DropDown, "BOTTOMRIGHT")
+
+		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.BlizzardDropdown = blizzardDropDown]]
 	end
 
 	miog.Plugin:SetScript("OnEnter", function()

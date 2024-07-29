@@ -656,6 +656,9 @@ eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+--eventReceiver:RegisterEvent("Menu.OpenMenuTag")
+
+
 
 eventReceiver:SetScript("OnEvent", miog.OnEvent)
 

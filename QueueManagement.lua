@@ -10,9 +10,26 @@ queueSystem.currentlyInUse = 0
 local queueFrameIndex = 1
 local randomBGFrame, randomEpicBGFrame, skirmish, brawl1, brawl2, specificBox
 
+local baseMenu
+
+
 function MIOG_GetCurrentDropdownButton(queueIndex)
 	return _G["DropDownList1Button" .. (queueIndex * 2)]
 
+end
+
+local function saveTempButton(queueIndex)
+	QueueStatusButton:Click("RightButton")
+
+	local menu = Menu.GetManager():GetOpenMenu()
+
+	if(menu) then
+		local children = menu:GetLayoutChildren()
+
+		MIOG_TempButton = children[queueIndex * 2]
+
+		menu:Close()
+	end
 end
 
 local function resetQueueFrame(_, frame)
@@ -645,8 +662,6 @@ local function checkQueues()
 					if(frame) then
 						local mapIDTable = miog.findBattlegroundMapIDsByName(mapName) or miog.findBrawlMapIDsByName(mapName)
 
-						--local battleInfo = miog.BATTLEMASTER_INFO[v[1]]
-
 						if(mapName == "Random Epic Battleground") then
 							frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/epicbgs.png")
 
@@ -720,9 +735,23 @@ local function checkQueues()
 
 						--		1		2			3			4			5			6			7				8		9				10				11				12			13			14			15		16			17
 						--local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime
+
+						saveTempButton(queueIndex)
+						
+						--[[if(not MIOG_TempButton.GetElementDescription) then
+							MIOG_TempButton.GetElementDescription = function()
+								return {
+									CanOpenSubmenu = function() return true end,
+									ShouldPlaySoundOnSubmenuClick = function() return false end,
+									Pick = function() end
+								}
+							end
+
+						end]]
 						
 						frame.CancelApplication:SetAttribute("type", "macro")
 						frame.CancelApplication:SetAttribute("macrotext1", "/click QueueStatusButton RightButton")
+						--frame.CancelApplication:SetAttribute("macrotext1", "/click " .. MIOG_TempButton:GetDebugName() .. " LeftButton")
 
 						queueIndex = queueIndex + 1
 						
@@ -921,7 +950,7 @@ miog.loadQueueSystem = function()
 	end
 end
 
-local function updateRandomDungeons()
+local function updateRandomDungeons(blizzDesc)
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	local info = {}
 	info.entryType = "option"
@@ -956,6 +985,9 @@ local function updateRandomDungeons()
 					self.Radio:SetChecked(tempMode == "queued")
 					
 				end)
+
+				blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
+				blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, icon = info.icon}
 			end
 		end
 	end
@@ -983,7 +1015,7 @@ local function sortAndAddDungeonList(list, enableOnShow)
 	end
 end
 
-local function updateDungeons(overwrittenParentIndex)
+local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	local dungeonList = GetLFDChoiceOrder() or {}
 
 	local normalDungeonList = {}
@@ -1017,9 +1049,8 @@ local function updateDungeons(overwrittenParentIndex)
 
 				if(overwrittenParentIndex) then
 					info.func = function(self)
-						local value = not self.Radio:GetChecked()
-						
-						selectedDungeonsList[dungeonID] = value == true and dungeonID or nil
+						selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
+
 						LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
 					end
 				else
@@ -1031,6 +1062,9 @@ local function updateDungeons(overwrittenParentIndex)
 					end
 				end
 
+				blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
+				blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = dungeonID, icon = info.icon}
+
 				if(subtypeID == 1) then
 					normalDungeonList[#normalDungeonList + 1] = info
 
@@ -1039,12 +1073,10 @@ local function updateDungeons(overwrittenParentIndex)
 
 				else
 					followerDungeonList[#followerDungeonList + 1] = info
-
 				end
 			end
 		end
 	end
-
 
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
@@ -1064,7 +1096,7 @@ local function updateDungeons(overwrittenParentIndex)
 	sortAndAddDungeonList(heroicDungeonList, overwrittenParentIndex == nil)
 
 	if(overwrittenParentIndex == nil) then
-		sortAndAddDungeonList(followerDungeonList, true)
+		--sortAndAddDungeonList(followerDungeonList, true)
 	
 	else
 		queueDropDown:CreateFunctionButton(nil, overwrittenParentIndex, "Queue for multiple dungeons", function()
@@ -1076,7 +1108,7 @@ end
 
 miog.updateDungeons = updateDungeons
 
-local function updateRaidFinder()
+local function updateRaidFinder(blizzDesc)
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
@@ -1176,6 +1208,11 @@ local function updateRaidFinder()
 						tempFrame.Name:SetTextColor(0.1,0.83,0.77,1)
 					end
 
+					
+
+					blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
+					blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, index = rfIndex, icon = info.icon}
+
 
 					nextLevel = nil
 
@@ -1229,6 +1266,72 @@ local function hideAllPVPButtonAssets(button)
 	end
 
 	button.Reward:Hide()
+end
+
+local function resetPVPFrame(frame, parent, setScript)
+	frame:ClearAllPoints()
+	frame:SetParent(parent)
+	frame:SetWidth(parent:GetWidth())
+	frame:SetHeight(20)
+
+	if(setScript) then
+		hideAllPVPButtonAssets(frame)
+		--frame:HookScript("OnShow", function(self)
+		--end)
+	end
+end
+
+local function updatePVP(parent)
+	if(HonorFrame and ConquestFrame) then
+		local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
+
+		local token, loopMax, generalTooltip;
+		if (groupSize > (MAX_PARTY_MEMBERS + 1)) then
+			token = "raid";
+			loopMax = groupSize;
+		else
+			token = "party";
+			loopMax = groupSize - 1; -- player not included in party tokens, just raid tokens
+		end
+		
+		local maxLevel = GetMaxLevelForLatestExpansion();
+		for i = 1, loopMax do
+			if ( not UnitIsConnected(token..i) ) then
+				generalTooltip = PVP_NO_QUEUE_DISCONNECTED_GROUP
+				break;
+			elseif ( UnitLevel(token..i) < maxLevel ) then
+				generalTooltip = PVP_NO_QUEUE_GROUP
+				break;
+			end
+		end
+
+		local soloFrame = ConquestFrame.RatedSoloShuffle
+		resetPVPFrame(soloFrame, parent, true)
+		soloFrame.layoutIndex = 1
+
+		local twoFrame = ConquestFrame.Arena2v2
+		resetPVPFrame(twoFrame, parent, true)
+		twoFrame.layoutIndex = 2
+
+		local threeFrame = ConquestFrame.Arena3v3
+		resetPVPFrame(threeFrame, parent, true)
+		threeFrame.layoutIndex = 3
+
+		local ratedBGFrame = ConquestFrame.RatedBG
+		resetPVPFrame(ratedBGFrame, parent, true)
+		ratedBGFrame.layoutIndex = 4
+
+		local conquestJoinButton = ConquestFrame.JoinButton
+		resetPVPFrame(conquestJoinButton, parent, false)
+		conquestJoinButton.layoutIndex = 5
+
+		local honorDropdown = HonorFrameTypeDropdown
+		resetPVPFrame(honorDropdown, parent, false)
+		honorDropdown:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -100)
+		--honorDropdown.layoutIndex = 6
+
+		
+	end
 end
 
 local function updatePVP2()
@@ -1472,176 +1575,10 @@ local function updatePVP2()
 	end
 end
 
---[[local function updatePvP()
-	local queueDropDown = miog.MainTab.QueueInformation.DropDown
-
-	local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
-
-	local token, loopMax, generalTooltip;
-	if (groupSize > (MAX_PARTY_MEMBERS + 1)) then
-		token = "raid";
-		loopMax = groupSize;
-	else
-		token = "party";
-		loopMax = groupSize - 1; -- player not included in party tokens, just raid tokens
-	end
-	
-	local maxLevel = GetMaxLevelForLatestExpansion();
-	for i = 1, loopMax do
-		if ( not UnitIsConnected(token..i) ) then
-			generalTooltip = PVP_NO_QUEUE_DISCONNECTED_GROUP
-			break;
-		elseif ( UnitLevel(token..i) < maxLevel ) then
-			generalTooltip = PVP_NO_QUEUE_GROUP
-			break;
-		end
-	end
-
-	local info = {}
-	info.level = 2
-	info.parentIndex = 7
-	info.text = PVP_RATED_SOLO_SHUFFLE
-
-	local minItemLevel = C_PvP.GetRatedSoloShuffleMinItemLevel()
-	local _, _, playerPvPItemLevel = GetAverageItemLevel();
-	info.disabled = playerPvPItemLevel < minItemLevel
-	info.icon = miog.findBrawlIconByName("Solo Shuffle")
-	info.tooltipOnButton = true
-	info.tooltipWhileDisabled = true
-	info.type2 = "rated"
-	info.tooltipTitle = "Unable to queue for this activity."
-	info.tooltipText = generalTooltip or format(_G["INSTANCE_UNAVAILABLE_SELF_PVP_GEAR_TOO_LOW"], "", minItemLevel, playerPvPItemLevel);
-	info.func = nil
-	--info.func = function()
-	--	JoinRatedSoloShuffle()
-	-- end
-	
-
-	local soloFrame = queueDropDown:CreateEntryFrame(info)
-	soloFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.RatedSoloShuffle, soloFrame)
-	
-	soloFrame:SetScript("OnShow", function(self)
-		--local tempMode = GetLFGMode(1, dungeonID)
-		--self.Radio:SetChecked(tempMode == "queued")
-		
-	end)
-
-	info = {}
-	info.level = 2
-	info.parentIndex = 7
-	info.text = ARENA_BATTLES_2V2
-	info.icon = miog.findBattlegroundIconByName("Arena (2v2)")
-	-- info.checked = false
-	info.type2 = "rated"
-	info.tooltipText = generalTooltip or groupSize > 2 and string.format(PVP_ARENA_NEED_LESS, groupSize - 2) or groupSize < 2 and string.format(PVP_ARENA_NEED_MORE, 2 - groupSize)
-	info.disabled = groupSize ~= 2
-	--info.func = function()
-	--	JoinArena()
-	--end
-
-	local twoFrame = queueDropDown:CreateEntryFrame(info)
-	twoFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.Arena2v2, twoFrame)
-
-	info = {}
-	info.level = 2
-	info.parentIndex = 7
-	info.text = ARENA_BATTLES_3V3
-	info.icon = miog.findBattlegroundIconByName("Arena (3v3)")
-	-- info.checked = false
-	info.type2 = "rated"
-	info.tooltipText = generalTooltip or groupSize > 3 and string.format(PVP_ARENA_NEED_LESS, groupSize - 3) or groupSize < 3 and string.format(PVP_ARENA_NEED_MORE, 3 - groupSize)
-	info.disabled = generalTooltip or groupSize ~= 3
-	--info.func = function()
-	--	JoinArena()
-	--end
-
-	-- UIDropDownMenu_AddButton(info, level)
-	local threeFrame = queueDropDown:CreateEntryFrame(info)
-	threeFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.Arena3v3, threeFrame)
-
-	info = {}
-	info.level = 2
-	info.parentIndex = 7
-	info.text = PVP_RATED_BATTLEGROUNDS
-	info.icon = miog.findBattlegroundIconByName("Rated Battlegrounds")
-	-- info.checked = false
-	info.type2 = "rated"
-	info.tooltipText = generalTooltip or groupSize > 10 and string.format(PVP_RATEDBG_NEED_LESS, groupSize - 10) or groupSize < 10 and string.format(PVP_RATEDBG_NEED_MORE, 10 - groupSize)
-	info.disabled = generalTooltip or groupSize ~= 10
-	--info.func = function()
-	--	JoinRatedBattlefield()
-	--end
-
-	-- UIDropDownMenu_AddButton(info, level)
-	local tenFrame = queueDropDown:CreateEntryFrame(info)
-	tenFrame:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-	queueDropDown:CreateExtraButton(ConquestFrame.RatedBG, tenFrame)
-
-	for index = 1, 5, 1 do
-		local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or index == 5 and C_PvP.GetSpecialEventBrawlInfo()
-
-		if(currentBGQueue and (index == 3 or currentBGQueue.canQueue)) then
-			info = {}
-			info.text = index == 1 and RANDOM_BATTLEGROUNDS or index == 2 and RANDOM_EPIC_BATTLEGROUND or index == 3 and "Skirmish" or currentBGQueue.name
-			info.entryType = "option"
-			info.checked = false
-			--info.disabled = index == 1 or index == 2
-			info.icon = index < 3 and miog.findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (miog.findBrawlIconByID(currentBGQueue.brawlID) or miog.findBrawlIconByName(currentBGQueue.name))
-			info.level = 2
-			info.parentIndex = 5
-			info.type2 = "unrated"
-			info.func = nil
-			info.disabled = index ~= 3 and currentBGQueue.canQueue == false or index == 3 and not HonorFrame.BonusFrame.Arena1Button.canQueue
-
-			-- UIDropDownMenu_AddButton(info, level)
-			local tempFrame = queueDropDown:CreateEntryFrame(info)
-
-			if(currentBGQueue.bgID) then
-				if(currentBGQueue.bgID == 32) then
-					tempFrame:SetAttribute("macrotext1", "/click HonorFrameQueueButton")
-					queueDropDown:CreateExtraButton(HonorFrame.BonusFrame.RandomBGButton, tempFrame)
-					
-
-				elseif(currentBGQueue.bgID == 901) then
-					--tempFrame:SetAttribute("macrotext1", "/click [nocombat] HonorFrame.BonusFrame.RandomEpicBGButton" .. "\r\n" .. "/click [nocombat] HonorFrameQueueButton")
-					tempFrame:SetAttribute("macrotext1", "/click HonorFrameQueueButton")
-					queueDropDown:CreateExtraButton(HonorFrame.BonusFrame.RandomEpicBGButton, tempFrame)
-
-				end
-
-				tempFrame:SetAttribute("original", tempFrame:GetAttribute("macrotext1"))
-			else
-				if(index == 3) then
-					--JoinSkirmish(4)
-					tempFrame:SetAttribute("macrotext1", "/run JoinSkirmish(4)")
-
-
-				elseif(index == 4) then
-					tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl()")
-					--C_PvP.JoinBrawl()
-
-				elseif(index == 5) then
-					tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl(true)")
-					--C_PvP.JoinBrawl(true)
-				
-				end
-			end
-		end
-
-	end
-
-	
-
-	
-end
-
-miog.updatePvP = updatePvP]]
-
 local function updateDropDown()
 	if(not InCombatLockdown()) then
+		local blizzardDropDownDescriptions = {}
+
 		local queueDropDown = miog.MainTab.QueueInformation.DropDown
 		queueDropDown:ResetDropDown()
 
@@ -1707,32 +1644,255 @@ local function updateDropDown()
 			
 		end)
 
-		--[[info = {}
-		info.level = 1
-		info.hasArrow = true
-		info.text = "PVP (Stock UI)"
-		info.type2 = "more"
-		info.index = 8
-		info.disabled = nil
-		local moreFrame = queueDropDown:CreateEntryFrame(info)
-		moreFrame:SetScript("OnClick", function()
-			PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
-		end)]]
-
 		info = {}
 		info.entryType = "option"
 		info.level = 2
 		info.index = nil
 
-		updateRandomDungeons()
-		updateDungeons()
-		updateDungeons(4)
-		updateRaidFinder()
+		updateRandomDungeons(blizzardDropDownDescriptions)
+		updateDungeons(nil, blizzardDropDownDescriptions)
+		updateDungeons(4, blizzardDropDownDescriptions)
+		updateRaidFinder(blizzardDropDownDescriptions)
 
 		if(HonorFrameTypeDropdown) then
 			updatePVP2()
 		end
-		--updatePvP()
+		
+		--[[local blizzardDropDown = miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.BlizzardDropdown
+
+		local selectedDungeonsList = {}
+
+		blizzardDropDown:SetupMenu(function(dropdown, rootDescription)
+			local dungeonButton = rootDescription:CreateButton(LFG_TYPE_DUNGEON)
+
+			for k, v in pairs(blizzardDropDownDescriptions[1]) do
+				local entryButton = dungeonButton:CreateButton(v.name, function()
+					ClearAllLFGDungeons(1);
+					SetLFGDungeon(1, v.id);
+					JoinSingleLFG(1, v.id);
+				end)
+
+				entryButton:AddInitializer(function(button, description, menu)
+					local leftTexture = button:AttachTexture();
+					leftTexture:SetSize(18, 18);
+					leftTexture:SetPoint("LEFT");
+					leftTexture:SetTexture(v.icon);
+
+					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+					return button.fontString:GetUnboundedStringWidth() + 18 + 5
+				end)
+			end
+
+			local heroicButton = rootDescription:CreateButton(LFG_TYPE_HEROIC_DUNGEON)
+
+			for k, v in pairs(blizzardDropDownDescriptions[2]) do
+				local entryButton = heroicButton:CreateButton(v.name, function()
+					ClearAllLFGDungeons(1);
+					SetLFGDungeon(1, v.id);
+					JoinSingleLFG(1, v.id);
+				end)
+
+				entryButton:AddInitializer(function(button, description, menu)
+					local leftTexture = button:AttachTexture();
+					leftTexture:SetSize(16, 16);
+					leftTexture:SetPoint("LEFT");
+					leftTexture:SetTexture(v.icon);
+
+					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+					return button.fontString:GetUnboundedStringWidth() + 18 + 5
+				end)
+			end
+
+			local followerButton = rootDescription:CreateButton(LFG_TYPE_FOLLOWER_DUNGEON)
+
+			for k, v in pairs(blizzardDropDownDescriptions[205]) do
+				local entryButton = followerButton:CreateButton(v.name, function()
+					ClearAllLFGDungeons(1);
+					SetLFGDungeon(1, v.id);
+					JoinSingleLFG(1, v.id);
+				end)
+				entryButton:AddInitializer(function(button, description, menu)
+					local leftTexture = button:AttachTexture();
+					leftTexture:SetSize(16, 16);
+					leftTexture:SetPoint("LEFT");
+					leftTexture:SetTexture(v.icon);
+
+					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+					return button.fontString:GetUnboundedStringWidth() + 18 + 5
+				end)
+			end
+
+			local specificButton = rootDescription:CreateButton(SPECIFIC_DUNGEONS)
+
+			specificButton:CreateTitle(LFG_TYPE_DUNGEON)
+
+			for k, v in pairs(blizzardDropDownDescriptions[1]) do
+				--LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
+				local entryButton = specificButton:CreateCheckbox(v.name,
+				function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end,
+				function(dungeonID)
+					selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
+
+					LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
+				end,
+				v.id)
+
+				entryButton:AddInitializer(function(button, description, menu)
+					local leftTexture = button:AttachTexture();
+					leftTexture:SetSize(16, 16);
+					leftTexture:SetPoint("LEFT", button.leftTexture1, "RIGHT", 5, 0);
+					leftTexture:SetTexture(v.icon);
+
+					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+					return button.fontString:GetUnboundedStringWidth() + 18 + 5
+				end)
+			end
+			
+			specificButton:CreateSpacer();
+			specificButton:CreateTitle(LFG_TYPE_HEROIC_DUNGEON)
+
+			for k, v in pairs(blizzardDropDownDescriptions[2]) do
+				local entryButton = specificButton:CreateCheckbox(v.name,
+				function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end,
+				function(dungeonID)
+					selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
+
+					LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
+				end,
+				v.id)
+
+				entryButton:AddInitializer(function(button, description, menu)
+					local leftTexture = button:AttachTexture();
+					leftTexture:SetSize(16, 16);
+					leftTexture:SetPoint("LEFT", button.leftTexture1, "RIGHT", 5, 0);
+					leftTexture:SetTexture(v.icon);
+
+					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+					return button.fontString:GetUnboundedStringWidth() + 18 + 5
+				end)
+			end
+
+			local queueButton = specificButton:CreateTemplate("UIPanelButtonTemplate")
+			queueButton:AddInitializer(function(button, description, menu)
+				button:SetScript("OnClick", function(_, buttonName)
+					LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
+				end);
+				button:SetText("Queue for multiple dungeons")
+			end);
+
+			local raidFinderButton = rootDescription:CreateButton(RAID_FINDER)
+
+			local lastRaidName
+
+			for k, v in pairs(blizzardDropDownDescriptions[17]) do
+				local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(v.index)
+
+				local isNewRaid = lastRaidName ~= raidName
+				local modifiedInstanceInfo, modifiedInstanceTooltipText = nil, ""
+
+				if(mapID) then
+					modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(mapID)
+
+					if (modifiedInstanceInfo) then
+						--icon = GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit);
+						modifiedInstanceTooltipText = "|n|n" .. modifiedInstanceInfo.description;
+
+					else
+					
+					end
+
+					--info.iconXOffset = -6;
+				end
+
+				if(isNewRaid) then
+					if(lastRaidName ~= nil) then
+						raidFinderButton:CreateSpacer()
+
+					end
+
+					local raidTitle = raidFinderButton:CreateTitle(miog.MAP_INFO[mapID].shortName)
+
+					if(modifiedInstanceInfo) then
+						raidTitle:AddInitializer(function(button, description, ...)
+							local leftTexture = button:AttachTexture();
+							leftTexture:SetSize(16, 16);
+							leftTexture:SetPoint("LEFT");
+							leftTexture:SetAtlas(GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit));
+
+							button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+							button.fontString:SetTextColor(0.1,0.83,0.77,1)
+
+							return button.fontString:GetUnboundedStringWidth() + 18 + 5
+						end)
+					end
+
+				end
+
+				local entryButton = raidFinderButton:CreateButton(v.name, function()
+					ClearAllLFGDungeons(3);
+					SetLFGDungeon(3, v.id);
+					JoinSingleLFG(3, v.id);
+				end)
+	
+				local encounters;
+				local numEncounters = GetLFGDungeonNumEncounters(id);
+				for j = 1, numEncounters do
+					local bossName, _, isKilled = GetLFGDungeonEncounterInfo(id, j);
+					local colorCode = "";
+					if ( isKilled ) then
+						colorCode = RED_FONT_COLOR_CODE;
+					end
+					if encounters then
+						encounters = encounters.."|n"..colorCode..bossName..FONT_COLOR_CODE_CLOSE;
+					else
+						encounters = colorCode..bossName..FONT_COLOR_CODE_CLOSE;
+					end
+				end
+
+				entryButton:SetTooltip(function(tooltip, description)
+					--GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					tooltip:SetText(RAID_BOSSES)
+					GameTooltip_AddNormalLine(tooltip, encounters .. modifiedInstanceTooltipText, 1, 1, 1, true)
+					GameTooltip:Show()
+				end)
+
+				entryButton:AddInitializer(function(button, description, menu)
+					local leftTexture = button:AttachTexture();
+					leftTexture:SetSize(16, 16);
+					leftTexture:SetPoint("LEFT");
+					leftTexture:SetTexture(v.icon);
+
+					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+					return button.fontString:GetUnboundedStringWidth() + 18 + 5
+				end)
+
+				lastRaidName = raidName
+			end
+
+			local pvpButton = rootDescription:CreateButton(PLAYER_V_PLAYER)
+
+			local listFrame = pvpButton:CreateTemplate("VerticalLayoutFrame")
+
+			listFrame:AddInitializer(function(frame, description, menu)
+				frame:SetSize(150, 150)
+				local newFrame = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+				newFrame.layoutIndex = 2
+				newFrame:SetBackdrop(BACKDROP_TEXT_PANEL_0_16)
+				updatePVP(frame)
+				frame:MarkDirty()
+			end)
+
+			
+			rootDescription:CreateButton(PET_BATTLE_PVP_QUEUE, function()
+				C_PetBattles.StartPVPMatchmaking()
+			end)
+		end)]]
 	
 	else
 		miog.F.UPDATE_AFTER_COMBAT = true
@@ -1744,7 +1904,6 @@ miog.updateDropDown = updateDropDown
 
 local function queueEvents(_, event, ...)
 	if(event == "LFG_UPDATE_RANDOM_INFO") then
-		--miog.updateRandomDungeons()
 		updateDropDown()
 
 	elseif(event == "LFG_UPDATE") then
