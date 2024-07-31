@@ -137,7 +137,7 @@ miog.loadFavouredPlayersPanel = function(parent, lastOption)
     return scrollBox
 end
 
-Menu.ModifyMenu("MENU_UNIT_PLAYER", function(ownerRegion, rootDescription, contextData)
+local function addFavouredButtonsToPlayer(rootDescription, contextData)
     rootDescription:CreateDivider()
     rootDescription:CreateTitle(addonName)
 
@@ -168,8 +168,10 @@ Menu.ModifyMenu("MENU_UNIT_PLAYER", function(ownerRegion, rootDescription, conte
         end
 
     end)
+end
 
-end)
+Menu.ModifyMenu("MENU_UNIT_PLAYER", function(ownerRegion, rootDescription, contextData) addFavouredButtonsToPlayer(rootDescription, contextData) end)
+Menu.ModifyMenu("MENU_UNIT_ENEMY_PLAYER", function(ownerRegion, rootDescription, contextData) addFavouredButtonsToPlayer(rootDescription, contextData) end)
 
 miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 	if(UIDROPDOWNMENU_MENU_LEVEL == 1) then

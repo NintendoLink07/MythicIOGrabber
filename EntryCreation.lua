@@ -78,7 +78,7 @@ local function createPlaystyleEntry(playstyle, activityInfo, playstyleDropDown)
         text = C_LFGList.GetPlaystyleString(playstyle, activityInfo),
         value = playstyle,
         checked = false,
-        func = function() LFGListEntryCreation_OnPlayStyleSelected(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.PlayStyleDropdown, playstyle) end
+        func = function() LFGListEntryCreation_OnPlayStyleSelectedInternal(LFGListFrame.EntryCreation, playstyle) end
     }
     playstyleDropDown:CreateEntryFrame(info)
 end

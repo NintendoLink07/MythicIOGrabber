@@ -1494,7 +1494,10 @@ local function searchResultsReceived()
 	miog.SearchPanel.Status.FontString:Hide()
 	miog.SearchPanel.Status.LoadingSpinner:Show()
 
-	LFGListFrame.SearchPanel.totalResults, LFGListFrame.SearchPanel.results = C_LFGList.GetFilteredSearchResults()
+	local numOfResults, table = C_LFGList.GetFilteredSearchResults()
+
+	LFGListFrame.SearchPanel.totalResults = numOfResults or 0
+	LFGListFrame.SearchPanel.results = table or {}
 
 	--if(not LFGListFrame.SearchPanel.searching) then
 		if(LFGListFrame.SearchPanel.totalResults > 0) then

@@ -114,65 +114,6 @@ miog.insertGearingData = function()
     for k, v in pairs(miog.GEARING_CHART) do
         if(k == seasonID) then
             for a in pairs(v.itemLevelInfo) do
-
-                currentChildren[a].ItemLevel:SetText(a)
-                local fullDungeonText, fullDungeonVaultText, fullDelvesText, fullDelvesVaultText = "", "", "", ""
-
-                for x, y in pairs(gearingData.dungeon.itemLevels) do
-                    if(y == a) then
-                        fullDungeonText = fullDungeonText .. (fullDungeonText == "" and gearingData.dungeon.info[x].name or "/" .. gearingData.dungeon.info[x].name)
-                    end
-                end
-
-                for x, y in pairs(gearingData.dungeon.vaultLevels) do
-                    if(y == a) then
-                        fullDungeonVaultText = fullDungeonVaultText .. (fullDungeonVaultText == "" and gearingData.dungeon.info[x].name or "/" .. gearingData.dungeon.info[x].name)
-                    end
-        
-                end
-        
-                for x, y in pairs(gearingData.raid.itemLevels) do
-                    if(y == a) then
-                        currentChildren[a].Raid:SetText(gearingData.raid.info[x].name)
-                    end
-        
-                end
-        
-                for x, y in pairs(gearingData.raid.veryRare.itemLevels) do
-                    if(y == a) then
-                        currentChildren[a].Raid:SetText(gearingData.raid.veryRare.info[x].name)
-                    end
-        
-                end
-
-                for x, y in pairs(gearingData.delves.itemLevels) do
-                    if(y == a) then
-                        fullDelvesText = fullDelvesText .. (fullDelvesText == "" and gearingData.delves.info[x].name or "/" .. gearingData.delves.info[x].name)
-                    end
-                end
-
-                for x, y in pairs(gearingData.delves.vaultLevels) do
-                    if(y == a) then
-                        fullDelvesVaultText = fullDelvesVaultText .. (fullDelvesVaultText == "" and gearingData.delves.info[x].name or "/" .. gearingData.delves.info[x].name)
-                    end
-                end
-        
-                for x, y in pairs(gearingData.other.itemLevels) do
-                    if(y == a) then
-                        currentChildren[a].Other:SetText(gearingData.other.info[x].name)
-                    end
-
-                end
-
-                if(fullDelvesText ~= "") then
-                    currentChildren[a].Delves:SetText(fullDelvesText .. "(?)")
-                end
-                
-                currentChildren[a].DelvesVault:SetText(fullDelvesVaultText)
-                currentChildren[a].Dungeon:SetText(fullDungeonText)
-                currentChildren[a].DungeonVault:SetText(fullDungeonVaultText)
-                currentChildren[a].Track:SetText(miog.createTrackString(seasonID, tonumber(a)))
-
                 r, g, b = nil, nil, nil
 
                 for x, y in ipairs(v.trackInfo) do
@@ -194,14 +135,74 @@ miog.insertGearingData = function()
         
                 end
 
+                currentChildren[a].ItemLevel:SetText(a)
+                local fullDungeonText, fullDungeonVaultText, fullDelvesText, fullDelvesVaultText = "", "", "", ""
+
+                for x, y in pairs(gearingData.dungeon.itemLevels) do
+                    if(y == a) then
+                        fullDungeonText = fullDungeonText .. (fullDungeonText == "" and gearingData.dungeon.info[x].name or "/" .. gearingData.dungeon.info[x].name)
+                    end
+                end
+
+                for x, y in pairs(gearingData.dungeon.vaultLevels) do
+                    if(y == a) then
+                        fullDungeonVaultText = fullDungeonVaultText .. (fullDungeonVaultText == "" and gearingData.dungeon.info[x].name or "/" .. gearingData.dungeon.info[x].name)
+                    end
+        
+                end
+        
+                for x, y in pairs(gearingData.raid.itemLevels) do
+                    if(y == a) then
+                        currentChildren[a].Raid:SetText(gearingData.raid.info[x].name)
+                        currentChildren[a].Raid:SetTextColor(r, g, b, 1)
+                    end
+        
+                end
+        
+                for x, y in pairs(gearingData.raid.veryRare.itemLevels) do
+                    if(y == a) then
+                        currentChildren[a].Raid:SetText(gearingData.raid.veryRare.info[x].name)
+                        local r2, g2, b2 =  miog.ITEM_QUALITY_COLORS[x + 1].color:GetRGB()
+                        currentChildren[a].Raid:SetTextColor(r2, g2, b2, 1)
+                    end
+        
+                end
+
+                for x, y in pairs(gearingData.delves.itemLevels) do
+                    if(y == a) then
+                        fullDelvesText = fullDelvesText .. (fullDelvesText == "" and gearingData.delves.info[x].name or "/" .. gearingData.delves.info[x].name)
+                    end
+                end
+
+                for x, y in pairs(gearingData.delves.vaultLevels) do
+                    if(y == a) then
+                        fullDelvesVaultText = fullDelvesVaultText .. (fullDelvesVaultText == "" and gearingData.delves.info[x].name or "/" .. gearingData.delves.info[x].name)
+                    end
+                end
+        
+                for x, y in pairs(gearingData.other.itemLevels) do
+                    if(y == a) then
+                        currentChildren[a].Other:SetText(gearingData.other.info[x].name)
+                        currentChildren[a].Other:SetTextColor(r,g,b,1)
+                    end
+
+                end
+
+                if(fullDelvesText ~= "") then
+                    currentChildren[a].Delves:SetText(fullDelvesText .. "(?)")
+                end
+                
+                currentChildren[a].DelvesVault:SetText(fullDelvesVaultText)
+                currentChildren[a].Dungeon:SetText(fullDungeonText)
+                currentChildren[a].DungeonVault:SetText(fullDungeonVaultText)
+                currentChildren[a].Track:SetText(miog.createTrackString(seasonID, tonumber(a)))
+
+
                 currentChildren[a].ItemLevel:SetTextColor(r, g, b, 1)
                 currentChildren[a].Dungeon:SetTextColor(r, g, b, 1)
                 currentChildren[a].Delves:SetTextColor(r, g, b, 1)
                 currentChildren[a].DelvesVault:SetTextColor(r, g, b, 1)
-                currentChildren[a].Raid:SetTextColor(r, g, b, 1)
                 currentChildren[a].DungeonVault:SetTextColor(r, g, b, 1)
-
-                currentChildren[a].Other:SetTextColor(r,g,b,1)
             end
 
         end
