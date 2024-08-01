@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.3.9] - 2024-08-01
+
+### Fixed
+
+- Players of the opposing faction can now be favoured again.
+
+- The rare items in the gearing chart now have the correct color indicating their respective track they're on.
+
+
 ## [2.3.8] - 2024-07-29
 
 ### Fixed
@@ -1958,7 +1967,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.8..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.9..HEAD
+[2.3.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.9
 [2.3.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.8
 [2.3.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.7
 [2.3.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.6

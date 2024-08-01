@@ -161,6 +161,20 @@
                 </ScrollChild>
             </ScrollFrame>
 
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SettingsBar" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
+
             <Frame parentKey="ModelScene" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.SettingsBar" relativePoint="BOTTOMLEFT"/>

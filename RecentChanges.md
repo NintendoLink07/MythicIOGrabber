@@ -1,7 +1,7 @@
-## [2.3.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.8) - 2024-07-29
+## [2.3.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.9) - 2024-08-01
 
 ### Fixed
 
-- Favouring a player should be possible again.
+- Players of the opposing faction can now be favoured again.
 
-- The specific dungeon queue selections should work properly again.
+- The rare items in the gearing chart now have the correct color indicating their respective track they're on.

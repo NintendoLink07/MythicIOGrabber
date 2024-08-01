@@ -9,7 +9,6 @@ local isRaid
 local changingKeylevel = false
 local currentModels = {}
 local lootWaitlist = {}
-local currentOffset = 0
 
 local EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.DungeonNormal,
@@ -54,7 +53,6 @@ local difficultyIDs = {
 local function resetModelFrame(_, frame)
     frame:Hide()
     frame.layoutIndex = nil
-    --SetPortraitTextureFromCreatureDisplayID(button.creature, displayInfo);
     frame.name = nil
     frame.id = nil
     frame.description = nil
@@ -1495,7 +1493,6 @@ miog.loadAdventureJournal = function()
         keyInfo.text = "+" .. i
         keyInfo.value = i
         keyInfo.func = function()
-            currentOffset = miog.AdventureJournal.AbilitiesFrame:GetVerticalScroll()
             changingKeylevel = true
             C_EncounterJournal.SetPreviewMythicPlusLevel(i)
             miog.selectBoss(currentEncounterID)
