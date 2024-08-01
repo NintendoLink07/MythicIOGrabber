@@ -4,4 +4,4 @@
 
 - Players of the opposing faction can now be favoured again.
 
-- The rare items in the gearing chart now have the correct color indicating their respective track they're on.
+- The rare items in the gearing chart now have the correct color indicating the respective track they're on.

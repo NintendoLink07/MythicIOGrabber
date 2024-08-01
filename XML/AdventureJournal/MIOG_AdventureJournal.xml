@@ -28,7 +28,8 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        self:GetParent().LootFrame:Hide()
+                        --self:GetParent().LootFrame:Hide()
+                        self:GetParent().ScrollBox:Hide()
                         self:GetParent().ModelScene:Hide()
                         self:GetParent().AbilitiesFrame:Show()
                     </OnClick>
@@ -44,7 +45,8 @@
                     <OnClick>
                         self:GetParent().AbilitiesFrame:Hide()
                         self:GetParent().ModelScene:Hide()
-                        self:GetParent().LootFrame:Show()
+                        --self:GetParent().LootFrame:Show()
+                        self:GetParent().ScrollBox:Show()
                     </OnClick>
                 </Scripts>
             </Button>
@@ -57,7 +59,8 @@
                 <Scripts>
                     <OnClick>
                         self:GetParent().AbilitiesFrame:Hide()
-                        self:GetParent().LootFrame:Hide()
+                        --self:GetParent().LootFrame:Hide()
+                        self:GetParent().ScrollBox:Hide()
                         self:GetParent().ModelScene:Show()
                     </OnClick>
                 </Scripts>

@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning].
 
 - Players of the opposing faction can now be favoured again.
 
-- The rare items in the gearing chart now have the correct color indicating their respective track they're on.
+- The rare items in the gearing chart now have the correct color indicating the respective track they're on.
 
 
 ## [2.3.8] - 2024-07-29

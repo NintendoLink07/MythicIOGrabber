@@ -67,35 +67,32 @@ local function resetSlotLine(_, frame)
     frame.Name:SetText()
 end
 
-local function resetLootItemFrames(_, frame)
-    frame:Hide()
-    frame.layoutIndex = nil
-    frame.itemLink = nil
-    frame.BasicInformation.Name:SetText("")
-    frame.BasicInformation.Icon:SetTexture(nil)
-    frame.BasicInformation.ExpandFrame:Show()
-    frame.abilityTitle = nil
+local function resetLootItemFrames(frame, data)
+    --frame:Hide()
+    --frame.layoutIndex = nil
+    if(data.template == "MIOG_AdventureJournalLootItemTemplate") then
+        frame.itemLink = nil
+        frame.BasicInformation.Name:SetText("")
+        frame.BasicInformation.Icon:SetTexture(nil)
 
-    frame:SetScript("OnEnter", nil)
+        frame:SetScript("OnEnter", nil)
 
-    frame.fixedWidth = miog.AdventureJournal.LootFrame:GetWidth()
+        frame.BasicInformation.Item1:SetTexture(nil)
+        frame.BasicInformation.Item1:SetScript("OnEnter", nil)
+        frame.BasicInformation.Item1.itemLink = nil
 
-    frame.BasicInformation.Item1:SetTexture(nil)
-    frame.BasicInformation.Item1:SetScript("OnEnter", nil)
-    frame.BasicInformation.Item1.itemLink = nil
+        frame.BasicInformation.Item2:SetTexture(nil)
+        frame.BasicInformation.Item2:SetScript("OnEnter", nil)
+        frame.BasicInformation.Item2.itemLink = nil
 
-    frame.BasicInformation.Item2:SetTexture(nil)
-    frame.BasicInformation.Item2:SetScript("OnEnter", nil)
-    frame.BasicInformation.Item2.itemLink = nil
+        frame.BasicInformation.Item3:SetTexture(nil)
+        frame.BasicInformation.Item3:SetScript("OnEnter", nil)
+        frame.BasicInformation.Item3.itemLink = nil
 
-    frame.BasicInformation.Item3:SetTexture(nil)
-    frame.BasicInformation.Item3:SetScript("OnEnter", nil)
-    frame.BasicInformation.Item3.itemLink = nil
-
-    frame.BasicInformation.Item4:SetTexture(nil)
-    frame.BasicInformation.Item4:SetScript("OnEnter", nil)
-    frame.BasicInformation.Item4.itemLink = nil
-
+        frame.BasicInformation.Item4:SetTexture(nil)
+        frame.BasicInformation.Item4:SetScript("OnEnter", nil)
+        frame.BasicInformation.Item4.itemLink = nil
+    end
 end
 
 local frameWidth
@@ -962,59 +959,41 @@ miog.selectInstance = function(journalInstanceID)
 end
 
 local function retrieveItemInfoFromCurrentEncounter(fromEvent)
-    lootPool:ReleaseAll()
-    slotLinePool:ReleaseAll()
+    --lootPool:ReleaseAll()
+    --slotLinePool:ReleaseAll()
 
     if(currentDifficultyIDs and currentDifficultyIDs[1]) then
+        local dataProvider = CreateDataProvider();
         local slotLines = {}
 
         for _, v in pairs(lootData) do
             if(not slotLines[v.index]) then
-                local line = slotLinePool:Acquire()
+
+                --[[local line = slotLinePool:Acquire()
                 line:SetWidth(frameWidth)
                 line.layoutIndex = v.index * 10
                 line.Name:SetText(v.slot)
-                line:Show()
+                line:Show()]]
 
                 slotLines[v.index] = true
+
+                dataProvider:Insert({template = "MIOG_AdventureJournalLootSlotLineTemplate", name = v.slot});
             end
 
-            local frame = lootPool:Acquire()
+            dataProvider:Insert({template = "MIOG_AdventureJournalLootItemTemplate", name = v.name, icon = v.icon});
+
+           --[[ local frame = lootPool:Acquire()
             frame.BasicInformation.Name:SetText(v.name)
             frame.BasicInformation.Icon:SetTexture(v.icon)
             frame.layoutIndex = v.index * 10 + 1
+            ]]
 
-            local counter = 0
+            --frame:Show()
 
-            for _, y in ipairs(currentDifficultyIDs) do
-                local currentItem = counter == 0 and frame or frame.BasicInformation["Item" .. (counter)]
-
-                if(v.links[y]) then
-                    currentItem:SetScript("OnEnter", function(self)
-                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetHyperlink(v.links[y])
-                    end)
-
-                    currentItem.itemLink = v.links[y]
-
-                    if(currentItem ~= frame) then
-                        currentItem:SetTexture(v.icon)
-                        currentItem:Show()
-
-                    end
-
-                    counter = counter + 1
-                elseif(currentItem) then
-                    currentItem:Hide()
-
-                end
-                
-            end
-
-            frame:Show()
+            miog.AdventureJournal.ScrollBox:SetDataProvider(dataProvider);
         end
 
-        miog.AdventureJournal.LootFrame.Container:MarkDirty()
+        --miog.AdventureJournal.LootFrame.Container:MarkDirty()
     end
 end
 
@@ -1393,8 +1372,8 @@ miog.loadAdventureJournal = function()
     difficultyPool = CreateFramePool("Frame", nil, "MIOG_AdventureJournalAbilityDifficultyTemplate", resetDifficultyFrames)
     switchPool = CreateFramePool("Button", nil, "MIOG_AdventureJournalAbilitySwitchTemplate", resetSwitchFrames)
 
-    lootPool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootItemTemplate", resetLootItemFrames)
-    slotLinePool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootSlotLineTemplate", resetSlotLine)
+    --lootPool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootItemTemplate", resetLootItemFrames)
+    --slotLinePool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootSlotLineTemplate", resetSlotLine)
     modelPool = CreateFramePool("Button", miog.AdventureJournal.ModelScene.List.Container, "MIOG_AdventureJournalCreatureButtonTemplate", resetModelFrame)
 
 	local instanceDropdown = miog.AdventureJournal.InstanceDropdown
@@ -1516,6 +1495,78 @@ miog.loadAdventureJournal = function()
     local filter = C_EncounterJournal.GetSlotFilter()
 
     miog.AdventureJournal.SettingsBar.SlotDropdown:SelectFirstFrameWithValue(filter)
+
+    local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
+
+    local function initializeLootFrames(frame, elementData)
+        --local elementData = node:GetData()
+
+        if(elementData.template == "MIOG_AdventureJournalLootItemTemplate") then
+            frame.BasicInformation.Name:SetText(elementData.name)
+            frame.BasicInformation.Icon:SetTexture(elementData.icon)
+
+            local currentLootData = lootData[elementData.name]
+            local counter = 0
+
+            for _, y in ipairs(currentDifficultyIDs) do
+                local currentItem = counter == 0 and frame or frame.BasicInformation["Item" .. (counter)]
+
+                if(currentLootData.links[y]) then
+                    currentItem:SetScript("OnEnter", function(self)
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                        GameTooltip:SetHyperlink(currentLootData.links[y])
+                    end)
+
+                    currentItem.itemLink = currentLootData.links[y]
+
+                    if(currentItem ~= frame) then
+                        currentItem:SetTexture(currentLootData.icon)
+                        --currentItem:Show()
+
+                    end
+
+                    counter = counter + 1
+                elseif(currentItem) then
+                    if(currentItem ~= frame) then
+                        currentItem:SetTexture(nil)
+                        --currentItem:Show()
+
+                    end
+                    
+                    currentItem:SetScript("OnEnter", nil)
+                    currentItem.itemLink = nil
+                    --currentItem:Hide()
+
+                end
+                
+            end
+
+            --[[for _, v in pairs(lootData) do
+
+                
+            end]]
+
+        else
+            frame.Name:SetText(elementData.name)
+
+
+        end
+    end
+		
+    local function CustomFactory(factory, data)
+        --local data = node:GetData()
+        local template = data.template
+        factory(template, initializeLootFrames)
+    end
+
+    view:SetElementFactory(CustomFactory)
+    view:SetElementResetter(resetLootItemFrames)
+    
+    view:SetPadding(1, 1, 1, 1, 4);
+    
+    ScrollUtil.InitScrollBoxListWithScrollBar(miog.AdventureJournal.ScrollBox, miog.AdventureJournal.ScrollBar, view);
+
+    miog.AdventureJournal.ScrollBox:SetDataProvider(CreateDataProvider())
 end
 
 hooksecurefunc("SetItemRef", function(link)

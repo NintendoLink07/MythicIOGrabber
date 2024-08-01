@@ -2,9 +2,7 @@
 ..\..\FrameXML\UI.xsd">
 
     <Frame name="MIOG_AdventureJournalLootItemTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
-        <KeyValues>
-			<KeyValue key="minimumHeight" value="20" type="number"/>
-		</KeyValues>
+        <Size y="20" />
 
         <Frames>
             <Frame parentKey="BasicInformation">
@@ -14,7 +12,7 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                 </Anchors>
 
-                <Frames>
+                <!--<Frames>
                     <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
                         <Size x="20" y="20" />
                         <Anchors>
@@ -36,7 +34,7 @@
                             </OnClick>
                         </Scripts>
                     </Button>
-                </Frames>
+                </Frames>-->
 
                 <Layers>
                     <Layer level="ARTWORK">
@@ -117,7 +115,7 @@
                         <Texture parentKey="Icon">
                             <Size x="16" y="16" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
                             </Anchors>
                         </Texture>
                     </Layer>
@@ -160,7 +158,7 @@
             </OnMouseDown>
         </Scripts>
 
-        <Frames>
+        <!--<Frames>
             <Frame parentKey="DetailedInformation" inherits="VerticalLayoutFrame" hidden="true">
                 <KeyValues>
                     <KeyValue key="topPadding" value="5" type="number"/>
@@ -219,6 +217,6 @@
                     </Layer>
                 </Layers>
             </Frame>
-        </Frames>
+        </Frames>-->
     </Frame>
 </Ui>
