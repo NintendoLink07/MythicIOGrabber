@@ -6,8 +6,10 @@
 
 ### Fixed
 
-- Added a lot of TWW map data like boss icons, used in the raid progress info, the journal and the creation of a new group.
+- [Entry creation] The current Dragonflight raids should now be selectable again.
 
-- [Group Creator] The current Dragonflight raids should now be selectable again.
+- [Search Panel] There shouldn't be any more errors when searching for legacy raids and then trying to create a group of any kind.
+
+- Added a lot of TWW map data like boss icons, used in the raid progress info, the journal and the creation of a new group.
 
 - Boss icons in the raid progress info of the raider io panel should be correct icons again and not their encounter journal counterparts.
