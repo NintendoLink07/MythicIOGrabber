@@ -505,7 +505,19 @@ miog.MAP_INFO = {
 	[2444] = {
 		shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png", fileName = "dragonislescontinent",
 	},
-	[2549] = {shortName = "ATDH", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png", fileName = "amirdrassil",
+	[2549] = {
+		shortName = "ATDH",
+		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png",
+		fileName = "amirdrassil",
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
 	},
 	[2569] = { -- interface/icons/inv_achievement_raiddragon
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png"},
@@ -517,10 +529,51 @@ miog.MAP_INFO = {
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
-		shortName = "ATSC", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png", fileName = "aberrus",
+		shortName = "ATSC",
+		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png",
+		fileName = "aberrus",
 	},
-	[2522] = {shortName = "VOTI", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png", fileName = "vaultoftheincarnates",
+	[2522] = {
+		shortName = "VOTI",
+		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png",
+		fileName = "vaultoftheincarnates",
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
 	},
+	
+	[2648] = {shortName = "ROOK", icon = "interface/lfgframe/lfgicon-therookery", fileName = "therookery"},
+	[2649] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-prioryofthesacredflames", fileName = "prioryofthesacredflames"},
+	[2651] = {shortName = "DFC", icon = "interface/lfgframe/lfgicon-darkflamecleft", fileName = "darkflamecleft"},
+	[2652] = {shortName = "SV", icon = "interface/lfgframe/lfgicon-thestonevault", fileName = "thestonevault"},
+	[2660] = {shortName = "AK", icon = "interface/lfgframe/lfgicon-arakaracityofechoes", fileName = "arakaracityofechoes"},
+	[2661] = {shortName = "CBM", icon = "interface/lfgframe/lfgicon-cinderbrewmeadery", fileName = "cinderbrewmeadery"},
+	[2662] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-thedawnbreaker", fileName = "thedawnbreaker"},
+	[2669] = {shortName = "COT", icon = "interface/lfgframe/lfgicon-cityofthreads", fileName = "cityofthreads"},
+
+	-- THE WAR WITHIN
+
+	[2657] = {
+		shortName = "NP",
+		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/raid.png",
+		fileName = "nerubarpalance",
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ulgrax.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/bloodboundhorror.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sikran.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashanan.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ovinax.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kyveza.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/silkencourt.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/queenansurek.png"},
+	},
+
+	[2774] = {shortName = "KA", fileName = "khazalgar",},
+		
 
 	[1136] = {shortName = "SOO", icon = "interface/lfgframe/lfgicon-orgrimmargates", fileName = "siegeoforgrimmar"},
 	[36] = {shortName = "DM", icon = "interface/lfgframe/lfgicon-deadmines.blp", fileName = "deadmines"},
@@ -991,12 +1044,13 @@ local function loadRawData()
 	local faction = UnitFactionGroup("player")
 
 	for k, v in pairs(miog.RAW["Map"]) do
+
 		if(miog.MAP_INFO[v[1]]) then
 			local mapInfo = miog.MAP_INFO[v[1]]
 			mapInfo.name = v[3]
-			mapInfo.instanceType = v[5]
-			mapInfo.expansionLevel = v[6]
-			mapInfo.loadingScreenID = v[8]
+			mapInfo.instanceType = v[10]
+			mapInfo.expansionLevel = v[12]
+			mapInfo.loadingScreenID = v[14]
 			mapInfo.bosses = {}
 			mapInfo.exactName = v[2]
 
@@ -1009,14 +1063,15 @@ local function loadRawData()
 			if(mapInfo.fileName) then
 				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. mapInfo.fileName .. ".png"
 				mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. mapInfo.fileName .. ".png"
-			
+				mapInfo.icon = mapInfo.icon or ("interface/lfgframe/lfgicon-" .. mapInfo.fileName .. ".png")
+
 			end
 		else
 			miog.MAP_INFO[v[1]] = {
 				name = v[3],
-				instanceType = v[5],
-				expansionLevel = v[6],
-				loadingScreenID = v[8],
+				instanceType = v[10],
+				expansionLevel = v[12],
+				loadingScreenID = v[14],
 				bosses = {},
 				exactName = v[2],
 			}
@@ -1054,14 +1109,16 @@ local function loadRawData()
 				if(mapInfo) then
 					if(miog.JOURNAL_CREATURE_INFO[journalEncounterID]) then
 						if(dungeonEncounterInfo.faction == nil or dungeonEncounterInfo.faction == 1 and faction == "Alliance" or dungeonEncounterInfo.faction == 0 and faction == "Horde") then
-							mapInfo.bosses[#mapInfo.bosses+1] = {
+							local bossIndex = #mapInfo.bosses+1
+
+							mapInfo.bosses[bossIndex] = {
 								name = dungeonEncounterInfo.name,
 								encounterID = v[2],
 								journalInstanceID = journalInstanceID,
 								instanceID = instanceID,
 								orderIndex = dungeonEncounterInfo.orderIndex,
 								creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
-								icon = miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
+								icon = mapInfo[bossIndex] and mapInfo[bossIndex].icon or miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
 								achievements = {},
 			
 							}
@@ -1088,11 +1145,13 @@ local function loadRawData()
 
 	for x = 1, EJ_GetNumTiers() - 1, 1 do
 			local name, link = EJ_GetTierInfo(x)
+			local expansionInfo = GetExpansionDisplayInfo(x-1)
 	
 			local expInfo = {}
 			expInfo.entryType = "arrow"
 			expInfo.index = x + 10000
 			expInfo.text = name
+			expInfo.icon = expansionInfo and expansionInfo.logo
 	
 			expansionTable[#expansionTable+1] = expInfo
 			
@@ -1124,12 +1183,12 @@ local function loadRawData()
 						}
 
 						local info = {}
-						--info.icon = miog.ACTIVITY_INFO[activityID].icon
 					
 						info.index = i + (isRaid and 1 or 300)
 						info.entryType = "option"
 						info.text = name
 						info.parentIndex = x + 10000
+						info.icon = miog.MAP_INFO[mapID].icon
 						info.value = journalInstanceID
 						info.func = function()
 							EJ_SelectTier(x)
@@ -1833,6 +1892,7 @@ miog.EXPANSION_INFO = {
 	[8] = {"Battle for Azeroth", "bfa-bg-1", GetExpansionDisplayInfo(7).logo},
 	[9] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
 	[10] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
+	[11] = {"The War Within", "tww-bg-1", GetExpansionDisplayInfo(10).logo},
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms

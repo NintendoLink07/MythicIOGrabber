@@ -637,11 +637,29 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.DungeonJournal.Text:SetText("Journal")
 	miog.pveFrame2.TitleBar.DungeonJournal:SetScript("OnClick", function()
 		miog.setActivePanel(nil, "AdventureJournal")
+
+		PanelTemplates_SetTab(miog.pveFrame2, 1)
+
+		if(miog.pveFrame2.selectedTabFrame) then
+			miog.pveFrame2.selectedTabFrame:Hide()
+		end
+
+		miog.pveFrame2.TabFramesPanel.MainTab:Show()
+		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 	end)
 
 	miog.pveFrame2.TitleBar.RaiderIOChecker.Text:SetText("IO")
 	miog.pveFrame2.TitleBar.RaiderIOChecker:SetScript("OnClick", function()
 		miog.setActivePanel(nil, "RaiderIOChecker")
+
+		PanelTemplates_SetTab(miog.pveFrame2, 1)
+
+		if(miog.pveFrame2.selectedTabFrame) then
+			miog.pveFrame2.selectedTabFrame:Hide()
+		end
+
+		miog.pveFrame2.TabFramesPanel.MainTab:Show()
+		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 	end)
 end
 

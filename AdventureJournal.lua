@@ -4,11 +4,13 @@ local regex1 = "%d+ [D-d]amage"
 local regex2 = "%d+ %w+ [D-d]amage"
 local regex3 = "%d+ %w+ %w+ [D-d]amage"
 
-local basePool, lootPool, slotLinePool, modelPool, difficultyPool, switchPool
+local basePool, modelPool, difficultyPool, switchPool
 local isRaid
 local changingKeylevel = false
 local currentModels = {}
 local lootWaitlist = {}
+
+local currentItemTable = {}
 
 local EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.DungeonNormal,
@@ -134,7 +136,6 @@ local function resetDifficultyFrames(_, frame)
 end
 
 local frameData = {}
-local lootData = {}
 local organizedFrameData = {}
 local currentDifficultyIDs
 local currentEncounterID
@@ -958,73 +959,75 @@ miog.selectInstance = function(journalInstanceID)
     miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
 end
 
-local function retrieveItemInfoFromCurrentEncounter(fromEvent)
-    --lootPool:ReleaseAll()
-    --slotLinePool:ReleaseAll()
+local function requestCurrentDifficultyItemsFromCurrentEncounter(difficultyIndex)
+    EJ_SetDifficulty(currentDifficultyIDs[difficultyIndex])
 
-    if(currentDifficultyIDs and currentDifficultyIDs[1]) then
-        local dataProvider = CreateDataProvider();
-        local slotLines = {}
+    miog.AdventureJournal.ScrollBox:GetDataProvider():Flush()
+    local dataProvider = CreateDataProvider();
+    --[[dataProvider:SetSortComparator(function(k1, k2)
+        if(k1 and k2) then
 
-        for _, v in pairs(lootData) do
-            if(not slotLines[v.index]) then
+            if(k1.index == k2.index) then
+                return k1.header or not k1.header
 
-                --[[local line = slotLinePool:Acquire()
-                line:SetWidth(frameWidth)
-                line.layoutIndex = v.index * 10
-                line.Name:SetText(v.slot)
-                line:Show()]]
-
-                slotLines[v.index] = true
-
-                dataProvider:Insert({template = "MIOG_AdventureJournalLootSlotLineTemplate", name = v.slot});
             end
 
-            dataProvider:Insert({template = "MIOG_AdventureJournalLootItemTemplate", name = v.name, icon = v.icon});
-
-           --[[ local frame = lootPool:Acquire()
-            frame.BasicInformation.Name:SetText(v.name)
-            frame.BasicInformation.Icon:SetTexture(v.icon)
-            frame.layoutIndex = v.index * 10 + 1
-            ]]
-
-            --frame:Show()
-
-            miog.AdventureJournal.ScrollBox:SetDataProvider(dataProvider);
+            return k1.index > k2.index
         end
+    end)]]
 
-        --miog.AdventureJournal.LootFrame.Container:MarkDirty()
-    end
-end
+    local usedSlots = {}
 
-local function requestCurrentDifficultyItemsFromCurrentEncounter()
     for n = 1, EJ_GetNumLoot(), 1 do
         local itemInfo = C_EncounterJournal.GetLootInfoByIndex(n)
+            
+        currentItemTable[itemInfo.itemID] = currentItemTable[itemInfo.itemID] or {}
 
-        if(itemInfo and itemInfo.name) then
-            lootData[itemInfo.name] = lootData[itemInfo.name] or {
+        if(itemInfo.name) then
+            local slot = itemInfo.slot == "" and "Other" or itemInfo.slot
+            
+            currentItemTable[itemInfo.itemID].links = currentItemTable[itemInfo.itemID].links or {}
+
+            --itemLinks[itemInfo.name] = itemLinks[itemInfo.name] or {}
+
+            if(not usedSlots[itemInfo.filterType]) then
+                dataProvider:Insert({
+                    template = "MIOG_AdventureJournalLootSlotLineTemplate",
+                    name = slot,
+                    index = itemInfo.filterType,
+                    header = true
+                })
+
+                usedSlots[itemInfo.filterType] = "used"
+            end
+
+            currentItemTable[itemInfo.itemID].links[EJ_GetDifficulty()] = itemInfo.link
+
+            dataProvider:Insert({
+                template = "MIOG_AdventureJournalLootItemTemplate",
                 name = itemInfo.name,
                 icon = itemInfo.icon,
                 itemID = itemInfo.itemID,
-                index = itemInfo.filterType or 20,
-                slot = itemInfo.slot == "" and "Other" or itemInfo.slot,
-                links = {}
-            }
-
-            lootData[itemInfo.name].links[EJ_GetDifficulty()] = itemInfo.link
+                slot = slot,
+                index = itemInfo.filterType,
+                --links = itemLinks[itemInfo.name],
+                header = false,
+            })
 
         else
             lootWaitlist[itemInfo.itemID] = false
 
         end
+
     end
+
+    miog.AdventureJournal.ScrollBox:SetDataProvider(dataProvider);
 end
 
 local function requestAllItemsFromCurrentEncounter()
     for x = 1, #currentDifficultyIDs, 1 do
-        EJ_SetDifficulty(currentDifficultyIDs[x])
+        requestCurrentDifficultyItemsFromCurrentEncounter(x)
 
-        requestCurrentDifficultyItemsFromCurrentEncounter()
     end
 end
 
@@ -1085,7 +1088,6 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
 
         frameData = {}
         organizedFrameData = {}
-        lootData = {}
         currentModels = {}
         local stack = {}
 
@@ -1100,9 +1102,7 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
         miog.AdventureJournal.AbilitiesFrame.Status:Hide()
 
         for x = 1, #currentDifficultyIDs, 1 do
-            EJ_SetDifficulty(currentDifficultyIDs[x])
-
-            requestCurrentDifficultyItemsFromCurrentEncounter()
+            requestCurrentDifficultyItemsFromCurrentEncounter(x)
 
             local _, _, _, originalRootID = EJ_GetEncounterInfo(currentEncounterID)
 
@@ -1192,8 +1192,6 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
 
             end
         end
-
-        retrieveItemInfoFromCurrentEncounter()
 
         miog.AdventureJournal.Status:SetColorTexture(0, 1, 0)
 
@@ -1322,9 +1320,6 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                     end
     
                     frame.SwitchPanel:SetShown(not equal and not forwardOrdered)
-    
-                    --requestAllItemsFromCurrentEncounter()
-                    --retrieveItemInfoFromCurrentEncounter()
                 end)
                 
 
@@ -1383,12 +1378,12 @@ miog.loadAdventureJournal = function()
 	bossDropdown:OnLoad()
 
 	local keylevelDropdown = miog.AdventureJournal.SettingsBar.KeylevelDropdown
-    keylevelDropdown:SetParent(miog.AdventureJournal.Abilities)
     keylevelDropdown:OnLoad()
+    keylevelDropdown:SetParent(miog.AdventureJournal.Abilities)
 
 	local classSpecDropdown = miog.AdventureJournal.SettingsBar.ClassSpecDropdown
-    classSpecDropdown:SetParent(miog.AdventureJournal.LootFrame)
     classSpecDropdown:OnLoad()
+    --classSpecDropdown:SetParent(miog.AdventureJournal.ScrollBox)
 
     local info = {}
     info.entryType = "option"
@@ -1398,9 +1393,7 @@ miog.loadAdventureJournal = function()
     info.func = function()
         EJ_SetLootFilter(0, 0)
 
-        lootData = {}
         requestAllItemsFromCurrentEncounter()
-        retrieveItemInfoFromCurrentEncounter()
     end
 
     classSpecDropdown:CreateEntryFrame(info)
@@ -1415,9 +1408,7 @@ miog.loadAdventureJournal = function()
         info.func = function()
             EJ_SetLootFilter(k, GetSpecializationInfoForClassID(k, 1))
 
-            lootData = {}
             requestAllItemsFromCurrentEncounter()
-            retrieveItemInfoFromCurrentEncounter()
         end
 
         classSpecDropdown:CreateEntryFrame(info)
@@ -1434,9 +1425,7 @@ miog.loadAdventureJournal = function()
             specInfo.func = function()
                 EJ_SetLootFilter(k, y)
 
-                lootData = {}
                 requestAllItemsFromCurrentEncounter()
-                retrieveItemInfoFromCurrentEncounter()
             end
 
             classSpecDropdown:CreateEntryFrame(specInfo)
@@ -1445,8 +1434,8 @@ miog.loadAdventureJournal = function()
     end
 
 	local slotDropdown = miog.AdventureJournal.SettingsBar.SlotDropdown
-    slotDropdown:SetParent(miog.AdventureJournal.LootFrame)
     slotDropdown:OnLoad()
+    --slotDropdown:SetParent(miog.AdventureJournal.ScrollBox)
 
     for k, v in pairs(Enum.ItemSlotFilterType) do
         local info = {}
@@ -1457,9 +1446,7 @@ miog.loadAdventureJournal = function()
         info.func = function()
             C_EncounterJournal.SetSlotFilter(v)
 
-            lootData = {}
             requestAllItemsFromCurrentEncounter()
-            retrieveItemInfoFromCurrentEncounter()
         end
 
         miog.AdventureJournal.SettingsBar.SlotDropdown:CreateEntryFrame(info)
@@ -1505,23 +1492,21 @@ miog.loadAdventureJournal = function()
             frame.BasicInformation.Name:SetText(elementData.name)
             frame.BasicInformation.Icon:SetTexture(elementData.icon)
 
-            local currentLootData = lootData[elementData.name]
             local counter = 0
 
             for _, y in ipairs(currentDifficultyIDs) do
                 local currentItem = counter == 0 and frame or frame.BasicInformation["Item" .. (counter)]
 
-                if(currentLootData.links[y]) then
+                if(currentItemTable[elementData.itemID].links[y]) then
                     currentItem:SetScript("OnEnter", function(self)
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetHyperlink(currentLootData.links[y])
+                        GameTooltip:SetHyperlink(currentItemTable[elementData.itemID].links[y])
                     end)
 
-                    currentItem.itemLink = currentLootData.links[y]
+                    currentItem.itemLink = currentItemTable[elementData.itemID].links[y]
 
                     if(currentItem ~= frame) then
-                        currentItem:SetTexture(currentLootData.icon)
-                        --currentItem:Show()
+                        currentItem:SetTexture(elementData.icon)
 
                     end
 
@@ -1529,23 +1514,15 @@ miog.loadAdventureJournal = function()
                 elseif(currentItem) then
                     if(currentItem ~= frame) then
                         currentItem:SetTexture(nil)
-                        --currentItem:Show()
 
                     end
                     
                     currentItem:SetScript("OnEnter", nil)
                     currentItem.itemLink = nil
-                    --currentItem:Hide()
 
                 end
                 
             end
-
-            --[[for _, v in pairs(lootData) do
-
-                
-            end]]
-
         else
             frame.Name:SetText(elementData.name)
 
@@ -1602,9 +1579,7 @@ local function aj_events(_, event, ...)
         end
 
         if(counter == 0) then
-            --print(GetTimePreciseSec(), "ZEROOOOOO")
             requestAllItemsFromCurrentEncounter()
-            retrieveItemInfoFromCurrentEncounter(true)
         end
     end
 end

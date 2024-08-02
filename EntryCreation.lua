@@ -264,13 +264,13 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 		activityDropDown:CreateSeparator(9999)
 
-		for i = 0, GetNumExpansions() - (2 + (categoryID == 3 and (IsPlayerAtEffectiveMaxLevel() and 0 or 1) or 0)), 1 do
-			local expansionInfo = GetExpansionDisplayInfo(i)
+		for i = 1, GetNumExpansions() - (1 + (categoryID == 3 and 1 or 0)), 1 do
+			local expansionInfo = GetExpansionDisplayInfo(i - 1)
 
 			local expInfo = {}
 			expInfo.entryType = "arrow"
-			expInfo.index = i + 10000
-			expInfo.text = miog.EXPANSION_INFO[i + 1][1]
+			expInfo.index = i - 1 + 10000
+			expInfo.text = miog.EXPANSION_INFO[i][1]
 			expInfo.icon = expansionInfo and expansionInfo.logo
 
 			expansionTable[#expansionTable+1] = expInfo
@@ -409,9 +409,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			activityDropDown:CreateEntryFrame(v)
 
 		end
-
-		--local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(categoryID)
-
 		
 		local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(categoryID, Enum.LFGListFilter.PvE)
 
@@ -447,100 +444,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			end
 
 		end
-		--[[else
-			local groups = C_LFGList.GetAvailableActivityGroups(categoryID, borFilters)
-
-			for k, v in ipairs(groups) do
-				local activities = C_LFGList.GetAvailableActivities(categoryID, v)
-				local activityID = activities[#activities]
-
-				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-
-				local info = {}
-
-				for activityIndex, difficultyActivityID in ipairs(activities) do
-					local difficultyActivityInfo = C_LFGList.GetActivityInfoTable(difficultyActivityID)
-
-					if(difficultyActivityInfo.isMythicPlusActivity) then
-						info.sort = "mplus"
-
-					end
-				end
-
-				info.entryType = "option"
-				info.index = activityInfo.groupFinderActivityGroupID
-				info.text = C_LFGList.GetActivityGroupInfo(v)
-				info.value = activityID
-				info.activities = activities
-				info.func = function()
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, selectedFilters), categoryID, v, activityID)
-
-
-				end
-
-				info.icon = miog.ACTIVITY_INFO[activityID].icon
-				info.mapID = miog.ACTIVITY_INFO[activityID].mapID
-
-				if(k == 1) then
-					firstGroupID = groups[1]
-				end
-
-				if(info.sort == "mplus") then
-					mythicPlusTable[#mythicPlusTable+1] = info
-
-				else
-					currentExpansionDungeons[#currentExpansionDungeons+1] = info
-
-				end
-			end
-
-			table.sort(mythicPlusTable, function(k1, k2)
-				return k1.text < k2.text
-			end)
-
-			activityDropDown:CreateTextLine(-1, nil, "Seasonal Mythic+ Dungeons")
-
-			for k, v in ipairs(mythicPlusTable) do
-				v.index = k
-				activityDropDown:CreateEntryFrame(v)
-
-			end
-
-			activityDropDown:CreateSeparator(9)
-
-			for k, v in ipairs(currentExpansionDungeons) do
-				activityDropDown:CreateEntryFrame(v)
-
-			end
-
-			groups = C_LFGList.GetAvailableActivityGroups(categoryID)
-
-			local maxExpansions = GetNumExpansions() - 1
-
-			for k, v in ipairs(groups) do
-				local activities = C_LFGList.GetAvailableActivities(categoryID, v)
-				local activityID = activities[#activities] -- SET TO HIGHEST DIFFICULTY
-
-				if(miog.ACTIVITY_INFO[activityID].expansionLevel < maxExpansions) then
-					local info = {}
-					info.icon = miog.ACTIVITY_INFO[activityID].icon
-
-					info.parentIndex = miog.ACTIVITY_INFO[activityID].expansionLevel + 10000
-					info.entryType = "option"
-					info.mapID = miog.ACTIVITY_INFO[activityID].mapID
-					info.text = C_LFGList.GetActivityGroupInfo(v)
-					info.value = activityID
-					info.activities = activities
-					info.func = function()
-						LFGListEntryCreation_Select(LFGListFrame.EntryCreation, bit.bor(LFGListFrame.EntryCreation.baseFilters, selectedFilters), categoryID, v, activityID)
-					end
-
-					legacyDungeonsTable[#legacyDungeonsTable+1] = info
-				end
-
-			end
-
-		end]]
 
 		local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
 
@@ -579,10 +482,8 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 		local currentRaidTable = {}
 		local legacyRaidTable = {}
 
-		--local groups = C_LFGList.GetAvailableActivityGroups(categoryID, borFilters)
-
 		if(selectedFilters ~= Enum.LFGListFilter.NotRecommended) then
-			local groups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE) or borFilters);
+			local groups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or borFilters);
 
 			for k, v in ipairs(groups) do
 				local activities = C_LFGList.GetAvailableActivities(categoryID, v)

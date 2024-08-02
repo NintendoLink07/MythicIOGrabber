@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.3.10] - 2024-08-02
+
+### Changed
+
+- The adventure journal now uses the new display method for many rows of data, basically less laggy, especially when loading loot data.
+
+### Fixed
+
+- Added a lot of TWW map data like boss icons, used in the raid progress info, the journal and the creation of a new group.
+
+- [Group Creator] The current Dragonflight raids should now be selectable again.
+
+- Boss icons in the raid progress info of the raider io panel should be correct icons again and not their encounter journal counterparts.
+
+
 ## [2.3.9] - 2024-08-01
 
 ### Fixed
@@ -1967,7 +1982,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.9..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.3.10..HEAD
+[2.3.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.10
 [2.3.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.9
 [2.3.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.8
 [2.3.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.7
