@@ -448,7 +448,7 @@ local function isGroupEligible(resultID, bordermode)
 
 				end
 			elseif(isRaid) then
-				if(currentSettings.filterForRaids and LFGListFrame.SearchPanel.filters == 1) then
+				if(currentSettings.filterForRaids and LFGListFrame.SearchPanel.filters == 1 and currentSettings.raids[activityInfo.groupFinderActivityGroupID]) then
 					if(not currentSettings.raids[activityInfo.groupFinderActivityGroupID].setting) then
 						return false, miog.INELIGIBILITY_REASONS[18]
 
