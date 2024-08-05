@@ -1334,6 +1334,22 @@ miog.BASE_ITEM_TRACK_INFO = {
 	[6] = {length = 4},
 }
 
+miog.TELEPORT_FLYOUT_IDS = {
+	[1] = {id = 230, expansion = 3, type="dungeon"},
+	[2] = {id = 84, expansion = 4, type="dungeon"},
+	[3] = {id = 96, expansion = 5, type="dungeon"},
+	[4] = {id = 224, expansion = 6, type="dungeon"},
+	[5] = {id = 223, expansion = 7, type="dungeon"},
+
+	[6] = {id = 220, expansion = 8, type="dungeon"},
+	[7] = {id = 222, expansion = 8, type="raid"},
+
+	[8] = {id = 227, expansion = 9, type="dungeon"},
+	[9] = {id = 231, expansion = 9, type="raid"},
+
+	[10] = {id = 232, expansion = 10, type="dungeon"},
+}
+
 miog.GEARING_CHART = {
 	[12] = {
 		maxJumps = 0,

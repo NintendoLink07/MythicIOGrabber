@@ -2,7 +2,53 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_Teleports" inherits="BackdropTemplate" virtual="true" toplevel="true">
         <Frames>
-            
+            <Frame parentKey="3" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="4" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="4" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.3" relativePoint="BOTTOMLEFT" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="5" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.4" relativePoint="BOTTOMLEFT" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="6" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.5" relativePoint="BOTTOMLEFT" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="7" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.6" relativePoint="BOTTOMLEFT" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="8" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.7" relativePoint="BOTTOMLEFT" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="9" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.8" relativePoint="BOTTOMLEFT" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="10" inherits="MIOG_TeleportLogoTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.9" relativePoint="BOTTOMLEFT" y="-4"/>
+                </Anchors>
+            </Frame>
         </Frames>
 
         <Layers>
@@ -15,5 +61,4 @@
             </Layer>
         </Layers>
     </Frame>
-
 </Ui>

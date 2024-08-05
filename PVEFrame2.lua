@@ -510,63 +510,60 @@ local function createPVEFrameReplacement()
 	queueDropDown:SetText("Choose a queue")
 	miog.MainTab.QueueInformation.Panel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	local counter = 0
-
-	local offset = 35 + 22
+	local offset = 35 + 20
 	local _, _, _, tabSlots = GetSpellTabInfo(1)
 
 	local formatter = CreateFromMixins(SecondsFormatterMixin)
 	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
 
-	for i = 1, tabSlots, 1 do
+	--[[for i = 1, tabSlots, 1 do
 		local spellType, id
 
-		if(GetSpellBookItemInfo) then
-			spellType, id = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
+		local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(i, Enum.SpellBookSpellBank.Player)
+		spellType, id = spellBookItemInfo.itemType, spellBookItemInfo.actionID]]
 
-		else
-			local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(i, Enum.SpellBookSpellBank.Player)
-			spellType, id = spellBookItemInfo.itemType, spellBookItemInfo.actionID
-		end
+	local lastExpansionFrames = {}
 
-		if(spellType == "FLYOUT" or spellType == 4) then
-			local name, description, numSlots, isKnown = GetFlyoutInfo(id)
+	for index, info in ipairs(miog.TELEPORT_FLYOUT_IDS) do
+		--if(spellType == "FLYOUT" or spellType == 4) then
+			local name, description, numSlots, isKnown = GetFlyoutInfo(info.id)
 
-			if(string.find(name, "Hero's Path")) then
-				local index
-				local expName
+			--print(name, id)
 
-				for x, y in ipairs(miog.EXPANSION_INFO) do
-					if(y[1] == (string.sub(name, 14))) then
-						index = x
-						expName = string.sub(name, 14)
-					end
-				end
+			--if(string.find(name, "Hero's Path")) then
+			local expansionInfo = GetExpansionDisplayInfo(info.expansion)
 
-				local string = miog.Teleports:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-				string:SetFont("SystemFont_Shadow_Med1", 12, "OUTLINE")
-				string:SetPoint("TOPLEFT", miog.Teleports, "TOPLEFT", 0, (index - 4) * -offset)
-				string:SetText(expName)
+			local logoFrame = miog.Teleports[tostring(info.expansion)]
+
+			if(logoFrame and expansionInfo) then
+				logoFrame.Texture:SetTexture(expansionInfo.logo)
+
+				local expNameTable = {}
 
 				for k = 1, numSlots, 1 do
-					local flyoutSpellID, overrideSpellID, spellKnown, spellName, slotSpecID = GetFlyoutSlotInfo(id, k)
+					local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(info.id, k)
 
-					local spellInfo = C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(flyoutSpellID) or C_SpellBook.GetSpellInfo(flyoutSpellID)
-					local tpButton = CreateFrame("Button", nil, miog.Teleports, "SecureActionButtonTemplate")
-					tpButton:SetFrameStrata("MEDIUM")
-					tpButton:SetSize(35, 35)
+					table.insert(expNameTable, {name = spellName, desc = C_Spell.GetSpellDescription(flyoutSpellID), spellID = flyoutSpellID, known = spellKnown})
+				end
+
+				table.sort(expNameTable, function(k1, k2)
+					return k1.desc < k2.desc
+				end)
+
+				for k, v in ipairs(expNameTable) do
+					local spellInfo = C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(v.spellID) or C_SpellBook.GetSpellInfo(v.spellID)
+					local tpButton = CreateFrame("Button", nil, miog.Teleports, "MIOG_TeleportButtonTemplate")
 					tpButton:SetNormalTexture(spellInfo.iconID)
-					tpButton:GetNormalTexture():SetDesaturated(not spellKnown)
-					tpButton:SetPoint("TOPLEFT", miog.Teleports, "TOPLEFT", (k-1) * 37, -13 + (index - 4) * -offset)
+					tpButton:GetNormalTexture():SetDesaturated(not v.known)
+					tpButton:SetPoint("LEFT", lastExpansionFrames[info.expansion] or logoFrame, "RIGHT", lastExpansionFrames[info.expansion] and k == 1 and 18 or 3, 0)
 
-					if(spellKnown) then
-						local myCooldown = CreateFrame("Cooldown", nil, miog.Teleports, "CooldownFrameTemplate")
-						myCooldown:SetFrameStrata("HIGH")
-						myCooldown:SetPoint("TOPLEFT", tpButton, "TOPLEFT")
-						myCooldown:SetPoint("BOTTOMRIGHT", tpButton, "BOTTOMRIGHT")
+					lastExpansionFrames[info.expansion] = tpButton
+
+					if(v.known) then
+						local myCooldown = tpButton.Cooldown
 						
 						tpButton:HookScript("OnShow", function()
-							local start, duration, _, modrate = GetSpellCooldown(flyoutSpellID)
+							local start, duration, _, modrate = GetSpellCooldown(v.spellID)
 							myCooldown:SetCooldown(start, duration, modrate)
 
 							local secondsLeft = duration - (GetTime() - start)
@@ -581,11 +578,11 @@ local function createPVEFrameReplacement()
 						tpButton:RegisterForClicks("LeftButtonDown")
 					end
 
-					local spell = Spell:CreateFromSpellID(flyoutSpellID)
+					local spell = Spell:CreateFromSpellID(v.spellID)
 					spell:ContinueOnSpellLoad(function()
 						tpButton:SetScript("OnEnter", function(self)
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-							GameTooltip_AddHighlightLine(GameTooltip, spellName)
+							GameTooltip_AddHighlightLine(GameTooltip, v.name)
 							GameTooltip:AddLine(spell:GetSpellDescription())
 							GameTooltip:Show()
 						end)
@@ -595,10 +592,9 @@ local function createPVEFrameReplacement()
 						GameTooltip:Hide()
 					end)
 				end
-
-				counter = counter + 1
 			end
-		end
+			--end
+		--end
 	end
 
 	miog.pveFrame2.categoryFramePool = CreateFramePool("Button", miog.pveFrame2.CategoryHoverFrame, "MIOG_MenuButtonTemplate", resetCategoryFrame)
