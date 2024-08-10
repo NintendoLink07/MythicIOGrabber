@@ -516,21 +516,12 @@ local function createPVEFrameReplacement()
 	local formatter = CreateFromMixins(SecondsFormatterMixin)
 	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
 
-	--[[for i = 1, tabSlots, 1 do
-		local spellType, id
+	local function addTeleportButtons()
+		local lastExpansionFrames = {}
 
-		local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(i, Enum.SpellBookSpellBank.Player)
-		spellType, id = spellBookItemInfo.itemType, spellBookItemInfo.actionID]]
-
-	local lastExpansionFrames = {}
-
-	for index, info in ipairs(miog.TELEPORT_FLYOUT_IDS) do
-		--if(spellType == "FLYOUT" or spellType == 4) then
+		for index, info in ipairs(miog.TELEPORT_FLYOUT_IDS) do
 			local name, description, numSlots, isKnown = GetFlyoutInfo(info.id)
 
-			--print(name, id)
-
-			--if(string.find(name, "Hero's Path")) then
 			local expansionInfo = GetExpansionDisplayInfo(info.expansion)
 
 			local logoFrame = miog.Teleports[tostring(info.expansion)]
@@ -542,8 +533,21 @@ local function createPVEFrameReplacement()
 
 				for k = 1, numSlots, 1 do
 					local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(info.id, k)
+					local desc = C_Spell.GetSpellDescription(flyoutSpellID)
+					local tableIndex = #expNameTable + 1
 
-					table.insert(expNameTable, {name = spellName, desc = C_Spell.GetSpellDescription(flyoutSpellID), spellID = flyoutSpellID, known = spellKnown})
+					expNameTable[tableIndex] = {name = spellName, desc = desc, spellID = flyoutSpellID, known = spellKnown}
+
+					if(desc == "") then
+						local spell = Spell:CreateFromSpellID(flyoutSpellID)
+						spell:ContinueOnSpellLoad(function()
+							addTeleportButtons()
+
+						end)
+
+						return false
+
+					end
 				end
 
 				table.sort(expNameTable, function(k1, k2)
@@ -551,7 +555,7 @@ local function createPVEFrameReplacement()
 				end)
 
 				for k, v in ipairs(expNameTable) do
-					local spellInfo = C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(v.spellID) or C_SpellBook.GetSpellInfo(v.spellID)
+					local spellInfo = C_Spell.GetSpellInfo(v.spellID)
 					local tpButton = CreateFrame("Button", nil, miog.Teleports, "MIOG_TeleportButtonTemplate")
 					tpButton:SetNormalTexture(spellInfo.iconID)
 					tpButton:GetNormalTexture():SetDesaturated(not v.known)
@@ -593,9 +597,10 @@ local function createPVEFrameReplacement()
 					end)
 				end
 			end
-			--end
-		--end
+		end
 	end
+
+	addTeleportButtons()
 
 	miog.pveFrame2.categoryFramePool = CreateFramePool("Button", miog.pveFrame2.CategoryHoverFrame, "MIOG_MenuButtonTemplate", resetCategoryFrame)
 	miog.pveFrame2.TitleBar.CreateGroup.Text:SetText("Create")
@@ -630,9 +635,8 @@ local function createPVEFrameReplacement()
 		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 	end
 
-	miog.pveFrame2.TitleBar.DungeonJournal.Text:SetText("Journal")
-	miog.pveFrame2.TitleBar.DungeonJournal:SetScript("OnClick", function()
-		miog.setActivePanel(nil, "AdventureJournal")
+	local function setCustomActivePanel(name)
+		miog.setActivePanel(nil, name)
 
 		PanelTemplates_SetTab(miog.pveFrame2, 1)
 
@@ -642,20 +646,18 @@ local function createPVEFrameReplacement()
 
 		miog.pveFrame2.TabFramesPanel.MainTab:Show()
 		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
-	end)
+	end
 
-	miog.pveFrame2.TitleBar.RaiderIOChecker.Text:SetText("IO")
-	miog.pveFrame2.TitleBar.RaiderIOChecker:SetScript("OnClick", function()
-		miog.setActivePanel(nil, "RaiderIOChecker")
+	miog.pveFrame2.TitleBar.MoreButton.Text:SetText("More")
+	miog.pveFrame2.TitleBar.MoreButton:SetScript("OnClick", function(self)
+		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
+			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
+			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
+			rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
+			rootDescription:SetTag("MIOG_MORE")
+		end)
 
-		PanelTemplates_SetTab(miog.pveFrame2, 1)
-
-		if(miog.pveFrame2.selectedTabFrame) then
-			miog.pveFrame2.selectedTabFrame:Hide()
-		end
-
-		miog.pveFrame2.TabFramesPanel.MainTab:Show()
-		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
+		currentMenu:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
 	end)
 end
 

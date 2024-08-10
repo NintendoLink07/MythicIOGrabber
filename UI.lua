@@ -67,6 +67,10 @@ local function setActivePanel(_, panel)
 		miog.RaiderIOChecker:Show()
 		miog.FilterPanel.Lock:Show()
 
+	elseif(panel == "DropChecker") then
+		miog.DropChecker:Show()
+		miog.FilterPanel.Lock:Show()
+
 	else
 		miog.Plugin:Hide()
 		miog.FilterPanel.Lock:Show()
@@ -212,9 +216,9 @@ miog.createFrames = function()
 		miog.loadAdventureJournal()
 		miog.loadPartyCheck()
 		miog.loadGuildFrame()
-		
-		miog.RaiderIOChecker = CreateFrame("Frame", "MythicIOGrabber_RaiderIOChecker", miog.Plugin.InsertFrame, "MIOG_RaiderIOChecker")
+		miog.loadDropChecker()
 
+		miog.loadRaiderIOChecker()
 		--miog.InviteFrame = CreateFrame("Frame", "MythicIOGrabber_InviteFrame", UIParent, "MIOG_InviteFrame")
 		--miog.InviteFrame:SetPoint("TOPLEFT", LFGListInviteDialog, "TOPLEFT")
 		--miog.InviteFrame:SetPoint("TOP", UIParent, "TOP", 0, - (GetScreenHeight() * 0.1))
@@ -232,6 +236,7 @@ miog.createFrames = function()
 		miog.SearchPanel,
 		miog.EntryCreation,
 		miog.AdventureJournal,
-		miog.RaiderIOChecker
+		miog.RaiderIOChecker,
+		miog.DropChecker,
 	}
 end

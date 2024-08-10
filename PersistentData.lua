@@ -488,17 +488,6 @@ miog.MAP_INFO = {
 
 	--SHADOWLANDS
 
-	--DRAGONFLIGHT
-	[2451] = {shortName = "ULOT", icon = "interface/lfgframe/lfgicon-uldaman-legacyoftyr", fileName = "uldamanlegacyoftyr"},
-	[2515] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-arcanevaults", fileName = "azurevault"},
-	[2516] = {shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains", fileName = "nokhudoffensive"},
-	[2519] = {shortName = "NELT", icon = "interface/lfgframe/lfgicon-neltharus", fileName = "neltharus"},
-	[2520] = {shortName = "BH", icon = "interface/lfgframe/lfgicon-brackenhidehollow", fileName = "brackenhidehollow"},
-	[2521] = {shortName = "RLP", icon = "interface/lfgframe/lfgicon-lifepools", fileName = "rubylifepools"},
-	[2526] = {shortName = "AA", icon = "interface/lfgframe/lfgicon-theacademy", fileName = "algetharacademy"},
-	[2527] = {shortName = "HOI", icon = "interface/lfgframe/lfgicon-hallsofinfusion", fileName = "hallsofinfusion"},
-	[2579] = {shortName = "DOTI", icon = "interface/lfgframe/lfgicon-dawnoftheinfinite", fileName = "dawnoftheinfinite"},
-
 
 	-- RAIDS
 
@@ -546,33 +535,7 @@ miog.MAP_INFO = {
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
 		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
 	},
-	
-	[2648] = {shortName = "ROOK", icon = "interface/lfgframe/lfgicon-therookery", fileName = "therookery"},
-	[2649] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-prioryofthesacredflames", fileName = "prioryofthesacredflames"},
-	[2651] = {shortName = "DFC", icon = "interface/lfgframe/lfgicon-darkflamecleft", fileName = "darkflamecleft"},
-	[2652] = {shortName = "SV", icon = "interface/lfgframe/lfgicon-thestonevault", fileName = "thestonevault"},
-	[2660] = {shortName = "AK", icon = "interface/lfgframe/lfgicon-arakaracityofechoes", fileName = "arakaracityofechoes"},
-	[2661] = {shortName = "CBM", icon = "interface/lfgframe/lfgicon-cinderbrewmeadery", fileName = "cinderbrewmeadery"},
-	[2662] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-thedawnbreaker", fileName = "thedawnbreaker"},
-	[2669] = {shortName = "COT", icon = "interface/lfgframe/lfgicon-cityofthreads", fileName = "cityofthreads"},
 
-	-- THE WAR WITHIN
-
-	[2657] = {
-		shortName = "NP",
-		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/raid.png",
-		fileName = "nerubarpalance",
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ulgrax.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/bloodboundhorror.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sikran.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashanan.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ovinax.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kyveza.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/silkencourt.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/queenansurek.png"},
-	},
-
-	[2774] = {shortName = "KA", fileName = "khazalgar",},
 		
 
 	[1136] = {shortName = "SOO", icon = "interface/lfgframe/lfgicon-orgrimmargates", fileName = "siegeoforgrimmar"},
@@ -737,6 +700,45 @@ miog.MAP_INFO = {
 	[2441] = {shortName = "TAZA", icon = "interface/lfgframe/lfgicon-tazaveshtheveiledmarket.blp", fileName = "tazavesh"},
 	[2481] = {shortName = "SFO", icon = "interface/lfgframe/lfgicon-sepulcherofthefirstones.blp", fileName = "sepulcherofthefirstones"},
 	--[2162] = {shortName = "TJG", icon = ""},
+
+	--DRAGONFLIGHT
+	[2451] = {shortName = "ULOT", icon = "interface/lfgframe/lfgicon-uldaman-legacyoftyr", fileName = "uldamanlegacyoftyr"},
+	[2515] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-arcanevaults", fileName = "azurevault"},
+	[2516] = {shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains", fileName = "nokhudoffensive"},
+	[2519] = {shortName = "NELT", icon = "interface/lfgframe/lfgicon-neltharus", fileName = "neltharus"},
+	[2520] = {shortName = "BH", icon = "interface/lfgframe/lfgicon-brackenhidehollow", fileName = "brackenhidehollow"},
+	[2521] = {shortName = "RLP", icon = "interface/lfgframe/lfgicon-lifepools", fileName = "rubylifepools"},
+	[2526] = {shortName = "AA", icon = "interface/lfgframe/lfgicon-theacademy", fileName = "algetharacademy"},
+	[2527] = {shortName = "HOI", icon = "interface/lfgframe/lfgicon-hallsofinfusion", fileName = "hallsofinfusion"},
+	[2579] = {shortName = "DOTI", icon = "interface/lfgframe/lfgicon-dawnoftheinfinite", fileName = "dawnoftheinfinite"},
+
+
+	-- THE WAR WITHIN
+	
+	[2648] = {shortName = "ROOK", icon = "interface/lfgframe/lfgicon-therookery", fileName = "therookery"},
+	[2649] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-prioryofthesacredflames", fileName = "prioryofthesacredflames"},
+	[2651] = {shortName = "DFC", icon = "interface/lfgframe/lfgicon-darkflamecleft", fileName = "darkflamecleft"},
+	[2652] = {shortName = "SV", icon = "interface/lfgframe/lfgicon-thestonevault", fileName = "thestonevault"},
+	[2660] = {shortName = "AK", icon = "interface/lfgframe/lfgicon-arakaracityofechoes", fileName = "arakaracityofechoes"},
+	[2661] = {shortName = "CBM", icon = "interface/lfgframe/lfgicon-cinderbrewmeadery", fileName = "cinderbrewmeadery"},
+	[2662] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-thedawnbreaker", fileName = "thedawnbreaker"},
+	[2669] = {shortName = "COT", icon = "interface/lfgframe/lfgicon-cityofthreads", fileName = "cityofthreads"},
+
+	[2657] = {
+		shortName = "NP",
+		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/raid.png",
+		fileName = "nerubarpalance",
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ulgrax.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/bloodboundhorror.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sikran.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashanan.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ovinax.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kyveza.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/silkencourt.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/queenansurek.png"},
+	},
+
+	[2774] = {shortName = "KA", fileName = "khazalgar",},
 }
 
 miog.LFG_ID_INFO = {
@@ -758,8 +760,8 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[9] = {mapID = 1209, file = miog.C.STANDARD_FILE_PATH .. "skyreach"},
 	
 	[10] = {mapID = 1208, file = miog.C.STANDARD_FILE_PATH .. "grimraildepot"},
-	[11] = {mapID = 1279, challengeModeID = 168, shortName = "EB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/everbloom.png"},
-	[12] = {mapID = 1176, challengeModeID = 165, shortName = "SBG", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/shadowmoonburialgrounds.png"},
+	[11] = {mapID = 1279, shortName = "EB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/everbloom.png"},
+	[12] = {mapID = 1176, shortName = "SBG", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/shadowmoonburialgrounds.png"},
 	[13] = {mapID = 1358, file = miog.C.STANDARD_FILE_PATH .. "upperblackrockspire"},
 	[14] = {mapID = 1228, file = miog.C.STANDARD_FILE_PATH .. "highmaul"},
 	[15] = {mapID = 1205, file = miog.C.STANDARD_FILE_PATH .. "blackrockfoundry"},
@@ -805,21 +807,21 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[51] = {mapID = 632, file = miog.C.STANDARD_FILE_PATH .. "forgeofsouls"},
 	[52] = {mapID = 658, file = miog.C.STANDARD_FILE_PATH .. "pitofsaron"},
 	[53] = {mapID = 668, file = miog.C.STANDARD_FILE_PATH .. "hallsofreflection"},
-	[54] = {mapID = 643, challengeModeID = 456, shortName = "TOTT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/throneofthetides.png"},
+	[54] = {mapID = 643, shortName = "TOTT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/throneofthetides.png"},
 	[55] = {mapID = 645, file = miog.C.STANDARD_FILE_PATH .. "blackrockcaverns"},
-	[56] = {mapID = 670, file = miog.C.STANDARD_FILE_PATH .. "grimbatol"},
+	[56] = {mapID = 670, shortName = "GB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/grimbatol.png"},
 	[57] = {mapID = 644, file = miog.C.STANDARD_FILE_PATH .. "hallsoforigination"},
 	[58] = {mapID = 725, file = miog.C.STANDARD_FILE_PATH .. "stonecore"},
-	[59] = {mapID = 657, challengeModeID = 438, shortName = "VP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/vortexpinnacle.png"},
+	[59] = {mapID = 657, shortName = "VP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/vortexpinnacle.png"},
 
 	[60] = {mapID = 755, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[61] = {mapID = 960, challengeModeID = 2, shortName = "TOTJS", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/templeofthejadeserpent.png"},
+	[61] = {mapID = 960, shortName = "TOTJS", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/templeofthejadeserpent.png"},
 	[62] = {mapID = 961, file = miog.C.STANDARD_FILE_PATH .. ""},
 	[63] = {mapID = 959, file = miog.C.STANDARD_FILE_PATH .. ""},
 	[64] = {mapID = 994, file = miog.C.STANDARD_FILE_PATH .. ""},
 	[65] = {mapID = 1011, file = miog.C.STANDARD_FILE_PATH .. ""},
 	[66] = {mapID = 962, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[67] = {mapID = 1279, challengeModeID = 168, shortName = "EB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/everbloom.png"},
+	[67] = {mapID = 1279, shortName = "EB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/everbloom.png"},
 	[68] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "draenoroutdoor"},
 	[69] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "outlandoutdoor"},
 
@@ -850,12 +852,12 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 
 	[111] = {mapID = 1220, file = miog.C.STANDARD_FILE_PATH .. "random legion dungeon"},
 	[112] = {mapID = 1456, file = miog.C.STANDARD_FILE_PATH .. "eyeofazshara"},
-	[113] = {mapID = 1466, challengeModeID = 198, shortName = "DHT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/darkheartthicket.png"},
+	[113] = {mapID = 1466, shortName = "DHT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/darkheartthicket.png"},
 	[114] = {mapID = 1477, file = miog.C.STANDARD_FILE_PATH .. "hallsofvalor"},
-	[115] = {mapID = 1458, challengeModeID = 206, shortName = "NL", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/neltharionslair.png"},
+	[115] = {mapID = 1458, shortName = "NL", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/neltharionslair.png"},
 	[116] = {mapID = 1544, file = miog.C.STANDARD_FILE_PATH .. "assaultonviolethold"},
 	[117] = {mapID = 1493, file = miog.C.STANDARD_FILE_PATH .. "vaultofthewardens"},
-	[118] = {mapID = 1501, challengeModeID = 199, shortName = "BRH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/blackrookhold.png"},
+	[118] = {mapID = 1501, shortName = "BRH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/blackrookhold.png"},
 	[119] = {mapID = 1492, file = miog.C.STANDARD_FILE_PATH .. "mawofsouls"},
 	[120] = {mapID = 1571, file = miog.C.STANDARD_FILE_PATH .. "courtofstars"},
 	[121] = {mapID = 1516, file = miog.C.STANDARD_FILE_PATH .. "arcway"},
@@ -876,16 +878,16 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 
 	[135] = {mapID = 1861, file = miog.C.STANDARD_FILE_PATH .. "uldir"},
 	[136] = {mapID = 1642, file = miog.C.STANDARD_FILE_PATH .. "random bfa dungeon"},
-	[137] = {mapID = 1763, challengeModeID = 244, shortName = "AD", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/ataldazar.png"},
-	[138] = {mapID = 1841, challengeModeID = 251, shortName = "UR", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/underrot.png"},
+	[137] = {mapID = 1763, shortName = "AD", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/ataldazar.png"},
+	[138] = {mapID = 1841, shortName = "UR", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/underrot.png"},
 	[139] = {mapID = 1877, file = miog.C.STANDARD_FILE_PATH .. "templeofsethraliss"},
 	[140] = {mapID = 1594, file = miog.C.STANDARD_FILE_PATH .. "motherlode"},
 	[141] = {mapID = 1762, file = miog.C.STANDARD_FILE_PATH .. "kingsrest"},
-	[142] = {mapID = 1754, challengeModeID = 245, shortName = "FH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/freehold.png"},
+	[142] = {mapID = 1754, shortName = "FH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/freehold.png"},
 	[143] = {mapID = 1864, file = miog.C.STANDARD_FILE_PATH .. "shrineofthestorm"},
 	[144] = {mapID = 1771, file = miog.C.STANDARD_FILE_PATH .. "toldagor"},
-	[145] = {mapID = 1862, challengeModeID = 248, shortName = "WM", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/waycrestmanor.png"},
-	[146] = {mapID = 1822, file = miog.C.STANDARD_FILE_PATH .. "siegeofboralus"},
+	[145] = {mapID = 1862, shortName = "WM", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/waycrestmanor.png"},
+	[146] = {mapID = 1822, shortName = "SOB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/siegeofboralus.png"},
 
 	[247] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "kultiras outdoor"},
 	[248] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "zandalar outdoor"},
@@ -905,10 +907,10 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 
 	[260] = {mapID = 2291, file = miog.C.STANDARD_FILE_PATH .. "theotherside"},
 	[261] = {mapID = 2287, file = miog.C.STANDARD_FILE_PATH .. "hallsofatonement"},
-	[262] = {mapID = 2290, file = miog.C.STANDARD_FILE_PATH .. "mistsoftirnascithe"},
+	[262] = {mapID = 2290, shortName = "MOTS", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/mistsoftirnascithe.png"},
 	[263] = {mapID = 2284, file = miog.C.STANDARD_FILE_PATH .. "sanguinedepths"},
 	[264] = {mapID = 2285, file = miog.C.STANDARD_FILE_PATH .. "spiresofascension"},
-	[265] = {mapID = 2286, file = miog.C.STANDARD_FILE_PATH .. "necroticwake"},
+	[265] = {mapID = 2286, shortName = "NW", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/necroticwake.png"},
 	[266] = {mapID = 2293, file = miog.C.STANDARD_FILE_PATH .. "theaterofpain"},
 	[267] = {mapID = 2296, file = miog.C.STANDARD_FILE_PATH .. "castlenathria"},
 
@@ -937,21 +939,32 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[288] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
 	[289] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
 
-	[302] = {mapID = 2526, challengeModeID = 402, shortName = "AA", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/algetharacademy.png"},
-	[303] = {mapID = 2520, challengeModeID = 405, shortName = "BH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/brackenhidehollow.png"},
-	[304] = {mapID = 2527, challengeModeID = 406, shortName = "HOI", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/hallsofinfusion.png"},
-	[305] = {mapID = 2519, challengeModeID = 404, shortName = "NELT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/neltharus.png"},
-	[306] = {mapID = 2521, challengeModeID = 399, shortName = "RLP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/rubylifepools.png"},
-	[307] = {mapID = 2515, challengeModeID = 401, shortName = "AV", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/azurevault.png"},
-	[308] = {mapID = 2516, challengeModeID = 400, shortName = "NO", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nokhudoffensive.png"},
-	[309] = {mapID = 2451, challengeModeID = 403, shortName = "ULOT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/uldamanlegacyoftyr.png"},
+	[302] = {mapID = 2526, shortName = "AA", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/algetharacademy.png"},
+	[303] = {mapID = 2520, shortName = "BH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/brackenhidehollow.png"},
+	[304] = {mapID = 2527, shortName = "HOI", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/hallsofinfusion.png"},
+	[305] = {mapID = 2519, shortName = "NELT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/neltharus.png"},
+	[306] = {mapID = 2521, shortName = "RLP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/rubylifepools.png"},
+	[307] = {mapID = 2515, shortName = "AV", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/azurevault.png"},
+	[308] = {mapID = 2516, shortName = "NO", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nokhudoffensive.png"},
+	[309] = {mapID = 2451, shortName = "ULOT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/uldamanlegacyoftyr.png"},
 	[310] = {mapID = 2522, shortName = "VOTI", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/vaultoftheincarnates.png"},
 	[313] = {mapID = 2569, shortName = "ATSC", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/aberrus.png"},
 	[315] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
-	[316] = {mapID = 2579, challengeModeID = 463, shortName = "FALL", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
-	[317] = {mapID = 2579, challengeModeID = 464, shortName = "RISE", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
+	[316] = {mapID = 2579, shortName = "FALL", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
+	[317] = {mapID = 2579, shortName = "RISE", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
 	[318] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
 	[319] = {mapID = 2549, shortName = "ATDH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/amirdrassil.png"},
+
+	[322] = {mapID = 2651, shortName = "DFC", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/darkflamecleft.png"},
+	[323] = {mapID = 2660, shortName = "AK", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/arakaracityofechoes.png"},
+	[324] = {mapID = 2649, shortName = "PSF", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/prioryofthesacredflames.png"},
+	[325] = {mapID = 2648, shortName = "ROOK", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/therookery.png"},
+	[326] = {mapID = 2662, shortName = "DB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/thedawnbreaker.png"},
+	[327] = {mapID = 2661, shortName = "CBM", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/cinderbrewmeadery.png"},
+	[328] = {mapID = 2652, shortName = "SV", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/thestonevault.png"},
+	[329] = {mapID = 2669, shortName = "COT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/cityofthreads.png"},
+
+	[362] = {mapID = 2657, shortName = "NP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nerubarpalace.png"},
 }
 
 miog.GROUP_ID_TO_LFG_ID = {}
@@ -960,19 +973,10 @@ miog.ACTIVITY_INFO = {
 
 }
 
-miog.SEASONAL_DUNGEONS = {
-	[11] = {184, 1274, 1247, 1248, 502, 463, 460, 530},
-	[12] = {1160, 1164, 1168, 1172, 1176, 1180, 1184, 1188},
+miog.SEASONAL_MAP_IDS = {
+	[12] = {dungeons = {2526, 2520, 2527, 2519, 2521, 2515, 2516, 2451}, raids = {2522, 2569, 2549}},
+	[13] = {dungeons = {2660, 2662, 2652, 2669, 670, 1822, 2290, 2286}, raids = {2657}},
 }
-
-for _, v in pairs(miog.SEASONAL_DUNGEONS) do
-	table.sort(v, function(k1, k2)
-		local info1 = C_LFGList.GetActivityFullName(k1)
-		local info2 = C_LFGList.GetActivityFullName(k2)
-
-		return info1 < info2
-	end)
-end
 
 miog.JOURNAL_CREATURE_INFO = {
 
@@ -981,15 +985,6 @@ miog.JOURNAL_CREATURE_INFO = {
 miog.DUNGEON_ENCOUNTER_INFO = {
 
 }
-
-miog.CHALLENGE_MODE = {
-
-}
-
-for k, v in ipairs(C_ChallengeMode.GetMapTable()) do
-	miog.CHALLENGE_MODE[v] = true
-
-end
 
 miog.LFG_DUNGEONS_INFO = {
 
@@ -1044,11 +1039,10 @@ local function loadRawData()
 	local faction = UnitFactionGroup("player")
 
 	for k, v in pairs(miog.RAW["Map"]) do
-
 		if(miog.MAP_INFO[v[1]]) then
 			local mapInfo = miog.MAP_INFO[v[1]]
 			mapInfo.name = v[3]
-			mapInfo.instanceType = v[10]
+			mapInfo.instanceType = v[11]
 			mapInfo.expansionLevel = v[12]
 			mapInfo.loadingScreenID = v[14]
 			mapInfo.bosses = {}
@@ -1078,17 +1072,17 @@ local function loadRawData()
 		end
 	end
 
-	for k, v in pairs(miog.RAW["BattlemasterList"]) do
-		if(miog.MAP_INFO[v[18]]) then
-			--local isNotNumber = type(miog.MAP_INFO[v[18]].exactName) ~= "number"
-			--local subbedString = string.gsub(miog.MAP_INFO[v[18]].name, "%s+", "")
+	--[[for k, v in pairs(miog.RAW["BattlemasterList"]) do
+		if(miog.MAP_INFO[v[18] ]) then
+			--local isNotNumber = type(miog.MAP_INFO[v[18] ].exactName) ~= "number"
+			--local subbedString = string.gsub(miog.MAP_INFO[v[18] ].name, "%s+", "")
 
-			--miog.MAP_INFO[v[18]].horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. (isNotNumber and miog.MAP_INFO[v[18]].exactName or subbedString) .. ".png"
-			--miog.MAP_INFO[v[18]].vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. (isNotNumber and miog.MAP_INFO[v[18]].exactName or subbedString) .. ".png"
+			--miog.MAP_INFO[v[18] ].horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. (isNotNumber and miog.MAP_INFO[v[18] ].exactName or subbedString) .. ".png"
+			--miog.MAP_INFO[v[18] ].vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. (isNotNumber and miog.MAP_INFO[v[18] ].exactName or subbedString) .. ".png"
 			
 		end
 
-	end
+	end]]
 
 	for k, v in pairs(miog.RAW["DungeonEncounter"]) do
 		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
@@ -1228,47 +1222,49 @@ local function loadRawData()
 	end
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
-		miog.ACTIVITY_INFO[k] = {
-			fullName = v[1],
-			difficultyName = v[2],
-			categoryID = v[3],
+		miog.ACTIVITY_INFO[v[1]] = {
+			fullName = v[2],
+			difficultyName = v[3],
+			categoryID = v[4],
 	
-			groupFinderActivityGroupID = v[5],
+			groupFinderActivityGroupID = v[6],
 	
-			mapID = v[9],
-			difficultyID = v[10],
+			mapID = v[10],
+			difficultyID = v[11],
 	
-			maxPlayers = v[12],
+			maxPlayers = v[13],
 		}
 
-		if(miog.GROUP_ACTIVITY[v[5]]) then
-			miog.GROUP_ACTIVITY[v[5]].activityID = k
+		if(miog.GROUP_ACTIVITY[v[6]]) then
+			miog.GROUP_ACTIVITY[v[6]].activityID = v[1]
 			
 		end
 		
-		if(miog.MAP_INFO[v[9]]) then
-			miog.ACTIVITY_INFO[k].instanceType = miog.MAP_INFO[v[9]].instanceType
-			miog.ACTIVITY_INFO[k].expansionLevel = miog.MAP_INFO[v[9]].expansionLevel
-			miog.ACTIVITY_INFO[k].bosses = miog.MAP_INFO[v[9]].bosses
-			miog.ACTIVITY_INFO[k].fileName = miog.MAP_INFO[v[9]].fileName
-			miog.ACTIVITY_INFO[k].horizontal = miog.MAP_INFO[v[9]].horizontal
-			miog.ACTIVITY_INFO[k].vertical = miog.MAP_INFO[v[9]].vertical
-			miog.ACTIVITY_INFO[k].background = miog.MAP_INFO[v[9]].background
-			miog.ACTIVITY_INFO[k].icon = miog.MAP_INFO[v[9]].icon
-			miog.ACTIVITY_INFO[k].shortName = miog.GROUP_ACTIVITY[v[5]] and miog.GROUP_ACTIVITY[v[5]].shortName or miog.MAP_INFO[v[9]].shortName
+		if(miog.MAP_INFO[v[10]]) then
+			miog.MAP_INFO[v[10]].groupFinderActivityID = v[6]
 
-			if(miog.MAP_INFO[v[9]].achievementCategory) then
-				miog.MAP_INFO[v[9]].achievementTable = {}
+			miog.ACTIVITY_INFO[v[1]].instanceType = miog.MAP_INFO[v[10]].instanceType
+			miog.ACTIVITY_INFO[v[1]].expansionLevel = miog.MAP_INFO[v[10]].expansionLevel
+			miog.ACTIVITY_INFO[v[1]].bosses = miog.MAP_INFO[v[10]].bosses
+			miog.ACTIVITY_INFO[v[1]].fileName = miog.MAP_INFO[v[10]].fileName
+			miog.ACTIVITY_INFO[v[1]].horizontal = miog.MAP_INFO[v[10]].horizontal
+			miog.ACTIVITY_INFO[v[1]].vertical = miog.MAP_INFO[v[10]].vertical
+			miog.ACTIVITY_INFO[v[1]].background = miog.MAP_INFO[v[10]].background
+			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
+			miog.ACTIVITY_INFO[v[1]].shortName = miog.GROUP_ACTIVITY[v[6]] and miog.GROUP_ACTIVITY[v[6]].shortName or miog.MAP_INFO[v[10]].shortName
 
-				local totalAchievements = GetCategoryNumAchievements(miog.MAP_INFO[v[9]].achievementCategory)
+			if(miog.MAP_INFO[v[10]].achievementCategory) then
+				miog.MAP_INFO[v[10]].achievementTable = {}
+
+				local totalAchievements = GetCategoryNumAchievements(miog.MAP_INFO[v[10]].achievementCategory)
 
 				for i = 1, totalAchievements, 1 do
-					local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(miog.MAP_INFO[v[9]].achievementCategory, i)
+					local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(miog.MAP_INFO[v[10]].achievementCategory, i)
 
-					if(strfind(name, miog.MAP_INFO[v[9]].name)) then
-						table.insert(miog.MAP_INFO[v[9]].achievementTable, id)
+					if(strfind(name, miog.MAP_INFO[v[10]].name)) then
+						table.insert(miog.MAP_INFO[v[10]].achievementTable, id)
 
-						for x, y in ipairs(miog.MAP_INFO[v[9]].bosses) do
+						for x, y in ipairs(miog.MAP_INFO[v[10]].bosses) do
 							if(strfind(name, y.name)) then
 								table.insert(y.achievements, id)
 	
@@ -1279,12 +1275,12 @@ local function loadRawData()
 				end
 			end
 
-			if(miog.ACTIVITY_INFO[k].horizontal == nil) then
-				miog.ACTIVITY_INFO[k].horizontal = miog.ACTIVITY_BACKGROUNDS[v[3]]
+			if(miog.ACTIVITY_INFO[v[1]].horizontal == nil) then
+				miog.ACTIVITY_INFO[v[1]].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4]]
 				
 			end
 		else
-			miog.ACTIVITY_INFO[k].horizontal = miog.ACTIVITY_BACKGROUNDS[v[3]]
+			miog.ACTIVITY_INFO[v[1]].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4]]
 
 		end
 	
@@ -1295,11 +1291,14 @@ local function loadRawData()
 			if(y[1] == v.groupFinderActivityGroupID) then
 				v.groupFinderActivityName = y[2] or C_LFGList.GetActivityGroupInfo(y[1])
 
-				if(miog.GROUP_ACTIVITY[y[1]].challengeModeID) then
-					miog.CHALLENGE_MODE[miog.GROUP_ACTIVITY[y[1]].challengeModeID] = k
-				end
-
 			end
+		end
+	end
+
+	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
+		if(miog.MAP_INFO[v[3]]) then
+			miog.MAP_INFO[v[3]].challengeModeID = v[2]
+			miog.GROUP_ACTIVITY[miog.MAP_INFO[v[3]].groupFinderActivityID].challengeModeID = v[2]
 		end
 	end
 end
@@ -1667,6 +1666,24 @@ miog.CLASSFILE_TO_ID = {
 	["DUMMY"] = 20,
 }
 
+
+miog.SLOT_FILTER_TO_NAME = {
+	[Enum.ItemSlotFilterType.Head] = INVTYPE_HEAD,
+	[Enum.ItemSlotFilterType.Neck] = INVTYPE_NECK,
+	[Enum.ItemSlotFilterType.Shoulder] = INVTYPE_SHOULDER,
+	[Enum.ItemSlotFilterType.Cloak] = INVTYPE_CLOAK,
+	[Enum.ItemSlotFilterType.Chest] = INVTYPE_CHEST,
+	[Enum.ItemSlotFilterType.Wrist] = INVTYPE_WRIST,
+	[Enum.ItemSlotFilterType.Hand] = INVTYPE_HAND,
+	[Enum.ItemSlotFilterType.Waist] = INVTYPE_WAIST,
+	[Enum.ItemSlotFilterType.Legs] = INVTYPE_LEGS,
+	[Enum.ItemSlotFilterType.Feet] = INVTYPE_FEET,
+	[Enum.ItemSlotFilterType.MainHand] = INVTYPE_WEAPONMAINHAND,
+	[Enum.ItemSlotFilterType.OffHand] = INVTYPE_WEAPONOFFHAND,
+	[Enum.ItemSlotFilterType.Finger] = INVTYPE_FINGER,
+	[Enum.ItemSlotFilterType.Trinket] = INVTYPE_TRINKET,
+	[Enum.ItemSlotFilterType.Other] = EJ_LOOT_SLOT_FILTER_OTHER,
+}
 
 miog.roleRemainingKeyLookup = {
 	["TANK"] = "TANK_REMAINING",

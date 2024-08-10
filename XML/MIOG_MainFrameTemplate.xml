@@ -83,19 +83,11 @@
                         </Scripts>
                     </Button>
                     
-                    <Button parentKey="DungeonJournal" inherits="MIOG_NavBarButtonTemplate">
+                    <Button parentKey="MoreButton" inherits="MIOG_NavBarButtonTemplate">
                         <Size x="62" y="20" />
 
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent.FindGroup" relativePoint="RIGHT" x="2" />
-						</Anchors>
-                    </Button>
-                    
-                    <Button parentKey="RaiderIOChecker" inherits="MIOG_NavBarButtonTemplate" hidden="true">
-                        <Size x="40" y="20" />
-
-						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.DungeonJournal" relativePoint="RIGHT" x="2" />
 						</Anchors>
                     </Button>
 

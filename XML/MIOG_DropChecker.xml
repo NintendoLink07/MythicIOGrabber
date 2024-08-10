@@ -1,0 +1,63 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_DropChecker" inherits="BackdropTemplate" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+
+        <Frames>
+            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1">
+                <Size y="24" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="7" y="-2"/>
+                    <Anchor point="TOPRIGHT" x="-2" y="-2"/>
+                </Anchors>
+            </EditBox>
+
+            <Frame parentKey="AutoCompleteBox" inherits="BackdropTemplate, WowScrollBoxList" hidden="true">
+                <Size y="200" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="AutoCompleteBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.AutoCompleteBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.AutoCompleteBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
+
+            <DropdownButton parentKey="SlotDropdown" inherits="WowStyle1DropdownTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-4" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOM" x="-3" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="ArmorDropdown" inherits="WowStyle1DropdownTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOM" x="2" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMRIGHT" x="-2" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-55"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
+        </Frames>
+    </Frame>
+</Ui>
