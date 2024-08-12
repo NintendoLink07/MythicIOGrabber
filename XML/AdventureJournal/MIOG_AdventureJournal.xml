@@ -67,31 +67,31 @@
             </Button>
 
             <Frame parentKey="SettingsBar">
-                <Size x="260" y="20" />
+                <Size x="260" y="24" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="ClassSpecDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                        <Size x="125" y="20" />
+                    <DropdownButton parentKey="SlotDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
+                        <Size x="125" y="24" />
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                         </Anchors>
-                    </Frame>
+                    </DropdownButton>
 
-                    <Frame parentKey="SlotDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                        <Size x="95" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.ClassSpecDropdown" relativePoint="RIGHT"/>
-                        </Anchors>
-                    </Frame>
-            
-                    <Frame parentKey="KeylevelDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
-                        <Size x="40" y="20" />
+                    <DropdownButton parentKey="ArmorDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
+                        <Size x="95" y="24" />
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.SlotDropdown" relativePoint="RIGHT"/>
+                        </Anchors>
+                    </DropdownButton>
+            
+                    <Frame parentKey="KeylevelDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
+                        <Size x="40" y="24" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.ArmorDropdown" relativePoint="RIGHT"/>
                         </Anchors>
                     </Frame>
                 </Frames>

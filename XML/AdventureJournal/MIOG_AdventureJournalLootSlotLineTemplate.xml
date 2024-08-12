@@ -11,7 +11,16 @@
                         <Anchor point="BOTTOM" relativeKey="$parent" relativePoint="BOTTOM" y="2"/>
                     </Anchors>
                 </FontString>
-            </Layer>    
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" hidden="true">
+                    <Size x="12" y="12" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Name" relativePoint="LEFT" x="-2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
             
             <Layer level="BORDER">
                 <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">

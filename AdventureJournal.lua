@@ -11,6 +11,15 @@ local currentModels = {}
 local lootWaitlist = {}
 
 local currentItemTable = {}
+local selectedItemClass, selectedItemSubClass
+local selectedArmor, selectedClass, selectedSpec
+
+local armorTypeInfo = {
+    {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Cloth)},
+    {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Leather)},
+    {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Mail)},
+    {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Plate)},
+}
 
 local EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.DungeonNormal,
@@ -957,6 +966,34 @@ miog.selectInstance = function(journalInstanceID)
 
     miog.selectBoss(firstBossID)
     miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
+    miog.AdventureJournal.SettingsBar.SlotDropdown:Show()
+    miog.AdventureJournal.SettingsBar.ArmorDropdown:Show()
+end
+
+local function checkIfItemIsFiltered(item)
+    local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(item.link)
+
+    local isSpecialToken = classID == 5 and subclassID == 2 and selectedItemClass == 15 and selectedItemSubClass == 0
+    local specialItemCorrectClass = classID == selectedItemClass
+    local specialItemCorrectSubClass = selectedItemSubClass ~= nil and subclassID == selectedItemSubClass or selectedItemSubClass == nil and true
+
+    local isSlotCorrect = item.filterType == C_EncounterJournal.GetSlotFilter()
+    local isArmorCorrect = selectedArmor == item.armorType
+
+    if(isSpecialToken or specialItemCorrectClass and specialItemCorrectSubClass) then
+        return true
+
+    elseif(selectedItemClass == nil and selectedItemSubClass == nil and (isSlotCorrect or isArmorCorrect)) then
+        if(selectedArmor ~= nil and C_EncounterJournal.GetSlotFilter() ~= 15 and (not isSlotCorrect or not isArmorCorrect)) then
+            return false
+
+        end
+
+        return true
+
+    end
+
+    return false
 end
 
 local function requestCurrentDifficultyItemsFromCurrentEncounter(difficultyIndex)
@@ -977,13 +1014,14 @@ local function requestCurrentDifficultyItemsFromCurrentEncounter(difficultyIndex
     end)]]
 
     local usedSlots = {}
+    local noFilter = C_EncounterJournal.GetSlotFilter() == 15
 
     for n = 1, EJ_GetNumLoot(), 1 do
         local itemInfo = C_EncounterJournal.GetLootInfoByIndex(n)
             
         currentItemTable[itemInfo.itemID] = currentItemTable[itemInfo.itemID] or {}
 
-        if(itemInfo.name) then
+        if((noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) and itemInfo.name) then
             local slot = itemInfo.slot == "" and "Other" or itemInfo.slot
             
             currentItemTable[itemInfo.itemID].links = currentItemTable[itemInfo.itemID].links or {}
@@ -1019,6 +1057,13 @@ local function requestCurrentDifficultyItemsFromCurrentEncounter(difficultyIndex
 
         end
 
+    end
+
+    if(dataProvider:GetSize() == 0) then
+        dataProvider:Insert({
+            template = "MIOG_AdventureJournalLootSlotLineTemplate",
+            name = "No loot available for this slot",
+        })
     end
 
     miog.AdventureJournal.ScrollBox:SetDataProvider(dataProvider);
@@ -1381,76 +1426,149 @@ miog.loadAdventureJournal = function()
     keylevelDropdown:OnLoad()
     keylevelDropdown:SetParent(miog.AdventureJournal.Abilities)
 
-	local classSpecDropdown = miog.AdventureJournal.SettingsBar.ClassSpecDropdown
-    classSpecDropdown:OnLoad()
-    --classSpecDropdown:SetParent(miog.AdventureJournal.ScrollBox)
 
-    local info = {}
-    info.entryType = "option"
-    info.index = 0
-    info.text = ALL_CLASSES
-    info.value = 0
-    info.func = function()
-        EJ_SetLootFilter(0, 0)
 
-        requestAllItemsFromCurrentEncounter()
-    end
 
-    classSpecDropdown:CreateEntryFrame(info)
 
-    for k, v in ipairs(miog.CLASSES) do
-
-        local info = {}
-        info.entryType = "option"
-        info.index = k
-        info.text = GetClassInfo(k)
-        info.value = k
-        info.func = function()
-            EJ_SetLootFilter(k, GetSpecializationInfoForClassID(k, 1))
-
+    miog.AdventureJournal.SettingsBar.ArmorDropdown:SetDefaultText("Armor types")
+    miog.AdventureJournal.SettingsBar.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
+        rootDescription:CreateButton("Clear", function(index)
+            selectedArmor = nil
+            selectedClass = nil
+            selectedSpec = nil
+            
+            EJ_ResetLootFilter()
             requestAllItemsFromCurrentEncounter()
-        end
 
-        classSpecDropdown:CreateEntryFrame(info)
+        end)
 
-        for x, y in ipairs(v.specs) do
-            local id, name, description, icon, role, classFile, className = GetSpecializationInfoByID(y)
+        local classButton = rootDescription:CreateButton("Classes")
 
-            local specInfo = {}
-            specInfo.entryType = "option"
-            specInfo.parentIndex = k
-            specInfo.index = y
-            specInfo.text = name
-            specInfo.value = y
-            specInfo.func = function()
-                EJ_SetLootFilter(k, y)
+        classButton:CreateButton("Clear", function(index)
+            selectedClass = nil
+            selectedSpec = nil
+            EJ_ResetLootFilter()
+            requestAllItemsFromCurrentEncounter()
 
+        end)
+
+        for k, v in ipairs(miog.CLASSES) do
+	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(index) return index == selectedClass end, function(name)
+                selectedClass = k
+                selectedSpec = nil
+                EJ_SetLootFilter(selectedClass, selectedSpec)
                 requestAllItemsFromCurrentEncounter()
+
+                if(dropdown:IsMenuOpen()) then
+                    dropdown:CloseMenu()
+                end
+            end, k)
+
+            for x, y in ipairs(v.specs) do
+                local id, specName, description, icon, role, classFile, className = GetSpecializationInfoByID(y)
+
+                classMenu:CreateRadio(specName, function(specID) return specID == selectedSpec end, function(name)
+                    selectedClass = k
+                    selectedSpec = id
+                    EJ_SetLootFilter(k, id)
+                    requestAllItemsFromCurrentEncounter()
+
+                    if(dropdown:IsMenuOpen()) then
+                        dropdown:CloseMenu()
+                    end
+                end, id)
             end
-
-            classSpecDropdown:CreateEntryFrame(specInfo)
         end
 
-    end
+        local armorButton = rootDescription:CreateButton("Armor")
 
-	local slotDropdown = miog.AdventureJournal.SettingsBar.SlotDropdown
-    slotDropdown:OnLoad()
-    --slotDropdown:SetParent(miog.AdventureJournal.ScrollBox)
+        --[[local sortedFilters = {}
 
-    for k, v in pairs(Enum.ItemSlotFilterType) do
-        local info = {}
-        info.entryType = "option"
-        info.index = v
-        info.text = k
-        info.value = v
-        info.func = function()
-            C_EncounterJournal.SetSlotFilter(v)
+        for k, v in pairs(Enum.ItemArmorSubclass) do
+            sortedFilters[v] = k
+        end
 
+        for k, v in ipairs(sortedFilters) do
+            if(k > 0 and k < 5) then
+                armorButton:CreateRadio(v, function(index) return index == selectedArmor end, function(index)
+                    selectedArmor = index
+
+                    checkAllItemIDs()
+                end, v)
+            end
+            
+        end]]
+
+        armorButton:CreateButton("Clear", function(index)
+            selectedArmor = nil
             requestAllItemsFromCurrentEncounter()
+
+        end)
+
+        for k, v in ipairs(armorTypeInfo) do
+	        armorButton:CreateRadio(v.name, function(name) return name == selectedArmor end, function(name)
+                selectedArmor = v.name
+                requestAllItemsFromCurrentEncounter()
+            end, v.name)
+            
         end
 
-        miog.AdventureJournal.SettingsBar.SlotDropdown:CreateEntryFrame(info)
-    end
+    end)
+
+    miog.AdventureJournal.SettingsBar.SlotDropdown:SetDefaultText("Equipment slots")
+    miog.AdventureJournal.SettingsBar.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
+        rootDescription:CreateButton("Clear", function(index)
+            selectedItemClass = nil
+            selectedItemSubClass = nil
+            C_EncounterJournal.ResetSlotFilter()
+            requestAllItemsFromCurrentEncounter()
+
+        end)
+
+        
+        local sortedFilters = {}
+
+        for k, v in pairs(Enum.ItemSlotFilterType) do
+            sortedFilters[v] = k
+        end
+
+        for i = 0, #sortedFilters - 1, 1 do
+	        rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(index) return index == C_EncounterJournal.GetSlotFilter() end, function(index)
+                selectedItemClass = nil
+                selectedItemSubClass = nil
+                C_EncounterJournal.SetSlotFilter(index)
+                requestAllItemsFromCurrentEncounter()
+
+            end, i)
+        end
+
+        rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+            selectedItemClass = data.class
+            selectedItemSubClass = data.subclass
+            
+            C_EncounterJournal.SetSlotFilter(14)
+            requestAllItemsFromCurrentEncounter()
+
+        end, {class = 15, subclass = 5})
+
+        rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+            selectedItemClass = data.class
+            selectedItemSubClass = data.subclass
+            
+            C_EncounterJournal.SetSlotFilter(14)
+            requestAllItemsFromCurrentEncounter()
+
+        end, {class = 9, subclass = nil})
+
+        rootDescription:CreateRadio("Tokens", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+            selectedItemClass = data.class
+            selectedItemSubClass = data.subclass
+
+            C_EncounterJournal.SetSlotFilter(14)
+            requestAllItemsFromCurrentEncounter()
+
+        end, {class = 15, subclass = 0})
+    end)
 
     for i = 2, 40, 1 do
         local keyInfo = {}
@@ -1469,19 +1587,6 @@ miog.loadAdventureJournal = function()
     end
 
     keylevelDropdown:SelectFirstFrameWithValue(3)
-
-    local classID, specID = EJ_GetLootFilter()
-
-    local success = classSpecDropdown:SelectFirstFrameWithValue(specID)
-
-    if(not success) then
-        classSpecDropdown:SelectFirstFrameWithValue(classID)
-        
-    end
-
-    local filter = C_EncounterJournal.GetSlotFilter()
-
-    miog.AdventureJournal.SettingsBar.SlotDropdown:SelectFirstFrameWithValue(filter)
 
     local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
 

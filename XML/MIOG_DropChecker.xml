@@ -16,21 +16,6 @@
                 </Anchors>
             </EditBox>
 
-            <Frame parentKey="AutoCompleteBox" inherits="BackdropTemplate, WowScrollBoxList" hidden="true">
-                <Size y="200" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
-            </Frame>
-
-            <EventFrame parentKey="AutoCompleteBar" inherits="MinimalScrollBar">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.AutoCompleteBox" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.AutoCompleteBox" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </EventFrame>
-
             <DropdownButton parentKey="SlotDropdown" inherits="WowStyle1DropdownTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-4" y="-2"/>

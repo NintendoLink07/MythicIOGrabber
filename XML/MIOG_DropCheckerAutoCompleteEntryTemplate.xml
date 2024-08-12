@@ -1,24 +1,24 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_DropCheckerAutoCompleteEntryTemplate" inherits="BackdropTemplate" virtual="true">
+    <Button name="MIOG_DropCheckerAutoCompleteEntryTemplate" inherits="BackdropTemplate" virtual="true">
         <Size y="20" />
         <Layers>
-            <!--<Layer level="ARTWORK">
-                <Texture parentKey="Texture" file="Interface/Addons/MythicIOGrabber/res/infoIcons/itemsacks.png">
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
                     <Size x="20" y="20" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                        <Anchor point="LEFT"/>
                     </Anchors>
                 </Texture>
-            </Layer>-->
+            </Layer>
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
-    </Frame>
+    </Button>
 </Ui>

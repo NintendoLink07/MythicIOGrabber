@@ -1,26 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local inventorySlotsInfo = {
-    {name = C_Item.GetItemInventorySlotInfo(1), index = 1},
-    {name = C_Item.GetItemInventorySlotInfo(2), index = 2},
-    {name = C_Item.GetItemInventorySlotInfo(3), index = 3},
-    {name = C_Item.GetItemInventorySlotInfo(16), index = 16},
-    {name = C_Item.GetItemInventorySlotInfo(5), index = 5},
-    {name = C_Item.GetItemInventorySlotInfo(9), index = 9},
-    {name = C_Item.GetItemInventorySlotInfo(10), index = 10},
-    {name = C_Item.GetItemInventorySlotInfo(6), index = 6},
-    {name = C_Item.GetItemInventorySlotInfo(7), index = 7},
-    {name = C_Item.GetItemInventorySlotInfo(8), index = 8},
-    {name = C_Item.GetItemInventorySlotInfo(11), index = 11},
-    {name = C_Item.GetItemInventorySlotInfo(12), index = 12},
-    {name = C_Item.GetItemInventorySlotInfo(13), index = 13},
-    {name = C_Item.GetItemInventorySlotInfo(14), index = 14},
-    {name = C_Item.GetItemInventorySlotInfo(15), index = 15},
-    {name = C_Item.GetItemInventorySlotInfo(17), index = 17},
-    {name = C_Item.GetItemInventorySlotInfo(18), index = 18},
-}
-
 local armorTypeInfo = {
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Cloth)},
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Leather)},
@@ -29,45 +9,41 @@ local armorTypeInfo = {
 }
 
 local currentItemIDs
-local selectedArmor, selectedClass, selectedSpec, selectedSlot
+local selectedArmor, selectedClass, selectedSpec
 
-local allNames
+local itemData
 
 local function fuzzyCheck(text)
-    local result = miog.fzy.filter(text, allNames)
+    local filterArray = {}
+
+    for k, v in ipairs(itemData) do
+        table.insert(filterArray, v.name)
+
+    end
+
+    local result = miog.fzy.filter(text, filterArray)
 
     table.sort(result, function(k1, k2)
         return k1[3] > k2[3]
     end)
 
-    local smallTable = {}
-
-    local dataProvider = CreateDataProvider()
+    local returnResults = {}
 
     for k, v in ipairs(result) do
-        --print(k, v[1], v[2], v[3])
-        table.insert(smallTable, allNames[k])
+        table.insert(returnResults, {index = v[1], positions = v[2]})
 
-        dataProvider:Insert({name = allNames[k]})
     end
 
-    miog.DropChecker.AutoCompleteBox:SetDataProvider(dataProvider)
-
-    
+    return returnResults
 end
 
 local function resetLootItemFrames(frame, data)
-    if(data.template == "MIOG_AdventureJournalLootItemTemplate") then
+    if(data.template == "MIOG_AdventureJournalLootItemSingleTemplate") then
         frame.itemLink = nil
         frame.BasicInformation.Name:SetText("")
         frame.BasicInformation.Icon:SetTexture(nil)
-
         frame:SetScript("OnEnter", nil)
 
-        frame.BasicInformation.Item1:Hide()
-        frame.BasicInformation.Item2:Hide()
-        frame.BasicInformation.Item3:Hide()
-        frame.BasicInformation.Item4:Hide()
     else
         local x1, x2, x3 = frame.Name:GetFont()
         frame.Name:SetFont(x1, 12, x3)
@@ -77,6 +53,33 @@ end
 
 local instanceQueue = {}
 local forceSeasonID = 13
+local selectedItemClass, selectedItemSubClass
+
+local function checkIfItemIsFiltered(item)
+    local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(item.link)
+
+    local isSpecialToken = classID == 5 and subclassID == 2 and selectedItemClass == 15 and selectedItemSubClass == 0
+    local specialItemCorrectClass = classID == selectedItemClass
+    local specialItemCorrectSubClass = selectedItemSubClass ~= nil and subclassID == selectedItemSubClass or selectedItemSubClass == nil and true
+
+    local isSlotCorrect = item.filterType == C_EncounterJournal.GetSlotFilter()
+    local isArmorCorrect = selectedArmor == item.armorType
+
+    if(isSpecialToken or specialItemCorrectClass and specialItemCorrectSubClass) then
+        return true
+
+    elseif(selectedItemClass == nil and selectedItemSubClass == nil and (isSlotCorrect or isArmorCorrect)) then
+        if(selectedArmor ~= nil and C_EncounterJournal.GetSlotFilter() ~= 15 and (not isSlotCorrect or not isArmorCorrect)) then
+            return false
+
+        end
+
+        return true
+
+    end
+
+    return false
+end
 
 local function loadLoot()
     local allItems = true
@@ -87,84 +90,105 @@ local function loadLoot()
             break
         end
     end
+        
+    local dataProvider = CreateDataProvider()
     
     if(allItems) then
-        local dataProvider = CreateDataProvider()
+        itemData = {}
 
-        allNames = {}
-
-        local searchBoxText = miog.DropChecker.SearchBox:GetText()
-
-        for k, v in ipairs(instanceQueue) do
+        for _, v in ipairs(instanceQueue) do
             EJ_SelectInstance(v.journalInstanceID)
             EJ_SetDifficulty(v.isRaid and 16 or 23)
 
             local numOfLoot = EJ_GetNumLoot()
-            local addedInstanceName = false
 
             if(numOfLoot > 0) then
-                local slotsDone = {}
-
                 for i = 1, numOfLoot, 1 do
                     local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
 
                     if(itemInfo.slot) then
-                        table.insert(allNames, itemInfo.name)
+                        table.insert(itemData, itemInfo)
 
-                        local noFilter = C_EncounterJournal.GetSlotFilter() == 15
-
-                        local nameCheck, allLootOkay, bothCheck, armorCheck, slotCheck
-
-                        if(searchBoxText ~= "") then
-                            nameCheck = string.find(string.lower(itemInfo.name), string.lower(searchBoxText))
-
-                        else
-                            allLootOkay = noFilter and selectedArmor == nil
-                            bothCheck = not noFilter and selectedArmor ~= nil and itemInfo.filterType == C_EncounterJournal.GetSlotFilter() and StripHyperlinks(itemInfo.armorType) == selectedArmor
-                            armorCheck = noFilter and selectedArmor ~= nil and StripHyperlinks(itemInfo.armorType) == selectedArmor
-                            slotCheck = selectedArmor == nil and itemInfo.filterType == C_EncounterJournal.GetSlotFilter()
-
-                        end
-
-                        if(nameCheck or allLootOkay or bothCheck or selectedArmor == nil and slotCheck or noFilter and armorCheck) then
-                            if(not addedInstanceName) then
-                                dataProvider:Insert({
-                                    template = "MIOG_AdventureJournalLootSlotLineTemplate",
-                                    name = EJ_GetInstanceInfo(),
-                                    header = true,
-                                })
-
-                                addedInstanceName = true
-                            end
-
-                            if(not slotsDone[itemInfo.slot] and noFilter) then
-                                dataProvider:Insert({
-                                    template = "MIOG_AdventureJournalLootSlotLineTemplate",
-                                    name = itemInfo.slot ~= "" and itemInfo.slot or "Other",
-                                })
-
-                                slotsDone[itemInfo.slot] = true
-                            end
-
-                            dataProvider:Insert({template = "MIOG_AdventureJournalLootItemTemplate", name = itemInfo.name, icon = itemInfo.icon, link = itemInfo.link, encounterID = itemInfo.encounterID})
-            
-                        end
                     end
                 end
             end
         end
 
-        fuzzyCheck(searchBoxText)
+        local searchBoxText = miog.DropChecker.SearchBox:GetText()
 
-        if(dataProvider:GetSize() == 0) then
-            dataProvider:Insert({
-                template = "MIOG_AdventureJournalLootSlotLineTemplate",
-                name = "No loot available for this slot",
-            })
+        local results = fuzzyCheck(searchBoxText)
+
+        local noFilter = C_EncounterJournal.GetSlotFilter() == 15
+
+        if(searchBoxText ~= "") then
+            for k, v in ipairs(results) do
+                local item = itemData[v.index]
+                dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = item.name, icon = item.icon, link = item.link, encounterID = item.encounterID, positions = v.positions})
+
+            end
+
+        else
+            for k, v in ipairs(instanceQueue) do
+                EJ_SelectInstance(v.journalInstanceID)
+                EJ_SetDifficulty(v.isRaid and 16 or 23)
+    
+                local numOfLoot = EJ_GetNumLoot()
+    
+                local addedInstance = false
+                local slotsDone = {}
+
+                if(numOfLoot > 0) then
+
+                    for i = 1, numOfLoot, 1 do
+                        local item = C_EncounterJournal.GetLootInfoByIndex(i)
+    
+                        if(searchBoxText ~= "") then
+    
+                        else
+                            if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(item, noFilter)) then
+                                if(not addedInstance) then
+                                    local instanceName, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
+                                    dataProvider:Insert({
+                                        template = "MIOG_AdventureJournalLootSlotLineTemplate",
+                                        name = instanceName,
+                                        icon = miog.MAP_INFO[mapID].icon,
+                                        header = true,
+                                    })
+                        
+                                    addedInstance = true
+                                end
+
+                                if(not slotsDone[item.filterType] and noFilter) then
+                                    dataProvider:Insert({
+                                        template = "MIOG_AdventureJournalLootSlotLineTemplate",
+                                        name = item.slot ~= "" and item.slot or "Other",
+                                    })
+                        
+                                    slotsDone[item.filterType] = true
+                                end
+                                
+                                dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = item.name, icon = item.icon, link = item.link, encounterID = item.encounterID})
+
+                            end
+                        end
+                    end
+                end
+            end
+
+
         end
+
         
-        miog.DropChecker.ScrollBox:SetDataProvider(dataProvider)
     end
+
+    if(dataProvider:GetSize() == 0) then
+        dataProvider:Insert({
+            template = "MIOG_AdventureJournalLootSlotLineTemplate",
+            name = "No loot available for this slot",
+        })
+    end
+    
+    miog.DropChecker.ScrollBox:SetDataProvider(dataProvider)
 end
 
 local function requestAllLootForMapID(mapID)
@@ -227,7 +251,8 @@ miog.loadDropChecker = function()
     miog.DropChecker.SlotDropdown:SetDefaultText("Equipment slots")
     miog.DropChecker.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
         rootDescription:CreateButton("Clear", function(index)
-            selectedSlot = nil
+            selectedItemClass = nil
+            selectedItemSubClass = nil
             C_EncounterJournal.ResetSlotFilter()
 
             checkAllItemIDs()
@@ -242,24 +267,42 @@ miog.loadDropChecker = function()
         end
 
         for i = 0, #sortedFilters - 1, 1 do
-	        rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(index) return index == selectedSlot end, function(index)
-                selectedSlot = i
+	        rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(index) return index == C_EncounterJournal.GetSlotFilter() end, function(index)
+                selectedItemClass = nil
+                selectedItemSubClass = nil
                 C_EncounterJournal.SetSlotFilter(index)
                 checkAllItemIDs()
 
             end, i)
         end
+
+        rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+            selectedItemClass = data.class
+            selectedItemSubClass = data.subclass
+            
+            C_EncounterJournal.SetSlotFilter(14)
+            checkAllItemIDs()
+
+        end, {class = 15, subclass = 5})
+
+        rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+            selectedItemClass = data.class
+            selectedItemSubClass = data.subclass
+            
+            C_EncounterJournal.SetSlotFilter(14)
+            checkAllItemIDs()
+
+        end, {class = 9, subclass = nil})
+
+        rootDescription:CreateRadio("Tokens", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+            selectedItemClass = data.class
+            selectedItemSubClass = data.subclass
+
+            C_EncounterJournal.SetSlotFilter(14)
+            checkAllItemIDs()
+
+        end, {class = 15, subclass = 0})
     end)
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -279,10 +322,20 @@ miog.loadDropChecker = function()
 
         local classButton = rootDescription:CreateButton("Classes")
 
+        classButton:CreateButton("Clear", function(index)
+            selectedClass = nil
+            selectedSpec = nil
+            EJ_ResetLootFilter()
+
+            checkAllItemIDs()
+
+        end)
+
         for k, v in ipairs(miog.CLASSES) do
 	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(index) return index == selectedClass end, function(name)
                 selectedClass = k
-                EJ_SetLootFilter(k, GetSpecializationInfoForClassID(k, 1))
+                selectedSpec = nil
+                EJ_SetLootFilter(selectedClass, selectedSpec)
 
                 checkAllItemIDs()
 
@@ -295,6 +348,7 @@ miog.loadDropChecker = function()
                 local id, specName, description, icon, role, classFile, className = GetSpecializationInfoByID(y)
 
                 classMenu:CreateRadio(specName, function(specID) return specID == selectedSpec end, function(name)
+                    selectedClass = k
                     selectedSpec = id
                     EJ_SetLootFilter(k, id)
                     checkAllItemIDs()
@@ -308,6 +362,30 @@ miog.loadDropChecker = function()
 
         local armorButton = rootDescription:CreateButton("Armor")
 
+        --[[local sortedFilters = {}
+
+        for k, v in pairs(Enum.ItemArmorSubclass) do
+            sortedFilters[v] = k
+        end
+
+        for k, v in ipairs(sortedFilters) do
+            if(k > 0 and k < 5) then
+                armorButton:CreateRadio(v, function(index) return index == selectedArmor end, function(index)
+                    selectedArmor = index
+
+                    checkAllItemIDs()
+                end, v)
+            end
+            
+        end]]
+
+        armorButton:CreateButton("Clear", function(index)
+            selectedArmor = nil
+
+            checkAllItemIDs()
+
+        end)
+
         for k, v in ipairs(armorTypeInfo) do
 	        armorButton:CreateRadio(v.name, function(name) return name == selectedArmor end, function(name)
                 selectedArmor = v.name
@@ -316,6 +394,7 @@ miog.loadDropChecker = function()
             end, v.name)
             
         end
+
     end)
 
     local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
@@ -323,21 +402,50 @@ miog.loadDropChecker = function()
     local function initializeLootFrames(frame, elementData)
         --local elementData = node:GetData()
 
-        if(elementData.template == "MIOG_AdventureJournalLootItemTemplate") then
-            frame.BasicInformation.Name:SetText(elementData.name)
+        if(elementData.template == "MIOG_AdventureJournalLootItemSingleTemplate") then
+            local formattedText
+
+            if(elementData.positions) then
+                formattedText = ""
+    
+                local positionArray = {}
+    
+                for k, v in ipairs(elementData.positions) do
+                    positionArray[v] = true
+                end
+    
+                for i = 1, strlen(elementData.name), 1 do
+                    if(positionArray[i]) then
+                        formattedText = formattedText .. WrapTextInColorCode(strsub(elementData.name, i, i), miog.CLRSCC.green)
+    
+                    else
+                        formattedText = formattedText .. strsub(elementData.name, i, i)
+    
+                    end
+    
+                end
+            end
+
+            frame.BasicInformation.Name:SetText(formattedText or elementData.name)
             frame.BasicInformation.Icon:SetTexture(elementData.icon)
+            frame.itemLink = elementData.link
             
             frame:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 GameTooltip:SetHyperlink(elementData.link)
                 GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                local name = EJ_GetEncounterInfo(elementData.encounterID)
-                GameTooltip:AddLine("Dropped by: " .. name)
+
+                local encounterName, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(elementData.encounterID)
+                local instanceName = EJ_GetInstanceInfo(journalInstanceID)
+
+                GameTooltip:AddLine("[" .. instanceName .. "]: " .. encounterName)
                 GameTooltip:Show()
             end)
 
         else
             frame.Name:SetText(elementData.name)
+            frame.Icon:SetTexture(elementData.icon)
+            frame.Icon:SetShown(elementData.icon ~= nil)
 
             if(elementData.header) then
                 local x1, x2, x3 = frame.Name:GetFont()
@@ -381,21 +489,9 @@ miog.loadDropChecker = function()
     
         else
             checkAllItemIDs()
-            --miog.DropChecker.AutoCompleteBox:Show()
 
         end
     end)
-
-    local autoCompleteView = CreateScrollBoxListLinearView();
-    autoCompleteView:SetElementInitializer("MIOG_DropCheckerAutoCompleteEntryTemplate", function(button, elementData)
-        button.Name:SetText(elementData.name)
-    end)
-    autoCompleteView:SetPadding(1, 1, 1, 1, 2);
-    
-    ScrollUtil.InitScrollBoxListWithScrollBar(miog.DropChecker.AutoCompleteBox, miog.DropChecker.AutoCompleteBar, autoCompleteView);
-
-    miog.createFrameBorder(miog.DropChecker.AutoCompleteBox, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-    miog.DropChecker.AutoCompleteBox:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 end
 
 local function dcEvents(_, event, ...)

@@ -1,18 +1,29 @@
-## [2.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4) - 2024-08-10
+## [2.4.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.1) - 2024-08-12
 
 ### Added
 
-- In the toolbar there is a new "More" button.
- This button opens a menu for:
- - the Adventure Journal (where some algorithm improvements come with version 2.5)
+- [DropChecker] You can now select "Mounts", "Recipes" and "Tokens" in the equipment slot dropdown.
 
- - the basically done DropChecker, where you can select either a slot, an armor type (cloth, leather, mail or plate) or a class/spec and see all the available loot for it.
- You can also just straight up search for the name of the item (description searching is coming with 2.4.1).
- The loot is divided by the individual dungeons and raids and further divided by slot.
- It contains all the TWW world boss drops and both the TWW S1 dungeons and the TWW1 S1 raid.
+- [DropChecker] You can now clear your armor type and class/spec selection separately.
 
- - the (not even close to being finished) RaiderIOChecker, where you can input a name and realm (not needed if on the same server) and you'll get all the RaiderIO data they have
+- [DropChecker] An icon for the dungeons/raids has been added.
+
+- [DropChecker] The tooltip line showing which boss drops the hovered item now lists the instance/raid in the beginning of the line, useful if you're currently searching for an item.
+
+- [AdventureJournal] A notification line has been added if no loot is available for a specific slot.
+
+- [AdventureJournal] The slot and armor dropdown menus have been ported over to the adventure journal (both the journal and the new DropChecker will be merged into a single feature around v2.6)
+
+### Changed
+
+- [DropChecker] The search bar now has a fuzzy algorithm type search behind it.
+Just like before when you search for "Claw" it will show the items with "Claw" in it's name at the top.
+But now items like "**Cla**sp of **W**aning Shadow" will now show up aswell.
+
+- [DropChecker] Items can now be linked in any chat frame.
 
 ### Fixed
 
-- All teleports are now really alphabetically sorted, even when starting WoW again after the cache has been cleared.
+- [DropChecker] Various errors with the filtering and searching of items have been fixed
+
+- [DropChecker] The full width of the item frame will now be used for the name.
