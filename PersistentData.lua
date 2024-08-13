@@ -728,14 +728,14 @@ miog.MAP_INFO = {
 		shortName = "NP",
 		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/raid.png",
 		fileName = "nerubarpalance",
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ulgrax.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/bloodboundhorror.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sikran.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashanan.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/ovinax.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kyveza.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/silkencourt.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/queenansurek.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ulgrax.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/bloodboundhorror.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/sikran.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/rashanan.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ovinax.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/kyveza.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/silkencourt.png"},
+		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/queenansurek.png"},
 	},
 
 	[2774] = {shortName = "KA", fileName = "khazalgar",},
@@ -964,7 +964,7 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[328] = {mapID = 2652, shortName = "SV", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/thestonevault.png"},
 	[329] = {mapID = 2669, shortName = "COT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/cityofthreads.png"},
 
-	[362] = {mapID = 2657, shortName = "NP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nerubarpalace.png"},
+	[362] = {mapID = 2657, shortName = "NP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nerubarpalance.png"},
 }
 
 miog.GROUP_ID_TO_LFG_ID = {}
@@ -1044,6 +1044,7 @@ local function loadRawData()
 			mapInfo.name = v[3]
 			mapInfo.instanceType = v[11]
 			mapInfo.expansionLevel = v[12]
+
 			mapInfo.loadingScreenID = v[14]
 			mapInfo.bosses = {}
 			mapInfo.exactName = v[2]
@@ -1234,6 +1235,11 @@ local function loadRawData()
 	
 			maxPlayers = v[13],
 		}
+
+		if(v[10] == 2549) then
+			DevTools_Dump(miog.ACTIVITY_INFO[v[1]])
+
+		end
 
 		if(miog.GROUP_ACTIVITY[v[6]]) then
 			miog.GROUP_ACTIVITY[v[6]].activityID = v[1]

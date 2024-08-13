@@ -502,6 +502,139 @@ miog.getCurrentCategoryID = function()
 	return activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
 end
 
+local function fillRaidPanelWithData(profile, mainPanel, raidPanel, mainRaidPanel)
+	local currentTierFrame
+	local slotsFilled = {}
+	local mainProgressText = ""
+
+	local currentData, nonCurrentData, orderedData, mainData = getRaidSortData(profile.name .. (profile.realm and "-" .. profile.realm or ""))
+	local hasMainData = mainData[1].parsedString ~= "0/0"
+
+	if(hasMainData) then
+		mainProgressText = mainData[1].shortName .. ": " .. wticc(miog.DIFFICULTY[mainData[1].difficulty].shortName .. ":" .. mainData[1].progress .. "/" .. mainData[1].bossCount, miog.DIFFICULTY[mainData[1].difficulty].color)
+
+		--[[
+		
+			ordinal = d.raid.ordinal,
+			raidProgressIndex = k,
+			mapId = mapID,
+			difficulty = y.difficulty,
+			current = d.current,
+			shortName = d.raid.shortName,
+			progress = y.kills,
+			bossCount = d.raid.bossCount,
+			parsedString = y.kills .. "/" .. d.raid.bossCount,
+			weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+		
+		]]
+	end
+
+	if(mainPanel.RaiderIOInformationPanel) then
+		mainPanel.RaiderIOInformationPanel.raid = {}
+		if(mainProgressText ~= "") then
+			mainPanel.RaiderIOInformationPanel.raid.main = wticc("Main: ", miog.ITEM_QUALITY_COLORS[7].pureHex) .. mainProgressText
+
+		else
+			mainPanel.RaiderIOInformationPanel.raid.main = wticc("On his main char", miog.ITEM_QUALITY_COLORS[7].pureHex)
+
+		end
+	end
+
+	for n = 1, 2 + (mainRaidPanel and hasMainData and 1 or 0), 1 do
+		local raidData = n == 1 and currentData or n == 2 and nonCurrentData or n == 3 and mainData
+
+		if(n == 3) then
+			raidPanel = mainRaidPanel
+		end
+
+		if(raidData) then
+			for a, b in ipairs(raidData) do
+				local slot = b.ordinal == 4 and 1 or b.ordinal == 5 and 2 or b.ordinal == 6 and 3 or b.ordinal
+
+				if(slot and slotsFilled[slot] == nil) then
+					slotsFilled[slot] = true
+
+					local panelProgressString = ""
+					local raidProgress = profile.raidProfile.raidProgress[b.raidProgressIndex]
+					local mapId
+
+					if(string.find(raidProgress.raid.mapId, 10000)) then
+						mapId = tonumber(strsub(raidProgress.raid.mapId, strlen(raidProgress.raid.mapId) - 3))
+
+					else
+						mapId = raidProgress.raid.mapId
+
+					end
+
+					local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapId)
+
+					currentTierFrame = raidPanel[slot == 1 and "HighestTier" or slot == 2 and "MiddleTier" or slot == 3 and "LowestTier"]
+					currentTierFrame:Show()
+					currentTierFrame.Icon:SetTexture(miog.MAP_INFO[mapId].icon)
+					currentTierFrame.Icon:SetScript("OnMouseDown", function()
+						local difficulty = b.difficulty == 1 and 14 or b.difficulty == 2 and 15 or 16
+						--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+						EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+					end)
+
+					currentTierFrame.Name:SetText(raidProgress.raid.shortName .. ":")
+
+					local setLowestBorder = {}
+
+					for x, y in ipairs(raidProgress.progress) do
+						if(y.difficulty == b.difficulty and y.obsolete == false) then
+							panelProgressString = wticc(miog.DIFFICULTY[y.difficulty].shortName .. ":" .. y.kills .. "/" .. raidProgress.raid.bossCount, miog.DIFFICULTY[y.difficulty].color) .. " " .. panelProgressString
+
+							for i = 1, 12, 1 do
+								local bossInfo = y.progress[i]
+								local currentBoss = currentTierFrame.BossFrames[i < 7 and "UpperRow" or "LowerRow"][tostring(i)]
+
+								if(bossInfo) then
+									currentBoss.Index:SetText(i)
+									
+									if(bossInfo.killed) then
+										currentBoss.Border:SetColorTexture(miog.DIFFICULTY[bossInfo.difficulty].miogColors:GetRGBA())
+										currentBoss.Icon:SetDesaturated(false)
+
+									end
+
+									if(not setLowestBorder[i]) then
+										if(not bossInfo.killed) then
+											currentBoss.Border:SetColorTexture(0,0,0,0)
+											currentBoss.Icon:SetDesaturated(not bossInfo.killed)
+
+										end
+
+										setLowestBorder[i] = true
+									end
+
+									currentBoss.Icon:SetTexture(miog.MAP_INFO[mapId].bosses[i].icon)
+									currentBoss.Icon:SetScript("OnMouseDown", function()
+										local difficulty = bossInfo.difficulty == 1 and 14 or bossInfo.difficulty == 2 and 15 or 16
+										EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
+									end)
+
+									currentBoss:Show()
+
+								else
+									currentBoss:Hide()
+
+								end
+							end
+						end
+					end
+					
+					currentTierFrame.Progress:SetText(panelProgressString)
+				end
+			end
+
+		end
+	end
+end
+
+miog.fillRaidPanelWithData = fillRaidPanelWithData
+
 local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 	local profile, mythicKeystoneProfile, raidProfile
 	local mythicPlusPanel = frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel
@@ -618,129 +751,8 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 		end
 
 		if(raidProfile) then
-			frameWithPanel.RaiderIOInformationPanel.raid = {}
+			fillRaidPanelWithData(profile, frameWithPanel, raidPanel)
 
-			local currentTierFrame
-			local mainProgressText = ""
-
-			local currentData, nonCurrentData, orderedData, mainData = getRaidSortData(playerName .. (realm and "-" .. realm or ""))
-
-			if(mainData[1].parsedString ~= "0/0") then
-				mainProgressText = mainData[1].shortName .. ": " .. wticc(miog.DIFFICULTY[mainData[1].difficulty].shortName .. ":" .. mainData[1].progress .. "/" .. mainData[1].bossCount, miog.DIFFICULTY[mainData[1].difficulty].color)
-
-				--[[
-				
-					ordinal = d.raid.ordinal,
-					raidProgressIndex = k,
-					mapId = mapID,
-					difficulty = y.difficulty,
-					current = d.current,
-					shortName = d.raid.shortName,
-					progress = y.kills,
-					bossCount = d.raid.bossCount,
-					parsedString = y.kills .. "/" .. d.raid.bossCount,
-					weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
-				
-				]]
-			end
-
-			if(mainProgressText ~= "") then
-				frameWithPanel.RaiderIOInformationPanel.raid.main = wticc("Main: ", miog.ITEM_QUALITY_COLORS[7].pureHex) .. mainProgressText
-
-			else
-				frameWithPanel.RaiderIOInformationPanel.raid.main = wticc("On his main char", miog.ITEM_QUALITY_COLORS[7].pureHex)
-
-			end
-
-			local slotsFilled = {}
-
-			for n = 1, 2, 1 do
-				local raidData = n == 1 and currentData or nonCurrentData
-
-				if(raidData) then
-
-					for a, b in ipairs(raidData) do
-						local slot = b.ordinal == 4 and 1 or b.ordinal == 5 and 2 or b.ordinal == 6 and 3 or b.ordinal
-
-						if(slot and slotsFilled[slot] == nil) then
-							slotsFilled[slot] = true
-
-							local panelProgressString = ""
-							local raidProgress = profile.raidProfile.raidProgress[b.raidProgressIndex]
-							local mapId
-
-							if(string.find(raidProgress.raid.mapId, 10000)) then
-								mapId = tonumber(strsub(raidProgress.raid.mapId, strlen(raidProgress.raid.mapId) - 3))
-
-							else
-								mapId = raidProgress.raid.mapId
-
-							end
-
-							local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapId)
-
-							currentTierFrame = raidPanel[slot == 1 and "HighestTier" or slot == 2 and "MiddleTier" or slot == 3 and "LowestTier"]
-							currentTierFrame:Show()
-							currentTierFrame.Icon:SetTexture(miog.MAP_INFO[mapId].icon)
-							currentTierFrame.Icon:SetScript("OnMouseDown", function()
-								local difficulty = b.difficulty == 1 and 14 or b.difficulty == 2 and 15 or 16
-								--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-								EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
-
-							end)
-
-							currentTierFrame.Name:SetText(raidProgress.raid.shortName .. ":")
-
-							local setLowestBorder = {}
-
-							for x, y in ipairs(raidProgress.progress) do
-								if(y.difficulty == b.difficulty and y.obsolete == false) then
-									panelProgressString = wticc(miog.DIFFICULTY[y.difficulty].shortName .. ":" .. y.kills .. "/" .. raidProgress.raid.bossCount, miog.DIFFICULTY[y.difficulty].color) .. " " .. panelProgressString
-
-									for i = 1, 10, 1 do
-										local bossInfo = y.progress[i]
-										local currentBoss = currentTierFrame.BossFrames[i < 6 and "UpperRow" or "LowerRow"][tostring(i)]
-
-										if(bossInfo) then
-											currentBoss.Index:SetText(i)
-											
-											if(bossInfo.killed) then
-												currentBoss.Border:SetColorTexture(miog.DIFFICULTY[bossInfo.difficulty].miogColors:GetRGBA())
-												currentBoss.Icon:SetDesaturated(false)
-
-											end
-
-											if(not setLowestBorder[i]) then
-												if(not bossInfo.killed) then
-													currentBoss.Border:SetColorTexture(0,0,0,0)
-													currentBoss.Icon:SetDesaturated(not bossInfo.killed)
-
-												end
-
-												setLowestBorder[i] = true
-											end
-
-											currentBoss.Icon:SetTexture(miog.MAP_INFO[mapId].bosses[i].icon)
-											currentBoss.Icon:SetScript("OnMouseDown", function()
-												local difficulty = bossInfo.difficulty == 1 and 14 or bossInfo.difficulty == 2 and 15 or 16
-												EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
-											end)
-
-											currentBoss:Show()
-
-										else
-											currentBoss:Hide()
-
-										end
-									end
-								end
-							end
-							
-							currentTierFrame.Progress:SetText(panelProgressString)
-						end
-					end
-				end
-			end
 		else --NO RAIDING DATA
 			--frameWithPanel.RaiderIOInformationPanel.RaidPanel.HighestTier.Name:SetText(wticc("N/A", miog.CLRSCC.red))
 			frameWithPanel.RaiderIOInformationPanel.RaidPanel.Status:Show()

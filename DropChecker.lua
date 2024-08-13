@@ -138,37 +138,38 @@ local function loadLoot()
                 local slotsDone = {}
 
                 if(numOfLoot > 0) then
-
                     for i = 1, numOfLoot, 1 do
-                        local item = C_EncounterJournal.GetLootInfoByIndex(i)
+                        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
     
-                        if(searchBoxText ~= "") then
-    
-                        else
-                            if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(item, noFilter)) then
-                                if(not addedInstance) then
-                                    local instanceName, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
-                                    dataProvider:Insert({
-                                        template = "MIOG_AdventureJournalLootSlotLineTemplate",
-                                        name = instanceName,
-                                        icon = miog.MAP_INFO[mapID].icon,
-                                        header = true,
-                                    })
-                        
-                                    addedInstance = true
-                                end
+                        if(itemInfo.slot) then
+                            if(searchBoxText ~= "") then
+        
+                            else
+                                if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo, noFilter)) then
+                                    if(not addedInstance) then
+                                        local instanceName, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
+                                        dataProvider:Insert({
+                                            template = "MIOG_AdventureJournalLootSlotLineTemplate",
+                                            name = instanceName,
+                                            icon = miog.MAP_INFO[mapID].icon,
+                                            header = true,
+                                        })
+                            
+                                        addedInstance = true
+                                    end
 
-                                if(not slotsDone[item.filterType] and noFilter) then
-                                    dataProvider:Insert({
-                                        template = "MIOG_AdventureJournalLootSlotLineTemplate",
-                                        name = item.slot ~= "" and item.slot or "Other",
-                                    })
-                        
-                                    slotsDone[item.filterType] = true
-                                end
-                                
-                                dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = item.name, icon = item.icon, link = item.link, encounterID = item.encounterID})
+                                    if(not slotsDone[itemInfo.filterType] and noFilter) then
+                                        dataProvider:Insert({
+                                            template = "MIOG_AdventureJournalLootSlotLineTemplate",
+                                            name = itemInfo.slot ~= "" and itemInfo.slot or "Other",
+                                        })
+                            
+                                        slotsDone[itemInfo.filterType] = true
+                                    end
+                                    
+                                    dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = itemInfo.name, icon = itemInfo.icon, link = itemInfo.link, encounterID = itemInfo.encounterID})
 
+                                end
                             end
                         end
                     end

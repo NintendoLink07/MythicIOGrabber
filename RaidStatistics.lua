@@ -3,7 +3,6 @@ local addonName, miog = ...
 miog.setupRaidStatistics = function()
 	if(miog.RaidStatistics.RaidColumns.Raids[1] == nil) then
 		for k, v in pairs(miog.ACTIVITY_INFO) do
-			
 			if(v.expansionLevel == (GetAccountExpansionLevel()-1) and v.difficultyID == miog.RAID_DIFFICULTIES[3]) then
 				--sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = v.groupFinderActivityGroupID, name = v.shortName}
 				local raidColumn = CreateFrame("Frame", nil, miog.RaidStatistics.RaidColumns, "MIOG_RaidStatisticsColumnTemplate")

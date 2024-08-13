@@ -41,7 +41,14 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.4" relativePoint="RIGHT" x="3"/>
                         </Anchors>
-                    </Frame>                           
+                    </Frame>     
+
+                    <Frame parentKey="6" inherits="MIOG_RaidBossFrameTemplate">
+                        <Size x="19" y="19" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.5" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>                        
                 </Frames>
             </Frame>
 
@@ -51,17 +58,10 @@
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
                 <Frames>
-                    <Frame parentKey="6" inherits="MIOG_RaidBossFrameTemplate">
-                        <Size x="19" y="19" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                        </Anchors>
-                    </Frame>
-
                     <Frame parentKey="7" inherits="MIOG_RaidBossFrameTemplate">
                         <Size x="19" y="19" />
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.6" relativePoint="RIGHT" x="3"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                         </Anchors>
                     </Frame>
 
@@ -85,6 +85,20 @@
                             <Anchor point="LEFT" relativeKey="$parent.9" relativePoint="RIGHT" x="3"/>
                         </Anchors>
                     </Frame>
+
+                    <Frame parentKey="11" inherits="MIOG_RaidBossFrameTemplate">
+                        <Size x="19" y="19" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.10" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="12" inherits="MIOG_RaidBossFrameTemplate">
+                        <Size x="19" y="19" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.11" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+                    </Frame>  
                 </Frames>
             </Frame>
         </Frames>

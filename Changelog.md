@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.2] - 2024-08-13
+
+### Added
+
+- [RaiderIOChecker] The current RaiderIO DB version will now be visible in the topright.
+
+- All horizontal and vertical background images for the TWW and S1 dungeons and the raid have been added.
+Old vertical images will be deleted once TWW S1 is active.
+
+### Fixed
+
+- [DropChecker] Switching to the DropChecker subframe won't trigger an table index error anymore.
+
+- [Raid Statistics] ATDH will now be visible again, accidentally deleted the ID. lol
+
+
+
 ## [2.4.1] - 2024-08-12
 
 ### Added
@@ -2049,7 +2066,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.2..HEAD
+[2.4.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.2
 [2.4.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.1
 [2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4
 [2.3.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.3.11

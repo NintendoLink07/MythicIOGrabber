@@ -5,7 +5,7 @@
             <EditBox parentKey="NameSearchBox" inherits="InputBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1">
                 <Size x="100" y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-2" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="7" y="-2" />
                 </Anchors>
             </EditBox>
 
@@ -19,21 +19,15 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="Name">
+                <FontString parentKey="RIOVersion" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.RealmSearchBox" relativePoint="RIGHT" x="2" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Rating" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.NameSearchBox" relativePoint="BOTTOMLEFT" y="-2" />
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Realm" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="Realm">
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="5" />
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Rating" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="Rating">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-2" />
                     </Anchors>
                 </FontString>
             </Layer>
@@ -105,10 +99,75 @@
                 </Frames>
             </Frame>
 
+            <Frame parentKey="MainMythicPlusPanel">
+                <Size x="160" y="160" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusPanel" relativePoint="TOPRIGHT" x="5"/>
+                </Anchors>
+                
+                <Frames>
+                    <Frame parentKey="DungeonRow1" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="DungeonRow2" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow1" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow1" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="DungeonRow3" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow2" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow2" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="DungeonRow4" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow3" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow3" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="DungeonRow5" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow4" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow4" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="DungeonRow6" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow5" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow5" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="DungeonRow7" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow6" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow6" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="DungeonRow8" inherits="MIOG_DungeonRowTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+
             <Frame parentKey="RaidPanel" toplevel="true">
                 <Size x="160" y="160" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusPanel" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusPanel" relativePoint="BOTTOMLEFT" />
                 </Anchors>
 
                 <Frames>
