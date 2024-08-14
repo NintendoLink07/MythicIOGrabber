@@ -187,16 +187,6 @@ miog.OnEvent = function(_, event, ...)
 
 			end
 		end
-	elseif(event == "Menu.OpenTag") then
-		if(... == "TARGET") then
-			Menu.ModifyMenu("MENU_UNIT_TARGET", function(ownerRegion, rootDescription, contextData)
-				-- Append a new section to the end of the menu.
-				rootDescription:CreateDivider()
-				rootDescription:CreateTitle(addonName)
-				rootDescription:CreateButton("Appended button", function() print("Clicked the appended button!") end)
-			end)
-		end
-
 	end
 end
 

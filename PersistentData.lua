@@ -1236,11 +1236,6 @@ local function loadRawData()
 			maxPlayers = v[13],
 		}
 
-		if(v[10] == 2549) then
-			DevTools_Dump(miog.ACTIVITY_INFO[v[1]])
-
-		end
-
 		if(miog.GROUP_ACTIVITY[v[6]]) then
 			miog.GROUP_ACTIVITY[v[6]].activityID = v[1]
 			

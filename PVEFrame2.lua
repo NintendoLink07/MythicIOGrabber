@@ -510,9 +510,6 @@ local function createPVEFrameReplacement()
 	queueDropDown:SetText("Choose a queue")
 	miog.MainTab.QueueInformation.Panel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	local offset = 35 + 20
-	local _, _, _, tabSlots = GetSpellTabInfo(1)
-
 	local formatter = CreateFromMixins(SecondsFormatterMixin)
 	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
 
@@ -567,10 +564,12 @@ local function createPVEFrameReplacement()
 						local myCooldown = tpButton.Cooldown
 						
 						tpButton:HookScript("OnShow", function()
-							local start, duration, _, modrate = GetSpellCooldown(v.spellID)
-							myCooldown:SetCooldown(start, duration, modrate)
+							
+							local spellCooldownInfo = C_Spell.GetSpellCooldown(v.spellID)
+							--local start, duration, _, modrate = GetSpellCooldown(v.spellID)
+							myCooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.modRate)
 
-							local secondsLeft = duration - (GetTime() - start)
+							local secondsLeft = spellCooldownInfo.duration - (GetTime() - spellCooldownInfo.startTime)
 							local text = secondsLeft > 0 and WrapTextInColorCode("Remaining CD: " .. formatter:Format(secondsLeft), miog.CLRSCC.red) or WrapTextInColorCode("Ready", miog.CLRSCC.green)
 
 							miog.Teleports.Remaining:SetText(text)

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.3] - 2024-08-14
+
+### Fixed
+
+- [Teleports] Various errors have been corrected checking for the tp cooldowns.
+
+
+
 ## [2.4.2] - 2024-08-13
 
 ### Added
@@ -2066,7 +2074,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.3..HEAD
+[2.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.3
 [2.4.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.2
 [2.4.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.1
 [2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4
