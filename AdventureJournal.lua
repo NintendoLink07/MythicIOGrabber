@@ -215,6 +215,10 @@ local function GetEJDifficultyString(difficultyID)
 	end
 end
 
+local function createNewBaseString(id)
+
+end
+
 local function createBaseString(id, lowestIndex)
     local baseArray = {}
     local shift = 0
@@ -1270,7 +1274,7 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                 frame.difficultyFrames = {}
 
                 C_Timer.After(0.3, function()
-                    local compareArray = {}
+                    --[[local compareArray = {}
                     local compareValue
 
                     for i = 1, #currentDifficultyIDs, 1 do
@@ -1285,17 +1289,61 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
 
                             end
                         end
-                    end
+                    end]]
                     
-                    local equal = compareArrayValues(compareArray, compareValue)
-                    local forwardOrdered = forwardOrderedValues(compareArray)
+                    --local equal = compareArrayValues(compareArray, compareValue)
+                    --local forwardOrdered = forwardOrderedValues(compareArray)
 
-                    local baseString = stopAndGo(id, equal, forwardOrdered)
+                    --local baseString = stopAndGo(id, equal, forwardOrdered)
 
-                    for i = 1, #currentDifficultyIDs, 1 do
+                    local baseString = ""
+
+                    local changingWord = false
+                    
+                    --for i = 2, #currentDifficultyIDs, 1 do
+                    if(frameData[id][currentDifficultyIDs[1]] and frameData[id][currentDifficultyIDs[2]]) then
+                        --[[if(diffCounter > 10) then
+                            diffCounter = 1
+
+                        end]]
+                    
+                        local diff = miog.dmp.diff_main(frameData[id][currentDifficultyIDs[1]].description, frameData[id][currentDifficultyIDs[2]].description)
+
+                        for k, v in ipairs(diff) do
+
+                            if(changingWord and string.find(v[2], " ")) then
+                                changingWord = false
+
+                            end 
+
+                            if(v[1] == 0) then
+                                if(changingWord == false) then
+                                    baseString = baseString .. v[2]
+
+                                else
+                                    print(v[2])
+
+                                end
+
+                            elseif(v[1] == -1) then
+                                --baseString = baseString .. WrapTextInColorCode("[" .. diffCounter .. "]", miog.AJ_CLRSCC[diffCounter])
+                                changingWord = true
+                                --diffCounter = diffCounter + 1
+
+                            elseif(v[1] == 1) then
+                                changingWord = true
+                            end
+                        end
+                    end
+
+                    --print(baseString)
+                    --end
+
+                    --local diffCounter = 1
+
+                    for i = 1, #currentDifficultyIDs - 1, 1 do
                         local difficultyFrame = difficultyPool:Acquire()
-
-                        local concatString = ""
+                        --[[local concatString = ""
 
                         if(frameData[id][currentDifficultyIDs[i] ] ~= nil) then
                             for k, v in ipairs(organizedFrameData[id][currentDifficultyIDs[i] ]) do
@@ -1317,7 +1365,7 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                         else
                             concatString = WrapTextInColorCode("Mechanic not implemented on " .. GetEJDifficultyString(currentDifficultyIDs[i]), "FFB92D27")
                 
-                        end
+                        end]]
 
                         difficultyFrame.Description:SetText(concatString)
                         difficultyFrame.Name:SetText(GetEJDifficultyString(currentDifficultyIDs[i]))
@@ -1335,9 +1383,11 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                     frame.DetailedInformation.Base.Description:SetText(baseString)
 
                     frame.ExpandFrame:SetShown(difficultyData[lowestDifficulty].description ~= "")
-                    frame.DetailedInformation.Base:SetShown((equal or forwardOrdered) and baseString ~= "")
+                    --frame.DetailedInformation.Base:SetShown((equal or forwardOrdered) and baseString ~= "")
 
-                    if(not equal and not forwardOrdered) then
+                    frame.DetailedInformation.Base:SetShown(baseString ~= "")
+
+                    --[[if(not equal and not forwardOrdered) then
                         frame.DetailedInformation.Base:Hide()
                     
                         for i = 1, #currentDifficultyIDs, 1 do
@@ -1362,9 +1412,9 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
                         end
     
                         frame.SwitchPanel:MarkDirty()
-                    end
+                    end]]
     
-                    frame.SwitchPanel:SetShown(not equal and not forwardOrdered)
+                    --frame.SwitchPanel:SetShown(not equal and not forwardOrdered)
                 end)
                 
 

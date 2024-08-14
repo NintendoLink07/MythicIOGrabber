@@ -1,4 +1,4 @@
-## Interface: 110002, 110000
+## Interface: 110002
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO
@@ -156,3 +156,5 @@ XML\MIOG_DropChecker.xml
 XML\MIOG_DropCheckerAutoCompleteEntryTemplate.xml
 
 FuzzyAlgorithm.lua
+ONP.lua
+DiffMatchPatch.lua
