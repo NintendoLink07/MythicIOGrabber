@@ -19,11 +19,11 @@ local function sortGuildList(k1, k2)
 	k1 = k1.data
 	k2 = k2.data
 
-	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.guild) do
+	for key, tableElement in pairs(MIOG_NewSettings.sortMethods["Guild"]) do
 		if(tableElement and tableElement.currentLayer == 1) then
 			local firstState = tableElement.currentState
 
-			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.guild) do
+			for innerKey, innerTableElement in pairs(MIOG_NewSettings.sortMethods["Guild"]) do
 				if(innerTableElement and innerTableElement.currentLayer == 2) then
 					local secondState = innerTableElement.currentState
 
@@ -169,8 +169,8 @@ local function retrieveGuildMembers()
             isOnline = isOnline,
             status = status,
             class = class,
-            keystone = miog.guildSystem.keystoneData[name] and miog.guildSystem.keystoneData[name].challengeMapID or MIOG_SavedSettings.guildKeystoneInfo[name] and MIOG_SavedSettings.guildKeystoneInfo[name].challengeMapID or 0,
-            keylevel = miog.guildSystem.keystoneData[name] and miog.guildSystem.keystoneData[name].level or MIOG_SavedSettings.guildKeystoneInfo[name] and MIOG_SavedSettings.guildKeystoneInfo[name].level or 0,
+            keystone = miog.guildSystem.keystoneData[name] and miog.guildSystem.keystoneData[name].challengeMapID or MIOG_NewSettings.guildKeystoneInfo[name] and MIOG_NewSettings.guildKeystoneInfo[name].challengeMapID or 0,
+            keylevel = miog.guildSystem.keystoneData[name] and miog.guildSystem.keystoneData[name].level or MIOG_NewSettings.guildKeystoneInfo[name] and MIOG_NewSettings.guildKeystoneInfo[name].level or 0,
 			score = score,
             progressWeight = progressWeight,
             progressText = progress,
@@ -213,7 +213,7 @@ miog.loadGuildFrame = function()
 		if(type(v) == "table" and v.Button) then
 			v.Name:SetText(v:GetParentKey())
 			miog.Guild.sortByCategoryButtons[v:GetDebugName()] = v.Button
-			v.Button.panel = "guild"
+			v.Button.panel = "Guild"
 			v.Button.category = v:GetDebugName()
 			v.Button:SetScript("PostClick", function()
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)

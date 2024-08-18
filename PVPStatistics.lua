@@ -105,31 +105,31 @@ miog.createPVPCharacter = function(playerGUID)
     if(isCurrentChar) then
         local _, className = UnitClass("player")
 
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID] = {}
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].name = MIOG_SavedSettings.pvpStatistics.table[playerGUID].name or UnitName("player")
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].class = MIOG_SavedSettings.pvpStatistics.table[playerGUID].class or className
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets = {}
+        MIOG_NewSettings.pvpStats[playerGUID] = {}
+        MIOG_NewSettings.pvpStats[playerGUID].name = MIOG_NewSettings.pvpStats[playerGUID].name or UnitName("player")
+        MIOG_NewSettings.pvpStats[playerGUID].class = MIOG_NewSettings.pvpStats[playerGUID].class or className
+        MIOG_NewSettings.pvpStats[playerGUID].brackets = {}
 
         for i = 1, 4, 1 do
             local rating, seasonBest, weeklyBest, seasonPlayed, seasonWon, weeklyPlayed, weeklyWon, cap = GetPersonalRatedInfo(i) -- 1 == 2v2, 2 == 3v3, 3 == 5v5, 4 == 10v10
 
-            MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i] = {rating = rating, seasonBest = seasonBest}
+            MIOG_NewSettings.pvpStats[playerGUID].brackets[i] = {rating = rating, seasonBest = seasonBest}
 
         end
 
         local tierID, nextTierID = C_PvP.GetSeasonBestInfo();
 
-        MIOG_SavedSettings.pvpStatistics.table[playerGUID].tierInfo = {tierID, nextTierID}
+        MIOG_NewSettings.pvpStats[playerGUID].tierInfo = {tierID, nextTierID}
     end
 
-	characterFrame.Name:SetText(MIOG_SavedSettings.pvpStatistics.table[playerGUID].name)
-	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.pvpStatistics.table[playerGUID].class):GetRGBA())
+	characterFrame.Name:SetText(MIOG_NewSettings.pvpStats[playerGUID].name)
+	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_NewSettings.pvpStats[playerGUID].class):GetRGBA())
     characterFrame.Score:SetText("")
 
-    local tierInfo = C_PvP.GetPvpTierInfo(MIOG_SavedSettings.pvpStatistics.table[playerGUID].tierInfo[1])
+    local tierInfo = C_PvP.GetPvpTierInfo(MIOG_NewSettings.pvpStats[playerGUID].tierInfo[1])
     characterFrame.Rank:SetTexture(tierInfo.tierIconID)
 
-    characterFrame.Rank:SetScript("OnEnter", function(self) tierFrame_OnEnter(self, MIOG_SavedSettings.pvpStatistics.table[playerGUID].tierInfo)
+    characterFrame.Rank:SetScript("OnEnter", function(self) tierFrame_OnEnter(self, MIOG_NewSettings.pvpStats[playerGUID].tierInfo)
     end)
     characterFrame.Rank:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
@@ -142,8 +142,8 @@ miog.fillPVPCharacter = function(playerGUID)
 		bracketFrame:SetWidth(miog.PVPStatistics.BracketColumns.Brackets[i]:GetWidth())
 		bracketFrame.layoutIndex = i
 
-        local rating = MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i].rating
-        local seasonBest = MIOG_SavedSettings.pvpStatistics.table[playerGUID].brackets[i].seasonBest
+        local rating = MIOG_NewSettings.pvpStats[playerGUID].brackets[i].rating
+        local seasonBest = MIOG_NewSettings.pvpStats[playerGUID].brackets[i].seasonBest
 
 		bracketFrame.Level1:SetText(rating)
 		bracketFrame.Level1:SetTextColor(CreateColorFromHexString(rating == 0 and miog.CLRSCC.gray or miog.CLRSCC.yellow):GetRGBA())
@@ -164,7 +164,7 @@ miog.gatherPVPStatistics = function()
 
 	local orderedTable = {}
 
-	for x, y in pairs(MIOG_SavedSettings.pvpStatistics.table) do
+	for x, y in pairs(MIOG_NewSettings.pvpStats) do
 		local index = #orderedTable+1
 		orderedTable[index] = y
 		orderedTable[index].key = x

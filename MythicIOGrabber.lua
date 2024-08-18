@@ -7,62 +7,23 @@ miog.referencePVPButtons = {}
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
 
-local function createBaseCategoryFrame(categoryID, index, canUseLFG, failureReason)
-	local categoryFrame = miog.pveFrame2.categoryFramePool:Acquire()
-
-	categoryFrame.categoryID = categoryID
-	categoryFrame:SetFrameStrata("FULLSCREEN")
-
-	categoryFrame:SetSize(140, 20)
-	categoryFrame.layoutIndex = index
-	categoryFrame.BackgroundImage:SetVertTile(true)
-	categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
-	categoryFrame.BackgroundImage:SetDesaturated(not canUseLFG)
-
-	miog.createFrameBorder(categoryFrame, 1, CreateColorFromHexString(miog.C.HOVER_COLOR):GetRGBA())
-
-	categoryFrame:SetScript("OnShow", function(self)
-		if(not canUseLFG) then
-			self:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(failureReason)
-				GameTooltip:Show()
-			end)
-			self:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-		else
-			self:SetScript("OnClick", function()
-				self:GetParent().setupFunction(self)
-				self:GetParent():Hide()
-			end)
-		
-		end
-	end)
-
-	return categoryFrame
-end
-
-
 miog.OnEvent = function(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
         miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()
 
 		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
-		
-		miog.checkForSavedSettings()
-
-		miog.F.LITE_MODE = MIOG_SavedSettings.liteMode.value
 
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
 
 		end
-
+		miog.loadNewSettings()
+		
 		miog.createFrames()
 
-		miog.loadSettings()
 		miog.loadRawData()
+
+		miog.loadNewSettingsAfterFrames()
 		
 		EJ_SetDifficulty(8)
 		
@@ -150,42 +111,21 @@ miog.OnEvent = function(_, event, ...)
 		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
-		
-			miog.startNewGroup({categoryID = activityInfo.categoryID, filters = activityInfo.filters})
-		end
 
-		if(not miog.F.LITE_MODE) then
-			if(miog.pveFrame2 and miog.pveFrame2.categoryFramePool) then
+			LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
 
-				local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+			--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
+			--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
 
-				local index = 0
-				miog.pveFrame2.categoryFramePool:ReleaseAll()
+			LFGListFrame.CategorySelection.selectedCategory = activityInfo.categoryID
+			LFGListFrame.CategorySelection.selectedFilters = activityInfo.filters
 
-				for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-					index = index + 1
+			LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
 
-					local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
-
-					local categoryFrame = createBaseCategoryFrame(categoryID, index, canUse, failureReason)
-					categoryFrame.filters = categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
-					categoryFrame.Title:SetText(categoryInfo.name)
-					categoryFrame:Show()
-
-					if(categoryInfo.separateRecommended) then
-						index = index + 1
-
-						local nonRecommendedFrame = createBaseCategoryFrame(categoryID, index, canUse)
-						nonRecommendedFrame.filters = categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended
-						nonRecommendedFrame.Title:SetText(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true))
-						nonRecommendedFrame:Show()
-						
-					end
-				end
-
-				miog.pveFrame2.CategoryHoverFrame:MarkDirty()
-
-			end
+			LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
+			--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
+			
+			miog.initializeActivityDropdown()
 		end
 	end
 end
@@ -357,7 +297,7 @@ local function handler(msg, editBox)
 
         local playerName, realm = miog.createSplitName(rest)
 
-		MIOG_SavedSettings.favouredApplicants.table[rest] = {name = playerName, fullName = rest}
+		MIOG_NewSettings.favouredApplicants[rest] = {name = playerName, fullName = rest}
 
 	end
 end

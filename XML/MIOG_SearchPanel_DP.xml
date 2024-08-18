@@ -125,38 +125,20 @@
                     </Button>
                 </Frames>
             </Frame>
-            
-            <ScrollFrame parentKey="NewScrollFrame" inherits="ScrollFrameTemplate">
-                <KeyValues>
-                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
-                </KeyValues>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
 
-                <ScrollChild>
-                    <Frame parentKey="Container" inherits="VerticalLayoutFrame" setAllPoints="true">
-                        <KeyValues>
-                            <KeyValue key="spacing" value="2" type="number" />
-                        </KeyValues>
-                    </Frame>
-                </ScrollChild>
-            </ScrollFrame>
-
-            <!--<Frame parentKey="ScrollBox2" inherits="WowScrollBoxList" hidden="true">
+            <Frame parentKey="ScrollBox2" inherits="WowScrollBoxList">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
             </Frame>
 
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar" hidden="true">
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox2" relativePoint="TOPRIGHT"/>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
-            </EventFrame>-->
+            </EventFrame>
             
             <Button parentKey="SignUpButton" inherits="UIPanelDynamicResizeButtonTemplate" text="Signup">
                 <Size y="20" />

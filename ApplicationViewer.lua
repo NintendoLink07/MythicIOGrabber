@@ -115,11 +115,11 @@ local function sortApplicantList(applicant1, applicant2)
 	local applicant1Member1 = applicant1[1]
 	local applicant2Member1 = applicant2[1]
 
-	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.applicationViewer) do
+	for key, tableElement in pairs(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"]) do
 		if(tableElement.currentLayer == 1) then
 			local firstState = tableElement.currentState
 
-			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.applicationViewer) do
+			for innerKey, innerTableElement in pairs(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"]) do
 
 				if(innerTableElement.currentLayer == 2) then
 					local secondState = innerTableElement.currentState
@@ -220,7 +220,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	end)
 	applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
 
-	if(MIOG_SavedSettings.favouredApplicants.table[name]) then
+	if(MIOG_NewSettings.favouredApplicants[name]) then
 		applicantMemberFrame:ClearBackdrop()
 		miog.createFrameBorder(applicantMemberFrame, 1, CreateColorFromHexString("FFe1ad21"):GetRGBA())
 	
@@ -554,7 +554,7 @@ local function gatherSortData()
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].secondary = secondarySortAttribute
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].index = applicantID
-								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favoured = MIOG_SavedSettings.favouredApplicants.table[applicantSystem.applicantMember[applicantID].memberData[applicantIndex].fullName] and true or false
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favoured = MIOG_NewSettings.favouredApplicants[applicantSystem.applicantMember[applicantID].memberData[applicantIndex].fullName] and true or false
 							end
 
 						end
@@ -633,24 +633,24 @@ end
 local function checkApplicantListForEligibleMembers(listEntry)
 	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForRoles[listEntry.role] ~= true) then
+	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].filterForRoles[listEntry.role] ~= true) then
 		return false
 
 	end
 
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForClassSpecs == true) then
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.class[miog.CLASSFILE_TO_ID[listEntry.class]] == false) then
+	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].filterForClassSpecs == true) then
+		if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].classes[miog.CLASSFILE_TO_ID[listEntry.class]] == false) then
 			return false
 		
 		end
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].classSpec.spec[listEntry.specID] == false) then
+		if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].specs[listEntry.specID] == false) then
 			return false
 
 		end
 	end
 
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].lustFit) then
+	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].lustFit) then
 		local _, _, playerClassID = UnitClass("player")
 		if(playerClassID == 3 or playerClassID == 7 or playerClassID == 8 or playerClassID == 13) then
 			return true
@@ -661,7 +661,7 @@ local function checkApplicantListForEligibleMembers(listEntry)
 		end
 	end
 	
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].ressFit) then
+	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].ressFit) then
 		local _, _, playerClassID = UnitClass("player")
 		if(playerClassID == 2 or playerClassID == 6 or playerClassID == 9 or playerClassID == 11) then
 			return true
@@ -672,7 +672,7 @@ local function checkApplicantListForEligibleMembers(listEntry)
 		end
 	end
 
-	if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(listEntry)) then
+	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(listEntry)) then
 		return false
 	end
 
@@ -682,22 +682,22 @@ local function checkApplicantListForEligibleMembers(listEntry)
 	if(isDungeon or isPvp) then
 		local rating = listEntry.primary
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].filterForRating) then
+		if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].filterForRating) then
 			if(rating) then
-				if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].maxRating ~= 0) then
-					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating >= 0
-					and not (rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating
-					and rating <= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating)) then
+				if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].maxRating ~= 0) then
+					if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating >= 0
+					and not (rating >= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating
+					and rating <= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating)) then
 						return false, miog.INELIGIBILITY_REASONS[14]
 
 					end
-				elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0) then
-					if(rating < MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].minRating) then
+				elseif(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0) then
+					if(rating < MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating) then
 						return false, miog.INELIGIBILITY_REASONS[15]
 
 					end
-				elseif(MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
-					if(rating >= MIOG_SavedSettings.filterOptions.table["LFGListFrame.ApplicationViewer"][categoryID].maxRating) then
+				elseif(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
+					if(rating >= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating) then
 						return false, miog.INELIGIBILITY_REASONS[16]
 						
 					end
@@ -1069,7 +1069,7 @@ miog.createApplicationViewer = function()
 
 	for i = 1, 4, 1 do
 		local sortByCategoryButton = applicationViewer.ButtonPanel[i == 1 and "RoleSort" or i == 2 and "PrimarySort" or i == 3 and "SecondarySort" or i == 4 and "IlvlSort"]
-		sortByCategoryButton.panel = "applicationViewer"
+		sortByCategoryButton.panel = "LFGListFrame.ApplicationViewer"
 		sortByCategoryButton.category = i == 1 and "role" or i == 2 and "primary" or i == 3 and "secondary" or i == 4 and "ilvl"
 
 		applicationViewer.ButtonPanel.sortByCategoryButtons[sortByCategoryButton.category] = sortByCategoryButton

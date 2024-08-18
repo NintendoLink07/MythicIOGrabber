@@ -5,6 +5,62 @@ local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
 
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
+local function createCategoryButtons(categoryID, type, rootDescription)
+	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
+
+	for i = 1, categoryInfo.separateRecommended and 2 or 1, 1 do
+		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true), function()
+			local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
+
+			--categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
+
+			if(type == "search") then
+				LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+
+				LFGListFrame.CategorySelection.selectedCategory = categoryID
+				LFGListFrame.CategorySelection.selectedFilters = filters
+
+				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters, LFGListFrame.baseFilters)
+
+				LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+
+			else
+				LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
+			
+				LFGListFrame.CategorySelection.selectedCategory = categoryID
+				LFGListFrame.CategorySelection.selectedFilters = filters
+			
+				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters, LFGListFrame.baseFilters)
+			
+				LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
+				
+				miog.initializeActivityDropdown()
+				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
+
+			end
+		
+			PanelTemplates_SetTab(miog.pveFrame2, 1)
+	
+			if(miog.pveFrame2.selectedTabFrame) then
+				miog.pveFrame2.selectedTabFrame:Hide()
+			end
+	
+			miog.pveFrame2.TabFramesPanel.MainTab:Show()
+			miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
+		end)
+
+		categoryButton:SetTooltip(function(tooltip, elementDescription)
+			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+			if(not canUse) then
+				GameTooltip_SetTitle(tooltip, failureReason);
+			end
+		end)
+		MIOG_CB = categoryButton
+	end
+end
+
+
 local function CanShowPreviewItemTooltip(self)
 	return self.unlocked and not C_WeeklyRewards.CanClaimRewards();
 end
@@ -104,48 +160,6 @@ local function ShowIncompleteMythicTooltip(self)
 	GameTooltip:Show();
 end
 
-local function resetCategoryFrame(_, frame)
-	frame:Hide()
-	frame.layoutIndex = nil
-	frame.categoryID = nil
-	frame.filters = nil
-	frame.Title:SetText("")
-	frame.BackgroundImage:SetTexture(nil)
-	frame:SetScript("OnEnter", nil)
-	frame:SetScript("OnLeave", nil)
-	frame:SetScript("OnClick", nil)
-end
-
-local function startNewGroup(categoryFrame)
-	LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
-
-	--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
-	--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
-
-	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
-	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
-
-	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
-
-	LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
-	--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
-	
-	miog.initializeActivityDropdown()
-end
-
-miog.startNewGroup = startNewGroup
-
-local function findGroup(categoryFrame)
-	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-	
-	LFGListFrame.CategorySelection.selectedCategory = categoryFrame.categoryID
-	LFGListFrame.CategorySelection.selectedFilters = categoryFrame.filters
-
-	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryFrame.categoryID, categoryFrame.filters, LFGListFrame.baseFilters)
-
-	LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-end
-
 local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
@@ -178,7 +192,7 @@ local function createPVEFrameReplacement()
 
 		--miog.updateProgressData()
 
-		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_SavedSettings.lastGroup.value)
+		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_NewSettings.lastGroup)
 		
 		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
 			local currentSeason = C_MythicPlus.GetCurrentSeason()
@@ -452,19 +466,6 @@ local function createPVEFrameReplacement()
 
 	end
 
-	pveFrame2.TitleBar.Expand:SetScript("OnClick", function()
-
-		MIOG_SavedSettings.frameExtended.value = not MIOG_SavedSettings.frameExtended.value
-
-		if(MIOG_SavedSettings.frameExtended.value == true) then
-			miog.Plugin:SetHeight(miog.Plugin.extendedHeight)
-
-		elseif(MIOG_SavedSettings.frameExtended.value == false) then
-			miog.Plugin:SetHeight(miog.Plugin.standardHeight)
-
-		end
-	end)
-
 	pveFrame2.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
@@ -600,39 +601,40 @@ local function createPVEFrameReplacement()
 	end
 
 	addTeleportButtons()
+	
+	miog.pveFrame2.TitleBar.CreateGroupButton.Text:SetText("Create")
+	miog.pveFrame2.TitleBar.CreateGroupButton:SetScript("OnClick", function(selfButton)
+		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.CreateGroupButton, function(ownerRegion, rootDescription)
+	
+			rootDescription:CreateTitle("Create Groups");
 
-	miog.pveFrame2.categoryFramePool = CreateFramePool("Button", miog.pveFrame2.CategoryHoverFrame, "MIOG_MenuButtonTemplate", resetCategoryFrame)
-	miog.pveFrame2.TitleBar.CreateGroup.Text:SetText("Create")
-	miog.pveFrame2.TitleBar.CreateGroup.setupFunction = function(self)
-		startNewGroup(self)
+			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
+				createCategoryButtons(categoryID, "entry", rootDescription)
 
-		LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
+			end
+			rootDescription:SetTag("MIOG_FINDGROUP")
+		end)
 
-		PanelTemplates_SetTab(miog.pveFrame2, 1)
+		currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
+	end)
 
-		if(miog.pveFrame2.selectedTabFrame) then
-			miog.pveFrame2.selectedTabFrame:Hide()
-		end
+	miog.pveFrame2.TitleBar.FindGroupButton.Text:SetText("Find")
+	miog.pveFrame2.TitleBar.FindGroupButton:SetScript("OnClick", function(selfButton)
+		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.FindGroupButton, function(ownerRegion, rootDescription)
+	
+			rootDescription:CreateTitle("Find Groups");
+			
+			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
 
-		miog.pveFrame2.TabFramesPanel.MainTab:Show()
-		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
-	end
+			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
+				createCategoryButtons(categoryID, "search", rootDescription, canUse)
 
-	miog.pveFrame2.TitleBar.FindGroup.Text:SetText("Find")
-	miog.pveFrame2.TitleBar.FindGroup.setupFunction = function(self)
-		findGroup(self)
+			end
+			rootDescription:SetTag("MIOG_FINDGROUP")
+		end)
 
-		LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-
-		PanelTemplates_SetTab(miog.pveFrame2, 1)
-
-		if(miog.pveFrame2.selectedTabFrame) then
-			miog.pveFrame2.selectedTabFrame:Hide()
-		end
-
-		miog.pveFrame2.TabFramesPanel.MainTab:Show()
-		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
-	end
+		currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
+	end)
 
 	local function setCustomActivePanel(name)
 		miog.setActivePanel(nil, name)
@@ -650,6 +652,7 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.MoreButton.Text:SetText("More")
 	miog.pveFrame2.TitleBar.MoreButton:SetScript("OnClick", function(self)
 		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
+			rootDescription:CreateTitle("More");
 			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
 			rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)

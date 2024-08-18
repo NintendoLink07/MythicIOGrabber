@@ -247,6 +247,19 @@ hooksecurefunc("LFGListEntryCreation_Select", function(_, filters, categoryID, g
 	setUpEntryCreation()
 end)
 
+function LFGListEntryCreation_SetTitleFromActivityInfo(self)
+	local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+	if(not self.selectedActivity or not self.selectedGroup or not self.selectedCategory) then
+		return;
+	end
+	local activityID = activeEntryInfo and activeEntryInfo.activityID or (self.selectedActivity or 0);
+	local activityInfo =  C_LFGList.GetActivityInfoTable(activityID);
+	if((activityInfo and activityInfo.isMythicPlusActivity) or not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity)) then
+		--Is protected, first showed up in 11.0.2
+		--C_LFGList.SetEntryTitle(self.selectedActivity, self.selectedGroup, self.selectedPlaystyle);
+	end
+end
+
 local function gatherGroupsAndActivitiesForCategory(categoryID)
 	local activityDropDown = miog.EntryCreation.ActivityDropDown
 	activityDropDown:ResetDropDown()

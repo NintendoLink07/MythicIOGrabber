@@ -386,7 +386,7 @@ miog.hideSidePanel = function(self)
 	self:GetParent():Hide()
 	self:GetParent():GetParent().ButtonPanel:Show()
 
-	MIOG_SavedSettings.activeSidePanel.value = ""
+	MIOG_NewSettings.activeSidePanel = "none"
 end
 
 -- type == unitID or unitName
@@ -743,9 +743,7 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 				wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
 			)
 
-		else
-			--wticc("NO M+ DATA", miog.CLRSCC["red"])
-			--frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.DungeonRow1.Name:SetText(wticc("N/A", miog.CLRSCC.red))
+		else --NO M+ DATA
 			frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.Status:Show()
 
 		end
@@ -754,14 +752,10 @@ local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 			fillRaidPanelWithData(profile, frameWithPanel, raidPanel)
 
 		else --NO RAIDING DATA
-			--frameWithPanel.RaiderIOInformationPanel.RaidPanel.HighestTier.Name:SetText(wticc("N/A", miog.CLRSCC.red))
 			frameWithPanel.RaiderIOInformationPanel.RaidPanel.Status:Show()
 		end
 
 	else -- If RaiderIO is not installed or no profile available
-		--frameWithPanel.separateData.noData = wticc("NO RIO DATA", miog.CLRSCC["red"])
-		--frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.DungeonRow1.Name:SetText(wticc("N/A", miog.CLRSCC.red))
-		--frameWithPanel.RaiderIOInformationPanel.RaidPanel.HighestTier.Name:SetText(wticc("N/A", miog.CLRSCC.red))
 			frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.Status:Show()
 			frameWithPanel.RaiderIOInformationPanel.RaidPanel.Status:Show()
 		
@@ -786,7 +780,7 @@ end
 miog.getActiveSortMethods = function(panel)
 	local numberOfActiveMethods = 0
 
-	for k, v in pairs(MIOG_SavedSettings.sortMethods.table[panel]) do
+	for k, v in pairs(MIOG_NewSettings.sortMethods[panel]) do
 		if(v.active) then
 			numberOfActiveMethods = numberOfActiveMethods + 1
 		end

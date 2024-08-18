@@ -18,7 +18,7 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 		end
 
 		if(miog.guildSystem.baseFrames[unitName]) then
-			MIOG_SavedSettings.guildKeystoneInfo[unitName] = keystoneInfo
+			MIOG_NewSettings.guildKeystoneInfo[unitName] = keystoneInfo
 			miog.guildSystem.keystoneData[unitName] = keystoneInfo
 
 			local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
@@ -126,7 +126,7 @@ miog.loadPartyCheck = function()
 		if(type(v) == "table" and v.Button) then
 			v.Name:SetText(v:GetParentKey())
 			miog.PartyCheck.sortByCategoryButtons[v:GetDebugName()] = v.Button
-			v.Button.panel = "partyCheck"
+			v.Button.panel = "PartyCheck"
 			v.Button.category = v:GetDebugName()
 			v.Button:SetScript("PostClick", function()
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)

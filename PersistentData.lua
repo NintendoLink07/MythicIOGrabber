@@ -1913,6 +1913,7 @@ miog.ACTIVITY_BACKGROUNDS = {
 	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
 	[111] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
+	[121] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/delves.png", --DELVES
 }
 
 miog.EXPANSION_INFO = {

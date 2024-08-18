@@ -30,29 +30,23 @@ local _, id = UnitClassBase("player")
 ]]
 local function convertAdvancedBlizzardFiltersToMIOGFilters()
 	local blizzardFilters = C_LFGList.GetAdvancedFilter()
-	local missingFilters = MIOG_SavedSettings.currentBlizzardFilters == nil and true or false
-	local filtersUpToDate = blizzardFilters == MIOG_SavedSettings.currentBlizzardFilters
+	local missingFilters = MIOG_NewSettings.currentBlizzardFilters == nil and true or false
+	local filtersUpToDate = blizzardFilters == MIOG_NewSettings.currentBlizzardFilters
 
 	if(missingFilters or not filtersUpToDate) then
-		MIOG_SavedSettings.currentBlizzardFilters = blizzardFilters
+		MIOG_NewSettings.currentBlizzardFilters = blizzardFilters
 
-		if(not MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2]) then
-			MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2] = miog.getDefaultFilters()
+		if(not MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][2]) then
+			MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][2] = miog.getDefaultFilters()
 		end
 
-		for k, v in pairs(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"]) do
+		for k, v in pairs(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"]) do
 			if(k == 2) then
 				v.minRating = blizzardFilters.minimumRating
 				v.minHealers = v.minHealers == 0 and blizzardFilters.hasHealer == true and 1 or v.minHealers or 0
 				v.minTanks = v.minTanks == 0 and blizzardFilters.hasTank == true and 1 or v.minTanks or 0
 
-				--v.filterForTanks = blizzardFilters.hasTank
-				--v.filterForHealers = blizzardFilters.hasHealer
-
 				v.needsMyClass = blizzardFilters.needsMyClass
-
-				--local _, id = UnitClassBase("player")
-				--v.classSpec.class[id] = v.needsMyClass
 
 				v.filterForRoles["TANK"] = blizzardFilters.needsTank == false
 				v.filterForRoles["HEALER"] = blizzardFilters.needsHealer == false
@@ -70,33 +64,33 @@ local function convertFiltersToAdvancedBlizzardFilters()
 	if(categoryID == 2) then
 		local miogFilters = {}
 
-		miogFilters.minimumRating = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minRating
-		miogFilters.hasHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForHealers
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minHealers > 0
+		miogFilters.minimumRating = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].minRating
+		miogFilters.hasHealer = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].filterForHealers
+		and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false
+		and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false
+		and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].minHealers > 0
 
-		miogFilters.hasTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForTanks
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false
-		and MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].minTanks > 0
+		miogFilters.hasTank = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].filterForTanks
+		and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].linkedTanks == false
+		and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].linkedHealers == false
+		and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].minTanks > 0
 
-		local difficultyFiltered = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForDifficulty
-		miogFilters.difficultyNormal = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonNormal and difficultyFiltered
-		miogFilters.difficultyHeroic = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonHeroic and difficultyFiltered
-		miogFilters.difficultyMythic = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonMythic and difficultyFiltered
-		miogFilters.difficultyMythicPlus = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonChallenge and difficultyFiltered
+		local difficultyFiltered = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].filterForDifficulty
+		miogFilters.difficultyNormal = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonNormal and difficultyFiltered
+		miogFilters.difficultyHeroic = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonHeroic and difficultyFiltered
+		miogFilters.difficultyMythic = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonMythic and difficultyFiltered
+		miogFilters.difficultyMythicPlus = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].difficultyID == DifficultyUtil.ID.DungeonChallenge and difficultyFiltered
 
-		miogFilters.needsTank = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForRoles["TANK"] == false
-		miogFilters.needsHealer = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForRoles["HEALER"] == false
-		miogFilters.needsDamage = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForRoles["DAMAGER"] == false
-		miogFilters.needsMyClass = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].needsMyClass
+		miogFilters.needsTank = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].filterForRoles["TANK"] == false
+		miogFilters.needsHealer = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].filterForRoles["HEALER"] == false
+		miogFilters.needsDamage = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].filterForRoles["DAMAGER"] == false
+		miogFilters.needsMyClass = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].needsMyClass
 
 		miogFilters.activities = {}
 
-		if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][categoryID].filterForDungeons) then
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons) then
-				for k, v in pairs(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons) do
+		if(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].filterForDungeons) then
+			if(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][2].dungeons) then
+				for k, v in pairs(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][2].dungeons) do
 					if(v == true) then
 						miogFilters.activities[#miogFilters.activities+1] = k
 					end
@@ -131,7 +125,7 @@ local function addOptionToFilterFrame(parent, _, text, name)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][name] = self:GetChecked()
+		MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][name] = self:GetChecked()
 
 		convertAndRefresh()
 	end)
@@ -154,7 +148,7 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, text, range)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 	
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName] = self:GetChecked()
+		MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName] = self:GetChecked()
 
 		convertAndRefresh()
 	end)
@@ -169,7 +163,7 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, text, range)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]["linked" .. name] = self:GetChecked()
+		MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID]["linked" .. name] = self:GetChecked()
 
 		convertAndRefresh()
 	end)
@@ -190,21 +184,21 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, text, range)
 					local currentPanel = LFGListFrame.activePanel:GetDebugName()
 					local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
+					MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
 
 					self:SetValue(spinnerValue)
 
 					if(i == 1) then
 						if(parent[name].Maximum:GetValue() < spinnerValue) then
 							parent[name].Maximum:SetValue(spinnerValue)
-							MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][maxName] = spinnerValue
+							MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][maxName] = spinnerValue
 
 						end
 
 					else
 						if(parent[name].Minimum:GetValue() > spinnerValue) then
 							parent[name].Minimum:SetValue(spinnerValue)
-							MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][minName] = spinnerValue
+							MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][minName] = spinnerValue
 
 						end
 					end
@@ -222,11 +216,11 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, text, range)
 			local currentPanel = LFGListFrame.activePanel:GetDebugName()
 			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
+			MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
 
 			if(parent[name].Minimum:GetValue() > spinnerValue) then
 				parent[name].Minimum:SetValue(spinnerValue)
-				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][minName] = spinnerValue
+				MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][minName] = spinnerValue
 
 			end
 
@@ -243,11 +237,11 @@ local function addDualNumericSpinnerToFilterFrame(parent, name, text, range)
 			local currentPanel = LFGListFrame.activePanel:GetDebugName()
 			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
+			MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = spinnerValue
 
 			if(parent[name].Maximum:GetValue() < spinnerValue) then
 				parent[name].Maximum:SetValue(spinnerValue)
-				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][maxName] = spinnerValue
+				MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][maxName] = spinnerValue
 
 			end
 
@@ -270,7 +264,7 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName] = self:GetChecked()
+		MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName] = self:GetChecked()
 
 		convertAndRefresh()
 	end)
@@ -291,18 +285,18 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		currentField:SetNumeric(true)
 		currentField:SetMaxLetters(4)
 		currentField:HookScript("OnTextChanged", function(self, ...)
-			if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()]) then
+			if(MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()]) then
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 				
 				local text = tonumber(self:GetText())
 				local currentPanel = LFGListFrame.activePanel:GetDebugName()
 				local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 			
-				MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = text ~= nil and text or 0
+				MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][currentName] = text ~= nil and text or 0
 
 				convertFiltersToAdvancedBlizzardFilters()
 
-				if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName]) then
+				if(MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID][settingName]) then
 					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 						miog.newUpdateFunction()
 			
@@ -357,15 +351,15 @@ local function updateRaidCheckboxes(reset)
 	for k, activityEntry in ipairs(sortedExpansionRaids) do
 		local currentButton = miog.FilterPanel.IndexedOptions.Raids.Buttons[k]
 
-		if(type(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID]) == "boolean" or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] == nil) then
-			MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] = {setting = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID], bosses = {}}
+		if(type(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID]) == "boolean" or MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] == nil) then
+			MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID] = {setting = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID], bosses = {}}
 		end
 
-		currentButton:SetChecked(reset or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].setting)
+		currentButton:SetChecked(reset or MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].setting)
 		currentButton:HookScript("OnClick", function(self)
-			MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].setting = self:GetChecked()
+			MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].setting = self:GetChecked()
 
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids) then
+			if(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 					miog.FilterPanel.IndexedOptions.Raids.Rows[k]:MarkDirty()
 					miog.FilterPanel.IndexedOptions.Raids:MarkDirty()
@@ -397,14 +391,14 @@ local function updateRaidCheckboxes(reset)
 					
 				end
 
-				MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses = {}
+				MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses = {}
 
 				miog.newUpdateFunction()
 			end)
 
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses) then
-				MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses
-				MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raidBosses = nil
+			if(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raidBosses) then
+				MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raidBosses
+				MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raidBosses = nil
 
 			end
 			
@@ -413,13 +407,13 @@ local function updateRaidCheckboxes(reset)
 					--SetPortraitTextureFromCreatureDisplayID(currentBossListRow.BossFrames[x].Icon, y.creatureDisplayInfoID)
 					
 				else
-					MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] or 0
+					MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] or 0
 
 					local bossFrame = CreateFrame("Frame", nil, currentBossListRow, "MIOG_FilterPanelBossFrameTemplate")
 					bossFrame.layoutIndex = x
 					SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, y.creatureDisplayInfoID)
 					
-					bossFrame.Icon:SetDesaturated(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] or true)
+					bossFrame.Icon:SetDesaturated(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] or true)
 
 					if(bossFrame.BorderMask == nil) then
 						bossFrame.BorderMask = bossFrame:CreateMaskTexture()
@@ -428,9 +422,9 @@ local function updateRaidCheckboxes(reset)
 						bossFrame.Border:AddMaskTexture(bossFrame.BorderMask)
 					end
 
-					local baseShortValue = MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x]
+					local baseShortValue = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x]
 
-					if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] > 0) then
+					if(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] > 0) then
 						bossFrame.Border:SetColorTexture(CreateColorFromHexString(baseShortValue == 1 and miog.CLRSCC.red or baseShortValue == 2 and miog.CLRSCC.green or miog.CLRSCC.white):GetRGBA())
 						bossFrame.Border:Show()
 
@@ -439,18 +433,18 @@ local function updateRaidCheckboxes(reset)
 
 					end
 
-					bossFrame.Icon:SetDesaturated(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] < 2 and true or false)
+					bossFrame.Icon:SetDesaturated(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] < 2 and true or false)
 
 					bossFrame.Icon:SetScript("OnMouseDown", function(self)
-						MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] =
-						MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 0 and 1
-						or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 1 and 2
-						or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 2 and 0
+						MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] =
+						MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 0 and 1
+						or MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 1 and 2
+						or MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 2 and 0
 						or 1
 
-						if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] > 0) then
-							bossFrame.Border:SetColorTexture(CreateColorFromHexString(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 1 and miog.CLRSCC.red
-							or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 2 and miog.CLRSCC.green or miog.CLRSCC.white):GetRGBA())
+						if(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] > 0) then
+							bossFrame.Border:SetColorTexture(CreateColorFromHexString(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 1 and miog.CLRSCC.red
+							or MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] == 2 and miog.CLRSCC.green or miog.CLRSCC.white):GetRGBA())
 							bossFrame.Border:Show()
 
 						else
@@ -458,7 +452,7 @@ local function updateRaidCheckboxes(reset)
 
 						end
 						
-						self:SetDesaturated(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] < 2 and true or false)
+						self:SetDesaturated(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][3].raids[activityEntry.groupFinderActivityGroupID].bosses[x] < 2 and true or false)
 
 						miog.newUpdateFunction()
 					end)
@@ -570,11 +564,11 @@ local function updateDungeonCheckboxes(reset)
 	for k, activityEntry in ipairs(sortedSeasonDungeons) do
 		local currentButton = miog.FilterPanel.IndexedOptions.Dungeons.Buttons[k]
 		currentButton:HookScript("OnClick", function(self)
-			MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons[activityEntry.groupFinderActivityGroupID] = self:GetChecked()
+			MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][2].dungeons[activityEntry.groupFinderActivityGroupID] = self:GetChecked()
 
 			convertFiltersToAdvancedBlizzardFilters()
 
-			if(MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons) then
+			if(MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][2].dungeons) then
 				if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 					miog.newUpdateFunction()
 		
@@ -587,7 +581,7 @@ local function updateDungeonCheckboxes(reset)
 		end)
 
 		currentButton.FontString:SetText(activityEntry.name)
-		currentButton:SetChecked(reset or MIOG_SavedSettings.filterOptions.table["LFGListFrame.SearchPanel"][2].dungeons[activityEntry.groupFinderActivityGroupID])
+		currentButton:SetChecked(reset or MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][2].dungeons[activityEntry.groupFinderActivityGroupID])
 		
 		currentButton:Show()
 	end
@@ -660,14 +654,9 @@ local function updateFilterDifficulties(reset)
 	local currentPanel = LFGListFrame.activePanel:GetDebugName()
 	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-	if(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()]) then
+	if(MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()]) then
 		local difficultyDropDown = miog.FilterPanel.IndexedOptions.Difficulty.Dropdown
 		difficultyDropDown:ResetDropDown()
-
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID] = MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID]
-		or miog.getDefaultFilters()
-
-		--local categoryID = LFGListFrame.SearchPanel.categoryID or C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID
 
 		local isPvp = categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9
 		local isDungeon = categoryID == 2
@@ -682,7 +671,7 @@ local function updateFilterDifficulties(reset)
 				info.level = 1
 				info.value = v
 				info.func = function()
-					MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID = v
+					MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID = v
 
 					if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 						miog.newUpdateFunction()
@@ -700,7 +689,7 @@ local function updateFilterDifficulties(reset)
 			difficultyDropDown.List:MarkDirty()
 
 			if(not reset) then
-				local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID)
+				local success = difficultyDropDown:SelectFirstFrameWithValue(MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID)
 				
 				if(not success) then
 					difficultyDropDown:SelectFrameAtLayoutIndex(1)
@@ -722,43 +711,31 @@ local function setupFiltersForActivePanel(reset)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-		MIOG_SavedSettings.filterOptions.table[currentPanel][categoryID] = miog.getDefaultFilters()
+		MIOG_NewSettings.filterOptions[currentPanel][categoryID] = miog.getDefaultFilters()
 
 		setupFiltersForActivePanel(true)
 
 		convertAndRefresh()
 	end)
 
-	local currentPanel = LFGListFrame.activePanel:GetDebugName()
-	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+	local cp = LFGListFrame.activePanel:GetDebugName()
+	local categoryID = cp == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or cp == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-	miog.FilterPanel.IndexedOptions.Tanks:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
-	miog.FilterPanel.IndexedOptions.Healers:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
-	miog.FilterPanel.IndexedOptions.Damager:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
-	miog.FilterPanel.IndexedOptions.hardDecline:SetShown(currentPanel == "LFGListFrame.SearchPanel" and true or false)
+	miog.FilterPanel.IndexedOptions.Tanks:SetShown(cp == "LFGListFrame.SearchPanel" and true or false)
+	miog.FilterPanel.IndexedOptions.Healers:SetShown(cp == "LFGListFrame.SearchPanel" and true or false)
+	miog.FilterPanel.IndexedOptions.Damager:SetShown(cp == "LFGListFrame.SearchPanel" and true or false)
+	miog.FilterPanel.IndexedOptions.hardDecline:SetShown(cp == "LFGListFrame.SearchPanel" and true or false)
 
-	miog.FilterPanel.IndexedOptions.BossKills:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
-	miog.FilterPanel.IndexedOptions.Dungeons:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 and true or false)
-	miog.FilterPanel.IndexedOptions.Raids:SetShown(currentPanel == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
-	miog.FilterPanel.IndexedOptions.Difficulty:SetShown((currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
-	miog.FilterPanel.IndexedOptions.Difficulty.Dropdown:SetShown((currentPanel == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
+	miog.FilterPanel.IndexedOptions.BossKills:SetShown(cp == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
+	miog.FilterPanel.IndexedOptions.Dungeons:SetShown(cp == "LFGListFrame.SearchPanel" and categoryID == 2 and true or false)
+	miog.FilterPanel.IndexedOptions.Raids:SetShown(cp == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
+	miog.FilterPanel.IndexedOptions.Difficulty:SetShown((cp == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
+	miog.FilterPanel.IndexedOptions.Difficulty.Dropdown:SetShown((cp == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
 
 	miog.FilterPanel.IndexedOptions:MarkDirty()
 
 	if(categoryID) then
-		local currentSettings = MIOG_SavedSettings.filterOptions.table[currentPanel][categoryID]
-
-		if(currentSettings == nil) then
-			currentSettings = miog.getDefaultFilters()
-			
-		else
-			for key, value in pairs(miog.defaultOptionSettings.filterOptions.table.default) do
-				if(currentSettings[key] == nil) then
-					currentSettings[key] = value
-
-				end
-			end
-		end
+		local currentSettings = MIOG_NewSettings.filterOptions[cp][categoryID]
 
 		updateFilterDifficulties(reset)
 
@@ -790,7 +767,7 @@ local function setupFiltersForActivePanel(reset)
 		miog.FilterPanel.IndexedOptions.Rating.Minimum:SetNumber(currentSettings.minRating or 0)
 		miog.FilterPanel.IndexedOptions.Rating.Maximum:SetNumber(currentSettings.maxRating or 0)
 
-		miog.FilterPanel.IndexedOptions.Age:SetShown(currentPanel == "LFGListFrame.SearchPanel")
+		miog.FilterPanel.IndexedOptions.Age:SetShown(cp == "LFGListFrame.SearchPanel")
 		miog.FilterPanel.IndexedOptions.Age.Button:SetChecked(currentSettings.filterForAge)
 		miog.FilterPanel.IndexedOptions.Age.Minimum:SetNumber(currentSettings.minAge or 0)
 		miog.FilterPanel.IndexedOptions.Age.Maximum:SetNumber(currentSettings.maxAge or 0)
@@ -799,7 +776,7 @@ local function setupFiltersForActivePanel(reset)
 		miog.FilterPanel.IndexedOptions.BossKills.Minimum:SetValue(currentSettings.minBossKills)
 		miog.FilterPanel.IndexedOptions.BossKills.Maximum:SetValue(currentSettings.maxBossKills)
 
-		miog.FilterPanel.IndexedOptions.partyFit:SetShown(currentPanel == "LFGListFrame.SearchPanel")
+		miog.FilterPanel.IndexedOptions.partyFit:SetShown(cp == "LFGListFrame.SearchPanel")
 		miog.FilterPanel.IndexedOptions.partyFit.Button:SetChecked(currentSettings.partyFit)
 
 		miog.FilterPanel.IndexedOptions.ressFit.Button:SetChecked(currentSettings.ressFit)
@@ -815,29 +792,23 @@ local function setupFiltersForActivePanel(reset)
 		for classIndex, classEntry in ipairs(miog.CLASSES) do
 			local currentClassPanel = miog.FilterPanel.ClassSpecOptions.Panels[classIndex]
 
-			if(MIOG_SavedSettings and currentSettings.classSpec) then
-				if(currentSettings.classSpec.class[classIndex] ~= nil) then
-					if(classIndex == id) then
-						currentClassPanel.Class.Button:SetChecked(reset or not currentSettings.needsMyClass)
-						
-					else
-						currentClassPanel.Class.Button:SetChecked(reset or currentSettings.classSpec.class[classIndex])
-
-					end
-
+			if(currentSettings.classes[classIndex] ~= nil) then
+				if(classIndex == id) then
+					currentClassPanel.Class.Button:SetChecked(reset or not currentSettings.needsMyClass)
+					
 				else
-					if(classIndex == id) then
-						currentClassPanel.Class.Button:SetChecked(not currentSettings.needsMyClass)
-						
-					else
-						currentClassPanel.Class.Button:SetChecked(true)
-
-					end
+					currentClassPanel.Class.Button:SetChecked(reset or currentSettings.classes[classIndex])
 
 				end
 
 			else
-				currentClassPanel.Class.Button:SetChecked(true)
+				if(classIndex == id) then
+					currentClassPanel.Class.Button:SetChecked(not currentSettings.needsMyClass)
+					
+				else
+					currentClassPanel.Class.Button:SetChecked(true)
+
+				end
 
 			end
 			
@@ -850,15 +821,15 @@ local function setupFiltersForActivePanel(reset)
 					currentSettings.needsMyClass = not state
 
 					if(currentSettings.needsMyClass == true) then
-						currentSettings.classSpec.class[id] = nil
+						currentSettings.classes[id] = nil
 
 					else
-						currentSettings.classSpec.class[id] = state
+						currentSettings.classes[id] = state
 
 					end
 					
 				else
-					currentSettings.classSpec.class[classIndex] = state
+					currentSettings.classes[classIndex] = state
 
 				end
 
@@ -867,14 +838,14 @@ local function setupFiltersForActivePanel(reset)
 					
 					if(classIndex == id) then
 						if(currentSettings.needsMyClass == true) then
-							currentSettings.classSpec.spec[specIndex] = nil
+							currentSettings.specs[specIndex] = nil
 
 						else
-							currentSettings.classSpec.spec[specIndex] = state
+							currentSettings.specs[specIndex] = state
 
 						end
 					else
-						currentSettings.classSpec.spec[specIndex] = state
+						currentSettings.specs[specIndex] = state
 					
 					end
 				end
@@ -894,29 +865,23 @@ local function setupFiltersForActivePanel(reset)
 
 			for specIndex, specID in pairs(classEntry.specs) do
 				local currentSpecFrame = currentClassPanel.SpecFrames[specID]
-				if(MIOG_SavedSettings and currentSettings.classSpec) then
-					if(currentSettings.classSpec.spec[specID] ~= nil) then
-						if(classIndex == id) then
-							currentSpecFrame.Button:SetChecked(reset or not currentSettings.needsMyClass)
-							
-						else
-							currentSpecFrame.Button:SetChecked(reset or currentSettings.classSpec.spec[specID])
-
-						end
-
+				if(currentSettings.specs[specID] ~= nil) then
+					if(classIndex == id) then
+						currentSpecFrame.Button:SetChecked(reset or not currentSettings.needsMyClass)
+						
 					else
-						if(classIndex == id) then
-							currentSpecFrame.Button:SetChecked(reset or not currentSettings.needsMyClass)
-							
-						else
-							currentSpecFrame.Button:SetChecked(true)
-	
-						end
+						currentSpecFrame.Button:SetChecked(reset or currentSettings.specs[specID])
 
 					end
 
 				else
-					currentSpecFrame.Button:SetChecked(true)
+					if(classIndex == id) then
+						currentSpecFrame.Button:SetChecked(reset or not currentSettings.needsMyClass)
+						
+					else
+						currentSpecFrame.Button:SetChecked(true)
+
+					end
 
 				end
 				
@@ -930,7 +895,7 @@ local function setupFiltersForActivePanel(reset)
 
 					end
 
-					currentSettings.classSpec.spec[specID] = state
+					currentSettings.specs[specID] = state
 
 					convertFiltersToAdvancedBlizzardFilters()
 
@@ -1036,7 +1001,7 @@ local function addRolePanel(parent)
 			local currentPanel = LFGListFrame.activePanel:GetDebugName()
 			local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 		
-			MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"] = state
+			MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForRoles[i == 1 and "TANK" or i == 2 and "HEALER" or "DAMAGER"] = state
 
 			convertFiltersToAdvancedBlizzardFilters()
 
@@ -1078,6 +1043,8 @@ miog.loadFilterPanel = function()
 	miog.FilterPanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
 	miog.FilterPanel:Hide()
 	miog.createFrameBorder(miog.FilterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	
+	miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
 
 	miog.FilterPanel.Retract:SetScript("OnClick", function(self)
 		miog.hideSidePanel(self)
@@ -1121,7 +1088,7 @@ miog.loadFilterPanel = function()
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 	
-		MIOG_SavedSettings.filterOptions.table[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDifficulty = self:GetChecked()
+		MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDifficulty = self:GetChecked()
 		
 		convertFiltersToAdvancedBlizzardFilters()
 

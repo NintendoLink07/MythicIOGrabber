@@ -60,15 +60,15 @@ miog.createRaidCharacter = function(playerGUID)
     if(isCurrentChar) then
         local _, className = UnitClass("player")
 
-        MIOG_SavedSettings.raidStatistics.table[playerGUID] = {}
-        MIOG_SavedSettings.raidStatistics.table[playerGUID].name = MIOG_SavedSettings.raidStatistics.table[playerGUID].name or UnitName("player")
-        MIOG_SavedSettings.raidStatistics.table[playerGUID].class = MIOG_SavedSettings.raidStatistics.table[playerGUID].class or className
-        MIOG_SavedSettings.raidStatistics.table[playerGUID].raids = {}
+        MIOG_NewSettings.raidStats[playerGUID] = {}
+        MIOG_NewSettings.raidStats[playerGUID].name = MIOG_NewSettings.raidStats[playerGUID].name or UnitName("player")
+        MIOG_NewSettings.raidStats[playerGUID].class = MIOG_NewSettings.raidStats[playerGUID].class or className
+        MIOG_NewSettings.raidStats[playerGUID].raids = {}
 
 		for _, x in ipairs(miog.RaidStatistics.RaidColumns.Raids) do
 			local mapID = x.mapID
 
-			MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID] = {regular = {}, awakened = {}}
+			MIOG_NewSettings.raidStats[playerGUID].raids[mapID] = {regular = {}, awakened = {}}
 			
 			for k, d in ipairs(miog.MAP_INFO[mapID].achievementsAwakened) do
 				local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(d)
@@ -76,18 +76,18 @@ miog.createRaidCharacter = function(playerGUID)
 				local difficulty = string.find(description, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
 
 				if(difficulty) then
-					MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty] = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty] or {kills = 0, bosses = {}}
+					MIOG_NewSettings.raidStats[playerGUID].raids[mapID].awakened[difficulty] = MIOG_NewSettings.raidStats[playerGUID].raids[mapID].awakened[difficulty] or {kills = 0, bosses = {}}
 
 					local numCriteria = GetAchievementNumCriteria(d)
 					for i = 1, numCriteria, 1 do
 						local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, i, true)
 
 						if(completedCriteria) then
-							MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].kills = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].kills + 1
+							MIOG_NewSettings.raidStats[playerGUID].raids[mapID].awakened[difficulty].kills = MIOG_NewSettings.raidStats[playerGUID].raids[mapID].awakened[difficulty].kills + 1
 
 						end
 
-						table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].awakened[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
+						table.insert(MIOG_NewSettings.raidStats[playerGUID].raids[mapID].awakened[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 					end
 				end
 			end
@@ -98,23 +98,23 @@ miog.createRaidCharacter = function(playerGUID)
 				local difficulty = string.find(name, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
 
 				if(difficulty) then
-					MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty] = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty] or {kills = 0, bosses = {}}
+					MIOG_NewSettings.raidStats[playerGUID].raids[mapID].regular[difficulty] = MIOG_NewSettings.raidStats[playerGUID].raids[mapID].regular[difficulty] or {kills = 0, bosses = {}}
 
 					local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, 1, true)
 
 					if(completedCriteria) then
-						MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].kills = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].kills + 1
+						MIOG_NewSettings.raidStats[playerGUID].raids[mapID].regular[difficulty].kills = MIOG_NewSettings.raidStats[playerGUID].raids[mapID].regular[difficulty].kills + 1
 
 					end
 
-					table.insert(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID].regular[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
+					table.insert(MIOG_NewSettings.raidStats[playerGUID].raids[mapID].regular[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 				end
 			end
 		end
     end
 
-	characterFrame.Name:SetText(MIOG_SavedSettings.raidStatistics.table[playerGUID].name)
-	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.raidStatistics.table[playerGUID].class):GetRGBA())
+	characterFrame.Name:SetText(MIOG_NewSettings.raidStats[playerGUID].name)
+	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_NewSettings.raidStats[playerGUID].class):GetRGBA())
 end
 
 local function raidFrame_OnEnter(self, playerGUID, mapID, difficulty, type)
@@ -122,7 +122,7 @@ local function raidFrame_OnEnter(self, playerGUID, mapID, difficulty, type)
 	GameTooltip_AddHighlightLine(GameTooltip, miog.MAP_INFO[mapID].name)
 	GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-	for k, v in ipairs(MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[mapID][type][difficulty].bosses) do
+	for k, v in ipairs(MIOG_NewSettings.raidStats[playerGUID].raids[mapID][type][difficulty].bosses) do
 		local bossInfo = v
 		local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfoByID(bossInfo.id, bossInfo.criteriaID, true)
 		local id, name, points, completed, month, day, year, description, flags,
@@ -150,12 +150,12 @@ miog.fillRaidCharacter = function(playerGUID)
 			local previous = a == 1 and raidFrame.Normal.Previous or a == 2 and raidFrame.Heroic.Previous or a == 3 and raidFrame.Mythic.Previous
 
 			if(current and previous) then
-				local currentProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].awakened[a]
+				local currentProgress = MIOG_NewSettings.raidStats[playerGUID].raids[x.mapID].awakened[a]
 				local text2 = (currentProgress and currentProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
 				current:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
 
 				if(previous) then
-					local previousProgress = MIOG_SavedSettings.raidStatistics.table[playerGUID].raids[x.mapID].regular[a]
+					local previousProgress = MIOG_NewSettings.raidStats[playerGUID].raids[x.mapID].regular[a]
 					local text = (previousProgress and previousProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
 					previous:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].desaturated))
 					previous:Show()
@@ -191,7 +191,7 @@ miog.gatherRaidStatistics = function()
 
 	local orderedTable = {}
 
-	for x, y in pairs(MIOG_SavedSettings.raidStatistics.table) do
+	for x, y in pairs(MIOG_NewSettings.raidStats) do
 		local index = #orderedTable+1
 		orderedTable[index] = y
 		orderedTable[index].key = x

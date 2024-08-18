@@ -4,8 +4,8 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 2.4.3
-## SavedVariables: MIOG_SavedSettings
+## Version: 2.4.4
+## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
 
@@ -17,7 +17,6 @@ Libs\libs.xml
 RawBlizzardData.lua
 
 MythicIOGrabber.lua
-Settings.lua
 UtilFunctions.lua
 PersistentData.lua
 UI.lua
@@ -47,6 +46,8 @@ PartyCheck.lua
 Guild.lua
 RaiderIOChecker.lua
 DropChecker.lua
+
+NewSettings.lua
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -156,5 +157,3 @@ XML\MIOG_DropChecker.xml
 XML\MIOG_DropCheckerAutoCompleteEntryTemplate.xml
 
 FuzzyAlgorithm.lua
-ONP.lua
-DiffMatchPatch.lua

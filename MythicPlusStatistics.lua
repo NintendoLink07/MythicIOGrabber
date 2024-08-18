@@ -62,11 +62,9 @@ local function round(n)
 	local scores, overallScore
 	
 	if(guid) then
-		overallScore = MIOG_SavedSettings.mPlusStatistics.table[guid][mapID].overAllScore
-
-		scores = {}
-		scores[1] = MIOG_SavedSettings.mPlusStatistics.table[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
-		scores[2] = MIOG_SavedSettings.mPlusStatistics.table[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
+		overallScore = MIOG_NewSettings.mplusStats[guid][mapID].overAllScore
+		scores[1] = MIOG_NewSettings.mplusStats[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
+		scores[2] = MIOG_NewSettings.mplusStats[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
 		
 	else
 		scores, overallScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID)
@@ -289,16 +287,16 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 	local isCurrentChar = playerGUID == UnitGUID("player")
 
 	if(isCurrentChar) then
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID] = {}
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name = UnitName("player")
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].class = className
-		MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score = C_ChallengeMode.GetOverallDungeonScore()
+		MIOG_NewSettings.mplusStats[playerGUID] = {}
+		MIOG_NewSettings.mplusStats[playerGUID].name = UnitName("player")
+		MIOG_NewSettings.mplusStats[playerGUID].class = className
+		MIOG_NewSettings.mplusStats[playerGUID].score = C_ChallengeMode.GetOverallDungeonScore()
 	end
 
-	characterFrame.Name:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].name)
-	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].class):GetRGBA())
-	characterFrame.Score:SetText(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score)
-	characterFrame.Score:SetTextColor(miog.createCustomColorForRating(MIOG_SavedSettings.mPlusStatistics.table[playerGUID].score):GetRGBA())
+	characterFrame.Name:SetText(MIOG_NewSettings.mplusStats[playerGUID].name)
+	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_NewSettings.mplusStats[playerGUID].class):GetRGBA())
+	characterFrame.Score:SetText(MIOG_NewSettings.mplusStats[playerGUID].score)
+	characterFrame.Score:SetTextColor(miog.createCustomColorForRating(MIOG_NewSettings.mplusStats[playerGUID].score):GetRGBA())
 
 	if(miog.F.WEEKLY_AFFIX and miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX]) then
 		characterFrame.Affix1:SetTexture(miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX][3])
@@ -312,27 +310,27 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 		dungeonFrame.layoutIndex = index
 
 		if(isCurrentChar) then
-			MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID] = {}
+			MIOG_NewSettings.mplusStats[playerGUID][challengeMapID] = {}
 
 			local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
 
 			if(affixScores) then
 				for k, v in ipairs(affixScores) do
-					MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][v.name] = v
+					MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][v.name] = v
 
 				end
 
 				local inTimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID);
 
-				MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overAllScore = overAllScore
-				MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].inTimeInfo = inTimeInfo
-				MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overtimeInfo = overtimeInfo
+				MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overAllScore = overAllScore
+				MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].inTimeInfo = inTimeInfo
+				MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo = overtimeInfo
 			end
 
 		end
 
-		local thisWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
-		local lastWeek = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
+		local thisWeek = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
+		local lastWeek = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
 
 		dungeonFrame.Level1:SetText(thisWeek and thisWeek.level or 0)
 		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek == nil or (thisWeek.level == 0 or thisWeek.level) == nil) and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
@@ -350,9 +348,9 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 			--local inTimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(self.mapID);
 			--local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(self.mapID);
 
-			local overAllScore = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overAllScore
-			local inTimeInfo = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].inTimeInfo
-			local overtimeInfo = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID].overtimeInfo
+			local overAllScore = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overAllScore
+			local inTimeInfo = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].inTimeInfo
+			local overtimeInfo = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo
 		
 			if(overAllScore and (inTimeInfo or overtimeInfo)) then
 				local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(overAllScore);
@@ -365,7 +363,7 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 			--if(affixScores and #affixScores > 0) then
 				--for _, affixInfo in ipairs(affixScores) do
 				for i = 1, 2, 1 do
-					local affixInfo = MIOG_SavedSettings.mPlusStatistics.table[playerGUID][challengeMapID][i == 1 and (miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified") or miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
+					local affixInfo = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][i == 1 and (miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified") or miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
 
 					if(affixInfo) then
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
@@ -412,7 +410,7 @@ miog.gatherMPlusStatistics = function()
 
 	local orderedTable = {}
 
-	for x, y in pairs(MIOG_SavedSettings.mPlusStatistics.table) do
+	for x, y in pairs(MIOG_NewSettings.mplusStats) do
 		local index = #orderedTable+1
 		orderedTable[index] = y
 		orderedTable[index].key = x

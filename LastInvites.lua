@@ -4,7 +4,7 @@ local wticc = WrapTextInColorCode
 miog.refreshLastInvites = function()
     local dataProvider = CreateDataProvider();
 
-    for k, v in pairs(MIOG_SavedSettings.lastInvitedApplicants.table) do
+    for k, v in pairs(MIOG_NewSettings.lastInvitedApplicants) do
 		dataProvider:Insert(v);
 	end
 
@@ -13,8 +13,8 @@ miog.refreshLastInvites = function()
 end
 
 miog.addInvitedPlayer = function(currentApplicant)
-	MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName] = currentApplicant
-	MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName].timestamp = MIOG_SavedSettings.lastInvitedApplicants.table[currentApplicant.fullName].timestamp or time()
+	MIOG_NewSettings.lastInvitedApplicants[currentApplicant.fullName] = currentApplicant
+	MIOG_NewSettings.lastInvitedApplicants[currentApplicant.fullName].timestamp = MIOG_NewSettings.lastInvitedApplicants[currentApplicant.fullName].timestamp or time()
 
     miog.refreshLastInvites()
 end
@@ -22,17 +22,20 @@ end
 miog.refreshFavouredPlayers = function()
     local dataProvider = CreateDataProvider();
 
-    for k, v in pairs(MIOG_SavedSettings.favouredApplicants.table) do
+    for k, v in pairs(MIOG_NewSettings.favouredApplicants) do
 		dataProvider:Insert(v);
+        
 	end
 
-	miog.LastInvites.FavouredScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
+	miog.favouredPlayersPanel:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
+    
+	--miog.LastInvites.FavouredScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
 
 end
 
 miog.addFavouredPlayer = function(currentApplicant)
-	MIOG_SavedSettings.favouredApplicants.table[currentApplicant.fullName] = currentApplicant
-	MIOG_SavedSettings.favouredApplicants.table[currentApplicant.fullName].timestamp = MIOG_SavedSettings.favouredApplicants.table[currentApplicant.fullName].timestamp or time()
+	MIOG_NewSettings.favouredApplicants[currentApplicant.fullName] = currentApplicant
+	MIOG_NewSettings.favouredApplicants[currentApplicant.fullName].timestamp = MIOG_NewSettings.favouredApplicants[currentApplicant.fullName].timestamp or time()
 
     miog.refreshFavouredPlayers()
 end
@@ -62,7 +65,7 @@ miog.loadLastInvitesPanel = function()
         
         button.Delete:OnLoad()
         button.Delete:SetScript("OnClick", function(self)
-            MIOG_SavedSettings.lastInvitedApplicants.table[elementData.fullName] = nil
+            MIOG_NewSettings.lastInvitedApplicants[elementData.fullName] = nil
             miog.refreshLastInvites()
         end)
     
@@ -70,12 +73,12 @@ miog.loadLastInvitesPanel = function()
         button.Favour:SetSingleTextureForSpecificState(0, miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", 15)
         button.Favour:SetSingleTextureForSpecificState(1, miog.C.STANDARD_FILE_PATH .. "/infoIcons/checkmarkSmallIcon.png", 12)
         button.Favour:SetMaxStates(2)
-        button.Favour:SetState(MIOG_SavedSettings.favouredApplicants.table[elementData.fullName] and true or false)
+        button.Favour:SetState(MIOG_NewSettings.favouredApplicants[elementData.fullName] and true or false)
         button.Favour:SetScript("OnClick", function(self)
             self:AdvanceState()
     
             if(self:GetActiveState() == 0) then
-                MIOG_SavedSettings.favouredApplicants.table[elementData.fullName] = nil
+                MIOG_NewSettings.favouredApplicants[elementData.fullName] = nil
                 miog.refreshFavouredPlayers()
     
             else
@@ -93,16 +96,19 @@ miog.loadLastInvitesPanel = function()
     view:SetPadding(1, 1, 1, 1, 2);
     
     ScrollUtil.InitScrollBoxListWithScrollBar(miog.LastInvites.SpecificScrollBox, miog.LastInvites.SpecificScrollBar, view);
+
+    miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
 end
 
 miog.loadFavouredPlayersPanel = function(parent, lastOption)
     local scrollBox = CreateFrame("Frame", nil, parent, "BackdropTemplate, WowScrollBoxList")
-    scrollBox:SetSize(220, 140)
+    --scrollBox:SetSize(220, 140)
     scrollBox:SetFrameStrata("HIGH")
-    scrollBox:SetPoint("TOPLEFT", lastOption or parent, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
+    --scrollBox:SetPoint("TOPLEFT", lastOption or parent, lastOption and "BOTTOMLEFT" or "TOPLEFT", 0, -15)
     miog.createFrameBorder(scrollBox, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-    miog.LastInvites.FavouredScrollBox = scrollBox
+    miog.favouredPlayersPanel = scrollBox
+    --miog.LastInvites.FavouredScrollBox = scrollBox
 
     local scrollBar = CreateFrame("EventFrame", nil, parent, "MinimalScrollBar")
     scrollBar:SetPoint("TOPLEFT", scrollBox, "TOPRIGHT")
@@ -122,7 +128,7 @@ miog.loadFavouredPlayersPanel = function(parent, lastOption)
         
         button.Delete:OnLoad()
         button.Delete:SetScript("OnClick", function(self)
-            MIOG_SavedSettings.favouredApplicants.table[elementData.fullName] = nil
+            MIOG_NewSettings.favouredApplicants[elementData.fullName] = nil
             miog.refreshFavouredPlayers()
         end)
     
@@ -145,8 +151,8 @@ local function addFavouredButtonsToPlayer(rootDescription, contextData)
     local server = contextData.server or GetRealmName()
     local fullName = name .. "-" .. server
     
-    rootDescription:CreateButton(MIOG_SavedSettings.favouredApplicants.table[fullName] and "Unfavour" or "Favour", function()
-        if(not MIOG_SavedSettings.favouredApplicants.table[fullName]) then
+    rootDescription:CreateButton(MIOG_NewSettings.favouredApplicants[fullName] and "Unfavour" or "Favour", function()
+        if(not MIOG_NewSettings.favouredApplicants[fullName]) then
             
             local profile = miog.F.IS_RAIDERIO_LOADED and RaiderIO.GetProfile(name, server, miog.F.CURRENT_REGION)
 
@@ -162,7 +168,7 @@ local function addFavouredButtonsToPlayer(rootDescription, contextData)
             miog.addFavouredPlayer(applicantData)
 
         else
-            MIOG_SavedSettings.favouredApplicants.table[fullName] = nil
+            MIOG_NewSettings.favouredApplicants[fullName] = nil
             miog.refreshFavouredPlayers()
 
         end
@@ -193,14 +199,14 @@ miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 						miog.addFavouredPlayer(arg1)
 
 					else
-                        MIOG_SavedSettings.favouredApplicants.table[arg1] = nil
+                        MIOG_NewSettings.favouredApplicants[arg1] = nil
                         miog.refreshFavouredPlayers()
 
 					end
 
 				end
 
-				if(MIOG_SavedSettings.favouredApplicants.table[fullName]) then
+				if(MIOG_NewSettings.favouredApplicants[fullName]) then
 					info.text = "[MIOG] Unfavour"
 					info.arg1 = fullName
 

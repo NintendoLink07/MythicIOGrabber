@@ -3,12 +3,6 @@
     <Frame name="MIOG_RaiderIOInformationPanel" virtual="true" toplevel="true">
         <Size y="200" />
 
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture parentKey="Background" setAllPoints="true"/>
-            </Layer>
-        </Layers>
-
         <Frames>
             <Button parentKey="MythicPlusTabButton" inherits="UIPanelButtonTemplate" text="Mythic+">
                 <Size y="20" />
@@ -56,98 +50,6 @@
                     </OnClick>
                 </Scripts>
             </Button>
-
-            <Frame parentKey="BackgroundRows" frameStrata="BACKGROUND">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusTabButton" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
-
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture parentKey="Row1">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                            </Anchors>
-                            <Color r="0.22745098039215686" b="0.23137254901960785" g="0.23529411764705882" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row2">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row1" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row1" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.1411764705882353" b="0.1450980392156863" g="0.14901960784313725" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row3">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row2" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row2" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.22745098039215686" b="0.23137254901960785" g="0.23529411764705882" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row4">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row3" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row3" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.1411764705882353" b="0.1450980392156863" g="0.14901960784313725" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row5">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row4" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row4" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.22745098039215686" b="0.23137254901960785" g="0.23529411764705882" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row6">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row5" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row5" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.1411764705882353" b="0.1450980392156863" g="0.14901960784313725" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row7">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row6" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row6" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.22745098039215686" b="0.23137254901960785" g="0.23529411764705882" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row8">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row7" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row7" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.1411764705882353" b="0.1450980392156863" g="0.14901960784313725" a="1"/>
-                        </Texture>
-
-                        <Texture parentKey="Row9">
-                            <Size y="20" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Row8" relativePoint="BOTTOMLEFT" />
-                                <Anchor point="TOPRIGHT" relativeKey="$parent.Row8" relativePoint="BOTTOMRIGHT" />
-                            </Anchors>
-                            <Color r="0.22745098039215686" b="0.23137254901960785" g="0.23529411764705882" a="1"/>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Frame>
 
             <Frame parentKey="MythicPlusPanel">
                 <Size y="160" />
@@ -216,7 +118,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Status" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="N/A">
+                        <FontString parentKey="Status" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.DungeonRow1" relativePoint="LEFT" x="2" />
                             </Anchors>
@@ -257,7 +159,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Status" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="N/A">
+                        <FontString parentKey="Status" font="SystemFont_Shadow_Med1" justifyH="LEFT" wordwrap="true" nonspacewrap="true" text="">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.HighestTier.Icon" relativePoint="LEFT" x="2" />
                             </Anchors>
@@ -336,5 +238,16 @@
                 </Layers>
             </Frame>
         </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="BackgroundRows" file="Interface/Addons/MythicIOGrabber/res/backgrounds/rioBackground.png">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusTabButton" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

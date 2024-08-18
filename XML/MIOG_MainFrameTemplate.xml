@@ -17,77 +17,28 @@
                 </Anchors>
 
                 <Frames>
-                    <Button parentKey="CreateGroup" inherits="MIOG_NavBarButtonTemplate">
+                    <Button parentKey="CreateGroupButton" inherits="MIOG_NavBarButtonTemplate">
                         <Size x="56" y="20" />
 
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2" />
 						</Anchors>
 
-                        <Scripts>
-                            <OnEnter>
-                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
-
-                                if(hoverFrame:IsShown()) then
-                                    hoverFrame:ClearAllPoints()
-                                    hoverFrame.setupFunction = self.setupFunction
-                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
-                                    hoverFrame:SetFrameLevel(10000)
-                                end
-                            </OnEnter>
-
-                            <OnClick>
-                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
-                                hoverFrame:SetShown(not hoverFrame:IsShown())
-
-                                if(hoverFrame:IsShown()) then
-                                    hoverFrame:ClearAllPoints()
-                                    hoverFrame.setupFunction = self.setupFunction
-                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
-                                    hoverFrame:SetFrameLevel(10000)
-                                end
-                            </OnClick>
-                        </Scripts>
                     </Button>
-
-                    <Button parentKey="FindGroup" inherits="MIOG_NavBarButtonTemplate">
+                    
+                    <Button parentKey="FindGroupButton" inherits="MIOG_NavBarButtonTemplate">
                         <Size x="50" y="20" />
 
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.CreateGroup" relativePoint="RIGHT" x="2" />
+							<Anchor point="LEFT" relativeKey="$parent.CreateGroupButton" relativePoint="RIGHT" x="2" />
 						</Anchors>
-
-                        <Scripts>
-                            <OnEnter>
-                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
-
-                                if(hoverFrame:IsShown()) then
-                                    hoverFrame:ClearAllPoints()
-                                    hoverFrame.setupFunction = self.setupFunction
-                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
-                                    hoverFrame:SetFrameLevel(10000)
-                                end
-                            </OnEnter>
-
-                            <OnClick>
-                                local hoverFrame = self:GetParent():GetParent().CategoryHoverFrame
-                                hoverFrame:SetShown(not hoverFrame:IsShown())
-
-                                if(hoverFrame:IsShown()) then
-                                    hoverFrame:ClearAllPoints()
-                                    hoverFrame.setupFunction = self.setupFunction
-                                    hoverFrame:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
-                                    hoverFrame:SetFrameLevel(10000)
-                                end
-                            </OnClick>
-                        </Scripts>
                     </Button>
                     
                     <Button parentKey="MoreButton" inherits="MIOG_NavBarButtonTemplate">
                         <Size x="62" y="20" />
 
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.FindGroup" relativePoint="RIGHT" x="2" />
+							<Anchor point="LEFT" relativeKey="$parent.FindGroupButton" relativePoint="RIGHT" x="2" />
 						</Anchors>
                     </Button>
 
@@ -103,16 +54,6 @@
 						</Scripts>
 					</Button>
 
-                    <Button parentKey="Expand">
-                        <Size x="12" y="12"/>
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2" y="-3"/>
-                        </Anchors>
-                        <NormalTexture file="interface/buttons/arrow-down-up.blp" />
-                        <PushedTexture file="interface/buttons/arrow-down-down.blp" />
-                        <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
-                    </Button>
-
                     <Button parentKey="BlizzardFrame" inherits="UIButtonTemplate" mixin="LFDMicroButtonMixin">
                         <KeyValues>
                             <KeyValue key="commandName" value="TOGGLEGROUPFINDER" type="string"/>
@@ -122,7 +63,7 @@
                         <Size x="20" y="20"/>
 
 						<Anchors>
-							<Anchor point="RIGHT" relativeKey="$parent.Expand" relativePoint="LEFT" x="-2"/>
+							<Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2"/>
 						</Anchors>
 
                         <NormalTexture atlas="Battlenet-ClientIcon-WoW" />

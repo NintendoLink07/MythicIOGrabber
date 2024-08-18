@@ -18,11 +18,11 @@ local function setActivePanel(_, panel)
 	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
 		miog.Plugin.ButtonPanel:Hide()
 
-		if(MIOG_SavedSettings.activeSidePanel.value == "filter") then
+		if(MIOG_NewSettings.activeSidePanel == "filter") then
 			miog.FilterPanel.Lock:Hide()
 			miog.FilterPanel:Show()
 
-		elseif(MIOG_SavedSettings.activeSidePanel.value == "invites") then
+		elseif(MIOG_NewSettings.activeSidePanel == "invites") then
 			miog.LastInvites:Show()
 
 		else
@@ -90,7 +90,7 @@ miog.createFrames = function()
 	settingsButton:SetSize(20, 20)
 	settingsButton:SetNormalTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/settingGear.png")
 	settingsButton:SetScript("OnClick", function()
-		Settings.OpenToCategory("MythicIOGrabber")
+		MIOG_OpenInterfaceOptions()
 	end)
 
 	if(miog.F.LITE_MODE == true) then
@@ -124,14 +124,7 @@ miog.createFrames = function()
 		settingsButton:SetParent(miog.pveFrame2.TitleBar)
 		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
 
-		miog.pveFrame2.TitleBar.Expand:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
-
-		--[[local blizzardDropDown = CreateFrame("DropdownButton", nil, miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation, "WowStyle1DropdownTemplate")
-		blizzardDropDown:SetDefaultText("Select a queue")
-		blizzardDropDown:SetPoint("TOPLEFT", blizzardDropDown:GetParent().DropDown, "BOTTOMLEFT")
-		blizzardDropDown:SetPoint("TOPRIGHT", blizzardDropDown:GetParent().DropDown, "BOTTOMRIGHT")
-
-		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.BlizzardDropdown = blizzardDropDown]]
+		miog.pveFrame2.TitleBar.BlizzardFrame:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
 	end
 
 	miog.Plugin:SetScript("OnEnter", function()
@@ -145,7 +138,7 @@ miog.createFrames = function()
 		miog.LastInvites:Hide()
 		miog.FilterPanel:Show()
 
-		MIOG_SavedSettings.activeSidePanel.value = "filter"
+		MIOG_NewSettings.activeSidePanel = "filter"
 
 		if(LFGListFrame.activePanel ~= LFGListFrame.SearchPanel and LFGListFrame.activePanel ~= LFGListFrame.ApplicationViewer) then
 			miog.FilterPanel.Lock:Show()
@@ -160,7 +153,7 @@ miog.createFrames = function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		miog.Plugin.ButtonPanel:Hide()
 
-		MIOG_SavedSettings.activeSidePanel.value = "invites"
+		MIOG_NewSettings.activeSidePanel = "invites"
 
 		miog.LastInvites:Show()
 		miog.FilterPanel:Hide()
@@ -172,35 +165,25 @@ miog.createFrames = function()
 	miog.createFrameBorder(miog.Plugin.ButtonPanel.LastInvitesButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.ButtonPanel.LastInvitesButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-	local standardWidth = miog.Plugin:GetWidth()
-
 	miog.Plugin.Resize:SetScript("OnDragStart", function(self, button)
 		self:GetParent():StartSizing()
 	end)
 
 	miog.Plugin.Resize:SetScript("OnDragStop", function(self)
 		self:GetParent():StopMovingOrSizing()
-	
-		MIOG_SavedSettings.frameManuallyResized.value = miog.Plugin:GetHeight()
 
-		if(MIOG_SavedSettings.frameManuallyResized.value > miog.Plugin.standardHeight) then
-			MIOG_SavedSettings.frameExtended.value = true
-			miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized.value
-
-		end
+		MIOG_NewSettings.manualResize = miog.Plugin:GetHeight()
 	end)
 
-	miog.Plugin.standardHeight = miog.Plugin:GetHeight()
-	miog.Plugin.extendedHeight = MIOG_SavedSettings.frameManuallyResized and MIOG_SavedSettings.frameManuallyResized.value > 0 and MIOG_SavedSettings.frameManuallyResized.value or miog.Plugin.standardHeight * 1.5
+	miog.Plugin:SetResizeBounds(miog.Plugin:GetWidth(), miog.Plugin:GetHeight(), miog.Plugin:GetWidth(), GetScreenHeight() * 0.67)
 
-	miog.Plugin:SetResizeBounds(standardWidth, miog.Plugin.standardHeight, standardWidth, GetScreenHeight() * 0.67)
-
-	miog.Plugin:SetHeight(MIOG_SavedSettings.frameExtended.value and miog.Plugin.extendedHeight or miog.Plugin.standardHeight)
+	miog.Plugin:SetHeight(MIOG_NewSettings.manualResize > 0 and MIOG_NewSettings.manualResize or miog.Plugin:GetHeight())
 
 	miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	miog.MainFrame = miog.F.LITE_MODE and miog.Plugin or miog.pveFrame2
+	miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. ".png")
 
 	miog.createApplicationViewer()
 	miog.createSearchPanel()

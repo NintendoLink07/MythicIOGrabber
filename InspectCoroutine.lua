@@ -62,11 +62,11 @@ local function sortPartyCheckList(k1, k2)
 	k1 = k1.data
 	k2 = k2.data
 
-	for key, tableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
+	for key, tableElement in pairs(MIOG_NewSettings.sortMethods["PartyCheck"]) do
 		if(tableElement.currentLayer == 1) then
 			local firstState = tableElement.currentState
 
-			for innerKey, innerTableElement in pairs(MIOG_SavedSettings.sortMethods.table.partyCheck) do
+			for innerKey, innerTableElement in pairs(MIOG_NewSettings.sortMethods["PartyCheck"]) do
 				if(innerTableElement.currentLayer == 2) then
 					local secondState = innerTableElement.currentState
 
