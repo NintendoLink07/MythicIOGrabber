@@ -887,7 +887,7 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[143] = {mapID = 1864, file = miog.C.STANDARD_FILE_PATH .. "shrineofthestorm"},
 	[144] = {mapID = 1771, file = miog.C.STANDARD_FILE_PATH .. "toldagor"},
 	[145] = {mapID = 1862, shortName = "WM", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/waycrestmanor.png"},
-	[146] = {mapID = 1822, shortName = "SOB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/siegeofboralus.png"},
+	[146] = {mapID = 1822, shortName = "SOB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/boralusdungeon.png"},
 
 	[247] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "kultiras outdoor"},
 	[248] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "zandalar outdoor"},
@@ -978,6 +978,22 @@ miog.SEASONAL_MAP_IDS = {
 	[13] = {dungeons = {2660, 2662, 2652, 2669, 670, 1822, 2290, 2286}, raids = {2657}},
 }
 
+miog.SEASONAL_CHALLENGE_MODES = {
+	[12] = {399, 400, 401, 402, 403, 404, 405, 406},
+	[13] = {353, 375, 376, 501, 502, 503, 505, 507},
+}
+
+miog.requestActivityGroupData = function()
+	local seasonGroups = C_LFGList.GetAvailableActivityGroups(2, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
+
+	table.sort(seasonGroups, function(k1, k2)
+		return miog.GROUP_ACTIVITY[k1].shortName < miog.GROUP_ACTIVITY[k2].shortName
+	end)
+
+	local activities = C_LFGList.GetAvailableActivities(2, seasonGroups[i])
+	local activityID = activities[#activities]
+end
+
 miog.JOURNAL_CREATURE_INFO = {
 
 }
@@ -1034,6 +1050,8 @@ for k, v in pairs(miog.RAW["BattlemasterList"]) do
 		}
 	}
 end
+
+miog.MAP_CHALLENGE_MODE_INFO = {}
 
 local function loadRawData()
 	local faction = UnitFactionGroup("player")
@@ -1261,8 +1279,8 @@ local function loadRawData()
 
 				for i = 1, totalAchievements, 1 do
 					local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(miog.MAP_INFO[v[10]].achievementCategory, i)
-
-					if(strfind(name, miog.MAP_INFO[v[10]].name)) then
+					
+					if(miog.fzy.has_match(miog.MAP_INFO[v[10]].name, name)) then
 						table.insert(miog.MAP_INFO[v[10]].achievementTable, id)
 
 						for x, y in ipairs(miog.MAP_INFO[v[10]].bosses) do
@@ -1297,6 +1315,8 @@ local function loadRawData()
 	end
 
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
+		miog.MAP_CHALLENGE_MODE_INFO[v[2]] = {mapID = v[3], name = v[1], expansionLevel = v[5]}
+
 		if(miog.MAP_INFO[v[3]]) then
 			miog.MAP_INFO[v[3]].challengeModeID = v[2]
 			miog.GROUP_ACTIVITY[miog.MAP_INFO[v[3]].groupFinderActivityID].challengeModeID = v[2]
@@ -1314,6 +1334,8 @@ miog.MAP_INFO[2549].achievementsAwakened = {19570, 19571, 19572}
 
 miog.MAP_INFO[2569].achievementCategory = 15469 --ATSC
 miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
+
+miog.MAP_INFO[2657].achievementCategory = 15520 --NP
 
 miog.WEIGHTS_TABLE = {
 	[1] = 10000,

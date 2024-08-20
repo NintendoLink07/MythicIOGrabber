@@ -277,7 +277,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 
 		activityDropDown:CreateSeparator(9999)
 
-		for i = 1, GetNumExpansions() - (1 + (categoryID == 3 and 1 or 0)), 1 do
+		for i = 1, GetNumExpansions() - (categoryID == 3 and 1 or 0), 1 do
 			local expansionInfo = GetExpansionDisplayInfo(i - 1)
 
 			local expInfo = {}
@@ -425,13 +425,13 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 		
 		local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(categoryID, Enum.LFGListFilter.PvE)
 
-		local maxExpansions = GetNumExpansions() - 1
+		--local maxExpansions = GetNumExpansions()
 
 		for k, v in ipairs(allExpansionsGroups) do
 			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
 			local activityID = activities[#activities]
 
-			if(miog.ACTIVITY_INFO[activityID].expansionLevel < maxExpansions) then
+			--if(miog.ACTIVITY_INFO[activityID].expansionLevel < maxExpansions) then
 				local info = {}
 				info.icon = miog.ACTIVITY_INFO[activityID].icon
 
@@ -454,7 +454,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				end
 
 				legacyDungeonsTable[#legacyDungeonsTable+1] = info
-			end
+			--end
 
 		end
 

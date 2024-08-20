@@ -514,7 +514,7 @@ local function checkQueues()
 				[18] = "YOURLISTING",
 				[20] = miog.ACTIVITY_INFO[activeEntryInfo.activityID].icon or nil,
 				[21] = -2,
-				[30] = activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.ACTIVITY_INFO[activeEntryInfo.activityID] and miog.ACTIVITY_INFO[activeEntryInfo.activityID].horizontal or nil
+				[30] = miog.ACTIVITY_INFO[activeEntryInfo.activityID] and miog.ACTIVITY_INFO[activeEntryInfo.activityID].horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or nil
 			}
 
 			local frame = createQueueFrame(frameData)

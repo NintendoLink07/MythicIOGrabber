@@ -4,6 +4,8 @@ local currentUnitName, currentChallengeMapID, currentLevel
 
 -- ALGO FROM https://www.reddit.com/r/wow/comments/13vqsbw/an_accurate_formula_for_m_score_calculation_in/
 
+local currentlySelectedID
+
 local function round(n)
 	return math.floor(n+0.5)
  end
@@ -112,9 +114,68 @@ miog.insertInfoIntoDropdown = function(unitName, keystoneInfo)
 		
 		unitName = miog.createShortNameFrom("unitName", unitName)
 
-		local info = {}
+		local text = WrapTextInColorCode(unitName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
+
+		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetDefaultText("Keystones")
+		miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetupMenu(function(dropdown, rootDescription)
+			local keystoneButton = rootDescription:CreateRadio(text, function() return (currentChallengeMapID == keystoneInfo.challengeMapID) == (currentUnitName == unitName) end, function()
+				currentUnitName = unitName
+				currentChallengeMapID = keystoneInfo.challengeMapID
+				currentLevel = keystoneInfo.level
+				
+				if(miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark) then
+					miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Show()
+
+				end
+
+				if(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]) then
+					miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID], "TOPLEFT")
+					miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID].TransparentDark
+					miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
+				end
+
+				if(unitName == UnitName("player")) then
+					local overtimeScore, minScore, maxScore = miog.calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, nil, miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue())
+
+					local playerGUID = UnitGUID("player")
+
+					for _, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
+						v.ScoreIncrease:Hide()
+
+					end
+
+					miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+					miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
+				else
+					for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
+						local overtimeScore, minScore, maxScore = miog.calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, k, miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue())
+
+						v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+						v.ScoreIncrease:Show()
+
+					end
+				
+				end
+			end, keystoneInfo.challengeMapID)
+
+			keystoneButton:AddInitializer(function(button, description, menu)
+				local leftTexture = button:AttachTexture();
+				leftTexture:SetSize(14, 14);
+				leftTexture:SetPoint("LEFT", 17, 0);
+				leftTexture:SetTexture(texture);
+
+				button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+				return button.fontString:GetUnboundedStringWidth() + 14 + 2
+			end)
+
+		end)
+
+			
+
+		--[[local info = {}
 		info.entryType = "option"
-		info.text = WrapTextInColorCode(unitName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
+		info.text = text
 		info.value = keystoneInfo.level
 		info.icon = texture
 		info.func = function()
@@ -157,7 +218,7 @@ miog.insertInfoIntoDropdown = function(unitName, keystoneInfo)
 
 		if(miog.MPlusStatistics) then
 			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:CreateEntryFrame(info)
-		end
+		end]]
 	end
 end
 
@@ -175,9 +236,11 @@ miog.setUpMPlusStatistics = function()
 
 			end
 
-			miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[currentChallengeMapID], "TOPLEFT")
-			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[currentChallengeMapID].TransparentDark
-			miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
+			if(miog.MPlusStatistics.DungeonColumns.Dungeons[currentChallengeMapID]) then
+				miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[currentChallengeMapID], "TOPLEFT")
+				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[currentChallengeMapID].TransparentDark
+				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
+			end
 
 			if(currentUnitName == UnitName("player")) then
 				local overtimeScore, minScore, maxScore = calculateNewScore(currentChallengeMapID, currentLevel, nil, currentTimerValue)
@@ -205,7 +268,7 @@ miog.setUpMPlusStatistics = function()
 	end)
 
 	if(miog.F.MPLUS_SETUP_COMPLETE ~= true) then
-		local mapTable = C_ChallengeMode.GetMapTable()
+		local mapTable = miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()
 
 		table.sort(mapTable, function(k1, k2)
 			local mapName1 = miog.retrieveShortNameFromChallengeModeMap(k1)
@@ -289,21 +352,25 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 	if(isCurrentChar) then
 		MIOG_NewSettings.mplusStats[playerGUID] = {}
 		MIOG_NewSettings.mplusStats[playerGUID].name = UnitName("player")
+		MIOG_NewSettings.mplusStats[playerGUID].fullName = miog.createFullNameFrom("unitID", "player")
 		MIOG_NewSettings.mplusStats[playerGUID].class = className
 		MIOG_NewSettings.mplusStats[playerGUID].score = C_ChallengeMode.GetOverallDungeonScore()
 	end
 
 	characterFrame.Name:SetText(MIOG_NewSettings.mplusStats[playerGUID].name)
 	characterFrame.Name:SetTextColor(C_ClassColor.GetClassColor(MIOG_NewSettings.mplusStats[playerGUID].class):GetRGBA())
+	--[[characterFrame.Name:SetScript("OnEnter", function()
+		local name, realm = miog.createSplitName(MIOG_NewSettings.mplusStats[playerGUID].fullName)
+
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(, 1, 1, 1);
+
+		for k, v in ipairs(miog.getMPlusSortData(name, realm)) do
+	end)]]
 	characterFrame.Score:SetText(MIOG_NewSettings.mplusStats[playerGUID].score)
 	characterFrame.Score:SetTextColor(miog.createCustomColorForRating(MIOG_NewSettings.mplusStats[playerGUID].score):GetRGBA())
 
-	if(miog.F.WEEKLY_AFFIX and miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX]) then
-		characterFrame.Affix1:SetTexture(miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX][3])
-		characterFrame.Affix2:SetTexture(miog.F.AFFIX_INFO[miog.F.WEEKLY_AFFIX == 9 and 10 or 9][3])
-	end
-
-	for index, challengeMapID in pairs(mapTable or C_ChallengeMode.GetMapTable()) do
+	for index, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
 		local dungeonFrame = characterFrame["Dungeon" .. index]
 		dungeonFrame.mapID = challengeMapID
 		dungeonFrame:SetWidth(miog.MPlusStatistics.DungeonColumns.Dungeons[challengeMapID]:GetWidth())
@@ -312,34 +379,18 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 		if(isCurrentChar) then
 			MIOG_NewSettings.mplusStats[playerGUID][challengeMapID] = {}
 
-			local affixScores, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(challengeMapID)
+			local intimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID)
 
-			if(affixScores) then
-				for k, v in ipairs(affixScores) do
-					MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][v.name] = v
-
-				end
-
-				local inTimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID);
-
-				MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overAllScore = overAllScore
-				MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].inTimeInfo = inTimeInfo
-				MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo = overtimeInfo
-			end
-
+			MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].inTimeInfo = intimeInfo
+			MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo = overtimeInfo
+			MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overAllScore = intimeInfo and intimeInfo.dungeonScore or overtimeInfo and overtimeInfo.dungeonScore or 0
 		end
 
-		local thisWeek = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
-		local lastWeek = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
+		local hasIntimeInfo = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].inTimeInfo ~= nil
+		local hasOvertimeInfo = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo ~= nil
 
-		dungeonFrame.Level1:SetText(thisWeek and thisWeek.level or 0)
-		dungeonFrame.Level1:SetTextColor(CreateColorFromHexString((thisWeek == nil or (thisWeek.level == 0 or thisWeek.level) == nil) and miog.CLRSCC.gray or thisWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
-
-		local desaturatedColors = CreateColorFromHexString((lastWeek == nil or (lastWeek.level == 0 or lastWeek.level) == nil) and miog.CLRSCC.gray or lastWeek.overTime and miog.CLRSCC.red or miog.CLRSCC.green)
-
-		dungeonFrame.Level2:SetText(lastWeek and lastWeek.level or 0)
-		dungeonFrame.Level2:SetTextColor(desaturatedColors.r * 0.5, desaturatedColors.g * 0.5, desaturatedColors.b * 0.5, 1)
-
+		dungeonFrame.Level:SetText(hasIntimeInfo and MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].inTimeInfo.level or hasOvertimeInfo and MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo.level or 0)
+		dungeonFrame.Level:SetTextColor(CreateColorFromHexString(not hasIntimeInfo and not hasOvertimeInfo and miog.CLRSCC.gray or hasOvertimeInfo and MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo.level and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
 		dungeonFrame:SetScript("OnEnter", function(self) -- ChallengesDungeonIconMixin:OnEnter()
 			local name = C_ChallengeMode.GetMapUIInfo(challengeMapID);
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
@@ -358,34 +409,26 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 					color = HIGHLIGHT_FONT_COLOR;
 				end
 				GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_TOTAL_SCORE:format(color:WrapTextInColorCode(overAllScore)), GREEN_FONT_COLOR);
-			end
-		
-			--if(affixScores and #affixScores > 0) then
-				--for _, affixInfo in ipairs(affixScores) do
-				for i = 1, 2, 1 do
-					local affixInfo = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID][i == 1 and (miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified") or miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
 
-					if(affixInfo) then
-						GameTooltip_AddBlankLineToTooltip(GameTooltip);
-						GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_BEST_AFFIX:format(affixInfo.name));
-						GameTooltip_AddColoredLine(GameTooltip, MYTHIC_PLUS_POWER_LEVEL:format(affixInfo.level), HIGHLIGHT_FONT_COLOR);
-						if(affixInfo.overTime) then
-							if(affixInfo.durationSec >= SECONDS_PER_HOUR) then
-								GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(affixInfo.durationSec, true)), LIGHTGRAY_FONT_COLOR);
-							else
-								GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(affixInfo.durationSec, false)), LIGHTGRAY_FONT_COLOR);
-							end
-						else
-							if(affixInfo.durationSec >= SECONDS_PER_HOUR) then
-								GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(affixInfo.durationSec, true), HIGHLIGHT_FONT_COLOR);
-							else
-								GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(affixInfo.durationSec, false), HIGHLIGHT_FONT_COLOR);
-							end
-						end
+				local info = inTimeInfo or overtimeInfo
+
+				GameTooltip_AddBlankLineToTooltip(GameTooltip);
+				--GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_BEST_AFFIX:format(affixInfo.name));
+				GameTooltip_AddColoredLine(GameTooltip, MYTHIC_PLUS_POWER_LEVEL:format(info.level), HIGHLIGHT_FONT_COLOR);
+				if(not hasIntimeInfo and hasOvertimeInfo) then
+					if(overtimeInfo.durationSec >= SECONDS_PER_HOUR) then
+						GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, true)), LIGHTGRAY_FONT_COLOR);
+					else
+						GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, false)), LIGHTGRAY_FONT_COLOR);
+					end
+				elseif(hasIntimeInfo) then
+					if(inTimeInfo.durationSec >= SECONDS_PER_HOUR) then
+						GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(inTimeInfo.durationSec, true), HIGHLIGHT_FONT_COLOR);
+					else
+						GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(inTimeInfo.durationSec, false), HIGHLIGHT_FONT_COLOR);
 					end
 				end
-				--end
-			--end
+			end
 		
 			GameTooltip:Show();
 		end)
@@ -396,7 +439,7 @@ end
 miog.gatherMPlusStatistics = function()
 	local playerGUID = UnitGUID("player")
 	
-	local mapTable = C_ChallengeMode.GetMapTable()
+	local mapTable = miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()
 
 	table.sort(mapTable, function(k1, k2)
 		local mapName1 = miog.retrieveShortNameFromChallengeModeMap(k1)

@@ -103,10 +103,6 @@ local function updateRosterInfoData()
 
 		end
 
-		if(miog.MPlusStatistics) then
-			miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
-		end
-
 		groupSystem.groupMember = {}
 
 		groupSystem.classCount = {
@@ -169,8 +165,6 @@ local function updateRosterInfoData()
 
 			if(miog.MPlusStatistics) then
 				local keystoneInfo = miog.openRaidLib.GetKeystoneInfo("player")
-
-				--miog.insertInfoIntoDropdown(fullPlayerName, keystoneInfo)
 			end
 
 			if(UnitIsConnected("player") and CanInspect("player")) then

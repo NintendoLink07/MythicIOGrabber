@@ -443,8 +443,6 @@ local function createPVEFrameReplacement()
 		miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
 	end
 	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
-	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:OnLoad()
-	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:SetListAnchorToTopleft()
 	miog.MPlusStatistics.ScrollFrame.Rows.accountChars = {}
 	miog.MPlusStatistics.DungeonColumns.Dungeons = {}
 

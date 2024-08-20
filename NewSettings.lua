@@ -58,6 +58,8 @@ local defaultFilters = {
     needsMyClass = true,
 }
 
+miog.defaultFilters = defaultFilters
+
 local defaultSettings = {
     {name = "Frame manually resized", variableName = "MIOG_ManualResize", key="manualResize", default=0},
     {name = "Active side panel", variableName = "MIOG_SidePanel", key="activeSidePanel", default="none"},
@@ -66,7 +68,7 @@ local defaultSettings = {
     {name = "Raid Statistics", variableName = "MIOG_RaidStats", key="raidStats", default={}},
     {name = "Lite Mode", variableName = "MIOG_LiteMode", key="liteMode", default=false, type="checkbox", tooltip="Enable or disable the lite mode of this addon (use Blizzards \"Dungeons and Raids\" Frame with this addon's frames layered on top", reload=true},
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions(), type="dropdown", tooltip="Change the default background of the MIOG frames",
-    customCallback=function(setting, value) 
+    customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
         miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
         miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
@@ -135,7 +137,7 @@ local function createDefaultSettings()
             setting:SetValueChangedCallback(function() C_UI.Reload() end)
 
         else
-            --setting:SetValueChangedCallback(v.customCallback or OnSettingChanged)
+            setting:SetValueChangedCallback(v.customCallback)
 
         end
 

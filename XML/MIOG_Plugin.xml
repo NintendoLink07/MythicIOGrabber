@@ -3,7 +3,7 @@
     <Frame name="MIOG_Plugin" inherits="BackdropTemplate" resizable="true" virtual="true" frameLevel="100">
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/dungeonrewardsbackground.png" setAllPoints="true" />
+                <Texture parentKey="Background" setAllPoints="true" />
             </Layer>
         </Layers>
 

@@ -9,16 +9,16 @@
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="KeystoneDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                        <Size x="130" y="20" />
+                    <DropdownButton parentKey="KeystoneDropdown" inherits="WowStyle1DropdownTemplate">
+                        <Size x="130" y="24" />
 
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
                         </Anchors>
-                    </Frame>
+                    </DropdownButton>
 
                     <Slider parentKey="TimelimitSlider" inherits="UISliderTemplate" virtual="true">
-                        <Size x="90" y="15"/>
+                        <Size x="90" y="13"/>
 
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.KeystoneDropdown" relativePoint="BOTTOMLEFT"/>

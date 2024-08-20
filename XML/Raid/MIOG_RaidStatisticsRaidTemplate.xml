@@ -14,13 +14,7 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
                             <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5"/>
-                            </Anchors>
-                        </FontString>
-
-                        <FontString parentKey="Previous" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-10"/>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -37,13 +31,7 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
                             <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5"/>
-                            </Anchors>
-                        </FontString>
-
-                        <FontString parentKey="Previous" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-10"/>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -60,13 +48,7 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
                             <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5"/>
-                            </Anchors>
-                        </FontString>
-
-                        <FontString parentKey="Previous" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" text="NORMAL" hidden="true">
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-10"/>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
                         </FontString>
                     </Layer>

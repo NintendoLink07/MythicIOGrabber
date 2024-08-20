@@ -29,13 +29,9 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 		end
 	end
 
-	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown:ResetDropDown()
-
 	for name, singleKeystoneInfo in pairs(allKeystoneData) do
 		miog.insertInfoIntoDropdown(name, singleKeystoneInfo)
 	end
-
-	miog.MPlusStatistics.CharacterInfo.KeystoneDropdown.List:MarkDirty()
 end
 
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)

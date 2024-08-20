@@ -7,7 +7,7 @@
             <KeyValue key="bottomPadding" value="1" type="number"/>
             <KeyValue key="leftPadding" value="1" type="number"/>
             <KeyValue key="rightPadding" value="1" type="number"/>
-            <KeyValue key="spacing" value="3" type="number"/>
+            <KeyValue key="spacing" value="2" type="number"/>
 		</KeyValues>
     </Frame>
 </Ui>

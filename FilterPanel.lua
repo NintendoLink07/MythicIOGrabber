@@ -283,7 +283,7 @@ local function addDualNumericFieldsToFilterFrame(parent, name)
 		currentField:SetAutoFocus(false)
 		currentField.autoFocus = false
 		currentField:SetNumeric(true)
-		currentField:SetMaxLetters(4)
+		--currentField:SetMaxLetters(4)
 		currentField:HookScript("OnTextChanged", function(self, ...)
 			if(MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()]) then
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -711,7 +711,11 @@ local function setupFiltersForActivePanel(reset)
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
-		MIOG_NewSettings.filterOptions[currentPanel][categoryID] = miog.getDefaultFilters()
+		--local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
+
+		-- /dump MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][1]
+
+		MIOG_NewSettings.filterOptions[currentPanel][categoryID] = miog.defaultFilters
 
 		setupFiltersForActivePanel(true)
 
@@ -729,8 +733,8 @@ local function setupFiltersForActivePanel(reset)
 	miog.FilterPanel.IndexedOptions.BossKills:SetShown(cp == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
 	miog.FilterPanel.IndexedOptions.Dungeons:SetShown(cp == "LFGListFrame.SearchPanel" and categoryID == 2 and true or false)
 	miog.FilterPanel.IndexedOptions.Raids:SetShown(cp == "LFGListFrame.SearchPanel" and categoryID == 3 and true or false)
-	miog.FilterPanel.IndexedOptions.Difficulty:SetShown((cp == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
-	miog.FilterPanel.IndexedOptions.Difficulty.Dropdown:SetShown((cp == "LFGListFrame.SearchPanel" and categoryID == 2 or categoryID == 3) and true or false)
+	miog.FilterPanel.IndexedOptions.Difficulty:SetShown((cp == "LFGListFrame.SearchPanel" and (categoryID == 2 or categoryID == 3)) and true or false)
+	miog.FilterPanel.IndexedOptions.Difficulty.Dropdown:SetShown((cp == "LFGListFrame.SearchPanel" and (categoryID == 2 or categoryID == 3)) and true or false)
 
 	miog.FilterPanel.IndexedOptions:MarkDirty()
 
@@ -784,33 +788,15 @@ local function setupFiltersForActivePanel(reset)
 
 		miog.FilterPanel.IndexedOptions.hardDecline.Button:SetChecked(currentSettings.hardDecline)
 
-		miog.FilterPanel.IndexedOptions.AffixFit:SetShown(categoryID == 2 and true or false)
-		miog.FilterPanel.IndexedOptions.AffixFit.Button:SetChecked(currentSettings.affixFit)
+		--miog.FilterPanel.IndexedOptions.AffixFit:SetShown(categoryID == 2 and true or false)
+		--miog.FilterPanel.IndexedOptions.AffixFit.Button:SetChecked(currentSettings.affixFit)
 
 		miog.FilterPanel.ClassSpecOptions.Option.Button:SetChecked(reset or currentSettings.filterForClassSpecs)
 
 		for classIndex, classEntry in ipairs(miog.CLASSES) do
 			local currentClassPanel = miog.FilterPanel.ClassSpecOptions.Panels[classIndex]
 
-			if(currentSettings.classes[classIndex] ~= nil) then
-				if(classIndex == id) then
-					currentClassPanel.Class.Button:SetChecked(reset or not currentSettings.needsMyClass)
-					
-				else
-					currentClassPanel.Class.Button:SetChecked(reset or currentSettings.classes[classIndex])
-
-				end
-
-			else
-				if(classIndex == id) then
-					currentClassPanel.Class.Button:SetChecked(not currentSettings.needsMyClass)
-					
-				else
-					currentClassPanel.Class.Button:SetChecked(true)
-
-				end
-
-			end
+			currentClassPanel.Class.Button:SetChecked(reset or classIndex == id and not currentSettings.needsMyClass or currentSettings.classes[classIndex] ~= false and true or false)
 			
 			currentClassPanel.Class.Button:SetScript("OnClick", function(self)
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -865,25 +851,8 @@ local function setupFiltersForActivePanel(reset)
 
 			for specIndex, specID in pairs(classEntry.specs) do
 				local currentSpecFrame = currentClassPanel.SpecFrames[specID]
-				if(currentSettings.specs[specID] ~= nil) then
-					if(classIndex == id) then
-						currentSpecFrame.Button:SetChecked(reset or not currentSettings.needsMyClass)
-						
-					else
-						currentSpecFrame.Button:SetChecked(reset or currentSettings.specs[specID])
-
-					end
-
-				else
-					if(classIndex == id) then
-						currentSpecFrame.Button:SetChecked(reset or not currentSettings.needsMyClass)
-						
-					else
-						currentSpecFrame.Button:SetChecked(true)
-
-					end
-
-				end
+				
+				currentSpecFrame.Button:SetChecked(reset or classIndex == id and not currentSettings.needsMyClass or currentSettings.specs[specID] ~= false and true or false)
 				
 				currentSpecFrame.Button:SetScript("OnClick", function(self)
 					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -892,6 +861,7 @@ local function setupFiltersForActivePanel(reset)
 
 					if(state) then
 						currentClassPanel.Class.Button:SetChecked(true)
+						currentSettings.classes[classIndex] = true
 
 					end
 
@@ -1138,9 +1108,9 @@ miog.loadFilterPanel = function()
 	bossKillsSpinner.layoutIndex = 10
 	bossKillsSpinner.Link:Hide()
 
-	local affixFitButton = addOptionToFilterFrame(miog.FilterPanel.IndexedOptions, nil, "Affix fit", "AffixFit")
+	--[[local affixFitButton = addOptionToFilterFrame(miog.FilterPanel.IndexedOptions, nil, "Affix fit", "AffixFit")
 	affixFitButton.expand = true
-	affixFitButton.layoutIndex = 12
+	affixFitButton.layoutIndex = 12]]
 
 	local divider = miog.FilterPanel.IndexedOptions:CreateTexture(nil, "BORDER")
 	divider:SetHeight(1)

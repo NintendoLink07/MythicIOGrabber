@@ -41,6 +41,17 @@
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1"/>
                             </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                    GameTooltip:SetText(C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().isCrossFactionListing and CROSS_FACTION_CLUB_FINDER_SEARCH_OPTION or UnitFactionGroup("player"))
+                                    GameTooltip:Show()
+                                </OnEnter>
+                                <OnLeave>
+		                            GameTooltip:Hide()
+                                </OnLeave>
+                            </Scripts>
                         </Texture>
                     </Layer>
                 </Layers>
@@ -118,7 +129,7 @@
             </Frame>
 
             <Frame parentKey="CreationSettings" inherits="BackdropTemplate">
-                <Size y="20" />
+                <Size y="24" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.InfoPanel" relativePoint="BOTTOMLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent.InfoPanel" relativePoint="BOTTOMRIGHT" />
@@ -141,66 +152,96 @@
                             </OnShow>
                         </Scripts>
                     </EditBox>
+
+                    <CheckButton parentKey="PrivateGroupButton" inherits="UIButtonTemplate">
+                        <NormalTexture atlas="npe_exclamationpoint" />
+
+                        <Size x="20" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3"/>
+                        </Anchors>
+
+                        <Scripts>                            
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(C_LFGList.HasActiveEntryInfo() and "Private listing: " .. tostring(C_LFGList.GetActiveEntryInfo().privateGroup) or "No current listing")
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+
+                    </CheckButton>
+
+                    <CheckButton parentKey="VoiceChatButton" inherits="UIButtonTemplate">
+                        <NormalTexture atlas="voicechat-icon-mic" />
+
+                        <Size x="20" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.PrivateGroupButton" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                if(self:GetChecked()) then
+                                    self:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
+                                    LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
+
+                                else
+                                    self:GetNormalTexture():SetVertexColor(0.75, 0.75, 0.75, 0.25)
+                                    LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(false)
+                                
+                                end
+                            </OnClick>
+
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked() and string.format(VOICE_CHAT_COLON, C_LFGList.GetActiveEntryInfo().voiceChat) or VOICECHAT_DISABLED)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+
+                    </CheckButton>
+                    
+                    <CheckButton parentKey="AutoAcceptButton" inherits="UIButtonTemplate">
+                        <NormalTexture atlas="recurringavailablequesticon" />
+
+                        <Size x="20" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.VoiceChatButton" relativePoint="RIGHT" x="5"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(C_LFGList.HasActiveEntryInfo() and LFG_LIST_AUTO_ACCEPT .. ": " .. tostring(C_LFGList.GetActiveEntryInfo().autoAccept) or "")
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                        </Scripts>
+
+                    </CheckButton>
                 </Frames>
 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="PrivateGroup" file="Interface/Addons/MythicIOGrabber/res/infoIcons/questionMark_Grey.png">
-                            <KeyValues>
-                                <KeyValue key="active" value="false" type="global" />
-                            </KeyValues>
-
-                            <Size x="7" y="18" />
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3"/>
-                            </Anchors>
-                            <Scripts>
-                                <OnEnter>
-                                    if(self.active) then
-                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                        GameTooltip:SetText("Group listing is set to private")
-                                        GameTooltip:Show()
-
-                                    else
-                                        GameTooltip:Hide()
-                                    
-                                    end
-                                </OnEnter>
-                                <OnLeave>
-                                    GameTooltip:Hide()
-                                </OnLeave>
-                            </Scripts>
-                        </Texture>
-
-                        <Texture parentKey="VoiceChat" file="Interface/Addons/MythicIOGrabber/res/infoIcons/voiceChatOff.png">
-                            <KeyValues>
-                                <KeyValue key="tooltipText" value="" type="global" />
-                            </KeyValues>
-
-                            <Size x="15" y="18" />
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.PrivateGroup" relativePoint="RIGHT" x="3"/>
-                            </Anchors>
-                            <Scripts>
-                                <OnEnter>
-                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                    GameTooltip:SetText(self.tooltipText)
-                                    GameTooltip:Show()
-                                </OnEnter>
-                                <OnLeave>
-                                    GameTooltip:Hide()
-                                </OnLeave>
-                            </Scripts>
-                        </Texture>
-
-                        <Texture parentKey="Playstyle" file="Interface/Addons/MythicIOGrabber/res/infoIcons/book.png">
+                        <Texture parentKey="Playstyle" atlas="levelup-icon-book">
                             <KeyValues>
                                 <KeyValue key="tooltipText" value="" type="global" />
                             </KeyValues>
 
                             <Size x="20" y="20" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.VoiceChat" relativePoint="RIGHT" x="3"/>
+                                <Anchor point="LEFT" relativeKey="$parent.AutoAcceptButton" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                             <Scripts>
                                 <OnEnter>
@@ -218,13 +259,13 @@
 
                 <Frames>
                     <Frame parentKey="Rating">
-                        <Size x="50" y="20" />
+                        <Size x="60" y="20" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Playstyle" relativePoint="RIGHT" x="3"/>
+                                <Anchor point="LEFT" relativeKey="$parent.Playstyle" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         <Layers>
                             <Layer level="ARTWORK">
-                                <Texture parentKey="Texture" file="Interface/Addons/MythicIOGrabber/res/infoIcons/skull.png">
+                                <Texture parentKey="Texture" atlas="jailerstower-scenario-skull3">
 
                                     <Size x="20" y="20" />
                                     <Anchors>
@@ -235,7 +276,8 @@
                             <Layer level="OVERLAY">
                                 <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
                                     <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" />
+                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="5"/>
+                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
                                     </Anchors>
                                 </FontString>
                             </Layer>
@@ -244,7 +286,10 @@
                         <Scripts>
                             <OnEnter>
                                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                GameTooltip:SetText(self.tooltipText)
+                                GameTooltip:SetText(C_LFGList.HasActiveEntryInfo()
+                                and C_LFGList.GetActiveEntryInfo().requiredDungeonScore and string.format(GROUP_FINDER_MYTHIC_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredDungeonScore)
+                                or C_LFGList.GetActiveEntryInfo().requiredPvpRating and string.format(GROUP_FINDER_PVP_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredPvpRating)
+                                or "No rating required")
                                 GameTooltip:Show()
                             </OnEnter>
                             <OnLeave>
@@ -254,14 +299,14 @@
                     </Frame>
 
                     <Frame parentKey="ItemLevel">
-                        <Size x="45" y="20" />
+                        <Size x="50" y="20" />
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="3"/>
+                            <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="5"/>
                         </Anchors>
 
                         <Layers>
                             <Layer level="ARTWORK">
-                                <Texture parentKey="Texture" file="Interface/Addons/MythicIOGrabber/res/infoIcons/itemsacks.png">
+                                <Texture parentKey="Texture" atlas="vehicle-hammergold-3">
                                     <Size x="20" y="20" />
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
@@ -272,7 +317,8 @@
                             <Layer level="OVERLAY">
                                 <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
                                     <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="2"/>
+                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="5"/>
+                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
                                     </Anchors>
                                 </FontString>
                             </Layer>
@@ -281,49 +327,7 @@
                         <Scripts>
                             <OnEnter>
                                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                GameTooltip:SetText(self.tooltipText)
-                                GameTooltip:Show()
-                            </OnEnter>
-                            <OnLeave>
-                                GameTooltip:Hide()
-                            </OnLeave>
-                        </Scripts>
-                    </Frame>
-                    <Frame parentKey="Affixes">
-                        <Size x="51" y="17" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="3" />
-                        </Anchors>
-                        
-                        <Layers>
-                            <Layer level="ARTWORK">
-                                <Texture parentKey="Affix1">
-                                    <Size x="17" y="17" />
-                                    <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
-                                    </Anchors>
-                                </Texture>
-
-                                <Texture parentKey="Affix2">
-                                    <Size x="17" y="17" />
-                                    <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent.Affix1" relativePoint="RIGHT" />
-                                    </Anchors>
-                                </Texture>
-
-                                <Texture parentKey="Affix3">
-                                    <Size x="17" y="17" />
-                                    <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent.Affix2" relativePoint="RIGHT" />
-                                    </Anchors>
-                                </Texture>
-                            </Layer>
-                        </Layers>
-
-                        <Scripts>
-                            <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                GameTooltip:SetText(self.tooltipText)
+                                GameTooltip:SetText(string.format(LFG_LIST_TOOLTIP_ILVL, C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredItemLevel or 0))
                                 GameTooltip:Show()
                             </OnEnter>
                             <OnLeave>
@@ -337,7 +341,7 @@
                     <Layer level="OVERLAY">
                         <FontString parentKey="Timer" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0:00:00" wordwrap="true" nonspacewrap="true">
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Affixes" relativePoint="RIGHT" x="3" />
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3" />
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -437,14 +441,14 @@
                     <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                 </KeyValues>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" x="1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
                 </Anchors>
 
                 <ScrollChild>
                     <Frame parentKey="Container" inherits="VerticalLayoutFrame" setAllPoints="true">
                         <KeyValues>
-                            <KeyValue key="spacing" value="3" type="number" />
+                            <KeyValue key="spacing" value="4" type="number" />
                             <KeyValue key="align" value="center" type="string" />
                         </KeyValues>
                     </Frame>

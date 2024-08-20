@@ -960,6 +960,8 @@ local function initializeSearchResultFrame(resultID)
 			persistentFrame.CategoryInformation.BossPanel:MarkDirty()
 		end
 
+		persistentFrame.RaiderIOInformationPanel:Hide()
+
 		return persistentFrame
 	end
 end
@@ -1787,6 +1789,7 @@ miog.createSearchPanel = function()
 	framePool = CreateFramePool("Frame", miog.SearchPanel.NewScrollFrame, "MIOG_SearchResultFrameTemplate", resetFrame)
 
 	miog.SearchPanel.NewScrollFrame.Container:SetFixedWidth(miog.SearchPanel.NewScrollFrame:GetWidth())
+	miog.SearchPanel.NewScrollFrame.ScrollBar:AdjustPointsOffset(-8, 0)
 
 	--[[local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
 

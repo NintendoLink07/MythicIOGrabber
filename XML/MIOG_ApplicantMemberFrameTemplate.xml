@@ -10,13 +10,13 @@
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1">
                 <Texture parentKey="Background" setAllPoints="true">
-                    <Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />
+                    <!--<Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />!-->
                 </Texture>
             </Layer>
         </Layers>
 
         <Frames>
-            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
+            <Frame parentKey="StatusFrame" setAllPoints="true" framestrata="FULLSCREEN" hidden="true">
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture setAllPoints="true">

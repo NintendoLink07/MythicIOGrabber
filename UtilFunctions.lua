@@ -13,21 +13,16 @@ end
 miog.setAffixes = function()
 	local affixIDs = C_MythicPlus.GetCurrentAffixes()
 
-	if(affixIDs) then
+	if(affixIDs and not miog.F.LITE_MODE) then
 		local affixString = ""
-		miog.ApplicationViewer.CreationSettings.Affixes.tooltipText = affixString
+
+		miog.MainTab.Information.Affixes.tooltipText = ""
 
 		for index, affix in ipairs(affixIDs) do
 			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affix.id)
 
-			miog.ApplicationViewer.CreationSettings.Affixes["Affix" .. index]:SetTexture(filedataid)
-			miog.ApplicationViewer.CreationSettings.Affixes.tooltipText = miog.ApplicationViewer.CreationSettings.Affixes.tooltipText .. name .. (index < #affixIDs and ", " or "")
-
-			if(not miog.F.LITE_MODE) then
-				--miog.MainTab.Information.Affixes:SetText(affixString)
-				miog.MainTab.Information.Affixes["Affix" .. index]:SetTexture(filedataid)
-				miog.MainTab.Information.Affixes.tooltipText = miog.ApplicationViewer.CreationSettings.Affixes.tooltipText
-			end
+			miog.MainTab.Information.Affixes["Affix" .. index]:SetTexture(filedataid)
+			miog.MainTab.Information.Affixes.tooltipText = miog.MainTab.Information.Affixes.tooltipText .. name .. (index < #affixIDs and ", " or "")
 		end
 
 		miog.F.WEEKLY_AFFIX = affixIDs[1].id

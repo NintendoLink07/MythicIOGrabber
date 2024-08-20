@@ -95,7 +95,7 @@ end
 
 miog.resetRaiderIOInformationPanel = resetRaiderIOInformationPanel
 
-miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGroupInternal
+miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
 	local self = LFGListFrame.EntryCreation
 
@@ -109,7 +109,7 @@ miog.listGroup = function() -- Effectively replaces LFGListEntryCreation_ListGro
 	local mythicPlusRating = LFGListFrame.EntryCreation.selectedCategory == 2 and rating or 0
 	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.Selected.value or nil
 
-	local autoAccept = activeEntryInfo and activeEntryInfo.autoAccept or false
+	local autoAccept = manualAutoAccept or activeEntryInfo and activeEntryInfo.autoAccept or false
 	local privateGroup = frame.PrivateGroup:GetChecked();
 	local isCrossFaction =  frame.CrossFaction:IsShown() and not frame.CrossFaction:GetChecked();
 	local questID = activeEntryInfo and activeEntryInfo.questID or 0
@@ -635,6 +635,27 @@ end
 
 miog.fillRaidPanelWithData = fillRaidPanelWithData
 
+local function getMPlusSortData(playerName, realm, region)
+	local profile = RaiderIO.GetProfile(playerName, realm, region or miog.F.CURRENT_REGION)
+
+	if(profile) then
+		local mplusData = {}
+
+		if(profile.mythicKeystoneProfile and profile.mythicKeystoneProfile.sortedDungeons) then
+			for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
+				mplusData[dungeonEntry.dungeon.instance_map_id] = {
+					level = profile.mythicKeystoneProfile.fortifiedDungeons[i],
+					chests = profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[i]
+				}
+			end
+		end
+
+		return mplusData
+	end
+end
+
+miog.getMPlusSortData = getMPlusSortData
+
 local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 	local profile, mythicKeystoneProfile, raidProfile
 	local mythicPlusPanel = frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel
@@ -796,6 +817,16 @@ miog.checkEgoTrip = function(name)
 	end
 end
 
+local function desaturateTexture(bool, texture)
+	if(bool) then
+		texture:SetVertexColor(1, 1, 1, 1)
+
+	else
+		texture:SetVertexColor(0.75, 0.75, 0.75, 0.25)
+	
+	end
+end
+
 local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo() or miog.F.ACTIVE_ENTRY_INFO
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityID)
@@ -804,11 +835,9 @@ local function insertLFGInfo(activityID)
 
 	if(activityInfo.categoryID == 2) then --Dungeons
 		miog.F.CURRENT_DUNGEON_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DUNGEON_DIFFICULTY
-		miog.ApplicationViewer.CreationSettings.Affixes:Show()
 
 	elseif(activityInfo.categoryID == 3) then --Raids
 		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
-		miog.ApplicationViewer.CreationSettings.Affixes:Hide()
 	end
 
 	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityID].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
@@ -816,8 +845,7 @@ local function insertLFGInfo(activityID)
 	miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
 	miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
 
-	miog.ApplicationViewer.CreationSettings.PrivateGroup.active = entryInfo.privateGroup
-	miog.ApplicationViewer.CreationSettings.PrivateGroup:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.privateGroup and "/infoIcons/questionMark_Yellow.png" or "/infoIcons/questionMark_Grey.png"))
+	miog.ApplicationViewer.CreationSettings.PrivateGroupButton:SetChecked(entryInfo.privateGroup)
 
 	if(entryInfo.playstyle) then
 		local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..entryInfo.playstyle]) or
@@ -854,20 +882,26 @@ local function insertLFGInfo(activityID)
 
 	end
 
-	if(entryInfo.voiceChat ~= "") then
-		LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
+	--if(entryInfo.voiceChat ~= "") then
+		--LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
 
-	end
+	--end
 
-	if(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked()) then
-		miog.ApplicationViewer.CreationSettings.VoiceChat.tooltipText = entryInfo.voiceChat
+	miog.ApplicationViewer.CreationSettings.VoiceChatButton:SetChecked(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked())
+
+	desaturateTexture(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked(), miog.ApplicationViewer.CreationSettings.VoiceChatButton:GetNormalTexture())
+	desaturateTexture(entryInfo.privateGroup, miog.ApplicationViewer.CreationSettings.PrivateGroupButton:GetNormalTexture())
+	desaturateTexture(entryInfo.autoAccept, miog.ApplicationViewer.CreationSettings.AutoAcceptButton:GetNormalTexture())
+
+	--[[if(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked()) then
+		--miog.ApplicationViewer.CreationSettings.VoiceChat.tooltipText = entryInfo.voiceChat
 		miog.ApplicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOn.png")
 
 	else
 		miog.ApplicationViewer.CreationSettings.VoiceChat.tooltipText = ""
 		miog.ApplicationViewer.CreationSettings.VoiceChat:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/voiceChatOff.png")
 
-	end
+	end]]
 
 	if(entryInfo.isCrossFactionListing == true) then
 		miog.ApplicationViewer.TitleBar.Faction:SetTexture(2437241)

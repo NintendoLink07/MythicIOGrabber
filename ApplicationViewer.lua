@@ -196,8 +196,6 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	local playerName, realm = miog.createSplitName(name)
 	local playerIsIgnored = C_FriendList.IsIgnored(name)
 
-	local rioLink = "https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[realm] .. "/" .. playerName
-
 	local applicantFrame = applicantSystem.applicantMember[applicantID].frame
 
 	local applicantMemberFrame = applicantFrame.framePool:Acquire()
@@ -253,12 +251,17 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	applicantMemberFrame.RaiderIOInformationPanel:SetShown(detailedList[name] or false)
 	applicantMemberFrame.BasicInformation.Comment:SetShown(applicantData.comment ~= "" and applicantData.comment ~= nil)
 
+	local r, g, b = C_ClassColor.GetClassColor(class):GetRGB()
+
+	applicantMemberFrame.Background:SetColorTexture(r, g, b, 0.5)
+
 	local nameFontString = applicantMemberFrame.BasicInformation.Name
-	nameFontString:SetText(playerIsIgnored and wticc(playerName, "FFFF0000") or wticc(playerName, select(4, GetClassColor(class))))
+	--nameFontString:SetText(playerIsIgnored and wticc(playerName, "FFFF0000") or wticc(playerName, select(4, GetClassColor(class))))
+	nameFontString:SetText(playerName)
 	nameFontString:SetScript("OnMouseDown", function(_, button)
 		if(button == "RightButton") then
 			local copybox = miog.ApplicationViewer.CopyBox
-			copybox:SetText(rioLink)
+			copybox:SetText("https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[realm] .. "/" .. playerName)
 			copybox:SetSize(applicantMemberFrame.fixedWidth - 8, applicantMemberFrame:GetHeight())
 			copybox:SetPoint("LEFT", applicantMemberFrame, "LEFT", 6, 0)
 			copybox:Show()
@@ -434,6 +437,8 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	
 	end
 
+	--local mplusData = miog.getMPlusSortData(playerName, realm)
+
 	--BasicInformation:MarkDirty()
 	applicantMemberFrame:MarkDirty()
 	applicantMemberFrame:Show()
@@ -443,16 +448,15 @@ end
 local function createApplicantFrame(applicantID)
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
-	if(applicantData) then
+	--if(applicantData) then
 		local applicantFrame = applicantFramePool:Acquire()
 
-		applicantFrame.minimumHeight = applicantData.numMembers * (20 + 3)
+		--applicantFrame.minimumHeight = applicantData.numMembers * (20 + 3)
 		applicantFrame.memberFrames = {}
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePool("Frame", applicantFrame, "MIOG_ApplicantMemberFrameTemplate", function(pool, frame)
 			miog.resetRaiderIOInformationPanel(frame)
 		end)
-		--applicantFrame.framePool:ReleaseAll()
 
 		applicantFrame.applicantID = applicantID
 
@@ -466,11 +470,104 @@ local function createApplicantFrame(applicantID)
 
 		applicantFrame:MarkDirty()
 		applicantSystem.applicantMember[applicantID].status = "indexed"
+	--end
 
-	end
+	return applicantFrame
 
 	--updateApplicantStatusFrame(applicantID, "debug")
+end
 
+local function gatherSortingInformation()
+	local applicantSortData = {}
+
+	if(C_LFGList.HasActiveEntryInfo()) then
+		local activeEntry = C_LFGList.GetActiveEntryInfo()
+
+		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
+
+		local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
+
+		for index, applicantID in pairs(currentApplicants) do
+			local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
+
+			local currentApplicantData = {}
+
+			for applicantIndex = 1, applicantData.numMembers, 1 do
+				local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo
+				local favourPrimary
+
+				if(miog.F.IS_IN_DEBUG_MODE) then
+					name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
+
+				else
+					name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
+
+				end
+
+				local playerName, realm = miog.createSplitName(name)
+
+				local primarySortAttribute, secondarySortAttribute
+
+				if(applicantIndex == 1) then -- GET SORT DATA
+
+					if(categoryID ~= 3 and categoryID ~= 4 and categoryID ~= 7 and categoryID ~= 8 and categoryID ~= 9) then
+						primarySortAttribute = dungeonScore
+						secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
+
+					elseif(categoryID == 3) then
+						local raidData = miog.getRaidSortData(playerName .. "-" .. realm)
+
+						if(raidData) then
+							primarySortAttribute = raidData[1].weight
+							secondarySortAttribute = raidData[2].weight
+							--favourPrimary = wticc(miog.DIFFICULTY[raidData[1].difficulty].shortName .. ":" .. raidData[1].progress .. "/" .. raidData[1].bossCount, miog.DIFFICULTY[raidData[1].difficulty].color)
+
+						else
+							primarySortAttribute = 0
+							secondarySortAttribute = 0
+							--favourPrimary = 0
+						
+						end
+
+					elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
+						if(not miog.F.IS_IN_DEBUG_MODE) then
+							pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activeEntry.activityID)
+
+						end
+
+						primarySortAttribute = pvpRatingInfo.rating
+						secondarySortAttribute = pvpRatingInfo.rating
+
+					end
+				end
+
+				--[applicantID]
+
+				currentApplicantData[applicantIndex] = {
+					applicantID = applicantID,
+					name = playerName,
+					realm = realm,
+					fullName = name,
+					role = assignedRole,
+					class = class,
+					specID = specID,
+					ilvl = itemLevel,
+				}
+
+				if(applicantIndex == 1 or MIOG_INCLUDE_SUBMEMBERS) then
+					currentApplicantData[applicantIndex].primary = primarySortAttribute
+					currentApplicantData[applicantIndex].secondary = secondarySortAttribute
+					--applicantSortData[applicantID][applicantIndex].favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary
+					currentApplicantData[applicantIndex].index = applicantID
+					currentApplicantData[applicantIndex].favoured = MIOG_NewSettings.favouredApplicants[name] and true or false
+				end
+
+				table.insert(applicantSortData, currentApplicantData)
+			end
+		end
+	end
+
+	return applicantSortData
 end
 
 local function gatherSortData()
@@ -672,9 +769,9 @@ local function checkApplicantListForEligibleMembers(listEntry)
 		end
 	end
 
-	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(listEntry)) then
+	--[[if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(listEntry)) then
 		return false
-	end
+	end]]
 
 	local isPvp = categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9
 	local isDungeon = categoryID == 2
@@ -684,7 +781,7 @@ local function checkApplicantListForEligibleMembers(listEntry)
 
 		if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].filterForRating) then
 			if(rating) then
-				if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][categoryID].maxRating ~= 0) then
+				if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
 					if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating >= 0
 					and not (rating >= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating
 					and rating <= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating)) then
@@ -712,9 +809,37 @@ local function checkApplicantListForEligibleMembers(listEntry)
 	end
 
 	return true
+end 
+
+local function updateApplicantList()
+	applicantFramePool:ReleaseAll()
+
+	local unsortedList = gatherSortingInformation()
+
+	table.sort(unsortedList, sortApplicantList)
+
+	for index, listEntry in ipairs(unsortedList) do
+		for i = 1, #listEntry, 1 do
+			if(checkApplicantListForEligibleMembers(listEntry[i]) == true) then
+				--print(index, listEntry[i].fullName)
+				local applicantFrame = createApplicantFrame(listEntry[1].applicantID)
+				applicantFrame.layoutIndex = index
+				applicantFrame:Show()
+				break
+			end
+		end
+	end
+
+	numOfApplicants, totalApplicants = applicationFrameIndex, #unsortedList
+
+	miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
+
+	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
 end
 
 local function checkApplicantList(forceReorder, applicantID)
+	--updateApplicantList()
+
 	local unsortedList = gatherSortData()
 
 	if(forceReorder) then
@@ -934,8 +1059,7 @@ local function applicationViewerEvents(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
         local isInitialLogin, isReloadingUi = ...
 
-        if(isInitialLogin or isReloadingUi) then
-        else
+        if(not isInitialLogin and not isReloadingUi) then
             hideAllApplicantFrames()
 
         end
@@ -1129,11 +1253,19 @@ miog.createApplicationViewer = function()
 		self.lastClick = GetTime()
 	end)
 
-	miog.ApplicationViewer.CreationSettings.PrivateGroup:SetScript("OnMouseDown", function()
+	miog.ApplicationViewer.CreationSettings.PrivateGroupButton:SetScript("OnClick", function()
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 
 		miog.EntryCreation.PrivateGroup:SetChecked(not miog.EntryCreation.PrivateGroup:GetChecked())
+
 		miog.listGroup()
+		miog.insertLFGInfo()
+	end)
+
+	miog.ApplicationViewer.CreationSettings.AutoAcceptButton:SetScript("OnClick", function(self)
+		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
+		
+		miog.listGroup(self:GetChecked())
 		miog.insertLFGInfo()
 	end)
 
@@ -1147,7 +1279,7 @@ miog.createApplicationViewer = function()
 		
 	end)
 
+	miog.ApplicationViewer.FramePanel.Container:SetFixedWidth(miog.ApplicationViewer.FramePanel:GetWidth())
 	applicantFramePool = CreateFramePool("Frame", miog.ApplicationViewer.FramePanel.Container, "MIOG_ApplicantFrameTemplate", resetBaseFrame)
 
-	miog.ApplicationViewer.FramePanel.Container.fixedWidth = miog.ApplicationViewer.FramePanel:GetWidth()
 end
