@@ -183,6 +183,13 @@
 
             </Frame>
 
+            <!--<Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="2" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>-->
+
             <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="2" type="number" />

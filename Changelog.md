@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.6] - 2024-08-23
+
+### Changed
+
+- The currency information in the mainframe has been switched to the TWW ones.
+
+### Fixed
+
+- [Filter Panel] There shouldn't be any issues when trying to create a group.
+
+
+
 ## [2.4.5] - 2024-08-20
 
 ### Added
@@ -2147,7 +2159,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.5..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.6..HEAD
+[2.4.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.6
 [2.4.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.5
 [2.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.4
 [2.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.3

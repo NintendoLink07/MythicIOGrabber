@@ -623,14 +623,21 @@ local function createDungeonPanel(parent)
 	dungeonPanelThirdRow.layoutIndex = 4
 	dungeonPanel.ThirdRow = dungeonPanelThirdRow
 
+	local dungeonPanelFourthRow = CreateFrame("Frame", nil, dungeonPanel, "HorizontalLayoutFrame, BackdropTemplate")
+	dungeonPanelFourthRow:SetHeight(24)
+	dungeonPanelFourthRow.spacing = 38
+	dungeonPanelFourthRow.expand = true
+	dungeonPanelFourthRow.layoutIndex = 4
+	dungeonPanel.FourthRow = dungeonPanelFourthRow
+
 	return dungeonPanel
 end
 
 local function addDungeonCheckboxes()
 	local dungeonPanel = miog.FilterPanel.IndexedOptions.Dungeons
 
-	for i = 1, 12, 1 do
-		local optionButton = CreateFrame("CheckButton", nil, i < 5 and dungeonPanel.FirstRow or i < 9 and dungeonPanel.SecondRow or dungeonPanel.ThirdRow, "MIOG_MinimalCheckButtonTemplate")
+	for i = 1, 16, 1 do
+		local optionButton = CreateFrame("CheckButton", nil, i < 5 and dungeonPanel.FirstRow or i < 9 and dungeonPanel.SecondRow or i < 13 and dungeonPanel.ThirdRow or dungeonPanel.FourthRow, "MIOG_MinimalCheckButtonTemplate")
 		optionButton:SetSize(miog.C.INTERFACE_OPTION_BUTTON_SIZE, miog.C.INTERFACE_OPTION_BUTTON_SIZE)
 		optionButton.layoutIndex = i
 		optionButton:SetScript("OnClick", function()

@@ -495,45 +495,51 @@ miog.MAP_INFO = {
 		shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png", fileName = "dragonislescontinent",
 	},
 	[2549] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
+		},
 		shortName = "ATDH",
 		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png",
 		fileName = "amirdrassil",
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
 	},
 	[2569] = { -- interface/icons/inv_achievement_raiddragon
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/chamber.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/experiment.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/assault.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashok.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/zskarn.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/chamber.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/experiment.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/assault.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashok.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/zskarn.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
+		},
 		shortName = "ATSC",
 		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png",
 		fileName = "aberrus",
 	},
 	[2522] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
+		},
 		shortName = "VOTI",
 		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png",
 		fileName = "vaultoftheincarnates",
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
 	},
 
 		
@@ -1131,7 +1137,6 @@ local function loadRawData()
 								instanceID = instanceID,
 								orderIndex = dungeonEncounterInfo.orderIndex,
 								creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
-								icon = mapInfo[bossIndex] and mapInfo[bossIndex].icon or miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
 								achievements = {},
 			
 							}
@@ -1147,10 +1152,14 @@ local function loadRawData()
 					table.sort(mapInfo.bosses, function(k1, k2)
 						return k1.orderIndex < k2.orderIndex
 					end)
+
+					for x, y in ipairs(mapInfo.bosses) do
+						--y.icon or miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon,
+						y.icon = mapInfo.bossIcons and mapInfo.bossIcons[x].icon or miog.JOURNAL_CREATURE_INFO[journalEncounterID].icon
+					end
 				end
 			end
 		end
-	
 	end
 
 	local expansionTable = {}

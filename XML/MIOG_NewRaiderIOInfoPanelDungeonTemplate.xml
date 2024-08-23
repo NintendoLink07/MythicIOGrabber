@@ -1,0 +1,31 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_NewRaiderIOInfoPanelDungeonTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="18" y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="5" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Level" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="45" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

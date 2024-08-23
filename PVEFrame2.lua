@@ -223,25 +223,25 @@ local function createPVEFrameReplacement()
 			end
 		end
 
-		if(miog.F.CURRENT_SEASON and miog.F.CURRENT_SEASON == 12) then
+		--[[if(miog.F.CURRENT_SEASON and miog.F.CURRENT_SEASON == 12) then
 			if(#miog.F.AWAKENED_MAPS == 1) then
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
-				miog.MainTab.Information.Awakened.Text:SetText(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1]].name)
+				miog.MainTab.Information.Awakened.Text:SetText(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1] ].name)
 				miog.MainTab.Information.Awakened.Icon:SetTexture(nil)
-				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1]].awakenedIcon .. "-large")
+				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1] ].awakenedIcon .. "-large")
 
 			elseif(#miog.F.AWAKENED_MAPS > 1) then
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
 				miog.MainTab.Information.Awakened.Text:SetText("All raids awakened")
 				miog.MainTab.Information.Awakened.Icon:SetTexture(nil)
-				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1]].awakenedIcon .. "-large")
+				miog.MainTab.Information.Awakened.Icon:SetAtlas(miog.MAP_INFO[miog.F.AWAKENED_MAPS[1] ].awakenedIcon .. "-large")
 
 			else
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,0,0,1)
 				miog.MainTab.Information.Awakened.Text:SetText("No awakened raids")
 
 			end
-		end
+		end]]
 		
 		for frameIndex = 1, 3, 1 do
 			local activities = C_WeeklyRewards.GetActivities(frameIndex)

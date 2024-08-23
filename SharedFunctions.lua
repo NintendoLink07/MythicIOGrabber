@@ -4,7 +4,7 @@ local wticc = WrapTextInColorCode
 miog.ONCE = true
 
 miog.updateCurrencies = function()
-	local currentSeason = C_MythicPlus.GetCurrentSeason()
+	local currentSeason = 13 or C_MythicPlus.GetCurrentSeason()
 	if(currentSeason > -1) then
 		local currencyTable = miog.CURRENCY_INFO[currentSeason]
 
@@ -30,6 +30,26 @@ miog.updateCurrencies = function()
 			end
 		else
 			miog.printDebug("No currencies for current season found. Current season:" .. currentSeason)
+
+		end
+	end
+end
+
+miog.resetNewRaiderIOInfoPanel = function(panel)
+	for k, v in pairs(panel.Raids) do
+		if(type(v) == "table") then
+			v:Hide()
+			v.Icon:SetTexture(nil)
+			v.Name:SetText("")
+			v.Progress:SetText("")
+			v.Progress:SetTextColor(1,1,1,1)
+			
+			for i = 1, 12, 1 do
+				v["Boss" .. i].Index:SetText("")
+				v["Boss" .. i].Icon:SetTexture(nil)
+				v["Boss" .. i].Border:SetColorTexture(0,0,0,0)
+
+			end
 
 		end
 	end
@@ -144,10 +164,81 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 	end
 end
 
-local function calculateWeightedScore(difficulty, kills, bossCount, current, ordinal)
+local function calculateWeightedScore(difficulty, kills, bossCount, current)
 	return (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount)
 
 end
+
+local function getNewRaidSortData(playerName, realm, region)
+	local profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+
+	if(profile) then
+		local raidData = {character = {raids = {}}, main = {raids = {}}}
+
+		if(profile.raidProfile) then
+			for k, d in ipairs(profile.raidProfile.raidProgress) do
+				local currentTable = d.isMainProgress and raidData.main or raidData.character
+
+				local mapID
+				local isAwakened = false
+
+				if(string.find(d.raid.mapId, 10000)) then
+					mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
+					isAwakened = d.current
+
+				else
+					mapID = d.raid.mapId
+
+				end
+
+				currentTable.raids[mapID] = currentTable.raids[mapID] or {regular = {difficulties = {}}, awakened = {difficulties = {}}, bossCount = d.raid.bossCount, isAwakened = isAwakened, shortName = d.raid.shortName}
+
+				local modeTable = isAwakened and currentTable.raids[mapID].awakened or currentTable.raids[mapID].regular
+
+				for x, y in ipairs(d.progress) do
+					modeTable.difficulties[y.difficulty] = {
+						bossesKilled = y.kills,
+						cleared = y.cleared,
+						weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current),
+						bosses = {},
+					}
+
+					for a, b in ipairs(y.progress) do
+						modeTable.difficulties[y.difficulty].bosses[a] = {
+							killed = b.killed,
+							count = b.count,
+						}
+					end
+				end
+			end
+		end
+
+		return raidData
+	end
+end
+
+miog.getNewRaidSortData = getNewRaidSortData
+
+local function getMPlusSortData(playerName, realm, region)
+	local profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+
+	if(profile) then
+		local mplusData = {}
+
+		if(profile.mythicKeystoneProfile and profile.mythicKeystoneProfile.sortedDungeons) then
+			for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
+				mplusData[dungeonEntry.dungeon.instance_map_id] = {
+					level = profile.mythicKeystoneProfile.fortifiedDungeons[i],
+					chests = profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[i]
+				}
+			end
+		end
+
+		return mplusData
+	end
+end
+
+miog.getMPlusSortData = getMPlusSortData
 
 local function getRaidSortData(playerName)
 	local profile
@@ -634,27 +725,6 @@ local function fillRaidPanelWithData(profile, mainPanel, raidPanel, mainRaidPane
 end
 
 miog.fillRaidPanelWithData = fillRaidPanelWithData
-
-local function getMPlusSortData(playerName, realm, region)
-	local profile = RaiderIO.GetProfile(playerName, realm, region or miog.F.CURRENT_REGION)
-
-	if(profile) then
-		local mplusData = {}
-
-		if(profile.mythicKeystoneProfile and profile.mythicKeystoneProfile.sortedDungeons) then
-			for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
-				mplusData[dungeonEntry.dungeon.instance_map_id] = {
-					level = profile.mythicKeystoneProfile.fortifiedDungeons[i],
-					chests = profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[i]
-				}
-			end
-		end
-
-		return mplusData
-	end
-end
-
-miog.getMPlusSortData = getMPlusSortData
 
 local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
 	local profile, mythicKeystoneProfile, raidProfile

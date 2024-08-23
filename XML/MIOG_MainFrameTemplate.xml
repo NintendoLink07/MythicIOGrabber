@@ -464,7 +464,7 @@
                                         </Layers>
                                     </Frame>
 
-                                    <Frame parentKey="Awakened" inherits="BackdropTemplate">
+                                    <Frame parentKey="Awakened" inherits="BackdropTemplate" hidden="true">
                                         <Size x="200" y="20" />
                                         <Anchors>
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>

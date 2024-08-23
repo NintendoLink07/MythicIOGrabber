@@ -234,10 +234,10 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 		local categoryID = miog.getCurrentCategoryID()
 		local baseFrame = self:GetParent():GetParent()
 
-		local infoData = baseFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
+		--[[local infoData = baseFrame.RaiderIOInformationPanel[categoryID == 3 and "raid" or "mplus"]
 
 		baseFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText(infoData and infoData.previous or "")
-		baseFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")
+		baseFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText(infoData and infoData.main or "")]]
 
 		baseFrame.RaiderIOInformationPanel:SetShown(not baseFrame.RaiderIOInformationPanel:IsShown())
 		
@@ -437,7 +437,121 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	
 	end
 
-	--local mplusData = miog.getMPlusSortData(playerName, realm)
+
+
+	--[[local mplusData = miog.getMPlusSortData(playerName, realm)
+
+	for k, v in ipairs(miog.SEASONAL_MAP_IDS[C_MythicPlus.GetCurrentSeason()].dungeons) do
+		applicantMemberFrame.RaiderIOInformationPanel.MythicPlus["Dungeon" .. k].Icon:SetTexture(miog.MAP_INFO[v].icon)
+		applicantMemberFrame.RaiderIOInformationPanel.MythicPlus["Dungeon" .. k].Name:SetText(miog.MAP_INFO[v].shortName)
+
+		local levelText = mplusData and (mplusData[v].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or mplusData[v].chests)) or 0
+		
+		applicantMemberFrame.RaiderIOInformationPanel.MythicPlus["Dungeon" .. k].Level:SetText(wticc(levelText, mplusData and mplusData[v].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+
+	end
+
+	local raidData = miog.getNewRaidSortData(playerName, realm)
+
+	local raidCounter = 1
+
+	for k, v in ipairs(miog.SEASONAL_MAP_IDS[C_MythicPlus.GetCurrentSeason()].raids) do
+		applicantMemberFrame.RaiderIOInformationPanel.Raids["Raid" .. k].Icon:SetTexture(miog.MAP_INFO[v].icon)
+		applicantMemberFrame.RaiderIOInformationPanel.Raids["Raid" .. k].Name:SetText(miog.MAP_INFO[v].shortName)
+
+		for i = 1, 12, 1 do
+			local currentBoss = "Boss" .. i
+
+			if(miog.MAP_INFO[v].bosses[i]) then
+				applicantMemberFrame.RaiderIOInformationPanel.Raids["Raid" .. raidCounter][currentBoss].Index:SetText(i)
+				applicantMemberFrame.RaiderIOInformationPanel.Raids["Raid" .. raidCounter][currentBoss].Icon:SetTexture(miog.MAP_INFO[v].bosses[i].icon)
+				applicantMemberFrame.RaiderIOInformationPanel.Raids["Raid" .. raidCounter][currentBoss]:Show()
+
+			else
+				applicantMemberFrame.RaiderIOInformationPanel.Raids["Raid" .. raidCounter][currentBoss]:Hide()
+
+			end
+		end
+
+		applicantMemberFrame.RaiderIOInformationPanel.Raids["Raid" .. raidCounter]:Show()
+
+		raidCounter = raidCounter + 1
+
+		--local levelText = mplusData and (mplusData[v].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or mplusData[v].chests)) or 0
+		
+		--applicantMemberFrame.RaiderIOInformationPanel.MythicPlus["Raid" .. k].Level:SetText(wticc(levelText, mplusData and mplusData[v].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+
+		local modeCounter = 1
+
+		if(raidData) then
+			if(raidData.character.raids[v]) then
+				--for x, y in pairs(raidData.character.raids[v]) do
+					--local currentTable = modeCounter == 1 and y.awakened or y.regular
+
+				--end
+
+				for i = 1, 2, 1 do
+					local currentTable = modeCounter == 1 and raidData.character.raids[v].awakened or raidData.character.raids[v].regular
+					-- print(raidData.character.raids[v].shortName)
+
+				end
+			end
+		end
+	end]]
+
+
+	--[[if(raidData) then
+		ocal numOfInserts = 0
+		local setInfo = {}
+
+		for k, v in ipairs(miog.SEASONAL_MAP_IDS[C_MythicPlus.GetCurrentSeason()].raids) do
+			if(numOfInserts > 3) then
+				break
+			end
+
+			if(raidData.character.raids[v]) then
+				if(not setInfo[v]) then
+					setInfo[v] = {}
+					for i = 3, 1, -1 do
+						local currentTable = raidData.character.raids[v].difficulties[i]
+
+						if(currentTable) then
+							for z = 1, 12, 1 do
+								if(currentTable.bosses[z] and not setInfo[v][z]) then
+									local currentBoss = "Boss" .. z
+
+									applicantMemberFrame.RaiderIOInformationPanel.Raid["Raid" .. raidCounter][currentBoss].Icon:SetDesaturated(not currentTable.bosses[z].killed)
+
+									if(currentTable.bosses[z].killed) then
+										applicantMemberFrame.RaiderIOInformationPanel.Raid["Raid" .. raidCounter][currentBoss].Border:SetColorTexture(miog.DIFFICULTY[i].miogColors:GetRGBA())
+										setInfo[v][z] = true
+
+									else
+										applicantMemberFrame.RaiderIOInformationPanel.Raid["Raid" .. raidCounter][currentBoss].Border:SetColorTexture(0,0,0,0)
+						
+									end
+								end
+							end
+
+							if(raidData.character.raids[v].isAwakened) then
+								applicantMemberFrame.RaiderIOInformationPanel.Raid["Raid" .. raidCounter].Name:SetText(raidData.character.raids[v].shortName)
+							end
+
+							applicantMemberFrame.RaiderIOInformationPanel.Raid["Raid" .. raidCounter].Progress:SetText(miog.DIFFICULTY[i].shortName .. ":" .. currentTable.bossesKilled .. "/" .. raidData.character.raids[v].bossCount)
+							applicantMemberFrame.RaiderIOInformationPanel.Raid["Raid" .. raidCounter].Progress:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
+							
+							break
+						end
+					end
+				end
+			end
+
+		end
+	else
+		applicantMemberFrame.RaiderIOInformationPanel.Raid["Raid" .. raidCounter].Progress:SetText("0/0")
+		raidCounter = raidCounter + 1
+
+	end]]
 
 	--BasicInformation:MarkDirty()
 	applicantMemberFrame:MarkDirty()
@@ -456,6 +570,7 @@ local function createApplicantFrame(applicantID)
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePool("Frame", applicantFrame, "MIOG_ApplicantMemberFrameTemplate", function(pool, frame)
 			miog.resetRaiderIOInformationPanel(frame)
+			--miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
 		end)
 
 		applicantFrame.applicantID = applicantID
