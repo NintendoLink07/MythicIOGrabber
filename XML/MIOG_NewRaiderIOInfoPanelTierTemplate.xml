@@ -2,14 +2,25 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_NewRaiderIOInfoPanelTierTemplate" virtual="true">
         <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="Icon">
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true">
                     <Size x="18" y="18" />
+                    <Color r="0" g="0" b="0" a="1" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-2"/>
                     </Anchors>
                 </Texture>
             </Layer>
+            
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" enableMouseClicks="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
@@ -30,83 +41,83 @@
         
         <Frames>
             <Frame parentKey="Boss1" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMLEFT" y="-1"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss2" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss1" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss3" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss2" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss4" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss3" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss5" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss4" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
             <Frame parentKey="Boss6" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss5" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss7" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss6" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss8" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss7" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss9" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss8" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
             
             <Frame parentKey="Boss10" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss9" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
 
             <Frame parentKey="Boss11" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss10" relativePoint="RIGHT" x="2"/>
                 </Anchors>
             </Frame>
             
             <Frame parentKey="Boss12" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
-                <Size x="20" y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss11" relativePoint="RIGHT" x="2"/>
                 </Anchors>

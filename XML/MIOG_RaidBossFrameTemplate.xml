@@ -7,7 +7,7 @@
             </Layer>
 
             <Layer level="ARTWORK">
-                <Texture parentKey="Icon" enableMouseClicks="true">
+                <Texture parentKey="Icon" enableMouseClicks="true" desaturated="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />

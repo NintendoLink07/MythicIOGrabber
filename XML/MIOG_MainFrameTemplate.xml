@@ -291,9 +291,16 @@
                                         <Size y="25" />
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-25"/>
                                         </Anchors>
                                     </Frame>
+
+                                    <Button parentKey="Requeue" inherits="RefreshButtonTemplate">
+                                        <Size x="22" y="22" />
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativeKey="$parent.DropDown" relativePoint="RIGHT" x="3"/>
+                                        </Anchors>
+                                    </Button>
                                     
                                     <Frame parentKey="LastGroup" inherits="BackdropTemplate">
                                         <Size y="50" />

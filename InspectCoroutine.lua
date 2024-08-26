@@ -198,7 +198,7 @@ local function updateRosterInfoData()
 				end
 
 				local playerName, realm = miog.createSplitName(name)
-				local fullName = playerName .. "-" .. realm
+				local fullName = playerName .. "-" .. (realm or "")
 
 				if(name) then
 					local keystoneInfo = miog.openRaidLib.GetKeystoneInfo(unitID)
@@ -502,7 +502,10 @@ local function updateRosterInfoData()
 
 					baseFrameData:Insert({
 						template = "MIOG_RaiderIOInformationPanel",
-						name = member.name,}
+						--template = "MIOG_NewRaiderIOInfoPanel",
+						name = member.name,
+						classFileName = member.classFileName
+					}
 					)
 				end
 
@@ -669,6 +672,20 @@ miog.createInspectCoroutine = function()
 				local playerName, realm = miog.createSplitName(data.name)
 
 				miog.retrieveRaiderIOData(playerName, realm, miog.groupSystem.raiderIOPanels[data.name])
+
+			elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
+				miog.groupSystem.raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
+				
+				local playerName, realm = miog.createSplitName(data.name)
+
+				--miog.retrieveRaiderIOData(playerName, realm, miog.groupSystem.raiderIOPanels[data.name])
+				miog.fillNewRaiderIOPanel(miog.groupSystem.raiderIOPanels[data.name], playerName, realm)
+
+				if(data.classFileName) then
+					local r, g, b = C_ClassColor.GetClassColor(data.classFileName):GetRGB()
+
+					frame.Background:SetColorTexture(r, g, b, 0.5)
+				end
 			end
 		end
 		

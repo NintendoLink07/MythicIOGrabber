@@ -2,11 +2,21 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_NewRaiderIOInfoPanelDungeonTemplate" virtual="true">
         <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="Icon">
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true">
                     <Size x="18" y="18" />
+                    <Color r="0" g="0" b="0" a="1" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" enableMouseClicks="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                     </Anchors>
                 </Texture>
             </Layer>

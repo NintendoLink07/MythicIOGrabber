@@ -75,6 +75,7 @@ local defaultSettings = {
     end},
     {name = "Guild keystone info", variableName = "MIOG_GuildKeystoneInfo", key="guildKeystoneInfo", default={}},
     {name = "Last invited applicants", variableName = "MIOG_LastInvitedApplicants", key="lastInvitedApplicants", default={}},
+    {name = "Last used queue", variableName = "MIOG_LastUsedQueue", key="lastUsedQueue", default = {}},
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
     {name = "Favoured applicants", variableName = "MIOG_FavouredApplicants", key="favouredApplicants", default={}, type="custom"},
@@ -95,7 +96,7 @@ local category = Settings.RegisterVerticalLayoutCategory(addonName)
 
 local function OnSettingChanged(setting, value)
 	-- This callback will be invoked whenever a setting is modified.
-	print("[MIOG] Setting changed:", setting:GetVariable(), value)
+	--print("[MIOG] Setting changed:", setting:GetVariable(), value)
 end
 
 local function createDefaultSettings()

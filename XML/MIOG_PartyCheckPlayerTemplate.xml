@@ -130,7 +130,7 @@
 
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background" atlas="pvpqueue-button-casual-up" setAllPoints="true" hidden="true" />
+                <Texture parentKey="Background" setAllPoints="true" />
                 <Texture parentKey="BackgroundHover" atlas="pvpqueue-button-casual-highlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
             </Layer>
 

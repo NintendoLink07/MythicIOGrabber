@@ -223,6 +223,10 @@ local function createPVEFrameReplacement()
 			end
 		end
 
+		miog.MainTab.QueueInformation.Requeue:SetScript("OnClick", function()
+			miog.requeue()
+		end)
+
 		--[[if(miog.F.CURRENT_SEASON and miog.F.CURRENT_SEASON == 12) then
 			if(#miog.F.AWAKENED_MAPS == 1) then
 				miog.MainTab.Information.Awakened.Text:SetTextColor(1,1,1,1)
@@ -501,6 +505,8 @@ local function createPVEFrameReplacement()
 	queueRolePanel.Damager.Checkbox:SetScript("OnClick", function(self)
 		setRoles()
 	end)
+	
+	setRoles()
 
 	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 

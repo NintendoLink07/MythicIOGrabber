@@ -10,8 +10,36 @@ queueSystem.currentlyInUse = 0
 local queueFrameIndex = 1
 local randomBGFrame, randomEpicBGFrame, skirmish, brawl1, brawl2, specificBox
 
-local baseMenu
+miog.requeue = function()
+	local queueInfo = MIOG_NewSettings.lastUsedQueue
 
+	if(queueInfo.type == "pve") then
+		if(queueInfo.subtype == "multidng") then
+			LFG_JoinDungeon(1, "specific", queueInfo.id, {})
+			
+		else
+			ClearAllLFGDungeons(queueInfo.subtype == "dng" and 1 or 3);
+			SetLFGDungeon(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
+			JoinSingleLFG(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
+
+		end
+
+	elseif(queueInfo.type == "pvp") then
+		if(queueInfo.subtype == "skirmish") then
+			JoinSkirmish(4)
+			
+		elseif(queueInfo.subtype == "brawl") then
+			C_PvP.JoinBrawl()
+
+		elseif(queueInfo.subtype == "brawlSpecial") then
+			C_PvP.JoinBrawl(true)
+
+		elseif(queueInfo.subtype == "pet") then
+			C_PetBattles.StartPVPMatchmaking()
+
+		end
+	end
+end
 
 function MIOG_GetCurrentDropdownButton(queueIndex)
 	return _G["DropDownList1Button" .. (queueIndex * 2)]
@@ -185,7 +213,7 @@ local function checkQueues()
 							[18] = queueID,
 							[20] = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
 							or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
-							[30] = (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID].horizontal
+							[30] = miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].horizontal or (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID].horizontal
 						}
 
 						local frame
@@ -968,7 +996,7 @@ local function updateRandomDungeons(blizzDesc)
 				info.text = isHolidayDungeon and "(Event) " .. name or name
 
 				info.checked = mode == "queued"
-				info.icon = miog.MAP_INFO[id] and miog.MAP_INFO[id].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
+				info.icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
 				info.parentIndex = subtypeID
 				info.index = -1
 				info.type2 = "random"
@@ -977,6 +1005,8 @@ local function updateRandomDungeons(blizzDesc)
 					ClearAllLFGDungeons(1);
 					SetLFGDungeon(1, id);
 					JoinSingleLFG(1, id);
+
+					MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = id}
 				end
 				
 				local tempFrame = queueDropDown:CreateEntryFrame(info)
@@ -1059,6 +1089,8 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 						SetLFGDungeon(1, dungeonID);
 						JoinSingleLFG(1, dungeonID);
 
+						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
+
 					end
 				end
 
@@ -1101,6 +1133,8 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	else
 		queueDropDown:CreateFunctionButton(nil, overwrittenParentIndex, "Queue for multiple dungeons", function()
 			LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
+
+			MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
 		end)
 	
 	end
@@ -1183,6 +1217,8 @@ local function updateRaidFinder(blizzDesc)
 						ClearAllLFGDungeons(3);
 						SetLFGDungeon(3, id);
 						JoinSingleLFG(3, id);
+
+						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = id}
 					end
 					
 					local tempFrame = queueDropDown:CreateEntryFrame(info)
@@ -1484,6 +1520,7 @@ local function updatePVP2()
 
 						info.func = function()
 							JoinSkirmish(4)
+							MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="skirmish", id = 0}
 						end
 
 						--info.tooltipTitle = info.text
@@ -1495,12 +1532,15 @@ local function updatePVP2()
 						end)
 						skirmish.tooltipTableKey = "Skirmish"
 
+
 					elseif(index == 4) then
 						--tempFrame:SetAttribute("macrotext1", "/run C_PvP.JoinBrawl()")
 						--C_PvP.JoinBrawl()
 
 						info.func = function()
 							C_PvP.JoinBrawl()
+
+							MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="brawl", id = 0}
 						end
 
 						--info.tooltipTitle = info.text
@@ -1518,6 +1558,8 @@ local function updatePVP2()
 
 						info.func = function()
 							C_PvP.JoinBrawl(true)
+
+							MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="brawlSpecial", id = 0}
 						end
 						
 						brawl2 = queueDropDown:CreateEntryFrame(info)
@@ -1636,6 +1678,8 @@ local function updateDropDown()
 		info.index = 7
 		info.func = function()
 			C_PetBattles.StartPVPMatchmaking()
+
+			MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
 		end
 
 		local tempFrame = queueDropDown:CreateEntryFrame(info)

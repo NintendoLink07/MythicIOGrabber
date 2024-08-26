@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.4.7] - 2024-08-26
+
+### Changed
+
+### Added
+
+- [MainFrame] A button has been added which lets you requeue your last queued activity.
+
+### Fixed
+
+- Fixed a rare error that could occur if Blizzard sent affix information before the addon fully loaded.
+
+- Random dungeon queues from MOP onward now have the correct icon.
+
+- The roles for all pve/pvp queues shouldn't be sometimes reset anymore when leveling up.
+
+
+
 ## [2.4.6] - 2024-08-23
 
 ### Changed
@@ -2159,7 +2177,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.6..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.4.7..HEAD
+[2.4.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.7
 [2.4.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.6
 [2.4.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.5
 [2.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.4

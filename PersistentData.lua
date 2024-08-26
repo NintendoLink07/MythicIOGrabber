@@ -731,17 +731,19 @@ miog.MAP_INFO = {
 	[2669] = {shortName = "COT", icon = "interface/lfgframe/lfgicon-cityofthreads", fileName = "cityofthreads"},
 
 	[2657] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ulgrax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/bloodboundhorror.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/sikran.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/rashanan.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ovinax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/kyveza.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/silkencourt.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/queenansurek.png"},
+		},
 		shortName = "NP",
 		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/raid.png",
 		fileName = "nerubarpalance",
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ulgrax.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/bloodboundhorror.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/sikran.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/rashanan.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ovinax.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/kyveza.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/silkencourt.png"},
-		{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/queenansurek.png"},
 	},
 
 	[2774] = {shortName = "KA", fileName = "khazalgar",},
@@ -752,7 +754,14 @@ miog.LFG_ID_INFO = {
 	[1971] = {shortName = "RWD", icon = "interface/lfgframe/lfgicon-draenor.blp", fileName = "draenor"}, --RANDOM WARLORDS DUNGEON
 	[2350] = { shortName = "LFDN", icon = "interface/lfgframe/lfgicon-dragonislescontinent.blp", fileName = "dragonislescontinent"},
 	[2351] = { shortName = "LFDH", icon = "interface/lfgframe/lfgicon-dragonislescontinent.blp", fileName = "dragonislescontinent"},
+	[2516] = { shortName = "LFTN", icon = "interface/lfgframe/lfgicon-khazalgar.blp", fileName = "khazalgar"},
+	[2517] = { shortName = "LFTH", icon = "interface/lfgframe/lfgicon-khazalgar.blp", fileName = "khazalgar"},
+	[2523] = { shortName = "LFTS1", icon = "interface/lfgframe/lfgicon-khazalgar.blp", fileName = "khazalgar"},
 }
+
+for k, v in pairs(miog.LFG_ID_INFO) do
+	v.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. v.fileName .. ".png"
+end
 
 miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	--[] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},

@@ -1,9 +1,15 @@
-## [2.4.6](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.6) - 2024-08-23
+## [2.4.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.7) - 2024-08-26
 
 ### Changed
 
-- The currency information in the mainframe has been switched to the TWW ones.
+### Added
+
+- [MainFrame] A button has been added which lets you requeue your last queued activity.
 
 ### Fixed
 
-- [Filter Panel] There shouldn't be any issues when trying to create a group.
+- Fixed a rare error that could occur if Blizzard sent affix information before the addon fully loaded.
+
+- Random dungeon queues from MOP onward now have the correct icon.
+
+- The roles for all pve/pvp queues shouldn't be sometimes reset anymore when leveling up.
