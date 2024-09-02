@@ -434,9 +434,11 @@
 
                                         <Scripts>
                                             <OnEnter>
-                                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                                GameTooltip:SetText(self.tooltipText)
-                                                GameTooltip:Show()
+                                                if(self.tooltipText) then
+                                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                                    GameTooltip:SetText(self.tooltipText)
+                                                    GameTooltip:Show()
+                                                end
                                             </OnEnter>
                                             <OnLeave>
                                                 GameTooltip:Hide()
