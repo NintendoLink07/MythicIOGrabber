@@ -354,11 +354,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 	end
 
-	miog.retrieveRaiderIOData(playerName, realm, applicantMemberFrame)
-
-	local raidData = miog.getRaidSortData(playerName .. "-" .. realm)
-	primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
-	secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
+	--applicantMemberFrame.RaiderIOInformationPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. (applicantData.comment or ""))
 
 	local infoPanel = applicantMemberFrame.RaiderIOInformationPanel.InfoPanel
 
@@ -385,6 +381,12 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
 
 	end
+
+	miog.retrieveRaiderIOData(playerName, realm, applicantMemberFrame)
+
+	local raidData = miog.getRaidSortData(playerName .. "-" .. realm)
+	primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
+	secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
 
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
 	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID

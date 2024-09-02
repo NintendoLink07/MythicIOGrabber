@@ -246,187 +246,195 @@ local function createPVEFrameReplacement()
 
 			end
 		end]]
+
+		local activityIndices = {
+			1, -- m+
+			3, -- raid
+			6, -- world/delves
+		}
 		
-		for frameIndex = 1, 3, 1 do
-			local activities = C_WeeklyRewards.GetActivities(frameIndex)
+		for k, v in ipairs(activityIndices) do
+			local activities = C_WeeklyRewards.GetActivities(v)
 
-			local firstThreshold = activities[1].progress >= activities[1].threshold
-			local secondThreshold = activities[2].progress >= activities[2].threshold
-			local thirdThreshold = activities[3].progress >= activities[3].threshold
-			local currentColor = thirdThreshold and miog.CLRSCC.green or secondThreshold and miog.CLRSCC.yellow or firstThreshold and miog.CLRSCC.orange or miog.CLRSCC.red
-			local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
-			dimColor[4] = 0.1
+			if(activities[k]) then
+				local firstThreshold = activities[1].progress >= activities[1].threshold
+				local secondThreshold = activities[2].progress >= activities[2].threshold
+				local thirdThreshold = activities[3].progress >= activities[3].threshold
+				local currentColor = thirdThreshold and miog.CLRSCC.green or secondThreshold and miog.CLRSCC.yellow or firstThreshold and miog.CLRSCC.orange or miog.CLRSCC.red
+				local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+				dimColor[4] = 0.1
 
-			local currentFrame = frameIndex == 1 and miog.MainTab.Information.MPlusStatus or frameIndex == 2 and miog.MainTab.Information.HonorStatus or miog.MainTab.Information.RaidStatus
+				local currentFrame = k == 1 and miog.MainTab.Information.MPlusStatus or k == 2 and miog.MainTab.Information.RaidStatus or miog.MainTab.Information.WorldStatus
 
-			currentFrame:SetMinMaxValues(0, activities[3].threshold)
-			currentFrame.info = (thirdThreshold or secondThreshold) and activities[3] or firstThreshold and activities[2] or activities[1]
-			currentFrame.activities = activities
-			currentFrame.unlocked = currentFrame.info.progress >= currentFrame.info.threshold;
+				currentFrame:SetMinMaxValues(0, activities[3].threshold)
+				currentFrame.info = (thirdThreshold or secondThreshold) and activities[3] or firstThreshold and activities[2] or activities[1]
+				currentFrame.activities = activities
+				currentFrame.unlocked = currentFrame.info.progress >= currentFrame.info.threshold;
 
-			local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[1].id))
-			local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[2].id))
-			local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[3].id))
-			
-			miog.VAULT_PROGRESS[frameIndex] = {activities1Lvl, activities2Lvl, activities3Lvl}
-
-			currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
-			miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
-
-			currentFrame:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11);
-
-				if self.info then
-					local itemLink, upgradeItemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.info.id);
-
-					local itemLevel, upgradeItemLevel, previewLevel, sparse;
-					if itemLink then
-						itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
-					end
-					if upgradeItemLink then
-						upgradeItemLevel, previewLevel, sparse = C_Item.GetDetailedItemLevelInfo(upgradeItemLink);
-					end
-
-					local canShow = CanShowPreviewItemTooltip(self)
-					
-					GameTooltip_SetTitle(GameTooltip, GREAT_VAULT_REWARDS);
-					GameTooltip_AddBlankLineToTooltip(GameTooltip);
+				local activities1Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[1].id))
+				local activities2Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[2].id))
+				local activities3Lvl = C_Item.GetDetailedItemLevelInfo(C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities[3].id))
 				
-					local hasRewards = C_WeeklyRewards.HasAvailableRewards();
+				miog.VAULT_PROGRESS[k] = {activities1Lvl, activities2Lvl, activities3Lvl}
 
-					if hasRewards then
-						GameTooltip_AddColoredLine(GameTooltip, GREAT_VAULT_REWARDS_WAITING, GREEN_FONT_COLOR);
+				currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+				miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
+
+				currentFrame:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11);
+
+					if self.info then
+						local itemLink, upgradeItemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.info.id);
+
+						local itemLevel, upgradeItemLevel, previewLevel, sparse;
+						if itemLink then
+							itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
+						end
+						if upgradeItemLink then
+							upgradeItemLevel, previewLevel, sparse = C_Item.GetDetailedItemLevelInfo(upgradeItemLink);
+						end
+
+						local canShow = CanShowPreviewItemTooltip(self)
+						
+						GameTooltip_SetTitle(GameTooltip, GREAT_VAULT_REWARDS);
 						GameTooltip_AddBlankLineToTooltip(GameTooltip);
-					end
+					
+						local hasRewards = C_WeeklyRewards.HasAvailableRewards();
 
-					if self.info.type == Enum.WeeklyRewardChestThresholdType.Activities then
-						if(canShow) then
-							local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(self.info.activityTierID, self.info.level);
-							if hasData then
-								upgradeItemLevel = nextItemLevel;
+						if hasRewards then
+							GameTooltip_AddColoredLine(GameTooltip, GREAT_VAULT_REWARDS_WAITING, GREEN_FONT_COLOR);
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
+						end
+
+						if self.info.type == Enum.WeeklyRewardChestThresholdType.Activities then
+							if(canShow) then
+								local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(self.info.activityTierID, self.info.level);
+								if hasData then
+									upgradeItemLevel = nextItemLevel;
+								else
+									nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(self.info.level);
+								end
+								
+								HandlePreviewMythicRewardTooltip(itemLevel, upgradeItemLevel, nextLevel, self);
+
 							else
-								nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(self.info.level);
+								ShowIncompleteMythicTooltip(self);
+								GameTooltip_AddBlankLineToTooltip(GameTooltip);
+
+							end
+
+							GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
+							GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
+							GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
+
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
+							
+							GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
+
+						elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
+							local currentDifficultyID = self.info.level;
+
+							if(itemLevel) then
+								local currentDifficultyName = DifficultyUtil.GetDifficultyName(currentDifficultyID);
+								GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_RAID, itemLevel, currentDifficultyName));
+								GameTooltip_AddBlankLineToTooltip(GameTooltip);
 							end
 							
-							HandlePreviewMythicRewardTooltip(itemLevel, upgradeItemLevel, nextLevel, self);
-
-						else
-							ShowIncompleteMythicTooltip(self);
-							GameTooltip_AddBlankLineToTooltip(GameTooltip);
-
-						end
-
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
-
-						GameTooltip_AddBlankLineToTooltip(GameTooltip);
-						
-						GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
-
-					elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
-						local currentDifficultyID = self.info.level;
-
-						if(itemLevel) then
-							local currentDifficultyName = DifficultyUtil.GetDifficultyName(currentDifficultyID);
-							GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_RAID, itemLevel, currentDifficultyName));
-							GameTooltip_AddBlankLineToTooltip(GameTooltip);
-						end
-						
-						if upgradeItemLevel then
-							local nextDifficultyID = DifficultyUtil.GetNextPrimaryRaidDifficultyID(currentDifficultyID);
-							local difficultyName = DifficultyUtil.GetDifficultyName(nextDifficultyID);
-							GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
-							GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_RAID, difficultyName));
-						end
-			
-						local encounters = C_WeeklyRewards.GetActivityEncounterInfo(self.info.type, self.info.index);
-						if encounters then
-							table.sort(encounters, function(left, right)
-								if left.instanceID ~= right.instanceID then
-									return left.instanceID < right.instanceID;
-								end
-								local leftCompleted = left.bestDifficulty > 0;
-								local rightCompleted = right.bestDifficulty > 0;
-								if leftCompleted ~= rightCompleted then
-									return leftCompleted;
-								end
-								return left.uiOrder < right.uiOrder;
-							end)
-							local lastInstanceID = nil;
-							for index, encounter in ipairs(encounters) do
-								local name, description, encounterID, rootSectionID, link, instanceID = EJ_GetEncounterInfo(encounter.encounterID);
-								if instanceID ~= lastInstanceID then
-									local instanceName = EJ_GetInstanceInfo(instanceID);
-									GameTooltip_AddBlankLineToTooltip(GameTooltip);	
-									GameTooltip_AddHighlightLine(GameTooltip, instanceName);
-									lastInstanceID = instanceID;
-								end
-								if name then
-									if encounter.bestDifficulty > 0 then
-										local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty);
-										GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName), miog.DIFFICULTY_ID_TO_COLOR[encounter.bestDifficulty]);
-									else
-										GameTooltip_AddColoredLine(GameTooltip, string.format(DASH_WITH_TEXT, name), DISABLED_FONT_COLOR);
+							if upgradeItemLevel then
+								local nextDifficultyID = DifficultyUtil.GetNextPrimaryRaidDifficultyID(currentDifficultyID);
+								local difficultyName = DifficultyUtil.GetDifficultyName(nextDifficultyID);
+								GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
+								GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_RAID, difficultyName));
+							end
+				
+							local encounters = C_WeeklyRewards.GetActivityEncounterInfo(self.info.type, self.info.index);
+							if encounters then
+								table.sort(encounters, function(left, right)
+									if left.instanceID ~= right.instanceID then
+										return left.instanceID < right.instanceID;
+									end
+									local leftCompleted = left.bestDifficulty > 0;
+									local rightCompleted = right.bestDifficulty > 0;
+									if leftCompleted ~= rightCompleted then
+										return leftCompleted;
+									end
+									return left.uiOrder < right.uiOrder;
+								end)
+								local lastInstanceID = nil;
+								for index, encounter in ipairs(encounters) do
+									local name, description, encounterID, rootSectionID, link, instanceID = EJ_GetEncounterInfo(encounter.encounterID);
+									if instanceID ~= lastInstanceID then
+										local instanceName = EJ_GetInstanceInfo(instanceID);
+										GameTooltip_AddBlankLineToTooltip(GameTooltip);	
+										GameTooltip_AddHighlightLine(GameTooltip, instanceName);
+										lastInstanceID = instanceID;
+									end
+									if name then
+										if encounter.bestDifficulty > 0 then
+											local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty);
+											GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName), miog.DIFFICULTY_ID_TO_COLOR[encounter.bestDifficulty]);
+										else
+											GameTooltip_AddColoredLine(GameTooltip, string.format(DASH_WITH_TEXT, name), DISABLED_FONT_COLOR);
+										end
 									end
 								end
 							end
-						end
+							
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
+
+							GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
+
+							GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
+							
+							GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
+
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
+							GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
+
+						elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
+							if(ConquestFrame and not ConquestFrame_HasActiveSeason()) then
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip_AddDisabledLine(GameTooltip, UNAVAILABLE);
+								GameTooltip_AddNormalLine(GameTooltip, CONQUEST_REQUIRES_PVP_SEASON);
+								GameTooltip:Show();
+								return;
+							end
 						
-						GameTooltip_AddBlankLineToTooltip(GameTooltip);
+							local weeklyProgress = C_WeeklyRewards.GetConquestWeeklyProgress();
+							local unlocksCompleted = weeklyProgress.unlocksCompleted or 0;
 
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
-
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
+							GameTooltip_AddNormalLine(GameTooltip, "Honor earned: " .. weeklyProgress.progress .. "/" .. weeklyProgress.maxProgress);
+							GameTooltip_AddBlankLineToTooltip(GameTooltip);
 						
-						GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
+							local maxUnlocks = weeklyProgress.maxUnlocks or 3;
+							local description;
+							if unlocksCompleted > 0 then
+								description = RATED_PVP_WEEKLY_VAULT_TOOLTIP:format(unlocksCompleted, maxUnlocks);
 
-						GameTooltip_AddBlankLineToTooltip(GameTooltip);
-						GameTooltip_AddNormalLine(GameTooltip, string.format("%s/%s rewards unlocked.", thirdThreshold and 3 or secondThreshold and 2 or firstThreshold and 1 or 0, 3))
+							else
+								description = RATED_PVP_WEEKLY_VAULT_TOOLTIP_NO_REWARDS:format(unlocksCompleted, maxUnlocks);
 
-					elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
-						if(ConquestFrame and not ConquestFrame_HasActiveSeason()) then
-							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-							GameTooltip_AddDisabledLine(GameTooltip, UNAVAILABLE);
-							GameTooltip_AddNormalLine(GameTooltip, CONQUEST_REQUIRES_PVP_SEASON);
-							GameTooltip:Show();
-							return;
-						end
-					
-						local weeklyProgress = C_WeeklyRewards.GetConquestWeeklyProgress();
-						local unlocksCompleted = weeklyProgress.unlocksCompleted or 0;
+							end
 
-						GameTooltip_AddNormalLine(GameTooltip, "Honor earned: " .. weeklyProgress.progress .. "/" .. weeklyProgress.maxProgress);
-						GameTooltip_AddBlankLineToTooltip(GameTooltip);
-					
-						local maxUnlocks = weeklyProgress.maxUnlocks or 3;
-						local description;
-						if unlocksCompleted > 0 then
-							description = RATED_PVP_WEEKLY_VAULT_TOOLTIP:format(unlocksCompleted, maxUnlocks);
-
-						else
-							description = RATED_PVP_WEEKLY_VAULT_TOOLTIP_NO_REWARDS:format(unlocksCompleted, maxUnlocks);
-
+							GameTooltip_AddNormalLine(GameTooltip, description);
+						
+							--GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+							--GameTooltip:Show();
 						end
 
-						GameTooltip_AddNormalLine(GameTooltip, description);
-					
-						--GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-						--GameTooltip:Show();
+						GameTooltip_AddBlankLineToTooltip(GameTooltip);
+						GameTooltip_AddInstructionLine(GameTooltip, WEEKLY_REWARDS_CLICK_TO_PREVIEW_INSTRUCTIONS);
+
+						GameTooltip:Show()
+
 					end
+				end)
 
-					GameTooltip_AddBlankLineToTooltip(GameTooltip);
-					GameTooltip_AddInstructionLine(GameTooltip, WEEKLY_REWARDS_CLICK_TO_PREVIEW_INSTRUCTIONS);
+				currentFrame:SetValue(activities[3].progress)
 
-					GameTooltip:Show()
-
-				end
-			end)
-
-			currentFrame:SetValue(activities[3].progress)
-
-			currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (frameIndex == 1 and "Dungeons" or frameIndex == 2 and "Honor" or frameIndex == 3 and "Bosses" or ""))
-			currentFrame.Text:SetTextColor(CreateColorFromHexString(not firstThreshold and currentColor or "FFFFFFFF"):GetRGBA())
+				currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (k == 1 and "Dungeons" or k == 2 and "Bosses" or k == 3 and "World" or ""))
+				currentFrame.Text:SetTextColor(CreateColorFromHexString(not firstThreshold and currentColor or "FFFFFFFF"):GetRGBA())
+			end
 		end
 	end)
 

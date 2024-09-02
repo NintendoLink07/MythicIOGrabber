@@ -511,7 +511,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="0/8 Dungeons" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="Activity 1 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -543,7 +543,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="0/7 Bosses" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="Activity 2 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -562,7 +562,7 @@
                                         </Scripts>
                                     </StatusBar>
 
-                                    <StatusBar parentKey="HonorStatus" inherits="BackdropTemplate">  <!--  mixin="WeeklyRewardsActivityMixin"-->
+                                    <StatusBar parentKey="WorldStatus" inherits="BackdropTemplate">  <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>
@@ -575,7 +575,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="0/5000 Honor" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -602,7 +602,7 @@
                                         <Size x="165" y="120" />
 
                                         <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.HonorStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.WorldStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
                                         </Anchors>
                                     </Frame>
 

@@ -5,7 +5,9 @@
 
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background" setAllPoints="true" />
+                <Texture parentKey="Background" setAllPoints="true">
+                    <Color r="0" g="0" b="0" a="0.5" />
+                </Texture>
             </Layer>
         </Layers>
 
@@ -122,5 +124,73 @@
                 </Frames>
             </Frame>
         </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Comment" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="40" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="BaseInfoDivider" atlas="tab-divider-top">
+                    <Color r="0" g="0" b="0" a="1" />
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="BackgroundDivider1" atlas="gm-bgopen-divider-horizontal" useAtlasSize="true">
+                    <Color r="0" g="0" b="0" a="1" />
+                    <Size y="18" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </Texture>
+
+                <Texture atlas="tab-divider-top">
+                    <Color r="0" g="0" b="0" a="1" />
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20" />
+                    </Anchors>
+                </Texture>
+
+                <Texture atlas="tab-divider-top">
+                    <Color r="0" g="0" b="0" a="1" />
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-40"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-40" />
+                    </Anchors>
+                </Texture>
+
+                <Texture atlas="tab-divider-top">
+                    <Color r="0" g="0" b="0" a="1" />
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-60"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-60" />
+                    </Anchors>
+                </Texture>
+
+                <Texture atlas="tab-divider-top">
+                    <Color r="0" g="0" b="0" a="1" />
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-80"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-80" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

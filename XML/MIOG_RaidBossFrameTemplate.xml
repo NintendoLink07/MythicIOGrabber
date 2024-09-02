@@ -3,7 +3,9 @@
     <Frame name="MIOG_RaidBossFrameTemplate" virtual="true">
         <Layers>
             <Layer level="BORDER">
-                <Texture parentKey="Border" setAllPoints="true" />
+                <Texture parentKey="Border" setAllPoints="true">
+                    <Color r="1" g="0" b="0" a="1" />
+                </Texture>
             </Layer>
 
             <Layer level="ARTWORK">

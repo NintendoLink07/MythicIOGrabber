@@ -51,7 +51,7 @@ miog.resetNewRaiderIOInfoPanel = function(panel)
 			bossFrame.Index:SetText("")
 			bossFrame.Icon:SetTexture(nil)
 			bossFrame.Icon:SetDesaturated(true)
-			bossFrame.Border:SetColorTexture(0,0,0,0)
+			bossFrame.Border:SetColorTexture(1,0,0,1)
 
 		end
 	end
@@ -603,13 +603,24 @@ miog.fillNewRaiderIOPanel = function(panelWithFrame, playerName, realm)
 	local mplusData = miog.getMPlusSortData(playerName, realm)
 
 	for k, v in ipairs(miog.SEASONAL_MAP_IDS[forceSeason].dungeons) do
-		panelWithFrame.RaiderIOInformationPanel.MythicPlus["Dungeon" .. k].Icon:SetTexture(miog.MAP_INFO[v].icon)
-		panelWithFrame.RaiderIOInformationPanel.MythicPlus["Dungeon" .. k].Name:SetText(miog.MAP_INFO[v].shortName)
+		local currentDungeon = panelWithFrame.RaiderIOInformationPanel.MythicPlus["Dungeon" .. k]
+		currentDungeon.Name:SetText(miog.MAP_INFO[v].shortName)
+		currentDungeon.Icon:SetTexture(miog.MAP_INFO[v].icon)
+		currentDungeon.Icon:SetScript("OnMouseDown", function()
+			local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
+
+			--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+			EncounterJournal_OpenJournal(EJ_GetDifficulty(), instanceID, nil, nil, nil, nil)
+
+		end)
 
 		if(mplusData and mplusData[v]) then
 			local levelText = mplusData and (mplusData[v].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or mplusData[v].chests)) or 0
 		
-			panelWithFrame.RaiderIOInformationPanel.MythicPlus["Dungeon" .. k].Level:SetText(wticc(levelText, mplusData and mplusData[v].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+			currentDungeon.Level:SetText(wticc(levelText, mplusData and mplusData[v].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+		else
+			currentDungeon.Level:SetText(wticc(0, miog.CLRSCC.red))
+
 		end
 
 	end
@@ -622,6 +633,13 @@ miog.fillNewRaiderIOPanel = function(panelWithFrame, playerName, realm)
 		local currentRaid = panelWithFrame.RaiderIOInformationPanel.Raids["Raid" .. raidCounter]
 		
 		currentRaid.Icon:SetTexture(miog.MAP_INFO[v].icon)
+		currentRaid.Icon:SetScript("OnMouseDown", function()
+			local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
+			local difficulty = 16
+			--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+			EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+		end)
 		currentRaid.Name:SetText(miog.MAP_INFO[v].shortName)
 
 		for i = 1, 12, 1 do
@@ -667,7 +685,7 @@ miog.fillNewRaiderIOPanel = function(panelWithFrame, playerName, realm)
 										bossesDone[z] = true
 
 									else
-										currentRaid[currentBoss].Border:SetColorTexture(0,0,0,0)
+										--currentRaid[currentBoss].Border:SetColorTexture(0,0,0,0)
 						
 									end
 								end
@@ -680,6 +698,13 @@ miog.fillNewRaiderIOPanel = function(panelWithFrame, playerName, realm)
 	
 								currentRaid.Progress:SetText(miog.DIFFICULTY[a].shortName .. ":" .. currentTable.difficulties[a].bossesKilled .. "/" .. raidData.character.raids[v].bossCount)
 								currentRaid.Progress:SetTextColor(miog.DIFFICULTY[a].miogColors:GetRGBA())
+								currentRaid.Icon:SetScript("OnMouseDown", function()
+									local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
+									local difficulty = a == 1 and 14 or a == 2 and 15 or 16
+									--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+									EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+			
+								end)
 
 								highestInfoSet = true
 							end

@@ -727,7 +727,7 @@ miog.MAP_INFO = {
 	[2652] = {shortName = "SV", icon = "interface/lfgframe/lfgicon-thestonevault", fileName = "thestonevault"},
 	[2660] = {shortName = "AK", icon = "interface/lfgframe/lfgicon-arakaracityofechoes", fileName = "arakaracityofechoes"},
 	[2661] = {shortName = "CBM", icon = "interface/lfgframe/lfgicon-cinderbrewmeadery", fileName = "cinderbrewmeadery"},
-	[2662] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-thedawnbreaker", fileName = "thedawnbreaker"},
+	[2662] = {shortName = "DB", icon = "interface/lfgframe/lfgicon-thedawnbreaker", fileName = "thedawnbreaker"},
 	[2669] = {shortName = "COT", icon = "interface/lfgframe/lfgicon-cityofthreads", fileName = "cityofthreads"},
 
 	[2657] = {

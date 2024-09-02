@@ -43,7 +43,7 @@
             <Frame parentKey="Boss1" inherits="MIOG_RaidBossFrameTemplate" hidden="true">
                 <Size x="18" y="18" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="BOTTOMLEFT" y="-2"/>
                 </Anchors>
             </Frame>
 

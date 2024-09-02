@@ -14,7 +14,7 @@ miog.setAffixes = function()
 	if(miog.MainTab) then
 		local affixIDs = C_MythicPlus.GetCurrentAffixes()
 
-		if(affixIDs and not miog.F.LITE_MODE) then
+		if(affixIDs and #affixIDs > 0 and not miog.F.LITE_MODE) then
 			local affixString = ""
 
 			miog.MainTab.Information.Affixes.tooltipText = ""

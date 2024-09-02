@@ -3,11 +3,11 @@
     <Frame name="MIOG_NewRaiderIOInfoPanelDungeonTemplate" virtual="true">
         <Layers>
             <Layer level="BORDER">
-                <Texture parentKey="Border" setAllPoints="true">
+                <Texture parentKey="Border">
                     <Size x="18" y="18" />
                     <Color r="0" g="0" b="0" a="1" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" y="-1"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -23,14 +23,12 @@
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
-                    <Size y="18" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="5" />
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Level" font="SystemFont_Shadow_Med1" justifyH="LEFT">
-                    <Size y="18" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="45" />
                     </Anchors>
