@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [2.4.9] - 2024-09-02
+## [2.4.9] - 2024-09-04
 
 ### Changed
 
