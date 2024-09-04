@@ -517,11 +517,13 @@ local function createFullNameFrom(type, value)
 			
 		end
 
-		local nameTable = miog.simpleSplit(name, "-")
-		
-		if(not nameTable[2]) then
-			name = nameTable[1] .. "-" .. realm
+		if(name) then
+			local nameTable = miog.simpleSplit(name, "-")
+			
+			if(not nameTable[2]) then
+				name = nameTable[1] .. "-" .. realm
 
+			end
 		end
 	end
 

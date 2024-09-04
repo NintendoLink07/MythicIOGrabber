@@ -29,7 +29,7 @@
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="3" type="number" />
                     </KeyValues>
-                    <Size x="60" />
+                    <Size x="45" />
                 </FontString>
 
                 <FontString parentKey="DelvesVault" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">

@@ -6,7 +6,7 @@ miog.getVaultProgress = function(lootLevel)
     local returnString = ""
 
     for k, v in ipairs(miog.VAULT_PROGRESS) do
-        local name = k == 1 and "D" or k == 2 and "P" or k == 3 and "R"
+        local name = k == 1 and "D" or k == 2 and "W" or k == 3 and "R"
 
         for i = 1, 3, 1 do
             if(v[i] and v[i] == lootLevel) then
@@ -117,6 +117,7 @@ miog.insertGearingData = function()
                 r, g, b = nil, nil, nil
 
                 for x, y in ipairs(v.trackInfo) do
+
                     if(a > v.maxUpgradeItemLevel) then
                         r, g, b =  miog.ITEM_QUALITY_COLORS[6].color:GetRGB()
                         
@@ -124,14 +125,13 @@ miog.insertGearingData = function()
                         for n = 1, y.length, 1 do
                             if(not v.awakenedInfo and a == y.data[n] or x ~= #v.trackInfo and a == y.data[n]) then
                                 r, g, b =  miog.ITEM_QUALITY_COLORS[x - 1].color:GetRGB()
-
                             end
                         end
                     end
                 end
         
                 if(r == nil) then
-                    r, g, b = 1, 1, 1
+                    r, g, b = miog.ITEM_QUALITY_COLORS[0].color:GetRGB()
         
                 end
 
@@ -189,7 +189,7 @@ miog.insertGearingData = function()
                 end
 
                 if(fullDelvesText ~= "") then
-                    currentChildren[a].Delves:SetText(fullDelvesText .. "(?)")
+                    currentChildren[a].Delves:SetText(fullDelvesText)
                 end
                 
                 currentChildren[a].DelvesVault:SetText(fullDelvesVaultText)

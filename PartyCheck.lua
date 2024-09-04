@@ -17,7 +17,7 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 			miog.updateRosterInfoData()
 		end
 
-		if(miog.guildSystem.baseFrames[unitName]) then
+		if(miog.guildSystem and miog.guildSystem.baseFrames[unitName]) then
 			MIOG_NewSettings.guildKeystoneInfo[unitName] = keystoneInfo
 			miog.guildSystem.keystoneData[unitName] = keystoneInfo
 

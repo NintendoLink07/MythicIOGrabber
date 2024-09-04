@@ -764,7 +764,7 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Guild">
+            <!--<Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Guild">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
                 </Anchors>
@@ -773,7 +773,7 @@
                         self.frameName = "Guild"
                     </OnLoad>
                 </Scripts>
-            </Button>
+            </Button>!-->
         </Frames>
 
         <Layers>
@@ -793,7 +793,7 @@
 
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 8)
+                PanelTemplates_SetNumTabs(self, 7)
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());

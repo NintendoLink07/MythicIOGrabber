@@ -198,7 +198,7 @@ miog.createFrames = function()
 		miog.loadGearingChart()
 		miog.loadAdventureJournal()
 		miog.loadPartyCheck()
-		miog.loadGuildFrame()
+		--miog.loadGuildFrame()
 		miog.loadDropChecker()
 
 		miog.loadRaiderIOChecker()

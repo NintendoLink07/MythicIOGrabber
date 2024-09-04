@@ -990,7 +990,7 @@ miog.ACTIVITY_INFO = {
 
 miog.SEASONAL_MAP_IDS = {
 	[12] = {dungeons = {2526, 2520, 2527, 2519, 2521, 2515, 2516, 2451}, raids = {2522, 2569, 2549}},
-	[13] = {dungeons = {2660, 2662, 2652, 2669, 670, 1822, 2290, 2286}, raids = {2657}},
+	[13] = {dungeons = {2660, 2662, 2652, 2669, 2651, 2661, 2649, 2648}, raids = {2657}}, --670, 1822, 2290, 2286, 
 }
 
 miog.SEASONAL_CHALLENGE_MODES = {
@@ -1462,8 +1462,8 @@ miog.GEARING_CHART = {
 		maxItemLevel = 639,
 		dungeon = {
 			info = {
-				[1] = {jumps = -1, name="Normal"},
-				[2] = {jumps = 7, name="Heroic/TW"},
+				[1] = {jumps = -1, name="Normal", ignoreForVault="true"},
+				[2] = {jumps = 4, name="Heroic/TW"},
 				[3] = {jumps = 11, vaultOffset = 3, name="Mythic"},
 				[4] = {jumps = 12, vaultOffset = 3, name="+2"},
 				[5] = {jumps = 12, name="+3"},
@@ -1507,14 +1507,14 @@ miog.GEARING_CHART = {
 		},
 		delves = {
 			info = {
-				[1] = {jumps = 4, name="L1"},
-				[2] = {jumps = 4, name="L2"},
-				[3] = {jumps = 5, name="L3"},
-				[4] = {jumps = 8, name="L4"},
-				[5] = {jumps = 10, name="L5"},
-				[6] = {jumps = 11, name="L6"},
-				[7] = {jumps = 12, name="L7"},
-				[8] = {jumps = 14, name="L8"},
+				[1] = {jumps = 1, vaultOffset = 7, name="L1"},
+				[2] = {jumps = 2, vaultOffset = 6, name="L2"},
+				[3] = {jumps = 4, vaultOffset = 5, name="L3"},
+				[4] = {jumps = 6, vaultOffset = 6, name="L4"},
+				[5] = {jumps = 8, vaultOffset = 6, name="L5"},
+				[6] = {jumps = 10, vaultOffset = 5, name="L6"},
+				[7] = {jumps = 12, vaultOffset = 4, name="L7"},
+				[8] = {jumps = 14, vaultOffset = 4, name="L8"},
 			},
 			itemLevels = {
 
@@ -1615,19 +1615,18 @@ for k, v in pairs(miog.GEARING_CHART) do
 	
 	for a, b in ipairs(v.dungeon.info) do
 		v.dungeon.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
-
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-		v.dungeon.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.dungeon.vaultJumpsOffset))
+
+		if(not b.ignoreForVault) then
+			v.dungeon.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.dungeon.vaultJumpsOffset))
+			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.dungeon.vaultJumpsOffset))] = true
+
+		end
 	end
 
 	for a, b in ipairs(v.raid.info) do
 		v.raid.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 1)] = true
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 2)] = true
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 3)] = true
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 4)] = true
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + 5)] = true
 		
 	end
 
@@ -1644,7 +1643,11 @@ for k, v in pairs(miog.GEARING_CHART) do
 			v.delves.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
 			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
 
-			v.delves.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (v.delves.vaultJumpsOffset))
+			if(not b.ignoreForVault) then
+				v.delves.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.delves.vaultJumpsOffset))
+				v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.delves.vaultJumpsOffset))] = true
+
+			end
 		end
 	end
 
@@ -1652,8 +1655,6 @@ for k, v in pairs(miog.GEARING_CHART) do
 		v.other.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
 		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
 	end
-
-	v.maxVaultItemLevel = v.trackInfo[#v.trackInfo][#v.trackInfo[#v.trackInfo].data - 2]
 
 	if(v.awakenedInfo) then
 		table.insert(v.trackInfo, {
