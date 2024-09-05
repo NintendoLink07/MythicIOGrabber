@@ -10,6 +10,10 @@ queueSystem.currentlyInUse = 0
 local queueFrameIndex = 1
 local randomBGFrame, randomEpicBGFrame, skirmish, brawl1, brawl2, specificBox
 
+local formatter = CreateFromMixins(SecondsFormatterMixin)
+formatter:SetStripIntervalWhitespace(true)
+formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
+
 miog.requeue = function()
 	local queueInfo = MIOG_NewSettings.lastUsedQueue
 
@@ -198,7 +202,7 @@ local function checkQueues()
 					table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
 
 					if(mode == "queued" and activeID == queueID or categoryID == LE_LFG_CATEGORY_RF) then
-						local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
+						--local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
 
 						local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
 
@@ -250,114 +254,79 @@ local function checkQueues()
 							frame.CancelApplication:SetAttribute("type", "macro")
 							frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
 
+							if(mapID and not isSpecificQueue) then
+								frame:SetScript("OnMouseDown", function()
+									EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].instanceID, nil, nil, nil, nil)
+								end)
+							end
+
 							frame:SetScript("OnEnter", function(self)
 								local tooltip = GameTooltip
-								GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0)
-								local mapInfo = miog.MAP_INFO[mapID]
+								tooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0)
 		
-								--DevTools_Dump(mapInfo)
-								--local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
-								--local activityInfo = C_LFGList.GetActivityInfoTable(miog.MAP_INFO[mapID].activityID);
-								local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
-								--local allowsCrossFaction = (categoryInfo and categoryInfo.allowCrossFaction) and (activityInfo and activityInfo.allowCrossFaction);
-		
-								local memberCounts = {TANK = totalTanks, HEALER = totalHealers, DAMAGER = totalDPS}
 								tooltip:SetText(isSpecificQueue and MULTIPLE_DUNGEONS or name, 1, 1, 1, true);
-		
-								--[[if (searchResultInfo.playstyle > 0) then
-									local playstyleString = C_LFGList.GetPlaystyleString(searchResultInfo.playstyle, activityInfo);
-									if(not searchResultInfo.crossFactionListing and allowsCrossFaction) then
-										GameTooltip_AddColoredLine(tooltip, GROUP_FINDER_CROSS_FACTION_LISTING_WITH_PLAYSTLE:format(playstyleString,  FACTION_STRINGS[searchResultInfo.leaderFactionGroup]), GREEN_FONT_COLOR);
-									else
-										GameTooltip_AddColoredLine(tooltip, playstyleString, GREEN_FONT_COLOR);
-									end
-								elseif(not searchResultInfo.crossFactionListing and allowsCrossFaction) then
-									GameTooltip_AddColoredLine(tooltip, GROUP_FINDER_CROSS_FACTION_LISTING_WITHOUT_PLAYSTLE:format(FACTION_STRINGS[searchResultInfo.leaderFactionGroup]), GREEN_FONT_COLOR);
-								end]]
-								--[[if ( searchResultInfo.comment and searchResultInfo.comment == "" and searchResultInfo.questID ) then
-									searchResultInfo.comment = LFGListUtil_GetQuestDescription(searchResultInfo.questID);
-								end
-								if ( searchResultInfo.comment ~= "" ) then
-									tooltip:AddLine(string.format(LFG_LIST_COMMENT_FORMAT, searchResultInfo.comment), LFG_LIST_COMMENT_FONT_COLOR.r, LFG_LIST_COMMENT_FONT_COLOR.g, LFG_LIST_COMMENT_FONT_COLOR.b, true);
-								end
-								tooltip:AddLine(" ");
-								if ( searchResultInfo.requiredDungeonScore > 0 ) then
-									tooltip:AddLine(GROUP_FINDER_MYTHIC_RATING_REQ_TOOLTIP:format(searchResultInfo.requiredDungeonScore));
-								end
-								if ( searchResultInfo.requiredPvpRating > 0 ) then
-									tooltip:AddLine(GROUP_FINDER_PVP_RATING_REQ_TOOLTIP:format(searchResultInfo.requiredPvpRating));
-								end
-								if ( searchResultInfo.requiredItemLevel > 0 ) then
-									if(activityInfo.isPvpActivity) then
-										tooltip:AddLine(LFG_LIST_TOOLTIP_ILVL_PVP:format(searchResultInfo.requiredItemLevel));
-									else
-										tooltip:AddLine(LFG_LIST_TOOLTIP_ILVL:format(searchResultInfo.requiredItemLevel));
-									end
-								end
-								if ( activityInfo.useHonorLevel and searchResultInfo.requiredHonorLevel > 0 ) then
-									tooltip:AddLine(LFG_LIST_TOOLTIP_HONOR_LEVEL:format(searchResultInfo.requiredHonorLevel));
-								end
-								if ( searchResultInfo.voiceChat ~= "" ) then
-									tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_VOICE_CHAT, searchResultInfo.voiceChat), nil, nil, nil, true);
-								end
-								if ( searchResultInfo.requiredItemLevel > 0 or (activityInfo.useHonorLevel and searchResultInfo.requiredHonorLevel > 0) or searchResultInfo.voiceChat ~= "" or  searchResultInfo.requiredDungeonScore > 0 or searchResultInfo.requiredPvpRating > 0 ) then
-									tooltip:AddLine(" ");
-								end
-		
-								if ( searchResultInfo.leaderName ) then
-									local factionString = searchResultInfo.leaderFactionGroup and FACTION_STRINGS[searchResultInfo.leaderFactionGroup];
-									if(factionString and (UnitFactionGroup("player") ~= PLAYER_FACTION_GROUP[searchResultInfo.leaderFactionGroup])) then
-										tooltip:AddLine(LFG_LIST_TOOLTIP_LEADER_FACTION:format(searchResultInfo.leaderName, factionString))
-									else
-										tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_LEADER, searchResultInfo.leaderName));
-									end
-								end]]
-		
-								--[[if( activityInfo.isRatedPvpActivity and searchResultInfo.leaderPvpRatingInfo) then
-									GameTooltip_AddNormalLine(tooltip, PVP_RATING_GROUP_FINDER:format(searchResultInfo.leaderPvpRatingInfo.activityName, searchResultInfo.leaderPvpRatingInfo.rating, PVPUtil.GetTierName(searchResultInfo.leaderPvpRatingInfo.tier)));
-								elseif ( isMythicPlusActivity and searchResultInfo.leaderOverallDungeonScore) then
-									local color = C_ChallengeMode.GetDungeonScoreRarityColor(searchResultInfo.leaderOverallDungeonScore);
-									if(not color) then
-										color = HIGHLIGHT_FONT_COLOR;
-									end
-									GameTooltip_AddNormalLine(tooltip, DUNGEON_SCORE_LEADER:format(color:WrapTextInColorCode(searchResultInfo.leaderOverallDungeonScore)));
-								end
-		
-								if(activityInfo.isMythicPlusActivity and searchResultInfo.leaderDungeonScoreInfo) then
-									local leaderDungeonScoreInfo = searchResultInfo.leaderDungeonScoreInfo;
-									local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(leaderDungeonScoreInfo.mapScore);
-									if (not color) then
-										color = HIGHLIGHT_FONT_COLOR;
-									end
-									if(leaderDungeonScoreInfo.mapScore == 0) then
-										GameTooltip_AddNormalLine(tooltip, DUNGEON_SCORE_PER_DUNGEON_NO_RATING:format(leaderDungeonScoreInfo.mapName, leaderDungeonScoreInfo.mapScore));
-									elseif (leaderDungeonScoreInfo.finishedSuccess) then
-										GameTooltip_AddNormalLine(tooltip, DUNGEON_SCORE_DUNGEON_RATING:format(leaderDungeonScoreInfo.mapName, color:WrapTextInColorCode(leaderDungeonScoreInfo.mapScore), leaderDungeonScoreInfo.bestRunLevel));
-									else
-										GameTooltip_AddNormalLine(tooltip, DUNGEON_SCORE_DUNGEON_RATING_OVERTIME:format(leaderDungeonScoreInfo.mapName, color:WrapTextInColorCode(leaderDungeonScoreInfo.mapScore), leaderDungeonScoreInfo.bestRunLevel));
-									end
-								end]]
+
 								if(hasData) then
 									if(name2 and name ~= name2) then
 										tooltip:AddLine(name2)
 										
 									end
+
+									tooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[difficulty].name))
+
+									if(IsPlayerAtEffectiveMaxLevel() and minLevel == UnitLevel("player")) then
+										tooltip:AddLine("Max level dungeon")
+										
+									else
+										tooltip:AddLine(isScalingDungeon and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
+
+									end
+									tooltip:AddLine(string.format("%d - %d players", minPlayersDisband and minPlayersDisband > 0 and minPlayersDisband or 1, maxPlayers))
 		
 									GameTooltip_AddBlankLineToTooltip(GameTooltip)
-		
-									if ( queuedTime > 0 ) then
-										tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime, false, false, 1, false)));
+
+									if(isTimewalker) then
+										tooltip:AddLine(PLAYER_DIFFICULTY_TIMEWALKER)
 									end
-		
-									if ( myWait > 0 ) then
-										tooltip:AddLine(string.format("Estimated wait time: |cffffffff%s|r", SecondsToTime(myWait, false, false, 1, false)));
+
+									if(isHoliday) then
+										tooltip:AddLine(CALENDAR_FILTER_HOLIDAYS)
 									end
-		
-									if ( averageWait > 0 ) then
-										tooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(averageWait, false, false, 1, false)));
+
+									if(bonusRep > 0) then
+										tooltip:AddLine(string.format(LFG_BONUS_REPUTATION, bonusRep))
+										
 									end
 		
 									tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds));
+		
+									if ( queuedTime > 0 ) then
+										tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", formatter:Format(GetTime() - queuedTime)));
+									end
+		
+									GameTooltip_AddBlankLineToTooltip(GameTooltip)
+									
+									tooltip:AddLine("Wait times:");
+		
+									if ( myWait > 0 ) then
+										tooltip:AddLine(string.format("~ |cffffffff%s|r", formatter:Format(myWait)));
+									end
+		
+									if ( averageWait > 0 ) then
+										tooltip:AddLine(string.format("Ø |cffffffff%s|r", formatter:Format(averageWait)));
+									end
+		
+									if ( tankWait > 0 ) then
+										tooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", formatter:Format(tankWait)));
+									end
+		
+									if ( healerWait > 0 ) then
+										tooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", formatter:Format(healerWait)));
+									end
+		
+									if ( damageWait > 0 ) then
+										tooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", formatter:Format(damageWait)));
+									end
 		
 									if(isSpecificQueue) then
 										GameTooltip_AddBlankLineToTooltip(GameTooltip)
@@ -372,7 +341,7 @@ local function checkQueues()
 											return k1.difficulty < k2.difficulty
 										end)
 		
-										for k, v in ipairs(specificQueueDungeons) do
+										for _, v in ipairs(specificQueueDungeons) do
 											tooltip:AddLine(v.difficulty .. " " .. v.name)
 		
 										end
@@ -383,50 +352,6 @@ local function checkQueues()
 								
 								end
 		
-								--[[if ( searchResultInfo.leaderName or searchResultInfo.age > 0 ) then
-									tooltip:AddLine(" ");
-								end
-		
-								if ( activityInfo.displayType == Enum.LFGListDisplayType.ClassEnumerate ) then
-									tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS_SIMPLE, searchResultInfo.numMembers));
-									for i=1, searchResultInfo.numMembers do
-										local role, class, classLocalized, specLocalized = C_LFGList.GetSearchResultMemberInfo(resultID, i);
-										local classColor = RAID_CLASS_COLORS[class] or NORMAL_FONT_COLOR;
-										tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_CLASS_ROLE, classLocalized, specLocalized), classColor.r, classColor.g, classColor.b);
-									end
-								else
-									tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, searchResultInfo.numMembers, memberCounts.TANK, memberCounts.HEALER, memberCounts.DAMAGER));
-								end
-		
-								if ( searchResultInfo.numBNetFriends + searchResultInfo.numCharFriends + searchResultInfo.numGuildMates > 0 ) then
-									tooltip:AddLine(" ");
-									tooltip:AddLine(LFG_LIST_TOOLTIP_FRIENDS_IN_GROUP);
-									tooltip:AddLine(LFGListSearchEntryUtil_GetFriendList(resultID), 1, 1, 1, true);
-								end
-		
-								local completedEncounters = C_LFGList.GetSearchResultEncounterInfo(resultID);
-								if ( completedEncounters and #completedEncounters > 0 ) then
-									tooltip:AddLine(" ");
-									tooltip:AddLine(LFG_LIST_BOSSES_DEFEATED);
-									for i=1, #completedEncounters do
-										tooltip:AddLine(completedEncounters[i], RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
-									end
-								end
-		
-								autoAcceptOption = autoAcceptOption or LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE;
-		
-								if autoAcceptOption == LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE and searchResultInfo.autoAccept then
-									tooltip:AddLine(" ");
-									tooltip:AddLine(LFG_LIST_TOOLTIP_AUTO_ACCEPT, LIGHTBLUE_FONT_COLOR:GetRGB());
-								end
-		
-								if ( searchResultInfo.isDelisted ) then
-									tooltip:AddLine(" ");
-									tooltip:AddLine(LFG_LIST_ENTRY_DELISTED, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true);
-								end
-		
-								tooltip:Show();]]
-		
 								GameTooltip:Show()
 							end)
 							frame:SetScript("OnLeave", function()
@@ -436,28 +361,6 @@ local function checkQueues()
 					end
 				end
 			
-				local subTitle;
-				local extraText;
-			
-				--[[if ( categoryID == LE_LFG_CATEGORY_RF and #allNames > 1 ) then --HACK - For now, RF works differently.
-					--We're queued for more than one thing
-					subTitle = table.remove(allNames, activeIndex);
-					extraText = string.format(ALSO_QUEUED_FOR, table.concat(allNames, PLAYER_LIST_DELIMITER));
-				elseif ( mode == "suspended" ) then
-					local suspendedPlayers = GetLFGSuspendedPlayers(categoryID);
-					if (suspendedPlayers and #suspendedPlayers > 0 ) then
-						extraText = "";
-						for i = 1, 3 do
-							if (suspendedPlayers[i]) then
-								if ( i > 1 ) then
-									extraText = extraText .. "\n";
-								end
-								extraText = extraText .. string.format(RAID_MEMBER_NOT_READY, suspendedPlayers[i]);
-							end
-						end
-					end
-				end]]
-
 				if(activeID) then
 					if ( mode == "queued" ) then
 
@@ -502,23 +405,8 @@ local function checkQueues()
 						--QueueStatusEntry_SetMinimalDisplay(entry, GetDisplayNameFromCategory(category), QUEUED_STATUS_UNKNOWN, subTitle, extraText);
 					end
 				end
-
-				--[[for categoryID, listEntry in ipairs(LFGQueuedForList) do
-					for dungeonID, queued in pairs(listEntry) do
-						if(queued == true) then
-							--DevTools_Dump({GetLFGDungeonInfo(dungeonID)})
-							--DevTools_Dump({})
-							local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID)
-		
-							if (hasData and queuedTime and not queueSystem.queueFrames[dungeonID]) then
-								createQueueFrame(categoryID, {GetLFGDungeonInfo(dungeonID)}, {GetLFGQueueStats(categoryID)})
-							end
-						end
-					end
-				end]]
 				
 				queueIndex = queueIndex + 1
-			else
 			end
 		end
 
@@ -562,9 +450,19 @@ local function checkQueues()
 				end)
 				frame:SetScript("OnEnter", function(self)
 					self.BackgroundHover:Show()
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					GameTooltip:SetText(string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants))
+
+					if(activeEntryInfo.questID > 0) then
+						GameTooltip:AddLine(LFG_TYPE_QUEST .. ": " .. C_QuestLog.GetTitleForQuestID(activeEntryInfo.questID))
+						
+					end
+
+					GameTooltip:Show()
 				end)
 				frame:SetScript("OnLeave", function(self)
 					self.BackgroundHover:Hide()
+					GameTooltip:Hide()
 				end)
 			end
 
@@ -602,9 +500,6 @@ local function checkQueues()
 						if(appStatus == "applied") then
 							local frame = createQueueFrame(frameData)
 
-							--[[frame.CancelApplication:SetScript("OnClick", function()
-								C_LFGList.CancelApplication(id)
-							end)]]
 							if(frame) then
 								frame.CancelApplication:SetAttribute("type", "macro")
 								frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
@@ -665,6 +560,7 @@ local function checkQueues()
 		--Try all PvP queues
 		for i=1, GetMaxBattlefieldID() do
 			local status, mapName, teamSize, registeredMatch, suspend, queueType, gameType, role, asGroup, shortDescription, longDescription, isSoloQueue = GetBattlefieldStatus(i);
+
 			if ( status and status ~= "none" and status ~= "error" ) then
 				local queuedTime = GetTime() - GetBattlefieldTimeWaited(i) / 1000
 				local estimatedTime = GetBattlefieldEstimatedWaitTime(i) / 1000
@@ -719,11 +615,18 @@ local function checkQueues()
 
 							tooltip:SetText(mapName, 1, 1, 1, true);
 
+							if(role ~= "") then
+								tooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper));
+							end
 
 							if(role ~= "") then
 								tooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper));
 							end
 
+							if(assignedSpec) then
+								tooltip:AddLine(ASSIGNED_COLON .. miog.SPECIALIZATIONS[assignedSpec].name);
+							end
+							
 							GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
 							if ( queuedTime > 0 ) then
@@ -934,12 +837,6 @@ local function checkQueues()
 	end
 end
 
-hooksecurefunc("LFGListSearchPanel_SetCategory", function()
-	miog.SearchPanel.categoryID = LFGListFrame.SearchPanel.categoryID
-	miog.SearchPanel.filters = LFGListFrame.SearchPanel.filters
-	miog.SearchPanel.preferredFilters = LFGListFrame.SearchPanel.preferredFilters
-end)
-
 miog.loadQueueSystem = function()
 	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
@@ -1064,7 +961,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
-		if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon and overwrittenParentIndex == nil)) then
+		if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon)) then
 			if(isAvailableForAll) then
 				local info = {}
 				info.entryType = "option"
@@ -1097,14 +994,15 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 				blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
 				blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = dungeonID, icon = info.icon}
 
-				if(subtypeID == 1) then
+				if(isFollowerDungeon) then
+					followerDungeonList[#followerDungeonList + 1] = info
+
+				elseif(subtypeID == 1) then
 					normalDungeonList[#normalDungeonList + 1] = info
 
 				elseif(subtypeID == 2) then
 					heroicDungeonList[#heroicDungeonList + 1] = info
 
-				else
-					followerDungeonList[#followerDungeonList + 1] = info
 				end
 			end
 		end
@@ -1127,10 +1025,13 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 	sortAndAddDungeonList(heroicDungeonList, overwrittenParentIndex == nil)
 
-	if(overwrittenParentIndex == nil) then
-		--sortAndAddDungeonList(followerDungeonList, true)
+	if(overwrittenParentIndex) then
+		queueDropDown:CreateTextLine(nil, overwrittenParentIndex, "Follower")
+	end
+
+	sortAndAddDungeonList(followerDungeonList, overwrittenParentIndex == nil)
 	
-	else
+	if(overwrittenParentIndex ~= nil) then
 		queueDropDown:CreateFunctionButton(nil, overwrittenParentIndex, "Queue for multiple dungeons", function()
 			LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
 

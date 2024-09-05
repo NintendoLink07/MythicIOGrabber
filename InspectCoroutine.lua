@@ -31,9 +31,8 @@ local function createSinglePartyCheckFrame(memberFrame, member)
 
 	miog.insertInfoIntoDropdown(member.name, miog.checkSystem.keystoneData[member.name])
 	
-	memberFrame.ExpandFrame:SetScript("OnClick", function(self)
+	memberFrame:SetScript("OnMouseDown", function(self)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		self:AdvanceState()
 		memberFrame.node:ToggleCollapsed()
 		detailedList[member.name] = memberFrame.node:IsCollapsed()
 	end)
@@ -501,7 +500,7 @@ local function updateRosterInfoData()
 					})
 
 					baseFrameData:Insert({
-						template = "MIOG_RaiderIOInformationPanel",
+						template = "MIOG_NewRaiderIOInfoPanel",
 						--template = "MIOG_NewRaiderIOInfoPanel",
 						name = member.name,
 						classFileName = member.classFileName
@@ -656,7 +655,7 @@ miog.createInspectCoroutine = function()
 
 		miog.PartyCheck.ScrollView = ScrollView
 		
-		ScrollUtil.InitScrollBoxListWithScrollBar(miog.PartyCheck.ScrollBox, miog.PartyCheck.ScrollBar, ScrollView)
+		ScrollUtil.InitScrollBoxListWithScrollBar(miog.PartyCheck.ScrollBox, miog.PartyCheck.ScrollBox.ScrollBar, ScrollView)
 
 		local function initializePartyFrames(frame, node)
 			local data = node:GetData()
@@ -666,20 +665,12 @@ miog.createInspectCoroutine = function()
 		
 				createSinglePartyCheckFrame(frame, data)
 		
-			elseif(data.template == "MIOG_RaiderIOInformationPanel") then
-				miog.groupSystem.raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
-				
-				local playerName, realm = miog.createSplitName(data.name)
-
-				miog.retrieveRaiderIOData(playerName, realm, miog.groupSystem.raiderIOPanels[data.name])
-
 			elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
 				miog.groupSystem.raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
 				
 				local playerName, realm = miog.createSplitName(data.name)
-
+				local mplusData, raidData = miog.fillNewRaiderIOPanel(frame, playerName, realm)
 				--miog.retrieveRaiderIOData(playerName, realm, miog.groupSystem.raiderIOPanels[data.name])
-				miog.fillNewRaiderIOPanel(miog.groupSystem.raiderIOPanels[data.name], playerName, realm)
 
 				if(data.classFileName) then
 					local r, g, b = C_ClassColor.GetClassColor(data.classFileName):GetRGB()
@@ -696,6 +687,12 @@ miog.createInspectCoroutine = function()
 		end
 
 		ScrollView:SetElementFactory(CustomFactory)
+		ScrollView:SetElementResetter(function(frame, data)
+			if(data.template == "MIOG_NewRaiderIOInfoPanel") then
+				miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
+			end
+		
+		end)
 	end
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")

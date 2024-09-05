@@ -6,7 +6,7 @@
                 <Size x="35" y="18"/>
                 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="20" y="-3"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-3"/>
                 </Anchors>
             </Frame>
 
@@ -14,7 +14,7 @@
                 <Size x="100" y="18"/>
                 
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Gr" relativePoint="RIGHT" x="3"/>
+                    <Anchor point="LEFT" relativeKey="$parent.Gr" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Frame>
             
@@ -38,7 +38,7 @@
                 <Size x="44" y="18"/>
                 
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="5"/>
+                    <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Frame>
             
@@ -51,7 +51,7 @@
             </Frame>
             
             <Frame name="keylevel" parentKey="Key" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="54" y="18"/>
+                <Size x="49" y="18"/>
                 
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Dur" relativePoint="RIGHT" x="5"/>
@@ -79,14 +79,16 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
-            </Frame>
 
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </EventFrame>
+                <Frames>
+                    <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" x="-5"/>
+                            <Anchor point="BOTTOMRIGHT" x="-5"/>
+                        </Anchors>
+                    </EventFrame>
+                </Frames>
+            </Frame>
         </Frames>
 
         <Layers>

@@ -95,7 +95,7 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString parentKey="Name" font="SystemFont_Shadow_Med1"  justifyH="LEFT" enableMouseMotion="true">
-                            <Size x="120" y="20" />
+                            <Size x="105" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
                             </Anchors>
@@ -108,9 +108,16 @@
                     </Layer>
                     
                     <Layer level="ARTWORK">
-                        <Texture parentKey="Spec">
+                        <Texture parentKey="Race">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                            </Anchors>
+                            <Size  x="15" y="15" />
+                        </Texture> 
+
+                        <Texture parentKey="Spec">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Race" relativePoint="RIGHT"/>
                             </Anchors>
                             <Size  x="15" y="15" />
                         </Texture> 
@@ -182,15 +189,7 @@
                 </Layers>
 
             </Frame>
-
-            <!--<Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="2" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>-->
-
-            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
+            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_NewRaiderIOInfoPanel" hidden="true">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="2" type="number" />
                     <KeyValue key="expand" value="true" type="boolean" />

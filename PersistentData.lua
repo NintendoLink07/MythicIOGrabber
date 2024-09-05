@@ -252,9 +252,9 @@ miog.C = {
 	--PATH / TEXTURES FILES
 	STANDARD_FILE_PATH = "Interface/Addons/MythicIOGrabber/res",
 	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/star_64.png:8:8|t",
-	TANK_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/tankIcon.png:20:20|t",
-	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png:20:20|t",
-	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:20:20|t",
+	TANK_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/tankIcon.png:16:16|t",
+	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png:16:16|t",
+	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:16:16|t",
 	STAR_TEXTURE = "⋆",
 	
 	AVAILABLE_ROLES = {
@@ -492,7 +492,7 @@ miog.MAP_INFO = {
 	-- RAIDS
 
 	[2444] = {
-		shortName = "DF WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dfWorld.png", fileName = "dragonislescontinent",
+		shortName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dragonislescontinent.png", fileName = "dragonislescontinent",
 	},
 	[2549] = {
 		bossIcons = {
@@ -746,7 +746,7 @@ miog.MAP_INFO = {
 		fileName = "nerubarpalance",
 	},
 
-	[2774] = {shortName = "KA", fileName = "khazalgar",},
+	[2601] = {shortName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/khazalgar.png", fileName = "khazalgar",},
 }
 
 miog.LFG_ID_INFO = {
@@ -989,7 +989,18 @@ miog.ACTIVITY_INFO = {
 }
 
 miog.SEASONAL_MAP_IDS = {
-	[12] = {dungeons = {2526, 2520, 2527, 2519, 2521, 2515, 2516, 2451}, raids = {2522, 2569, 2549}},
+	[12] = {dungeons = {2526, 2520, 2527, 2519, 2521, 2515, 2516, 2451}, raids = {2549, 2569, 2522}},
+	[13] = {dungeons = {2660, 2662, 2652, 2669, 670, 1822, 2290, 2286}, raids = {2657, 2549}}, --2651, 2661, 2649, 2648
+}
+
+for k, v in pairs(miog.SEASONAL_MAP_IDS) do
+	table.sort(v.dungeons, function(k1, k2)
+		return miog.MAP_INFO[k1].shortName < miog.MAP_INFO[k2].shortName
+
+	end)
+end
+
+miog.DROPCHECKER_MAP_IDS ={
 	[13] = {dungeons = {2660, 2662, 2652, 2669, 2651, 2661, 2649, 2648}, raids = {2657}}, --670, 1822, 2290, 2286, 
 }
 
@@ -1135,6 +1146,8 @@ local function loadRawData()
 				local mapInfo = miog.MAP_INFO[dungeonEncounterInfo.mapID]
 				
 				if(mapInfo) then
+					mapInfo.instanceID = journalInstanceID
+
 					if(miog.JOURNAL_CREATURE_INFO[journalEncounterID]) then
 						if(dungeonEncounterInfo.faction == nil or dungeonEncounterInfo.faction == 1 and faction == "Alliance" or dungeonEncounterInfo.faction == 0 and faction == "Horde") then
 							local bossIndex = #mapInfo.bosses+1
@@ -1173,18 +1186,17 @@ local function loadRawData()
 
 	local expansionTable = {}
 
-
 	for x = 1, EJ_GetNumTiers() - 1, 1 do
-			local name, link = EJ_GetTierInfo(x)
-			local expansionInfo = GetExpansionDisplayInfo(x-1)
-	
-			local expInfo = {}
-			expInfo.entryType = "arrow"
-			expInfo.index = x + 10000
-			expInfo.text = name
-			expInfo.icon = expansionInfo and expansionInfo.logo
-	
-			expansionTable[#expansionTable+1] = expInfo
+		local name, link = EJ_GetTierInfo(x)
+		local expansionInfo = GetExpansionDisplayInfo(x-1)
+
+		local expInfo = {}
+		expInfo.entryType = "arrow"
+		expInfo.index = x + 10000
+		expInfo.text = name
+		expInfo.icon = expansionInfo and expansionInfo.logo
+
+		expansionTable[#expansionTable+1] = expInfo
 			
 	end
 
@@ -1287,6 +1299,7 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[v[1]].horizontal = miog.MAP_INFO[v[10]].horizontal
 			miog.ACTIVITY_INFO[v[1]].vertical = miog.MAP_INFO[v[10]].vertical
 			miog.ACTIVITY_INFO[v[1]].background = miog.MAP_INFO[v[10]].background
+
 			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
 			miog.ACTIVITY_INFO[v[1]].shortName = miog.GROUP_ACTIVITY[v[6]] and miog.GROUP_ACTIVITY[v[6]].shortName or miog.MAP_INFO[v[10]].shortName
 
@@ -1832,34 +1845,34 @@ miog.SPECIALIZATIONS = {
 }
 
 miog.RACES = {
-	[1] = "raceicon-human-male",
-	[2] = "raceicon-orc-male",
-	[3] = "raceicon-dwarf-male",
-	[4] = "raceicon-nightelf-male",
-	[5] = "raceicon-undead-male",
-	[6] = "raceicon-tauren-male",
-	[7] = "raceicon-gnome-male",
-	[8] = "raceicon-troll-male",
-	[9] = "raceicon-goblin-male",
-	[10] = "raceicon-bloodelf-male",
-	[11] = "raceicon-draenei-male",
-	[22] = "raceicon-worgen-male",
-	[24] = "raceicon-pandaren-male",
-	[25] = "raceicon-pandaren-male",
-	[26] = "raceicon-pandaren-male",
-	[27] = "raceicon-nightborne-male",
-	[28] = "raceicon-highmountain-male",
-	[29] = "raceicon-voidelf-male",
-	[30] = "raceicon-lightforged-male",
-	[31] = "raceicon-zandalari-male",
-	[32] = "raceicon-kultiran-male",
-	[33] = "raceicon-darkirondwarf-male",
-	[34] = "raceicon-darkirondwarf-male",
-	[35] = "raceicon-vulpera-male",
-	[36] = "raceicon-magharorc-male",
-	[37] = "raceicon-mechagnome-male",
-	[52] = "raceicon-dracthyr-male",
-	[70] = "raceicon-dracthyr-male",
+	[1] = "raceicon128-human-male",
+	[2] = "raceicon128-orc-male",
+	[3] = "raceicon128-dwarf-male",
+	[4] = "raceicon128-nightelf-male",
+	[5] = "raceicon128-undead-male",
+	[6] = "raceicon128-tauren-male",
+	[7] = "raceicon128-gnome-male",
+	[8] = "raceicon128-troll-male",
+	[9] = "raceicon128-goblin-male",
+	[10] = "raceicon128-bloodelf-male",
+	[11] = "raceicon128-draenei-male",
+	[22] = "raceicon128-worgen-male",
+	[24] = "raceicon128-pandaren-male",
+	[25] = "raceicon128-pandaren-male",
+	[26] = "raceicon128-pandaren-male",
+	[27] = "raceicon128-nightborne-male",
+	[28] = "raceicon128-highmountain-male",
+	[29] = "raceicon128-voidelf-male",
+	[30] = "raceicon128-lightforged-male",
+	[31] = "raceicon128-zandalari-male",
+	[32] = "raceicon128-kultiran-male",
+	[33] = "raceicon128-darkirondwarf-male",
+	[34] = "raceicon128-darkirondwarf-male",
+	[35] = "raceicon128-vulpera-male",
+	[36] = "raceicon128-magharorc-male",
+	[37] = "raceicon128-mechagnome-male",
+	[52] = "raceicon128-dracthyr-male",
+	[70] = "raceicon128-dracthyr-male",
 
 }
 

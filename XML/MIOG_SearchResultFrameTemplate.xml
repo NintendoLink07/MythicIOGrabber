@@ -2,7 +2,12 @@
 ..\..\FrameXML\UI.xsd">    
     <Frame name="MIOG_SearchResultFrameTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
         <KeyValues>
-            <KeyValue key="expand" value="true" type="boolean" />
+            <KeyValue key="expand" value="true" type="boolean"/>
+            <KeyValue key="topPadding" value="1" type="number"/>
+            <KeyValue key="bottomPadding" value="1" type="number"/>
+            <KeyValue key="leftPadding" value="1" type="number"/>
+            <KeyValue key="rightPadding" value="1" type="number"/>
+            <KeyValue key="spacing" value="2" type="number"/>
         </KeyValues>
         
         <Size y="40" />
@@ -255,7 +260,7 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_RaiderIOInformationPanel" hidden="true">
+            <Frame parentKey="RaiderIOInformationPanel" inherits="MIOG_NewRaiderIOInfoPanel" hidden="true">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="3" type="number" />
                     <KeyValue key="expand" value="true" type="boolean" />

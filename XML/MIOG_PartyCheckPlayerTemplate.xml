@@ -105,29 +105,6 @@
             </OnLeave>
         </Scripts>
 
-        <Frames>
-            <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="1" type="number" />
-                </KeyValues>
-
-                <Size x="15" y="15" />
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2"/>
-                </Anchors>
-
-                <Scripts>
-                    <OnLoad>
-                        self:OnLoad()
-                        self:SetMaxStates(2)
-                        self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
-                        self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
-                        self:SetState(false)
-                    </OnLoad>
-                </Scripts>
-            </Button>
-        </Frames>
-
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background" setAllPoints="true" />
@@ -138,7 +115,7 @@
                 <FontString parentKey="Group" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
                     <Size x="35" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="3" />
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2"/>
                     </Anchors>
                 </FontString>
 
@@ -193,7 +170,7 @@
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Keylevel" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
-                    <Size x="30" />
+                    <Size x="25" />
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Keystone" relativePoint="RIGHT" x="4"/>
@@ -201,7 +178,7 @@
                 </FontString>
 
                 <FontString parentKey="Score" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
-                    <Size x="40" />
+                    <Size x="35" />
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Keylevel" relativePoint="RIGHT" x="10"/>

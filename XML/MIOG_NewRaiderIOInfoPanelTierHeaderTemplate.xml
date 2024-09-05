@@ -1,11 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_RaidPanelTemplate" virtual="true" hidden="true">
-        <Size y="60" />
+    <Frame name="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate" virtual="true">
         <Layers>
-            <Layer level="ARTWORK">
+            <Layer level="BORDER">
                 <Texture parentKey="Border" setAllPoints="true">
-                    <Size x="16" y="16" />
+                    <Size x="18" y="18" />
                     <Color r="0" g="0" b="0" a="1" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2"/>
@@ -21,29 +20,29 @@
                     </Anchors>
                 </Texture>
             </Layer>
-        
+
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="5" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Progress" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Progress1" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="54" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress2" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="LEFT" x="42" />
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
-
-        <Frames>
-            <Frame parentKey="BossFrames" inherits="MIOG_RaidPanelTierTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
-            </Frame>
-        </Frames>
     </Frame>
 </Ui>

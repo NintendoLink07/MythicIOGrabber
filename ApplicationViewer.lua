@@ -17,7 +17,6 @@ local function resetBaseFrame(pool, childFrame)
     childFrame:Hide()
 	childFrame.layoutIndex = nil
 	childFrame.applicantID = nil
-
 	childFrame:ClearBackdrop()
 
 end
@@ -257,7 +256,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 	local nameFontString = applicantMemberFrame.BasicInformation.Name
 	--nameFontString:SetText(playerIsIgnored and wticc(playerName, "FFFF0000") or wticc(playerName, select(4, GetClassColor(class))))
-	nameFontString:SetText(playerName)
+	nameFontString:SetText(applicantData.numMembers .. " - " .. playerName)
 	nameFontString:SetScript("OnMouseDown", function(_, button)
 		if(button == "RightButton") then
 			local copybox = miog.ApplicationViewer.CopyBox
@@ -274,30 +273,25 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 		nameFontString:SetWidth(100)
 	end
 
-	local specFrame = applicantMemberFrame.BasicInformation.Spec
+	applicantMemberFrame.BasicInformation.Race:SetAtlas(miog.RACES[raceID])
 
 	if(miog.SPECIALIZATIONS[specID] and class == miog.SPECIALIZATIONS[specID].class.name) then
-		specFrame:SetTexture(miog.SPECIALIZATIONS[specID].icon)
+		applicantMemberFrame.BasicInformation.Spec:SetTexture(miog.SPECIALIZATIONS[specID].icon)
 
 	else
-		specFrame:SetTexture(miog.SPECIALIZATIONS[0].icon)
+		applicantMemberFrame.BasicInformation.Spec:SetTexture(miog.SPECIALIZATIONS[0].icon)
 
 	end
 
-	local roleFrame = applicantMemberFrame.BasicInformation.Role
-	roleFrame:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
-
-	local primaryIndicator = applicantMemberFrame.BasicInformation.Primary
-	local secondaryIndicator = applicantMemberFrame.BasicInformation.Secondary
-	local itemLevelFrame = applicantMemberFrame.BasicInformation.ItemLevel
+	applicantMemberFrame.BasicInformation.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
 
 	local reqIlvl = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel or 0
 
 	if(reqIlvl > itemLevel) then
-		itemLevelFrame:SetText(wticc(miog.round(itemLevel, 1), miog.CLRSCC["red"]))
+		applicantMemberFrame.BasicInformation.ItemLevel:SetText(wticc(miog.round(itemLevel, 1), miog.CLRSCC["red"]))
 
 	else
-		itemLevelFrame:SetText(miog.round(itemLevel, 1))
+		applicantMemberFrame.BasicInformation.ItemLevel:SetText(miog.round(itemLevel, 1))
 
 	end
 
@@ -352,35 +346,22 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 		declineButton:Show()
 		inviteButton:Show()
 
+	else
+		declineButton:Hide()
+		inviteButton:Hide()
+
 	end
 
-	--applicantMemberFrame.RaiderIOInformationPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. (applicantData.comment or ""))
+	applicantMemberFrame.RaiderIOInformationPanel.Comment:SetText(COMMENTS_COLON .. " " .. (applicantData.comment or ""))
+	
+	local activeEntry = C_LFGList.GetActiveEntryInfo()
+	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
 
-	local infoPanel = applicantMemberFrame.RaiderIOInformationPanel.InfoPanel
+	--[[local infoPanel = applicantMemberFrame.RaiderIOInformationPanel.InfoPanel
 
 	infoPanel.Comment:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
 	infoPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
-	infoPanel.RaceRoles:SetText("Role: ")
-
-	if(tank) then
-		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.TANK_TEXTURE)
-
-	end
-
-	if(healer) then
-		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.HEALER_TEXTURE)
-
-	end
-
-	if(damager) then
-		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() .. miog.C.DPS_TEXTURE)
-
-	end
-
-	if(raceID and miog.RACES[raceID]) then
-		infoPanel.RaceRoles:SetText(infoPanel.RaceRoles:GetText() ..  " " .. _G["RACE"] .. ": " .. CreateAtlasMarkup(miog.RACES[raceID], miog.C.APPLICANT_MEMBER_HEIGHT, miog.C.APPLICANT_MEMBER_HEIGHT))
-
-	end
+	
 
 	miog.retrieveRaiderIOData(playerName, realm, applicantMemberFrame)
 
@@ -388,8 +369,6 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
 	secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
 
-	local activeEntry = C_LFGList.GetActiveEntryInfo()
-	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
 
 	if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 		primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
@@ -437,9 +416,25 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 		end
 	
+	end]]
+
+	local mplusData, raidData = miog.fillNewRaiderIOPanel(applicantMemberFrame.RaiderIOInformationPanel, playerName, realm)
+	miog.setInfoIndicators(applicantMemberFrame.BasicInformation, categoryID, dungeonScore, dungeonData, raidData, pvpData)
+
+	if(tank) then
+		applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:SetText(applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:GetText() .. miog.C.TANK_TEXTURE .. " ")
+
 	end
 
-	--miog.fillNewRaiderIOPanel(applicantMemberFrame, playerName, realm)
+	if(healer) then
+		applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:SetText(applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:GetText() .. miog.C.HEALER_TEXTURE .. " ")
+
+	end
+
+	if(damager) then
+		applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:SetText(applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:GetText() .. miog.C.DPS_TEXTURE .. " ")
+
+	end
 
 	--BasicInformation:MarkDirty()
 	applicantMemberFrame:MarkDirty()
@@ -447,9 +442,16 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 end
 
+local testArray = {}
+
 local function createApplicantFrame(applicantID)
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
+	if(testArray[applicantID]) then
+		print(applicantID, "is already in the system?")
+	end
+
+	testArray[applicantID] = true
 	--if(applicantData) then
 		local applicantFrame = applicantFramePool:Acquire()
 
@@ -457,8 +459,8 @@ local function createApplicantFrame(applicantID)
 		applicantFrame.memberFrames = {}
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePool("Frame", applicantFrame, "MIOG_ApplicantMemberFrameTemplate", function(pool, frame)
-			miog.resetRaiderIOInformationPanel(frame)
-			--miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
+			--miog.resetRaiderIOInformationPanel(frame)
+			miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
 		end)
 
 		applicantFrame.applicantID = applicantID
@@ -673,17 +675,14 @@ end
 
 local function addOrShowApplicant(applicantID)
 	if(applicantSystem.applicantMember[applicantID]) then
-		if(applicantSystem.applicantMember[applicantID].frame) then
-			applicantSystem.applicantMember[applicantID].frame:Show()
-
-		else
+		if(not applicantSystem.applicantMember[applicantID].frame) then
 			applicantSystem.applicantMember[applicantID].status = "inProgress"
 			createApplicantFrame(applicantID)
-			applicantSystem.applicantMember[applicantID].frame:Show()
 
 		end
 
 		applicantSystem.applicantMember[applicantID].frame.layoutIndex = applicationFrameIndex
+		applicantSystem.applicantMember[applicantID].frame:Show()
 
 		applicationFrameIndex = applicationFrameIndex + 1
 
@@ -871,6 +870,7 @@ local function checkApplicantList(forceReorder, applicantID)
 		for index, v in pairs(applicantSystem.applicantMember) do
 			if(not updatedFrames[index] and v.frame) then
 				v.frame:Hide()
+				v.frame.layoutIndex = nil
 	
 			end
 		end
@@ -897,7 +897,7 @@ local function createAVSelfEntry(pvpBracket)
 		applicationStatus = "applied",
 		numMembers = 1,
 		isNew = true,
-		comment = "Tettles is question mark spam pinging me, please help.",
+		comment = "aaaaa aaaaaa aaaaaaaaaaa aaaaaaaaaaa aaa aaaaaaaaaaaa aaaa aaaa",
 		displayOrderID = 1,
 	}
 
@@ -979,13 +979,14 @@ local function createFullEntries(iterations)
 
 	for index = 1, iterations, 1 do
 		local applicantID = random(10000, 99999)
+		local numMembers = random(1, 3)
 
 		miog.DEBUG_APPLICANT_DATA[applicantID] = {
 			applicantID = applicantID,
 			applicationStatus = "applied",
-			numMembers = random(1, 3),
+			numMembers = numMembers,
 			isNew = true,
-			comment = "Tettles is question mark spam pinging me, please help.",
+			comment = "aaaaa aaaaaa aaaaaaaaaaa aaaaaaaaaaa aaa aaaaaaaaaaaa aaaa aaaa",
 			displayOrderID = 1,
 		}
 

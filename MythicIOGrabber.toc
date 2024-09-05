@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 2.4.9
+## Version: 2.5.0
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -59,11 +59,6 @@ XML\MIOG_ApplicantFrameTemplate.xml
 XML\MIOG_ApplicantMemberFrameTemplate.xml
 
 XML\MIOG_SearchResultFrameTemplate.xml
-
-XML\MIOG_DungeonRowTemplate.xml
-XML\MIOG_RaidPanelTemplate.xml
-XML\MIOG_RaidPanelTierTemplate.xml
-XML\MIOG_RaidBossFrameTemplate.xml
 
 XML\MIOG_GroupMemberTemplate.xml
 XML\MIOG_SmallGroupMemberTemplate.xml
@@ -148,7 +143,6 @@ XML\MIOG_GuildPlayerTemplate.xml
 XML\MIOG_TabButtonTemplate.xml
 
 XML\MIOG_InviteFrame.xml
-XML\MIOG_RaiderIOInformationPanel.xml
 
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_RaiderIOChecker.xml
@@ -156,8 +150,11 @@ XML\MIOG_RaiderIOChecker.xml
 XML\MIOG_DropChecker.xml
 XML\MIOG_DropCheckerAutoCompleteEntryTemplate.xml
 
+XML\MIOG_RaidBossFrameTemplate.xml
 XML\MIOG_NewRaiderIOInfoPanel.xml
+XML\MIOG_NewRaiderIOInfoPanelDungeonPanelTemplate.xml
 XML\MIOG_NewRaiderIOInfoPanelDungeonTemplate.xml
+XML\MIOG_NewRaiderIOInfoPanelTierHeaderTemplate.xml
 XML\MIOG_NewRaiderIOInfoPanelTierTemplate.xml
 
 FuzzyAlgorithm.lua

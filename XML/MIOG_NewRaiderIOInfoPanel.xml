@@ -12,91 +12,25 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="MythicPlus">
+            <Frame parentKey="MythicPlus" inherits="MIOG_NewRaiderIOInfoPanelDungeonPanelTemplate">
                 <Size x="120" y="160" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     <!--<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" />!-->
                 </Anchors>
-
-                <Frames>
-                    <Frame parentKey="Dungeon1" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Dungeon2" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon1" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon1" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Dungeon3" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon2" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon2" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Dungeon4" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon3" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon3" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Dungeon5" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon4" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon4" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Dungeon6" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon5" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon5" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Dungeon7" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon6" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon6" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Dungeon8" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                        <Size y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon7" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon7" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                </Frames>
             </Frame>
 
             <Frame parentKey="Raids">
-                <Size y="120" />
+                <Size y="80" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlus" relativePoint="TOPRIGHT" x="5" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="Raid1" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
-                        <Size y="40" />
+                    <Frame parentKey="Raid1Header" inherits="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate" hidden="true">
+                        <Size y="20" />
 
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
@@ -104,8 +38,17 @@
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="Raid2" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
-                        <Size y="40" />
+                    <Frame parentKey="Raid1" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
+                        <Size y="20" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid1Header" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1Header" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="Raid2Header" inherits="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate" hidden="true">
+                        <Size y="20" />
 
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Raid1" relativePoint="BOTTOMLEFT"/>
@@ -113,12 +56,12 @@
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="Raid3" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
-                        <Size y="40" />
+                    <Frame parentKey="Raid2" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
+                        <Size y="20" />
 
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid2" relativePoint="BOTTOMLEFT"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid2" relativePoint="BOTTOMRIGHT"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid2Header" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid2Header" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
                     </Frame>
                 </Frames>
@@ -127,7 +70,39 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Comment" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="PreviousData" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Raids" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="MainData" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.PreviousData" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.PreviousData" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="MPlusKeys" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.MainData" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.MainData" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="RaceRolesServer" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.MPlusKeys" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.MPlusKeys" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Comment" font="SystemFont_Shadow_Med1" justifyH="LEFT" spacing="4">
                     <Size y="40" />
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="1"/>
@@ -136,7 +111,7 @@
                 </FontString>
             </Layer>
 
-            <Layer level="ARTWORK">
+            <Layer level="BACKGROUND">
                 <Texture parentKey="BaseInfoDivider" atlas="tab-divider-top">
                     <Color r="0" g="0" b="0" a="1" />
                     <Size y="2" />
@@ -155,39 +130,75 @@
                     </Anchors>
                 </Texture>
 
-                <Texture atlas="tab-divider-top">
-                    <Color r="0" g="0" b="0" a="1" />
-                    <Size y="2" />
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20" />
                     </Anchors>
                 </Texture>
 
-                <Texture atlas="tab-divider-top">
-                    <Color r="0" g="0" b="0" a="1" />
-                    <Size y="2" />
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-40"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-40" />
                     </Anchors>
                 </Texture>
 
-                <Texture atlas="tab-divider-top">
-                    <Color r="0" g="0" b="0" a="1" />
-                    <Size y="2" />
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-60"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-60" />
                     </Anchors>
                 </Texture>
 
-                <Texture atlas="tab-divider-top">
-                    <Color r="0" g="0" b="0" a="1" />
-                    <Size y="2" />
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-80"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-80" />
+                    </Anchors>
+                </Texture>
+
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-100"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-100" />
+                    </Anchors>
+                </Texture>
+
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-120"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-120" />
+                    </Anchors>
+                </Texture>
+
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-140"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-140" />
+                    </Anchors>
+                </Texture>
+
+                <Texture>
+                    <Color r="0.05" g="0.05" b="0.05" a="0.95" />
+                    <Size y="1" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-160"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-160" />
                     </Anchors>
                 </Texture>
             </Layer>

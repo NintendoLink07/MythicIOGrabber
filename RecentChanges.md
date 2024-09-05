@@ -1,16 +1,25 @@
-## [2.4.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.4.9) - 2024-09-04
+## [2.5.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.0) - 2024-09-05
+
+### Added
+
+- The War Within World boss data is now implemented.
+
+- [QueueSelector] You can now queue up for multiple follower dungeons at once (realized today that you can do that lol).
 
 ### Changed
 
-- Updated the gearing chart with the info that is currently available.
+- The new raider io info panel has been implemented in the application viewer, search panel and party check.
 
-- Added the 4 non-mythic+ dungeons and removed the 4 m+ dungeons to/from the DropChecker for now, as soon as S1 starts they'll get taken out.
+- Updated the raider io checker with season 1 data.
 
-- Disabled the Guild tab for now, not enough time to really work on it and it's hitting performance quite a lot.
-Will revisit this in the future.
+- Removed DF S4 statistic background images.
+
+- [ActiveQueues] Added more data to the tooltips (e.g. tank/healer/dps wait times for dungeon/lfr queues).
 
 ### Fixed
 
-- [PartyCheck] Players that are leaving the group won't be checked for gear anymore.
+- [SearchPanel] Detection of groups that declined you should now work more accurate.
 
-- [Active Queues] Cinderbrew Meadery now has an background image.
+- [ApplicationViewer] Members of a premade group that are not the leader won't have a decline button or an invite button anymore.
+
+- [ApplicationViewer] Old applicants shouldn't show up in a "group" with new applicants anymore.

@@ -34,195 +34,95 @@
         </Layers>
 
        <Frames>
-            <Frame parentKey="MythicPlusPanel">
-                <Size x="160" y="160" />
+            <Frame parentKey="MythicPlus" inherits="MIOG_NewRaiderIOInfoPanelDungeonPanelTemplate">
+                <Size x="120" y="160" />
+
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Rating" relativePoint="BOTTOMLEFT" />
                 </Anchors>
-                
+            </Frame>
+
+            <Frame parentKey="Raids">
+                <Size y="80" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlus" relativePoint="TOPRIGHT" x="5" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
                 <Frames>
-                    <Frame parentKey="DungeonRow1" inherits="MIOG_DungeonRowTemplate">
+                    <Frame parentKey="Raid1Header" inherits="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate" hidden="true">
+                        <Size y="20" />
+
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="DungeonRow2" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow1" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow1" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow3" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow2" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow2" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow4" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow3" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow3" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow5" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow4" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow4" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow6" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow5" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow5" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow7" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow6" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow6" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow8" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                </Frames>
-            </Frame>
+                    <Frame parentKey="Raid1" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
+                        <Size y="20" />
 
-            <Frame parentKey="MainMythicPlusPanel">
-                <Size x="160" y="160" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusPanel" relativePoint="TOPRIGHT" x="5"/>
-                </Anchors>
-                
-                <Frames>
-                    <Frame parentKey="DungeonRow1" inherits="MIOG_DungeonRowTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid1Header" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1Header" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="Raid2Header" inherits="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate" hidden="true">
+                        <Size y="20" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid1" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="DungeonRow2" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow1" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow1" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow3" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow2" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow2" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow4" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow3" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow3" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow5" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow4" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow4" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow6" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow5" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow5" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow7" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow6" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow6" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="DungeonRow8" inherits="MIOG_DungeonRowTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.DungeonRow7" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                </Frames>
-            </Frame>
+                    <Frame parentKey="Raid2" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
+                        <Size y="20" />
 
-            <Frame parentKey="RaidPanel" toplevel="true">
-                <Size x="160" y="160" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusPanel" relativePoint="BOTTOMLEFT" />
-                </Anchors>
-
-                <Frames>
-                    <Frame parentKey="HighestTier" inherits="MIOG_RaidPanelTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="MiddleTier" inherits="MIOG_RaidPanelTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="LowestTier" inherits="MIOG_RaidPanelTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-                </Frames>
-            </Frame>
-
-            <Frame parentKey="MainRaidPanel" toplevel="true">
-                <Size x="150" y="160" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.RaidPanel" relativePoint="TOPRIGHT" />
-                </Anchors>
-
-                <Frames>
-                    <Frame parentKey="HighestTier" inherits="MIOG_RaidPanelTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="MiddleTier" inherits="MIOG_RaidPanelTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.HighestTier" relativePoint="BOTTOMRIGHT" />
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="LowestTier" inherits="MIOG_RaidPanelTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.MiddleTier" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid2Header" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid2Header" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
                     </Frame>
                 </Frames>
             </Frame>
         </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="PreviousData" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Raids" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="MainData" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.PreviousData" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.PreviousData" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="MPlusKeys" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.MainData" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.MainData" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="RaceRolesServer" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.MPlusKeys" relativePoint="BOTTOMLEFT" />
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.MPlusKeys" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

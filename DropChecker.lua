@@ -217,11 +217,11 @@ local function checkAllItemIDs()
 
     for x, y in pairs(miog.SEASONAL_MAP_IDS) do
         if((forceSeasonID or C_MythicPlus:GetCurrentSeason()) == x) then
-            for _, mapID in ipairs(y.dungeons) do
+            for _, mapID in ipairs((miog.DROPCHECKER_MAP_IDS[x] or y).dungeons) do
                 requestAllLootForMapID(mapID)
             end
             
-            for _, mapID in ipairs(y.raids) do
+            for _, mapID in ipairs((miog.DROPCHECKER_MAP_IDS[x] or y).raids) do
                 requestAllLootForMapID(mapID)
             end
         end
