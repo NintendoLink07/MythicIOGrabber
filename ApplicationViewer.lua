@@ -256,7 +256,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 	local nameFontString = applicantMemberFrame.BasicInformation.Name
 	--nameFontString:SetText(playerIsIgnored and wticc(playerName, "FFFF0000") or wticc(playerName, select(4, GetClassColor(class))))
-	nameFontString:SetText(applicantData.numMembers .. " - " .. playerName)
+	nameFontString:SetText(playerName)
 	nameFontString:SetScript("OnMouseDown", function(_, button)
 		if(button == "RightButton") then
 			local copybox = miog.ApplicationViewer.CopyBox

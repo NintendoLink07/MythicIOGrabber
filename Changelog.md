@@ -20,6 +20,13 @@ Hovering over the entries shows a tooltip listing the time and date until the lo
 Means more frequent updates and less errors.
 Also while not really measurable it shaved ~1 to 1.5 seconds off of the loading time when you first login.
 
+- [ApplicationViewer] Moved the race icon infront of the spec icon.
+This has been in effect since 2.5.0.
+Round textures with the black background removed will be implemented in 2.5.2.
+
+- In the RaiderIO info panel data of the m+ now included in which season they earned this score.
+This has been in effect since 2.5.0.
+
 ### Fixed
 
 - Characters that don't have any M+ data whatsoever shouldn't cause an error anymore when you look at them in the [ApplicationViewer], [SearchPanel], etc.
