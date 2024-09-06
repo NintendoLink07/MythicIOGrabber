@@ -466,6 +466,8 @@ local function createPVEFrameReplacement()
 	miog.RaidStatistics.RaidColumns.Raids = {}
 	miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
 
+	miog.LockoutCheck = pveFrame2.TabFramesPanel.LockoutCheck
+
 	local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
 
 	for i = 1, 6, 1 do

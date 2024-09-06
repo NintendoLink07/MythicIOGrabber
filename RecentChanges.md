@@ -1,25 +1,19 @@
-## [2.5.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.0) - 2024-09-05
+## [2.5.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.1) - 2024-09-06
 
 ### Added
 
-- The War Within World boss data is now implemented.
-
-- [QueueSelector] You can now queue up for multiple follower dungeons at once (realized today that you can do that lol).
+- A new tab has appeared! [Lockouts] has been added.
+Here you can see all the raid & dungeon lockouts of all of your alphabetically sorted characters.
+Hovering over the entries shows a tooltip listing the time and date until the lockout expires and which encounters are alive / have been defeated.
 
 ### Changed
 
-- The new raider io info panel has been implemented in the application viewer, search panel and party check.
-
-- Updated the raider io checker with season 1 data.
-
-- Removed DF S4 statistic background images.
-
-- [ActiveQueues] Added more data to the tooltips (e.g. tank/healer/dps wait times for dungeon/lfr queues).
+- Deleted quite a lot of code that I had to put in myself after every Blizzard DB update.
+Means more frequent updates and less errors.
+Also while not really measurable it shaved ~1 to 1.5 seconds off of the loading time when you first login.
 
 ### Fixed
 
-- [SearchPanel] Detection of groups that declined you should now work more accurate.
+- Characters that don't have any M+ data whatsoever shouldn't cause an error anymore when you look at them in the [ApplicationViewer], [SearchPanel], etc.
 
-- [ApplicationViewer] Members of a premade group that are not the leader won't have a decline button or an invite button anymore.
-
-- [ApplicationViewer] Old applicants shouldn't show up in a "group" with new applicants anymore.
+- Deleted some debug prints.

@@ -90,6 +90,7 @@ local defaultSettings = {
         ["Guild"] = {["level"] = defaultSortState, ["rank"] = defaultSortState, ["class"] = defaultSortState, ["keystone"] = defaultSortState, ["keylevel"] = defaultSortState, ["score"] = defaultSortState, ["progressWeight"] = defaultSortState, }}
     },
     {name = "Search Panel declined groups", variableName = "MIOG_DeclinedGroups", key="declinedGroups", default={}},
+    {name = "Account-wide lockouts", variableName = "MIOG_Lockouts", key="lockoutCheck", default={}},
 }
 
 local category = Settings.RegisterVerticalLayoutCategory(addonName)

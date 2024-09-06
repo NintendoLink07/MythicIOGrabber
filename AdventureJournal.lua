@@ -1426,10 +1426,6 @@ miog.loadAdventureJournal = function()
     keylevelDropdown:OnLoad()
     keylevelDropdown:SetParent(miog.AdventureJournal.Abilities)
 
-
-
-
-
     miog.AdventureJournal.SettingsBar.ArmorDropdown:SetDefaultText("Armor types")
     miog.AdventureJournal.SettingsBar.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
         rootDescription:CreateButton("Clear", function(index)

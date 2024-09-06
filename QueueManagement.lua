@@ -256,7 +256,7 @@ local function checkQueues()
 
 							if(mapID and not isSpecificQueue) then
 								frame:SetScript("OnMouseDown", function()
-									EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].instanceID, nil, nil, nil, nil)
+									EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].journalInstanceID, nil, nil, nil, nil)
 								end)
 							end
 

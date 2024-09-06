@@ -1,0 +1,43 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_LockoutCheck" virtual="true">
+        <Frames>
+            <!--<ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="Columns" inherits="HorizontalLayoutFrame, BackdropTemplate" setAllPoints="true" />
+                </ScrollChild>
+            </ScrollFrame>!-->
+
+            <Frame parentKey="Columns" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                </Anchors>
+
+                <Frames>
+                </Frames>
+            </Frame>
+            <EventFrame parentKey="ScrollBar" inherits="MIOG_MinimalHorizontalScrollBarTemplate">
+                <Size y="14" />
+                <KeyValues>
+                    <KeyValue key="minThumbExtent" value="10" type="number"/>
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Columns" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Columns" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+            </EventFrame>
+        </Frames>
+
+        <Scripts>
+            <OnShow>
+            </OnShow>
+        </Scripts>
+    </Frame>
+</Ui>

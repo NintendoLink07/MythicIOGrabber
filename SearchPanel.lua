@@ -946,17 +946,23 @@ local function initializeSearchResultFrame(resultID)
 
 			persistentFrame.CategoryInformation.BossPanel.bossFrames = {}
 
+			if(#miog.MAP_INFO[mapID].bosses == 0) then
+				miog.checkSingleMapIDForNewData(mapID)
+			end
+
 			for k, v in ipairs(miog.MAP_INFO[mapID].bosses) do
-				local bossFrame = persistentFrame.framePool:Acquire("MIOG_ResultFrameBossFrameTemplate")
-				bossFrame:SetParent(persistentFrame.CategoryInformation.BossPanel)
-				bossFrame.layoutIndex = k
+				--if(v.factionChecked) then
+					local bossFrame = persistentFrame.framePool:Acquire("MIOG_ResultFrameBossFrameTemplate")
+					bossFrame:SetParent(persistentFrame.CategoryInformation.BossPanel)
+					bossFrame.layoutIndex = k
 
-				SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
-				bossFrame.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
+					SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
+					bossFrame.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
 
-				bossFrame:Show()
+					bossFrame:Show()
 
-				persistentFrame.CategoryInformation.BossPanel.bossFrames[k] = bossFrame
+					persistentFrame.CategoryInformation.BossPanel.bossFrames[k] = bossFrame
+				--end
 			end
 
 			persistentFrame.CategoryInformation.BossPanel:MarkDirty()

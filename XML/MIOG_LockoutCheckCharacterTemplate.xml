@@ -1,0 +1,31 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_LockoutCheckCharacterTemplate" virtual="true">
+        <!--<KeyValues>
+            <KeyValue key="expand" value="true" type="boolean"/>
+            <KeyValue key="fixedWidth" value="130" type="number"/>
+            <KeyValue key="minimumHeight" value="20" type="number"/>
+        </KeyValues>!-->
+
+        <Size x="110"/>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="PlayerName">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-5"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

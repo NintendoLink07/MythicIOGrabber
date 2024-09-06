@@ -202,6 +202,7 @@ miog.createFrames = function()
 		miog.loadDropChecker()
 
 		miog.loadRaiderIOChecker()
+		miog.loadLockoutCheck()
 		--miog.InviteFrame = CreateFrame("Frame", "MythicIOGrabber_InviteFrame", UIParent, "MIOG_InviteFrame")
 		--miog.InviteFrame:SetPoint("TOPLEFT", LFGListInviteDialog, "TOPLEFT")
 		--miog.InviteFrame:SetPoint("TOP", UIParent, "TOP", 0, - (GetScreenHeight() * 0.1))

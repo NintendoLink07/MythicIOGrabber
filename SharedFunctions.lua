@@ -267,8 +267,6 @@ miog.getNewRaidSortData = getNewRaidSortData
 local function getMPlusSortData(playerName, realm, region)
 	local profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
 
-	--print(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
-
 	if(profile) then
 		local mplusData = {}
 
@@ -295,11 +293,11 @@ local function getMPlusSortData(playerName, realm, region)
 			mplusData.keystoneTwentyFivePlus = profile.mythicKeystoneProfile.keystoneTwentyFivePlus
 
 		else
-			mplusData.score = 0
-			mplusData.previousScore = 0
+			mplusData.score = {score = 0}
+			mplusData.previousScore = {score = 0}
 	
-			mplusData.mainScore = 0
-			mplusData.mainPreviousScore = 0
+			mplusData.mainScore = {score = 0}
+			mplusData.mainPreviousScore = {score = 0}
 	
 			mplusData.keystoneFivePlus = 0
 			mplusData.keystoneTenPlus = 0

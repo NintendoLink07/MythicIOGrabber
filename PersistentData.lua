@@ -161,6 +161,14 @@ miog.DIFFICULTY = {
 	[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222", desaturated = "ffe93838"},
 }
 
+miog.CUSTOM_DIFFICULTY_ORDER = {
+	["LFR"] = 1,
+	["N"] = 2,
+	["H"] = 3,
+	["M"] = 4,
+	["M+"] = 5,
+}
+
 for i = 0, 205, 1 do -- max # of difficulties in wago tools Difficulty
 	local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic, toggleDifficultyID, isLFR, minGroupSize, maxGroupSize = GetDifficultyInfo(i)
 
@@ -168,6 +176,11 @@ for i = 0, 205, 1 do -- max # of difficulties in wago tools Difficulty
 		miog.DIFFICULTY_ID_INFO[i] = {name = i == 8 and "Mythic+" or name, shortName = (i == 1 or i == 3 or i == 4 or i == 9 or i == 14) and "N" or (i == 2 or i == 5 or i == 6 or i == 15 or i == 24 or i == 33) and "H" or i == 8 and "M+" or (i == 7 or i == 17) and "LFR" or (i == 16 or i == 23) and "M",
 		type = groupType, isHeroic = isHeroic, isChallengeMode = isChallengeMode, isLFR = isLFR, toggleDifficulty = toggleDifficultyID, color = miog.DIFFICULTY_ID_TO_COLOR[i] and miog.DIFFICULTY_ID_TO_COLOR[i]}
 
+
+		if(miog.DIFFICULTY_ID_INFO[i].shortName) then
+			miog.DIFFICULTY_ID_INFO[i].customDifficultyOrderIndex = miog.CUSTOM_DIFFICULTY_ORDER[miog.DIFFICULTY_ID_INFO[i].shortName]
+			
+		end
 	end
 end
 
@@ -1079,8 +1092,50 @@ end
 
 miog.MAP_CHALLENGE_MODE_INFO = {}
 
+local function checkSingleMapIDForNewData(mapID)
+	if(mapID > 0 and miog.MAP_INFO[mapID]) then
+		local bossIndex = 1;
+
+		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
+
+		if(not bossName) then
+			EJ_SelectInstance(miog.MAP_INFO[mapID].journalInstanceID)
+			bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex);
+		end
+
+		while bossName do
+			--if(factionChecked) then
+				local id, name, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
+				
+				miog.MAP_INFO[mapID].bosses[bossIndex] = {
+					name = bossName,
+					journalEncounterID = journalEncounterID,
+					journalInstanceID = journalInstanceID,
+					dungeonEncounterID = dungeonEncounterID,
+					mapID = mapID,
+					orderIndex = id,
+					achievements = {},
+					id = id,
+					creatureDisplayInfoID = displayInfo,
+					--factionChecked = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID] == nil or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 1 and faction == "Alliance" or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 0 and faction == "Horde",
+					icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
+				}
+
+				bossIndex = bossIndex + 1;
+				bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
+			--end
+		end
+	end
+end
+
+miog.checkSingleMapIDForNewData = checkSingleMapIDForNewData
+
 local function loadRawData()
 	local faction = UnitFactionGroup("player")
+
+	for k, v in pairs(miog.RAW["DungeonEncounter"]) do
+		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
+	end
 
 	for k, v in pairs(miog.RAW["Map"]) do
 		if(miog.MAP_INFO[v[1]]) then
@@ -1115,6 +1170,10 @@ local function loadRawData()
 				exactName = v[2],
 			}
 		end
+
+		miog.MAP_INFO[v[1]].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
+
+		checkSingleMapIDForNewData(v[1])
 	end
 
 	--[[for k, v in pairs(miog.RAW["BattlemasterList"]) do
@@ -1129,39 +1188,36 @@ local function loadRawData()
 
 	end]]
 
-	for k, v in pairs(miog.RAW["DungeonEncounter"]) do
-		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
-	end
-
 	local firstDungeonEncounter
 
-	for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
+	--[[for k, v in pairs(miog.RAW["JournalEncounterCreature"]) do
 		if(v[6] == 0) then
-			miog.JOURNAL_CREATURE_INFO[v[3]] = {name = v[1], id = v[2], creatureDisplayInfoID = v[4], icon = v[5]}
+			miog.JOURNAL_CREATURE_INFO[v[3] ] = {name = v[1], id = v[2], creatureDisplayInfoID = v[4], icon = v[5]}
 			
-			local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, instanceID = EJ_GetEncounterInfo(v[3])
+			local bossName, description, journalEncounterID, rootSectionID, bossLink, journalInstanceID, dungeonEncounterID, mapID = EJ_GetEncounterInfo(v[3])
 			local dungeonEncounterInfo = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID]
+			if(dungeonEncounterInfo.faction == nil or dungeonEncounterInfo.faction == 1 and faction == "Alliance" or dungeonEncounterInfo.faction == 0 and faction == "Horde") then
 
 			if(dungeonEncounterInfo) then
 				local mapInfo = miog.MAP_INFO[dungeonEncounterInfo.mapID]
 				
 				if(mapInfo) then
-					mapInfo.instanceID = journalInstanceID
+					mapInfo.journalInstanceID = journalInstanceID
 
 					if(miog.JOURNAL_CREATURE_INFO[journalEncounterID]) then
 						if(dungeonEncounterInfo.faction == nil or dungeonEncounterInfo.faction == 1 and faction == "Alliance" or dungeonEncounterInfo.faction == 0 and faction == "Horde") then
-							local bossIndex = #mapInfo.bosses+1
+							local bossIndex = #mapInfo.bosses + 1
 
-							mapInfo.bosses[bossIndex] = {
+							--[ [mapInfo.bosses[bossIndex] = {
 								name = dungeonEncounterInfo.name,
 								encounterID = v[2],
 								journalInstanceID = journalInstanceID,
-								instanceID = instanceID,
+								mapID = mapID,
 								orderIndex = dungeonEncounterInfo.orderIndex,
 								creatureDisplayInfoID = miog.JOURNAL_CREATURE_INFO[journalEncounterID].creatureDisplayInfoID,
 								achievements = {},
 			
-							}
+							}] ]
 						end
 					end
 			
@@ -1182,7 +1238,7 @@ local function loadRawData()
 				end
 			end
 		end
-	end
+	end]]
 
 	local expansionTable = {}
 

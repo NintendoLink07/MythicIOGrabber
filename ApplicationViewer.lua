@@ -442,16 +442,9 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 end
 
-local testArray = {}
-
 local function createApplicantFrame(applicantID)
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 
-	if(testArray[applicantID]) then
-		print(applicantID, "is already in the system?")
-	end
-
-	testArray[applicantID] = true
 	--if(applicantData) then
 		local applicantFrame = applicantFramePool:Acquire()
 
@@ -823,7 +816,6 @@ local function updateApplicantList()
 	for index, listEntry in ipairs(unsortedList) do
 		for i = 1, #listEntry, 1 do
 			if(checkApplicantListForEligibleMembers(listEntry[i]) == true) then
-				--print(index, listEntry[i].fullName)
 				local applicantFrame = createApplicantFrame(listEntry[1].applicantID)
 				applicantFrame.layoutIndex = index
 				applicantFrame:Show()

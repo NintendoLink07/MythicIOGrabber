@@ -678,6 +678,9 @@
 
                     <Frame parentKey="Guild" inherits="MIOG_Guild" hidden="true" setAllPoints="true">
                     </Frame>
+
+                    <Frame parentKey="LockoutCheck" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true">
+                    </Frame>
                 </Frames>
             </Frame>
 
@@ -764,6 +767,17 @@
                 </Scripts>
             </Button>
 
+            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Lockouts">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "LockoutCheck"
+                    </OnLoad>
+                </Scripts>
+            </Button>
+
             <!--<Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Guild">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
@@ -793,7 +807,7 @@
 
             <OnLoad>
                 self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 7)
+                PanelTemplates_SetNumTabs(self, 8)
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());
