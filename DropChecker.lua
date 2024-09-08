@@ -9,9 +9,9 @@ local armorTypeInfo = {
 }
 
 local currentItemIDs
-local selectedArmor, selectedClass, selectedSpec
+local selectedArmor, selectedClass, selectedSpec, selectedSlot
 
-local itemData
+local itemData = {}
 
 local function fuzzyCheck(text)
     local filterArray = {}
@@ -81,6 +81,10 @@ local function checkIfItemIsFiltered(item)
     return false
 end
 
+local function iterateInstanceQueue()
+
+end
+
 local function loadLoot()
     local allItems = true
     
@@ -94,92 +98,80 @@ local function loadLoot()
     local dataProvider = CreateDataProvider()
     
     if(allItems) then
-        itemData = {}
-
-        for _, v in ipairs(instanceQueue) do
-            EJ_SelectInstance(v.journalInstanceID)
-            EJ_SetDifficulty(v.isRaid and 16 or 23)
-
-            local numOfLoot = EJ_GetNumLoot()
-
-            if(numOfLoot > 0) then
-                for i = 1, numOfLoot, 1 do
-                    local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
-
-                    if(itemInfo.slot) then
-                        table.insert(itemData, itemInfo)
-
-                    end
-                end
-            end
-        end
-
         local searchBoxText = miog.DropChecker.SearchBox:GetText()
 
         local results = fuzzyCheck(searchBoxText)
 
         local noFilter = C_EncounterJournal.GetSlotFilter() == 15
 
-        if(searchBoxText ~= "") then
-            for k, v in ipairs(results) do
-                local item = itemData[v.index]
-                dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = item.name, icon = item.icon, link = item.link, encounterID = item.encounterID, positions = v.positions})
+        local searching = searchBoxText ~= ""
 
-            end
+        itemData = {}
 
-        else
-            for k, v in ipairs(instanceQueue) do
-                EJ_SelectInstance(v.journalInstanceID)
-                EJ_SetDifficulty(v.isRaid and 16 or 23)
+        for _, v in ipairs(instanceQueue) do
+            --EJ_SetDifficulty(v.isRaid and 16 or 23)
+
+            EncounterJournal.instanceID = instanceID;
+            EncounterJournal.encounterID = nil;
+
+            EJ_SelectInstance(v.journalInstanceID)
+
+	    local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID = EJ_GetInstanceInfo();
+
+        print(instanceName)
+
+            local numOfLoot = EJ_GetNumLoot()
+
+            local addedInstance = false
+            local slotsDone = {}
+
+            if(numOfLoot > 0) then
+                for i = 1, numOfLoot, 1 do
+                    local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
+
+                    if(itemInfo.slot) then
+                        if(searching) then
+                            table.insert(itemData, itemInfo)
     
-                local numOfLoot = EJ_GetNumLoot()
-    
-                local addedInstance = false
-                local slotsDone = {}
-
-                if(numOfLoot > 0) then
-                    for i = 1, numOfLoot, 1 do
-                        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
-    
-                        if(itemInfo.slot) then
-                            if(searchBoxText ~= "") then
-        
-                            else
-                                if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo, noFilter)) then
-                                    if(not addedInstance) then
-                                        local instanceName, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
-                                        dataProvider:Insert({
-                                            template = "MIOG_AdventureJournalLootSlotLineTemplate",
-                                            name = instanceName,
-                                            icon = miog.MAP_INFO[mapID].icon,
-                                            header = true,
-                                        })
-                            
-                                        addedInstance = true
-                                    end
-
-                                    if(not slotsDone[itemInfo.filterType] and noFilter) then
-                                        dataProvider:Insert({
-                                            template = "MIOG_AdventureJournalLootSlotLineTemplate",
-                                            name = itemInfo.slot ~= "" and itemInfo.slot or "Other",
-                                        })
-                            
-                                        slotsDone[itemInfo.filterType] = true
-                                    end
-                                    
-                                    dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = itemInfo.name, icon = itemInfo.icon, link = itemInfo.link, encounterID = itemInfo.encounterID})
-
+                        else
+                            if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo, noFilter)) then
+                                if(not addedInstance) then
+                                    local instanceName, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
+                                    dataProvider:Insert({
+                                        template = "MIOG_AdventureJournalLootSlotLineTemplate",
+                                        name = instanceName,
+                                        icon = miog.MAP_INFO[mapID].icon,
+                                        header = true,
+                                    })
+                        
+                                    addedInstance = true
                                 end
+
+                                if(not slotsDone[itemInfo.filterType] and noFilter) then
+                                    dataProvider:Insert({
+                                        template = "MIOG_AdventureJournalLootSlotLineTemplate",
+                                        name = itemInfo.slot ~= "" and itemInfo.slot or "Other",
+                                    })
+                        
+                                    slotsDone[itemInfo.filterType] = true
+                                end
+                                
+                                dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = itemInfo.name, icon = itemInfo.icon, link = itemInfo.link, encounterID = itemInfo.encounterID})
+
                             end
                         end
                     end
                 end
             end
-
-
         end
-
         
+        if(searching) then
+            for k, v in ipairs(results) do
+                local item = itemData[v.index]
+                dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = item.name, icon = item.icon, link = item.link, encounterID = item.encounterID, positions = v.positions})
+
+            end
+        end
     end
 
     if(dataProvider:GetSize() == 0) then
@@ -193,9 +185,10 @@ local function loadLoot()
 end
 
 local function requestAllLootForMapID(mapID)
-    local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID) or nil
+    local journalInstanceID = miog.MAP_INFO[mapID].journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID) or nil
 
     if(journalInstanceID) then
+        EJ_SetDifficulty(miog.MAP_INFO[mapID].isRaid and 16 or 23)
         EJ_SelectInstance(journalInstanceID)
 
         for i = 1, EJ_GetNumLoot(), 1 do
@@ -271,6 +264,8 @@ miog.loadDropChecker = function()
 	        rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(index) return index == C_EncounterJournal.GetSlotFilter() end, function(index)
                 selectedItemClass = nil
                 selectedItemSubClass = nil
+                selectedSlot = index
+
                 C_EncounterJournal.SetSlotFilter(index)
                 checkAllItemIDs()
 
@@ -280,6 +275,7 @@ miog.loadDropChecker = function()
         rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
+            selectedSlot = 14
             
             C_EncounterJournal.SetSlotFilter(14)
             checkAllItemIDs()
@@ -289,6 +285,7 @@ miog.loadDropChecker = function()
         rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
+            selectedSlot = 14
             
             C_EncounterJournal.SetSlotFilter(14)
             checkAllItemIDs()
@@ -298,6 +295,7 @@ miog.loadDropChecker = function()
         rootDescription:CreateRadio("Tokens", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
+            selectedSlot = 14
 
             C_EncounterJournal.SetSlotFilter(14)
             checkAllItemIDs()

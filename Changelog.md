@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.5.3] - 2024-09-09
+
+### Fixed
+
+- [DropChecker] Trying to check loot after selecting a different raid/dungeon in Blizzards Adventure Journal will not result in no loot found anymore.
+
+
+
 ## [2.5.2] - 2024-09-08
 
 ### Changed

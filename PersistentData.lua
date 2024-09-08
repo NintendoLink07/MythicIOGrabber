@@ -1097,6 +1097,7 @@ local function checkSingleMapIDForNewData(mapID)
 		local bossIndex = 1;
 
 		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
+		miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
 
 		if(not bossName) then
 			EJ_SelectInstance(miog.MAP_INFO[mapID].journalInstanceID)
