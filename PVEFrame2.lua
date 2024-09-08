@@ -180,15 +180,17 @@ local function createPVEFrameReplacement()
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
 		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
-		
-		--C_Calendar.CloseEvent()
-		--C_Calendar.OpenCalendar()
 
 		if(not setup) then
 			miog.updateCurrencies()
 
 			setup = true
 		end
+		
+		local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime();
+		C_Calendar.SetAbsMonth(currentCalendarTime.month, currentCalendarTime.year);
+
+		C_Calendar.OpenCalendar();
 
 		--miog.updateProgressData()
 
@@ -522,7 +524,7 @@ local function createPVEFrameReplacement()
 
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	queueDropDown:OnLoad()
-	queueDropDown:SetText("Choose a queue")
+	queueDropDown:SetText("Select an activity")
 	miog.MainTab.QueueInformation.Panel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	local formatter = CreateFromMixins(SecondsFormatterMixin)

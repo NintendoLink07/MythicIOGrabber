@@ -12,7 +12,6 @@ local function resetHolidayFrame(_, frame)
 	frame.layoutIndex = nil
 
 	frame.DateBar.Title:SetText()
-	frame.Icon:SetTexture(nil)
 
 ---@diagnostic disable-next-line: undefined-field
 	miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
@@ -26,11 +25,10 @@ local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
             counter = counter + 1
             
             local cFrame = framePool:Acquire()
-            cFrame:SetWidth(165)
             cFrame.layoutIndex = counter
 
-            cFrame.Icon:SetTexture(info.texture)
-            cFrame.Icon:SetTexCoord(0, 0.70, 0, 0.70)
+            --cFrame.Icon:SetTexture(info.texture)
+            --cFrame.Icon:SetTexCoord(0, 0.70, 0, 0.70)
             cFrame.DateBar.Title:SetText(info.name)
             
             local startTimeSeconds = time({year = info.startTime.year, month = info.startTime.month, day = info.startTime.monthDay, hour = info.startTime.hour, minute = info.startTime.minute})
@@ -54,8 +52,10 @@ local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
             cFrame:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 GameTooltip:SetText(info.name, nil, nil, nil, nil, true)
-                GameTooltip:AddLine("Start: " .. CalendarUtil.FormatCalendarTimeWeekday(info.startTime))
-                GameTooltip:AddLine("End: " .. CalendarUtil.FormatCalendarTimeWeekday(info.endTime))
+                GameTooltip:AddLine(string.format(MONTHLY_ACTIVITIES_DAYS, formatter:Format(timeTillEnd)))
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                GameTooltip:AddLine("Start: " .. date("%x - %X", startTimeSeconds))
+                GameTooltip:AddLine("End: " .. date("%x - %X", endTimeSeconds))
 
                 if(info.description ~= "") then
                     GameTooltip_AddBlankLineToTooltip(GameTooltip)
@@ -114,6 +114,9 @@ miog.loadCalendarSystem = function()
     eventReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
     eventReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT")
     eventReceiver:RegisterEvent("CALENDAR_OPEN_EVENT");
+	eventReceiver:RegisterEvent("CALENDAR_UPDATE_ERROR");
+	eventReceiver:RegisterEvent("CALENDAR_UPDATE_ERROR_WITH_COUNT");
+	eventReceiver:RegisterEvent("CALENDAR_UPDATE_ERROR_WITH_PLAYER_NAME");
     
     eventReceiver:SetScript("OnEvent", calendarOnEvent)
 

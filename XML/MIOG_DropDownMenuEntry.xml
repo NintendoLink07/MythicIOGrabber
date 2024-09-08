@@ -3,12 +3,16 @@
     <Button name="MIOG_DropDownMenuEntry" inherits="BackdropTemplate" virtual="true">
         <Size y="20" />
 
-        <NormalTexture parentKey="NormalTexture" atlas="pvpqueue-button-casual-up"/>
+        <!--<NormalTexture parentKey="NormalTexture" atlas="pvpqueue-button-casual-up"/>
 		<PushedTexture atlas="pvpqueue-button-casual-down"/>
-		<HighlightTexture parentKey="HighlightTexture" atlas="pvpqueue-button-casual-highlight" alphaMode="ADD"/>
+		<HighlightTexture parentKey="HighlightTexture" atlas="pvpqueue-button-casual-highlight" alphaMode="ADD"/>!-->
+
+        --common-dropdown-textholder
+
+        <HighlightTexture parentKey="HighlightTexture" file="Interface/QuestFrame/UI-QuestTitleHighlight" alphaMode="ADD" />
         
         <Frames>
-            <CheckButton parentKey="Radio" inherits="UIRadioButtonTemplate" checked="false">
+            <CheckButton parentKey="Radio" inherits="UIRadialButtonTemplate" checked="false">
                 <Size x="16" y="16" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" />
@@ -26,6 +30,17 @@
                     <KeyValue key="align" value="top" />
                     <KeyValue key="spacing" value="3" />
                 </KeyValues>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" atlas="common-dropdown-bg" alpha="0.925">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-8" y="10"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="8" y="-13"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
 
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />

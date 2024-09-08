@@ -80,6 +80,17 @@
                     <KeyValue key="spacing" value="3" />
                 </KeyValues>
 
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" atlas="common-dropdown-bg" alpha="0.925">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-8" y="10"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="8" y="-13"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25"/>
                 </Anchors>

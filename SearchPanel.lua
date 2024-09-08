@@ -21,7 +21,7 @@ local function resetFrame(pool, childFrame)
 	childFrame.layoutIndex = nil
 	childFrame.resultID = nil
 
-	miog.resetNewRaiderIOInfoPanel(childFrame.RaiderIOInformationPanel)
+	--miog.resetNewRaiderIOInfoPanel(childFrame.RaiderIOInformationPanel)
 end
 
 local function sortSearchResultList(k1, k2)
@@ -587,7 +587,7 @@ local function setResultFrameColors(resultID, isInviteFrame)
 		end
 		
 		if(r) then
-			resultFrame.Background:SetVertexColor(r, g, b, 0.33)
+			resultFrame.Background:SetVertexColor(r, g, b, 0.4)
 		end
 	end
 end
@@ -991,9 +991,15 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 
 			--miog.retrieveRaiderIOData(playerName, realm, currentFrame)
-			local mplusData, raidData = miog.fillNewRaiderIOPanel(currentFrame.RaiderIOInformationPanel, playerName, realm)
 
-			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo, raidData, searchResultInfo.leaderPvpRatingInfo)
+			currentFrame.RaiderIOInformationPanel:OnLoad()
+			currentFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
+			currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
+			currentFrame.RaiderIOInformationPanel:ApplyFillData()
+
+			--local mplusData, raidData = miog.fillNewRaiderIOPanel(currentFrame.RaiderIOInformationPanel, playerName, realm)
+
+			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo, currentFrame.RaiderIOInformationPanel.raidData, searchResultInfo.leaderPvpRatingInfo)
 
 			currentFrame:SetScript("OnMouseDown", function(_, button)
 				groupSignup(searchResultInfo.searchResultID)
@@ -1005,7 +1011,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			end)
 
 			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal, "CLAMP", "MIRROR")
-			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.33)
+			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 
 			currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
 			currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
@@ -1075,7 +1081,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 			currentFrame.BasicInformation.Title:SetText(warmodeString .. bnetFriends .. charFriends .. guildFriends .. wticc(searchResultInfo.name, titleZoneColor))
 			currentFrame.CategoryInformation.Comment:SetShown(searchResultInfo.comment ~= "" and searchResultInfo.comment ~= nil and true or false)
-			currentFrame.RaiderIOInformationPanel.Comment:SetText(COMMENTS_COLON .. " " .. (searchResultInfo.comment or ""))
+			--currentFrame.RaiderIOInformationPanel.Comment:SetText(COMMENTS_COLON .. " " .. (searchResultInfo.comment or ""))
 
 			currentFrame.AcceptInvite:Hide()
 			currentFrame.CancelApplication:SetScript("OnClick", function(self, button)

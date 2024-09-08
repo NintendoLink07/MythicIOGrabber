@@ -1,9 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd"> 
     <Frame name="MIOG_HolidayFrameTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size x="165" y="25" />
+        <Size x="140" y="20" />
 
-        <Layers>
+        <!--<Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
                     <Size x="25" y="25" />
@@ -12,22 +12,18 @@
                     </Anchors>
                 </Texture>
             </Layer>           
-        </Layers>
+        </Layers>!-->
 
         <Frames>
-            <StatusBar parentKey="DateBar" inherits="BackdropTemplate">
+            <StatusBar parentKey="DateBar" inherits="BackdropTemplate" setAllPoints="true">
                 <BarTexture atlas="ui-castingbar-filling-standard" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
 
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString parentKey="Title" font="SystemFont_Shadow_Med1">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                                <Anchor point="TOPLEFT" x="3"/>
+                                <Anchor point="BOTTOMRIGHT" x="-3"/>
                             </Anchors>
                         </FontString>
                     </Layer> 

@@ -1,24 +1,23 @@
-## [2.5.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.1) - 2024-09-06
-
-### Added
-
-- A new tab has appeared! [Lockouts] has been added.
-Here you can see all the raid & dungeon lockouts of all of your alphabetically sorted characters.
-Hovering over the entries shows a tooltip listing the time and date until the lockout expires and which encounters are alive / have been defeated.
+## [2.5.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.2) - 2024-09-08
 
 ### Changed
 
-- Deleted quite a lot of code that I had to put in myself after every Blizzard DB update.
-Means more frequent updates and less errors.
-Also while not really measurable it shaved ~1 to 1.5 seconds off of the loading time when you first login.
+- [MainFrame] Switched up the order of the info frames in the top right corner.
 
-- [ApplicationViewer] Moved the race icon infront of the spec icon.
-This has been in effect since 2.5.0.
-Round textures with the black background removed will be implemented in 2.5.2.
+- [Queue Dropdown] Changed the dropdown style to something similar to Blizzards new dropdowns.
 
-- In the RaiderIO info panel data of the m+ now included in which season they earned this score.
-This has been in effect since 2.5.0.
+- [Queue Dropdown] When your character is at the last expansion's max level (e.g. 70 for dragonflight) the queue dropdown dungeon selection will be ordered by expansionlevel and Random Dungeon will always be on top.
+
+- [Queue Dropdown] When there are no options for a category type (e.g. no raid finder options) the button will be greyed out and do nothing.
 
 ### Fixed
 
-- Characters that don't have any M+ data whatsoever shouldn't cause an error anymore when you look at them in the [ApplicationViewer], [SearchPanel], etc.
+- [MainFrame] Calendar events are back again with a slightly updated look.
+
+- [ActiveQueues] Hovering over most queue frames should cause a quest ID error anymore.
+
+- Clicking on the dungeon icon in the RaiderIO info panel should now refer to the correct dungeon + difficulty.
+
+- [Queue Dropdown] If you have no heroic dungeons unlocked there won't be a section in the "Specific Dungeons" selection that tells you that you have unlocked them.
+
+- [Queue Dropdown] The button to queue for multiple dungeons should now match the width of the frame.

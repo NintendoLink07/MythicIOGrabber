@@ -408,7 +408,9 @@ function SlickDropDown:CreateFunctionButton(index, parentIndex, text, func)
 	end
 
 	button:SetText(text)
-	button:SetSize((parentIndex and self.entryFrameTree[parentIndex] or button:GetParent()):GetWidth(), 20)
+	--button:SetSize((parentIndex and self.entryFrameTree[parentIndex] or button:GetParent()):GetWidth(), 20)
+	button.leftPadding = 3
+	button.rightPadding = 3
 	button.topPadding = 3
 	button.bottomPadding = 3
 	button:SetScript("OnClick", func)
@@ -487,9 +489,9 @@ function SlickDropDown:InsertCustomFrame(info, frame)
 
 			self.entryFrameTree[infoTable.parentIndex][frame.layoutIndex] = frame
 
-			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
 			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
 
 		else
 			list = self.List
@@ -498,9 +500,9 @@ function SlickDropDown:InsertCustomFrame(info, frame)
 			
 			self.entryFrameTree[frame.layoutIndex] = frame
 
-			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
 			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
 
 		end
 
@@ -552,9 +554,9 @@ function SlickDropDown:CreateEntryFrame(info)
 			self.entryFrameTree[infoTable.parentIndex][frame.layoutIndex] = frame
 
 			frame:SetParent(list)
-			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
 			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
 
 			list:SetScript("OnMouseDown", function()
 				
@@ -567,9 +569,9 @@ function SlickDropDown:CreateEntryFrame(info)
 			
 			self.entryFrameTree[frame.layoutIndex] = frame
 
-			list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
 			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())
+			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
 			frame.List.highestWidth = 0
 		
 			frame.List.hideOnClick = infoTable.hideOnClick
@@ -605,7 +607,7 @@ function SlickDropDown:CreateEntryFrame(info)
 		frame.ParentDropDown = self
 		frame.parentIndex = infoTable.parentIndex
 
-		if(infoTable.func) then
+		if(infoTable.func and not infoTable.disabled) then
 			frame:SetScript("OnClick", infoTable.func)
 
 		end

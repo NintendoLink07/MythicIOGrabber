@@ -210,7 +210,7 @@ local function checkQueues()
 
 						local frameData = {
 							[1] = hasData,
-							[2] = isFollowerDungeon and "Follower" or subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic" or subtypeID == 3 and "Raid Finder",
+							[2] = isFollowerDungeon and LFG_TYPE_FOLLOWER_DUNGEON or subtypeID == 1 and LFG_TYPE_DUNGEON or subtypeID == 2 and LFG_TYPE_HEROIC_DUNGEON or subtypeID == 3 and RAID_FINDER,
 							[11] = isSpecificQueue and MULTIPLE_DUNGEONS or name,
 							[12] = myWait,
 							[17] = {"queued", queuedTime},
@@ -453,7 +453,7 @@ local function checkQueues()
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 					GameTooltip:SetText(string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants))
 
-					if(activeEntryInfo.questID > 0) then
+					if(activeEntryInfo.questID and activeEntryInfo.questID > 0) then
 						GameTooltip:AddLine(LFG_TYPE_QUEST .. ": " .. C_QuestLog.GetTitleForQuestID(activeEntryInfo.questID))
 						
 					end
@@ -876,7 +876,7 @@ miog.loadQueueSystem = function()
 end
 
 local function updateRandomDungeons(blizzDesc)
-	local queueDropDown = miog.MainTab.QueueInformation.DropDown
+	--[[local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	local info = {}
 	info.entryType = "option"
 	info.level = 2
@@ -917,7 +917,7 @@ local function updateRandomDungeons(blizzDesc)
 				blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, icon = info.icon}
 			end
 		end
-	end
+	end]]
 end
 
 miog.updateRandomDungeons = updateRandomDungeons
@@ -926,10 +926,25 @@ local function sortAndAddDungeonList(list, enableOnShow)
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
 	table.sort(list, function(k1, k2)
-		return k1.text < k2.text
+		if(k1.expansionLevel == k2.expansionLevel) then
+			if(k1.type1 == k2.type1) then
+				return k1.text < k2.text
+			end
+
+			return k1.type1 > k2.type1
+		end
+
+		return k1.expansionLevel > k2.expansionLevel
 	end)
 
+	local lastExp = nil
+
 	for k, v in pairs(list) do
+		if(lastExp and lastExp ~= v.expansionLevel) then
+			queueDropDown:CreateSeparator(nil, v.parentIndex)
+
+		end
+
 		local tempFrame = queueDropDown:CreateEntryFrame(v)
 
 		if(enableOnShow) then
@@ -939,6 +954,8 @@ local function sortAndAddDungeonList(list, enableOnShow)
 				
 			end)
 		end
+		
+		lastExp = v.expansionLevel
 	end
 end
 
@@ -955,6 +972,61 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 	local selectedDungeonsList = {}
 
+	if(not overwrittenParentIndex) then
+		for i=1, GetNumRandomDungeons() do
+			local id, name, typeID, subtypeID, _, _, _, _, _, expLevel, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon = GetLFGRandomDungeonInfo(i)
+			
+			local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
+			local isFollowerDungeon = id >= 0 and C_LFGInfo.IsLFGFollowerDungeon(id)
+
+			if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon)) then
+				if(isAvailableForAll) then
+					local mode = GetLFGMode(1, id)
+
+					local info = {}
+					info.text = isHolidayDungeon and "(Event) " .. name or name
+
+					info.checked = mode == "queued"
+					info.icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
+					info.parentIndex = subtypeID
+					info.type1 = typeID
+					--info.index = -1
+					info.expansionLevel = miog.LFG_DUNGEONS_INFO[id].expansionLevel or expLevel
+					info.type2 = "random"
+
+					info.func = function()
+						ClearAllLFGDungeons(1);
+						SetLFGDungeon(1, id);
+						JoinSingleLFG(1, id);
+
+						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = id}
+					end
+					
+					--[[local tempFrame = queueDropDown:CreateEntryFrame(info)
+					tempFrame:SetScript("OnShow", function(self)
+						local tempMode = GetLFGMode(1, id)
+						self.Radio:SetChecked(tempMode == "queued")
+						
+					end)]]
+
+					blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
+					blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, icon = info.icon}
+
+					if(isFollowerDungeon) then
+						followerDungeonList[#followerDungeonList + 1] = info
+
+					elseif(subtypeID == 1) then
+						normalDungeonList[#normalDungeonList + 1] = info
+
+					elseif(subtypeID == 2) then
+						heroicDungeonList[#heroicDungeonList + 1] = info
+
+					end
+				end
+			end
+		end
+	end
+
 	for _, dungeonID in pairs(dungeonList) do
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
 		local name, typeID, subtypeID, _, _, _, _, _, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
@@ -962,11 +1034,14 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
 		if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon)) then
+
 			if(isAvailableForAll) then
 				local info = {}
 				info.entryType = "option"
 				info.level = 2
 				info.id = dungeonID
+				info.type1 = typeID
+				info.expansionLevel = miog.MAP_INFO[mapID].expansionLevel or expLevel
 
 				info.text = isHolidayDungeon and "(Event) " .. name or name
 
@@ -1011,22 +1086,50 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
 	if(overwrittenParentIndex) then
-		queueDropDown:CreateTextLine(nil, overwrittenParentIndex, "Normal")
+		if(#normalDungeonList > 0) then
+			queueDropDown:CreateTextLine(nil, overwrittenParentIndex, LFG_TYPE_DUNGEON)
+		end
+	else
+		local info = {}
+		info.text = LFG_TYPE_DUNGEON
+		info.hasArrow = true
+		info.level = 1
+		info.index = 1
+		info.disabled = #normalDungeonList == 0
+		queueDropDown:CreateEntryFrame(info)
 
 	end
 
 	sortAndAddDungeonList(normalDungeonList, overwrittenParentIndex == nil)
 
-
 	if(overwrittenParentIndex) then
-		queueDropDown:CreateTextLine(nil, overwrittenParentIndex, "Heroic")
-
+		if(#heroicDungeonList > 0) then
+			queueDropDown:CreateTextLine(nil, overwrittenParentIndex, LFG_TYPE_HEROIC_DUNGEON)
+		end
+	else
+		local info = {}
+		info.text = LFG_TYPE_HEROIC_DUNGEON
+		info.hasArrow = true
+		info.level = 1
+		info.index = 2
+		info.disabled = #heroicDungeonList == 0
+		queueDropDown:CreateEntryFrame(info)
 	end
 
 	sortAndAddDungeonList(heroicDungeonList, overwrittenParentIndex == nil)
 
 	if(overwrittenParentIndex) then
-		queueDropDown:CreateTextLine(nil, overwrittenParentIndex, "Follower")
+		if(#followerDungeonList > 0) then
+			queueDropDown:CreateTextLine(nil, overwrittenParentIndex, LFG_TYPE_FOLLOWER_DUNGEON)
+		end
+	else
+		local info = {}
+		info.text = LFG_TYPE_FOLLOWER_DUNGEON
+		info.hasArrow = true
+		info.level = 1
+		info.index = 3
+		info.disabled = #followerDungeonList == 0
+		queueDropDown:CreateEntryFrame(info)
 	end
 
 	sortAndAddDungeonList(followerDungeonList, overwrittenParentIndex == nil)
@@ -1043,6 +1146,13 @@ end
 
 miog.updateDungeons = updateDungeons
 
+local function IsRaidFinderDungeonDisplayable(id)
+	local name, typeID, subtypeID, minLevel, maxLevel, _, _, _, expansionLevel = GetLFGDungeonInfo(id);
+	local myLevel = UnitLevel("player");
+	return myLevel >= minLevel and myLevel <= maxLevel and EXPANSION_LEVEL >= expansionLevel;
+end
+
+
 local function updateRaidFinder(blizzDesc)
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
@@ -1058,13 +1168,17 @@ local function updateRaidFinder(blizzDesc)
 
 	local lastRaidName
 
+	local hasAnEntry = false
+
 	for rfIndex = 1, GetNumRFDungeons() do
-		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(rfIndex)
+		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansion, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(rfIndex)
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
 
-		if((isAvailableForPlayer or not hideIfNotJoinable)) then
-			if(isAvailableForAll) then
+		if( not hideIfNotJoinable or isAvailableForAll ) then
+			if ( isAvailableForAll or isAvailableForPlayer or IsRaidFinderDungeonDisplayable(id) ) then
 				if (playerLevel >= minLevel and playerLevel <= maxLevel) then
+					hasAnEntry = true
+
 					local encounters;
 					local numEncounters = GetLFGDungeonNumEncounters(id);
 					for j = 1, numEncounters do
@@ -1144,12 +1258,10 @@ local function updateRaidFinder(blizzDesc)
 					if(icon) then
 						tempFrame.Name:SetTextColor(0.1,0.83,0.77,1)
 					end
-
 					
 
 					blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
 					blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, index = rfIndex, icon = info.icon}
-
 
 					nextLevel = nil
 
@@ -1162,6 +1274,14 @@ local function updateRaidFinder(blizzDesc)
 			end
 		end
 	end
+
+	local mainInfo = {}
+	mainInfo.text = RAID_FINDER
+	mainInfo.hasArrow = true
+	mainInfo.level = 1
+	mainInfo.index = 5
+	mainInfo.disabled = not hasAnEntry
+	queueDropDown:CreateEntryFrame(mainInfo)
 end
 
 miog.updateRaidFinder = updateRaidFinder
@@ -1528,39 +1648,12 @@ local function updateDropDown()
 		queueDropDown.List.selfCheck = true
 
 		local info = {}
-		info.text = LFG_TYPE_DUNGEON
-		info.hasArrow = true
-		info.level = 1
-		info.index = 1
-		queueDropDown:CreateEntryFrame(info)
-
-		info = {}
-		info.text = LFG_TYPE_HEROIC_DUNGEON
-		info.hasArrow = true
-		info.level = 1
-		info.index = 2
-		queueDropDown:CreateEntryFrame(info)
-
-		info = {}
-		info.text = LFG_TYPE_FOLLOWER_DUNGEON
-		info.hasArrow = true
-		info.level = 1
-		info.index = 3
-		queueDropDown:CreateEntryFrame(info)
-
-		info = {}
+		
 		info.text = SPECIFIC_DUNGEONS
 		info.hasArrow = true
 		info.level = 1
 		info.index = 4
 		info.hideOnClick = false
-		queueDropDown:CreateEntryFrame(info)
-
-		info = {}
-		info.text = RAID_FINDER
-		info.hasArrow = true
-		info.level = 1
-		info.index = 5
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}

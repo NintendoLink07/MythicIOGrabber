@@ -723,11 +723,9 @@ miog.getCurrentCategoryID = function()
 end
 
 miog.fillNewRaiderIOPanel = function(raiderIOPanel, playerName, realm)
-	local forceSeason = 13
+	--[[local forceSeason = 13
 
 	local mplusData = miog.getMPlusSortData(playerName, realm)
-
-	raiderIOPanel.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or "") .. " ")
 
 	for k, v in ipairs(miog.SEASONAL_MAP_IDS[forceSeason].dungeons) do
 		local currentDungeon = raiderIOPanel.MythicPlus["Dungeon" .. k]
@@ -792,9 +790,9 @@ miog.fillNewRaiderIOPanel = function(raiderIOPanel, playerName, realm)
 		raiderIOPanel.MainData:SetText("No main m+ rating. ")
 		raiderIOPanel.MPlusKeys:SetText("No m+ keys done.")
 
-	end
+	end]]--
 
-	local raidData = miog.getNewRaidSortData(playerName, realm)
+	--[[local raidData = miog.getNewRaidSortData(playerName, realm)
 
 	local raidCounter = 1
 	local raidMapIDSet = {}
@@ -903,7 +901,7 @@ miog.fillNewRaiderIOPanel = function(raiderIOPanel, playerName, realm)
 		end
 	end
 
-	return mplusData, raidData
+	return mplusData, raidData]]--
 end
 
 local function fillRaidPanelWithData(profile, mainPanel, raidPanel, mainRaidPanel)

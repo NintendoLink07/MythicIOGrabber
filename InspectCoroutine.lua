@@ -669,7 +669,11 @@ miog.createInspectCoroutine = function()
 				miog.groupSystem.raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
 				
 				local playerName, realm = miog.createSplitName(data.name)
-				local mplusData, raidData = miog.fillNewRaiderIOPanel(frame, playerName, realm)
+				frame:OnLoad()
+				frame:SetPlayerData(playerName, realm)
+				frame:ApplyFillData()
+
+				--local mplusData, raidData = miog.fillNewRaiderIOPanel(frame, playerName, realm)
 				--miog.retrieveRaiderIOData(playerName, realm, miog.groupSystem.raiderIOPanels[data.name])
 
 				if(data.classFileName) then
@@ -689,7 +693,7 @@ miog.createInspectCoroutine = function()
 		ScrollView:SetElementFactory(CustomFactory)
 		ScrollView:SetElementResetter(function(frame, data)
 			if(data.template == "MIOG_NewRaiderIOInfoPanel") then
-				miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
+				--miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
 			end
 		
 		end)

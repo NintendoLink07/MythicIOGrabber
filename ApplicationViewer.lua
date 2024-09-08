@@ -352,7 +352,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 	end
 
-	applicantMemberFrame.RaiderIOInformationPanel.Comment:SetText(COMMENTS_COLON .. " " .. (applicantData.comment or ""))
+	--applicantMemberFrame.RaiderIOInformationPanel.Comment:SetText(COMMENTS_COLON .. " " .. (applicantData.comment or ""))
 	
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
 	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
@@ -418,23 +418,13 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	
 	end]]
 
-	local mplusData, raidData = miog.fillNewRaiderIOPanel(applicantMemberFrame.RaiderIOInformationPanel, playerName, realm)
-	miog.setInfoIndicators(applicantMemberFrame.BasicInformation, categoryID, dungeonScore, dungeonData, raidData, pvpData)
+	applicantMemberFrame.RaiderIOInformationPanel:OnLoad()
+	applicantMemberFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
+	applicantMemberFrame.RaiderIOInformationPanel:SetOptionalData(applicantData.comment, realm, {tank = tank, healer = healer, damager = damager})
+	applicantMemberFrame.RaiderIOInformationPanel:ApplyFillData()
+	--local mplusData, raidData = miog.fillNewRaiderIOPanel(applicantMemberFrame.RaiderIOInformationPanel, playerName, realm)
 
-	if(tank) then
-		applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:SetText(applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:GetText() .. miog.C.TANK_TEXTURE .. " ")
-
-	end
-
-	if(healer) then
-		applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:SetText(applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:GetText() .. miog.C.HEALER_TEXTURE .. " ")
-
-	end
-
-	if(damager) then
-		applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:SetText(applicantMemberFrame.RaiderIOInformationPanel.RaceRolesServer:GetText() .. miog.C.DPS_TEXTURE .. " ")
-
-	end
+	miog.setInfoIndicators(applicantMemberFrame.BasicInformation, categoryID, dungeonScore, dungeonData, applicantMemberFrame.RaiderIOInformationPanel.raidData, pvpData)
 
 	--BasicInformation:MarkDirty()
 	applicantMemberFrame:MarkDirty()
@@ -453,7 +443,7 @@ local function createApplicantFrame(applicantID)
 
 		applicantFrame.framePool = applicantFrame.framePool or CreateFramePool("Frame", applicantFrame, "MIOG_ApplicantMemberFrameTemplate", function(pool, frame)
 			--miog.resetRaiderIOInformationPanel(frame)
-			miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
+			--miog.resetNewRaiderIOInfoPanel(frame.RaiderIOInformationPanel)
 		end)
 
 		applicantFrame.applicantID = applicantID

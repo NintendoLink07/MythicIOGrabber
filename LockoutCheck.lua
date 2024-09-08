@@ -1,7 +1,5 @@
 local addonName, miog = ...
 
-local framePool
-
 local formatter = CreateFromMixins(SecondsFormatterMixin)
 formatter:SetStripIntervalWhitespace(true)
 formatter:Init(0, SecondsFormatter.Abbreviation.None)
@@ -37,7 +35,7 @@ miog.loadLockoutCheck = function()
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                     GameTooltip:SetText(miog.MAP_INFO[elementData.mapID].name)
                     GameTooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[elementData.difficulty].name))
-                    GameTooltip:AddLine(string.format(elementData.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(elementData.resetDate - time()) .. " (" .. date("%d/%m/%y %H:%M:%S", elementData.resetDate) .. ")"))
+                    GameTooltip:AddLine(string.format(elementData.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(elementData.resetDate - time()) .. " (" .. date("%x %X", elementData.resetDate) .. ")"))
 
                     local setAliveEncounters, setDefeatedEncounters = false, false
 
@@ -85,7 +83,7 @@ miog.loadLockoutCheck = function()
 
                     GameTooltip:SetText(elementData.name)
                     GameTooltip:AddLine("World Boss")
-                    GameTooltip:AddLine(string.format(elementData.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(elementData.resetDate - time()) .. " (" .. date("%d/%m/%y %H:%M:%S", elementData.resetDate) .. ")"))
+                    GameTooltip:AddLine(string.format(elementData.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(elementData.resetDate - time()) .. " (" .. date("%x %X", elementData.resetDate) .. ")"))
 
                     GameTooltip:Show()
                 end)

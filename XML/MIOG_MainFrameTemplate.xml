@@ -401,110 +401,11 @@
                                 </Anchors>
 
                                 <Frames>
-                                    <Frame parentKey="Affixes">
-                                        <Size x="60" y="20" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
-                                        </Anchors>
-                                        
-                                        <Layers>
-                                            <Layer level="ARTWORK">
-                                                <Texture parentKey="Affix1">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
-                                                    </Anchors>
-                                                </Texture>
-
-                                                <Texture parentKey="Affix2">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Affix1" relativePoint="RIGHT" />
-                                                    </Anchors>
-                                                </Texture>
-
-                                                <Texture parentKey="Affix3">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Affix2" relativePoint="RIGHT" />
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-                                        </Layers>
-
-                                        <Scripts>
-                                            <OnEnter>
-                                                if(self.tooltipText) then
-                                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                                    GameTooltip:SetText(self.tooltipText)
-                                                    GameTooltip:Show()
-                                                end
-                                            </OnEnter>
-                                            <OnLeave>
-                                                GameTooltip:Hide()
-                                            </OnLeave>
-                                        </Scripts>
-                                    </Frame>
-
-                                    <Frame parentKey="Keystone" inherits="BackdropTemplate">
-                                        <Size x="200" y="20" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="ARTWORK">
-                                                <Texture parentKey="Icon" atlas="Dungeon">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <Color r="1" g="0" b="0" a="1" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                    </Frame>
-
-                                    <Frame parentKey="Awakened" inherits="BackdropTemplate" hidden="true">
-                                        <Size x="200" y="20" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="ARTWORK">
-                                                <Texture parentKey="Icon" atlas="Raid">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <Color r="1" g="0" b="0" a="1" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                    </Frame>
-
                                     <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate"> <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Awakened" relativePoint="BOTTOMRIGHT" />
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                                         </Anchors>
 
                                         <Layers>
@@ -597,6 +498,105 @@
                                         </Scripts>
                                     </StatusBar>
                                     
+                                    <Frame parentKey="Keystone" inherits="BackdropTemplate">
+                                        <Size x="200" y="20" />
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.WorldStatus" relativePoint="BOTTOMRIGHT"/>
+                                        </Anchors>
+
+                                        <Layers>
+                                            <Layer level="ARTWORK">
+                                                <Texture parentKey="Icon" atlas="Dungeon">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+
+                                            <Layer level="OVERLAY">
+                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                    <Color r="1" g="0" b="0" a="1" />
+                                                    <Anchors>
+                                                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
+                                    <Frame parentKey="Affixes">
+                                        <Size x="60" y="20" />
+
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>
+                                        </Anchors>
+                                        
+                                        <Layers>
+                                            <Layer level="ARTWORK">
+                                                <Texture parentKey="Affix1">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                                                    </Anchors>
+                                                </Texture>
+
+                                                <Texture parentKey="Affix2">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Affix1" relativePoint="RIGHT" />
+                                                    </Anchors>
+                                                </Texture>
+
+                                                <Texture parentKey="Affix3">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Affix2" relativePoint="RIGHT" />
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+                                        </Layers>
+
+                                        <Scripts>
+                                            <OnEnter>
+                                                if(self.tooltipText) then
+                                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                                    GameTooltip:SetText(self.tooltipText)
+                                                    GameTooltip:Show()
+                                                end
+                                            </OnEnter>
+                                            <OnLeave>
+                                                GameTooltip:Hide()
+                                            </OnLeave>
+                                        </Scripts>
+                                    </Frame>
+
+                                    <Frame parentKey="Awakened" inherits="BackdropTemplate" hidden="true">
+                                        <Size x="200" y="20" />
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>
+                                        </Anchors>
+
+                                        <Layers>
+                                            <Layer level="ARTWORK">
+                                                <Texture parentKey="Icon" atlas="Raid">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+
+                                            <Layer level="OVERLAY">
+                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                    <Color r="1" g="0" b="0" a="1" />
+                                                    <Anchors>
+                                                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
+
                                     <Frame parentKey="Holiday" inherits="VerticalLayoutFrame">
                                         <KeyValues>
                                             <KeyValue key="spacing" value="5" />
@@ -604,7 +604,7 @@
                                         <Size x="165" y="120" />
 
                                         <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.WorldStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT" y="-3"/>
                                         </Anchors>
                                     </Frame>
 
@@ -612,7 +612,7 @@
                                         <Size x="40" y="120" />
 
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3" />
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                                         </Anchors>
 
                                         <Frames>
