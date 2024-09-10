@@ -36,5 +36,13 @@ miog.loadRaiderIOChecker = function()
         end
     end)
 
-	miog.RaiderIOChecker.RIOVersion:SetText(C_AddOns.GetAddOnMetadata("RaiderIO", "Version"))
+    local splitTable = miog.simpleSplit(C_AddOns.GetAddOnMetadata("RaiderIO", "Version"), "%s")
+
+    local rioVersion = splitTable[1]
+    local rioDate = splitTable[2]
+
+    local rioTime = time({year = strsub(rioDate, 3, 6), month = strsub(rioDate, 7, 8), day = strsub(rioDate, 9, 10), hour = strsub(rioDate, 11, 12), min = strsub(rioDate, 13, 14), })
+    local rioTimeInDate = date("%x %H:%M", rioTime)
+
+	miog.RaiderIOChecker.RIOVersion:SetText(rioVersion .. " - " .. rioTimeInDate)
 end

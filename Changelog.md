@@ -8,9 +8,15 @@ and this project adheres to [Semantic Versioning].
 
 ## [2.5.3] - 2024-09-09
 
+### Changed
+
+- [RaiderIOChecker] Parsed the RaiderIO database addon version so it's easier to know when the DB was last updated.
+
 ### Fixed
 
 - [DropChecker] Trying to check loot after selecting a different raid/dungeon in Blizzards Adventure Journal will not result in no loot found anymore.
+
+- [MainFrame] A textline error with the queue dropdown has been resolved.
 
 
 
@@ -37,6 +43,7 @@ and this project adheres to [Semantic Versioning].
 - [Queue Dropdown] If you have no heroic dungeons unlocked there won't be a section in the "Specific Dungeons" selection that tells you that you have unlocked them.
 
 - [Queue Dropdown] The button to queue for multiple dungeons should now match the width of the frame.
+
 
 
 ## [2.5.1] - 2024-09-06
@@ -2301,7 +2308,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.3..HEAD
+[2.5.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.3
 [2.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.2
 [2.5.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.1
 [2.5.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.0

@@ -1157,6 +1157,14 @@ local function updateRaidFinder(blizzDesc)
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
+	local mainInfo = {}
+	mainInfo.text = RAID_FINDER
+	mainInfo.hasArrow = true
+	mainInfo.level = 1
+	mainInfo.index = 5
+	mainInfo.disabled = not hasAnEntry
+	local raidFinderFrame = queueDropDown:CreateEntryFrame(mainInfo)
+
 	local info = {}
 	info.entryType = "option"
 	info.level = 2
@@ -1213,7 +1221,6 @@ local function updateRaidFinder(blizzDesc)
 
 
 					if(lastRaidName ~= raidName) then
-
 						local textLine = queueDropDown:CreateTextLine(nil, info.parentIndex, miog.MAP_INFO[mapID].shortName, icon)
 
 						if(icon) then
@@ -1257,6 +1264,7 @@ local function updateRaidFinder(blizzDesc)
 
 					if(icon) then
 						tempFrame.Name:SetTextColor(0.1,0.83,0.77,1)
+						
 					end
 					
 
@@ -1275,13 +1283,10 @@ local function updateRaidFinder(blizzDesc)
 		end
 	end
 
-	local mainInfo = {}
-	mainInfo.text = RAID_FINDER
-	mainInfo.hasArrow = true
-	mainInfo.level = 1
-	mainInfo.index = 5
-	mainInfo.disabled = not hasAnEntry
-	queueDropDown:CreateEntryFrame(mainInfo)
+	if(not hasAnEntry) then
+		queueDropDown:DisableSpecificFrame(raidFinderFrame)
+
+	end
 end
 
 miog.updateRaidFinder = updateRaidFinder

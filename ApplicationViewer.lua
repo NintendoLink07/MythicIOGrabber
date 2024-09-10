@@ -422,7 +422,6 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	applicantMemberFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
 	applicantMemberFrame.RaiderIOInformationPanel:SetOptionalData(applicantData.comment, realm, {tank = tank, healer = healer, damager = damager})
 	applicantMemberFrame.RaiderIOInformationPanel:ApplyFillData()
-	--local mplusData, raidData = miog.fillNewRaiderIOPanel(applicantMemberFrame.RaiderIOInformationPanel, playerName, realm)
 
 	miog.setInfoIndicators(applicantMemberFrame.BasicInformation, categoryID, dungeonScore, dungeonData, applicantMemberFrame.RaiderIOInformationPanel.raidData, pvpData)
 

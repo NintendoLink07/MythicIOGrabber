@@ -673,9 +673,6 @@ miog.createInspectCoroutine = function()
 				frame:SetPlayerData(playerName, realm)
 				frame:ApplyFillData()
 
-				--local mplusData, raidData = miog.fillNewRaiderIOPanel(frame, playerName, realm)
-				--miog.retrieveRaiderIOData(playerName, realm, miog.groupSystem.raiderIOPanels[data.name])
-
 				if(data.classFileName) then
 					local r, g, b = C_ClassColor.GetClassColor(data.classFileName):GetRGB()
 

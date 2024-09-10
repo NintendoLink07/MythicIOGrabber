@@ -997,8 +997,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
 			currentFrame.RaiderIOInformationPanel:ApplyFillData()
 
-			--local mplusData, raidData = miog.fillNewRaiderIOPanel(currentFrame.RaiderIOInformationPanel, playerName, realm)
-
 			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo, currentFrame.RaiderIOInformationPanel.raidData, searchResultInfo.leaderPvpRatingInfo)
 
 			currentFrame:SetScript("OnMouseDown", function(_, button)

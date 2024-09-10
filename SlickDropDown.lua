@@ -341,7 +341,9 @@ end
 function SlickDropDown:CreateTextLine(index, parentIndex, text, icon, fontSize, expandable)
 	local textLine = self.List.fontStringPool:Acquire()
 
-	if(parentIndex) then
+
+
+	if(parentIndex and self.entryFrameTree[parentIndex]) then
 		textLine:SetParent(self.entryFrameTree[parentIndex].List)
 
 	end
@@ -525,6 +527,12 @@ function SlickDropDown:InsertCustomFrame(info, frame)
 		miog.F.UPDATE_AFTER_COMBAT = true
 
 	end
+end
+
+function SlickDropDown:DisableSpecificFrame(frame)
+	frame.Name:SetTextColor(0.5, 0.5, 0.5, 1)
+	frame:SetScript("OnClick", nil)
+	frame.Radio:Hide()
 end
 
 function SlickDropDown:CreateEntryFrame(info)
