@@ -2155,7 +2155,6 @@ miog.RAW["GroupFinderActivity"] = { -- https://wago.tools/db2/GroupFinderActivit
     {1252,"Amirdrassil (Heroic)","Heroic",3,2,319,35,446,114446,2549,15,0,30,0,0,0},
     {1253,"Amirdrassil (Mythic)","Mythic",3,3,319,35,459,115330,2549,16,0,20,0,0,0},
     {1274,"Throne of the Tides (Mythic Keystone)","Mythic+",2,8,54,194,385,112699,643,8,0,5,1,0,0},
-
     {1275,"Darkflame Cleft (Normal)","Normal",2,1,322,99,0,114336,2651,1,0,5,1,0,0},
     {1276,"Darkflame Cleft (Heroic)","Heroic",2,2,322,99,567,115171,2651,2,0,5,1,0,0},
     {1277,"Darkflame Cleft (Mythic)","Mythic",2,3,322,99,330,120231,2651,23,0,5,1,0,0},
@@ -2342,7 +2341,7 @@ miog.RAW["GroupFinderActivity"] = { -- https://wago.tools/db2/GroupFinderActivit
     {1503,"The Spiral Weave","Tier 11",121,11,343,162,0,121468,2688,208,15007,5,4,0,},
     {1504,"Nerub-ar Palace (Mythic)","Mythic",3,3,362,35,597,122606,2657,16,0,20,0,0,},
     {1505,"Nerub-ar Palace (Normal)","Normal",3,1,362,35,571,122606,2657,14,0,30,0,0,},
-    {1506,"Nerub-ar Palace (Heroic)","Heroic",3,2,362,35,584,122606,2657,14,0,30,0,0,},
+    {1506,"Nerub-ar Palace (Heroic)","Heroic",3,2,362,35,584,122606,2657,15,0,30,0,0,},
     {1507,"Cinderbrew Meadery (Normal)","Normal",2,1,327,99,0,117308,2661,1,0,5,0,0,},
     {1508,"Cinderbrew Meadery (Heroic)","Heroic",2,2,327,99,567,117308,2661,2,0,5,1,0,},
     {1509,"Cinderbrew Meadery (Mythic)","Mythic",2,3,327,99,0,120235,2661,23,0,5,1,0,},

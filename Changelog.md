@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.5.5] - 2024-09-11
+
+### Fixed
+
+- [FilterPanel] When no difficulty has been actually selected (new install of the addon and it defaults to normal) it will now check for the base difficulty instead of no difficulty.
+
+
 
 ## [2.5.4] - 2024-09-11
 
@@ -2326,7 +2333,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.5..HEAD
+[2.5.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.5
 [2.5.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.4
 [2.5.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.3
 [2.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.2

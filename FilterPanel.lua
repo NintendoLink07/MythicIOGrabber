@@ -688,6 +688,10 @@ local function updateFilterDifficulties(reset)
 			
 					end
 				end
+
+				if(MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID == 0) then
+					MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID].difficultyID = v
+				end
 				
 				difficultyDropDown:CreateEntryFrame(info)
 
@@ -1064,7 +1068,7 @@ miog.loadFilterPanel = function()
 
 		local currentPanel = LFGListFrame.activePanel:GetDebugName()
 		local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
-	
+
 		MIOG_NewSettings.filterOptions[LFGListFrame.activePanel:GetDebugName()][categoryID].filterForDifficulty = self:GetChecked()
 		
 		convertFiltersToAdvancedBlizzardFilters()
