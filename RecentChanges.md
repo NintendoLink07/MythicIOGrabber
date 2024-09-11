@@ -1,4 +1,12 @@
-## [2.5.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7) - 2024-09-11
+## [2.5.7a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7a) - 2024-09-11
+
+### Fixed
+
+- Deleted some debug prints.
+
+
+
+## [2.5.7] - 2024-09-11
 
 ### Changed
 

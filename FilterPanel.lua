@@ -752,8 +752,6 @@ local function setupFiltersForActivePanel(reset)
 	if(categoryID) then
 		local currentSettings = MIOG_NewSettings.filterOptions[cp][categoryID]
 
-		print(currentSettings.needsMyClass)
-
 		updateFilterDifficulties(reset)
 
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[1]:SetChecked(currentSettings.filterForRoles["TANK"])
@@ -857,8 +855,6 @@ local function setupFiltersForActivePanel(reset)
 					
 					end
 				end
-
-				print(currentSettings.needsMyClass, currentSettings.classes[id])
 
 				convertFiltersToAdvancedBlizzardFilters()
 

@@ -118,8 +118,6 @@ local function loadLoot()
 
 	    local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID = EJ_GetInstanceInfo();
 
-        print(instanceName)
-
             local numOfLoot = EJ_GetNumLoot()
 
             local addedInstance = false
