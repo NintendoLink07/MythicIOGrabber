@@ -257,6 +257,13 @@ local function getNewRaidSortData(playerName, realm, region)
 				raids = {}
 			},
 		}
+	else
+		raidData.character.ordered[1] = raidData.character.ordered[1] or {mapID = miog.SEASONAL_MAP_IDS[13].raids[1], parsedString = "0/0", difficulty = -1}
+		raidData.character.ordered[2] = raidData.character.ordered[2] or {mapID = miog.SEASONAL_MAP_IDS[13].raids[1], parsedString = "0/0", difficulty = -1}
+
+		raidData.main.ordered[1] = raidData.main.ordered[1] or {parsedString = "0/0", difficulty = -1}
+		raidData.main.ordered[2] = raidData.main.ordered[2] or {parsedString = "0/0", difficulty = -1}
+
 	end
 
 	return raidData
@@ -274,8 +281,8 @@ local function getMPlusSortData(playerName, realm, region)
 			if(profile.mythicKeystoneProfile.sortedDungeons) then
 				for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
 					mplusData[dungeonEntry.dungeon.instance_map_id] = {
-						level = profile.mythicKeystoneProfile.fortifiedDungeons[i],
-						chests = profile.mythicKeystoneProfile.fortifiedDungeonUpgrades[i]
+						level = profile.mythicKeystoneProfile.dungeons[i],
+						chests = profile.mythicKeystoneProfile.dungeonUpgrades[i]
 					}
 				end
 			end
@@ -361,9 +368,13 @@ miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeon
 
 		end
 	else
-		
-		primaryIndicator:SetText(wticc(raidData.character.ordered[1].parsedString, raidData.character.ordered[1].current and miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color or miog.DIFFICULTY[raidData.character.ordered[1].difficulty].desaturated))
-		secondaryIndicator:SetText(wticc(raidData.character.ordered[2].parsedString, raidData.character.ordered[2].current and miog.DIFFICULTY[raidData.character.ordered[2].difficulty].color or miog.DIFFICULTY[raidData.character.ordered[2].difficulty].desaturated))
+		if(raidData.character.ordered[1]) then
+			primaryIndicator:SetText(wticc(raidData.character.ordered[1].parsedString, raidData.character.ordered[1].current and miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color or miog.DIFFICULTY[raidData.character.ordered[1].difficulty].desaturated))
+		end
+
+		if(raidData.character.ordered[2]) then
+			secondaryIndicator:SetText(wticc(raidData.character.ordered[2].parsedString, raidData.character.ordered[2].current and miog.DIFFICULTY[raidData.character.ordered[2].difficulty].color or miog.DIFFICULTY[raidData.character.ordered[2].difficulty].desaturated))
+		end
 
 	end
 end
@@ -1036,137 +1047,6 @@ local function fillRaidPanelWithData(profile, mainPanel, raidPanel, mainRaidPane
 end
 
 miog.fillRaidPanelWithData = fillRaidPanelWithData
-
-local function retrieveRaiderIOData(playerName, realm, frameWithPanel)
-	local profile, mythicKeystoneProfile, raidProfile
-	local mythicPlusPanel = frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel
-	local raidPanel = frameWithPanel.RaiderIOInformationPanel.RaidPanel
-	local infoPanel = frameWithPanel.RaiderIOInformationPanel.InfoPanel
-
-	local categoryID = miog.getCurrentCategoryID()
-
-	raidPanel:SetShown(categoryID == 3 and true)
-	mythicPlusPanel:SetShown(not raidPanel:IsShown())
-
-	if(miog.F.IS_RAIDERIO_LOADED) then
-		profile = RaiderIO.GetProfile(playerName, realm, miog.F.CURRENT_REGION)
-
-		if(profile ~= nil) then
-			mythicKeystoneProfile = profile.mythicKeystoneProfile
-			raidProfile = profile.raidProfile
-
-		end
-	end
-
-	frameWithPanel.RaiderIOInformationPanel.mplus = nil
-	frameWithPanel.RaiderIOInformationPanel.raid = nil
-
-	if(profile) then
-		if(mythicKeystoneProfile and mythicKeystoneProfile.sortedDungeons) then
-			frameWithPanel.RaiderIOInformationPanel.mplus = {}
-
-			table.sort(mythicKeystoneProfile.sortedDungeons, function(k1, k2)
-				return k1.dungeon.shortName < k2.dungeon.shortName
-
-			end)
-
-			local primaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeons or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeons
-			local primaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.tyrannicalDungeonUpgrades or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.fortifiedDungeonUpgrades
-			local secondaryDungeonLevel = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeons or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeons
-			local secondaryDungeonChests = miog.F.WEEKLY_AFFIX == 9 and mythicKeystoneProfile.fortifiedDungeonUpgrades or miog.F.WEEKLY_AFFIX == 10 and mythicKeystoneProfile.tyrannicalDungeonUpgrades
-
-			if(primaryDungeonLevel and primaryDungeonChests and secondaryDungeonLevel and secondaryDungeonChests) then
-				for i, dungeonEntry in ipairs(mythicKeystoneProfile.sortedDungeons) do
-
-					local dungeonRowFrame = mythicPlusPanel["DungeonRow" .. i]
-
-					local rowIndex = dungeonEntry.dungeon.index
-					local texture = miog.MAP_INFO[dungeonEntry.dungeon.instance_map_id].icon
-
-					dungeonRowFrame.Icon:SetTexture(texture)
-					dungeonRowFrame.Icon:SetScript("OnMouseDown", function()
-						local instanceID = C_EncounterJournal.GetInstanceForGameMap(dungeonEntry.dungeon.instance_map_id)
-
-						--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-						EncounterJournal_OpenJournal(EJ_GetDifficulty(), instanceID, nil, nil, nil, nil)
-
-					end)
-
-					dungeonRowFrame.Name:SetText(dungeonEntry.dungeon.shortName .. ":")
-
-					dungeonRowFrame.Primary:SetText(wticc(primaryDungeonLevel[rowIndex] .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or primaryDungeonChests[rowIndex]),
-					primaryDungeonChests[rowIndex] > 0 and miog.C.GREEN_COLOR or primaryDungeonChests[rowIndex] == 0 and miog.CLRSCC["red"] or "0"))
-
-					dungeonRowFrame.Secondary:SetText(wticc(secondaryDungeonLevel[rowIndex] .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or secondaryDungeonChests[rowIndex]),
-					secondaryDungeonChests[rowIndex] > 0 and miog.C.GREEN_COLOR or secondaryDungeonChests[rowIndex] == 0 and miog.CLRSCC["red"] or "0"))
-				end
-			end
-
-			local previousScoreString = ""
-
-			local currentSeason = miog.MPLUS_SEASONS[miog.F.CURRENT_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
-			local previousSeason = miog.MPLUS_SEASONS[miog.F.PREVIOUS_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
-
-			if(mythicKeystoneProfile.previousScore and mythicKeystoneProfile.previousScore > 0 and previousSeason) then
-				previousScoreString = "Best score so far: " .. wticc(mythicKeystoneProfile.previousScore, miog.createCustomColorForRating(mythicKeystoneProfile.previousScore):GenerateHexColor())
-
-			end
-
-			frameWithPanel.RaiderIOInformationPanel.mplus.previous = previousScoreString
-
-			local mainScoreString = ""
-
-			if(mythicKeystoneProfile.mainCurrentScore) then
-				if((mythicKeystoneProfile.mainCurrentScore > 0) == false and (mythicKeystoneProfile.mainPreviousScore > 0) == false) then
-					mainScoreString = wticc("On his main char", miog.ITEM_QUALITY_COLORS[7].pureHex)
-
-				else
-					if(mythicKeystoneProfile.mainCurrentScore > 0 and mythicKeystoneProfile.mainPreviousScore > 0) then
-						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor()) ..
-						" " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
-
-					elseif(mythicKeystoneProfile.mainCurrentScore > 0) then
-						mainScoreString = "Main " .. currentSeason .. ": " .. wticc(mythicKeystoneProfile.mainCurrentScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainCurrentScore):GenerateHexColor())
-
-					elseif(mythicKeystoneProfile.mainPreviousScore > 0) then
-						mainScoreString = "Main " .. previousSeason .. ": " .. wticc(mythicKeystoneProfile.mainPreviousScore, miog.createCustomColorForRating(mythicKeystoneProfile.mainPreviousScore):GenerateHexColor())
-
-					end
-
-				end
-			end
-
-			frameWithPanel.RaiderIOInformationPanel.mplus.main = mainScoreString
-
-			infoPanel.MPlusKeys:SetText(
-				wticc(mythicKeystoneProfile.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
-				wticc(mythicKeystoneProfile.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
-				wticc(mythicKeystoneProfile.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
-				wticc(mythicKeystoneProfile.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex)
-			)
-
-		else --NO M+ DATA
-			frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.Status:Show()
-
-		end
-
-		if(raidProfile) then
-			fillRaidPanelWithData(profile, frameWithPanel, raidPanel)
-
-		else --NO RAIDING DATA
-			frameWithPanel.RaiderIOInformationPanel.RaidPanel.Status:Show()
-		end
-
-	else -- If RaiderIO is not installed or no profile available
-			frameWithPanel.RaiderIOInformationPanel.MythicPlusPanel.Status:Show()
-			frameWithPanel.RaiderIOInformationPanel.RaidPanel.Status:Show()
-		
-	end
-
-	infoPanel.Realm:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (realm or GetRealmName() or ""))
-end
-
-miog.retrieveRaiderIOData = retrieveRaiderIOData
 
 miog.createSplitName = function(name)
 	local nameTable = miog.simpleSplit(name, "-")

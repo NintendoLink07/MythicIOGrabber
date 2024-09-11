@@ -257,8 +257,6 @@ miog.loadGuildFrame = function()
 			miog.guildSystem.raiderIOPanels[data.fullName] = {RaiderIOInformationPanel = frame}
 			
 			local playerName, realm = miog.createSplitName(data.fullName)
-
-			miog.retrieveRaiderIOData(playerName, realm, miog.guildSystem.raiderIOPanels[data.fullName])
 		end
 	end
 	

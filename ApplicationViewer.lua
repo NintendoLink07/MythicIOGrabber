@@ -351,72 +351,9 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 		inviteButton:Hide()
 
 	end
-
-	--applicantMemberFrame.RaiderIOInformationPanel.Comment:SetText(COMMENTS_COLON .. " " .. (applicantData.comment or ""))
 	
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
 	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
-
-	--[[local infoPanel = applicantMemberFrame.RaiderIOInformationPanel.InfoPanel
-
-	infoPanel.Comment:SetSpacing(miog.C.APPLICANT_MEMBER_HEIGHT - miog.C.TEXT_ROW_FONT_SIZE)
-	infoPanel.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((applicantData.comment and applicantData.comment) or ""))
-	
-
-	miog.retrieveRaiderIOData(playerName, realm, applicantMemberFrame)
-
-	local raidData = miog.getRaidSortData(playerName .. "-" .. realm)
-	primaryIndicator:SetText(wticc(raidData[1].parsedString, raidData[1].current and miog.DIFFICULTY[raidData[1].difficulty].color or miog.DIFFICULTY[raidData[1].difficulty].desaturated))
-	secondaryIndicator:SetText(wticc(raidData[2].parsedString, raidData[2].current and miog.DIFFICULTY[raidData[2].difficulty].color or miog.DIFFICULTY[raidData[2].difficulty].desaturated))
-
-
-	if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
-		primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
-
-		if(pvpData.tier and pvpData.tier ~= "N/A") then
-			local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
-			secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
-
-		else
-			secondaryIndicator:SetText(0)
-		
-		end
-	
-	elseif(categoryID ~= 3) then
-		if(dungeonScore > 0) then
-			local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
-			local highestKeyForDungeon
-
-			if(reqScore > dungeonScore) then
-				primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC["red"]))
-
-			else
-				primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
-
-			end
-
-			if(dungeonData) then
-				if(dungeonData.finishedSuccess == true) then
-					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.C.GREEN_COLOR)
-
-				elseif(dungeonData.finishedSuccess == false) then
-					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.CLRSCC["red"])
-
-				end
-			else
-				highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
-
-			end
-
-			secondaryIndicator:SetText(highestKeyForDungeon)
-		else
-			local difficulty = miog.DIFFICULTY[-1] -- NO DATA
-			primaryIndicator:SetText(wticc("0", difficulty.color))
-			secondaryIndicator:SetText(wticc("0", difficulty.color))
-
-		end
-	
-	end]]
 
 	applicantMemberFrame.RaiderIOInformationPanel:OnLoad()
 	applicantMemberFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
@@ -903,8 +840,7 @@ local function createAVSelfEntry(pvpBracket)
 	local highestKey
 
 	if(rioProfile and rioProfile.mythicKeystoneProfile) then
-		highestKey = rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel > rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel and
-		rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel or rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel
+		highestKey = rioProfile.mythicKeystoneProfile.maxDungeonLevel
 	end
 
 	local _, _, raceID = UnitRace("player")
@@ -1000,8 +936,7 @@ local function createFullEntries(iterations)
 			local highestKey
 
 			if(rioProfile and rioProfile.mythicKeystoneProfile) then
-				highestKey = rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel > rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel and
-				rioProfile.mythicKeystoneProfile.fortifiedMaxDungeonLevel or rioProfile.mythicKeystoneProfile.tyrannicalMaxDungeonLevel
+				highestKey = rioProfile.mythicKeystoneProfile.maxDungeonLevel
 			end
 
 			local randomRace = random(1, 5)

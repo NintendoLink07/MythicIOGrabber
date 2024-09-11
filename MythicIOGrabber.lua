@@ -79,12 +79,12 @@ miog.OnEvent = function(_, event, ...)
 		end
 
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
-		if(miog.F.MPLUS_SETUP_COMPLETE) then
+		--[[if(miog.F.MPLUS_SETUP_COMPLETE) then
 			miog.gatherMPlusStatistics()
-		end
+		end]]
 
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
-		if(miog.F.WEEKLY_AFFIX == nil) then
+		--[[if(miog.F.WEEKLY_AFFIX == nil) then
 			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 
 			miog.F.AFFIX_INFO[9] = {C_ChallengeMode.GetAffixInfo(9)} --TYRA
@@ -95,7 +95,7 @@ miog.OnEvent = function(_, event, ...)
 			if(miog.F.MPLUS_SETUP_COMPLETE) then
 				miog.gatherMPlusStatistics()
 			end
-        end
+        end]]
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		--miog.openRaidLib.RequestKeystoneDataFromParty()
 	

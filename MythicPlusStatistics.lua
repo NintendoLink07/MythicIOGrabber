@@ -61,12 +61,12 @@ local function round(n)
 
  local function calculateNewScore(mapID, newLevel, guid, customTimer)
 
-	local scores, overallScore
+	local scores, overallScore, inTimeInfo, overtimeInfo
 	
 	if(guid) then
 		overallScore = MIOG_NewSettings.mplusStats[guid][mapID].overAllScore
-		scores[1] = MIOG_NewSettings.mplusStats[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or "Fortified"]
-		scores[2] = MIOG_NewSettings.mplusStats[guid][mapID][miog.F.WEEKLY_AFFIX == 9 and "Fortified" or "Tyrannical"]
+		inTimeInfo = MIOG_NewSettings.mplusStats[guid][mapID].intimeInfo
+		overtimeInfo = MIOG_NewSettings.mplusStats[guid][mapID].overtimeInfo
 		
 	else
 		scores, overallScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(mapID)

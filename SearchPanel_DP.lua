@@ -1567,8 +1567,6 @@ local function Initializer(frame, node)
 
 			if(searchResultInfo.leaderName) then
 				local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
-
-				miog.retrieveRaiderIOData(playerName, realm, searchResultSystem.raiderIOPanels[data.resultID])
 			end
 		end
 	end

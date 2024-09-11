@@ -990,8 +990,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			local declineData = searchResultInfo.leaderName and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID]
 			local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 
-			--miog.retrieveRaiderIOData(playerName, realm, currentFrame)
-
 			currentFrame.RaiderIOInformationPanel:OnLoad()
 			currentFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
 			currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
@@ -1610,8 +1608,6 @@ local function Initializer(frame, node)
 
 			if(searchResultInfo.leaderName) then
 				local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
-
-				miog.retrieveRaiderIOData(playerName, realm, searchResultSystem.raiderIOPanels[data.resultID])
 			end
 		end
 	end

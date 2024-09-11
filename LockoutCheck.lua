@@ -4,6 +4,18 @@ local formatter = CreateFromMixins(SecondsFormatterMixin)
 formatter:SetStripIntervalWhitespace(true)
 formatter:Init(0, SecondsFormatter.Abbreviation.None)
 
+local function checkEntriesForExpiration()
+    for k, v in pairs(MIOG_NewSettings.lockoutCheck) do
+        for a, b in ipairs(v) do
+        --for i = 1, #v, 1 do
+            if(b.resetDate <= time()) then
+                MIOG_NewSettings.lockoutCheck[k][a] = nil
+
+            end
+        end
+    end
+end
+
 miog.loadLockoutCheck = function()
     local fullPlayerName = miog.createFullNameFrom("unitID", "player")
 
@@ -123,13 +135,15 @@ miog.loadLockoutCheck = function()
     miog.LockoutCheck:SetScript("OnShow", function()
         --framePool:ReleaseAll()
         miog.LockoutCheck.Columns:Flush()
+
+        checkEntriesForExpiration()
     
         MIOG_NewSettings.lockoutCheck[fullPlayerName] = {class = UnitClassBase("player")}
     
         for index = 1, GetNumSavedInstances(), 1 do
             local name, lockoutId, reset, difficultyId, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled, instanceId = GetSavedInstanceInfo(index)
 
-            if(lockoutId > 0) then
+            if(lockoutId > 0 and reset > 0) then
                 local allBossesAlive = true
                 local bosses = {}
 
@@ -193,6 +207,7 @@ miog.loadLockoutCheck = function()
         for k, v in pairs(MIOG_NewSettings.lockoutCheck) do
             if(#v > 0) then
                 orderedCharacterTable[#orderedCharacterTable+1] = k
+
             else
                 MIOG_NewSettings.lockoutCheck[k] = nil
 
@@ -208,7 +223,6 @@ miog.loadLockoutCheck = function()
             --frame.layoutIndex = counter
 
             columnProvider:Insert({name = v, settings = MIOG_NewSettings.lockoutCheck[v]});
-
         end
 
         miog.LockoutCheck.Columns:SetDataProvider(columnProvider);
