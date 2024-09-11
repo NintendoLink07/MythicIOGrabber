@@ -941,7 +941,7 @@ local function sortAndAddDungeonList(list, enableOnShow)
 
 	for k, v in pairs(list) do
 		if(lastExp and lastExp ~= v.expansionLevel) then
-			queueDropDown:CreateSeparator(nil, v.parentIndex)
+			--queueDropDown:CreateSeparator(nil, v.parentIndex)
 
 		end
 
@@ -991,7 +991,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 					info.parentIndex = subtypeID
 					info.type1 = typeID
 					--info.index = -1
-					info.expansionLevel = miog.LFG_DUNGEONS_INFO[id].expansionLevel or expLevel
+					info.expansionLevel = miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel or expLevel
 					info.type2 = "random"
 
 					info.func = function()
@@ -1162,7 +1162,6 @@ local function updateRaidFinder(blizzDesc)
 	mainInfo.hasArrow = true
 	mainInfo.level = 1
 	mainInfo.index = 5
-	mainInfo.disabled = not hasAnEntry
 	local raidFinderFrame = queueDropDown:CreateEntryFrame(mainInfo)
 
 	local info = {}
@@ -1283,7 +1282,7 @@ local function updateRaidFinder(blizzDesc)
 		end
 	end
 
-	if(not hasAnEntry) then
+	if(hasAnEntry == false) then
 		queueDropDown:DisableSpecificFrame(raidFinderFrame)
 
 	end

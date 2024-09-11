@@ -1,11 +1,9 @@
-## [2.5.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.3) - 2024-09-10
-
-### Changed
-
-- [RaiderIOChecker] Parsed the RaiderIO database addon version so it's easier to know when the DB was last updated.
+## [2.5.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.4) - 2024-09-11
 
 ### Fixed
 
-- [DropChecker] Trying to check loot after selecting a different raid/dungeon in Blizzards Adventure Journal will not result in no loot found anymore.
+- [MainFrame] The queue dropdown raidfinder selection should now correctly check if there are any activities found.
 
-- [MainFrame] A textline error with the queue dropdown has been resolved.
+- [MainFrame] The new random dungeon tww S1 selection now has the correct icon.
+
+- [MainFrame] There won't be any expansion separators between the different S1 heroic dungeons anymore.

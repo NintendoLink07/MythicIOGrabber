@@ -6,7 +6,19 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [2.5.3] - 2024-09-09
+## [2.5.4] - 2024-09-11
+
+### Fixed
+
+- [MainFrame] The queue dropdown raidfinder selection should now correctly check if there are any activities found.
+
+- [MainFrame] The new random dungeon tww S1 selection now has the correct icon.
+
+- [MainFrame] There won't be any expansion separators between the different S1 heroic dungeons anymore.
+
+
+
+## [2.5.3] - 2024-09-10
 
 ### Changed
 
@@ -2308,7 +2320,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.4..HEAD
+[2.5.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.4
 [2.5.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.3
 [2.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.2
 [2.5.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.1
