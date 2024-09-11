@@ -242,7 +242,7 @@ local function updateRosterInfoData()
 
 							C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE,
 							function()
-								if(groupSystem.groupMember[name] and (not MIOG_SavedSpecIDs[name])) then
+								if(groupSystem.groupMember[name] and (not MIOG_InspectedNames[name])) then
 									lastNotifyTime = GetTimePreciseSec()
 
 									NotifyInspect(groupSystem.groupMember[name].unitID)

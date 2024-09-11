@@ -177,8 +177,8 @@ miog.loadPartyCheck = function()
 		end
 	end)
 
-	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
-	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
-	miog.openRaidLib.RegisterCallback(miog, "GearDurabilityUpdate", "OnGearDurabilityUpdate")
-	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
+	--miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
+	--miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
+	--miog.openRaidLib.RegisterCallback(miog, "GearDurabilityUpdate", "OnGearDurabilityUpdate")
+	--miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
 end
