@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.5.6] - 2024-09-11
+
+### Changed
+
+- [Gearing] Updated the gearing information.
+
+- [DropChecker] Switched dungeon data to S1 dungeons.
+
+### Fixed
+
+- [PartyCheck] Hovering over Brann in a Delve won't cause an error anymore.
+
+- [FilterPanel] Unchecking your class now sets Blizzards "Needs my class" setting correctly and doesn't reset upon reopening the search panel.
+
+
+
 ## [2.5.5] - 2024-09-11
 
 ### Fixed
@@ -2333,7 +2349,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.5..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.6..HEAD
+[2.5.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.6
 [2.5.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.5
 [2.5.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.4
 [2.5.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.3

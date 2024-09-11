@@ -752,6 +752,8 @@ local function setupFiltersForActivePanel(reset)
 	if(categoryID) then
 		local currentSettings = MIOG_NewSettings.filterOptions[cp][categoryID]
 
+		print(currentSettings.needsMyClass)
+
 		updateFilterDifficulties(reset)
 
 		miog.FilterPanel.IndexedOptions.Roles.Buttons[1]:SetChecked(currentSettings.filterForRoles["TANK"])
@@ -807,7 +809,16 @@ local function setupFiltersForActivePanel(reset)
 		for classIndex, classEntry in ipairs(miog.CLASSES) do
 			local currentClassPanel = miog.FilterPanel.ClassSpecOptions.Panels[classIndex]
 
-			currentClassPanel.Class.Button:SetChecked(reset or classIndex == id and not currentSettings.needsMyClass or currentSettings.classes[classIndex] ~= false and true or false)
+			if(reset) then
+				currentClassPanel.Class.Button:SetChecked(reset)
+				
+			elseif(classIndex == id) then
+				currentClassPanel.Class.Button:SetChecked(not currentSettings.needsMyClass)
+
+			else
+				currentClassPanel.Class.Button:SetChecked(currentSettings.classes[classIndex] ~= false and true or false)
+
+			end
 			
 			currentClassPanel.Class.Button:SetScript("OnClick", function(self)
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -847,6 +858,8 @@ local function setupFiltersForActivePanel(reset)
 					end
 				end
 
+				print(currentSettings.needsMyClass, currentSettings.classes[id])
+
 				convertFiltersToAdvancedBlizzardFilters()
 
 				if(currentSettings.filterForClassSpecs) then
@@ -862,8 +875,17 @@ local function setupFiltersForActivePanel(reset)
 
 			for specIndex, specID in pairs(classEntry.specs) do
 				local currentSpecFrame = currentClassPanel.SpecFrames[specID]
-				
-				currentSpecFrame.Button:SetChecked(reset or classIndex == id and not currentSettings.needsMyClass or currentSettings.specs[specID] ~= false and true or false)
+
+				if(reset) then
+					currentSpecFrame.Button:SetChecked(reset)
+					
+				elseif(classIndex == id) then
+					currentSpecFrame.Button:SetChecked(not currentSettings.needsMyClass)
+
+				else
+					currentSpecFrame.Button:SetChecked(currentSettings.specs[specID] ~= false and true or false)
+
+				end
 				
 				currentSpecFrame.Button:SetScript("OnClick", function(self)
 					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)

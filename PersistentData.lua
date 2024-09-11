@@ -1014,7 +1014,7 @@ for k, v in pairs(miog.SEASONAL_MAP_IDS) do
 end
 
 miog.DROPCHECKER_MAP_IDS ={
-	[13] = {dungeons = {2660, 2662, 2652, 2669, 2651, 2661, 2649, 2648}, raids = {2657}}, --670, 1822, 2290, 2286, 
+	--[13] = {dungeons = {2660, 2662, 2652, 2669, 2651, 2661, 2649, 2648}, raids = {2657}}, --670, 1822, 2290, 2286, 
 }
 
 miog.SEASONAL_CHALLENGE_MODES = {
@@ -1533,8 +1533,8 @@ miog.GEARING_CHART = {
 		other = {
 			info = {
 				[1] = {jumps = 12, name="Spark5"},
-				[2] = {jumps = 19, name="Harbr5"},
-				[3] = {jumps = 22, name="Gilded5"},
+				[2] = {jumps = 19, name="Runed5"},
+				[3] = {jumps = 24, name="Gilded5"},
 			},
 			itemLevels = {
 

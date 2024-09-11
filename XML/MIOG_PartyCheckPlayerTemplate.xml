@@ -17,7 +17,9 @@
                 GameTooltip:SetUnit(self.data.unitID)
                 GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-                GameTooltip:AddLine(WrapTextInColorCode((self.data.specID and self.data.specID ~= 0 and (select(2, GetSpecializationInfoForSpecID(self.data.specID)) .. " ") or "") .. UnitClass(self.data.unitID), C_ClassColor.GetClassColor(self.data.classFileName):GenerateHexColor()))
+                if(self.data.classFileName) then
+                    GameTooltip:AddLine(WrapTextInColorCode((self.data.specID and self.data.specID ~= 0 and (select(2, GetSpecializationInfoForSpecID(self.data.specID)) .. " ") or "") .. UnitClass(self.data.unitID), C_ClassColor.GetClassColor(self.data.classFileName):GenerateHexColor()))
+                end
 
                 if (self.data.rank == 2 ) then
                     GameTooltip_AddBlankLineToTooltip(GameTooltip)
