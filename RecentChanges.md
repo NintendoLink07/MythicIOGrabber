@@ -1,56 +1,18 @@
-## [2.5.7a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7a) - 2024-09-11
+## [2.5.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8) - 2024-09-16
 
-### Fixed
+### Added
 
-- Deleted some debug prints.
-
-
-
-## [2.5.7] - 2024-09-11
+- [MainFrame] A tooltip has been added to the string beside the character panel at the top of the frame for clarification.
 
 ### Changed
 
-- [PartyCheck] Disabled the keylevel and gear info for now, they create 4-5 hard lags after combat.
-Will be fixed by the end of the week, don't have much time right now.
+- [PartyCheck] PartyCheck (with all the gear/keystone info) has been re-enabled and it's info will now only be updated when the frame is shown.
 
-
-
-## [2.5.6] - 2024-09-11
-
-### Changed
-
-- [Gearing] Updated the gearing information.
-
-- [DropChecker] Switched dungeon data to S1 dungeons.
+- [PartyCheck] The new sorting algorithm has been implemented, you can now sort for more than 2 things at once.
+Keep in mind the more the addon has to sort a raid group the more it has to compute.
 
 ### Fixed
 
-- [PartyCheck] Hovering over Brann in a Delve won't cause an error anymore.
+- [Lockouts] The lockouts will now be correctly refreshed when login in with a character and not just when opening the Lockouts frame.
 
-- [FilterPanel] Unchecking your class now sets Blizzards "Needs my class" setting correctly and doesn't reset upon reopening the search panel.
-
-
-
-## [2.5.5] - 2024-09-11
-
-### Fixed
-
-- [FilterPanel] When no difficulty has been actually selected (new install of the addon and it defaults to normal) it will now check for the base difficulty instead of no difficulty.
-
-
-
-## [2.5.4] - 2024-09-11
-
-### Fixed
-
-- [MainFrame] The queue dropdown raidfinder selection should now correctly check if there are any activities found.
-
-- [MainFrame] The new random dungeon tww S1 selection now has the correct icon.
-
-- [MainFrame] There won't be any expansion separators between the different S1 heroic dungeons anymore.
-
-- [SearchPanel&ApplicationViewer] Swapped out the RaiderIO data fortified and tyrannical timers for the new single ones.
-
-- [Lockouts] Lockouts will now be deleted when they're expired.
-
-- [SearchPanel] The raid category will now display "0/0" when there is no last season data.
+- Logging in with a character will no longer cause a few lags at the beginning of loading into the world.

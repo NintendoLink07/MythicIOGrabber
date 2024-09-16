@@ -39,6 +39,12 @@
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.LoadingSpinner" relativePoint="LEFT" />
                     </Anchors>
+
+                    <Scripts>  
+                        <OnLeave>
+                            GameTooltip:Hide()
+                        </OnLeave>
+                    </Scripts>
                 </FontString>
             </Layer>
         </Layers>

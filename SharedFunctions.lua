@@ -181,8 +181,28 @@ local function calculateWeightedScore(difficulty, kills, bossCount, current, ord
 
 end
 
+local function standardSortFunction(k1, k2)
+    for k, v in ipairs(self.sortingParameters) do
+        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+            if(v.state == 1) then
+                return k1[v.name] < k2[v.name]
+
+            else
+                return k1[v.name] > k2[v.name]
+            end
+        end
+    end
+end
+
+miog.standardSortFunction = standardSortFunction
+
 local function getNewRaidSortData(playerName, realm, region)
-	local profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	local profile
+	
+	if(RaiderIO) then 
+		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	end
+	
 	local raidData
 
 	if(profile) then
@@ -213,6 +233,8 @@ local function getNewRaidSortData(playerName, realm, region)
 						current = d.current,
 						bossesKilled = y.kills,
 						cleared = y.cleared,
+						mapID = mapID,
+						shortName = currentTable.raids[mapID].shortName,
 						weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal),
 						parsedString = y.kills .. "/" .. d.raid.bossCount,
 						bosses = {},
@@ -272,7 +294,11 @@ end
 miog.getNewRaidSortData = getNewRaidSortData
 
 local function getMPlusSortData(playerName, realm, region)
-	local profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	local profile
+	
+	if(RaiderIO) then
+		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	end
 
 	if(profile) then
 		local mplusData = {}
@@ -826,6 +852,8 @@ miog.fillNewRaiderIOPanel = function(raiderIOPanel, playerName, realm)
 
 			end)
 			raidHeaderFrame.Name:SetText(miog.MAP_INFO[v].shortName)
+			
+            miog.checkSingleMapIDForNewData(v)
 
 			for i = 1, 12, 1 do
 				local currentBoss = "Boss" .. i

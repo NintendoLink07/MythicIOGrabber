@@ -11,10 +11,11 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 	if(unitName) then
 		unitName = miog.createFullNameFrom("unitName", unitName)
 
-		if(miog.groupSystem.groupMember[unitName] or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitName("player")) then
+		if(miog.inspection.groupData[unitName] or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitName("player")) then
 			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
-			miog.updateRosterInfoData()
+			--miog.updateRosterInfoData()
+			miog.inspection.updateGroupData()
 		end
 
 		if(miog.guildSystem and miog.guildSystem.baseFrames[unitName]) then
@@ -58,11 +59,13 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 
 		end
 
-		MIOG_SavedSpecIDs[singleUnitInfo.nameFull] = specId ~= 0 and specId
-		MIOG_InspectedNames[singleUnitInfo.nameFull] = MIOG_SavedSpecIDs[singleUnitInfo.nameFull] and GetTimePreciseSec() or nil
+		miog.playerSpecs[singleUnitInfo.nameFull] = specId ~= 0 and specId
+		--MIOG_InspectedNames[singleUnitInfo.nameFull] = MIOG_SavedSpecIDs[singleUnitInfo.nameFull] and GetTimePreciseSec() or nil
 	end
+	
 
-	miog.updateRosterInfoData()
+	--miog.updateRosterInfoData()
+	miog.inspection.updateGroupData()
 end
 
 function miog.OnUnitInfoWipe()
@@ -96,7 +99,8 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 				miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 			end
 
-			miog.updateRosterInfoData()
+			--miog.updateRosterInfoData()
+			miog.inspection.updateGroupData()
 		end
 	end
 end
@@ -109,37 +113,24 @@ function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
 			miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
 			miog.checkSystem.groupMember[name].durability = durability
 
-			miog.updateRosterInfoData()
+			--miog.updateRosterInfoData()
+			miog.inspection.updateGroupData()
 		end
 	end
 end
 
 miog.loadPartyCheck = function()
     miog.PartyCheck = miog.pveFrame2.TabFramesPanel.PartyCheck
-	miog.PartyCheck.sortByCategoryButtons = {}
-
-	for k, v in pairs(miog.PartyCheck) do
-		if(type(v) == "table" and v.Button) then
-			v.Name:SetText(v:GetParentKey())
-			miog.PartyCheck.sortByCategoryButtons[v:GetDebugName()] = v.Button
-			v.Button.panel = "PartyCheck"
-			v.Button.category = v:GetDebugName()
-			v.Button:SetScript("PostClick", function()
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-				miog.updateRosterInfoData()
-			end)
-		end
-
-	end
+	miog.PartyCheck:SetScrollView(miog.PartyCheck.ScrollView)
 
 	miog.PartyCheck:SetScript("OnShow", function()
 		if(IsInRaid()) then
-			miog.openRaidLib.RequestKeystoneDataFromRaid()
-			miog.openRaidLib.GetAllUnitsGear()
+			--miog.openRaidLib.RequestKeystoneDataFromRaid()
+			--miog.openRaidLib.GetAllUnitsGear()
 			
 		elseif(IsInGroup()) then
-			miog.openRaidLib.RequestKeystoneDataFromParty()
-			miog.openRaidLib.GetAllUnitsGear()
+			--miog.openRaidLib.RequestKeystoneDataFromParty()
+			--miog.openRaidLib.GetAllUnitsGear()
 
 		end
 
@@ -172,13 +163,31 @@ miog.loadPartyCheck = function()
 					miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 				end
 
-				miog.updateRosterInfoData()
+				--miog.updateRosterInfoData()
+				miog.inspection.updateGroupData()
 			end
 		end
+		
+		miog.PartyCheck:Sort()
 	end)
 
-	--miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
-	--miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
-	--miog.openRaidLib.RegisterCallback(miog, "GearDurabilityUpdate", "OnGearDurabilityUpdate")
-	--miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
+	miog.PartyCheck:OnLoad()
+	miog.PartyCheck:AddMultipleSortingParameters({
+		{name = "group"},
+		{name = "name", padding = 20},
+		{name = "role", padding = 80},
+		{name = "spec", padding = 30},
+		{name = "ilvl", padding = 30},
+		{name = "durability", padding = 30},
+		{name = "keylevel", padding = 30},
+		{name = "score", padding = 30},
+		{name = "progressWeight", padding = 35},
+	})
+
+	--miog.PartyCheck:PrintAllSortingParameters()
+
+	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
+	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
+	miog.openRaidLib.RegisterCallback(miog, "GearDurabilityUpdate", "OnGearDurabilityUpdate")
+	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
 end

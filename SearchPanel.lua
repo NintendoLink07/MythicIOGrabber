@@ -266,6 +266,8 @@ local function isGroupEligible(resultID, bordermode)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 		local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 
+		miog.checkSingleMapIDForNewData(miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID)
+
 		if(LFGListFrame.SearchPanel.categoryID and activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not bordermode) then
 			return false, miog.INELIGIBILITY_REASONS[2]
 

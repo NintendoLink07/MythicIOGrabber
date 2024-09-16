@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [2.5.8] - 2024-09-16
+
+### Added
+
+- [MainFrame] A tooltip has been added to the string beside the character panel at the top of the frame for clarification.
+
+### Changed
+
+- [PartyCheck] PartyCheck (with all the gear/keystone info) has been re-enabled and it's info will now only be updated when the frame is shown.
+
+- [PartyCheck] The new sorting algorithm has been implemented, you can now sort for more than 2 things at once.
+Keep in mind the more the addon has to sort a raid group the more it has to compute.
+
+### Fixed
+
+- [Lockouts] The lockouts will now be correctly refreshed when login in with a character and not just when opening the Lockouts frame.
+
+- Logging in with a character will no longer cause a few lags at the beginning of loading into the world.
+
+
+
+## [2.5.8] - 2024-09-13
+
+### Fixed
+
+- Deleted some debug prints.
+
+
+
 ## [2.5.7a] - 2024-09-11
 
 ### Fixed
@@ -2366,7 +2395,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.7a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.8..HEAD
+[2.5.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8
 [2.5.7a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7a
 [2.5.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7
 [2.5.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.6

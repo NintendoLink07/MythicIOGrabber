@@ -2,11 +2,15 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ClassPanelSpecFrameTemplate" inherits="BackdropTemplate" virtual="true">
         <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true" />
+            </Layer>
+            
             <Layer level="ARTWORK">
-                <Texture parentKey="Icon">
+                <Texture parentKey="Icon" enableMouseClicks="true">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1" />
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                     </Anchors>
                 </Texture>
             </Layer>

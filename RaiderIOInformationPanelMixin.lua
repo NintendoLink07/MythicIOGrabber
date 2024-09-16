@@ -45,6 +45,8 @@ function RaiderIOInformationPanelMixin:OnLoad()
 			end)
 			raidHeaderFrame.Name:SetText(miog.MAP_INFO[v].shortName)
 
+            miog.checkSingleMapIDForNewData(v)
+
 			for i = 1, 12, 1 do
 				local currentBoss = "Boss" .. i
 
@@ -56,6 +58,8 @@ function RaiderIOInformationPanelMixin:OnLoad()
 						local difficulty = 16
 						EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
 					end)
+                    raidBossesFrame[currentBoss].Border:SetColorTexture(1, 0, 0, 1);
+                    raidBossesFrame[currentBoss].Icon:SetDesaturated(true)
 
 					raidBossesFrame[currentBoss]:Show()
 

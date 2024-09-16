@@ -4,6 +4,8 @@ local formatter = CreateFromMixins(SecondsFormatterMixin)
 formatter:SetStripIntervalWhitespace(true)
 formatter:Init(0, SecondsFormatter.Abbreviation.None)
 
+local fullPlayerName
+
 local function checkEntriesForExpiration()
     for k, v in pairs(MIOG_NewSettings.lockoutCheck) do
         for a, b in ipairs(v) do
@@ -16,8 +18,68 @@ local function checkEntriesForExpiration()
     end
 end
 
+local function refreshCharacterInfo()
+    MIOG_NewSettings.lockoutCheck[fullPlayerName] = {class = UnitClassBase("player")}
+    
+    for index = 1, GetNumSavedInstances(), 1 do
+        local name, lockoutId, reset, difficultyId, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled, instanceId = GetSavedInstanceInfo(index)
+
+        if(lockoutId > 0 and reset > 0) then
+            local allBossesAlive = true
+            local bosses = {}
+
+            for i = 1, numEncounters, 1 do
+                local bossName, fileDataID, isKilled, unknown4 = GetSavedInstanceEncounterInfo(index, i)
+
+                bosses[i] = {bossName = bossName, isKilled = isKilled}
+
+                if(isKilled) then
+                    allBossesAlive = false
+                end
+            end
+
+            if(not allBossesAlive) then
+                MIOG_NewSettings.lockoutCheck[fullPlayerName][#MIOG_NewSettings.lockoutCheck[fullPlayerName]+1] = {
+                    id = lockoutId,
+                    name = name,
+                    difficulty = difficultyId,
+                    extended = extended,
+                    isRaid = isRaid,
+                    icon = miog.MAP_INFO[instanceId].icon,
+                    mapID = instanceId,
+                    index = index,
+                    numEncounters = numEncounters,
+                    resetDate = time() + reset,
+                    bosses = bosses
+                }
+            end
+        end
+    end
+    
+    for i = 1, GetNumSavedWorldBosses(), 1 do
+        local name, worldBossID, reset = GetSavedWorldBossInfo(i)
+
+        MIOG_NewSettings.lockoutCheck[fullPlayerName][#MIOG_NewSettings.lockoutCheck[fullPlayerName] + 1] = {
+            id = worldBossID,
+            name = name,
+            isWorldBoss = true,
+            resetDate = time() + reset,
+            --icon = miog.MAP_INFO[instanceId].icon,
+        }
+    end
+end
+
+hooksecurefunc("RequestRaidInfo", function()
+    fullPlayerName = miog.createFullNameFrom("unitID", "player")
+
+    if(fullPlayerName) then
+        refreshCharacterInfo()
+        
+    end
+end)
+
 miog.loadLockoutCheck = function()
-    local fullPlayerName = miog.createFullNameFrom("unitID", "player")
+    fullPlayerName = miog.createFullNameFrom("unitID", "player")
 
     --framePool = CreateFramePool("Frame", miog.LockoutCheck.ScrollFrame.Columns, "MIOG_LockoutCheckCharacterTemplate", function(_, frame) frame.Name:SetText("") end)
 
@@ -137,55 +199,8 @@ miog.loadLockoutCheck = function()
         miog.LockoutCheck.Columns:Flush()
 
         checkEntriesForExpiration()
-    
-        MIOG_NewSettings.lockoutCheck[fullPlayerName] = {class = UnitClassBase("player")}
-    
-        for index = 1, GetNumSavedInstances(), 1 do
-            local name, lockoutId, reset, difficultyId, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled, instanceId = GetSavedInstanceInfo(index)
 
-            if(lockoutId > 0 and reset > 0) then
-                local allBossesAlive = true
-                local bosses = {}
-
-                for i = 1, numEncounters, 1 do
-                    local bossName, fileDataID, isKilled, unknown4 = GetSavedInstanceEncounterInfo(index, i)
-
-                    bosses[i] = {bossName = bossName, isKilled = isKilled}
-
-                    if(isKilled) then
-                        allBossesAlive = false
-                    end
-                end
-
-                if(not allBossesAlive) then
-                    MIOG_NewSettings.lockoutCheck[fullPlayerName][#MIOG_NewSettings.lockoutCheck[fullPlayerName]+1] = {
-                        id = lockoutId,
-                        name = name,
-                        difficulty = difficultyId,
-                        extended = extended,
-                        isRaid = isRaid,
-                        icon = miog.MAP_INFO[instanceId].icon,
-                        mapID = instanceId,
-                        index = index,
-                        numEncounters = numEncounters,
-                        resetDate = time() + reset,
-                        bosses = bosses
-                    }
-                end
-            end
-        end
-        
-        for i = 1, GetNumSavedWorldBosses(), 1 do
-            local name, worldBossID, reset = GetSavedWorldBossInfo(i)
-
-            MIOG_NewSettings.lockoutCheck[fullPlayerName][#MIOG_NewSettings.lockoutCheck[fullPlayerName] + 1] = {
-                id = worldBossID,
-                name = name,
-                isWorldBoss = true,
-                resetDate = time() + reset,
-                --icon = miog.MAP_INFO[instanceId].icon,
-            }
-        end
+        refreshCharacterInfo()
     
         table.sort(MIOG_NewSettings.lockoutCheck[fullPlayerName], function(k1, k2)
             if(k1.isRaid == k2.isRaid) then
@@ -229,4 +244,6 @@ miog.loadLockoutCheck = function()
 
         --miog.LockoutCheck.ScrollFrame.Columns:MarkDirty()
     end)
+
+    RequestRaidInfo()
 end

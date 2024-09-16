@@ -15,9 +15,13 @@ miog.loadRaiderIOChecker = function()
 
     miog.RaiderIOChecker.NameSearchBox:SetScript("OnKeyDown", function(self, key)
         if(key == "ENTER") then
-            local profile = RaiderIO.GetProfile(self:GetText(), miog.RaiderIOChecker.RealmSearchBox:GetText() or "")
+            local profile
+            
+            if(RaiderIO) then
+                profile = RaiderIO.GetProfile(self:GetText(), miog.RaiderIOChecker.RealmSearchBox:GetText() or "")
 
-            setRaiderIOInformation(profile)
+                setRaiderIOInformation(profile)
+            end
 
         elseif(key == "TAB") then
             miog.RaiderIOChecker.RealmSearchBox:SetFocus()
@@ -26,9 +30,13 @@ miog.loadRaiderIOChecker = function()
 
     miog.RaiderIOChecker.RealmSearchBox:SetScript("OnKeyDown", function(self, key)
         if(key == "ENTER") then
-            local profile = RaiderIO.GetProfile(miog.RaiderIOChecker.NameSearchBox:GetText() or "", self:GetText())
+            local profile
+            
+            if(RaiderIO) then
+                profile = RaiderIO.GetProfile(self:GetText(), miog.RaiderIOChecker.RealmSearchBox:GetText() or "")
 
-            setRaiderIOInformation(profile)
+                setRaiderIOInformation(profile)
+            end
 
         elseif(key == "TAB") then
             miog.RaiderIOChecker.NameSearchBox:SetFocus()

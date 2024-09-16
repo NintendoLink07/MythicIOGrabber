@@ -1093,7 +1093,7 @@ end
 miog.MAP_CHALLENGE_MODE_INFO = {}
 
 local function checkSingleMapIDForNewData(mapID)
-	if(mapID > 0 and miog.MAP_INFO[mapID]) then
+	if(miog.MAP_INFO[mapID]) then --mapID > 0 and 
 		local bossIndex = 1;
 
 		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
@@ -1106,7 +1106,7 @@ local function checkSingleMapIDForNewData(mapID)
 
 		while bossName do
 			--if(factionChecked) then
-				local id, name, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
+				local id, _, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
 				
 				miog.MAP_INFO[mapID].bosses[bossIndex] = {
 					name = bossName,
@@ -1174,7 +1174,7 @@ local function loadRawData()
 
 		miog.MAP_INFO[v[1]].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
 
-		checkSingleMapIDForNewData(v[1])
+		--checkSingleMapIDForNewData(v[1])
 	end
 
 	local expansionTable = {}
