@@ -85,7 +85,7 @@ local defaultSettings = {
 
         ["LFGListFrame.ApplicationViewer"] = {["role"] = defaultSortState, ["primary"] = defaultSortState, ["secondary"] = defaultSortState, ["ilvl"] = defaultSortState},
 
-        ["PartyCheck"] = {["group"] = defaultSortState, ["shortName"] = defaultSortState, ["role"] = defaultSortState, ["specID"] = defaultSortState, ["ilvl"] = defaultSortState, ["durability"] = defaultSortState, ["keylevel"] = defaultSortState, ["score"] = defaultSortState, ["progressWeight"] = defaultSortState},
+        ["PartyCheck"] = {},
 
         ["Guild"] = {["level"] = defaultSortState, ["rank"] = defaultSortState, ["class"] = defaultSortState, ["keystone"] = defaultSortState, ["keylevel"] = defaultSortState, ["score"] = defaultSortState, ["progressWeight"] = defaultSortState, }}
     },

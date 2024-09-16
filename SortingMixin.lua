@@ -33,6 +33,10 @@ function SortingMixin:OnLoad()
     end)
 end
 
+function SortingMixin:SetSettingsTable(table)
+    self.settingsTable = table
+end
+
 function SortingMixin:SetScrollView(scrollView)
     self.scrollView = scrollView
 end
@@ -43,12 +47,17 @@ function SortingMixin:CreateButtonsForParameters()
     for k, v in ipairs(self.sortingParameters) do
         local button = buttonPool:Acquire()
 
-        button.leftPadding = self.sortingParameters[k].padding or 0
+        button.leftPadding = v.padding or 0
         button.parameter = v
         button.layoutIndex = k
 
         v.button = button
 
+        if(v.state > 0) then
+            self:SetParameterState(k, v.state)
+            button:SetState(true, v.state)
+
+        end
     end
 
     self.SortButtonRow:MarkDirty()
@@ -68,7 +77,14 @@ function SortingMixin:AddSingleSortingParameter(parameter, noCreation)
     --table.insert(self.sortingParameters, {name = parameter, state = 0, index = #self.sortingParameters})
 
     local index = #self.sortingParameters + 1
-    self.sortingParameters[index] = {name = parameter.name, padding = parameter.padding, state = 0, index = index}
+
+    if(self.settingsTable[parameter.name] and not self.settingsTable[parameter.name].currentState) then
+        self.sortingParameters[index] = self.settingsTable[parameter.name]
+        
+    else
+        self.sortingParameters[index] = {name = parameter.name, padding = parameter.padding, state = 0, index = index}
+
+    end
 
     if(not noCreation) then
         self:CreateButtonsForParameters()
@@ -106,14 +122,14 @@ function SortingMixin:GetParameterInfo(parameter)
     end
 end
 
-function SortingMixin:CheckOrderStatus(parameter)
-    local hasBeenDeactivated = parameter.state == 0
+function SortingMixin:CheckOrderStatus(parameterInfo)
+    local hasBeenDeactivated = parameterInfo.state == 0
 
     if(hasBeenDeactivated) then
-        local oldOrder = parameter.order
+        local oldOrder = parameterInfo.order
 
-        parameter.order = nil
-        parameter.button.FontString:SetText(parameter.order)
+        parameterInfo.order = nil
+        parameterInfo.button.FontString:SetText(parameterInfo.order)
 
         for k, v in ipairs(self.sortingParameters) do
             if(v.order and v.order > oldOrder) then
@@ -122,10 +138,12 @@ function SortingMixin:CheckOrderStatus(parameter)
             end
         end
     else
-        parameter.order = not parameter.order and self:GetNumOfActiveSortMethods() or parameter.order
-        parameter.button.FontString:SetText(parameter.order)
+        parameterInfo.order = not parameterInfo.order and self:GetNumOfActiveSortMethods() or parameterInfo.order
+        parameterInfo.button.FontString:SetText(parameterInfo.order)
 
     end
+
+    self.settingsTable[parameterInfo.name] = parameterInfo
 end
 
 function SortingMixin:SetParameterState(parameter, state)

@@ -172,6 +172,7 @@ miog.loadPartyCheck = function()
 	end)
 
 	miog.PartyCheck:OnLoad()
+	miog.PartyCheck:SetSettingsTable(MIOG_NewSettings["sortMethods"]["PartyCheck"])
 	miog.PartyCheck:AddMultipleSortingParameters({
 		{name = "group"},
 		{name = "name", padding = 20},
