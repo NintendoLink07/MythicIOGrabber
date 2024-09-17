@@ -160,6 +160,14 @@ local function ShowIncompleteMythicTooltip(self)
 	GameTooltip:Show();
 end
 
+local function setRoles()
+	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
+	
+	SetLFGRoles(queueRolePanel.Leader.Checkbox:GetChecked(), queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
+	SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
+
+end
+
 local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
@@ -510,12 +518,6 @@ local function createPVEFrameReplacement()
 
 	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
 	local leader, tank, healer, damager = LFDQueueFrame_GetRoles()
-
-	local function setRoles()
-		SetLFGRoles(queueRolePanel.Leader.Checkbox:GetChecked(), queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
-		SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
-
-	end
 
 	queueRolePanel.Leader.Checkbox:SetChecked(leader)
 	queueRolePanel.Leader.Checkbox:SetScript("OnClick", function(self)

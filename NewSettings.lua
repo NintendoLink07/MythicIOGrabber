@@ -79,14 +79,14 @@ local defaultSettings = {
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
     {name = "Favoured applicants", variableName = "MIOG_FavouredApplicants", key="favouredApplicants", default={}, type="custom"},
-    {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={["LFGListFrame.SearchPanel"] = defaultFilters, ["LFGListFrame.ApplicationViewer"] = defaultFilters}},
+    {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={
+        ["LFGListFrame.SearchPanel"] = defaultFilters,
+        ["LFGListFrame.ApplicationViewer"] = defaultFilters}
+    },
     {name = "Sort methods", variableName = "MIOG_SortMethods", key="sortMethods", default={
         ["LFGListFrame.SearchPanel"] = {["primary"] = defaultSortState, ["secondary"] = defaultSortState, ["age"] = defaultSortState},
-
         ["LFGListFrame.ApplicationViewer"] = {["role"] = defaultSortState, ["primary"] = defaultSortState, ["secondary"] = defaultSortState, ["ilvl"] = defaultSortState},
-
         ["PartyCheck"] = {},
-
         ["Guild"] = {["level"] = defaultSortState, ["rank"] = defaultSortState, ["class"] = defaultSortState, ["keystone"] = defaultSortState, ["keylevel"] = defaultSortState, ["score"] = defaultSortState, ["progressWeight"] = defaultSortState, }}
     },
     {name = "Search Panel declined groups", variableName = "MIOG_DeclinedGroups", key="declinedGroups", default={}},
@@ -167,10 +167,18 @@ local function createDefaultSettings()
                 end
             end
         elseif(v.key == "declinedGroups") then
-            
             for x, y in pairs(MIOG_NewSettings.declinedGroups) do
                 if(y.timestamp < time() - 900) then
                     MIOG_NewSettings.declinedGroups[x] = nil
+                    
+                end
+            end
+        end
+
+        if(type(v.default) == "table") then
+            for x, y in pairs(v.default) do
+                if(not MIOG_NewSettings[v.key][x]) then
+                    MIOG_NewSettings[v.key][x] = y
                     
                 end
             end

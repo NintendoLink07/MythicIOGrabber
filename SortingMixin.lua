@@ -34,6 +34,11 @@ function SortingMixin:OnLoad()
 end
 
 function SortingMixin:SetSettingsTable(table)
+    if(not table) then
+        table = {}
+
+    end
+
     self.settingsTable = table
 end
 
@@ -143,7 +148,13 @@ function SortingMixin:CheckOrderStatus(parameterInfo)
 
     end
 
-    self.settingsTable[parameterInfo.name] = parameterInfo
+    self.settingsTable[parameterInfo.name] = {
+        name = parameterInfo.name,
+        order = parameterInfo.order,
+        index = parameterInfo.index,
+        state = parameterInfo.state,
+        padding = parameterInfo.padding,
+    }
 end
 
 function SortingMixin:SetParameterState(parameter, state)
@@ -265,7 +276,15 @@ function SortingMixin:Sort()
 
             self.scrollView:SetDataProvider(dataProvider)
 
-            dataProvider:SetAllCollapsed(true)
+            for k, v in pairs(dataProvider:GetChildrenNodes()) do
+                if(v.data.collapsed == false) then
+                    v:SetCollapsed(v.data.collapsed)
+
+                else
+                    v:SetCollapsed(true)
+
+                end
+            end
         end
     end
 end

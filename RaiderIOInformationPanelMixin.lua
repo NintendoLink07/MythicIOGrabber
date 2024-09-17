@@ -286,9 +286,9 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                         end
                     end
                 end
-
-                raidCounter = raidCounter + 1
             end
+
+            raidCounter = raidCounter + 1
         end
 	end
 end

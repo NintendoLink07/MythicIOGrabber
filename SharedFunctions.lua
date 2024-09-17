@@ -393,7 +393,7 @@ miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeon
 			secondaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
 
 		end
-	else
+	elseif(raidData) then
 		if(raidData.character.ordered[1]) then
 			primaryIndicator:SetText(wticc(raidData.character.ordered[1].parsedString, raidData.character.ordered[1].current and miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color or miog.DIFFICULTY[raidData.character.ordered[1].difficulty].desaturated))
 		end

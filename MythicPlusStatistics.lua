@@ -60,6 +60,10 @@ local function round(n)
  end
 
  local function calculateNewScore(mapID, newLevel, guid, customTimer)
+	-- xd
+	if(true) then
+		return 0
+	end
 
 	local scores, overallScore, inTimeInfo, overtimeInfo
 	

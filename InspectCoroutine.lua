@@ -3,12 +3,7 @@ local wticc = WrapTextInColorCode
 
 miog.inspection = {}
 
-local groupSystem = {}
-groupSystem.groupMember = {}
-groupSystem.raiderIOPanels = {}
-
---miog.groupSystem = groupSystem
-
+local raiderIOPanels = {}
 local groupData = {}
 miog.inspection.groupData = groupData
 
@@ -23,8 +18,9 @@ MIOG_SavedSpecIDs = {}
 
 miog.playerSpecs = {}
 
-local timers = {}
-local currentInspection = nil
+local collapsedList = {}
+
+MIOG_COLLAPSELIST = collapsedList
 
 local fullPlayerName, shortName
 
@@ -32,6 +28,7 @@ local function startPityTimer()
 	pityTimer = C_Timer.NewTimer(10, function()
 		if(GetTimePreciseSec() - lastNotifyTime > 10) then
 			ClearInspectPlayer(true)
+			miog.inspection.updateGroupData()
 	
 		end
 	end)
@@ -40,7 +37,7 @@ end
 local function createSinglePartyCheckFrame(memberFrame, member)
 	memberFrame.data = member
 	memberFrame.fixedWidth = miog.PartyCheck:GetWidth()
-	memberFrame.Group:SetText(member.group)
+	memberFrame.Group:SetText(member.online and member.group or WrapTextInColorCode(member.group, miog.CLRSCC.red))
 	memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
 	memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
 	memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
@@ -49,10 +46,17 @@ local function createSinglePartyCheckFrame(memberFrame, member)
 	
 	memberFrame:SetScript("OnMouseDown", function(self)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		memberFrame.node:ToggleCollapsed()
-		--miog.PartyCheck.expandedChildren[member.name] = memberFrame.node:IsCollapsed()
 
-		miog.PartyCheck:SetExpandedChild(member.name, memberFrame.node:IsCollapsed())
+		local frame = raiderIOPanels[member.name]
+		
+		frame.RaiderIOInformationPanel:SetPlayerData(member.name)
+		--currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
+		frame.RaiderIOInformationPanel:ApplyFillData()
+
+		memberFrame.node:ToggleCollapsed()
+		collapsedList[member.name] = memberFrame.node:IsCollapsed()
+
+		--miog.PartyCheck:SetExpandedChild(member.name, memberFrame.node:IsCollapsed())
 	end)
 
 	if(member.rank == 2) then
@@ -121,7 +125,7 @@ local function getOptionalPlayerData(fullName)
 		groupData[fullName].durability = libData.durability or 0
 		groupData[fullName].missingEnchants = libData.missingEnchants or {}
 		groupData[fullName].missingGems = libData.missingGems or {}
-		groupData[fullName].hasWeaponEnchant = libData.hasWeaponEnchant or false
+		--groupData[fullName].hasWeaponEnchant = libData.hasWeaponEnchant or false
 		
 	end
 
@@ -139,7 +143,7 @@ local function getOptionalPlayerData(fullName)
 		local mainData = raidData.main
 
 		for i = 1, 2, 1 do
-			local raidInfo = raidData[i == 1 and "character" or "main"]
+			local raidInfo = i == 1 and charData or mainData
 
 			for k, v in ipairs(raidInfo.ordered) do
 				if(v.difficulty > 0) then
@@ -161,6 +165,8 @@ local function getOptionalPlayerData(fullName)
 		
 	end
 end
+
+local currentInspectionName = ""
 
 local function updateGroupData()
 	if(not InCombatLockdown()) then
@@ -195,7 +201,6 @@ local function updateGroupData()
 		local groupOffset = 0
 		local playersWithSpecData, inspectableMembers, numOfMembers = 0, 0, GetNumGroupMembers()
 		local inspectedPlayerStillInGroup = false
-		local currentInspectionName = ""
 
 		for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
 			local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
@@ -243,79 +248,25 @@ local function updateGroupData()
 					durability = 0,
 					missingEnchants = {},
 					missingGems = {},
-					hasWeaponEnchant = false,
+					--hasWeaponEnchant = false,
 
 					progressWeight = 0,
 					progress = "",
 					progressTooltipData = "",
 					score = 0,
 
+					collapsed = collapsedList[fullName]
 				}
 
 				getOptionalPlayerData(fullName)
-				
-				--[[local rioProfile
 
-				if(miog.F.IS_RAIDERIO_LOADED) then
-					rioProfile = RaiderIO.GetProfile(playerName, realm)
-				end
-	
-				if(rioProfile) then
-					groupData[fullName].score = rioProfile.mythicKeystoneProfile and rioProfile.mythicKeystoneProfile.currentScore or 0
-					
-					local currentData, nonCurrentData, orderedData = miog.getRaidSortData(member.name)
-					
-					if(#orderedData > 0) then						
-						for a, b in ipairs(orderedData) do
-							groupData[fullName].progress = (groupData[fullName].progress or "") .. wticc(b.parsedString, miog.DIFFICULTY[b.difficulty].color) .. " "
-						
-							groupData[fullName].progressWeight = groupData[fullName].progressWeight + (b.weight or 0)
-	
-							if(b.mapId) then
-	
-								if(string.find(b.mapId, 10000)) then
-									b.mapId = tonumber(strsub(b.mapId, strlen(b.mapId) - 3))
-								end
-							
-								groupData[fullName].progressTooltipData = groupData[fullName].progressTooltipData .. b.shortName .. ": " .. wticc(miog.DIFFICULTY[b.difficulty].shortName .. ":" .. b.progress .. "/" .. b.bossCount, miog.DIFFICULTY[b.difficulty].color) .. "\r\n"
-							end
-	
-							if(a == 3) then
-								break
-							end
-						end
-	
-						if(member.progressWeight == 0) then
-							member.progress = nil
-							member.progressTooltipData = nil
-						end
-					end
-				else
-					member.progress = ""
-					member.score = 0
-				
-				end]]
-
-				if(groupData[fullName].specID) then
-					specCount[groupData[fullName].specID] = specCount[groupData[fullName].specID] and specCount[groupData[fullName].specID] + 1 or 1
-
-					if(groupData[fullName].role == nil) then
-						groupData[fullName].role = GetSpecializationRoleByID(groupData[fullName].specID)
-					end
-
-					if(groupData[fullName].specID ~= 0) then
-						playersWithSpecData = playersWithSpecData + 1
-					end
-				end
-
-				if(UnitIsConnected(groupData[fullName].unitID) and CanInspect(groupData[fullName].unitID)) then
+				if(online and CanInspect(groupData[fullName].unitID)) then
 					inspectableMembers = inspectableMembers + 1
 
 				end
 
 				if(fullName ~= fullPlayerName) then
-					if(not miog.playerSpecs[fullName] and not playerInInspection and CanInspect(groupData[fullName].unitID)) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
-						--print("Notify", fullName, unitID)
+					if(not miog.playerSpecs[fullName] and not playerInInspection and CanInspect(groupData[fullName].unitID) and online) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 						playerInInspection = fullName
 
 						local color = C_ClassColor.GetClassColor(groupData[playerInInspection].classFileName)
@@ -326,6 +277,21 @@ local function updateGroupData()
 							startPityTimer()
 						
 						end)
+					end
+				else
+					groupData[fullName].specID = GetSpecializationInfo(GetSpecialization())
+
+				end
+
+				if(groupData[fullName].specID) then
+					specCount[groupData[fullName].specID] = specCount[groupData[fullName].specID] and specCount[groupData[fullName].specID] + 1 or 1
+
+					if(groupData[fullName].role == nil) then
+						groupData[fullName].role = GetSpecializationRoleByID(groupData[fullName].specID)
+					end
+
+					if(groupData[fullName].specID ~= 0) then
+						playersWithSpecData = playersWithSpecData + 1
 					end
 				end
 
@@ -373,12 +339,14 @@ local function updateGroupData()
 				durability = 0,
 				missingEnchants = {},
 				missingGems = {},
-				hasWeaponEnchant = false,
+				--hasWeaponEnchant = false,
 
 				progressWeight = 0,
 				progress = "",
 				progressTooltipData = "",
 				score = 0,
+
+				collapsed = collapsedList[fullPlayerName]
 			}
 
 			miog.playerSpecs[fullPlayerName] = specID
@@ -397,10 +365,7 @@ local function updateGroupData()
 				end
 			end
 
-			if(UnitIsConnected(groupData[fullPlayerName].unitID) and CanInspect(groupData[fullPlayerName].unitID)) then
-				inspectableMembers = inspectableMembers + 1
-
-			end
+			inspectableMembers = inspectableMembers + 1
 
 		end
 
@@ -491,8 +456,6 @@ local function updateGroupData()
 end
 
 miog.inspection.updateGroupData = updateGroupData
-
-local imLosingIt = false
 
 --[[local function updateRosterInfoData()
 	updateGroupData()
@@ -997,16 +960,16 @@ local function inspectCoroutineEvents(_, event, ...)
 		if(groupData[fullName]) then
 			miog.playerSpecs[fullName] = GetInspectSpecialization(groupData[fullName].unitID)
 
-			if(playerInInspection == fullName) then
-				ClearInspectPlayer(true)
-				pityTimer:Cancel()
-
-				updateGroupData()
-
-			end
 		end
 
-		--print(fullName, miog.playerSpecs[fullName])
+		if(playerInInspection == fullName) then
+			ClearInspectPlayer(true)
+			pityTimer:Cancel()
+
+			updateGroupData()
+
+		end
+
 
 		--[[if(groupSystem.groupMember[fullName]) then
 			MIOG_InspectedNames[fullName] = GetTimePreciseSec()
@@ -1034,12 +997,6 @@ local function inspectCoroutineEvents(_, event, ...)
 		updateGroupData()
 	
 	elseif(event == "GROUP_ROSTER_UPDATE") then
-		if(miog.PartyCheck) then
-			miog.PartyCheck.ScrollView:Flush()
-		end
-
-		--updateRosterInfoData()
-
 		updateGroupData()
 
 	elseif(event == "PLAYER_REGEN_ENABLED") then
@@ -1090,7 +1047,7 @@ miog.createInspectCoroutine = function()
 				createSinglePartyCheckFrame(frame, data)
 		
 			elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
-				miog.groupSystem.raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
+				raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
 				
 				local playerName, realm = miog.createSplitName(data.name)
 				frame:OnLoad()

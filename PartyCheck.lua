@@ -15,10 +15,10 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
 			--miog.updateRosterInfoData()
-			miog.inspection.updateGroupData()
+			--miog.inspection.updateGroupData()
 		end
 
-		if(miog.guildSystem and miog.guildSystem.baseFrames[unitName]) then
+		--[[if(miog.guildSystem and miog.guildSystem.baseFrames[unitName]) then
 			MIOG_NewSettings.guildKeystoneInfo[unitName] = keystoneInfo
 			miog.guildSystem.keystoneData[unitName] = keystoneInfo
 
@@ -27,12 +27,12 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 			local currentFrame = miog.guildSystem.baseFrames[unitName]
 			currentFrame.BasicInformation.Keylevel:SetText("+" .. keystoneInfo.level)
 			currentFrame.BasicInformation.Keystone:SetTexture(texture)
-		end
+		end]]
 	end
 
-	for name, singleKeystoneInfo in pairs(allKeystoneData) do
-		miog.insertInfoIntoDropdown(name, singleKeystoneInfo)
-	end
+	--for name, singleKeystoneInfo in pairs(allKeystoneData) do
+	--	miog.insertInfoIntoDropdown(name, singleKeystoneInfo)
+	--end
 end
 
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
@@ -65,7 +65,7 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 	
 
 	--miog.updateRosterInfoData()
-	miog.inspection.updateGroupData()
+	--miog.inspection.updateGroupData()
 end
 
 function miog.OnUnitInfoWipe()
@@ -99,8 +99,7 @@ function miog.OnGearUpdate(unitId, unitGear, allUnitsGear)
 				miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 			end
 
-			--miog.updateRosterInfoData()
-			miog.inspection.updateGroupData()
+			--miog.inspection.updateGroupData()
 		end
 	end
 end
@@ -113,8 +112,7 @@ function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
 			miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
 			miog.checkSystem.groupMember[name].durability = durability
 
-			--miog.updateRosterInfoData()
-			miog.inspection.updateGroupData()
+			--miog.inspection.updateGroupData()
 		end
 	end
 end
@@ -138,7 +136,7 @@ miog.loadPartyCheck = function()
 
         local itemLevel = miog.openRaidLib.GearManager.GetPlayerItemLevel()
         local gearDurability, lowestItemDurability = miog.openRaidLib.GearManager.GetPlayerGearDurability()
-        --local weaponEnchant, mainHandEnchantId, offHandEnchantId = miog.openRaidLib.GearManager.GetPlayerWeaponEnchant()
+    	local weaponEnchant, mainHandEnchantId, offHandEnchantId = miog.openRaidLib.GearManager.GetPlayerWeaponEnchant()
         local slotsWithoutGems, slotsWithoutEnchant = miog.openRaidLib.GearManager.GetPlayerGemsAndEnchantInfo()
 		
 		if(unitId) then
@@ -172,7 +170,7 @@ miog.loadPartyCheck = function()
 	end)
 
 	miog.PartyCheck:OnLoad()
-	miog.PartyCheck:SetSettingsTable(MIOG_NewSettings["sortMethods"]["PartyCheck"])
+	miog.PartyCheck:SetSettingsTable(MIOG_NewSettings.sortMethods.PartyCheck)
 	miog.PartyCheck:AddMultipleSortingParameters({
 		{name = "group"},
 		{name = "name", padding = 20},
