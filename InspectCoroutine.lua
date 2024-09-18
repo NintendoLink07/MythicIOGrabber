@@ -5,7 +5,6 @@ miog.inspection = {}
 
 local raiderIOPanels = {}
 local groupData = {}
-miog.inspection.groupData = groupData
 
 local lastNotifyTime = 0
 local pityTimer = nil
@@ -21,6 +20,10 @@ miog.playerSpecs = {}
 local collapsedList = {}
 
 local fullPlayerName, shortName
+
+miog.inspection.characterExists = function(playerName)
+	return groupData[playerName] ~= nil
+end
 
 local function startPityTimer()
 	pityTimer = C_Timer.NewTimer(10, function()
@@ -133,7 +136,6 @@ local function getOptionalPlayerData(fullName)
 		groupData[fullName].keystone = texture
 		groupData[fullName].keylevel = keystoneInfo.level
 		groupData[fullName].mapName = mapName
-		
 	end
 
 	if(raidData) then
@@ -168,6 +170,16 @@ local currentInspectionName = ""
 
 local function updateGroupData()
 	if(not InCombatLockdown()) then
+		--[[if(IsInRaid()) then --BUILD REFRESH BUTTON
+			miog.openRaidLib.RequestKeystoneDataFromRaid()
+			--miog.openRaidLib.GetAllUnitsGear()
+			
+		elseif(IsInGroup()) then
+			miog.openRaidLib.RequestKeystoneDataFromParty()
+			--miog.openRaidLib.GetAllUnitsGear()
+
+		end]]
+		
 		groupData = {}
 
 		local classCount = {
@@ -238,7 +250,7 @@ local function updateGroupData()
 					raidRole = role,
 					masterLooter = isML,
 
-					keystone = "Interface\\ChatFrame\\ChatFrameBackground",
+					keystone = "",
 					keylevel = 0,
 					keyname = "",
 
@@ -293,6 +305,11 @@ local function updateGroupData()
 					end
 				end
 
+				if(roleCount[combatRole]) then
+					roleCount[combatRole] = roleCount[combatRole] + 1
+	
+				end
+
 				hasNoData = false
 
 				if(fullName == playerInInspection) then
@@ -329,7 +346,7 @@ local function updateGroupData()
 				raidRole = nil,
 				masterLooter = nil,
 
-				keystone = "Interface\\ChatFrame\\ChatFrameBackground",
+				keystone = "",
 				keylevel = 0,
 				keyname = "",
 
@@ -450,6 +467,8 @@ local function updateGroupData()
 		if(miog.PartyCheck:IsShown()) then
 			miog.PartyCheck:Sort()
 		end
+
+		miog.inspection.groupData = groupData
 	end
 end
 
@@ -955,21 +974,21 @@ local function inspectCoroutineEvents(_, event, ...)
 			ClearInspectPlayer(true)
 		end]]
 
-		if(groupData[fullName]) then
-			miog.playerSpecs[fullName] = GetInspectSpecialization(groupData[fullName].unitID)
-
-		end
-
 		if(playerInInspection == fullName) then
 			ClearInspectPlayer(true)
+
 			if(pityTimer) then
 				pityTimer:Cancel()
 			end
 
+		end
+
+		if(groupData[fullName]) then
+			miog.playerSpecs[fullName] = GetInspectSpecialization(groupData[fullName].unitID)
+
 			updateGroupData()
 
 		end
-
 
 		--[[if(groupSystem.groupMember[fullName]) then
 			MIOG_InspectedNames[fullName] = GetTimePreciseSec()

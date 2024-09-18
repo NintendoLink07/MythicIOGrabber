@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.6.0] - 2024-09-18
+
+### Added
+
+- Delve background images have now been added.
+
+### Fixed
+
+- [Raid statistics] Changed the raid stat check from awakened raids to regular raids so Nerub'ar Palace's stats show up correctly.
+
+- [M+ statistics] Changed the order of some code so it won't color the keylevel red when you infact have a key of the same or a higher level timed.
+
+- [ApplicationViewer] The role count in the topright corner should now show the correct count again.
+
+- [PartyCheck] Keystone info now gets populated correctly.
+
+
+
 ## [2.5.9] - 2024-09-18
 
 ### Added
@@ -2428,7 +2446,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.9..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.6.0..HEAD
+[2.6.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.6.0
 [2.5.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.9
 [2.5.8b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8b
 [2.5.8a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8a

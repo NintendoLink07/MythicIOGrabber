@@ -11,11 +11,14 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 	if(unitName) then
 		unitName = miog.createFullNameFrom("unitName", unitName)
 
-		if(miog.inspection.groupData[unitName] or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitName("player")) then
+		if(miog.inspection.characterExists(unitName) or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitName("player")) then
 			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
 			--miog.updateRosterInfoData()
 			--miog.inspection.updateGroupData()
+		else
+			print(unitName, "doesn't exist.")
+
 		end
 
 		--[[if(miog.guildSystem and miog.guildSystem.baseFrames[unitName]) then
@@ -123,11 +126,11 @@ miog.loadPartyCheck = function()
 
 	miog.PartyCheck:SetScript("OnShow", function()
 		if(IsInRaid()) then
-			--miog.openRaidLib.RequestKeystoneDataFromRaid()
+			miog.openRaidLib.RequestKeystoneDataFromRaid()
 			--miog.openRaidLib.GetAllUnitsGear()
 			
 		elseif(IsInGroup()) then
-			--miog.openRaidLib.RequestKeystoneDataFromParty()
+			miog.openRaidLib.RequestKeystoneDataFromParty()
 			--miog.openRaidLib.GetAllUnitsGear()
 
 		end

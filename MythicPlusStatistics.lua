@@ -394,7 +394,7 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 		local hasOvertimeInfo = MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo ~= nil
 
 		dungeonFrame.Level:SetText(hasIntimeInfo and MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].inTimeInfo.level or hasOvertimeInfo and MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo.level or 0)
-		dungeonFrame.Level:SetTextColor(CreateColorFromHexString(not hasIntimeInfo and not hasOvertimeInfo and miog.CLRSCC.gray or hasOvertimeInfo and MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo.level and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
+		dungeonFrame.Level:SetTextColor(CreateColorFromHexString(hasIntimeInfo and  miog.CLRSCC.green or hasOvertimeInfo and MIOG_NewSettings.mplusStats[playerGUID][challengeMapID].overtimeInfo.level and miog.CLRSCC.red or miog.CLRSCC.gray):GetRGBA())
 		dungeonFrame:SetScript("OnEnter", function(self) -- ChallengesDungeonIconMixin:OnEnter()
 			local name = C_ChallengeMode.GetMapUIInfo(challengeMapID);
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
@@ -419,17 +419,17 @@ miog.createMPlusCharacter = function(playerGUID, mapTable)
 				GameTooltip_AddBlankLineToTooltip(GameTooltip);
 				--GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_BEST_AFFIX:format(affixInfo.name));
 				GameTooltip_AddColoredLine(GameTooltip, MYTHIC_PLUS_POWER_LEVEL:format(info.level), HIGHLIGHT_FONT_COLOR);
-				if(not hasIntimeInfo and hasOvertimeInfo) then
-					if(overtimeInfo.durationSec >= SECONDS_PER_HOUR) then
-						GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, true)), LIGHTGRAY_FONT_COLOR);
-					else
-						GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, false)), LIGHTGRAY_FONT_COLOR);
-					end
-				elseif(hasIntimeInfo) then
+				if(hasIntimeInfo) then
 					if(inTimeInfo.durationSec >= SECONDS_PER_HOUR) then
 						GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(inTimeInfo.durationSec, true), HIGHLIGHT_FONT_COLOR);
 					else
 						GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(inTimeInfo.durationSec, false), HIGHLIGHT_FONT_COLOR);
+					end
+				elseif(not hasIntimeInfo and hasOvertimeInfo) then
+					if(overtimeInfo.durationSec >= SECONDS_PER_HOUR) then
+						GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, true)), LIGHTGRAY_FONT_COLOR);
+					else
+						GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, false)), LIGHTGRAY_FONT_COLOR);
 					end
 				end
 			end

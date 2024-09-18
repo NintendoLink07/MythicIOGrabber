@@ -6,6 +6,7 @@ miog.setupRaidStatistics = function()
 			if(v.expansionLevel == (GetNumExpansions()-1) and v.difficultyID == miog.RAID_DIFFICULTIES[3]) then
 				--sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = v.groupFinderActivityGroupID, name = v.shortName}
 				local raidColumn = CreateFrame("Frame", nil, miog.RaidStatistics.RaidColumns, "MIOG_RaidStatisticsColumnTemplate")
+				miog.checkSingleMapIDForNewData(v.mapID)
 				raidColumn.mapID = v.mapID
 				raidColumn:SetHeight(miog.RaidStatistics:GetHeight())
 				raidColumn.layoutIndex = k
@@ -152,7 +153,7 @@ miog.fillRaidCharacter = function(playerGUID)
 			--local previous = a == 1 and raidFrame.Normal.Previous or a == 2 and raidFrame.Heroic.Previous or a == 3 and raidFrame.Mythic.Previous
 
 			if(current) then -- and previous
-				local currentProgress = MIOG_NewSettings.raidStats[playerGUID].raids[x.mapID].awakened[a]
+				local currentProgress = MIOG_NewSettings.raidStats[playerGUID].raids[x.mapID].regular[a]
 				local text2 = (currentProgress and currentProgress.kills or 0) .. "/" .. #miog.MAP_INFO[x.mapID].bosses
 				current:SetText(WrapTextInColorCode(text2, miog.DIFFICULTY[a].color))
 

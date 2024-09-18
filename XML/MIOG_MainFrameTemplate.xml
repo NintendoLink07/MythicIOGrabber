@@ -806,7 +806,7 @@
 
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="1">
-                <Texture parentKey="Background" setAllPoints="true" />
+                <Texture parentKey="Background" setAllPoints="true"/>
             </Layer>
         </Layers>
 

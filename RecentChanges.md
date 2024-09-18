@@ -1,13 +1,15 @@
-## [2.5.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.9) - 2024-09-18
+## [2.6.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.6.0) - 2024-09-18
 
 ### Added
 
-- Implemented the Delves category. 
-Background images for the delves will be implemented with v2.6.0.
-Gonna investigate if I can check for delve completion and the level of it to display some "progress data" in the app viewer and search panel.
+- Delve background images have now been added.
 
 ### Fixed
 
-- [FilterPanel] The filter should now catch if you have set a minimum and maximum amount of damagers and no link with another role is active.
+- [Raid statistics] Changed the raid stat check from awakened raids to regular raids so Nerub'ar Palace's stats show up correctly.
 
-- [MainFrame] Hovering over the "Bosses" great vault bar in the topright will not cause an error anymore when you have killed a story-mode boss.
+- [M+ statistics] Changed the order of some code so it won't color the keylevel red when you infact have a key of the same or a higher level timed.
+
+- [ApplicationViewer] The role count in the topright corner should now show the correct count again.
+
+- [PartyCheck] Keystone info now gets populated correctly.
