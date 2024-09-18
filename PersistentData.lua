@@ -1093,7 +1093,7 @@ end
 miog.MAP_CHALLENGE_MODE_INFO = {}
 
 local function checkSingleMapIDForNewData(mapID)
-	if(miog.MAP_INFO[mapID]) then --mapID > 0 and 
+	if(mapID > 0 and miog.MAP_INFO[mapID]) then --mapID > 0 and 
 		local bossIndex = 1;
 
 		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);

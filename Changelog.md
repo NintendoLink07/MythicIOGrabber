@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.5.8a] - 2024-09-18
+
+### Fixed
+
+- [SearchPanel] There won't be a check anymore for a mapID in categories that don't have them.
+
+
+
 ## [2.5.8] - 2024-09-18
 
 ### Added
@@ -2392,7 +2400,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.8..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.8a..HEAD
+[2.5.8a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8a
 [2.5.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8
 [2.5.7a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7a
 [2.5.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7
