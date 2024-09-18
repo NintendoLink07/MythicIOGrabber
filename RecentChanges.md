@@ -3,3 +3,5 @@
 ### Fixed
 
 - [SearchPanel] There won't be a check anymore for a mapID in categories that don't have them.
+
+- [SearchPanel] Pressing the signup button accidentaly before selecting a group won't bug out the search panel anymore.

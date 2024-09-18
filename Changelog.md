@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning].
 
 - [SearchPanel] There won't be a check anymore for a mapID in categories that don't have them.
 
+- [SearchPanel] Pressing the signup button accidentaly before selecting a group won't bug out the search panel anymore.
+
 
 
 ## [2.5.8] - 2024-09-18

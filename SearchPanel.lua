@@ -1687,9 +1687,11 @@ miog.createSearchPanel = function()
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		LFGListApplicationDialog_Show(LFGListApplicationDialog, LFGListFrame.SearchPanel.selectedResult)
+		if(C_LFGList.HasSearchResultInfo(LFGListFrame.SearchPanel.selectedResult)) then
+			LFGListApplicationDialog_Show(LFGListApplicationDialog, LFGListFrame.SearchPanel.selectedResult)
 
-		miog.groupSignup(LFGListFrame.SearchPanel.selectedResult)
+			miog.groupSignup(LFGListFrame.SearchPanel.selectedResult)
+		end
 	end)
 
 	local searchBox = LFGListFrame.SearchPanel.SearchBox
