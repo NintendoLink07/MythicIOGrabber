@@ -341,7 +341,6 @@ miog.CURRENCY_INFO = {
 
 --CHANGING VARIABLES
 miog.F = {
-    WEEKLY_AFFIX = nil,
     SHOW_TANKS = true,
     SHOW_HEALERS = true,
     SHOW_DPS = true,

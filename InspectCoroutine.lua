@@ -964,7 +964,9 @@ local function inspectCoroutineEvents(_, event, ...)
 
 		if(playerInInspection == fullName) then
 			ClearInspectPlayer(true)
-			pityTimer:Cancel()
+			if(pityTimer) then
+				pityTimer:Cancel()
+			end
 
 			updateGroupData()
 

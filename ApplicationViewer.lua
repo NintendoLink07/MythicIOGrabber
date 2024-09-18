@@ -1003,11 +1003,8 @@ local function applicationViewerEvents(_, event, ...)
 				miog.ApplicationViewer.CreationSettings.Timer:SetText("00:00:00")
 
 				miog.ApplicationViewer:Hide()
-
-				if(miog.F.WEEKLY_AFFIX == nil) then
-					miog.setAffixes()
-
-				end
+				
+				miog.setAffixes()
 			end
 		else
 			if(... == true) then --NEW LISTING

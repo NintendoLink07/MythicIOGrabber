@@ -84,18 +84,9 @@ miog.OnEvent = function(_, event, ...)
 		end]]
 
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
-		--[[if(miog.F.WEEKLY_AFFIX == nil) then
-			C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
-
-			miog.F.AFFIX_INFO[9] = {C_ChallengeMode.GetAffixInfo(9)} --TYRA
-			miog.F.AFFIX_INFO[10] = {C_ChallengeMode.GetAffixInfo(10)} --FORT
-			
-			miog.setAffixes()
-			
-			if(miog.F.MPLUS_SETUP_COMPLETE) then
-				miog.gatherMPlusStatistics()
-			end
-        end]]
+		C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
+		miog.setAffixes()
+		
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		--miog.openRaidLib.RequestKeystoneDataFromParty()
 	

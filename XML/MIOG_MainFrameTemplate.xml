@@ -525,7 +525,7 @@
                                         </Layers>
                                     </Frame>
                                     <Frame parentKey="Affixes">
-                                        <Size x="60" y="20" />
+                                        <Size x="20" y="20" />
 
                                         <Anchors>
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>
@@ -540,7 +540,7 @@
                                                     </Anchors>
                                                 </Texture>
 
-                                                <Texture parentKey="Affix2">
+                                                <!--<Texture parentKey="Affix2">
                                                     <Size x="20" y="20" />
                                                     <Anchors>
                                                         <Anchor point="LEFT" relativeKey="$parent.Affix1" relativePoint="RIGHT" />
@@ -553,6 +553,20 @@
                                                         <Anchor point="LEFT" relativeKey="$parent.Affix2" relativePoint="RIGHT" />
                                                     </Anchors>
                                                 </Texture>
+
+                                                <Texture parentKey="Affix4">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Affix3" relativePoint="RIGHT" />
+                                                    </Anchors>
+                                                </Texture>
+
+                                                <Texture parentKey="Affix5">
+                                                    <Size x="20" y="20" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Affix4" relativePoint="RIGHT" />
+                                                    </Anchors>
+                                                </Texture>!-->
                                             </Layer>
                                         </Layers>
 

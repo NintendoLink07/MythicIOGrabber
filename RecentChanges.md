@@ -1,7 +1,7 @@
-## [2.5.8a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8a) - 2024-09-18
+## [2.5.8b](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8b) - 2024-09-18
 
 ### Fixed
 
-- [SearchPanel] There won't be a check anymore for a mapID in categories that don't have them.
+- [MainFrame] The weekly Xal'atath affix will now be shown in the mainframe.
 
-- [SearchPanel] Pressing the signup button accidentaly before selecting a group won't bug out the search panel anymore.
+- [PartyCheck] There will be no more errors when joining a group and getting their spec info right away due to Blizzard being a merciful god.
