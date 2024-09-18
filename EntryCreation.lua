@@ -626,6 +626,41 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			activityDropDown:CreateEntryFrame(v)
 
 		end
+	elseif(categoryID == 121) then
+		local delvesTable = {}
+
+		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or borFilters);
+		
+		for k, v in ipairs(groups) do
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
+			local activityID = activities[#activities]
+
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+			local info = {}
+
+			info.entryType = "option"
+			info.index = activityInfo.groupFinderActivityGroupID
+			info.text = C_LFGList.GetActivityGroupInfo(v)
+			info.value = activityID
+			info.activities = activities
+			info.func = function()
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
+
+			end
+			info.icon = miog.ACTIVITY_INFO[activityID].icon
+			info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+
+			delvesTable[#delvesTable+1] = info
+
+			if(k == 1) then
+				firstGroupID = groups[1]
+			end
+		end
+
+		for k, v in ipairs(delvesTable) do
+			activityDropDown:CreateEntryFrame(v)
+
+		end
 
 	elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 		local pvpTable = {}

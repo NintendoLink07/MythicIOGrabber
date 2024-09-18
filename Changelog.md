@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.5.9] - 2024-09-18
+
+### Added
+
+- Implemented the Delves category. 
+Background images for the delves will be implemented with v2.6.0.
+Gonna investigate if I can check for delve completion and the level of it to display some "progress data" in the app viewer and search panel.
+
+### Fixed
+
+- [FilterPanel] The filter should now catch if you have set a minimum and maximum amount of damagers and no link with another role is active.
+
+- [MainFrame] Hovering over the "Bosses" great vault bar in the topright will not cause an error anymore when you have killed a story-mode boss.
+
+
+
 ## [2.5.8b] - 2024-09-18
 
 ### Fixed
@@ -2412,7 +2428,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.8a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.5.9..HEAD
+[2.5.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.9
+[2.5.8b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8b
 [2.5.8a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8a
 [2.5.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.8
 [2.5.7a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.5.7a

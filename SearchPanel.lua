@@ -317,9 +317,9 @@ local function isGroupEligible(resultID, bordermode)
 
 			end
 
-			if(currentSettings.affixFit == true and not CanDealWithThisWeeksAffixes(resultID)) then
+			--[[if(currentSettings.affixFit == true and not CanDealWithThisWeeksAffixes(resultID)) then
 				return false, miog.INELIGIBILITY_REASONS[9]
-			end
+			end]]
 
 			local roleCount = {
 				["TANK"] = 0,
@@ -360,6 +360,7 @@ local function isGroupEligible(resultID, bordermode)
 			local healerCountInRange = roleCount["HEALER"] >= currentSettings.minHealers and roleCount["HEALER"] <= currentSettings.maxHealers
 			local damagerCountInRange = roleCount["DAMAGER"] >= currentSettings.minDamager and roleCount["DAMAGER"] <= currentSettings.maxDamager
 
+
 			local tanksOk = currentSettings.filterForTanks == false or
 			currentSettings.filterForTanks and tankCountInRange == true
 
@@ -389,7 +390,7 @@ local function isGroupEligible(resultID, bordermode)
 
 			elseif(not tanksOk and not currentSettings.linkedTanks
 			or not healersOk and not currentSettings.linkedHealers
-			or not damagerOk and currentSettings.linkedDamager) then
+			or not damagerOk and not currentSettings.linkedDamager) then
 				return false, miog.INELIGIBILITY_REASONS[12]
 
 			end
@@ -450,6 +451,8 @@ local function isGroupEligible(resultID, bordermode)
 				if(currentSettings.filterForDungeons) then
 					if(currentSettings.dungeons[activityInfo.groupFinderActivityGroupID] == false) then
 						return false, miog.INELIGIBILITY_REASONS[17]
+
+					else
 
 					end
 
@@ -516,7 +519,7 @@ local function isGroupEligible(resultID, bordermode)
 
 					end
 
-				end
+				end				
 			end
 		end
 
@@ -1097,7 +1100,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			updateResultFrameStatus(resultID)
 
 			local difficultyID = miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID
-			local difficultyName = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
+			local difficultyName = difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
 			local questType = searchResultInfo.questID and C_QuestLog.GetQuestType(searchResultInfo.questID)
 			local questDesc = questType and miog.RAW["QuestInfo"][questType] and miog.RAW["QuestInfo"][questType][1]
 			local shortName = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].shortName

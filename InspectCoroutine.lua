@@ -20,8 +20,6 @@ miog.playerSpecs = {}
 
 local collapsedList = {}
 
-MIOG_COLLAPSELIST = collapsedList
-
 local fullPlayerName, shortName
 
 local function startPityTimer()
@@ -1019,6 +1017,7 @@ end)
 hooksecurefunc("ClearInspectPlayer", function(own)
 	if(own) then
 		playerInInspection = nil
+		currentInspectionName = nil
 	end
 end)
 

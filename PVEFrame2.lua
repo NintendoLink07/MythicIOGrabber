@@ -376,13 +376,13 @@ local function createPVEFrameReplacement()
 									local name, description, encounterID, rootSectionID, link, instanceID = EJ_GetEncounterInfo(encounter.encounterID);
 									if instanceID ~= lastInstanceID then
 										local instanceName = EJ_GetInstanceInfo(instanceID);
-										GameTooltip_AddBlankLineToTooltip(GameTooltip);	
+										GameTooltip_AddBlankLineToTooltip(GameTooltip);
 										GameTooltip_AddHighlightLine(GameTooltip, instanceName);
 										lastInstanceID = instanceID;
 									end
 									if name then
 										if encounter.bestDifficulty > 0 then
-											local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty);
+											local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty) or miog.DIFFICULTY_ID_INFO[encounter.bestDifficulty].name
 											GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName), miog.DIFFICULTY_ID_TO_COLOR[encounter.bestDifficulty]);
 										else
 											GameTooltip_AddColoredLine(GameTooltip, string.format(DASH_WITH_TEXT, name), DISABLED_FONT_COLOR);
@@ -394,9 +394,7 @@ local function createPVEFrameReplacement()
 							GameTooltip_AddBlankLineToTooltip(GameTooltip);
 
 							GameTooltip_AddNormalLine(GameTooltip, "Slot 1: " .. (activities1Lvl or "N/A"))
-
 							GameTooltip_AddNormalLine(GameTooltip, "Slot 2: " .. (activities2Lvl or "N/A"))
-							
 							GameTooltip_AddNormalLine(GameTooltip, "Slot 3: " .. (activities3Lvl or "N/A"))
 
 							GameTooltip_AddBlankLineToTooltip(GameTooltip);

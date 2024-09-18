@@ -161,7 +161,6 @@ miog.loadPartyCheck = function()
 					miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 				end
 
-				--miog.updateRosterInfoData()
 				miog.inspection.updateGroupData()
 			end
 		end
@@ -182,8 +181,6 @@ miog.loadPartyCheck = function()
 		{name = "score", padding = 30},
 		{name = "progressWeight", padding = 35},
 	})
-
-	--miog.PartyCheck:PrintAllSortingParameters()
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")

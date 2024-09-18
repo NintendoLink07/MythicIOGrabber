@@ -491,20 +491,12 @@ function SlickDropDown:InsertCustomFrame(info, frame)
 
 			self.entryFrameTree[infoTable.parentIndex][frame.layoutIndex] = frame
 
-			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
-
 		else
 			list = self.List
 
 			frame.layoutIndex = infoTable.index or #list:GetLayoutChildren() +1
 			
 			self.entryFrameTree[frame.layoutIndex] = frame
-
-			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
 
 		end
 
@@ -551,9 +543,7 @@ function SlickDropDown:CreateEntryFrame(info)
 
 			end
 
-			--list.framePool = list.framePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
 			list.framePool = list.framePool or CreateFramePool("Button", list, "MIOG_DropDownMenuEntry", SlickDropDown.ResetFrame)
-			--list.securePool = list.securePool or CreateFramePool("Button", list, "PVPCasualActivityButton, MIOG_DropDownMenuEntry, SecureActionButtonTemplate", SlickDropDown.ResetFrame)
 
 			frame = list.framePool:Acquire()
 
@@ -562,9 +552,6 @@ function SlickDropDown:CreateEntryFrame(info)
 			self.entryFrameTree[infoTable.parentIndex][frame.layoutIndex] = frame
 
 			frame:SetParent(list)
-			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
 
 			list:SetScript("OnMouseDown", function()
 				
@@ -577,9 +564,6 @@ function SlickDropDown:CreateEntryFrame(info)
 			
 			self.entryFrameTree[frame.layoutIndex] = frame
 
-			--[[list:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false,  edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-			list:SetBackdropColor(CreateColorFromHexString("FF2A2B2C"):GetRGBA())
-			list:SetBackdropBorderColor(CreateColorFromHexString(color):GetRGBA())]]
 			frame.List.highestWidth = 0
 		
 			frame.List.hideOnClick = infoTable.hideOnClick

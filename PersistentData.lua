@@ -129,6 +129,7 @@ miog.DIFFICULTY_ID_TO_COLOR = {
 	[DifficultyUtil.ID.DungeonMythic] = miog.ITEM_QUALITY_COLORS[5].color,
 	[DifficultyUtil.ID.DungeonTimewalker] = miog.ITEM_QUALITY_COLORS[3].color,
 	[DifficultyUtil.ID.RaidTimewalker] = miog.ITEM_QUALITY_COLORS[3].color,
+	[DifficultyUtil.ID.RaidStory] = miog.ITEM_QUALITY_COLORS[1].color,
 }
 
 miog.DIFFICULTY_ID_TO_SHORT_NAME = {
@@ -148,6 +149,7 @@ miog.DIFFICULTY_ID_TO_SHORT_NAME = {
 	[DifficultyUtil.ID.DungeonMythic] = "M",
 	[DifficultyUtil.ID.DungeonTimewalker] = "TW",
 	[DifficultyUtil.ID.RaidTimewalker] = "TW",
+	[DifficultyUtil.ID.RaidStory] = "ST",
 }
 
 miog.DIFFICULTY_ID_INFO = {}
@@ -169,13 +171,12 @@ miog.CUSTOM_DIFFICULTY_ORDER = {
 	["M+"] = 5,
 }
 
-for i = 0, 205, 1 do -- max # of difficulties in wago tools Difficulty
+for i = 0, 230, 1 do -- max # of difficulties in wago tools Difficulty
 	local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic, toggleDifficultyID, isLFR, minGroupSize, maxGroupSize = GetDifficultyInfo(i)
 
 	if(name) then
 		miog.DIFFICULTY_ID_INFO[i] = {name = i == 8 and "Mythic+" or name, shortName = (i == 1 or i == 3 or i == 4 or i == 9 or i == 14) and "N" or (i == 2 or i == 5 or i == 6 or i == 15 or i == 24 or i == 33) and "H" or i == 8 and "M+" or (i == 7 or i == 17) and "LFR" or (i == 16 or i == 23) and "M",
 		type = groupType, isHeroic = isHeroic, isChallengeMode = isChallengeMode, isLFR = isLFR, toggleDifficulty = toggleDifficultyID, color = miog.DIFFICULTY_ID_TO_COLOR[i] and miog.DIFFICULTY_ID_TO_COLOR[i]}
-
 
 		if(miog.DIFFICULTY_ID_INFO[i].shortName) then
 			miog.DIFFICULTY_ID_INFO[i].customDifficultyOrderIndex = miog.CUSTOM_DIFFICULTY_ORDER[miog.DIFFICULTY_ID_INFO[i].shortName]
@@ -1939,11 +1940,12 @@ miog.CUSTOM_CATEGORY_ORDER = {
 	[1] = 1,
 	[2] = 2,
 	[3] = 3,
-	[4] = 4,
-	[5] = 7,
-	[6] = 9,
-	[7] = 8,
-	[8] = 6,
+	[4] = 121,
+	[5] = 4,
+	[6] = 7,
+	[7] = 9,
+	[8] = 8,
+	[9] = 6,
 }
 
 miog.ACTIVITY_BACKGROUNDS = {

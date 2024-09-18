@@ -1313,6 +1313,7 @@ miog.RAW["GroupFinderActivityGrp"] = {
     {354,"Domination Point",0},
     {355,"Lion's Landing",0},
     {362,"Nerub-ar Palace",0},
+    {362,"Khaz Algar",0},
 }
 
 miog.RAW["MapChallengeMode"] = {
