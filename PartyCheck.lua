@@ -16,8 +16,6 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 
 			--miog.updateRosterInfoData()
 			--miog.inspection.updateGroupData()
-		else
-			print(unitName, "doesn't exist.")
 
 		end
 
