@@ -331,6 +331,7 @@ miog.CURRENCY_INFO = {
 		{id = 3010, icon = "4555657",},
 	},
 	[13] = {
+		{id = 2813,}, --catalyst
 		{id = 3008,},
 		{id = 2914,},
 		{id = 2915,},

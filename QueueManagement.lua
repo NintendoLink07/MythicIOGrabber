@@ -1,6 +1,17 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local indices = {
+	["EVENT"] = 1,
+	["NORMAL"] = 2,
+	["HEROIC"] = 3,
+	["FOLLOWER"] = 4,
+	["SPECIFIC"] = 5,
+	["RAIDFINDER"] = 6,
+	["PVP"] = 7,
+	["PET"] = 8,
+}
+
 local queuedList = {};
 
 local queueSystem = {}
@@ -965,6 +976,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	local normalDungeonList = {}
 	local heroicDungeonList = {}
 	local followerDungeonList = {}
+	local eventDungeonList = {}
 
 	-- local mythicDungeonList (we can only hope)
 
@@ -974,21 +986,22 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 	if(not overwrittenParentIndex) then
 		for i=1, GetNumRandomDungeons() do
-			local id, name, typeID, subtypeID, _, _, _, _, _, expLevel, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon = GetLFGRandomDungeonInfo(i)
+			local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon = GetLFGRandomDungeonInfo(i)
 			
 			local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
 			local isFollowerDungeon = id >= 0 and C_LFGInfo.IsLFGFollowerDungeon(id)
 
-			if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon)) then
+			if(isAvailableForPlayer or not hideIfNotJoinable) then
+
 				if(isAvailableForAll) then
 					local mode = GetLFGMode(1, id)
 
 					local info = {}
-					info.text = isHolidayDungeon and "(Event) " .. name or name
+					info.text = name
 
 					info.checked = mode == "queued"
 					info.icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
-					info.parentIndex = subtypeID
+					info.parentIndex = (isHolidayDungeon or isTimewalkingDungeon) and indices["EVENT"] or subtypeID == 1 and indices["NORMAL"] or subtypeID == 2 and indices["HEROIC"]
 					info.type1 = typeID
 					--info.index = -1
 					info.expansionLevel = miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel or expLevel
@@ -1015,6 +1028,9 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 					if(isFollowerDungeon) then
 						followerDungeonList[#followerDungeonList + 1] = info
 
+					elseif(isHolidayDungeon or isTimewalkingDungeon) then
+						eventDungeonList[#eventDungeonList + 1] = info
+					
 					elseif(subtypeID == 1) then
 						normalDungeonList[#normalDungeonList + 1] = info
 
@@ -1029,7 +1045,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 	for _, dungeonID in pairs(dungeonList) do
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
-		local name, typeID, subtypeID, _, _, _, _, _, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
+		local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
 
 		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
@@ -1046,8 +1062,8 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 				info.text = isHolidayDungeon and "(Event) " .. name or name
 
 				info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or fileID or nil
-
-				info.parentIndex = overwrittenParentIndex or isFollowerDungeon and 3 or subtypeID
+				
+				info.parentIndex = overwrittenParentIndex or isFollowerDungeon and indices["FOLLOWER"] or (isHolidayDungeon or isTimewalkingDungeon) and indices["EVENT"] or subtypeID == 1 and indices["NORMAL"] or subtypeID == 2 and indices["HEROIC"]
 
 				if(overwrittenParentIndex) then
 					info.func = function(self)
@@ -1072,6 +1088,9 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 				if(isFollowerDungeon) then
 					followerDungeonList[#followerDungeonList + 1] = info
 
+				elseif(isHolidayDungeon or isTimewalkingDungeon) then
+					eventDungeonList[#eventDungeonList + 1] = info
+
 				elseif(subtypeID == 1) then
 					normalDungeonList[#normalDungeonList + 1] = info
 
@@ -1085,6 +1104,18 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
+	if(not overwrittenParentIndex and #eventDungeonList > 0) then
+		local info = {}
+		info.text = EVENTS_LABEL
+		info.hasArrow = true
+		info.level = 1
+		info.index = indices["EVENT"]
+		queueDropDown:CreateEntryFrame(info)
+
+		sortAndAddDungeonList(eventDungeonList, overwrittenParentIndex == nil)
+
+	end
+
 	if(overwrittenParentIndex) then
 		if(#normalDungeonList > 0) then
 			queueDropDown:CreateTextLine(nil, overwrittenParentIndex, LFG_TYPE_DUNGEON)
@@ -1094,7 +1125,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 		info.text = LFG_TYPE_DUNGEON
 		info.hasArrow = true
 		info.level = 1
-		info.index = 1
+		info.index = indices["NORMAL"]
 		info.disabled = #normalDungeonList == 0
 		queueDropDown:CreateEntryFrame(info)
 
@@ -1111,7 +1142,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 		info.text = LFG_TYPE_HEROIC_DUNGEON
 		info.hasArrow = true
 		info.level = 1
-		info.index = 2
+		info.index = indices["HEROIC"]
 		info.disabled = #heroicDungeonList == 0
 		queueDropDown:CreateEntryFrame(info)
 	end
@@ -1127,7 +1158,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 		info.text = LFG_TYPE_FOLLOWER_DUNGEON
 		info.hasArrow = true
 		info.level = 1
-		info.index = 3
+		info.index = indices["FOLLOWER"]
 		info.disabled = #followerDungeonList == 0
 		queueDropDown:CreateEntryFrame(info)
 	end
@@ -1152,7 +1183,6 @@ local function IsRaidFinderDungeonDisplayable(id)
 	return myLevel >= minLevel and myLevel <= maxLevel and EXPANSION_LEVEL >= expansionLevel;
 end
 
-
 local function updateRaidFinder(blizzDesc)
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
@@ -1161,14 +1191,14 @@ local function updateRaidFinder(blizzDesc)
 	mainInfo.text = RAID_FINDER
 	mainInfo.hasArrow = true
 	mainInfo.level = 1
-	mainInfo.index = 5
+	mainInfo.index = indices["RAIDFINDER"]
 	local raidFinderFrame = queueDropDown:CreateEntryFrame(mainInfo)
 
 	local info = {}
 	info.entryType = "option"
 	info.level = 2
 	info.index = nil
-	info.parentIndex = 5
+	info.parentIndex = indices["RAIDFINDER"]
 
 	local nextLevel = nil;
 	local playerLevel = UnitLevel("player")
@@ -1425,7 +1455,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 1
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		hideAllPVPButtonAssets(ConquestFrame.RatedSoloShuffle)
 		local soloFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedSoloShuffle)
 		soloFrame:HookScript("OnShow", function(self)
@@ -1438,7 +1468,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 2
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
 		local twosFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.Arena2v2)
 		twosFrame:HookScript("OnShow", function(self)
@@ -1449,7 +1479,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 3
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		hideAllPVPButtonAssets(ConquestFrame.Arena3v3)
 		local threesFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.Arena3v3)
 		threesFrame:HookScript("OnShow", function(self)
@@ -1460,7 +1490,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 4
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		hideAllPVPButtonAssets(ConquestFrame.RatedBG)
 		local ratedBGFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedBG)
 		ratedBGFrame:HookScript("OnShow", function(self)
@@ -1471,7 +1501,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 5
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		--hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
 		queueDropDown:InsertCustomFrame(info, ConquestFrame.JoinButton)
 
@@ -1496,7 +1526,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 10
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		HonorFrameTypeDropdown:SetHeight(20)
 		local dropdown = queueDropDown:InsertCustomFrame(info, HonorFrameTypeDropdown)
 		dropdown.topPadding = 8
@@ -1517,7 +1547,7 @@ local function updatePVP2()
 				--info.disabled = index == 1 or index == 2
 				info.icon = index < 3 and miog.findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (miog.findBrawlIconByID(currentBGQueue.brawlID) or miog.findBrawlIconByName(currentBGQueue.name))
 				info.level = 2
-				info.parentIndex = 6
+				info.parentIndex = indices["PVP"]
 				info.disabled = index ~= 3 and currentBGQueue.canQueue == false or index == 3 and not HonorFrame.BonusFrame.Arena1Button.canQueue
 
 				if(currentBGQueue.bgID) then
@@ -1605,7 +1635,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 15
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		specificBox = queueDropDown:InsertCustomFrame(info, HonorFrame.SpecificScrollBox)
 		specificBox.leftPadding = -3
 		specificBox:SetHeight(120)
@@ -1636,7 +1666,7 @@ local function updatePVP2()
 		info.entryType = "option"
 		info.index = 30
 		info.level = 2
-		info.parentIndex = 6
+		info.parentIndex = indices["PVP"]
 		--hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
 		queueDropDown:InsertCustomFrame(info, HonorFrame.QueueButton)
 	end
@@ -1656,7 +1686,7 @@ local function updateDropDown()
 		info.text = SPECIFIC_DUNGEONS
 		info.hasArrow = true
 		info.level = 1
-		info.index = 4
+		info.index = indices["SPECIFIC"]
 		info.hideOnClick = false
 		queueDropDown:CreateEntryFrame(info)
 
@@ -1664,7 +1694,7 @@ local function updateDropDown()
 		info.text = PLAYER_V_PLAYER
 		info.hasArrow = true
 		info.level = 1
-		info.index = 6
+		info.index = indices["PVP"]
 		queueDropDown:CreateEntryFrame(info)
 
 		info = {}
@@ -1673,7 +1703,7 @@ local function updateDropDown()
 		info.entryType = "option"
 		info.level = 1
 		info.value = "PETBATTLEQUEUEBUTTON"
-		info.index = 7
+		info.index = indices["PET"]
 		info.func = function()
 			C_PetBattles.StartPVPMatchmaking()
 
@@ -1693,7 +1723,7 @@ local function updateDropDown()
 
 		updateRandomDungeons(blizzardDropDownDescriptions)
 		updateDungeons(nil, blizzardDropDownDescriptions)
-		updateDungeons(4, blizzardDropDownDescriptions)
+		updateDungeons(indices["SPECIFIC"], blizzardDropDownDescriptions)
 		updateRaidFinder(blizzardDropDownDescriptions)
 
 		if(HonorFrameTypeDropdown) then

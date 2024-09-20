@@ -1038,6 +1038,15 @@ local function addRolePanel(parent)
 	return roleFilterPanel
 end
 
+
+
+
+-- create new filter panel
+-- completely from scratch
+
+
+
+
 miog.loadFilterPanel = function()
 	miog.FilterPanel = CreateFrame("Frame", "MythicIOGrabber_FilterPanel", miog.Plugin, "MIOG_FilterPanel") ---@class Frame
 	miog.FilterPanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
