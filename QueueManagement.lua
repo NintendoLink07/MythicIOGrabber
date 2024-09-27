@@ -527,7 +527,7 @@ local function checkQueues()
 									LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 								end)
 
-								local eligible, reason = miog.isGroupEligible(id, true)
+								local eligible, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, id, true)
 
 								if(eligible == false) then
 									frame.Name:SetTextColor(1, 0, 0, 1)
@@ -914,6 +914,8 @@ local function updateRandomDungeons(blizzDesc)
 					SetLFGDungeon(1, id);
 					JoinSingleLFG(1, id);
 
+					GetLFGDungeonInfo
+
 					MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = id}
 				end
 				
@@ -1043,13 +1045,15 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 		end
 	end
 
+	--table.insert(dungeonList, 1533)
+
 	for _, dungeonID in pairs(dungeonList) do
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
-		local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
+		local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, maxPlayers, _, isHolidayDungeon, _, minPlayers, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
 
 		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
-		if((isAvailableForPlayer or not hideIfNotJoinable) and (subtypeID and difficultyID < 3 and not isFollowerDungeon or isFollowerDungeon)) then
+		if((isAvailableForPlayer or (not hideIfNotJoinable and dungeonID ~= 1533)) and (subtypeID and (difficultyID < 3 or difficultyID == 33) and not isFollowerDungeon or isFollowerDungeon)) then
 
 			if(isAvailableForAll) then
 				local info = {}
@@ -1059,7 +1063,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 				info.type1 = typeID
 				info.expansionLevel = miog.MAP_INFO[mapID].expansionLevel or expLevel
 
-				info.text = isHolidayDungeon and "(Event) " .. name or name
+				info.text = name
 
 				info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or fileID or nil
 				

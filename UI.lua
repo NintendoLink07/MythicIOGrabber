@@ -4,6 +4,8 @@ local wticc = WrapTextInColorCode
 local panels
 
 local function setActivePanel(_, panel)
+	miog.setupFilterPanel()
+
 	for k, v in pairs(panels) do
 		if(v) then
 			v:Hide()
@@ -19,8 +21,8 @@ local function setActivePanel(_, panel)
 		miog.Plugin.ButtonPanel:Hide()
 
 		if(MIOG_NewSettings.activeSidePanel == "filter") then
-			miog.FilterPanel.Lock:Hide()
-			miog.FilterPanel:Show()
+			miog.NewFilterPanel.Lock:Hide()
+			miog.NewFilterPanel:Show()
 
 		elseif(MIOG_NewSettings.activeSidePanel == "invites") then
 			miog.LastInvites:Show()
@@ -30,7 +32,7 @@ local function setActivePanel(_, panel)
 		
 		end
 
-		miog.setupFiltersForActivePanel()
+		--miog.setupFiltersForActivePanel()
 
 	end
 
@@ -51,7 +53,7 @@ local function setActivePanel(_, panel)
 		miog.SearchPanel:Show()
 
 	elseif(panel == LFGListFrame.EntryCreation) then
-		miog.FilterPanel.Lock:Show()
+		miog.NewFilterPanel.Lock:Show()
 		miog.EntryCreation:Show()
 
 		if(miog.F.LITE_MODE) then
@@ -61,19 +63,19 @@ local function setActivePanel(_, panel)
 
 	elseif(panel == "AdventureJournal") then
 		miog.AdventureJournal:Show()
-		miog.FilterPanel.Lock:Show()
+		miog.NewFilterPanel.Lock:Show()
 
 	elseif(panel == "RaiderIOChecker") then
 		miog.RaiderIOChecker:Show()
-		miog.FilterPanel.Lock:Show()
+		miog.NewFilterPanel.Lock:Show()
 
 	elseif(panel == "DropChecker") then
 		miog.DropChecker:Show()
-		miog.FilterPanel.Lock:Show()
+		miog.NewFilterPanel.Lock:Show()
 
 	else
 		miog.Plugin:Hide()
-		miog.FilterPanel.Lock:Show()
+		miog.NewFilterPanel.Lock:Show()
 
 	end
 end
@@ -136,15 +138,15 @@ miog.createFrames = function()
 		miog.Plugin.ButtonPanel:Hide()
 
 		miog.LastInvites:Hide()
-		miog.FilterPanel:Show()
+		miog.NewFilterPanel:Show()
 
 		MIOG_NewSettings.activeSidePanel = "filter"
 
 		if(LFGListFrame.activePanel ~= LFGListFrame.SearchPanel and LFGListFrame.activePanel ~= LFGListFrame.ApplicationViewer) then
-			miog.FilterPanel.Lock:Show()
+			miog.NewFilterPanel.Lock:Show()
 
 		else
-			miog.FilterPanel.Lock:Hide()
+			miog.NewFilterPanel.Lock:Hide()
 		
 		end
 	end)
@@ -156,7 +158,7 @@ miog.createFrames = function()
 		MIOG_NewSettings.activeSidePanel = "invites"
 
 		miog.LastInvites:Show()
-		miog.FilterPanel:Hide()
+		miog.NewFilterPanel:Hide()
 	end)
 
 	miog.createFrameBorder(miog.Plugin.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -188,7 +190,7 @@ miog.createFrames = function()
 	miog.createApplicationViewer()
 	miog.createSearchPanel()
 	miog.createEntryCreation()
-	miog.loadFilterPanel()
+	miog.loadNewFilterPanel()
 	miog.loadLastInvitesPanel()
 	miog.createClassPanel()
 

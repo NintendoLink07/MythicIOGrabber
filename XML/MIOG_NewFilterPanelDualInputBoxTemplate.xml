@@ -1,0 +1,28 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_NewFilterPanelDualInputBoxTemplate" mixin="FilterMixin" virtual="true">
+        <KeyValues>
+            <KeyValue key="expand" value="true" type="boolean" />
+        </KeyValues>
+        
+        <Size x="140" y="20" />
+
+        <Frames>
+            <EditBox parentKey="Minimum" inherits="InputBoxTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="4"/>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="CENTER" x="-4"/>
+                </Anchors>
+            </EditBox>
+
+            <EditBox parentKey="Maximum" inherits="InputBoxTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="CENTER" x="4"/>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-4"/>
+                </Anchors>
+            </EditBox>
+        </Frames>
+    </Frame>
+</Ui>

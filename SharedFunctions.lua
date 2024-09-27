@@ -737,6 +737,8 @@ miog.getGroupLeader = function()
 end
 
 hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
+	miog.blizzardFilters = C_LFGList.GetAdvancedFilter()
+
 	LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
 	LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
 	LFGListFrame.SearchPanel.FilterButton:Hide()
@@ -755,8 +757,12 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 end)
 
 miog.getCurrentCategoryID = function()
-	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
-	return activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID or LFGListFrame.SearchPanel.categoryID
+	local currentPanel = LFGListFrame.activePanel:GetDebugName()
+	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
+	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or
+	LFGListFrame.CategorySelection.selectedCategory
+
+	return categoryID, currentPanel
 end
 
 miog.fillNewRaiderIOPanel = function(raiderIOPanel, playerName, realm)

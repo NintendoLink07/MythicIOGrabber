@@ -1,0 +1,267 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_NewFilterPanel" inherits="BackdropTemplate, VerticalLayoutFrame" virtual="true">
+        <Size x="230" />
+
+        <Frames>
+            <Frame parentKey="Lock" inherits="BackdropTemplate" hidden="true" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.93"/>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="Filters are only available in the search panel or application viewer.">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Scripts>
+                    <OnMouseDown>
+                        
+                    </OnMouseDown>
+                </Scripts>
+            </Frame>
+
+            <Button parentKey="Retract" inherits="UIButtonTemplate">
+                <Size x="15" y="20" />
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="-1" type="number" />
+                    <KeyValue key="align" value="right" type="string" />
+                    <KeyValue key="rightPadding" value="7" type="number" />
+                    <KeyValue key="topPadding" value="2" type="number" />
+                </KeyValues>
+
+                <NormalTexture file="interface/buttons/arrow-down-up.blp" />
+                <DisabledTexture file="interface/buttons/arrow-down-disabled.blp" />
+
+                <Scripts>
+                    <OnLoad>
+                        self:GetNormalTexture():SetRotation(-math.pi/2)
+                        self:GetDisabledTexture():SetRotation(-math.pi/2)
+                    </OnLoad>
+                </Scripts> 
+            </Button>
+
+            <Button parentKey="Uncheck" inherits="IconButtonTemplate">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Retract" relativePoint="TOPLEFT" />
+                </Anchors>
+
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+
+                <Scripts>
+                    <OnShow>
+                        self:OnLoad()
+                    </OnShow>
+                </Scripts>
+            </Button>
+
+            <Frame parentKey="PartyFit" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="RessFit" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="LustFit" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="HideHardDecline" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="Difficulty" inherits="MIOG_NewFilterPanelDropdownSettingTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="TankSpinnerContainer" inherits="MIOG_NewFilterPanelContainerRowTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Setting" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="DualSpinner" inherits="MIOG_NewFilterPanelDualSpinnerTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="HealerSpinnerContainer" inherits="MIOG_NewFilterPanelContainerRowTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Setting" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="DualSpinner" inherits="MIOG_NewFilterPanelDualSpinnerTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="DamagerSpinnerContainer" inherits="MIOG_NewFilterPanelContainerRowTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Setting" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="DualSpinner" inherits="MIOG_NewFilterPanelDualSpinnerTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="RatingInputBoxes" inherits="MIOG_NewFilterPanelContainerRowTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Setting" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="DualBoxes" inherits="MIOG_NewFilterPanelDualInputBoxTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="AgeInputBoxes" inherits="MIOG_NewFilterPanelContainerRowTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Setting" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="DualBoxes" inherits="MIOG_NewFilterPanelDualInputBoxTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="ActivitiesSpacer" atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                    <KeyValues>
+                        <KeyValue key="expand" value="true" type="boolean" />
+                    </KeyValues>
+
+                    <Size y="1" />
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="Activities" inherits="MIOG_NewFilterPanelTextSettingTemplate">
+                <KeyValues>
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="ActivityRow1" inherits="MIOG_NewFilterPanelActivityRowTemplate">
+            </Frame>
+
+            <Frame parentKey="ActivityRow2" inherits="MIOG_NewFilterPanelActivityRowTemplate">
+            </Frame>
+
+            <Frame parentKey="ActivityRow3" inherits="MIOG_NewFilterPanelActivityRowTemplate">
+            </Frame>
+
+            <Frame parentKey="ActivityRow4" inherits="MIOG_NewFilterPanelActivityRowTemplate">
+            </Frame>
+
+            <Frame parentKey="ActivityBossRow1" inherits="MIOG_NewFilterPanelActivityBossRowTemplate">
+            </Frame>
+
+            <Frame parentKey="ActivityBossRow2" inherits="MIOG_NewFilterPanelActivityBossRowTemplate">
+            </Frame>
+
+            <Frame parentKey="ActivityBossRow3" inherits="MIOG_NewFilterPanelActivityBossRowTemplate">
+            </Frame>
+
+            <Frame parentKey="ActivityBossRow4" inherits="MIOG_NewFilterPanelActivityBossRowTemplate">
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-7">
+                <Texture parentKey="TransparentDark" >
+                    <Color r="0.1" g="0.1" b="0.1" a="0.85" />
+
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="BACKGROUND" textureSubLevel="-8">
+                <Texture parentKey="Background" horizTile="true" vertTile="true" hWrapMode="MIRROR" vWrapMode="MIRROR" setAllPoints="true" />
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

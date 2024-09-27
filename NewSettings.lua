@@ -9,6 +9,24 @@ local defaultSortState = {
     active = false,
 }
 
+
+local function keepSignUpNote(self, resultID)
+	if(resultID) then
+		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+		if(searchResultInfo) then
+
+			self.resultID = resultID
+			self.activityID = searchResultInfo.activityID
+
+			LFGListApplicationDialog_UpdateRoles(self)
+			StaticPopupSpecial_Show(self)
+		end
+	end
+end
+
+LFGListApplicationDialog_Show = keepSignUpNote
+
 local defaultFilters = {
     classes = {},
     specs = {},
@@ -71,7 +89,7 @@ local defaultSettings = {
     customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
         miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
-        miog.FilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
+        miog.NewFilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
     end},
     {name = "Guild keystone info", variableName = "MIOG_GuildKeystoneInfo", key="guildKeystoneInfo", default={}},
     {name = "Last invited applicants", variableName = "MIOG_LastInvitedApplicants", key="lastInvitedApplicants", default={}},
@@ -79,6 +97,7 @@ local defaultSettings = {
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
     {name = "Favoured applicants", variableName = "MIOG_FavouredApplicants", key="favouredApplicants", default={}, type="custom"},
+    {name = "New filter options", variableName = "MIOG_NewFilterOptions", key="newFilterOptions", default={}},
     {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={
         ["LFGListFrame.SearchPanel"] = defaultFilters,
         ["LFGListFrame.ApplicationViewer"] = defaultFilters}

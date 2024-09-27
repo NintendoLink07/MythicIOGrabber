@@ -104,163 +104,7 @@ local function sortSearchResultList(k1, k2)
 
 end
 
-local function HasRemainingSlotsForBloodlust(resultID)
-	local _, _, playerClassID = UnitClass("player")
-	if(playerClassID == 3 or playerClassID == 7 or playerClassID == 8 or playerClassID == 13) then
-		return true
-
-	end
-
-	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
-	if roles then
-		if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
-			return true
-		end
-
-		local playerRole = GetSpecializationRole(GetSpecialization())
-
-		if(playerRole == "DAMAGER" and (roles["HEALER_REMAINING"] > 0 or roles["DAMAGER_REMAINING"] > 1)) then
-			return true
-
-		end
-
-		if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0) then
-			return true
-
-		end
-
-		for k, v in pairs(roles) do
-			if((k == "HUNTER" or k == "SHAMAN" or k == "MAGE" or k == "EVOKER") and v > 0) then
-				return true
-
-			end
-		end
-	end
-end
-
-local function CanDealWithThisWeeksAffixes(resultID)
-	local currentAffixes = C_MythicPlus.GetCurrentAffixes()
-
-	local affixesSolved = {}
-
-	for x, y in pairs(miog.CLASS_SPEC_FOR_AFFIXES) do
-		for a, b in pairs(currentAffixes) do
-			if(x == b.id) then
-				affixesSolved[x] = false
-
-				local _, fileName, playerClassID = UnitClass("player")
-
-				if(y.classIDs[playerClassID]) then
-					affixesSolved[x] = true
-
-				end
-
-				local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
-				if roles then
-					if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
-						affixesSolved[x] = true
-					end
-
-					local playerRole = GetSpecializationRole(GetSpecialization())
-
-					if(playerRole == "DAMAGER" and (roles["HEALER_REMAINING"] > 0 or roles["DAMAGER_REMAINING"] > 1)) then
-						affixesSolved[x] = true
-
-					end
-
-					if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0 or roles["TANK_REMAINING"] > 0) then
-						affixesSolved[x] = true
-
-					end
-
-					if(playerRole == "TANK" and roles["DAMAGER_REMAINING"] > 0 or roles["HEALER_REMAINING"] > 0) then
-						affixesSolved[x] = true
-
-					end
-
-					for k, v in pairs(roles) do
-						if(y.classes[k] and v > 0) then
-							affixesSolved[x] = true
-
-						end
-					end
-				end
-			end
-		end
-	end
-
-	if(affixesSolved == {}) then
-		return true
-
-	else
-		for _, v in pairs(affixesSolved) do
-			if(v == false) then
-				return false
-			end
-
-		end
-
-		return true
-	end
-end
-
-local function HasRemainingSlotsForBattleResurrection(resultID)
-	if(playerClassID == 2 or playerClassID == 6 or playerClassID == 9 or playerClassID == 11) then
-		return true
-
-	end
-
-	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
-	if roles then
-		if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
-			return true
-		end
-
-		local playerRole = GetSpecializationRole(GetSpecialization())
-
-		if(playerRole == "DAMAGER" and (roles["HEALER_REMAINING"] > 0 or roles["DAMAGER_REMAINING"] > 1)) then
-			return true
-
-		end
-
-		if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0 or roles["TANK_REMAINING"] > 0) then
-			return true
-
-		end
-
-		if(playerRole == "TANK" and roles["DAMAGER_REMAINING"] > 0 or roles["HEALER_REMAINING"] > 0) then
-			return true
-
-		end
-
-		for k, v in pairs(roles) do
-			if((k == "PALADIN" or k == "DEATHKNIGHT" or k == "WARLOCK" or k == "DRUID") and v > 0) then
-				return true
-
-			end
-		end
-	end
-end
-
-local function HasRemainingSlotsForLocalPlayerRole(resultID) -- LFGList.lua local function HasRemainingSlotsForLocalPlayerRole(lfgresultID)
-	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
-
-	if roles then
-		if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
-			return true
-		end
-
-		local playerRole = GetSpecializationRole(GetSpecialization())
-		if playerRole then
-			local remainingRoleKey = miog.roleRemainingKeyLookup[playerRole]
-			if remainingRoleKey then
-				return (roles[remainingRoleKey] or 0) > 0
-			end
-		end
-	end
-end
-
-local function isGroupEligible(resultID, bordermode)
+--[[local function isGroupEligible(resultID, bordermode)
 	if(C_LFGList.HasSearchResultInfo(resultID)) then
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
@@ -274,6 +118,8 @@ local function isGroupEligible(resultID, bordermode)
 		end
 
 		local currentSettings = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][activityInfo.categoryID]
+
+		miog.checkEligibility("LFGListFrame.SearchPanel", activityInfo.categoryID, searchResultInfo)
 
 		if(currentSettings) then
 			if(currentSettings.hardDecline and searchResultInfo.leaderName
@@ -317,9 +163,9 @@ local function isGroupEligible(resultID, bordermode)
 
 			end
 
-			--[[if(currentSettings.affixFit == true and not CanDealWithThisWeeksAffixes(resultID)) then
+			--[ [if(currentSettings.affixFit == true and not CanDealWithThisWeeksAffixes(resultID)) then
 				return false, miog.INELIGIBILITY_REASONS[9]
-			end]]
+			end] ]
 
 			local roleCount = {
 				["TANK"] = 0,
@@ -343,7 +189,7 @@ local function isGroupEligible(resultID, bordermode)
 
 					end
 
-					if(currentSettings.classes[miog.CLASSFILE_TO_ID[class]] == false) then
+					if(currentSettings.classes[miog.CLASSFILE_TO_ID[class] ] == false) then
 						return false, miog.INELIGIBILITY_REASONS[10]
 
 					end
@@ -531,13 +377,13 @@ local function isGroupEligible(resultID, bordermode)
 	end
 end
 
-miog.isGroupEligible = isGroupEligible
+miog.isGroupEligible = isGroupEligible]]
 
 local function setResultFrameColors(resultID, isInviteFrame)
 	local resultFrame = searchResultSystem.baseFrames[resultID]
 
 	if(resultFrame) then
-		local isEligible = isGroupEligible(resultID, true)
+		local isEligible, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID, true)
 		local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
@@ -757,7 +603,7 @@ local function createResultTooltip(resultID, resultFrame)
 			GameTooltip:AddLine(searchResultInfo.leaderName .. " is on your favoured player list.")
 		end
 
-		local success, reason = isGroupEligible(resultID)
+		local success, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)
 
 		if(not success and reason) then
 			GameTooltip:AddLine(" ")
@@ -774,7 +620,7 @@ end
 miog.createResultTooltip = createResultTooltip
 
 local function groupSignup(resultID)
-	if(resultID and (UnitIsGroupLeader("player") or not IsInGroup() or not IsInRaid())) then
+	if(resultID and C_LFGList.HasSearchResultInfo(resultID) and (UnitIsGroupLeader("player") or not IsInGroup() or not IsInRaid())) then
 		local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
@@ -1467,7 +1313,8 @@ local function newUpdateFunction()
 	local actualResultsCounter = 0
 
 	for k, v in ipairs(currentDataList) do
-		local showFrame = v.appStatus == "applied" or isGroupEligible(v.resultID)
+		local showFrame, reason = v.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v.resultID)
+		print(reason)
 
 		if(showFrame) then
 			local frame = initializeSearchResultFrame(v.resultID)
@@ -1483,6 +1330,8 @@ local function newUpdateFunction()
 	end
 
 	miog.SearchPanel.NewScrollFrame.Container:MarkDirty()
+
+	miog.SearchPanel.NewScrollFrame.ScrollBar:ScrollToBegin()
 
 	--[[local DataProvider = CreateTreeDataProvider()
 	DataProvider:SetSortComparator(sortSearchResultList, false)
@@ -1563,6 +1412,8 @@ local function searchResultsReceived()
 
 	LFGListFrame.SearchPanel.totalResults = numOfResults or 0
 	LFGListFrame.SearchPanel.results = table or {}
+	miog.SearchPanel.totalResults = numOfResults or 0
+	miog.SearchPanel.results = table or {}
 
 	--if(not LFGListFrame.SearchPanel.searching) then
 		if(LFGListFrame.SearchPanel.totalResults > 0) then
@@ -1690,7 +1541,7 @@ miog.createSearchPanel = function()
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		if(C_LFGList.HasSearchResultInfo(LFGListFrame.SearchPanel.selectedResult)) then
+		if(LFGListFrame.SearchPanel.selectedResult and C_LFGList.HasSearchResultInfo(LFGListFrame.SearchPanel.selectedResult)) then
 			LFGListApplicationDialog_Show(LFGListApplicationDialog, LFGListFrame.SearchPanel.selectedResult)
 
 			miog.groupSignup(LFGListFrame.SearchPanel.selectedResult)

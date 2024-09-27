@@ -460,7 +460,7 @@
                                                 WeeklyRewards_ShowUI()
                                             </OnMouseDown>
                                             <OnLeave>
-                                                    GameTooltip:Hide()
+                                                GameTooltip:Hide()
                                             </OnLeave>
                                         </Scripts>
                                     </StatusBar>
