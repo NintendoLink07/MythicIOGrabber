@@ -440,7 +440,7 @@ local function setScriptsOnFrame(self)
 			end
 		end
 
-		if(self.List and #self.List:GetLayoutChildren() > 1) then
+		if(self.List and #self.List:GetLayoutChildren() > 0) then
 			self.List:Show()
 			self.ParentDropDown.currentList = self.List
 			

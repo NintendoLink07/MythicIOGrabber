@@ -279,14 +279,16 @@ local function updateGroupData()
 					if(not miog.playerSpecs[fullName] and not playerInInspection and CanInspect(groupData[fullName].unitID) and online) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 						playerInInspection = fullName
 
-						local color = C_ClassColor.GetClassColor(groupData[playerInInspection].classFileName)
-						currentInspectionName = color and WrapTextInColorCode(groupData[playerInInspection].shortName, color:GenerateHexColor()) or groupData[playerInInspection].shortName
+						if(groupData[playerInInspection].classFileName) then
+							local color = C_ClassColor.GetClassColor(groupData[playerInInspection].classFileName)
+							currentInspectionName = color and WrapTextInColorCode(groupData[playerInInspection].shortName, color:GenerateHexColor()) or groupData[playerInInspection].shortName
 
-						C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE, function()
-							NotifyInspect(unitID)
-							startPityTimer()
-						
-						end)
+							C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE, function()
+								NotifyInspect(unitID)
+								startPityTimer()
+							
+							end)
+						end
 					end
 				else
 					groupData[fullName].specID = GetSpecializationInfo(GetSpecialization())
@@ -454,8 +456,15 @@ local function updateGroupData()
 
 		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 
-		miog.PartyCheck:UpdateSortingData(sortingData)
-		miog.PartyCheck:SetScrollView(miog.PartyCheck.ScrollView)
+		if(miog.PartyCheck) then
+			miog.PartyCheck:UpdateSortingData(sortingData)
+			miog.PartyCheck:SetScrollView(miog.PartyCheck.ScrollView)
+
+			if(miog.PartyCheck:IsShown()) then
+				miog.PartyCheck:Sort()
+			end
+		end
+
 		miog.ClassPanel.StatusString:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText(playersWithSpecData .. " players with spec data.")
@@ -463,10 +472,6 @@ local function updateGroupData()
 			GameTooltip:AddLine(numOfMembers .. " total group members.")
 			GameTooltip:Show()
 		end)
-
-		if(miog.PartyCheck:IsShown()) then
-			miog.PartyCheck:Sort()
-		end
 
 		miog.inspection.groupData = groupData
 	end

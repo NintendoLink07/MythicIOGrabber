@@ -96,7 +96,8 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
-		miog.pveFrame2:Hide()
+		miog.MainFrame:Hide()
+		--miog.pveFrame2:Hide()
 
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then

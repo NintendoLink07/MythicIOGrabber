@@ -11,18 +11,15 @@ local defaultSortState = {
 
 
 local function keepSignUpNote(self, resultID)
-	if(resultID) then
-		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-
-		if(searchResultInfo) then
-
-			self.resultID = resultID
-			self.activityID = searchResultInfo.activityID
-
-			LFGListApplicationDialog_UpdateRoles(self)
-			StaticPopupSpecial_Show(self)
-		end
+    local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
+	if ( searchResultInfo.activityID ~= self.activityID ) then
+		--C_LFGList.ClearApplicationTextFields();
 	end
+
+	self.resultID = resultID;
+	self.activityID = searchResultInfo.activityID;
+	LFGListApplicationDialog_UpdateRoles(self);
+	StaticPopupSpecial_Show(self);
 end
 
 LFGListApplicationDialog_Show = keepSignUpNote
@@ -85,6 +82,7 @@ local defaultSettings = {
     {name = "PVP Statistics", variableName = "MIOG_PVPStats", key="pvpStats", default={}},
     {name = "Raid Statistics", variableName = "MIOG_RaidStats", key="raidStats", default={}},
     {name = "Lite Mode", variableName = "MIOG_LiteMode", key="liteMode", default=false, type="checkbox", tooltip="Enable or disable the lite mode of this addon (use Blizzards \"Dungeons and Raids\" Frame with this addon's frames layered on top", reload=true},
+    {name = "Filter popups", variableName = "MIOG_FilterPopup", key="filterPopup", default=false, type="checkbox", tooltip="Enable or disable popups when your filters don't match anymore with one of the groups you've applied to.", reload=true},
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions(), type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
@@ -212,11 +210,10 @@ miog.loadNewSettings = function()
 
     miog.refreshFavouredPlayers()
 
-   
 end
 
 miog.loadNewSettingsAfterFrames = function()
-    for k, v in pairs(MIOG_NewSettings.sortMethods) do
+    --[[for k, v in pairs(MIOG_NewSettings.sortMethods) do
         local buttonArray = k == "LFGListFrame.ApplicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons
         or k == "LFGListFrame.SearchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons
         or k == "PartyCheck" and miog.PartyCheck and miog.PartyCheck.sortByCategoryButtons
@@ -236,7 +233,7 @@ miog.loadNewSettingsAfterFrames = function()
                 end
             end
         end
-    end
+    end]]
 end
 
 function MIOG_OpenInterfaceOptions()

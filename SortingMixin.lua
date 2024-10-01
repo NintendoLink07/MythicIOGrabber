@@ -11,7 +11,7 @@ SortingMixin = {}
 
 local buttonPool
 
-function SortingMixin:OnLoad()
+function SortingMixin:OnLoad(func)
     self.sortingParameters = {}
     self.sortingData = {}
     self.expandedChildren = {}
@@ -28,7 +28,13 @@ function SortingMixin:OnLoad()
 
             end
 
-            self:Sort()
+            if(self.scrollView) then
+                self:Sort()
+            end
+
+            if(func) then
+                func(true)
+            end
         end)
     end)
 end
@@ -44,6 +50,15 @@ end
 
 function SortingMixin:SetScrollView(scrollView)
     self.scrollView = scrollView
+end
+
+function SortingMixin:SetPostCallback(func)
+    for widget in buttonPool:EnumerateActive() do
+        widget:SetScript("PostClick", function()
+            func(true)
+        end)
+        
+    end
 end
 
 function SortingMixin:CreateButtonsForParameters()
@@ -85,7 +100,7 @@ function SortingMixin:AddSingleSortingParameter(parameter, noCreation)
 
     if(self.settingsTable[parameter.name] and not self.settingsTable[parameter.name].currentState) then
         self.sortingParameters[index] = self.settingsTable[parameter.name]
-        
+        self.sortingParameters[index].padding = parameter.padding
     else
         self.sortingParameters[index] = {name = parameter.name, padding = parameter.padding, state = 0, index = index}
 
@@ -107,6 +122,10 @@ end
 
 function SortingMixin:UpdateSortingData(table)
     self.sortingData = table
+end
+
+function SortingMixin:GetSortingData()
+    return self.sortingData
 end
 
 function SortingMixin:SetSortingFunction(func)
@@ -221,6 +240,10 @@ end
 
 function SortingMixin:SortBy()
     
+end
+
+function SortingMixin:SetCallback(func)
+    self.func = func
 end
 
 function SortingMixin:GetOrderedParameters()

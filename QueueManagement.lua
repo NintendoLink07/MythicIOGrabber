@@ -1,6 +1,18 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local disabledPopups = {}
+local currentPopup = nil
+local currentCategoryID, currentFilters
+local numOfActiveApps = 0
+
+--[[local reSearch = CreateFrame("Button", "MythicIOGrabber_ReSearchButton", nil, "UIPanelButtonTemplate")
+reSearch:SetScript("OnClick", function()
+	miog.openSearchPanel(currentCategoryID or LFGListFrame.SearchPanel.categoryID, currentFilters or LFGListFrame.SearchPanel.filters)
+end)]]
+
+local popupFrame
+
 local indices = {
 	["EVENT"] = 1,
 	["NORMAL"] = 2,
@@ -24,6 +36,13 @@ local randomBGFrame, randomEpicBGFrame, skirmish, brawl1, brawl2, specificBox
 local formatter = CreateFromMixins(SecondsFormatterMixin)
 formatter:SetStripIntervalWhitespace(true)
 formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
+
+local function setPopupInfo(reason, groupName, activityName, leaderName)
+	popupFrame.Reason:SetText(reason)
+	popupFrame.Activity:SetText(groupName .. " - " .. activityName)
+	popupFrame.Leader:SetText("Leader: " .. leaderName)
+	popupFrame:MarkDirty()
+end
 
 miog.requeue = function()
 	local queueInfo = MIOG_NewSettings.lastUsedQueue
@@ -480,6 +499,10 @@ local function checkQueues()
 			--createQueueFrame(categoryID, {GetLFGDungeonInfo(activeID)}, {GetLFGQueueStats(categoryID)})
 		end
 
+		numOfActiveApps = 0
+
+		local currentPopupStillActive = false
+
 		--Try LFGList applications
 		local applications = C_LFGList.GetApplications()
 		if(applications) then
@@ -489,10 +512,10 @@ local function checkQueues()
 
 				if(id) then
 					local identifier = "APPLICATION_" .. id
-					if(appStatus == "applied" or appStatus == "invited") then
-						local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-						--local activityName = C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode);
 
+					if(appStatus == "applied") then
+
+						local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
 						local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 						local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 				
@@ -508,49 +531,74 @@ local function checkQueues()
 							[30] = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal or nil
 						}
 
-						if(appStatus == "applied") then
-							local frame = createQueueFrame(frameData)
+						local frame = createQueueFrame(frameData)
 
-							if(frame) then
-								frame.CancelApplication:SetAttribute("type", "macro")
-								frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
+						numOfActiveApps = numOfActiveApps + 1
 
-								frame:SetScript("OnMouseDown", function()
-									PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-									--LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-									LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, LFGListFrame.SearchPanel.preferredFilters or 0, LFGListFrame.baseFilters)
+						if(frame) then
+							frame.CancelApplication:SetAttribute("type", "macro")
+							frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
 
-									if(LFGListFrame.SearchPanel.filters == 0 or LFGListFrame.SearchPanel.filters == nil or LFGListFrame.SearchPanel.preferredFilters == nil) then
-										LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-									end
-									
-									LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-								end)
+							frame:SetScript("OnMouseDown", function()
+								PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+								--LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+								LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, LFGListFrame.SearchPanel.preferredFilters or 0, LFGListFrame.baseFilters)
 
-								local eligible, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, id, true)
+								if(LFGListFrame.SearchPanel.filters == 0 or LFGListFrame.SearchPanel.filters == nil or LFGListFrame.SearchPanel.preferredFilters == nil) then
+									LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+								end
+								
+								LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+							end)
 
-								if(eligible == false) then
-									frame.Name:SetTextColor(1, 0, 0, 1)
+							local eligible, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, id, true)
 
-									if(reason) then
-										frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
+							if(eligible == false) then
+								frame.Name:SetTextColor(1, 0, 0, 1)
+
+								if(reason) then
+									frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
+
+									if(MIOG_NewSettings.filterPopup and not disabledPopups[v] and not currentPopup and not pendingStatus and not searchResultInfo.isDelisted) then
+										--StaticPopup_Show("MIOG_GROUP_FILTERED", reason[2], nil, v, popupFrame)
+										currentCategoryID = activityInfo.categoryID
+										currentFilters = activityInfo.filters
+
+										setPopupInfo(reason[1], searchResultInfo.name, activityInfo.fullName, searchResultInfo.leaderName)
+										currentPopup = v
+
+										StaticPopupSpecial_Show(popupFrame)
 									end
 								end
-
-								frame:SetScript("OnEnter", function(self)
-									miog.createResultTooltip(id, frame)
-
-									GameTooltip:Show()
-								end)
-								frame:SetScript("OnLeave", function()
-									GameTooltip:Hide()
-								end)
 							end
 
-							queueIndex = queueIndex + 1
+							frame:SetScript("OnEnter", function(self)
+								miog.createResultTooltip(id, frame)
+
+								GameTooltip:Show()
+							end)
+							frame:SetScript("OnLeave", function()
+								GameTooltip:Hide()
+							end)
+						
+							if(currentPopup == v) then
+								currentPopupStillActive = true
+
+							end
 						end
+
+						queueIndex = queueIndex + 1
 					end
 				end
+			end
+		end
+
+		if(MIOG_NewSettings.filterPopup) then
+			popupFrame.ActiveApps:SetText("Remaining applications: " .. (numOfActiveApps))
+
+			if(not currentPopupStillActive) then
+				StaticPopupSpecial_Hide(popupFrame)
+
 			end
 		end
 	--[[
@@ -883,7 +931,34 @@ miog.loadQueueSystem = function()
 			specificBox:SetShown(value == "specific")
 			specificBox:GetParent():MarkDirty()
 		end)
-	end
+	end 
+	
+	popupFrame = CreateFrame("Frame", "MythicIOGrabber_ReSearchButton", nil, "MIOG_PopupFrame")
+	popupFrame.ButtonPanel.Cancel:SetScript("OnClick", function()
+		if(currentPopup) then
+			C_LFGList.CancelApplication(currentPopup)
+			currentPopup = nil
+		end
+	end)
+
+	popupFrame.ButtonPanel.CancelAndSearch:SetScript("OnClick", function()
+		if(currentPopup) then
+			C_LFGList.CancelApplication(currentPopup)
+			currentPopup = nil
+
+		end
+
+		miog.openSearchPanel(currentCategoryID or LFGListFrame.SearchPanel.categoryID, currentFilters or LFGListFrame.SearchPanel.filters)
+	end)
+
+	popupFrame.ButtonPanel.Dismiss:SetScript("OnClick", function()
+		if(currentPopup) then
+			disabledPopups[currentPopup] = true
+			currentPopup = nil
+
+		end
+
+	end)
 end
 
 local function updateRandomDungeons(blizzDesc)
@@ -959,6 +1034,10 @@ local function sortAndAddDungeonList(list, enableOnShow)
 		end
 
 		local tempFrame = queueDropDown:CreateEntryFrame(v)
+
+		if(#list == 1) then
+			MIOG_TEMP = tempFrame
+		end
 
 		if(enableOnShow) then
 			tempFrame:SetScript("OnShow", function(self)

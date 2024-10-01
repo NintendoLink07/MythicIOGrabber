@@ -1126,7 +1126,7 @@ local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo() or miog.F.ACTIVE_ENTRY_INFO
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityID)
 
-	miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
+	--miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
 
 	if(activityInfo.categoryID == 2) then --Dungeons
 		miog.F.CURRENT_DUNGEON_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DUNGEON_DIFFICULTY

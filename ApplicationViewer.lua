@@ -542,7 +542,7 @@ local function gatherSortData()
 								local primarySortAttribute, secondarySortAttribute
 
 								if(categoryID ~= 3 and categoryID ~= 4 and categoryID ~= 7 and categoryID ~= 8 and categoryID ~= 9) then
-									primarySortAttribute = dungeonScore
+									primarySortAttribute = dungeonScore or 0
 									secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 								elseif(categoryID == 3) then
@@ -576,13 +576,20 @@ local function gatherSortData()
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].index = applicantID
 								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].favoured = MIOG_NewSettings.favouredApplicants[applicantSystem.applicantMember[applicantID].memberData[applicantIndex].fullName] and true or false
+
+							else
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].primary = 0
+								applicantSystem.applicantMember[applicantID].memberData[applicantIndex].secondary = 0
+
+
 							end
 
 						end
 
 					end
 
-					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].memberData
+					--unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].memberData
+					unsortedMainApplicantsList[#unsortedMainApplicantsList+1] = applicantSystem.applicantMember[applicantID].memberData[1]
 
 				end
 			end
@@ -768,19 +775,37 @@ local function checkApplicantList(forceReorder, applicantID)
 		applicationFrameIndex = 0
 
 		if(unsortedList[1]) then
-			table.sort(unsortedList, sortApplicantList)
+			miog.ApplicationViewer:UpdateSortingData(unsortedList)
+			miog.ApplicationViewer:Sort()
+			--table.sort(unsortedList, sortApplicantList)
 
-			local time = GetTime()
+			for d, listEntry in ipairs(miog.ApplicationViewer:GetSortingData()) do
+				--[[for _, v in pairs(listEntry) do
+					local showFrame, _ = miog.checkEligibility("LFGListFrame.ApplicationViewer", _, v)
 
-			for d, listEntry in ipairs(unsortedList) do
-
-				for _, v in pairs(listEntry) do
-					if(checkApplicantListForEligibleMembers(v) == true) then
+					if(showFrame) then
+					--if(checkApplicantListForEligibleMembers(v) == true) then
 						updatedFrames[listEntry[1].index] = true
 						addOrShowApplicant(listEntry[1].index)
 						break
 					
+					--else
+						--print(v.name, reason and reason[1])
+
 					end
+				end]]
+
+				local showFrame, _ = miog.checkEligibility("LFGListFrame.ApplicationViewer", _, listEntry)
+
+				if(showFrame) then
+				--if(checkApplicantListForEligibleMembers(v) == true) then
+					updatedFrames[listEntry.index] = true
+					addOrShowApplicant(listEntry.index)
+					--break
+				
+				--else
+					--print(v.name, reason and reason[1])
+
 				end
 			end
 		end
@@ -896,7 +921,7 @@ local function createFullEntries(iterations)
 
 	for index = 1, iterations, 1 do
 		local applicantID = random(10000, 99999)
-		local numMembers = random(1, 3)
+		local numMembers = 1
 
 		miog.DEBUG_APPLICANT_DATA[applicantID] = {
 			applicantID = applicantID,
@@ -1101,12 +1126,12 @@ miog.createApplicationViewer = function()
 	miog.createFrameBorder(applicationViewer.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.InfoPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.CreationSettings, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	miog.createFrameBorder(applicationViewer.ButtonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	miog.createFrameBorder(applicationViewer.SortButtonRow, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	applicationViewer.TitleBar.Faction:SetTexture(2437241)
 	applicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[10])
 
-	applicationViewer.ButtonPanel.sortByCategoryButtons = {}
+	--[[applicationViewer.ButtonPanel.sortByCategoryButtons = {}
 
 	for i = 1, 4, 1 do
 		local sortByCategoryButton = applicationViewer.ButtonPanel[i == 1 and "RoleSort" or i == 2 and "PrimarySort" or i == 3 and "SecondarySort" or i == 4 and "IlvlSort"]
@@ -1117,7 +1142,7 @@ miog.createApplicationViewer = function()
 
 	end
 
-	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset((miog.F.LITE_MODE and -20 or 0) + 156, 0)
+	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset((miog.F.LITE_MODE and -20 or 0) + 156, 0)]]
 	applicationViewer.Browse:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 
 	miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
@@ -1195,6 +1220,16 @@ miog.createApplicationViewer = function()
 		miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
 		
 	end)
+
+	miog.ApplicationViewer:OnLoad(checkApplicantList)
+	miog.ApplicationViewer:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"])
+	miog.ApplicationViewer:AddMultipleSortingParameters({
+		{name = "role", padding = 156},
+		{name = "primary", padding = 13},
+		{name = "secondary", padding = 21},
+		{name = "ilvl", padding = 21},
+	})
+	--miog.ApplicationViewer:SetPostCallback()
 
 	miog.ApplicationViewer.FramePanel.Container:SetFixedWidth(miog.ApplicationViewer.FramePanel:GetWidth())
 	applicantFramePool = CreateFramePool("Frame", miog.ApplicationViewer.FramePanel.Container, "MIOG_ApplicantFrameTemplate", resetBaseFrame)

@@ -6,7 +6,7 @@
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
 ## Version: 2.7.0
 ## SavedVariables: MIOG_NewSettings
-## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs
+## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
 
 ## X-Curse-Project-ID: 916354
@@ -76,12 +76,6 @@ XML\MIOG_SearchPanel.xml
 XML\MIOG_InviteBox.xml
 XML\MIOG_InviteBoxFrameTemplate.xml
 
-XML\Filter\MIOG_FilterPanel.xml
-XML\Filter\MIOG_FilterOption.xml
-XML\Filter\MIOG_FilterOptionSpinnerTemplate.xml
-XML\Filter\MIOG_FilterOptionDualSpinnerTemplate.xml
-XML\Filter\MIOG_FilterOptionDualFieldTemplate.xml
-XML\Filter\MIOG_FilterPanelBossFrameTemplate.xml
 XML\MIOG_LastInvitesTemplate.xml
 XML\MIOG_LastInvitesPlayerTemplate.xml
 
@@ -171,11 +165,14 @@ NewMultiStateButtonMixin.lua
 XML\MIOG_NewFilterPanel.xml
 XML\MIOG_NewFilterPanelIconSettingTemplate.xml
 XML\MIOG_NewFilterPanelTextSettingTemplate.xml
+XML\MIOG_NewFilterPanelClassPanelTemplate.xml
 XML\MIOG_NewFilterPanelDualSpinnerTemplate.xml
 XML\MIOG_NewFilterPanelDualInputBoxTemplate.xml
 XML\MIOG_NewFilterPanelDropdownSettingTemplate.xml
 XML\MIOG_NewFilterPanelActivityRowTemplate.xml
+XML\MIOG_NewFilterPanelBossFrameTemplate.xml
 XML\MIOG_NewFilterPanelActivityBossRowTemplate.xml
 XML\MIOG_NewFilterPanelContainerRowTemplate.xml
+XML\MIOG_PopupFrame.xml
 
 FuzzyAlgorithm.lua

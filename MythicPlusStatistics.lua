@@ -44,7 +44,7 @@ local function round(n)
 	   level = level - 1
 	end
 	
-	return (90 + level * 5 + nAboveTen * 2 + naffix * 10) * (timerBonus <= 0 and nAboveTen >= 0 and oldLevel >= 10 and 0 or 1)
+	return (150 + level * 5 + nAboveTen * 2 * 10) * (timerBonus <= 0 and nAboveTen >= 0 and oldLevel >= 10 and 0 or 1)
  end
 
  local function CalculateCombinedScore(mapID)
@@ -83,13 +83,32 @@ local function round(n)
 	local otherAffixScore = 0
 	overallScore = overallScore or 0
 
+	local highestID = 0
+	local highestScore = 0
+
 	if(#scores > 0) then
 		for k, info in ipairs(scores) do
-			if(info.name == (miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or miog.F.WEEKLY_AFFIX == 10 and "Fortified")) then
+			if(info.score > highestScore) then
+				highestScore = info.score
+				highestID = k
+
+			end
+		end
+	end
+
+	local info = scores[highestID]
+
+	newLevel = 8
+
+	local currentGain = CalculateSingleScore(mapID, info, info.level)
+
+	--if(#scores > 0) then
+	--	for k, info in ipairs(scores) do
+	--		if(info.name == (miog.F.WEEKLY_AFFIX == 9 and "Tyrannical" or miog.F.WEEKLY_AFFIX == 10 and "Fortified")) then
 				overTimeGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit}, info.level)
 				lowGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, info.level)
 				highGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, info.level)
-
+	--[[
 			else
 				otherAffixScore = CalculateSingleScore(mapID, info)
 			
@@ -100,7 +119,7 @@ local function round(n)
 		lowGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, 0)
 		highGain = CalculateSingleScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, 0)
 	
-	end
+	end]]
 
 	local overtimeScore = max(overTimeGain , otherAffixScore) * 1.5 + min(overTimeGain , otherAffixScore) * 0.5
 	local lowerScore = max(lowGain , otherAffixScore) * 1.5 + min(lowGain , otherAffixScore) * 0.5

@@ -21,6 +21,8 @@ local function resetFrame(pool, childFrame)
 	childFrame.layoutIndex = nil
 	childFrame.resultID = nil
 
+	childFrame.CategoryInformation.BossPanel:Hide()
+
 	--miog.resetNewRaiderIOInfoPanel(childFrame.RaiderIOInformationPanel)
 end
 
@@ -382,7 +384,7 @@ miog.isGroupEligible = isGroupEligible]]
 local function setResultFrameColors(resultID, isInviteFrame)
 	local resultFrame = searchResultSystem.baseFrames[resultID]
 
-	if(resultFrame) then
+	if(resultFrame and C_LFGList.HasSearchResultInfo(resultID)) then
 		local isEligible, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID, true)
 		local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
@@ -486,7 +488,7 @@ local function updateSearchResultFrameApplicationStatus(resultID, new, old)
 				local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 					
 				if(searchResultInfo.leaderName and appStatus ~= "declined_full" and appStatus ~= "failed" and appStatus ~= "invited" and appStatus ~= "inviteaccepted") then
-					MIOG_NewSettings.declinedGroups[searchResultInfo.activityID .. searchResultInfo.leaderName] = {timestamp = time(), activeDecline = appStatus == "declined"}
+					MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] = {timestamp = time(), activeDecline = appStatus == "declined"}
 
 				end
 			end
@@ -631,10 +633,11 @@ local function groupSignup(resultID)
 		if(LFGListFrame.SearchPanel.selectedResult) then
 			_, appStatus = C_LFGList.GetApplicationInfo(LFGListFrame.SearchPanel.selectedResult)
 
-			if(searchResultSystem.baseFrames[resultID]) then
-				searchResultSystem.baseFrames[resultID]:SetBackdropBorderColor(
-					CreateColorFromHexString(appStatus == "applied" and miog.CLRSCC.green or miog.C.BACKGROUND_COLOR_3):GetRGBA()
-				)
+			local oldResultID = LFGListFrame.SearchPanel.selectedResult
+
+			if(searchResultSystem.baseFrames[LFGListFrame.SearchPanel.selectedResult]) then
+				LFGListFrame.SearchPanel.selectedResult = nil
+				setResultFrameColors(oldResultID)
 			end
 		end
 
@@ -645,8 +648,7 @@ local function groupSignup(resultID)
 
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
-
-		LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
+		LFGListApplicationDialog_Show(LFGListApplicationDialog, resultID)
 	end
 
 end
@@ -841,6 +843,39 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			local declineData = searchResultInfo.leaderName and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID]
 			local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 
+			local questTagInfo = searchResultInfo.questID and C_QuestLog.GetQuestTagInfo(searchResultInfo.questID)
+			local questDesc = questTagInfo and questTagInfo.tagName
+			local difficultyID = miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID
+			local difficultyName = difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
+			local shortName = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].shortName
+
+			local difficultyZoneText = difficultyID and difficultyName or questDesc or nil
+
+			local titleZoneColor = nil
+
+			if(searchResultInfo.autoAccept) then
+				titleZoneColor = miog.CLRSCC.blue
+
+			elseif(searchResultInfo.isWarMode) then
+				titleZoneColor = miog.CLRSCC.yellow
+
+			elseif(declineData) then
+				if(declineData.timestamp > time() - 900) then
+					titleZoneColor = declineData.activeDecline and miog.CLRSCC.red or miog.CLRSCC.orange
+
+				else
+					titleZoneColor = "FFFFFFFF"
+					MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] = nil
+
+				end
+			else
+				titleZoneColor = "FFFFFFFF"
+
+			end
+
+			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor)
+			)
+
 			currentFrame.RaiderIOInformationPanel:OnLoad()
 			currentFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
 			currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
@@ -860,15 +895,24 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal, "CLAMP", "MIRROR")
 			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 
-			currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
+			if(not questTagInfo) then
+				currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
+
+			else
+				currentFrame.BasicInformation.Icon:SetAtlas(QuestUtils_GetQuestTagAtlas(questTagInfo.tagID, questTagInfo.worldQuestType) or QuestUtil.GetWorldQuestAtlasInfo(searchResultInfo.questID, questTagInfo) or nil)
+
+			end
+
 			currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
 				EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
 
 			end)
 
-			local color = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID] or {r = 1, g = 1, b = 1}
+			local color = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID]
+			or questTagInfo and {r = 0, g = 0, b = 0, a = 0}
+			or {r = 1, g = 1, b = 1}
 
-			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, 1)
+			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, color.a or 1)
 
 			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function(self)
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -899,28 +943,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 			end)
 
-			local titleZoneColor = nil
-
-			if(searchResultInfo.autoAccept) then
-				titleZoneColor = miog.CLRSCC.blue
-
-			elseif(searchResultInfo.isWarMode) then
-				titleZoneColor = miog.CLRSCC.yellow
-
-			elseif(declineData) then
-				if(declineData.timestamp > time() - 900) then
-					titleZoneColor = declineData.activeDecline and miog.CLRSCC.red or miog.CLRSCC.orange
-
-				else
-					titleZoneColor = "FFFFFFFF"
-					MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] = nil
-
-				end
-			else
-				titleZoneColor = "FFFFFFFF"
-
-			end
-
 			local warmodeString = searchResultInfo.isWarMode and "|A:pvptalents-warmode-swords:12:12|a" or ""
 			local bnetFriends = searchResultInfo.numBNetFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\battlenetfriend.png:14|t" or ""
 			local charFriends = searchResultInfo.numCharFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\friend.png:14|t" or ""
@@ -944,17 +966,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			end)
 
 			updateResultFrameStatus(resultID)
-
-			local difficultyID = miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID
-			local difficultyName = difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
-			local questType = searchResultInfo.questID and C_QuestLog.GetQuestType(searchResultInfo.questID)
-			local questDesc = questType and miog.RAW["QuestInfo"][questType] and miog.RAW["QuestInfo"][questType][1]
-			local shortName = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].shortName
-
-			local difficultyZoneText = difficultyID and difficultyName or questDesc or nil
-
-			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor)
-			)
 
 			--local primaryIndicator = currentFrame.BasicInformation.Primary
 			--local secondaryIndicator = currentFrame.BasicInformation.Secondary
@@ -1001,24 +1012,12 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			local bossPanel = currentFrame.CategoryInformation.BossPanel
 
 			memberPanel:SetShown(activityInfo.categoryID ~= 3)
-			bossPanel:SetShown(activityInfo.categoryID == 3)
+			bossPanel:SetShown(activityInfo.categoryID == 3 and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID > 0)
 			currentFrame.CategoryInformation.DifficultyZone:SetWidth(activityInfo.categoryID ~= 3 and 100 or LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
 
 			currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
 
 			if(activityInfo.categoryID == 3) then
-				--[[local orderedData = searchResultSystem.raidSortData[searchResultInfo.leaderName] and searchResultSystem.raidSortData[searchResultInfo.leaderName][3]
-
-				if(orderedData) then
-					primaryIndicator:SetText(wticc(orderedData[1].parsedString, orderedData[1].current and miog.DIFFICULTY[orderedData[1].difficulty].color or miog.DIFFICULTY[orderedData[1].difficulty].desaturated))
-					secondaryIndicator:SetText(wticc(orderedData[2].parsedString, orderedData[2].current and miog.DIFFICULTY[orderedData[2].difficulty].color or miog.DIFFICULTY[orderedData[2].difficulty].desaturated))
-
-				else
-					primaryIndicator:SetText(wticc(0, miog.CLRSCC.red))
-					secondaryIndicator:SetText(wticc(0, miog.CLRSCC.red))
-				
-				end]]
-
 				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
 
 				if(currentFrame.encounterInfo ~= encounterInfo or encounterInfo == {}) then
@@ -1058,56 +1057,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 				end
 			end
 
-			--[[if(activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9) then
-
-				if(searchResultInfo.leaderPvpRatingInfo) then
-					primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderPvpRatingInfo.rating), miog.createCustomColorForRating(searchResultInfo.leaderPvpRatingInfo.rating):GenerateHexColor()))
-
-					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(searchResultInfo.leaderPvpRatingInfo.tier), " ")
-					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
-
-				else
-					primaryIndicator:SetText(0)
-					secondaryIndicator:SetText("Unra")
-
-				end
-			end]]
-
 			if(activityInfo.categoryID ~= 3) then
-
-				--[[if(searchResultInfo.leaderOverallDungeonScore and searchResultInfo.leaderOverallDungeonScore > 0) then
-					local reqRating = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonRating or 0
-					local highestKeyForDungeon
-
-					if(reqRating > searchResultInfo.leaderOverallDungeonScore) then
-						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.CLRSCC["red"]))
-
-					else
-						primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.createCustomColorForRating(searchResultInfo.leaderOverallDungeonScore):GenerateHexColor()))
-
-					end
-
-					if(searchResultInfo.leaderDungeonScoreInfo) then
-						if(searchResultInfo.leaderDungeonScoreInfo.finishedSuccess == true) then
-							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonScoreInfo.bestRunLevel), miog.C.GREEN_COLOR)
-
-						elseif(searchResultInfo.leaderDungeonScoreInfo.finishedSuccess == false) then
-							highestKeyForDungeon = wticc(tostring(searchResultInfo.leaderDungeonScoreInfo.bestRunLevel), miog.CLRSCC["red"])
-
-						end
-					else
-						highestKeyForDungeon = wticc(tostring(0), miog.CLRSCC["red"])
-
-					end
-
-					secondaryIndicator:SetText(highestKeyForDungeon)
-				else
-					local difficulty = miog.DIFFICULTY[-1] -- NO DATA
-					primaryIndicator:SetText(wticc("0", difficulty.color))
-					secondaryIndicator:SetText(wticc("0", difficulty.color))
-
-				end]]
-
 				--if(searchResultInfo.numMembers < 6) then
 				for i = 1, 1, 1 do
 					if(roleCount["TANK"] < 1 and groupSize < groupLimit) then
@@ -1314,7 +1264,6 @@ local function newUpdateFunction()
 
 	for k, v in ipairs(currentDataList) do
 		local showFrame, reason = v.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v.resultID)
-		print(reason)
 
 		if(showFrame) then
 			local frame = initializeSearchResultFrame(v.resultID)
@@ -1325,6 +1274,7 @@ local function newUpdateFunction()
 			updatePersistentResultFrame(v.resultID)
 
 			actualResultsCounter = actualResultsCounter + 1
+
 		end
 
 	end
@@ -1525,7 +1475,6 @@ local function searchPanelEvents(_, event, ...)
 			miog.MainTab.QueueInformation.LastGroup.Text:SetText(lastGroup)
 
 			MIOG_NewSettings.lastGroup = lastGroup
-
 		end
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then

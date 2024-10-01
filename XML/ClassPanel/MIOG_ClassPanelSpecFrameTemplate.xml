@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ClassPanelSpecFrameTemplate" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_ClassPanelSpecFrameTemplate" inherits="BackdropTemplate" virtual="true" frameStrata="HIGH">
         <Layers>
             <Layer level="BORDER">
                 <Texture parentKey="Border" setAllPoints="true" />

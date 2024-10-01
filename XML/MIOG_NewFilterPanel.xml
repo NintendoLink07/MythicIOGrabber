@@ -12,9 +12,7 @@
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" setAllPoints="true">
-                            <Color r="0.1" g="0.1" b="0.1" a="0.93"/>
-                        </Texture>
+                        <Texture parentKey="Background" setAllPoints="true" />
                     </Layer>
 
                     <Layer level="OVERLAY">
@@ -72,6 +70,133 @@
                 </Scripts>
             </Button>
 
+            <Frame parentKey="WARRIOR" inherits="MIOG_NewFilterPanelClassPanelTemplate">
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="PALADIN" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="HUNTER" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="ROGUE" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="PRIEST" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="DEATHKNIGHT" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="SHAMAN" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="MAGE" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="WARLOCK" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="MONK" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="DRUID" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Spec4" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="DEMONHUNTER" inherits="MIOG_NewFilterPanelClassPanelTemplate" />
+            <Frame parentKey="EVOKER" inherits="MIOG_NewFilterPanelClassPanelTemplate" >
+                <Frames>
+                    <Frame parentKey="Spec3" inherits="MIOG_NewFilterPanelIconSettingTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+
             <Frame parentKey="PartyFit" inherits="MIOG_NewFilterPanelTextSettingTemplate">
                 <KeyValues>
                     <KeyValue key="bottomPadding" value="2" type="number" />
@@ -115,9 +240,10 @@
                     </Frame>
 
                     <Frame parentKey="DualSpinner" inherits="MIOG_NewFilterPanelDualSpinnerTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number" />
-                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="80"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>
@@ -135,9 +261,10 @@
                     </Frame>
 
                     <Frame parentKey="DualSpinner" inherits="MIOG_NewFilterPanelDualSpinnerTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number" />
-                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="80"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>
@@ -155,9 +282,10 @@
                     </Frame>
 
                     <Frame parentKey="DualSpinner" inherits="MIOG_NewFilterPanelDualSpinnerTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number" />
-                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="80"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>
@@ -175,9 +303,10 @@
                     </Frame>
 
                     <Frame parentKey="DualBoxes" inherits="MIOG_NewFilterPanelDualInputBoxTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number" />
-                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="70"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>
@@ -195,9 +324,10 @@
                     </Frame>
 
                     <Frame parentKey="DualBoxes" inherits="MIOG_NewFilterPanelDualInputBoxTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number" />
-                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="70"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>

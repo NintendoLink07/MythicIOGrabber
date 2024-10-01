@@ -5,6 +5,27 @@ local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
 
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
+local function openSearchPanel(categoryID, filters, dontSearch)
+	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+
+	LFGListFrame.CategorySelection.selectedCategory = categoryID
+	LFGListFrame.CategorySelection.selectedFilters = filters
+
+	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters, LFGListFrame.baseFilters)
+
+	if(not dontSearch) then
+		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+
+	else
+		miog.SearchPanel.Status:Hide()
+
+	end
+	
+	LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+end
+
+miog.openSearchPanel = openSearchPanel
+
 local function createCategoryButtons(categoryID, type, rootDescription)
 	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
 
@@ -15,15 +36,7 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 			--categoryFrame.BackgroundImage:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID], nil, "CLAMPTOBLACKADDITIVE")
 
 			if(type == "search") then
-				LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-
-				LFGListFrame.CategorySelection.selectedCategory = categoryID
-				LFGListFrame.CategorySelection.selectedFilters = filters
-
-				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters, LFGListFrame.baseFilters)
-
-				LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+				openSearchPanel(categoryID, filters)
 
 			else
 				LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
@@ -176,6 +189,8 @@ local function createPVEFrameReplacement()
 	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
 	miog.Teleports = pveFrame2.TabFramesPanel.Teleports
 	
+	LFGListFrame.SearchPanel.results = LFGListFrame.SearchPanel.results or {}
+	LFGListFrame.SearchPanel.applications = LFGListFrame.SearchPanel.applications or {}
 
 	if(pveFrame2:GetPoint() == nil) then
 		pveFrame2:SetPoint(PVEFrame:GetPoint())
