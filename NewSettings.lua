@@ -82,7 +82,7 @@ local defaultSettings = {
     {name = "PVP Statistics", variableName = "MIOG_PVPStats", key="pvpStats", default={}},
     {name = "Raid Statistics", variableName = "MIOG_RaidStats", key="raidStats", default={}},
     {name = "Lite Mode", variableName = "MIOG_LiteMode", key="liteMode", default=false, type="checkbox", tooltip="Enable or disable the lite mode of this addon (use Blizzards \"Dungeons and Raids\" Frame with this addon's frames layered on top", reload=true},
-    {name = "Filter popups", variableName = "MIOG_FilterPopup", key="filterPopup", default=false, type="checkbox", tooltip="Enable or disable popups when your filters don't match anymore with one of the groups you've applied to.", reload=true},
+    {name = "Filter popups", variableName = "MIOG_FilterPopup", key="filterPopup", default=false, type="checkbox", tooltip="Enable or disable popups when your filters don't match anymore with one of the groups you've applied to.", reload=false},
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions(), type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
@@ -108,6 +108,7 @@ local defaultSettings = {
     },
     {name = "Search Panel declined groups", variableName = "MIOG_DeclinedGroups", key="declinedGroups", default={}},
     {name = "Account-wide lockouts", variableName = "MIOG_Lockouts", key="lockoutCheck", default={}},
+    {name = "Statistics for account characters", variableName = "MIOG_AccountStatistics", key="accountStatistics", default={}},
 }
 
 local category = Settings.RegisterVerticalLayoutCategory(addonName)
@@ -115,6 +116,10 @@ local category = Settings.RegisterVerticalLayoutCategory(addonName)
 local function OnSettingChanged(setting, value)
 	-- This callback will be invoked whenever a setting is modified.
 	--print("[MIOG] Setting changed:", setting:GetVariable(), value)
+end
+
+local function setSettingValue(value)
+
 end
 
 local function createDefaultSettings()
@@ -155,8 +160,11 @@ local function createDefaultSettings()
         if(v.reload) then
             setting:SetValueChangedCallback(function() C_UI.Reload() end)
 
-        else
+        elseif(v.customCallback) then
             setting:SetValueChangedCallback(v.customCallback)
+
+        else
+            setting:SetValueChangedCallback(OnSettingChanged)
 
         end
 

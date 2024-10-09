@@ -24,6 +24,7 @@ UI.lua
 MultiStateButton.lua
 SlickDropDown.lua
 PVEFrame2.lua
+ActivityChecker.lua
 QueueManagement.lua
 
 ApplicationViewer.lua
@@ -174,5 +175,16 @@ XML\MIOG_NewFilterPanelBossFrameTemplate.xml
 XML\MIOG_NewFilterPanelActivityBossRowTemplate.xml
 XML\MIOG_NewFilterPanelContainerRowTemplate.xml
 XML\MIOG_PopupFrame.xml
+
+StatisticsTabMixin.lua
+XML\MIOG_StatisticsLayoutTemplate.xml
+XML\MIOG_StatisticsDungeonLayout.xml
+XML\MIOG_StatisticsRaidLayout.xml
+XML\MIOG_StatisticsColumnTemplate.xml
+XML\MIOG_StatisticsCharacterTemplate.xml
+XML\MIOG_StatisticsDungeonCharacterTemplate.xml
+XML\MIOG_StatisticsRaidCharacterTemplate.xml
+XML\MIOG_StatisticsPVPCharacterTemplate.xml
+XML\MIOG_StatisticsGridSingleTemplate.xml
 
 FuzzyAlgorithm.lua

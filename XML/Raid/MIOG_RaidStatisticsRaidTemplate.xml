@@ -12,7 +12,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
+                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
@@ -24,12 +24,12 @@
             <Frame parentKey="Heroic">
                 <Size x="45" y="20" />
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Normal" relativePoint="RIGHT"/>
+                    <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                 </Anchors>
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
+                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
@@ -41,12 +41,12 @@
             <Frame parentKey="Mythic">
                 <Size x="45" y="20" />
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Heroic" relativePoint="RIGHT"/>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
                 </Anchors>
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0/8" outline="NORMAL">
+                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>

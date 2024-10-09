@@ -72,7 +72,6 @@ local function honorBar_OnEnter()
 			GameTooltip:Show();
 		end
 	end
-
 end
 
 miog.createPVPCharacter = function(playerGUID)

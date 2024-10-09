@@ -1,0 +1,38 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_StatisticsCharacterTemplate" inherits="BackdropTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" text="NAME">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="BACKGROUND">
+                <Texture parentKey="TransparentDark" setAllPoints="true" >
+                    <Color r="0.03" g="0.03" b="0.03" a="0.6" />
+                </Texture>
+            </Layer>
+            
+            <Layer level="BORDER">
+                <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">
+                    <Size y="6" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-10" y="2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="10" y="2" />
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Divider2" atlas="dragonflight-weeklyrewards-divider">
+                    <Size y="4" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="-10" y="-2" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="10" y="-2" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

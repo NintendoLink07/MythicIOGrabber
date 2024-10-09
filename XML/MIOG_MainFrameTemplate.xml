@@ -675,13 +675,13 @@
                     <Frame parentKey="PartyCheck" inherits="MIOG_PartyCheck" hidden="true" id="2" setAllPoints="true">
                     </Frame>
 
-                    <Frame parentKey="MPlusStatistics" inherits="MIOG_MPlusStatistics" hidden="true" setAllPoints="true">
+                    <Frame parentKey="MPlusStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
                     </Frame>
 
-                    <Frame parentKey="RaidStatistics" inherits="MIOG_RaidStatistics" hidden="true" setAllPoints="true">
+                    <Frame parentKey="RaidStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
                     </Frame>
 
-                    <Frame parentKey="PVPStatistics" inherits="MIOG_PVPStatistics" hidden="true" setAllPoints="true">
+                    <Frame parentKey="PVPStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
                     </Frame>
 
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true">

@@ -1,0 +1,83 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_StatisticsLayoutTemplate" inherits="BackdropTemplate" mixin="StatisticsTabMixin" virtual="true">
+        <Frames>
+            <Frame parentKey="Info">
+                <Size x="125" y="45" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                </Anchors>
+
+                <Frames>
+                    <DropdownButton parentKey="KeystoneDropdown" inherits="WowStyle1DropdownTemplate">
+                        <Size y="25" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                        </Anchors>
+                    </DropdownButton>
+                </Frames>
+                
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="TimePercentage" inherits="GameFontHighlight">
+                            <Size y="15" />
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent.KeystoneDropdown" relativePoint="BOTTOMRIGHT" x="-1"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Slider parentKey="TimelimitSlider" inherits="UISliderTemplate" virtual="true">
+                        <Size y="15"/>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.KeystoneDropdown" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="RIGHT" relativeKey="$parent.TimePercentage" relativePoint="LEFT" x="-2"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:SetMinMaxValues(1.00, 40.00)
+                                self:SetValue(40)
+                                self:SetValueStep(0.25)
+	                            self:GetParent().TimePercentage:SetText(self:GetValue() .. "%")
+                            </OnLoad>
+                        </Scripts>
+                    </Slider>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="Columns" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Info" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Selection" inherits="BackdropTemplate" frameStrata="HIGH">
+                        <Size x="51" />
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="Rows" inherits="WowScrollBoxList" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Info" relativePoint="BOTTOMLEFT" x="1" y="-1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="RowsScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Rows" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Rows" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
+        </Frames>
+    </Frame>
+</Ui>

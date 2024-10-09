@@ -1126,7 +1126,31 @@ end
 
 miog.MAP_CHALLENGE_MODE_INFO = {}
 
-local function checkSingleMapIDForNewData(mapID)
+local function checkForMapAchievements(mapID)
+	if(miog.MAP_INFO[mapID].achievementCategory) then
+		miog.MAP_INFO[mapID].achievementTable = {}
+
+		local totalAchievements = GetCategoryNumAchievements(miog.MAP_INFO[mapID].achievementCategory)
+
+		for i = 1, totalAchievements, 1 do
+			local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(miog.MAP_INFO[mapID].achievementCategory, i)
+
+			
+			if(miog.fzy.has_match(miog.MAP_INFO[mapID].name, name)) then
+				table.insert(miog.MAP_INFO[mapID].achievementTable, id)
+
+				for x, y in ipairs(miog.MAP_INFO[mapID].bosses) do
+					if(string.find(name, y.name, nil, true)) then
+						table.insert(y.achievements, id)
+
+					end
+				end
+			end
+		end
+	end
+end
+
+local function checkSingleMapIDForNewData(mapID, checkForAchievements)
 	if(mapID > 0 and miog.MAP_INFO[mapID]) then --mapID > 0 and 
 		local bossIndex = 1;
 
@@ -1159,6 +1183,10 @@ local function checkSingleMapIDForNewData(mapID)
 				bossIndex = bossIndex + 1;
 				bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
 			--end
+		end
+
+		if(checkForAchievements) then
+			checkForMapAchievements(mapID)
 		end
 	end
 end
@@ -1330,27 +1358,7 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
 			miog.ACTIVITY_INFO[v[1]].shortName = miog.GROUP_ACTIVITY[v[6]] and miog.GROUP_ACTIVITY[v[6]].shortName or miog.MAP_INFO[v[10]].shortName
 
-			if(miog.MAP_INFO[v[10]].achievementCategory) then
-				miog.MAP_INFO[v[10]].achievementTable = {}
-
-				local totalAchievements = GetCategoryNumAchievements(miog.MAP_INFO[v[10]].achievementCategory)
-
-				for i = 1, totalAchievements, 1 do
-					local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(miog.MAP_INFO[v[10]].achievementCategory, i)
-					
-					if(miog.fzy.has_match(miog.MAP_INFO[v[10]].name, name)) then
-						table.insert(miog.MAP_INFO[v[10]].achievementTable, id)
-
-						for x, y in ipairs(miog.MAP_INFO[v[10]].bosses) do
-							if(strfind(name, y.name)) then
-								table.insert(y.achievements, id)
-	
-							end
-	
-						end
-					end
-				end
-			end
+			checkForMapAchievements(v[10])
 
 			if(miog.ACTIVITY_INFO[v[1]].horizontal == nil) then
 				miog.ACTIVITY_INFO[v[1]].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4]]

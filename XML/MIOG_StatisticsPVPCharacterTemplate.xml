@@ -1,0 +1,34 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_StatisticsPVPCharacterTemplate" inherits="MIOG_StatisticsCharacterTemplate, HorizontalLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="leftPadding" value="125" type="number" />
+            <KeyValue key="spacing" value="2" type="number" />
+        </KeyValues>
+
+        <Frames>
+            <Frame parentKey="Bracket1" inherits="MIOG_PVPStatisticsBracketTemplate">
+            </Frame>
+
+            <Frame parentKey="Bracket2" inherits="MIOG_PVPStatisticsBracketTemplate">
+            </Frame>
+
+            <Frame parentKey="Bracket3" inherits="MIOG_PVPStatisticsBracketTemplate">
+            </Frame>
+
+            <Frame parentKey="Bracket4" inherits="MIOG_PVPStatisticsBracketTemplate">
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Rank">
+                    <Size x="25" y="25" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Bracket1" relativePoint="LEFT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

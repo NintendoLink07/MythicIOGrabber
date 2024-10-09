@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_PVPStatisticsBracketTemplate" virtual="true">
-        <Size y="40" />
-
+        <Size y="32" />
+        
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Level1" font="SystemFont_Shadow_Med3" outline="NORMAL" justifyH="CENTER" text="Level1">

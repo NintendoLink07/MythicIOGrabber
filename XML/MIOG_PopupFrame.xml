@@ -73,15 +73,15 @@
                         <Scripts>
                             <OnLoad>
                                 self:FitToText()
-                                --self:SetWidth(self:GetWidth() - 6)
                             </OnLoad>
+
                             <PostClick>
                                 StaticPopupSpecial_Hide(self:GetParent():GetParent())
                             </PostClick>
                         </Scripts>
                     </Button>
 
-                    <Button parentKey="CancelAndSearch" inherits="UIPanelDynamicResizeButtonTemplate" text="Cancel and search">
+                    <Button parentKey="CancelAndSearch" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate" text="Cancel and switch">
                         <KeyValues>
                             <KeyValue key="layoutIndex" value="2" type="number" />
                         </KeyValues>
@@ -89,8 +89,8 @@
                         <Scripts>
                             <OnLoad>
                                 self:FitToText()
-                                --self:SetWidth(self:GetWidth() - 6)
                             </OnLoad>
+
                             <PostClick>
                                 StaticPopupSpecial_Hide(self:GetParent():GetParent())
                             </PostClick>
@@ -105,8 +105,8 @@
                         <Scripts>
                             <OnLoad>
                                 self:FitToText()
-                                --self:SetWidth(self:GetWidth() - 6)
                             </OnLoad>
+
                             <PostClick>
                                 StaticPopupSpecial_Hide(self:GetParent():GetParent())
                             </PostClick>
@@ -114,8 +114,6 @@
                     </Button>
                 </Frames>
             </Frame>
-
-            
         </Frames>
     </Frame>
 </Ui>

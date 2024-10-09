@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.7.1] - 2024-10-02
+
+### Changed
+
+- [Statistics] All statistic panels have now been updated to use the same code foundation to make bugfixing easier.
+
+- [Statistics] All statistic panels now request data for each of your characters on your account that has atleast a single currency (note: money, e.g copper, silver, gold does not count for this restriction).
+This works retroactively, you do not need to log into each of your characters (which you will probably do anyway but just saying).
+
+- [Statistics] The raid and the M+ panels will now update data for all characters except your currently logged in from RaiderIO if you haven't logged into them since the update of this addon.
+
+- [Statistics] The first character in the list will always be the one you are currently logged in.
+The following characters will be sorted by score for M+, progress for raid and rating for PVP.
+
+### Fixed
+
+- [FilterPanel] Clicking the checkbutton infront of the Difficulty dropdown will now activate the filter immediately instead of only after a new search.
+
+- [FilterPanel] Re-implemented right-clicking the bossframes to reset them.
+
+- [PartyCheck] The character tooltip now displays the keystone dungeon name aswell as the level.
+
+- [PartyCheck] Split up some methods for the spec, keystone and progress detection, should lag less when new people join the group.
+
+- [PartyCheck] Fixed the width of certain elements of a character frame, now it shouldn't cut off the text anymore.
+
+
+
 ## [2.7.0] - 2024-10-01
 
 ### Added

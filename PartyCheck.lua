@@ -14,26 +14,8 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 		if(miog.inspection.characterExists(unitName) or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitName("player")) then
 			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
-			--miog.updateRosterInfoData()
-			--miog.inspection.updateGroupData()
-
 		end
-
-		--[[if(miog.guildSystem and miog.guildSystem.baseFrames[unitName]) then
-			MIOG_NewSettings.guildKeystoneInfo[unitName] = keystoneInfo
-			miog.guildSystem.keystoneData[unitName] = keystoneInfo
-
-			local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
-
-			local currentFrame = miog.guildSystem.baseFrames[unitName]
-			currentFrame.BasicInformation.Keylevel:SetText("+" .. keystoneInfo.level)
-			currentFrame.BasicInformation.Keystone:SetTexture(texture)
-		end]]
 	end
-
-	--for name, singleKeystoneInfo in pairs(allKeystoneData) do
-	--	miog.insertInfoIntoDropdown(name, singleKeystoneInfo)
-	--end
 end
 
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
@@ -176,10 +158,10 @@ miog.loadPartyCheck = function()
 		{name = "name", padding = 20},
 		{name = "role", padding = 80},
 		{name = "spec", padding = 30},
-		{name = "ilvl", padding = 30},
+		{name = "ilvl", padding = 20},
 		{name = "durability", padding = 30},
 		{name = "keylevel", padding = 30},
-		{name = "score", padding = 30},
+		{name = "score", padding = 45},
 		{name = "progressWeight", padding = 35},
 	})
 

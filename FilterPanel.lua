@@ -1067,6 +1067,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 			v.object.CheckButton:SetScript("OnClick", function(self)
 				categorySettings[v.id].value = self:GetChecked()
+				convertAndRefresh()
 			end)
 			v.object.Button:SetChecked(categorySettings[v.id].value)
 
@@ -1306,9 +1307,15 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 								if(sortedExpansionRaids[i].bosses and sortedExpansionRaids[i].bosses[d]) then
 									SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, sortedExpansionRaids[i].bosses[d].creatureDisplayInfoID)
 
-									bossFrame:SetScript("OnClick", function()
-										categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d] = categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d] == 3 and 1
-										or categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d] + 1
+									bossFrame:SetScript("OnClick", function(self, button)
+										if(button == "LeftButton") then
+											categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d] = categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d] == 3 and 1
+											or categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d] + 1
+
+										else
+											categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d] = 1
+
+										end
 
 										convertAndRefresh()
 									end)

@@ -40,9 +40,11 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 		if(not miog.F.LITE_MODE) then
-			miog.setUpMPlusStatistics()
-			miog.setupPVPStatistics()
-			miog.setupRaidStatistics()
+
+			--miog.loadStatistics(1)
+			--miog.setUpMPlusStatistics()
+			--miog.setupPVPStatistics()
+			--miog.setupRaidStatistics()
 			
 			miog.insertGearingData()
 
@@ -77,6 +79,8 @@ miog.OnEvent = function(_, event, ...)
 				end)
 			end
 		end
+	elseif(event == "PLAYER_ENTERING_WORLD") then
+		C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
 
 	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
 		--[[if(miog.F.MPLUS_SETUP_COMPLETE) then
@@ -94,6 +98,9 @@ miog.OnEvent = function(_, event, ...)
 		if(miog.MainTab) then
 			miog.updateCurrencies()
 		end
+
+	elseif(event == "ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED") then
+		--miog.getAccountCharacters()
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
 		miog.MainFrame:Hide()

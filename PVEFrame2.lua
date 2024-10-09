@@ -201,8 +201,8 @@ local function createPVEFrameReplacement()
 	local setup = false
 	
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
-		C_MythicPlus.RequestCurrentAffixes()
 		C_MythicPlus.RequestMapInfo()
+		C_MythicPlus.RequestCurrentAffixes()
 
 		if(not setup) then
 			miog.updateCurrencies()
@@ -502,17 +502,18 @@ local function createPVEFrameReplacement()
 	if(miog.F.IS_RAIDERIO_LOADED) then
 		miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
 	end
-	miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
-	miog.MPlusStatistics.ScrollFrame.Rows.accountChars = {}
-	miog.MPlusStatistics.DungeonColumns.Dungeons = {}
 
-	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
-	miog.PVPStatistics.BracketColumns.Brackets = {}
-	miog.PVPStatistics.ScrollFrame.Rows.accountChars = {}
+    miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
+	miog.MPlusStatistics:OnLoad(1)
 
 	miog.RaidStatistics = pveFrame2.TabFramesPanel.RaidStatistics
-	miog.RaidStatistics.RaidColumns.Raids = {}
-	miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
+	miog.RaidStatistics:OnLoad(2)
+
+	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
+	miog.PVPStatistics:OnLoad(3)
+
+	--miog.RaidStatistics.RaidColumns.Raids = {}
+	--miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
 
 	miog.LockoutCheck = pveFrame2.TabFramesPanel.LockoutCheck
 
@@ -730,6 +731,7 @@ eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+eventReceiver:RegisterEvent("ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED")
 --eventReceiver:RegisterEvent("Menu.OpenMenuTag")
 
 

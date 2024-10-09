@@ -149,12 +149,12 @@
                 <FontString parentKey="ILvl" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
                     <Size x="33" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="35"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="25"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Durability" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="N/A">
-                    <Size x="33" />
+                    <Size x="35" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="16"/>
                     </Anchors>
@@ -172,7 +172,7 @@
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Keylevel" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
-                    <Size x="25" />
+                    <Size x="35" />
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Keystone" relativePoint="RIGHT" x="4"/>

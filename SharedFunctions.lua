@@ -181,6 +181,8 @@ local function calculateWeightedScore(difficulty, kills, bossCount, current, ord
 
 end
 
+miog.calculateWeightedScore = calculateWeightedScore
+
 local function standardSortFunction(k1, k2)
     for k, v in ipairs(self.sortingParameters) do
         if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
@@ -293,58 +295,79 @@ end
 
 miog.getNewRaidSortData = getNewRaidSortData
 
-local function getMPlusSortData(playerName, realm, region)
+local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable)
 	local profile
 	
 	if(RaiderIO) then
-		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region and strlower(region) or miog.F.CURRENT_REGION)
 	end
 
 	if(profile) then
 		local mplusData = {}
+		local intimeInfo = {}
+		local overtimeInfo = {}
 
 		if(profile.mythicKeystoneProfile) then
 			if(profile.mythicKeystoneProfile.sortedDungeons) then
 				for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
-					mplusData[dungeonEntry.dungeon.instance_map_id] = {
-						level = profile.mythicKeystoneProfile.dungeons[i],
-						chests = profile.mythicKeystoneProfile.dungeonUpgrades[i]
-					}
+
+					if(returnAsBlizzardTable) then
+						local table = dungeonEntry.chests > 0 and intimeInfo or overtimeInfo
+
+						table[dungeonEntry.dungeon.keystone_instance] = {
+							durationSec = dungeonEntry.dungeon.timers[dungeonEntry.chests == 0 and 3 or dungeonEntry.chests == 1 and 2 or dungeonEntry.chests == 2 and 1] + (dungeonEntry.chests < 3 and 1 or -1),
+							level = dungeonEntry.level,
+						}
+
+					else
+						mplusData[dungeonEntry.dungeon.instance_map_id] = {
+							level = profile.mythicKeystoneProfile.dungeons[i],
+							chests = profile.mythicKeystoneProfile.dungeonUpgrades[i]
+						}
+
+					end
 				end
 			end
 
-			mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
-			mplusData.previousScore = profile.mythicKeystoneProfile.mplusPrevious
-	
-			mplusData.mainScore = profile.mythicKeystoneProfile.mplusMainCurrent
-			mplusData.mainPreviousScore = profile.mythicKeystoneProfile.mplusMainPrevious
-	
-			mplusData.keystoneFivePlus = profile.mythicKeystoneProfile.keystoneFivePlus
-			mplusData.keystoneTenPlus = profile.mythicKeystoneProfile.keystoneTenPlus
-			mplusData.keystoneFifteenPlus = profile.mythicKeystoneProfile.keystoneFifteenPlus
-			mplusData.keystoneTwentyPlus = profile.mythicKeystoneProfile.keystoneTwentyPlus
-			mplusData.keystoneTwentyFivePlus = profile.mythicKeystoneProfile.keystoneTwentyFivePlus
+			if(not returnAsBlizzardTable) then
+				mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
+				mplusData.previousScore = profile.mythicKeystoneProfile.mplusPrevious
+		
+				mplusData.mainScore = profile.mythicKeystoneProfile.mplusMainCurrent
+				mplusData.mainPreviousScore = profile.mythicKeystoneProfile.mplusMainPrevious
+		
+				mplusData.keystoneFivePlus = profile.mythicKeystoneProfile.keystoneFivePlus
+				mplusData.keystoneTenPlus = profile.mythicKeystoneProfile.keystoneTenPlus
+				mplusData.keystoneFifteenPlus = profile.mythicKeystoneProfile.keystoneFifteenPlus
+				mplusData.keystoneTwentyPlus = profile.mythicKeystoneProfile.keystoneTwentyPlus
+				mplusData.keystoneTwentyFivePlus = profile.mythicKeystoneProfile.keystoneTwentyFivePlus
+			end
 
 		else
-			mplusData.score = {score = 0}
-			mplusData.previousScore = {score = 0}
-	
-			mplusData.mainScore = {score = 0}
-			mplusData.mainPreviousScore = {score = 0}
-	
-			mplusData.keystoneFivePlus = 0
-			mplusData.keystoneTenPlus = 0
-			mplusData.keystoneFifteenPlus = 0
-			mplusData.keystoneTwentyPlus = 0
-			mplusData.keystoneTwentyFivePlus = 0
+			if(not returnAsBlizzardTable) then
+				mplusData.score = {score = 0}
+				mplusData.previousScore = {score = 0}
+		
+				mplusData.mainScore = {score = 0}
+				mplusData.mainPreviousScore = {score = 0}
+		
+				mplusData.keystoneFivePlus = 0
+				mplusData.keystoneTenPlus = 0
+				mplusData.keystoneFifteenPlus = 0
+				mplusData.keystoneTwentyPlus = 0
+				mplusData.keystoneTwentyFivePlus = 0
+			else
 
+			end
 		end
 
-		return mplusData
+		return mplusData, intimeInfo, overtimeInfo
 	end
 end
 
 miog.getMPlusSortData = getMPlusSortData
+
+getMPlusSortData("Rhany", "Ravencrest", "eu", true)
 
 miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeonScore, dungeonData, raidData, pvpData)
 	local primaryIndicator, secondaryIndicator = frameWithDoubleIndicators.Primary, frameWithDoubleIndicators.Secondary
