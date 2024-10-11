@@ -129,7 +129,7 @@ local function mplusOnEnter(self, playerGUID)
 
 		GameTooltip_AddBlankLineToTooltip(GameTooltip);
 		GameTooltip_AddColoredLine(GameTooltip, MYTHIC_PLUS_POWER_LEVEL:format(info.level) .. (inTimeInfo and string.format(" (%s chest)", inTimeInfo.chests or getChestsLevelForID(challengeMapID, inTimeInfo.durationSec)) or ""), HIGHLIGHT_FONT_COLOR);
-		
+
 		if(overAllScore) then
 			if(inTimeInfo) then
 				GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(inTimeInfo.durationSec, inTimeInfo.durationSec >= SECONDS_PER_HOUR and true or false), HIGHLIGHT_FONT_COLOR);
@@ -161,7 +161,7 @@ local function raidOnEnter(self, playerGUID, mapID, difficulty, type)
 
 			if(bossInfo.id) then
 				_, name = GetAchievementInfo(bossInfo.id)
-				
+
 			else
 				name = miog.MAP_INFO[mapID].bosses[k].name .. " kills"
 
@@ -183,11 +183,84 @@ local function raidOnEnter(self, playerGUID, mapID, difficulty, type)
 			GameTooltip_AddBlankLineToTooltip(GameTooltip)
 			GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
 			GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
-	
+
 		end
 	end
 
 	GameTooltip:Show()
+end
+
+local function round(n)
+	return math.floor(n+0.5)
+ end
+
+
+ -- 14 untimed 290, JIT 395, 2chest 402.5, 3chest 410, 1 affix (counts)
+ -- 13 untimed 290, JIT 380, 2chest 387.5, 3chest 395, 1 affix
+ -- 12 untimed 290, JIT 365, 2chest 372.5, 3chest 380, 1 affix
+
+ -- 11 untimed 290, JIT 335, 2chest 342.5, 3chest 350, 4 affixes
+ -- 10 untimed 290, JIT 320, 2chest 327.5, 3chest 335, 4 affixes
+
+ -- 9 untimed 265, JIT 295, 2chest 302.5, 3chest 310, 3 affixes
+ -- 8 untimed 250, JIT 280, 2chest 287.5, 3chest 295, 3 affixes
+ -- 7 untimed 235, JIT 265, 2chest 272.5, 3chest 280, 3 affixes
+
+ -- 6 untimed 205, JIT 235, 2chest 242.5, 3chest 250, 2 affixes
+ -- 5 untimed 190, JIT 220, 2chest 227.5, 3chest 235, 2 affixes
+ -- 4 untimed 175, JIT 205, 2chest 212.5, 3chest 220, 2 affixes
+
+ -- 3 untimed 150, JIT 180, 2chest 187.5, 3chest 195, 1 affix
+ -- 2 untimed 135, JIT 165, 2chest 172.5, 3chest 180, 1 affix
+
+local function calculateMapScore(challengeMapID, info)
+	local _, _, mapTimer = C_ChallengeMode.GetMapUIInfo(challengeMapID)
+
+	if(info.durationSec > mapTimer * 1.4) then
+		return 0
+	end
+
+	local timerDifference = (mapTimer - info.durationSec)
+	local overtime = timerDifference <= 0
+
+    local level = overtime and info.level > 10 and 10 or info.level
+
+	local baseScore = 125 + level * 15
+	local timerBonus = (timerDifference / (mapTimer * 0.4)) * 15
+	local affixBonus = (level > 11 and 5 or level > 9 and 4 or level > 6 and 3 or level > 3 and 2 or 1) * 10
+	local extraBonus = (level > 11 and 10 or level > 6 and 5 or 0)
+
+	local finalScore = baseScore + timerBonus + affixBonus + extraBonus - (overtime and 15 or 0)
+
+	return finalScore
+end
+
+local function calculateNewScore(mapID, newLevel, guid, customTimer)
+	local intimeInfo, overtimeInfo
+
+	if(guid) then
+		intimeInfo = MIOG_NewSettings.accountStatistics[guid].mplus[mapID].intimeInfo
+		overtimeInfo = MIOG_NewSettings.accountStatistics[guid].mplus[mapID].overtimeInfo
+
+	end
+
+	local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(mapID)
+
+	local overTimeGain, lowGain, highGain = 0, 0, 0
+
+	if(intimeInfo or overtimeInfo) then
+		local info = intimeInfo or overtimeInfo
+
+		overTimeGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit}, info.level)
+		lowGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, info.level)
+		highGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, info.level)
+
+		return max(round(overTimeGain - info.dungeonScore), 0), max(round(lowGain - info.dungeonScore), 0), max(round(highGain - info.dungeonScore), 0)
+	end
+ end
+
+local function xd3()
+
 end
 
 function StatisticsTabMixin:CreateDropdownEntry(fullName, rootDescription)
@@ -196,48 +269,55 @@ function StatisticsTabMixin:CreateDropdownEntry(fullName, rootDescription)
 	if(keystoneInfo and keystoneInfo.mapID > 0) then
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
 		local className, classFile = GetClassInfo(keystoneInfo.classID)
-		
+
 		local shortName = miog.createSplitName(fullName)
 
 		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
 
-		local keystoneButton = rootDescription:CreateRadio(text, function() return (currentChallengeMapID == keystoneInfo.challengeMapID) == (currentUnitName == fullName) end, function()
+		local keystoneButton = rootDescription:CreateRadio(text, function() return self.currentUnitName == fullName end, function()
 			self.currentUnitName = fullName
 			self.currentChallengeMapID = keystoneInfo.challengeMapID
 			self.currentLevel = keystoneInfo.level
-			
-			if(miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark) then
-				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Show()
 
-			end
+			local columnFrame
 
-			if(miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID]) then
-				miog.MPlusStatistics.DungeonColumns.Selection:SetPoint("TOPLEFT", miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID], "TOPLEFT")
-				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark = miog.MPlusStatistics.DungeonColumns.Dungeons[keystoneInfo.challengeMapID].TransparentDark
-				miog.MPlusStatistics.DungeonColumns.Selection.TransparentDark:Hide()
-			end
-
-			if(fullName == UnitName("player")) then
-				local overtimeScore, minScore, maxScore = miog.calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, nil, miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue())
-
-				local playerGUID = UnitGUID("player")
-
-				for _, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
-					v.ScoreIncrease:Hide()
+			for k, v in self.Columns:EnumerateFrames() do
+				if(v:GetElementData().mapID == keystoneInfo.mapID) then
+					columnFrame = v
 
 				end
+			end
 
-				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
-				miog.MPlusStatistics.ScrollFrame.Rows.accountChars[playerGUID].ScoreIncrease:Show()
+			if(columnFrame) then
+				self.Selection:ClearAllPoints()
+				self.Selection:SetPoint("TOPLEFT", columnFrame, "TOPLEFT")
+				self.Selection:SetPoint("BOTTOMRIGHT", columnFrame, "BOTTOMRIGHT")
+				self.Selection:Show()
+			end
+
+			if(fullName == miog.createFullNameFrom("unitID", "player")) then
+				print("its a player yay")
+
+				for k, v in self.Rows:EnumerateFrames() do
+					if(v:GetElementData().guid == UnitGUID("player")) then
+						local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, UnitGUID("player"), self.Info.TimelimitSlider:GetValue())
+						v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+						v.ScoreIncrease:Show()
+
+					end
+				end
+
 			else
-				for k, v in pairs(miog.MPlusStatistics.ScrollFrame.Rows.accountChars) do
-					local overtimeScore, minScore, maxScore = miog.calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, k, miog.MPlusStatistics.CharacterInfo.TimelimitSlider:GetValue())
+				print("its an asshole yay")
+
+				for k, v in self.Rows:EnumerateFrames() do
+					local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, v:GetElementData().guid, self.Info.TimelimitSlider:GetValue())
 
 					v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
 					v.ScoreIncrease:Show()
 
 				end
-			
+
 			end
 		end, keystoneInfo.challengeMapID)
 
@@ -262,11 +342,13 @@ function StatisticsTabMixin:OnLoad(id)
 
         if(IsInRaid()) then
             miog.openRaidLib.RequestKeystoneDataFromRaid()
-            
+
         elseif(IsInGroup()) then
             miog.openRaidLib.RequestKeystoneDataFromParty()
         end
     end)
+
+	miog.createFrameBorder(self.Selection, 1, CreateColorFromHexString(miog.CLRSCC.silver):GetRGBA())
 
     local activityView = CreateScrollBoxListLinearView();
     activityView:SetHorizontal(true)
@@ -290,7 +372,7 @@ function StatisticsTabMixin:OnLoad(id)
 
 		miog.createFrameBorder(frame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 	end)
-	
+
 	activityView:SetPadding(1, 1, 1, 1, 2);
     self.Columns:Init(activityView);
 
@@ -321,15 +403,15 @@ function StatisticsTabMixin:OnLoad(id)
 
 			end
 		end
-    
+
         if(isDungeon) then
             frame.Score:SetText(data.score.value)
-    
+
             if(data.score.ingame) then
                 frame.Score:SetTextColor(miog.createCustomColorForRating(data.score.value):GetRGBA())
                 frame.Score:SetScript("OnEnter", nil)
                 frame.Score:SetScript("OnLeave", nil)
-    
+
             else
                 frame.Score:SetTextColor(CreateColorFromHexString(miog.CLRSCC.yellow):GetRGBA())
                 frame.Score:SetScript("OnEnter", function(selfFrame)
@@ -338,13 +420,13 @@ function StatisticsTabMixin:OnLoad(id)
 					GameTooltip:AddLine("Login with this character to request official data from Blizzard.")
                     GameTooltip:Show()
                 end)
-            
+
                 frame.Score:SetScript("OnLeave", function()
                     GameTooltip:Hide()
                 end)
-    
+
             end
-            
+
             for index, challengeMapID in ipairs(self.activityTable) do
                 local dungeonFrame = frame.Dungeons["Dungeon" .. index]
                 dungeonFrame:SetWidth(self.Columns:GetView():GetElementExtent())
@@ -371,21 +453,21 @@ function StatisticsTabMixin:OnLoad(id)
 				for a = 1, 3, 1 do
 					local current = a == 1 and raidFrame.Normal.Current or a == 2 and raidFrame.Heroic.Current or a == 3 and raidFrame.Mythic.Current
 					--local previous = a == 1 and raidFrame.Normal.Previous or a == 2 and raidFrame.Heroic.Previous or a == 3 and raidFrame.Mythic.Previous
-		
+
 					if(current) then -- and previous
 						local currentProgress = MIOG_NewSettings.accountStatistics[data.guid].raid[mapID].regular[a]
 
 						local text2 = (currentProgress and currentProgress.kills or 0) .. "/" .. #miog.MAP_INFO[mapID].bosses
 						current:SetText(WrapTextInColorCode(text2, currentProgress and miog.DIFFICULTY[a].color or miog.CLRSCC.gray))
-		
+
 						current:SetScript("OnEnter", function(selfFrame)
 							raidOnEnter(selfFrame, data.guid, mapID, a, "regular")
 						end)
-		
+
 						current:SetScript("OnLeave", function()
 							GameTooltip:Hide()
 						end)
-		
+
 						--[[if(previous) then
 							local previousProgress = MIOG_NewSettings.raidStats[playerGUID].raid[mapID].regular[a]
 							local text = (previousProgress and previousProgress.kills or 0) .. "/" .. #miog.MAP_INFO[mapID].bosses
@@ -410,14 +492,14 @@ function StatisticsTabMixin:OnLoad(id)
 				frame.Rank:SetTexture(tierInfo.tierIconID)
 				frame.Rank:SetScript("OnEnter", function()
 					pvpOnEnter(self, MIOG_NewSettings.accountStatistics[data.guid].tierInfo)
-	
+
 				end)
-	
+
 				frame.Rank:SetScript("OnLeave", function()
 					GameTooltip:Hide()
-	
+
 				end)
-	
+
 
 			end
 			for i = 1, 4, 1 do
@@ -427,7 +509,7 @@ function StatisticsTabMixin:OnLoad(id)
 
 				local rating
 				local seasonBest
-		
+
 				if(MIOG_NewSettings.accountStatistics[data.guid].brackets[i]) then
 					rating = MIOG_NewSettings.accountStatistics[data.guid].brackets[i].rating
 					seasonBest = MIOG_NewSettings.accountStatistics[data.guid].brackets[i].seasonBest
@@ -437,15 +519,15 @@ function StatisticsTabMixin:OnLoad(id)
 					seasonBest = 0
 
 				end
-		
+
 				bracketFrame.Level1:SetText(rating)
 				bracketFrame.Level1:SetTextColor(CreateColorFromHexString(rating == 0 and miog.CLRSCC.gray or miog.CLRSCC.yellow):GetRGBA())
-		
+
 				local desaturatedColors = CreateColorFromHexString(seasonBest == 0 and miog.CLRSCC.gray or miog.CLRSCC.yellow)
-		
+
 				bracketFrame.Level2:SetText(seasonBest or 0)
 				bracketFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
-		
+
 			end
 		end
 	end)
@@ -470,7 +552,7 @@ function StatisticsTabMixin:OnLoad(id)
 					local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
 					local unitID
-				
+
 					if(IsInRaid()) then
 						unitID = "raid" .. groupIndex
 					else
@@ -490,6 +572,51 @@ function StatisticsTabMixin:OnLoad(id)
 				end
 			else
 				self:CreateDropdownEntry(fullPlayerName, rootDescription)
+
+			end
+		end)
+
+		self.Info.TimelimitSlider:SetScript("OnValueChanged", function(selfSlider)
+			self.Info.TimePercentage:SetText(round(self:GetValue()) .. "%")
+	
+			local columnFrame
+
+			for k, v in self.Columns:EnumerateFrames() do
+				if(v:GetElementData().mapID == keystoneInfo.mapID) then
+					columnFrame = v
+
+				end
+			end
+
+			if(columnFrame) then
+				self.Selection:ClearAllPoints()
+				self.Selection:SetPoint("TOPLEFT", columnFrame, "TOPLEFT")
+				self.Selection:SetPoint("BOTTOMRIGHT", columnFrame, "BOTTOMRIGHT")
+				self.Selection:Show()
+			end
+
+			if(fullName == miog.createFullNameFrom("unitID", "player")) then
+				print("its a player yay")
+
+				for k, v in self.Rows:EnumerateFrames() do
+					if(v:GetElementData().guid == UnitGUID("player")) then
+						local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, UnitGUID("player"), self.Info.TimelimitSlider:GetValue())
+						v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+						v.ScoreIncrease:Show()
+
+					end
+				end
+
+			else
+				print("its an asshole yay")
+
+				for k, v in self.Rows:EnumerateFrames() do
+					local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, v:GetElementData().guid, self.Info.TimelimitSlider:GetValue())
+
+					v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+					v.ScoreIncrease:Show()
+
+				end
 
 			end
 		end)
@@ -525,10 +652,10 @@ function StatisticsTabMixin:RequestAccountCharacters()
 			end
 		end
 	end
-	
+
 	for k, v in pairs(charList) do
 		localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(k)
-		
+
 		table.insert(self.accountCharacters, {guid = k, name = name, realm = realmName, classFile = englishClass})
 	end
 end
@@ -561,16 +688,17 @@ end
 
 function StatisticsTabMixin:LoadActivities()
 	if(self.id == 1) then
+
 		self.activityTable = miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()
 
 	elseif(self.id == 2) then
 		self.activityTable = miog.SEASONAL_MAP_IDS[13].raids
-		
+
 	elseif(self.id == 3) then
 		self.activityTable = {1, 2, 3, 4}
 
 	end
-	
+
 	if(self.id ~= 3) then
 		table.sort(self.activityTable, function(k1, k2)
 			local mapName1, mapName2
@@ -591,7 +719,7 @@ function StatisticsTabMixin:LoadActivities()
 	end
 
 	self.Columns:Flush()
-	
+
 	local columnProvider = CreateDataProvider();
 
 	for index, activityEntry in ipairs(self.activityTable) do
@@ -620,7 +748,7 @@ function StatisticsTabMixin:CalculateProgressWeightViaAchievements(guid)
 		if(character.raid[v].regular) then
 			for difficultyIndex, table in pairs(character.raid[v].regular) do
 				progressWeight = progressWeight + miog.calculateWeightedScore(difficultyIndex, table.kills, #table.bosses, true, 1)
-				
+
 
 			end
 		else
@@ -633,7 +761,7 @@ function StatisticsTabMixin:CalculateProgressWeightViaAchievements(guid)
 
 	--for a, b in ipairs(miog.guildSystem.memberData[name][3]) do
 	--	progress = (progress or "") .. wticc(b.parsedString, miog.DIFFICULTY[b.difficulty].color) .. " "
-	
+
 	--	progressWeight = progressWeight + (b.weight or 0)
 end
 
@@ -674,7 +802,7 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
     if(guid == playerGUID) then
 		for _, mapID in ipairs(self.activityTable) do
 			MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID] = {regular = {}, awakened = {}}
-			
+
 			if(miog.MAP_INFO[mapID].achievementsAwakened) then
 				for k, d in ipairs(miog.MAP_INFO[mapID].achievementsAwakened) do
 					local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(d)
@@ -698,8 +826,8 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
 					end
 				end
 			end
-			
-			
+
+
 			for k, d in ipairs(miog.MAP_INFO[mapID].achievementTable) do
 				local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(d)
 
@@ -774,9 +902,9 @@ function StatisticsTabMixin:UpdateCharacterMPlusStatistics(guid)
 
 		for index, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
 			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID] = {}
-	
+
 			local intimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID)
-	
+
 			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].intimeInfo = intimeInfo
 			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].overtimeInfo = overtimeInfo
 			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].overAllScore = intimeInfo and intimeInfo.dungeonScore or overtimeInfo and overtimeInfo.dungeonScore or 0
@@ -791,9 +919,9 @@ function StatisticsTabMixin:UpdateCharacterMPlusStatistics(guid)
 				MIOG_NewSettings.accountStatistics[guid].mplus.score = {value = mplusData.score.score, ingame = false}
 			end
 		end
-		
+
 		local mplusData, intimeInfo, overtimeInfo = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics[guid].name, MIOG_NewSettings.accountStatistics[guid].realm, nil, true)
-	
+
 		for index, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
 			if(not MIOG_NewSettings.accountStatistics[guid].mplus[challengeMapID]) then
 				MIOG_NewSettings.accountStatistics[guid].mplus[challengeMapID] = {}
@@ -808,7 +936,7 @@ end
 
 function StatisticsTabMixin:LoadCharacters()
 	self.Rows:Flush()
-	
+
 	local columnProvider = CreateDataProvider();
 
 	if(self.id == 1) then
@@ -819,7 +947,7 @@ function StatisticsTabMixin:LoadCharacters()
 
 	elseif(self.id == 3) then
 		columnProvider:SetSortComparator(sortByRating)
-		
+
 	end
 
 	local template = self.id == 1 and "MIOG_StatisticsDungeonCharacterTemplate" or self.id == 2 and "MIOG_StatisticsRaidCharacterTemplate" or self.id == 3 and "MIOG_StatisticsPVPCharacterTemplate"

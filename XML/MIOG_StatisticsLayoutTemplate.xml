@@ -57,13 +57,9 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Info" relativePoint="TOPRIGHT"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
-
-                <Frames>
-                    <Frame parentKey="Selection" inherits="BackdropTemplate" frameStrata="HIGH">
-                        <Size x="51" />
-                    </Frame>
-                </Frames>
             </Frame>
+
+            <Frame parentKey="Selection" inherits="BackdropTemplate" frameStrata="HIGH" />
 
             <Frame parentKey="Rows" inherits="WowScrollBoxList" frameStrata="HIGH">
                 <Anchors>
