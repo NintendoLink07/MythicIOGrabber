@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [2.7.1] - 2024-10-02
+## [2.7.1] - 2024-10-12
 
 ### Changed
 
@@ -20,7 +20,13 @@ This works retroactively, you do not need to log into each of your characters (w
 - [Statistics] The first character in the list will always be the one you are currently logged in.
 The following characters will be sorted by score for M+, progress for raid and rating for PVP.
 
+- [Statistics-MythicPlus] The score calculation has now been updated!
+Took 2 days to figure out the algorithm but now it should correctly calculate the new score.
+
 ### Fixed
+
+- The raider IO info panel will now correctly show keylevel bracket data, e.g. amount of keys done in 2-3, 4-6, 7-9, etc.
+Though right now RaiderIO seems to have a bug that doesn't correctly transfer any keylevel bracket except the 4-6 bracket into the downloadable databases (what you update through CurseForge or the RaiderIO client).
 
 - [FilterPanel] Clicking the checkbutton infront of the Difficulty dropdown will now activate the filter immediately instead of only after a new search.
 
@@ -31,6 +37,8 @@ The following characters will be sorted by score for M+, progress for raid and r
 - [PartyCheck] Split up some methods for the spec, keystone and progress detection, should lag less when new people join the group.
 
 - [PartyCheck] Fixed the width of certain elements of a character frame, now it shouldn't cut off the text anymore.
+
+- Cleaned up old files and code, should improve load times of the addon on lower end machines a bit (we're talking still sub-seconds of loadtime improvement though)
 
 
 

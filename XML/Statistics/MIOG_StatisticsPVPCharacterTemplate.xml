@@ -2,21 +2,21 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_StatisticsPVPCharacterTemplate" inherits="MIOG_StatisticsCharacterTemplate, HorizontalLayoutFrame" virtual="true">
         <KeyValues>
-            <KeyValue key="leftPadding" value="125" type="number" />
             <KeyValue key="spacing" value="2" type="number" />
+            <KeyValue key="leftPadding" value="125" type="number" />
         </KeyValues>
 
         <Frames>
-            <Frame parentKey="Bracket1" inherits="MIOG_PVPStatisticsBracketTemplate">
+            <Frame parentKey="Bracket1" inherits="MIOG_StatisticsBracketTemplate">
             </Frame>
 
-            <Frame parentKey="Bracket2" inherits="MIOG_PVPStatisticsBracketTemplate">
+            <Frame parentKey="Bracket2" inherits="MIOG_StatisticsBracketTemplate">
             </Frame>
 
-            <Frame parentKey="Bracket3" inherits="MIOG_PVPStatisticsBracketTemplate">
+            <Frame parentKey="Bracket3" inherits="MIOG_StatisticsBracketTemplate">
             </Frame>
 
-            <Frame parentKey="Bracket4" inherits="MIOG_PVPStatisticsBracketTemplate">
+            <Frame parentKey="Bracket4" inherits="MIOG_StatisticsBracketTemplate">
             </Frame>
         </Frames>
 

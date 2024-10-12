@@ -2,18 +2,18 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_StatisticsRaidCharacterTemplate" inherits="MIOG_StatisticsCharacterTemplate, HorizontalLayoutFrame" virtual="true">
         <KeyValues>
-            <KeyValue key="leftPadding" value="125" type="number" />
             <KeyValue key="spacing" value="2" type="number" />
+            <KeyValue key="leftPadding" value="125" type="number" />
         </KeyValues>
 
         <Frames>
-            <Frame parentKey="Raid1" inherits="MIOG_RaidStatisticsRaidTemplate">
+            <Frame parentKey="Raid1" inherits="MIOG_StatisticsRaidTemplate">
             </Frame>
 
-            <Frame parentKey="Raid2" inherits="MIOG_RaidStatisticsRaidTemplate">
+            <Frame parentKey="Raid2" inherits="MIOG_StatisticsRaidTemplate">
             </Frame>
 
-            <Frame parentKey="Raid3" inherits="MIOG_RaidStatisticsRaidTemplate">
+            <Frame parentKey="Raid3" inherits="MIOG_StatisticsRaidTemplate">
             </Frame>
         </Frames>
     </Frame>

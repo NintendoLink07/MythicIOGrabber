@@ -202,11 +202,12 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
 		end
 
 		self.MPlusKeys:SetText("M+ Keys done: " ..
-			WrapTextInColorCode(self.mplusData.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
-			WrapTextInColorCode(self.mplusData.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
-			WrapTextInColorCode(self.mplusData.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
-			WrapTextInColorCode(self.mplusData.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
-			WrapTextInColorCode(self.mplusData.keystoneTwentyFivePlus or "0", miog.ITEM_QUALITY_COLORS[6].pureHex)
+			WrapTextInColorCode(self.mplusData.keystoneMilestone2 or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
+			WrapTextInColorCode(self.mplusData.keystoneMilestone4 or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
+			WrapTextInColorCode(self.mplusData.keystoneMilestone7 or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
+			WrapTextInColorCode(self.mplusData.keystoneMilestone10 or "0", miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
+			WrapTextInColorCode(self.mplusData.keystoneMilestone12 or "0", miog.ITEM_QUALITY_COLORS[6].pureHex) .. " - " ..
+			WrapTextInColorCode(self.mplusData.keystoneMilestone15 or "0", miog.ITEM_QUALITY_COLORS[7].pureHex)
 		)
 
 	else

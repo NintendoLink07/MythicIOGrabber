@@ -690,9 +690,6 @@
                     <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true">
                     </Frame>
 
-                    <Frame parentKey="Guild" inherits="MIOG_Guild" hidden="true" setAllPoints="true">
-                    </Frame>
-
                     <Frame parentKey="LockoutCheck" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true">
                     </Frame>
                 </Frames>

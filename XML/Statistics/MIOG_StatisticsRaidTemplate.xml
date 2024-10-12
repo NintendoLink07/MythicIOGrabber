@@ -1,8 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_RaidStatisticsRaidTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size y="32" />
-
+    <Frame name="MIOG_StatisticsRaidTemplate" inherits="BackdropTemplate" virtual="true">
         <Frames>
             <Frame parentKey="Normal">
                 <Size x="45" y="20" />

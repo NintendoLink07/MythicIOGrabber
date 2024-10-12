@@ -92,6 +92,27 @@
                         <Anchor point="TOPLEFT" relativeKey="$parent.MainData" relativePoint="BOTTOMLEFT" />
                         <Anchor point="TOPRIGHT" relativeKey="$parent.MainData" relativePoint="BOTTOMRIGHT" />
                     </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            local parentPanel = self:GetParent()
+
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetText("The amount of keys in a specific keylevel bracket that have been completed:")
+                            GameTooltip:AddLine("2-3: " .. parentPanel.mplusData.keystoneMilestone2)
+                            GameTooltip:AddLine("4-6: " .. parentPanel.mplusData.keystoneMilestone4)
+                            GameTooltip:AddLine("7-9: " .. parentPanel.mplusData.keystoneMilestone7)
+                            GameTooltip:AddLine("10-11: " .. parentPanel.mplusData.keystoneMilestone10)
+                            GameTooltip:AddLine("12-14: " .. parentPanel.mplusData.keystoneMilestone12)
+                            GameTooltip:AddLine("15+: " .. parentPanel.mplusData.keystoneMilestone15)
+                            GameTooltip:Show()
+
+                        </OnEnter>
+
+                        <OnLeave>
+                            GameTooltip:Hide()
+                        </OnLeave>
+                    </Scripts>
                 </FontString>
 
                 <FontString parentKey="RaceRolesServer" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="">

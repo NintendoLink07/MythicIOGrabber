@@ -336,11 +336,12 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 				mplusData.mainScore = profile.mythicKeystoneProfile.mplusMainCurrent
 				mplusData.mainPreviousScore = profile.mythicKeystoneProfile.mplusMainPrevious
 		
-				mplusData.keystoneFivePlus = profile.mythicKeystoneProfile.keystoneFivePlus
-				mplusData.keystoneTenPlus = profile.mythicKeystoneProfile.keystoneTenPlus
-				mplusData.keystoneFifteenPlus = profile.mythicKeystoneProfile.keystoneFifteenPlus
-				mplusData.keystoneTwentyPlus = profile.mythicKeystoneProfile.keystoneTwentyPlus
-				mplusData.keystoneTwentyFivePlus = profile.mythicKeystoneProfile.keystoneTwentyFivePlus
+				mplusData.keystoneMilestone2 = profile.mythicKeystoneProfile.keystoneMilestone2
+				mplusData.keystoneMilestone4 = profile.mythicKeystoneProfile.keystoneMilestone4
+				mplusData.keystoneMilestone7 = profile.mythicKeystoneProfile.keystoneMilestone7
+				mplusData.keystoneMilestone10 = profile.mythicKeystoneProfile.keystoneMilestone10
+				mplusData.keystoneMilestone12 = profile.mythicKeystoneProfile.keystoneMilestone12
+				mplusData.keystoneMilestone15 = profile.mythicKeystoneProfile.keystoneMilestone15
 			end
 
 		else
@@ -351,11 +352,12 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 				mplusData.mainScore = {score = 0}
 				mplusData.mainPreviousScore = {score = 0}
 		
-				mplusData.keystoneFivePlus = 0
-				mplusData.keystoneTenPlus = 0
-				mplusData.keystoneFifteenPlus = 0
-				mplusData.keystoneTwentyPlus = 0
-				mplusData.keystoneTwentyFivePlus = 0
+				mplusData.keystoneMilestone2 = 0
+				mplusData.keystoneMilestone4 = 0
+				mplusData.keystoneMilestone7 = 0
+				mplusData.keystoneMilestone10 = 0
+				mplusData.keystoneMilestone12 = 0
+				mplusData.keystoneMilestone15 = 0
 			else
 
 			end
@@ -844,11 +846,12 @@ miog.fillNewRaiderIOPanel = function(raiderIOPanel, playerName, realm)
 		end
 
 		raiderIOPanel.MPlusKeys:SetText("M+ Keys done: " ..
-			wticc(mplusData.keystoneFivePlus or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
-			wticc(mplusData.keystoneTenPlus or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
-			wticc(mplusData.keystoneFifteenPlus or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
-			wticc(mplusData.keystoneTwentyPlus or "0", miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
-			wticc(mplusData.keystoneTwentyFivePlus or "0", miog.ITEM_QUALITY_COLORS[6].pureHex)
+			WrapTextInColorCode(mplusData.keystoneMilestone2 or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
+			WrapTextInColorCode(mplusData.keystoneMilestone4 or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
+			WrapTextInColorCode(mplusData.keystoneMilestone7 or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
+			WrapTextInColorCode(mplusData.keystoneMilestone10 or "0", miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
+			WrapTextInColorCode(mplusData.keystoneMilestone12 or "0", miog.ITEM_QUALITY_COLORS[6].pureHex) .. " - " ..
+			WrapTextInColorCode(mplusData.keystoneMilestone15 or "0", miog.ITEM_QUALITY_COLORS[7].pureHex)
 		)
 
 	else

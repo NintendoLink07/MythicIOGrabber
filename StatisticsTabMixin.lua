@@ -71,11 +71,11 @@ local function sortByRating(k1, k2)
 
 end
 
-local function pvpOnEnter(self, tierTable)
+local function pvpOnEnter(selfFrame, tierTable)
     local tierInfo = C_PvP.GetPvpTierInfo(tierTable[1])
     local nextTierInfo = C_PvP.GetPvpTierInfo(tierTable[2])
 
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
     GameTooltip:SetMinimumWidth(260);
     --GameTooltip_SetTitle(GameTooltip, tierName);
 	local tierName = tierInfo and tierInfo.pvpTierEnum and PVPUtil.GetTierName(tierInfo.pvpTierEnum);
@@ -242,84 +242,47 @@ local function calculateNewScore(mapID, newLevel, guid, customTimer)
 		intimeInfo = MIOG_NewSettings.accountStatistics[guid].mplus[mapID].intimeInfo
 		overtimeInfo = MIOG_NewSettings.accountStatistics[guid].mplus[mapID].overtimeInfo
 
+		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(mapID)
+
+		local overTimeGain, lowGain, highGain = 0, 0, 0
+	
+		if(intimeInfo or overtimeInfo) then
+			local info = intimeInfo or overtimeInfo
+	
+			overTimeGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit}, info.level)
+			lowGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, info.level)
+			highGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, info.level)
+	
+			return max(round(overTimeGain - info.dungeonScore), 0), max(round(lowGain - info.dungeonScore), 0), max(round(highGain - info.dungeonScore), 0)
+		end
 	end
 
-	local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(mapID)
-
-	local overTimeGain, lowGain, highGain = 0, 0, 0
-
-	if(intimeInfo or overtimeInfo) then
-		local info = intimeInfo or overtimeInfo
-
-		overTimeGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit}, info.level)
-		lowGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, info.level)
-		highGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, info.level)
-
-		return max(round(overTimeGain - info.dungeonScore), 0), max(round(lowGain - info.dungeonScore), 0), max(round(highGain - info.dungeonScore), 0)
-	end
+	return 0, 0, 0
  end
 
-local function xd3()
 
-end
+function StatisticsTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
+	local newKeystoneInfo = {}
+	newKeystoneInfo.challengeMapID = 507
+	newKeystoneInfo.level = 14
+	newKeystoneInfo.mapID = 670
+	newKeystoneInfo.classID = 4
 
-function StatisticsTabMixin:CreateDropdownEntry(fullName, rootDescription)
-	local keystoneInfo = miog.checkSystem.keystoneData[fullName]
-
-	if(keystoneInfo and keystoneInfo.mapID > 0) then
-		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
-		local className, classFile = GetClassInfo(keystoneInfo.classID)
+	if(newKeystoneInfo and newKeystoneInfo.mapID > 0) then
+		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(newKeystoneInfo.challengeMapID)
+		local className, classFile = GetClassInfo(newKeystoneInfo.classID)
 
 		local shortName = miog.createSplitName(fullName)
 
-		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
+		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. newKeystoneInfo.level .. " " .. miog.MAP_INFO[newKeystoneInfo.mapID].shortName, miog.createCustomColorForRating(newKeystoneInfo.level * 130):GenerateHexColor())
 
-		local keystoneButton = rootDescription:CreateRadio(text, function() return self.currentUnitName == fullName end, function()
-			self.currentUnitName = fullName
-			self.currentChallengeMapID = keystoneInfo.challengeMapID
-			self.currentLevel = keystoneInfo.level
+		local keystoneButton = rootDescription:CreateRadio(text, function(fullCharacterName) return self.currentUnitName == fullCharacterName end, function(fullCharacterName)
+			self.currentUnitName = fullCharacterName
+			self.currentKeystoneInfo = newKeystoneInfo
+	
+			self:SetMPlusScoreInfo()
 
-			local columnFrame
-
-			for k, v in self.Columns:EnumerateFrames() do
-				if(v:GetElementData().mapID == keystoneInfo.mapID) then
-					columnFrame = v
-
-				end
-			end
-
-			if(columnFrame) then
-				self.Selection:ClearAllPoints()
-				self.Selection:SetPoint("TOPLEFT", columnFrame, "TOPLEFT")
-				self.Selection:SetPoint("BOTTOMRIGHT", columnFrame, "BOTTOMRIGHT")
-				self.Selection:Show()
-			end
-
-			if(fullName == miog.createFullNameFrom("unitID", "player")) then
-				print("its a player yay")
-
-				for k, v in self.Rows:EnumerateFrames() do
-					if(v:GetElementData().guid == UnitGUID("player")) then
-						local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, UnitGUID("player"), self.Info.TimelimitSlider:GetValue())
-						v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
-						v.ScoreIncrease:Show()
-
-					end
-				end
-
-			else
-				print("its an asshole yay")
-
-				for k, v in self.Rows:EnumerateFrames() do
-					local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, v:GetElementData().guid, self.Info.TimelimitSlider:GetValue())
-
-					v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
-					v.ScoreIncrease:Show()
-
-				end
-
-			end
-		end, keystoneInfo.challengeMapID)
+		end, fullName)
 
 		keystoneButton:AddInitializer(function(button, description, menu)
 			local leftTexture = button:AttachTexture();
@@ -331,6 +294,111 @@ function StatisticsTabMixin:CreateDropdownEntry(fullName, rootDescription)
 
 			return button.fontString:GetUnboundedStringWidth() + 14 + 2
 		end)
+	end
+ end
+
+function StatisticsTabMixin:CreateDropdownEntry(fullName, rootDescription)
+	--self:CreateDebugKeyInfo(fullName, rootDescription)
+
+	local keystoneInfo = miog.checkSystem.keystoneData[fullName]
+
+	if(keystoneInfo and keystoneInfo.mapID > 0) then
+		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
+		local className, classFile = GetClassInfo(keystoneInfo.classID)
+
+		local shortName = miog.createSplitName(fullName)
+
+		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
+
+		local keystoneButton = rootDescription:CreateRadio(text, function(fullCharacterName) return self.currentUnitName == fullCharacterName end, function(fullCharacterName)
+			self.currentUnitName = fullCharacterName
+			self.currentKeystoneInfo = keystoneInfo
+	
+			self:SetMPlusScoreInfo()
+
+		end, fullName)
+
+		keystoneButton:AddInitializer(function(button, description, menu)
+			local leftTexture = button:AttachTexture();
+			leftTexture:SetSize(14, 14);
+			leftTexture:SetPoint("LEFT", 17, 0);
+			leftTexture:SetTexture(texture);
+
+			button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+			return button.fontString:GetUnboundedStringWidth() + 14 + 2
+		end)
+	end
+	
+	
+end
+
+function StatisticsTabMixin:StartScoreCalculationForCharacter(frame, guid)
+	if(frame) then
+		if(self.currentKeystoneInfo and self.currentUnitName == MIOG_NewSettings.accountStatistics[guid].fullName) then
+			local overtimeScore, minScore, maxScore = calculateNewScore(self.currentKeystoneInfo.challengeMapID, self.currentKeystoneInfo.level, guid, self.Info.TimelimitSlider:GetValue())
+			frame.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
+			frame.ScoreIncrease:Show()
+
+		else
+			frame.ScoreIncrease:SetText("")
+			frame.ScoreIncrease:Hide()
+
+		end
+	end
+end
+
+function StatisticsTabMixin:StartScoreCalculationForAllCharacters()
+	for k, v in self.Rows:EnumerateFrames() do
+		self:StartScoreCalculationForCharacter(v, v:GetElementData().guid)
+
+	end
+end
+
+function StatisticsTabMixin:FindFrameWithMatchingDataElement(scrollList, element, value)
+	for k, v in scrollList:EnumerateFrames() do
+		if(v:GetElementData()[element] == value) then
+			return v
+
+		end
+	end
+end
+
+function StatisticsTabMixin:SetMPlusScoreInfo()
+	if(self.currentKeystoneInfo) then
+		local columnFrame
+
+		for k, v in self.Columns:EnumerateFrames() do
+			if(v:GetElementData().mapID == self.currentKeystoneInfo.mapID) then
+				columnFrame = v
+
+			end
+		end
+
+		if(columnFrame) then
+			if(self.lastColumnFrame) then
+				self.lastColumnFrame.TransparentDark:Show()
+			end
+
+			self.lastColumnFrame = columnFrame
+
+			self.lastColumnFrame.TransparentDark:Hide()
+
+			self.Selection:ClearAllPoints()
+			self.Selection:SetPoint("TOPLEFT", columnFrame, "TOPLEFT")
+			self.Selection:SetPoint("BOTTOMRIGHT", columnFrame, "BOTTOMRIGHT")
+			self.Selection:Show()
+		end
+
+		if(self.currentUnitName == miog.createFullNameFrom("unitID", "player")) then
+			local frame = self:FindFrameWithMatchingDataElement(self.Rows, "guid", UnitGUID("player"))
+
+			self:StartScoreCalculationForCharacter(frame, UnitGUID("player"))
+
+		else
+			self:StartScoreCalculationForAllCharacters()
+
+		end
 	end
 end
 
@@ -407,6 +475,8 @@ function StatisticsTabMixin:OnLoad(id)
         if(isDungeon) then
             frame.Score:SetText(data.score.value)
 
+			self:StartScoreCalculationForCharacter(frame, data.guid)
+
             if(data.score.ingame) then
                 frame.Score:SetTextColor(miog.createCustomColorForRating(data.score.value):GetRGBA())
                 frame.Score:SetScript("OnEnter", nil)
@@ -428,8 +498,9 @@ function StatisticsTabMixin:OnLoad(id)
             end
 
             for index, challengeMapID in ipairs(self.activityTable) do
-                local dungeonFrame = frame.Dungeons["Dungeon" .. index]
+                local dungeonFrame = frame["Dungeon" .. index]
                 dungeonFrame:SetWidth(self.Columns:GetView():GetElementExtent())
+                dungeonFrame:SetHeight(frame:GetHeight())
                 dungeonFrame.challengeMapID = challengeMapID
                 dungeonFrame.layoutIndex = index
 
@@ -444,10 +515,10 @@ function StatisticsTabMixin:OnLoad(id)
 
             end
         elseif(isRaid) then
-
 			for index, mapID in ipairs(self.activityTable) do
 				local raidFrame = frame["Raid" .. index]
 				raidFrame:SetWidth(self.Columns:GetView():GetElementExtent())
+                raidFrame:SetHeight(frame:GetHeight())
 				raidFrame.layoutIndex = index
 
 				for a = 1, 3, 1 do
@@ -490,8 +561,8 @@ function StatisticsTabMixin:OnLoad(id)
 				local tierInfo = C_PvP.GetPvpTierInfo(MIOG_NewSettings.accountStatistics[data.guid].tierInfo[1])
 
 				frame.Rank:SetTexture(tierInfo.tierIconID)
-				frame.Rank:SetScript("OnEnter", function()
-					pvpOnEnter(self, MIOG_NewSettings.accountStatistics[data.guid].tierInfo)
+				frame.Rank:SetScript("OnEnter", function(selfFrame)
+					pvpOnEnter(selfFrame, MIOG_NewSettings.accountStatistics[data.guid].tierInfo)
 
 				end)
 
@@ -502,9 +573,11 @@ function StatisticsTabMixin:OnLoad(id)
 
 
 			end
+
 			for i = 1, 4, 1 do
 				local bracketFrame = frame["Bracket" .. i]
 				bracketFrame:SetWidth(self.Columns:GetView():GetElementExtent())
+                bracketFrame:SetHeight(frame:GetHeight())
 				bracketFrame.layoutIndex = i
 
 				local rating
@@ -577,48 +650,9 @@ function StatisticsTabMixin:OnLoad(id)
 		end)
 
 		self.Info.TimelimitSlider:SetScript("OnValueChanged", function(selfSlider)
-			self.Info.TimePercentage:SetText(round(self:GetValue()) .. "%")
+			self.Info.TimePercentage:SetText(round(selfSlider:GetValue()) .. "%")
 	
-			local columnFrame
-
-			for k, v in self.Columns:EnumerateFrames() do
-				if(v:GetElementData().mapID == keystoneInfo.mapID) then
-					columnFrame = v
-
-				end
-			end
-
-			if(columnFrame) then
-				self.Selection:ClearAllPoints()
-				self.Selection:SetPoint("TOPLEFT", columnFrame, "TOPLEFT")
-				self.Selection:SetPoint("BOTTOMRIGHT", columnFrame, "BOTTOMRIGHT")
-				self.Selection:Show()
-			end
-
-			if(fullName == miog.createFullNameFrom("unitID", "player")) then
-				print("its a player yay")
-
-				for k, v in self.Rows:EnumerateFrames() do
-					if(v:GetElementData().guid == UnitGUID("player")) then
-						local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, UnitGUID("player"), self.Info.TimelimitSlider:GetValue())
-						v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
-						v.ScoreIncrease:Show()
-
-					end
-				end
-
-			else
-				print("its an asshole yay")
-
-				for k, v in self.Rows:EnumerateFrames() do
-					local overtimeScore, minScore, maxScore = calculateNewScore(keystoneInfo.challengeMapID, keystoneInfo.level, v:GetElementData().guid, self.Info.TimelimitSlider:GetValue())
-
-					v.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
-					v.ScoreIncrease:Show()
-
-				end
-
-			end
+			self:SetMPlusScoreInfo()
 		end)
 	else
 		self.Info:Hide()
