@@ -112,9 +112,9 @@ local function mplusOnEnter(self, playerGUID)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 	GameTooltip:SetText(name, 1, 1, 1);
 
-	local overAllScore = MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].overAllScore
-	local inTimeInfo = MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].intimeInfo
-	local overtimeInfo = MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].overtimeInfo
+	local overAllScore = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overAllScore
+	local inTimeInfo = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].intimeInfo
+	local overtimeInfo = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overtimeInfo
 
 	if(inTimeInfo or overtimeInfo) then
 		if(overAllScore) then
@@ -154,8 +154,8 @@ local function raidOnEnter(self, playerGUID, mapID, difficulty, type)
 	GameTooltip_AddHighlightLine(GameTooltip, miog.MAP_INFO[mapID].name)
 	GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-	if(MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID][type][difficulty]) then
-		for k, v in ipairs(MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID][type][difficulty].bosses) do
+	if(MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID][type][difficulty]) then
+		for k, v in ipairs(MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID][type][difficulty].bosses) do
 			local bossInfo = v
 			local criteriaString, name
 
@@ -179,7 +179,7 @@ local function raidOnEnter(self, playerGUID, mapID, difficulty, type)
 
 		end
 
-		if(not MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID][type][difficulty].ingame) then
+		if(not MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID][type][difficulty].ingame) then
 			GameTooltip_AddBlankLineToTooltip(GameTooltip)
 			GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
 			GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
@@ -239,24 +239,23 @@ local function calculateNewScore(mapID, newLevel, guid, customTimer)
 	local intimeInfo, overtimeInfo
 
 	if(guid) then
-		intimeInfo = MIOG_NewSettings.accountStatistics[guid].mplus[mapID].intimeInfo
-		overtimeInfo = MIOG_NewSettings.accountStatistics[guid].mplus[mapID].overtimeInfo
+		intimeInfo = MIOG_NewSettings.accountStatistics.characters[guid].mplus[mapID].intimeInfo
+		overtimeInfo = MIOG_NewSettings.accountStatistics.characters[guid].mplus[mapID].overtimeInfo
 
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(mapID)
 
 		local overTimeGain, lowGain, highGain = 0, 0, 0
-	
-		if(intimeInfo or overtimeInfo) then
-			local info = intimeInfo or overtimeInfo
-	
-			overTimeGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit}, info.level)
-			lowGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1}, info.level)
-			highGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - timeLimit * (customTimer and customTimer / 100)}, info.level)
-	
-			return max(round(overTimeGain - info.dungeonScore), 0), max(round(lowGain - info.dungeonScore), 0), max(round(highGain - info.dungeonScore), 0)
-		end
-	end
 
+		local info = intimeInfo or overtimeInfo
+		local dungeonScore = info and info.dungeonScore or 0
+	
+		overTimeGain = calculateMapScore(mapID, {level = newLevel, durationSec = customTimer <= 0 and timeLimit * (1 - (customTimer / 100)) or timeLimit})
+		lowGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1})
+		highGain = calculateMapScore(mapID, {level = newLevel, durationSec = customTimer > 0 and timeLimit - timeLimit * (customTimer / 100) or timeLimit - 0.1})
+
+		return max(round(overTimeGain - dungeonScore), 0), max(round(lowGain - dungeonScore), 0), max(round(highGain - dungeonScore), 0)
+	end
+	
 	return 0, 0, 0
  end
 
@@ -335,7 +334,7 @@ end
 
 function StatisticsTabMixin:StartScoreCalculationForCharacter(frame, guid)
 	if(frame) then
-		if(self.currentKeystoneInfo and self.currentUnitName == MIOG_NewSettings.accountStatistics[guid].fullName) then
+		if(self.currentKeystoneInfo and (guid == UnitGUID("player") or self.currentUnitName ~= miog.createFullNameFrom("unitID", "player"))) then
 			local overtimeScore, minScore, maxScore = calculateNewScore(self.currentKeystoneInfo.challengeMapID, self.currentKeystoneInfo.level, guid, self.Info.TimelimitSlider:GetValue())
 			frame.ScoreIncrease:SetText(WrapTextInColorCode(overtimeScore, miog.CLRSCC.red) .. "||" .. WrapTextInColorCode(minScore, miog.CLRSCC.yellow) .. "||" .. WrapTextInColorCode(maxScore, miog.CLRSCC.green))
 			frame.ScoreIncrease:Show()
@@ -461,6 +460,7 @@ function StatisticsTabMixin:OnLoad(id)
 
 			if(isDungeon) then
 				frame.Score:SetFont(file, height + 2, flags)
+				frame.ScoreIncrease:SetFont(file, height + 2, flags)
 
 			end
 		else
@@ -468,6 +468,7 @@ function StatisticsTabMixin:OnLoad(id)
 
 			if(isDungeon) then
 				frame.Score:SetFont(file, height, flags)
+				frame.ScoreIncrease:SetFont(file, height, flags)
 
 			end
 		end
@@ -504,11 +505,11 @@ function StatisticsTabMixin:OnLoad(id)
                 dungeonFrame.challengeMapID = challengeMapID
                 dungeonFrame.layoutIndex = index
 
-                local hasIntimeInfo = MIOG_NewSettings.accountStatistics[data.guid].mplus[challengeMapID].intimeInfo ~= nil
-                local hasOvertimeInfo = MIOG_NewSettings.accountStatistics[data.guid].mplus[challengeMapID].overtimeInfo ~= nil
+                local hasIntimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo ~= nil
+                local hasOvertimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo ~= nil
 
-                dungeonFrame.Level:SetText(hasIntimeInfo and MIOG_NewSettings.accountStatistics[data.guid].mplus[challengeMapID].intimeInfo.level or hasOvertimeInfo and MIOG_NewSettings.accountStatistics[data.guid].mplus[challengeMapID].overtimeInfo.level or 0)
-                dungeonFrame.Level:SetTextColor(CreateColorFromHexString(hasIntimeInfo and  miog.CLRSCC.green or hasOvertimeInfo and MIOG_NewSettings.accountStatistics[data.guid].mplus[challengeMapID].overtimeInfo.level and miog.CLRSCC.red or miog.CLRSCC.gray):GetRGBA())
+                dungeonFrame.Level:SetText(hasIntimeInfo and MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo.level or hasOvertimeInfo and MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo.level or 0)
+                dungeonFrame.Level:SetTextColor(CreateColorFromHexString(hasIntimeInfo and  miog.CLRSCC.green or hasOvertimeInfo and MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo.level and miog.CLRSCC.red or miog.CLRSCC.gray):GetRGBA())
                 dungeonFrame:SetScript("OnEnter", function(selfFrame)
 					mplusOnEnter(selfFrame, data.guid)
 				end) -- ChallengesDungeonIconMixin:OnEnter()
@@ -526,7 +527,7 @@ function StatisticsTabMixin:OnLoad(id)
 					--local previous = a == 1 and raidFrame.Normal.Previous or a == 2 and raidFrame.Heroic.Previous or a == 3 and raidFrame.Mythic.Previous
 
 					if(current) then -- and previous
-						local currentProgress = MIOG_NewSettings.accountStatistics[data.guid].raid[mapID].regular[a]
+						local currentProgress = MIOG_NewSettings.accountStatistics.characters[data.guid].raid[mapID].regular[a]
 
 						local text2 = (currentProgress and currentProgress.kills or 0) .. "/" .. #miog.MAP_INFO[mapID].bosses
 						current:SetText(WrapTextInColorCode(text2, currentProgress and miog.DIFFICULTY[a].color or miog.CLRSCC.gray))
@@ -557,12 +558,12 @@ function StatisticsTabMixin:OnLoad(id)
 				end
 			end
 		elseif(isPvp) then
-			if(MIOG_NewSettings.accountStatistics[data.guid].tierInfo[1]) then
-				local tierInfo = C_PvP.GetPvpTierInfo(MIOG_NewSettings.accountStatistics[data.guid].tierInfo[1])
+			if(MIOG_NewSettings.accountStatistics.characters[data.guid].tierInfo[1]) then
+				local tierInfo = C_PvP.GetPvpTierInfo(MIOG_NewSettings.accountStatistics.characters[data.guid].tierInfo[1])
 
 				frame.Rank:SetTexture(tierInfo.tierIconID)
 				frame.Rank:SetScript("OnEnter", function(selfFrame)
-					pvpOnEnter(selfFrame, MIOG_NewSettings.accountStatistics[data.guid].tierInfo)
+					pvpOnEnter(selfFrame, MIOG_NewSettings.accountStatistics.characters[data.guid].tierInfo)
 
 				end)
 
@@ -583,9 +584,9 @@ function StatisticsTabMixin:OnLoad(id)
 				local rating
 				local seasonBest
 
-				if(MIOG_NewSettings.accountStatistics[data.guid].brackets[i]) then
-					rating = MIOG_NewSettings.accountStatistics[data.guid].brackets[i].rating
-					seasonBest = MIOG_NewSettings.accountStatistics[data.guid].brackets[i].seasonBest
+				if(MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[i]) then
+					rating = MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[i].rating
+					seasonBest = MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[i].seasonBest
 
 				else
 					rating = 0
@@ -603,12 +604,15 @@ function StatisticsTabMixin:OnLoad(id)
 
 			end
 		end
+
+		characterView:RecalculateExtent(self.Rows)
 	end)
 
     characterView:SetPadding(1, 1, 1, 1, 4)
-    characterView:SetElementExtentCalculator(function(index, data)
-		return data.guid == UnitGUID("player") and 40 or 32
-	end)
+    --[[characterView:SetElementExtentCalculator(function(index, data)
+		return index == 1 and data.guid == UnitGUID("player") and 40 or 32
+	end)]]
+	characterView:SetElementExtent(32)
 
     ScrollUtil.InitScrollBoxListWithScrollBar(self.Rows, self.RowsScrollBar, characterView);
 
@@ -650,7 +654,7 @@ function StatisticsTabMixin:OnLoad(id)
 		end)
 
 		self.Info.TimelimitSlider:SetScript("OnValueChanged", function(selfSlider)
-			self.Info.TimePercentage:SetText(round(selfSlider:GetValue()) .. "%")
+			self.Info.TimePercentage:SetText(round((selfSlider:GetValue() * -1)) .. "%")
 	
 			self:SetMPlusScoreInfo()
 		end)
@@ -696,14 +700,14 @@ end
 
 function StatisticsTabMixin:UpdateAllCharacterStatistics()
 	for k, v in ipairs(self.accountCharacters) do
-		if(not MIOG_NewSettings.accountStatistics[v.guid]) then
-			MIOG_NewSettings.accountStatistics[v.guid] = {}
-			MIOG_NewSettings.accountStatistics[v.guid].name = v.name
-			MIOG_NewSettings.accountStatistics[v.guid].fullName = miog.createFullNameFrom("unitName", v.name .. "-" .. v.realm)
-			MIOG_NewSettings.accountStatistics[v.guid].classFile = v.classFile
-			MIOG_NewSettings.accountStatistics[v.guid].mplus = {}
-			MIOG_NewSettings.accountStatistics[v.guid].raid = {}
-			MIOG_NewSettings.accountStatistics[v.guid].pvp = {}
+		if(not MIOG_NewSettings.accountStatistics.characters[v.guid]) then
+			MIOG_NewSettings.accountStatistics.characters[v.guid] = {}
+			MIOG_NewSettings.accountStatistics.characters[v.guid].name = v.name
+			MIOG_NewSettings.accountStatistics.characters[v.guid].fullName = miog.createFullNameFrom("unitName", v.name .. "-" .. v.realm)
+			MIOG_NewSettings.accountStatistics.characters[v.guid].classFile = v.classFile
+			MIOG_NewSettings.accountStatistics.characters[v.guid].mplus = {}
+			MIOG_NewSettings.accountStatistics.characters[v.guid].raid = {}
+			MIOG_NewSettings.accountStatistics.characters[v.guid].pvp = {}
 		end
 
 		if(self.id == 1) then
@@ -775,7 +779,7 @@ function StatisticsTabMixin:LoadActivities()
 end
 
 function StatisticsTabMixin:CalculateProgressWeightViaAchievements(guid)
-	local character = MIOG_NewSettings.accountStatistics[guid]
+	local character = MIOG_NewSettings.accountStatistics.characters[guid]
 	local progressWeight = 0
 
 	for k, v in ipairs(self.activityTable) do
@@ -791,7 +795,7 @@ function StatisticsTabMixin:CalculateProgressWeightViaAchievements(guid)
 		end
 	end
 
-	MIOG_NewSettings.accountStatistics[guid].progressWeight = progressWeight
+	MIOG_NewSettings.accountStatistics.characters[guid].progressWeight = progressWeight
 
 	--for a, b in ipairs(miog.guildSystem.memberData[name][3]) do
 	--	progress = (progress or "") .. wticc(b.parsedString, miog.DIFFICULTY[b.difficulty].color) .. " "
@@ -805,12 +809,12 @@ function StatisticsTabMixin:UpdatePVPStatistics(guid)
     if(guid == playerGUID) then
 		local highestRating = 0
 
-		MIOG_NewSettings.accountStatistics[playerGUID].brackets = {}
+		MIOG_NewSettings.accountStatistics.characters[playerGUID].brackets = {}
 
 		for i = 1, 4, 1 do
 			local rating, seasonBest, weeklyBest, seasonPlayed, seasonWon, weeklyPlayed, weeklyWon, cap = GetPersonalRatedInfo(i) -- 1 == 2v2, 2 == 3v3, 3 == 5v5, 4 == 10v10
 
-			MIOG_NewSettings.accountStatistics[playerGUID].brackets[i] = {rating = rating, seasonBest = seasonBest}
+			MIOG_NewSettings.accountStatistics.characters[playerGUID].brackets[i] = {rating = rating, seasonBest = seasonBest}
 
 			highestRating = rating > highestRating and rating or highestRating
 
@@ -818,14 +822,14 @@ function StatisticsTabMixin:UpdatePVPStatistics(guid)
 
 		local tierID, nextTierID = C_PvP.GetSeasonBestInfo();
 
-		MIOG_NewSettings.accountStatistics[playerGUID].tierInfo = {tierID, nextTierID}
+		MIOG_NewSettings.accountStatistics.characters[playerGUID].tierInfo = {tierID, nextTierID}
 
-		MIOG_NewSettings.accountStatistics[playerGUID].rating = highestRating
+		MIOG_NewSettings.accountStatistics.characters[playerGUID].rating = highestRating
 
 	else
-		MIOG_NewSettings.accountStatistics[guid].brackets = MIOG_NewSettings.accountStatistics[guid].brackets or {}
-		MIOG_NewSettings.accountStatistics[guid].tierInfo = MIOG_NewSettings.accountStatistics[guid].tierInfo or {}
-		MIOG_NewSettings.accountStatistics[guid].rating = MIOG_NewSettings.accountStatistics[guid].rating or 0
+		MIOG_NewSettings.accountStatistics.characters[guid].brackets = MIOG_NewSettings.accountStatistics.characters[guid].brackets or {}
+		MIOG_NewSettings.accountStatistics.characters[guid].tierInfo = MIOG_NewSettings.accountStatistics.characters[guid].tierInfo or {}
+		MIOG_NewSettings.accountStatistics.characters[guid].rating = MIOG_NewSettings.accountStatistics.characters[guid].rating or 0
 
 	end
 end
@@ -835,7 +839,7 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
 
     if(guid == playerGUID) then
 		for _, mapID in ipairs(self.activityTable) do
-			MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID] = {regular = {}, awakened = {}}
+			MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID] = {regular = {}, awakened = {}}
 
 			if(miog.MAP_INFO[mapID].achievementsAwakened) then
 				for k, d in ipairs(miog.MAP_INFO[mapID].achievementsAwakened) do
@@ -844,18 +848,18 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
 					local difficulty = string.find(description, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
 
 					if(difficulty) then
-						MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].awakened[difficulty] = {ingame = true, kills = 0, bosses = {}}
+						MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].awakened[difficulty] = {ingame = true, kills = 0, bosses = {}}
 
 						local numCriteria = GetAchievementNumCriteria(d)
 						for i = 1, numCriteria, 1 do
 							local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, i, true)
 
 							if(completedCriteria) then
-								MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].awakened[difficulty].kills = MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].awakened[difficulty].kills + 1
+								MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].awakened[difficulty].kills = MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].awakened[difficulty].kills + 1
 
 							end
 
-							table.insert(MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].awakened[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
+							table.insert(MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].awakened[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 						end
 					end
 				end
@@ -868,29 +872,29 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
 				local difficulty = string.find(name, "Normal") and 1 or string.find(name, "Heroic") and 2 or string.find(name, "Mythic") and 3
 
 				if(difficulty) then
-					MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].regular[difficulty] = MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].regular[difficulty] or {ingame = true, kills = 0, bosses = {}}
+					MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].regular[difficulty] = MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].regular[difficulty] or {ingame = true, kills = 0, bosses = {}}
 
 					local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, 1, true)
 
 					if(completedCriteria) then
-						MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].regular[difficulty].kills = MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].regular[difficulty].kills + 1
+						MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].regular[difficulty].kills = MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].regular[difficulty].kills + 1
 
 					end
 
-					table.insert(MIOG_NewSettings.accountStatistics[playerGUID].raid[mapID].regular[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
+					table.insert(MIOG_NewSettings.accountStatistics.characters[playerGUID].raid[mapID].regular[difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 				end
 			end
 		end
 
 		self:CalculateProgressWeightViaAchievements(guid)
     else
-		local raidData = miog.getNewRaidSortData(MIOG_NewSettings.accountStatistics[guid].name, MIOG_NewSettings.accountStatistics[guid].realm)
+		local raidData = miog.getNewRaidSortData(MIOG_NewSettings.accountStatistics.characters[guid].name, MIOG_NewSettings.accountStatistics.characters[guid].realm)
 
-		local progressWeight = MIOG_NewSettings.accountStatistics[guid].progressWeight or 0
+		local progressWeight = MIOG_NewSettings.accountStatistics.characters[guid].progressWeight or 0
 
 		for k, v in ipairs(self.activityTable) do
-			if(not MIOG_NewSettings.accountStatistics[guid].raid[v] and raidData and raidData.character) then
-				MIOG_NewSettings.accountStatistics[guid].raid[v] = {regular = {}, awakened = {}}
+			if(not MIOG_NewSettings.accountStatistics.characters[guid].raid[v] and raidData and raidData.character) then
+				MIOG_NewSettings.accountStatistics.characters[guid].raid[v] = {regular = {}, awakened = {}}
 
 				local mapInfo = miog.MAP_INFO[v]
 
@@ -908,11 +912,11 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
 							if(difficulty and raidData.character.raids[v].regular.difficulties[difficulty]) then
 								local raiderIODifficultyData = raidData.character.raids[v].regular.difficulties[difficulty]
 
-								MIOG_NewSettings.accountStatistics[guid].raid[v].regular[difficulty] = {ingame = false, kills = raiderIODifficultyData.bossesKilled, bosses = raiderIODifficultyData.bosses}
+								MIOG_NewSettings.accountStatistics.characters[guid].raid[v].regular[difficulty] = {ingame = false, kills = raiderIODifficultyData.bossesKilled, bosses = raiderIODifficultyData.bosses}
 
 								local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, 1, true)
 
-								MIOG_NewSettings.accountStatistics[guid].raid[v].regular[difficulty].bosses[x] =  {id = id, criteriaID = criteriaID, killed = raiderIODifficultyData.bosses[x].killed, quantity = raiderIODifficultyData.bosses[x].count}
+								MIOG_NewSettings.accountStatistics.characters[guid].raid[v].regular[difficulty].bosses[x] =  {id = id, criteriaID = criteriaID, killed = raiderIODifficultyData.bosses[x].killed, quantity = raiderIODifficultyData.bosses[x].count}
 
 							end
 						end
@@ -924,7 +928,7 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
 			end
 		end
 
-		MIOG_NewSettings.accountStatistics[guid].progressWeight = progressWeight
+		MIOG_NewSettings.accountStatistics.characters[guid].progressWeight = progressWeight
 	end
 end
 
@@ -932,35 +936,35 @@ function StatisticsTabMixin:UpdateCharacterMPlusStatistics(guid)
 	local playerGUID = UnitGUID("player")
 
 	if(guid == playerGUID) then
-		MIOG_NewSettings.accountStatistics[playerGUID].mplus.score = {value = C_ChallengeMode.GetOverallDungeonScore(), ingame = true}
+		MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus.score = {value = C_ChallengeMode.GetOverallDungeonScore(), ingame = true}
 
 		for index, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
-			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID] = {}
+			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID] = {}
 
 			local intimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID)
 
-			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].intimeInfo = intimeInfo
-			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].overtimeInfo = overtimeInfo
-			MIOG_NewSettings.accountStatistics[playerGUID].mplus[challengeMapID].overAllScore = intimeInfo and intimeInfo.dungeonScore or overtimeInfo and overtimeInfo.dungeonScore or 0
+			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].intimeInfo = intimeInfo
+			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overtimeInfo = overtimeInfo
+			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overAllScore = intimeInfo and intimeInfo.dungeonScore or overtimeInfo and overtimeInfo.dungeonScore or 0
 		end
 	else
-		MIOG_NewSettings.accountStatistics[guid].mplus.score = MIOG_NewSettings.accountStatistics[guid].mplus.score or {value = 0, ingame = true}
+		MIOG_NewSettings.accountStatistics.characters[guid].mplus.score = MIOG_NewSettings.accountStatistics.characters[guid].mplus.score or {value = 0, ingame = true}
 
-		if(MIOG_NewSettings.accountStatistics[guid].mplus.score.value == 0) then
-			local mplusData = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics[guid].name, MIOG_NewSettings.accountStatistics[guid].realm)
+		if(MIOG_NewSettings.accountStatistics.characters[guid].mplus.score.value == 0) then
+			local mplusData = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics.characters[guid].name, MIOG_NewSettings.accountStatistics.characters[guid].realm)
 
 			if(mplusData) then
-				MIOG_NewSettings.accountStatistics[guid].mplus.score = {value = mplusData.score.score, ingame = false}
+				MIOG_NewSettings.accountStatistics.characters[guid].mplus.score = {value = mplusData.score.score, ingame = false}
 			end
 		end
 
-		local mplusData, intimeInfo, overtimeInfo = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics[guid].name, MIOG_NewSettings.accountStatistics[guid].realm, nil, true)
+		local mplusData, intimeInfo, overtimeInfo = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics.characters[guid].name, MIOG_NewSettings.accountStatistics.characters[guid].realm, nil, true)
 
 		for index, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
-			if(not MIOG_NewSettings.accountStatistics[guid].mplus[challengeMapID]) then
-				MIOG_NewSettings.accountStatistics[guid].mplus[challengeMapID] = {}
-				MIOG_NewSettings.accountStatistics[guid].mplus[challengeMapID].intimeInfo = intimeInfo and intimeInfo[challengeMapID]
-				MIOG_NewSettings.accountStatistics[guid].mplus[challengeMapID].overtimeInfo = overtimeInfo and overtimeInfo[challengeMapID]
+			if(not MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID]) then
+				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID] = {}
+				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo = intimeInfo and intimeInfo[challengeMapID]
+				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo = overtimeInfo and overtimeInfo[challengeMapID]
 
 			end
 		end
@@ -986,7 +990,7 @@ function StatisticsTabMixin:LoadCharacters()
 
 	local template = self.id == 1 and "MIOG_StatisticsDungeonCharacterTemplate" or self.id == 2 and "MIOG_StatisticsRaidCharacterTemplate" or self.id == 3 and "MIOG_StatisticsPVPCharacterTemplate"
 
-	for k, v in pairs(MIOG_NewSettings.accountStatistics) do
+	for k, v in pairs(MIOG_NewSettings.accountStatistics.characters) do
 		columnProvider:Insert({template = template, guid = k, name = v.name, realm = v.realm, classFile = v.classFile, score = v.mplus.score, progressWeight = v.progressWeight, rating = v.rating})
 
 	end

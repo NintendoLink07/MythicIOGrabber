@@ -615,155 +615,6 @@ local function addOrShowApplicant(applicantID)
 	end
 end
 
-local function CanDealWithThisWeeksAffixes(listEntry)
-	local currentAffixes = C_MythicPlus.GetCurrentAffixes()
-
-	local affixesSolved = {}
-
-	for x, y in pairs(miog.CLASS_SPEC_FOR_AFFIXES) do
-		for a, b in pairs(currentAffixes) do
-			if(x == b.id) then
-				affixesSolved[x] = false
-
-				local _, fileName, playerClassID = UnitClass("player")
-
-				if(y.classIDs[playerClassID]) then
-					affixesSolved[x] = true
-
-				end
-
-				if(y.classes[miog.CLASSFILE_TO_ID[listEntry.class]]) then
-					affixesSolved[x] = true
-
-				end
-			end
-		end
-	end
-
-	if(affixesSolved == {}) then
-		return true
-
-	else
-		for _, v in pairs(affixesSolved) do
-			if(v == false) then
-				return false
-			end
-		
-		end
-
-		return true
-	end
-end
-
-local function checkApplicantListForEligibleMembers(listEntry)
-	local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
-
-	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].filterForRoles[listEntry.role] ~= true) then
-		return false
-
-	end
-
-	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].filterForClassSpecs == true) then
-		if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].classes[miog.CLASSFILE_TO_ID[listEntry.class]] == false) then
-			return false
-		
-		end
-
-		if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].specs[listEntry.specID] == false) then
-			return false
-
-		end
-	end
-
-	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].lustFit) then
-		local _, _, playerClassID = UnitClass("player")
-		if(playerClassID == 3 or playerClassID == 7 or playerClassID == 8 or playerClassID == 13) then
-			return true
-
-		elseif(listEntry.class ~= "HUNTER" and listEntry.class ~= "SHAMAN" and listEntry.class ~= "MAGE" and listEntry.class ~= "EVOKER") then
-			return false
-
-		end
-	end
-	
-	if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].ressFit) then
-		local _, _, playerClassID = UnitClass("player")
-		if(playerClassID == 2 or playerClassID == 6 or playerClassID == 9 or playerClassID == 11) then
-			return true
-
-		elseif(listEntry.class ~= "PALADIN" and listEntry.class ~= "DEATHKNIGHT" and listEntry.class ~= "WARLOCK" and listEntry.class ~= "DRUID") then
-			return false
-
-		end
-	end
-
-	--[[if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].affixFit == true and not CanDealWithThisWeeksAffixes(listEntry)) then
-		return false
-	end]]
-
-	local isPvp = categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9
-	local isDungeon = categoryID == 2
-
-	if(isDungeon or isPvp) then
-		local rating = listEntry.primary
-
-		if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].filterForRating) then
-			if(rating) then
-				if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0 and MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
-					if(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating >= 0
-					and not (rating >= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating
-					and rating <= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating)) then
-						return false, miog.INELIGIBILITY_REASONS[14]
-
-					end
-				elseif(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating ~= 0) then
-					if(rating < MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].minRating) then
-						return false, miog.INELIGIBILITY_REASONS[15]
-
-					end
-				elseif(MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating ~= 0) then
-					if(rating >= MIOG_NewSettings.filterOptions["LFGListFrame.ApplicationViewer"][categoryID].maxRating) then
-						return false, miog.INELIGIBILITY_REASONS[16]
-						
-					end
-
-				end
-			else
-				return false
-			
-			end
-		
-		end
-	end
-
-	return true
-end 
-
-local function updateApplicantList()
-	applicantFramePool:ReleaseAll()
-
-	local unsortedList = gatherSortingInformation()
-
-	table.sort(unsortedList, sortApplicantList)
-
-	for index, listEntry in ipairs(unsortedList) do
-		for i = 1, #listEntry, 1 do
-			if(checkApplicantListForEligibleMembers(listEntry[i]) == true) then
-				local applicantFrame = createApplicantFrame(listEntry[1].applicantID)
-				applicantFrame.layoutIndex = index
-				applicantFrame:Show()
-				break
-			end
-		end
-	end
-
-	numOfApplicants, totalApplicants = applicationFrameIndex, #unsortedList
-
-	miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
-
-	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
-end
-
 local function checkApplicantList(forceReorder, applicantID)
 	--updateApplicantList()
 
@@ -777,34 +628,14 @@ local function checkApplicantList(forceReorder, applicantID)
 		if(unsortedList[1]) then
 			miog.ApplicationViewer:UpdateSortingData(unsortedList)
 			miog.ApplicationViewer:Sort()
-			--table.sort(unsortedList, sortApplicantList)
 
 			for d, listEntry in ipairs(miog.ApplicationViewer:GetSortingData()) do
-				--[[for _, v in pairs(listEntry) do
-					local showFrame, _ = miog.checkEligibility("LFGListFrame.ApplicationViewer", _, v)
-
-					if(showFrame) then
-					--if(checkApplicantListForEligibleMembers(v) == true) then
-						updatedFrames[listEntry[1].index] = true
-						addOrShowApplicant(listEntry[1].index)
-						break
-					
-					--else
-						--print(v.name, reason and reason[1])
-
-					end
-				end]]
 
 				local showFrame, _ = miog.checkEligibility("LFGListFrame.ApplicationViewer", _, listEntry)
 
 				if(showFrame) then
-				--if(checkApplicantListForEligibleMembers(v) == true) then
 					updatedFrames[listEntry.index] = true
 					addOrShowApplicant(listEntry.index)
-					--break
-				
-				--else
-					--print(v.name, reason and reason[1])
 
 				end
 			end

@@ -29,6 +29,12 @@ local function setPopupInfo(resultID, reason, groupName, activityName, leaderNam
 	popupFrame:MarkDirty()
 end
 
+miog.filterReasons = {}
+
+miog.saveFilterReason = function()
+
+end
+
 miog.requeue = function()
 	local queueInfo = MIOG_NewSettings.lastUsedQueue
 
@@ -535,7 +541,8 @@ local function checkQueues()
 								LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 							end)
 
-							local eligible, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, id, true)
+							local eligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, id, true)
+							local reason = miog.INELIGIBILITY_REASONS[reasonID]
 
 							if(eligible == false) then
 								frame.Name:SetTextColor(1, 0, 0, 1)

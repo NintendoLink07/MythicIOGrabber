@@ -126,6 +126,16 @@ miog.OnEvent = function(_, event, ...)
 			
 			miog.initializeActivityDropdown()
 		end
+
+	elseif(event == "CHALLENGE_MODE_START") then
+		miog.increaseStatistic("CHALLENGE_MODE_START")
+
+	elseif(event == "CHALLENGE_MODE_RESET") then
+		miog.increaseStatistic("CHALLENGE_MODE_RESET")
+
+	elseif(event == "CHALLENGE_MODE_COMPLETED") then
+		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
+
 	end
 end
 

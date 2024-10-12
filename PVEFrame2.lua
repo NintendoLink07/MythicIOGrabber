@@ -732,6 +732,10 @@ eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 eventReceiver:RegisterEvent("ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED")
+
+eventReceiver:RegisterEvent("CHALLENGE_MODE_START")
+eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")
+eventReceiver:RegisterEvent("CHALLENGE_MODE_COMPLETED")
 --eventReceiver:RegisterEvent("Menu.OpenMenuTag")
 
 

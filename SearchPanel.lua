@@ -106,286 +106,12 @@ local function sortSearchResultList(k1, k2)
 
 end
 
---[[local function isGroupEligible(resultID, bordermode)
-	if(C_LFGList.HasSearchResultInfo(resultID)) then
-
-		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-		local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
-
-		miog.checkSingleMapIDForNewData(miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID)
-
-		if(LFGListFrame.SearchPanel.categoryID and activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not bordermode) then
-			return false, miog.INELIGIBILITY_REASONS[2]
-
-		end
-
-		local currentSettings = MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][activityInfo.categoryID]
-
-		miog.checkEligibility("LFGListFrame.SearchPanel", activityInfo.categoryID, searchResultInfo)
-
-		if(currentSettings) then
-			if(currentSettings.hardDecline and searchResultInfo.leaderName
-			and MIOG_NewSettings.declinedGroups[searchResultInfo.activityID .. searchResultInfo.leaderName] and MIOG_NewSettings.declinedGroups[searchResultInfo.activityID .. searchResultInfo.leaderName].activeDecline) then
-				return false, miog.INELIGIBILITY_REASONS[3]
-
-			end
-
-			local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7
-			local isDungeon = activityInfo.categoryID == 2
-			local isRaid = activityInfo.categoryID == 3
-
-			if(currentSettings.filterForDifficulty) then
-				if(isDungeon or isRaid) then
-					if(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= currentSettings.difficultyID
-					)then
-						return false, miog.INELIGIBILITY_REASONS[4]
-
-					end
-				elseif(isPvp) then
-					if(searchResultInfo.activityID ~= currentSettings.difficultyID) then
-						return false, miog.INELIGIBILITY_REASONS[5]
-
-					end
-
-				end
-			end
-
-			if(currentSettings.partyFit == true and not HasRemainingSlotsForLocalPlayerRole(resultID)) then
-				return false, miog.INELIGIBILITY_REASONS[6]
-
-			end
-
-			if(currentSettings.ressFit == true and not HasRemainingSlotsForBattleResurrection(resultID)) then
-				return false, miog.INELIGIBILITY_REASONS[7]
-
-			end
-
-			if(currentSettings.lustFit == true and not HasRemainingSlotsForBloodlust(resultID)) then
-				return false, miog.INELIGIBILITY_REASONS[8]
-
-			end
-
-			--[ [if(currentSettings.affixFit == true and not CanDealWithThisWeeksAffixes(resultID)) then
-				return false, miog.INELIGIBILITY_REASONS[9]
-			end] ]
-
-			local roleCount = {
-				["TANK"] = 0,
-				["HEALER"] = 0,
-				["DAMAGER"] = 0,
-				["NONE"] = 0
-			}
-
-			for i = 1, searchResultInfo.numMembers, 1 do
-				local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
-				local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
-
-				if(role) then
-					roleCount[role] = roleCount[role] + 1
-
-				end
-
-				if(currentSettings.filterForClassSpecs) then
-					if(miog.CLASSFILE_TO_ID[class] == playerClassID and currentSettings.needsMyClass == true) then
-						return false, miog.INELIGIBILITY_REASONS[10]
-
-					end
-
-					if(currentSettings.classes[miog.CLASSFILE_TO_ID[class] ] == false) then
-						return false, miog.INELIGIBILITY_REASONS[10]
-
-					end
-
-					if(currentSettings.specs[specID] == false) then
-						return false, miog.INELIGIBILITY_REASONS[11]
-
-					end
-
-				end
-			end
-
-			local tankCountInRange = roleCount["TANK"] >= currentSettings.minTanks and roleCount["TANK"] <= currentSettings.maxTanks
-			local healerCountInRange = roleCount["HEALER"] >= currentSettings.minHealers and roleCount["HEALER"] <= currentSettings.maxHealers
-			local damagerCountInRange = roleCount["DAMAGER"] >= currentSettings.minDamager and roleCount["DAMAGER"] <= currentSettings.maxDamager
-
-
-			local tanksOk = currentSettings.filterForTanks == false or
-			currentSettings.filterForTanks and tankCountInRange == true
-
-			local healersOk = currentSettings.filterForHealers == false or
-			currentSettings.filterForHealers and healerCountInRange == true
-
-			local damagerOk = currentSettings.filterForDamager == false or
-			currentSettings.filterForDamager and damagerCountInRange == true
-
-			if(currentSettings.linkedTanks == true and not tanksOk and
-				(currentSettings.linkedHealers == true and not healersOk
-				or currentSettings.linkedDamager == true and not damagerOk)
-			) then
-				return false, miog.INELIGIBILITY_REASONS[12]
-
-			elseif(currentSettings.linkedHealers == true and not healersOk and
-				(currentSettings.linkedTanks == true and not tanksOk
-				or currentSettings.linkedDamager == true and not damagerOk)
-			) then
-				return false, miog.INELIGIBILITY_REASONS[12]
-
-			elseif(currentSettings.linkedDamager == true and not damagerOk and
-				(currentSettings.linkedTanks == true and not tanksOk
-				or currentSettings.linkedHealers == true and not healersOk)
-			) then
-				return false, miog.INELIGIBILITY_REASONS[12]
-
-			elseif(not tanksOk and not currentSettings.linkedTanks
-			or not healersOk and not currentSettings.linkedHealers
-			or not damagerOk and not currentSettings.linkedDamager) then
-				return false, miog.INELIGIBILITY_REASONS[12]
-
-			end
-
-			if(currentSettings.filterForRoles["TANK"] == false and roleCount["TANK"] > 0
-			or currentSettings.filterForRoles["HEALER"] == false and roleCount["HEALER"] > 0
-			or currentSettings.filterForRoles["DAMAGER"] == false and roleCount["DAMAGER"] > 0) then
-				return false, miog.INELIGIBILITY_REASONS[13]
-
-			end
-			
-			if(currentSettings.filterForAge) then
-				if(currentSettings.minAge ~= 0 and currentSettings.maxAge ~= 0) then
-					if(currentSettings.maxAge >= 0 and not (searchResultInfo.age >= currentSettings.minAge * 60 and searchResultInfo.age <= currentSettings.maxAge * 60)) then
-						return false, miog.INELIGIBILITY_REASONS[23]
-
-					end
-				elseif(currentSettings.minAge ~= 0) then
-					if(searchResultInfo.age < currentSettings.minAge * 60) then
-						return false, miog.INELIGIBILITY_REASONS[24]
-
-					end
-				elseif(currentSettings.maxAge ~= 0) then
-					if(searchResultInfo.age >= currentSettings.maxAge * 60) then
-						return false, miog.INELIGIBILITY_REASONS[25]
-
-					end
-
-				end
-			end
-
-			local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
-
-			if(isDungeon or isPvp) then
-				if(currentSettings.filterForRating) then
-					if(currentSettings.minRating ~= 0 and currentSettings.maxRating ~= 0) then
-						if(currentSettings.maxRating >= 0
-						and not (rating >= currentSettings.minRating
-						and rating <= currentSettings.maxRating)) then
-							return false, miog.INELIGIBILITY_REASONS[14]
-
-						end
-					elseif(currentSettings.minRating ~= 0) then
-						if(rating < currentSettings.minRating) then
-							return false, miog.INELIGIBILITY_REASONS[15]
-
-						end
-					elseif(currentSettings.maxRating ~= 0) then
-						if(rating >= currentSettings.maxRating) then
-							return false, miog.INELIGIBILITY_REASONS[16]
-
-						end
-
-					end
-
-				end
-
-				if(currentSettings.filterForDungeons) then
-					if(currentSettings.dungeons[activityInfo.groupFinderActivityGroupID] == false) then
-						return false, miog.INELIGIBILITY_REASONS[17]
-
-					else
-
-					end
-
-				end
-			elseif(isRaid) then
-				if(currentSettings.filterForRaids and LFGListFrame.SearchPanel.filters == 1 and currentSettings.raids[activityInfo.groupFinderActivityGroupID]) then
-					if(not currentSettings.raids[activityInfo.groupFinderActivityGroupID].setting) then
-						return false, miog.INELIGIBILITY_REASONS[18]
-
-					else
-						local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
-
-						local encountersDefeated = {}
-
-						if(encounterInfo) then
-							for k, v in ipairs(encounterInfo) do
-								encountersDefeated[v] = true
-							end
-						end
-
-						if(currentSettings.raids[activityInfo.groupFinderActivityGroupID].setting) then
-							for k, v in pairs(currentSettings.raids[activityInfo.groupFinderActivityGroupID].bosses) do
-								local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityID].bosses[k]
-
-								-- 0 either defeated or alive
-								-- 1 defeated
-								-- 2 alive
-								if(v == 2 and encountersDefeated[bossInfo.name] or v == 1 and not encountersDefeated[bossInfo.name]) then
-									return false, miog.INELIGIBILITY_REASONS[19]
-
-								end
-
-							end
-						end
-					end
-
-				end
-
-				if(currentSettings.filterForBossKills) then
-					local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(resultID)
-
-					local numberOfSlainEncounters = encounterInfo and #encounterInfo or 0
-
-					local minKills = currentSettings.minBossKills
-					local maxKills = currentSettings.maxBossKills
-
-					if(minKills ~= 0 and maxKills ~= 0) then
-						if(maxKills >= 0
-						and not (numberOfSlainEncounters >= minKills
-						and numberOfSlainEncounters <= maxKills)) then
-							return false, miog.INELIGIBILITY_REASONS[20]
-
-						end
-					elseif(minKills ~= 0) then
-						if(numberOfSlainEncounters < minKills) then
-							return false, miog.INELIGIBILITY_REASONS[21]
-
-						end
-					elseif(maxKills ~= 0) then
-						if(numberOfSlainEncounters >= maxKills) then
-							return false, miog.INELIGIBILITY_REASONS[22]
-
-						end
-
-					end
-
-				end				
-			end
-		end
-
-		return true
-
-	else
-		return false, miog.INELIGIBILITY_REASONS[1]
-
-	end
-end
-
-miog.isGroupEligible = isGroupEligible]]
-
 local function setResultFrameColors(resultID, isInviteFrame)
 	local resultFrame = searchResultSystem.baseFrames[resultID]
 
 	if(resultFrame and C_LFGList.HasSearchResultInfo(resultID)) then
-		local isEligible, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID, true)
+		local isEligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID, true)
+		local reason = miog.INELIGIBILITY_REASONS[reasonID]
 		local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
@@ -605,7 +331,8 @@ local function createResultTooltip(resultID, resultFrame)
 			GameTooltip:AddLine(searchResultInfo.leaderName .. " is on your favoured player list.")
 		end
 
-		local success, reason = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)
+		local success, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)
+		local reason = miog.INELIGIBILITY_REASONS[reasonID]
 
 		if(not success and reason) then
 			GameTooltip:AddLine(" ")
@@ -621,6 +348,25 @@ end
 
 miog.createResultTooltip = createResultTooltip
 
+local function selectResultFrame(resultID)
+	if(LFGListFrame.SearchPanel.selectedResult) then
+		local oldResultID = LFGListFrame.SearchPanel.selectedResult
+
+		if(searchResultSystem.baseFrames[LFGListFrame.SearchPanel.selectedResult]) then
+			LFGListFrame.SearchPanel.selectedResult = nil
+			setResultFrameColors(oldResultID)
+		end
+	end
+
+	if(resultID ~= LFGListFrame.SearchPanel.selectedResult and searchResultSystem.baseFrames[resultID]) then
+		searchResultSystem.baseFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
+
+	end
+
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
+end
+
 local function groupSignup(resultID)
 	if(resultID and C_LFGList.HasSearchResultInfo(resultID) and (UnitIsGroupLeader("player") or not IsInGroup() or not IsInRaid())) then
 		local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
@@ -630,24 +376,8 @@ local function groupSignup(resultID)
 			return false
 		end
 
-		if(LFGListFrame.SearchPanel.selectedResult) then
-			_, appStatus = C_LFGList.GetApplicationInfo(LFGListFrame.SearchPanel.selectedResult)
+		selectResultFrame(resultID)
 
-			local oldResultID = LFGListFrame.SearchPanel.selectedResult
-
-			if(searchResultSystem.baseFrames[LFGListFrame.SearchPanel.selectedResult]) then
-				LFGListFrame.SearchPanel.selectedResult = nil
-				setResultFrameColors(oldResultID)
-			end
-		end
-
-		if(resultID ~= LFGListFrame.SearchPanel.selectedResult and searchResultSystem.baseFrames[resultID]) then
-			searchResultSystem.baseFrames[resultID]:SetBackdropBorderColor(CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR):GetRGBA())
-
-		end
-
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, resultID)
 		LFGListApplicationDialog_Show(LFGListApplicationDialog, resultID)
 	end
 
@@ -883,12 +613,19 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo, currentFrame.RaiderIOInformationPanel.raidData, searchResultInfo.leaderPvpRatingInfo)
 
-			currentFrame:SetScript("OnMouseDown", function(_, button)
-				groupSignup(searchResultInfo.searchResultID)
+			currentFrame:SetScript("OnMouseDown", function(self, button)
+				if(button == "LeftButton") then
+					groupSignup(self.resultID)
+
+				else
+					selectResultFrame(self.resultID)
+					LFGListSearchEntry_CreateContextMenu(self)
+
+				end
 
 			end)
-			currentFrame:SetScript("OnEnter", function()
-				createResultTooltip(searchResultInfo.searchResultID, currentFrame)
+			currentFrame:SetScript("OnEnter", function(self)
+				createResultTooltip(self.resultID, currentFrame)
 
 			end)
 
@@ -1263,7 +1000,7 @@ local function newUpdateFunction()
 	local actualResultsCounter = 0
 
 	for k, v in ipairs(currentDataList) do
-		local showFrame, reason = v.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v.resultID)
+		local showFrame, reasonID = v.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v.resultID)
 
 		if(showFrame) then
 			local frame = initializeSearchResultFrame(v.resultID)
@@ -1462,8 +1199,15 @@ local function searchPanelEvents(_, event, ...)
 
 	elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
 		local resultID, new, old, name = ...
+		
+		miog.increaseStatistic(new)
 
-		--local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
+		if(new == "cancelled") then
+			local eligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)
+			--local reason = miog.INELIGIBILITY_REASONS[reasonID]
+
+			miog.increaseStatistic(reasonID)
+		end
 
 		updateSearchResultFrameApplicationStatus(resultID, new, old)
 

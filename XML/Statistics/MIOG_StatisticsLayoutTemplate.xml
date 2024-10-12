@@ -23,7 +23,7 @@
                 <Layers>
                     <Layer level="ARTWORK">
                         <FontString parentKey="TimePercentage" inherits="GameFontHighlight">
-                            <Size y="15" />
+                            <Size x="35" y="15" />
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativeKey="$parent.KeystoneDropdown" relativePoint="BOTTOMRIGHT" x="-1"/>
                             </Anchors>
@@ -42,10 +42,10 @@
 
                         <Scripts>
                             <OnLoad>
-                                self:SetMinMaxValues(1.00, 40.00)
+                                self:SetMinMaxValues(-40.00, 40.00)
                                 self:SetValue(40)
                                 self:SetValueStep(0.25)
-	                            self:GetParent().TimePercentage:SetText(self:GetValue() .. "%")
+	                            self:GetParent().TimePercentage:SetText((self:GetValue() * -1) .. "%")
                             </OnLoad>
                         </Scripts>
                     </Slider>
@@ -68,10 +68,10 @@
                 </Anchors>
             </Frame>
 
-            <EventFrame parentKey="RowsScrollBar" inherits="MinimalScrollBar">
+            <EventFrame parentKey="RowsScrollBar" inherits="MinimalScrollBar" frameStrata="HIGH">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Rows" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Rows" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4"/>
                 </Anchors>
             </EventFrame>
         </Frames>

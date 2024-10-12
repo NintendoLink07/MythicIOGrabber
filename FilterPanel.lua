@@ -613,14 +613,14 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			miog.checkSingleMapIDForNewData(miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID)
 			
 			if(LFGListFrame.SearchPanel.categoryID and activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not borderMode) then
-				return false, miog.INELIGIBILITY_REASONS[2]
+				return false, "incorrectCategory"
 
 			end
 
 			local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
 			
 			if(settings.hideHardDecline and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID].activeDecline) then
-				return false, miog.INELIGIBILITY_REASONS[3]
+				return false, "hardDeclined"
 				
 			end
 
@@ -628,12 +628,12 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 				if(isDungeon or isRaid) then
 					if(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= settings.difficulty.id
 					)then
-						return false, miog.INELIGIBILITY_REASONS[4]
+						return false, "incorrectDifficulty"
 
 					end
 				elseif(isPvp) then
 					if(searchResultInfo.activityID ~= settings.difficulty.id) then
-						return false, miog.INELIGIBILITY_REASONS[5]
+						return false, "incorrectBracket"
 
 					end
 				end
@@ -649,12 +649,12 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 				end
 
 				if(settings.needsMyClass == true and miog.CLASSFILE_TO_ID[class] == id or settings.classes[miog.CLASSFILE_TO_ID[class]] == false) then
-					return false, miog.INELIGIBILITY_REASONS[10]
+					return false, "classFiltered"
 
 				end
 
 				if(settings.specs[specID] == false) then
-					return false, miog.INELIGIBILITY_REASONS[11]
+					return false, "specFiltered"
 
 				end
 
@@ -676,49 +676,49 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			if(not tanksOk and (settings.tank.linked ~= true or settings.tank.linked == true and settings.healer.linked == false and settings.damager.linked == false)
 			or not healersOk and (settings.healer.linked ~= true or settings.healer.linked == true and settings.damager.linked == false and settings.tank.linked == false)
 			or not damagerOk and (settings.damager.linked ~= true or settings.damager.linked == true and settings.tank.linked == false and settings.healer.linked == false)) then
-				return false, miog.INELIGIBILITY_REASONS[12]
+				return false, "incorrectNumberOfRoles"
 			end
 
 			if(settings.tank.linked and settings.healer.linked and not tanksOk and not healersOk
 			or settings.healer.linked and settings.damager.linked and not healersOk and not damagerOk
 			or settings.damager.linked and settings.tank.linked and not damagerOk and not tanksOk) then
-				return false, miog.INELIGIBILITY_REASONS[12]
+				return false, "incorrectNumberOfRoles"
 				
 			end
 
 			if(settings.tank.linked and settings.healer.linked and not tanksOk and not healersOk
 			or settings.healer.linked and settings.damager.linked and not healersOk and not damagerOk
 			or settings.damager.linked and settings.tank.linked and not damagerOk and not tanksOk) then
-				return false, miog.INELIGIBILITY_REASONS[12]
+				return false, "incorrectNumberOfRoles"
 				
 			end
 
 			if(settings.roles["TANK"] == false and roleCount["TANK"] > 0) then
-				return false, miog.INELIGIBILITY_REASONS[13]
+				return false, "incorrectRoles"
 			end
 
 			if(settings.roles["HEALER"] == false and roleCount["HEALER"] > 0) then
-				return false, miog.INELIGIBILITY_REASONS[13]
+				return false, "incorrectRoles"
 			end
 
 			if(settings.roles["DAMAGER"] == false and roleCount["DAMAGER"] > 0) then
-				return false, miog.INELIGIBILITY_REASONS[13]
+				return false, "incorrectRoles"
 			end
 				
 			if(settings.age.value) then
 				if(settings.age.minimum ~= 0 and settings.age.maximum ~= 0) then
 					if(settings.age.maximum >= 0 and not (searchResultInfo.age >= settings.age.minimum * 60 and searchResultInfo.age <= settings.age.maximum * 60)) then
-						return false, miog.INELIGIBILITY_REASONS[23]
+						return false, "ageMismatch"
 
 					end
 				elseif(settings.age.minimum ~= 0) then
 					if(searchResultInfo.age < settings.age.minimum * 60) then
-						return false, miog.INELIGIBILITY_REASONS[24]
+						return false, "ageLowerMismatch"
 
 					end
 				elseif(settings.age.maximum ~= 0) then
 					if(searchResultInfo.age >= settings.age.maximum * 60) then
-						return false, miog.INELIGIBILITY_REASONS[25]
+						return false, "ageHigherMismatch"
 
 					end
 
@@ -726,14 +726,14 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			end
 
 			if(settings.activities.value and (isRaid or isDungeon)) then
-				if(not settings.activities[activityInfo.groupFinderActivityGroupID].value) then
-					return false, miog.INELIGIBILITY_REASONS[17]
+				if(isDungeon and not settings.activities[activityInfo.groupFinderActivityGroupID].value) then
+					return false, "dungeonMismatch"
 
 				end
 
 				if(isRaid and LFGListFrame.SearchPanel.filters == 1) then
 					if(not settings.activities[activityInfo.groupFinderActivityGroupID].value) then
-						return false, miog.INELIGIBILITY_REASONS[18]
+						return false, "raidMismatch"
 
 					else
 						local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
@@ -754,42 +754,42 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 								-- 2 defeated
 								-- 3 alive
 								if(v == 2 and encountersDefeated[bossInfo.name] or v == 3 and not encountersDefeated[bossInfo.name]) then
-									return false, miog.INELIGIBILITY_REASONS[19]
+									return false, "bossSelectionMismatch"
 
 								end
 							end
 						end
 					end
 
-				if(settings.kills) then
-					local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
+					if(settings.kills) then
+						local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
 
-					local numberOfSlainEncounters = encounterInfo and #encounterInfo or 0
+						local numberOfSlainEncounters = encounterInfo and #encounterInfo or 0
 
-					local minKills = settings.kills.minimum
-					local maxKills = settings.kills.maximum
+						local minKills = settings.kills.minimum
+						local maxKills = settings.kills.maximum
 
-					if(minKills ~= 0 and maxKills ~= 0) then
-						if(maxKills >= 0
-						and not (numberOfSlainEncounters >= minKills
-						and numberOfSlainEncounters <= maxKills)) then
-							return false, miog.INELIGIBILITY_REASONS[20]
+						if(minKills ~= 0 and maxKills ~= 0) then
+							if(maxKills >= 0
+							and not (numberOfSlainEncounters >= minKills
+							and numberOfSlainEncounters <= maxKills)) then
+								return false, "bossKillsMismatch"
 
-						end
-					elseif(minKills ~= 0) then
-						if(numberOfSlainEncounters < minKills) then
-							return false, miog.INELIGIBILITY_REASONS[21]
+							end
+						elseif(minKills ~= 0) then
+							if(numberOfSlainEncounters < minKills) then
+								return false, "bossKillsLowerMismatch"
 
-						end
-					elseif(maxKills ~= 0) then
-						if(numberOfSlainEncounters >= maxKills) then
-							return false, miog.INELIGIBILITY_REASONS[22]
+							end
+						elseif(maxKills ~= 0) then
+							if(numberOfSlainEncounters >= maxKills) then
+								return false, "bossKillsHigherMismatch"
+
+							end
 
 						end
 
 					end
-
-				end
 
 				end
 			end
@@ -800,17 +800,17 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 						if(settings.rating.maximum >= 0
 						and not (rating >= settings.rating.minimum
 						and rating <= settings.rating.maximum)) then
-							return false, miog.INELIGIBILITY_REASONS[14]
+							return false, "ratingMismatch"
 
 						end
 					elseif(settings.rating.minimum ~= 0) then
 						if(rating < settings.rating.minimum) then
-							return false, miog.INELIGIBILITY_REASONS[15]
+							return false, "ratingLowerMismatch"
 
 						end
 					elseif(settings.rating.maximum ~= 0) then
 						if(rating >= settings.rating.maximum) then
-							return false, miog.INELIGIBILITY_REASONS[16]
+							return false, "ratingHigherMismatch"
 
 						end
 
@@ -819,21 +819,21 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			end
 
 			if(settings.partyFit and not HasRemainingSlotsForLocalPlayerRole(searchResultInfo.searchResultID)) then
-				return false, miog.INELIGIBILITY_REASONS[6]
+				return false, "partyFit"
 		
 			end
 		
 			if(settings.ressFit and not HasRemainingSlotsForBattleResurrection(searchResultInfo.searchResultID)) then
-				return false, miog.INELIGIBILITY_REASONS[7]
+				return false, "ressFit"
 		
 			end
 		
 			if(settings.lustFit and not HasRemainingSlotsForBloodlust(searchResultInfo.searchResultID)) then
-				return false, miog.INELIGIBILITY_REASONS[8]
+				return false, "lustFit"
 		
 			end
 		else
-			return false, miog.INELIGIBILITY_REASONS[1]
+			return false, "noResult"
 
 		end
 	elseif(panel == "LFGListFrame.ApplicationViewer") then
@@ -846,7 +846,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			if(playerClassID == 2 or playerClassID == 6 or playerClassID == 9 or playerClassID == 11) then
 	
 			elseif(resultOrApplicant.class ~= "PALADIN" and resultOrApplicant.class ~= "DEATHKNIGHT" and resultOrApplicant.class ~= "WARLOCK" and resultOrApplicant.class ~= "DRUID") then
-				return false, miog.INELIGIBILITY_REASONS[7]
+				return false, "ressFit"
 	
 			end
 		end
@@ -857,23 +857,23 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 				--return true
 	
 			elseif(resultOrApplicant.class ~= "HUNTER" and resultOrApplicant.class ~= "SHAMAN" and resultOrApplicant.class ~= "MAGE" and resultOrApplicant.class ~= "EVOKER") then
-				return false, miog.INELIGIBILITY_REASONS[8]
+				return false, "lustFit"
 	
 			end
 		end
 
 		if(settings.roles[resultOrApplicant.role] == false) then
-			return false, miog.INELIGIBILITY_REASONS[13]
+			return false, "incorrectRoles"
 	
 		end
 	
 		if(settings.classes[miog.CLASSFILE_TO_ID[resultOrApplicant.class]] == false) then
-			return false, miog.INELIGIBILITY_REASONS[11]
+			return false, "classFiltered"
 		
 		end
 
 		if(settings.specs[resultOrApplicant.specID] == false) then
-			return false, miog.INELIGIBILITY_REASONS[12]
+			return false, "specFiltered"
 
 		end
 	
@@ -888,17 +888,17 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 					if(settings.rating.maximum >= 0
 					and not (rating >= settings.rating.minimum
 					and rating <= settings.rating.maximum)) then
-						return false, miog.INELIGIBILITY_REASONS[14]
+						return false, "ratingMismatch"
 
 					end
 				elseif(settings.rating.minimum ~= 0) then
 					if(rating < settings.rating.minimum) then
-						return false, miog.INELIGIBILITY_REASONS[15]
+						return false, "ratingLowerMismatch"
 
 					end
 				elseif(settings.rating.maximum ~= 0) then
 					if(rating >= settings.rating.maximum) then
-						return false, miog.INELIGIBILITY_REASONS[16]
+						return false, "ratingHigherMismatch"
 						
 					end
 

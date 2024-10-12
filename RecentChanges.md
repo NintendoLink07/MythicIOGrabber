@@ -1,42 +1,46 @@
-## [2.7.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.7.0) - 2024-10-01
+## [2.8.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.8.0) - 2024-10-12
 
 ### Added
 
-- If a group does not match your set filters anymore (all dps slots full, tank left and your filter is set to atleast 1 tank, etc.) there will now be a popup where you can cancel the app immediately and switch to the search panel.
-There are still some issues with this and the visuals aren't fully fleshed out yet.
-For now it is an optional toggle in the settings menu.
+- The interface options now have LFG statistics.
+Wondering how many times you have been declined from groups? Now you can find out.
+For now it's only the app status that gets captured or the filter reason if you manually cancel an application.
+But to be honest I can capture basically anything, and I probably will just sneak in additions into most version updates.
 
-- [SearchPanel] Delves now have an icon.
-
-- [SearchPanel] Specific quests and world quests now have an icon.
+- [SearchPanel] Right-clicking the search panel groups now opens a menu just like the normal search panel where you can whisper the leader, report the group, etc.
 
 ### Changed
 
-- [FilterPanel] Recoded the entire filter panel to make it easier to implement new filters / change something about current filters.
-Also squished alot of bugs where the logic was too convoluted to understand where I went wrong.
+- [Statistics] All statistic panels have now been updated to use the same code foundation to make bugfixing easier and to streamline the UI.
 
-- [FilterPanel] All filter options now have a tooltip to explain what the option does.
+- [Statistics] All statistic panels now request data for each of your characters on your account that has atleast a single currency (note: money, e.g copper, silver, gold does not count for this restriction).
+This works retroactively, you do not need to log into each of your characters (which you will probably do anyway but just saying).
+Before warbands there was no known method (atleast known to me) to do this.
 
-- [FilterPanel] Boss frames' size in the raid category have been increased to better see what boss setting you are changing.
+- [Statistics] The raid and the M+ panels will now update data for all characters except your currently logged in from RaiderIO if you haven't logged into them since the update of this addon.
 
-- [FilterPanel] MIOG's filter now correctly pass over to the Blizzard dungeon filters.
+- [Statistics] The first character in the list will always be the one you are currently logged in.
+The following characters will be sorted by score for M+, progress for raid and rating for PVP.
 
-- [ApplicationViewer] Switched over to the new sorting algorithm. Enjoy faster sorting and more than 2 sort methods at once.
+- [Statistics-MythicPlus] The score calculation has now been updated!
+Took 2 days to figure out the algorithm but now it should correctly calculate the new score.
+Also the slider now goes from -40% to 40%, so you can see how much score you'd get if you got the key done even over time but still within 40% over time.
 
-
+- [MainFrame] Changed the currency info if the currency has no seasonal maximum you could exceed (e.g. valorstones and catalyst charges have maximums but they're not seasonal maximums).
+ 
 ### Fixed
 
-- [ClassPanel] Lowered the frame strata so the Blizzard tooltips are visible.
+- The raider IO info panel will now correctly show keylevel bracket data, e.g. amount of keys done in 2-3, 4-6, 7-9, etc.
+Though right now RaiderIO seems to have a bug that doesn't correctly transfer any keylevel bracket except the 4-6 bracket into the downloadable databases (what you update through CurseForge or the RaiderIO client).
 
-- [SearchPanel] Selecting a different group will now "deselect" the group you've selected before (just a visual change).
+- [FilterPanel] Clicking the checkbutton infront of the Difficulty dropdown will now activate the filter immediately instead of only after a new search.
 
-- Created a workaround for a bug in Blizzards Search Panel where sometimes the search result list doesn't get populated correctly when you do a /reload and right after the loading screen the search panel tries to update itself.
+- [FilterPanel] Re-implemented right-clicking the bossframes to reset them.
 
-- Decreased the memory and cpu requirement that comes with computing all group info you get when using the search panel and any active filter.
+- [PartyCheck] The character tooltip now displays the keystone dungeon name aswell as the level.
 
-- The queue selector dropdown will now also show category types that only have a single entry, e.g. only 1 event currently active.
+- [PartyCheck] Split up some methods for the spec, keystone and progress detection, should lag less when new people join the group.
 
+- [PartyCheck] Fixed the width of certain elements of a character frame, now it shouldn't cut off the text anymore.
 
-### Known issues
-
-- [M+ Statistics] The keystone dropdown doesn't correctly refresh with party data. This will be fixed in 2.7.1 or 2.7.2.
+- Cleaned up old files and code, should improve load times of the addon on lower end machines a bit (we're talking still sub-seconds of loadtime improvement though)

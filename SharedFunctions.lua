@@ -13,7 +13,13 @@ miog.updateCurrencies = function()
 				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
 				local currentFrame = miog.MainTab.Information.Currency[tostring(k)]
 
-				currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. "/" .. currencyInfo.maxQuantity .. ")")
+				if(currencyInfo.totalEarned > 0) then
+					currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. "/" .. currencyInfo.maxQuantity .. ")")
+
+				else
+					currentFrame.Text:SetText(currencyInfo.quantity .. "/" .. currencyInfo.maxQuantity)
+
+				end
 				currentFrame.Icon:SetTexture(v.icon or currencyInfo.iconFileID)
 				currentFrame.Icon:SetScript("OnEnter", function(self)
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

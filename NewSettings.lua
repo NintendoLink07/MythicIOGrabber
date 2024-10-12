@@ -89,6 +89,7 @@ local defaultSettings = {
         miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
         miog.NewFilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
     end},
+    {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},
     {name = "Last invited applicants", variableName = "MIOG_LastInvitedApplicants", key="lastInvitedApplicants", default={}},
     {name = "Last used queue", variableName = "MIOG_LastUsedQueue", key="lastUsedQueue", default = {}},
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
@@ -107,7 +108,7 @@ local defaultSettings = {
     },
     {name = "Search Panel declined groups", variableName = "MIOG_DeclinedGroups", key="declinedGroups", default={}},
     {name = "Account-wide lockouts", variableName = "MIOG_Lockouts", key="lockoutCheck", default={}},
-    {name = "Statistics for account characters", variableName = "MIOG_AccountStatistics", key="accountStatistics", default={}},
+    {name = "Statistics for account characters", variableName = "MIOG_AccountStatistics", key="accountStatistics", default={characters = {}, lfgStatistics = {}}, type="custom"},
 }
 
 local category = Settings.RegisterVerticalLayoutCategory(addonName)
@@ -151,9 +152,17 @@ local function createDefaultSettings()
                     
                     subcategoryLayout:AddAnchorPoint("TOPLEFT", 10, -10);
                     subcategoryLayout:AddAnchorPoint("BOTTOMRIGHT", -10, 10);
+
+                elseif(v.key == "accountStatistics") then
+                    local scrollBox = miog.createStatisticsInterfacePanelPage(SettingsPanel)
+
+                    local subcategory, subcategoryLayout = Settings.RegisterCanvasLayoutSubcategory(category, scrollBox, "LFG Statistics");
+                    
+                    subcategoryLayout:AddAnchorPoint("TOPLEFT", 10, -10);
+                    subcategoryLayout:AddAnchorPoint("BOTTOMRIGHT", -10, 10);
+
                 end
             end
-        
         end
 
         if(v.reload) then
@@ -167,30 +176,7 @@ local function createDefaultSettings()
 
         end
 
-        if(v.key == "filterOptions") then
-            local categories = C_LFGList.GetAvailableCategories(LFGListFrame.CategorySelection.baseFilters)
-
-            for x, y in ipairs(categories) do
-                local categoryInfo = C_LFGList.GetLfgCategoryInfo(y)
-
-                -- /dump MIOG_NewSettings.filterOptions["LFGListFrame.SearchPanel"][1]
-
-                for i = 1, 2, 1 do
-                    local panel = i == 1 and "LFGListFrame.SearchPanel" or "LFGListFrame.ApplicationViewer"
-                    if(not MIOG_NewSettings.filterOptions[panel][y]) then
-                        MIOG_NewSettings.filterOptions[panel][y] = defaultFilters
-
-                    else
-                        for a, b in pairs(defaultFilters) do
-                            if(MIOG_NewSettings.filterOptions[panel][y][a] == nil) then
-                                MIOG_NewSettings.filterOptions[panel][y][a] = b
-
-                            end
-                        end
-                    end
-                end
-            end
-        elseif(v.key == "declinedGroups") then
+        if(v.key == "declinedGroups") then
             for x, y in pairs(MIOG_NewSettings.declinedGroups) do
                 if(y.timestamp < time() - 900) then
                     MIOG_NewSettings.declinedGroups[x] = nil
@@ -208,6 +194,10 @@ local function createDefaultSettings()
             end
         end
     end
+end
+
+miog.increaseStatistic = function(name)
+    MIOG_NewSettings.accountStatistics.lfgStatistics[name] = MIOG_NewSettings.accountStatistics.lfgStatistics[name] and MIOG_NewSettings.accountStatistics.lfgStatistics[name] + 1 or 1
 end
 
 miog.loadNewSettings = function()
