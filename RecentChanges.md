@@ -1,4 +1,4 @@
-## [2.8.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.8.0) - 2024-10-12
+## [2.8.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.8.0) - 2024-10-13
 
 ### Added
 
@@ -34,6 +34,8 @@ Also the slider now goes from -40% to 40%, so you can see how much score you'd g
 Though right now RaiderIO seems to have a bug that doesn't correctly transfer any keylevel bracket except the 4-6 bracket into the downloadable databases (what you update through CurseForge or the RaiderIO client).
 
 - [FilterPanel] Clicking the checkbutton infront of the Difficulty dropdown will now activate the filter immediately instead of only after a new search.
+
+- [FilterPanel] Legacy raids should now correctly show up again.
 
 - [FilterPanel] Re-implemented right-clicking the bossframes to reset them.
 
