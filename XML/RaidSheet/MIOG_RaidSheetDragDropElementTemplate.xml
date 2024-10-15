@@ -1,0 +1,37 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_RaidSheetDragDropElementTemplate" movable="true" propagateMouseInput="Both" registerForClicks="AnyUp, AnyDown" registerForDrag="LeftButton" inherits="BackdropTemplate" virtual="true">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+			<KeyValue key="backdropColor" value="BLACK_FONT_COLOR" type="global"/>
+            <KeyValue key="type" value="element" type="string"/>
+        </KeyValues>
+        <Size x="105" y="15" />
+
+        <Scripts>
+            <OnDragStart>
+                if(not self.originalWidth and not self.originalHeight) then
+                    self.originalWidth = self:GetWidth()
+                    self.originalHeight = self:GetHeight()
+
+                else
+                    self:SetSize(self.originalWidth, self.originalHeight)
+
+                end
+
+                self:StartMoving()
+            </OnDragStart>
+        </Scripts>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+</Ui>

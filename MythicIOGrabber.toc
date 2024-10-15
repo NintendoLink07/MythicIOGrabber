@@ -40,6 +40,7 @@ AdventureJournal.lua
 PartyCheck.lua
 RaiderIOChecker.lua
 DropChecker.lua
+RaidPlanner.lua
 
 NewSettings.lua
 StatisticsRecorder.lua
@@ -148,3 +149,7 @@ XML\Util\MIOG_MinimalHorizontalScrollBarTemplate.xml
 XML\MIOG_StatisticsPage.xml
 XML\MIOG_StatisticsPageListEntryTemplate.xml
 XML\MIOG_StatisticsPageListHeaderTemplate.xml
+
+XML\RaidSheet\MIOG_RaidSheet.xml
+XML\RaidSheet\MIOG_RaidSheetDragDropSpaceTemplate.xml
+XML\RaidSheet\MIOG_RaidSheetDragDropElementTemplate.xml

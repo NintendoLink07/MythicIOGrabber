@@ -1,0 +1,77 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_RaidSheet" virtual="true">
+        <Frames>
+            <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" frameStrata="HIGH">
+                <KeyValues>
+                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-18"/>
+                </Anchors>
+
+                <ScrollChild>
+                    <Frame parentKey="PlayerList" inherits="VerticalLayoutFrame" >
+                        <KeyValues>
+                            <KeyValue key="spacing" value="2" type="string" />
+                        </KeyValues>
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+
+            <Frame parentKey="Sheet" inherits="StaticGridLayoutFrame" frameStrata="MEDIUM">
+                <Size x="400" />
+                <KeyValues>
+                    <KeyValue key="childXPadding" value="0" type="number"/>
+                    <KeyValue key="childYPadding" value="10" type="number"/>
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollFrame" relativePoint="TOPLEFT" x="105"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <DropdownButton parentKey="PresetDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="200" y="25" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-20"/>
+                </Anchors>
+            </DropdownButton>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Occupied" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.PresetDropdown" relativePoint="LEFT" x="-5"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Damager" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Occupied" relativePoint="LEFT" x="-5" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Healer" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Damager" relativePoint="LEFT" x="-5" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Tank" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Healer" relativePoint="LEFT" x="-5" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnLoad>
+            </OnLoad>
+        </Scripts>
+    </Frame>
+</Ui>

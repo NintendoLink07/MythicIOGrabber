@@ -25,7 +25,7 @@ local function setPopupInfo(resultID, reason, groupName, activityName, leaderNam
 	currentPopup = resultID
 	popupFrame.Reason:SetText(reason)
 	popupFrame.Activity:SetText(groupName .. " - " .. activityName)
-	popupFrame.Leader:SetText("Leader: " .. leaderName)
+	popupFrame.Leader:SetText("Leader: " .. (leaderName or "N/A"))
 	popupFrame:MarkDirty()
 end
 

@@ -202,6 +202,7 @@ miog.createFrames = function()
 		miog.loadPartyCheck()
 		--miog.loadGuildFrame()
 		miog.loadDropChecker()
+		miog.loadRaidPlanner()
 
 		miog.loadRaiderIOChecker()
 		miog.loadLockoutCheck()

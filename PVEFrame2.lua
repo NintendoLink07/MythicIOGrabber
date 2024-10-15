@@ -196,7 +196,7 @@ local function createPVEFrameReplacement()
 		pveFrame2:SetPoint(PVEFrame:GetPoint())
 	end
 
-	miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	--miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	local setup = false
 	

@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" movable="true" hidden="true" virtual="true" toplevel="true" enableMouse="true" parent="UIParent"> <!-- mixin="WeeklyRewardsMixin" -->
+    <Frame name="MIOG_MainFrameTemplate" movable="true" hidden="true" virtual="true" registerForDrag="LeftButton" parent="UIParent"> <!-- mixin="WeeklyRewardsMixin" -->
         <Frames>
             <Frame parentKey="CategoryHoverFrame" inherits="VerticalLayoutFrame" hidden="true" frameLevel="10000">
                 <KeyValues>
@@ -692,6 +692,9 @@
 
                     <Frame parentKey="LockoutCheck" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true">
                     </Frame>
+
+                    <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true">
+                    </Frame>
                 </Frames>
             </Frame>
 
@@ -789,6 +792,17 @@
                 </Scripts>
             </Button>
 
+            <Button name="$parentTab9" inherits="MIOG_TabButtonTemplate" id="9" text="Raid Sheet">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab8" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "RaidSheet"
+                    </OnLoad>
+                </Scripts>
+            </Button>
+
             <!--<Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Guild">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
@@ -817,8 +831,7 @@
             </OnDragStop>
 
             <OnLoad>
-                self:RegisterForDrag("LeftButton")
-                PanelTemplates_SetNumTabs(self, 8)
+                PanelTemplates_SetNumTabs(self, 9)
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());

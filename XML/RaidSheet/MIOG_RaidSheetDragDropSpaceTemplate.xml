@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_RaidSheetDragDropSpaceTemplate" inherits="BackdropTemplate" propagateMouseInput="Both" virtual="true">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+            <KeyValue key="type" value="space" type="string"/>
+        </KeyValues>
+        <Size x="109" y="20" />
+    </Frame>
+</Ui>
