@@ -1,15 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name="MIOG_RaidSheetDragDropElementTemplate" movable="true" propagateMouseInput="Both" registerForClicks="AnyUp, AnyDown" registerForDrag="LeftButton" inherits="BackdropTemplate" virtual="true">
-        <KeyValues>
-            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
-			<KeyValue key="backdropColor" value="BLACK_FONT_COLOR" type="global"/>
-            <KeyValue key="type" value="element" type="string"/>
-        </KeyValues>
-        <Size x="105" y="15" />
+    <Button name="MIOG_RaidSheetDragDropElementTemplate" movable="true" registerForClicks="AnyUp, AnyDown" registerForDrag="LeftButton" inherits="BackdropTemplate" mixin="RaidSheetElementMixin" virtual="true">
+        <Size x="106" y="18" />
 
         <Scripts>
             <OnDragStart>
+                if(self.occupiedSpace) then
+                    self.SpecPicker:Hide()
+                end
+
                 if(not self.originalWidth and not self.originalHeight) then
                     self.originalWidth = self:GetWidth()
                     self.originalHeight = self:GetHeight()
@@ -21,17 +20,95 @@
 
                 self:StartMoving()
             </OnDragStart>
+
+            <OnEnter>
+                if(self.occupiedSpace) then
+                    self.SpecPicker:Show()
+                end
+            </OnEnter>
+
+            <OnLeave>
+                if(self.occupiedSpace) then
+                    self.SpecPicker:Hide()
+                end
+            </OnLeave>
         </Scripts>
 
         <Layers>
-            <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+            <Layer level="ARTWORK">
+                <Texture parentKey="Spec">
+                    <Size x="14" y="14" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY" textureSubLevel="-1">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="2"/>
                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
+
+        <Frames>
+            <Frame parentKey="SpecPicker" inherits="HorizontalLayoutFrame" setAllPoints="true" hidden="true">
+                <KeyValues>
+				    <KeyValue key="childLayoutDirection" value="rightToLeft" type="string"/>
+                </KeyValues>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture parentKey="TransparentDark" setAllPoints="true">
+                            <Color r="0.03" g="0.03" b="0.03" a="0.6" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Button parentKey="Spec1" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Spec2" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Spec3" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Spec4" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
     </Button>
 </Ui>

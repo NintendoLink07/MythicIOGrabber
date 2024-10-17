@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.8.1] - 2024-10-18
+
+### Added
+
+- [RaidSheets] have been added!
+You can now plan your raid comp right ingame.
+
+
+### Fixed
+
+- [M+ Statistics] Overtime keys that have a higher score than your intime key score will now correctly show up instead of the intime key.
+
+
+
 ## [2.8.0] - 2024-10-13
 
 ### Added

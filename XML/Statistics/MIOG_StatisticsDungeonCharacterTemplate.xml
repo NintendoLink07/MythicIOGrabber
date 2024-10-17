@@ -36,7 +36,7 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="Score" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" text="CURRENT SCORE">
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="2"/>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="1"/>
                     </Anchors>
                 </FontString>
 

@@ -2,18 +2,26 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_RaidSheet" virtual="true">
         <Frames>
+            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1">
+                <Size x="100" y="25" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="5" y="2"/>
+                </Anchors>
+            </EditBox>
+
             <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" frameStrata="HIGH">
                 <KeyValues>
                     <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                 </KeyValues>
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-4" y="-2"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-18"/>
                 </Anchors>
 
                 <ScrollChild>
-                    <Frame parentKey="PlayerList" inherits="VerticalLayoutFrame" >
+                    <Frame parentKey="PlayerList" inherits="VerticalLayoutFrame">
                         <KeyValues>
                             <KeyValue key="spacing" value="2" type="string" />
                         </KeyValues>
@@ -24,50 +32,74 @@
             <Frame parentKey="Sheet" inherits="StaticGridLayoutFrame" frameStrata="MEDIUM">
                 <Size x="400" />
                 <KeyValues>
-                    <KeyValue key="childXPadding" value="0" type="number"/>
+                    <KeyValue key="childXPadding" value="1" type="number"/>
                     <KeyValue key="childYPadding" value="10" type="number"/>
                 </KeyValues>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollFrame" relativePoint="TOPLEFT" x="105"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollFrame" relativePoint="TOPLEFT" x="108"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Tank" inherits="MIOG_IconWithTextTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.SearchBox" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Healer" inherits="MIOG_IconWithTextTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Damager" inherits="MIOG_IconWithTextTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="5"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Occupied" inherits="MIOG_IconWithTextTemplate">
+                <Size x="50" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Damager" relativePoint="RIGHT" x="5"/>
                 </Anchors>
             </Frame>
 
             <DropdownButton parentKey="PresetDropdown" inherits="WowStyle1DropdownTemplate">
                 <Size x="200" y="25" />
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-20"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-18" y="1"/>
                 </Anchors>
             </DropdownButton>
+            
+            <EditBox parentKey="CreateSettingsBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="SystemFont_Shadow_Med1" hidden="true">
+                <Size x="200" y="25" />
+                <Anchors>
+                    <Anchor point="CENTER"/>
+                </Anchors>
+                
+                <Scripts>
+                    <OnKeyDown>
+                        if(key == "ESCAPE" or key == "ENTER") then
+                            self:Hide()
+                            self:ClearFocus()
+                            self:GetParent().TransparentDark:Hide()
+                        end
+                    </OnKeyDown>
+                </Scripts>
+            </EditBox>
+
+            <Frame parentKey="TransparentDark" frameStrata="DIALOG" setAllPoints="true" hidden="true">
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture setAllPoints="true">
+                            <Color r="0.03" g="0.03" b="0.03" a="0.6" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
         </Frames>
-
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString parentKey="Occupied" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.PresetDropdown" relativePoint="LEFT" x="-5"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Damager" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Occupied" relativePoint="LEFT" x="-5" />
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Healer" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Damager" relativePoint="LEFT" x="-5" />
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Tank" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Healer" relativePoint="LEFT" x="-5" />
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
 
         <Scripts>
             <OnLoad>

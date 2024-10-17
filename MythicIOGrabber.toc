@@ -52,6 +52,8 @@ StatisticsTabMixin.lua
 FuzzyAlgorithm.lua
 FilterMixin.lua
 NewMultiStateButtonMixin.lua
+RaidSheetElementMixin.lua
+RaidSheetSpaceMixin.lua
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -145,6 +147,7 @@ XML\Util\MIOG_MinimalCheckButtonTemplate.xml
 XML\Util\MIOG_MenuButtonTemplate.xml
 XML\Util\MIOG_VerticalButtonTemplate.xml
 XML\Util\MIOG_MinimalHorizontalScrollBarTemplate.xml
+XML\Util\MIOG_IconWithTextTemplate.xml
 
 XML\MIOG_StatisticsPage.xml
 XML\MIOG_StatisticsPageListEntryTemplate.xml
