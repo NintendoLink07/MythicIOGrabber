@@ -488,8 +488,6 @@ local function raidSheetEvents(_, event, ...)
     if(event == "INITIAL_CLUBS_LOADED") then
         setupSaveData()
     end
-
-    print(GetTimePreciseSec(), event, ...)
 end
 
 miog.loadRaidPlanner = function()
