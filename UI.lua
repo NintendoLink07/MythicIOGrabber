@@ -73,6 +73,10 @@ local function setActivePanel(_, panel)
 		miog.DropChecker:Show()
 		miog.NewFilterPanel.Lock:Show()
 
+	elseif(panel == "LockoutCheck") then
+		miog.LockoutCheck:Show()
+		miog.NewFilterPanel.Lock:Show()
+
 	else
 		miog.Plugin:Hide()
 		miog.NewFilterPanel.Lock:Show()
@@ -200,12 +204,12 @@ miog.createFrames = function()
 		miog.loadGearingChart()
 		miog.loadAdventureJournal()
 		miog.loadPartyCheck()
-		--miog.loadGuildFrame()
 		miog.loadDropChecker()
 		miog.loadRaidPlanner()
 
 		miog.loadRaiderIOChecker()
 		miog.loadLockoutCheck()
+		miog.loadActivityChecker()
 		
 	end
 
@@ -222,5 +226,6 @@ miog.createFrames = function()
 		miog.AdventureJournal,
 		miog.RaiderIOChecker,
 		miog.DropChecker,
+		miog.LockoutCheck,
 	}
 end

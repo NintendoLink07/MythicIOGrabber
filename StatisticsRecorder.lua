@@ -3,29 +3,33 @@ local wticc = WrapTextInColorCode
 
 local db = {
     --LFG
-    ["declined"] = "Declined",
-    ["declined_full"] = "Delisted (Full)",
-    ["declined_delisted"] = "Delisted",
-    ["applied"] = "Applied",
-    ["timedout"] = "Timed out",
-    ["invited"] = LFG_LIST_APP_INVITED,
-    ["inviteaccepted"] = LFG_LIST_APP_INVITE_ACCEPTED,
-    ["invitedeclined"] = LFG_LIST_APP_INVITE_DECLINED,
-    ["cancelled"] = "Cancelled",
-    ["failed"] = FAILED,
+    ["declined"] = {name = "Declined", subtype = "SearchPanel", hide = false},
+    ["declined_full"] = {name = "Delisted (Full)", subtype = "SearchPanel", hide = false},
+    ["declined_delisted"] = {name = "Delisted", subtype = "SearchPanel", hide = false},
+    ["applied"] = {name = "Applied", subtype = "SearchPanel", hide = false},
+    ["timedout"] = {name = "Timed out", subtype = "SearchPanel", hide = false},
+    ["invited"] = {name = LFG_LIST_APP_INVITED, subtype = "SearchPanel", hide = false},
+    ["inviteaccepted"] = {name = LFG_LIST_APP_INVITE_ACCEPTED, subtype = "SearchPanel", hide = false},
+    ["invitedeclined"] = {name = LFG_LIST_APP_INVITE_DECLINED, subtype = "SearchPanel", hide = false},
+    ["cancelled"] = {name = "Cancelled", subtype = "SearchPanel", hide = false},
+    ["failed"] = {name = FAILED, subtype = "SearchPanel", hide = false},
     
     --Keystones
-    ["CHALLENGE_MODE_START"] = "Keys started",
-    ["CHALLENGE_MODE_RESET"] = "Keys aborted",
-    ["CHALLENGE_MODE_COMPLETED"] = "Keys finished",
+    ["CHALLENGE_MODE_START"] = {name = "Keys started", subtype="Keys", hide = true},
+    ["CHALLENGE_MODE_RESET"] = {name = "Keys aborted", subtype="Keys", hide = false},
+    ["CHALLENGE_MODE_COMPLETED"] = {name = "Keys finished", subtype="Keys", hide = false},
 }
+
+local function shouldHideKey(key)
+    return db[key] and db[key].hide or false
+end
 
 local function requestTypeOfKey(key)
     return db[key] and "blizzard" or miog.INELIGIBILITY_REASONS[key] and "miog" or "none"
 end
 
 local function requestNameOfKey(key)
-    return db[key] or miog.INELIGIBILITY_REASONS[key] and miog.INELIGIBILITY_REASONS[key][2] or key
+    return db[key] and db[key].name or miog.INELIGIBILITY_REASONS[key] and miog.INELIGIBILITY_REASONS[key][2] or key
 end
 
 local function distinguish(k1, k2)
@@ -35,8 +39,12 @@ local function distinguish(k1, k2)
 
         elseif(k1.header) then
             return true
+
         elseif(k2.header) then
             return false
+
+        elseif(k1.subtype ~= k2.subtype) then
+            return k1.subtype > k2.subtype
 
         else
             return k1.name < k2.name
@@ -85,16 +93,17 @@ miog.createStatisticsInterfacePanelPage = function(parent)
         local typesDone = {}
 
         for k, v in pairs(MIOG_NewSettings.accountStatistics.lfgStatistics) do
-            local keytype = requestTypeOfKey(k)
+            if(not shouldHideKey(k)) then
+                local keytype = requestTypeOfKey(k)
 
-            if(not typesDone[keytype]) then
-                typesDone[keytype] = keytype
-			    provider:Insert({template = "MIOG_StatisticsPageListHeaderTemplate", name = keytype == "blizzard" and "Blizzard" or keytype == "miog" and addonName or "Other", type = keytype, header = true});
+                if(not typesDone[keytype]) then
+                    typesDone[keytype] = keytype
+                    provider:Insert({template = "MIOG_StatisticsPageListHeaderTemplate", name = keytype == "blizzard" and "Blizzard" or keytype == "miog" and addonName or "Other", type = keytype, header = true});
 
+                end
+
+                provider:Insert({template = "MIOG_StatisticsPageListEntryTemplate", key = k, name = requestNameOfKey(k), value = v, type = keytype, subtype = db[k] and db[k].subtype});
             end
-
-			provider:Insert({template = "MIOG_StatisticsPageListEntryTemplate", key = k, name = requestNameOfKey(k), value = v, type = keytype});
-
         end
 
         self.ScrollBox:SetDataProvider(provider);

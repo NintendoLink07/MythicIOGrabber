@@ -690,9 +690,6 @@
                     <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true">
                     </Frame>
 
-                    <Frame parentKey="LockoutCheck" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true">
-                    </Frame>
-
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true">
                     </Frame>
                 </Frames>
@@ -781,20 +778,9 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Lockouts">
+            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Raid Sheet">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
-                </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self.frameName = "LockoutCheck"
-                    </OnLoad>
-                </Scripts>
-            </Button>
-
-            <Button name="$parentTab9" inherits="MIOG_TabButtonTemplate" id="9" text="Raid Sheet">
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab8" relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
                     <OnLoad>
@@ -802,17 +788,6 @@
                     </OnLoad>
                 </Scripts>
             </Button>
-
-            <!--<Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Guild">
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
-                </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self.frameName = "Guild"
-                    </OnLoad>
-                </Scripts>
-            </Button>!-->
         </Frames>
 
         <Layers>
@@ -831,7 +806,7 @@
             </OnDragStop>
 
             <OnLoad>
-                PanelTemplates_SetNumTabs(self, 9)
+                PanelTemplates_SetNumTabs(self, 8)
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());

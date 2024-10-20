@@ -1109,7 +1109,6 @@ end
 miog.updateDropDown = updateDropDown
 
 local function activityEvents(_, event, ...)
-
     if(event == "LFG_UPDATE_RANDOM_INFO") then
         updateDropDown()
 
@@ -1129,17 +1128,17 @@ local function activityEvents(_, event, ...)
     end
 end
 
-miog.activityEvents = activityEvents
+miog.loadActivityChecker = function()
+	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_ActivityEventReceiver")
 
-local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_ActivityEventReceiver")
-
-eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-eventReceiver:RegisterEvent("LFG_UPDATE")
-eventReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
-eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
-eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
-eventReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
-eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
-eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
-eventReceiver:SetScript("OnEvent", miog.activityEvents)
+	eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+	eventReceiver:RegisterEvent("LFG_UPDATE")
+	eventReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
+	eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+	eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+	eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
+	eventReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
+	eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
+	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
+	eventReceiver:SetScript("OnEvent", activityEvents)
+end

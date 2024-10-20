@@ -1,17 +1,25 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local occupiedSpaces = {}
-
 local numberOfSpaces = 40
 local occupied = 0
+local renamingIndex
+
 local roles = {
     ["TANK"] = 0,
     ["HEALER"] = 0,
     ["DAMAGER"] = 0,
 }
 
-local selectedPreset = nil
+local PRESENCE_SORT_ORDER = {
+	[Enum.ClubMemberPresence.Online] = 1,
+	[Enum.ClubMemberPresence.OnlineMobile] = 2,
+	[Enum.ClubMemberPresence.Away] = 3,
+	[Enum.ClubMemberPresence.Busy] = 4,
+	[Enum.ClubMemberPresence.Offline] = 5,
+	[Enum.ClubMemberPresence.Unknown] = 6,
+};
+
 local playerPool
 
 local function clearObject(object)
@@ -71,7 +79,7 @@ local function filterPlayerList()
     if(text ~= "") then
         for widget in playerPool:EnumerateActive() do
             if(not widget.occupiedSpace) then
-                if(string.find(widget.Name:GetText(), text)) then
+                if(string.find(strlower(widget.Name:GetText()), strlower(text))) then
                     widget.layoutIndex = widget.originalIndex
                     widget:Show()
 
@@ -96,6 +104,34 @@ local function filterPlayerList()
     
 end
 
+local function orderClubMembers(lhsMemberInfo, rhsMemberInfo)
+    if lhsMemberInfo.presence ~= rhsMemberInfo.presence then
+        return PRESENCE_SORT_ORDER[lhsMemberInfo.presence] < PRESENCE_SORT_ORDER[rhsMemberInfo.presence];
+    --elseif lhsMemberInfo.level and rhsMemberInfo.level and lhsMemberInfo.level ~= rhsMemberInfo.level then
+    --    return lhsMemberInfo.level > rhsMemberInfo.level;
+    --elseif lhsMemberInfo.guildRankOrder and rhsMemberInfo.guildRankOrder and lhsMemberInfo.guildRankOrder ~= rhsMemberInfo.guildRankOrder then
+    --    return lhsMemberInfo.guildRankOrder < rhsMemberInfo.guildRankOrder;
+    --elseif lhsMemberInfo.role ~= rhsMemberInfo.role then
+    --    return lhsMemberInfo.role < rhsMemberInfo.role;
+    elseif lhsMemberInfo.lastOnlineYear ~= rhsMemberInfo.lastOnlineYear then
+        return lhsMemberInfo.lastOnlineYear < rhsMemberInfo.lastOnlineYear;
+
+    elseif lhsMemberInfo.lastOnlineMonth ~= rhsMemberInfo.lastOnlineMonth then
+        return lhsMemberInfo.lastOnlineMonth < rhsMemberInfo.lastOnlineMonth;
+
+    elseif lhsMemberInfo.lastOnlineDay ~= rhsMemberInfo.lastOnlineDay then
+        return lhsMemberInfo.lastOnlineDay < rhsMemberInfo.lastOnlineDay;
+
+    elseif lhsMemberInfo.lastOnlineHour ~= rhsMemberInfo.lastOnlineHour then
+        return lhsMemberInfo.lastOnlineHour < rhsMemberInfo.lastOnlineHour;
+
+    elseif lhsMemberInfo.name and rhsMemberInfo.name then
+        return lhsMemberInfo.name < rhsMemberInfo.name;
+    else
+        return lhsMemberInfo.memberId < rhsMemberInfo.memberId;
+    end
+end
+
 local function updateSheet()
     countRoles()
     filterPlayerList()
@@ -118,14 +154,14 @@ local function bindElementToSpace(element, space)
 end
 
 local function saveInfoToSlot(slotIndex)
-    if(selectedPreset and slotIndex) then
+    if(MIOG_NewSettings.raidPlanner.selectedPreset and slotIndex) then
         local frame = miog.RaidSheet.Sheet["Space" .. slotIndex].occupiedBy
 
         if(frame) then
-            MIOG_NewSettings.raidPlanner.sheets[selectedPreset].slots[slotIndex] = {specID = frame.activeSpecID, saveID = frame.saveID}
+            MIOG_NewSettings.raidPlanner.sheets[MIOG_NewSettings.raidPlanner.selectedPreset].slots[slotIndex] = {specID = frame.activeSpecID, saveID = frame.saveID}
 
         else
-            MIOG_NewSettings.raidPlanner.sheets[selectedPreset].slots[slotIndex] = nil
+            MIOG_NewSettings.raidPlanner.sheets[MIOG_NewSettings.raidPlanner.selectedPreset].slots[slotIndex] = nil
 
         end
     end
@@ -213,25 +249,35 @@ local function tryToSetFrame(self, populateFirstSlot)
     updateSheet()
 end
 
-local function createElementFrame(className)
-    --local elementFrame = CreateFrame("Button", nil, miog.RaidSheet.ScrollFrame.PlayerList, "MIOG_RaidSheetDragDropElementTemplate")
+local function createElementFrame(classID)
     local elementFrame = playerPool:Acquire()
-    elementFrame:OnLoad(className)
+    elementFrame:OnLoad(classID)
 
-    for i = 1, GetNumSpecializationsForClassID(elementFrame.classID), 1 do
+    for i = 1, 4, 1 do
         local specFrame = elementFrame.SpecPicker["Spec" .. i]
         
-        specFrame:SetScript("PostClick", function(selfFrame)
-            saveInfoToSlot(elementFrame.occupiedSpace.index)
-            updateSheet()
+        if(i <= elementFrame.numOfSpecs) then
+            specFrame:SetScript("PostClick", function(selfFrame)
+                saveInfoToSlot(elementFrame.occupiedSpace.index)
+                updateSheet()
 
-        end)
+            end)
+            specFrame:Show()
+        else
+            specFrame:Hide()
+            specFrame:SetScript("PostClick", nil)
+
+        end
     end
 
     elementFrame:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
         tryToSetFrame(self)
 
+        if(MouseIsOver(self) and self.occupiedSpace) then
+            self.SpecPicker:Show()
+
+        end
     end)
     elementFrame:SetScript("OnDoubleClick", function(self, button)
         if(button == "LeftButton") then
@@ -253,16 +299,31 @@ local function createElementFrame(className)
     return elementFrame
 end
 
-local function loadPreset()
+local function loadPreset(selectedPreset)
     clearAllSpaces()
 
-    for slotIndex, slotInfo in pairs(MIOG_NewSettings.raidPlanner.sheets[selectedPreset].slots) do
-        for v in playerPool:EnumerateActive() do
-            if(slotInfo.saveID == v.saveID) then
-                local space = miog.RaidSheet.Sheet["Space" .. slotIndex]
+    if(MIOG_NewSettings.raidPlanner.sheets[selectedPreset]) then
+        MIOG_NewSettings.raidPlanner.selectedPreset = selectedPreset
 
-                bindElementToSpace(v, space)
-                v:SetActiveSpecID(slotInfo.specID)
+        for slotIndex, slotInfo in pairs(MIOG_NewSettings.raidPlanner.sheets[selectedPreset].slots) do
+            local playerFound = false
+
+            for v in playerPool:EnumerateActive() do
+                if(slotInfo.saveID == v.saveID) then
+                    local space = miog.RaidSheet.Sheet["Space" .. slotIndex]
+
+                    bindElementToSpace(v, space)
+                    v:SetActiveSpecID(slotInfo.specID)
+
+                    playerFound = true
+
+                    break
+                end
+            end
+
+            if(not playerFound) then --if the player can't be found, e.g. guild member isnt in guild anymore.
+                --MIOG_NewSettings.raidPlanner.sheets[selectedPreset].slots[slotIndex] = nil
+
             end
         end
     end
@@ -272,7 +333,7 @@ end
 
 local function deletePreset(index)
     local numberOfSheets = #MIOG_NewSettings.raidPlanner.sheets
-    local isCurrentlySelected = index == selectedPreset
+    local isCurrentlySelected = index == MIOG_NewSettings.raidPlanner.selectedPreset
 
     MIOG_NewSettings.raidPlanner.sheets[index] = nil
 
@@ -280,16 +341,15 @@ local function deletePreset(index)
         MIOG_NewSettings.raidPlanner.sheets[i] = MIOG_NewSettings.raidPlanner.sheets[i + 1]
     end
 
+    MIOG_NewSettings.raidPlanner.selectedPreset = nil
     MIOG_NewSettings.raidPlanner.sheets[numberOfSheets] = nil
 
 
     if(isCurrentlySelected) then
         local nextIndex = MIOG_NewSettings.raidPlanner.sheets[index] and index or MIOG_NewSettings.raidPlanner.sheets[index - 1] and (index - 1) or nil
 
-        selectedPreset = nextIndex
-
-        if(selectedPreset) then
-            loadPreset()
+        if(nextIndex) then
+            loadPreset(nextIndex)
 
         else
             clearAllSpaces()
@@ -301,15 +361,143 @@ local function deletePreset(index)
     end
 end
 
+local function setupFramePools()
+    playerPool = playerPool or CreateFramePool("Button", miog.RaidSheet.ScrollFrame.PlayerList, "MIOG_RaidSheetDragDropElementTemplate", function(pool, frame) frame:Hide() frame.layoutIndex = nil frame.memberInfo = nil end)
+    playerPool:ReleaseAll()
+
+    local guildMembers = GetNumGuildMembers()
+
+    if(IsInGuild() and guildMembers > 0) then
+        local guildClubId = C_Club.GetGuildClubId()
+        local clubMembers = C_Club.GetClubMembers(guildClubId)
+
+        local orderedGuildList = {}
+        
+        for k, v in ipairs(clubMembers) do
+            orderedGuildList[k] = C_Club.GetMemberInfo(guildClubId, v)
+        end
+
+        table.sort(orderedGuildList, orderClubMembers)
+
+        for k, v in ipairs(orderedGuildList) do
+            local elementFrame = createElementFrame(v.classID)
+            elementFrame:SetMemberInfo(v)
+            elementFrame.saveID = v.name
+            elementFrame.originalIndex = k
+            elementFrame.layoutIndex = k
+
+            elementFrame.align = "left"
+
+            elementFrame.Name:SetText(miog.createSplitName(v.name))
+        end
+    else
+        for classIndex, classInfo in ipairs(miog.CLASSES) do
+            local localizedName = GetClassInfo(classIndex)
+
+            for specIndex, specID in ipairs(classInfo.specs) do
+                local elementFrame = createElementFrame(classIndex)
+                elementFrame:SetMemberInfo({name = localizedName .. specIndex, presence = 0, level = 80, memberNote = "Y no guild mate", test = true})
+                elementFrame.saveID = classIndex .. " - " .. specID
+                elementFrame.originalIndex = specID
+                elementFrame.layoutIndex = specID
+
+                elementFrame.align = "left"
+
+                elementFrame.Name:SetText(localizedName .. specIndex)
+            end
+        end
+    end
+
+    loadPreset(MIOG_NewSettings.raidPlanner.selectedPreset)
+end
+
+local function setupSaveData()
+    miog.RaidSheet.PresetDropdown:SetupMenu(function(dropdown, rootDescription)
+        local newButton = rootDescription:CreateButton("New", function()
+            miog.RaidSheet.TransparentDark:Show()
+            miog.RaidSheet.CreateSettingsBox:SetText("RaidSheet" .. #MIOG_NewSettings.raidPlanner.sheets + 1)
+            miog.RaidSheet.CreateSettingsBox:HighlightText()
+            miog.RaidSheet.CreateSettingsBox:Show()
+            miog.RaidSheet.CreateSettingsBox:SetFocus()
+        end)
+
+        for k, v in ipairs(MIOG_NewSettings.raidPlanner.sheets) do
+            local sameGuild = v.guildClubID == C_Club.GetGuildClubId()
+
+            if(not v.guildClubID or sameGuild) then
+                local presetButton = rootDescription:CreateRadio(WrapTextInColorCode(v.name, sameGuild and miog.CLRSCC.green or miog.CLRSCC.yellow), function(index) return index == MIOG_NewSettings.raidPlanner.selectedPreset end, function(index)
+                    loadPreset(index)
+                end, k)
+
+                presetButton:SetTooltip(function(tooltip, elementDescription)
+                    --GameTooltip:SetOwner(tooltip)
+
+                    if(sameGuild) then
+                        GameTooltip:AddLine("This preset is connected to this characters guild and only accessible by this account's characters in this guild.")
+
+                    else
+                        GameTooltip:AddLine("This preset is not associated with any guild and is accessible by all account characters.")
+
+                    end
+
+                    GameTooltip:Show()
+                end)
+    
+                presetButton:AddInitializer(function(button, description, menu)
+                    local deleteButton = button:AttachTemplate("UIButtonTemplate")
+                    deleteButton:SetSize(20, 20);
+                    deleteButton:SetPoint("RIGHT", 0, 0);
+                    deleteButton:SetNormalAtlas("128-redbutton-delete")
+                    deleteButton:SetPushedAtlas("128-redbutton-delete")
+                    deleteButton:SetHighlightAtlas("128-redbutton-delete")
+                    deleteButton:SetDisabledAtlas("128-redbutton-delete")
+                    deleteButton:SetScript("OnMouseDown", function(self, buttonName)
+                        deletePreset(k)
+                        menu:SendResponse(rootDescription, MenuResponse.Close)
+    
+                        miog.RaidSheet.PresetDropdown:OpenMenu()
+                    end)
+                    
+                    local renameButton = button:AttachTemplate("UIButtonTemplate")
+                    renameButton:SetSize(20, 20);
+                    renameButton:SetPoint("RIGHT", deleteButton, "LEFT", -3, 0);
+                    renameButton:SetNormalAtlas("uitools-icon-refresh")
+                    renameButton:SetPushedAtlas("uitools-icon-refresh")
+                    renameButton:SetHighlightAtlas("uitools-icon-refresh")
+                    renameButton:SetDisabledAtlas("uitools-icon-refresh")
+                    renameButton:SetScript("OnMouseDown", function(self, buttonName)
+                        renamingIndex = description.data
+                        menu:SendResponse(rootDescription, MenuResponse.Close)
+    
+                        miog.RaidSheet.TransparentDark:Show()
+                        miog.RaidSheet.CreateSettingsBox:SetText(MIOG_NewSettings.raidPlanner.sheets[renamingIndex].name)
+                        miog.RaidSheet.CreateSettingsBox:HighlightText()
+                        miog.RaidSheet.CreateSettingsBox:Show()
+                        miog.RaidSheet.CreateSettingsBox:SetFocus()
+    
+                    end)
+    
+                    return button.fontstring:GetUnboundedStringWidth() + 2 - 16 - 16 - 3
+                end)
+            end
+        end
+    end)
+end
+
+local function raidSheetEvents(_, event, ...)
+    if(event == "INITIAL_CLUBS_LOADED") then
+        setupSaveData()
+    end
+
+    print(GetTimePreciseSec(), event, ...)
+end
+
 miog.loadRaidPlanner = function()
     miog.RaidSheet = miog.pveFrame2.TabFramesPanel.RaidSheet
     miog.RaidSheet.Tank.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png")
     miog.RaidSheet.Healer.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png")
     miog.RaidSheet.Damager.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
     miog.RaidSheet.Occupied.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/guildmate.png")
-
-    --local elementFrame = CreateFrame("Button", nil, miog.RaidSheet.ScrollFrame.PlayerList, "MIOG_RaidSheetDragDropElementTemplate")
-    playerPool = CreateFramePool("Button", miog.RaidSheet.ScrollFrame.PlayerList, "MIOG_RaidSheetDragDropElementTemplate", function(pool, frame) end)
     
     miog.RaidSheet.SearchBox:SetScript("OnTextChanged", function(self)
         SearchBoxTemplate_OnTextChanged(self)
@@ -341,88 +529,50 @@ miog.loadRaidPlanner = function()
         miog.createFrameBorder(spaceFrame, 1, CreateColorFromHexString(miog.CLRSCC.gray):GetRGBA())
     end
 
-    local guildMembers = GetNumGuildMembers()
-
-    if(guildMembers > 0) then
-        for i = 1, guildMembers, 1 do
-            local name, rankName, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, class, achievementPoints, achievementRank, isMobile, canSoR, repStanding, guid = GetGuildRosterInfo(i)
-
-            local elementFrame = createElementFrame(class)
-            elementFrame.saveID = name
-            elementFrame.originalIndex = i
-            elementFrame.layoutIndex = i
-
-            elementFrame.align = "left"
-
-            elementFrame.Name:SetText(name)
-        end
-    else
-        for classIndex, classInfo in ipairs(miog.CLASSES) do
-            for specIndex, specID in ipairs(classInfo.specs) do
-                local elementFrame = createElementFrame(classInfo.name)
-                elementFrame.saveID = classIndex .. " - " .. specID
-                elementFrame.originalIndex = specID
-                elementFrame.layoutIndex = specID
-
-                elementFrame.Name:SetText(classInfo.name .. specIndex)
-            end
-        end
-    end
+    setupFramePools()
 
     miog.RaidSheet.CreateSettingsBox:SetScript("OnEnterPressed", function(self)
-        table.insert(MIOG_NewSettings.raidPlanner.sheets, {
-            name = self:GetText(),
-            slots = {}
-        })
+        if(not renamingIndex) then
+            table.insert(MIOG_NewSettings.raidPlanner.sheets, {
+                name = self:GetText(),
+                slots = {}
+            })
+            MIOG_NewSettings.raidPlanner.sheets[#MIOG_NewSettings.raidPlanner.sheets].guildClubID = C_Club.GetGuildClubId()
 
-        selectedPreset = #MIOG_NewSettings.raidPlanner.sheets
-        loadPreset()
+            loadPreset(#MIOG_NewSettings.raidPlanner.sheets)
+        else
+            MIOG_NewSettings.raidPlanner.sheets[renamingIndex].name = self:GetText()
+            renamingIndex = nil
+
+        end
 
         miog.RaidSheet.PresetDropdown:SetText(self:GetText())
     end)
 
-    miog.RaidSheet.PresetDropdown:SetDefaultText("New")
-    miog.RaidSheet.PresetDropdown:SetupMenu(function(dropdown, rootDescription)
-        local newButton = rootDescription:CreateButton("New", function()
-            miog.RaidSheet.TransparentDark:Show()
-            miog.RaidSheet.CreateSettingsBox:SetText("RaidSheet" .. #MIOG_NewSettings.raidPlanner.sheets + 1)
-            miog.RaidSheet.CreateSettingsBox:HighlightText()
-            miog.RaidSheet.CreateSettingsBox:Show()
-            miog.RaidSheet.CreateSettingsBox:SetFocus()
-        end)
-
-        for k, v in ipairs(MIOG_NewSettings.raidPlanner.sheets) do
-	        local presetButton = rootDescription:CreateRadio(v.name, function(index) return index == selectedPreset end, function(index)
-                selectedPreset = index
-                loadPreset()
-            end, k)
-
-            presetButton:AddInitializer(function(button, description, menu)
-                local deleteButton = button:AttachTemplate("UIButtonTemplate")
-                deleteButton:SetSize(20, 20);
-                deleteButton:SetPoint("RIGHT", 0, 0);
-                deleteButton:SetNormalAtlas("128-redbutton-delete")
-                deleteButton:SetPushedAtlas("128-redbutton-delete")
-                deleteButton:SetHighlightAtlas("128-redbutton-delete")
-                deleteButton:SetDisabledAtlas("128-redbutton-delete")
-                deleteButton:SetScript("OnMouseDown", function(self, buttonName)
-                    deletePreset(k)
-                    --menu:SendResponse(rootDescription, MenuResponse.Refresh)
-                    menu:SendResponse(rootDescription, MenuResponse.Close)
-
-                    miog.RaidSheet.PresetDropdown:OpenMenu()
-                    
-                    if(#MIOG_NewSettings.raidPlanner.sheets > 0) then
-		                --description:Pick(MenuInputContext.MouseButton, buttonName);
-
-                    end
-                end)
-
-                return button.fontstring:GetUnboundedStringWidth() + 2 - 16
-            end)
-        end
+    miog.RaidSheet.CreateSettingsBox:SetScript("OnEscapePressed", function(self)
+        renamingIndex = nil
 
     end)
 
+    miog.RaidSheet.PresetDropdown:SetDefaultText("New")
+
+    if(not IsInGuild() or C_Club.GetGuildClubId() ~= nil) then
+        setupSaveData()
+    end
+
     miog.RaidSheet.Occupied.Text:SetText("0" .. "/" .. numberOfSpaces)
+    miog.RaidSheet:SetScript("OnShow", function()
+        setupFramePools()
+    end)
+
+    miog.RaidSheet.ResetButton:SetScript("OnClick", function()
+        setupFramePools()
+    end)
+    miog.RaidSheet:RegisterEvent("INITIAL_CLUBS_LOADED")
+    miog.RaidSheet:SetScript("OnEvent", raidSheetEvents)
+    
+    if(#MIOG_NewSettings.raidPlanner.sheets > 0) then
+        loadPreset(MIOG_NewSettings.raidPlanner.selectedPreset or 1)
+
+    end
 end

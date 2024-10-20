@@ -4,34 +4,9 @@
         <Size x="106" y="18" />
 
         <Scripts>
-            <OnDragStart>
-                if(self.occupiedSpace) then
-                    self.SpecPicker:Hide()
-                end
-
-                if(not self.originalWidth and not self.originalHeight) then
-                    self.originalWidth = self:GetWidth()
-                    self.originalHeight = self:GetHeight()
-
-                else
-                    self:SetSize(self.originalWidth, self.originalHeight)
-
-                end
-
-                self:StartMoving()
-            </OnDragStart>
-
-            <OnEnter>
-                if(self.occupiedSpace) then
-                    self.SpecPicker:Show()
-                end
-            </OnEnter>
-
-            <OnLeave>
-                if(self.occupiedSpace) then
-                    self.SpecPicker:Hide()
-                end
-            </OnLeave>
+            <OnDragStart method="OnDragStart"/>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
         </Scripts>
 
         <Layers>
@@ -47,15 +22,15 @@
             <Layer level="OVERLAY" textureSubLevel="-1">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="2"/>
-                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Spec" relativePoint="TOPRIGHT" x="2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
 
         <Frames>
-            <Frame parentKey="SpecPicker" inherits="HorizontalLayoutFrame" setAllPoints="true" hidden="true">
+            <Frame parentKey="SpecPicker" inherits="HorizontalLayoutFrame" propagateMouseInput="Both" setAllPoints="true" hidden="true">
                 <KeyValues>
 				    <KeyValue key="childLayoutDirection" value="rightToLeft" type="string"/>
                 </KeyValues>
@@ -75,6 +50,9 @@
                             <OnClick>
                                 self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
                             </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
                         </Scripts>
                     </Button>
 
@@ -85,6 +63,9 @@
                             <OnClick>
                                 self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
                             </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
                         </Scripts>
                     </Button>
 
@@ -95,6 +76,9 @@
                             <OnClick>
                                 self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
                             </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
                         </Scripts>
                     </Button>
 
@@ -105,6 +89,9 @@
                             <OnClick>
                                 self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
                             </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
                         </Scripts>
                     </Button>
                 </Frames>

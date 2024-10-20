@@ -108,7 +108,7 @@ local defaultSettings = {
     },
     {name = "Search Panel declined groups", variableName = "MIOG_DeclinedGroups", key="declinedGroups", default={}},
     {name = "Account-wide lockouts", variableName = "MIOG_Lockouts", key="lockoutCheck", default={}},
-    {name = "Raid planner settings", variableName = "MIOG_RaidPlannerSettings", key="raidPlanner", default={sheets = {}}},
+    {name = "Raid planner settings", variableName = "MIOG_RaidPlannerSettings", key="raidPlanner", default={sheets = {[1] = {name = "RaidSheet1", slots = {}}}}},
     {name = "Statistics for account characters", variableName = "MIOG_AccountStatistics", key="accountStatistics", default={characters = {}, lfgStatistics = {}}, type="custom"},
 }
 

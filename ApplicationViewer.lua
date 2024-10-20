@@ -270,7 +270,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	end)
 
 	if(miog.F.LITE_MODE) then
-		nameFontString:SetWidth(100)
+		nameFontString:SetWidth(85)
 	end
 
 	applicantMemberFrame.BasicInformation.Race:SetAtlas(miog.RACES[raceID])
@@ -1060,7 +1060,6 @@ miog.createApplicationViewer = function()
 		{name = "secondary", padding = 21},
 		{name = "ilvl", padding = 21},
 	})
-	--miog.ApplicationViewer:SetPostCallback()
 
 	miog.ApplicationViewer.FramePanel.Container:SetFixedWidth(miog.ApplicationViewer.FramePanel:GetWidth())
 	applicantFramePool = CreateFramePool("Frame", miog.ApplicationViewer.FramePanel.Container, "MIOG_ApplicantFrameTemplate", resetBaseFrame)

@@ -9,7 +9,6 @@ local fullPlayerName
 local function checkEntriesForExpiration()
     for k, v in pairs(MIOG_NewSettings.lockoutCheck) do
         for a, b in ipairs(v) do
-        --for i = 1, #v, 1 do
             if(b.resetDate <= time()) then
                 MIOG_NewSettings.lockoutCheck[k][a] = nil
 
@@ -64,7 +63,6 @@ local function refreshCharacterInfo()
             name = name,
             isWorldBoss = true,
             resetDate = time() + reset,
-            --icon = miog.MAP_INFO[instanceId].icon,
         }
     end
 end
@@ -79,11 +77,9 @@ hooksecurefunc("RequestRaidInfo", function()
 end)
 
 miog.loadLockoutCheck = function()
+    miog.LockoutCheck = CreateFrame("Frame", "MythicIOGrabber_LockoutCheck", miog.Plugin.InsertFrame, "MIOG_LockoutCheck")
+
     fullPlayerName = miog.createFullNameFrom("unitID", "player")
-
-    --framePool = CreateFramePool("Frame", miog.LockoutCheck.ScrollFrame.Columns, "MIOG_LockoutCheckCharacterTemplate", function(_, frame) frame.Name:SetText("") end)
-
-    --miog.LockoutCheck.ScrollFrame:SetHorizontal(true)
 
     local columnView = CreateScrollBoxListLinearView();
     columnView:SetHorizontal(true)
@@ -93,8 +89,6 @@ miog.loadLockoutCheck = function()
 
         local playerName, realm = miog.createSplitName(k)
         frame.Name:SetText(WrapTextInColorCode(playerName, v.class and C_ClassColor.GetClassColor(v.class):GenerateHexColor() or "FFFFFFFF"))
-
-        --local instanceFramePool = CreateFramePool("Frame", frame, "MIOG_LockoutCheckCharacterTemplate", function(_, frame) frame.Name:SetText("") end)
 
         local view = CreateScrollBoxListLinearView();
         view:SetElementInitializer("MIOG_LockoutCheckInstanceTemplate", function(elementFrame, elementData)
@@ -116,7 +110,6 @@ miog.loadLockoutCheck = function()
                     for i = 1, elementData.numEncounters, 1 do
                         local isKilled = elementData.bosses[i].isKilled
                         local bossName = elementData.bosses[i].bossName
-                        --local bossName, fileDataID, isKilled, unknown4 = GetSavedInstanceEncounterInfo(index, i)
 
                         if(not isKilled) then
                             if(not setAliveEncounters) then
@@ -188,11 +181,8 @@ miog.loadLockoutCheck = function()
     columnView:SetPadding(1, 1, 1, 1, 2);
 
     miog.LockoutCheck.Columns:SetHorizontal(true)
-    --miog.LockoutCheck.Columns:Init(columnView);
 
     ScrollUtil.InitScrollBoxListWithScrollBar(miog.LockoutCheck.Columns, miog.LockoutCheck.ScrollBar, columnView);
-
-    --miog.LockoutCheck.Columns:SetHeight((#v + 1) * 20)
 
     miog.LockoutCheck:SetScript("OnShow", function()
         --framePool:ReleaseAll()
@@ -234,15 +224,11 @@ miog.loadLockoutCheck = function()
         end)
 
         for k, v in ipairs(orderedCharacterTable) do
-            --local frame = framePool:Acquire()
-            --frame.layoutIndex = counter
-
             columnProvider:Insert({name = v, settings = MIOG_NewSettings.lockoutCheck[v]});
+            
         end
 
         miog.LockoutCheck.Columns:SetDataProvider(columnProvider);
-
-        --miog.LockoutCheck.ScrollFrame.Columns:MarkDirty()
     end)
 
     RequestRaidInfo()
