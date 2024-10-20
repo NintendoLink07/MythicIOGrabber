@@ -2,17 +2,6 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_LockoutCheck" virtual="true">
         <Frames>
-            <!--<ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" hidden="true">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
-                </Anchors>
-
-                <ScrollChild>
-                    <Frame parentKey="Columns" inherits="HorizontalLayoutFrame, BackdropTemplate" setAllPoints="true" />
-                </ScrollChild>
-            </ScrollFrame>!-->
-
             <Frame parentKey="Columns" inherits="WowScrollBoxList">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>

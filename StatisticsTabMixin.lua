@@ -112,37 +112,40 @@ local function mplusOnEnter(self, playerGUID)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 	GameTooltip:SetText(name, 1, 1, 1);
 
-	local overAllScore = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overAllScore
-	local inTimeInfo = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].intimeInfo
+	local intimeInfo = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].intimeInfo
 	local overtimeInfo = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overtimeInfo
+	local overtimeHigher = intimeInfo and overtimeInfo and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
+	local overallScore = overtimeHigher and overtimeInfo.dungeonScore or intimeInfo and intimeInfo.dungeonScore or 0
 
-	if(inTimeInfo or overtimeInfo) then
-		if(overAllScore) then
-			local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(overAllScore);
+	if(intimeInfo or overtimeInfo) then
+		if(overallScore) then
+			local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(overallScore);
 			if(not color) then
 				color = HIGHLIGHT_FONT_COLOR;
 			end
-			GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_TOTAL_SCORE:format(color:WrapTextInColorCode(overAllScore)), GREEN_FONT_COLOR);
+			GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_TOTAL_SCORE:format(color:WrapTextInColorCode(overallScore)), GREEN_FONT_COLOR);
 		end
 
-		local info = inTimeInfo or overtimeInfo
+		local info = overtimeHigher and overtimeInfo or intimeInfo
 
-		GameTooltip_AddBlankLineToTooltip(GameTooltip);
-		GameTooltip_AddColoredLine(GameTooltip, MYTHIC_PLUS_POWER_LEVEL:format(info.level) .. (inTimeInfo and string.format(" (%s chest)", inTimeInfo.chests or getChestsLevelForID(challengeMapID, inTimeInfo.durationSec)) or ""), HIGHLIGHT_FONT_COLOR);
+		if(info) then
+			GameTooltip_AddBlankLineToTooltip(GameTooltip);
+			GameTooltip_AddColoredLine(GameTooltip, MYTHIC_PLUS_POWER_LEVEL:format(info.level) .. (intimeInfo and string.format(" (%s chest)", intimeInfo.chests or getChestsLevelForID(challengeMapID, intimeInfo.durationSec)) or ""), HIGHLIGHT_FONT_COLOR);
 
-		if(overAllScore) then
-			if(inTimeInfo) then
-				GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(inTimeInfo.durationSec, inTimeInfo.durationSec >= SECONDS_PER_HOUR and true or false), HIGHLIGHT_FONT_COLOR);
+			if(overallScore) then
+				if(not overtimeHigher and intimeInfo) then
+					GameTooltip_AddColoredLine(GameTooltip, SecondsToClock(intimeInfo.durationSec, intimeInfo.durationSec >= SECONDS_PER_HOUR and true or false), HIGHLIGHT_FONT_COLOR);
 
-			elseif(overtimeInfo) then
-				GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, overtimeInfo.durationSec >= SECONDS_PER_HOUR and true or false)), LIGHTGRAY_FONT_COLOR);
+				elseif(overtimeInfo) then
+					GameTooltip_AddColoredLine(GameTooltip, DUNGEON_SCORE_OVERTIME_TIME:format(SecondsToClock(overtimeInfo.durationSec, overtimeInfo.durationSec >= SECONDS_PER_HOUR and true or false)), LIGHTGRAY_FONT_COLOR);
+
+				end
+			else
+				GameTooltip_AddBlankLineToTooltip(GameTooltip)
+				GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
+				GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
 
 			end
-		else
-			GameTooltip_AddBlankLineToTooltip(GameTooltip)
-			GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
-			GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
-
 		end
 	end
 
@@ -505,11 +508,13 @@ function StatisticsTabMixin:OnLoad(id)
                 dungeonFrame.challengeMapID = challengeMapID
                 dungeonFrame.layoutIndex = index
 
-                local hasIntimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo ~= nil
-                local hasOvertimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo ~= nil
+                local intimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo
+                local overtimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo
 
-                dungeonFrame.Level:SetText(hasIntimeInfo and MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo.level or hasOvertimeInfo and MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo.level or 0)
-                dungeonFrame.Level:SetTextColor(CreateColorFromHexString(hasIntimeInfo and  miog.CLRSCC.green or hasOvertimeInfo and MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo.level and miog.CLRSCC.red or miog.CLRSCC.gray):GetRGBA())
+				local overtimeHigher = intimeInfo and overtimeInfo and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
+
+                dungeonFrame.Level:SetText(overtimeHigher and overtimeInfo.level or intimeInfo and intimeInfo.level or 0)
+                dungeonFrame.Level:SetTextColor(CreateColorFromHexString(overtimeHigher and overtimeInfo.level and miog.CLRSCC.red or intimeInfo and intimeInfo.level and miog.CLRSCC.green or miog.CLRSCC.gray):GetRGBA())
                 dungeonFrame:SetScript("OnEnter", function(selfFrame)
 					mplusOnEnter(selfFrame, data.guid)
 				end) -- ChallengesDungeonIconMixin:OnEnter()
@@ -765,7 +770,7 @@ function StatisticsTabMixin:LoadActivities()
 			columnProvider:Insert({mapID = miog.retrieveMapIDFromChallengeModeMap(activityEntry)});
 
 		elseif(self.id == 2) then
-			miog.checkSingleMapIDForNewData(activityEntry, true)
+			miog.checkSingleMapIDForNewData(activityEntry, true, true)
 			columnProvider:Insert({mapID = activityEntry});
 
 		elseif(self.id == 3) then
@@ -945,7 +950,6 @@ function StatisticsTabMixin:UpdateCharacterMPlusStatistics(guid)
 
 			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].intimeInfo = intimeInfo
 			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overtimeInfo = overtimeInfo
-			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overAllScore = intimeInfo and intimeInfo.dungeonScore or overtimeInfo and overtimeInfo.dungeonScore or 0
 		end
 	else
 		MIOG_NewSettings.accountStatistics.characters[guid].mplus.score = MIOG_NewSettings.accountStatistics.characters[guid].mplus.score or {value = 0, ingame = true}

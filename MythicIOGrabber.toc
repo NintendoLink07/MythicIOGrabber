@@ -1,10 +1,10 @@
-## Interface: 110002
+## Interface: 110002, 110005
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 2.8.0
+## Version: 2.9.0
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -40,6 +40,7 @@ AdventureJournal.lua
 PartyCheck.lua
 RaiderIOChecker.lua
 DropChecker.lua
+RaidPlanner.lua
 
 NewSettings.lua
 StatisticsRecorder.lua
@@ -51,6 +52,8 @@ StatisticsTabMixin.lua
 FuzzyAlgorithm.lua
 FilterMixin.lua
 NewMultiStateButtonMixin.lua
+RaidSheetElementMixin.lua
+RaidSheetSpaceMixin.lua
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -144,7 +147,12 @@ XML\Util\MIOG_MinimalCheckButtonTemplate.xml
 XML\Util\MIOG_MenuButtonTemplate.xml
 XML\Util\MIOG_VerticalButtonTemplate.xml
 XML\Util\MIOG_MinimalHorizontalScrollBarTemplate.xml
+XML\Util\MIOG_IconWithTextTemplate.xml
 
 XML\MIOG_StatisticsPage.xml
 XML\MIOG_StatisticsPageListEntryTemplate.xml
 XML\MIOG_StatisticsPageListHeaderTemplate.xml
+
+XML\RaidSheet\MIOG_RaidSheet.xml
+XML\RaidSheet\MIOG_RaidSheetDragDropSpaceTemplate.xml
+XML\RaidSheet\MIOG_RaidSheetDragDropElementTemplate.xml

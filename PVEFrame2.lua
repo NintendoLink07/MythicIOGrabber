@@ -512,11 +512,6 @@ local function createPVEFrameReplacement()
 	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
 	miog.PVPStatistics:OnLoad(3)
 
-	--miog.RaidStatistics.RaidColumns.Raids = {}
-	--miog.RaidStatistics.ScrollFrame.Rows.accountChars = {}
-
-	miog.LockoutCheck = pveFrame2.TabFramesPanel.LockoutCheck
-
 	local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
 
 	for i = 1, 6, 1 do
@@ -712,6 +707,7 @@ local function createPVEFrameReplacement()
 			rootDescription:CreateTitle("More");
 			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
+			rootDescription:CreateButton("Lockouts", function() setCustomActivePanel("LockoutCheck") end)
 			rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
 			rootDescription:SetTag("MIOG_MORE")
 		end)

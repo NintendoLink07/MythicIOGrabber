@@ -1,0 +1,101 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_RaidSheetDragDropElementTemplate" movable="true" registerForClicks="AnyUp, AnyDown" registerForDrag="LeftButton" inherits="BackdropTemplate" mixin="RaidSheetElementMixin" virtual="true">
+        <Size x="106" y="18" />
+
+        <Scripts>
+            <OnDragStart method="OnDragStart"/>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+        </Scripts>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Spec">
+                    <Size x="14" y="14" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY" textureSubLevel="-1">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Spec" relativePoint="TOPRIGHT" x="2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="SpecPicker" inherits="HorizontalLayoutFrame" propagateMouseInput="Both" setAllPoints="true" hidden="true">
+                <KeyValues>
+				    <KeyValue key="childLayoutDirection" value="rightToLeft" type="string"/>
+                </KeyValues>
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture parentKey="TransparentDark" setAllPoints="true">
+                            <Color r="0.03" g="0.03" b="0.03" a="0.6" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Button parentKey="Spec1" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Spec2" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Spec3" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Spec4" propagateMouseInput="Motion">
+                        <Size x="16" y="16" />
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().Spec:SetTexture(self:GetNormalTexture():GetTexture())
+                            </OnClick>
+                    <OnDragStart>
+                        self:GetParent():GetParent():StartMoving()
+                    </OnDragStart>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Button>
+</Ui>

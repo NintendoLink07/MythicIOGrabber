@@ -994,21 +994,26 @@ miog.updatePersistentResultFrame = updatePersistentResultFrame
 local function newUpdateFunction()
 	framePool:ReleaseAll()
 
-	currentDataList = gatherSearchResultSortData()
-	table.sort(currentDataList, sortSearchResultList)
+	local unsortedList = gatherSearchResultSortData()
+
+	miog.SearchPanel:UpdateSortingData(unsortedList)
+	miog.SearchPanel:Sort()
+
+	--table.sort(currentDataList, sortSearchResultList)
 
 	local actualResultsCounter = 0
 
-	for k, v in ipairs(currentDataList) do
-		local showFrame, reasonID = v.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v.resultID)
+	for d, listEntry in ipairs(miog.SearchPanel:GetSortingData()) do
+	--for k, v in ipairs(currentDataList) do
+		local showFrame, reasonID = listEntry.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, listEntry.resultID)
 
 		if(showFrame) then
-			local frame = initializeSearchResultFrame(v.resultID)
-			frame.layoutIndex = k
+			local frame = initializeSearchResultFrame(listEntry.resultID)
+			frame.layoutIndex = d
 			frame:SetParent(miog.SearchPanel.NewScrollFrame.Container)
 			frame:Show()
 
-			updatePersistentResultFrame(v.resultID)
+			updatePersistentResultFrame(listEntry.resultID)
 
 			actualResultsCounter = actualResultsCounter + 1
 
@@ -1072,9 +1077,9 @@ local function newUpdateFunction()
 		end
 	end]]
 
-	miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #currentDataList .. ")")
+	miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #miog.SearchPanel:GetSortingData() .. ")")
 	
-	miog.Plugin.FooterBar.Results:SetScript("OnEnter", #currentDataList >= 100 and function(self)
+	miog.Plugin.FooterBar.Results:SetScript("OnEnter", #miog.SearchPanel:GetSortingData() >= 100 and function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		GameTooltip:SetText("There might be more groups listed.")
 		GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
@@ -1107,7 +1112,7 @@ local function searchResultsReceived()
 			if(not blocked) then
 				blocked = true
 
-				C_Timer.After(miog.getActiveSortMethods("LFGListFrame.SearchPanel") > 0 and 0.5 or 0, function()
+				C_Timer.After(miog.SearchPanel:GetNumOfActiveSortMethods() > 0 and 0.5 or 0, function()
 					miog.SearchPanel.Status:Hide()
 					miog.SearchPanel.Status.LoadingSpinner:Hide()
 					newUpdateFunction()
@@ -1257,7 +1262,7 @@ miog.createSearchPanel = function()
 	end
 
 	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
-	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("DIALOG")
+	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("HIGH")
 
 	searchPanel.SearchBox = searchBox
 
@@ -1298,9 +1303,9 @@ miog.createSearchPanel = function()
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 	end)
 
-	miog.createFrameBorder(searchPanel.ButtonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	--miog.createFrameBorder(searchPanel.ButtonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	searchPanel.ButtonPanel.sortByCategoryButtons = {}
+	--[[searchPanel.ButtonPanel.sortByCategoryButtons = {}
 
 	for i = 1, 3, 1 do
 		local sortByCategoryButton = searchPanel.ButtonPanel[i == 1 and "PrimarySort" or i == 2 and "SecondarySort" or "AgeSort"]
@@ -1335,7 +1340,7 @@ miog.createSearchPanel = function()
 
 	end
 
-	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(176, 0)
+	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(176, 0)]]
 
 	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
@@ -1351,6 +1356,33 @@ miog.createSearchPanel = function()
 
 	miog.SearchPanel.NewScrollFrame.Container:SetFixedWidth(miog.SearchPanel.NewScrollFrame:GetWidth())
 	miog.SearchPanel.NewScrollFrame.ScrollBar:AdjustPointsOffset(-8, 0)
+	
+
+	local function performantSort()
+		--table.sort(currentDataList, sortSearchResultList)
+		miog.SearchPanel:Sort()
+
+		local orderedResultIDList = {}
+
+		for k, v in ipairs(miog.SearchPanel:GetSortingData()) do
+			orderedResultIDList[v.resultID] = k
+		end
+
+		for widget in framePool:EnumerateActive() do
+			widget.layoutIndex = orderedResultIDList[widget.resultID]
+
+		end
+
+		miog.SearchPanel.NewScrollFrame.Container:MarkDirty()
+	end
+
+	miog.SearchPanel:OnLoad(performantSort)
+	miog.SearchPanel:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.SearchPanel"])
+	miog.SearchPanel:AddMultipleSortingParameters({
+		{name = "primary", padding = 175},
+		{name = "secondary", padding = 18},
+		{name = "age", padding = 35},
+	})
 
 	--[[local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
 

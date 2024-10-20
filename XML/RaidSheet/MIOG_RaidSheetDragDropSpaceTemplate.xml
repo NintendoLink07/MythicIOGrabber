@@ -1,0 +1,17 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_RaidSheetDragDropSpaceTemplate" inherits="BackdropTemplate" mixin="RaidSheetSpaceMixin" virtual="true">
+        <Size x="108" y="20" />
+        
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="-1">
+                <FontString parentKey="Number" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Color r="0.5" g="0.5" b="0.5" />
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

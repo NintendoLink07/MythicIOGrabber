@@ -1151,7 +1151,7 @@ local function checkForMapAchievements(mapID)
 	end
 end
 
-local function checkSingleMapIDForNewData(mapID, checkForAchievements)
+local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectInstance)
 	if(mapID > 0 and miog.MAP_INFO[mapID]) then --mapID > 0 and 
 		local bossIndex = 1;
 
@@ -1159,7 +1159,11 @@ local function checkSingleMapIDForNewData(mapID, checkForAchievements)
 		miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
 
 		if(not bossName) then
-			EJ_SelectInstance(miog.MAP_INFO[mapID].journalInstanceID)
+			if(selectInstance) then
+				EJ_SelectInstance(miog.MAP_INFO[mapID].journalInstanceID)
+
+			end
+
 			bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex);
 		end
 
@@ -1236,8 +1240,6 @@ local function loadRawData()
 		end
 
 		miog.MAP_INFO[v[1]].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
-
-		--checkSingleMapIDForNewData(v[1])
 	end
 
 	local expansionTable = {}

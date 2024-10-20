@@ -783,7 +783,7 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 	end
 
 	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
-	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("DIALOG")
+	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("HIGH")
 	LFGListFrame.SearchPanel.SearchBox:SetFrameLevel(9999)
 end)
 
