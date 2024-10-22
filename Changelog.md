@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.9.1] - 2024-10-22
+
+### Fixed
+
+- The new raid sheet feature won't prolong the loading time of the addon anymore.
+
+- [RaidSheet] Dragging a character and releasing it above it's old space will now correctly set it to this space again.
+
+- [PartyCheck] Changed the algorithm for detecting the unitID back to my version instead of using Blizzard's, mine is more reliable.
+
+
+
 ## [2.9.0] - 2024-10-20
 
 ### Added
@@ -2596,7 +2608,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.0..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.1..HEAD
+[2.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.1
 [2.9.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.0
 [2.8.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.8.0
 [2.7.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.7.0

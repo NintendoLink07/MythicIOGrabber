@@ -289,7 +289,7 @@
                                 GameTooltip:SetText(C_LFGList.HasActiveEntryInfo()
                                 and C_LFGList.GetActiveEntryInfo().requiredDungeonScore and string.format(GROUP_FINDER_MYTHIC_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredDungeonScore)
                                 or C_LFGList.GetActiveEntryInfo().requiredPvpRating and string.format(GROUP_FINDER_PVP_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredPvpRating)
-                                or "No rating required")
+                                or "Rating required: 0")
                                 GameTooltip:Show()
                             </OnEnter>
                             <OnLeave>
@@ -380,71 +380,6 @@
                     </Button>
                 </Frames>
             </Frame>
-            
-            <!-- <Frame parentKey="ButtonPanel" inherits="BackdropTemplate">
-                <Size y="20" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-                <Frames>
-                    <Button parentKey="RoleSort" inherits="MIOG_SortButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
-                        </Anchors>
-
-                        <Scripts>
-                            <PostClick>
-                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                                C_LFGList.RefreshApplicants()
-                            </PostClick>
-                        </Scripts>
-                    </Button>
-
-                    <Button parentKey="PrimarySort" inherits="MIOG_SortButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.RoleSort" relativePoint="RIGHT" x="11"/>
-                        </Anchors>
-
-                        <Scripts>
-                            <PostClick>
-                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                                C_LFGList.RefreshApplicants()
-                            </PostClick>
-                        </Scripts>
-                    </Button>
-
-                    <Button parentKey="SecondarySort" inherits="MIOG_SortButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.PrimarySort" relativePoint="RIGHT" x="20"/>
-                        </Anchors>
-
-                        <Scripts>
-                            <PostClick>
-                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                                C_LFGList.RefreshApplicants()
-                            </PostClick>
-                        </Scripts>
-                    </Button>
-
-                    <Button parentKey="IlvlSort" inherits="MIOG_SortButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.SecondarySort" relativePoint="RIGHT" x="20"/>
-                        </Anchors>
-
-                        <Scripts>
-                            <PostClick>
-                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                                C_LFGList.RefreshApplicants()
-                            </PostClick>
-                        </Scripts>
-                    </Button>
-                </Frames>
-            </Frame>-->
 
             <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate">
                 <KeyValues>

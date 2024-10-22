@@ -201,7 +201,7 @@ local function tryToSetFrame(self, populateFirstSlot)
         local space = miog.RaidSheet.Sheet["Space" .. i]
 
         if(space) then
-            if(not space.occupied) then
+            if(not space.occupied or hadSlotBefore and self.occupiedSpace == space) then
                 if(populateFirstSlot or not populateFirstSlot and MouseIsOver(space)) then
                     newSlotFound = true
 
@@ -526,8 +526,6 @@ miog.loadRaidPlanner = function()
 
         miog.createFrameBorder(spaceFrame, 1, CreateColorFromHexString(miog.CLRSCC.gray):GetRGBA())
     end
-
-    setupFramePools()
 
     miog.RaidSheet.CreateSettingsBox:SetScript("OnEnterPressed", function(self)
         if(not renamingIndex) then

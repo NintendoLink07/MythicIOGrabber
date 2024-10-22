@@ -213,8 +213,6 @@ miog.createFrames = function()
 		
 	end
 
-	miog.createInspectCoroutine()
-
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		setActivePanel(_, panel)
 	end)
