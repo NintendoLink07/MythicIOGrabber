@@ -1099,6 +1099,7 @@ miog.RAW["Map"] = {
     {2780,2780,"11.0.0 Transport: Arathi Airship 7",0,0,0,0,0,0,3,0,10,0,0,-1,-1,-1,0,1,-1,0,12,0,0,0,0,3649,1040,96},
     {2782,2782,"11.0 - Vault of Memory",0,0,0,0,0,0,1,0,10,0,434,-1,-1,-1,0,1,-1,0,12,0,5890444,0,0,142614109,262160,0},
     {2786,2786,"Pocket Dimension",0,0,0,0,0,0,1,0,10,0,0,-1,-1,-1,0,1,-1,0,12,0,5903868,0,0,142614109,1040,0},
+    {2792,2792,"Blackrock Depths",0,0,0,0,0,0,1,2,0,0,103,-1,-1,-1,0,1,-1,0,12,0,5930971,0,0,142614109,33808,0},
 }
 
 miog.RAW["GroupFinderActivityGrp"] = {
@@ -1313,7 +1314,8 @@ miog.RAW["GroupFinderActivityGrp"] = {
     {354,"Domination Point",0},
     {355,"Lion's Landing",0},
     {362,"Nerub-ar Palace",0},
-    {362,"Khaz Algar",0},
+    {363,"Khaz Algar",0},
+    {372,"Blackrock Depths",0},
 }
 
 miog.RAW["MapChallengeMode"] = {
@@ -2358,6 +2360,9 @@ miog.RAW["GroupFinderActivity"] = { -- https://wago.tools/db2/GroupFinderActivit
     {1536,"Azj-Kahet","Azj-Kahet",1,0,363,258,0,0,0,0,14752,0,4,0,},
     {1537,"Hallowfall","Hallowfall",1,0,363,258,0,0,0,0,15145,0,4,0,},
     {1538,"Isle of Dorn","Isle of Dorn",1,0,363,258,0,0,0,0,14717,0,4,0,},
+    {1551,"Blackrock Depths (Normal)","Normal",3,0,372,34,591,129707,2792,14,15913,15,0,0,0,},
+    {1552,"Blackrock Depths (Heroic)","Heroic",3,0,372,34,604,129707,2792,15,15913,15,0,0,0},
+
 
     {1332,"Siege of Orgrimmar (Normal)","Normal",3,0,1,35,0,0,1136,14,0,30,0,0,},
     {1331,"Siege of Orgrimmar (Heroic)","Heroic",3,0,1,35,0,0,1136,15,0,30,0,0,},

@@ -795,6 +795,8 @@ miog.MAP_INFO = {
 	[2710] = {shortName = "ATM", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "awakeningthemachine",},
 	[2767] = {shortName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole",},
 	[2768] = {shortName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
+
+	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
 }
 
 miog.LFG_ID_INFO = {
@@ -1028,6 +1030,7 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[329] = {mapID = 2669, shortName = "COT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/cityofthreads.png"},
 
 	[362] = {mapID = 2657, shortName = "NP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nerubarpalance.png"},
+	[372] = {mapID = 2792, shortName = "BRD", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/blackrockdepths.png"},
 }
 
 miog.GROUP_ID_TO_LFG_ID = {}
@@ -1337,6 +1340,7 @@ local function loadRawData()
 			groupFinderActivityGroupID = v[6],
 	
 			mapID = v[10],
+
 			difficultyID = v[11],
 	
 			maxPlayers = v[13],
@@ -1348,7 +1352,7 @@ local function loadRawData()
 		end
 		
 		if(miog.MAP_INFO[v[10]]) then
-			miog.MAP_INFO[v[10]].groupFinderActivityID = v[6]
+			miog.MAP_INFO[v[10]].groupFinderActivityGroupID = v[6]
 
 			miog.ACTIVITY_INFO[v[1]].instanceType = miog.MAP_INFO[v[10]].instanceType
 			miog.ACTIVITY_INFO[v[1]].expansionLevel = miog.MAP_INFO[v[10]].expansionLevel
@@ -1388,7 +1392,7 @@ local function loadRawData()
 
 		if(miog.MAP_INFO[v[3]]) then
 			miog.MAP_INFO[v[3]].challengeModeID = v[2]
-			miog.GROUP_ACTIVITY[miog.MAP_INFO[v[3]].groupFinderActivityID].challengeModeID = v[2]
+			miog.GROUP_ACTIVITY[miog.MAP_INFO[v[3]].groupFinderActivityGroupID].challengeModeID = v[2]
 		end
 	end
 end

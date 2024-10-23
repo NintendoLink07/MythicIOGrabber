@@ -30,7 +30,7 @@ local selectedDifficultyIndex = nil
 
 	difficultyMythicPlus
 
-	activities {groupFinderActivityID}
+	activities {groupFinderActivityGroupID}
 ]]
 local function convertAdvancedBlizzardFiltersToMIOGFilters()
 	local blizzardFilters = C_LFGList.GetAdvancedFilter()
@@ -116,7 +116,10 @@ end
 local function convertAndRefresh()
 	convertFiltersToAdvancedBlizzardFilters()
 		
-	if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+	if(miog.DropChecker and miog.DropChecker:IsShown()) then
+		miog.checkAllDropCheckerItemIDs()
+
+	elseif(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 		miog.newUpdateFunction()
 
 	elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
@@ -589,7 +592,6 @@ local function HasRemainingSlotsForLocalPlayerRole(resultID) -- LFGList.lua loca
 end
 
 local function checkEligibility(panel, _, resultOrApplicant, borderMode)
-	--categoryID, panel = categoryID, panel or miog.getCurrentCategoryID()
 	local roleCount = {
 		["TANK"] = 0,
 		["HEALER"] = 0,
@@ -641,7 +643,6 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 			for i = 1, searchResultInfo.numMembers, 1 do
 				local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
-				local specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]
 
 				if(role) then
 					roleCount[role] = roleCount[role] + 1
@@ -653,7 +654,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 				end
 
-				if(settings.specs[specID] == false) then
+				if(class and settings.specs[miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]] == false) then
 					return false, "specFiltered"
 
 				end
@@ -731,7 +732,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 				end
 
-				if(isRaid and LFGListFrame.SearchPanel.filters == 1) then
+				if(isRaid and LFGListFrame.SearchPanel.filters == 1 and settings.activities[activityInfo.groupFinderActivityGroupID]) then
 					if(not settings.activities[activityInfo.groupFinderActivityGroupID].value) then
 						return false, "raidMismatch"
 
@@ -917,12 +918,13 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 	MIOG_NewSettings.newFilterOptions[panel][categoryID] = MIOG_NewSettings.newFilterOptions[panel][categoryID] or {}
 
 	local categorySettings = MIOG_NewSettings.newFilterOptions[panel][categoryID]
+	local activitiesLine
 
 	for k, v in ipairs(allFilters) do
-		if(v.id == "activitiesSpacer" and (categoryID == 2 or categoryID == 3)) then
+		if(v.id == "activitiesSpacer" and (categoryID == 0 or categoryID == 2 or categoryID == 3)) then
 			v.object:Show()
 		
-		elseif(v.id == "classPanel") then
+		elseif(v.id == "classPanel" and categoryID ~= 0) then
 			v.object:Show()
 
 			categorySettings.classes = categorySettings.classes or {}
@@ -971,7 +973,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 				
 			end
 
-		elseif(v.id == "roles") then
+		elseif(v.id == "roles" and categoryID ~= 0) then
 			categorySettings[v.id] = categorySettings[v.id] or {}
 
 			v.object.tank.Button:SetChecked(categorySettings.roles["TANK"] ~= false)
@@ -1024,7 +1026,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 			v.object:Show()
 
-		elseif(v.id == "lustFit" or v.id == "ressFit" or (v.id == "hideHardDecline" or v.id == "partyFit") and panel == "LFGListFrame.SearchPanel") then
+		elseif(categoryID ~= 0 and (v.id == "lustFit" or v.id == "ressFit" or (v.id == "hideHardDecline" or v.id == "partyFit") and panel == "LFGListFrame.SearchPanel")) then
 			v.object:Show()
 			v.object.Button:SetScript("OnClick", function(self)
 				categorySettings[v.id] = self:GetChecked()
@@ -1180,7 +1182,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			miog.NewFilterPanel.ActivityBossRow4:Hide()
 			miog.NewFilterPanel.ActivityBossRow4.layoutIndex = nil
 
-			if(panel == "LFGListFrame.SearchPanel" and (categoryID == 2 or categoryID == 3)) then
+			if(panel == "LFGListFrame.SearchPanel" and (categoryID == 2 or categoryID == 3) or panel == "DropChecker") then
 				if(categoryID == 2) then
 					local sortedSeasonDungeons = {}
 					local addedIDs = {}
@@ -1246,6 +1248,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 						else
 							frame.Button:SetChecked(true)
 							frame.Text:SetScript("OnEnter", nil)
+							frame:Hide()
 
 						end
 
@@ -1267,7 +1270,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					if(seasonGroups and #seasonGroups > 0) then
 						for _, v in ipairs(seasonGroups) do
 							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
-							miog.checkSingleMapIDForNewData(activityInfo.mapID)
+							miog.checkSingleMapIDForNewData(activityInfo.mapID, false, true)
 							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, bosses = activityInfo.bosses}
 		
 						end
@@ -1349,6 +1352,174 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					v.object:Show()
 					miog.NewFilterPanel:MarkDirty()
 
+				
+				elseif(categoryID == 0) then
+					local sortedSeasonDungeons = {}
+					local addedIDs = {}
+
+					local seasonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
+					local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
+					
+					table.sort(seasonGroup, function(k1, k2)
+						return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+					end)
+
+					table.sort(expansionGroups, function(k1, k2)
+						return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+					end)
+
+					if(seasonGroup and #seasonGroup > 0) then
+						for x, y in ipairs(seasonGroup) do
+							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
+							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+							addedIDs[y] = true
+						end
+					end
+
+					if(expansionGroups and #expansionGroups > 0) then
+						for x, y in ipairs(expansionGroups) do
+							if(not addedIDs[y]) then
+								local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
+								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+							end
+						end
+					end
+					
+					local overall = 1
+
+					for i = 1, 16, 1 do
+						local row = i < 5 and 1 or i < 9 and 2 or i < 13 and 3 or 4
+						local column = i - ((row - 1) * 4)
+
+						local activityRow = miog.NewFilterPanel["ActivityRow" .. row]
+						local frame = activityRow["Activity" .. column]
+
+						if(sortedSeasonDungeons[i]) then
+							categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID] = categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID] or {}
+
+							frame.Text:SetText(sortedSeasonDungeons[i].name)
+							frame.Text:SetScript("OnEnter", function(self)
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+								GameTooltip:SetText(C_LFGList.GetActivityGroupInfo(sortedSeasonDungeons[i].groupFinderActivityGroupID) or "")
+								GameTooltip:Show()
+							end)
+							frame:Show()
+
+							activityRow.layoutIndex = 1000 + row
+							activityRow:Show()
+						
+							if(categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value) then
+								frame.Button:SetChecked(categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value)
+								categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value = categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value ~= false
+
+							else
+								frame.Button:SetChecked(true)
+								categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value = true
+
+							end
+
+							frame.Button:SetScript("OnClick", function(self)
+								categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value = self:GetChecked()
+
+								convertAndRefresh()
+							end)
+
+							overall = overall + 1
+
+						else
+							frame.Button:SetChecked(true)
+							frame.Text:SetScript("OnEnter", nil)
+
+							frame:Hide()
+
+						end
+
+						frame.Text:SetScript("OnLeave", function()
+							GameTooltip:Hide()
+						end)
+
+					end
+
+					local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.Recommended);
+					local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
+		
+					local sortedExpansionRaids = {}
+		
+					if(seasonGroups and #seasonGroups > 0) then
+						for _, v in ipairs(seasonGroups) do
+							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
+							miog.checkSingleMapIDForNewData(activityInfo.mapID)
+							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, bosses = activityInfo.bosses}
+		
+						end
+					end
+		
+					if(worldBossActivity and #worldBossActivity > 0) then
+						local activityInfo = C_LFGList.GetActivityInfoTable(worldBossActivity[1])
+						sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = "World"}
+		
+					end
+		
+					table.sort(sortedExpansionRaids, function(k1, k2)
+						return k1.groupFinderActivityGroupID < k2.groupFinderActivityGroupID
+
+					end)
+
+					for i = 1, 16, 1 do
+						local row = overall < 5 and 1 or overall < 9 and 2 or overall < 13 and 3 or 4
+						local column = overall - ((row - 1) * 4)
+
+						local activityRow = miog.NewFilterPanel["ActivityRow" .. row]
+						local frame = activityRow["Activity" .. column]
+
+						if(sortedExpansionRaids[i]) then
+							categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID] = categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID] or {}
+
+							frame.Text:SetText(sortedExpansionRaids[i].name)
+							frame.Text:SetScript("OnEnter", function(self)
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+								GameTooltip:SetText(C_LFGList.GetActivityGroupInfo(sortedExpansionRaids[i].groupFinderActivityGroupID) or sortedExpansionRaids[i].name or "")
+								GameTooltip:Show()
+							end)
+							frame:Show()
+
+							activityRow.layoutIndex = 1000 + row
+							activityRow:Show()
+						
+							if(categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value) then
+								frame.Button:SetChecked(categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value)
+								categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value = categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value ~= false
+
+							else
+								frame.Button:SetChecked(true)
+								categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value = true
+
+							end
+
+							frame.Button:SetScript("OnClick", function(self)
+								categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value = self:GetChecked()
+
+								convertAndRefresh()
+							end)
+
+							overall = overall + 1
+
+						else
+							frame.Button:SetChecked(true)
+							frame.Text:SetScript("OnEnter", nil)
+
+							frame:Hide()
+
+						end
+
+						frame.Text:SetScript("OnLeave", function()
+							GameTooltip:Hide()
+						end)
+					end
+
+					v.object:Show()
+					miog.NewFilterPanel:MarkDirty()
+					
 				else
 					v.object:Hide()
 					miog.NewFilterPanel:MarkDirty()

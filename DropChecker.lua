@@ -116,7 +116,7 @@ local function loadLoot()
 
             EJ_SelectInstance(v.journalInstanceID)
 
-	    local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID = EJ_GetInstanceInfo();
+	        local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID = EJ_GetInstanceInfo();
 
             local numOfLoot = EJ_GetNumLoot()
 
@@ -183,10 +183,18 @@ local function loadLoot()
 end
 
 local function requestAllLootForMapID(mapID)
-    local journalInstanceID = miog.MAP_INFO[mapID].journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID) or nil
+    local mapInfo = miog.MAP_INFO[mapID]
+    local settings = MIOG_NewSettings.newFilterOptions["DropChecker"] and MIOG_NewSettings.newFilterOptions["DropChecker"][0]
+
+    if(settings and settings.activities.value and settings.activities[mapInfo.groupFinderActivityGroupID] and settings.activities[mapInfo.groupFinderActivityGroupID].value == false) then
+        return
+
+    end
+
+    local journalInstanceID = mapInfo.journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID) or nil
 
     if(journalInstanceID) then
-        EJ_SetDifficulty(miog.MAP_INFO[mapID].isRaid and 16 or 23)
+        EJ_SetDifficulty(mapInfo.isRaid and 16 or 23)
         EJ_SelectInstance(journalInstanceID)
 
         for i = 1, EJ_GetNumLoot(), 1 do
@@ -198,13 +206,21 @@ local function requestAllLootForMapID(mapID)
             end
         end
 
-        table.insert(instanceQueue, {journalInstanceID = journalInstanceID, isRaid = EJ_InstanceIsRaid()})
+        table.insert(instanceQueue, {journalInstanceID = journalInstanceID, isRaid = EJ_InstanceIsRaid(), shortName = mapInfo.shortName})
     end
 end
 
 local function checkAllItemIDs()
     currentItemIDs = {}
     instanceQueue = {}
+
+    
+    local seasonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
+    local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
+    local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.Recommended);
+    local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
+
+    -- do loop for all activities
 
     for x, y in pairs(miog.SEASONAL_MAP_IDS) do
         if((forceSeasonID or C_MythicPlus:GetCurrentSeason()) == x) then
@@ -220,7 +236,7 @@ local function checkAllItemIDs()
     
     table.sort(instanceQueue, function(k1, k2)
         if(k1.isRaid == k2.isRaid) then
-            return k1.journalInstanceID < k2.journalInstanceID
+            return k1.shortName < k2.shortName
         end
 
         return not k1.isRaid
@@ -228,6 +244,8 @@ local function checkAllItemIDs()
                 
     loadLoot()
 end
+
+miog.checkAllDropCheckerItemIDs = checkAllItemIDs
 
 miog.loadDropChecker = function()
     miog.DropChecker = CreateFrame("Frame", "MythicIOGrabber_DropChecker", miog.Plugin.InsertFrame, "MIOG_DropChecker")
@@ -262,7 +280,6 @@ miog.loadDropChecker = function()
 	        rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(index) return index == C_EncounterJournal.GetSlotFilter() end, function(index)
                 selectedItemClass = nil
                 selectedItemSubClass = nil
-                selectedSlot = index
 
                 C_EncounterJournal.SetSlotFilter(index)
                 checkAllItemIDs()
@@ -273,7 +290,6 @@ miog.loadDropChecker = function()
         rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
-            selectedSlot = 14
             
             C_EncounterJournal.SetSlotFilter(14)
             checkAllItemIDs()
@@ -283,7 +299,6 @@ miog.loadDropChecker = function()
         rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
-            selectedSlot = 14
             
             C_EncounterJournal.SetSlotFilter(14)
             checkAllItemIDs()
@@ -293,16 +308,12 @@ miog.loadDropChecker = function()
         rootDescription:CreateRadio("Tokens", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
-            selectedSlot = 14
 
             C_EncounterJournal.SetSlotFilter(14)
             checkAllItemIDs()
 
         end, {class = 15, subclass = 0})
     end)
-
-
-
 
     miog.DropChecker.ArmorDropdown:SetDefaultText("Armor types")
     miog.DropChecker.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
@@ -359,23 +370,6 @@ miog.loadDropChecker = function()
 
         local armorButton = rootDescription:CreateButton("Armor")
 
-        --[[local sortedFilters = {}
-
-        for k, v in pairs(Enum.ItemArmorSubclass) do
-            sortedFilters[v] = k
-        end
-
-        for k, v in ipairs(sortedFilters) do
-            if(k > 0 and k < 5) then
-                armorButton:CreateRadio(v, function(index) return index == selectedArmor end, function(index)
-                    selectedArmor = index
-
-                    checkAllItemIDs()
-                end, v)
-            end
-            
-        end]]
-
         armorButton:CreateButton("Clear", function(index)
             selectedArmor = nil
 
@@ -397,8 +391,6 @@ miog.loadDropChecker = function()
     local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
 
     local function initializeLootFrames(frame, elementData)
-        --local elementData = node:GetData()
-
         if(elementData.template == "MIOG_AdventureJournalLootItemSingleTemplate") then
             local formattedText
 
@@ -454,7 +446,6 @@ miog.loadDropChecker = function()
     end
 
     local function CustomFactory(factory, data)
-        --local data = node:GetData()
         local template = data.template
         factory(template, initializeLootFrames)
     end
@@ -501,6 +492,5 @@ end
 
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
 
---eventReceiver:RegisterEvent("EJ_DIFFICULTY_UPDATE")
 eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
 eventReceiver:SetScript("OnEvent", dcEvents)

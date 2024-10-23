@@ -788,10 +788,18 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 end)
 
 miog.getCurrentCategoryID = function()
-	local currentPanel = LFGListFrame.activePanel:GetDebugName()
-	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
-	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or
-	LFGListFrame.CategorySelection.selectedCategory
+	local currentPanel = miog.DropChecker and miog.DropChecker:IsShown() and "DropChecker" or LFGListFrame.activePanel:GetDebugName()
+	local categoryID
+
+	if(currentPanel ~= "DropChecker") then
+		categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
+		or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or
+		LFGListFrame.CategorySelection.selectedCategory
+	else
+		categoryID = 0
+
+	end
+
 
 	return categoryID, currentPanel
 end

@@ -565,7 +565,6 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 		playerSpecs[singleUnitInfo.nameFull] = specId ~= 0 and specId
 
 		if(groupData[singleUnitInfo.nameFull]) then
-			print("LIB", singleUnitInfo.nameFull, specId)
 			--playerSpecs[singleUnitInfo.nameFull] = GetInspectSpecialization(groupData[singleUnitInfo.nameFull].unitID)
 
 			updateGroupData()

@@ -4,8 +4,6 @@ local wticc = WrapTextInColorCode
 local panels
 
 local function setActivePanel(_, panel)
-	miog.setupFilterPanel()
-
 	for k, v in pairs(panels) do
 		if(v) then
 			v:Hide()
@@ -17,7 +15,7 @@ local function setActivePanel(_, panel)
 	if(miog.F.LITE_MODE and panel ~= LFGListFrame.CategorySelection) then
 		panel:Hide()
 
-	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
+	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel or panel == "DropChecker") then
 		miog.Plugin.ButtonPanel:Hide()
 
 		if(MIOG_NewSettings.activeSidePanel == "filter") then
@@ -31,8 +29,6 @@ local function setActivePanel(_, panel)
 			miog.Plugin.ButtonPanel:Show()
 		
 		end
-
-		--miog.setupFiltersForActivePanel()
 
 	end
 
@@ -71,7 +67,6 @@ local function setActivePanel(_, panel)
 
 	elseif(panel == "DropChecker") then
 		miog.DropChecker:Show()
-		miog.NewFilterPanel.Lock:Show()
 
 	elseif(panel == "LockoutCheck") then
 		miog.LockoutCheck:Show()
@@ -82,6 +77,8 @@ local function setActivePanel(_, panel)
 		miog.NewFilterPanel.Lock:Show()
 
 	end
+	
+	miog.setupFilterPanel()
 end
 
 miog.setActivePanel = setActivePanel
