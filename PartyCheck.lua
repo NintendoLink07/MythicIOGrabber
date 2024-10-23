@@ -290,15 +290,17 @@ local function updateGroupData()
 							currentInspectionName = color and WrapTextInColorCode(groupData[playerInInspection].shortName, color:GenerateHexColor()) or groupData[playerInInspection].shortName
 
 							C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE, function()
-								NotifyInspect(groupData[playerInInspection].unitID)
+								if(playerInInspection) then
+									NotifyInspect(groupData[playerInInspection].unitID)
 
-								pityTimer = C_Timer.NewTimer(10, function()
-									if(GetTimePreciseSec() - lastNotifyTime > 10) then
-										ClearInspectPlayer(true)
-										updateGroupData()
-								
-									end
-								end)
+									pityTimer = C_Timer.NewTimer(10, function()
+										if(GetTimePreciseSec() - lastNotifyTime > 10) then
+											ClearInspectPlayer(true)
+											updateGroupData()
+									
+										end
+									end)
+								end
 							end)
 						end
 					end

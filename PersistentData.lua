@@ -795,6 +795,8 @@ miog.MAP_INFO = {
 	[2710] = {shortName = "ATM", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "awakeningthemachine",},
 	[2767] = {shortName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole",},
 	[2768] = {shortName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
+	
+	[2774] = {shortName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/khazalgar.png", fileName = "khazalgar",},
 
 	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
 }
@@ -1241,7 +1243,6 @@ local function loadRawData()
 				exactName = v[2],
 			}
 		end
-
 		miog.MAP_INFO[v[1]].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
 	end
 

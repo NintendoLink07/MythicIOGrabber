@@ -1408,7 +1408,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 							activityRow.layoutIndex = 1000 + row
 							activityRow:Show()
 						
-							if(categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value) then
+							if(categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value ~= nil) then
 								frame.Button:SetChecked(categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value)
 								categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value = categorySettings.activities[sortedSeasonDungeons[i].groupFinderActivityGroupID].value ~= false
 
@@ -1486,7 +1486,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 							activityRow.layoutIndex = 1000 + row
 							activityRow:Show()
 						
-							if(categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value) then
+							if(categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value ~= nil) then
 								frame.Button:SetChecked(categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value)
 								categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value = categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].value ~= false
 

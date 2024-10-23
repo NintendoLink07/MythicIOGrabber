@@ -334,116 +334,118 @@ local function updateRaidFinder(blizzDesc)
 	info.index = nil
 	info.parentIndex = indices["RAIDFINDER"]
 
-	local nextLevel = nil;
 	local playerLevel = UnitLevel("player")
 
 	local lastRaidName
 
 	local hasAnEntry = false
 
+	local orderedList = {}
+
 	for rfIndex = 1, GetNumRFDungeons() do
 		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansion, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(rfIndex)
+
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
 
 		if( not hideIfNotJoinable or isAvailableForAll ) then
 			if ( isAvailableForAll or isAvailableForPlayer or IsRaidFinderDungeonDisplayable(id) ) then
 				if (playerLevel >= minLevel and playerLevel <= maxLevel) then
 					hasAnEntry = true
-
-					local encounters;
-					local numEncounters = GetLFGDungeonNumEncounters(id);
-					for j = 1, numEncounters do
-						local bossName, _, isKilled = GetLFGDungeonEncounterInfo(id, j);
-						local colorCode = "";
-						if ( isKilled ) then
-							colorCode = RED_FONT_COLOR_CODE;
-						end
-						if encounters then
-							encounters = encounters.."|n"..colorCode..bossName..FONT_COLOR_CODE_CLOSE;
-						else
-							encounters = colorCode..bossName..FONT_COLOR_CODE_CLOSE;
-						end
-					end
-					
-					local modifiedInstanceTooltipText = "";
-					local icon = nil
-
-					if(mapID) then
-						local modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(mapID)
-
-						if (modifiedInstanceInfo) then
-							icon = GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit);
-							modifiedInstanceTooltipText = "|n|n" .. modifiedInstanceInfo.description;
-
-						else
-						
-						end
-
-						--info.iconXOffset = -6;
-					end
-
-
-					if(lastRaidName ~= raidName) then
-						local textLine = queueDropDown:CreateTextLine(nil, info.parentIndex, miog.MAP_INFO[mapID].shortName, icon)
-
-						if(icon) then
-							textLine:SetTextColor(0.1,0.83,0.77,1)
-
-						end
-
-					end
-
-					local mode = GetLFGMode(3, id)
-					info.text = isHolidayDungeon and "(Event) " .. name or name
-					info.checked = mode == "queued"
-					--info.index = rfIndex
-					info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
-					info.func = function()
-						ClearAllLFGDungeons(3);
-						SetLFGDungeon(3, id);
-						JoinSingleLFG(3, id);
-
-						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = id}
-					end
-					
-					local tempFrame = queueDropDown:CreateEntryFrame(info)
-
-					tempFrame:SetScript("OnShow", function(self)
-						local tempMode = GetLFGMode(3, id)
-						self.Radio:SetChecked(tempMode == "queued")
-						
-					end)
-
-					tempFrame:HookScript("OnEnter", function(self)
-						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-						GameTooltip:SetText(RAID_BOSSES)
-						GameTooltip:AddLine(encounters .. modifiedInstanceTooltipText, 1, 1, 1, true)
-						GameTooltip:Show()
-					end)
-
-					tempFrame:HookScript("OnLeave", function()
-						GameTooltip:Hide()
-					end)
-
-					if(icon) then
-						tempFrame.Name:SetTextColor(0.1,0.83,0.77,1)
-						
-					end
-					
-
-					blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
-					blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, index = rfIndex, icon = info.icon}
-
-					nextLevel = nil
-
-					lastRaidName = raidName
-
-				elseif ( playerLevel < minLevel and (not nextLevel or minLevel < nextLevel ) ) then
-					nextLevel = minLevel
-
+					table.insert(orderedList, {id = id, rfIndex = rfIndex})
 				end
 			end
 		end
+	end
+
+	table.sort(orderedList, function(k1, k2)
+		return k1.id < k2.id
+	end)
+
+	for k, v in ipairs(orderedList) do
+	--for rfIndex = 1, GetNumRFDungeons() do
+		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansion, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(v.rfIndex)
+
+
+		local encounters;
+		local numEncounters = GetLFGDungeonNumEncounters(id);
+		for j = 1, numEncounters do
+			local bossName, _, isKilled = GetLFGDungeonEncounterInfo(id, j);
+			local colorCode = "";
+			if ( isKilled ) then
+				colorCode = RED_FONT_COLOR_CODE;
+			end
+			if encounters then
+				encounters = encounters.."|n"..colorCode..bossName..FONT_COLOR_CODE_CLOSE;
+			else
+				encounters = colorCode..bossName..FONT_COLOR_CODE_CLOSE;
+			end
+		end
+		
+		local modifiedInstanceTooltipText = "";
+		local icon = nil
+
+		if(mapID) then
+			local modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(mapID)
+
+			if (modifiedInstanceInfo) then
+				icon = GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit);
+				modifiedInstanceTooltipText = "|n|n" .. modifiedInstanceInfo.description;
+
+			else
+			
+			end
+		end
+
+		if(lastRaidName ~= raidName) then
+			local textLine = queueDropDown:CreateTextLine(nil, info.parentIndex, miog.MAP_INFO[mapID].shortName, icon)
+
+			if(icon) then
+				textLine:SetTextColor(0.1,0.83,0.77,1)
+
+			end
+		end
+
+		local mode = GetLFGMode(3, id)
+		info.text = isHolidayDungeon and "(Event) " .. name or name
+		info.checked = mode == "queued"
+		--info.index = rfIndex
+		info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
+		info.func = function()
+			ClearAllLFGDungeons(3);
+			SetLFGDungeon(3, id);
+			JoinSingleLFG(3, id);
+
+			MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = id}
+		end
+		
+		local tempFrame = queueDropDown:CreateEntryFrame(info)
+
+		tempFrame:SetScript("OnShow", function(self)
+			local tempMode = GetLFGMode(3, id)
+			self.Radio:SetChecked(tempMode == "queued")
+			
+		end)
+
+		tempFrame:HookScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText(RAID_BOSSES)
+			GameTooltip:AddLine(encounters .. modifiedInstanceTooltipText, 1, 1, 1, true)
+			GameTooltip:Show()
+		end)
+
+		tempFrame:HookScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+
+		if(icon) then
+			tempFrame.Name:SetTextColor(0.1,0.83,0.77,1)
+			
+		end
+		
+		blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
+		blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, index = rfIndex, icon = info.icon}
+
+		lastRaidName = raidName
 	end
 
 	if(hasAnEntry == false) then

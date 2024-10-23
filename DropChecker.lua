@@ -182,6 +182,14 @@ local function loadLoot()
     miog.DropChecker.ScrollBox:SetDataProvider(dataProvider)
 end
 
+local function getMaxDifficultyForMapID(mapID)
+    local instanceType = miog.MAP_INFO[mapID].instanceType
+
+    if(instanceType == 2) then
+        
+    end
+end
+
 local function requestAllLootForMapID(mapID)
     local mapInfo = miog.MAP_INFO[mapID]
     local settings = MIOG_NewSettings.newFilterOptions["DropChecker"] and MIOG_NewSettings.newFilterOptions["DropChecker"][0]
@@ -191,9 +199,9 @@ local function requestAllLootForMapID(mapID)
 
     end
 
-    local journalInstanceID = mapInfo.journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID) or nil
+    local journalInstanceID = mapInfo.journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID) or EJ_GetInstanceForMap(mapID) or nil
 
-    if(journalInstanceID) then
+    if(journalInstanceID and journalInstanceID > 0) then
         EJ_SetDifficulty(mapInfo.isRaid and 16 or 23)
         EJ_SelectInstance(journalInstanceID)
 
@@ -214,15 +222,51 @@ local function checkAllItemIDs()
     currentItemIDs = {}
     instanceQueue = {}
 
-    
-    local seasonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
+    local dungeonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
     local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
     local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.Recommended);
     local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
-    -- do loop for all activities
+    local listWithMapIDs = {}
+    local seasonalDungeonsDone = {}
+    
+    if(dungeonGroup and #dungeonGroup > 0) then
+        for _, v in ipairs(dungeonGroup) do
+            local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
+            listWithMapIDs[#listWithMapIDs + 1] = activityInfo.mapID
+            seasonalDungeonsDone[v] = true
+        end
+    end
 
-    for x, y in pairs(miog.SEASONAL_MAP_IDS) do
+    if(expansionGroups and #expansionGroups > 0) then
+        for _, v in ipairs(expansionGroups) do
+            if(not seasonalDungeonsDone[v]) then
+                local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
+                listWithMapIDs[#listWithMapIDs + 1] = activityInfo.mapID
+                
+            end
+        end
+    end
+
+    if(seasonGroups and #seasonGroups > 0) then
+        for _, v in ipairs(seasonGroups) do
+            local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
+            listWithMapIDs[#listWithMapIDs + 1] = activityInfo.mapID
+
+        end
+    end
+
+    if(worldBossActivity and #worldBossActivity > 0) then
+        for _, v in ipairs(worldBossActivity) do
+            --local activityInfo = C_LFGList.GetActivityInfoTable(worldBossActivity[1])
+            --listWithMapIDs[#listWithMapIDs + 1] = 2774
+            local activityInfo = miog.ACTIVITY_INFO[v]
+
+            listWithMapIDs[#listWithMapIDs + 1] = activityInfo.mapID
+        end
+    end
+
+    --[[for x, y in pairs(miog.SEASONAL_MAP_IDS) do
         if((forceSeasonID or C_MythicPlus:GetCurrentSeason()) == x) then
             for _, mapID in ipairs((miog.DROPCHECKER_MAP_IDS[x] or y).dungeons) do
                 requestAllLootForMapID(mapID)
@@ -232,6 +276,11 @@ local function checkAllItemIDs()
                 requestAllLootForMapID(mapID)
             end
         end
+    end]]
+
+    for k, mapID in ipairs(listWithMapIDs) do
+        requestAllLootForMapID(mapID)
+
     end
     
     table.sort(instanceQueue, function(k1, k2)

@@ -1,9 +1,15 @@
-## [2.9.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.2) - 2024-10-23
+## [2.9.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.3) - 2024-10-23
+
+### Added
+
+- [DropChecker] Added filters for the loot so you can check for world boss, BRD anniversary and non-seasonal dungeon loot.
 
 ### Fixed
 
-- Added the new Blackrock Depths raid to the data.
+- [PartyCheck] Being in a party where many members join and leave shouldn't create errors anymore.
 
-- [FilterPanel] There shouldn't be any more errors when Blizzard doesn't send all the class/spec data for the group listing.
+- [Active Queues] "The Codex of Chromie" will not cause an error anymore (and for that matter no other coming events that are not yet implemented will).
 
-- [SearchPanel] There shouldn't be any more errors when Blizzard doesn't send all the class/spec data for the group listing.
+- [Queue Dropdown] Raid finder wings from different raids will now be listed under the same raid.
+
+- [DropChecker] Current seasonal dungeons will not request the loot twice.

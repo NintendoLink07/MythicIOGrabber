@@ -2172,7 +2172,7 @@ miog.RAW["GroupFinderActivity"] = { -- https://wago.tools/db2/GroupFinderActivit
     {1286,"Cinderbrew Meadery (Mythic Keystone)","Mythic+",2,3,327,99,330,120235,2661,8,0,5,1,0,0},
     {1287,"The Stonevault (Mythic Keystone)","Mythic+",2,4,328,99,330,120236,2652,8,0,5,1,0,0},
     {1288,"City of Threads (Mythic Keystone)","Mythic+",2,4,329,99,0,120237,2669,8,0,5,1,0,0},
-    {1289,"World Bosses (War Within)","World Bosses",3,0,0,803,0,128613,2601,0,0,40,0,0,0},
+    {1289,"World Bosses (War Within)","World Bosses",3,0,0,803,0,128613,2774,0,0,40,0,0,0},
     {1290,"Grim Batol (Mythic Keystone)","Mythic+",2,4,56,99,0,120783,670,8,0,5,1,0,0},
     {1291,"The Dawnbreaker (Mythic)","Mythic",2,3,326,99,330,124935,2662,23,0,5,1,0,0},
     {1292,"The Stonevault (Mythic)","Mythic",2,3,328,99,330,124932,2652,23,0,5,1,0,0},
