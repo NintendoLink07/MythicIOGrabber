@@ -108,6 +108,7 @@ miog.createStatisticsInterfacePanelPage = function(parent)
 
         self.ScrollBox:SetDataProvider(provider);
     end)
+    
     miog.StatisticsPage = statisticsPage
 
     local view = CreateScrollBoxListLinearView();

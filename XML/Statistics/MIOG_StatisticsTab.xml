@@ -1,0 +1,71 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_StatisticsTab" virtual="true">
+        <Frames>
+            <Frame parentKey="MPlusStatistics" inherits="MIOG_StatisticsLayoutTemplate" setAllPoints="true">
+            </Frame>
+
+            <Frame parentKey="RaidStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
+            </Frame>
+
+            <Frame parentKey="PVPStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
+            </Frame>
+
+            <Frame parentKey="TabPanel" inherits="HorizontalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="spacing" value="5" type="number"/>
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-20" />
+                </Anchors>
+
+                <Frames>
+                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Mythic Plus">
+                        <Size y="25" />
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number"/>
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().RaidStatistics:Hide()
+                                self:GetParent():GetParent().PVPStatistics:Hide()
+                                self:GetParent():GetParent().MPlusStatistics:Show()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Raid">
+                        <Size y="25" />
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number"/>
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().MPlusStatistics:Hide()
+                                self:GetParent():GetParent().PVPStatistics:Hide()
+                                self:GetParent():GetParent().RaidStatistics:Show()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Player versus Player">
+                        <Size y="25" />
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number"/>
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().RaidStatistics:Hide()
+                                self:GetParent():GetParent().MPlusStatistics:Hide()
+                                self:GetParent():GetParent().PVPStatistics:Show()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

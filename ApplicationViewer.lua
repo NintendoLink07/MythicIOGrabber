@@ -950,8 +950,7 @@ end
 
 miog.createApplicationViewer = function()
 	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin.InsertFrame, "MIOG_ApplicationViewer") ---@class Frame
-	miog.ApplicationViewer = applicationViewer
-	miog.ApplicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", miog.ApplicationViewer.FramePanel, "TOPRIGHT", -1, 0)
+	applicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", applicationViewer.FramePanel, "TOPRIGHT", -1, 0)
 
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -976,10 +975,10 @@ miog.createApplicationViewer = function()
 	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset((miog.F.LITE_MODE and -20 or 0) + 156, 0)]]
 	applicationViewer.Browse:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 
-	miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
+	applicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 
-		local editbox = miog.ApplicationViewer.CreationSettings.EditBox
+		local editbox = applicationViewer.CreationSettings.EditBox
 		editbox:Hide()
 
 		if(editbox.hiddenElement) then
@@ -995,11 +994,11 @@ miog.createApplicationViewer = function()
 		miog.insertLFGInfo()
 	end)
 
-	miog.ApplicationViewer.CreationSettings.EditBox:SetScript("OnEnterPressed", miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:GetScript("OnClick"))
+	applicationViewer.CreationSettings.EditBox:SetScript("OnEnterPressed", applicationViewer.CreationSettings.EditBox.UpdateButton:GetScript("OnClick"))
 
-	miog.ApplicationViewer.InfoPanel.Description.Container:SetSize(miog.ApplicationViewer.InfoPanel.Description:GetSize())
+	applicationViewer.InfoPanel.Description.Container:SetSize(applicationViewer.InfoPanel.Description:GetSize())
 
-	miog.ApplicationViewer.InfoPanel.Description:SetScript("OnMouseDown", function(self)
+	applicationViewer.InfoPanel.Description:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
 			--miog.EntryCreation.Description:SetParent(miog.ApplicationViewer.InfoPanel)
 			--miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetPoint("LEFT", miog.EntryCreation.Description, "RIGHT")
@@ -1008,7 +1007,7 @@ miog.createApplicationViewer = function()
 		self.lastClick = GetTime()
 	end)
 	
-	miog.ApplicationViewer.CreationSettings.ItemLevel:SetScript("OnMouseDown", function(self)
+	applicationViewer.CreationSettings.ItemLevel:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			showEditBox("ItemLevel", self.FontString, true, 3)
@@ -1017,7 +1016,7 @@ miog.createApplicationViewer = function()
 		self.lastClick = GetTime()
 	end)
 
-	miog.ApplicationViewer.CreationSettings.Rating:SetScript("OnMouseDown", function(self)
+	applicationViewer.CreationSettings.Rating:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			showEditBox("Rating", self.FontString, true, 4)
@@ -1026,7 +1025,7 @@ miog.createApplicationViewer = function()
 		self.lastClick = GetTime()
 	end)
 
-	miog.ApplicationViewer.CreationSettings.PrivateGroupButton:SetScript("OnClick", function()
+	applicationViewer.CreationSettings.PrivateGroupButton:SetScript("OnClick", function()
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 
 		miog.EntryCreation.PrivateGroup:SetChecked(not miog.EntryCreation.PrivateGroup:GetChecked())
@@ -1035,33 +1034,34 @@ miog.createApplicationViewer = function()
 		miog.insertLFGInfo()
 	end)
 
-	miog.ApplicationViewer.CreationSettings.AutoAcceptButton:SetScript("OnClick", function(self)
+	applicationViewer.CreationSettings.AutoAcceptButton:SetScript("OnClick", function(self)
 		LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 		
 		miog.listGroup(self:GetChecked())
 		miog.insertLFGInfo()
 	end)
 
-	miog.ApplicationViewer:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-	miog.ApplicationViewer:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
-	miog.ApplicationViewer:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
-	miog.ApplicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
-	miog.ApplicationViewer:SetScript("OnEvent", applicationViewerEvents)
-	miog.ApplicationViewer:SetScript("OnShow", function()
+	applicationViewer:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
+	applicationViewer:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
+	applicationViewer:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+	applicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
+	applicationViewer:SetScript("OnEvent", applicationViewerEvents)
+	applicationViewer:SetScript("OnShow", function()
 		miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
 		
 	end)
 
-	miog.ApplicationViewer:OnLoad(checkApplicantList)
-	miog.ApplicationViewer:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"])
-	miog.ApplicationViewer:AddMultipleSortingParameters({
+	applicationViewer:OnLoad(checkApplicantList)
+	applicationViewer:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"])
+	applicationViewer:AddMultipleSortingParameters({
 		{name = "role", padding = 156},
 		{name = "primary", padding = 13},
 		{name = "secondary", padding = 21},
 		{name = "ilvl", padding = 21},
 	})
 
-	miog.ApplicationViewer.FramePanel.Container:SetFixedWidth(miog.ApplicationViewer.FramePanel:GetWidth())
-	applicantFramePool = CreateFramePool("Frame", miog.ApplicationViewer.FramePanel.Container, "MIOG_ApplicantFrameTemplate", resetBaseFrame)
+	applicationViewer.FramePanel.Container:SetFixedWidth(applicationViewer.FramePanel:GetWidth())
+	applicantFramePool = CreateFramePool("Frame", applicationViewer.FramePanel.Container, "MIOG_ApplicantFrameTemplate", resetBaseFrame)
 
+	return applicationViewer
 end

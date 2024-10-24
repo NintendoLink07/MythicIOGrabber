@@ -297,9 +297,9 @@ end
 miog.checkAllDropCheckerItemIDs = checkAllItemIDs
 
 miog.loadDropChecker = function()
-    miog.DropChecker = CreateFrame("Frame", "MythicIOGrabber_DropChecker", miog.Plugin.InsertFrame, "MIOG_DropChecker")
-    miog.DropChecker:SetScript("OnShow", function()
-        if(miog.DropChecker.ScrollBox:GetDataProvider():GetSize() <= 1) then
+    local dropChecker = CreateFrame("Frame", "MythicIOGrabber_DropChecker", miog.Plugin.InsertFrame, "MIOG_DropChecker")
+    dropChecker:SetScript("OnShow", function()
+        if(dropChecker.ScrollBox:GetDataProvider():GetSize() <= 1) then
             EJ_ResetLootFilter()
             C_EncounterJournal.ResetSlotFilter()
             checkAllItemIDs()
@@ -307,8 +307,8 @@ miog.loadDropChecker = function()
     end)
 
 
-    miog.DropChecker.SlotDropdown:SetDefaultText("Equipment slots")
-    miog.DropChecker.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
+    dropChecker.SlotDropdown:SetDefaultText("Equipment slots")
+    dropChecker.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
         rootDescription:CreateButton("Clear", function(index)
             selectedItemClass = nil
             selectedItemSubClass = nil
@@ -364,8 +364,8 @@ miog.loadDropChecker = function()
         end, {class = 15, subclass = 0})
     end)
 
-    miog.DropChecker.ArmorDropdown:SetDefaultText("Armor types")
-    miog.DropChecker.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
+    dropChecker.ArmorDropdown:SetDefaultText("Armor types")
+    dropChecker.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
         rootDescription:CreateButton("Clear", function(index)
             selectedArmor = nil
             selectedClass = nil
@@ -513,11 +513,11 @@ miog.loadDropChecker = function()
     
     view:SetPadding(1, 1, 1, 1, 4);
     
-    ScrollUtil.InitScrollBoxListWithScrollBar(miog.DropChecker.ScrollBox, miog.DropChecker.ScrollBar, view);
+    ScrollUtil.InitScrollBoxListWithScrollBar(dropChecker.ScrollBox, dropChecker.ScrollBar, view);
 
-    miog.DropChecker.ScrollBox:SetDataProvider(CreateDataProvider())
+    dropChecker.ScrollBox:SetDataProvider(CreateDataProvider())
 
-    miog.DropChecker.SearchBox:SetScript("OnTextChanged", function(self)
+    dropChecker.SearchBox:SetScript("OnTextChanged", function(self)
         SearchBoxTemplate_OnTextChanged(self)
 
         if(key == "ESCAPE" or key == "ENTER") then
@@ -529,6 +529,8 @@ miog.loadDropChecker = function()
 
         end
     end)
+
+    return dropChecker
 end
 
 local function dcEvents(_, event, ...)

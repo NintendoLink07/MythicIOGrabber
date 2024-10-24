@@ -1187,7 +1187,7 @@ local function searchPanelEvents(_, event, ...)
 				miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
 
 				C_Timer.NewTicker(0.25, function(self)
-					local timeUntil = timestamp + 3 - GetTime()
+					local timeUntil = timestamp + 2.5 - GetTime()
 					miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
 
 					if(timeUntil <= 0) then
@@ -1211,7 +1211,6 @@ local function searchPanelEvents(_, event, ...)
 
 		if(new == "cancelled") then
 			local eligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)
-			--local reason = miog.INELIGIBILITY_REASONS[reasonID]
 
 			miog.increaseStatistic(reasonID)
 		end
@@ -1236,7 +1235,6 @@ end
 
 miog.createSearchPanel = function()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel") ---@class Frame
-	miog.SearchPanel = searchPanel
 
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
@@ -1256,14 +1254,14 @@ miog.createSearchPanel = function()
 	LFGListFrame.SearchPanel.FilterButton:Hide()
 
 	if(not miog.F.LITE_MODE) then
-		LFGListFrame.SearchPanel.SearchBox:SetSize(miog.SearchPanel.SearchBoxBase:GetSize())
+		LFGListFrame.SearchPanel.SearchBox:SetSize(searchPanel.SearchBoxBase:GetSize())
 
 	else
-		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 100)
+		LFGListFrame.SearchPanel.SearchBox:SetWidth(searchPanel.standardSearchBoxWidth - 100)
 
 	end
 
-	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
+	LFGListFrame.SearchPanel.SearchBox:SetPoint(searchPanel.SearchBoxBase:GetPoint())
 	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("HIGH")
 
 	searchPanel.SearchBox = searchBox
@@ -1344,29 +1342,29 @@ miog.createSearchPanel = function()
 
 	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(176, 0)]]
 
-	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
-	miog.SearchPanel:RegisterEvent("LFG_LIST_SEARCH_FAILED")
-	miog.SearchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
-	miog.SearchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
-	miog.SearchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-	miog.SearchPanel:SetScript("OnEvent", searchPanelEvents)
-	miog.SearchPanel:SetScript("OnShow", function()
+	searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
+	searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+	searchPanel:RegisterEvent("LFG_LIST_SEARCH_FAILED")
+	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
+	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
+	searchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+	searchPanel:SetScript("OnEvent", searchPanelEvents)
+	searchPanel:SetScript("OnShow", function()
 	end)
 
-	framePool = CreateFramePool("Frame", miog.SearchPanel.NewScrollFrame, "MIOG_SearchResultFrameTemplate", resetFrame)
+	framePool = CreateFramePool("Frame", searchPanel.NewScrollFrame, "MIOG_SearchResultFrameTemplate", resetFrame)
 
-	miog.SearchPanel.NewScrollFrame.Container:SetFixedWidth(miog.SearchPanel.NewScrollFrame:GetWidth())
-	miog.SearchPanel.NewScrollFrame.ScrollBar:AdjustPointsOffset(-8, 0)
+	searchPanel.NewScrollFrame.Container:SetFixedWidth(searchPanel.NewScrollFrame:GetWidth())
+	searchPanel.NewScrollFrame.ScrollBar:AdjustPointsOffset(-8, 0)
 	
 
 	local function performantSort()
 		--table.sort(currentDataList, sortSearchResultList)
-		miog.SearchPanel:Sort()
+		searchPanel:Sort()
 
 		local orderedResultIDList = {}
 
-		for k, v in ipairs(miog.SearchPanel:GetSortingData()) do
+		for k, v in ipairs(searchPanel:GetSortingData()) do
 			orderedResultIDList[v.resultID] = k
 		end
 
@@ -1378,13 +1376,15 @@ miog.createSearchPanel = function()
 		miog.SearchPanel.NewScrollFrame.Container:MarkDirty()
 	end
 
-	miog.SearchPanel:OnLoad(performantSort)
-	miog.SearchPanel:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.SearchPanel"])
-	miog.SearchPanel:AddMultipleSortingParameters({
+	searchPanel:OnLoad(performantSort)
+	searchPanel:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.SearchPanel"])
+	searchPanel:AddMultipleSortingParameters({
 		{name = "primary", padding = 175},
 		{name = "secondary", padding = 18},
 		{name = "age", padding = 35},
 	})
+
+	return searchPanel
 
 	--[[local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
 

@@ -99,6 +99,7 @@ miog.FILTER_DESCRIPTIONS = {
 }
 
 miog.INELIGIBILITY_REASONS = {
+	["allGood"] = {"All filters checked and group is okay.", "All good", },
 	["noResult"] = {"No search result info.", "No result", },
 	["incorrectCategory"] = {"Incorrect categoryID.", "Incorrect category", },
 	["hardDeclined"] = {"You have been hard declined from this group.", "Hard declined", },

@@ -6,6 +6,7 @@ local wticc = WrapTextInColorCode
 local allFilters = {}
 local _, id = UnitClassBase("player")
 local selectedDifficultyIndex = nil
+local filterPanel
 
 --[[
 	needsMyClass
@@ -129,7 +130,7 @@ local function convertAndRefresh()
 end
 
 local function setupTextSetting(key, text, filterID)
-	local setting = miog.NewFilterPanel[key]
+	local setting = filterPanel[key]
 
 	setting.Text:SetText(text)
 	setting:SetWidth(setting.Text:GetUnboundedStringWidth() + 20)
@@ -145,7 +146,7 @@ local function setupTextSetting(key, text, filterID)
 end
 
 local function createTextSetting(text, parent, filterID)
-	local filterOption = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelTextSettingTemplate")
+	local filterOption = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelTextSettingTemplate")
 	filterOption.Text:SetText(text)
 	filterOption:SetWidth(filterOption.Text:GetUnboundedStringWidth() + 20)
 	filterOption.layoutIndex = #filterOption:GetParent():GetLayoutChildren() + 1
@@ -177,7 +178,7 @@ local function setupIconSetting(key, parent, texture, filterID)
 end
 
 local function createIconSetting(texture, parent, filterID)
-	local filterOption = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelIconSettingTemplate")
+	local filterOption = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelIconSettingTemplate")
 	filterOption.Icon:SetTexture(texture)
 	filterOption:SetWidth(36)
 	filterOption.layoutIndex = #filterOption:GetParent():GetLayoutChildren() + 1
@@ -204,6 +205,7 @@ local function setDualInputBoxesScripts(filterOption, setting)
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			
 			local text = tonumber(self:GetText())
+
 			setting[currentName] = text ~= nil and text or 0
 
 			convertAndRefresh()
@@ -289,7 +291,7 @@ local function setDualSpinnerScripts(filterOption, setting)
 end
 
 local function setupDualSpinner(key, text, filterID)
-	local spinnerContainer = miog.NewFilterPanel[key]
+	local spinnerContainer = filterPanel[key]
 
 	spinnerContainer.Setting.Text:SetText(text)
 	spinnerContainer.Setting:SetWidth(spinnerContainer.Setting.Text:GetUnboundedStringWidth() + 20)
@@ -313,7 +315,7 @@ local function setupDualSpinner(key, text, filterID)
 end
 
 local function createDualSpinner(parent)
-	local filterOption = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelDualSpinnerTemplate")
+	local filterOption = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelDualSpinnerTemplate")
 	filterOption:SetWidth(154)
 
 	filterOption.Minimum:SetWidth(22)
@@ -328,7 +330,7 @@ local function createDualSpinner(parent)
 end
 
 local function createSpinnerSetting(text, parent, filterID)
-	local containerFrame = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
+	local containerFrame = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
 	containerFrame.layoutIndex = #containerFrame:GetParent():GetLayoutChildren() + 1
 
 	local checkBox = createTextSetting(text, containerFrame)
@@ -343,7 +345,7 @@ local function createSpinnerSetting(text, parent, filterID)
 end
 
 local function createDualInputBox(parent)
-	local filterOption = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelDualInputBoxTemplate")
+	local filterOption = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelDualInputBoxTemplate")
 	filterOption.layoutIndex = #filterOption:GetParent():GetLayoutChildren() + 1
 
 	filterOption.Minimum:SetAutoFocus(false)
@@ -358,7 +360,7 @@ local function createDualInputBox(parent)
 end
 
 local function setupDualInputBoxes(key, text, filterID)
-	local containerFrame = miog.NewFilterPanel[key]
+	local containerFrame = filterPanel[key]
 	containerFrame.layoutIndex = #containerFrame:GetParent():GetLayoutChildren() + 1
 
 	containerFrame.Setting.Text:SetText(text)
@@ -380,7 +382,7 @@ local function setupDualInputBoxes(key, text, filterID)
 end
 
 local function createInputBoxSetting(text, parent, filterID)
-	local containerFrame = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
+	local containerFrame = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
 	containerFrame.layoutIndex = #containerFrame:GetParent():GetLayoutChildren() + 1
 
 	local checkBox = createTextSetting(text, containerFrame)
@@ -395,7 +397,7 @@ local function createInputBoxSetting(text, parent, filterID)
 end
 
 local function setupDropdownSetting(key, text, filterID)
-	local setting = miog.NewFilterPanel[key]
+	local setting = filterPanel[key]
 	setting.layoutIndex = #setting:GetParent():GetLayoutChildren() + 1
 
 	setting.Dropdown:SetDefaultText(text)
@@ -407,7 +409,7 @@ end
 
 
 local function createDropdownSetting(parent, filterID)
-	local filterOption = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelDropdownSettingTemplate")
+	local filterOption = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelDropdownSettingTemplate")
 	filterOption.layoutIndex = #filterOption:GetParent():GetLayoutChildren() + 1
 
 	filterOption.Dropdown:SetDefaultText("Difficulty")
@@ -421,8 +423,8 @@ local function createNewClassPanel(parent, filterID)
 	local containerFrame
 
 	for classIndex, classInfo in ipairs(miog.CLASSES) do
-		--containerFrame = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
-		containerFrame = miog.NewFilterPanel[classInfo.name]
+		--containerFrame = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
+		containerFrame = parent[classInfo.name]
 		containerFrame.layoutIndex = #containerFrame:GetParent():GetLayoutChildren() + 1
 		containerFrame.classID = classIndex
 
@@ -459,7 +461,7 @@ local function createNewClassPanel(parent, filterID)
 end
 
 local function createRolePanel(parent, filterID)
-	local containerFrame = CreateFrame("Frame", nil, parent or miog.NewFilterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
+	local containerFrame = CreateFrame("Frame", nil, parent, "MIOG_NewFilterPanelContainerRowTemplate")
 	containerFrame.layoutIndex = #containerFrame:GetParent():GetLayoutChildren() + 1
 
 	for i = 1, 3, 1 do
@@ -481,7 +483,7 @@ local function createRolePanel(parent, filterID)
 end
 
 local function setupSpacer(key, filterID)
-	local spacer = miog.NewFilterPanel[key]
+	local spacer = filterPanel[key]
 	spacer.layoutIndex = #spacer:GetParent():GetLayoutChildren() + 1
 	spacer:SetWidth(spacer:GetParent():GetWidth())
 
@@ -908,7 +910,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 		end
 	end
 	
-	return true, {"All filters checked and group is okay", "All good"}
+	return true, "allGood"
 end
 
 miog.checkEligibility = checkEligibility
@@ -1555,30 +1557,26 @@ end
 miog.setupFilterPanel = setupFilterPanel
 
 miog.loadNewFilterPanel = function()
-	miog.NewFilterPanel = CreateFrame("Frame", "MythicIOGrabber_NewFilterPanel", miog.Plugin, "MIOG_NewFilterPanel")
-	miog.NewFilterPanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
-	miog.NewFilterPanel:Hide()
-	miog.createFrameBorder(miog.NewFilterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	miog.NewFilterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
+	filterPanel = CreateFrame("Frame", "MythicIOGrabber_NewFilterPanel", miog.Plugin, "MIOG_NewFilterPanel")
+	filterPanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
+	filterPanel:Hide()
+	miog.createFrameBorder(filterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	filterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
 	
-	miog.NewFilterPanel.Uncheck:SetScript("OnClick", function()
+	filterPanel.Uncheck:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-		local categoryID, currentPanel = miog.getCurrentCategoryID()
-
-		MIOG_NewSettings.filterOptions[currentPanel][categoryID] = miog.defaultFilters
 
 		setupFilterPanel()
 		convertAndRefresh()
 	end)
 
-	miog.NewFilterPanel.Retract:SetScript("OnClick", function(self)
+	filterPanel.Retract:SetScript("OnClick", function(self)
 		miog.hideSidePanel(self)
 	end)
 
-	local classPanel = createNewClassPanel(nil, "classPanel")
+	local classPanel = createNewClassPanel(filterPanel, "classPanel")
 
-	local rolePanel = createRolePanel(nil, "roles")
+	local rolePanel = createRolePanel(filterPanel, "roles")
 	rolePanel.topPadding = 2
 	rolePanel.bottomPadding = 2
 
@@ -1597,7 +1595,9 @@ miog.loadNewFilterPanel = function()
 
 	setupFilterPanel()
 
-	miog.NewFilterPanel:MarkDirty()
+	filterPanel:MarkDirty()
 	
 	convertAndRefresh()
+
+	return filterPanel
 end

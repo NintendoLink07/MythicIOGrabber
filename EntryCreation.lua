@@ -8,7 +8,7 @@ local playstyles = {
 	Enum.LFGEntryPlaystyle.Hardcore
 }
 
-local function setUpRatingLevels()
+local function setUpRatingLevels(entryCreation)
 	local score = C_ChallengeMode.GetOverallDungeonScore()
 
 	local lowest = miog.round3(score, 50)
@@ -32,15 +32,15 @@ local function setUpRatingLevels()
 			info.text = v
 			info.value = v
 			info.checked = false
-			info.func = function() miog.EntryCreation.Rating:SetText(v) end
+			info.func = function() entryCreation.Rating:SetText(v) end
 
-			miog.EntryCreation.Rating.DropDown:CreateEntryFrame(info)
+			entryCreation.Rating.DropDown:CreateEntryFrame(info)
 		end
 		
 	end
 end
 
-local function setUpItemLevels()
+local function setUpItemLevels(entryCreation)
 	local avgItemLevel, avgItemLevelEquipped, avgItemLevelPvp = GetAverageItemLevel()
 	local itemLevelTable = {}
 
@@ -64,9 +64,9 @@ local function setUpItemLevels()
 			info.text = v
 			info.value = v
 			info.checked = false
-			info.func = function() miog.EntryCreation.ItemLevel:SetText(v) end
+			info.func = function() entryCreation.ItemLevel:SetText(v) end
 
-			miog.EntryCreation.ItemLevel.DropDown:CreateEntryFrame(info)
+			entryCreation.ItemLevel.DropDown:CreateEntryFrame(info)
 		end
 
 	end
@@ -807,43 +807,39 @@ function LFGListEntryCreation_UpdateAuthenticatedState(self)
 end
 
 miog.createEntryCreation = function()
-	local frame = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.Plugin.InsertFrame, "MIOG_EntryCreation") ---@class Frame
-	frame:GetParent().EntryCreation = frame
-	miog.EntryCreation = frame
+	local entryCreation = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.Plugin.InsertFrame, "MIOG_EntryCreation") ---@class Frame
+	entryCreation:GetParent().EntryCreation = entryCreation
 
-	--miog.createFrameBorder(miog.EntryCreation.Background, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	entryCreation.Border:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	entryCreation.selectedActivity = 0
 
-	miog.EntryCreation.Border:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	frame.selectedActivity = 0
-
-	local activityDropDown = frame.ActivityDropDown
+	local activityDropDown = entryCreation.ActivityDropDown
 	activityDropDown:OnLoad()
 
-	local difficultyDropDown = frame.DifficultyDropDown
+	local difficultyDropDown = entryCreation.DifficultyDropDown
 	difficultyDropDown:OnLoad()
 
-	local playstyleDropDown = frame.PlaystyleDropDown
+	local playstyleDropDown = entryCreation.PlaystyleDropDown
 	playstyleDropDown:OnLoad()
 
 	local nameField = LFGListFrame.EntryCreation.Name
 	nameField:ClearAllPoints()
 	nameField:SetAutoFocus(false)
-	nameField:SetParent(frame)
-	nameField:SetSize(frame:GetWidth() - 15, 25)
+	nameField:SetParent(entryCreation)
+	nameField:SetSize(entryCreation:GetWidth() - 15, 25)
 	--nameField:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -80)
-	nameField:SetPoint(frame.Name:GetPoint())
-	frame.Name = nameField
-	frame.NameString:SetPoint("BOTTOMLEFT", nameField, "TOPLEFT", -5, 0)
+	nameField:SetPoint(entryCreation.Name:GetPoint())
+	entryCreation.Name = nameField
+	entryCreation.NameString:SetPoint("BOTTOMLEFT", nameField, "TOPLEFT", -5, 0)
 
 	local descriptionField = LFGListFrame.EntryCreation.Description
 	descriptionField:ClearAllPoints()
-	descriptionField:SetParent(frame)
-	descriptionField:SetSize(frame:GetWidth() - 20, 50)
-	descriptionField:SetPoint("TOPLEFT", frame.Name, "BOTTOMLEFT", 0, -20)
-	frame.Description = descriptionField
+	descriptionField:SetParent(entryCreation)
+	descriptionField:SetSize(entryCreation:GetWidth() - 20, 50)
+	descriptionField:SetPoint("TOPLEFT", entryCreation.Name, "BOTTOMLEFT", 0, -20)
+	entryCreation.Description = descriptionField
 	
-	frame.Rating:SetPoint("TOPLEFT", frame.Description, "BOTTOMLEFT", 0, -20)
+	entryCreation.Rating:SetPoint("TOPLEFT", entryCreation.Description, "BOTTOMLEFT", 0, -20)
 	
 	local voiceChat = LFGListFrame.EntryCreation.VoiceChat
 	--voiceChat.CheckButton:SetNormalTexture("checkbox-minimal")
@@ -853,20 +849,20 @@ miog.createEntryCreation = function()
 	voiceChat.CheckButton:Hide()
 	voiceChat.Label:Hide()
 	voiceChat.EditBox:ClearAllPoints()
-	voiceChat.EditBox:SetPoint("LEFT", frame.VoiceChat, "LEFT")
+	voiceChat.EditBox:SetPoint("LEFT", entryCreation.VoiceChat, "LEFT")
 	--voiceChat:SetPoint("LEFT", frame.VoiceChat, "LEFT", -6, 0)
 	voiceChat:ClearAllPoints()
-	voiceChat:SetParent(frame)
+	voiceChat:SetParent(entryCreation)
 	
 	--miogDropdown.List:MarkDirty()
 	--miogDropdown:MarkDirty()
 
-	miog.EntryCreation.StartGroup:SetPoint("RIGHT", miog.Plugin.FooterBar, "RIGHT")
-	miog.EntryCreation.StartGroup:SetScript("OnClick", function()
+	entryCreation.StartGroup:SetPoint("RIGHT", miog.Plugin.FooterBar, "RIGHT")
+	entryCreation.StartGroup:SetScript("OnClick", function()
 		miog.listGroup()
 	end)
 
-	frame:HookScript("OnShow", function(self)
+	entryCreation:HookScript("OnShow", function(self)
 		if(C_LFGList.HasActiveEntryInfo()) then
 			LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
 			self.StartGroup:SetText("Update")
@@ -878,7 +874,7 @@ miog.createEntryCreation = function()
 		end
 	end)
 
-	frame:HookScript("OnHide", function(self)
+	entryCreation:HookScript("OnHide", function(self)
 		self.ActivityDropDown.List:Hide()
 		self.DifficultyDropDown.List:Hide()
 		self.PlaystyleDropDown.List:Hide()
@@ -886,18 +882,20 @@ miog.createEntryCreation = function()
 
 	local activityFinder = LFGListFrame.EntryCreation.ActivityFinder
 	activityFinder:ClearAllPoints()
-	activityFinder:SetParent(frame)
-	activityFinder:SetPoint("TOPLEFT", frame, "TOPLEFT")
-	activityFinder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
+	activityFinder:SetParent(entryCreation)
+	activityFinder:SetPoint("TOPLEFT", entryCreation, "TOPLEFT")
+	activityFinder:SetPoint("BOTTOMRIGHT", entryCreation, "BOTTOMRIGHT")
 	activityFinder:SetFrameStrata("DIALOG")
 
-	frame.ItemLevel.DropDown.Selected:Hide()
-	frame.ItemLevel.DropDown.Button:Show()
-	frame.ItemLevel.DropDown:OnLoad()
-	setUpItemLevels()
+	entryCreation.ItemLevel.DropDown.Selected:Hide()
+	entryCreation.ItemLevel.DropDown.Button:Show()
+	entryCreation.ItemLevel.DropDown:OnLoad()
+	setUpItemLevels(entryCreation)
 
-	frame.Rating.DropDown.Selected:Hide()
-	frame.Rating.DropDown.Button:Show()
-	frame.Rating.DropDown:OnLoad()
-	setUpRatingLevels()
+	entryCreation.Rating.DropDown.Selected:Hide()
+	entryCreation.Rating.DropDown.Button:Show()
+	entryCreation.Rating.DropDown:OnLoad()
+	setUpRatingLevels(entryCreation)
+
+	return entryCreation
 end

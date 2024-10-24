@@ -77,7 +77,8 @@ hooksecurefunc("RequestRaidInfo", function()
 end)
 
 miog.loadLockoutCheck = function()
-    miog.LockoutCheck = CreateFrame("Frame", "MythicIOGrabber_LockoutCheck", miog.Plugin.InsertFrame, "MIOG_LockoutCheck")
+    --local lockoutCheck = CreateFrame("Frame", "MythicIOGrabber_LockoutCheck", miog.Plugin.InsertFrame, "MIOG_LockoutCheck")
+    local lockoutCheck = miog.pveFrame2.TabFramesPanel.Lockouts
 
     fullPlayerName = miog.createFullNameFrom("unitID", "player")
 
@@ -180,13 +181,13 @@ miog.loadLockoutCheck = function()
 
     columnView:SetPadding(1, 1, 1, 1, 2);
 
-    miog.LockoutCheck.Columns:SetHorizontal(true)
+    lockoutCheck.Columns:SetHorizontal(true)
 
-    ScrollUtil.InitScrollBoxListWithScrollBar(miog.LockoutCheck.Columns, miog.LockoutCheck.ScrollBar, columnView);
+    ScrollUtil.InitScrollBoxListWithScrollBar(lockoutCheck.Columns, lockoutCheck.ScrollBar, columnView);
 
-    miog.LockoutCheck:SetScript("OnShow", function()
+    lockoutCheck:SetScript("OnShow", function()
         --framePool:ReleaseAll()
-        miog.LockoutCheck.Columns:Flush()
+        lockoutCheck.Columns:Flush()
 
         checkEntriesForExpiration()
 
@@ -196,6 +197,7 @@ miog.loadLockoutCheck = function()
             if(k1.isRaid == k2.isRaid) then
                 if(miog.MAP_INFO[k1.mapID].shortName == miog.MAP_INFO[k2.mapID].shortName) then
                     return miog.DIFFICULTY_ID_INFO[k1.difficulty].customDifficultyOrderIndex > miog.DIFFICULTY_ID_INFO[k2.difficulty].customDifficultyOrderIndex
+
                 end
 
                 return miog.MAP_INFO[k1.mapID].shortName < miog.MAP_INFO[k2.mapID].shortName
@@ -228,8 +230,10 @@ miog.loadLockoutCheck = function()
             
         end
 
-        miog.LockoutCheck.Columns:SetDataProvider(columnProvider);
+        lockoutCheck.Columns:SetDataProvider(columnProvider);
     end)
 
     RequestRaidInfo()
+
+    return lockoutCheck
 end

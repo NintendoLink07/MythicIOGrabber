@@ -672,26 +672,12 @@
                         </Frames>
                     </Frame>
 
-                    <Frame parentKey="PartyCheck" inherits="MIOG_PartyCheck" hidden="true" id="2" setAllPoints="true">
-                    </Frame>
-
-                    <Frame parentKey="MPlusStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
-                    </Frame>
-
-                    <Frame parentKey="RaidStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
-                    </Frame>
-
-                    <Frame parentKey="PVPStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
-                    </Frame>
-
-                    <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true">
-                    </Frame>
-
-                    <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true">
-                    </Frame>
-
-                    <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true">
-                    </Frame>
+                    <Frame parentKey="PartyCheck" inherits="MIOG_PartyCheck" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="Statistics" inherits="MIOG_StatisticsTab" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />
                 </Frames>
             </Frame>
 
@@ -719,45 +705,21 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab3" inherits="MIOG_TabButtonTemplate" id="3" text="M+">
+            <Button name="$parentTab3" inherits="MIOG_TabButtonTemplate" id="3" text="Statistics">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT"/>
                 </Anchors>
                 
                 <Scripts>
                     <OnLoad>
-                        self.frameName = "MPlusStatistics"
+                        self.frameName = "Statistics"
                     </OnLoad>
                 </Scripts>
             </Button>
-            
-            <Button name="$parentTab4" inherits="MIOG_TabButtonTemplate" id="4" text="Raid">
+
+            <Button name="$parentTab4" inherits="MIOG_TabButtonTemplate" id="4" text="Ports">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT" />
-                </Anchors>
-
-                <Scripts>
-                    <OnLoad>
-                        self.frameName = "RaidStatistics"
-                    </OnLoad>
-                </Scripts>
-            </Button>
-            
-            <Button name="$parentTab5" inherits="MIOG_TabButtonTemplate" id="5" text="PVP">
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" />
-                </Anchors>
-
-                <Scripts>
-                    <OnLoad>
-                        self.frameName = "PVPStatistics"
-                    </OnLoad>
-                </Scripts>
-            </Button>
-
-            <Button name="$parentTab6" inherits="MIOG_TabButtonTemplate" id="6" text="Ports">
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" />
                 </Anchors>
 
                 <Scripts>
@@ -767,9 +729,9 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Gearing">
+            <Button name="$parentTab5" inherits="MIOG_TabButtonTemplate" id="5" text="Gearing">
                 <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
+                    <Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
                     <OnLoad>
@@ -778,13 +740,24 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Raid Sheet">
+            <Button name="$parentTab6" inherits="MIOG_TabButtonTemplate" id="6" text="Raid Sheet">
                 <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
+                    <Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
                     <OnLoad>
                         self.frameName = "RaidSheet"
+                    </OnLoad>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Lockouts">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "Lockouts"
                     </OnLoad>
                 </Scripts>
             </Button>
@@ -806,7 +779,7 @@
             </OnDragStop>
 
             <OnLoad>
-                PanelTemplates_SetNumTabs(self, 8)
+                PanelTemplates_SetNumTabs(self, 7)
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());

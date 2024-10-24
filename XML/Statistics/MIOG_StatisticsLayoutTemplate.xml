@@ -54,7 +54,7 @@
 
             <Frame parentKey="Columns" inherits="WowScrollBoxList">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Info" relativePoint="TOPRIGHT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Info.KeystoneDropdown" relativePoint="BOTTOMRIGHT"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
             </Frame>

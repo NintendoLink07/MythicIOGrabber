@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.9.4] - 2024-10-24
+
+### Changed
+
+- The statistic panels (m+, raid and pvp) have been consolidated into a single tab to make room for more tabs.
+
+- The "Lockouts" tab has been re-added to the tabs at the bottom of the frame.
+
+- [SearchPanel] Lowered the "cooldown" of searching too often by 0.5 seconds.
+
+### Fixed
+
+- [FilterPanel] The transparent foreground frame that blocks the filter panel when you are in a non-filter panel frame is now shown again.
+
+- [FilterPanel] The reset button should now work again.
+
+- [InterfaceOptions] There shouldn't be any more errors about groups that haven't been filtered when opening the lfg statistics.
+
+
+
 ## [2.9.3] - 2024-10-23
 
 ### Added
@@ -21,6 +41,7 @@ and this project adheres to [Semantic Versioning].
 - [Queue Dropdown] Raid finder wings from different raids will now be listed under the same raid.
 
 - [DropChecker] Current seasonal dungeons will not request the loot twice.
+
 
 
 ## [2.9.2] - 2024-10-23
@@ -2637,7 +2658,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.4..HEAD
+[2.9.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.4
 [2.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.3
 [2.9.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.2
 [2.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.1

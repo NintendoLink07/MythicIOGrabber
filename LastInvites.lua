@@ -41,13 +41,13 @@ miog.addFavouredPlayer = function(currentApplicant)
 end
 
 miog.loadLastInvitesPanel = function()
-    miog.LastInvites = CreateFrame("Frame", "MythicIOGrabber_LastInvitesPanel", miog.Plugin, "MIOG_LastInvitesTemplate") ---@class Frame
-	miog.LastInvites:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
-	miog.LastInvites:Hide()
-	miog.LastInvites:SetSize(230, miog.MainFrame:GetHeight())
-	miog.createFrameBorder(miog.LastInvites, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+    local lastInvites = CreateFrame("Frame", "MythicIOGrabber_LastInvitesPanel", miog.Plugin, "MIOG_LastInvitesTemplate") ---@class Frame
+	lastInvites:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
+	lastInvites:Hide()
+	lastInvites:SetSize(230, miog.MainFrame:GetHeight())
+	miog.createFrameBorder(lastInvites, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
-	miog.LastInvites.Retract:SetScript("OnClick", function(self)
+	lastInvites.Retract:SetScript("OnClick", function(self)
 		miog.hideSidePanel(self)
 	end)
 
@@ -95,9 +95,9 @@ miog.loadLastInvitesPanel = function()
     
     view:SetPadding(1, 1, 1, 1, 2);
     
-    ScrollUtil.InitScrollBoxListWithScrollBar(miog.LastInvites.SpecificScrollBox, miog.LastInvites.SpecificScrollBar, view);
+    ScrollUtil.InitScrollBoxListWithScrollBar(lastInvites.SpecificScrollBox, lastInvites.SpecificScrollBar, view);
 
-    miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
+    lastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
 end
 
 miog.loadFavouredPlayersPanel = function(parent, lastOption)

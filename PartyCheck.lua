@@ -110,6 +110,8 @@ end
 
 
 local function updateGroupClassData()
+	miog.ClassPanel.LoadingSpinner:Hide()
+
 	local classCount = {
 		[1] = 0,
 		[2] = 0,
@@ -150,10 +152,7 @@ local function updateGroupClassData()
 	end
 
 	if(miog.ClassPanel) then
-		if(not playerInInspection) then
-			miog.ClassPanel.LoadingSpinner:Hide()
-
-		else
+		if(playerInInspection) then
 			miog.ClassPanel.LoadingSpinner:Show()
 
 		end

@@ -11,35 +11,35 @@ local function setRaiderIOInformation(profile)
 end
 
 miog.loadRaiderIOChecker = function()
-	miog.RaiderIOChecker = CreateFrame("Frame", "MythicIOGrabber_RaiderIOChecker", miog.Plugin.InsertFrame, "MIOG_RaiderIOChecker")
+	local raiderIOChecker = CreateFrame("Frame", "MythicIOGrabber_RaiderIOChecker", miog.Plugin.InsertFrame, "MIOG_RaiderIOChecker")
 
-    miog.RaiderIOChecker.NameSearchBox:SetScript("OnKeyDown", function(self, key)
+    raiderIOChecker.NameSearchBox:SetScript("OnKeyDown", function(self, key)
         if(key == "ENTER") then
             local profile
             
             if(RaiderIO) then
-                profile = RaiderIO.GetProfile(self:GetText(), miog.RaiderIOChecker.RealmSearchBox:GetText() or "")
+                profile = RaiderIO.GetProfile(self:GetText(), raiderIOChecker.RealmSearchBox:GetText() or "")
 
                 setRaiderIOInformation(profile)
             end
 
         elseif(key == "TAB") then
-            miog.RaiderIOChecker.RealmSearchBox:SetFocus()
+            raiderIOChecker.RealmSearchBox:SetFocus()
         end
     end)
 
-    miog.RaiderIOChecker.RealmSearchBox:SetScript("OnKeyDown", function(self, key)
+    raiderIOChecker.RealmSearchBox:SetScript("OnKeyDown", function(self, key)
         if(key == "ENTER") then
             local profile
             
             if(RaiderIO) then
-                profile = RaiderIO.GetProfile(self:GetText(), miog.RaiderIOChecker.RealmSearchBox:GetText() or "")
+                profile = RaiderIO.GetProfile(self:GetText(), raiderIOChecker.RealmSearchBox:GetText() or "")
 
                 setRaiderIOInformation(profile)
             end
 
         elseif(key == "TAB") then
-            miog.RaiderIOChecker.NameSearchBox:SetFocus()
+            raiderIOChecker.NameSearchBox:SetFocus()
 
         end
     end)
@@ -52,5 +52,7 @@ miog.loadRaiderIOChecker = function()
     local rioTime = time({year = strsub(rioDate, 3, 6), month = strsub(rioDate, 7, 8), day = strsub(rioDate, 9, 10), hour = strsub(rioDate, 11, 12), min = strsub(rioDate, 13, 14), })
     local rioTimeInDate = date("%x %H:%M", rioTime)
 
-	miog.RaiderIOChecker.RIOVersion:SetText(rioVersion .. " - " .. rioTimeInDate)
+	raiderIOChecker.RIOVersion:SetText(rioVersion .. " - " .. rioTimeInDate)
+
+    return raiderIOChecker
 end

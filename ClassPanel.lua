@@ -2,26 +2,26 @@ local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
 miog.createClassPanel = function()
-    miog.ClassPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.pveFrame2 or PVEFrame, "MIOG_ClassPanel")
-	miog.ClassPanel:SetPoint("BOTTOMRIGHT", miog.ClassPanel:GetParent(), "TOPRIGHT", 0, 1)
-    miog.ClassPanel:SetPoint("BOTTOMLEFT", miog.ClassPanel:GetParent(), "TOPLEFT", 0, 1)
+    local classPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.MainFrame, "MIOG_ClassPanel")
+	classPanel:SetPoint("BOTTOMRIGHT", classPanel:GetParent(), "TOPRIGHT", 0, 1)
+    classPanel:SetPoint("BOTTOMLEFT", classPanel:GetParent(), "TOPLEFT", 0, 1)
+	classPanel.LoadingSpinner:SetScript("OnMouseDown", function()
+		miog.resetInspectCoroutine()
+	end)
 
-    local classPanel = miog.ClassPanel.Container
+    local container = classPanel.Container
 
-    classPanel:SetHeight(classPanel:GetParent():GetHeight() - 5)
-
-    classPanel.classFrames = {}
-
-    --CLASS PANEL FUCKS UP SOMEWHERE, PLEASE FIX XD
+    container:SetHeight(container:GetParent():GetHeight() - 5)
+    container.classFrames = {}
 
     for classID, classEntry in ipairs(miog.CLASSES) do
-        local classFrame = CreateFrame("Frame", nil, classPanel, "MIOG_ClassPanelClassFrameTemplate")
+        local classFrame = CreateFrame("Frame", nil, container, "MIOG_ClassPanelClassFrameTemplate")
         classFrame.layoutIndex = classID
-        classFrame:SetSize(classPanel:GetHeight(), classPanel:GetHeight())
+        classFrame:SetSize(container:GetHeight(), container:GetHeight())
 
         classFrame.Icon:SetTexture(classEntry.icon)
         classFrame.leftPadding = 3
-        classPanel.classFrames[classID] = classFrame
+        container.classFrames[classID] = classFrame
 
         local specPanel = CreateFrame("Frame", nil, classFrame, "VerticalLayoutFrame, BackdropTemplate")
         specPanel:SetPoint("TOP", classFrame, "BOTTOM", 0, -5)
@@ -56,9 +56,7 @@ miog.createClassPanel = function()
         end)
     end
 
-    classPanel:MarkDirty()
+    container:MarkDirty()
 
-	miog.ClassPanel.LoadingSpinner:SetScript("OnMouseDown", function()
-		miog.resetInspectCoroutine()
-	end)
+    return classPanel
 end

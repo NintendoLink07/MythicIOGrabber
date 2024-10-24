@@ -1016,10 +1016,10 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
 end
 
 miog.loadAdventureJournal = function()
-    miog.AdventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.Plugin.InsertFrame, "MIOG_AdventureJournal")
-    frameWidth = miog.AdventureJournal.AbilitiesFrame:GetWidth()
+    local adventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.Plugin.InsertFrame, "MIOG_AdventureJournal")
+    frameWidth = adventureJournal.AbilitiesFrame:GetWidth()
 
-    miog.AdventureJournal:SetScript("OnShow", function()
+    adventureJournal:SetScript("OnShow", function()
         local currentMapID = select(8, GetInstanceInfo());
         
         if(currentMapID and currentMapID ~= 0) then
@@ -1027,32 +1027,29 @@ miog.loadAdventureJournal = function()
 
             if(journalInstanceID) then
                 miog.selectInstance(journalInstanceID)
-                miog.AdventureJournal.InstanceDropdown:SelectFirstFrameWithValue(journalInstanceID)
+                adventureJournal.InstanceDropdown:SelectFirstFrameWithValue(journalInstanceID)
                 
             end
         end
     end)
 
-    basePool = CreateFramePool("Frame", miog.AdventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
+    basePool = CreateFramePool("Frame", adventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
     difficultyPool = CreateFramePool("Frame", nil, "MIOG_AdventureJournalAbilityDifficultyTemplate", resetDifficultyFrames)
     switchPool = CreateFramePool("Button", nil, "MIOG_AdventureJournalAbilitySwitchTemplate", resetSwitchFrames)
+    modelPool = CreateFramePool("Button", adventureJournal.ModelScene.List.Container, "MIOG_AdventureJournalCreatureButtonTemplate", resetModelFrame)
 
-    --lootPool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootItemTemplate", resetLootItemFrames)
-    --slotLinePool = CreateFramePool("Frame", miog.AdventureJournal.LootFrame.Container, "MIOG_AdventureJournalLootSlotLineTemplate", resetSlotLine)
-    modelPool = CreateFramePool("Button", miog.AdventureJournal.ModelScene.List.Container, "MIOG_AdventureJournalCreatureButtonTemplate", resetModelFrame)
-
-	local instanceDropdown = miog.AdventureJournal.InstanceDropdown
+	local instanceDropdown = adventureJournal.InstanceDropdown
 	instanceDropdown:OnLoad()
 
-	local bossDropdown = miog.AdventureJournal.BossDropdown
+	local bossDropdown = adventureJournal.BossDropdown
 	bossDropdown:OnLoad()
 
-	local keylevelDropdown = miog.AdventureJournal.SettingsBar.KeylevelDropdown
+	local keylevelDropdown = adventureJournal.SettingsBar.KeylevelDropdown
     keylevelDropdown:OnLoad()
-    keylevelDropdown:SetParent(miog.AdventureJournal.Abilities)
+    keylevelDropdown:SetParent(adventureJournal.Abilities)
 
-    miog.AdventureJournal.SettingsBar.ArmorDropdown:SetDefaultText("Armor types")
-    miog.AdventureJournal.SettingsBar.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
+    adventureJournal.SettingsBar.ArmorDropdown:SetDefaultText("Armor types")
+    adventureJournal.SettingsBar.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
         rootDescription:CreateButton("Clear", function(index)
             selectedArmor = nil
             selectedClass = nil
@@ -1103,23 +1100,6 @@ miog.loadAdventureJournal = function()
 
         local armorButton = rootDescription:CreateButton("Armor")
 
-        --[[local sortedFilters = {}
-
-        for k, v in pairs(Enum.ItemArmorSubclass) do
-            sortedFilters[v] = k
-        end
-
-        for k, v in ipairs(sortedFilters) do
-            if(k > 0 and k < 5) then
-                armorButton:CreateRadio(v, function(index) return index == selectedArmor end, function(index)
-                    selectedArmor = index
-
-                    checkAllItemIDs()
-                end, v)
-            end
-            
-        end]]
-
         armorButton:CreateButton("Clear", function(index)
             selectedArmor = nil
             requestAllItemsFromCurrentEncounter()
@@ -1136,8 +1116,8 @@ miog.loadAdventureJournal = function()
 
     end)
 
-    miog.AdventureJournal.SettingsBar.SlotDropdown:SetDefaultText("Equipment slots")
-    miog.AdventureJournal.SettingsBar.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
+    adventureJournal.SettingsBar.SlotDropdown:SetDefaultText("Equipment slots")
+    adventureJournal.SettingsBar.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
         rootDescription:CreateButton("Clear", function(index)
             selectedItemClass = nil
             selectedItemSubClass = nil
@@ -1267,9 +1247,11 @@ miog.loadAdventureJournal = function()
     
     view:SetPadding(1, 1, 1, 1, 4);
     
-    ScrollUtil.InitScrollBoxListWithScrollBar(miog.AdventureJournal.ScrollBox, miog.AdventureJournal.ScrollBar, view);
+    ScrollUtil.InitScrollBoxListWithScrollBar(adventureJournal.ScrollBox, adventureJournal.ScrollBar, view);
 
-    miog.AdventureJournal.ScrollBox:SetDataProvider(CreateDataProvider())
+    adventureJournal.ScrollBox:SetDataProvider(CreateDataProvider())
+
+    return adventureJournal
 end
 
 hooksecurefunc("SetItemRef", function(link)

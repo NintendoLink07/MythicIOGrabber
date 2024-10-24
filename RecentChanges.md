@@ -1,15 +1,17 @@
-## [2.9.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.3) - 2024-10-23
+## [2.9.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.4) - 2024-10-24
 
-### Added
+### Changed
 
-- [DropChecker] Added filters for the loot so you can check for world boss, BRD anniversary and non-seasonal dungeon loot.
+- The statistic panels (m+, raid and pvp) have been consolidated into a single tab to make room for more tabs.
+
+- The "Lockouts" tab has been re-added to the tabs at the bottom of the frame.
+
+- [SearchPanel] Lowered the "cooldown" of searching too often by 0.5 seconds.
 
 ### Fixed
 
-- [PartyCheck] Being in a party where many members join and leave shouldn't create errors anymore.
+- [FilterPanel] The transparent foreground frame that blocks the filter panel when you are in a non-filter panel frame is now shown again.
 
-- [Active Queues] "The Codex of Chromie" will not cause an error anymore (and for that matter no other coming events that are not yet implemented will).
+- [FilterPanel] The reset button should now work again.
 
-- [Queue Dropdown] Raid finder wings from different raids will now be listed under the same raid.
-
-- [DropChecker] Current seasonal dungeons will not request the loot twice.
+- [InterfaceOptions] There shouldn't be any more errors about groups that haven't been filtered when opening the lfg statistics.

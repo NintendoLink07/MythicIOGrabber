@@ -68,10 +68,6 @@ local function setActivePanel(_, panel)
 	elseif(panel == "DropChecker") then
 		miog.DropChecker:Show()
 
-	elseif(panel == "LockoutCheck") then
-		miog.LockoutCheck:Show()
-		miog.NewFilterPanel.Lock:Show()
-
 	else
 		miog.Plugin:Hide()
 		miog.NewFilterPanel.Lock:Show()
@@ -188,25 +184,25 @@ miog.createFrames = function()
 	miog.MainFrame = miog.F.LITE_MODE and miog.Plugin or miog.pveFrame2
 	miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. ".png")
 
-	miog.createApplicationViewer()
-	miog.createSearchPanel()
-	miog.createEntryCreation()
-	miog.loadNewFilterPanel()
-	miog.loadLastInvitesPanel()
-	miog.createClassPanel()
+	miog.ApplicationViewer = miog.createApplicationViewer()
+	miog.SearchPanel = miog.createSearchPanel()
+	miog.EntryCreation = miog.createEntryCreation()
+	miog.NewFilterPanel = miog.loadNewFilterPanel()
+	miog.LastInvites = miog.loadLastInvitesPanel()
+	miog.ClassPanel = miog.createClassPanel()
 
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
 		miog.loadCalendarSystem()
 		miog.loadGearingChart()
-		miog.loadAdventureJournal()
 		miog.loadPartyCheck()
-		miog.loadDropChecker()
 		miog.loadRaidPlanner()
-
-		miog.loadRaiderIOChecker()
-		miog.loadLockoutCheck()
 		miog.loadActivityChecker()
+
+		miog.RaiderIOChecker = miog.loadRaiderIOChecker()
+		miog.AdventureJournal = miog.loadAdventureJournal()
+		miog.DropChecker = miog.loadDropChecker()
+		miog.LockoutCheck = miog.loadLockoutCheck()
 		
 	end
 
@@ -221,6 +217,5 @@ miog.createFrames = function()
 		miog.AdventureJournal,
 		miog.RaiderIOChecker,
 		miog.DropChecker,
-		miog.LockoutCheck,
 	}
 end

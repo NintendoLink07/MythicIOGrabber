@@ -503,13 +503,14 @@ local function createPVEFrameReplacement()
 		miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
 	end
 
-    miog.MPlusStatistics = pveFrame2.TabFramesPanel.MPlusStatistics
+	miog.Statistics = pveFrame2.TabFramesPanel.Statistics
+    miog.MPlusStatistics = miog.Statistics.MPlusStatistics
 	miog.MPlusStatistics:OnLoad(1)
 
-	miog.RaidStatistics = pveFrame2.TabFramesPanel.RaidStatistics
+	miog.RaidStatistics = miog.Statistics.RaidStatistics
 	miog.RaidStatistics:OnLoad(2)
 
-	miog.PVPStatistics = pveFrame2.TabFramesPanel.PVPStatistics
+	miog.PVPStatistics = miog.Statistics.PVPStatistics
 	miog.PVPStatistics:OnLoad(3)
 
 	local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
@@ -707,7 +708,6 @@ local function createPVEFrameReplacement()
 			rootDescription:CreateTitle("More");
 			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
-			rootDescription:CreateButton("Lockouts", function() setCustomActivePanel("LockoutCheck") end)
 			rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
 			rootDescription:SetTag("MIOG_MORE")
 		end)
