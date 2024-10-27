@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning].
 
 This data gets refreshed on every login and on a completion of a weekly reward goal.
 
+- [MainFrame] When the mainframe has been hidden due to getting into combat it will be shown again after combat.
+
 ### Fixed
 
 - [MainFrame] The great vault bars tooltips have been updated/corrected. 

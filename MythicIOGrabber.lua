@@ -103,9 +103,16 @@ miog.OnEvent = function(_, event, ...)
 		--miog.getAccountCharacters()
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
-		miog.MainFrame:Hide()
-		--miog.pveFrame2:Hide()
+		if(miog.MainFrame:IsShown()) then
+			miog.F.MAINFRAME_WAS_VISIBLE = true
+			miog.MainFrame:Hide()
+			
+		end
+	elseif(event == "PLAYER_REGEN_ENABLED") then
+		if(miog.F.MAINFRAME_WAS_VISIBLE) then
+			miog.MainFrame:Show()
 
+		end
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
@@ -137,7 +144,7 @@ miog.OnEvent = function(_, event, ...)
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
 
 	elseif(event == "WEEKLY_REWARDS_UPDATE") then
-		
+		StatisticsTabMixin:UpdateAllCharacterStatistics()
 
 	end
 end

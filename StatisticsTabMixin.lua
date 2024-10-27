@@ -2,6 +2,8 @@ local addonName, miog = ...
 
 StatisticsTabMixin = {}
 
+local accountCharacters
+
 local function getChestsLevelForID(challengeMapID, durationSec)
 	local name, id, timeLimit, texture, backgroundTexture = C_ChallengeMode.GetMapUIInfo(challengeMapID)
 
@@ -689,17 +691,17 @@ function StatisticsTabMixin:OnLoad(id)
 	end
 end
 
- --workaround, gets most characters if they've been converted with the warband feature, not even have to be logged in first or used this addon.
- --just has to have atleast a single type of currency (money (coppper, silver, gold) doesn't count)
+ --workaround, gets most characters if they've been converted with the warband feature, you don't even have to be logged in first or used this addon.
+ --just has to have atleast a single type of currency (money (copper, silver, gold) doesn't count)
 function StatisticsTabMixin:RequestAccountCharacters()
-	self.accountCharacters = {}
+	accountCharacters = {}
 
 	local charList = {}
 	local info
 
 	local playerGUID = UnitGUID("player")
 	local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(playerGUID)
-	table.insert(self.accountCharacters, {guid = playerGUID, name = name, realm = realmName, classFile = englishClass})
+	table.insert(accountCharacters, {guid = playerGUID, name = name, realm = realmName, classFile = englishClass})
 
 	for i = 1, 5000, 1 do
 		info = C_CurrencyInfo.GetCurrencyListInfo(i)
@@ -719,13 +721,13 @@ function StatisticsTabMixin:RequestAccountCharacters()
 	for k, v in pairs(charList) do
 		localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(k)
 
-		table.insert(self.accountCharacters, {guid = k, name = name, realm = realmName, classFile = englishClass})
+		table.insert(accountCharacters, {guid = k, name = name, realm = realmName, classFile = englishClass})
 	end
 end
 
 local function hasCurrentCharacterRewardForNextWeek()
 	for i, activityInfo in ipairs(C_WeeklyRewards.GetActivities()) do
-		if(activityInfo.progress > 0) then
+		if(activityInfo.progress > activityInfo.threshold) then
 			return true
 		end
 	end
@@ -733,8 +735,12 @@ local function hasCurrentCharacterRewardForNextWeek()
 	return false
 end
 
-function StatisticsTabMixin:UpdateAllCharacterStatistics()
-	for k, v in ipairs(self.accountCharacters) do
+function StatisticsTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, updatePvp)
+	if(not accountCharacters) then
+		self:RequestAccountCharacters()
+	end
+
+	for k, v in ipairs(accountCharacters) do
 		MIOG_NewSettings.accountStatistics.characters[v.guid] = MIOG_NewSettings.accountStatistics.characters[v.guid] or {}
 		MIOG_NewSettings.accountStatistics.characters[v.guid].name = MIOG_NewSettings.accountStatistics.characters[v.guid].name or v.name
 		MIOG_NewSettings.accountStatistics.characters[v.guid].fullName = MIOG_NewSettings.accountStatistics.characters[v.guid].fullName or miog.createFullNameFrom("unitName", v.name .. "-" .. v.realm)
@@ -753,15 +759,13 @@ function StatisticsTabMixin:UpdateAllCharacterStatistics()
 			end
 		end
 
-		--MIOG_NewSettings.accountStatistics.characters[v.guid].hasWeeklyRewards = C_WeeklyRewards.HasAvailableRewards()
-
-		if(self.id == 1) then
+		if(self.id == 1 or updateMPlus) then
 			self:UpdateCharacterMPlusStatistics(v.guid)
 
-		elseif(self.id == 2) then
+		elseif(self.id == 2 or updateRaid) then
 			self:UpdateCharacterRaidStatistics(v.guid)
 
-		elseif(self.id == 3) then
+		elseif(self.id == 3 or updatePvp) then
 			self:UpdatePVPStatistics(v.guid)
 
 		end
@@ -1045,7 +1049,6 @@ end
 function StatisticsTabMixin:UpdateStatistics()
     self:LoadActivities()
 
-	self:RequestAccountCharacters()
 	self:UpdateAllCharacterStatistics()
 
     self:LoadCharacters()

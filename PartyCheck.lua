@@ -110,85 +110,80 @@ end
 
 
 local function updateGroupClassData()
-	miog.ClassPanel.LoadingSpinner:Hide()
+	if(not InCombatLockdown()) then
+		local classCount = {
+			[1] = 0,
+			[2] = 0,
+			[3] = 0,
+			[4] = 0,
+			[5] = 0,
+			[6] = 0,
+			[7] = 0,
+			[8] = 0,
+			[9] = 0,
+			[10] = 0,
+			[11] = 0,
+			[12] = 0,
+			[13] = 0,
+		}
+		local hasNoData = true
 
-	local classCount = {
-		[1] = 0,
-		[2] = 0,
-		[3] = 0,
-		[4] = 0,
-		[5] = 0,
-		[6] = 0,
-		[7] = 0,
-		[8] = 0,
-		[9] = 0,
-		[10] = 0,
-		[11] = 0,
-		[12] = 0,
-		[13] = 0,
-	}
-	local hasNoData = true
+		for groupIndex = 1, GetNumGroupMembers(), 1 do
+			local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+			
+			if(name) then
+				if(classCount[miog.CLASSFILE_TO_ID[fileName] ]) then
+					classCount[miog.CLASSFILE_TO_ID[fileName] ] = classCount[miog.CLASSFILE_TO_ID[fileName] ] + 1
 
-	for groupIndex = 1, GetNumGroupMembers(), 1 do
-		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
-		
-		if(name) then
-			if(classCount[miog.CLASSFILE_TO_ID[fileName] ]) then
-				classCount[miog.CLASSFILE_TO_ID[fileName] ] = classCount[miog.CLASSFILE_TO_ID[fileName] ] + 1
+				end
+
+				hasNoData = false
+			end
+		end
+
+		if(hasNoData) then
+			local _, id = UnitClassBase("player")
+			
+			if(classCount[id]) then
+				classCount[id] = classCount[id] + 1
 
 			end
-
-			hasNoData = false
-		end
-	end
-
-	if(hasNoData) then
-		local _, id = UnitClassBase("player")
-		
-		if(classCount[id]) then
-			classCount[id] = classCount[id] + 1
-
-		end
-	end
-
-	if(miog.ClassPanel) then
-		if(playerInInspection) then
-			miog.ClassPanel.LoadingSpinner:Show()
-
 		end
 
-		for classID, classEntry in ipairs(miog.CLASSES) do
-			local numOfClasses = classCount[classID]
-			local currentClassFrame = miog.ClassPanel.Container.classFrames[classID]
-			currentClassFrame.layoutIndex = classID
-			currentClassFrame.Icon:SetDesaturated(numOfClasses < 1)
+		if(miog.ClassPanel) then
+			for classID, classEntry in ipairs(miog.CLASSES) do
+				local numOfClasses = classCount[classID]
+				local currentClassFrame = miog.ClassPanel.Container.classFrames[classID]
+				currentClassFrame.layoutIndex = classID
+				currentClassFrame.Icon:SetDesaturated(numOfClasses < 1)
 
-			if(numOfClasses > 0) then
-				--local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[classID].name)
-				--miog.createFrameBorder(currentClassFrame, 1, rPerc, gPerc, bPerc, 1)
-				currentClassFrame.FontString:SetText(numOfClasses)
-				currentClassFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(classEntry.name):GetRGBA())
-				currentClassFrame.layoutIndex = currentClassFrame.layoutIndex - 100
+				if(numOfClasses > 0) then
+					--local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[classID].name)
+					--miog.createFrameBorder(currentClassFrame, 1, rPerc, gPerc, bPerc, 1)
+					currentClassFrame.FontString:SetText(numOfClasses)
+					currentClassFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(classEntry.name):GetRGBA())
+					currentClassFrame.layoutIndex = currentClassFrame.layoutIndex - 100
 
-			else
-				currentClassFrame.FontString:SetText("")
-				currentClassFrame.Border:SetColorTexture(0, 0, 0, 1)
-				--miog.createFrameBorder(currentClassFrame, 1, 0, 0, 0, 1)
+				else
+					currentClassFrame.FontString:SetText("")
+					currentClassFrame.Border:SetColorTexture(0, 0, 0, 1)
+					--miog.createFrameBorder(currentClassFrame, 1, 0, 0, 0, 1)
+
+				end
+
+				miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
 
 			end
-
-			miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
-
 		end
 	end
 end
-
-
 
 local currentInspectionName = ""
 
 local function updateGroupData()
 	if(not InCombatLockdown()) then
+		miog.ClassPanel.LoadingSpinner:Hide()
+
 		groupData = {}
 
 		local roleCount = {
@@ -210,18 +205,6 @@ local function updateGroupData()
 
 			if(name) then
 				local unitID
-				
-				--[[if(IsInRaid()) then
-					unitID = "raid" .. groupIndex
-				else
-					if groupIndex == 1 then
-						unitID = "player";
-
-					else
-						unitID = "party"..(groupIndex - 1);
-
-					end
-				end]]
 
 				if(IsInRaid()) then
 					unitID = "raid" .. groupIndex
@@ -335,6 +318,9 @@ local function updateGroupData()
 
 		if(not inspectedPlayerStillInGroup) then
 			ClearInspectPlayer(true)
+
+		else
+			miog.ClassPanel.LoadingSpinner:Show()
 
 		end
 

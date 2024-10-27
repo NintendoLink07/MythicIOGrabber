@@ -597,9 +597,7 @@ local function updatePVP2()
 		soloFrame:HookScript("OnShow", function(self)
 			hideAllPVPButtonAssets(self)
 		end)
-		--ConquestFrame.RatedSoloShuffle:SetAttribute("type", "macro")
-		--ConquestFrame.RatedSoloShuffle:SetAttribute("macrotext1", "/click [nocombat] ConquestJoinButton")
-
+		
 		info = {}
 		info.entryType = "option"
 		info.index = 2
@@ -638,25 +636,7 @@ local function updatePVP2()
 		info.index = 5
 		info.level = 2
 		info.parentIndex = indices["PVP"]
-		--hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
 		queueDropDown:InsertCustomFrame(info, ConquestFrame.JoinButton)
-
-		--[[soloFrame:SetScript("OnClick", function()
-			--PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
-			ConquestJoinButton:Click()
-
-			--HideUIPanel(PVEFrame)
-		end)]]
-
-		--SlickDropDown:CreateExtraButton(ConquestFrame.RatedSoloShuffle, soloFrame)
-
-		--info.func = function()
-		--	JoinArena()
-		--end
-
-		--HonorFrame.BonusFrame.Arena1Button:Hide()
-		--HonorFrame.BonusFrame.BrawlButton:Hide()
-		--HonorFrame.BonusFrame.BrawlButton2:Hide()
 
 		info = {}
 		info.entryType = "option"
@@ -668,7 +648,6 @@ local function updatePVP2()
 		dropdown.topPadding = 8
 		dropdown.bottomPadding = 8
 		dropdown.leftPadding = 0
-		--UIDropDownMenu_SetWidth(HonorFrameTypeDropdown, 190)
 		dropdown:SetHeight(20)
 
 		for index = 1, 5, 1 do
@@ -680,7 +659,6 @@ local function updatePVP2()
 				info.entryType = "option"
 				info.checked = false
 				info.index = index == 1 and 11 or index == 2 and 12 or index + 4
-				--info.disabled = index == 1 or index == 2
 				info.icon = index < 3 and miog.findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (miog.findBrawlIconByID(currentBGQueue.brawlID) or miog.findBrawlIconByName(currentBGQueue.name))
 				info.level = 2
 				info.parentIndex = indices["PVP"]
