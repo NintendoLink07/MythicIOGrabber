@@ -401,7 +401,7 @@
                                 </Anchors>
 
                                 <Frames>
-                                    <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate"> <!--  mixin="WeeklyRewardsActivityMixin"-->
+                                    <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin"> <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>
@@ -427,13 +427,12 @@
                                             <OnMouseDown>
                                                 WeeklyRewards_ShowUI()
                                             </OnMouseDown>
-                                            <OnLeave>
-                                                    GameTooltip:Hide()
-                                            </OnLeave>
+                                            <OnEnter method="OnEnter" />
+                                            <OnLeave function="GameTooltip_Hide" />
                                         </Scripts>
                                     </StatusBar>
 
-                                    <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate"> <!--  mixin="WeeklyRewardsActivityMixin"-->
+                                    <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin"> <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>
@@ -459,13 +458,12 @@
                                             <OnMouseDown>
                                                 WeeklyRewards_ShowUI()
                                             </OnMouseDown>
-                                            <OnLeave>
-                                                GameTooltip:Hide()
-                                            </OnLeave>
+                                            <OnEnter method="OnEnter" />
+                                            <OnLeave function="GameTooltip_Hide" />
                                         </Scripts>
                                     </StatusBar>
 
-                                    <StatusBar parentKey="WorldStatus" inherits="BackdropTemplate">  <!--  mixin="WeeklyRewardsActivityMixin"-->
+                                    <StatusBar parentKey="WorldStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin">  <!--  mixin="WeeklyRewardsActivityMixin"-->
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="144" y="16" />
                                         <Anchors>
@@ -490,11 +488,9 @@
                                         <Scripts>
                                             <OnMouseDown>
                                                 WeeklyRewards_ShowUI()
-
                                             </OnMouseDown>
-                                            <OnLeave>
-                                                    GameTooltip:Hide()
-                                            </OnLeave>
+                                            <OnEnter method="OnEnter" />
+                                            <OnLeave function="GameTooltip_Hide" />
                                         </Scripts>
                                     </StatusBar>
                                     

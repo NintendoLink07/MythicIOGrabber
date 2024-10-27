@@ -464,7 +464,6 @@ function StatisticsTabMixin:OnLoad(id)
 			if(isDungeon) then
 				frame.Score:SetFont(file, height + 2, flags)
 				frame.ScoreIncrease:SetFont(file, height + 2, flags)
-
 			end
 		else
 			frame.Name:SetFont(file, height, flags)
@@ -475,6 +474,27 @@ function StatisticsTabMixin:OnLoad(id)
 
 			end
 		end
+		
+		if(self.id ~= 3) then
+			if(MIOG_NewSettings.accountStatistics.characters[data.guid].weeklyReward.availableTimestamp) then
+				if(MIOG_NewSettings.accountStatistics.characters[data.guid].weeklyReward.availableTimestamp < GetTimePreciseSec()) then
+					frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-collect")
+					frame.VaultAvailable.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
+				
+				else
+					frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-complete")
+					frame.VaultAvailable.tooltipText = "Your weekly rewards in your great vault will be available in " .. SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true) .. "."
+
+				end
+			else
+				frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-incomplete")
+				frame.VaultAvailable.tooltipText = "No great vault activity yet completed."
+				
+			end
+
+			frame.VaultAvailable:Show()
+		end
+
 
         if(isDungeon) then
             frame.Score:SetText(data.score.value)
@@ -703,17 +723,37 @@ function StatisticsTabMixin:RequestAccountCharacters()
 	end
 end
 
+local function hasCurrentCharacterRewardForNextWeek()
+	for i, activityInfo in ipairs(C_WeeklyRewards.GetActivities()) do
+		if(activityInfo.progress > 0) then
+			return true
+		end
+	end
+
+	return false
+end
+
 function StatisticsTabMixin:UpdateAllCharacterStatistics()
 	for k, v in ipairs(self.accountCharacters) do
-		if(not MIOG_NewSettings.accountStatistics.characters[v.guid]) then
-			MIOG_NewSettings.accountStatistics.characters[v.guid] = {}
-			MIOG_NewSettings.accountStatistics.characters[v.guid].name = v.name
-			MIOG_NewSettings.accountStatistics.characters[v.guid].fullName = miog.createFullNameFrom("unitName", v.name .. "-" .. v.realm)
-			MIOG_NewSettings.accountStatistics.characters[v.guid].classFile = v.classFile
-			MIOG_NewSettings.accountStatistics.characters[v.guid].mplus = {}
-			MIOG_NewSettings.accountStatistics.characters[v.guid].raid = {}
-			MIOG_NewSettings.accountStatistics.characters[v.guid].pvp = {}
+		MIOG_NewSettings.accountStatistics.characters[v.guid] = MIOG_NewSettings.accountStatistics.characters[v.guid] or {}
+		MIOG_NewSettings.accountStatistics.characters[v.guid].name = MIOG_NewSettings.accountStatistics.characters[v.guid].name or v.name
+		MIOG_NewSettings.accountStatistics.characters[v.guid].fullName = MIOG_NewSettings.accountStatistics.characters[v.guid].fullName or miog.createFullNameFrom("unitName", v.name .. "-" .. v.realm)
+		MIOG_NewSettings.accountStatistics.characters[v.guid].classFile = MIOG_NewSettings.accountStatistics.characters[v.guid].classFile or v.classFile
+		MIOG_NewSettings.accountStatistics.characters[v.guid].mplus = MIOG_NewSettings.accountStatistics.characters[v.guid].mplus or {}
+		MIOG_NewSettings.accountStatistics.characters[v.guid].raid = MIOG_NewSettings.accountStatistics.characters[v.guid].raid or {}
+		MIOG_NewSettings.accountStatistics.characters[v.guid].pvp = MIOG_NewSettings.accountStatistics.characters[v.guid].pvp or {}
+		MIOG_NewSettings.accountStatistics.characters[v.guid].weeklyReward = MIOG_NewSettings.accountStatistics.characters[v.guid].weeklyReward or {}
+
+		if(v.guid == UnitGUID("player")) then
+			local hasRewardComing = hasCurrentCharacterRewardForNextWeek()
+
+			if(hasRewardComing) then
+				MIOG_NewSettings.accountStatistics.characters[v.guid].weeklyReward.availableTimestamp = GetTimePreciseSec() + C_DateAndTime.GetSecondsUntilWeeklyReset()
+
+			end
 		end
+
+		--MIOG_NewSettings.accountStatistics.characters[v.guid].hasWeeklyRewards = C_WeeklyRewards.HasAvailableRewards()
 
 		if(self.id == 1) then
 			self:UpdateCharacterMPlusStatistics(v.guid)

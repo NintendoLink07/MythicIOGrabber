@@ -223,7 +223,7 @@ local function checkQueues()
 					table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
 
 					if(mode == "queued" and activeID == queueID or categoryID == LE_LFG_CATEGORY_RF) then
-						--local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
+						local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
 
 						local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
 
@@ -305,6 +305,14 @@ local function checkQueues()
 									tooltip:AddLine(string.format("%d - %d players", minPlayersDisband and minPlayersDisband > 0 and minPlayersDisband or 1, maxPlayers))
 		
 									GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+									if(noPartialClear) then
+										tooltip:AddLine("This will be a fresh ID.")
+
+									else
+										tooltip:AddLine("This group could have already killed some bosses.")
+
+									end
 
 									if(isTimewalker) then
 										tooltip:AddLine(PLAYER_DIFFICULTY_TIMEWALKER)

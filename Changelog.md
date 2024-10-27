@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [2.9.5] - 2024-10-27
+
+### Added
+
+- [Statistics] An icon for each character has been added to indicate:
+    1. If they currently have a reward from the great vault waiting for them
+    2. If will have a reward from the great vault waiting for them the next week
+    3. If they haven't completed any activity for a great vault slot
+
+This data gets refreshed on every login and on a completion of a weekly reward goal.
+
+### Fixed
+
+- [MainFrame] The great vault bars tooltips have been updated/corrected. 
+
+
+
 ## [2.9.4] - 2024-10-24
 
 ### Changed
@@ -2658,7 +2676,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.5..HEAD
+[2.9.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.5
 [2.9.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.4
 [2.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.3
 [2.9.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.2

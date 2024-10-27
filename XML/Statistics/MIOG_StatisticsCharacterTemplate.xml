@@ -15,6 +15,24 @@
                     <Color r="0.03" g="0.03" b="0.03" a="0.6" />
                 </Texture>
             </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="VaultAvailable" atlas="mythicplus-dragonflight-greatvault-collect" hidden="true">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="5" y="-1"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            GameTooltip:SetOwner(self)
+                            GameTooltip:SetText(self.tooltipText)
+                            GameTooltip:Show()
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+            </Layer>
             
             <Layer level="BORDER">
                 <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">

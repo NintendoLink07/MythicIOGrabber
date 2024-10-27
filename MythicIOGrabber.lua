@@ -136,6 +136,9 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "CHALLENGE_MODE_COMPLETED") then
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
 
+	elseif(event == "WEEKLY_REWARDS_UPDATE") then
+		
+
 	end
 end
 
