@@ -44,6 +44,7 @@ RaidPlanner.lua
 
 NewSettings.lua
 StatisticsRecorder.lua
+MythicRequeue.lua
 
 SortingMixin.lua
 MultiStateButton.lua
@@ -70,6 +71,7 @@ XML\MIOG_PartyCheckPlayerTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_RaiderIOChecker.xml
 XML\MIOG_DropChecker.xml
+XML\MIOG_PopupFrame.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml
@@ -125,7 +127,6 @@ XML\NewFilterPanel\MIOG_NewFilterPanelActivityRowTemplate.xml
 XML\NewFilterPanel\MIOG_NewFilterPanelBossFrameTemplate.xml
 XML\NewFilterPanel\MIOG_NewFilterPanelActivityBossRowTemplate.xml
 XML\NewFilterPanel\MIOG_NewFilterPanelContainerRowTemplate.xml
-XML\NewFilterPanel\MIOG_PopupFrame.xml
 
 XML\Statistics\MIOG_StatisticsTab.xml
 XML\Statistics\MIOG_StatisticsLayoutTemplate.xml

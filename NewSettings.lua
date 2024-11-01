@@ -83,6 +83,7 @@ local defaultSettings = {
     {name = "Raid Statistics", variableName = "MIOG_RaidStats", key="raidStats", default={}},
     {name = "Lite Mode", variableName = "MIOG_LiteMode", key="liteMode", default=false, type="checkbox", tooltip="Enable or disable the lite mode of this addon (use Blizzards \"Dungeons and Raids\" Frame with this addon's frames layered on top", reload=true},
     {name = "Filter popups", variableName = "MIOG_FilterPopup", key="filterPopup", default=false, type="checkbox", tooltip="Enable or disable popups when your filters don't match anymore with one of the groups you've applied to.", reload=false},
+    {name = "Flash when Apply Popup is shown", variableName = "MIOG_FlashOnApplyPopup", key="flashOnApplyPopup", default=false, type="checkbox", tooltip="Flash the WoW application in the taskbar when a group has declined you / has been delisted and the popup shows up.", reload=false},
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions(), type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
@@ -91,6 +92,7 @@ local defaultSettings = {
     end},
     {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},
     {name = "Last invited applicants", variableName = "MIOG_LastInvitedApplicants", key="lastInvitedApplicants", default={}},
+    {name = "Requeue GUIDs", variableName = "MIOG_RequeueGUIDs", key="requeueGUIDs", default = {}},
     {name = "Last used queue", variableName = "MIOG_LastUsedQueue", key="lastUsedQueue", default = {}},
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},

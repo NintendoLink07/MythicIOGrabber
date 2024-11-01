@@ -27,10 +27,10 @@ local function setupFilterPopup(resultID, reason, groupName, activityName, leade
 	filterPopup.ButtonPanel:MarkDirty()
 
 	filterPopupID = resultID
-	filterPopup.Reason:SetText(reason)
-	filterPopup.Reason:SetTextColor(1, 0, 0, 1)
-	filterPopup.Activity:SetText(groupName .. " - " .. activityName)
-	filterPopup.Leader:SetText("Leader: " .. (leaderName or "N/A"))
+	filterPopup.Text2:SetText(reason)
+	filterPopup.Text2:SetTextColor(1, 0, 0, 1)
+	filterPopup.Text3:SetText(groupName .. " - " .. activityName)
+	filterPopup.Text4:SetText("Leader: " .. (leaderName or "N/A"))
 	filterPopup:MarkDirty()
 end
 
@@ -146,10 +146,8 @@ local function createQueueFrame(queueInfo)
 	end
 end
 
-
-
 local function updateFakeGroupApplications()
-	if(C_AddOns.IsAddOnLoaded("MythicRequeue")) then
+	if(MR_GetNumberOfPartyGUIDs) then
 		local numOfSavedGUIDs = MR_GetNumberOfPartyGUIDs()
 
 		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
@@ -159,7 +157,7 @@ local function updateFakeGroupApplications()
 				if(C_LFGList.HasSearchResultInfo(listEntry.resultID)) then
 					local partyGUID = C_LFGList.GetSearchResultInfo(listEntry.resultID).partyGUID
 
-					if(MR_GetSavedPartyGUIDs[partyGUID]) then
+					if(MR_GetSavedPartyGUIDs()[partyGUID]) then
 						local id, appStatus = C_LFGList.GetApplicationInfo(listEntry.resultID)
 		
 						if(appStatus ~= "applied") then
@@ -589,7 +587,7 @@ local function updateGroupApplications()
 	end
 
 	if(MIOG_NewSettings.filterPopup) then
-		filterPopup.ActiveApps:SetText("Remaining applications: " .. (numOfActiveApps))
+		filterPopup.Text6:SetText("Remaining applications: " .. (numOfActiveApps))
 
 		if(filterPopupID) then
 			local id, appStatus = C_LFGList.GetApplicationInfo(filterPopupID)
@@ -867,6 +865,8 @@ local function createFilterPopup()
 		end
 
 		filterPopupID = nil
+
+		StaticPopupSpecial_Hide(filterPopup)
 	end)
 end
 

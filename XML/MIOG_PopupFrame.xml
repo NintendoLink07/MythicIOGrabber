@@ -1,0 +1,111 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_PopupFrame" inherits="TooltipBorderedFrameTemplate, VerticalLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="spacing" value="5" type="number" />
+            <KeyValue key="topPadding" value="10" type="number" />
+            <KeyValue key="leftPadding" value="2" type="number" />
+            <KeyValue key="rightPadding" value="2" type="number" />
+            <KeyValue key="bottomPadding" value="1" type="number" />
+        </KeyValues>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text1" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="A group is not compatible with your filters anymore.">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="1" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
+                    </KeyValues>
+                </FontString>
+
+                <FontString parentKey="Text2" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Reason">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="2" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
+                    </KeyValues>
+                </FontString>
+
+                <FontString parentKey="Text3" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Activity">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="3" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
+                    </KeyValues>
+                </FontString>
+
+                <FontString parentKey="Text4" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Leader">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="4" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
+                    </KeyValues>
+                </FontString>
+
+                <FontString parentKey="Text5" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Cancel the application?">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="5" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
+                    </KeyValues>
+                </FontString>
+
+                <FontString parentKey="Text6" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Remaining applications: 0">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="6" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
+                        <KeyValue key="topPadding" value="7" type="number" />
+                    </KeyValues>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="ButtonPanel" inherits="HorizontalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="7" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                    <KeyValue key="bottomPadding" value="2" type="number" />
+                </KeyValues>
+
+                <Frames>
+                    <Button parentKey="Button1" inherits="UIPanelDynamicResizeButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnLoad>
+                                --self:FitToText()
+                            </OnLoad>
+
+                            <PostClick>
+                                StaticPopupSpecial_Hide(self:GetParent():GetParent())
+                            </PostClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Button2" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnLoad>
+                                --self:FitToText()
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Button2P5" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate" hidden="true" text="Apply to next group">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnLoad>
+                                --self:FitToText()
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

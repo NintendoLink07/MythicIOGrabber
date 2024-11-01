@@ -72,13 +72,13 @@ local function setResultFrameColors(resultID, isInviteFrame)
 
 		else
 			if(isEligible) then
-				if(C_AddOns.IsAddOnLoaded("MythicRequeue")) then
+				if(MR_GetSavedPartyGUIDs) then
 					local partyGUIDs = MR_GetSavedPartyGUIDs()
 
 					if(partyGUIDs[searchResultInfo.partyGUID]) then
 						resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.yellow):GetRGBA())
 						r, g, b = CreateColorFromHexString(miog.CLRSCC.yellow):GetRGB()
-						
+
 					else
 						resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
@@ -1256,6 +1256,9 @@ miog.createSearchPanel = function()
 	end
 
 	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(176, 0)]]
+
+	LFGListFrame.SearchPanel.results = {}
+	LFGListFrame.SearchPanel.applications = {}
 
 	searchPanel:SetScript("OnEvent", searchPanelEvents)
 	searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
