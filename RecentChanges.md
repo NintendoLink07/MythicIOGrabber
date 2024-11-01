@@ -1,3 +1,10 @@
+## [2.9.6a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.6a) - 2024-11-01
+
+### Fixed
+
+- Enabled checks for a new addon of mine that I forgot to check if the addon is loaded.
+
+
 ## [2.9.6](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.6) - 2024-11-01
 
 ### Changed

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.9.6a] - 2024-11-01
+
+### Fixed
+
+- Enabled checks for a new addon of mine that I forgot to check if the addon is loaded.
+
+
+
 ## [2.9.6] - 2024-11-01
 
 ### Changed
@@ -2699,7 +2707,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.6..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.6a..HEAD
+[2.9.6a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.6a
 [2.9.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.6
 [2.9.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.5
 [2.9.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.4
