@@ -71,15 +71,20 @@ local function setResultFrameColors(resultID, isInviteFrame)
 			--resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 		else
-			if(isEligible and C_AddOns.IsAddOnLoaded("MythicRequeue")) then
-				local partyGUIDs = MR_GetSavedPartyGUIDs()
+			if(isEligible) then
+				if(C_AddOns.IsAddOnLoaded("MythicRequeue")) then
+					local partyGUIDs = MR_GetSavedPartyGUIDs()
 
-				if(not partyGUIDs[searchResultInfo.partyGUID]) then
-					resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-					
+					if(partyGUIDs[searchResultInfo.partyGUID]) then
+						resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.yellow):GetRGBA())
+						r, g, b = CreateColorFromHexString(miog.CLRSCC.yellow):GetRGB()
+						
+					else
+						resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+
+					end
 				else
-					resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.yellow):GetRGBA())
-					r, g, b = CreateColorFromHexString(miog.CLRSCC.yellow):GetRGB()
+					resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 				end
 			else
@@ -87,9 +92,6 @@ local function setResultFrameColors(resultID, isInviteFrame)
 				resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.orange):GetRGBA())
 
 			end
-
-			--resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
-
 		end
 		
 		if(r) then

@@ -149,63 +149,65 @@ end
 
 
 local function updateFakeGroupApplications()
-	local numOfSavedGUIDs = MR_GetNumberOfPartyGUIDs()
+	if(C_AddOns.IsAddOnLoaded("MythicRequeue")) then
+		local numOfSavedGUIDs = MR_GetNumberOfPartyGUIDs()
 
-	miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
+		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
 
-	if(numOfSavedGUIDs> 0) then
-		for d, listEntry in ipairs(miog.SearchPanel:GetSortingData()) do
-			if(C_LFGList.HasSearchResultInfo(listEntry.resultID)) then
-				local partyGUID = C_LFGList.GetSearchResultInfo(listEntry.resultID).partyGUID
+		if(numOfSavedGUIDs> 0) then
+			for d, listEntry in ipairs(miog.SearchPanel:GetSortingData()) do
+				if(C_LFGList.HasSearchResultInfo(listEntry.resultID)) then
+					local partyGUID = C_LFGList.GetSearchResultInfo(listEntry.resultID).partyGUID
 
-				if(MR_GetSavedPartyGUIDs[partyGUID]) then
-					local id, appStatus = C_LFGList.GetApplicationInfo(listEntry.resultID)
-	
-					if(appStatus ~= "applied") then
-						local identifier = "FAKE_APPLICATION_FOR_RESULT_" .. listEntry.resultID
-						local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-						local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
-						local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
-				
-						local frameData = {
-							[1] = true,
-							[2] = groupInfo,
-							[11] = searchResultInfo.name,
-							[12] = -1,
-							--[17] = {"duration", appDuration},
-							[18] = identifier,
-							[20] = miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil,
-							[21] = listEntry.resultID + 1000,
-							[30] = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal or nil
-						}
+					if(MR_GetSavedPartyGUIDs[partyGUID]) then
+						local id, appStatus = C_LFGList.GetApplicationInfo(listEntry.resultID)
+		
+						if(appStatus ~= "applied") then
+							local identifier = "FAKE_APPLICATION_FOR_RESULT_" .. listEntry.resultID
+							local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
+							local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+							local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
+					
+							local frameData = {
+								[1] = true,
+								[2] = groupInfo,
+								[11] = searchResultInfo.name,
+								[12] = -1,
+								--[17] = {"duration", appDuration},
+								[18] = identifier,
+								[20] = miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil,
+								[21] = listEntry.resultID + 1000,
+								[30] = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal or nil
+							}
 
-						local frame = createQueueFrame(frameData)
+							local frame = createQueueFrame(frameData)
 
-						if(frame) then
-							frame:SetAlpha(0.45)
-							frame:SetScript("OnMouseDown", function()
-								PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-								LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, LFGListFrame.SearchPanel.preferredFilters or 0, LFGListFrame.baseFilters)
-								LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-								LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-							end)
+							if(frame) then
+								frame:SetAlpha(0.45)
+								frame:SetScript("OnMouseDown", function()
+									PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+									LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, LFGListFrame.SearchPanel.preferredFilters or 0, LFGListFrame.baseFilters)
+									LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+									LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+								end)
 
-							frame:SetScript("OnEnter", function(self)
-								miog.createResultTooltip(id, frame)
+								frame:SetScript("OnEnter", function(self)
+									miog.createResultTooltip(id, frame)
 
-								GameTooltip:Show()
-							end)
-							frame:SetScript("OnLeave", function()
-								GameTooltip:Hide()
-							end)
+									GameTooltip:Show()
+								end)
+								frame:SetScript("OnLeave", function()
+									GameTooltip:Hide()
+								end)
+							end
 						end
 					end
 				end
 			end
-		end
-	else
-		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("")
+		else
+			miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("")
 
+		end
 	end
 end
 
