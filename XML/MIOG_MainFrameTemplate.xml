@@ -344,6 +344,14 @@
                                                             </Anchors>
                                                         </FontString>
                                                     </Layer>
+
+                                                    <Layer level="OVERLAY">
+                                                        <FontString parentKey="FakeApps" font="SystemFont_Shadow_Med1">
+                                                            <Anchors>
+                                                                <Anchor point="LEFT" relativeKey="$parent.FontString" relativePoint="RIGHT" x="5"/>
+                                                            </Anchors>
+                                                        </FontString>
+                                                    </Layer>
                                                 </Layers>
                                             </Frame>
                                         </Frames>

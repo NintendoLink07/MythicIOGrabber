@@ -197,11 +197,7 @@ local function setDualInputBoxesScripts(filterOption, setting)
 		local currentField = filterOption[i == 1 and "Minimum" or "Maximum"]
 		local currentName = i == 1 and "minimum" or "maximum"
 
-		--currentField:SetAutoFocus(false)
-		--currentField.autoFocus = false
-		--currentField:SetNumeric(true)
-		--currentField:SetMaxLetters(4)
-		currentField:HookScript("OnTextChanged", function(self, ...)
+		currentField:SetScript("OnTextChanged", function(self, ...)
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			
 			local text = tonumber(self:GetText())
@@ -368,7 +364,6 @@ local function setupDualInputBoxes(key, text, filterID)
 	containerFrame.Setting.Button:SetScript("PostClick", function(self)
 		convertAndRefresh(self:GetChecked())
 	end)
-	containerFrame.Setting.Text:SetText(text)
 	
 	containerFrame.DualBoxes.Minimum:SetAutoFocus(false)
 	containerFrame.DualBoxes.Minimum.autoFocus = false
@@ -920,7 +915,6 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 	MIOG_NewSettings.newFilterOptions[panel][categoryID] = MIOG_NewSettings.newFilterOptions[panel][categoryID] or {}
 
 	local categorySettings = MIOG_NewSettings.newFilterOptions[panel][categoryID]
-	local activitiesLine
 
 	for k, v in ipairs(allFilters) do
 		if(v.id == "activitiesSpacer" and (categoryID == 0 or categoryID == 2 or categoryID == 3)) then
@@ -1089,6 +1083,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			categorySettings[v.id] = categorySettings[v.id] or {value = false, minimum = 0, maximum = 0, linked = false}
 
 			setDualSpinnerScripts(v.object.DualSpinner, categorySettings[v.id])
+
 			v.object.Setting.Button:SetScript("OnClick", function(self)
 				categorySettings[v.id].value = self:GetChecked()
 		
@@ -1099,12 +1094,10 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 		
 			end)
 
-			--/run MIOG_NewSettings.newFilterOptions = nil
-
-			v.object.Setting.Button:SetChecked(categorySettings[v.id].value)
-			v.object.DualSpinner.Link:SetChecked(categorySettings[v.id].linked)
 			v.object.DualSpinner.Minimum:SetValue(categorySettings[v.id].minimum)
 			v.object.DualSpinner.Maximum:SetValue(categorySettings[v.id].maximum)
+			v.object.DualSpinner.Link:SetChecked(categorySettings[v.id].linked)
+			v.object.Setting.Button:SetChecked(categorySettings[v.id].value)
 
 			v.object.Setting.Text:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -1122,13 +1115,15 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			categorySettings[v.id] = categorySettings[v.id] or {value = false, minimum = 0, maximum = 0}
 
 			setDualInputBoxesScripts(v.object.DualBoxes, categorySettings[v.id])
+
 			v.object.Setting.Button:SetScript("OnClick", function(self)
 				categorySettings[v.id].value = self:GetChecked()
 		
 			end)
-			v.object.Setting.Button:SetChecked(categorySettings[v.id].value)
+
 			v.object.DualBoxes.Minimum:SetNumber(categorySettings[v.id].minimum)
 			v.object.DualBoxes.Maximum:SetNumber(categorySettings[v.id].maximum)
+			v.object.Setting.Button:SetChecked(categorySettings[v.id].value)
 
 			v.object.Setting.Text:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

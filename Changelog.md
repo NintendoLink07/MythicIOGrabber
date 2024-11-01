@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [2.9.6] - 2024-11-01
+
+### Changed
+
+- Updated backend code to lower the amount applications and any queue update the "Active queues" panel.
+
+- Disabled the RaiderIO Checker panel for now, has to be remade completely, I hate it.
+
+### Fixed
+
+- The filter panel's input options (e.g. rating, age) will not overwrite settings in other panels anymore.
+
+- [MainFrame] The mainframe will now be actually hiding and showing itself depending on whether it was open or closed before combat had been initiated.
+
+- [MainFrame] The great vault dungeon bar will now show all completed runs that count for the vault instead of just the ones of the current slot.
+
+- [SearchPanel] There shouldn't be anymore errors while trying to sort the members of a group.
+
+- [RaiderIO InfoPanel] The server data will now be refreshed correctly.
+
+
 
 ## [2.9.5] - 2024-10-27
 
@@ -22,7 +43,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 
 ### Fixed
 
-- [MainFrame] The great vault bars tooltips have been updated/corrected. 
+- [MainFrame] The great vault bars tooltips have been updated/corrected.
 
 
 
@@ -2678,7 +2699,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.5..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/2.9.6..HEAD
+[2.9.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.6
 [2.9.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.5
 [2.9.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.4
 [2.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.3

@@ -19,7 +19,6 @@
                 </FontString>
 
                 <FontString parentKey="Reason" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Reason">
-                    <Color r="1" g="0" b="0" a="1" />
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="2" type="number" />
                         <KeyValue key="expand" value="true" type="boolean" />
@@ -66,14 +65,14 @@
                 </KeyValues>
 
                 <Frames>
-                    <Button parentKey="Cancel" inherits="UIPanelDynamicResizeButtonTemplate" text="Cancel">
+                    <Button parentKey="Button1" inherits="UIPanelDynamicResizeButtonTemplate">
                         <KeyValues>
                             <KeyValue key="layoutIndex" value="1" type="number" />
                         </KeyValues>
 
                         <Scripts>
                             <OnLoad>
-                                self:FitToText()
+                                --self:FitToText()
                             </OnLoad>
 
                             <PostClick>
@@ -82,35 +81,27 @@
                         </Scripts>
                     </Button>
 
-                    <Button parentKey="CancelAndSearch" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate" text="Cancel and switch">
+                    <Button parentKey="Button2" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate">
                         <KeyValues>
                             <KeyValue key="layoutIndex" value="2" type="number" />
                         </KeyValues>
 
                         <Scripts>
                             <OnLoad>
-                                self:FitToText()
+                                --self:FitToText()
                             </OnLoad>
-
-                            <PostClick>
-                                StaticPopupSpecial_Hide(self:GetParent():GetParent())
-                            </PostClick>
                         </Scripts>
                     </Button>
 
-                    <Button parentKey="Dismiss" inherits="UIPanelDynamicResizeButtonTemplate" text="Dismiss">
+                    <Button parentKey="Button2P5" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate" hidden="true" text="Apply to next group">
                         <KeyValues>
-                            <KeyValue key="layoutIndex" value="3" type="number" />
+                            <KeyValue key="layoutIndex" value="2" type="number" />
                         </KeyValues>
 
                         <Scripts>
                             <OnLoad>
-                                self:FitToText()
+                                --self:FitToText()
                             </OnLoad>
-
-                            <PostClick>
-                                StaticPopupSpecial_Hide(self:GetParent():GetParent())
-                            </PostClick>
                         </Scripts>
                     </Button>
                 </Frames>

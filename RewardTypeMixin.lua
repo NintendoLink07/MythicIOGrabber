@@ -183,10 +183,6 @@ function RewardTypeMixin:OnEnter()
     end
 
     if(self.info.type == Enum.WeeklyRewardChestThresholdType.Activities) then
-        if(not hasData) then
-            nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(farthestCompletedActivity.level);
-        end
-
         if(numOfCompletedActivities == 0) then
             GameTooltip_AddBlankLineToTooltip(GameTooltip);
             GameTooltip_AddNormalLine(GameTooltip, GREAT_VAULT_REWARDS_MYTHIC_INCOMPLETE);
@@ -218,9 +214,9 @@ function RewardTypeMixin:OnEnter()
                 end
 
                 GameTooltip_AddBlankLineToTooltip(GameTooltip);
-                GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, farthestCompletedActivity.threshold));
 
                 local runHistory = C_MythicPlus.GetRunHistory(false, true);
+                GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, #runHistory));
                 if #runHistory > 0 then
                     local comparison = function(entry1, entry2)
                         if ( entry1.level == entry2.level ) then
@@ -231,12 +227,10 @@ function RewardTypeMixin:OnEnter()
                     end
                     table.sort(runHistory, comparison);
 
-                    for i = 1, farthestCompletedActivity.threshold do
-                        if runHistory[i] then
-                            local runInfo = runHistory[i];
-                            local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID);
-                            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_RUN_INFO, runInfo.level, name));
-                        end
+                    for i = 1, #runHistory do
+                        local runInfo = runHistory[i];
+                        local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID);
+                        GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_RUN_INFO, runInfo.level, name));
                     end
                 end
 

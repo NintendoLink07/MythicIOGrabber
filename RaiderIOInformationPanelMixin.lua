@@ -79,13 +79,13 @@ end
 
 function RaiderIOInformationPanelMixin:Flush()
     self.playerName = nil
-    self.server = nil
+    self.realm = nil
     self.region = nil
 
     self.mplusData = nil
     self.raidData = nil
     self.comment = nil
-    self.server = nil
+    self.realm = nil
     self.roles = nil
     self.race = nil
 
@@ -140,26 +140,26 @@ function RaiderIOInformationPanelMixin:SetFillData(mplusData, raidData, server, 
     self.mplusData = mplusData
     self.raidData = raidData
     self.comment = comment
-    self.server = server
+    self.realm = server
     self.roles = roles
     self.race = race
 end
 
 function RaiderIOInformationPanelMixin:SetPlayerData(playerName, server, region)
     self.playerName = playerName
-    self.server = server
+    self.realm = server
     self.region = region
 end
 
 function RaiderIOInformationPanelMixin:SetOptionalData(comment, server, roles, race)
     self.comment = comment
-    self.server = server
+    self.realm = server
     self.roles = roles
     self.race = race
 end
 
 function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
-    self.mplusData = not refreshData and self.mplusData or miog.getMPlusSortData(self.playerName, self.server, self.region)
+    self.mplusData = not refreshData and self.mplusData or miog.getMPlusSortData(self.playerName, self.realm, self.region)
 
     --local currentSeason = miog.MPLUS_SEASONS[miog.F.CURRENT_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
     --local previousSeason = miog.MPLUS_SEASONS[miog.F.PREVIOUS_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
@@ -219,7 +219,7 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
 end
 
 function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
-    self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(self.playerName, self.server)
+    self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(self.playerName, self.realm)
 
 	local raidMapIDSet = {}
     

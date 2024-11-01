@@ -110,6 +110,7 @@ miog.OnEvent = function(_, event, ...)
 		end
 	elseif(event == "PLAYER_REGEN_ENABLED") then
 		if(miog.F.MAINFRAME_WAS_VISIBLE) then
+			miog.F.MAINFRAME_WAS_VISIBLE = false
 			miog.MainFrame:Show()
 
 		end

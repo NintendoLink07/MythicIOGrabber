@@ -11,7 +11,6 @@ searchResultSystem.baseFrames = {}
 searchResultSystem.raiderIOPanels = {}
 
 local collapsedList = {}
-
 local currentDataList
 
 local framePool
@@ -24,86 +23,6 @@ local function resetFrame(pool, childFrame)
 	childFrame.CategoryInformation.BossPanel:Hide()
 
 	--miog.resetNewRaiderIOInfoPanel(childFrame.RaiderIOInformationPanel)
-end
-
-local function sortSearchResultList(k1, k2)
-	local result1, result2 = k1.data or k1, k2.data or k2
-
-	for key, tableElement in pairs(MIOG_NewSettings.sortMethods["LFGListFrame.SearchPanel"]) do
-		if(tableElement.currentLayer == 1) then
-			local firstState = tableElement.currentState
-
-			for innerKey, innerTableElement in pairs(MIOG_NewSettings.sortMethods["LFGListFrame.SearchPanel"]) do
-				if(innerTableElement.currentLayer == 2) then
-					local secondState = innerTableElement.currentState
-
-					if(result1.appStatus == "applied" and result2.appStatus ~= "applied") then
-						return true
-
-					elseif(result1.appStatus ~= "applied" and result2.appStatus == "applied") then
-						return false
-
-					elseif(result1.favoured and not result2.favoured) then
-						return true
-
-					elseif(not result1.favoured and result2.favoured) then
-						return false
-
-					else
-						if(result1[key] == result2[key]) then
-							return secondState == 1 and result1[innerKey] > result2[innerKey] or secondState == 2 and result1[innerKey] < result2[innerKey]
-
-						else
-							return firstState == 1 and result1[key] > result2[key] or firstState == 2 and result1[key] < result2[key]
-
-						end
-					end
-				end
-			end
-
-			if(result1.appStatus == "applied" and result2.appStatus ~= "applied") then
-				return true
-
-			elseif(result1.appStatus ~= "applied" and result2.appStatus == "applied") then
-				return false
-
-			elseif(result1.favoured and not result2.favoured) then
-				return true
-
-			elseif(not result1.favoured and result2.favoured) then
-				return false
-
-			else
-				if(result1[key] == result2[key]) then
-					return firstState == 1 and result1.resultID > result2.resultID or firstState == 2 and result1.resultID < result2.resultID
-
-				elseif(result1[key] ~= result2[key]) then
-					return firstState == 1 and result1[key] > result2[key] or firstState == 2 and result1[key] < result2[key]
-
-				end
-			end
-
-		end
-
-	end
-
-	if(result1.appStatus == "applied" and result2.appStatus ~= "applied") then
-		return true
-
-	elseif(result1.appStatus ~= "applied" and result2.appStatus == "applied") then
-		return false
-
-	elseif(result1.favoured and not result2.favoured) then
-		return true
-
-	elseif(not result1.favoured and result2.favoured) then
-		return false
-
-	else
-		return result1.resultID < result2.resultID
-
-	end
-
 end
 
 local function setResultFrameColors(resultID, isInviteFrame)
@@ -152,9 +71,17 @@ local function setResultFrameColors(resultID, isInviteFrame)
 			--resultFrame.Background:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 		else
-			if(isEligible) then
-				resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+			if(isEligible and C_AddOns.IsAddOnLoaded("MythicRequeue")) then
+				local partyGUIDs = MR_GetSavedPartyGUIDs()
 
+				if(not partyGUIDs[searchResultInfo.partyGUID]) then
+					resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+					
+				else
+					resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.yellow):GetRGBA())
+					r, g, b = CreateColorFromHexString(miog.CLRSCC.yellow):GetRGB()
+
+				end
 			else
 				r, g, b = CreateColorFromHexString(miog.CLRSCC.orange):GetRGB()
 				resultFrame:SetBackdropBorderColor(CreateColorFromHexString(miog.CLRSCC.orange):GetRGBA())
@@ -821,38 +748,32 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 					groupSize = groupSize + 1
 				end
 
+				local function isDummy(class)
+					return class == "DUMMY"
+				end
+
 				table.sort(orderedList, function(k1, k2)
-					if(k1.role ~= k2.role) then
-						return k1.role > k2.role
-
-					elseif(k1.spec ~= k2.spec) then
-
-						if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
-							return false
-
-						elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
-							return true
-
-						else
-							return k1.spec > k2.spec
-
+					if(k1 and k2) then
+						if k1.role ~= k2.role then
+							return k1.role > k2.role
 						end
+					
+						if isDummy(k1.class) and not isDummy(k2.class) then
+							return false
+						elseif isDummy(k2.class) and not isDummy(k1.class) then
+							return true
+						end
+					
+						if k1.spec ~= k2.spec then
+							return k1.spec > k2.spec
+						end
+					
+						return k1.class > k2.class
 
 					else
-
-						if(k1.class == "DUMMY" and k2.class ~= "DUMMY") then
-							return false
-
-						elseif(k2.class == "DUMMY" and k1.class ~= "DUMMY") then
-							return true
-
-						else
-							return k1.class > k2.class
-
-						end
+						return false
 
 					end
-
 				end)
 
 				for i = 1, 5, 1 do
@@ -1001,15 +922,13 @@ local function newUpdateFunction()
 	miog.SearchPanel:UpdateSortingData(unsortedList)
 	miog.SearchPanel:Sort()
 
-	--table.sort(currentDataList, sortSearchResultList)
-
 	local actualResultsCounter = 0
 
 	for d, listEntry in ipairs(miog.SearchPanel:GetSortingData()) do
-	--for k, v in ipairs(currentDataList) do
 		local showFrame, reasonID = listEntry.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, listEntry.resultID)
 
 		if(showFrame) then
+
 			local frame = initializeSearchResultFrame(listEntry.resultID)
 			frame.layoutIndex = d
 			frame:SetParent(miog.SearchPanel.NewScrollFrame.Container)
@@ -1172,7 +1091,7 @@ local function searchPanelEvents(_, event, ...)
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then --update to title, ilvl, group members, etc
 		if(C_LFGList.HasSearchResultInfo(...)) then
 			updatePersistentResultFrame(...)
-
+			
 		end
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
 
@@ -1208,12 +1127,6 @@ local function searchPanelEvents(_, event, ...)
 		local resultID, new, old, name = ...
 		
 		miog.increaseStatistic(new)
-
-		if(new == "cancelled") then
-			local eligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)
-
-			miog.increaseStatistic(reasonID)
-		end
 
 		updateSearchResultFrameApplicationStatus(resultID, new, old)
 
@@ -1342,22 +1255,19 @@ miog.createSearchPanel = function()
 
 	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(176, 0)]]
 
+	searchPanel:SetScript("OnEvent", searchPanelEvents)
 	searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
 	searchPanel:RegisterEvent("LFG_LIST_SEARCH_FAILED")
 	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
 	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
 	searchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-	searchPanel:SetScript("OnEvent", searchPanelEvents)
-	searchPanel:SetScript("OnShow", function()
-	end)
 
 	framePool = CreateFramePool("Frame", searchPanel.NewScrollFrame, "MIOG_SearchResultFrameTemplate", resetFrame)
 
 	searchPanel.NewScrollFrame.Container:SetFixedWidth(searchPanel.NewScrollFrame:GetWidth())
 	searchPanel.NewScrollFrame.ScrollBar:AdjustPointsOffset(-8, 0)
 	
-
 	local function performantSort()
 		--table.sort(currentDataList, sortSearchResultList)
 		searchPanel:Sort()
@@ -1384,8 +1294,6 @@ miog.createSearchPanel = function()
 		{name = "age", padding = 35},
 	})
 
-	return searchPanel
-
 	--[[local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
 
 	miog.SearchPanel.ScrollView = ScrollView
@@ -1400,7 +1308,7 @@ miog.createSearchPanel = function()
 
 	ScrollView:SetElementFactory(CustomFactory)]]
 
-
+	return searchPanel
 end
 
 hooksecurefunc("LFGListSearchPanel_SetCategory", function()

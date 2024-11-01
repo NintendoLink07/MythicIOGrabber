@@ -20,6 +20,8 @@ local db = {
     ["CHALLENGE_MODE_COMPLETED"] = {name = "Keys finished", subtype="Keys", hide = false},
 }
 
+miog.statisticsDB = db
+
 local function shouldHideKey(key)
     return db[key] and db[key].hide or false
 end

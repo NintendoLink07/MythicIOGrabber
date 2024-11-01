@@ -155,7 +155,34 @@ local function createPVEFrameReplacement()
 		end
 
 		miog.MainTab.QueueInformation.Requeue:SetScript("OnClick", function()
-			miog.requeue()
+			local queueInfo = MIOG_NewSettings.lastUsedQueue
+
+			if(queueInfo.type == "pve") then
+				if(queueInfo.subtype == "multidng") then
+					LFG_JoinDungeon(1, "specific", queueInfo.id, {})
+					
+				else
+					ClearAllLFGDungeons(queueInfo.subtype == "dng" and 1 or 3);
+					SetLFGDungeon(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
+					JoinSingleLFG(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
+
+				end
+
+			elseif(queueInfo.type == "pvp") then
+				if(queueInfo.subtype == "skirmish") then
+					JoinSkirmish(4)
+					
+				elseif(queueInfo.subtype == "brawl") then
+					C_PvP.JoinBrawl()
+
+				elseif(queueInfo.subtype == "brawlSpecial") then
+					C_PvP.JoinBrawl(true)
+
+				elseif(queueInfo.subtype == "pet") then
+					C_PetBattles.StartPVPMatchmaking()
+
+				end
+			end
 		end)
 
 		for k, v in ipairs(activityIndices) do
@@ -405,7 +432,7 @@ local function createPVEFrameReplacement()
 			rootDescription:CreateTitle("More");
 			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
-			rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
+			--rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
 			rootDescription:SetTag("MIOG_MORE")
 		end)
 
