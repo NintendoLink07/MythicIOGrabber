@@ -421,23 +421,25 @@ local function setupSaveData()
             miog.RaidSheet.CreateSettingsBox:SetFocus()
         end)
 
+        local hasGuild = C_Club.GetGuildClubId() ~= nil
+
         for k, v in ipairs(MIOG_NewSettings.raidPlanner.sheets) do
             local sameGuild = v.guildClubID == C_Club.GetGuildClubId()
 
             if(not v.guildClubID or sameGuild) then
-                local presetButton = rootDescription:CreateRadio(WrapTextInColorCode(v.name, sameGuild and miog.CLRSCC.green or miog.CLRSCC.yellow), function(index) return index == MIOG_NewSettings.raidPlanner.selectedPreset end, function(index)
+                local presetButton = rootDescription:CreateRadio(WrapTextInColorCode(v.name, hasGuild and sameGuild and miog.CLRSCC.green or hasGuild and not sameGuild and miog.CLRSCC.yellow or miog.CLRSCC.white), function(index) return index == MIOG_NewSettings.raidPlanner.selectedPreset end, function(index)
                     loadPreset(index)
                 end, k)
 
                 presetButton:SetTooltip(function(tooltip, elementDescription)
-                    --GameTooltip:SetOwner(tooltip)
+                    if(hasGuild) then
+                        if(sameGuild) then
+                            GameTooltip:AddLine("This preset is connected to this characters guild and only accessible by this account's characters in this guild.")
 
-                    if(sameGuild) then
-                        GameTooltip:AddLine("This preset is connected to this characters guild and only accessible by this account's characters in this guild.")
+                        else
+                            GameTooltip:AddLine("This preset is not associated with any guild and is accessible by all account characters.")
 
-                    else
-                        GameTooltip:AddLine("This preset is not associated with any guild and is accessible by all account characters.")
-
+                        end
                     end
 
                     GameTooltip:Show()
@@ -518,9 +520,6 @@ miog.loadRaidPlanner = function()
         spaceFrame.gridColumn = gridColumn
         spaceFrame.gridRow = gridRow
 
-        --gridColumn = gridRow == 10 and gridColumn + 1 or gridColumn
-        --gridRow = gridRow == 10 and 1 or gridRow + 1
-
         gridRow = gridColumn == 4 and gridRow + 1 or gridRow
         gridColumn = gridColumn == 4 and 1 or gridColumn + 1
 
@@ -564,10 +563,12 @@ miog.loadRaidPlanner = function()
     miog.RaidSheet.ResetButton:SetScript("OnClick", function()
         setupFramePools()
     end)
+
     miog.RaidSheet:RegisterEvent("INITIAL_CLUBS_LOADED")
     miog.RaidSheet:SetScript("OnEvent", raidSheetEvents)
     
     if(#MIOG_NewSettings.raidPlanner.sheets > 0) then
+        setupFramePools()
         loadPreset(MIOG_NewSettings.raidPlanner.selectedPreset or 1)
 
     end

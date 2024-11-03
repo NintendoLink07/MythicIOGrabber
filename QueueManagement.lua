@@ -587,7 +587,7 @@ local function updateGroupApplications()
 	end
 
 	if(MIOG_NewSettings.filterPopup) then
-		filterPopup.Text6:SetText("Remaining applications: " .. (numOfActiveApps))
+		filterPopup.Text6:SetText("Remaining applications: " .. (numOfActiveApps - 1))
 
 		if(filterPopupID) then
 			local id, appStatus = C_LFGList.GetApplicationInfo(filterPopupID)

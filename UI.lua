@@ -191,6 +191,11 @@ miog.createFrames = function()
 	miog.LastInvites = miog.loadLastInvitesPanel()
 	miog.ClassPanel = miog.createClassPanel()
 
+	if(MIOG_NewSettings.reQueue) then
+		miog.loadReQueue()
+
+	end
+
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
 		miog.loadCalendarSystem()

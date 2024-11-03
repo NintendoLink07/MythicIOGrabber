@@ -43,15 +43,18 @@ local function refreshPartyGUIDs()
 	local newPartyGUIDs = {}
 
     for _, v in ipairs(searchResults) do
-		if(C_LFGList.HasSearchResultInfo(v)) then
-            local partyGUID = C_LFGList.GetSearchResultInfo(v).partyGUID
+        local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
+		if(C_LFGList.HasSearchResultInfo(v) and not searchResultInfo.isDelisted) then
+            local partyGUID = searchResultInfo.partyGUID
 
 			if(MIOG_NewSettings.requeueGUIDs[partyGUID]) then
 				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
-                    newPartyGUIDs[partyGUID] = true
-
+                    if(not MIOG_NewSettings.clearFakeApps or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v, true)) then
+                        newPartyGUIDs[partyGUID] = true
+                        
+                    end
                 end
 			end
 		end
@@ -125,7 +128,7 @@ local function setupApplyPopup(text1, text2, text3, text4, text5, text6)
 	end
 end
 
-local function createApplyPopup()
+local function loadReQueue()
 	applyPopup = CreateFrame("Frame", nil, UIParent, "MIOG_PopupFrame")
 
 	applyPopup.ButtonPanel.Button1:SetText("Dismiss")
@@ -191,21 +194,21 @@ local function createApplyPopup()
 			FlashClientIcon()
 		end
 	end)
+
+    makeFunctionsPublic()
+    hooksecurefunc("LFGListSearchPanel_DoSearch", function() refreshNeeded = false end)
+
+    LFGListFrame.SearchPanel.results = {}
+
+    eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
+    eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+    eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 end
 
+miog.loadReQueue = loadReQueue
+
 local function events(_, event, ...)
-    if(event == "PLAYER_LOGIN") then
-        createApplyPopup()
-        makeFunctionsPublic()
-        hooksecurefunc("LFGListSearchPanel_DoSearch", function() refreshNeeded = false end)
-
-        LFGListFrame.SearchPanel.results = {}
-
-        eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-        eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
-        eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-
-    elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
+    if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
         refreshSearchResults()
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
@@ -242,5 +245,4 @@ local function events(_, event, ...)
     end
 end
 
-eventReceiver:RegisterEvent("PLAYER_LOGIN")
 eventReceiver:SetScript("OnEvent", events)
