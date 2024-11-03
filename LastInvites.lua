@@ -98,6 +98,8 @@ miog.loadLastInvitesPanel = function()
     ScrollUtil.InitScrollBoxListWithScrollBar(lastInvites.SpecificScrollBox, lastInvites.SpecificScrollBar, view);
 
     lastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
+
+    return lastInvites
 end
 
 miog.loadFavouredPlayersPanel = function(parent, lastOption)

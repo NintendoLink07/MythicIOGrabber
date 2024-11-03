@@ -1256,7 +1256,6 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					end
 
 					v.object:Show()
-					miog.NewFilterPanel:MarkDirty()
 					
 				elseif(categoryID == 3 and LFGListFrame.SearchPanel.filters == 1) then
 					local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.Recommended);
@@ -1347,8 +1346,6 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					end
 
 					v.object:Show()
-					miog.NewFilterPanel:MarkDirty()
-
 				
 				elseif(categoryID == 0) then
 					local sortedSeasonDungeons = {}
@@ -1515,16 +1512,12 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					end
 
 					v.object:Show()
-					miog.NewFilterPanel:MarkDirty()
 					
 				else
 					v.object:Hide()
-					miog.NewFilterPanel:MarkDirty()
 
 				end
 			else
-				miog.NewFilterPanel:MarkDirty()
-
 				v.object:Hide()
 
 			end
@@ -1538,6 +1531,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 		end
 
 	end
+	
+	miog.NewFilterPanel:MarkDirty()
 end
 
 local function setupFilterPanel()
@@ -1555,6 +1550,7 @@ miog.loadNewFilterPanel = function()
 	filterPanel = CreateFrame("Frame", "MythicIOGrabber_NewFilterPanel", miog.Plugin, "MIOG_NewFilterPanel")
 	filterPanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
 	filterPanel:Hide()
+
 	miog.createFrameBorder(filterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	filterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
 	

@@ -34,6 +34,13 @@ Enjoy.
 
 - [RaidSheets] There will be no error anymore trying to access player frames when no frames have been created yet.
 
+- [SidePanel] When trying to open the filter / last invites panel as a new user, it will now actually open the sidepanel instead of producing an error.
+ 
+### Known issues
+
+- [FilterPanel] There is a huge lag / loading of settings happening when opening the panel the first time or after you opened the "Last invites" panel, /reload or relog and then open the panel.
+This will be fixed in 3.0.1.
+
 
 
 ## [2.9.6a] - 2024-11-01
