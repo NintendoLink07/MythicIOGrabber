@@ -34,10 +34,6 @@ Enjoy.
 
 - [RaidSheets] There will be no error anymore trying to access player frames when no frames have been created yet.
 
-### Known issues
-
-- Sometimes the new [ReQueue] feature says it has another group you can apply to but it actually does not.
-
 
 
 ## [2.9.6a] - 2024-11-01
