@@ -11,9 +11,9 @@ local function getSavedPartyGUIDs()
 	return MIOG_NewSettings.requeueGUIDs
 end
 
-local function addPartyGUID(guid)
+local function addPartyGUID(guid, resultID)
 	refreshNeeded = true
-	MIOG_NewSettings.requeueGUIDs[guid] = true
+	MIOG_NewSettings.requeueGUIDs[guid] = {resultID = resultID, timestamp = GetTimePreciseSec()}
 end
 
 local function deletePartyGUID(guid)
@@ -40,7 +40,7 @@ local function refreshSearchResults()
 end
 
 local function refreshPartyGUIDs()
-	local newPartyGUIDs = {}
+    local newPartyGUIDs = {}
 
     for _, v in ipairs(searchResults) do
         local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
@@ -52,7 +52,7 @@ local function refreshPartyGUIDs()
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
                     if(not MIOG_NewSettings.clearFakeApps or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v, true)) then
-                        newPartyGUIDs[partyGUID] = true
+                        newPartyGUIDs[partyGUID] = {resultID = v, timestamp = GetTimePreciseSec()}
                         
                     end
                 end
@@ -79,22 +79,49 @@ local function getNumberOfActualApplications()
 	return numOfActualApps
 end
 
-local function getNextListingFromQueue()
+local function searchForFirstResultID()
+    local orderedList = {}
+    
+    for _, v in pairs(MIOG_NewSettings.requeueGUIDs) do
+        table.insert(orderedList, v)
+
+    end
+
+    table.sort(orderedList, function(k1, k2)
+        return k1.timestamp < k2.timestamp
+
+    end)
+
+    for _, v in ipairs(orderedList) do
+		if(C_LFGList.HasSearchResultInfo(v.resultID) and not C_LFGList.GetSearchResultInfo(v.resultID).isDelisted) then
+            local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v.resultID)
+
+            if(appStatus ~= "applied" and pendingStatus ~= "applied") then
+                return v.resultID
+
+            end
+        end
+    end
+end
+
+--[[local function getNextListingFromQueue()
     for _, v in ipairs(searchResults) do
-		if(C_LFGList.HasSearchResultInfo(v)) then
-            local partyGUID = C_LFGList.GetSearchResultInfo(v).partyGUID
+        local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
+
+		if(C_LFGList.HasSearchResultInfo(v) and not searchResultInfo.isDelisted) then
+            local partyGUID = searchResultInfo.partyGUID
 
 			if(MIOG_NewSettings.requeueGUIDs[partyGUID]) then
 				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
-					return v, partyGUID
+					return v
 
                 end
 			end
 		end
     end
-end
+end]]
 
 local function makeFunctionsPublic()
     MR_GetNumberOfPartyGUIDs = getNumberOfPartyGUIDs
@@ -153,11 +180,11 @@ local function loadReQueue()
                     self:GetParent():MarkDirty()
     
                 else
-                    UIErrorsFrame:AddExternalErrorMessage("[MR]: Too many active applications.");
+                    UIErrorsFrame:AddExternalErrorMessage("[MIOG]: Too many active applications.");
         
                 end
             else
-                UIErrorsFrame:AddExternalErrorMessage("[MR]: No more groups to apply to.");
+                UIErrorsFrame:AddExternalErrorMessage("[MIOG]: No more groups to apply to.");
         
             end
     
@@ -168,7 +195,7 @@ local function loadReQueue()
 	applyPopup.ButtonPanel.Button2P5:SetText("Apply to next group")
 	applyPopup.ButtonPanel.Button2P5:FitToText()
 	applyPopup.ButtonPanel.Button2P5:SetScript("OnClick", function()
-		local resultID = getNextListingFromQueue()
+		local resultID = searchForFirstResultID() or getNextListingFromQueue()
 
         if(resultID) then
             if(getNumberOfActualApplications() < 5) then
@@ -178,11 +205,11 @@ local function loadReQueue()
                     LFGListApplicationDialog.DamagerButton:IsShown() and LFGListApplicationDialog.DamagerButton.CheckButton:GetChecked()
                 )
             else
-                UIErrorsFrame:AddExternalErrorMessage("[MR]: Already too many active applications.");
+                UIErrorsFrame:AddExternalErrorMessage("[MIOG]: Already too many active applications.");
 
             end
         else
-            UIErrorsFrame:AddExternalErrorMessage("[MR]: All saved groups have been delisted.");
+            UIErrorsFrame:AddExternalErrorMessage("[MIOG]: All saved groups have been delisted.");
 
         end
 
@@ -225,7 +252,7 @@ local function events(_, event, ...)
 
         if(new == "failed") then --over the limit or already delisted
             if(C_LFGList.HasSearchResultInfo(resultID) and not searchResultInfo.isDelisted) then --checking that it's not delisted
-                addPartyGUID(searchResultInfo.partyGUID) --adding to GUID list for later checks
+                addPartyGUID(searchResultInfo.partyGUID, resultID) --adding to GUID list for later checks
 
             end
             

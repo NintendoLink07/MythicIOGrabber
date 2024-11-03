@@ -1,34 +1,12 @@
-## [3.0.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.0) - 2024-11-03
+## [3.0.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.1) - 2024-11-03
 
-### Added
+### Changed
 
-- The new [ReQueue] feature has been added!
-You can now "apply" to more than 5 groups at a time!
-
-How this works:
-
-When you are at the maximum of 5 applications the addon saves data from the group you've tried to apply to.
-Then when one of the 5 groups declines you / gets delisted a popup will show up asking you to refresh the search panel.
-Then the addon asks you if you wanna apply to the next group.
-
-The refresh is only required if you applied to a group since the last refresh, so if you apply to 10 groups and then you just play the game after the first refresh you won't have to refresh anymore.
-While I would like for this to be simpler I have to go through some hoops to get this to work.
-These groups will be saved between /reloads or quick relogs.
-
-There are three new settings in the interface options for this feature:
-1. "Apply popups", by default enabled. This setting let's you enable/disable the feature.
-2. "Clear fake apps", by default disabled. When an "queued application" has been blocked by a filter it gets cleared automatically since it's not a real lfg application and doesn't break anything on Blizzard's side.
-3. "Flash client icon", by default disabled. If you are tabbed out of the game but still want a reminder to queue for the next group you can enable this feature.
-
-Enjoy.
+- [ReQueue] The feature will now retrieve the groups you've tried to apply to in order of your signups.
 
 ### Fixed
 
-- [RaidSheets] There will be no error anymore trying to access player frames when no frames have been created yet.
+- [Statistics] Raid and PVP panels are accessible again.
 
-- [SidePanel] When trying to open the filter / last invites panel as a new user, it will now actually open the sidepanel instead of producing an error.
- 
-### Known issues
-
-- [FilterPanel] There is a huge lag / loading of settings happening when opening the panel the first time or after you opened the "Last invites" panel, /reload or relog and then open the panel.
-This will be fixed in 3.0.1.
+- [FilterPanel] Lowered the amount of lag the filter panel produces.
+Lags on first open or switching search panel categories and then opening the panel still causes big lags.

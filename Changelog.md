@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.1] - 2024-11-03
+
+### Changed
+
+- [ReQueue] The feature will now retrieve the groups you've tried to apply to in order of your signups.
+
+### Fixed
+
+- [Statistics] Raid and PVP panels are accessible again.
+
+- [FilterPanel] Lowered the amount of lag the filter panel produces.
+Lags on first open or switching search panel categories and then opening the panel still causes big lags.
+
+
+
 ## [3.0.0] - 2024-11-03
 
 ### Added
@@ -2744,7 +2759,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.0..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.1..HEAD
+[3.0.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.1
 [3.0.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.0
 [2.9.6a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.6a
 [2.9.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/2.9.6

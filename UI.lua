@@ -26,10 +26,10 @@ local function setActivePanel(_, panel)
 			miog.LastInvites:Show()
 
 		else
+			miog.NewFilterPanel:Hide()
 			miog.Plugin.ButtonPanel:Show()
 		
 		end
-
 	end
 
 	if(panel == LFGListFrame.ApplicationViewer) then

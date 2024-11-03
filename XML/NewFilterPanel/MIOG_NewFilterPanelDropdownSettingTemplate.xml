@@ -18,6 +18,10 @@
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" />
                 </Anchors>
+
+                <Scripts>
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
             </DropdownButton>
         </Frames>
     </Frame>

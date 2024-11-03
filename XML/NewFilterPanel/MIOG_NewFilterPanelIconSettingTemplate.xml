@@ -25,9 +25,7 @@
                     </Anchors>
 
                     <Scripts>
-                        <OnLeave>
-                            GameTooltip:Hide()
-                        </OnLeave>
+                        <OnLeave function="GameTooltip_Hide" />
                     </Scripts>
                 </Texture>
             </Layer>

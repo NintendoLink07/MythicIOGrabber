@@ -22,6 +22,10 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="2"/>
                     </Anchors>
+
+                    <Scripts>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
                 </FontString>
             </Layer>
         </Layers>

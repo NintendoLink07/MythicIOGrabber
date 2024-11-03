@@ -38,6 +38,13 @@
                     
                 end
             </PostClick>
+
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(self.name)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave function="GameTooltip_Hide" />
         </Scripts>
     </Button>
 </Ui>

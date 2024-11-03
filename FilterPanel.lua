@@ -133,6 +133,12 @@ local function setupTextSetting(key, text, filterID)
 	local setting = filterPanel[key]
 
 	setting.Text:SetText(text)
+	setting.Text:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText(text)
+		GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[filterID], nil, nil, nil, true)
+		GameTooltip:Show()
+	end)
 	setting:SetWidth(setting.Text:GetUnboundedStringWidth() + 20)
 	setting.layoutIndex = #setting:GetParent():GetLayoutChildren() + 1
 	setting.Button:SetScript("PostClick", function()
@@ -209,91 +215,22 @@ local function setDualInputBoxesScripts(filterOption, setting)
 	end
 end
 
-local function setDualSpinnerScripts(filterOption, setting)
-	for i = 1, 2, 1 do
-		local currentSpinner = filterOption[i == 1 and "Minimum" or "Maximum"]
-		local currentName = i == 1 and "minimum" or "maximum"
-
-		currentSpinner:SetScript("OnTextChanged", function(self, userInput)
-			if(userInput) then
-				local spinnerValue = self:GetNumber()
-
-				if(spinnerValue) then
-
-					setting[currentName] = spinnerValue
-
-					self:SetValue(spinnerValue)
-
-					if(i == 1) then
-						if(setting.maximum < spinnerValue) then
-							filterOption.Maximum:SetValue(spinnerValue)
-							setting.maximum = spinnerValue
-
-						end
-
-					else
-						if(setting.minimum > spinnerValue) then
-							filterOption.Minimum:SetValue(spinnerValue)
-							setting.minimum = spinnerValue
-
-						end
-					end
-				end
-			end
-
-			convertAndRefresh()
-		end)
-
-		currentSpinner.DecrementButton:SetScript("OnMouseDown", function(self)
-			currentSpinner:Decrement()
-
-			local spinnerValue = currentSpinner:GetValue()
-
-			setting[currentName] = spinnerValue
-
-			if(i == 2) then
-				if(not setting.minimum or setting.minimum > setting.maximum) then
-					filterOption.Minimum:SetValue(setting.maximum)
-					setting.minimum = setting.maximum
-
-				end
-			end
-
-			currentSpinner:ClearFocus()
-
-			convertAndRefresh()
-		end)
-
-		currentSpinner.IncrementButton:SetScript("OnMouseDown", function()
-			currentSpinner:Increment()
-
-			local spinnerValue = currentSpinner:GetValue()
-
-			setting[currentName] = spinnerValue
-
-			if(i == 1) then
-				if(not setting.maximum or setting.maximum < setting.minimum) then
-					filterOption.Maximum:SetValue(setting.minimum)
-					setting.maximum = setting.minimum
-
-				end
-			end
-
-			currentSpinner:ClearFocus()
-
-			convertAndRefresh()
-		end)
-	end
-end
-
 local function setupDualSpinner(key, text, filterID)
 	local spinnerContainer = filterPanel[key]
 
 	spinnerContainer.Setting.Text:SetText(text)
+	spinnerContainer.Setting.Text:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText(text)
+		GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[filterID], nil, nil, nil, true)
+		GameTooltip:Show()
+	end)
 	spinnerContainer.Setting:SetWidth(spinnerContainer.Setting.Text:GetUnboundedStringWidth() + 20)
 	spinnerContainer.Setting.Button:SetScript("PostClick", function()
 		convertAndRefresh()
 	end)
+	
+
 
 	spinnerContainer.DualSpinner:SetWidth(154)
 
@@ -360,11 +297,17 @@ local function setupDualInputBoxes(key, text, filterID)
 	containerFrame.layoutIndex = #containerFrame:GetParent():GetLayoutChildren() + 1
 
 	containerFrame.Setting.Text:SetText(text)
+	containerFrame.Setting.Text:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText(text)
+		GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[filterID], nil, nil, nil, true)
+		GameTooltip:Show()
+	end)
 	containerFrame.Setting:SetWidth(containerFrame.Setting.Text:GetUnboundedStringWidth() + 20)
 	containerFrame.Setting.Button:SetScript("PostClick", function(self)
 		convertAndRefresh(self:GetChecked())
 	end)
-	
+
 	containerFrame.DualBoxes.Minimum:SetAutoFocus(false)
 	containerFrame.DualBoxes.Minimum.autoFocus = false
 	containerFrame.DualBoxes.Minimum:SetNumeric(true)
@@ -396,6 +339,12 @@ local function setupDropdownSetting(key, text, filterID)
 	setting.layoutIndex = #setting:GetParent():GetLayoutChildren() + 1
 
 	setting.Dropdown:SetDefaultText(text)
+	setting.Dropdown:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText(text)
+		GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[filterID], nil, nil, nil, true)
+		GameTooltip:Show()
+	end)
 
 	table.insert(allFilters, {type = "dropdown", id = filterID, object = setting})
 	
@@ -418,7 +367,6 @@ local function createNewClassPanel(parent, filterID)
 	local containerFrame
 
 	for classIndex, classInfo in ipairs(miog.CLASSES) do
-		--containerFrame = CreateFrame("Frame", nil, parent or filterPanel, "MIOG_NewFilterPanelContainerRowTemplate")
 		containerFrame = parent[classInfo.name]
 		containerFrame.layoutIndex = #containerFrame:GetParent():GetLayoutChildren() + 1
 		containerFrame.classID = classIndex
@@ -462,12 +410,31 @@ local function createRolePanel(parent, filterID)
 	for i = 1, 3, 1 do
 		if(i == 1) then
 			containerFrame.tank = createIconSetting(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png", containerFrame)
+			containerFrame.tank.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText("Tank")
+				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[filterID], nil, nil, nil, true)
+				GameTooltip:Show()
+			end)
 
 		elseif(i == 2) then
 			containerFrame.healer = createIconSetting(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png", containerFrame)
 
+			containerFrame.healer.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText("Healer")
+				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[filterID], nil, nil, nil, true)
+				GameTooltip:Show()
+			end)
+
 		elseif(i == 3) then
 			containerFrame.damager = createIconSetting(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png", containerFrame)
+			containerFrame.damager.Icon:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText("Damager")
+				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[filterID], nil, nil, nil, true)
+				GameTooltip:Show()
+			end)
 
 		end
 	end
@@ -918,10 +885,10 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 	for k, v in ipairs(allFilters) do
 		if(v.id == "activitiesSpacer" and (categoryID == 0 or categoryID == 2 or categoryID == 3)) then
-			v.object:Show()
+			v.object:SetShown(true)
 		
 		elseif(v.id == "classPanel" and categoryID ~= 0) then
-			v.object:Show()
+			v.object:SetShown(true)
 
 			categorySettings.classes = categorySettings.classes or {}
 			categorySettings.specs = categorySettings.specs or {}
@@ -990,60 +957,19 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			
 			end)
 
-			v.object.tank.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText("Tank")
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.tank.Icon:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-
-			v.object.healer.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText("Healer")
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.healer.Icon:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-
-			v.object.damager.Icon:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText("Damager")
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.damager.Icon:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-
-			v.object:Show()
+			v.object:SetShown(true)
 
 		elseif(categoryID ~= 0 and (v.id == "lustFit" or v.id == "ressFit" or (v.id == "hideHardDecline" or v.id == "partyFit") and panel == "LFGListFrame.SearchPanel")) then
-			v.object:Show()
+			v.object:SetShown(true)
 			v.object.Button:SetScript("OnClick", function(self)
 				categorySettings[v.id] = self:GetChecked()
 			end)
 			v.object.Button:SetChecked(categorySettings[v.id])
 
-			v.object.Text:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(v.object.Text:GetText())
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.Text:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-			--bossFrame:SetScript("OnLeave", nil)
 		elseif(v.id == "difficulty" and panel == "LFGListFrame.SearchPanel") then
-
 			categorySettings.difficulty = categorySettings.difficulty or {}
 
-			v.object:Show()
+			v.object:SetShown(true)
 			selectedDifficultyIndex = categorySettings.difficulty.id
 			
 			v.object.Dropdown:SetupMenu(function(dropdown, rootDescription)
@@ -1057,7 +983,6 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 							selectedDifficultyIndex = difficultyIndex
 							MIOG_NewSettings.newFilterOptions["LFGListFrame.SearchPanel"][LFGListFrame.SearchPanel.categoryID].difficulty.id = difficultyIndex
 							convertAndRefresh()
-							--changeFilterSetting()
 						end, y)
 					end
 				end
@@ -1069,20 +994,83 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			end)
 			v.object.Button:SetChecked(categorySettings[v.id].value)
 
-			v.object.Dropdown:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText("Difficulty")
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.Dropdown:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-
 		elseif((v.id == "tank" or v.id == "healer" or v.id == "damager") and panel == "LFGListFrame.SearchPanel") then
 			categorySettings[v.id] = categorySettings[v.id] or {value = false, minimum = 0, maximum = 0, linked = false}
 
-			setDualSpinnerScripts(v.object.DualSpinner, categorySettings[v.id])
+			for i = 1, 2, 1 do
+				local currentSpinner = v.object.DualSpinner[i == 1 and "Minimum" or "Maximum"]
+				local currentName = i == 1 and "minimum" or "maximum"
+		
+				currentSpinner:SetScript("OnTextChanged", function(self, userInput)
+					if(userInput) then
+						local spinnerValue = self:GetNumber()
+		
+						if(spinnerValue) then
+		
+							categorySettings[v.id][currentName] = spinnerValue
+		
+							self:SetValue(spinnerValue)
+		
+							if(i == 1) then
+								if(categorySettings[v.id].maximum < spinnerValue) then
+									v.object.DualSpinner.Maximum:SetValue(spinnerValue)
+									categorySettings[v.id].maximum = spinnerValue
+		
+								end
+		
+							else
+								if(categorySettings[v.id].minimum > spinnerValue) then
+									v.object.DualSpinner.Minimum:SetValue(spinnerValue)
+									categorySettings[v.id].minimum = spinnerValue
+		
+								end
+							end
+						end
+					end
+		
+					convertAndRefresh()
+				end)
+		
+				currentSpinner.DecrementButton:SetScript("OnMouseDown", function(self)
+					currentSpinner:Decrement()
+		
+					local spinnerValue = currentSpinner:GetValue()
+		
+					categorySettings[v.id][currentName] = spinnerValue
+		
+					if(i == 2) then
+						if(not categorySettings[v.id].minimum or categorySettings[v.id].minimum > categorySettings[v.id].maximum) then
+							v.object.DualSpinner.Minimum:SetValue(categorySettings[v.id].maximum)
+							categorySettings[v.id].minimum = categorySettings[v.id].maximum
+		
+						end
+					end
+		
+					currentSpinner:ClearFocus()
+		
+					convertAndRefresh()
+				end)
+		
+				currentSpinner.IncrementButton:SetScript("OnMouseDown", function()
+					currentSpinner:Increment()
+		
+					local spinnerValue = currentSpinner:GetValue()
+		
+					categorySettings[v.id][currentName] = spinnerValue
+		
+					if(i == 1) then
+						if(not categorySettings[v.id].maximum or categorySettings[v.id].maximum < categorySettings[v.id].minimum) then
+							v.object.DualSpinner.Maximum:SetValue(categorySettings[v.id].minimum)
+							categorySettings[v.id].maximum = categorySettings[v.id].minimum
+		
+						end
+					end
+		
+					currentSpinner:ClearFocus()
+		
+					convertAndRefresh()
+				end)
+			end
 
 			v.object.Setting.Button:SetScript("OnClick", function(self)
 				categorySettings[v.id].value = self:GetChecked()
@@ -1099,17 +1087,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			v.object.DualSpinner.Link:SetChecked(categorySettings[v.id].linked)
 			v.object.Setting.Button:SetChecked(categorySettings[v.id].value)
 
-			v.object.Setting.Text:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(v.object.Setting.Text:GetText())
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.Setting.Text:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-
-			v.object:Show()
+			v.object:SetShown(true)
 
 		elseif(v.id == "age" and panel == "LFGListFrame.SearchPanel" or v.id == "rating" and (categoryID == 2 or categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9)) then
 			categorySettings[v.id] = categorySettings[v.id] or {value = false, minimum = 0, maximum = 0}
@@ -1125,17 +1103,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			v.object.DualBoxes.Maximum:SetNumber(categorySettings[v.id].maximum)
 			v.object.Setting.Button:SetChecked(categorySettings[v.id].value)
 
-			v.object.Setting.Text:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(v.object.Setting.Text:GetText())
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.Setting.Text:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-
-			v.object:Show()
+			v.object:SetShown(true)
 
 		elseif(v.id == "activities") then
 			categorySettings.activities = categorySettings.activities or {}
@@ -1143,16 +1111,6 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			v.object.Button:SetChecked(categorySettings[v.id].value)
 			v.object.Button:SetScript("OnClick", function(self)
 				categorySettings[v.id].value = self:GetChecked()
-			end)
-
-			v.object.Text:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(v.object.Text:GetText())
-				GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS[v.id], nil, nil, nil, true)
-				GameTooltip:Show()
-			end)
-			v.object.Text:SetScript("OnLeave", function()
-				GameTooltip:Hide()
 			end)
 			
 			miog.NewFilterPanel.ActivityRow1:Hide()
@@ -1249,9 +1207,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 						end
 
-						frame.Text:SetScript("OnLeave", function()
-							GameTooltip:Hide()
-						end)
+						frame.Text:SetScript("OnLeave", GameTooltip_Hide)
 
 					end
 
@@ -1318,29 +1274,23 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 										convertAndRefresh()
 									end)
-									bossFrame:SetScript("OnEnter", function(self)
-										GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-										GameTooltip:SetText(sortedExpansionRaids[i].bosses[d].name)
-										GameTooltip:Show()
-									end)
-									bossFrame:SetScript("OnLeave", function()
-										GameTooltip:Hide()
-
-									end)
-									--categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d]
-
+									bossFrame.name = sortedExpansionRaids[i].bosses[d].name
 									bossFrame:SetState(categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID].bosses[d])
 									bossFrame:Show()
+
 								else
 									bossFrame:Hide()
 									bossFrame:SetScript("OnClick", nil)
-									bossFrame:SetScript("OnEnter", nil)
 
 								end
 							end
 
 							bossRow:Show()
 							bossRow.layoutIndex = 1004 + i
+
+						else
+							bossRow:Hide()
+							bossRow.layoutIndex = nil
 
 						end
 					end
@@ -1428,9 +1378,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 						end
 
-						frame.Text:SetScript("OnLeave", function()
-							GameTooltip:Hide()
-						end)
+						frame.Text:SetScript("OnLeave", GameTooltip_Hide)
 
 					end
 
@@ -1506,9 +1454,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 						end
 
-						frame.Text:SetScript("OnLeave", function()
-							GameTooltip:Hide()
-						end)
+						frame.Text:SetScript("OnLeave", GameTooltip_Hide)
 					end
 
 					v.object:Show()
@@ -1549,7 +1495,6 @@ miog.setupFilterPanel = setupFilterPanel
 miog.loadNewFilterPanel = function()
 	filterPanel = CreateFrame("Frame", "MythicIOGrabber_NewFilterPanel", miog.Plugin, "MIOG_NewFilterPanel")
 	filterPanel:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
-	filterPanel:Hide()
 
 	miog.createFrameBorder(filterPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	filterPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
