@@ -3,6 +3,11 @@
     <Frame name="MIOG_NewFilterPanel" inherits="BackdropTemplate, VerticalLayoutFrame" virtual="true">
         <Size x="230" />
 
+        <KeyValues>
+            <KeyValue key="spacing" value="1" type="number" />
+            <KeyValue key="bottomPadding" value="2" type="number" />
+        </KeyValues>
+
         <Frames>
             <Frame parentKey="Lock" inherits="BackdropTemplate" hidden="true" frameStrata="HIGH">
                 <Anchors>

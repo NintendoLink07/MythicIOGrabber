@@ -745,9 +745,11 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 				end
 
 				for i = 3, 5, 1 do
-					orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
-					roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
-					groupSize = groupSize + 1
+					if(roleCount["DAMAGER"] < 3 and groupSize < groupLimit) then
+						orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
+						roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+						groupSize = groupSize + 1
+					end
 				end
 
 				local function isDummy(class)
@@ -1178,7 +1180,6 @@ miog.createSearchPanel = function()
 
 	LFGListFrame.SearchPanel.SearchBox:SetPoint(searchPanel.SearchBoxBase:GetPoint())
 	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("HIGH")
-
 	searchPanel.SearchBox = searchBox
 
 	local searchingSpinner = LFGListFrame.SearchPanel.SearchingSpinner

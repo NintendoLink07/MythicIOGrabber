@@ -24,8 +24,6 @@ formatter:SetStripIntervalWhitespace(true)
 formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
 
 local function setupFilterPopup(resultID, reason, groupName, activityName, leaderName)
-	filterPopup.ButtonPanel:MarkDirty()
-
 	filterPopupID = resultID
 	filterPopup.Text2:SetText(reason)
 	filterPopup.Text2:SetTextColor(1, 0, 0, 1)
@@ -208,6 +206,8 @@ local function updateFakeGroupApplications()
 		end
 	end
 end
+
+miog.updateFakeGroupApplications = updateFakeGroupApplications
 
 local function updateAllPVEQueues()
 	for categoryID = 1, NUM_LE_LFG_CATEGORYS do
@@ -845,20 +845,11 @@ end
 local function createFilterPopup()
 	filterPopup = CreateFrame("Frame", nil, UIParent, "MIOG_PopupFrame")
 
-	filterPopup.ButtonPanel.Button1:SetText("Cancel")
+	filterPopup.ButtonPanel.Button1:SetText("Dismiss")
 	filterPopup.ButtonPanel.Button1:FitToText()
 	filterPopup.ButtonPanel.Button1:SetScript("OnClick", function()
-		if(filterPopupID) then
-			C_LFGList.CancelApplication(filterPopupID)
+	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 
-		end
-		
-		filterPopupID = nil
-	end)
-
-	filterPopup.ButtonPanel.Button2:SetText("Dismiss")
-	filterPopup.ButtonPanel.Button2:FitToText()
-	filterPopup.ButtonPanel.Button2:SetScript("OnClick", function()
 		if(filterPopupID) then
 			disabledPopups[filterPopupID] = true
 
@@ -867,6 +858,27 @@ local function createFilterPopup()
 		filterPopupID = nil
 
 		StaticPopupSpecial_Hide(filterPopup)
+	end)
+
+	filterPopup.ButtonPanel.Button2:SetText("Cancel")
+	filterPopup.ButtonPanel.Button2:FitToText()
+	filterPopup.ButtonPanel.Button2:SetScript("OnClick", function()
+	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+		
+		if(filterPopupID) then
+			C_LFGList.CancelApplication(filterPopupID)
+
+		end
+		
+		filterPopupID = nil
+
+		StaticPopupSpecial_Hide(filterPopup)
+	end)
+
+	filterPopup:SetScript("OnShow", function()
+		if(MIOG_NewSettings.flashOnFilterPopup) then
+			FlashClientIcon()
+		end
 	end)
 end
 

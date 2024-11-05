@@ -372,7 +372,7 @@ local function createNewClassPanel(parent, filterID)
 		containerFrame.classID = classIndex
 
 		local r, g, b = GetClassColor(classInfo.name)
-		containerFrame.Border:SetColorTexture(r, g, b, 0.9)
+		containerFrame.Border:SetColorTexture(r, g, b, 0.2)
 		containerFrame.Background:SetColorTexture(r, g, b, 0.6)
 
 		local classFrame = containerFrame.ClassFrame
@@ -877,6 +877,33 @@ end
 
 miog.checkEligibility = checkEligibility
 
+local function setClassSpecState(containerFrame, categorySettings)
+	local specs = miog.CLASSES[containerFrame.classID].specs
+
+	if(categorySettings.classes[containerFrame.classID] == false) then
+		local r, g, b = GetClassColor(miog.CLASSES[containerFrame.classID].name)
+		containerFrame.Border:SetColorTexture(r, g, b, 0.5)
+		containerFrame.Background:SetColorTexture(r, g, b, 1)
+
+		return true
+
+	else
+		for k, v in ipairs(specs) do
+			if(categorySettings.specs[v] == false) then
+				local r, g, b = GetClassColor(miog.CLASSES[containerFrame.classID].name)
+				containerFrame.Border:SetColorTexture(r, g, b, 0.5)
+				containerFrame.Background:SetColorTexture(r, g, b, 1)
+
+				return true
+			end
+		end
+	end
+
+	local r, g, b = GetClassColor(miog.CLASSES[containerFrame.classID].name)
+	containerFrame.Border:SetColorTexture(r, g, b, 0.2)
+	containerFrame.Background:SetColorTexture(r, g, b, 0.6)
+end
+
 local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 	MIOG_NewSettings.newFilterOptions[panel] = MIOG_NewSettings.newFilterOptions[panel] or {}
 	MIOG_NewSettings.newFilterOptions[panel][categoryID] = MIOG_NewSettings.newFilterOptions[panel][categoryID] or {}
@@ -909,6 +936,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					categorySettings.classes[v.object.classID] = self:GetChecked()
 
 				end
+
+				setClassSpecState(v.object, categorySettings)
 			end)
 
 			for i = 1, 4, 1 do
@@ -930,11 +959,15 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 							v.object.ClassFrame.Button:SetChecked(true)
 
 						end
+
+						setClassSpecState(v.object, categorySettings)
 					
 					end)
 				end
 				
 			end
+
+			setClassSpecState(v.object, categorySettings)
 
 		elseif(v.id == "roles" and categoryID ~= 0) then
 			categorySettings[v.id] = categorySettings[v.id] or {}

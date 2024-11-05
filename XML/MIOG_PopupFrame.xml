@@ -6,7 +6,7 @@
             <KeyValue key="topPadding" value="10" type="number" />
             <KeyValue key="leftPadding" value="2" type="number" />
             <KeyValue key="rightPadding" value="2" type="number" />
-            <KeyValue key="bottomPadding" value="1" type="number" />
+            <KeyValue key="bottomPadding" value="6" type="number" />
         </KeyValues>
 
         <Layers>
@@ -57,24 +57,24 @@
         </Layers>
 
         <Frames>
-            <Frame parentKey="ButtonPanel" inherits="HorizontalLayoutFrame">
+            <Frame parentKey="ButtonPanel">
+                <Size y="20" />
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="7" type="number" />
                     <KeyValue key="expand" value="true" type="boolean" />
-                    <KeyValue key="bottomPadding" value="2" type="number" />
+                    <KeyValue key="bottomPadding" value="4" type="number" />
+                    <KeyValue key="leftPadding" value="4" type="number" />
+                    <KeyValue key="rightPadding" value="4" type="number" />
                 </KeyValues>
 
                 <Frames>
                     <Button parentKey="Button1" inherits="UIPanelDynamicResizeButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="1" type="number" />
-                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOM"/>
+                        </Anchors>
 
                         <Scripts>
-                            <OnLoad>
-                                --self:FitToText()
-                            </OnLoad>
-
                             <PostClick>
                                 StaticPopupSpecial_Hide(self:GetParent():GetParent())
                             </PostClick>
@@ -82,27 +82,17 @@
                     </Button>
 
                     <Button parentKey="Button2" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number" />
-                        </KeyValues>
-
-                        <Scripts>
-                            <OnLoad>
-                                --self:FitToText()
-                            </OnLoad>
-                        </Scripts>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
                     </Button>
 
-                    <Button parentKey="Button2P5" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate" hidden="true" text="Apply to next group">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number" />
-                        </KeyValues>
-
-                        <Scripts>
-                            <OnLoad>
-                                --self:FitToText()
-                            </OnLoad>
-                        </Scripts>
+                    <Button parentKey="Button2P5" inherits="UIPanelDynamicResizeButtonTemplate, SecureActionButtonTemplate" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
                     </Button>
                 </Frames>
             </Frame>

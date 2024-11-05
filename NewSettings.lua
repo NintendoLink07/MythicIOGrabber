@@ -12,9 +12,9 @@ local defaultSortState = {
 
 local function keepSignUpNote(self, resultID)
     local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
-	if ( searchResultInfo.activityID ~= self.activityID ) then
+	--if ( searchResultInfo.activityID ~= self.activityID ) then
 		--C_LFGList.ClearApplicationTextFields();
-	end
+	--end
 
 	self.resultID = resultID;
 	self.activityID = searchResultInfo.activityID;
@@ -23,6 +23,21 @@ local function keepSignUpNote(self, resultID)
 end
 
 LFGListApplicationDialog_Show = keepSignUpNote
+
+--[[LFGListApplicationDialogDescription:Hide()
+LFGListApplicationDialogDescription = nil
+
+local customDesc = CreateFrame("ScrollFrame", nil, LFGListApplicationDialog, "InputScrollFrameTemplate")
+customDesc:SetParentKey("Description")
+customDesc:SetSize(210, 28)
+customDesc:SetPoint("BOTTOM", 0, 55)
+customDesc.maxLetters = 63
+customDesc.instructions = LFG_LIST_NOTE_TO_LEADER
+customDesc.hideCharCount = true
+InputScrollFrame_OnLoad(customDesc);
+customDesc.EditBox:SetText("3.4k last season, Dispell/Purge")
+
+LFGListApplicationDialogDescription = customDesc]]
 
 local defaultFilters = {
     classes = {},
@@ -85,7 +100,8 @@ local defaultSettings = {
     {name = "ReQueue", variableName = "MIOG_ReQueue", key="reQueue", default=true, type="checkbox", tooltip="Enable or disable the ReQueue feature.", reload=true},
     {name = "Filter popup", variableName = "MIOG_FilterPopup", key="filterPopup", default=false, type="checkbox", tooltip="Enable or disable popups when your filters don't match anymore with one of the groups you've applied to.", reload=false},
     {name = "Clear ReQueue apps", variableName = "MIOG_ClearFakeApps", key="clearFakeApps", default=false, type="checkbox", tooltip="Clear out applications from the ReQueue feature when they've been blocked by a filter.", reload=false},
-    {name = "Flash client icon", variableName = "MIOG_FlashOnApplyPopup", key="flashOnApplyPopup", default=false, type="checkbox", tooltip="Flash the WoW application in the taskbar when a group has declined you / has been delisted and the Apply Popup shows up.", reload=false},
+    {name = "[ReQueue] Flash client icon", variableName = "MIOG_FlashOnApplyPopup", key="flashOnApplyPopup", default=false, type="checkbox", tooltip="Flash the WoW application in the taskbar when a group has declined you / has been delisted and the Apply Popup shows up.", reload=false},
+    {name = "[Filter] Flash client icon", variableName = "MIOG_FlashOnFilterPopup", key="flashOnFilterPopup", default=false, type="checkbox", tooltip="Flash the WoW application in the taskbar when a group has been filtered and the Filter Popup shows up.", reload=false},
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions(), type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")

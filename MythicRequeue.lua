@@ -3,7 +3,7 @@ local wticc = WrapTextInColorCode
 
 local eventReceiver = CreateFrame("Frame", "MythicRequeue_EventReceiver")
 
-local refreshNeeded = true
+local refreshNeeded
 local searchResults = {}
 local applyPopup
 
@@ -42,6 +42,11 @@ end
 local function refreshPartyGUIDs()
     local newPartyGUIDs = {}
 
+    if(#searchResults == 0) then
+        refreshSearchResults()
+
+    end
+
     for _, v in ipairs(searchResults) do
         local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
 		if(C_LFGList.HasSearchResultInfo(v) and not searchResultInfo.isDelisted) then
@@ -52,7 +57,7 @@ local function refreshPartyGUIDs()
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
                     if(not MIOG_NewSettings.clearFakeApps or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v, true)) then
-                        newPartyGUIDs[partyGUID] = {resultID = v, timestamp = GetTimePreciseSec()}
+                        newPartyGUIDs[partyGUID] = {resultID = v, timestamp = MIOG_NewSettings.requeueGUIDs[partyGUID] and MIOG_NewSettings.requeueGUIDs[partyGUID].timestamp or GetTimePreciseSec()}
                         
                     end
                 end
@@ -68,7 +73,7 @@ local function getNumberOfActualApplications()
 	local applications = C_LFGList.GetApplications()
 
 	for _, v in ipairs(applications) do
-		local id, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
+		local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
 		if(appStatus == "applied" or pendingStatus == "applied") then
 			numOfActualApps = numOfActualApps + 1
@@ -93,18 +98,19 @@ local function searchForFirstResultID()
     end)
 
     for _, v in ipairs(orderedList) do
-		if(C_LFGList.HasSearchResultInfo(v.resultID) and not C_LFGList.GetSearchResultInfo(v.resultID).isDelisted) then
+        local searchResultInfo = C_LFGList.GetSearchResultInfo(v.resultID)
+		if(C_LFGList.HasSearchResultInfo(v.resultID) and not searchResultInfo.isDelisted) then
             local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v.resultID)
 
             if(appStatus ~= "applied" and pendingStatus ~= "applied") then
-                return v.resultID
+                return v.resultID, searchResultInfo
 
             end
         end
     end
 end
 
---[[local function getNextListingFromQueue()
+--[[local function getNextListingFromQueue() --deprecated
     for _, v in ipairs(searchResults) do
         local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
 
@@ -147,12 +153,37 @@ local function setupApplyPopup(text1, text2, text3, text4, text5, text6)
 		if(refreshNeeded) then
 			applyPopup.ButtonPanel.Button2P5:Hide()
 			applyPopup.ButtonPanel.Button2:Show()
-			applyPopup.ButtonPanel:MarkDirty()
+
+        else
+			applyPopup.ButtonPanel.Button2:Hide()
+			applyPopup.ButtonPanel.Button2P5:Show()
 
 		end
 		
 		StaticPopupSpecial_Show(applyPopup)
 	end
+end
+
+local function getCategoryIDOfFirstResult()
+    local _, info = searchForFirstResultID()
+
+    local activityInfo = C_LFGList.GetActivityInfoTable(info.activityID)
+
+    return activityInfo and activityInfo.categoryID
+end
+
+local function checkForErrors()
+    if(getNumberOfPartyGUIDs() == 0) then
+        UIErrorsFrame:AddExternalErrorMessage("[MIOG]: No more groups to apply to.");
+        return false
+       
+    elseif(getNumberOfActualApplications() == 5) then
+        UIErrorsFrame:AddExternalErrorMessage("[MIOG]: Too many active applications.");
+        return false
+
+    end
+
+    return true
 end
 
 local function loadReQueue()
@@ -168,26 +199,14 @@ local function loadReQueue()
 	applyPopup.ButtonPanel.Button2:SetText("Refresh (REQUIRED)")
 	applyPopup.ButtonPanel.Button2:FitToText()
 	applyPopup.ButtonPanel.Button2:SetScript("OnClick", function(self)
+	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 
         StaticPopupSpecial_Hide(applyPopup)
 
-        C_Timer.After(0.8, function()
-            if(getNumberOfPartyGUIDs() > 0) then
-                if(getNumberOfActualApplications() < 5) then
-                    self:Hide()
-                    self:GetParent().Button2P5:Show()
-                    self:GetParent():MarkDirty()
-    
-                else
-                    UIErrorsFrame:AddExternalErrorMessage("[MIOG]: Too many active applications.");
-        
-                end
-            else
-                UIErrorsFrame:AddExternalErrorMessage("[MIOG]: No more groups to apply to.");
-        
-            end
-    
+        C_Timer.After(0.75, function()
+            checkForErrors()
             setupApplyPopup()
         end)
 	end)
@@ -195,22 +214,16 @@ local function loadReQueue()
 	applyPopup.ButtonPanel.Button2P5:SetText("Apply to next group")
 	applyPopup.ButtonPanel.Button2P5:FitToText()
 	applyPopup.ButtonPanel.Button2P5:SetScript("OnClick", function()
-		local resultID = searchForFirstResultID() or getNextListingFromQueue()
+	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 
-        if(resultID) then
-            if(getNumberOfActualApplications() < 5) then
-                C_LFGList.ApplyToGroup(resultID,
-                    LFGListApplicationDialog.TankButton:IsShown() and LFGListApplicationDialog.TankButton.CheckButton:GetChecked(),
-                    LFGListApplicationDialog.HealerButton:IsShown() and LFGListApplicationDialog.HealerButton.CheckButton:GetChecked(),
-                    LFGListApplicationDialog.DamagerButton:IsShown() and LFGListApplicationDialog.DamagerButton.CheckButton:GetChecked()
-                )
-            else
-                UIErrorsFrame:AddExternalErrorMessage("[MIOG]: Already too many active applications.");
+		local resultID = searchForFirstResultID()
 
-            end
-        else
-            UIErrorsFrame:AddExternalErrorMessage("[MIOG]: All saved groups have been delisted.");
-
+        if(checkForErrors() and resultID) then
+            C_LFGList.ApplyToGroup(resultID,
+                LFGListApplicationDialog.TankButton:IsShown() and LFGListApplicationDialog.TankButton.CheckButton:GetChecked(),
+                LFGListApplicationDialog.HealerButton:IsShown() and LFGListApplicationDialog.HealerButton.CheckButton:GetChecked(),
+                LFGListApplicationDialog.DamagerButton:IsShown() and LFGListApplicationDialog.DamagerButton.CheckButton:GetChecked()
+            )
         end
 
         setupApplyPopup()
@@ -219,6 +232,7 @@ local function loadReQueue()
 	applyPopup:SetScript("OnShow", function()
 		if(MIOG_NewSettings.flashOnApplyPopup) then
 			FlashClientIcon()
+            
 		end
 	end)
 
@@ -227,6 +241,7 @@ local function loadReQueue()
 
     LFGListFrame.SearchPanel.results = {}
 
+    eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
     eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
     eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
@@ -235,7 +250,10 @@ end
 miog.loadReQueue = loadReQueue
 
 local function events(_, event, ...)
-    if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
+    if(event == "PLAYER_ENTERING_WORLD") then
+        setupApplyPopup()
+
+    elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
         refreshSearchResults()
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
@@ -267,6 +285,8 @@ local function events(_, event, ...)
 
         elseif(new ~= "invited") then
             setupApplyPopup()
+
+            miog.updateFakeGroupApplications()
 
         end
     end

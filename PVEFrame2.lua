@@ -6,12 +6,12 @@ local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
 local function openSearchPanel(categoryID, filters, dontSearch)
-	LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+	--LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
 
 	LFGListFrame.CategorySelection.selectedCategory = categoryID
-	LFGListFrame.CategorySelection.selectedFilters = filters
+	LFGListFrame.CategorySelection.selectedFilters = filters or 0
 
-	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters, LFGListFrame.baseFilters)
+	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters or 0, LFGListFrame.baseFilters)
 
 	if(not dontSearch) then
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
