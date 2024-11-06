@@ -372,8 +372,8 @@ local function createNewClassPanel(parent, filterID)
 		containerFrame.classID = classIndex
 
 		local r, g, b = GetClassColor(classInfo.name)
-		containerFrame.Border:SetColorTexture(r, g, b, 0.2)
-		containerFrame.Background:SetColorTexture(r, g, b, 0.6)
+		containerFrame.Border:SetColorTexture(r, g, b, 0.25)
+		containerFrame.Background:SetColorTexture(r, g, b, 0.5)
 
 		local classFrame = containerFrame.ClassFrame
 		classFrame.classID = classIndex
@@ -900,8 +900,8 @@ local function setClassSpecState(containerFrame, categorySettings)
 	end
 
 	local r, g, b = GetClassColor(miog.CLASSES[containerFrame.classID].name)
-	containerFrame.Border:SetColorTexture(r, g, b, 0.2)
-	containerFrame.Background:SetColorTexture(r, g, b, 0.6)
+	containerFrame.Border:SetColorTexture(r, g, b, 0.25)
+	containerFrame.Background:SetColorTexture(r, g, b, 0.5)
 end
 
 local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)

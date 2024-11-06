@@ -218,8 +218,6 @@ local function loadReQueue()
 
 		local resultID, searchResultInfo = searchForFirstResultID()
 
-        print(resultID)
-
         if(resultID) then
             if(checkForErrors()) then
                 C_LFGList.ApplyToGroup(resultID,
