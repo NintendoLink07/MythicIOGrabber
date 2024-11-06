@@ -661,20 +661,15 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			for i = 1, searchResultInfo.numMembers, 1 do
 				local role, class, _, specLocalized, isLeader = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
 
-				if(class) then
-					orderedList[i] = {leader = isLeader, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
+				table.insert(orderedList, {leader = isLeader, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]})
 
-					if(role) then
-						roleCount[role] = roleCount[role] + 1
+				if(role) then
+					roleCount[role] = roleCount[role] + 1
 
-					else
-						orderedList[i].role = "DAMAGER"
-					end
 				end
 			end
 
 			local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
-			local groupSize = #orderedList
 
 			local memberPanel = currentFrame.CategoryInformation.MemberPanel
 			local bossPanel = currentFrame.CategoryInformation.BossPanel
@@ -726,29 +721,24 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			end
 
 			if(activityInfo.categoryID ~= 3) then
-				--if(searchResultInfo.numMembers < 6) then
 				for i = 1, 1, 1 do
-					if(roleCount["TANK"] < 1 and groupSize < groupLimit) then
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
-						roleCount["TANK"] = roleCount["TANK"] + 1
-						groupSize = groupSize + 1
+					if(roleCount["TANK"] < 1 and searchResultInfo.numMembers < groupLimit) then
+						table.insert(orderedList, {class = "DUMMY", role = "TANK", specID = 20})
 					end
 				end
 
-				for i = 1, 1, 1 do
-					if(roleCount["HEALER"] < 1 and groupSize < groupLimit) then
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
+				for i = 2, 2, 1 do
+					if(roleCount["HEALER"] < 1 and searchResultInfo.numMembers < groupLimit) then
+						table.insert(orderedList, {class = "DUMMY", role = "HEALER", specID = 20})
 						roleCount["HEALER"] = roleCount["HEALER"] + 1
-						groupSize = groupSize + 1
 
 					end
 				end
 
 				for i = 3, 5, 1 do
-					if(roleCount["DAMAGER"] < 3 and groupSize < groupLimit) then
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
+					if(roleCount["DAMAGER"] < 3 and searchResultInfo.numMembers < groupLimit) then
+						table.insert(orderedList, {class = "DUMMY", role = "DAMAGER", specID = 20})
 						roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
-						groupSize = groupSize + 1
 					end
 				end
 
@@ -784,7 +774,8 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 					if(i <= groupLimit) then
 						local currentMemberFrame = memberPanel[tostring(i)]
 
-						currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
+						currentMemberFrame.Icon:SetTexture(orderedList[i].specID and miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon or
+						orderedList[i].class and miog.CLASSFILE_TO_ID[orderedList[i].class] and miog.CLASSES[miog.CLASSFILE_TO_ID[orderedList[i].class]].icon)
 
 						if(orderedList[i].class ~= "DUMMY") then
 							currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
@@ -812,7 +803,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 						end
 
-						--orderedListIndex = orderedListIndex + 1
 						memberPanel[tostring(i)]:Show()
 
 					else
@@ -820,95 +810,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 					end
 				end
-				--else
-					--[[for i = 1, 2, 1 do
-						if(roleCount["TANK"] < 2 and groupSize < groupLimit) then
-							orderedList[groupSize + 1] = {class = "DUMMY", role = "TANK", specID = 20}
-							roleCount["TANK"] = roleCount["TANK"] + 1
-							groupSize = groupSize + 1
-						end
-					end
-		
-					for i = 1, 6, 1 do
-						if(roleCount["HEALER"] < 6 and groupSize < groupLimit) then
-							orderedList[groupSize + 1] = {class = "DUMMY", role = "HEALER", specID = 20}
-							roleCount["HEALER"] = roleCount["HEALER"] + 1
-							groupSize = groupSize + 1
-			
-						end
-					end
-		
-					for i = groupSize, groupLimit, 1 do
-						orderedList[groupSize + 1] = {class = "DUMMY", role = "DAMAGER", specID = 20}
-						roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
-						groupSize = groupSize + 1
-					end
-		
-					table.sort(orderedList, function(k1, k2)
-						-- Sort by role first
-						if k1.role ~= k2.role then
-							return k1.role > k2.role
-						end
-					
-						-- Sort by specID if role and class are the same
-						if k1.specID and k2.specID then
-							return k1.specID > k2.specID
-						elseif k1.specID then
-							return false
-						elseif k2.specID then
-							return true
-						end
-					
-						-- Sort by class if role is the same
-						if k1.class ~= k2.class then
-							-- "DUMMY" class should always come last
-							if k1.class == "DUMMY" then
-								return false
-							elseif k2.class == "DUMMY" then
-								return true
-							end
-							return k1.class > k2.class
-						end
-					
-						-- If everything else is equal, maintain the existing order
-						return false
-					end)
-	
-					for i = 1, 40, 1 do
-						local currentMemberFrame = memberPanel[tostring(i)]
-
-						currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon)
-
-						if(orderedList[i].class ~= "DUMMY") then
-							currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
-
-						else
-							currentMemberFrame.Border:SetColorTexture(0, 0, 0, 0)
-						
-						end
-
-						if(orderedList[i].leader) then
-							memberPanel.LeaderCrown:ClearAllPoints()
-							memberPanel.LeaderCrown:SetParent(currentMemberFrame)
-							memberPanel.LeaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
-							memberPanel.LeaderCrown:SetShown(true)
-
-							currentMemberFrame:SetMouseMotionEnabled(true)
-							currentMemberFrame:SetScript("OnEnter", function()
-								GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_CURSOR")
-								GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultInfo.leaderName))
-								GameTooltip:Show()
-
-							end)
-						else
-							currentMemberFrame:SetScript("OnEnter", nil)
-						
-						end
-
-						--orderedListIndex = orderedListIndex + 1
-						memberPanel[tostring(i)]:Show()
-					end]]
-				--end
 			end
 			
 			updateResultFrameStatus(resultID)

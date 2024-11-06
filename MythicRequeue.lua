@@ -13,7 +13,7 @@ end
 
 local function addPartyGUID(guid, resultID)
 	refreshNeeded = true
-	MIOG_NewSettings.requeueGUIDs[guid] = {resultID = resultID, timestamp = GetTimePreciseSec()}
+	MIOG_NewSettings.requeueGUIDs[guid] = {resultID = resultID, partyGUID = guid, timestamp = GetTimePreciseSec()}
 end
 
 local function deletePartyGUID(guid)
@@ -42,11 +42,6 @@ end
 local function refreshPartyGUIDs()
     local newPartyGUIDs = {}
 
-    if(#searchResults == 0) then
-        refreshSearchResults()
-
-    end
-
     for _, v in ipairs(searchResults) do
         local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
 		if(C_LFGList.HasSearchResultInfo(v) and not searchResultInfo.isDelisted) then
@@ -65,7 +60,7 @@ local function refreshPartyGUIDs()
 		end
     end
 
-	MIOG_NewSettings.requeueGUIDs = newPartyGUIDs
+	MIOG_NewSettings.requeueGUIDs = #searchResults > 0 and newPartyGUIDs or MIOG_NewSettings.requeueGUIDs
 end
 
 local function getNumberOfActualApplications()
@@ -88,6 +83,7 @@ local function searchForFirstResultID()
     local orderedList = {}
     
     for _, v in pairs(MIOG_NewSettings.requeueGUIDs) do
+        v.partyGUID = _
         table.insert(orderedList, v)
 
     end
@@ -99,6 +95,7 @@ local function searchForFirstResultID()
 
     for _, v in ipairs(orderedList) do
         local searchResultInfo = C_LFGList.GetSearchResultInfo(v.resultID)
+
 		if(C_LFGList.HasSearchResultInfo(v.resultID) and not searchResultInfo.isDelisted) then
             local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v.resultID)
 
@@ -106,6 +103,9 @@ local function searchForFirstResultID()
                 return v.resultID, searchResultInfo
 
             end
+        else
+            deletePartyGUID(v.partyGUID)
+
         end
     end
 end
@@ -216,14 +216,20 @@ local function loadReQueue()
 	applyPopup.ButtonPanel.Button2P5:SetScript("OnClick", function()
 	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 
-		local resultID = searchForFirstResultID()
+		local resultID, searchResultInfo = searchForFirstResultID()
 
-        if(checkForErrors() and resultID) then
-            C_LFGList.ApplyToGroup(resultID,
-                LFGListApplicationDialog.TankButton:IsShown() and LFGListApplicationDialog.TankButton.CheckButton:GetChecked(),
-                LFGListApplicationDialog.HealerButton:IsShown() and LFGListApplicationDialog.HealerButton.CheckButton:GetChecked(),
-                LFGListApplicationDialog.DamagerButton:IsShown() and LFGListApplicationDialog.DamagerButton.CheckButton:GetChecked()
-            )
+        print(resultID)
+
+        if(resultID) then
+            if(checkForErrors()) then
+                C_LFGList.ApplyToGroup(resultID,
+                    LFGListApplicationDialog.TankButton:IsShown() and LFGListApplicationDialog.TankButton.CheckButton:GetChecked(),
+                    LFGListApplicationDialog.HealerButton:IsShown() and LFGListApplicationDialog.HealerButton.CheckButton:GetChecked(),
+                    LFGListApplicationDialog.DamagerButton:IsShown() and LFGListApplicationDialog.DamagerButton.CheckButton:GetChecked()
+                )
+            end
+
+            deletePartyGUID(searchResultInfo.partyGUID)
         end
 
         setupApplyPopup()

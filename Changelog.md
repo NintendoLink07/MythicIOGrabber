@@ -6,11 +6,23 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.3] - 2024-11-06
+
+### Fixed
+
+- [ReQueue] Disabled an extra check for search results which kept deleting the saved groups in certain situations.
+
+- [ReQueue] Added a code block that will always delete groups that can't be found anymore if you got the data inbetween you requesting the data and the group disappearing.
+
+- [SearchPanel] Recoded some of the member count algorithm to fail-over to the class icon if for some reason Blizzard doesn't send spec data of the group listing when requesting it.
+
+
+
 ## [3.0.2] - 2024-11-05
 
 ### PSA
 
-[ReQueue] You should always be <= 100 results AND use the same for the feature to reliably work.
+- [ReQueue] You should always be <= 100 results AND use the same filters for the feature to reliably work.
 E.g. you have a group from the 101-200 result range and now you search for a different key range: the original result might not be in your new results, thus the feature can't check for the saved group ID.
 
 ### Changed
@@ -2793,7 +2805,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.3..HEAD
+[3.0.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.3
 [3.0.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.2
 [3.0.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.1
 [3.0.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.0
