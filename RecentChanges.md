@@ -1,9 +1,8 @@
-## [3.0.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.3) - 2024-11-06
+## [3.0.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.4) - 2024-11-08
 
 ### Fixed
 
-- [ReQueue] Disabled an extra check for search results which kept deleting the saved groups in certain situations.
+- [Statistics] The great vault "timer" will now use a different timing method to make it usable for all of eternity.
+It functioned somewhat correctly for the current vault period but won't work for future ones correctly.
 
-- [ReQueue] Added a code block that will always delete groups that can't be found anymore if you got the data inbetween you requesting the data and the group disappearing.
-
-- [SearchPanel] Recoded some of the member count algorithm to fail-over to the class icon if for some reason Blizzard doesn't send spec data of the group listing when requesting it.
+- [FilterPanel] When converting my rating filters to Blizzard's rating filters it will now check if the rating checkbox is checked or not

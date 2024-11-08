@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.4] - 2024-11-08
+
+### Fixed
+
+- [Statistics] The great vault "timer" will now use a different timing method to make it usable for all of eternity.
+It functioned somewhat correctly for the current vault period but won't work for future ones correctly.
+
+- [FilterPanel] When converting my rating filters to Blizzard's rating filters it will now check if the rating checkbox is checked or not
+
+
+
 ## [3.0.3] - 2024-11-06
 
 ### Fixed
@@ -2805,7 +2816,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.4..HEAD
+[3.0.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.4
 [3.0.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.3
 [3.0.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.2
 [3.0.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.1

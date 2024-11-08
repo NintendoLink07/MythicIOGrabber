@@ -74,7 +74,7 @@ local function convertFiltersToAdvancedBlizzardFilters()
 		local miogFilters = {}
 		local currentSettings = MIOG_NewSettings.newFilterOptions["LFGListFrame.SearchPanel"][categoryID]
 
-		miogFilters.minimumRating = currentSettings.rating and currentSettings.rating.minimum
+		miogFilters.minimumRating = currentSettings.rating and currentSettings.rating.value and currentSettings.rating.minimum or 0
 		miogFilters.hasHealer = currentSettings.healer and currentSettings.healer.value
 		and currentSettings.healer.linked == false
 		and currentSettings.tank.linked == false
@@ -760,6 +760,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			end
 
 			if(isDungeon or isPvp) then
+				print(isDungeon, isPvp, settings.rating.value)
 				if(settings.rating.value) then
 					if(settings.rating.minimum ~= 0 and settings.rating.maximum ~= 0) then
 						if(settings.rating.maximum >= 0

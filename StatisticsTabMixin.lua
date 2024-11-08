@@ -479,7 +479,7 @@ function StatisticsTabMixin:OnLoad(id)
 		
 		if(self.id ~= 3) then
 			if(MIOG_NewSettings.accountStatistics.characters[data.guid].weeklyReward.availableTimestamp) then
-				if(MIOG_NewSettings.accountStatistics.characters[data.guid].weeklyReward.availableTimestamp < GetTimePreciseSec()) then
+				if(MIOG_NewSettings.accountStatistics.characters[data.guid].weeklyReward.availableTimestamp < time()) then
 					frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-collect")
 					frame.VaultAvailable.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
 				
@@ -754,7 +754,10 @@ function StatisticsTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid
 			local hasRewardComing = hasCurrentCharacterRewardForNextWeek()
 
 			if(hasRewardComing) then
-				MIOG_NewSettings.accountStatistics.characters[v.guid].weeklyReward.availableTimestamp = GetTimePreciseSec() + C_DateAndTime.GetSecondsUntilWeeklyReset()
+				MIOG_NewSettings.accountStatistics.characters[v.guid].weeklyReward.availableTimestamp = time() + C_DateAndTime.GetSecondsUntilWeeklyReset()
+
+			else
+				MIOG_NewSettings.accountStatistics.characters[v.guid].weeklyReward.availableTimestamp = nil
 
 			end
 		end

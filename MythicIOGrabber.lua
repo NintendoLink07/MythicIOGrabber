@@ -40,12 +40,6 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 		if(not miog.F.LITE_MODE) then
-
-			--miog.loadStatistics(1)
-			--miog.setUpMPlusStatistics()
-			--miog.setupPVPStatistics()
-			--miog.setupRaidStatistics()
-			
 			miog.insertGearingData()
 
 			if(PVPUIFrame) then
