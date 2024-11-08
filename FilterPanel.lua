@@ -760,7 +760,6 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			end
 
 			if(isDungeon or isPvp) then
-				print(isDungeon, isPvp, settings.rating.value)
 				if(settings.rating.value) then
 					if(settings.rating.minimum ~= 0 and settings.rating.maximum ~= 0) then
 						if(settings.rating.maximum >= 0
