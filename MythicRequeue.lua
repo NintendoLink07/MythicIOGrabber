@@ -8,23 +8,23 @@ local searchResults = {}
 local applyPopup
 
 local function getSavedPartyGUIDs()
-	return MIOG_NewSettings.requeueGUIDs
+	return MIOG_NewSettings.requeueData.guids
 end
 
 local function addPartyGUID(guid, resultID)
 	refreshNeeded = true
-	MIOG_NewSettings.requeueGUIDs[guid] = {resultID = resultID, partyGUID = guid, timestamp = GetTimePreciseSec()}
+	MIOG_NewSettings.requeueData.guids[guid] = {resultID = resultID, partyGUID = guid, timestamp = GetTimePreciseSec()}
 end
 
 local function deletePartyGUID(guid)
-	MIOG_NewSettings.requeueGUIDs[guid] = nil
+	MIOG_NewSettings.requeueData.guids[guid] = nil
 
 end
 
 local function getNumberOfPartyGUIDs()
     local num = 0
 
-	for _ in pairs(MIOG_NewSettings.requeueGUIDs) do
+	for _ in pairs(MIOG_NewSettings.requeueData.guids) do
 		num = num + 1
 		
 	end
@@ -47,12 +47,12 @@ local function refreshPartyGUIDs()
 		if(C_LFGList.HasSearchResultInfo(v) and not searchResultInfo.isDelisted) then
             local partyGUID = searchResultInfo.partyGUID
 
-			if(MIOG_NewSettings.requeueGUIDs[partyGUID]) then
+			if(MIOG_NewSettings.requeueData.guids[partyGUID]) then
 				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
                     if(not MIOG_NewSettings.clearFakeApps or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v, true)) then
-                        newPartyGUIDs[partyGUID] = {resultID = v, timestamp = MIOG_NewSettings.requeueGUIDs[partyGUID] and MIOG_NewSettings.requeueGUIDs[partyGUID].timestamp or GetTimePreciseSec()}
+                        newPartyGUIDs[partyGUID] = {resultID = v, timestamp = MIOG_NewSettings.requeueData.guids[partyGUID] and MIOG_NewSettings.requeueData.guids[partyGUID].timestamp or GetTimePreciseSec()}
                         
                     end
                 end
@@ -60,7 +60,7 @@ local function refreshPartyGUIDs()
 		end
     end
 
-	MIOG_NewSettings.requeueGUIDs = #searchResults > 0 and newPartyGUIDs or MIOG_NewSettings.requeueGUIDs
+	MIOG_NewSettings.requeueData.guids = #searchResults > 0 and newPartyGUIDs or MIOG_NewSettings.requeueData.guids
 end
 
 local function getNumberOfActualApplications()
@@ -82,7 +82,7 @@ end
 local function searchForFirstResultID()
     local orderedList = {}
     
-    for _, v in pairs(MIOG_NewSettings.requeueGUIDs) do
+    for _, v in pairs(MIOG_NewSettings.requeueData.guids) do
         v.partyGUID = _
         table.insert(orderedList, v)
 
@@ -117,7 +117,7 @@ end
 		if(C_LFGList.HasSearchResultInfo(v) and not searchResultInfo.isDelisted) then
             local partyGUID = searchResultInfo.partyGUID
 
-			if(MIOG_NewSettings.requeueGUIDs[partyGUID]) then
+			if(MIOG_NewSettings.requeueData.guids[partyGUID]) then
 				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
@@ -255,6 +255,15 @@ miog.loadReQueue = loadReQueue
 
 local function events(_, event, ...)
     if(event == "PLAYER_ENTERING_WORLD") then
+        local isInitialLogin = ...
+
+        if(isInitialLogin and MIOG_NewSettings.requeueData.lastCharacter == miog.createFullNameFrom("unitID", "player")) then
+            MIOG_NewSettings.requeueData.guids = {}
+
+        end
+
+        MIOG_NewSettings.requeueData.lastCharacter = miog.createFullNameFrom("unitID", "player")
+        
         setupApplyPopup()
 
     elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
@@ -263,7 +272,7 @@ local function events(_, event, ...)
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
         local resultID = ...
 
-        if(C_LFGList.HasSearchResultInfo(resultID) and MIOG_NewSettings.requeueGUIDs[C_LFGList.GetSearchResultInfo(resultID).partyGUID]) then
+        if(C_LFGList.HasSearchResultInfo(resultID) and MIOG_NewSettings.requeueData.guids[C_LFGList.GetSearchResultInfo(resultID).partyGUID]) then
             refreshPartyGUIDs()
 
         end
@@ -284,7 +293,7 @@ local function events(_, event, ...)
             end
 
         elseif(new == "inviteaccepted") then --delete all data
-            MIOG_NewSettings.requeueGUIDs = {}
+            MIOG_NewSettings.requeueData.guids = {}
             StaticPopupSpecial_Hide(applyPopup)
 
         elseif(new ~= "invited") then

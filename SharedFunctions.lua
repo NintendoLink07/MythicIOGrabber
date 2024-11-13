@@ -691,7 +691,7 @@ local function createFullNameFrom(type, value)
 					name = shortName .. "-" .. realm2
 
 				else
-					name = UnitName("player") .. "-" .. realm
+					name = UnitNameUnmodified("player") .. "-" .. realm
 				
 				end
 

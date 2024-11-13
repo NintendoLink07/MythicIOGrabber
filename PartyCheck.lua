@@ -126,6 +126,7 @@ local function updateGroupClassData()
 			[12] = 0,
 			[13] = 0,
 		}
+
 		local hasNoData = true
 
 		for groupIndex = 1, GetNumGroupMembers(), 1 do
@@ -333,7 +334,7 @@ local function updateGroupData()
 				index = nil,
 				unitID = "player",
 				name = fullPlayerName,
-				shortName = UnitName("player"),
+				shortName = UnitNameUnmodified("player"),
 				classID = id,
 				classFileName = fileName,
 				role = "DAMAGER",
@@ -512,13 +513,11 @@ local function inspectCoroutineEvents(_, event, ...)
     end
 end
 
-
-
 miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
 	if(unitName) then
-		unitName = miog.createFullNameFrom("unitName", unitName)
+		unitName = miog.createFullNameFrom("unitName", unitName) or unitName
 
-		if(groupData[unitName] or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitName("player")) then
+		if(groupData[unitName] or unitName == miog.createFullNameFrom("unitID", "player") or unitName == UnitNameUnmodified("player")) then
 			miog.checkSystem.keystoneData[unitName] = keystoneInfo
 
 		end
@@ -623,37 +622,35 @@ miog.loadPartyCheck = function()
 			miog.openRaidLib.GetAllUnitsInfo()
 		end
 
-		local unitId = "player"
-
         local itemLevel = miog.openRaidLib.GearManager.GetPlayerItemLevel()
         local gearDurability, lowestItemDurability = miog.openRaidLib.GearManager.GetPlayerGearDurability()
     	local weaponEnchant, mainHandEnchantId, offHandEnchantId = miog.openRaidLib.GearManager.GetPlayerWeaponEnchant()
         local slotsWithoutGems, slotsWithoutEnchant = miog.openRaidLib.GearManager.GetPlayerGemsAndEnchantInfo()
 		
-		if(unitId) then
-			local name = miog.createFullNameFrom("unitID", unitId)
+		local name = miog.createFullNameFrom("unitID", "player")
 
-			if(name) then
-				miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
-				miog.checkSystem.groupMember[name].ilvl = itemLevel
-				miog.checkSystem.groupMember[name].durability = gearDurability
-				miog.checkSystem.groupMember[name].missingEnchants = {}
-				--miog.checkSystem.groupMember[name].hasWeaponEnchant = weaponEnchant == 1 and true or false
-				miog.checkSystem.groupMember[name].missingGems = {}
+		if(name) then
+			miog.checkSystem.groupMember[name] = miog.checkSystem.groupMember[name] or {}
+			miog.checkSystem.groupMember[name].ilvl = itemLevel
+			miog.checkSystem.groupMember[name].durability = gearDurability
+			miog.checkSystem.groupMember[name].missingEnchants = {}
+		--	miog.checkSystem.groupMember[name].hasWeaponEnchant = weaponEnchant == 1 and true or false
+			miog.checkSystem.groupMember[name].missingGems = {}
 
-				for index, slotIdWithoutEnchant in ipairs(slotsWithoutEnchant) do
-					if(slotIdWithoutEnchant ~= 10) then
-						miog.checkSystem.groupMember[name].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
-						
-					end
+			for index, slotIdWithoutEnchant in ipairs(slotsWithoutEnchant) do
+				if(slotIdWithoutEnchant ~= 10) then
+					miog.checkSystem.groupMember[name].missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+					
 				end
-	
-				for index, slotIdWithEmptyGemSocket in ipairs (slotsWithoutGems) do
-					miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
-				end
-
-				updateGroupData()
 			end
+
+			for index, slotIdWithEmptyGemSocket in ipairs (slotsWithoutGems) do
+				miog.checkSystem.groupMember[name].missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+			end
+
+			updateGroupData()
+			updateGroupClassData()
+
 		end
 		
 		miog.PartyCheck:Sort()

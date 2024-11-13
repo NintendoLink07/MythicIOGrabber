@@ -110,7 +110,7 @@ local defaultSettings = {
     end},
     {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},
     {name = "Last invited applicants", variableName = "MIOG_LastInvitedApplicants", key="lastInvitedApplicants", default={}},
-    {name = "Requeue GUIDs", variableName = "MIOG_RequeueGUIDs", key="requeueGUIDs", default = {}},
+    {name = "Requeue data", variableName = "MIOG_RequeueData", key="requeueData", default = {guids = {}}},
     {name = "Last used queue", variableName = "MIOG_LastUsedQueue", key="lastUsedQueue", default = {}},
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},

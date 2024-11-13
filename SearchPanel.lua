@@ -661,7 +661,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 			for i = 1, searchResultInfo.numMembers, 1 do
 				local role, class, _, specLocalized, isLeader = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
 
-				table.insert(orderedList, {leader = isLeader, role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]})
+				table.insert(orderedList, {leader = isLeader, role = role, class = class, specID = class and specLocalized and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]})
 
 				if(role) then
 					roleCount[role] = roleCount[role] + 1
