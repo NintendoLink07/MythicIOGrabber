@@ -727,7 +727,7 @@ end
 
 local function hasCurrentCharacterRewardForNextWeek()
 	for i, activityInfo in ipairs(C_WeeklyRewards.GetActivities()) do
-		if(activityInfo.progress > activityInfo.threshold) then
+		if(activityInfo.progress >= activityInfo.threshold) then
 			return true
 		end
 	end
@@ -777,14 +777,13 @@ function StatisticsTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid
 end
 
 function StatisticsTabMixin:LoadActivities()
-	if(self.id == 1) then
-
+	if(self.id == 1) then --M+
 		self.activityTable = miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()
 
-	elseif(self.id == 2) then
+	elseif(self.id == 2) then --RAID
 		self.activityTable = miog.SEASONAL_MAP_IDS[13].raids
 
-	elseif(self.id == 3) then
+	elseif(self.id == 3) then --PVP
 		self.activityTable = {1, 2, 3, 4}
 
 	end

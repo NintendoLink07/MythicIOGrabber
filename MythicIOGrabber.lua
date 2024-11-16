@@ -266,7 +266,7 @@ local function handler(msg, editBox)
 		miog.debug.debugTimer = C_Timer.NewTicker(tickRate, function(self)
 
 			local startTime = GetTimePreciseSec()
-			miog.newUpdateFunction()
+			miog.fullyUpdateSearchPanel()
 			local endTime = GetTimePreciseSec()
 		
 			miog.debug.currentAverageExecuteTime[#miog.debug.currentAverageExecuteTime+1] = endTime - startTime

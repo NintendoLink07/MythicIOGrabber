@@ -1,8 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local _, playerClassID = UnitClassBase("player")
-
 local searchResultSystem = {}
 searchResultSystem.declinedGroups = {}
 searchResultSystem.raidSortData = {}
@@ -10,8 +8,7 @@ searchResultSystem.raidSortData = {}
 searchResultSystem.baseFrames = {}
 searchResultSystem.raiderIOPanels = {}
 
-local collapsedList = {}
-local currentDataList
+local actualResults = 0
 
 local framePool
 
@@ -317,7 +314,7 @@ miog.groupSignup = groupSignup
 local function gatherSearchResultSortData(singleResultID)
 	local unsortedMainApplicantsList = {}
 
-	local total, resultTable = C_LFGList.GetFilteredSearchResults()
+	local _, resultTable = C_LFGList.GetFilteredSearchResults()
 
 	local counter = 1
 
@@ -325,76 +322,57 @@ local function gatherSearchResultSortData(singleResultID)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 		if(searchResultInfo and not searchResultInfo.hasSelf) then
-			--local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+			local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+			local primarySortAttribute, secondarySortAttribute
 
-			local _, appStatus, _, appDuration = C_LFGList.GetApplicationInfo(resultID)
+			local nameTable
 
-			--if(appStatus == "applied" or activityInfo.categoryID == LFGListFrame.SearchPanel.categoryID) then
-				local primarySortAttribute, secondarySortAttribute
+			if(searchResultInfo.leaderName) then
+				nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+			end
 
-				local nameTable
+			if(nameTable and not nameTable[2]) then
+				nameTable[2] = GetNormalizedRealmName()
 
+				if(nameTable[2]) then
+					searchResultInfo.leaderName = nameTable[1] .. "-" .. nameTable[2]
+
+				end
+			end
+
+			if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
+				primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
+				secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo.bestRunLevel or 0
+
+			elseif(LFGListFrame.SearchPanel.categoryID == 3) then
 				if(searchResultInfo.leaderName) then
-					nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
-				end
+					searchResultSystem.raidSortData[searchResultInfo.leaderName] = {miog.getRaidSortData(searchResultInfo.leaderName)}
 
-				if(nameTable and not nameTable[2]) then
-					nameTable[2] = GetNormalizedRealmName()
-	
-					if(nameTable[2]) then
-						searchResultInfo.leaderName = nameTable[1] .. "-" .. nameTable[2]
-	
-					end
-				end
+					primarySortAttribute = searchResultSystem.raidSortData[searchResultInfo.leaderName][3][1].weight
+					secondarySortAttribute = searchResultSystem.raidSortData[searchResultInfo.leaderName][3][2].weight
 
-				if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
-					primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
-					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo.bestRunLevel or 0
-
-				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
-					if(searchResultInfo.leaderName) then
-						searchResultSystem.raidSortData[searchResultInfo.leaderName] = {miog.getRaidSortData(searchResultInfo.leaderName)}
-
-						--primarySortAttribute = currentData[1].weight + currentData[2].weight + currentData[3].weight
-						--secondarySortAttribute = nonCurrentData[1].weight + nonCurrentData[2].weight + nonCurrentData[3].weight
-
-						primarySortAttribute = searchResultSystem.raidSortData[searchResultInfo.leaderName][3][1].weight
-						secondarySortAttribute = searchResultSystem.raidSortData[searchResultInfo.leaderName][3][2].weight
-
-						--if(currentData) then
-							--secondarySortAttribute = currentData[2].weight
-
-						--elseif(nonCurrentData) then
-							--primarySortAttribute = nonCurrentData[1].weight
-
-						--else
-							--primarySortAttribute = 0
-							--secondarySortAttribute = 0
-
-						--end
-					else
-						primarySortAttribute = 0
-						secondarySortAttribute = 0
-
-					end
-
-				elseif(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9) then
-					primarySortAttribute = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0
-					secondarySortAttribute = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0
+				else
+					primarySortAttribute = 0
+					secondarySortAttribute = 0
 
 				end
 
-				unsortedMainApplicantsList[counter] = {
-					primary = primarySortAttribute,
-					appStatus = appStatus,
-					secondary = secondarySortAttribute,
-					resultID = resultID,
-					age = searchResultInfo.age,
-					favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
-				}
+			elseif(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9) then
+				primarySortAttribute = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0
+				secondarySortAttribute = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0
 
-				counter = counter + 1
-			--end
+			end
+
+			unsortedMainApplicantsList[counter] = {
+				primary = primarySortAttribute,
+				appStatus = appStatus,
+				secondary = secondarySortAttribute,
+				resultID = resultID,
+				age = searchResultInfo.age,
+				favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
+			}
+
+			counter = counter + 1
 		end
 
 	end
@@ -409,9 +387,25 @@ local function initializeSearchResultFrame(resultID)
 		local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
 
 		local persistentFrame = framePool:Acquire()
+		persistentFrame.resultID = resultID
 		persistentFrame:SetFixedWidth(miog.SearchPanel.NewScrollFrame.Container:GetFixedWidth())
 		searchResultSystem.baseFrames[resultID] = persistentFrame
 		persistentFrame.InviteBackground:Hide()
+		persistentFrame:SetScript("OnMouseDown", function(self, button)
+			if(button == "LeftButton") then
+				groupSignup(self.resultID)
+
+			else
+				selectResultFrame(self.resultID)
+				LFGListSearchEntry_CreateContextMenu(self)
+
+			end
+
+		end)
+		persistentFrame:SetScript("OnEnter", function(self)
+			createResultTooltip(self.resultID, persistentFrame)
+
+		end)
 
 		miog.createInvisibleFrameBorder(persistentFrame, 2)
 
@@ -442,20 +436,19 @@ local function initializeSearchResultFrame(resultID)
 		expandFrameButton:SetState(false)
 
 		persistentFrame.CancelApplication:OnLoad()
+		persistentFrame.CancelApplication:SetScript("OnClick", function(self, button)
+			if(button == "LeftButton") then
+				local _, appStatus = C_LFGList.GetApplicationInfo(self:GetParent().resultID)
+
+				if(appStatus == "applied") then
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+					C_LFGList.CancelApplication(self:GetParent().resultID)
+
+				end
+			end
+		end)
 
 		if(miog.MAP_INFO[mapID]) then
-			--[[persistentFrame.RaidInformation.SpecFrames = {}
-
-			for i = 1, 40, 1 do
-				local currentPanel = i < 3 and "TankPanel" or i < 9 and "HealerPanel" or "DamagerPanel"
-				local groupMemberFrame = persistentFrame.framePool:Acquire("MIOG_SmallGroupMemberTemplate")
-				groupMemberFrame:SetParent(persistentFrame.RaidInformation[currentPanel])
-				groupMemberFrame.layoutIndex = i
-		
-				persistentFrame.RaidInformation.SpecFrames[i] = groupMemberFrame
-		
-			end]]
-
 			persistentFrame.CategoryInformation.BossPanel.bossFrames = {}
 
 			if(#miog.MAP_INFO[mapID].bosses == 0) then
@@ -463,18 +456,16 @@ local function initializeSearchResultFrame(resultID)
 			end
 
 			for k, v in ipairs(miog.MAP_INFO[mapID].bosses) do
-				--if(v.factionChecked) then
-					local bossFrame = persistentFrame.framePool:Acquire("MIOG_ResultFrameBossFrameTemplate")
-					bossFrame:SetParent(persistentFrame.CategoryInformation.BossPanel)
-					bossFrame.layoutIndex = k
+				local bossFrame = persistentFrame.framePool:Acquire("MIOG_ResultFrameBossFrameTemplate")
+				bossFrame:SetParent(persistentFrame.CategoryInformation.BossPanel)
+				bossFrame.layoutIndex = k
 
-					SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
-					bossFrame.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
+				SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
+				bossFrame.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
 
-					bossFrame:Show()
+				bossFrame:Show()
 
-					persistentFrame.CategoryInformation.BossPanel.bossFrames[k] = bossFrame
-				--end
+				persistentFrame.CategoryInformation.BossPanel.bossFrames[k] = bossFrame
 			end
 
 			persistentFrame.CategoryInformation.BossPanel:MarkDirty()
@@ -486,22 +477,15 @@ local function initializeSearchResultFrame(resultID)
 	end
 end
 
-local function updatePersistentResultFrame(resultID, isInviteFrame)
+local function updateOptionalData(resultID)
 	if(C_LFGList.HasSearchResultInfo(resultID)) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
-		if(searchResultInfo.leaderName and searchResultSystem.baseFrames[resultID]) then
-
-			local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
-
-			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+		if(searchResultInfo.leaderName) then
 			local currentFrame = searchResultSystem.baseFrames[resultID]
-			currentFrame.resultID = resultID
-			--local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
-			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+			
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
 			local declineData = searchResultInfo.leaderName and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID]
-			local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
-
 			local questTagInfo = searchResultInfo.questID and C_QuestLog.GetQuestTagInfo(searchResultInfo.questID)
 			local questDesc = questTagInfo and questTagInfo.tagName
 			local difficultyID = miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID
@@ -532,34 +516,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 
 			end
 
-			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor)
-			)
-
-			currentFrame.RaiderIOInformationPanel:OnLoad()
-			currentFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
-			currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
-			currentFrame.RaiderIOInformationPanel:ApplyFillData()
-
-			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo, currentFrame.RaiderIOInformationPanel.raidData, searchResultInfo.leaderPvpRatingInfo)
-
-			currentFrame:SetScript("OnMouseDown", function(self, button)
-				if(button == "LeftButton") then
-					groupSignup(self.resultID)
-
-				else
-					selectResultFrame(self.resultID)
-					LFGListSearchEntry_CreateContextMenu(self)
-
-				end
-
-			end)
-			currentFrame:SetScript("OnEnter", function(self)
-				createResultTooltip(self.resultID, currentFrame)
-
-			end)
-
-			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal, "CLAMP", "MIRROR")
-			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
+			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor))
 
 			if(not questTagInfo) then
 				currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
@@ -568,17 +525,50 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 				currentFrame.BasicInformation.Icon:SetAtlas(QuestUtils_GetQuestTagAtlas(questTagInfo.tagID, questTagInfo.worldQuestType) or QuestUtil.GetWorldQuestAtlasInfo(searchResultInfo.questID, questTagInfo) or nil)
 
 			end
-
-			currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
-				EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
-
-			end)
-
+			
 			local color = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID]
 			or questTagInfo and {r = 0, g = 0, b = 0, a = 0}
 			or {r = 1, g = 1, b = 1}
 
 			currentFrame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, color.a or 1)
+			
+			local warmodeString = searchResultInfo.isWarMode and "|A:pvptalents-warmode-swords:12:12|a" or ""
+			local bnetFriends = searchResultInfo.numBNetFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\battlenetfriend.png:14|t" or ""
+			local charFriends = searchResultInfo.numCharFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\friend.png:14|t" or ""
+			local guildFriends = searchResultInfo.numGuildMates > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\guildmate.png:14|t" or ""
+
+			currentFrame.BasicInformation.Title:SetText(warmodeString .. bnetFriends .. charFriends .. guildFriends .. wticc(searchResultInfo.name, titleZoneColor))
+			
+			local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
+
+			currentFrame.RaiderIOInformationPanel:OnLoad()
+			currentFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
+			currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
+			currentFrame.RaiderIOInformationPanel:ApplyFillData()
+
+			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo, currentFrame.RaiderIOInformationPanel.raidData, searchResultInfo.leaderPvpRatingInfo)
+		end
+	end
+end
+
+local function updatePersistentResultFrame(resultID)
+	if(C_LFGList.HasSearchResultInfo(resultID)) then
+		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+		if(searchResultSystem.baseFrames[resultID]) then
+			local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+			local currentFrame = searchResultSystem.baseFrames[resultID]
+			currentFrame.resultID = resultID
+			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal, "CLAMP", "MIRROR")
+			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
+
+			currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
+				EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
+
+			end)
 
 			currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function(self)
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -588,10 +578,6 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 				currentFrame.RaiderIOInformationPanel:SetShown(not currentFrame.RaiderIOInformationPanel:IsShown())
 
 				currentFrame:MarkDirty()
-
-				--currentFrame.node:ToggleCollapsed()
-
-				--collapsedList[saveID] = currentFrame.node:IsCollapsed()
 			end)
 
 			if(currentFrame.BasicInformation.Age.ageTicker) then
@@ -608,47 +594,9 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 				currentFrame.BasicInformation.Age:SetText(miog.secondsToClock(ageNumber))
 
 			end)
-
-			local warmodeString = searchResultInfo.isWarMode and "|A:pvptalents-warmode-swords:12:12|a" or ""
-			local bnetFriends = searchResultInfo.numBNetFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\battlenetfriend.png:14|t" or ""
-			local charFriends = searchResultInfo.numCharFriends > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\friend.png:14|t" or ""
-			local guildFriends = searchResultInfo.numGuildMates > 0 and "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\guildmate.png:14|t" or ""
-
-			currentFrame.BasicInformation.Title:SetText(warmodeString .. bnetFriends .. charFriends .. guildFriends .. wticc(searchResultInfo.name, titleZoneColor))
 			currentFrame.CategoryInformation.Comment:SetShown(searchResultInfo.comment ~= "" and searchResultInfo.comment ~= nil and true or false)
-			--currentFrame.RaiderIOInformationPanel.Comment:SetText(COMMENTS_COLON .. " " .. (searchResultInfo.comment or ""))
 
 			currentFrame.AcceptInvite:Hide()
-			currentFrame.CancelApplication:SetScript("OnClick", function(self, button)
-				if(button == "LeftButton") then
-					local _, appStatus = C_LFGList.GetApplicationInfo(searchResultInfo.searchResultID)
-
-					if(appStatus == "applied") then
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-						C_LFGList.CancelApplication(searchResultInfo.searchResultID)
-
-					end
-				end
-			end)
-
-			updateResultFrameStatus(resultID)
-
-			--local primaryIndicator = currentFrame.BasicInformation.Primary
-			--local secondaryIndicator = currentFrame.BasicInformation.Secondary
-			local nameTable
-			
-			if(searchResultInfo.leaderName) then
-				nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
-			end
-
-			if(nameTable and not nameTable[2]) then
-				nameTable[2] = GetNormalizedRealmName()
-
-				if(nameTable[2]) then
-					searchResultInfo.leaderName = nameTable[1] .. "-" .. nameTable[2]
-
-				end
-			end
 
 			local orderedList = {}
 
@@ -794,7 +742,7 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 							currentMemberFrame:SetMouseMotionEnabled(true)
 							currentMemberFrame:SetScript("OnEnter", function()
 								GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_RIGHT")
-								GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultInfo.leaderName))
+								GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultInfo.leaderName or ""))
 								GameTooltip:Show()
 
 							end)
@@ -812,120 +760,102 @@ local function updatePersistentResultFrame(resultID, isInviteFrame)
 				end
 			end
 			
+			updateOptionalData(resultID)
 			updateResultFrameStatus(resultID)
 		end
 	end
 end
 
-miog.updatePersistentResultFrame = updatePersistentResultFrame
+local function showStatusOverlay(status)
+	miog.SearchPanel.Status:Show()
+	miog.SearchPanel.Status.LoadingSpinner:Hide()
+
+	if(status == "throttled") then
+		miog.SearchPanel.StartSearch:Disable()
+
+		local timestamp = GetTime()
+		miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
+
+		C_Timer.NewTicker(0.2, function(self)
+			local timeUntil = timestamp + 3 - GetTime()
+			miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
+
+			if(timeUntil <= 0) then
+				miog.SearchPanel.StartSearch:Enable()
+				miog.SearchPanel.Status.FontString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
+				self:Cancel()
+			end
+		end)
+	else
+		miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
+		framePool:ReleaseAll()
+		miog.Plugin.FooterBar.Results:SetText("0(0)")
+	end
+	
+	miog.SearchPanel.Status.FontString:Show()
+end
 
 local function newUpdateFunction()
-	framePool:ReleaseAll()
-
 	local unsortedList = gatherSearchResultSortData()
 
 	miog.SearchPanel:UpdateSortingData(unsortedList)
 	miog.SearchPanel:Sort()
 
-	local actualResultsCounter = 0
+	actualResults = 0
 
 	for d, listEntry in ipairs(miog.SearchPanel:GetSortingData()) do
-		local showFrame, reasonID = listEntry.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, listEntry.resultID)
+		local showFrame = listEntry.appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, listEntry.resultID)
 
 		if(showFrame) then
+			local frame
 
-			local frame = initializeSearchResultFrame(listEntry.resultID)
-			frame.layoutIndex = d
-			frame:SetParent(miog.SearchPanel.NewScrollFrame.Container)
-			frame:Show()
+			if(searchResultSystem.baseFrames[resultID]) then
+				frame = searchResultSystem.baseFrames[resultID]
+				
+			else
+				frame = initializeSearchResultFrame(listEntry.resultID)
+
+			end
 
 			updatePersistentResultFrame(listEntry.resultID)
+			frame.layoutIndex = d
+			frame:Show()
 
-			actualResultsCounter = actualResultsCounter + 1
+			actualResults = actualResults + 1
 
 		end
-
 	end
 
 	miog.SearchPanel.NewScrollFrame.Container:MarkDirty()
-
 	miog.SearchPanel.NewScrollFrame.ScrollBar:ScrollToBegin()
 
-	--[[local DataProvider = CreateTreeDataProvider()
-	DataProvider:SetSortComparator(sortSearchResultList, false)
+	if(miog.SearchPanel:IsShown()) then
+		local numberOfResults = #miog.SearchPanel:GetSortingData()
+		miog.updateFooterBarResults(actualResults, numberOfResults, numberOfResults >= 100)
 
-	local actualResultsCounter = 0
-
-	for i = 1, #orderedList, 1 do
-		local listEntry = orderedList[i]
-		local showFrame = listEntry.appStatus == "applied" or isGroupEligible(listEntry.resultID)
-
-		if(showFrame) then
-			actualResultsCounter = actualResultsCounter + 1
-
-			local baseFrameData = DataProvider:Insert({
-				template = "MIOG_SearchResultFrameTemplate",
-				resultID = listEntry.resultID,
-				primary = listEntry.primary,
-				appStatus = listEntry.appStatus,
-				secondary = listEntry.secondary,
-				age = listEntry.age,
-				favoured = listEntry.favoured
-			})
-
-			baseFrameData:Insert({
-				template = "MIOG_RaiderIOInformationPanel",
-				resultID = listEntry.resultID,
-			})
-		end
 	end
 
-	miog.SearchPanel.ScrollView:SetDataProvider(DataProvider)
+	if(actualResults == 0) then
+		showStatusOverlay()
 
-	DataProvider:CollapseAll()
+	else
+		miog.SearchPanel.Status:Hide()
 
-	for index, child in ipairs(DataProvider.node.nodes) do
-		if(C_LFGList.HasSearchResultInfo(child.data.resultID)) then
-			local searchResultInfo = C_LFGList.GetSearchResultInfo(child.data.resultID)
+	end
 
-			if(searchResultInfo.leaderName) then
-				local saveID = searchResultInfo.activityID .. searchResultInfo.leaderName
-
-				if(collapsedList[saveID] == false) then
-					child:SetCollapsed(false)
-
-					for index2, child2 in ipairs(child.nodes) do
-						child2:SetCollapsed(false)
-
-					end
-				end
-			end
-		end
-	end]]
-
-	miog.Plugin.FooterBar.Results:SetText(actualResultsCounter .. "(" .. #miog.SearchPanel:GetSortingData() .. ")")
-	
-	miog.Plugin.FooterBar.Results:SetScript("OnEnter", #miog.SearchPanel:GetSortingData() >= 100 and function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		GameTooltip:SetText("There might be more groups listed.")
-		GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
-		GameTooltip:Show()
-	end or nil)
-
-	miog.Plugin.FooterBar.Results:SetScript("OnLeave", function()
-		GameTooltip:Hide()
-	end)
 end
 
-miog.newUpdateFunction = newUpdateFunction
+local function fullyUpdateSearchPanel()
+	framePool:ReleaseAll()
+
+	newUpdateFunction()
+end
+
+miog.fullyUpdateSearchPanel = fullyUpdateSearchPanel
 
 local blocked = false
 
 local function searchResultsReceived()
-	miog.SearchPanel.Status:Show()
-	miog.SearchPanel.Status.FontString:Hide()
-	miog.SearchPanel.Status.LoadingSpinner:Show()
-
 	local numOfResults, table = C_LFGList.GetFilteredSearchResults()
 
 	LFGListFrame.SearchPanel.totalResults = numOfResults or 0
@@ -933,57 +863,20 @@ local function searchResultsReceived()
 	miog.SearchPanel.totalResults = numOfResults or 0
 	miog.SearchPanel.results = table or {}
 
-	--if(not LFGListFrame.SearchPanel.searching) then
-		if(LFGListFrame.SearchPanel.totalResults > 0) then
-			if(not blocked) then
-				blocked = true
+	if(LFGListFrame.SearchPanel.totalResults > 0) then
+		if(not blocked) then
+			blocked = true
+			fullyUpdateSearchPanel()
 
-				C_Timer.After(miog.SearchPanel:GetNumOfActiveSortMethods() > 0 and 0.5 or 0, function()
-					miog.SearchPanel.Status:Hide()
-					miog.SearchPanel.Status.LoadingSpinner:Hide()
-					newUpdateFunction()
+			if(miog.SearchPanel:GetNumOfActiveSortMethods() > 0) then
+				C_Timer.After(0.5, function()
+					fullyUpdateSearchPanel()
 					blocked = false
 				end)
 			end
-		else
-			if(not miog.F.SEARCH_IS_THROTTLED) then
-				miog.SearchPanel.Status.LoadingSpinner:Hide()
-				miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
-				miog.SearchPanel.Status.FontString:Show()
-
-				if(LFGListFrame.SearchPanel.searchFailed) then
-					miog.SearchPanel.ScrollView:GetDataProvider():Flush()
-					miog.Plugin.FooterBar.Results:SetText("0(0)")
-				end
-
-			end
 		end
-	--end
-end
-	
-local function Initializer(frame, node)
-	local data = node:GetData()
-
-	--frame:SetShown(data.visibility)
-
-	if(data.template == "MIOG_SearchResultFrameTemplate") then
-		frame.node = node
-
-		frame.resultID = data.resultID
-
-		initializeSearchResultFrame(frame, data.resultID)
-		updatePersistentResultFrame(data.resultID)
-
-	elseif(data.template == "MIOG_RaiderIOInformationPanel") then
-		searchResultSystem.raiderIOPanels[data.resultID] = {RaiderIOInformationPanel = frame}
-		
-		if(C_LFGList.HasSearchResultInfo(data.resultID)) then
-			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
-
-			if(searchResultInfo.leaderName) then
-				local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
-			end
-		end
+	else
+		showStatusOverlay()
 	end
 end
 
@@ -999,34 +892,7 @@ local function searchPanelEvents(_, event, ...)
 			
 		end
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
-
-		if(... == "throttled") then
-			if(not miog.F.SEARCH_IS_THROTTLED) then
-				miog.F.SEARCH_IS_THROTTLED = true
-				local timestamp = GetTime()
-
-				miog.SearchPanel.Status.FontString:Hide()
-				miog.SearchPanel.Status.LoadingSpinner:Hide()
-				miog.SearchPanel.StartSearch:Disable()
-				miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. miog.secondsToClock(timestamp + 3 - GetTime()))
-
-				C_Timer.NewTicker(0.25, function(self)
-					local timeUntil = timestamp + 2.5 - GetTime()
-					miog.SearchPanel.Status.FontString:SetText("Time until search is available again: " .. wticc(miog.secondsToClock(timeUntil), timeUntil > 2 and miog.CLRSCC.red or timeUntil > 1 and miog.CLRSCC.orange or miog.CLRSCC.yellow))
-
-					if(timeUntil <= 0) then
-						miog.SearchPanel.StartSearch:Enable()
-						miog.SearchPanel.Status.FontString:SetText(wticc("Search is available again!", miog.CLRSCC.green))
-						miog.F.SEARCH_IS_THROTTLED = false
-						self:Cancel()
-					end
-				end)
-
-				miog.SearchPanel.Status:Show()
-				miog.SearchPanel.Status.FontString:Show()
-
-			end
-		end
+		showStatusOverlay(...)
 
 	elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
 		local resultID, new, old, name = ...
@@ -1053,6 +919,11 @@ end
 
 miog.createSearchPanel = function()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel") ---@class Frame
+	searchPanel:SetScript("OnShow", function()
+		local numberOfResults = #miog.SearchPanel:GetSortingData()
+		miog.updateFooterBarResults(actualResults, numberOfResults, numberOfResults >= 100)
+
+	end)
 
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
@@ -1120,45 +991,6 @@ miog.createSearchPanel = function()
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 	end)
 
-	--miog.createFrameBorder(searchPanel.ButtonPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	--[[searchPanel.ButtonPanel.sortByCategoryButtons = {}
-
-	for i = 1, 3, 1 do
-		local sortByCategoryButton = searchPanel.ButtonPanel[i == 1 and "PrimarySort" or i == 2 and "SecondarySort" or "AgeSort"]
-		sortByCategoryButton.panel = "LFGListFrame.SearchPanel"
-		sortByCategoryButton.category = i == 1 and "primary" or i == 2 and "secondary" or i == 3 and "age"
-
-		sortByCategoryButton:SetScript("PostClick", function(self, button)
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-			--local dataProvider = miog.SearchPanel.ScrollView:GetDataProvider()
-
-			--dataProvider:Sort()
-			--dataProvider:SetAllCollapsed(true)
-
-			table.sort(currentDataList, sortSearchResultList)
-
-			local orderedResultIDList = {}
-
-			for k, v in ipairs(currentDataList) do
-				orderedResultIDList[v.resultID] = k
-			end
-
-			for widget in framePool:EnumerateActive() do
-				widget.layoutIndex = orderedResultIDList[widget.resultID]
-
-			end
-
-			miog.SearchPanel.NewScrollFrame.Container:MarkDirty()
-		end)
-
-		searchPanel.ButtonPanel.sortByCategoryButtons[sortByCategoryButton.category] = sortByCategoryButton
-
-	end
-
-	searchPanel.ButtonPanel["PrimarySort"]:AdjustPointsOffset(176, 0)]]
-
 	LFGListFrame.SearchPanel.results = {}
 	LFGListFrame.SearchPanel.applications = {}
 
@@ -1170,7 +1002,7 @@ miog.createSearchPanel = function()
 	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
 	searchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
-	framePool = CreateFramePool("Frame", searchPanel.NewScrollFrame, "MIOG_SearchResultFrameTemplate", resetFrame)
+	framePool = CreateFramePool("Frame", searchPanel.NewScrollFrame.Container, "MIOG_SearchResultFrameTemplate", resetFrame)
 
 	searchPanel.NewScrollFrame.Container:SetFixedWidth(searchPanel.NewScrollFrame:GetWidth())
 	searchPanel.NewScrollFrame.ScrollBar:AdjustPointsOffset(-8, 0)
@@ -1201,19 +1033,7 @@ miog.createSearchPanel = function()
 		{name = "age", padding = 35},
 	})
 
-	--[[local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
-
-	miog.SearchPanel.ScrollView = ScrollView
-	
-	ScrollUtil.InitScrollBoxListWithScrollBar(miog.SearchPanel.ScrollBox2, miog.SearchPanel.ScrollBar, ScrollView)
-	
-	local function CustomFactory(factory, node)
-		local data = node:GetData()
-		local template = data.template
-		factory(template, Initializer)
-	end
-
-	ScrollView:SetElementFactory(CustomFactory)]]
+	C_CVar.SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_KEY_RANGE_GROUP_FINDER, true)
 
 	return searchPanel
 end

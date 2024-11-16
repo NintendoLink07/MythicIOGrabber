@@ -226,32 +226,7 @@ miog.C = {
 	BLIZZARD_INSPECT_THROTTLE = 1.5,
 	BLIZZARD_INSPECT_THROTTLE_SAVE = 2,
 
-
 	PLAYER_GUID = UnitGUID("player"),
-
-    --
-    --- FRAME SIZES
-    --
-    FULL_SIZE = 160,
-    APPLICANT_MEMBER_HEIGHT = 20,
-    APPLICANT_BUTTON_SIZE = 20,
-	INTERFACE_OPTION_BUTTON_SIZE = 20,
-	MAIN_WIDTH = 0,
-
-    --
-    --- FONT SIZES
-    --
-	CLASS_PANEL_FONT_SIZE = 16,
-	SPEC_PANEL_FONT_SIZE = 14,
-	TITLE_FONT_SIZE = 14,
-	ACTIVITY_NAME_FONT_SIZE = 13,
-	LISTING_COMMENT_FONT_SIZE = 12,
-	LISTING_INFO_FONT_SIZE = 14,
-	AFFIX_TEXTURE_FONT_SIZE = 12, --always weird, gotta change that
-	APPLICANT_MEMBER_FONT_SIZE = 11,
-	TEXT_ROW_FONT_SIZE = 11,
-
-	SEARCH_RESULT_FRAME_TEXT_SIZE = 14,
     
     --
     -- COLORS
@@ -277,9 +252,6 @@ miog.C = {
 		[72] = "eu", --ptr, forcing eu for development
  	},
 
-	STANDARD_PADDING = 4,
-	APPLICANT_PADDING = 2,
-
 	--PATH / TEXTURES FILES
 	STANDARD_FILE_PATH = "Interface/Addons/MythicIOGrabber/res",
 	RIO_STAR_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/star_64.png:8:8|t",
@@ -293,8 +265,6 @@ miog.C = {
 		["HEALER"] = false,
 		["DAMAGER"] = false
 	},
-
-	WEEK_IN_SECONDS = 604800,
 
 	SEASON_AVAILABLE = {
 		[12] = {
@@ -310,8 +280,6 @@ miog.C = {
 			}
 		}
 	},
-
-	
 
 	REGION_DATE_DIFFERENCE = {
 		[1] = -86400,
@@ -360,24 +328,9 @@ miog.CURRENCY_INFO = {
 
 --CHANGING VARIABLES
 miog.F = {
-    SHOW_TANKS = true,
-    SHOW_HEALERS = true,
-    SHOW_DPS = true,
-	LISTED_CATEGORY_ID = 0,
-	LOADING_SCREEN_OCCURRED = false,
-
-	NUM_OF_GROUP_MEMBERS = 0,
-
-	REQUIRED_RATING = 0,
-	REQUIRED_ILVL = 0,
-
 	IS_RAIDERIO_LOADED = false,
-	IS_PGF1_LOADED = false,
 	IS_IN_DEBUG_MODE = false,
-
-	MOST_BOSSES = 0,
 	
-	CURRENTLY_INSPECTING = false,
 	ACTIVE_ENTRY_INFO = nil,
 	
 	CURRENT_DUNGEON_DIFFICULTY = 0,
@@ -389,36 +342,20 @@ miog.F = {
 
 	LFG_STATE = "solo",
 
-	RAID_BOSSES = {},
-
-	LAST_INVITES_COUNTER = 0,
-	FAVOURED_APPLICANTS_COUNTER = 0,
-
-	LAST_INVITED_APPLICANTS = {},
-	FAVOURED_APPLICANTS = {},
-
 	CAN_INVITE = false,
 
-	CURRENT_SEARCH_RESULT_ID = 0,
-	WAITING_FOR_RESULTS = false,
-
-	SEARCH_IS_THROTTLED = false,
-
-	AFFIX_INFO = {},
 	AWAKENED_MAPS = {}
 }
 
-local color = "FF1eff00"
-
 miog.BLANK_BACKGROUND_INFO = {
 	bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-	tileSize = miog.C.APPLICANT_MEMBER_HEIGHT,
+	tileSize = 20,
 	tile = false,
 	edgeSize = 1
 }
 
 miog.INSTANCE_IDS = {
-	
+
 }
 
 miog.BRACKETS = {

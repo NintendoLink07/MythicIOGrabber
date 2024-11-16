@@ -375,7 +375,16 @@ end
 
 miog.getMPlusSortData = getMPlusSortData
 
-getMPlusSortData("Rhany", "Ravencrest", "eu", true)
+miog.updateFooterBarResults = function(filteredResultNumber, totalResultNumber, setSearchScript)
+	miog.Plugin.FooterBar.Results:SetText(filteredResultNumber .. "(" .. totalResultNumber .. ")")
+	
+	miog.Plugin.FooterBar.Results:SetScript("OnEnter", setSearchScript and function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText("There might be more groups listed.")
+		GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
+		GameTooltip:Show()
+	end or nil)
+end
 
 miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeonScore, dungeonData, raidData, pvpData)
 	local primaryIndicator, secondaryIndicator = frameWithDoubleIndicators.Primary, frameWithDoubleIndicators.Secondary

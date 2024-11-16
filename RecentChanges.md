@@ -1,11 +1,21 @@
-## [3.0.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.5) - 2024-11-13
+## [3.0.6](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.6) - 2024-11-16
+
+### Changed
+
+- [SearchPanel] There won't be a loading spinner / delay before all search results have been updated with the correct data.
+It will now update every group .5 seconds after the first groups have shown up.
+Blizzard sends search result data usually twice (except for rated BG's), the first one includes most of the data, the second one usually all of the data.
 
 ### Fixed
 
-- [SearchPanel] Checks for both class and spec data are now more tight since for some reason there might be some data missing in the first few calls to retrieve data.
+- [SearchPanel] Improved performance.
 
-- [PartyCheck] There will now be a check if the keystone data contains a character name (usually should but on very rare occassions it doesn't).
+- [SearchPanel & ApplicationViewer] The footer bar number that shows applicants/search results should now update correctly and not show applicants in the search panel or vice versa.
 
-- [ReQueue] When logging into a different character the saved groups will now get wiped.
+- [SearchPanel] The "Enter a key range" help tooltip will not show up anymore.
 
-- [PartyCheck] Switching to the PartyCheck tab will now always refresh the class bar at the top of the frame.
+- [FilterPanel] The reset button will now correctly reset the current category (e.g. dungeon, legacy raid, rated bg's).
+
+- [Statistics] Great vault tracking should now also work if you're exactly at the threshold of the slot, e.g. you've done exactly 1 Dungeon or 2 delves or 4 bosses, etc.
+
+- Improved addon load time (leads to a shorter loading screen when logging in).

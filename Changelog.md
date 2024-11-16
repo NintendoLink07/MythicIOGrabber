@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.6] - 2024-11-16
+
+### Changed
+
+- [SearchPanel] There won't be a loading spinner / delay before all search results have been updated with the correct data.
+It will now update every group .5 seconds after the first groups have shown up.
+Blizzard sends search result data usually twice (except for rated BG's), the first one includes most of the data, the second one usually all of the data.
+
+### Fixed
+
+- [SearchPanel] Improved performance.
+
+- [SearchPanel & ApplicationViewer] The footer bar number that shows applicants/search results should now update correctly and not show applicants in the search panel or vice versa.
+
+- [SearchPanel] The "Enter a key range" help tooltip will not show up anymore.
+
+- [FilterPanel] The reset button will now correctly reset the current category (e.g. dungeon, legacy raid, rated bg's).
+
+- [Statistics] Great vault tracking should now also work if you're exactly at the threshold of the slot, e.g. you've done exactly 1 Dungeon or 2 delves or 4 bosses, etc.
+
+- Improved addon load time (leads to a shorter loading screen when logging in).
+
+
+
 ## [3.0.5] - 2024-11-13
 
 ### Fixed
@@ -2830,7 +2854,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.6..HEAD
+[3.0.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.6
 [3.0.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.5
 [3.0.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.4
 [3.0.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.3

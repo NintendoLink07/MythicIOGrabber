@@ -616,7 +616,6 @@ local function addOrShowApplicant(applicantID)
 end
 
 local function checkApplicantList(forceReorder, applicantID)
-	--updateApplicantList()
 
 	local unsortedList = gatherSortData()
 
@@ -656,7 +655,7 @@ local function checkApplicantList(forceReorder, applicantID)
 
 	numOfApplicants, totalApplicants = applicationFrameIndex, #unsortedList
 
-	miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
+	miog.updateFooterBarResults(numOfApplicants, totalApplicants, false)
 	miog.ApplicationViewer.FramePanel.Container:MarkDirty()
 end
 
@@ -960,19 +959,6 @@ miog.createApplicationViewer = function()
 
 	applicationViewer.TitleBar.Faction:SetTexture(2437241)
 	applicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[10])
-
-	--[[applicationViewer.ButtonPanel.sortByCategoryButtons = {}
-
-	for i = 1, 4, 1 do
-		local sortByCategoryButton = applicationViewer.ButtonPanel[i == 1 and "RoleSort" or i == 2 and "PrimarySort" or i == 3 and "SecondarySort" or i == 4 and "IlvlSort"]
-		sortByCategoryButton.panel = "LFGListFrame.ApplicationViewer"
-		sortByCategoryButton.category = i == 1 and "role" or i == 2 and "primary" or i == 3 and "secondary" or i == 4 and "ilvl"
-
-		applicationViewer.ButtonPanel.sortByCategoryButtons[sortByCategoryButton.category] = sortByCategoryButton
-
-	end
-
-	applicationViewer.ButtonPanel["RoleSort"]:AdjustPointsOffset((miog.F.LITE_MODE and -20 or 0) + 156, 0)]]
 	applicationViewer.Browse:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 
 	applicationViewer.CreationSettings.EditBox.UpdateButton:SetScript("OnClick", function(self)
@@ -1000,8 +986,6 @@ miog.createApplicationViewer = function()
 
 	applicationViewer.InfoPanel.Description:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
-			--miog.EntryCreation.Description:SetParent(miog.ApplicationViewer.InfoPanel)
-			--miog.ApplicationViewer.CreationSettings.EditBox.UpdateButton:SetPoint("LEFT", miog.EntryCreation.Description, "RIGHT")
 		end
 	
 		self.lastClick = GetTime()
@@ -1047,8 +1031,7 @@ miog.createApplicationViewer = function()
 	applicationViewer:RegisterEvent("PARTY_LEADER_CHANGED")
 	applicationViewer:SetScript("OnEvent", applicationViewerEvents)
 	applicationViewer:SetScript("OnShow", function()
-		miog.Plugin.FooterBar.Results:SetText(numOfApplicants .. "(" .. totalApplicants .. ")")
-		
+		miog.updateFooterBarResults(numOfApplicants, totalApplicants, false)
 	end)
 
 	applicationViewer:OnLoad(checkApplicantList)

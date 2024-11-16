@@ -121,7 +121,7 @@ local function convertAndRefresh()
 		miog.checkAllDropCheckerItemIDs()
 
 	elseif(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
-		miog.newUpdateFunction()
+		miog.fullyUpdateSearchPanel()
 
 	elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
 		C_LFGList.RefreshApplicants()
@@ -1514,10 +1514,14 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 	miog.NewFilterPanel:MarkDirty()
 end
 
-local function setupFilterPanel()
+local function setupFilterPanel(resetSettings)
 	local categoryID, currentPanel = miog.getCurrentCategoryID()
 
 	if(categoryID and currentPanel) then
+		if(resetSettings and MIOG_NewSettings.newFilterOptions[currentPanel]) then
+			MIOG_NewSettings.newFilterOptions[currentPanel][categoryID] = nil
+		end
+
 		setFilterVisibilityByCategoryAndPanel(categoryID, currentPanel)
 
 	end
@@ -1535,7 +1539,7 @@ miog.loadNewFilterPanel = function()
 	filterPanel.Uncheck:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-		setupFilterPanel()
+		setupFilterPanel(true)
 		convertAndRefresh()
 	end)
 

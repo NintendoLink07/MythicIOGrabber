@@ -8,7 +8,7 @@
 
         <Frames>
             
-            <Frame parentKey="Status" frameStrata="FULLSCREEN">
+            <Frame parentKey="Status" frameStrata="FULLSCREEN" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-1" y="-25" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
