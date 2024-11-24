@@ -12,3 +12,5 @@ Means a less bloated and more reliable addon, 100% coverage of backup files (e.g
 - [SearchPanel] When MIOG requests member data of a listing right after a /reload the sorting of members should no longer in very rare cases cause an error.
 
 - Increased performance of certain parts of code.
+
+- Updated the open raid library.

@@ -1085,7 +1085,7 @@ local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectIns
 					id = id,
 					creatureDisplayInfoID = displayInfo,
 					--factionChecked = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID] == nil or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 1 and faction == "Alliance" or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 0 and faction == "Horde",
-					--icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
+					icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
 				}
 
 				bossIndex = bossIndex + 1;

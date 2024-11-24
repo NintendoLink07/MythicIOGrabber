@@ -20,6 +20,8 @@ Means a less bloated and more reliable addon, 100% coverage of backup files (e.g
 
 - Increased performance of certain parts of code.
 
+- Updated the open raid library.
+
 
 
 ## [3.0.6] - 2024-11-16
