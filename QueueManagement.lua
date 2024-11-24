@@ -118,7 +118,19 @@ local function createQueueFrame(queueInfo)
 		end
 
 		if(queueInfo[30]) then
-			queueFrame.Background:SetTexture(queueInfo[30])
+			local isHQ = miog.isMIOGHQLoaded()
+			
+			if(isHQ) then
+				queueFrame.Background:SetVertTile(false)
+				queueFrame.Background:SetHorizTile(false)
+				queueFrame.Background:SetTexture(queueInfo[30], "CLAMP", "CLAMP")
+				
+			else
+				queueFrame.Background:SetVertTile(true)
+				queueFrame.Background:SetHorizTile(true)
+				queueFrame.Background:SetTexture(queueInfo[30], "MIRROR", "MIRROR")
+
+			end
 
 		end
 

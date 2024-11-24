@@ -2,22 +2,6 @@ local addonName, miog = ...
 
 local currentChildren = {}
 
-miog.getVaultProgress = function(lootLevel)
-    local returnString = ""
-
-    for k, v in ipairs(miog.VAULT_PROGRESS) do
-        local name = k == 1 and "D" or k == 2 and "W" or k == 3 and "R"
-
-        for i = 1, 3, 1 do
-            if(v[i] and v[i] == lootLevel) then
-                returnString = returnString .. name .. i .. " "
-            end
-        end
-    end
-
-    return returnString
-end
-
 miog.createTrackString = function(seasonID, itemLevel)
     local trackString = ""
 
@@ -54,51 +38,6 @@ miog.createTrackString = function(seasonID, itemLevel)
 end
 
 local forceSeasonID = 13
-
-miog.updateProgressData = function()
-    local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
-
-    if(not seasonID or seasonID == -1) then
-        seasonID = 12
-
-    end
-
-    local r, g, b
-
-    for k, v in pairs(miog.GEARING_CHART) do
-        if(k == seasonID) then
-            for a in pairs(v.itemLevelInfo) do
-                local progressValue = miog.getVaultProgress(a)
-                
-                if(progressValue ~= "") then
-                    r, g, b = nil, nil, nil
-
-                    for x, y in ipairs(v.trackInfo) do
-                        if(a > v.maxUpgradeItemLevel) then
-                            r, g, b =  miog.ITEM_QUALITY_COLORS[6].color:GetRGB()
-                            
-                        else
-                            for n = 1, y.length, 1 do
-                                if(not v.awakenedInfo and a == y.data[n] or x ~= #v.trackInfo and a == y.data[n]) then
-                                    r, g, b =  miog.ITEM_QUALITY_COLORS[x - 1].color:GetRGB()
-
-                                end
-                            end
-                        end
-                    end
-            
-                    if(r == nil) then
-                        r, g, b = 1, 1, 1
-            
-                    end
-
-                    currentChildren[a].Progress:SetText(progressValue)
-                    currentChildren[a].Progress:SetTextColor(r,g,b,1)
-                end
-            end
-        end
-    end
-end
 
 miog.insertGearingData = function()
     local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()

@@ -27,15 +27,27 @@ miog.setAffixes = function()
 	end
 end
 
+--[[
+    Prints a debug message with a custom prefix
+    - `string`: Message to print (defaults to "No message attached")
+--]]
 miog.printDebug = function(string)
 	print("[MIOG]: " .. (string or "No message attached"))
 end
 
+--[[
+    Checks the player's current group state (raid, party, or solo)
+    - Returns a string indicating the group state
+--]]
 miog.checkLFGState = function()
 	return UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "solo"
 
 end
 
+--[[
+    Prints each key-value pair in a given table on a new line
+    - `table`: The table to print
+--]]
 miog.printTableAsLines = function(table)
 	for k, v in pairs(table) do
 		print(k, v)
@@ -43,21 +55,42 @@ miog.printTableAsLines = function(table)
 	end
 end
 
+--[[
+    Sets a standard backdrop for a given frame
+    - `frame`: The frame to apply the backdrop to
+--]]
 miog.setStandardBackdrop = function(frame)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=false, edgeSize = 1} )
 end
 
+--[[
+    Creates an invisible frame border with a specified thickness and color
+    - `frame`: The frame to apply the border to
+    - `thickness`: Thickness of the border
+    - `r, g, b, a`: Red, Green, Blue, Alpha values for the border color
+--]]
 miog.createInvisibleFrameBorder = function(frame, thickness, r, g, b, a)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=20, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
 	frame:SetBackdropColor(r or 0, g or 0, b or 0, a or 0) -- main area color
 end
 
+--[[
+    Sets the backdrop color of a specific frame
+    - `frame`: The frame to apply the border to
+    - `r, g, b, a`: Red, Green, Blue, Alpha values for the border color
+--]]
 miog.setBackdropColor = function(frame, r, g, b, a)
 	frame:SetBackdropColor(0, 0, 0, 0) -- main area color
 	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- border color
 
 end
 
+--[[
+    Creates a frame border with a specified thickness and color
+    - `frame`: The frame to apply the border to
+    - `thickness`: Thickness of the border
+    - `r, g, b, a`: Red, Green, Blue, Alpha values for the border color
+--]]
 miog.createFrameBorder = function(frame, thickness, r, g, b, a)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=1, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
 	frame:SetBackdropColor(0, 0, 0, 0) -- main area color
@@ -65,6 +98,12 @@ miog.createFrameBorder = function(frame, thickness, r, g, b, a)
 
 end
 
+--[[
+    Creates a top and bottom border with a specified thickness and color
+    - `frame`: The frame to apply the border to
+    - `thickness`: Thickness of the border
+    - `r, g, b, a`: Red, Green, Blue, Alpha values for the border color
+--]]
 miog.createTopBottomLines = function(frame, thickness, r, g, b, a)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=0, right=0, top=-miog.F.PX_SIZE_1(), bottom=-miog.F.PX_SIZE_1()}} )
 	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color
@@ -72,6 +111,13 @@ miog.createTopBottomLines = function(frame, thickness, r, g, b, a)
 
 end
 
+
+--[[
+    Creates a left and right border with a specified thickness and color
+    - `frame`: The frame to apply the border to
+    - `thickness`: Thickness of the border
+    - `r, g, b, a`: Red, Green, Blue, Alpha values for the border color
+--]]
 miog.createLeftRightLines = function(frame, thickness, r, g, b, a)
 	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=16, tile=true, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize=thickness, insets={left=-1, right=-miog.F.PX_SIZE_1(), top=0, bottom=0}} )
 	frame:SetBackdropColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- main area color

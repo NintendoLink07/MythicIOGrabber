@@ -390,7 +390,6 @@ local function initializeSearchResultFrame(resultID)
 		persistentFrame.resultID = resultID
 		persistentFrame:SetFixedWidth(miog.SearchPanel.NewScrollFrame.Container:GetFixedWidth())
 		searchResultSystem.baseFrames[resultID] = persistentFrame
-		persistentFrame.InviteBackground:Hide()
 		persistentFrame:SetScript("OnMouseDown", function(self, button)
 			if(button == "LeftButton") then
 				groupSignup(self.resultID)
@@ -436,17 +435,6 @@ local function initializeSearchResultFrame(resultID)
 		expandFrameButton:SetState(false)
 
 		persistentFrame.CancelApplication:OnLoad()
-		persistentFrame.CancelApplication:SetScript("OnClick", function(self, button)
-			if(button == "LeftButton") then
-				local _, appStatus = C_LFGList.GetApplicationInfo(self:GetParent().resultID)
-
-				if(appStatus == "applied") then
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-					C_LFGList.CancelApplication(self:GetParent().resultID)
-
-				end
-			end
-		end)
 
 		if(miog.MAP_INFO[mapID]) then
 			persistentFrame.CategoryInformation.BossPanel.bossFrames = {}
@@ -551,6 +539,34 @@ local function updateOptionalData(resultID)
 	end
 end
 
+local function isDummy(class)
+	return class == "DUMMY"
+end
+
+local function sortSmallGroup(k1, k2)
+	if(k1 and k2) then
+		if k1.role ~= k2.role then
+			return k1.role > k2.role
+		end
+	
+		if isDummy(k1.class) and not isDummy(k2.class) then
+			return false
+		elseif isDummy(k2.class) and not isDummy(k1.class) then
+			return true
+		end
+	
+		if k1.spec ~= k2.spec then
+			return k1.spec > k2.spec
+		end
+	
+		return k1.class > k2.class
+
+	else
+		return false
+
+	end
+end
+
 local function updatePersistentResultFrame(resultID)
 	if(C_LFGList.HasSearchResultInfo(resultID)) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
@@ -609,11 +625,14 @@ local function updatePersistentResultFrame(resultID)
 			for i = 1, searchResultInfo.numMembers, 1 do
 				local role, class, _, specLocalized, isLeader = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
 
-				table.insert(orderedList, {leader = isLeader, role = role, class = class, specID = class and specLocalized and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]})
+				if(role or class) then
+					table.insert(orderedList, {leader = isLeader, role = role, class = class, specID = class and specLocalized and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]})
 
-				if(role) then
-					roleCount[role] = roleCount[role] + 1
 
+					if(role) then
+						roleCount[role] = roleCount[role] + 1
+	
+					end
 				end
 			end
 
@@ -690,33 +709,7 @@ local function updatePersistentResultFrame(resultID)
 					end
 				end
 
-				local function isDummy(class)
-					return class == "DUMMY"
-				end
-
-				table.sort(orderedList, function(k1, k2)
-					if(k1 and k2) then
-						if k1.role ~= k2.role then
-							return k1.role > k2.role
-						end
-					
-						if isDummy(k1.class) and not isDummy(k2.class) then
-							return false
-						elseif isDummy(k2.class) and not isDummy(k1.class) then
-							return true
-						end
-					
-						if k1.spec ~= k2.spec then
-							return k1.spec > k2.spec
-						end
-					
-						return k1.class > k2.class
-
-					else
-						return false
-
-					end
-				end)
+				table.sort(orderedList, sortSmallGroup)
 
 				for i = 1, 5, 1 do
 					if(i <= groupLimit) then
@@ -845,6 +838,23 @@ local function newUpdateFunction()
 
 end
 
+local function sortFrames()
+	miog.SearchPanel:Sort()
+
+	for d, listEntry in ipairs(miog.SearchPanel:GetSortingData()) do
+
+		local frame
+
+		if(searchResultSystem.baseFrames[resultID]) then
+			frame = searchResultSystem.baseFrames[resultID]
+			
+			frame.layoutIndex = d
+		end
+	end
+
+	miog.SearchPanel.NewScrollFrame.Container:MarkDirty()
+end
+
 local function fullyUpdateSearchPanel()
 	framePool:ReleaseAll()
 
@@ -869,9 +879,13 @@ local function searchResultsReceived()
 			fullyUpdateSearchPanel()
 
 			if(miog.SearchPanel:GetNumOfActiveSortMethods() > 0) then
-				C_Timer.After(0.5, function()
+				C_Timer.After(0.55, function()
 					fullyUpdateSearchPanel()
 					blocked = false
+				end)
+
+				C_Timer.After(1, function()
+					sortFrames()
 				end)
 			end
 		end
@@ -984,6 +998,8 @@ miog.createSearchPanel = function()
 	autoCompleteFrame:SetFrameStrata("DIALOG")
 	autoCompleteFrame:SetWidth(searchBox:GetWidth())
 	autoCompleteFrame:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", -4, 1)
+
+	LFGListFrame.SearchPanel.AutoCompleteFrame = autoCompleteFrame
 	searchPanel.AutoCompleteFrame = autoCompleteFrame
 
 	searchPanel.StartSearch:SetScript("OnClick", function( )

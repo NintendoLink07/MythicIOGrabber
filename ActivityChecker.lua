@@ -175,8 +175,6 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 		end
 	end
 
-	--table.insert(dungeonList, 1533)
-
 	for _, dungeonID in pairs(dungeonList) do
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
 		local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, maxPlayers, _, isHolidayDungeon, _, minPlayers, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)

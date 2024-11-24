@@ -4,6 +4,7 @@
         <Layers>
             <Layer level="BORDER">
                 <Texture parentKey="Border" setAllPoints="true">
+                    <Size x="18" y="18" />
                     <Color r="1" g="0" b="0" a="1" />
                 </Texture>
             </Layer>
@@ -24,7 +25,6 @@
                     </Anchors>
                 </FontString>
             </Layer>
-
         </Layers>
     </Frame>
 </Ui>

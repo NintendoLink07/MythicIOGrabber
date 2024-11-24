@@ -223,7 +223,17 @@ local function setUpEntryCreation()
 	playstyleDropDown:SelectFirstFrameWithValue(self.selectedPlaystyle)
 
 	if(miog.ACTIVITY_INFO[self.selectedActivity]) then
-		frame.Background:SetTexture(miog.ACTIVITY_INFO[self.selectedActivity].horizontal)
+		if(miog.isMIOGHQLoaded()) then
+			frame.Background:SetVertTile(false)
+			frame.Background:SetHorizTile(false)
+			frame.Background:SetTexture(miog.ACTIVITY_INFO[self.selectedActivity].horizontal, "CLAMP", "CLAMP")
+
+		else
+			frame.Background:SetVertTile(true)
+			frame.Background:SetHorizTile(true)
+			frame.Background:SetTexture(miog.ACTIVITY_INFO[self.selectedActivity].horizontal, "MIRROR", "MIRROR")
+
+		end
 
 	else
 		frame.Background:SetTexture(nil)
@@ -461,15 +471,41 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 		local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
 
 		for activityIndex, activityID in ipairs(activities) do
-				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+			local info = {}
+
+			info.entryType = "option"
+			info.parentIndex = miog.ACTIVITY_INFO[activityID].expansionLevel + 10000
+			info.mapID = miog.ACTIVITY_INFO[activityID].mapID
+			info.text = activityInfo.shortName
+			info.value = activityID
+			info.func = function()
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, 0, activityID)
+
+			end
+			info.icon = miog.ACTIVITY_INFO[activityID].icon
+
+			if(not firstGroupID and activityIndex == 1) then
+				firstGroupID = activityID
+			end
+
+			legacyDungeonsTable[#legacyDungeonsTable+1] = info
+		end
+
+		--[[local manualGroupIDs = {7, 10}
+
+		for groupIndex, groupID in ipairs(manualGroupIDs) do
+			local activityID = miog.GROUP_ACTIVITY[groupID].activityID
+
+			if(activityID) then
+				local activityInfo = miog.ACTIVITY_INFO[activityID]
 				local info = {}
 
 				info.entryType = "option"
 				info.parentIndex = miog.ACTIVITY_INFO[activityID].expansionLevel + 10000
 				info.mapID = miog.ACTIVITY_INFO[activityID].mapID
-				info.text = activityInfo.shortName
+				info.text = activityInfo.groupFinderActivityName
 				info.value = activityID
-				--info.activities = activities
 				info.func = function()
 					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, 0, activityID)
 
@@ -481,7 +517,8 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				end
 
 				legacyDungeonsTable[#legacyDungeonsTable+1] = info
-		end
+			end
+		end]]
 
 		table.sort(legacyDungeonsTable, function(k1, k2)
 			return k1.text < k2.text
@@ -555,7 +592,6 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 			----
 
 		elseif(selectedFilters == Enum.LFGListFilter.NotRecommended) then
-
 			local activities = C_LFGList.GetAvailableActivities(categoryID, 0, 6)
 
 			for activityIndex, activityID in ipairs(activities) do
@@ -616,6 +652,7 @@ local function gatherGroupsAndActivitiesForCategory(categoryID)
 				end
 			end
 		end
+
 
 		for k, v in ipairs(currentRaidTable) do
 			activityDropDown:CreateEntryFrame(v)

@@ -1,21 +1,14 @@
-## [3.0.6](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.6) - 2024-11-16
+## [3.0.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.7) - 2024-11-24
 
 ### Changed
 
-- [SearchPanel] There won't be a loading spinner / delay before all search results have been updated with the correct data.
-It will now update every group .5 seconds after the first groups have shown up.
-Blizzard sends search result data usually twice (except for rated BG's), the first one includes most of the data, the second one usually all of the data.
+- Updated A LOT of backend code to match Blizzard's file system names and folders.
+Means a less bloated and more reliable addon, 100% coverage of backup files (e.g. new dungeons and I haven't finished the photoshop/upscaling of the background images), etc.
 
 ### Fixed
 
-- [SearchPanel] Improved performance.
+- [RaiderIOPanel] Bosses should now always have an icon set.
 
-- [SearchPanel & ApplicationViewer] The footer bar number that shows applicants/search results should now update correctly and not show applicants in the search panel or vice versa.
+- [SearchPanel] When MIOG requests member data of a listing right after a /reload the sorting of members should no longer in very rare cases cause an error.
 
-- [SearchPanel] The "Enter a key range" help tooltip will not show up anymore.
-
-- [FilterPanel] The reset button will now correctly reset the current category (e.g. dungeon, legacy raid, rated bg's).
-
-- [Statistics] Great vault tracking should now also work if you're exactly at the threshold of the slot, e.g. you've done exactly 1 Dungeon or 2 delves or 4 bosses, etc.
-
-- Improved addon load time (leads to a shorter loading screen when logging in).
+- Increased performance of certain parts of code.

@@ -57,7 +57,7 @@
             </Layer>
 
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background">
+                <Texture parentKey="Background" horizTile="true" vertTile="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>

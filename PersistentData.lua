@@ -354,17 +354,6 @@ miog.BLANK_BACKGROUND_INFO = {
 	edgeSize = 1
 }
 
-miog.INSTANCE_IDS = {
-
-}
-
-miog.BRACKETS = {
-	[2] = {shortName = "3's", description = _G["ARENA_3V3"], color = miog.ITEM_QUALITY_COLORS[3].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[3].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[3].color},
-	[1] = {shortName = "2's", description = _G["ARENA_2V2"], color = miog.ITEM_QUALITY_COLORS[2].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[2].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[2].color},
-	--[0] = {shortName = "LT", description = "Last tier", color = miog.ITEM_QUALITY_COLORS[0].pureHex, desaturated = miog.ITEM_QUALITY_COLORS[0].desaturatedHex, miogColors = miog.ITEM_QUALITY_COLORS[0].color},
-	--[-1] = {shortName = "NT", description = "No tier", color = "FFFF2222", desaturated = "ffe93838"},
-}
-
 miog.DIFFICULTY_NAMES_TO_ID = {
 	--category id to further divide
 
@@ -430,33 +419,6 @@ miog.MAP_INFO = {
 	[2118] = {shortName = "BFW", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "wintergrasp"},
 	[2245] = {shortName = "DWG", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush"},
 
-	--CATACLYSM
-	[643] = {shortName = "TOTT", icon = "interface/lfgframe/lfgicon-throneofthetides", fileName = "throneofthetides"},
-	[657] = {shortName = "VP", icon = "interface/lfgframe/lfgicon-thevortexpinnacle", fileName = "vortexpinnacle"},
-
-	--MISTS OF PANDARIA
-	[960] = {shortName = "TOJS", icon = "interface/lfgframe/lfgicon-templeofthejadeserpent", fileName = "jadetemple"},
-
-	--WARLORDS OF DRAENOR
-	[1176] = {shortName = "SBG", icon = "interface/lfgframe/lfgicon-shadowmoonburialgrounds", fileName = "shadowmoonburialgrounds"},
-	[1279] = {shortName = "EB", icon = "interface/lfgframe/lfgicon-everbloom", fileName = "everbloom"},
-
-	--LEGION
-	[1458] = {shortName = "NL", icon = "interface/lfgframe/lfgicon-neltharionslair", fileName = "neltharionslair"},
-	[1466] = {shortName = "DHT", icon = "interface/lfgframe/lfgicon-darkheartthicket", fileName = "darkheartthicket"},
-	[1477] = {shortName = "HoV", icon = "interface/lfgframe/lfgicon-hallsofvalor", fileName = "hallsofvalor"},
-	[1571] = {shortName = "CoS", icon = "interface/lfgframe/lfgicon-courtofstars", fileName = "suramarcitydungeon"},
-	[1501] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookhold", fileName = "blackrookhold"},
-
-	--BATTLE FOR AZEROTH
-	[1754] = {shortName = "FH", icon = "interface/lfgframe/lfgicon-freehold", fileName = "freehold"},
-	[1763] = {shortName = "AD", icon = "interface/lfgframe/lfgicon-ataldazar", fileName = "ataldazar"},
-	[1841] = {shortName = "UR", icon = "interface/lfgframe/lfgicon-theunderrot", fileName = "underrot"},
-	[1862] = {shortName = "WM", icon = "interface/lfgframe/lfgicon-waycrestmanor", fileName = "waycrestmanor"},
-
-	--SHADOWLANDS
-
-
 	-- RAIDS
 
 	[2444] = {
@@ -475,8 +437,7 @@ miog.MAP_INFO = {
 			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
 		},
 		shortName = "ATDH",
-		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/amirdrassil.png",
-		fileName = "amirdrassil",
+		fileName = "emeralddream",
 	},
 	[2569] = { -- interface/icons/inv_achievement_raiddragon
 		bossIcons = {
@@ -491,7 +452,6 @@ miog.MAP_INFO = {
 			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
 		},
 		shortName = "ATSC",
-		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/aberrus.png",
 		fileName = "aberrus",
 	},
 	[2522] = {
@@ -506,197 +466,212 @@ miog.MAP_INFO = {
 			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
 		},
 		shortName = "VOTI",
-		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/vault.png",
 		fileName = "vaultoftheincarnates",
 	},
 
 		
-
-	[1136] = {shortName = "SOO", icon = "interface/lfgframe/lfgicon-orgrimmargates", fileName = "siegeoforgrimmar"},
-	[36] = {shortName = "DM", icon = "interface/lfgframe/lfgicon-deadmines.blp", fileName = "deadmines"},
-	[1175] = {shortName = "BSM", icon = "interface/lfgframe/lfgicon-bloodmaulslagmines.blp", fileName = "ogrecompound"},
-	[1195] = {shortName = "ID", icon = "interface/lfgframe/lfgicon-irondocks.blp", fileName = "irondocks"},
-	[1182] = {shortName = "AUCH", icon = "interface/lfgframe/lfgicon-auchindounwod.blp", fileName = "auchindoun_wod"},
-	[1209] = {shortName = "SR", icon = "interface/lfgframe/lfgicon-skyreach.blp", fileName = "skyreach"},
-	[1208] = {shortName = "GD", icon = "interface/lfgframe/lfgicon-grimraildepot.blp", fileName = "blackrocktraindepot"},
-	[1358] = {shortName = "UBRS", icon = "interface/lfgframe/lfgicon-upperblackrockspire.blp", fileName = "upperblackrockspire"},
-	[1228] = {shortName = "HM", icon = "interface/lfgframe/lfgicon-highmaul.blp", fileName = "highmaulraid"},
-	[1205] = {shortName = "BRF", icon = "interface/lfgframe/lfgicon-blackrockfoundry.blp", fileName = "blackrockfoundry"},
-
-	[409] = {shortName = "MC", fileName = "moltencore"},
-	[469] = {shortName = "BWL", fileName = "blackwinglair"},
-	[509] = {shortName = "AQ20", fileName = "ahnqiraj20man"},
-	[531] = {shortName = "AQ40", icon = "interface/lfgframe/lfgicon-aqtemple.blp", fileName = "ahnqiraj40man"},
-	[533] = {shortName = "NAXX", icon = "interface/lfgframe/lfgicon-naxxramas.blp", fileName = "naxxramas"},
-	[631] = {shortName = "ICC", icon = "interface/lfgframe/lfgicon-icecrowncitadel.blp", fileName = "icecrowncitadel"},
-
-	[1007] = {shortName = "SCHOLO", icon = "interface/lfgframe/lfgicon-scholomance.blp", fileName = "scholomance2"},
-	[33] = {shortName = "SFK", icon = "interface/lfgframe/lfgicon-shadowfangkeep.blp", fileName = "shadowfangkeep"},
-
-	[543] = {shortName = "RAMPS", icon = "interface/lfgframe/lfgicon-hellfirecitadel.blp", fileName = "hellfirecitadel"},
-	[542] = {shortName = "BF", icon = "interface/lfgframe/lfgicon-hellfirecitadel.blp", fileName = "hellfirecitadel"},
-	[540] = {shortName = "SH", icon = "interface/lfgframe/lfgicon-hellfirecitadel.blp", fileName = "hellfirecitadel"},
-	[547] = {shortName = "SP", icon = "interface/lfgframe/lfgicon-coilfang.blp", fileName = "coilfang"},
-	[546] = {shortName = "UB", icon = "interface/lfgframe/lfgicon-coilfang.blp", fileName = "coilfang"},
-	[545] = {shortName = "SV", icon = "interface/lfgframe/lfgicon-coilfang.blp", fileName = "coilfang"},
-	[557] = {shortName = "MT", icon = "interface/lfgframe/lfgicon-auchindoun.blp", fileName = "auchindoun"},
-	[558] = {shortName = "CRYPTS", icon = "interface/lfgframe/lfgicon-auchindoun.blp", fileName = "auchindoun"},
-	[556] = {shortName = "SETH", icon = "interface/lfgframe/lfgicon-auchindoun.blp", fileName = "auchindoun"},
-	[555] = {shortName = "SL", icon = "interface/lfgframe/lfgicon-auchindoun.blp", fileName = "auchindoun"},
-	[1001] = {shortName = "SH", icon = "interface/lfgframe/lfgicon-scarlethalls.blp", fileName = "scarlethalls"},
-	[1004] = {shortName = "SM", icon = "interface/lfgframe/lfgicon-scarletmonastery.blp", fileName = "scarletmonastery2"},
-	[560] = {shortName = "EFD", icon = "interface/lfgframe/lfgicon-cavernsoftime.blp", fileName = "cavernstime"},
-	[269] = {shortName = "BM", icon = "interface/lfgframe/lfgicon-cavernsoftime.blp", fileName = "cavernstime"},
-	[554] = {shortName = "MECH", icon = "interface/lfgframe/lfgicon-tempestkeep.blp", fileName = "tempestkeep"},
-	[553] = {shortName = "BOTA", icon = "interface/lfgframe/lfgicon-tempestkeep.blp", fileName = "tempestkeep"},
-	[552] = {shortName = "ARC", icon = "interface/lfgframe/lfgicon-tempestkeep.blp", fileName = "tempestkeep"},
-	[585] = {shortName = "MGT", icon = "interface/lfgframe/lfgicon-magistersterrace.blp", fileName = "sunwell5man"},
-	
-	[532] = {shortName = "KARA", icon = "interface/lfgframe/lfgicon-karazhan.blp", fileName = "karazhan"},
-	[544] = {shortName = "ML", icon = "interface/lfgframe/lfgicon-hellfireraid.blp", fileName = "hellfireraid"},
-	[548] = {shortName = "SSC", icon = "interface/lfgframe/lfgicon-serpentshrinecavern.blp", fileName = "coilfang"},
-	[550] = {shortName = "TK", icon = "interface/lfgframe/lfgicon-tempestkeep.blp", fileName = "tempestkeep"},
-	[564] = {shortName = "BT", icon = "interface/lfgframe/lfgicon-blacktemple.blp", fileName = "blacktemple"},
-	[565] = {shortName = "GL", icon = "interface/lfgframe/lfgicon-gruulslair.blp", fileName = "gruulslair"},
-	[580] = {shortName = "SW", icon = "interface/lfgframe/lfgicon-sunwell.blp", fileName = "sunwell"},
-
-	[574] = {shortName = "UTK", icon = "interface/lfgframe/lfgicon-utgarde.blp", fileName = "utgardekeep"},
-	[575] = {shortName = "UTP", icon = "interface/lfgframe/lfgicon-utgardepinnacle.blp", fileName = "utgardepinnacle"},
-	[601] = {shortName = "AN", icon = "interface/lfgframe/lfgicon-azjolnerub.blp", fileName = "azjoluppercity"},
-	[578] = {shortName = "OCU", icon = "interface/lfgframe/lfgicon-theoculus.blp", fileName = "nexus80"},
-	[602] = {shortName = "HOL", icon = "interface/lfgframe/lfgicon-hallsoflightning.blp", fileName = "ulduar80"},
-	[599] = {shortName = "HOS", icon = "interface/lfgframe/lfgicon-hallsofstone.blp", fileName = "ulduar70"},
-	[595] = {shortName = "CULL", icon = "interface/lfgframe/lfgicon-oldstratholme.blp", fileName = "stratholme"},
-	[600] = {shortName = "DTK", icon = "interface/lfgframe/lfgicon-draktharon.blp", fileName = "draktharon"},
-	[604] = {shortName = "GUN", icon = "interface/lfgframe/lfgicon-gundrak.blp", fileName = "gundrak"},
-	[619] = {shortName = "ATOK", icon = "interface/lfgframe/lfgicon-ahnkalet.blp", fileName = "azjolnerub76"},
-	[608] = {shortName = "VH", icon = "interface/lfgframe/lfgicon-theviolethold.blp", fileName = "dalaranprison"},
-	[576] = {shortName = "NEX", icon = "interface/lfgframe/lfgicon-thenexus.blp", fileName = "nexus70"},
-	[650] = {shortName = "TOTC", icon = "interface/lfgframe/lfgicon-argentdungeon.blp", fileName = "argentdungeon"},
-	[632] = {shortName = "FOS", icon = "interface/lfgframe/lfgicon-theforgeofsouls.blp", fileName = "icecrown5man"},
-	[658] = {shortName = "PIT", icon = "interface/lfgframe/lfgicon-pitofsaron.blp", fileName = "pitofsaron"},
-	[668] = {shortName = "HOR", icon = "interface/lfgframe/lfgicon-hallsofreflection.blp", fileName = "hallsofreflection"},
-	[603] = {shortName = "ULD", icon = "interface/lfgframe/lfgicon-ulduar.blp", fileName = "ulduar80"},
-
+	--VANILLA
+	[36] = {shortName = "DM", fileName = "deadmines"},
 	[43] = {shortName = "WC", fileName = "wailingcaverns"},
 	[389] = {shortName = "RFC", fileName = "ragefirechasm"},
 	[48] = {shortName = "BFD", fileName = "blackfathomdeeps"},
-	[34] = {shortName = "SS", fileName = "stormwindstockade"},
+	[34] = {shortName = "SS", fileName = "stormwindstockades"},
 	[90] = {shortName = "GR", fileName = "gnomeregan"},
 	[47] = {shortName = "RFK", fileName = "razorfenkraul"},
 	[129] = {shortName = "RFD", fileName = "razorfendowns"},
-	[70] = {shortName = "ULDA", fileName = "uldamanold"},
-	[209] = {shortName = "ZF", fileName = "zulfarrak"},
+	[70] = {shortName = "ULD", fileName = "uldaman"},
+	[209] = {shortName = "ZF", fileName = "zulfarak"},
 	[349] = {shortName = "MAU", fileName = "maraudon"},
 	[109] = {shortName = "ST", fileName = "sunkentemple"},
 	[230] = {shortName = "BRD", fileName = "blackrockdepths"},
 	[229] = {shortName = "BRS", fileName = "blackrockspire"},
 	[429] = {shortName = "DM", fileName = "diremaul"},
-	[329] = {shortName = "SH", fileName = "stratholme"},
+	[329] = {shortName = "SH", iconName = "oldstratholme", bgName = "stratholme"},
+	[1007] = {shortName = "SCHOLO", fileName = "scholomance"},
+	[33] = {shortName = "SFK", fileName = "shadowfangkeep"},
+
+	[409] = {shortName = "MC", fileName = "moltencore"},
+	[469] = {shortName = "BWL", fileName = "blackwinglair"},
+	[509] = {shortName = "AQ20", fileName = "aqruins"},
+	[531] = {shortName = "AQ40",  fileName = "aqtemple"},
+
+	--THE BURNING CRUSADE
+	[543] = {shortName = "RAMPS", fileName = "hellfirecitadel"},
+	[542] = {shortName = "BF", fileName = "hellfirecitadel"},
+	[540] = {shortName = "SH", fileName = "hellfirecitadel"},
+	[547] = {shortName = "SP", fileName = "coilfang"},
+	[546] = {shortName = "UB", fileName = "coilfang"},
+	[545] = {shortName = "SV", fileName = "coilfang"},
+	[557] = {shortName = "MT", fileName = "auchindoun"},
+	[558] = {shortName = "CRYPTS", fileName = "auchindoun"},
+	[556] = {shortName = "SETH", fileName = "auchindoun"},
+	[555] = {shortName = "SL", fileName = "auchindoun"},
+	[1001] = {shortName = "SH", fileName = "scarlethalls"},
+	[1004] = {shortName = "SM", fileName = "scarletmonastery"},
+	[560] = {shortName = "EFD", fileName = "cavernsoftime"},
+	[269] = {shortName = "BM", fileName = "cavernsoftime"},
+	[554] = {shortName = "MECH", fileName = "tempestkeep"},
+	[553] = {shortName = "BOTA", fileName = "tempestkeep"},
+	[552] = {shortName = "ARC", fileName = "tempestkeep"},
+	[585] = {shortName = "MGT", fileName = "magistersterrace"},
+	
+	[565] = {shortName = "GL", fileName = "gruulslair"},
+	[544] = {shortName = "ML", fileName = "hellfireraid"},
+	[548] = {shortName = "SSC", iconName = "serpentshrinecavern", bgName = "coilfang"},
+	[532] = {shortName = "KARA", fileName = "karazhan"},
+	[564] = {shortName = "BT", fileName = "blacktemple"},
+	[550] = {shortName = "TK", fileName = "tempestkeep"},
+	[580] = {shortName = "SW", fileName = "sunwell"},
+
+	--WRATH OF THE LICH KING
+	[574] = {shortName = "UTK", fileName = "utgarde"},
+	[575] = {shortName = "UTP", fileName = "utgardepinnacle"},
+	[601] = {shortName = "AN", fileName = "azjolnerub"},
+	[578] = {shortName = "OCU", fileName = "theoculus"},
+	[602] = {shortName = "HOL", fileName = "hallsoflightning"},
+	[599] = {shortName = "HOS", fileName = "hallsofstone"},
+	[595] = {shortName = "CULL", fileName = "stratholme"},
+	[600] = {shortName = "DTK", fileName = "draktharon"},
+	[604] = {shortName = "GUN", fileName = "gundrak"},
+	[619] = {shortName = "ATOK", fileName = "ahnkalet"},
+	[608] = {shortName = "VH", fileName = "theviolethold"},
+	[576] = {shortName = "NEX", fileName = "thenexus"},
+	[650] = {shortName = "TOTC", fileName = "argentdungeon"},
+	[632] = {shortName = "FOS", fileName = "theforgeofsouls"},
+	[658] = {shortName = "PIT", fileName = "pitofsaron"},
+	[668] = {shortName = "HOR", fileName = "hallsofreflection"},
+	[533] = {shortName = "NAXX", fileName = "naxxramas"},
+	[624] = {shortName = "VOA", fileName = "vaultofarchavon"},
+	[603] = {shortName = "ULD", fileName = "ulduar"},
+	[616] = {shortName = "EOE", fileName = "malygos"},
+	[649] = {shortName = "TOTC", fileName = "argentraid"},
+	[631] = {shortName = "ICC", fileName = "icecrowncitadel"},
+	[249] = {shortName = "ONY", fileName = "onyxiaencounter"},
+	[724] = {shortName = "RS", fileName = "rubysanctum"},
+
+	-- CATACLYSM
 	[859] = {shortName = "ZG", fileName = "zulgurub"},
-	[568] = {shortName = "ZA", fileName = "zulaman2"},
-	[938] = {shortName = "ET", fileName = "endoftime"},
+	[568] = {shortName = "ZA", fileName = "zulaman"},
+	[938] = {shortName = "ET", fileName = "endtime"},
 	[939] = {shortName = "WOE", fileName = "wellofeternity"},
 	[940] = {shortName = "HOT", fileName = "houroftwilight"},
+	[645] = {shortName = "BRC", fileName = "blackrockcaverns"},
+	[670] = {shortName = "GB", fileName = "grimbatol"},
+	[644] = {shortName = "HOO", fileName = "hallsoforigination"},
+	[725] = {shortName = "SC", fileName = "thestonecore"},
+	[755] = {shortName = "LCT", fileName = "lostcityoftolvir"},
+	[643] = {shortName = "TOTT", fileName = "throneofthetides"},
+	[657] = {shortName = "VP", fileName = "thevortexpinnacle"},
+	[669] = {shortName = "BWD", fileName = "blackwingdescentraid"},
+	[671] = {shortName = "BOT", fileName = "grimbatolraid"},
+	[754] = {shortName = "TOTFW", fileName = "throneofthefourwinds"},
+	[720] = {shortName = "FL", fileName = "firelands"},
+	[967] = {shortName = "DS", fileName = "dragonsoul"},
 
-	[645] = {shortName = "BRC", icon = "interface/lfgframe/lfgicon-blackrockcaverns.blp", fileName = "blackrockcaverns"},
-	[670] = {shortName = "GB", icon = "interface/lfgframe/lfgicon-grimbatol.blp", fileName = "grimbatol"},
-	[644] = {shortName = "HOO", icon = "interface/lfgframe/lfgicon-hallsoforigination.blp", fileName = "hallsoforigination"},
-	[725] = {shortName = "SC", icon = "interface/lfgframe/lfgicon-thestonecore.blp", fileName = "deepholmdungeon"},
-	[755] = {shortName = "LCT", icon = "interface/lfgframe/lfgicon-lostcityoftolvir.blp", fileName = "lostcityoftolvir"},
-
-	[961] = {shortName = "SSB", icon = "interface/lfgframe/lfgicon-stormstoutbrewery.blp", fileName = "stormstoutbrewery"},
-	[959] = {shortName = "SPM", icon = "interface/lfgframe/lfgicon-shadowpanmonastery.blp", fileName = "shadowpanmonastery"},
-	[994] = {shortName = "MSP", icon = "interface/lfgframe/lfgicon-mogushanpalace.blp", fileName = "mogushanpalace"},
-	[1011] = {shortName = "SNT", icon = "interface/lfgframe/lfgicon-siegeofnizaotemple.blp", fileName = "siegeofnizaotemple"},
-	[962] = {shortName = "GOTSS", icon = "interface/lfgframe/lfgicon-gateofthesettingsun.blp", fileName = "gateofthesettingsun"},
-	--[] = {shortName = "EB", icon = ""},
-
-	[649] = {shortName = "TOTC", icon = "interface/lfgframe/lfgicon-argentraid.blp", fileName = "argentraid"},
-	[724] = {shortName = "RS", icon = "interface/lfgframe/lfgicon-rubysanctum.blp", fileName = "rubysanctum"},
-
-	[669] = {shortName = "BWD", icon = "interface/lfgframe/lfgicon-blackwingdescentraid.blp", fileName = "blackwingdescentraid"},
-	[671] = {shortName = "BOT", icon = "interface/lfgframe/lfgicon-grimbatol.blp", fileName = "grimbatolraid"},
-	[754] = {shortName = "TOTFW", icon = "interface/lfgframe/lfgicon-throneofthefourwinds.blp", fileName = "throneofthefourwinds"},
-	[720] = {shortName = "FL", icon = "interface/lfgframe/lfgicon-firelands.blp", fileName = "firelandsraid"},
-	[967] = {shortName = "DS", icon = "interface/lfgframe/lfgicon-dragonsoul.blp", fileName = "deathwingraid"},
-
-	[1008] = {shortName = "MSV", icon = "interface/lfgframe/lfgicon-mogushanvaults.blp", fileName = "mogushanvaults"},
-	[1009] = {shortName = "HOF", icon = "interface/lfgframe/lfgicon-heartoffear.blp", fileName = "heartoffear"},
-	[996] = {shortName = "TOES", icon = "interface/lfgframe/lfgicon-terraceoftheendlessspring.blp", fileName = "terraceoftheendlessspring"},
-	[1098] = {shortName = "TOT", icon = "interface/lfgframe/lfgicon-thunderforgotten.blp", fileName = "throneofthunder"},
+	-- MISTS OF PANDARIA
 	--[870] = {shortName = "RPD", icon = ""}, --RANDOM PANDARIA DUNGEON
-	--[1116] = {shortName = "RWD", icon = ""}, --RANDOM WARLORDS DUNGEON
-	[1448] = {shortName = "HFC", icon = "interface/lfgframe/lfgicon-hellfireraid.blp", fileName = "hellfireraid"},
-	--[1220] = {shortName = "RLD", icon = ""}, --RANDOM LEGION DUNGEON
-
-	[1456] = {shortName = "EOA", icon = "interface/lfgframe/lfgicon-eyeofazshara.blp", fileName = "nagadungeon"},
-	[1544] = {shortName = "AOVH", icon = "interface/lfgframe/lfgicon-assaultonviolethold.blp", fileName = "violethold"},
-	[1493] = {shortName = "VOTW", icon = "interface/lfgframe/lfgicon-vaultofthewardens.blp", fileName = "vaultofthewardens"},
-	[1492] = {shortName = "MOS", icon = "interface/lfgframe/lfgicon-mawofsouls.blp", fileName = "helheimship"},
-	[1516] = {shortName = "ARC", icon = "interface/lfgframe/lfgicon-thearcway.blp", fileName = "suramarcatacombs"},
-
-	[1520] = {shortName = "EN", icon = "interface/lfgframe/lfgicon-theemeraldnightmare-riftofaln.blp", fileName = "emeraldnightmareraid"},
-	[1530] = {shortName = "NH", icon = "interface/lfgframe/lfgicon-thenighthold.blp", fileName = "suramarraid"},
-	[1648] = {shortName = "TOV", icon = "interface/lfgframe/lfgicon-trialofvalor.blp", fileName = "trialsofvalor"},
-	--[1651] = {shortName = "", icon = ""},
-	[1651] = {shortName = "RTK", icon = "interface/lfgframe/lfgicon-returntokarazhan.blp", fileName = "returntokarazhan"},
-	[1677] = {shortName = "COEN", icon = "interface/lfgframe/lfgicon-cathedralofeternalnight.blp", fileName = "tombofsargerasdungeon"},
-
-	[1676] = {shortName = "TOS", icon = "interface/lfgframe/lfgicon-tombofsargeraschamberoftheavatar.blp", fileName = "tombofsargerasraid"},
-	[1712] = {shortName = "ATBT", icon = "interface/lfgframe/lfgicon-antorus.blp", fileName = "argusraid"},
-	[1753] = {shortName = "SEAT", icon = "interface/lfgframe/lfgicon-seatofthetriumvirate.blp", fileName = "argusdungeon"},
-
-	[1861] = {shortName = "ULDIR", icon = "interface/lfgframe/lfgicon-uldir.blp", fileName = "nazmirraid"},
-	--[1642] = {shortName = "RBD", icon = ""}, --RANDOM BFA DUNGEON
-	[1877] = {shortName = "TOS", icon = "interface/lfgframe/lfgicon-templeofsethraliss.blp", fileName = "serpentinetunnels"},
-	[1594] = {shortName = "ML", icon = "interface/lfgframe/lfgicon-themotherlode.blp", fileName = "goblinmine"},
-	[1762] = {shortName = "KR", icon = "interface/lfgframe/lfgicon-kingsrest.blp", fileName = "goldencityinterior----kingsrest"},
-	[1864] = {shortName = "SOTS", icon = "interface/lfgframe/lfgicon-shrineofthestorm.blp", fileName = "shrineofthestorm"},
-	[1771] = {shortName = "TD", icon = "interface/lfgframe/lfgicon-toldagor.blp", fileName = "toldagor"},
-	[1822] = {shortName = "SOB", icon = "interface/lfgframe/lfgicon-siegeofboralus.blp", fileName = "boralusdungeon"},
-	[2070] = {shortName = "BOD", icon = "interface/lfgframe/lfgicon-battleofdazaralor.blp", fileName = "zuldazarraid"},
-	[2096] = {shortName = "COS", icon = "interface/lfgframe/lfgicon-crucibleofstorms.blp", fileName = "seapriestraid"},
-	[2164] = {shortName = "EP", icon = "interface/lfgframe/lfgicon-eternalpalace.blp", fileName = "eternalpalace"},
-	[2097] = {shortName = "MECH", icon = "interface/lfgframe/lfgicon-mechagon.blp", fileName = "mechagonzone"},
-	[2217] = {shortName = "NYA", icon = "interface/lfgframe/lfgicon-nyalotha.blp", fileName = "nyalotha"},
+	[960] = {shortName = "TOJS", fileName = "templeofthejadeserpent"},
+	[961] = {shortName = "SSB", fileName = "stormstoutbrewery"},
+	[959] = {shortName = "SPM", fileName = "shadowpanmonastery"},
+	[994] = {shortName = "MSP", fileName = "mogushanpalace"},
+	[1011] = {shortName = "SNT", fileName = "siegeofnizaotemple"},
+	[962] = {shortName = "GOTSS", fileName = "gateofthesettingsun"},
+	[1008] = {shortName = "MSV",  fileName = "mogushanvaults"},
+	[1009] = {shortName = "HOF", fileName = "heartoffear"},
+	[996] = {shortName = "TOES", fileName = "terraceoftheendlessspring"},
+	[1098] = {shortName = "TOT", fileName = "thunderpinnacle"},
+	[1136] = {shortName = "SOO", fileName = "orgrimmargates"},
 	
-	[2289] = {shortName = "PF", icon = "interface/lfgframe/lfgicon-plaguefall.blp", fileName = "plaguefall"},
-	[2291] = {shortName = "DOS", icon = "interface/lfgframe/lfgicon-theotherside.blp", fileName = "theotherside"},
-	[2287] = {shortName = "HOA", icon = "interface/lfgframe/lfgicon-hallsofatonement.blp", fileName = "hallsofatonement"},
-	[2290] = {shortName = "MOTS", icon = "interface/lfgframe/lfgicon-mistsoftirnascithe.blp", fileName = "mistsoftirnascithe"},
-	[2284] = {shortName = "SD", icon = "interface/lfgframe/lfgicon-sanguinedepths.blp", fileName = "sanguinedepths"},
-	[2285] = {shortName = "SOA", icon = "interface/lfgframe/lfgicon-spiresofascension.blp", fileName = "spiresofascension"},
-	[2286] = {shortName = "NW", icon = "interface/lfgframe/lfgicon-necroticwake.blp", fileName = "necroticwake"},
-	[2293] = {shortName = "TOP", icon = "interface/lfgframe/lfgicon-theaterofpain.blp", fileName = "theaterofpain"},
-	[2296] = {shortName = "CN", icon = "interface/lfgframe/lfgicon-castlenathria.blp", fileName = "castlenathria"},
-	[2450] = {shortName = "SOD", icon = "interface/lfgframe/lfgicon-sanctumofdomination.blp", fileName = "sanctumofdomination"},
-	[2441] = {shortName = "TAZA", icon = "interface/lfgframe/lfgicon-tazaveshtheveiledmarket.blp", fileName = "tazavesh"},
-	[2481] = {shortName = "SFO", icon = "interface/lfgframe/lfgicon-sepulcherofthefirstones.blp", fileName = "sepulcherofthefirstones"},
-	--[2162] = {shortName = "TJG", icon = ""},
+	-- WARLORDS OF DRAENOR
+	--[1116] = {shortName = "RWD", icon = ""}, --RANDOM WARLORDS DUNGEON
+	[1175] = {shortName = "BSM", fileName = "bloodmaulslagmines"},
+	[1195] = {shortName = "ID", fileName = "irondocks"},
+	[1182] = {shortName = "AUCH", fileName = "auchindounwod"},
+	[1209] = {shortName = "SR", fileName = "skyreach"},
+	[1208] = {shortName = "GD", fileName = "grimraildepot"},
+	[1358] = {shortName = "UBRS", fileName = "upperblackrockspire"},
+	[1176] = {shortName = "SBG", fileName = "shadowmoonburialgrounds"},
+	[1279] = {shortName = "EB", fileName = "everbloom"},
+	[1228] = {shortName = "HM", fileName = "highmaul"},
+	[1205] = {shortName = "BRF", fileName = "blackrockfoundry"},
+	[1448] = {shortName = "HFC", fileName = "hellfireraid"},
+
+	--LEGION
+	--[1220] = {shortName = "RLD", icon = ""}, --RANDOM LEGION DUNGEON
+	[1458] = {shortName = "NL", fileName = "neltharionslair"},
+	[1466] = {shortName = "DHT", fileName = "darkheartthicket"},
+	[1477] = {shortName = "HoV", fileName = "hallsofvalor"},
+	[1571] = {shortName = "CoS", fileName = "courtofstars"},
+	[1501] = {shortName = "BRH", fileName = "blackrookhold"},
+	[1456] = {shortName = "EOA", fileName = "eyeofazshara"},
+	[1544] = {shortName = "AOVH", fileName = "assaultonviolethold"},
+	[1493] = {shortName = "VOTW", fileName = "vaultofthewardens"},
+	[1492] = {shortName = "MOS", fileName = "mawofsouls"},
+	[1516] = {shortName = "ARC", fileName = "thearcway"},
+	[1753] = {shortName = "SEAT", fileName = "seatofthetriumvirate"},
+	[1651] = {shortName = "RTK", fileName = "returntokarazhan"},
+	[1677] = {shortName = "COEN", fileName = "cathedralofeternalnight"},
+	[1520] = {shortName = "EN", fileName = "theemeraldnightmare-riftofaln"},
+	[1530] = {shortName = "NH", fileName = "thenighthold"},
+	[1648] = {shortName = "TOV", fileName = "trialofvalor"},
+	--[1651] = {shortName = "", icon = ""},
+	[1676] = {shortName = "TOS", iconName = "tombofsargerasdeceiversfall", bgName = "tombofsargeras"},
+	[1712] = {shortName = "ATBT", fileName = "antorus"},
+
+	-- BATTLE FOR AZEROTH
+	--[1642] = {shortName = "RBD", icon = ""}, --RANDOM BFA DUNGEON
+	[1861] = {shortName = "ULDIR", fileName = "uldir"},
+	[1754] = {shortName = "FH", fileName = "freehold"},
+	[1763] = {shortName = "AD", fileName = "ataldazar"},
+	[1841] = {shortName = "UR", fileName = "theunderrot"},
+	[1862] = {shortName = "WM", fileName = "waycrestmanor"},
+	[1877] = {shortName = "TOS", fileName = "templeofsethraliss"},
+	[1594] = {shortName = "ML", fileName = "themotherlode"},
+	[1762] = {shortName = "KR", fileName = "kingsrest"},
+	[1864] = {shortName = "SOTS", fileName = "shrineofthestorm"},
+	[1771] = {shortName = "TD", fileName = "toldagor"},
+	[1822] = {shortName = "SOB", fileName = "siegeofboralus"},
+	[2070] = {shortName = "BOD", fileName = "battleofdazaralor"},
+	[2096] = {shortName = "COS", fileName = "crucibleofstorms"},
+	[2164] = {shortName = "EP", fileName = "eternalpalace"},
+	[2097] = {shortName = "MECH", fileName = "mechagon"},
+	[2217] = {shortName = "NYA", fileName = "nyalotha"},
+	
+	--SHADOWLANDS
+	[2289] = {shortName = "PF", fileName = "plaguefall"},
+	[2291] = {shortName = "DOS", fileName = "theotherside"},
+	[2287] = {shortName = "HOA", fileName = "hallsofatonement"},
+	[2290] = {shortName = "MOTS", fileName = "mistsoftirnascithe"},
+	[2284] = {shortName = "SD", fileName = "sanguinedepths"},
+	[2285] = {shortName = "SOA", fileName = "spiresofascension"},
+	[2286] = {shortName = "NW", fileName = "necroticwake"},
+	[2293] = {shortName = "TOP", fileName = "theaterofpain"},
+	[2296] = {shortName = "CN", fileName = "castlenathria"},
+	[2450] = {shortName = "SOD", fileName = "sanctumofdomination"},
+	[2441] = {shortName = "TAZA", fileName = "tazaveshtheveiledmarket"},
+	[2481] = {shortName = "SFO", fileName = "sepulcherofthefirstones"},
 
 	--DRAGONFLIGHT
-	[2451] = {shortName = "ULOT", icon = "interface/lfgframe/lfgicon-uldaman-legacyoftyr", fileName = "uldamanlegacyoftyr"},
-	[2515] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-arcanevaults", fileName = "azurevault"},
-	[2516] = {shortName = "NO", icon = "interface/lfgframe/lfgicon-centaurplains", fileName = "nokhudoffensive"},
-	[2519] = {shortName = "NELT", icon = "interface/lfgframe/lfgicon-neltharus", fileName = "neltharus"},
-	[2520] = {shortName = "BH", icon = "interface/lfgframe/lfgicon-brackenhidehollow", fileName = "brackenhidehollow"},
-	[2521] = {shortName = "RLP", icon = "interface/lfgframe/lfgicon-lifepools", fileName = "rubylifepools"},
-	[2526] = {shortName = "AA", icon = "interface/lfgframe/lfgicon-theacademy", fileName = "algetharacademy"},
-	[2527] = {shortName = "HOI", icon = "interface/lfgframe/lfgicon-hallsofinfusion", fileName = "hallsofinfusion"},
-	[2579] = {shortName = "DOTI", icon = "interface/lfgframe/lfgicon-dawnoftheinfinite", fileName = "dawnoftheinfinite"},
+	[2451] = {shortName = "ULOT", fileName = "uldaman-legacyoftyr"},
+	[2515] = {shortName = "AV", iconName = "arcanevaults", bgName = "azurevaults"},
+	[2516] = {shortName = "NO", iconName = "centaurplains", bgName = "nokhudoffensive"},
+	[2519] = {shortName = "NELT", fileName = "neltharus"},
+	[2520] = {shortName = "BH", fileName = "brackenhidehollow"},
+	[2521] = {shortName = "RLP", fileName = "lifepools"},
+	[2526] = {shortName = "AA", fileName = "theacademy"},
+	[2527] = {shortName = "HOI", fileName = "hallsofinfusion"},
+	[2579] = {shortName = "DOTI", fileName = "dawnoftheinfinite"},
 
 
 	-- THE WAR WITHIN
-	
-	[2648] = {shortName = "ROOK", icon = "interface/lfgframe/lfgicon-therookery", fileName = "therookery"},
-	[2649] = {shortName = "PSF", icon = "interface/lfgframe/lfgicon-prioryofthesacredflames", fileName = "prioryofthesacredflames"},
-	[2651] = {shortName = "DFC", icon = "interface/lfgframe/lfgicon-darkflamecleft", fileName = "darkflamecleft"},
-	[2652] = {shortName = "SV", icon = "interface/lfgframe/lfgicon-thestonevault", fileName = "thestonevault"},
-	[2660] = {shortName = "AK", icon = "interface/lfgframe/lfgicon-arakaracityofechoes", fileName = "arakaracityofechoes"},
-	[2661] = {shortName = "CBM", icon = "interface/lfgframe/lfgicon-cinderbrewmeadery", fileName = "cinderbrewmeadery"},
-	[2662] = {shortName = "DB", icon = "interface/lfgframe/lfgicon-thedawnbreaker", fileName = "thedawnbreaker"},
-	[2669] = {shortName = "COT", icon = "interface/lfgframe/lfgicon-cityofthreads", fileName = "cityofthreads"},
+	[2648] = {shortName = "ROOK", fileName = "therookery"},
+	[2649] = {shortName = "PSF", fileName = "prioryofthesacredflames"},
+	[2651] = {shortName = "DFC", fileName = "darkflamecleft"},
+	[2652] = {shortName = "SV", fileName = "thestonevault"},
+	[2660] = {shortName = "AK", fileName = "arakaracityofechoes"},
+	[2661] = {shortName = "CBM", fileName = "cinderbrewmeadery"},
+	[2662] = {shortName = "DB", fileName = "thedawnbreaker"},
+	[2669] = {shortName = "COT", fileName = "cityofthreads"},
 
 	[2657] = {
 		bossIcons = {
@@ -710,11 +685,11 @@ miog.MAP_INFO = {
 			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/queenansurek.png"},
 		},
 		shortName = "NP",
-		icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/raid.png",
-		fileName = "nerubarpalance",
+		iconName = "nerubarpalance",
+		bgName = "nerubarpalace",
 	},
 
-	[2601] = {shortName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/khazalgar.png", fileName = "khazalgar",},
+	[2601] = {shortName = "KA", fileName = "khazalgar"},
 
 	[2664] = {shortName = "FF", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "fungalfolly",},
 	[2679] = {shortName = "MMC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "mycomancercavern",},
@@ -734,9 +709,9 @@ miog.MAP_INFO = {
 	[2767] = {shortName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole",},
 	[2768] = {shortName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
 	
-	[2774] = {shortName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/khazalgar.png", fileName = "khazalgar",},
-
+	[2774] = {shortName = "WORLD", fileName = "khazalgar",},
 	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
+
 }
 
 miog.LFG_ID_INFO = {
@@ -951,7 +926,7 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[306] = {mapID = 2521, shortName = "RLP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/rubylifepools.png"},
 	[307] = {mapID = 2515, shortName = "AV", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/azurevault.png"},
 	[308] = {mapID = 2516, shortName = "NO", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nokhudoffensive.png"},
-	[309] = {mapID = 2451, shortName = "ULOT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/uldamanlegacyoftyr.png"},
+	[309] = {mapID = 2451, shortName = "ULOT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/uldaman-legacyoftyr.png"},
 	[310] = {mapID = 2522, shortName = "VOTI", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/vaultoftheincarnates.png"},
 	[313] = {mapID = 2569, shortName = "ATSC", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/aberrus.png"},
 	[315] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
@@ -973,11 +948,7 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 	[372] = {mapID = 2792, shortName = "BRD", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/blackrockdepths.png"},
 }
 
-miog.GROUP_ID_TO_LFG_ID = {}
-
-miog.ACTIVITY_INFO = {
-
-}
+miog.ACTIVITY_INFO = {}
 
 miog.SEASONAL_MAP_IDS = {
 	[12] = {dungeons = {2526, 2520, 2527, 2519, 2521, 2515, 2516, 2451}, raids = {2549, 2569, 2522}},
@@ -999,17 +970,6 @@ miog.SEASONAL_CHALLENGE_MODES = {
 	[12] = {399, 400, 401, 402, 403, 404, 405, 406},
 	[13] = {353, 375, 376, 501, 502, 503, 505, 507},
 }
-
-miog.requestActivityGroupData = function()
-	local seasonGroups = C_LFGList.GetAvailableActivityGroups(2, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
-
-	table.sort(seasonGroups, function(k1, k2)
-		return miog.GROUP_ACTIVITY[k1].shortName < miog.GROUP_ACTIVITY[k2].shortName
-	end)
-
-	local activities = C_LFGList.GetAvailableActivities(2, seasonGroups[i])
-	local activityID = activities[#activities]
-end
 
 miog.JOURNAL_CREATURE_INFO = {
 
@@ -1125,7 +1085,7 @@ local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectIns
 					id = id,
 					creatureDisplayInfoID = displayInfo,
 					--factionChecked = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID] == nil or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 1 and faction == "Alliance" or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 0 and faction == "Horde",
-					icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
+					--icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
 				}
 
 				bossIndex = bossIndex + 1;
@@ -1148,6 +1108,8 @@ local function loadRawData()
 		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
 	end
 
+	local loadHQData = miog.isMIOGHQLoaded()
+
 	for k, v in pairs(miog.RAW["Map"]) do
 		if(miog.MAP_INFO[v[1]]) then
 			local mapInfo = miog.MAP_INFO[v[1]]
@@ -1165,11 +1127,20 @@ local function loadRawData()
 				table.insert(miog.F.AWAKENED_MAPS, v[1])
 			end
 		
-			if(mapInfo.fileName) then
-				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. mapInfo.fileName .. ".png"
-				mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. mapInfo.fileName .. ".png"
-				mapInfo.icon = mapInfo.icon or ("interface/lfgframe/lfgicon-" .. mapInfo.fileName .. ".png")
+			if(mapInfo.fileName or mapInfo.bgName) then
+				if(loadHQData) then
+					mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. (mapInfo.fileName or mapInfo.bgName) .. ".png"
+					mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. (mapInfo.fileName or mapInfo.bgName) .. ".png"
+					--mapInfo.icon = mapInfo.icon or miog.C.STANDARD_FILE_PATH .. "/icons/" .. (mapInfo.fileName or mapInfo.iconName) .. ".png"
 
+				else
+					mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. (mapInfo.fileName or mapInfo.bgName) .. ".blp"
+					mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. (mapInfo.fileName or mapInfo.bgName) .. ".blp"
+					--mapInfo.icon or 
+
+				end
+
+				mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.fileName or mapInfo.iconName) .. ".blp"
 			end
 		else
 			miog.MAP_INFO[v[1]] = {
@@ -1271,6 +1242,8 @@ local function loadRawData()
 	end
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
+
+
 		miog.ACTIVITY_INFO[v[1]] = {
 			fullName = v[2],
 			difficultyName = v[3],
@@ -1288,6 +1261,8 @@ local function loadRawData()
 		if(miog.GROUP_ACTIVITY[v[6]]) then
 			miog.GROUP_ACTIVITY[v[6]].activityID = v[1]
 			
+			miog.GROUP_ACTIVITY[v[6]].activityIDs = miog.GROUP_ACTIVITY[v[6]].activityIDs or {}
+			miog.GROUP_ACTIVITY[v[6]].activityIDs[v[1]] = true
 		end
 		
 		if(miog.MAP_INFO[v[10]]) then
@@ -1302,7 +1277,7 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[v[1]].background = miog.MAP_INFO[v[10]].background
 
 			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
-			miog.ACTIVITY_INFO[v[1]].shortName = miog.GROUP_ACTIVITY[v[6]] and miog.GROUP_ACTIVITY[v[6]].shortName or miog.MAP_INFO[v[10]].shortName
+			miog.ACTIVITY_INFO[v[1]].shortName = miog.MAP_INFO[v[10]].shortName
 
 			checkForMapAchievements(v[10])
 
@@ -1669,22 +1644,6 @@ for k, v in pairs(miog.GEARING_CHART) do
 	end
 end
 
-miog.VAULT_PROGRESS = {
-	[1] = {},
-	[2] = {},
-	[3] = {},
-}
-
-miog.FONTS = {
-	--libMono = "Interface\\Addons\\MythicIOGrabber\\res\\fonts\\LiberationMono-Regular.ttf",
-}
-
-miog.MAX_GROUP_SIZES = {
-	["solo"] = 1,
-	["party"] = 5,
-	["raid"] = 40
-}
-
 miog.CLASSFILE_TO_ID = {
 	["WARRIOR"] = 1,
 	["PALADIN"] = 2,
@@ -1857,43 +1816,12 @@ miog.RACES = {
 
 }
 
-miog.CLASS_SPEC_FOR_AFFIXES = {
-	[6] = {
-		classIDs = {3, 4, 11, 13},
-		specs = {},
-	},
-	[135] = {
-		classIDs = {2, 5, 7, 8, 10, 11, 13},
-		specs = {},
-	},
-
-}
-
-for k, v in pairs(miog.CLASS_SPEC_FOR_AFFIXES) do
-	v.classes = {}
-
-	for x, y in pairs(v.classIDs) do
-		v.classes[miog.CLASSES[y].name] = true
-	end
-end
-
-miog.INSTANCE_SHORT_NAME = {
-
-
-}
-
 miog.SEARCH_LANGUAGES = {
 	itIT=true,
 	ruRU=true,
 	frFR=true,
 	esES=true,
 	deDE=true,
-}
-
-miog.ICON_COORDINATES = {
-    tankCoords = {0.76, 0.8725, 0.255, 0.367},
-    healerCoords = {0.13, 0.2425, 0.255, 0.3675},
-    dpsCoords = {0.003, 0.1155, 0.381, 0.4935},
 }
 
 miog.COLOR_BREAKPOINTS = {
@@ -3087,4 +3015,6 @@ miog.DEBUG_RAIDER_IO_PROFILES = {
 miog.DEBUG_DEV_CHARACTERS = {
 	"Rhany-Ravencrest",
 	"Gerhanya-Ravencrest",
+	"Latimeria-Ravencrest",
+	"Lyadry-Ravencrest",
 }

@@ -240,6 +240,8 @@ local function calculateMapScore(challengeMapID, info)
 	return finalScore
 end
 
+miog.calculateMapScore = calculateMapScore
+
 local function calculateNewScore(mapID, newLevel, guid, customTimer)
 	local intimeInfo, overtimeInfo
 
@@ -263,7 +265,6 @@ local function calculateNewScore(mapID, newLevel, guid, customTimer)
 	
 	return 0, 0, 0
  end
-
 
 function StatisticsTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
 	local newKeystoneInfo = {}
@@ -436,7 +437,7 @@ function StatisticsTabMixin:OnLoad(id)
 			local mapInfo = miog.MAP_INFO[data.mapID]
 			shortName = mapInfo.shortName
 
-			frame.Background:SetTexture(mapInfo.vertical, "MIRROR", "CLAMP")
+			frame.Background:SetTexture(mapInfo.vertical, "MIRROR", "MIRROR")
 
 		end
 
@@ -497,7 +498,6 @@ function StatisticsTabMixin:OnLoad(id)
 			frame.VaultAvailable:Show()
 		end
 
-
         if(isDungeon) then
             frame.Score:SetText(data.score.value)
 
@@ -531,6 +531,10 @@ function StatisticsTabMixin:OnLoad(id)
                 dungeonFrame.layoutIndex = index
 
                 local intimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo
+
+				if(data.name == "Rhany") then
+					--DevTools_Dump(intimeInfo)
+				end
                 local overtimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo
 
 				local overtimeHigher = intimeInfo and overtimeInfo and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
@@ -987,35 +991,32 @@ function StatisticsTabMixin:UpdateCharacterMPlusStatistics(guid)
 	local playerGUID = UnitGUID("player")
 
 	if(guid == playerGUID) then
-		MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus.score = {value = C_ChallengeMode.GetOverallDungeonScore(), ingame = true}
+		MIOG_NewSettings.accountStatistics.characters[guid].mplus.score = {value = C_ChallengeMode.GetOverallDungeonScore(), ingame = true}
 
-		for index, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
-			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID] = {}
+		for _, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
+			MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID] = {}
 
 			local intimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID)
 
-			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].intimeInfo = intimeInfo
-			MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overtimeInfo = overtimeInfo
+			MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo = intimeInfo
+			MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo = overtimeInfo
 		end
 	else
 		MIOG_NewSettings.accountStatistics.characters[guid].mplus.score = MIOG_NewSettings.accountStatistics.characters[guid].mplus.score or {value = 0, ingame = true}
 
-		if(MIOG_NewSettings.accountStatistics.characters[guid].mplus.score.value == 0) then
-			local mplusData = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics.characters[guid].name, MIOG_NewSettings.accountStatistics.characters[guid].realm)
+		local mplusData, intimeInfo, overtimeInfo = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics.characters[guid].name, MIOG_NewSettings.accountStatistics.characters[guid].realm, nil, true)
 
-			if(mplusData) then
+		if(mplusData) then
+			if(MIOG_NewSettings.accountStatistics.characters[guid].mplus.score.value == 0) then
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus.score = {value = mplusData.score.score, ingame = false}
 			end
 		end
 
-		local mplusData, intimeInfo, overtimeInfo = miog.getMPlusSortData(MIOG_NewSettings.accountStatistics.characters[guid].name, MIOG_NewSettings.accountStatistics.characters[guid].realm, nil, true)
-
-		for index, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
-			if(not MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID]) then
+		if(intimeInfo or overtimeInfo) then
+			for _, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID] = {}
-				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo = intimeInfo and intimeInfo[challengeMapID]
-				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo = overtimeInfo and overtimeInfo[challengeMapID]
-
+				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo = intimeInfo and intimeInfo[challengeMapID] or MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo
+				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo = overtimeInfo and overtimeInfo[challengeMapID] or MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo
 			end
 		end
 	end

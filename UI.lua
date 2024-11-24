@@ -3,6 +3,13 @@ local wticc = WrapTextInColorCode
 
 local panels
 
+--[[
+    Function: setActivePanel
+    Description: Manages the visibility and behavior of addon panels based on the active panel.
+    Parameters:
+        _ (any) - Unused argument, part of the hook signature.
+        panel (table/string) - The panel to activate and display.
+]]
 local function setActivePanel(_, panel)
 	for k, v in pairs(panels) do
 		if(v) then
@@ -79,10 +86,17 @@ end
 
 miog.setActivePanel = setActivePanel
 
+--[[
+    Function: createFrames
+    Description: Initializes and configures the addon UI elements and panels.
+]]
 miog.createFrames = function()
+	-- Preload the encounter journal so any function in the addon doesn't have to always check if the journal is loaded
 	EncounterJournal_LoadUI()
+	-- This can be any instanceID
 	EJ_SelectInstance(1207)
 
+	-- OnOpen usually generates an error and doesn't really do anything important, so mask it with a dummy function
 	C_EncounterJournal.OnOpen = miog.dummyFunction
 
 	local settingsButton = CreateFrame("Button")

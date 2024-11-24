@@ -310,20 +310,31 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 
 	if(profile) then
 		local mplusData = {}
-		local intimeInfo = {}
-		local overtimeInfo = {}
+		local intimeInfo, overtimeInfo
 
 		if(profile.mythicKeystoneProfile) then
 			if(profile.mythicKeystoneProfile.sortedDungeons) then
 				for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
 
 					if(returnAsBlizzardTable) then
-						local table = dungeonEntry.chests > 0 and intimeInfo or overtimeInfo
+						local table
+
+						if(dungeonEntry.chests > 0) then
+							intimeInfo = intimeInfo or {}
+							table = intimeInfo
+
+						else
+							overtimeInfo = overtimeInfo or {}
+							table = overtimeInfo
+
+						end
 
 						table[dungeonEntry.dungeon.keystone_instance] = {
 							durationSec = dungeonEntry.dungeon.timers[dungeonEntry.chests == 0 and 3 or dungeonEntry.chests == 1 and 2 or dungeonEntry.chests == 2 and 1] + (dungeonEntry.chests < 3 and 1 or -1),
 							level = dungeonEntry.level,
 						}
+						
+						--table[dungeonEntry.dungeon.keystone_instance].dungeonScore = miog.calculateMapScore(dungeonEntry.dungeon.keystone_instance, table[dungeonEntry.dungeon.keystone_instance])
 
 					else
 						mplusData[dungeonEntry.dungeon.instance_map_id] = {
@@ -384,6 +395,10 @@ miog.updateFooterBarResults = function(filteredResultNumber, totalResultNumber, 
 		GameTooltip:AddLine("Try to pre-filter by typing something in the search bar.")
 		GameTooltip:Show()
 	end or nil)
+end
+
+miog.isMIOGHQLoaded = function()
+	return true
 end
 
 miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeonScore, dungeonData, raidData, pvpData)

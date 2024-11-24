@@ -13,12 +13,6 @@
         <Size y="40" />
 
         <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="-3">
-                <Texture parentKey="InviteBackground" setAllPoints="true" hidden="true">
-                    <Color r="0.1" g="0.1" b="0.1" a="0.93"/>
-                </Texture>
-            </Layer>
-
             <Layer level="BACKGROUND" textureSubLevel="-1">
                 <Texture parentKey="Background" horizTile="true" vertTile="true">
                     <Anchors>
@@ -56,6 +50,20 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-7" y="-2" />
                 </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        if(button == "LeftButton") then
+                            local _, appStatus = C_LFGList.GetApplicationInfo(self:GetParent().resultID)
+
+                            if(appStatus == "applied") then
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                C_LFGList.CancelApplication(self:GetParent().resultID)
+
+                            end
+                        end
+                    </OnClick>
+                </Scripts>
             </Button>
 
             <Button parentKey="AcceptInvite" inherits="IconButtonTemplate" hidden="true">
