@@ -1,16 +1,17 @@
-## [3.0.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.7) - 2024-11-24
+## [3.0.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.8) - 2024-12-04
+
+### Added
+
+- [Group creation] The name of the current selected category has been added to the top of the group creation frame.
 
 ### Changed
 
-- Updated A LOT of backend code to match Blizzard's file system names and folders.
-Means a less bloated and more reliable addon, 100% coverage of backup files (e.g. new dungeons and I haven't finished the photoshop/upscaling of the background images), etc.
+- [Group creation] The dropdowns have been changed to Blizzard's new dropdowns.
+Relevant code changes in the background have improved memory management (unless you spam click the dropdowns 5 times a second, then it's worse)
 
 ### Fixed
 
-- [RaiderIOPanel] Bosses should now always have an icon set.
+- [Group creation] Amirdrassil should now have the correct background image.
 
-- [SearchPanel] When MIOG requests member data of a listing right after a /reload the sorting of members should no longer in very rare cases cause an error.
-
-- Increased performance of certain parts of code.
-
-- Updated the open raid library.
+- [MainFrame] An error that happens when an update for WoW has been installed and the client has no cached data yet has been resolved partially.
+Will take till the next update for it to be fully resolved (currently rewriting that code for better performance and logic).

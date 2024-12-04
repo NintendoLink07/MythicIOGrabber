@@ -221,11 +221,6 @@ miog.createFrames = function()
 		miog.AdventureJournal = miog.loadAdventureJournal()
 		miog.DropChecker = miog.loadDropChecker()
 		miog.LockoutCheck = miog.loadLockoutCheck()
-		
-		--if(miog.F.IS_RAIDERIO_LOADED) then
-		--	miog.RaiderIOChecker = miog.loadRaiderIOChecker()
-
-		--end
 	end
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)

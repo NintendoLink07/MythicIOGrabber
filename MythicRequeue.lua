@@ -188,6 +188,7 @@ end
 
 local function loadReQueue()
 	applyPopup = CreateFrame("Frame", nil, UIParent, "MIOG_PopupFrame")
+    applyPopup:SetPropagateMouseClicks(false)
 
 	applyPopup.ButtonPanel.Button1:SetText("Dismiss")
 	applyPopup.ButtonPanel.Button1:FitToText()

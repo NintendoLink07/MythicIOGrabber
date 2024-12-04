@@ -139,13 +139,13 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 
 	local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 
-	local activityID = frame.DifficultyDropDown.Selected.value or frame.ActivityDropDown.Selected.value or 0
+	local activityID = LFGListFrame.EntryCreation.selectedActivity or 0
 
 	local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0
 	local rating = tonumber(frame.Rating:GetText()) or 0
 	local pvpRating = (LFGListFrame.EntryCreation.selectedCategory == 4 or LFGListFrame.EntryCreation.selectedCategory == 9) and rating or 0
 	local mythicPlusRating = LFGListFrame.EntryCreation.selectedCategory == 2 and rating or 0
-	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and frame.PlaystyleDropDown.Selected.value or nil
+	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and LFGListFrame.EntryCreation.selectedPlaystyle or nil
 
 	local autoAccept = manualAutoAccept or activeEntryInfo and activeEntryInfo.autoAccept or false
 	local privateGroup = frame.PrivateGroup:GetChecked();

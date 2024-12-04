@@ -856,6 +856,7 @@ end
 
 local function createFilterPopup()
 	filterPopup = CreateFrame("Frame", nil, UIParent, "MIOG_PopupFrame")
+    filterPopup:SetPropagateMouseClicks(false)
 
 	filterPopup.ButtonPanel.Button1:SetText("Dismiss")
 	filterPopup.ButtonPanel.Button1:FitToText()

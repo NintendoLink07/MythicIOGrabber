@@ -102,6 +102,46 @@ local function sortAndAddDungeonList(list, enableOnShow)
 	end
 end
 
+local function getRandomDungeonsList()
+	local randomDungeonList = {}
+
+	for i=1, GetNumRandomDungeons() do
+		local id = GetLFGRandomDungeonInfo(i)
+		
+		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
+
+		if(isAvailableForAll and (isAvailableForPlayer or not hideIfNotJoinable)) then
+			tinsert(randomDungeonList, id)
+
+		end
+	end
+
+	return randomDungeonList
+end
+
+local function getRegularDungeonList()
+	local regularDungeonList = {}
+
+	for _, dungeonID in pairs(GetLFDChoiceOrder()) do
+		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
+		local _, _, subtypeID, _, _, _, _, _, _, _, _, difficultyID = GetLFGDungeonInfo(dungeonID)
+
+		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
+		local isDungeon = subtypeID and difficultyID < 3 or difficultyID == 33
+
+		if(isAvailableForAll and (isAvailableForPlayer or not hideIfNotJoinable) and (isDungeon and not isFollowerDungeon or isFollowerDungeon)) then
+			tinsert(regularDungeonList, dungeonID)
+		end
+	end
+
+	return regularDungeonList
+end
+
+local function refreshDungeonList()
+	local randomDungeonList = getRandomDungeonsList()
+	local regularDungeonList = getRegularDungeonList()
+end
+
 local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	local dungeonList = GetLFDChoiceOrder() or {}
 
@@ -836,6 +876,8 @@ local function updateDropDown()
 		updateRandomDungeons(blizzardDropDownDescriptions)
 		updateDungeons(nil, blizzardDropDownDescriptions)
 		updateDungeons(indices["SPECIFIC"], blizzardDropDownDescriptions)
+
+		refreshDungeonList()
 		updateRaidFinder(blizzardDropDownDescriptions)
 
 		if(HonorFrameTypeDropdown) then

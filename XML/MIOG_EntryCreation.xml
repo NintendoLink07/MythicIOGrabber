@@ -16,30 +16,43 @@
                     </OnLoad>
                 </Scripts>
             </Button>
+        </Frames>
 
-            <Frame parentKey="ActivityDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                <Size y="22" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-4"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-4"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="DifficultyDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                <Size y="22" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ActivityDropDown" relativePoint="TOPLEFT" y="-25"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.ActivityDropDown" relativePoint="TOPRIGHT" y="-25"/>
-                </Anchors>
-            </Frame>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="CategoryName" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" wordwrap="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-5" y="-5"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
 
-            <Frame parentKey="PlaystyleDropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
-                <Size y="22" />
+        <Frames>
+            <DropdownButton parentKey="ActivityDropDown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.DifficultyDropDown" relativePoint="TOPLEFT" y="-25"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropDown" relativePoint="TOPRIGHT" y="-25"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryName" relativePoint="BOTTOMLEFT" y="-5"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.CategoryName" relativePoint="BOTTOMRIGHT" y="-5"/>
                 </Anchors>
-            </Frame>
+            </DropdownButton>
+
+            <DropdownButton parentKey="DifficultyDropDown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ActivityDropDown" relativePoint="BOTTOMLEFT" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ActivityDropDown" relativePoint="BOTTOMRIGHT" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="PlaystyleDropDown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.DifficultyDropDown" relativePoint="BOTTOMLEFT" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropDown" relativePoint="BOTTOMRIGHT" y="-2"/>
+                </Anchors>
+            </DropdownButton>
 
             <EditBox parentKey="Name" autoFocus="false" hidden="true">
                 <Anchors>
@@ -50,7 +63,7 @@
             <EditBox parentKey="Description" inherits="LargeInputBoxTemplate" autoFocus="false" multiLine="true" hidden="true">
                 <Size x="350" y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-20"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-10"/>
                 </Anchors>
             </EditBox>
 
@@ -163,7 +176,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                        <Anchor point="BOTTOM" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOM" />
+                        <Anchor point="BOTTOM" relativeKey="$parent.PlaystyleDropDown" relativePoint="BOTTOM" y="-5"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -228,15 +241,5 @@
                 </FontString>
             </Layer>
         </Layers>
-
-        <Scripts>
-            <OnMouseDown>         
-                self.ActivityDropDown.List:Hide()
-
-                if(self.ActivityDropDown.currentList) then
-                    self.ActivityDropDown.currentList:Hide()
-                end
-            </OnMouseDown>
-        </Scripts>
     </Frame>
 </Ui>

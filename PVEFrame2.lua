@@ -39,18 +39,16 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 				openSearchPanel(categoryID, filters)
 
 			else
-				LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
-			
 				LFGListFrame.CategorySelection.selectedCategory = categoryID
 				LFGListFrame.CategorySelection.selectedFilters = filters
-			
+
 				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters, LFGListFrame.baseFilters)
-			
-				LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
+
+				LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.EntryCreation)
 				
-				miog.initializeActivityDropdown()
 				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 
+				miog.initializeActivityDropdown(filters)
 			end
 		
 			PanelTemplates_SetTab(miog.pveFrame2, 1)
@@ -69,7 +67,6 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 				GameTooltip_SetTitle(tooltip, failureReason);
 			end
 		end)
-		MIOG_CB = categoryButton
 	end
 end
 
