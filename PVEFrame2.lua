@@ -151,37 +151,6 @@ local function createPVEFrameReplacement()
 			end
 		end
 
-		miog.MainTab.QueueInformation.Requeue:SetScript("OnClick", function()
-			local queueInfo = MIOG_NewSettings.lastUsedQueue
-
-			if(queueInfo.type == "pve") then
-				if(queueInfo.subtype == "multidng") then
-					LFG_JoinDungeon(1, "specific", queueInfo.id, {})
-					
-				else
-					ClearAllLFGDungeons(queueInfo.subtype == "dng" and 1 or 3);
-					SetLFGDungeon(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
-					JoinSingleLFG(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
-
-				end
-
-			elseif(queueInfo.type == "pvp") then
-				if(queueInfo.subtype == "skirmish") then
-					JoinSkirmish(4)
-					
-				elseif(queueInfo.subtype == "brawl") then
-					C_PvP.JoinBrawl()
-
-				elseif(queueInfo.subtype == "brawlSpecial") then
-					C_PvP.JoinBrawl(true)
-
-				elseif(queueInfo.subtype == "pet") then
-					C_PetBattles.StartPVPMatchmaking()
-
-				end
-			end
-		end)
-
 		for k, v in ipairs(activityIndices) do
 			local activities = C_WeeklyRewards.GetActivities(v)
 
@@ -204,6 +173,42 @@ local function createPVEFrameReplacement()
 
 			currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (k == 1 and "Dungeons" or k == 2 and "Bosses" or k == 3 and "World" or ""))
 			currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+
+		end
+		
+		--HonorFrame.TypeDropdown:ClearAllPoints()
+		--HonorFrame.TypeDropdown:SetAllPoints(pveFrame2.TabFramesPanel.MainTab.QueueInformation.BonusSpecificPoint)
+		--HonorFrame.TypeDropdown:SetParent(pveFrame2)
+	end)
+
+	miog.MainTab.QueueInformation.Requeue:SetScript("OnClick", function()
+		local queueInfo = MIOG_NewSettings.lastUsedQueue
+
+		if(queueInfo.type == "pve") then
+			if(queueInfo.subtype == "multidng") then
+				LFG_JoinDungeon(1, "specific", queueInfo.id, {})
+				
+			else
+				ClearAllLFGDungeons(queueInfo.subtype == "dng" and 1 or 3);
+				SetLFGDungeon(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
+				JoinSingleLFG(queueInfo.subtype == "dng" and 1 or 3, queueInfo.id);
+
+			end
+
+		elseif(queueInfo.type == "pvp") then
+			if(queueInfo.subtype == "skirmish") then
+				JoinSkirmish(4)
+				
+			elseif(queueInfo.subtype == "brawl") then
+				C_PvP.JoinBrawl()
+
+			elseif(queueInfo.subtype == "brawlSpecial") then
+				C_PvP.JoinBrawl(true)
+
+			elseif(queueInfo.subtype == "pet") then
+				C_PetBattles.StartPVPMatchmaking()
+
+			end
 		end
 	end)
 
@@ -277,8 +282,6 @@ local function createPVEFrameReplacement()
 	end)
 	
 	setRoles()
-
-	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	queueDropDown:OnLoad()
@@ -386,11 +389,36 @@ local function createPVEFrameReplacement()
 				createCategoryButtons(categoryID, "entry", rootDescription)
 
 			end
+
+			--[[local dd = rootDescription:CreateTemplate("WowStyle1DropdownTemplate")
+			dd:AddInitializer(function(frame, description, menu)
+				frame:SetDefaultText("My Dropdown");
+				frame:SetupMenu(function(dropdown, rootDescription)
+					rootDescription:CreateButton("TEST", function(index)
+						
+			
+					end)
+					rootDescription:CreateButton("TEST2", function(index)
+						
+			
+					end)
+				end)
+			
+	
+			end)]]
+
 			rootDescription:SetTag("MIOG_FINDGROUP")
 		end)
 
 		currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
 	end)
+
+	miog.MainTab.QueueInformation.ActivityDropdown:SetDefaultText("Select an activity...")
+	miog.MainTab.QueueInformation.ActivityDropdown:SetupMenu(function(dropdown, rootDescription)
+		--miog.setupQueueDropdown(rootDescription)
+
+	end)
+	miog.updateDropDown()
 
 	miog.pveFrame2.TitleBar.FindGroupButton.Text:SetText("Find")
 	miog.pveFrame2.TitleBar.FindGroupButton:SetScript("OnClick", function(selfButton)

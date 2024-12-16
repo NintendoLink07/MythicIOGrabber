@@ -341,8 +341,6 @@ end
 function SlickDropDown:CreateTextLine(index, parentIndex, text, icon, fontSize, expandable)
 	local textLine = self.List.fontStringPool:Acquire()
 
-
-
 	if(parentIndex and self.entryFrameTree[parentIndex]) then
 		textLine:SetParent(self.entryFrameTree[parentIndex].List)
 
@@ -410,7 +408,6 @@ function SlickDropDown:CreateFunctionButton(index, parentIndex, text, func)
 	end
 
 	button:SetText(text)
-	--button:SetSize((parentIndex and self.entryFrameTree[parentIndex] or button:GetParent()):GetWidth(), 20)
 	button.leftPadding = 3
 	button.rightPadding = 3
 	button.topPadding = 3
@@ -418,8 +415,6 @@ function SlickDropDown:CreateFunctionButton(index, parentIndex, text, func)
 	button:SetScript("OnClick", func)
 	button.layoutIndex = index or (parentIndex and #self.entryFrameTree[parentIndex].List:GetLayoutChildren() or #self.List:GetLayoutChildren()) + 1
 end
-
-local color = "FFAAAAAA"
 
 local function setScriptsOnFrame(self)
 	self:SetScript("OnEnter", function()
@@ -592,6 +587,8 @@ function SlickDropDown:CreateEntryFrame(info)
 			frame.Radio:SetChecked(infoTable.checked)
 		
 		end
+		
+		frame.Arrow:SetShown(infoTable.hasArrow)
 
 		frame.tooltip = infoTable.tooltip
 		frame.tooltipTitle = infoTable.tooltipTitle

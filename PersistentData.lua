@@ -1881,17 +1881,17 @@ miog.ACTIVITY_BACKGROUNDS = {
 }
 
 miog.EXPANSION_INFO = {
-	[1] = {"Classic", "vanilla-bg-1", GetExpansionDisplayInfo(0).logo},
-	[2] = {"The Burning Crusade", "tbc-bg-1", GetExpansionDisplayInfo(1).logo},
-	[3] = {"Wrath of the Lich King", "wotlk-bg-1", GetExpansionDisplayInfo(2).logo},
-	[4] = {"Cataclysm", "cata-bg-1", GetExpansionDisplayInfo(3).logo},
-	[5] = {"Mists of Pandaria", "mop-bg-1", GetExpansionDisplayInfo(4).logo},
-	[6] = {"Warlords of Draenor", "wod-bg-1", GetExpansionDisplayInfo(5).logo},
-	[7] = {"Legion", "legion-bg-1", GetExpansionDisplayInfo(6).logo},
-	[8] = {"Battle for Azeroth", "bfa-bg-1", GetExpansionDisplayInfo(7).logo},
-	[9] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
-	[10] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
-	[11] = {"The War Within", "tww-bg-1", GetExpansionDisplayInfo(10).logo},
+	[0] = {"Classic", "vanilla-bg-1", GetExpansionDisplayInfo(0).logo},
+	[1] = {"The Burning Crusade", "tbc-bg-1", GetExpansionDisplayInfo(1).logo},
+	[2] = {"Wrath of the Lich King", "wotlk-bg-1", GetExpansionDisplayInfo(2).logo},
+	[3] = {"Cataclysm", "cata-bg-1", GetExpansionDisplayInfo(3).logo},
+	[4] = {"Mists of Pandaria", "mop-bg-1", GetExpansionDisplayInfo(4).logo},
+	[5] = {"Warlords of Draenor", "wod-bg-1", GetExpansionDisplayInfo(5).logo},
+	[6] = {"Legion", "legion-bg-1", GetExpansionDisplayInfo(6).logo},
+	[7] = {"Battle for Azeroth", "bfa-bg-1", GetExpansionDisplayInfo(7).logo},
+	[8] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
+	[9] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
+	[10] = {"The War Within", "tww-bg-1", GetExpansionDisplayInfo(10).logo},
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms

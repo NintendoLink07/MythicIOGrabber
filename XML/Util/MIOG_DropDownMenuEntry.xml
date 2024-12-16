@@ -55,6 +55,12 @@
         
         <Layers>
             <Layer level="ARTWORK">
+                <Texture parentKey="Arrow" file="Interface\ChatFrame\ChatFrameExpandArrow" hidden="true">
+                    <Size x="12" y="12" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                    </Anchors>
+                </Texture>
             </Layer>
 
             <Layer level="OVERLAY">

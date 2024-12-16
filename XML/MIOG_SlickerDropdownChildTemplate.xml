@@ -1,0 +1,18 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_SlickerDropdownChildTemplate" inherits="HorizontalLayoutFrame, MIOG_SlickerDropdownBaseTemplate" mixin="SlickerDropdownChildMixin" virtual="true">
+        <KeyValues>
+            <KeyValue key="expand" value="true" type="boolean" />
+            <KeyValue key="leftPadding" value="2" type="number" />
+            <KeyValue key="rightPadding" value="2" type="number" />
+        </KeyValues>
+
+        <Size y="20" />
+
+        <HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" />
+        
+        <Scripts>
+            <OnLoad method="OnLoad" />
+        </Scripts>
+    </Button>
+</Ui>

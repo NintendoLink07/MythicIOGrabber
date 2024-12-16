@@ -102,7 +102,7 @@ local defaultSettings = {
     {name = "Clear ReQueue apps", variableName = "MIOG_ClearFakeApps", key="clearFakeApps", default=false, type="checkbox", tooltip="Clear out applications from the ReQueue feature when they've been blocked by a filter.", reload=false},
     {name = "[ReQueue] Flash client icon", variableName = "MIOG_FlashOnApplyPopup", key="flashOnApplyPopup", default=false, type="checkbox", tooltip="Flash the WoW application in the taskbar when a group has declined you / has been delisted and the Apply Popup shows up.", reload=false},
     {name = "[Filter] Flash client icon", variableName = "MIOG_FlashOnFilterPopup", key="flashOnFilterPopup", default=false, type="checkbox", tooltip="Flash the WoW application in the taskbar when a group has been filtered and the Filter Popup shows up.", reload=false},
-    {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions(), type="dropdown", tooltip="Change the default background of the MIOG frames",
+    {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions() - 1, type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
         miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
@@ -156,10 +156,16 @@ local function createDefaultSettings()
                 local GetOptions
 
                 if(v.key == "backgroundOptions") then
+                    if(MIOG_NewSettings.backgroundOptions > #miog.EXPANSION_INFO) then
+                        MIOG_NewSettings.backgroundOptions = v.default
+                        
+                    end
+
                     GetOptions = function()
                         local container = Settings.CreateControlTextContainer();
                         for x, y in ipairs(miog.EXPANSION_INFO) do
                             container:Add(x, y[1])
+
                         end
                         return container:GetData();
                     end

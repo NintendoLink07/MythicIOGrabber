@@ -1,6 +1,8 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local randomBGFrame, randomEpicBGFrame, specificBox
+
 local indices = {
 	["EVENT"] = 1,
 	["NORMAL"] = 2,
@@ -10,6 +12,18 @@ local indices = {
 	["RAIDFINDER"] = 6,
 	["PVP"] = 7,
 	["PET"] = 8,
+}
+
+
+local indicesInfo = {
+	[1] = {id = "EVENT", var = EVENTS_LABEL},
+	[2] = {id = "NORMAL", var = LFG_TYPE_DUNGEON},
+	[3] = {id = "HEROIC", var = LFG_TYPE_HEROIC_DUNGEON},
+	[4] = {id = "FOLLOWER", var = LFG_TYPE_FOLLOWER_DUNGEON},
+	[5] = {id = "SPECIFIC", var = SPECIFIC_DUNGEONS},
+	[6] = {id = "RAIDFINDER", var = RAID_FINDER},
+	[7] = {id = "PVP", var = PLAYER_V_PLAYER},
+	[8] = {id = "PET", var = PET_BATTLE_PVP_QUEUE},
 }
 
 local function updateRandomDungeons(blizzDesc)
@@ -102,45 +116,468 @@ local function sortAndAddDungeonList(list, enableOnShow)
 	end
 end
 
-local function getRandomDungeonsList()
-	local randomDungeonList = {}
-
+local function getRandomDungeonsList(dungeonList)
 	for i=1, GetNumRandomDungeons() do
 		local id = GetLFGRandomDungeonInfo(i)
 		
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
 
 		if(isAvailableForAll and (isAvailableForPlayer or not hideIfNotJoinable)) then
-			tinsert(randomDungeonList, id)
+			tinsert(dungeonList, id)
 
 		end
 	end
-
-	return randomDungeonList
 end
 
-local function getRegularDungeonList()
-	local regularDungeonList = {}
-
+local function getRegularDungeonLists(dungeonList)
 	for _, dungeonID in pairs(GetLFDChoiceOrder()) do
 		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
-		local _, _, subtypeID, _, _, _, _, _, _, _, _, difficultyID = GetLFGDungeonInfo(dungeonID)
+		--local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, maxPlayers, _, isHolidayDungeon, _, minPlayers, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
 
-		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
-		local isDungeon = subtypeID and difficultyID < 3 or difficultyID == 33
+		--local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
-		if(isAvailableForAll and (isAvailableForPlayer or not hideIfNotJoinable) and (isDungeon and not isFollowerDungeon or isFollowerDungeon)) then
-			tinsert(regularDungeonList, dungeonID)
+		if(isAvailableForAll and (isAvailableForPlayer or not hideIfNotJoinable)) then
+			tinsert(dungeonList, dungeonID)
+		end
+	end
+end
+
+local function addPvpActivities(topButton)
+	local honorFrames = {
+		HonorFrame.BonusFrame.RandomBGButton,
+		HonorFrame.BonusFrame.RandomEpicBGButton,
+		HonorFrame.BonusFrame.Arena1Button,
+		HonorFrame.BonusFrame.BrawlButton,
+		HonorFrame.BonusFrame.BrawlButton2,
+	}
+
+	local conquestFrames = {
+		ConquestFrame.RatedSoloShuffle,
+		ConquestFrame.RatedBGBlitz,
+		ConquestFrame.Arena2v2,
+		ConquestFrame.Arena3v3,
+		ConquestFrame.RatedBG,
+	}
+
+	if(HonorFrame.TypeDropdown) then
+		if(HonorFrame.type == "bonus") then
+			for k, v in ipairs(honorFrames) do
+				local test = topButton:CreateFrame()
+				test:AddInitializer(function(blankFrame, description, menu)
+					blankFrame:SetSize(300, 25)
+	
+					v:ClearAllPoints()
+					v:SetAllPoints(blankFrame)
+					v:SetParent(blankFrame)
+					v:SetScript("OnHide", function(self)
+						self:ClearAllPoints()
+					end)
+
+					miog.hideAllPVPButtonAssets(v)
+				end)
+			end
+		elseif(HonorFrame.type == "specific") then
+			local specificBox = topButton:CreateTemplate("VerticalLayoutFrame")
+			specificBox:AddInitializer(function(blankFrame, description, menu)
+				blankFrame:SetSize(300, 300)
+	
+				HonorFrame.SpecificScrollBox:ClearAllPoints()
+				HonorFrame.SpecificScrollBox.layoutIndex = 1
+				HonorFrame.SpecificScrollBox:SetSize(blankFrame:GetSize())
+				HonorFrame.SpecificScrollBox:SetParent(blankFrame)
+				HonorFrame.SpecificScrollBox:SetScript("OnHide", function(self)
+					self:ClearAllPoints()
+				end)
+	
+				HonorFrame.SpecificScrollBar:ClearAllPoints()
+				HonorFrame.SpecificScrollBar:SetPoint("TOPLEFT", HonorFrame.SpecificScrollBox, "TOPRIGHT", 5, 0)
+				HonorFrame.SpecificScrollBar:SetPoint("BOTTOMLEFT", HonorFrame.SpecificScrollBox, "BOTTOMRIGHT", 5, 0)
+				HonorFrame.SpecificScrollBar:SetParent(HonorFrame.SpecificScrollBox)
+				HonorFrame.SpecificScrollBar:SetScript("OnHide", function(self)
+					self:ClearAllPoints()
+				end)
+	
+				blankFrame:MarkDirty()
+			end)
+		end
+
+		local honorQueue = topButton:CreateFrame()
+		honorQueue:AddInitializer(function(blankFrame, description, menu)
+			blankFrame:SetSize(300, 25)
+
+			HonorFrame.QueueButton:ClearAllPoints()
+			HonorFrame.QueueButton:SetAllPoints(blankFrame)
+			HonorFrame.QueueButton:SetParent(blankFrame)
+			HonorFrame.QueueButton:SetScript("OnHide", function(self)
+				self:ClearAllPoints()
+			end)
+		end)
+
+		local spacer1 = topButton:CreateSpacer()
+		local divider = topButton:CreateDivider()
+		local spacer2 = topButton:CreateSpacer()
+	end
+
+	if(ConquestFrame) then
+		for k, v in ipairs(conquestFrames) do
+			local test = topButton:CreateFrame()
+			test:AddInitializer(function(blankFrame, description, menu)
+				blankFrame:SetSize(300, 25)
+
+				v:ClearAllPoints()
+				v:SetAllPoints(blankFrame)
+				v:SetParent(blankFrame)
+				v:SetScript("OnHide", function(self)
+					self:ClearAllPoints()
+				end)
+
+				miog.hideAllPVPButtonAssets(v)
+			end)
+		end
+
+		local conquestQueue = topButton:CreateFrame()
+		conquestQueue:AddInitializer(function(blankFrame, description, menu)
+			blankFrame:SetSize(300, 25)
+
+			ConquestFrame.JoinButton:ClearAllPoints()
+			ConquestFrame.JoinButton:SetAllPoints(blankFrame)
+			ConquestFrame.JoinButton:SetParent(blankFrame)
+			ConquestFrame.JoinButton:SetScript("OnHide", function(self)
+				self:ClearAllPoints()
+			end)
+		end)
+	end
+end
+
+local indicesList = {}
+
+local function IsRaidFinderDungeonDisplayable(id)
+	local name, typeID, subtypeID, minLevel, maxLevel, _, _, _, expansionLevel = GetLFGDungeonInfo(id);
+	local myLevel = UnitLevel("player");
+	return myLevel >= minLevel and myLevel <= maxLevel and EXPANSION_LEVEL >= expansionLevel;
+end
+
+
+local function addRaidFinderDungeonsToList(dungeonList)
+	-- GetBestRFChoice()
+	
+	for rfIndex = 1, GetNumRFDungeons() do
+		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansion, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(rfIndex)
+
+		local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(id);
+
+		if(not hideIfNotJoinable or isAvailableForAll ) then
+			if(isAvailableForAll or isAvailableForPlayer or IsRaidFinderDungeonDisplayable(id)) then
+				table.insert(dungeonList, id)
+				--table.insert(dungeonList, {id = id, rfIndex = rfIndex})
+			end
+		end
+	end
+end
+
+local function checkIfIDIsAlreadyAdded(dungeonList, name)
+	for k, v in ipairs(dungeonList) do
+		if(v.name == name) then
+			return true
 		end
 	end
 
-	return regularDungeonList
+	return false
 end
 
 local function refreshDungeonList()
-	local randomDungeonList = getRandomDungeonsList()
-	local regularDungeonList = getRegularDungeonList()
+	indicesList = {}
+
+	for k, v in ipairs(indicesInfo) do
+		indicesList[k] = {}
+
+	end
+
+	local dungeonList = {}
+
+	getRandomDungeonsList(dungeonList)
+	getRegularDungeonLists(dungeonList)
+	addRaidFinderDungeonsToList(dungeonList)
+
+	for _, dungeonID in ipairs(dungeonList) do
+		local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, maxPlayers, desc, isHolidayDungeon, bonusRep, minPlayers, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
+
+		local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
+
+		local entryType = (typeID == 1 and subtypeID == 3) and indices["RAIDFINDER"] or (isHolidayDungeon or isTimewalkingDungeon) and indices["EVENT"] or isFollowerDungeon and indices["FOLLOWER"] or subtypeID == 1 and indices["NORMAL"] or subtypeID == 2 and indices["HEROIC"]
+
+		if(entryType == indices["NORMAL"] or entryType == indices["HEROIC"]) then
+			if(not checkIfIDIsAlreadyAdded(indicesList[indices["SPECIFIC"]], name)) then
+				tinsert(indicesList[indices["SPECIFIC"]], {
+					name = name,
+					name2 = name2,
+					typeID = typeID,
+					subtypeID = subtypeID,
+					dungeonID = dungeonID,
+					icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or fileID or miog.EXPANSION_INFO[expLevel][3] or nil,
+					expansionLevel = expLevel,
+				})
+			end
+		end
+
+		tinsert(indicesList[entryType], {
+			name = name,
+			name2 = name2,
+			typeID = typeID,
+			subtypeID = subtypeID,
+			dungeonID = dungeonID,
+			icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon 
+			or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon 
+			or fileID
+			or miog.EXPANSION_INFO[expLevel][3]
+			or nil,
+			expansionLevel = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel or miog.LFG_DUNGEONS_INFO[dungeonID] and miog.LFG_DUNGEONS_INFO[dungeonID].expansionLevel or expLevel,
+		})
+	end
+
+	for k, v in ipairs(indicesInfo) do
+		table.sort(indicesList[k], function(k1, k2)
+			if(k1.expansionLevel == k2.expansionLevel) then
+				if(k1.typeID == k2.typeID) then
+					return k1.name < k2.name
+				end
+	
+				return k1.typeID > k2.typeID
+			end
+	
+			return k1.expansionLevel > k2.expansionLevel
+		end)
+	end
+
 end
+
+local selectedDungeonsList = {}
+
+local function setupQueueDropdown(rootDescription)
+	--[[
+	local orderedList = {}
+	local lastRaidName
+	table.sort(orderedList, function(k1, k2)
+		return k1.id < k2.id
+	end)
+
+	for k, v in ipairs(orderedList) do
+	--for rfIndex = 1, GetNumRFDungeons() do
+		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(v.rfIndex)
+
+		local encounters;
+		local numEncounters = GetLFGDungeonNumEncounters(id);
+		for j = 1, numEncounters do
+			local bossName, _, isKilled = GetLFGDungeonEncounterInfo(id, j);
+			local colorCode = "";
+			if ( isKilled ) then
+				colorCode = RED_FONT_COLOR_CODE;
+			end
+			if encounters then
+				encounters = encounters.."|n"..colorCode..bossName..FONT_COLOR_CODE_CLOSE;
+			else
+				encounters = colorCode..bossName..FONT_COLOR_CODE_CLOSE;
+			end
+		end
+		
+		local modifiedInstanceTooltipText = "";
+		local icon = nil
+
+		if(mapID) then
+			local modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(mapID)
+
+			if (modifiedInstanceInfo) then
+				icon = GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit);
+				modifiedInstanceTooltipText = "|n|n" .. modifiedInstanceInfo.description;
+
+			else
+			
+			end
+		end
+
+		if(lastRaidName ~= raidName) then
+			--local textLine = queueDropDown:CreateTextLine(nil, info.parentIndex, miog.MAP_INFO[mapID].shortName, icon)
+
+			if(icon) then
+				--textLine:SetTextColor(0.1,0.83,0.77,1)
+
+			end
+		end
+
+		tinsert(indicesList[indices["RAIDFINDER"] ], {
+			name = name,
+			typeID = typeID,
+			dungeonID = id,
+			icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil,
+			expansionLevel = miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel or expLevel,
+		})
+
+		--[ [local mode = GetLFGMode(3, id)
+		info.text = isHolidayDungeon and "(Event) " .. name or name
+		info.checked = mode == "queued"
+		--info.index = rfIndex
+		info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
+		info.func = function()
+			ClearAllLFGDungeons(3);
+			SetLFGDungeon(3, id);
+			JoinSingleLFG(3, id);
+
+			MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = id}
+		end
+		
+		local tempFrame = queueDropDown:CreateEntryFrame(info)
+
+		tempFrame:SetScript("OnShow", function(self)
+			local tempMode = GetLFGMode(3, id)
+			self.Radio:SetChecked(tempMode == "queued")
+			
+		end)
+
+		tempFrame:HookScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText(RAID_BOSSES)
+			GameTooltip:AddLine(encounters .. modifiedInstanceTooltipText, 1, 1, 1, true)
+			GameTooltip:Show()
+		end)
+
+		tempFrame:HookScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+
+		if(icon) then
+			tempFrame.Name:SetTextColor(0.1,0.83,0.77,1)
+			
+		end
+		
+		blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
+		blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, index = rfIndex, icon = info.icon}
+
+		lastRaidName = raidName] ]
+	end
+
+
+	]]
+
+	LFGEnabledList = GetLFDChoiceEnabledState(LFGEnabledList);	--We maintain this list in Lua
+
+	for k, v in ipairs(indicesList) do
+		local isPetBattle = k == indices["PET"]
+		
+		local activityButton
+		
+		if(isPetBattle) then
+			activityButton = rootDescription:CreateRadio(PET_BATTLE_PVP_QUEUE, function() return C_PetBattles.GetPVPMatchmakingInfo() ~= nil end, function()
+				C_PetBattles.StartPVPMatchmaking()
+	
+				MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
+
+			end)
+		else
+			activityButton = rootDescription:CreateButton(indicesInfo[k].var, function(index)
+			end, k)
+		end
+
+		local lastRaidName, lastExpansion
+
+		local isSpecific = k == indices["SPECIFIC"]
+		local isRaidFinder = k == indices["RAIDFINDER"]
+		local isEvent = k == indices["EVENT"]
+		local isPvp = k == indices["PVP"]
+
+		activityButton:SetEnabled(isPetBattle and true or isPvp and (C_PvP.CanPlayerUseRatedPVPUI() or C_LFGInfo.CanPlayerUsePremadeGroup()) and true or isSpecific and #indicesList[2] > 0 and true or #v > 0)
+
+		local queueButton
+
+		if(isPvp) then
+			addPvpActivities(activityButton)
+
+		else
+			for listIndex, dungeonInfo in ipairs(v) do
+				if(isSpecific) then
+					if(dungeonInfo.typeID ~= 6) then
+						if(lastExpansion ~= dungeonInfo.expansionLevel) then
+							local title = activityButton:CreateTitle(miog.EXPANSION_INFO[dungeonInfo.expansionLevel][1])
+							
+						end
+
+						queueButton = activityButton:CreateCheckbox(dungeonInfo.name, function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end, function(dungeonID)
+							selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
+
+							LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
+						end, dungeonInfo.dungeonID)
+
+						lastExpansion = dungeonInfo.expansionLevel
+					end
+				elseif(isRaidFinder) then
+					if(lastRaidName ~= dungeonInfo.name2) then
+						--local textLine = queueDropDown:CreateTextLine(nil, info.parentIndex, miog.MAP_INFO[mapID].shortName, icon)
+						local title = activityButton:CreateTitle(dungeonInfo.name2)
+
+						if(icon) then
+							--textLine:SetTextColor(0.1,0.83,0.77,1)
+
+						end
+					end
+
+					queueButton = activityButton:CreateRadio(dungeonInfo.name, function(dungeonID) return GetLFGMode(3, dungeonID) == "queued" end, function(dungeonID)
+						ClearAllLFGDungeons(3);
+						SetLFGDungeon(3, dungeonID);
+						JoinSingleLFG(3, dungeonID);
+
+						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = dungeonID}
+					end, dungeonInfo.dungeonID)
+
+					lastRaidName = dungeonInfo.name2
+				else
+					if(not isEvent and lastExpansion ~= dungeonInfo.expansionLevel) then
+						local title = activityButton:CreateTitle(miog.EXPANSION_INFO[dungeonInfo.expansionLevel][1])
+						
+					end
+
+					queueButton = activityButton:CreateRadio(dungeonInfo.name, function(dungeonID) return GetLFGMode(1, dungeonID) == "queued" end, function(dungeonID)
+						ClearAllLFGDungeons(1);
+						SetLFGDungeon(1, dungeonID);
+						JoinSingleLFG(1, dungeonID);
+		
+						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
+					end, dungeonInfo.dungeonID)
+
+					lastExpansion = dungeonInfo.expansionLevel
+				end
+
+				if(queueButton) then
+					queueButton:AddInitializer(function(button, description, menu)
+						if(dungeonInfo.icon) then
+							local leftTexture = button:AttachTexture();
+							leftTexture:SetSize(16, 16);
+							leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+							leftTexture:SetTexture(dungeonInfo.icon);
+			
+							button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+			
+							return button.fontString:GetUnboundedStringWidth() + 18 + 5
+						end
+					end)
+				end
+			end
+		end
+
+		if(isSpecific) then
+			queueButton = activityButton:CreateTemplate("UIPanelButtonTemplate")
+			queueButton:AddInitializer(function(button, description, menu)
+				button:SetScript("OnClick", function(_, buttonName)
+					LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
+
+					MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
+				end);
+
+				button:SetText("Queue for multiple dungeons")
+			end);
+		end
+	end
+end
+
+miog.setupQueueDropdown = setupQueueDropdown
 
 local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	local dungeonList = GetLFDChoiceOrder() or {}
@@ -172,11 +609,11 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 					info.text = name
 
 					info.checked = mode == "queued"
-					info.icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
+					info.icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.EXPANSION_INFO[expLevel][3] or nil
 					info.parentIndex = (isHolidayDungeon or isTimewalkingDungeon) and indices["EVENT"] or subtypeID == 1 and indices["NORMAL"] or subtypeID == 2 and indices["HEROIC"]
 					info.type1 = typeID
 					--info.index = -1
-					info.expansionLevel = miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel or expLevel
+					info.expansionLevel = expLevel
 					info.type2 = "random"
 
 					info.func = function()
@@ -295,7 +732,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	else
 		local info = {}
 		info.text = LFG_TYPE_DUNGEON
-		info.hasArrow = true
+		info.hasArrow = #normalDungeonList > 0
 		info.level = 1
 		info.index = indices["NORMAL"]
 		info.disabled = #normalDungeonList == 0
@@ -312,7 +749,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	else
 		local info = {}
 		info.text = LFG_TYPE_HEROIC_DUNGEON
-		info.hasArrow = true
+		info.hasArrow = #heroicDungeonList > 0
 		info.level = 1
 		info.index = indices["HEROIC"]
 		info.disabled = #heroicDungeonList == 0
@@ -328,7 +765,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	else
 		local info = {}
 		info.text = LFG_TYPE_FOLLOWER_DUNGEON
-		info.hasArrow = true
+		info.hasArrow = #followerDungeonList > 0
 		info.level = 1
 		info.index = indices["FOLLOWER"]
 		info.disabled = #followerDungeonList == 0
@@ -348,12 +785,6 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 end
 
 miog.updateDungeons = updateDungeons
-
-local function IsRaidFinderDungeonDisplayable(id)
-	local name, typeID, subtypeID, minLevel, maxLevel, _, _, _, expansionLevel = GetLFGDungeonInfo(id);
-	local myLevel = UnitLevel("player");
-	return myLevel >= minLevel and myLevel <= maxLevel and EXPANSION_LEVEL >= expansionLevel;
-end
 
 local function updateRaidFinder(blizzDesc)
 	---@diagnostic disable-next-line: undefined-field
@@ -488,6 +919,7 @@ local function updateRaidFinder(blizzDesc)
 
 	if(hasAnEntry == false) then
 		queueDropDown:DisableSpecificFrame(raidFinderFrame)
+		raidFinderFrame.Arrow:Hide()
 
 	end
 end
@@ -519,6 +951,18 @@ local function hideAllPVPButtonAssets(button)
 		button.TeamTypeText:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
 	end
 
+	if(button.LevelRequirement and button.LevelRequirement:GetText()) then
+		button.LevelRequirement:Hide()
+		button:Enable()
+
+		button:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(self.Title:GetText(), 1, 1, 1);
+			GameTooltip:AddLine(self.LevelRequirement:GetText(), 1, 0, 0, true);
+			GameTooltip:Show();
+		end)
+	end
+
 	if(button.CurrentRating) then
 		button.CurrentRating:Hide()
 	end
@@ -532,6 +976,8 @@ local function hideAllPVPButtonAssets(button)
 
 	button.Reward:Hide()
 end
+
+miog.hideAllPVPButtonAssets = hideAllPVPButtonAssets
 
 local function resetPVPFrame(frame, parent, setScript)
 	frame:ClearAllPoints()
@@ -599,6 +1045,22 @@ local function updatePVP(parent)
 	end
 end
 
+local function addBonusSpecificDropdown()
+	local queueDropDown = miog.MainTab.QueueInformation.DropDown
+
+	local info = {}
+	info.entryType = "option"
+	info.index = 20
+	info.level = 2
+	info.parentIndex = indices["PVP"]
+	HonorFrame.TypeDropdown:SetHeight(20)
+	local dropdown = queueDropDown:InsertCustomFrame(info, HonorFrame.TypeDropdown)
+	dropdown.topPadding = 8
+	dropdown.bottomPadding = 8
+	dropdown.leftPadding = 0
+	dropdown:SetHeight(20)
+end
+
 local function updatePVP2()
 	if(HonorFrame and ConquestFrame) then
 		local queueDropDown = miog.MainTab.QueueInformation.DropDown
@@ -635,10 +1097,21 @@ local function updatePVP2()
 		soloFrame:HookScript("OnShow", function(self)
 			hideAllPVPButtonAssets(self)
 		end)
-		
+
 		info = {}
 		info.entryType = "option"
 		info.index = 2
+		info.level = 2
+		info.parentIndex = indices["PVP"]
+		hideAllPVPButtonAssets(ConquestFrame.RatedBGBlitz)
+		local soloBGFrame = queueDropDown:InsertCustomFrame(info, ConquestFrame.RatedBGBlitz)
+		soloBGFrame:HookScript("OnShow", function(self)
+			hideAllPVPButtonAssets(self)
+		end)
+		
+		info = {}
+		info.entryType = "option"
+		info.index = 3
 		info.level = 2
 		info.parentIndex = indices["PVP"]
 		hideAllPVPButtonAssets(ConquestFrame.Arena2v2)
@@ -649,7 +1122,7 @@ local function updatePVP2()
 
 		info = {}
 		info.entryType = "option"
-		info.index = 3
+		info.index = 4
 		info.level = 2
 		info.parentIndex = indices["PVP"]
 		hideAllPVPButtonAssets(ConquestFrame.Arena3v3)
@@ -660,7 +1133,7 @@ local function updatePVP2()
 
 		info = {}
 		info.entryType = "option"
-		info.index = 4
+		info.index = 5
 		info.level = 2
 		info.parentIndex = indices["PVP"]
 		hideAllPVPButtonAssets(ConquestFrame.RatedBG)
@@ -671,22 +1144,12 @@ local function updatePVP2()
 
 		info = {}
 		info.entryType = "option"
-		info.index = 5
+		info.index = 6
 		info.level = 2
 		info.parentIndex = indices["PVP"]
 		queueDropDown:InsertCustomFrame(info, ConquestFrame.JoinButton)
 
-		info = {}
-		info.entryType = "option"
-		info.index = 10
-		info.level = 2
-		info.parentIndex = indices["PVP"]
-		HonorFrameTypeDropdown:SetHeight(20)
-		local dropdown = queueDropDown:InsertCustomFrame(info, HonorFrameTypeDropdown)
-		dropdown.topPadding = 8
-		dropdown.bottomPadding = 8
-		dropdown.leftPadding = 0
-		dropdown:SetHeight(20)
+		queueDropDown:CreateSeparator(10, indices["PVP"])
 
 		for index = 1, 5, 1 do
 			local currentBGQueue = index == 1 and C_PvP.GetRandomBGInfo() or index == 2 and C_PvP.GetRandomEpicBGInfo() or index == 3 and C_PvP.GetSkirmishInfo(4) or index == 4 and C_PvP.GetAvailableBrawlInfo() or index == 5 and C_PvP.GetSpecialEventBrawlInfo()
@@ -696,7 +1159,7 @@ local function updatePVP2()
 				info.text = index == 1 and RANDOM_BATTLEGROUNDS or index == 2 and RANDOM_EPIC_BATTLEGROUND or index == 3 and SKIRMISH or currentBGQueue.name
 				info.entryType = "option"
 				info.checked = false
-				info.index = index == 1 and 11 or index == 2 and 12 or index + 4
+				info.index = index == 1 and 21 or index == 2 and 22 or index + 10
 				info.icon = index < 3 and miog.findBattlegroundIconByID(currentBGQueue.bgID) or index == 3 and currentBGQueue.icon or index > 3 and (miog.findBrawlIconByID(currentBGQueue.brawlID) or miog.findBrawlIconByName(currentBGQueue.name))
 				info.level = 2
 				info.parentIndex = indices["PVP"]
@@ -783,26 +1246,29 @@ local function updatePVP2()
 			end
 		end
 
+		addBonusSpecificDropdown()
+	
 		info = {}
 		info.entryType = "option"
-		info.index = 15
+		info.index = 21
 		info.level = 2
 		info.parentIndex = indices["PVP"]
 		specificBox = queueDropDown:InsertCustomFrame(info, HonorFrame.SpecificScrollBox)
 		specificBox.leftPadding = -3
 		specificBox:SetHeight(120)
-
+	
 		HonorFrame.SpecificScrollBar:ClearAllPoints()
 		HonorFrame.SpecificScrollBar:SetPoint("TOPLEFT", HonorFrame.SpecificScrollBox, "TOPRIGHT", -10, 0)
 		HonorFrame.SpecificScrollBar:SetPoint("BOTTOMLEFT", HonorFrame.SpecificScrollBox, "BOTTOMRIGHT", -10, 0)
 		HonorFrame.SpecificScrollBar:SetParent(HonorFrame.SpecificScrollBox)
-
+	
 		randomBGFrame:SetShown(HonorFrame.type == "bonus")
 		randomEpicBGFrame:SetShown(HonorFrame.type == "bonus")
-
+	
 		specificBox:SetShown(HonorFrame.type == "specific")
 		specificBox:GetParent():MarkDirty()
 
+		--addBonusSpecificDropdown()
 		--[[info = {}
 		info.entryType = "option"
 		info.index = 15
@@ -880,246 +1346,10 @@ local function updateDropDown()
 		refreshDungeonList()
 		updateRaidFinder(blizzardDropDownDescriptions)
 
-		if(HonorFrameTypeDropdown) then
+		if(HonorFrame and HonorFrame.TypeDropdown) then
 			updatePVP2()
+
 		end
-		
-		--[[local blizzardDropDown = miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.BlizzardDropdown
-
-		local selectedDungeonsList = {}
-
-		blizzardDropDown:SetupMenu(function(dropdown, rootDescription)
-			local dungeonButton = rootDescription:CreateButton(LFG_TYPE_DUNGEON)
-
-			for k, v in pairs(blizzardDropDownDescriptions[1]) do
-				local entryButton = dungeonButton:CreateButton(v.name, function()
-					ClearAllLFGDungeons(1);
-					SetLFGDungeon(1, v.id);
-					JoinSingleLFG(1, v.id);
-				end)
-
-				entryButton:AddInitializer(function(button, description, menu)
-					local leftTexture = button:AttachTexture();
-					leftTexture:SetSize(18, 18);
-					leftTexture:SetPoint("LEFT");
-					leftTexture:SetTexture(v.icon);
-
-					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-					return button.fontString:GetUnboundedStringWidth() + 18 + 5
-				end)
-			end
-
-			local heroicButton = rootDescription:CreateButton(LFG_TYPE_HEROIC_DUNGEON)
-
-			for k, v in pairs(blizzardDropDownDescriptions[2]) do
-				local entryButton = heroicButton:CreateButton(v.name, function()
-					ClearAllLFGDungeons(1);
-					SetLFGDungeon(1, v.id);
-					JoinSingleLFG(1, v.id);
-				end)
-
-				entryButton:AddInitializer(function(button, description, menu)
-					local leftTexture = button:AttachTexture();
-					leftTexture:SetSize(16, 16);
-					leftTexture:SetPoint("LEFT");
-					leftTexture:SetTexture(v.icon);
-
-					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-					return button.fontString:GetUnboundedStringWidth() + 18 + 5
-				end)
-			end
-
-			local followerButton = rootDescription:CreateButton(LFG_TYPE_FOLLOWER_DUNGEON)
-
-			for k, v in pairs(blizzardDropDownDescriptions[205]) do
-				local entryButton = followerButton:CreateButton(v.name, function()
-					ClearAllLFGDungeons(1);
-					SetLFGDungeon(1, v.id);
-					JoinSingleLFG(1, v.id);
-				end)
-				entryButton:AddInitializer(function(button, description, menu)
-					local leftTexture = button:AttachTexture();
-					leftTexture:SetSize(16, 16);
-					leftTexture:SetPoint("LEFT");
-					leftTexture:SetTexture(v.icon);
-
-					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-					return button.fontString:GetUnboundedStringWidth() + 18 + 5
-				end)
-			end
-
-			local specificButton = rootDescription:CreateButton(SPECIFIC_DUNGEONS)
-
-			specificButton:CreateTitle(LFG_TYPE_DUNGEON)
-
-			for k, v in pairs(blizzardDropDownDescriptions[1]) do
-				--LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
-				local entryButton = specificButton:CreateCheckbox(v.name,
-				function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end,
-				function(dungeonID)
-					selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
-
-					LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
-				end,
-				v.id)
-
-				entryButton:AddInitializer(function(button, description, menu)
-					local leftTexture = button:AttachTexture();
-					leftTexture:SetSize(16, 16);
-					leftTexture:SetPoint("LEFT", button.leftTexture1, "RIGHT", 5, 0);
-					leftTexture:SetTexture(v.icon);
-
-					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-					return button.fontString:GetUnboundedStringWidth() + 18 + 5
-				end)
-			end
-			
-			specificButton:CreateSpacer();
-			specificButton:CreateTitle(LFG_TYPE_HEROIC_DUNGEON)
-
-			for k, v in pairs(blizzardDropDownDescriptions[2]) do
-				local entryButton = specificButton:CreateCheckbox(v.name,
-				function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end,
-				function(dungeonID)
-					selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
-
-					LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
-				end,
-				v.id)
-
-				entryButton:AddInitializer(function(button, description, menu)
-					local leftTexture = button:AttachTexture();
-					leftTexture:SetSize(16, 16);
-					leftTexture:SetPoint("LEFT", button.leftTexture1, "RIGHT", 5, 0);
-					leftTexture:SetTexture(v.icon);
-
-					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-					return button.fontString:GetUnboundedStringWidth() + 18 + 5
-				end)
-			end
-
-			local queueButton = specificButton:CreateTemplate("UIPanelButtonTemplate")
-			queueButton:AddInitializer(function(button, description, menu)
-				button:SetScript("OnClick", function(_, buttonName)
-					LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
-				end);
-				button:SetText("Queue for multiple dungeons")
-			end);
-
-			local raidFinderButton = rootDescription:CreateButton(RAID_FINDER)
-
-			local lastRaidName
-
-			for k, v in pairs(blizzardDropDownDescriptions[17]) do
-				local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, _, _, _, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(v.index)
-
-				local isNewRaid = lastRaidName ~= raidName
-				local modifiedInstanceInfo, modifiedInstanceTooltipText = nil, ""
-
-				if(mapID) then
-					modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(mapID)
-
-					if (modifiedInstanceInfo) then
-						--icon = GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit);
-						modifiedInstanceTooltipText = "|n|n" .. modifiedInstanceInfo.description;
-
-					else
-					
-					end
-
-					--info.iconXOffset = -6;
-				end
-
-				if(isNewRaid) then
-					if(lastRaidName ~= nil) then
-						raidFinderButton:CreateSpacer()
-
-					end
-
-					local raidTitle = raidFinderButton:CreateTitle(miog.MAP_INFO[mapID].shortName)
-
-					if(modifiedInstanceInfo) then
-						raidTitle:AddInitializer(function(button, description, ...)
-							local leftTexture = button:AttachTexture();
-							leftTexture:SetSize(16, 16);
-							leftTexture:SetPoint("LEFT");
-							leftTexture:SetAtlas(GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit));
-
-							button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-							button.fontString:SetTextColor(0.1,0.83,0.77,1)
-
-							return button.fontString:GetUnboundedStringWidth() + 18 + 5
-						end)
-					end
-
-				end
-
-				local entryButton = raidFinderButton:CreateButton(v.name, function()
-					ClearAllLFGDungeons(3);
-					SetLFGDungeon(3, v.id);
-					JoinSingleLFG(3, v.id);
-				end)
-	
-				local encounters;
-				local numEncounters = GetLFGDungeonNumEncounters(id);
-				for j = 1, numEncounters do
-					local bossName, _, isKilled = GetLFGDungeonEncounterInfo(id, j);
-					local colorCode = "";
-					if ( isKilled ) then
-						colorCode = RED_FONT_COLOR_CODE;
-					end
-					if encounters then
-						encounters = encounters.."|n"..colorCode..bossName..FONT_COLOR_CODE_CLOSE;
-					else
-						encounters = colorCode..bossName..FONT_COLOR_CODE_CLOSE;
-					end
-				end
-
-				entryButton:SetTooltip(function(tooltip, description)
-					--GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-					tooltip:SetText(RAID_BOSSES)
-					GameTooltip_AddNormalLine(tooltip, encounters .. modifiedInstanceTooltipText, 1, 1, 1, true)
-					GameTooltip:Show()
-				end)
-
-				entryButton:AddInitializer(function(button, description, menu)
-					local leftTexture = button:AttachTexture();
-					leftTexture:SetSize(16, 16);
-					leftTexture:SetPoint("LEFT");
-					leftTexture:SetTexture(v.icon);
-
-					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-					return button.fontString:GetUnboundedStringWidth() + 18 + 5
-				end)
-
-				lastRaidName = raidName
-			end
-
-			local pvpButton = rootDescription:CreateButton(PLAYER_V_PLAYER)
-
-			local listFrame = pvpButton:CreateTemplate("VerticalLayoutFrame")
-
-			listFrame:AddInitializer(function(frame, description, menu)
-				frame:SetSize(150, 150)
-				local newFrame = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-				newFrame.layoutIndex = 2
-				newFrame:SetBackdrop(BACKDROP_TEXT_PANEL_0_16)
-				updatePVP(frame)
-				frame:MarkDirty()
-			end)
-
-			
-			rootDescription:CreateButton(PET_BATTLE_PVP_QUEUE, function()
-				C_PetBattles.StartPVPMatchmaking()
-			end)
-		end)]]
-	
 	else
 		miog.F.UPDATE_AFTER_COMBAT = true
 	
@@ -1130,22 +1360,25 @@ miog.updateDropDown = updateDropDown
 
 local function activityEvents(_, event, ...)
     if(event == "LFG_UPDATE_RANDOM_INFO") then
-        updateDropDown()
+		refreshDungeonList()
 
     elseif(event == "LFG_UPDATE") then
+		refreshDungeonList()
 
     elseif(event == "LFG_LOCK_INFO_RECEIVED") then
-        updateDropDown()
+		refreshDungeonList()
         
     elseif(event == "PVP_BRAWL_INFO_UPDATED") then
-        updateDropDown()
+		refreshDungeonList()
 
     elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
-        updateDropDown()
+		refreshDungeonList()
 
     elseif(event == "GROUP_ROSTER_UPDATE") then
-        --updateDropDown()
+		refreshDungeonList()
     end
+
+	miog.updateDropDown()
 end
 
 miog.loadActivityChecker = function()
@@ -1156,9 +1389,16 @@ miog.loadActivityChecker = function()
 	eventReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
 	eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 	eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-	eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
 	eventReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
-	eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
-	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 	eventReceiver:SetScript("OnEvent", activityEvents)
+	
+	if(HonorFrame.TypeDropdown) then
+		hooksecurefunc("HonorFrame_SetTypeInternal", function(value)
+			randomBGFrame:SetShown(value == "bonus")
+			randomEpicBGFrame:SetShown(value == "bonus")
+
+			specificBox:SetShown(value == "specific")
+			specificBox:GetParent():MarkDirty()
+		end)
+	end
 end

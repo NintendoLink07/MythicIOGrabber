@@ -1,10 +1,10 @@
-## Interface: 110005
+## Interface: 110005, 110007
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.0.8
+## Version: 3.0.9
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -55,6 +55,7 @@ NewMultiStateButtonMixin.lua
 RaidSheetElementMixin.lua
 RaidSheetSpaceMixin.lua
 RewardTypeMixin.lua
+SlickerDropdownMixin.lua
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -70,6 +71,10 @@ XML\MIOG_PartyCheckPlayerTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_DropChecker.xml
 XML\MIOG_PopupFrame.xml
+
+XML\MIOG_SlickerDropdownBaseTemplate.xml
+XML\MIOG_SlickerDropdownTemplate.xml
+XML\MIOG_SlickerDropdownChildTemplate.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml

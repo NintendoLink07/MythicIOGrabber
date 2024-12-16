@@ -912,26 +912,6 @@ miog.loadQueueSystem = function()
 	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 	eventReceiver:SetScript("OnEvent", miog.queueEvents)
 
-	if(HonorFrameTypeDropdown_OnClick) then
-		hooksecurefunc("HonorFrameTypeDropdown_OnClick", function(self)
-			randomBGFrame:SetShown(self.value == "bonus")
-			randomEpicBGFrame:SetShown(self.value == "bonus")
-
-			specificBox:SetShown(self.value == "specific")
-			specificBox:GetParent():MarkDirty()
-		end)
-	end
-
-	if(HonorFrame.TypeDropdown) then
-		hooksecurefunc("HonorFrame_SetTypeInternal", function(value)
-			randomBGFrame:SetShown(value == "bonus")
-			randomEpicBGFrame:SetShown(value == "bonus")
-
-			specificBox:SetShown(value == "specific")
-			specificBox:GetParent():MarkDirty()
-		end)
-	end
-
 	createFilterPopup()
 end
 
@@ -940,7 +920,7 @@ local function queueEvents(_, event, ...)
 		if(miog.F.UPDATE_AFTER_COMBAT) then
 			miog.F.UPDATE_AFTER_COMBAT = false
 
-			miog.updateDropDown()
+			--miog.updateDropDown()
 			checkQueues()
 		end
 	end

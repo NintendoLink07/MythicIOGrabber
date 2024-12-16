@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.9] - 2024-12-16
+
+### Added
+
+- You can now choose the seasonal dungeons in the "Specific" queue dropdown options.
+
+### Changed
+
+- [MainFrame] The queue dropdown now indicates if any category has options to select via an arrow.
+
+- Updated for 11.0.7.
+
+- Many background code changes have been made to improve performance for v3.1.0 an onward.
+
+### Fixed
+
+- [MainFrame] When trying to change from "Bonus" to "Specific" battlegrounds in the PVP queue dropdown category no more errors should appear.
+
+
+
 ## [3.0.8] - 2024-12-04
 
 ### Added
@@ -2893,7 +2913,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.8..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.9..HEAD
+[3.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.9
 [3.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.8
 [3.0.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.7
 [3.0.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.6

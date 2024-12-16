@@ -165,7 +165,7 @@
 
                                 <Frames>
                                     <Frame parentKey="RolePanel">
-                                        <Size y="30" />
+                                        <Size y="22" />
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                                             <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
@@ -173,7 +173,7 @@
 
                                         <Frames>
                                             <Frame parentKey="Leader">
-                                                <Size x="40" y="20" />
+                                                <Size x="40" y="22" />
 
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5"/>
@@ -201,7 +201,7 @@
                                             </Frame>
 
                                             <Frame parentKey="Tank">
-                                                <Size x="40" y="20" />
+                                                <Size x="40" y="22" />
 
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="5"/>
@@ -229,7 +229,7 @@
                                             </Frame>
 
                                             <Frame parentKey="Healer">
-                                                <Size x="40" y="20" />
+                                                <Size x="40" y="22" />
 
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="5"/>
@@ -257,7 +257,7 @@
                                             </Frame>
 
                                             <Frame parentKey="Damager">
-                                                <Size x="40" y="20" />
+                                                <Size x="40" y="22" />
 
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="5"/>
@@ -287,19 +287,51 @@
                                         </Frames>
                                     </Frame>
 
-                                    <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
+                                    <Frame parentKey="BonusSpecificPoint">
                                         <Size y="25" />
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-25"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
                                         </Anchors>
                                     </Frame>
+
+                                    <!--<DropdownButton parentKey="Local_SlickerDropdown" inherits="MIOG_SlickerDropdownTemplate">
+                                        <Size y="25" />
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
+                                        </Anchors>
+                                    </DropdownButton>!-->
+
+                                    <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
+                                        <Size y="25" />
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMLEFT"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMRIGHT" x="-25"/>
+                                        </Anchors>
+                                    </Frame>
+
+                                    <DropdownButton parentKey="ActivityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMLEFT"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMRIGHT" x="-25"/>
+                                        </Anchors>
+                                    </DropdownButton>
 
                                     <Button parentKey="Requeue" inherits="RefreshButtonTemplate">
                                         <Size x="22" y="22" />
                                         <Anchors>
-                                            <Anchor point="LEFT" relativeKey="$parent.DropDown" relativePoint="RIGHT" x="3"/>
+                                            <Anchor point="LEFT" relativeKey="$parent.ActivityDropdown" relativePoint="RIGHT" x="3"/>
                                         </Anchors>
+                                        <Scripts>
+                                            <OnEnter>
+                                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                                GameTooltip:SetText("Queue up for the same activity you queued for the last time")
+                                                GameTooltip:Show()
+                                            </OnEnter>
+
+                                            <OnLeave function="GameTooltip_Hide" />
+                                        </Scripts>
                                     </Button>
                                     
                                     <Frame parentKey="LastGroup" inherits="BackdropTemplate">
