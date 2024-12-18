@@ -424,7 +424,7 @@
                         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                         local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
                         if(activeEntryInfo) then
-                            local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
+                            local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1])
                             if(activityInfo) then
                                 LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
                                 LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)

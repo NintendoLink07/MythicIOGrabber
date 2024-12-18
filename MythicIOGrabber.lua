@@ -111,7 +111,7 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
-			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityID)
+			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1])
 
 			LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
 

@@ -250,7 +250,7 @@ local function createResultTooltip(resultID, resultFrame)
 		end
 
 		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(C_LFGList.GetActivityFullName(searchResultInfo.activityID, nil, searchResultInfo.isWarMode))
+		GameTooltip:AddLine(C_LFGList.GetActivityFullName(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode))
 
 		if(MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName]) then
 			GameTooltip:AddLine(" ")
@@ -384,7 +384,7 @@ local function initializeSearchResultFrame(resultID)
 	if(C_LFGList.HasSearchResultInfo(resultID)) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
-		local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
+		local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].mapID
 
 		local persistentFrame = framePool:Acquire()
 		persistentFrame.resultID = resultID
@@ -472,13 +472,13 @@ local function updateOptionalData(resultID)
 		if(searchResultInfo.leaderName) then
 			local currentFrame = searchResultSystem.baseFrames[resultID]
 			
-			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 			local declineData = searchResultInfo.leaderName and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID]
 			local questTagInfo = searchResultInfo.questID and C_QuestLog.GetQuestTagInfo(searchResultInfo.questID)
 			local questDesc = questTagInfo and questTagInfo.tagName
-			local difficultyID = miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID
-			local difficultyName = difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
-			local shortName = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].shortName
+			local difficultyID = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID
+			local difficultyName = difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
+			local shortName = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].shortName
 
 			local difficultyZoneText = difficultyID and difficultyName or questDesc or nil
 
@@ -507,14 +507,14 @@ local function updateOptionalData(resultID)
 			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor))
 
 			if(not questTagInfo) then
-				currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].icon or nil)
+				currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].icon or nil)
 
 			else
 				currentFrame.BasicInformation.Icon:SetAtlas(QuestUtils_GetQuestTagAtlas(questTagInfo.tagID, questTagInfo.worldQuestType) or QuestUtil.GetWorldQuestAtlasInfo(searchResultInfo.questID, questTagInfo) or nil)
 
 			end
 			
-			local color = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID]
+			local color = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.DIFFICULTY_ID_TO_COLOR[miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID]
 			or questTagInfo and {r = 0, g = 0, b = 0, a = 0}
 			or {r = 1, g = 1, b = 1}
 
@@ -572,13 +572,13 @@ local function updatePersistentResultFrame(resultID)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 		if(searchResultSystem.baseFrames[resultID]) then
-			local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID
-			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+			local mapID = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].mapID
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 			local currentFrame = searchResultSystem.baseFrames[resultID]
 			currentFrame.resultID = resultID
 			local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 
-			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityID].horizontal, "CLAMP", "MIRROR")
+			currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].horizontal, "CLAMP", "MIRROR")
 			currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 
 			currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
@@ -642,7 +642,7 @@ local function updatePersistentResultFrame(resultID)
 			local bossPanel = currentFrame.CategoryInformation.BossPanel
 
 			memberPanel:SetShown(activityInfo.categoryID ~= 3)
-			bossPanel:SetShown(activityInfo.categoryID == 3 and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID > 0)
+			bossPanel:SetShown(activityInfo.categoryID == 3 and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID > 0)
 			currentFrame.CategoryInformation.DifficultyZone:SetWidth(activityInfo.categoryID ~= 3 and 100 or LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
 
 			currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
@@ -917,9 +917,9 @@ local function searchPanelEvents(_, event, ...)
 
 		if(not miog.F.LITE_MODE and new == "inviteaccepted") then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 
-			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityID].name or activityInfo.fullName
+			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].name or activityInfo.fullName
 			miog.MainTab.QueueInformation.LastGroup.Text:SetText(lastGroup)
 
 			MIOG_NewSettings.lastGroup = lastGroup

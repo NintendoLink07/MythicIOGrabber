@@ -177,7 +177,7 @@ end
 
 local function createApplicantMemberFrame(applicantID, applicantIndex)
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
-	local activityID = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.activityID or 0
+	local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityID or 0
 
 	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID
 	local dungeonData, pvpData, rioProfile
@@ -285,7 +285,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 
 	applicantMemberFrame.BasicInformation.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. assignedRole .. "Icon.png")
 
-	local reqIlvl = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredItemLevel or 0
+	local reqIlvl = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredItemLevel or 0
 
 	if(reqIlvl > itemLevel) then
 		applicantMemberFrame.BasicInformation.ItemLevel:SetText(wticc(miog.round(itemLevel, 1), miog.CLRSCC["red"]))
@@ -353,7 +353,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 	end
 	
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
-	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
+	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1]).categoryID
 
 	applicantMemberFrame.RaiderIOInformationPanel:OnLoad()
 	applicantMemberFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
@@ -407,7 +407,7 @@ local function gatherSortingInformation()
 	if(C_LFGList.HasActiveEntryInfo()) then
 		local activeEntry = C_LFGList.GetActiveEntryInfo()
 
-		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
+		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1]).categoryID
 
 		local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
 
@@ -501,7 +501,7 @@ local function gatherSortData()
 	local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
 
 	if(activeEntry) then
-		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityID).categoryID
+		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1]).categoryID
 
 		for _, applicantID in pairs(currentApplicants) do
 
@@ -839,14 +839,14 @@ local function applicationViewerEvents(_, event, ...)
 
         end
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then --LISTING CHANGES
-		miog.F.ACTIVE_ENTRY_INFO = C_LFGList.GetActiveEntryInfo()
+		local entryInfo = C_LFGList.GetActiveEntryInfo()
 
-		if(miog.F.ACTIVE_ENTRY_INFO) then
+		if(entryInfo) then
 			miog.insertLFGInfo()
 		end
 
 		if(... == nil) then --DELIST
-			if not(miog.F.ACTIVE_ENTRY_INFO) then
+			if not(entryInfo) then
 				if(queueTimer) then
 					queueTimer:Cancel()
 

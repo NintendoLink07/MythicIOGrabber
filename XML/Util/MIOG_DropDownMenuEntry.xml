@@ -1,6 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name="MIOG_DropDownMenuEntry" inherits="BackdropTemplate" virtual="true">
+    <Button name="MIOG_DropDownMenuEntry" inherits="BackdropTemplate, HorizonalLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="leftPadding" value="4" type="number" />
+        </KeyValues>
+
         <Size y="20" />
 
         <!--<NormalTexture parentKey="NormalTexture" atlas="pvpqueue-button-casual-up"/>
@@ -13,7 +17,7 @@
         
         <Frames>
             <CheckButton parentKey="Radio" inherits="UIRadialButtonTemplate" checked="false">
-                <Size x="16" y="16" />
+                <Size x="17" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" />
                 </Anchors>
@@ -45,11 +49,6 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                 </Anchors>
-
-                <Scripts>
-                    <OnShow>
-                    </OnShow>
-                </Scripts>
             </Frame>       
         </Frames>
         
@@ -57,22 +56,24 @@
             <Layer level="ARTWORK">
                 <Texture parentKey="Arrow" file="Interface\ChatFrame\ChatFrameExpandArrow" hidden="true">
                     <Size x="12" y="12" />
+
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Icon">
+                    <Size x="16" y="16" />
+
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Radio" relativePoint="RIGHT" x="2" />
                     </Anchors>
                 </Texture>
             </Layer>
 
             <Layer level="OVERLAY">
-                <Texture parentKey="Icon">
-                    <Size x="12" y="12" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Radio" relativePoint="RIGHT" x="2" />
-                    </Anchors>
-                </Texture>
 
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title of the thingy" wordwrap="false">
-
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
                     </Anchors>

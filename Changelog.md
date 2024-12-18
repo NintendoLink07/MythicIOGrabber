@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.10] - 2024-12-18
+
+### Fixed
+
+- Many problems that 11.0.7 introduced have been fixed already.
+
+### Known issues
+
+- Opening up the group finder for the first time in a session might have some serious lag and subsequent openings have a little bit of lag.
+This will be fixed in v3.1.0, haven't investigated what's up with that.
+
+
+
 ## [3.0.9] - 2024-12-16
 
 ### Added
@@ -2913,7 +2926,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.9..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.10..HEAD
+[3.0.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.10
 [3.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.9
 [3.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.8
 [3.0.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.7

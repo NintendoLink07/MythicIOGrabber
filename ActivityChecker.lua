@@ -177,7 +177,7 @@ local function addPvpActivities(topButton)
 				end)
 			end
 		elseif(HonorFrame.type == "specific") then
-			local specificBox = topButton:CreateTemplate("VerticalLayoutFrame")
+			local specificBox = topButton:CreateTemplate("VerticalLayoutFrame", "Frame")
 			specificBox:AddInitializer(function(blankFrame, description, menu)
 				blankFrame:SetSize(300, 300)
 	
@@ -457,8 +457,11 @@ local function setupQueueDropdown(rootDescription)
 
 
 	]]
+	
+	--print("SLOCK")
+	--rootDescription:OnLoad()
 
-	LFGEnabledList = GetLFDChoiceEnabledState(LFGEnabledList);	--We maintain this list in Lua
+	--LFGEnabledList = GetLFDChoiceEnabledState(LFGEnabledList);	--We maintain this list in Lua
 
 	for k, v in ipairs(indicesList) do
 		local isPetBattle = k == indices["PET"]
@@ -548,14 +551,14 @@ local function setupQueueDropdown(rootDescription)
 				if(queueButton) then
 					queueButton:AddInitializer(function(button, description, menu)
 						if(dungeonInfo.icon) then
-							local leftTexture = button:AttachTexture();
-							leftTexture:SetSize(16, 16);
+							local leftTexture = button:AttachTexture(dungeonInfo.icon);
+							--[[leftTexture:SetSize(16, 16);
 							leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
 							leftTexture:SetTexture(dungeonInfo.icon);
 			
 							button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
 			
-							return button.fontString:GetUnboundedStringWidth() + 18 + 5
+							return button.fontString:GetUnboundedStringWidth() + 18 + 5]]
 						end
 					end)
 				end
@@ -563,7 +566,7 @@ local function setupQueueDropdown(rootDescription)
 		end
 
 		if(isSpecific) then
-			queueButton = activityButton:CreateTemplate("UIPanelButtonTemplate")
+			queueButton = activityButton:CreateTemplate("UIPanelButtonTemplate", "Button")
 			queueButton:AddInitializer(function(button, description, menu)
 				button:SetScript("OnClick", function(_, buttonName)
 					LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
@@ -589,7 +592,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 	-- local mythicDungeonList (we can only hope)
 
-	LFGEnabledList = GetLFDChoiceEnabledState(LFGEnabledList)
+	--LFGEnabledList = GetLFDChoiceEnabledState(LFGEnabledList)
 
 	local selectedDungeonsList = {}
 
@@ -678,7 +681,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 					info.func = function(self)
 						selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
 
-						LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
+						--LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
 					end
 				else
 					info.func = function()
@@ -1347,7 +1350,7 @@ local function updateDropDown()
 		updateRaidFinder(blizzardDropDownDescriptions)
 
 		if(HonorFrame and HonorFrame.TypeDropdown) then
-			updatePVP2()
+			--updatePVP2()
 
 		end
 	else
@@ -1401,4 +1404,6 @@ miog.loadActivityChecker = function()
 			specificBox:GetParent():MarkDirty()
 		end)
 	end
+
+	LFGDungeonList_Setup()
 end

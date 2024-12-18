@@ -418,6 +418,10 @@ local function createPVEFrameReplacement()
 		--miog.setupQueueDropdown(rootDescription)
 
 	end)
+
+	miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetToDropdownMode()
+	miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetGenerator(miog.setupQueueDropdown)
+
 	miog.updateDropDown()
 
 	miog.pveFrame2.TitleBar.FindGroupButton.Text:SetText("Find")

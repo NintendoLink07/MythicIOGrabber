@@ -295,13 +295,12 @@
                                         </Anchors>
                                     </Frame>
 
-                                    <!--<DropdownButton parentKey="Local_SlickerDropdown" inherits="MIOG_SlickerDropdownTemplate">
-                                        <Size y="25" />
+                                    <DropdownButton parentKey="Local_SlickerDropdown" inherits="WowStyle1DropdownTemplate, MIOG_SlickerDropdownBaseTemplate" hidden="true">
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
                                         </Anchors>
-                                    </DropdownButton>!-->
+                                    </DropdownButton>
 
                                     <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
                                         <Size y="25" />

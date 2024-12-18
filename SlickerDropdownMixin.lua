@@ -1,193 +1,285 @@
-local baseTemplate = "UIButtonTemplate"
+local currentDropdown
 
-SlickerDropdownBaseMixin = {}
+SlickerDropdownMixin = {}
 
-function SlickerDropdownBaseMixin:OnLoad(buttonTemplate)
-    self:SetButtonTemplate(buttonTemplate)
+function SlickerDropdownMixin:OnShow()
+    if(self.List) then
+        if(not self.arrow) then
+            self:CreateSubmenuArrow()
 
-    self.provider = CreateDataProvider()
+        end
+
+        self.arrow:SetShown(#self.List:GetLayoutChildren() > 0)
+    end
+
+    if(self.data and self.data.selectedFunc) then
+        local firstType = self.checkbox2 or self.radio2
+
+        if(firstType) then
+            firstType:SetShown(self.data.selectedFunc(self.data.value))
+
+        end
+    end
+end
+
+function SlickerDropdownMixin:OnLoad()
+    --self.provider = CreateDataProvider()
     
     self:CreateFactory()
-
-    self:Init()
 end
 
-function SlickerDropdownBaseMixin:CreateFactory()
-    self.frameFactories = self.frameFactories or CreateFramePoolCollection()
+function SlickerDropdownMixin:CreateFactory()
+    self.List.frameFactories = self.List.frameFactories or CreateFramePoolCollection()
+    self.List.buttonFactory = self.List.buttonFactory or self.List.frameFactories:GetOrCreatePool("Button", self.List, "HorizontalLayoutFrame, MIOG_SlickerDropdownBaseTemplate", function(pool, frame)
+        frame:Hide()
+        frame.layoutIndex = nil
+        frame.currentDropdown = nil
+        frame.data = nil
+        frame:ReleaseAllChildren()
+    end)
 
-	self.titleFontStringFactory = self.titleFontStringFactory or CreateFontStringPool(self.List, "OVERLAY", nil, "SystemFont_Shadow_Med1", function(pool, fontstring) end)
-	self.titleTextureFactory = self.titleTextureFactory or CreateTexturePool(self.List, "ARTWORK", nil, nil, function(pool, texture) end)
+	self.fontstringFactory = self.fontstringFactory or CreateFontStringPool(self, "OVERLAY", nil, "SystemFont_Shadow_Med1", function(pool, fontstring)
+    end)
 
-    self.buttonFactory = self.buttonFactory or self.frameFactories:GetOrCreatePool("Button", self.List, "MIOG_SlickerDropdownChildTemplate", function(pool, frame) end)
-	self.fontstringFactory = self.fontstringFactory or CreateFontStringPool(self.List, "OVERLAY", nil, "SystemFont_Shadow_Med1", function(pool, fontstring) end)
-	self.textureFactory = self.textureFactory or CreateTexturePool(self.List, "ARTWORK", nil, nil, function(pool, texture) end)
+	self.textureFactory = self.textureFactory or CreateTexturePool(self, "ARTWORK", nil, nil, function(pool, texture)
+    end)
 end
 
-function SlickerDropdownBaseMixin:RefreshMenu(id)
-    self.frameFactories:ReleaseAll()
+function SlickerDropdownMixin:ReleaseAllChildren()
+    self.List.frameFactories:ReleaseAll()
+    self.List.buttonFactory:ReleaseAll()
 
     self.fontstringFactory:ReleaseAll()
     self.textureFactory:ReleaseAll()
 
-    self.buttonFactory:ReleaseAll()
+end
+
+function SlickerDropdownMixin:Reset()
+    self:ReleaseAllChildren()
+    --self.provider = CreateDataProvider()
+end
+
+function SlickerDropdownMixin:AddChildFrame(data)
+    local frame = self.List.buttonFactory:Acquire()
+    frame:SetToListOnlyMode()
+    frame.layoutIndex = self.List.buttonFactory:GetNumActive() + 1
+    frame.data = data
+
+    if(data.func) then
+        frame:SetScript("OnClick", function(localSelf)
+            data.func(data.value)
+
+            if(localSelf.data.type ~= "checkbox") then
+                currentDropdown.List:Hide()
+
+            end
+        end)
+    end
+    
+    if(data.type == "radio") then
+        frame:AttachRadioTexture()
+
+    end
+
+    if(data.type == "checkbox") then
+        frame:AttachCheckboxTexture()
+        -- ATTACH FRAME POST CLICK
+    end
+
+    if(data.text) then
+        frame:AttachText(data.text)
+
+    end
+
+    frame:Show()
+
+    self.List:MarkDirty()
+
+    return frame
+end
+
+function SlickerDropdownMixin:RefreshMenu()
+    self:ReleaseAllChildren()
 
     local child
     
-    for k, v in self.provider:Enumerate() do
-        local frame = self.buttonFactory:Acquire()
-        frame.layoutIndex = k
-
-        if(v.type == "radio") then
-            frame:AttachRadioTexture()
-
-        end
-
-        if(v.type == "checkbox") then
-            frame:AttachCheckboxTexture()
-
-        end
-
-        if(v.text) then
-            frame:AttachText(v.text)
-
-        end
-        
-        if(id and v.id == id) then
-            child = frame
-        end
-    end
+    self.generator(self)
 
     self.List:MarkDirty()
-    
-    if(self.buttonFactory:GetNumActive() > 0) then
-        self:CreateSubmenuArrow()
-    end
 
     return child
 end
 
-function SlickerDropdownBaseMixin:SetButtonTemplate(template)
-    self.buttonTemplate = template or baseTemplate
+function SlickerDropdownMixin:CreateDivider(index)
+    local divider = self.textureFactory:Acquire()
+    divider.layoutIndex = index or self.textureFactory:GetNumActive() + 1
+	divider:SetTexture("Interface\\Common\\UI-TooltipDivider-Transparent");
+    divider.expand = true
+	divider:SetHeight(13);
 
-    if(self.buttonFactory) then
-        self.buttonFactory:ReleaseAll()
-
-    end
-
-    self:CreateFactory()
+	return divider
 end
 
-function SlickerDropdownBaseMixin:CreateButton(text, func)
-    local id = self.List:GetSize() + 1
+function SlickerDropdownMixin:CreateTitle(text)
+    --[[local title = self.List.fontstringFactory:Acquire()
+    title.layoutIndex = index or self.List.fontstringFactory:GetNumActive() + 1
 
-    self.provider:Insert({
+    title:SetHeight(self:GetHeight())
+    title:SetText(text)
+
+	return title;]]
+end
+
+function SlickerDropdownMixin:CreateSpacer(index)
+    --[[local spacer = self.List.frameFactories:GetOrCreatePool("Frame", self.List, "BackdropTemplate", function(pool, frame) end):Acquire()
+    spacer.layoutIndex = index or #self.List:GetChildren() + 1
+
+	spacer:SetHeight(10);
+
+	return spacer]]
+end
+
+function SlickerDropdownMixin:CreateTemplate(template, type)
+    local pool = self.List.frameFactories:GetOrCreatePool(type, self.List, type == "Frame" and template or (template .. ", MIOG_SlickerDropdownBaseTemplate"), function(pool, frame)
+        frame:Hide()
+        frame.layoutIndex = nil
+        frame.currentDropdown = nil
+        frame.data = nil
+    end)
+    
+    local frame = pool:Acquire()
+    frame:SetParentKey("SPECI")
+    frame:SetSize(300, 25)
+    frame.layoutIndex = self.List.buttonFactory:GetNumActive() + 1
+    frame:Show()
+
+    return frame
+end
+
+function SlickerDropdownMixin:CreateFrame()
+    local pool = self.List.frameFactories:GetOrCreatePool("Frame", self.List, "BackdropTemplate, MIOG_SlickerDropdownBaseTemplate", function(pool, frame)
+        frame:Hide()
+        frame.layoutIndex = nil
+        frame.currentDropdown = nil
+        frame.data = nil
+    end)
+    
+    local frame = pool:Acquire()
+    frame.layoutIndex = pool:GetNumActive() + 1
+    frame.data = {
+        type = "custom",
+        id = pool:GetNumActive() + 1,
+    }
+
+    frame:Show()
+
+    return frame
+end
+
+function SlickerDropdownMixin:CreateButton(text, func)
+    local id = #self.List:GetLayoutChildren() + 1
+    local data = {
         type = "button",
         id = id,
         text = text,
         func = func,
-    })
+    }
 
-    local child = self:RefreshMenu(id)
+    local frame = self:AddChildFrame(data)
 
-    return child
+    return frame
 end
 
-function SlickerDropdownBaseMixin:CreateRadio(text, selectedFunc, func)
-    local id = self.List:GetSize() + 1
+function SlickerDropdownMixin:CreateRadio(text, selectedFunc, func, value)
+    local id = #self.List:GetLayoutChildren() + 1
 
-    self.provider:Insert({
+    local data = {
         type = "radio",
         id = id,
         text = text,
         func = func,
         selectedFunc = selectedFunc,
-    })
+        parent = self,
+        value = value,
+    }
 
-    local child = self:RefreshMenu(id)
+    local frame = self:AddChildFrame(data)
 
-    return child
+    return frame
 end
 
-function SlickerDropdownBaseMixin:CreateCheckbox(text, selectedFunc, func)
-    local id = self.List:GetSize() + 1
+function SlickerDropdownMixin:CreateCheckbox(text, selectedFunc, func, value)
+    local id = #self.List:GetLayoutChildren() + 1
 
-    self.provider:Insert({
+    local data = {
         type = "checkbox",
         id = id,
         text = text,
         func = func,
         selectedFunc = selectedFunc,
-    })
+        value = value,
+    }
 
-    local child = self:RefreshMenu(id)
-
-    return child
-end
-
-function SlickerDropdownBaseMixin:CreateTemplate(template)
-    local pool = self.frameFactories:GetOrCreatePool("Button", self.List, template, function(pool, frame) end)
-    local frame = Mixin(pool:Acquire(), SlickerDropdownBaseMixin)
+    local frame = self:AddChildFrame(data)
 
     return frame
 end
 
-function SlickerDropdownBaseMixin:CreateFrame()
-    local pool = self.frameFactories:GetOrCreatePool("Frame", self.List, "BackdropTemplate", function(pool, frame) end)
-    local frame = Mixin(pool:Acquire(), SlickerDropdownBaseMixin)
-
-    return frame
-end
-
-function SlickerDropdownBaseMixin:CreateSubmenuArrow(texture, index)
-    self.arrow = self.textureFactory:Acquire()
-    self.arrow:SetPoint("RIGHT", -5, 0)
+function SlickerDropdownMixin:CreateSubmenuArrow(texture)
+    self.arrow = self.arrow or self:CreateTexture("Arrow", "ARTWORK")
+    self.arrow:SetPoint("RIGHT", self, "RIGHT", -5, 0)
     self.arrow:SetTexture(texture or "Interface\\ChatFrame\\ChatFrameExpandArrow")
-
-    self:SetWidth(self:GetWidth() + self.arrow:GetWidth() + 4)
 
     return self.arrow
 end
 
-function SlickerDropdownBaseMixin:AddInitializer(func)
+function SlickerDropdownMixin:AddInitializer(func)
     func(self)
 end
 
-
-
-
-
-
-
-SlickerDropdownMixin = {}
-
-function SlickerDropdownMixin:Init(buttonTemplate)
+function SlickerDropdownMixin:SetToDropdownMode()
     self.List:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
     self.List:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT")
 
-    self:SetDefaultText("Select an activity...");
+    self:ClearHighlightTexture()
+    self:SetDefaultText("Select an activity...")
 
     self:SetScript("OnClick", function(localSelf)
-        localSelf.List:SetShown(not localSelf.List:IsShown())
+        local isListShown = localSelf.List:IsShown()
+
+        if(not isListShown and self.generator) then
+            self:RefreshMenu()
+
+        end
+
+        localSelf.List:SetShown(not isListShown)
+
+        currentDropdown = localSelf
     end)
 end
 
+function SlickerDropdownMixin:SetToListOnlyMode()
+    self:AddMotionScripts()
+    self.spacing = 3
+
+    self.List:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 6)
+    self:SetFixedWidth(200)
+end
+
+function SlickerDropdownMixin:SetGenerator(generator)
+    self:ReleaseAllChildren()
+    self.generator = generator
+end
 
 
-
-
-
-
-
-SlickerDropdownChildMixin = {}
-
-function SlickerDropdownChildMixin:AddMotionScripts()
+function SlickerDropdownMixin:AddMotionScripts()
     self:SetScript("OnEnter", function(localSelf)
         if(localSelf:GetParent().activeList) then
             localSelf:GetParent().activeList:Hide()
 
         end
 
-        if(self.buttonFactory:GetNumActive() > 0) then
+        if(self.List.buttonFactory:GetNumActive() > 0 or localSelf.data.text == PLAYER_V_PLAYER) then
             localSelf.List:Show()
             localSelf:GetParent().activeList = localSelf.List
 
@@ -199,80 +291,79 @@ function SlickerDropdownChildMixin:AddMotionScripts()
     end)
 end
 
-function SlickerDropdownChildMixin:Init()
-    if(not hoverOnly) then
-        self:SetScript("OnClick", function(localSelf)
-            localSelf:GetParent():Hide()
-            print(#self:GetChildren())
-        end)
-    end
+function SlickerDropdownMixin:AttachText(text)
+    self.fontString = self.fontString or self.fontstringFactory:Acquire()
+
+    self.fontString:SetParent(self)
+    self.fontString:SetText(text)
+    self.fontString:SetJustifyV("MIDDLE")
+
+    self.fontString.layoutIndex = 5
+    self.fontString.align = "center"
+    self.fontString.leftPadding = 1
+
+    self.fontString:Show()
     
-    self:AddMotionScripts()
+    self:MarkDirty()
 
-    self.List:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 6)
-
-    self:SetFixedWidth(self:GetParent():GetParent():GetWidth() - 4)
+    return self.fontString
 end
 
-function SlickerDropdownChildMixin:AttachText(text, index)
-    self.text = self.titleFontStringFactory:Acquire()
-    self.text:SetHeight(self:GetHeight())
-    self.text.layoutIndex = index or #self:GetChildren() + 1
-    self.text:SetJustifyV("MIDDLE")
-    self.text:SetText(text)
+function SlickerDropdownMixin:AttachTexture(file, name, isAtlas)
+    local height = self:GetHeight() - 4
 
-    return self.text
+    name = name or "icon"
+
+    self[name] = self[name] or self.textureFactory:Acquire()
+    self[name]:SetParent(self)
+
+    if(isAtlas) then
+        self[name]:SetAtlas(file)
+        
+    else
+        self[name]:SetTexture(file)
+
+    end
+
+    self[name]:SetSize(height, height)
+
+    self[name].layoutIndex = 2
+    self[name].align = "center"
+    
+    self:MarkDirty()
+
+    return self[name]
 end
 
-function SlickerDropdownChildMixin:AttachTexture(texture, index)
-    self.icon = self.titleTextureFactory:Acquire()
-    self.icon:SetSize(self:GetHeight(), self:GetHeight())
-    self.icon.layoutIndex = index or #self:GetChildren() + 1
-    self.icon:SetTexture(texture)
+function SlickerDropdownMixin:AttachRadioTexture(texture1, texture2)
+    local height = self:GetHeight() - 2
 
-    return self.icon
+    local radio = self:AttachTexture(texture1 or "common-dropdown-tickradial", "radio", true)
+    radio:SetSize(height - 2, height)
+    radio.layoutIndex = 1
+
+    local radio2 = self:AttachTexture(texture2 or "common-dropdown-icon-radialtick-yellow", "radio2", true)
+    radio2:SetSize(height - 2, height)
+    radio2.ignoreInLayout = true
+    radio2:SetAllPoints(radio)
+
+    return radio
 end
 
-function SlickerDropdownChildMixin:AttachRadioTexture(texture1, texture2, index)
-    self.radio = self.titleTextureFactory:Acquire()
-    self.radio:SetSize(self:GetHeight(), self:GetHeight())
-    self.radio.layoutIndex = index or #self:GetChildren() + 1
-    self.radio:SetAtlas(texture1 or "common-dropdown-tickradial")
+function SlickerDropdownMixin:AttachCheckboxTexture(texture1, texture2)
+    local height = self:GetHeight() - 6
 
-    return self.radio
-end
+    local checkbox = self:AttachTexture(texture1 or "common-dropdown-ticksquare", "checkbox", true)
+    checkbox:SetSize(height - 1, height)
+    checkbox.layoutIndex = 1
+    checkbox.leftPadding = 2
+    checkbox.rightPadding = 2
 
-function SlickerDropdownChildMixin:AttachCheckboxTexture(texture1, texture2, index)
-    self.radio = self.titleTextureFactory:Acquire()
-    self.radio:SetSize(self:GetHeight(), self:GetHeight())
-    self.radio.layoutIndex = index or #self:GetChildren() + 1
-    self.radio:SetAtlas(texture1 or "common-dropdown-ticksquare")
+    local checkbox2 = self:AttachTexture(texture2 or "common-dropdown-icon-checkmark-yellow", "checkbox2", true)
+    checkbox2:SetSize(height - 1, height)
+    checkbox2.layoutIndex = nil
+    checkbox2.ignoreInLayout = true
+    checkbox2:SetAllPoints(checkbox)
 
-    return self.radio
-end
-
-function SlickerDropdownChildMixin:CreateDivider(index)
-    local divider = self.titleTextureFactory:Acquire()
-    divider.layoutIndex = index or #self:GetParent():GetChildren() + 1
-	divider:SetTexture("Interface\\Common\\UI-TooltipDivider-Transparent");
-	divider:SetHeight(13);
-
-	return divider;
-end
-
-function SlickerDropdownChildMixin:CreateSpacer()
-    local spacer = self.frameFactories:GetOrCreatePool("Frame", self, "BackdropTemplate", function(pool, frame) end):Acquire()
-    spacer.layoutIndex = index or #self:GetParent():GetChildren() + 1
-	spacer:SetHeight(10);
-
-	return spacer;
-end
-
-function SlickerDropdownChildMixin:CreateTitle(text)
-    local title = self.titleFontStringFactory:Acquire()
-    title.layoutIndex = index or #self:GetParent():GetChildren() + 1
-    title:SetHeight(self:GetHeight())
-    title:SetText(text)
-
-	return title;
+    return checkbox
 end

@@ -134,7 +134,7 @@ function LFGListEntryCreation_SetTitleFromActivityInfo(self)
 	if(not self.selectedActivity or not self.selectedGroup or not self.selectedCategory) then
 		return;
 	end
-	local activityID = activeEntryInfo and activeEntryInfo.activityID or (self.selectedActivity or 0);
+	local activityID = activeEntryInfo and activeEntryInfo.activityIDs[1] or (self.selectedActivity or 0);
 	local activityInfo =  C_LFGList.GetActivityInfoTable(activityID);
 	if((activityInfo and activityInfo.isMythicPlusActivity) or not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity)) then
 		--Is protected, first showed up in 11.0.2
@@ -452,9 +452,9 @@ local function selectKeystoneOrFirst()
 	-- set to currently listed group if one is found
 	if(C_LFGList.HasActiveEntryInfo()) then
 		local entryInfo = C_LFGList.GetActiveEntryInfo()
-		local activityInfo = C_LFGList.GetActivityInfoTable(entryInfo.activityID)
+		local activityInfo = C_LFGList.GetActivityInfoTable(entryInfo.activityIDs[1])
 
-		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, activityInfo.categoryID, activityInfo.groupFinderActivityGroupID, entryInfo.activityID)
+		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, activityInfo.categoryID, activityInfo.groupFinderActivityGroupID, entryInfo.activityIDs[1])
 		return
 	end
 

@@ -154,12 +154,28 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 
 	local honorLevel = 0
 
+	local createData = {
+		activityIDs = { activityID },
+		questID = questID,
+		isAutoAccept = autoAccept,
+		isCrossFactionListing = isCrossFaction,
+		isPrivateGroup = privateGroup,
+		playstyle = selectedPlaystyle,
+		requiredDungeonScore = mythicPlusRating,
+		requiredItemLevel = itemLevel,
+		requiredPvpRating = pvpRating,
+	};
+
 	if ( LFGListEntryCreation_IsEditMode(self) ) then
+		-- Pull these values from the active entry.
+		createData.isAutoAccept = activeEntryInfo.autoAccept;
+		createData.questID = activeEntryInfo.questID;
+
 		if activeEntryInfo.isCrossFactionListing == isCrossFaction then
-			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+			C_LFGList.UpdateListing(createData);
 		else
 			-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
-			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+			C_LFGList.UpdateListing(createData);
 
 
 			-- DOESNT WORK BECAUSE OF PROTECTION XD
@@ -170,10 +186,10 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 		LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
 	else
 		if(C_LFGList.HasActiveEntryInfo()) then
-			C_LFGList.UpdateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
+			C_LFGList.UpdateListing(createData)
 
 		else
-			C_LFGList.CreateListing(activityID, itemLevel, honorLevel, autoAccept, privateGroup, questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction)
+			C_LFGList.CreateListing(createData)
 
 		end
 
@@ -418,7 +434,7 @@ miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeon
 	
 	elseif(categoryID ~= 3) then
 		if(dungeonScore > 0) then
-			local reqScore = miog.F.ACTIVE_ENTRY_INFO and miog.F.ACTIVE_ENTRY_INFO.requiredDungeonScore or 0
+			local reqScore = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredDungeonScore or 0
 			local highestKeyForDungeon
 
 			if(reqScore > dungeonScore) then
@@ -817,7 +833,7 @@ miog.getCurrentCategoryID = function()
 
 	if(currentPanel ~= "DropChecker") then
 		categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
-		or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or
+		or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
 		LFGListFrame.CategorySelection.selectedCategory
 	else
 		categoryID = 0
@@ -1187,8 +1203,8 @@ local function desaturateTexture(bool, texture)
 end
 
 local function insertLFGInfo(activityID)
-	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo() or miog.F.ACTIVE_ENTRY_INFO
-	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityID)
+	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
+	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityIDs[1])
 
 	--miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
 
@@ -1199,7 +1215,7 @@ local function insertLFGInfo(activityID)
 		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
 	end
 
-	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityID].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
+	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityIDs[1]].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
 	miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
 	miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)

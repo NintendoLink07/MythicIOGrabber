@@ -568,7 +568,8 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 	if(panel == "LFGListFrame.SearchPanel") then
 		if(C_LFGList.HasSearchResultInfo(resultOrApplicant)) then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultOrApplicant)
-			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityID)
+
+			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 
 			settings = MIOG_NewSettings.newFilterOptions[panel][activityInfo.categoryID]
 
@@ -576,7 +577,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			local isDungeon = activityInfo.categoryID == 2
 			local isRaid = activityInfo.categoryID == 3
 
-			miog.checkSingleMapIDForNewData(miog.ACTIVITY_INFO[searchResultInfo.activityID].mapID)
+			miog.checkSingleMapIDForNewData(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].mapID)
 			
 			if(LFGListFrame.SearchPanel.categoryID and activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not borderMode) then
 				return false, "incorrectCategory"
@@ -592,13 +593,13 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 			if(settings.difficulty.value) then
 				if(isDungeon or isRaid) then
-					if(miog.ACTIVITY_INFO[searchResultInfo.activityID] and miog.ACTIVITY_INFO[searchResultInfo.activityID].difficultyID ~= settings.difficulty.id
+					if(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID ~= settings.difficulty.id
 					)then
 						return false, "incorrectDifficulty"
 
 					end
 				elseif(isPvp) then
-					if(searchResultInfo.activityID ~= settings.difficulty.id) then
+					if(searchResultInfo.activityIDs[1] ~= settings.difficulty.id) then
 						return false, "incorrectBracket"
 
 					end
@@ -712,7 +713,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 						end
 
 						for k, v in pairs(settings.activities[activityInfo.groupFinderActivityGroupID].bosses) do
-							local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityID].bosses[k]
+							local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].bosses[k]
 
 							if(bossInfo) then
 								-- 1 either defeated or alive
@@ -802,7 +803,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 		end
 	elseif(panel == "LFGListFrame.ApplicationViewer") then
-		local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityID).categoryID or LFGListFrame.CategorySelection.selectedCategory
+		local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
 		settings = MIOG_NewSettings.newFilterOptions[panel][categoryID]
 		

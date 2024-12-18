@@ -17,7 +17,7 @@ local function keepSignUpNote(self, resultID)
 	--end
 
 	self.resultID = resultID;
-	self.activityID = searchResultInfo.activityID;
+	self.activityID = searchResultInfo.activityIDs[1];
 	LFGListApplicationDialog_UpdateRoles(self);
 	StaticPopupSpecial_Show(self);
 end
