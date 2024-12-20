@@ -619,7 +619,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 				end
 
-				if(class and settings.specs[miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]] == false) then
+				if(specLocalized and class and settings.specs[miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]] == false) then
 					return false, "specFiltered"
 
 				end

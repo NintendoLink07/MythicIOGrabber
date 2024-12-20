@@ -341,8 +341,6 @@ miog.F = {
 	LFG_STATE = "solo",
 
 	CAN_INVITE = false,
-
-	AWAKENED_MAPS = {}
 }
 
 miog.BLANK_BACKGROUND_INFO = {
@@ -513,6 +511,7 @@ miog.MAP_INFO = {
 	[552] = {shortName = "ARC", fileName = "tempestkeep"},
 	[585] = {shortName = "MGT", fileName = "magistersterrace"},
 	
+	[534] = {shortName = "BMH", fileName = "hyjalpast"},
 	[565] = {shortName = "GL", fileName = "gruulslair"},
 	[544] = {shortName = "ML", fileName = "hellfireraid"},
 	[548] = {shortName = "SSC", iconName = "serpentshrinecavern", bgName = "coilfang"},
@@ -538,6 +537,8 @@ miog.MAP_INFO = {
 	[632] = {shortName = "FOS", fileName = "theforgeofsouls"},
 	[658] = {shortName = "PIT", fileName = "pitofsaron"},
 	[668] = {shortName = "HOR", fileName = "hallsofreflection"},
+	
+	[615] = {shortName = "OS", fileName = "chamberofaspects"},
 	[533] = {shortName = "NAXX", fileName = "naxxramas"},
 	[624] = {shortName = "VOA", fileName = "vaultofarchavon"},
 	[603] = {shortName = "ULD", fileName = "ulduar"},
@@ -563,6 +564,7 @@ miog.MAP_INFO = {
 	[669] = {shortName = "BWD", fileName = "blackwingdescentraid"},
 	[671] = {shortName = "BOT", fileName = "grimbatolraid"},
 	[754] = {shortName = "TOTFW", fileName = "throneofthefourwinds"},
+	[757] = {shortName = "BH", fileName = "baradinhold"},
 	[720] = {shortName = "FL", fileName = "firelands"},
 	[967] = {shortName = "DS", fileName = "dragonsoul"},
 
@@ -648,6 +650,7 @@ miog.MAP_INFO = {
 	[2450] = {shortName = "SOD", fileName = "sanctumofdomination"},
 	[2441] = {shortName = "TAZA", fileName = "tazaveshtheveiledmarket"},
 	[2481] = {shortName = "SFO", fileName = "sepulcherofthefirstones"},
+	[2559] = {shortName = "WORLD", iconName = "shadowlands", bgName = "shadowlandscontinent",},
 
 	--DRAGONFLIGHT
 	[2451] = {shortName = "ULOT", fileName = "uldaman-legacyoftyr"},
@@ -658,6 +661,7 @@ miog.MAP_INFO = {
 	[2521] = {shortName = "RLP", fileName = "lifepools"},
 	[2526] = {shortName = "AA", fileName = "theacademy"},
 	[2527] = {shortName = "HOI", fileName = "hallsofinfusion"},
+	[2574] = {shortName = "WORLD", fileName = "dragonislescontinent",},
 	[2579] = {shortName = "DOTI", fileName = "dawnoftheinfinite"},
 
 
@@ -708,6 +712,7 @@ miog.MAP_INFO = {
 	[2768] = {shortName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
 	
 	[2774] = {shortName = "WORLD", fileName = "khazalgar",},
+	[2776] = {shortName = "CODEX", fileName = "kalimdor",},
 	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
 
 }
@@ -727,223 +732,6 @@ for k, v in pairs(miog.LFG_ID_INFO) do
 end
 
 miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
-	--[] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[1] = {mapID = 1136, file = miog.C.STANDARD_FILE_PATH .. "siegeoforgrimmar"},
-	[2] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "easternkingdoms outdoor"},
-	[3] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "kalimdor outdoor"},
-	[5] = {mapID = 36, file = miog.C.STANDARD_FILE_PATH .. "deadmines"},
-	[6] = {mapID = 1175, file = miog.C.STANDARD_FILE_PATH .. "bloodmaulslagmines"},
-	[7] = {mapID = 1195, file = miog.C.STANDARD_FILE_PATH .. "irondocks"},
-	[8] = {mapID = 1182, file = miog.C.STANDARD_FILE_PATH .. "auchindoun"},
-	[9] = {mapID = 1209, file = miog.C.STANDARD_FILE_PATH .. "skyreach"},
-	
-	[10] = {mapID = 1208, file = miog.C.STANDARD_FILE_PATH .. "grimraildepot"},
-	[11] = {mapID = 1279, shortName = "EB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/everbloom.png"},
-	[12] = {mapID = 1176, shortName = "SBG", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/shadowmoonburialgrounds.png"},
-	[13] = {mapID = 1358, file = miog.C.STANDARD_FILE_PATH .. "upperblackrockspire"},
-	[14] = {mapID = 1228, file = miog.C.STANDARD_FILE_PATH .. "highmaul"},
-	[15] = {mapID = 1205, file = miog.C.STANDARD_FILE_PATH .. "blackrockfoundry"},
-	[16] = {mapID = 533, file = miog.C.STANDARD_FILE_PATH .. "naxxramas"},
-	[17] = {mapID = 631, file = miog.C.STANDARD_FILE_PATH .. "icecrowncitadel"},
-	[18] = {mapID = 1007, file = miog.C.STANDARD_FILE_PATH .. "scholomance"},
-	[19] = {mapID = 33, file = miog.C.STANDARD_FILE_PATH .. "shadowfangkeep"},
-	[20] = {mapID = 543, file = miog.C.STANDARD_FILE_PATH .. "hellfireramparts"},
-
-	[21] = {mapID = 542, file = miog.C.STANDARD_FILE_PATH .. "bloodfurnace"},
-	[22] = {mapID = 540, file = miog.C.STANDARD_FILE_PATH .. "shatteredhalls"},
-	[23] = {mapID = 547, file = miog.C.STANDARD_FILE_PATH .. "slavepens"},
-	[24] = {mapID = 546, file = miog.C.STANDARD_FILE_PATH .. "underbog"},
-	[25] = {mapID = 545, file = miog.C.STANDARD_FILE_PATH .. "steamvault"},
-	[26] = {mapID = 557, file = miog.C.STANDARD_FILE_PATH .. "manatombs"},
-	[27] = {mapID = 558, file = miog.C.STANDARD_FILE_PATH .. "auchenaicrypts"},
-	[28] = {mapID = 556, file = miog.C.STANDARD_FILE_PATH .. "sethekkhalls"},
-	[29] = {mapID = 555, file = miog.C.STANDARD_FILE_PATH .. "shadowlabyrinth"},
-
-	[30] = {mapID = 1001, file = miog.C.STANDARD_FILE_PATH .. "scarlethalls"},
-	[31] = {mapID = 1004, file = miog.C.STANDARD_FILE_PATH .. "scarletmonastery"},
-	[32] = {mapID = 560, file = miog.C.STANDARD_FILE_PATH .. "oldhillsbrad"},
-	[33] = {mapID = 269, file = miog.C.STANDARD_FILE_PATH .. "blackmorass"},
-	[34] = {mapID = 554, file = miog.C.STANDARD_FILE_PATH .. "mechanar"},
-	[35] = {mapID = 553, file = miog.C.STANDARD_FILE_PATH .. "botanica"},
-	[36] = {mapID = 552, file = miog.C.STANDARD_FILE_PATH .. "arcatraz"},
-	[37] = {mapID = 585, file = miog.C.STANDARD_FILE_PATH .. "magistersterrace"},
-	[38] = {mapID = 574, file = miog.C.STANDARD_FILE_PATH .. "utgrade keep"},
-	[39] = {mapID = 575, file = miog.C.STANDARD_FILE_PATH .. "utgarde pinnacle"},
-
-	[40] = {mapID = 601, file = miog.C.STANDARD_FILE_PATH .. "azjolnerub"},
-	[41] = {mapID = 578, file = miog.C.STANDARD_FILE_PATH .. "oculus"},
-	[42] = {mapID = 602, file = miog.C.STANDARD_FILE_PATH .. "hallsoflightning"},
-	[43] = {mapID = 599, file = miog.C.STANDARD_FILE_PATH .. "hallsofstone"},
-	[44] = {mapID = 595, file = miog.C.STANDARD_FILE_PATH .. "cullingofstratholme"},
-	[45] = {mapID = 600, file = miog.C.STANDARD_FILE_PATH .. "draktharon"},
-	[46] = {mapID = 604, file = miog.C.STANDARD_FILE_PATH .. "gundrak"},
-	[47] = {mapID = 619, file = miog.C.STANDARD_FILE_PATH .. "ahnkalet"},
-	[48] = {mapID = 608, file = miog.C.STANDARD_FILE_PATH .. "violethold"},
-	[49] = {mapID = 576, file = miog.C.STANDARD_FILE_PATH .. "nexus"},
-
-	[50] = {mapID = 650, file = miog.C.STANDARD_FILE_PATH .. "trialofthechampion"},
-	[51] = {mapID = 632, file = miog.C.STANDARD_FILE_PATH .. "forgeofsouls"},
-	[52] = {mapID = 658, file = miog.C.STANDARD_FILE_PATH .. "pitofsaron"},
-	[53] = {mapID = 668, file = miog.C.STANDARD_FILE_PATH .. "hallsofreflection"},
-	[54] = {mapID = 643, shortName = "TOTT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/throneofthetides.png"},
-	[55] = {mapID = 645, file = miog.C.STANDARD_FILE_PATH .. "blackrockcaverns"},
-	[56] = {mapID = 670, shortName = "GB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/grimbatol.png"},
-	[57] = {mapID = 644, file = miog.C.STANDARD_FILE_PATH .. "hallsoforigination"},
-	[58] = {mapID = 725, file = miog.C.STANDARD_FILE_PATH .. "stonecore"},
-	[59] = {mapID = 657, shortName = "VP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/vortexpinnacle.png"},
-
-	[60] = {mapID = 755, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[61] = {mapID = 960, shortName = "TOTJS", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/templeofthejadeserpent.png"},
-	[62] = {mapID = 961, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[63] = {mapID = 959, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[64] = {mapID = 994, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[65] = {mapID = 1011, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[66] = {mapID = 962, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[67] = {mapID = 1279, shortName = "EB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/everbloom.png"},
-	[68] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "draenoroutdoor"},
-	[69] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "outlandoutdoor"},
-
-	[70] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "northrendoutdoor"},
-	[71] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "pandariaoutdoor"},
-	--[72] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[73] = {mapID = 649, file = miog.C.STANDARD_FILE_PATH .. "trialofthecrusader"},
-	[74] = {mapID = 724, file = miog.C.STANDARD_FILE_PATH .. "rubysanctum"},
-	[75] = {mapID = 669, file = miog.C.STANDARD_FILE_PATH .. "blackwingdescent"},
-	[76] = {mapID = 671, file = miog.C.STANDARD_FILE_PATH .. "bastionoftwilight"},
-	[77] = {mapID = 754, file = miog.C.STANDARD_FILE_PATH .. "throneofthefourwinds"},
-	[78] = {mapID = 720, file = miog.C.STANDARD_FILE_PATH .. "firelands"},
-	[79] = {mapID = 967, file = miog.C.STANDARD_FILE_PATH .. "dragonsoul"},
-
-	[80] = {mapID = 1008, file = miog.C.STANDARD_FILE_PATH .. "mogushanvaults"},
-	[81] = {mapID = 1009, file = miog.C.STANDARD_FILE_PATH .. "heartoffear"},
-	[82] = {mapID = 996, file = miog.C.STANDARD_FILE_PATH .. "terraceoftheendlessspring"},
-	[83] = {mapID = 1098, file = miog.C.STANDARD_FILE_PATH .. "throneofthunder"},
-	[84] = {mapID = 870, file = miog.C.STANDARD_FILE_PATH .. "random pandaria dungeon"},
-	--[85] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[86] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "theramoresfall"},
-	--[87] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	--[88] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	--[89] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-
-	[109] = {mapID = 1116, file = miog.C.STANDARD_FILE_PATH .. "random warlords dungeon"},
-	[110] = {mapID = 1448, file = miog.C.STANDARD_FILE_PATH .. "hellfirecitadelraid"},
-
-	[111] = {mapID = 1220, file = miog.C.STANDARD_FILE_PATH .. "random legion dungeon"},
-	[112] = {mapID = 1456, file = miog.C.STANDARD_FILE_PATH .. "eyeofazshara"},
-	[113] = {mapID = 1466, shortName = "DHT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/darkheartthicket.png"},
-	[114] = {mapID = 1477, file = miog.C.STANDARD_FILE_PATH .. "hallsofvalor"},
-	[115] = {mapID = 1458, shortName = "NL", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/neltharionslair.png"},
-	[116] = {mapID = 1544, file = miog.C.STANDARD_FILE_PATH .. "assaultonviolethold"},
-	[117] = {mapID = 1493, file = miog.C.STANDARD_FILE_PATH .. "vaultofthewardens"},
-	[118] = {mapID = 1501, shortName = "BRH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/blackrookhold.png"},
-	[119] = {mapID = 1492, file = miog.C.STANDARD_FILE_PATH .. "mawofsouls"},
-	[120] = {mapID = 1571, file = miog.C.STANDARD_FILE_PATH .. "courtofstars"},
-	[121] = {mapID = 1516, file = miog.C.STANDARD_FILE_PATH .. "arcway"},
-	[122] = {mapID = 1520, file = miog.C.STANDARD_FILE_PATH .. "emeraldnightmare"},
-	[123] = {mapID = 1530, file = miog.C.STANDARD_FILE_PATH .. "nighthold"},
-	[124] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "legionoutdoor"},
-	[125] = {mapID = 1651, file = miog.C.STANDARD_FILE_PATH .. "returntokarazhan"},
-	[126] = {mapID = 1648, file = miog.C.STANDARD_FILE_PATH .. "trialofvalor"},
-	[127] = {mapID = 1651, file = miog.C.STANDARD_FILE_PATH .. "lowerkarazhan"},
-	[128] = {mapID = 1651, file = miog.C.STANDARD_FILE_PATH .. "upperkarazhan"},
-	[129] = {mapID = 1677, file = miog.C.STANDARD_FILE_PATH .. "cathedralofeternalnight"},
-
-	--[130] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[131] = {mapID = 1676, file = miog.C.STANDARD_FILE_PATH .. "tombofsargeras"},
-	[132] = {mapID = 1712, file = miog.C.STANDARD_FILE_PATH .. "antorus"},
-	[133] = {mapID = 1753, file = miog.C.STANDARD_FILE_PATH .. "seatofthetriumvirate"},
-	[134] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/argus3.png"},
-
-	[135] = {mapID = 1861, file = miog.C.STANDARD_FILE_PATH .. "uldir"},
-	[136] = {mapID = 1642, file = miog.C.STANDARD_FILE_PATH .. "random bfa dungeon"},
-	[137] = {mapID = 1763, shortName = "AD", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/ataldazar.png"},
-	[138] = {mapID = 1841, shortName = "UR", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/underrot.png"},
-	[139] = {mapID = 1877, file = miog.C.STANDARD_FILE_PATH .. "templeofsethraliss"},
-	[140] = {mapID = 1594, file = miog.C.STANDARD_FILE_PATH .. "motherlode"},
-	[141] = {mapID = 1762, file = miog.C.STANDARD_FILE_PATH .. "kingsrest"},
-	[142] = {mapID = 1754, shortName = "FH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/freehold.png"},
-	[143] = {mapID = 1864, file = miog.C.STANDARD_FILE_PATH .. "shrineofthestorm"},
-	[144] = {mapID = 1771, file = miog.C.STANDARD_FILE_PATH .. "toldagor"},
-	[145] = {mapID = 1862, shortName = "WM", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/waycrestmanor.png"},
-	[146] = {mapID = 1822, shortName = "SOB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/boralusdungeon.png"},
-
-	[247] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "kultiras outdoor"},
-	[248] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "zandalar outdoor"},
-	[249] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "random island expedition"},
-
-	--[250] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[251] = {mapID = 2070, file = miog.C.STANDARD_FILE_PATH .. "battleofdazaralor"},
-	[252] = {mapID = 2096, file = miog.C.STANDARD_FILE_PATH .. "crucibleofstorms"},
-	[253] = {mapID = 2097, file = miog.C.STANDARD_FILE_PATH .. "operationmechagon"},
-	[254] = {mapID = 2164, file = miog.C.STANDARD_FILE_PATH .. "eternalpalace"},
-	[255] = {mapID = 1804, file = miog.C.STANDARD_FILE_PATH .. "battleforstromgarde"},
-	[256] = {mapID = 2097, file = miog.C.STANDARD_FILE_PATH .. "mechagon junkyard"},
-	[257] = {mapID = 2097, file = miog.C.STANDARD_FILE_PATH .. "mechagon workshop"},
-	[258] = {mapID = 2217, file = miog.C.STANDARD_FILE_PATH .. "nyalotha"},
-
-	[259] = {mapID = 2289, file = miog.C.STANDARD_FILE_PATH .. "plaguefall"},
-
-	[260] = {mapID = 2291, file = miog.C.STANDARD_FILE_PATH .. "theotherside"},
-	[261] = {mapID = 2287, file = miog.C.STANDARD_FILE_PATH .. "hallsofatonement"},
-	[262] = {mapID = 2290, shortName = "MOTS", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/mistsoftirnascithe.png"},
-	[263] = {mapID = 2284, file = miog.C.STANDARD_FILE_PATH .. "sanguinedepths"},
-	[264] = {mapID = 2285, file = miog.C.STANDARD_FILE_PATH .. "spiresofascension"},
-	[265] = {mapID = 2286, shortName = "NW", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/necroticwake.png"},
-	[266] = {mapID = 2293, file = miog.C.STANDARD_FILE_PATH .. "theaterofpain"},
-	[267] = {mapID = 2296, file = miog.C.STANDARD_FILE_PATH .. "castlenathria"},
-
-	[268] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[269] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-
-	[270] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "shadowlands outdoor"},
-	[271] = {mapID = 2450, file = miog.C.STANDARD_FILE_PATH .. "sanctumofdomination"},
-	[272] = {mapID = 2441, file = miog.C.STANDARD_FILE_PATH .. "tazaveshtheveiledmarket"},
-	[273] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "twistingcorridors"},
-	[274] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "skoldushall"},
-	[275] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "upperreaches"},
-	[276] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "soulforges"},
-	[277] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "mort'regar"},
-	[278] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "fracturechambers"},
-	[279] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "coldheartinterstitia"},
-	[280] = {mapID = 2441, file = miog.C.STANDARD_FILE_PATH .. "tazaveshstreets"},
-	[281] = {mapID = 2441, file = miog.C.STANDARD_FILE_PATH .. "tazaveshgambit"},
-	[282] = {mapID = 2481, file = miog.C.STANDARD_FILE_PATH .. "sepulcherofthefirstones"},
-	[283] = {mapID = 2162, file = miog.C.STANDARD_FILE_PATH .. "jailersgauntlet"},
-
-	[284] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dragonislescontinent.png"},
-	[285] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[286] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[287] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[288] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-	[289] = {mapID = 0, file = miog.C.STANDARD_FILE_PATH .. ""},
-
-	[302] = {mapID = 2526, shortName = "AA", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/algetharacademy.png"},
-	[303] = {mapID = 2520, shortName = "BH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/brackenhidehollow.png"},
-	[304] = {mapID = 2527, shortName = "HOI", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/hallsofinfusion.png"},
-	[305] = {mapID = 2519, shortName = "NELT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/neltharus.png"},
-	[306] = {mapID = 2521, shortName = "RLP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/rubylifepools.png"},
-	[307] = {mapID = 2515, shortName = "AV", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/azurevault.png"},
-	[308] = {mapID = 2516, shortName = "NO", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nokhudoffensive.png"},
-	[309] = {mapID = 2451, shortName = "ULOT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/uldaman-legacyoftyr.png"},
-	[310] = {mapID = 2522, shortName = "VOTI", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/vaultoftheincarnates.png"},
-	[313] = {mapID = 2569, shortName = "ATSC", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/aberrus.png"},
-	[315] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
-	[316] = {mapID = 2579, shortName = "FALL", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
-	[317] = {mapID = 2579, shortName = "RISE", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
-	[318] = {mapID = 2579, file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dawnoftheinfinite.png"},
-	[319] = {mapID = 2549, shortName = "ATDH", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/amirdrassil.png"},
-
-	[322] = {mapID = 2651, shortName = "DFC", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/darkflamecleft.png"},
-	[323] = {mapID = 2660, shortName = "AK", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/arakaracityofechoes.png"},
-	[324] = {mapID = 2649, shortName = "PSF", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/prioryofthesacredflames.png"},
-	[325] = {mapID = 2648, shortName = "ROOK", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/therookery.png"},
-	[326] = {mapID = 2662, shortName = "DB", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/thedawnbreaker.png"},
-	[327] = {mapID = 2661, shortName = "CBM", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/cinderbrewmeadery.png"},
-	[328] = {mapID = 2652, shortName = "SV", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/thestonevault.png"},
-	[329] = {mapID = 2669, shortName = "COT", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/cityofthreads.png"},
-
-	[362] = {mapID = 2657, shortName = "NP", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/nerubarpalance.png"},
-	[372] = {mapID = 2792, shortName = "BRD", file = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/blackrockdepths.png"},
 }
 
 miog.ACTIVITY_INFO = {}
@@ -967,14 +755,6 @@ miog.DROPCHECKER_MAP_IDS ={
 miog.SEASONAL_CHALLENGE_MODES = {
 	[12] = {399, 400, 401, 402, 403, 404, 405, 406},
 	[13] = {353, 375, 376, 501, 502, 503, 505, 507},
-}
-
-miog.JOURNAL_CREATURE_INFO = {
-
-}
-
-miog.DUNGEON_ENCOUNTER_INFO = {
-
 }
 
 miog.LFG_DUNGEONS_INFO = {
@@ -1025,8 +805,6 @@ for k, v in pairs(miog.RAW["BattlemasterList"]) do
 		}
 	}
 end
-
-miog.MAP_CHALLENGE_MODE_INFO = {}
 
 local function checkForMapAchievements(mapID)
 	if(miog.MAP_INFO[mapID].achievementCategory) then
@@ -1082,7 +860,6 @@ local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectIns
 					achievements = {},
 					id = id,
 					creatureDisplayInfoID = displayInfo,
-					--factionChecked = miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID] == nil or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 1 and faction == "Alliance" or miog.DUNGEON_ENCOUNTER_INFO[dungeonEncounterID].faction == 0 and faction == "Horde",
 					icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
 				}
 
@@ -1100,148 +877,37 @@ end
 miog.checkSingleMapIDForNewData = checkSingleMapIDForNewData
 
 local function loadRawData()
-	local faction = UnitFactionGroup("player")
-
-	for k, v in pairs(miog.RAW["DungeonEncounter"]) do
-		miog.DUNGEON_ENCOUNTER_INFO[v[2]] = {name = v[1], mapID = v[3], difficultyID = v[4], orderIndex = v[5], faction = v[10] > -1 and v[10] or nil}
-	end
-
 	local loadHQData = miog.isMIOGHQLoaded()
 
 	for k, v in pairs(miog.RAW["Map"]) do
-		if(miog.MAP_INFO[v[1]]) then
-			local mapInfo = miog.MAP_INFO[v[1]]
-			mapInfo.name = v[3]
-			mapInfo.instanceType = v[11]
-			mapInfo.expansionLevel = v[12]
+		miog.MAP_INFO[v[1]] = miog.MAP_INFO[v[1]] or {}
 
-			mapInfo.loadingScreenID = v[14]
-			mapInfo.bosses = {}
-			mapInfo.exactName = v[2]
+		local mapInfo = miog.MAP_INFO[v[1]]
 
-			local modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(v[1])
-			if (modifiedInstanceInfo) then
-				mapInfo.awakenedIcon = modifiedInstanceInfo.uiTextureKit
-				table.insert(miog.F.AWAKENED_MAPS, v[1])
-			end
-		
-			if(mapInfo.fileName or mapInfo.bgName) then
-				if(loadHQData) then
-					mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. (mapInfo.fileName or mapInfo.bgName) .. ".png"
-					mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. (mapInfo.fileName or mapInfo.bgName) .. ".png"
-					--mapInfo.icon = mapInfo.icon or miog.C.STANDARD_FILE_PATH .. "/icons/" .. (mapInfo.fileName or mapInfo.iconName) .. ".png"
-
-				else
-					mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. (mapInfo.fileName or mapInfo.bgName) .. ".blp"
-					mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. (mapInfo.fileName or mapInfo.bgName) .. ".blp"
-					--mapInfo.icon or 
-
-				end
-
-				mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.fileName or mapInfo.iconName) .. ".blp"
-			end
-		else
-			miog.MAP_INFO[v[1]] = {
-				name = v[3],
-				instanceType = v[10],
-				expansionLevel = v[12],
-				loadingScreenID = v[14],
-				bosses = {},
-				exactName = v[2],
-			}
-		end
+		miog.MAP_INFO[v[1]].name = v[3]
+		miog.MAP_INFO[v[1]].instanceType = v[10]
+		miog.MAP_INFO[v[1]].expansionLevel = v[12]
+		miog.MAP_INFO[v[1]].bosses = {}
 		miog.MAP_INFO[v[1]].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
-	end
+		
+		local background = mapInfo.fileName or mapInfo.bgName
+		
+		if(background) then
+			if(loadHQData) then
+				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. background .. ".png"
+				mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. background .. ".png"
+				
+			else
+				mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
+				mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
 
-	local expansionTable = {}
-
-	for x = 1, EJ_GetNumTiers() - 1, 1 do
-		local name, link = EJ_GetTierInfo(x)
-		local expansionInfo = GetExpansionDisplayInfo(x-1)
-
-		local expInfo = {}
-		expInfo.entryType = "arrow"
-		expInfo.index = x + 10000
-		expInfo.text = name
-		expInfo.icon = expansionInfo and expansionInfo.logo
-
-		expansionTable[#expansionTable+1] = expInfo
-			
-	end
-
-	if(miog.AdventureJournal) then
-		for k, v in ipairs(expansionTable) do
-			miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
-
-		end
-
-		local adventureJournalDungeonTable = {}
-		local adventureJournalRaidTable = {}
-
-		for x = 1, EJ_GetNumTiers() - 1, 1 do
-			EJ_SelectTier(x)
-			
-			for k = 1, 2, 1 do
-				local isRaid = k == 1 and true or false
-
-				for i = 1, 5000, 1 do
-					local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
-
-					if(journalInstanceID) then
-						miog.JOURNAL_INSTANCE_INFO[journalInstanceID] = {
-							name = name,
-							isRaid = isRaid,
-							mapID = mapID,
-						}
-
-						local info = {}
-					
-						info.index = i + (isRaid and 1 or 300)
-						info.entryType = "option"
-						info.text = name
-						info.parentIndex = x + 10000
-						info.icon = miog.MAP_INFO[mapID].icon
-						info.value = journalInstanceID
-						info.func = function()
-							EJ_SelectTier(x)
-							miog.selectInstance(info.value)
-							--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
-					
-						end
-
-						if(isRaid) then
-							adventureJournalRaidTable[#adventureJournalRaidTable+1] = info
-
-						else
-							adventureJournalDungeonTable[#adventureJournalDungeonTable+1] = info
-						
-						end
-					end
-				end
-
-				if(not isRaid) then
-					miog.AdventureJournal.InstanceDropdown:CreateSeparator(299, x + 10000)
-					
-				end
 			end
+
+			mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.fileName or mapInfo.iconName) .. ".blp"
 		end
-
-		for k, v in ipairs(adventureJournalRaidTable) do
-			miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
-
-		end
-
-		for k, v in ipairs(adventureJournalDungeonTable) do
-			miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
-
-		end
-
-		miog.AdventureJournal.InstanceDropdown.List:MarkDirty()
 	end
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
-
-
 		miog.ACTIVITY_INFO[v[1]] = {
 			fullName = v[2],
 			difficultyName = v[3],
@@ -1256,12 +922,9 @@ local function loadRawData()
 			maxPlayers = v[13],
 		}
 
-		if(miog.GROUP_ACTIVITY[v[6]]) then
-			miog.GROUP_ACTIVITY[v[6]].activityID = v[1]
-			
-			miog.GROUP_ACTIVITY[v[6]].activityIDs = miog.GROUP_ACTIVITY[v[6]].activityIDs or {}
-			miog.GROUP_ACTIVITY[v[6]].activityIDs[v[1]] = true
-		end
+		miog.GROUP_ACTIVITY[v[6]] = miog.GROUP_ACTIVITY[v[6]] or {activityIDs = {}}
+		miog.GROUP_ACTIVITY[v[6]].activityID = v[1]
+		miog.GROUP_ACTIVITY[v[6]].activityIDs[v[1]] = true
 		
 		if(miog.MAP_INFO[v[10]]) then
 			miog.MAP_INFO[v[10]].groupFinderActivityGroupID = v[6]
@@ -1269,13 +932,13 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[v[1]].instanceType = miog.MAP_INFO[v[10]].instanceType
 			miog.ACTIVITY_INFO[v[1]].expansionLevel = miog.MAP_INFO[v[10]].expansionLevel
 			miog.ACTIVITY_INFO[v[1]].bosses = miog.MAP_INFO[v[10]].bosses
+			miog.ACTIVITY_INFO[v[1]].shortName = miog.MAP_INFO[v[10]].shortName
+
 			miog.ACTIVITY_INFO[v[1]].fileName = miog.MAP_INFO[v[10]].fileName
+			miog.ACTIVITY_INFO[v[1]].bgName = miog.MAP_INFO[v[10]].bgName
 			miog.ACTIVITY_INFO[v[1]].horizontal = miog.MAP_INFO[v[10]].horizontal
 			miog.ACTIVITY_INFO[v[1]].vertical = miog.MAP_INFO[v[10]].vertical
-			miog.ACTIVITY_INFO[v[1]].background = miog.MAP_INFO[v[10]].background
-
 			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
-			miog.ACTIVITY_INFO[v[1]].shortName = miog.MAP_INFO[v[10]].shortName
 
 			checkForMapAchievements(v[10])
 
@@ -1289,22 +952,10 @@ local function loadRawData()
 		end
 	
 	end
-	
-	for k, v in pairs(miog.ACTIVITY_INFO) do
-		for x, y in pairs(miog.RAW["GroupFinderActivityGrp"]) do
-			if(y[1] == v.groupFinderActivityGroupID) then
-				v.groupFinderActivityName = y[2] or C_LFGList.GetActivityGroupInfo(y[1])
-
-			end
-		end
-	end
 
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
-		miog.MAP_CHALLENGE_MODE_INFO[v[2]] = {mapID = v[3], name = v[1], expansionLevel = v[5]}
-
 		if(miog.MAP_INFO[v[3]]) then
 			miog.MAP_INFO[v[3]].challengeModeID = v[2]
-			miog.GROUP_ACTIVITY[miog.MAP_INFO[v[3]].groupFinderActivityGroupID].challengeModeID = v[2]
 		end
 	end
 end

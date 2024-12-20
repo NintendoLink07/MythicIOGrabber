@@ -4,6 +4,8 @@ local regex1 = "%d+ [D-d]amage"
 local regex2 = "%d+ %w+ [D-d]amage"
 local regex3 = "%d+ %w+ %w+ [D-d]amage"
 
+local selectedInstance, expansionTable, selectedTier
+
 local basePool, modelPool, difficultyPool, switchPool
 local isRaid
 local changingKeylevel = false
@@ -579,20 +581,6 @@ miog.selectInstance = function(journalInstanceID)
 
     isRaid = miog.JOURNAL_INSTANCE_INFO[journalInstanceID] and miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid or false
     miog.AdventureJournal.SettingsBar.KeylevelDropdown:SetShown(not isRaid)
-
-    miog.AdventureJournal.BossDropdown:ResetDropDown()
-
-    local bossTable, firstBossID = checkForBossInfo(journalInstanceID)
-
-	for k, v in ipairs(bossTable) do
-		miog.AdventureJournal.BossDropdown:CreateEntryFrame(v)
-
-	end
-
-    miog.selectBoss(firstBossID)
-    miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
-    miog.AdventureJournal.SettingsBar.SlotDropdown:Show()
-    miog.AdventureJournal.SettingsBar.ArmorDropdown:Show()
 end
 
 local function checkIfItemIsFiltered(item)
@@ -1015,6 +1003,86 @@ miog.selectBoss = function(journalEncounterID, abilityTitle)
     miog.AdventureJournal.AbilitiesFrame.Container:MarkDirty()
 end
 
+local function loadInstanceInfo()
+    expansionTable = {}
+
+	for x = 1, EJ_GetNumTiers() - 1, 1 do
+		local name, link = EJ_GetTierInfo(x)
+		local expansionInfo = GetExpansionDisplayInfo(x-1)
+
+		local expInfo = {}
+		expInfo.index = x + 10000
+		expInfo.text = name
+		expInfo.icon = expansionInfo and expansionInfo.logo
+
+		expansionTable[#expansionTable+1] = expInfo
+			
+	end
+
+    local adventureJournalDungeonTable = {}
+    local adventureJournalRaidTable = {}
+
+    for x = 1, EJ_GetNumTiers() - 1, 1 do
+        EJ_SelectTier(x)
+        
+        for k = 1, 2, 1 do
+            local isRaid = k == 1 and true or false
+
+            for i = 1, 5000, 1 do
+                local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
+
+                if(journalInstanceID) then
+                    miog.JOURNAL_INSTANCE_INFO[journalInstanceID] = {
+                        name = name,
+                        isRaid = isRaid,
+                        mapID = mapID,
+                    }
+
+                    local info = {}
+                
+                    info.index = i + (isRaid and 1 or 300)
+                    info.entryType = "option"
+                    info.text = name
+                    info.parentIndex = x + 10000
+                    --info.icon = miog.MAP_INFO[mapID].icon
+                    info.value = journalInstanceID
+                    info.func = function()
+                        EJ_SelectTier(x)
+                        miog.selectInstance(info.value)
+                        --LFGListEntryCreation_Select(LFGListFrame.EntryCreation, activityInfo.filters, categoryID, v, activityID)
+                
+                    end
+
+                    if(isRaid) then
+                        adventureJournalRaidTable[#adventureJournalRaidTable+1] = info
+
+                    else
+                        adventureJournalDungeonTable[#adventureJournalDungeonTable+1] = info
+                    
+                    end
+                end
+            end
+
+            if(not isRaid) then
+                --miog.AdventureJournal.InstanceDropdown:CreateSeparator(299, x + 10000)
+                
+            end
+        end
+    end
+
+    for k, v in ipairs(adventureJournalRaidTable) do
+        --miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
+
+    end
+
+    for k, v in ipairs(adventureJournalDungeonTable) do
+        --miog.AdventureJournal.InstanceDropdown:CreateEntryFrame(v)
+
+    end
+
+    --miog.AdventureJournal.InstanceDropdown.List:MarkDirty()
+end
+
 miog.loadAdventureJournal = function()
     local adventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.Plugin.InsertFrame, "MIOG_AdventureJournal")
     frameWidth = adventureJournal.AbilitiesFrame:GetWidth()
@@ -1027,7 +1095,6 @@ miog.loadAdventureJournal = function()
 
             if(journalInstanceID) then
                 miog.selectInstance(journalInstanceID)
-                adventureJournal.InstanceDropdown:SelectFirstFrameWithValue(journalInstanceID)
                 
             end
         end
@@ -1038,11 +1105,80 @@ miog.loadAdventureJournal = function()
     switchPool = CreateFramePool("Button", nil, "MIOG_AdventureJournalAbilitySwitchTemplate", resetSwitchFrames)
     modelPool = CreateFramePool("Button", adventureJournal.ModelScene.List.Container, "MIOG_AdventureJournalCreatureButtonTemplate", resetModelFrame)
 
-	local instanceDropdown = adventureJournal.InstanceDropdown
-	instanceDropdown:OnLoad()
+    loadInstanceInfo()
+
+    local instanceDropdown = adventureJournal.InstanceDropdown
+
+    instanceDropdown:SetDefaultText("Select an instance")
+    instanceDropdown:SetupMenu(function(dropdown, rootDescription)
+
+		for k, v in ipairs(expansionTable) do
+            local expansionButton = rootDescription:CreateButton(v.text)
+
+            expansionButton:AddInitializer(function(button, description, menu)
+                local leftTexture = button:AttachTexture();
+                leftTexture:SetSize(16, 16);
+                leftTexture:SetPoint("LEFT", button, "LEFT", 0, 0);
+                leftTexture:SetTexture(v.icon);
+
+                button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+                return button.fontString:GetUnboundedStringWidth() + 18 + 5
+            end)
+
+            EJ_SelectTier(k)
+            
+            for typeIndex = 1, 2, 1 do
+                local isRaid = typeIndex == 1 and true or false
+    
+                for i = 1, 5000, 1 do
+                    local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(i, isRaid)
+
+                    if(journalInstanceID) then
+                        local instanceButton = expansionButton:CreateRadio(miog.JOURNAL_INSTANCE_INFO[journalInstanceID].name, function(index) return selectedInstance == index end, function(index)
+                            miog.selectInstance(journalInstanceID)
+                        end, journalInstanceID)
+
+                        instanceButton:AddInitializer(function(button, description, menu)
+                            local leftTexture = button:AttachTexture();
+                            leftTexture:SetSize(16, 16);
+                            leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+                            leftTexture:SetTexture(miog.MAP_INFO[mapID].icon);
+
+                            button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+                            return button.fontString:GetUnboundedStringWidth() + 18 + 5
+                        end)
+
+                    else break
+                    end
+                end
+            end
+		end
+
+    end)
 
 	local bossDropdown = adventureJournal.BossDropdown
-	bossDropdown:OnLoad()
+    bossDropdown:SetupMenu(function(dropdown, rootDescription)
+        if(selectedInstance) then
+            local bossTable, firstBossID = checkForBossInfo(selectedInstance)
+            local selectedBoss
+        
+            for k, v in ipairs(bossTable) do
+                --miog.AdventureJournal.BossDropdown:CreateEntryFrame(v)
+                local instanceButton = rootDescription:CreateRadio(v.text, function(index) return selectedBoss == index end, function(index)
+                    selectedBoss = index
+    
+                end, v.value)
+        
+            end
+        
+            --miog.selectBoss(firstBossID)
+            --miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
+            adventureJournal.SettingsBar.SlotDropdown:Show()
+            adventureJournal.SettingsBar.ArmorDropdown:Show()
+        end
+    end)
 
 	local keylevelDropdown = adventureJournal.SettingsBar.KeylevelDropdown
     keylevelDropdown:OnLoad()
@@ -1300,3 +1436,11 @@ local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
 --eventReceiver:RegisterEvent("EJ_DIFFICULTY_UPDATE")
 eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
 eventReceiver:SetScript("OnEvent", aj_events)
+
+hooksecurefunc("EJ_SelectInstance", function(journalInstanceID)
+    selectedInstance = journalInstanceID
+end)
+
+hooksecurefunc("EJ_SelectTier", function(expansionIndex)
+    selectedTier = expansionIndex
+end)

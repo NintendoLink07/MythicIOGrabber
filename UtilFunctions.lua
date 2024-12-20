@@ -307,7 +307,7 @@ miog.retrieveMapIDFromChallengeModeMap = function(challengeID)
 end
 
 miog.retrieveShortNameFromChallengeModeMap = function(challengeID)
-	for k, v in pairs(miog.GROUP_ACTIVITY) do
+	for k, v in pairs(miog.MAP_INFO) do
 		if(v.challengeModeID == challengeID) then
 			return v.shortName
 		end

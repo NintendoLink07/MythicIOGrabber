@@ -7,19 +7,19 @@
         </Anchors>
 
         <Frames>
-            <Frame parentKey="InstanceDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="1000">
-                <Size x="260" y="22" />
+            <DropdownButton parentKey="InstanceDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="260" y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                 </Anchors>
-            </Frame>
-            
-            <Frame parentKey="BossDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="1000">
-                <Size x="260" y="22" />
+            </DropdownButton>
+
+            <DropdownButton parentKey="BossDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="260" y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
-            </Frame>
+            </DropdownButton>
 
             <Button parentKey="Abilities" inherits="UIPanelDynamicResizeButtonTemplate" text="Abilities">
                 <Size x="50" y="20" />

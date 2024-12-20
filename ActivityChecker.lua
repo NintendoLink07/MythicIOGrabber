@@ -673,8 +673,9 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 
 				info.text = name
 
+
 				info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or fileID or nil
-				
+
 				info.parentIndex = overwrittenParentIndex or isFollowerDungeon and indices["FOLLOWER"] or (isHolidayDungeon or isTimewalkingDungeon) and indices["EVENT"] or subtypeID == 1 and indices["NORMAL"] or subtypeID == 2 and indices["HEROIC"]
 
 				if(overwrittenParentIndex) then

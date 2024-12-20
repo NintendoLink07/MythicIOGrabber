@@ -2,7 +2,7 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local selectedExpansion, defaultGroup, defaultActivity
+local selectedExpansion, defaultGroup, defaultActivity = nil, nil, nil
 
 local playstyles = {
 	Enum.LFGEntryPlaystyle.Standard,
@@ -91,7 +91,8 @@ end
 
 local function setUpDifficultyDropDown()
 	miog.EntryCreation.DifficultyDropDown:SetupMenu(function(dropdown, rootDescription)
-		local unsortedActivities = C_LFGList.GetAvailableActivities(LFGListFrame.EntryCreation.selectedCategory, LFGListFrame.EntryCreation.selectedGroup, LFGListFrame.EntryCreation.selectedFilters);
+		print(LFGListFrame.EntryCreation.selectedCategory, LFGListFrame.EntryCreation.selectedGroup, LFGListFrame.EntryCreation.selectedFilters)
+		local unsortedActivities = C_LFGList.GetAvailableActivities(LFGListFrame.EntryCreation.selectedCategory, LFGListFrame.EntryCreation.selectedGroup);
 		local activities = {}
 
 		if(LFGListFrame.EntryCreation.selectedCategory == 2 or LFGListFrame.EntryCreation.selectedCategory == 3) then
@@ -177,8 +178,6 @@ local function addExpansionHeadersToDropdown(rootDescription)
 			local expansionInfo = GetExpansionDisplayInfo(i)
 
 			local expansionButton = rootDescription:CreateRadio(miog.EXPANSION_INFO[i][1], function(index) return index == selectedExpansion end, function(index)
-				selectedExpansion = index
-
 			end, i)
 	
 			expansionButton:AddInitializer(function(button, description, menu)
@@ -238,7 +237,7 @@ local function addExpansionHeadersToDropdown(rootDescription)
 					return button.fontString:GetUnboundedStringWidth() + 18 + 5
 				end)
 
-				if(not defaultGroup and not defaultActivity and k == 1) then
+				if(not selectedExpansion and not defaultGroup and not defaultActivity and k == 1) then
 					defaultGroup = v.groupID
 					defaultActivity = v.activityID
 					selectedExpansion = i
@@ -249,8 +248,11 @@ local function addExpansionHeadersToDropdown(rootDescription)
 	end
 end
 
+hooksecurefunc("LFGListSearchPanel_SetCategory", function()
+	defaultGroup, defaultActivity, selectedExpansion = nil, nil, nil
+end)
+
 local function gatherAllActivities(dropdown, rootDescription)
-	defaultGroup, defaultActivity, selectedExpansion = nil, nil
 
 	if(LFGListFrame.CategorySelection.selectedCategory == 1 or LFGListFrame.CategorySelection.selectedCategory == 6) then
 		local activityList = {}

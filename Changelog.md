@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.12] - 2024-12-21
+
+### Fixed
+
+- [FilterPanel] An error regarding spec filtering has been resolved.
+
+- [MainFrame] The activity icons in the queue dropdown will now always be correctly set to the actual file ID.
+
+- [GroupCreation] The dropdown text will not reset to "Classic" anymore when you have already selected an activity.
+
+- [GroupCreation] Dragonflight raids's difficulty can now be changed without having to create a group and edit it right after.
+
+- The addon will now check for less data in the loading process, resulting in a faster loading screen.
+Probably only really noticable on slower machines.
+
+
+
 ## [3.0.11] - 2024-12-20
 
 ### Fixed
