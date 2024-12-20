@@ -413,14 +413,14 @@ local function createPVEFrameReplacement()
 		currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
 	end)
 
-	miog.MainTab.QueueInformation.ActivityDropdown:SetDefaultText("Select an activity...")
+	--[[miog.MainTab.QueueInformation.ActivityDropdown:SetDefaultText("Select an activity...")
 	miog.MainTab.QueueInformation.ActivityDropdown:SetupMenu(function(dropdown, rootDescription)
 		--miog.setupQueueDropdown(rootDescription)
 
-	end)
+	end)]]
 
-	miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetToDropdownMode()
-	miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetGenerator(miog.setupQueueDropdown)
+	--miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetToDropdownMode()
+	--miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetGenerator(miog.setupQueueDropdown)
 
 	miog.updateDropDown()
 

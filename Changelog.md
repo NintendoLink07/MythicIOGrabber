@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.11] - 2024-12-20
+
+### Fixed
+
+- [MainFrame] Opening and closing the mainframe will not regularly cause huge lags to happen.
+
+- [MainFrame] The PVP queue selections are visible again.
+
+- [SearchPanel] Opening the search panel for the first time in a game session will no longer cause a huge lag to happen.
+
+### Known issues
+
+- Some backgrounds in the [Active queues] part of the mainframe don't show up.
+This will be fixed with v3.0.12.
+
+
+
 ## [3.0.10] - 2024-12-18
 
 ### Fixed
@@ -2926,7 +2943,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.10..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.11..HEAD
+[3.0.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.11
 [3.0.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.10
 [3.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.9
 [3.0.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.8

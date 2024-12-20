@@ -1,10 +1,14 @@
-## [3.0.10](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.10) - 2024-12-18
+## [3.0.11](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.11) - 2024-12-20
 
 ### Fixed
 
-- Many problems that 11.0.7 introduced have been fixed already.
+- [MainFrame] Opening and closing the mainframe will not regularly cause huge lags to happen.
+
+- [MainFrame] The PVP queue selections are visible again.
+
+- [SearchPanel] Opening the search panel for the first time in a game session will no longer cause a huge lag to happen.
 
 ### Known issues
 
-- Opening up the group finder for the first time in a session might have some serious lag and subsequent openings have a little bit of lag.
-This will be fixed in v3.1.0, haven't investigated what's up with that.
+- Some backgrounds in the [Active queues] part of the mainframe don't show up.
+This will be fixed with v3.0.12.

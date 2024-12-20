@@ -1350,7 +1350,7 @@ local function updateDropDown()
 		updateRaidFinder(blizzardDropDownDescriptions)
 
 		if(HonorFrame and HonorFrame.TypeDropdown) then
-			--updatePVP2()
+			updatePVP2()
 
 		end
 	else
