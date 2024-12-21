@@ -4,7 +4,7 @@ local regex1 = "%d+ [D-d]amage"
 local regex2 = "%d+ %w+ [D-d]amage"
 local regex3 = "%d+ %w+ %w+ [D-d]amage"
 
-local selectedInstance, expansionTable, selectedTier
+local selectedInstance, expansionTable, selectedExpansion, selectedBoss
 
 local basePool, modelPool, difficultyPool, switchPool
 local isRaid
@@ -580,6 +580,7 @@ miog.selectInstance = function(journalInstanceID)
     retrieveDifficultyIDs()
 
     isRaid = miog.JOURNAL_INSTANCE_INFO[journalInstanceID] and miog.JOURNAL_INSTANCE_INFO[journalInstanceID].isRaid or false
+
     miog.AdventureJournal.SettingsBar.KeylevelDropdown:SetShown(not isRaid)
 end
 
@@ -735,7 +736,9 @@ end
 
 miog.selectBoss = function(journalEncounterID, abilityTitle)
     if(not abilityTitle or abilityTitle and currentEncounterID ~= journalEncounterID) then
-        C_EncounterJournal.SetPreviewMythicPlusLevel(miog.AdventureJournal.SettingsBar.KeylevelDropdown:GetSelectedValue())
+        selectedBoss = journalEncounterID
+
+        C_EncounterJournal.SetPreviewMythicPlusLevel(miog.AdventureJournal and miog.AdventureJournal.SettingsBar.KeylevelDropdown:GetSelectedValue() or 0)
         basePool:ReleaseAll()
         difficultyPool:ReleaseAll()
         switchPool:ReleaseAll()
@@ -1113,12 +1116,12 @@ miog.loadAdventureJournal = function()
     instanceDropdown:SetupMenu(function(dropdown, rootDescription)
 
 		for k, v in ipairs(expansionTable) do
-            local expansionButton = rootDescription:CreateButton(v.text)
+            local expansionButton = rootDescription:CreateRadio(v.text, function(index) return selectedExpansion == index end, nil, k)
 
             expansionButton:AddInitializer(function(button, description, menu)
                 local leftTexture = button:AttachTexture();
                 leftTexture:SetSize(16, 16);
-                leftTexture:SetPoint("LEFT", button, "LEFT", 0, 0);
+                leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
                 leftTexture:SetTexture(v.icon);
 
                 button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
@@ -1137,6 +1140,9 @@ miog.loadAdventureJournal = function()
                     if(journalInstanceID) then
                         local instanceButton = expansionButton:CreateRadio(miog.JOURNAL_INSTANCE_INFO[journalInstanceID].name, function(index) return selectedInstance == index end, function(index)
                             miog.selectInstance(journalInstanceID)
+                            selectedExpansion = k
+                            selectedBoss = nil
+
                         end, journalInstanceID)
 
                         instanceButton:AddInitializer(function(button, description, menu)
@@ -1162,18 +1168,19 @@ miog.loadAdventureJournal = function()
     bossDropdown:SetupMenu(function(dropdown, rootDescription)
         if(selectedInstance) then
             local bossTable, firstBossID = checkForBossInfo(selectedInstance)
-            local selectedBoss
         
             for k, v in ipairs(bossTable) do
                 --miog.AdventureJournal.BossDropdown:CreateEntryFrame(v)
                 local instanceButton = rootDescription:CreateRadio(v.text, function(index) return selectedBoss == index end, function(index)
-                    selectedBoss = index
-    
+                    miog.selectBoss(index)
                 end, v.value)
         
             end
-        
-            --miog.selectBoss(firstBossID)
+
+            if(not selectedBoss) then
+                --miog.selectBoss(firstBossID)
+
+            end
             --miog.AdventureJournal.BossDropdown:SelectFirstFrameWithValue(firstBossID)
             adventureJournal.SettingsBar.SlotDropdown:Show()
             adventureJournal.SettingsBar.ArmorDropdown:Show()
