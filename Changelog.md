@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.0.13] - 2024-12-27
+## [3.0.12] - 2024-12-27
 
 ### Changed
 
@@ -23,12 +23,6 @@ This feature will be re-enabled in v3.1.0.
 ### Fixed
 
 - [ApplicationViewer] M+ applicant entries will now show the correct completed keylevel for your listed dungeon again.
-
-
-
-## [3.0.12] - 2024-12-21
-
-### Fixed
 
 - [FilterPanel] An error regarding spec filtering has been resolved.
 
@@ -2980,8 +2974,7 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.13..HEAD
-[3.0.13]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.13
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.12..HEAD
 [3.0.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.12
 [3.0.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.11
 [3.0.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.10
