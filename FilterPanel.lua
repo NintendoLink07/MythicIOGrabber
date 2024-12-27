@@ -881,9 +881,9 @@ miog.checkEligibility = checkEligibility
 local function setClassSpecState(containerFrame, categorySettings)
 	local specs = miog.CLASSES[containerFrame.classID].specs
 
-	if(categorySettings.classes[containerFrame.classID] == false) then
+	if(categorySettings.classes[containerFrame.classID] == false or containerFrame.classID == id and categorySettings.needsMyClass) then
 		local r, g, b = GetClassColor(miog.CLASSES[containerFrame.classID].name)
-		containerFrame.Border:SetColorTexture(r, g, b, 0.5)
+		containerFrame.Border:SetColorTexture(1, 1, 1, 1)
 		containerFrame.Background:SetColorTexture(r, g, b, 1)
 
 		return true
@@ -892,7 +892,7 @@ local function setClassSpecState(containerFrame, categorySettings)
 		for k, v in ipairs(specs) do
 			if(categorySettings.specs[v] == false) then
 				local r, g, b = GetClassColor(miog.CLASSES[containerFrame.classID].name)
-				containerFrame.Border:SetColorTexture(r, g, b, 0.5)
+				containerFrame.Border:SetColorTexture(1, 1, 1, 1)
 				containerFrame.Background:SetColorTexture(r, g, b, 1)
 
 				return true

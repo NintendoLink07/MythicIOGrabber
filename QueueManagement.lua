@@ -144,12 +144,12 @@ local function createQueueFrame(queueInfo)
 
 		queueFrame:SetShown(true)
 
-	---@diagnostic disable-next-line: undefined-field
 		miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
 
 		queueFrame:GetParent():MarkDirty()
 
 		return queueFrame
+
 	else
 		miog.F.UPDATE_AFTER_COMBAT = true
 	
@@ -685,37 +685,31 @@ local function updatePVPQueues()
 					end
 
 					frame:SetScript("OnEnter", function(self)
-						local tooltip = GameTooltip
-						GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0)
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-						tooltip:SetText(mapName, 1, 1, 1, true);
-
-						if(role ~= "") then
-							tooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper));
-						end
+						GameTooltip:SetText(mapName, 1, 1, 1, true);
 
 						if(role ~= "") then
-							tooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper));
+							GameTooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper));
 						end
 
 						if(assignedSpec) then
-							tooltip:AddLine(ASSIGNED_COLON .. miog.SPECIALIZATIONS[assignedSpec].name);
+							GameTooltip:AddLine(ASSIGNED_COLON .. miog.SPECIALIZATIONS[assignedSpec].name);
 						end
 						
 						GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
 						if ( queuedTime > 0 ) then
-							tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime, false, false, 1, false)));
+							GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime, false, false, 1, false)));
 						end
 
 						if ( estimatedTime > 0 ) then
-							tooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(estimatedTime, false, false, 1, false)));
+							GameTooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(estimatedTime, false, false, 1, false)));
 						end
 
 						if(teamSize > 0) then
-							tooltip:AddLine(teamSize);
+							GameTooltip:AddLine(teamSize);
 						end
-
 
 						GameTooltip:Show()
 					end)
@@ -729,9 +723,15 @@ local function updatePVPQueues()
 			
 			if (frame and status == "queued" ) then
 				if(not suspend) then
+					local id = queueIndex * 2
+
 					frame.CancelApplication:SetAttribute("type", "macro")
+
+					--/click Menu.GetManager():GetOpenMenu():GetLayoutChildren()[" .. id .. "]
+					--frame.CancelApplication:SetAttribute("macrotext1", "/click QueueStatusButton RightButton" .. "\r\n" .. "/click CreateFromMixins(Menu.GetManager():GetOpenMenu():GetLayoutChildren()[" .. id .. "], UIButtonMixin)")
 					frame.CancelApplication:SetAttribute("macrotext1", "/click QueueStatusButton RightButton")
 
+					--MENU_QUEUE_STATUS_FRAME
 					queueIndex = queueIndex + 1
 					
 
@@ -920,7 +920,7 @@ local function queueEvents(_, event, ...)
 		if(miog.F.UPDATE_AFTER_COMBAT) then
 			miog.F.UPDATE_AFTER_COMBAT = false
 
-			miog.updateDropDown()
+			--miog.updateDropDown()
 			checkQueues()
 		end
 	end

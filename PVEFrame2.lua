@@ -173,10 +173,6 @@ local function createPVEFrameReplacement()
 			currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
 
 		end
-		
-		--HonorFrame.TypeDropdown:ClearAllPoints()
-		--HonorFrame.TypeDropdown:SetAllPoints(pveFrame2.TabFramesPanel.MainTab.QueueInformation.BonusSpecificPoint)
-		--HonorFrame.TypeDropdown:SetParent(pveFrame2)
 	end)
 
 	miog.MainTab.QueueInformation.Requeue:SetScript("OnClick", function()
@@ -281,9 +277,9 @@ local function createPVEFrameReplacement()
 	
 	setRoles()
 
-	local queueDropDown = miog.MainTab.QueueInformation.DropDown
-	queueDropDown:OnLoad()
-	queueDropDown:SetText("Select an activity")
+	--local queueDropDown = miog.MainTab.QueueInformation.DropDown
+	--queueDropDown:OnLoad()
+	--queueDropDown:SetText("Select an activity")
 	miog.MainTab.QueueInformation.Panel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	local formatter = CreateFromMixins(SecondsFormatterMixin)
@@ -417,10 +413,9 @@ local function createPVEFrameReplacement()
 
 	end)]]
 
-	--miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetToDropdownMode()
-	--miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Local_SlickerDropdown:SetGenerator(miog.setupQueueDropdown)
-
-	miog.updateDropDown()
+	--miog.updateDropDown()
+	miog.MainTab.QueueInformation.FakeDropdown:SetupMenu(miog.setupQueueDropdown)
+	miog.MainTab.QueueInformation.FakeDropdown:SetDefaultText("Select an activity...")
 
 	miog.pveFrame2.TitleBar.FindGroupButton.Text:SetText("Find")
 	miog.pveFrame2.TitleBar.FindGroupButton:SetScript("OnClick", function(selfButton)
@@ -457,7 +452,7 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.MoreButton:SetScript("OnClick", function(self)
 		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
 			rootDescription:CreateTitle("More");
-			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
+			--rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
 			--rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
 			rootDescription:SetTag("MIOG_MORE")

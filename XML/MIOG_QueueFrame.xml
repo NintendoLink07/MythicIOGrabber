@@ -4,17 +4,11 @@
         <Size y="43" />
 
         <Frames>
-            <Button parentKey="CancelApplication" inherits="SecureActionButtonTemplate">
-                <Size x="14" y="14" />
+            <Button parentKey="CancelApplication" inherits="BigRedExitButtonTemplate, SecureActionButtonTemplate">
+                <Size x="20" y="20" />
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-3" y="-3" />
                 </Anchors>
-
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="Icon" file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" setAllPoints="true" />
-                    </Layer>
-                </Layers>
 
                 <Scripts>
                     <OnLeave>
@@ -29,29 +23,30 @@
                 <Texture parentKey="ActiveIDFrame" hidden="true">
                     <Size x="9" y="9" />
                     <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-3" y="-3"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
                     </Anchors>
                     <Color r="1" g="0" b="0" a="1" />
                 </Texture>
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="Name" wordwrap="true" spacing="0">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="4" y="-5"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-30" x="-18"/>
-                    </Anchors>
-                </FontString>
-
                 <FontString parentKey="Age" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Age">
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="4" y="3" />
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="5" y="3" />
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Wait" font="SystemFont_Shadow_Med1" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="Wait">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Age" relativePoint="RIGHT" x="3" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="Name" wordwrap="true" spacing="0">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.CancelApplication" relativePoint="TOPLEFT" x="-2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Age" relativePoint="TOPRIGHT"/>
                     </Anchors>
                 </FontString>
             </Layer>

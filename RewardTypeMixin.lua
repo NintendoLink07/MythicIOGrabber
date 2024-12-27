@@ -184,7 +184,6 @@ function RewardTypeMixin:OnEnter()
 
     if(self.info.type == Enum.WeeklyRewardChestThresholdType.Activities) then
         if(numOfCompletedActivities == 0) then
-            GameTooltip_AddBlankLineToTooltip(GameTooltip);
             GameTooltip_AddNormalLine(GameTooltip, GREAT_VAULT_REWARDS_MYTHIC_INCOMPLETE);
 
         elseif(numOfCompletedActivities ~= 3) then

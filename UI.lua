@@ -93,8 +93,6 @@ miog.setActivePanel = setActivePanel
 miog.createFrames = function()
 	-- Preload the encounter journal so any function in the addon doesn't have to always check if the journal is loaded
 	EncounterJournal_LoadUI()
-	-- This can be any instanceID
-	--EJ_SelectInstance(1207)
 
 	-- OnOpen usually generates an error and doesn't really do anything important, so mask it with a dummy function
 	C_EncounterJournal.OnOpen = miog.dummyFunction

@@ -287,40 +287,44 @@
                                         </Frames>
                                     </Frame>
 
-                                    <Frame parentKey="BonusSpecificPoint">
-                                        <Size y="25" />
-                                        <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
-                                        </Anchors>
-                                    </Frame>
-
-                                    <!--<DropdownButton parentKey="Local_SlickerDropdown" inherits="WowStyle1DropdownTemplate, MIOG_SlickerDropdownBaseTemplate" hidden="true">
+                                    <!--<DropdownButton parentKey="Local_SlickerDropdown" inherits="WowStyle1DropdownTemplate, MIOG_SlickerDropdownBaseTemplate">
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
                                         </Anchors>
                                     </DropdownButton>!-->
 
-                                    <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
+                                    <DropdownButton parentKey="FakeDropdown" inherits="WowStyle1DropdownTemplate" mixin="FakeDropdownMixin">
+                                        <Size y="25" />
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT" x="2"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-27"/>
+                                        </Anchors>
+
+                                        <Scripts>
+                                            <OnClick method="OnClick" />
+                                        </Scripts>
+                                    </DropdownButton>
+
+                                    <!--<Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
                                         <Size y="25" />
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMLEFT"/>
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMRIGHT" x="-25"/>
                                         </Anchors>
-                                    </Frame>
+                                    </Frame>!-->
 
-                                    <DropdownButton parentKey="ActivityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
+                                    <!--<DropdownButton parentKey="ActivityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMLEFT"/>
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMRIGHT" x="-25"/>
                                         </Anchors>
-                                    </DropdownButton>
+                                    </DropdownButton>!-->
 
-                                    <Button parentKey="Requeue" inherits="RefreshButtonTemplate">
-                                        <Size x="22" y="22" />
+                                    <Button parentKey="Requeue" inherits="BigRedRefreshButtonTemplate">
+                                        <Size x="25" y="25" />
                                         <Anchors>
-                                            <Anchor point="LEFT" relativeKey="$parent.ActivityDropdown" relativePoint="RIGHT" x="3"/>
+                                            <Anchor point="LEFT" relativeKey="$parent.FakeDropdown" relativePoint="RIGHT" x="2"/>
                                         </Anchors>
                                         <Scripts>
                                             <OnEnter>
@@ -355,7 +359,7 @@
                                         </KeyValues>
 
                                         <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.DropDown" relativePoint="BOTTOMLEFT"/>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.FakeDropdown" relativePoint="BOTTOMLEFT"/>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT"/>
                                         </Anchors>
 
@@ -820,12 +824,12 @@
                 tinsert(UISpecialFrames, self:GetName());
             </OnLoad>
 
-            <OnMouseDown>         
-                self.TabFramesPanel.MainTab.QueueInformation.DropDown.List:Hide()
+            <OnMouseDown>
+                <!--self.TabFramesPanel.MainTab.QueueInformation.DropDown.List:Hide()
 
                 if(self.TabFramesPanel.MainTab.QueueInformation.DropDown.currentList) then
                     self.TabFramesPanel.MainTab.QueueInformation.DropDown.currentList:Hide()
-                end
+                end!-->
             </OnMouseDown>
 
             <OnShow>

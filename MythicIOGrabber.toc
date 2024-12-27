@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.0.11
+## Version: 3.0.13
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -45,17 +45,31 @@ NewSettings.lua
 StatisticsRecorder.lua
 MythicRequeue.lua
 
+FuzzyAlgorithm.lua
+
+
+
+##
+### MIXINS
+##
+
 SortingMixin.lua
 MultiStateButton.lua
-SlickDropDown.lua
 StatisticsTabMixin.lua
-FuzzyAlgorithm.lua
 FilterMixin.lua
 NewMultiStateButtonMixin.lua
 RaidSheetElementMixin.lua
 RaidSheetSpaceMixin.lua
 RewardTypeMixin.lua
-#SlickerDropdownMixin.lua
+FakeDropdownMixin.lua
+
+
+
+##
+### XML
+##
+
+XML\MIOG_FakeDropdownButton.xml
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_Plugin.xml
@@ -71,8 +85,6 @@ XML\MIOG_PartyCheckPlayerTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_DropChecker.xml
 XML\MIOG_PopupFrame.xml
-
-XML\MIOG_SlickerDropdownBaseTemplate.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml
@@ -140,8 +152,6 @@ XML\Statistics\MIOG_StatisticsRaidCharacterTemplate.xml
 XML\Statistics\MIOG_StatisticsBracketTemplate.xml
 XML\Statistics\MIOG_StatisticsPVPCharacterTemplate.xml
 
-XML\Util\MIOG_DropDownMenu.xml
-XML\Util\MIOG_DropDownMenuEntry.xml
 XML\Util\MIOG_MultiStateButtonTemplate.xml
 XML\Util\MIOG_SortButtonTemplate.xml
 XML\Util\MIOG_SortButtonWithTextTemplate.xml

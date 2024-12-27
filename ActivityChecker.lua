@@ -1,7 +1,7 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local randomBGFrame, randomEpicBGFrame, specificBox
+local randomBGFrame, randomEpicBGFrame, arena1Frame, brawl1Frame, brawl2Frame, specificBox
 
 local indices = {
 	["EVENT"] = 1,
@@ -100,10 +100,6 @@ local function sortAndAddDungeonList(list, enableOnShow)
 
 		local tempFrame = queueDropDown:CreateEntryFrame(v)
 
-		if(#list == 1) then
-			MIOG_TEMP = tempFrame
-		end
-
 		if(enableOnShow) then
 			tempFrame:SetScript("OnShow", function(self)
 				local tempMode = GetLFGMode(1, v.id)
@@ -146,6 +142,7 @@ local function addPvpActivities(topButton)
 	local honorFrames = {
 		HonorFrame.BonusFrame.RandomBGButton,
 		HonorFrame.BonusFrame.RandomEpicBGButton,
+		HonorFrame.SpecificScrollBox,
 		HonorFrame.BonusFrame.Arena1Button,
 		HonorFrame.BonusFrame.BrawlButton,
 		HonorFrame.BonusFrame.BrawlButton2,
@@ -160,9 +157,51 @@ local function addPvpActivities(topButton)
 	}
 
 	if(HonorFrame.TypeDropdown) then
-		if(HonorFrame.type == "bonus") then
-			for k, v in ipairs(honorFrames) do
-				local test = topButton:CreateFrame()
+		local typeDrop = topButton:CreateFrame()
+		typeDrop:AddInitializer(function(blankFrame, description, menu)
+			blankFrame:SetSize(300, 25)
+
+			HonorFrame.TypeDropdown:ClearAllPoints()
+			HonorFrame.TypeDropdown:SetAllPoints(blankFrame)
+			HonorFrame.TypeDropdown:SetParent(blankFrame)
+			HonorFrame.TypeDropdown:SetScript("OnHide", function(self)
+				--self:ClearAllPoints()
+			end)
+		end)
+
+		local isBonus = HonorFrame.type == "bonus"
+		local isSpecific = HonorFrame.type == "specific"
+
+		for k, v in ipairs(honorFrames) do
+			local test = topButton:CreateFrame()
+
+			if(v == HonorFrame.SpecificScrollBox) then
+				test:AddInitializer(function(blankFrame, description, menu)
+					blankFrame:SetSize(300, 300)
+		
+					HonorFrame.SpecificScrollBox:ClearAllPoints()
+					HonorFrame.SpecificScrollBox:SetAllPoints(blankFrame)
+					--HonorFrame.SpecificScrollBox.layoutIndex = 1
+					--HonorFrame.SpecificScrollBox:SetSize(blankFrame:GetSize())
+					HonorFrame.SpecificScrollBox:SetParent(blankFrame)
+					HonorFrame.SpecificScrollBox:SetScript("OnHide", function(self)
+						--self:ClearAllPoints()
+					end)
+		
+					HonorFrame.SpecificScrollBar:ClearAllPoints()
+					HonorFrame.SpecificScrollBar:SetPoint("TOPLEFT", HonorFrame.SpecificScrollBox, "TOPRIGHT", 5, 0)
+					HonorFrame.SpecificScrollBar:SetPoint("BOTTOMLEFT", HonorFrame.SpecificScrollBox, "BOTTOMRIGHT", 5, 0)
+					HonorFrame.SpecificScrollBar:SetParent(HonorFrame.SpecificScrollBox)
+					HonorFrame.SpecificScrollBar:SetScript("OnHide", function(self)
+						--self:ClearAllPoints()
+					end)
+		
+				end)
+
+				test:SetShown(isSpecific)
+				specificBox = test
+
+			else
 				test:AddInitializer(function(blankFrame, description, menu)
 					blankFrame:SetSize(300, 25)
 	
@@ -170,35 +209,36 @@ local function addPvpActivities(topButton)
 					v:SetAllPoints(blankFrame)
 					v:SetParent(blankFrame)
 					v:SetScript("OnHide", function(self)
-						self:ClearAllPoints()
+						--self:ClearAllPoints()
 					end)
-
+				end)
+				test:SetScript("OnShow", function(self)
 					miog.hideAllPVPButtonAssets(v)
 				end)
+
+				if(v == HonorFrame.BonusFrame.RandomBGButton) then
+					test:SetShown(isBonus)
+					randomBGFrame = test
+
+				elseif(v == HonorFrame.BonusFrame.RandomEpicBGButton) then
+					test:SetShown(isBonus)
+					randomEpicBGFrame = test
+
+				elseif(v == HonorFrame.BonusFrame.Arena1Button) then
+					test:SetShown(isBonus)
+					arena1Frame = test
+
+				elseif(v == HonorFrame.BonusFrame.BrawlButton) then
+					test:SetShown(isBonus)
+					brawl1Frame = test
+
+				elseif(v == HonorFrame.BonusFrame.BrawlButton2) then
+					test:SetShown(isBonus)
+					brawl2Frame = test
+
+				end
+
 			end
-		elseif(HonorFrame.type == "specific") then
-			local specificBox = topButton:CreateTemplate("VerticalLayoutFrame", "Frame")
-			specificBox:AddInitializer(function(blankFrame, description, menu)
-				blankFrame:SetSize(300, 300)
-	
-				HonorFrame.SpecificScrollBox:ClearAllPoints()
-				HonorFrame.SpecificScrollBox.layoutIndex = 1
-				HonorFrame.SpecificScrollBox:SetSize(blankFrame:GetSize())
-				HonorFrame.SpecificScrollBox:SetParent(blankFrame)
-				HonorFrame.SpecificScrollBox:SetScript("OnHide", function(self)
-					self:ClearAllPoints()
-				end)
-	
-				HonorFrame.SpecificScrollBar:ClearAllPoints()
-				HonorFrame.SpecificScrollBar:SetPoint("TOPLEFT", HonorFrame.SpecificScrollBox, "TOPRIGHT", 5, 0)
-				HonorFrame.SpecificScrollBar:SetPoint("BOTTOMLEFT", HonorFrame.SpecificScrollBox, "BOTTOMRIGHT", 5, 0)
-				HonorFrame.SpecificScrollBar:SetParent(HonorFrame.SpecificScrollBox)
-				HonorFrame.SpecificScrollBar:SetScript("OnHide", function(self)
-					self:ClearAllPoints()
-				end)
-	
-				blankFrame:MarkDirty()
-			end)
 		end
 
 		local honorQueue = topButton:CreateFrame()
@@ -209,16 +249,16 @@ local function addPvpActivities(topButton)
 			HonorFrame.QueueButton:SetAllPoints(blankFrame)
 			HonorFrame.QueueButton:SetParent(blankFrame)
 			HonorFrame.QueueButton:SetScript("OnHide", function(self)
-				self:ClearAllPoints()
+				--self:ClearAllPoints()
 			end)
 		end)
-
-		local spacer1 = topButton:CreateSpacer()
-		local divider = topButton:CreateDivider()
-		local spacer2 = topButton:CreateSpacer()
 	end
 
 	if(ConquestFrame) then
+		local spacer1 = topButton:CreateSpacer()
+		local divider = topButton:CreateDivider()
+		local spacer2 = topButton:CreateSpacer()
+
 		for k, v in ipairs(conquestFrames) do
 			local test = topButton:CreateFrame()
 			test:AddInitializer(function(blankFrame, description, menu)
@@ -228,9 +268,11 @@ local function addPvpActivities(topButton)
 				v:SetAllPoints(blankFrame)
 				v:SetParent(blankFrame)
 				v:SetScript("OnHide", function(self)
-					self:ClearAllPoints()
+					--self:ClearAllPoints()
 				end)
 
+			end)
+			test:SetScript("OnShow", function(self)
 				miog.hideAllPVPButtonAssets(v)
 			end)
 		end
@@ -243,7 +285,7 @@ local function addPvpActivities(topButton)
 			ConquestFrame.JoinButton:SetAllPoints(blankFrame)
 			ConquestFrame.JoinButton:SetParent(blankFrame)
 			ConquestFrame.JoinButton:SetScript("OnHide", function(self)
-				self:ClearAllPoints()
+				--self:ClearAllPoints()
 			end)
 		end)
 	end
@@ -315,7 +357,7 @@ local function refreshDungeonList()
 					subtypeID = subtypeID,
 					dungeonID = dungeonID,
 					icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or fileID or miog.EXPANSION_INFO[expLevel][3] or nil,
-					expansionLevel = expLevel,
+					expansionLevel = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel or miog.LFG_DUNGEONS_INFO[dungeonID] and miog.LFG_DUNGEONS_INFO[dungeonID].expansionLevel or expLevel,
 				})
 			end
 		end
@@ -503,7 +545,7 @@ local function setupQueueDropdown(rootDescription)
 							
 						end
 
-						queueButton = activityButton:CreateCheckbox(dungeonInfo.name, function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end, function(dungeonID)
+						queueButton = activityButton:CreateCheckbox(dungeonInfo.name .. " " .. (dungeonInfo.subtypeID == 1 and PLAYER_DIFFICULTY1 or dungeonInfo.subtypeID == 2 and PLAYER_DIFFICULTY2 or ""), function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end, function(dungeonID)
 							selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
 
 							LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
@@ -551,14 +593,14 @@ local function setupQueueDropdown(rootDescription)
 				if(queueButton) then
 					queueButton:AddInitializer(function(button, description, menu)
 						if(dungeonInfo.icon) then
-							local leftTexture = button:AttachTexture(dungeonInfo.icon);
-							--[[leftTexture:SetSize(16, 16);
+							local leftTexture = button:AttachTexture();
+							leftTexture:SetSize(16, 16);
 							leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
 							leftTexture:SetTexture(dungeonInfo.icon);
 			
 							button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
 			
-							return button.fontString:GetUnboundedStringWidth() + 18 + 5]]
+							return button.fontString:GetUnboundedStringWidth() + 18 + 5
 						end
 					end)
 				end
@@ -978,7 +1020,9 @@ local function hideAllPVPButtonAssets(button)
 
 	end
 
-	button.Reward:Hide()
+	if(button.Reward) then
+		button.Reward:Hide()
+	end
 end
 
 miog.hideAllPVPButtonAssets = hideAllPVPButtonAssets
@@ -1382,7 +1426,7 @@ local function activityEvents(_, event, ...)
 		refreshDungeonList()
     end
 
-	miog.updateDropDown()
+	--miog.updateDropDown()
 end
 
 miog.loadActivityChecker = function()
@@ -1398,11 +1442,24 @@ miog.loadActivityChecker = function()
 	
 	if(HonorFrame.TypeDropdown) then
 		hooksecurefunc("HonorFrame_SetTypeInternal", function(value)
-			randomBGFrame:SetShown(value == "bonus")
-			randomEpicBGFrame:SetShown(value == "bonus")
+			local isBonus = value == "bonus"
+			local isSpecific = value == "specific"
 
-			specificBox:SetShown(value == "specific")
+			randomBGFrame:SetShown(isBonus)
+
+			randomEpicBGFrame:SetShown(isBonus)
+
+			arena1Frame:SetShown(isBonus)
+
+			brawl1Frame:SetShown(isBonus)
+
+			brawl2Frame:SetShown(isBonus)
+
+			specificBox:SetShown(isSpecific)
+
 			specificBox:GetParent():MarkDirty()
+
+			--HonorFrame.TypeDropdown:GetParent():GetParent():MarkDirty()
 		end)
 	end
 

@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.0.13] - 2024-12-27
+
+### Changed
+
+- [MainFrame] Transitioned the queue dropdown to Blizzard's new menus.
+
+- [MainFrame] The requeue button and the cancel buttons on the queue frames have been updated.
+
+- [FilterPanel] When a class/spec filter has been changed the class row will now have a white border to make it visually clear that a filter is active.
+
+- [AdventureJournal] The journal has been disabled temporarily.
+The base idea is good, showing you the difference between all difficulties without switching between them and having a M+ keylevel scalar integrated but it currently only works when the text is 100% the same except the number.
+This feature will be re-enabled in v3.1.0.
+
+### Fixed
+
+- [ApplicationViewer] M+ applicant entries will now show the correct completed keylevel for your listed dungeon again.
+
+
+
 ## [3.0.12] - 2024-12-21
 
 ### Fixed
@@ -2960,7 +2980,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.11..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.13..HEAD
+[3.0.13]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.13
+[3.0.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.12
 [3.0.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.11
 [3.0.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.10
 [3.0.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.9

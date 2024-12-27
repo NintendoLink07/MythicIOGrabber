@@ -1,0 +1,38 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_FakeDropdownButton" mixin="FakeDropdownListMixin" virtual="true">
+        <HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" setAllPoints="true" />
+
+        <Frames>
+            <CheckButton parentKey="Radio" inherits="UIRadioButtonTemplate" hidden="true">
+                <NormalTexture atlas="common-dropdown-tickradial" useAtlasSize="true" />
+                <CheckedTexture atlas="common-dropdown-icon-radialtick-yellow" useAtlasSize="true" />
+
+                <Size x="19" y="19" />
+                <Anchors>
+                    <Anchor point="LEFT" x="-3"/>
+                </Anchors>
+            </CheckButton>
+
+            <CheckButton parentKey="Checkbox" inherits="UICheckButtonTemplate" hidden="true">
+                <NormalTexture atlas="common-dropdown-ticksquare" useAtlasSize="true" />
+                <CheckedTexture atlas="common-dropdown-icon-checkmark-yellow" useAtlasSize="true" />
+
+                <Size x="12" y="12" />
+                <Anchors>
+                    <Anchor point="LEFT" x="2"/>
+                </Anchors>
+            </CheckButton>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+</Ui>

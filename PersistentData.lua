@@ -778,9 +778,6 @@ miog.BATTLEMASTER_INFO = {
 
 }
 
-miog.JOURNAL_INSTANCE_INFO = {
-}
-
 for k, v in pairs(miog.RAW["BattlemasterList"]) do
 	miog.BATTLEMASTER_INFO[v[1]] = {
 		name = v[2],

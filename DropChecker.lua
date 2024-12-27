@@ -309,7 +309,7 @@ miog.loadDropChecker = function()
 
     dropChecker.SlotDropdown:SetDefaultText("Equipment slots")
     dropChecker.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
-        rootDescription:CreateButton("Clear", function(index)
+        rootDescription:CreateButton(CLEAR_ALL, function(index)
             selectedItemClass = nil
             selectedItemSubClass = nil
             C_EncounterJournal.ResetSlotFilter()
@@ -366,7 +366,7 @@ miog.loadDropChecker = function()
 
     dropChecker.ArmorDropdown:SetDefaultText("Armor types")
     dropChecker.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
-        rootDescription:CreateButton("Clear", function(index)
+        rootDescription:CreateButton(CLEAR_ALL, function(index)
             selectedArmor = nil
             selectedClass = nil
             selectedSpec = nil
@@ -379,7 +379,7 @@ miog.loadDropChecker = function()
 
         local classButton = rootDescription:CreateButton("Classes")
 
-        classButton:CreateButton("Clear", function(index)
+        classButton:CreateButton(CLEAR_ALL, function(index)
             selectedClass = nil
             selectedSpec = nil
             EJ_ResetLootFilter()
@@ -419,7 +419,7 @@ miog.loadDropChecker = function()
 
         local armorButton = rootDescription:CreateButton("Armor")
 
-        armorButton:CreateButton("Clear", function(index)
+        armorButton:CreateButton(CLEAR_ALL, function(index)
             selectedArmor = nil
 
             checkAllItemIDs()

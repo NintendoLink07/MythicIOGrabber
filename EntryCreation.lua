@@ -27,19 +27,26 @@ local function setUpRatingLevels(entryCreation)
 
 	end
 
-	for k, v in ipairs(scoreTable) do
-		if(v >= 0) then
-			local info = {}
+	local selectedValue
 
-			info.text = v
-			info.value = v
-			info.checked = false
-			info.func = function() entryCreation.Rating:SetText(v) end
+	entryCreation.Rating.DropDown:SetupMenu(function(dropdown, rootDescription)
+		local clearButton = rootDescription:CreateButton(CLEAR_ALL, function()
+			selectedValue = nil
+			miog.EntryCreation.Rating:SetText("")
 
-			entryCreation.Rating.DropDown:CreateEntryFrame(info)
-		end
+		end)
+
+		for k, v in ipairs(scoreTable) do
+			if(v >= 0) then
+				local button = rootDescription:CreateRadio(v, function(value) return value == selectedValue end, function(value)
+					selectedValue = value
+					miog.EntryCreation.Rating:SetText(selectedValue)
 		
-	end
+				end, v)
+			end
+	
+		end
+	end)
 end
 
 local function setUpItemLevels(entryCreation)
@@ -56,22 +63,28 @@ local function setUpItemLevels(entryCreation)
 
 	if(itemLevelTable[5] ~= miog.round(avgItemLevelEquipped, 0)) then
 		itemLevelTable[6] = miog.round(avgItemLevelEquipped, 0)
-
 	end
+		
+	local selectedValue
 
-	for k, v in ipairs(itemLevelTable) do
-		if(v >= 0) then
-			local info = {}
+	entryCreation.ItemLevel.DropDown:SetupMenu(function(dropdown, rootDescription)
+		local clearButton = rootDescription:CreateButton(CLEAR_ALL, function()
+			selectedValue = nil
+			miog.EntryCreation.ItemLevel:SetText("")
 
-			info.text = v
-			info.value = v
-			info.checked = false
-			info.func = function() entryCreation.ItemLevel:SetText(v) end
+		end)
 
-			entryCreation.ItemLevel.DropDown:CreateEntryFrame(info)
+		for k, v in ipairs(itemLevelTable) do
+			if(v >= 0) then
+				local button = rootDescription:CreateRadio(v, function(value) return value == selectedValue end, function(value)
+					selectedValue = value
+					miog.EntryCreation.ItemLevel:SetText(selectedValue)
+		
+				end, v)
+			end
+	
 		end
-
-	end
+	end)
 end
 
 local function setUpPlaystyleDropDown()
@@ -91,7 +104,6 @@ end
 
 local function setUpDifficultyDropDown()
 	miog.EntryCreation.DifficultyDropDown:SetupMenu(function(dropdown, rootDescription)
-		print(LFGListFrame.EntryCreation.selectedCategory, LFGListFrame.EntryCreation.selectedGroup, LFGListFrame.EntryCreation.selectedFilters)
 		local unsortedActivities = C_LFGList.GetAvailableActivities(LFGListFrame.EntryCreation.selectedCategory, LFGListFrame.EntryCreation.selectedGroup);
 		local activities = {}
 
@@ -613,14 +625,7 @@ miog.createEntryCreation = function()
 	activityFinder:SetPoint("BOTTOMRIGHT", entryCreation, "BOTTOMRIGHT")
 	activityFinder:SetFrameStrata("DIALOG")
 
-	entryCreation.ItemLevel.DropDown.Selected:Hide()
-	entryCreation.ItemLevel.DropDown.Button:Show()
-	entryCreation.ItemLevel.DropDown:OnLoad()
 	setUpItemLevels(entryCreation)
-
-	entryCreation.Rating.DropDown.Selected:Hide()
-	entryCreation.Rating.DropDown.Button:Show()
-	entryCreation.Rating.DropDown:OnLoad()
 	setUpRatingLevels(entryCreation)
 
 	return entryCreation

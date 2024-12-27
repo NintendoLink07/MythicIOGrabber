@@ -99,12 +99,12 @@
                 </Scripts>
 
                 <Frames>
-                    <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                    <DropdownButton parentKey="DropDown" inherits="WowStyle1ArrowDropdownTemplate">
+                        <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                            <Anchor point="RIGHT" x="1"/>
                         </Anchors>
-                    </Frame>
+                    </DropdownButton>
                 </Frames>
             </EditBox>
 
@@ -139,12 +139,12 @@
                 </Scripts>
 
                 <Frames>
-                    <Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown">
+                    <DropdownButton parentKey="DropDown" inherits="WowStyle1ArrowDropdownTemplate">
+                        <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                            <Anchor point="RIGHT" x="1"/>
                         </Anchors>
-                    </Frame>
+                    </DropdownButton>
                 </Frames>
             </EditBox>
 
