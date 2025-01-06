@@ -2188,7 +2188,6 @@ miog.RAW["GroupFinderActivity"] = { -- https://wago.tools/db2/GroupFinderActivit
     {1329,"Throne of Thunder (10 Normal)","10 Normal",3,1,83,35,0,0,1098,3,0,10,0,0,},
     {1328,"Throne of Thunder (10 Heroic)","10 Heroic",3,3,83,35,0,0,1098,5,0,10,0,0,},
     {1364,"A Little Patience (Normal)","Normal",5,0,353,546,0,923,1104,12,0,3,1,0,0},
-
 }
 
 miog.RAW["BattlemasterList"] = { -- https://wago.tools/db2/BattlemasterList

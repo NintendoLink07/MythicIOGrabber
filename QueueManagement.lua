@@ -39,18 +39,15 @@ local function resetQueueFrame(_, frame)
 
 		local objectType = frame:GetObjectType()
 
-		if(objectType == "Frame") then
+		if(objectType == "Button") then
 			frame:SetScript("OnMouseDown", nil)
 			frame:SetScript("OnEnter", nil)
-			frame:SetScript("OnLeave", nil)
 			frame.Name:SetText("")
 			frame.Name:SetTextColor(1,1,1,1)
 			frame.Age:SetText("")
 			frame.Background:SetTexture(nil)
 			frame:SetAlpha(1)
 
-			frame:ClearBackdrop()
-			
 			frame.CancelApplication:RegisterForClicks("LeftButtonDown")
 			frame.CancelApplication:SetAttribute("type", nil)
 			frame.CancelApplication:SetAttribute("macrotext1", nil)
@@ -74,8 +71,6 @@ local function createQueueFrame(queueInfo)
 		if(not queueSystem.queueFrames[queueInfo[18]]) then
 			queueFrame = queueSystem.framePool:Acquire()
 			queueFrame.ActiveIDFrame:Hide()
-
-			--miog.createFrameBorder(queueFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 			queueSystem.queueFrames[queueInfo[18]] = queueFrame
 
 			queueFrameIndex = queueFrameIndex + 1
@@ -84,8 +79,6 @@ local function createQueueFrame(queueInfo)
 		end
 
 		queueFrame:SetWidth(miog.MainTab.QueueInformation.Panel:GetWidth() - 7)
-		
-		--queueFrame:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_2):GetRGBA())
 
 		queueFrame.Name:SetText(queueInfo[11])
 
@@ -117,6 +110,9 @@ local function createQueueFrame(queueInfo)
 			end
 		end
 
+		queueFrame.Age:SetText(miog.secondsToClock(ageNumber or 0))
+		queueFrame.Wait:SetText("(" .. (queueInfo[12] ~= -1 and miog.secondsToClock(queueInfo[12] or 0) or "N/A") .. ")")
+
 		if(queueInfo[30]) then
 			local isHQ = miog.isMIOGHQLoaded()
 			
@@ -134,19 +130,9 @@ local function createQueueFrame(queueInfo)
 
 		end
 
-		queueFrame.Age:SetText(miog.secondsToClock(ageNumber or 0))
-
-		--if(queueInfo[20]) then
-			--queueFrame.Icon:SetTexture(queueInfo[20])
-		--end
-
-		queueFrame.Wait:SetText("(" .. (queueInfo[12] ~= -1 and miog.secondsToClock(queueInfo[12] or 0) or "N/A") .. ")")
-
-		queueFrame:SetShown(true)
+		queueFrame:Show()
 
 		miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
-
-		queueFrame:GetParent():MarkDirty()
 
 		return queueFrame
 
@@ -204,9 +190,9 @@ local function updateFakeGroupApplications()
 
 									GameTooltip:Show()
 								end)
-								frame:SetScript("OnLeave", function()
-									GameTooltip:Hide()
-								end)
+
+								frame.CancelApplication:SetAttribute("type", "macro")
+								frame.CancelApplication:SetAttribute("macrotext1", "/run MIOG_DeletePartyGUID(" .. tostring(searchResultInfo.partyGUID) .. ")")
 							end
 						end
 					end
@@ -241,9 +227,11 @@ local function updateAllPVEQueues()
 				mode, submode = GetLFGMode(categoryID, queueID);
 				local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
 
-				table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
-
 				if(mode == "queued" and activeID == queueID or categoryID == LE_LFG_CATEGORY_RF) then
+					if(isSpecificQueue) then
+						table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
+					end
+
 					local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
 
 					local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
@@ -259,7 +247,7 @@ local function updateAllPVEQueues()
 						[18] = queueID,
 						[20] = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
 						or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
-						[30] = miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].horizontal or (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].horizontal
+						[30] = miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].horizontal or (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].horizontal or fileID
 					}
 
 					local frame
@@ -276,22 +264,8 @@ local function updateAllPVEQueues()
 
 						else
 							frame.ActiveIDFrame:Hide()
-
-							--[[if(categoryID == 1) then
-								frame.CancelApplication:SetScript("OnEnter", function(self)
-									GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
-									GameTooltip_AddErrorLine(GameTooltip, "This will also cancel all group finder applications!")
-									GameTooltip:Show()
-								end)
-
-							end]]
 						
 						end
-
-						--[[frame.CancelApplication:SetScript("OnClick", function()
-							LeaveSingleLFG(categoryID, queueID)
-						end)]]
-						
 					
 						frame.CancelApplication:SetAttribute("type", "macro")
 						frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
@@ -404,13 +378,11 @@ local function updateAllPVEQueues()
 	
 							GameTooltip:Show()
 						end)
-
-						frame:SetScript("OnLeave", GameTooltip_Hide)
 					end
 				end
 			end
 		
-			if(activeID) then
+			--[[if(activeID) then
 				if ( mode == "queued" ) then
 
 					local inParty, joined, queued, noPartialClear, achievements, lfgComment, slotCount, _, leader, tank, healer, dps = GetLFGInfoServer(categoryID, activeID);
@@ -434,7 +406,7 @@ local function updateAllPVEQueues()
 				elseif ( mode == "rolecheck" ) then
 					--QueueStatusEntry_SetMinimalDisplay(entry, GetDisplayNameFromCategory(category), QUEUED_STATUS_ROLE_CHECK_IN_PROGRESS, subTitle, extraText);
 				elseif ( mode == "lfgparty" or mode == "abandonedInDungeon" ) then
-					--[[local title;
+					-- local title;
 					if (C_PvP.IsInBrawl()) then
 						local brawlInfo = C_PvP.GetActiveBrawlInfo();
 						if (brawlInfo and brawlInfo.canQueue and brawlInfo.longDescription) then
@@ -449,11 +421,11 @@ local function updateAllPVEQueues()
 						title = GetDisplayNameFromCategory(category);
 					end
 					
-					QueueStatusEntry_SetMinimalDisplay(entry, title, QUEUED_STATUS_IN_PROGRESS, subTitle, extraText);]]
+					QueueStatusEntry_SetMinimalDisplay(entry, title, QUEUED_STATUS_IN_PROGRESS, subTitle, extraText);] ]
 				else
 					--QueueStatusEntry_SetMinimalDisplay(entry, GetDisplayNameFromCategory(category), QUEUED_STATUS_UNKNOWN, subTitle, extraText);
 				end
-			end
+			end]]
 			
 			queueIndex = queueIndex + 1
 		end
@@ -487,10 +459,6 @@ local function updateCurrentListing()
 
 		if(frame) then
 			frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
-			--[[frame.CancelApplication:SetScript("OnClick", function()
-				C_LFGList.RemoveListing()
-			end)]]
-
 			frame.CancelApplication:SetAttribute("type", "macro")
 			frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
 
@@ -510,13 +478,7 @@ local function updateCurrentListing()
 
 				GameTooltip:Show()
 			end)
-			frame:SetScript("OnLeave", function(self)
-				self.BackgroundHover:Hide()
-				GameTooltip:Hide()
-			end)
 		end
-
-		--createQueueFrame(categoryID, {GetLFGDungeonInfo(activeID)}, {GetLFGQueueStats(categoryID)})
 	end
 end
 
@@ -533,7 +495,6 @@ local function updateGroupApplications()
 				local identifier = "APPLICATION_" .. id
 
 				if(appStatus == "applied") then
-
 					local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
 					local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 					local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
@@ -587,9 +548,6 @@ local function updateGroupApplications()
 
 							GameTooltip:Show()
 						end)
-						frame:SetScript("OnLeave", function()
-							GameTooltip:Hide()
-						end)
 					end
 
 					queueIndex = queueIndex + 1
@@ -640,7 +598,7 @@ local function updatePVPQueues()
 			local queuedTime = GetTime() - GetBattlefieldTimeWaited(i) / 1000
 			local estimatedTime = GetBattlefieldEstimatedWaitTime(i) / 1000
 			local assignedSpec = C_PvP.GetAssignedSpecForBattlefieldQueue(i);
-			local allowsDecline = PVPHelper_QueueAllowsLeaveQueueWithMatchReady(queueType)
+			--local allowsDecline = PVPHelper_QueueAllowsLeaveQueueWithMatchReady(queueType)
 			
 			local frameData = {
 				[1] = true,
@@ -656,37 +614,40 @@ local function updatePVPQueues()
 
 			if (mapName and queuedTime) then
 				frame = createQueueFrame(frameData)
-				--frame.CancelApplication:Hide()
 
 				if(frame) then
 					local mapIDTable = miog.findBattlegroundMapIDsByName(mapName) or miog.findBrawlMapIDsByName(mapName)
+					local texture
 
 					if(mapName == "Random Epic Battleground") then
-						frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/epicbgs.png")
+						texture = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/epicbgs.png"
 
 					elseif(mapName == "Random Battleground") then
-						frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/normalbgs.png")
+						texture = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/normalbgs.png"
 
 					elseif(mapIDTable and #mapIDTable > 0) then
-						local counter = 0
-						local randomNumber = random(1, #mapIDTable)
+						if(#mapIDTable == 1) then
+							texture = miog.MAP_INFO[mapIDTable[1]].horizontal
+							
+						elseif(#mapIDTable > 1) then
+							local counter = 0
+							local randomNumber = random(1, #mapIDTable)
 
-						for k, v in pairs(mapIDTable) do
-							counter = counter + 1
+							for k, v in pairs(mapIDTable) do
+								counter = counter + 1
 
-							if(counter == randomNumber) then
-								frame.Background:SetTexture(miog.MAP_INFO[v].horizontal)
-								break
+								if(counter == randomNumber) then
+									texture = miog.MAP_INFO[mapIDTable[v]].horizontal
+									break
+								end
 							end
 						end
-					else
-						frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png")
-					
 					end
+
+					frame.Background:SetTexture(texture or miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png")
 
 					frame:SetScript("OnEnter", function(self)
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-
 						GameTooltip:SetText(mapName, 1, 1, 1, true);
 
 						if(role ~= "") then
@@ -712,10 +673,6 @@ local function updatePVPQueues()
 						end
 
 						GameTooltip:Show()
-					end)
-
-					frame:SetScript("OnLeave", function()
-						GameTooltip:Hide()
 					end)
 				end
 			end
@@ -747,7 +704,6 @@ local function updateWorldPVPQueues()
 	for i=1, MAX_WORLD_PVP_QUEUES do
 		local status, mapName, queueID, expireTime, averageWaitTime, queuedTime, suspended = GetWorldPVPQueueStatus(i)
 		if ( status and status ~= "none" ) then
-			--QueueStatusEntry_SetUpWorldPvP(entry, i);
 			local frameData = {
 				[1] = true,
 				[2] = "",
@@ -760,7 +716,6 @@ local function updateWorldPVPQueues()
 	
 			if (status == "queued") then
 				local frame = createQueueFrame(frameData)
-				--frame.Icon:Show()
 	
 				if(frame) then
 					frame.CancelApplication:SetAttribute("type", "macro")
@@ -770,7 +725,7 @@ local function updateWorldPVPQueues()
 	
 				queueIndex = queueIndex + 1
 	
-			elseif(status == "proposal") then
+			--elseif(status == "proposal") then
 				
 			
 			end
@@ -790,7 +745,6 @@ local function updateWorldPVPQueues()
 		}
 
 		local frame = createQueueFrame(frameData)
-		--frame.Icon:Show()
 
 		if(frame) then
 			frame.CancelApplication:SetAttribute("type", "macro")
@@ -828,7 +782,7 @@ local function updatePetBattleQueue()
 
 			queueIndex = queueIndex + 1
 
-		elseif(pbStatus == "proposal") then
+		--elseif(pbStatus == "proposal") then
 		
 		end
 	end
@@ -836,8 +790,8 @@ end
 
 local function checkQueues()
 	if(not InCombatLockdown()) then
-		queueSystem.queueFrames = {}
 		queueSystem.framePool:ReleaseAll()
+		queueSystem.queueFrames = {}
 		queueIndex = 1
 
 		updateAllPVEQueues()
@@ -896,19 +850,19 @@ local function createFilterPopup()
 end
 
 miog.loadQueueSystem = function()
-	queueSystem.framePool = CreateFramePool("Frame", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
+	queueSystem.framePool = CreateFramePool("Button", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
 
 	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
 
-	eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-	eventReceiver:RegisterEvent("LFG_UPDATE")
-	eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-	eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-	eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
-	eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-	eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
-	eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
+	--eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+	--eventReceiver:RegisterEvent("LFG_UPDATE")
+	--eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
+	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+	--eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+	--eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
+	--eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 	eventReceiver:SetScript("OnEvent", miog.queueEvents)
 
@@ -920,7 +874,6 @@ local function queueEvents(_, event, ...)
 		if(miog.F.UPDATE_AFTER_COMBAT) then
 			miog.F.UPDATE_AFTER_COMBAT = false
 
-			--miog.updateDropDown()
 			checkQueues()
 		end
 	end

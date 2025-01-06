@@ -4,7 +4,7 @@ local regex1 = "%d+ [D-d]amage"
 local regex2 = "%d+ %w+ [D-d]amage"
 local regex3 = "%d+ %w+ %w+ [D-d]amage"
 
-local selectedInstance, expansionTable, selectedTier, selectedEncounter
+local selectedInstance, expansionTable, selectedEncounter
 
 local journalInfo = {}
 
@@ -114,26 +114,24 @@ local frameWidth
 local function resetJournalFrames(_, frame)
     frame:Hide()
     frame.layoutIndex = nil
-    frame.Name:SetText("")
+
     frame.Icon:SetTexture(nil)
-    frame.ExpandFrame:Show()
-    frame.leftPadding = nil
-    frame.difficultyFrames = nil
-    frame.spellID = nil
+    frame.Title:SetText("")
 
-    if(not changingKeylevel) then
-        frame.ExpandFrame:SetState(0)
-        frame.DetailedInformation:Hide()
-    end
+    frame.Base.Name:SetText("")
+    frame.Base.Description:SetText("")
 
-    frame.SwitchPanel:Hide()
-    frame.DetailedInformation.Base:Show()
+    frame.Diff1.Name:SetText("")
+    frame.Diff1.Description:SetText("")
 
-    frame.DetailedInformation.Base.Name:SetText("")
-    frame.DetailedInformation.Base.Description:SetText("")
-    frame.DetailedInformation.Base.fixedWidth = frameWidth
+    frame.Diff2.Name:SetText("")
+    frame.Diff2.Description:SetText("")
 
-    frame.DetailedInformation.Difficulties.fixedWidth = frameWidth
+    frame.Diff3.Name:SetText("")
+    frame.Diff3.Description:SetText("")
+
+    frame.Diff4.Name:SetText("")
+    frame.Diff4.Description:SetText("")
 end
 
 local function resetSwitchFrames(_, frame)
@@ -577,9 +575,9 @@ local function selectInstance(journalInstanceID)
     selectedInstance = journalInstanceID
     selectedEncounter = nil
 
-    retrieveDifficultyIDs()
-
     EJ_SelectInstance(selectedInstance)
+
+    retrieveDifficultyIDs()
 end
 
 local function checkIfItemIsFiltered(item)
@@ -733,19 +731,90 @@ local function retrieveEncounterCreatureInfo()
     miog.AdventureJournal.ModelScene.List.Container:MarkDirty()
 end
 
+local function compareTexts(needles, haystack)
+    local text = ""
+
+    local needleArray = miog.simpleSplit(needles, "%s") or {}
+    local haystackArray = miog.simpleSplit(haystack, "%s") or {}
+
+    local array = {}
+
+    local isNextEqualAgain = false
+    local counter = 1
+
+    for index, needle in ipairs(needleArray) do
+        if(needle == haystackArray[index]) then
+            text = text .. needle .. " "
+            
+        else
+            text = text .. "[" .. counter .. "] "
+            counter = counter + 1
+
+            tinsert(array, needle)
+
+            isNextEqualAgain = haystackArray[index + 1] == needleArray[index + 1]
+
+            if(isNextEqualAgain) then
+                
+
+            end
+        end
+    end
+   
+    --print(counter > 1, text)
+
+    return counter > 1, array, text
+end
+
+local function compareTexts2(needles, haystackString)
+    local haystackArray = miog.simpleSplit(haystackString, "%s")
+
+    local text = ""
+
+    local differences = {}
+    local counter = 1
+
+    for needle in needles:gmatch("%S+") do
+        local result = miog.fzy.has_match(needle, haystackString, true)
+
+        if(result) then
+            text = text .. needle .. " "
+
+        else
+            text = text .. "[HERE-" .. counter .. "] "
+            tinsert(differences, {needle = needle, haystack = haystackArray[counter]})
+
+        end
+
+        counter = counter + 1
+    end
+
+    return differences, text
+end
+
+local function findNumberInText(text)
+    for word in text:gmatch("%S+") do
+        if(tonumber(word)) then
+            print(word)
+        end
+    end
+end
+
+local function compareAllAvailableDescriptions(array)
+
+end
+
 local function selectEncounter(encounterID)
     selectedEncounter = encounterID
     EJ_SelectEncounter(selectedEncounter)
 
-    basePool:ReleaseAll()
-    difficultyPool:ReleaseAll()
-    switchPool:ReleaseAll()
-
     local stack = {}
-    local sections = {}
+    local sectionInfo = {}
 
-    for x = 1, #currentDifficultyIDs, 1 do
-        --EJ_SetDifficulty(currentDifficultyIDs[x])
+    local oneIsMissing = false
+
+    for k, v in ipairs(currentDifficultyIDs) do
+        EJ_SetDifficulty(v)
 
         local _, _, _, rootSectionID = EJ_GetEncounterInfo(encounterID)
 
@@ -753,6 +822,8 @@ local function selectEncounter(encounterID)
             local info = C_EncounterJournal.GetSectionInfo(rootSectionID)
 
             if(info) then
+                sectionInfo[rootSectionID] = sectionInfo[rootSectionID] or {}
+
                 table.insert(stack, info.siblingSectionID)
 
                 if(info.title) then
@@ -760,14 +831,439 @@ local function selectEncounter(encounterID)
                         table.insert(stack, info.firstChildSectionID)
 
                     end
+
+                    --oneIsMissing = info.description == nil
+
+                    --if(info.filteredByDifficulty ~= true) then
+                        if(info.description ~= "") then
+                            info.difficulty = v
+                            info.rootSectionID = rootSectionID
+                            --info.difficultyData = {}
+            
+                            table.insert(sectionInfo[rootSectionID], info)
+                        end
+
+
+                    --end
                 end
 
-                sections[rootSectionID] = true
             end
             
             rootSectionID = table.remove(stack)
         until not rootSectionID
     end
+
+    --[[if(oneIsMissing) then
+        C_Timer.After(2, function()
+            print("RESET")
+            selectEncounter(encounterID)
+        end)
+    end]]
+
+    --DevTools_Dump(sectionInfo[30135])
+
+    local info1, info2
+    local sectionText
+    local mainOffset, otherOffset
+    local finalText
+
+    --local sectionDiffArray = {}
+    --local sectionID = 30135
+    --local v = sectionInfo[sectionID]
+
+    local provider = CreateDataProvider()
+
+    local compareLowestAndHighest = false
+
+    for sectionID, v in pairs(sectionInfo) do
+        finalText = ""
+
+        local noChange = true
+
+        for k, sectionData in ipairs(v) do
+
+            if(#v == 1) then
+                finalText = sectionData.description
+
+            else
+                sectionText = ""
+
+                if(sectionData.spellID == 385574) then
+                    --print(sectionData.description)
+                end
+    
+                info1 = v[compareLowestAndHighest and k or 1]
+                info2 = v[k + 1]
+    
+                if(compareLowestAndHighest and info1 and not info2 and k == #v) then
+                    info2 = v[1]
+    
+                end
+    
+                if(info1 and info2) then
+                    local currentSize
+                    local diffArray1, diffArray2, sameArray = TEXTCOMP_COMPARETEXTS(info1.description, info2.description)
+
+                    if(#diffArray1 > 0 or #diffArray2 > 0) then
+                        noChange = false
+                    end
+
+                    if(sectionData.spellID == 434776 and info2.difficulty == 16) then
+                        --DevTools_Dump(diffArray1)
+                        --DevTools_Dump(diffArray2)
+                    end
+    
+                    --tinsert(sectionData.difficultyData, diffArray)
+    
+                    --if(sectionData.spellID == 445268) then
+                        local tempText = ""
+    
+                        for x, y in ipairs(diffArray1) do
+                            currentSize = #y
+    
+                            for a, b in ipairs(y) do
+                                if(b.needle) then
+                                    tempText = tempText .. b.needle .. " "
+    
+                                end
+                            end
+    
+                            --print(info1.difficulty, x, tempText)
+                        end
+    
+                        if(not compareLowestAndHighest and k == 1) then
+                            info1.difficultyText = tempText
+    
+                            local tempFinalText
+    
+                            for x, y in ipairs(sameArray) do
+                                tempFinalText = nil
+    
+                                for a, b in ipairs(y) do
+                                    if(b.needle) then
+                                        tempFinalText = tempFinalText and (tempFinalText .. " " .. b.needle) or b.needle
+        
+                                    end
+                                end
+    
+                                if(tempFinalText) then 
+                                    if(x ~= #sameArray) then
+                                        tempFinalText = tempFinalText .. "."
+    
+                                    end
+    
+                                    finalText = finalText .. tempFinalText .. "\n\r"
+    
+                                end
+        
+                                --print("SAME", tempText)
+    
+                            end
+                        end
+    
+                        tempText = ""
+    
+                        if(info2.difficulty == 16) then
+                            --DevTools_Dump(diffArray2)
+                        end
+    
+                        for x, y in ipairs(diffArray2) do
+                            if(currentSize ~= #y) then
+                                sameSize = false
+                            end
+    
+                            for a, b in ipairs(y) do
+                                if(b.needle) then
+                                    tempText = tempText .. b.needle .. " "
+    
+                                end
+                            end
+    
+                            --print(info2.difficulty, x, tempText)
+                        end
+    
+                        info2.difficultyText = tempText
+    
+                        --print("WAS THE SAME SIZE?", sameSize)
+                            --print(sectionData.description)
+                    --end
+                    --[[otherOffset, mainOffset = 0, 0
+                    
+                    local needleArray = miog.simpleSplit(info1.description, "%s") or {}
+                    local haystackArray = miog.simpleSplit(info2.description, "%s") or {}
+                
+                    local isNextEqualAgain = false
+                    local counter = 1
+                    local mainArray = needleArray
+                    local otherArray = haystackArray
+                
+                    for index, needle in ipairs(mainArray) do
+                        local needleWithOffset = mainArray[index + mainOffset]
+    
+                        if(needleWithOffset) then
+                            if(needleWithOffset == otherArray[index + otherOffset]) then
+                                sectionText = sectionText .. needleWithOffset .. " "
+                                
+                            else
+                                sectionText = sectionText .. "[" .. counter .. "] "
+    
+                                tinsert(sectionData.difficultyData, {needle = needleWithOffset, index = counter})
+                                counter = counter + 1
+                    
+                                isNextEqualAgain = otherArray[index + otherOffset + 1] == mainArray[index + mainOffset + 1]
+                    
+                                if(isNextEqualAgain) then
+                                    
+                    
+                                else
+                                    if(otherArray[index + otherOffset + 1] == "million") then
+                                        otherOffset = otherOffset + 1
+    
+                                    --elseif(#mainArray > #otherArray and mainArray[index + mainOffset + 1] == "million") then
+                                        --mainOffset = mainOffset + 1
+    
+                                    end
+                                end
+                            end
+                        end
+                    end]]
+    
+                    --finalText = sameText
+    
+                    --sectionData.difficultyData.text = diffText
+    
+                    --sectionData.difficultyText = diffText
+                end
+
+            end
+        end
+
+
+        --[[
+
+        for k, _ in ipairs(v) do
+            sectionText = ""
+
+            info1 = finalText and {description = finalText} or v[k]
+            info2 = v[k + 1]
+
+            if(info1 and not info2 and k == #v) then
+                info2 = v[1]
+
+            end
+            
+            if(info1 and info2) then
+                local needleArray = miog.simpleSplit(info1.description, "%s") or {}
+                local haystackArray = miog.simpleSplit(info2.description, "%s") or {}
+
+                local isNextEqualAgain = false
+                local counter = 1
+
+                for index, needle in ipairs(needleArray) do
+                    if(needle == haystackArray[index]) then
+                        sectionText = sectionText .. needle .. " "
+                        
+                    else
+                        sectionText = sectionText .. "[" .. counter .. "] "
+
+                        counter = counter + 1
+            
+                        isNextEqualAgain = haystackArray[index + 1] == needleArray[index + 1]
+            
+                        if(isNextEqualAgain) then
+                            
+            
+                        end
+                    end
+                end
+
+                finalText = sectionText
+            end
+        end]]
+        
+        provider:Insert({sectionInfo = v, base = finalText})
+    end
+
+    for index, data in ipairs(provider.collection) do
+        if(#data.sectionInfo > 0) then
+            local frame = basePool:Acquire()
+
+            frame.layoutIndex = index
+            frame.fixedWidth = frameWidth
+
+            frame.Title:SetText(data.sectionInfo[1].title .. ", " .. data.sectionInfo[1].spellID)
+            frame.Base.Description:SetText(data.base)
+            frame.Base:MarkDirty()
+            frame.Icon:SetTexture(data.sectionInfo[1].abilityIcon)
+
+
+            for k, v in ipairs(currentDifficultyIDs) do
+                frame["Diff" .. k].Name:SetText(GetEJDifficultyString(v))
+            end
+
+            for k, v in ipairs(data.sectionInfo) do
+                frame.Title:SetText(frame.Title:GetText() .. " " .. v.difficulty)
+
+                local diffFrame = frame["Diff" .. k]
+
+                if(v.difficultyText == "") then
+                    v.difficultyText = "This mechanic is implemented on " .. diffFrame.Name:GetText()
+                    --print("EMPTY", data.sectionInfo[1].title)
+
+                elseif(v.difficultyText == nil) then
+                    print("NIL", data.sectionInfo[1].title)
+
+                else
+
+                end
+
+                diffFrame.Description:SetText(v.difficultyText)
+                diffFrame:MarkDirty()
+            end
+
+            frame:MarkDirty()
+            frame:Show()
+        end
+    end
+    --miog.AdventureJournal.ScrollBox:SetDataProvider(provider)
+
+    --DevTools_Dump(sectionDiffArray)
+
+    --434776
+
+    --[[
+    local differences = {}
+    local a1, a2
+    
+    for k, v in pairs(sectionInfo) do
+        print("--------")
+        local sectionText
+
+        for index, info in ipairs(v) do
+            differences[info.spellID] = differences[info.spellID] or {}
+            differences[info.spellID][info.difficulty] = differences[info.spellID][info.difficulty] or {}
+
+            a1 = v[index]
+            a2 = v[index + 1]
+
+            if(a1 and not a2 and index == #v) then
+                a2 = v[1]
+
+            end
+
+            if(a1 and a2) then
+                --print(a1.difficulty, a2.difficulty)
+                local difference, array, text = compareTexts(a1.description, a2.description)
+
+                -- ARRAY RETURNS ALL ORIGINAL THINGIES FROM A1
+
+                sectionText = text
+            end
+        end
+    end]]
+
+    --[[for k, v in pairs(sectionInfo) do
+        local a1, a2
+
+        for difficultyID, info in pairs(v) do
+            differences[info.spellID] = differences[info.spellID] or {}
+            differences[info.spellID][difficultyID] = differences[info.spellID][difficultyID] or {}
+
+            if(not a1) then
+                a1 = info
+                a1.currentDiff = difficultyID
+
+            elseif(not a2) then
+                a2 = info
+                a2.currentDiff = difficultyID
+
+            else
+                a1 = a2
+
+                a2 = info
+                a2.currentDiff = difficultyID
+
+            end
+
+            if(a1 and a2) then
+                local diff, text = compareTexts2(a1.description, a2.description)
+                compareTexts(a1.description, a2.description)
+
+                if(#diff > 0) then
+                    for x, y in ipairs(diff) do
+                        tinsert(differences[info.spellID][a1.currentDiff], y.needle)
+                        tinsert(differences[info.spellID][a2.currentDiff], y.haystack)
+
+                        --differences[info.spellID][a1.currentDiff].originals[y.needle] = true
+                        --differences[info.spellID][a1.currentDiff][a2.currentDiff] = differences[info.spellID][a1.currentDiff][a2.currentDiff] or {}
+                        --tinsert(differences[info.spellID][a1.currentDiff][a2.currentDiff], y.needle)
+
+                        --differences[info.spellID][a2.currentDiff].originals[y.haystack] = true
+                        --differences[info.spellID][a2.currentDiff][a1.currentDiff] = differences[info.spellID][a2.currentDiff][a1.currentDiff] or {}
+                        --tinsert(differences[info.spellID][a2.currentDiff][a1.currentDiff], y.haystack)
+                    end
+
+                    --differences[info.spellID][a1.currentDiff]["text"..tostring(a2.currentDiff)] = text
+                    --differences[info.spellID][a2.currentDiff]["text"..tostring(a1.currentDiff)] = text
+
+                end
+            end
+        end
+    end]]
+
+    --[[
+    
+    for k, v in pairs(sectionInfo) do
+        diffSwitch = false
+        local a1, a2
+
+        for difficultyID, info in pairs(v) do
+            differences[difficultyID] = differences[difficultyID] or {}
+            differences[difficultyID][info.spellID] = differences[difficultyID][info.spellID] or {}
+
+            if(not a1) then
+                a1 = info
+                a1.currentDiff = difficultyID
+
+            elseif(not a2) then
+                a2 = info
+                a2.currentDiff = difficultyID
+
+            else
+                if(diffSwitch) then
+                    a1 = info
+                    a1.currentDiff = difficultyID
+
+                    diffSwitch = true
+                else
+                    a2 = info
+                    a2.currentDiff = difficultyID
+
+                end
+
+            end
+
+            if(a1 and a2) then
+                local diff, text = compareTexts2(a1.description, a2.description)
+
+                if(#diff > 0) then
+                    for x, y in ipairs(diff) do
+                        differences[a1.currentDiff][info.spellID][a2.currentDiff] = differences[a1.currentDiff][info.spellID][a2.currentDiff] or {}
+                        tinsert(differences[a1.currentDiff][info.spellID][a2.currentDiff], y.needle)
+
+                        differences[a2.currentDiff][info.spellID][a1.currentDiff] = differences[a2.currentDiff][info.spellID][a1.currentDiff] or {}
+                        tinsert(differences[a2.currentDiff][info.spellID][a1.currentDiff], y.haystack)
+                    end
+
+                    differences[a1.currentDiff][info.spellID][a2.currentDiff].text = text
+                    differences[a2.currentDiff][info.spellID][a1.currentDiff].text = text
+
+                end
+            end
+        end
+    end
+    
+    ]]
 end
 
 miog.selectBoss = function(journalEncounterID, abilityTitle)
@@ -1123,7 +1619,7 @@ miog.loadAdventureJournal = function()
     local adventureJournal = CreateFrame("Frame", "MythicIOGrabber_AdventureJournal", miog.Plugin.InsertFrame, "MIOG_AdventureJournal")
     frameWidth = adventureJournal.AbilitiesFrame:GetWidth()
 
-    adventureJournal:SetScript("OnShow", function()
+    --[[adventureJournal:SetScript("OnShow", function()
         local currentMapID = select(8, GetInstanceInfo());
         
         if(currentMapID and currentMapID ~= 0) then
@@ -1134,12 +1630,69 @@ miog.loadAdventureJournal = function()
                 
             end
         end
+    end)]]
+
+    basePool = CreateFramePool("Frame", adventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityTemplate2", resetJournalFrames)
+    --difficultyPool = CreateFramePool("Frame", nil, "MIOG_AdventureJournalAbilityDifficultyTemplate", resetDifficultyFrames)
+    --switchPool = CreateFramePool("Button", nil, "MIOG_AdventureJournalAbilitySwitchTemplate", resetSwitchFrames)
+    --modelPool = CreateFramePool("Button", adventureJournal.ModelScene.List.Container, "MIOG_AdventureJournalCreatureButtonTemplate", resetModelFrame)
+
+    --[[local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 4);
+    view:SetElementInitializer("MIOG_AdventureJournalAbilityTemplate2", function(frame, data)
+        --local diffText
+        frame.Title:SetText(data.sectionInfo[1].title .. ", " .. data.sectionInfo[1].spellID)
+        frame.Base.Description:SetText(data.base)
+        frame.Base:MarkDirty()
+        frame.Icon:SetTexture(data.sectionInfo[1].abilityIcon)
+
+        for k, v in ipairs(currentDifficultyIDs) do
+            frame["Diff" .. k].Name:SetText(GetEJDifficultyString(v))
+        end
+
+        for k, v in ipairs(data.sectionInfo) do
+            frame.Title:SetText(frame.Title:GetText() .. " " .. v.difficulty)
+
+            local diffFrame = frame["Diff" .. k]
+
+            if(v.difficultyText == "") then
+                v.difficultyText = "This mechanic is implemented on " .. diffFrame.Name:GetText()
+                --print("EMPTY", data.sectionInfo[1].title)
+
+            elseif(v.difficultyText == nil) then
+                print("NIL", data.sectionInfo[1].title)
+
+            else
+
+            end
+
+            diffFrame.Description:SetText(v.difficultyText)
+        end
+
+        frame:MarkDirty()
     end)
 
-    basePool = CreateFramePool("Frame", adventureJournal.AbilitiesFrame.Container, "MIOG_AdventureJournalAbilityTemplate", resetJournalFrames)
-    difficultyPool = CreateFramePool("Frame", nil, "MIOG_AdventureJournalAbilityDifficultyTemplate", resetDifficultyFrames)
-    switchPool = CreateFramePool("Button", nil, "MIOG_AdventureJournalAbilitySwitchTemplate", resetSwitchFrames)
-    modelPool = CreateFramePool("Button", adventureJournal.ModelScene.List.Container, "MIOG_AdventureJournalCreatureButtonTemplate", resetModelFrame)
+    view:SetElementResetter(function(frame, data)
+        frame.Icon:SetTexture(nil)
+        frame.Title:SetText("")
+
+        frame.Base.Name:SetText("")
+        frame.Base.Description:SetText("")
+
+        frame.Diff1.Name:SetText("")
+        frame.Diff1.Description:SetText("")
+
+        frame.Diff2.Name:SetText("")
+        frame.Diff2.Description:SetText("")
+
+        frame.Diff3.Name:SetText("")
+        frame.Diff3.Description:SetText("")
+
+        frame.Diff4.Name:SetText("")
+        frame.Diff4.Description:SetText("")
+    end)
+
+    ScrollUtil.InitScrollBoxListWithScrollBar(adventureJournal.ScrollBox, adventureJournal.ScrollBar, view);]]
+
 
     loadInstanceInfo()
 
@@ -1148,7 +1701,7 @@ miog.loadAdventureJournal = function()
     instanceDropdown:SetDefaultText("Select an instance")
     instanceDropdown:SetupMenu(function(dropdown, rootDescription)
 		for k, v in ipairs(expansionTable) do
-            local expansionButton = rootDescription:CreateRadio(v.text, function(index) return selectedTier == index end, nil, k)
+            local expansionButton = rootDescription:CreateRadio(v.text, function(index) return EJ_GetCurrentTier() == index end, nil, k)
 
             expansionButton:AddInitializer(function(button, description, menu)
                 local leftTexture = button:AttachTexture();
@@ -1184,8 +1737,6 @@ miog.loadAdventureJournal = function()
 		end
 
     end)
-
-    --do not kill it, wait for next event and pull through wall, 100% drop
 
 	local bossDropdown = adventureJournal.BossDropdown
     bossDropdown:SetupMenu(function(dropdown, rootDescription)
@@ -1348,7 +1899,7 @@ miog.loadAdventureJournal = function()
 
     --keylevelDropdown:SelectFirstFrameWithValue(3)
 
-    local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
+    --[[local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
 
     local function initializeLootFrames(frame, elementData)
         --local elementData = node:GetData()
@@ -1408,7 +1959,7 @@ miog.loadAdventureJournal = function()
     
     ScrollUtil.InitScrollBoxListWithScrollBar(adventureJournal.ScrollBox, adventureJournal.ScrollBar, view);
 
-    adventureJournal.ScrollBox:SetDataProvider(CreateDataProvider())
+    adventureJournal.ScrollBox:SetDataProvider(CreateDataProvider())]]
 
     return adventureJournal
 end
@@ -1458,7 +2009,3 @@ local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
 --eventReceiver:RegisterEvent("EJ_DIFFICULTY_UPDATE")
 eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
 eventReceiver:SetScript("OnEvent", aj_events)
-
-hooksecurefunc("EJ_SelectTier", function(expansionIndex)
-    selectedTier = expansionIndex
-end)

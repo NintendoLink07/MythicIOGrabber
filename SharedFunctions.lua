@@ -183,7 +183,12 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 			--C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
 		end
 
-		LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
+		local unitName, unitID = miog.getGroupLeader()
+
+		if(unitID == "player") then
+			LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
+			
+		end
 	else
 		if(C_LFGList.HasActiveEntryInfo()) then
 			C_LFGList.UpdateListing(createData)

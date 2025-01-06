@@ -1,6 +1,6 @@
 local addonName, miog = ...
 
-StatisticsTabMixin = {}
+ProgressTabMixin = {}
 
 local accountCharacters
 
@@ -266,7 +266,7 @@ local function calculateNewScore(mapID, newLevel, guid, customTimer)
 	return 0, 0, 0
  end
 
-function StatisticsTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
+function ProgressTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
 	local newKeystoneInfo = {}
 	newKeystoneInfo.challengeMapID = 507
 	newKeystoneInfo.level = 14
@@ -302,7 +302,7 @@ function StatisticsTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
 	end
  end
 
-function StatisticsTabMixin:CreateDropdownEntry(fullName, rootDescription)
+function ProgressTabMixin:CreateDropdownEntry(fullName, rootDescription)
 	--self:CreateDebugKeyInfo(fullName, rootDescription)
 
 	local keystoneInfo = miog.checkSystem.keystoneData[fullName]
@@ -338,7 +338,7 @@ function StatisticsTabMixin:CreateDropdownEntry(fullName, rootDescription)
 	
 end
 
-function StatisticsTabMixin:StartScoreCalculationForCharacter(frame, guid)
+function ProgressTabMixin:StartScoreCalculationForCharacter(frame, guid)
 	if(frame) then
 		if(self.currentKeystoneInfo and (guid == UnitGUID("player") or self.currentUnitName ~= miog.createFullNameFrom("unitID", "player"))) then
 			local overtimeScore, minScore, maxScore = calculateNewScore(self.currentKeystoneInfo.challengeMapID, self.currentKeystoneInfo.level, guid, self.Info.TimelimitSlider:GetValue())
@@ -353,14 +353,14 @@ function StatisticsTabMixin:StartScoreCalculationForCharacter(frame, guid)
 	end
 end
 
-function StatisticsTabMixin:StartScoreCalculationForAllCharacters()
+function ProgressTabMixin:StartScoreCalculationForAllCharacters()
 	for k, v in self.Rows:EnumerateFrames() do
 		self:StartScoreCalculationForCharacter(v, v:GetElementData().guid)
 
 	end
 end
 
-function StatisticsTabMixin:FindFrameWithMatchingDataElement(scrollList, element, value)
+function ProgressTabMixin:FindFrameWithMatchingDataElement(scrollList, element, value)
 	for k, v in scrollList:EnumerateFrames() do
 		if(v:GetElementData()[element] == value) then
 			return v
@@ -369,7 +369,7 @@ function StatisticsTabMixin:FindFrameWithMatchingDataElement(scrollList, element
 	end
 end
 
-function StatisticsTabMixin:SetMPlusScoreInfo()
+function ProgressTabMixin:SetMPlusScoreInfo()
 	if(self.currentKeystoneInfo) then
 		local columnFrame
 
@@ -407,7 +407,7 @@ function StatisticsTabMixin:SetMPlusScoreInfo()
 	end
 end
 
-function StatisticsTabMixin:OnLoad(id)
+function ProgressTabMixin:OnLoad(id)
     self.id = id
 
     self:SetScript("OnShow", function()
@@ -425,7 +425,7 @@ function StatisticsTabMixin:OnLoad(id)
 
     local activityView = CreateScrollBoxListLinearView();
     activityView:SetHorizontal(true)
-    activityView:SetElementInitializer("MIOG_StatisticsColumnTemplate", function(frame, data)
+    activityView:SetElementInitializer("MIOG_ProgressColumnTemplate", function(frame, data)
 		local shortName
 		if(data.type == "pvp") then
 			local i = data.index
@@ -450,14 +450,14 @@ function StatisticsTabMixin:OnLoad(id)
     self.Columns:Init(activityView);
 
     local characterView = CreateScrollBoxListLinearView();
-    local template = self.id == 1 and "MIOG_StatisticsDungeonCharacterTemplate" or self.id == 2 and "MIOG_StatisticsRaidCharacterTemplate" or self.id == 3 and "MIOG_StatisticsPVPCharacterTemplate"
+    local template = self.id == 1 and "MIOG_ProgressDungeonCharacterTemplate" or self.id == 2 and "MIOG_ProgressRaidCharacterTemplate" or self.id == 3 and "MIOG_ProgressPVPCharacterTemplate"
     characterView:SetElementInitializer(template, function(frame, data)
         frame.Name:SetText(data.name)
         frame.Name:SetTextColor(C_ClassColor.GetClassColor(data.classFile):GetRGBA())
 
-		local isRaid = data.template == "MIOG_StatisticsRaidCharacterTemplate"
-		local isDungeon = data.template == "MIOG_StatisticsDungeonCharacterTemplate"
-		local isPvp = data.template == "MIOG_StatisticsPVPCharacterTemplate"
+		local isRaid = data.template == "MIOG_ProgressRaidCharacterTemplate"
+		local isDungeon = data.template == "MIOG_ProgressDungeonCharacterTemplate"
+		local isPvp = data.template == "MIOG_ProgressPVPCharacterTemplate"
 
 		local file, height, flags = _G["SystemFont_Shadow_Med1"]:GetFont()
 
@@ -697,7 +697,7 @@ end
 
  --workaround, gets most characters if they've been converted with the warband feature, you don't even have to be logged in first or used this addon.
  --just has to have atleast a single type of currency (money (copper, silver, gold) doesn't count)
-function StatisticsTabMixin:RequestAccountCharacters()
+function ProgressTabMixin:RequestAccountCharacters()
 	accountCharacters = {}
 
 	local charList = {}
@@ -739,7 +739,7 @@ local function hasCurrentCharacterRewardForNextWeek()
 	return false
 end
 
-function StatisticsTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, updatePvp)
+function ProgressTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, updatePvp)
 	if(not accountCharacters) then
 		self:RequestAccountCharacters()
 	end
@@ -780,7 +780,7 @@ function StatisticsTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid
 	end
 end
 
-function StatisticsTabMixin:LoadActivities()
+function ProgressTabMixin:LoadActivities()
 	if(self.id == 1) then --M+
 		self.activityTable = miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()
 
@@ -833,7 +833,7 @@ function StatisticsTabMixin:LoadActivities()
 	self.Columns:SetDataProvider(columnProvider);
 end
 
-function StatisticsTabMixin:CalculateProgressWeightViaAchievements(guid)
+function ProgressTabMixin:CalculateProgressWeightViaAchievements(guid)
 	local character = MIOG_NewSettings.accountStatistics.characters[guid]
 	local progressWeight = 0
 
@@ -858,7 +858,7 @@ function StatisticsTabMixin:CalculateProgressWeightViaAchievements(guid)
 	--	progressWeight = progressWeight + (b.weight or 0)
 end
 
-function StatisticsTabMixin:UpdatePVPStatistics(guid)
+function ProgressTabMixin:UpdatePVPStatistics(guid)
 	local playerGUID = UnitGUID("player")
 
     if(guid == playerGUID) then
@@ -889,7 +889,7 @@ function StatisticsTabMixin:UpdatePVPStatistics(guid)
 	end
 end
 
-function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
+function ProgressTabMixin:UpdateCharacterRaidStatistics(guid)
 	local playerGUID = UnitGUID("player")
 
     if(guid == playerGUID) then
@@ -987,7 +987,7 @@ function StatisticsTabMixin:UpdateCharacterRaidStatistics(guid)
 	end
 end
 
-function StatisticsTabMixin:UpdateCharacterMPlusStatistics(guid)
+function ProgressTabMixin:UpdateCharacterMPlusStatistics(guid)
 	local playerGUID = UnitGUID("player")
 
 	if(guid == playerGUID) then
@@ -1023,7 +1023,7 @@ function StatisticsTabMixin:UpdateCharacterMPlusStatistics(guid)
 end
 
 
-function StatisticsTabMixin:LoadCharacters()
+function ProgressTabMixin:LoadCharacters()
 	self.Rows:Flush()
 
 	local columnProvider = CreateDataProvider();
@@ -1039,7 +1039,7 @@ function StatisticsTabMixin:LoadCharacters()
 
 	end
 
-	local template = self.id == 1 and "MIOG_StatisticsDungeonCharacterTemplate" or self.id == 2 and "MIOG_StatisticsRaidCharacterTemplate" or self.id == 3 and "MIOG_StatisticsPVPCharacterTemplate"
+	local template = self.id == 1 and "MIOG_ProgressDungeonCharacterTemplate" or self.id == 2 and "MIOG_ProgressRaidCharacterTemplate" or self.id == 3 and "MIOG_ProgressPVPCharacterTemplate"
 
 	for k, v in pairs(MIOG_NewSettings.accountStatistics.characters) do
 		columnProvider:Insert({template = template, guid = k, name = v.name, realm = v.realm, classFile = v.classFile, score = v.mplus.score, progressWeight = v.progressWeight, rating = v.rating})
@@ -1049,7 +1049,7 @@ function StatisticsTabMixin:LoadCharacters()
 	self.Rows:SetDataProvider(columnProvider)
 end
 
-function StatisticsTabMixin:UpdateStatistics()
+function ProgressTabMixin:UpdateStatistics()
     self:LoadActivities()
 
 	self:UpdateAllCharacterStatistics()

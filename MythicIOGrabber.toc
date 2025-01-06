@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.0.12
+## Version: 3.0.13
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -55,7 +55,7 @@ FuzzyAlgorithm.lua
 
 SortingMixin.lua
 MultiStateButton.lua
-StatisticsTabMixin.lua
+ProgressTabMixin.lua
 FilterMixin.lua
 NewMultiStateButtonMixin.lua
 RaidSheetElementMixin.lua
@@ -68,7 +68,6 @@ FakeDropdownMixin.lua
 ##
 ### XML
 ##
-
 XML\MIOG_FakeDropdownButton.xml
 
 XML\MIOG_MainFrameTemplate.xml
@@ -110,12 +109,10 @@ XML\GearingChart\MIOG_GearingChartLegendTextureTemplate.xml
 
 XML\AdventureJournal\MIOG_AdventureJournal.xml
 XML\AdventureJournal\MIOG_AdventureJournalAbilityTemplate.xml
-XML\AdventureJournal\MIOG_AdventureJournalAbilityDifficultyTemplate.xml
 XML\AdventureJournal\MIOG_AdventureJournalLootItemTemplate.xml
 XML\AdventureJournal\MIOG_AdventureJournalLootSlotLineTemplate.xml
-XML\AdventureJournal\MIOG_AdventureJournalCreatureButtonTemplate.xml
-XML\AdventureJournal\MIOG_AdventureJournalAbilitySwitchTemplate.xml
 XML\AdventureJournal\MIOG_AdventureJournalLootItemSingleTemplate.xml
+XML\AdventureJournal\MIOG_AdventureJournalCreatureButtonTemplate.xml
 
 RaiderIOInformationPanelMixin.lua
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelRaidBossFrameTemplate.xml
@@ -141,16 +138,16 @@ XML\NewFilterPanel\MIOG_NewFilterPanelBossFrameTemplate.xml
 XML\NewFilterPanel\MIOG_NewFilterPanelActivityBossRowTemplate.xml
 XML\NewFilterPanel\MIOG_NewFilterPanelContainerRowTemplate.xml
 
-XML\Statistics\MIOG_StatisticsTab.xml
-XML\Statistics\MIOG_StatisticsLayoutTemplate.xml
-XML\Statistics\MIOG_StatisticsColumnTemplate.xml
-XML\Statistics\MIOG_StatisticsCharacterTemplate.xml
-XML\Statistics\MIOG_StatisticsDungeonTemplate.xml
-XML\Statistics\MIOG_StatisticsDungeonCharacterTemplate.xml
-XML\Statistics\MIOG_StatisticsRaidTemplate.xml
-XML\Statistics\MIOG_StatisticsRaidCharacterTemplate.xml
-XML\Statistics\MIOG_StatisticsBracketTemplate.xml
-XML\Statistics\MIOG_StatisticsPVPCharacterTemplate.xml
+XML\Statistics\MIOG_ProgressTab.xml
+XML\Statistics\MIOG_ProgressLayoutTemplate.xml
+XML\Statistics\MIOG_ProgressColumnTemplate.xml
+XML\Statistics\MIOG_ProgressCharacterTemplate.xml
+XML\Statistics\MIOG_ProgressDungeonTemplate.xml
+XML\Statistics\MIOG_ProgressDungeonCharacterTemplate.xml
+XML\Statistics\MIOG_ProgressRaidTemplate.xml
+XML\Statistics\MIOG_ProgressRaidCharacterTemplate.xml
+XML\Statistics\MIOG_ProgressBracketTemplate.xml
+XML\Statistics\MIOG_ProgressPVPCharacterTemplate.xml
 
 XML\Util\MIOG_MultiStateButtonTemplate.xml
 XML\Util\MIOG_SortButtonTemplate.xml

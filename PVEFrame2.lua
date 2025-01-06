@@ -217,29 +217,24 @@ local function createPVEFrameReplacement()
 			
 		end
 	end)
-	--miog.pveFrame2.TitleBar.Expand:SetParent(miog.Plugin)
 
-	if(miog.F.IS_RAIDERIO_LOADED) then
-		miog.pveFrame2.TitleBar.RaiderIOLoaded:Hide()
-	end
-
-	miog.Statistics = pveFrame2.TabFramesPanel.Statistics
-    miog.MPlusStatistics = miog.Statistics.MPlusStatistics
+	miog.Progress = pveFrame2.TabFramesPanel.Progress
+    miog.MPlusStatistics = miog.Progress.MPlusStatistics
 	miog.MPlusStatistics:OnLoad(1)
 
-	miog.RaidStatistics = miog.Statistics.RaidStatistics
+	miog.RaidStatistics = miog.Progress.RaidStatistics
 	miog.RaidStatistics:OnLoad(2)
 
-	miog.PVPStatistics = miog.Statistics.PVPStatistics
+	miog.PVPStatistics = miog.Progress.PVPStatistics
 	miog.PVPStatistics:OnLoad(3)
 
-	local r,g,b = CreateColorFromHexString(miog.CLRSCC.black):GetRGB()
+	local r,g,b = CreateColorFromHexString(miog.CLRSCC.white):GetRGB()
 
 	for i = 1, 6, 1 do
 		local currentFrame = miog.MainTab.Information.Currency[tostring(i)]
 
-		miog.createFrameBorder(currentFrame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-		currentFrame:SetBackdropColor(r, g, b, 0.8)
+		miog.createFrameBorder(currentFrame, 1, r, g, b, 0.2)
+		currentFrame:SetBackdropColor(r, g, b, 0.1)
 
 	end
 
@@ -452,7 +447,7 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.MoreButton:SetScript("OnClick", function(self)
 		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
 			rootDescription:CreateTitle("More");
-			--rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
+			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
 			--rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
 			rootDescription:SetTag("MIOG_MORE")
@@ -480,7 +475,6 @@ eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")
 eventReceiver:RegisterEvent("CHALLENGE_MODE_COMPLETED")
 
 eventReceiver:RegisterEvent("WEEKLY_REWARDS_UPDATE")
---eventReceiver:RegisterEvent("Menu.OpenMenuTag")
 
 
 

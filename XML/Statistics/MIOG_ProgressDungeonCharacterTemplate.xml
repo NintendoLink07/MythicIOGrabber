@@ -1,34 +1,34 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_StatisticsDungeonCharacterTemplate" inherits="MIOG_StatisticsCharacterTemplate, HorizontalLayoutFrame" virtual="true">
+    <Frame name="MIOG_ProgressDungeonCharacterTemplate" inherits="MIOG_ProgressCharacterTemplate, HorizontalLayoutFrame" virtual="true">
         <KeyValues>
             <KeyValue key="spacing" value="2" />
             <KeyValue key="leftPadding" value="125" type="number" />
         </KeyValues>
 
         <Frames>
-            <Frame parentKey="Dungeon1" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon1" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
 
-            <Frame parentKey="Dungeon2" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon2" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
 
-            <Frame parentKey="Dungeon3" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon3" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
 
-            <Frame parentKey="Dungeon4" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon4" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
 
-            <Frame parentKey="Dungeon5" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon5" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
 
-            <Frame parentKey="Dungeon6" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon6" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
 
-            <Frame parentKey="Dungeon7" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon7" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
 
-            <Frame parentKey="Dungeon8" inherits="MIOG_StatisticsDungeonTemplate">
+            <Frame parentKey="Dungeon8" inherits="MIOG_ProgressDungeonTemplate">
             </Frame>
         </Frames>
 

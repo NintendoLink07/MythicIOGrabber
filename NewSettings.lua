@@ -163,9 +163,9 @@ local function createDefaultSettings()
 
                     GetOptions = function()
                         local container = Settings.CreateControlTextContainer();
-                        for x, y in ipairs(miog.EXPANSION_INFO) do
-                            container:Add(x, y[1])
-
+                        for i = 0, #miog.EXPANSION_INFO, 1 do
+                            container:Add(i, miog.EXPANSION_INFO[i][1])
+                            
                         end
                         return container:GetData();
                     end

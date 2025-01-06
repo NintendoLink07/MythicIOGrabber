@@ -1,123 +1,64 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-
-    <Frame name="MIOG_AdventureJournalAbilityTemplate" inherits="ResizeLayoutFrame, BackdropTemplate" virtual="true">
-        <KeyValues>
-			<KeyValue key="minimumHeight" value="20" type="number"/>
-		</KeyValues>
-
-        <Frames>
-            <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
-                <Size x="20" y="20" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-2"/>
-                </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self:OnLoad()
-                        self:SetMaxStates(2)
-                        self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
-                        self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
-                        self:SetState(false)
-                    </OnLoad>
-                    <OnClick>
-					    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-					    self:AdvanceState()
-                        self:GetParent().DetailedInformation:SetShown(not self:GetParent().DetailedInformation:IsShown())
-                        self:GetParent():MarkDirty()
-                    </OnClick>
-                </Scripts>
-            </Button>
-        </Frames>
-
-        <Scripts>
-            <OnLoad>
-                self:SetBackdrop( {edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
-                self:SetBackdropBorderColor(PAPER_FRAME_EXPANDED_COLOR:GetRGB())
-            </OnLoad>
-            <OnMouseDown>
-                if(IsLeftShiftKeyDown()) then
-                    ChatEdit_InsertLink("|cff71d5ff|Haddon:MythicIOGrabber:aj:ability:" .. self.encounterID .. ":" .. self.abilityTitle .. "|h[MIOG_AJ: " .. GetSpellInfo(self.spellID) .. "]|h|r")
-                end
-            </OnMouseDown>
-        </Scripts>
-
-        <Layers>
+    <Frame name="MIOG_AdventureJournalAbilityTemplate2" inherits="ResizeLayoutFrame" virtual="true">
+         <Layers>
             <Layer level="BACKGROUND">
-                <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true">
-                    <Size x="12" y="12"/>
-                </Texture>
+                <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true" />
             </Layer>
 
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
-                    <Size x="16" y="16" />
+                    <Size x="20" y="20" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2"/>
                     </Anchors>
                 </Texture>
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="AbilityName">
+                <FontString parentKey="Title" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1" />
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
+                        <Anchor point="RIGHT" x="-3"/>
                     </Anchors>
                 </FontString>
-            </Layer>            
+            </Layer>
         </Layers>
 
         <Frames>
-            <Frame parentKey="SwitchPanel" inherits="HorizontalLayoutFrame" hidden="true">
-                <KeyValues>
-                    <KeyValue key="spacing" value="1" type="number"/>
-                    <KeyValue key="fixedHeight" value="20" type="number"/>
-                </KeyValues>
-
+            <Frame parentKey="Base" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate2">
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
             </Frame>
 
-            <Frame parentKey="DetailedInformation" inherits="VerticalLayoutFrame">
-                <KeyValues>
-                    <KeyValue key="topPadding" value="5" type="number"/>
-                    <KeyValue key="bottomPadding" value="10" type="number"/>
-                    <KeyValue key="leftPadding" value="5" type="number"/>
-                    <KeyValue key="rightPadding" value="5" type="number"/>
-                    <KeyValue key="spacing" value="4" type="number"/>
-                </KeyValues>
-
+            <Frame parentKey="Diff1" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate2">
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Base" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Base" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
+            </Frame>
 
-                <Frames>
-                    <Frame parentKey="Base" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="1" type="number"/>
-                        </KeyValues>
-                    </Frame>
+            <Frame parentKey="Diff2" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate2">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Diff1" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Diff1" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
 
-                    <Frame parentKey="Difficulties" inherits="VerticalLayoutFrame">
-                        <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number"/>
-                        </KeyValues>
-                    </Frame>
-                </Frames>
+            <Frame parentKey="Diff3" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate2">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Diff2" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Diff2" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
 
-                <Layers>
-                    <Layer level="BORDER">
-                        <Texture parentKey="Divider1" atlas="dragonflight-weeklyrewards-divider">
-                            <Size y="5" />
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1"/>
-                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
+            <Frame parentKey="Diff4" inherits="MIOG_AdventureJournalAbilityDifficultyTemplate2">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Diff3" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Diff3" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
             </Frame>
         </Frames>
     </Frame>

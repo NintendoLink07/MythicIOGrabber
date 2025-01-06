@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_StatisticsCharacterTemplate" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_ProgressCharacterTemplate" inherits="BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" text="NAME">
@@ -18,9 +18,9 @@
 
             <Layer level="ARTWORK">
                 <Texture parentKey="VaultAvailable" atlas="mythicplus-dragonflight-greatvault-collect" hidden="true">
-                    <Size x="20" y="20" />
+                    <Size x="16" y="16" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="5" y="-1"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="105" y="-2"/>
                     </Anchors>
 
                     <Scripts>

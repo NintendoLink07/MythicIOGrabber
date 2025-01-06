@@ -314,6 +314,15 @@ miog.retrieveShortNameFromChallengeModeMap = function(challengeID)
 	end
 end
 
+miog.findBattlegroundBackgroundByName = function(mapName)
+	for bgID, bgEntry in pairs(miog.BATTLEMASTER_INFO) do
+		if(mapName == bgEntry.name) then
+			return bgEntry.icon ~= 0 and bgEntry.icon or 525915
+		end
+	end
+
+	return 525915
+end
 
 miog.findBattlegroundIconByName = function(mapName)
 	for bgID, bgEntry in pairs(miog.BATTLEMASTER_INFO) do

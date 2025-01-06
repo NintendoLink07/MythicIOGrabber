@@ -21,6 +21,8 @@ local function deletePartyGUID(guid)
 
 end
 
+MIOG_DeletePartyGUID = deletePartyGUID
+
 local function getNumberOfPartyGUIDs()
     local num = 0
 

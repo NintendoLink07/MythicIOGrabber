@@ -1,14 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_StatisticsTab" virtual="true">
+    <Frame name="MIOG_ProgressTab" virtual="true">
         <Frames>
-            <Frame parentKey="MPlusStatistics" inherits="MIOG_StatisticsLayoutTemplate" setAllPoints="true">
+            <Frame parentKey="MPlusStatistics" inherits="MIOG_ProgressLayoutTemplate" setAllPoints="true">
             </Frame>
 
-            <Frame parentKey="RaidStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
+            <Frame parentKey="RaidStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
             </Frame>
 
-            <Frame parentKey="PVPStatistics" inherits="MIOG_StatisticsLayoutTemplate" hidden="true" setAllPoints="true">
+            <Frame parentKey="PVPStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
             </Frame>
 
             <Frame parentKey="TabPanel" inherits="HorizontalLayoutFrame">

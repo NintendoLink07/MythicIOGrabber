@@ -1,19 +1,20 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\..\FrameXML\UI.xsd">    
-    <Frame name="MIOG_AdventureJournalAbilityDifficultyTemplate" inherits="ResizeLayoutFrame" virtual="true">
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_AdventureJournalAbilityDifficultyTemplate2" inherits="ResizeLayoutFrame" virtual="true">        
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="85" />
+                    <Size x="80" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        <Anchor point="TOPLEFT" x="3" />
+                        <Anchor point="BOTTOMLEFT" x="3" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Description" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="TOP" wordwrap="true" nonspacewrap="true">
-                    <Size x="270" />
+                <FontString parentKey="Description" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true" nonspacewrap="true">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT" />
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT" x="3" />
+                        <Anchor point="TOPRIGHT" x="-3" />
                     </Anchors>
                 </FontString>
             </Layer>

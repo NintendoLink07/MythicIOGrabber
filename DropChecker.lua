@@ -100,8 +100,6 @@ local function loadLoot()
     if(allItems) then
         local searchBoxText = miog.DropChecker.SearchBox:GetText()
 
-        local results = fuzzyCheck(searchBoxText)
-
         local noFilter = C_EncounterJournal.GetSlotFilter() == 15
 
         local searching = searchBoxText ~= ""
@@ -116,7 +114,7 @@ local function loadLoot()
 
             EJ_SelectInstance(v.journalInstanceID)
 
-	        local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID = EJ_GetInstanceInfo();
+	        local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID, _, _, mapID = EJ_GetInstanceInfo();
 
             local numOfLoot = EJ_GetNumLoot()
 
@@ -134,7 +132,8 @@ local function loadLoot()
                         else
                             if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo, noFilter)) then
                                 if(not addedInstance) then
-                                    local instanceName, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
+                                    --local instanceName, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
+
                                     dataProvider:Insert({
                                         template = "MIOG_AdventureJournalLootSlotLineTemplate",
                                         name = instanceName,
@@ -164,6 +163,8 @@ local function loadLoot()
         end
         
         if(searching) then
+            local results = fuzzyCheck(searchBoxText)
+            
             for k, v in ipairs(results) do
                 local item = itemData[v.index]
                 dataProvider:Insert({template = "MIOG_AdventureJournalLootItemSingleTemplate", name = item.name, icon = item.icon, link = item.link, encounterID = item.encounterID, positions = v.positions})
