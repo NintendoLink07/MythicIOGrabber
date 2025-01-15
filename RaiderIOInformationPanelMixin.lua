@@ -4,16 +4,21 @@ RaiderIOInformationPanelMixin = {}
 
 MIOG_FAILSAFE_SEASON_ID = 13
 
-function RaiderIOInformationPanelMixin:OnLoad()
-    self:Flush()
-    
-    --self.seasonID = C_MythicPlus.GetCurrentSeason() > 0 and C_MythicPlus.GetCurrentSeason() or MIOG_FAILSAFE_SEASON_ID
-    self.seasonID = MIOG_FAILSAFE_SEASON_ID
-
+function RaiderIOInformationPanelMixin:OnLoadMPlus()
 	for k, v in ipairs(miog.SEASONAL_MAP_IDS[self.seasonID].dungeons) do
 		local currentDungeon = self.MythicPlus["Dungeon" .. k]
-		currentDungeon.Name:SetText(miog.MAP_INFO[v].shortName)
-		currentDungeon.Icon:SetTexture(miog.MAP_INFO[v].icon)
+
+        currentDungeon.dungeonName = miog.MAP_INFO[v].name
+
+        if(currentDungeon.Name) then
+		    currentDungeon.Name:SetText(miog.MAP_INFO[v].shortName)
+            
+        end
+
+        miog.checkSingleMapIDForNewData(v, nil, true)
+
+		currentDungeon.Icon:SetTexture(self.mode == "side" and miog.MAP_INFO[v].horizontal or miog.MAP_INFO[v].icon)
+        currentDungeon.Icon:SetDesaturation(0.7)
 		currentDungeon.Icon:SetScript("OnMouseDown", function()
 			local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
             local difficulty = 23
@@ -23,54 +28,90 @@ function RaiderIOInformationPanelMixin:OnLoad()
 
 		end)
 	end
+end
+
+function RaiderIOInformationPanelMixin:SetMode(mode)
+    self.mode = mode
+end
+
+function RaiderIOInformationPanelMixin:OnLoad(mode)
+    self:Flush()
+    self:SetMode(mode)
+    
+    --self.seasonID = C_MythicPlus.GetCurrentSeason() > 0 and C_MythicPlus.GetCurrentSeason() or MIOG_FAILSAFE_SEASON_ID
+    self.seasonID = MIOG_FAILSAFE_SEASON_ID
+
+	self:OnLoadMPlus()
 
 	local raidCounter = 1
 
+    local hasIcon = self.Raids.Raid1.Header.Icon
+
     for k, v in ipairs(miog.SEASONAL_MAP_IDS[self.seasonID].raids) do
-		local raidBossesFrame = self.Raids["Raid" .. raidCounter]
+		local raidFrame = self.Raids["Raid" .. raidCounter]
 
-		if(raidBossesFrame) then
-			local raidHeaderFrame = self.Raids["Raid" .. raidCounter .. "Header"]
+		if(raidFrame) then
+			local raidHeaderFrame = self.Raids["Raid" .. raidCounter].Header
+
+            miog.checkSingleMapIDForNewData(v, nil, true)
 		
-			raidHeaderFrame.Progress1:SetText(WrapTextInColorCode("0/"..#miog.MAP_INFO[v].bosses, miog.CLRSCC.red))
-			raidHeaderFrame.Progress2:SetText(WrapTextInColorCode("0/"..#miog.MAP_INFO[v].bosses, miog.CLRSCC.red))
+            if(raidHeaderFrame.Progress1) then
+                raidHeaderFrame.Progress1:SetText(WrapTextInColorCode("0/"..#miog.MAP_INFO[v].bosses, miog.CLRSCC.red))
+                raidHeaderFrame.Progress2:SetText(WrapTextInColorCode("0/"..#miog.MAP_INFO[v].bosses, miog.CLRSCC.red))
 
-			raidHeaderFrame.Icon:SetTexture(miog.MAP_INFO[v].icon)
-			raidHeaderFrame.Icon:SetScript("OnMouseDown", function()
-				local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
-				local difficulty = 16
-				--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-				EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+            elseif(raidFrame.Bosses.Progress1) then
+                raidFrame.Bosses.Progress1:SetMinMaxValues(0, 10)
+                raidFrame.Bosses.Progress2:SetMinMaxValues(0, 10)
 
-			end)
+            end
+
+            local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
+
+            texture:SetTexture(hasIcon and miog.MAP_INFO[v].icon or miog.MAP_INFO[v].horizontal)
+            texture:SetScript("OnMouseDown", function()
+                local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
+                local difficulty = 16
+                --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+                EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+            end)
+
 			raidHeaderFrame.Name:SetText(miog.MAP_INFO[v].shortName)
 
-            miog.checkSingleMapIDForNewData(v)
 
-			for i = 1, 12, 1 do
+			for i = 1, 10, 1 do
 				local currentBoss = "Boss" .. i
 
 				if(miog.MAP_INFO[v].bosses[i]) then
-					raidBossesFrame[currentBoss].Index:SetText(i)
-					raidBossesFrame[currentBoss].Icon:SetTexture(miog.MAP_INFO[v].bosses[i].icon)
-					raidBossesFrame[currentBoss].Icon:SetScript("OnMouseDown", function()
+                    if(raidFrame.Bosses[currentBoss].Index) then
+					    raidFrame.Bosses[currentBoss].Index:SetText(i)
+
+                    end
+
+                    raidFrame.Bosses[currentBoss].name = miog.MAP_INFO[v].bosses[i].name
+					raidFrame.Bosses[currentBoss].Icon:SetTexture(miog.MAP_INFO[v].bosses[i].icon)
+					raidFrame.Bosses[currentBoss].Icon:SetScript("OnMouseDown", function()
 						local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
 						local difficulty = 16
 						EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
 					end)
-                    raidBossesFrame[currentBoss].Border:SetColorTexture(1, 0, 0, 1);
-                    raidBossesFrame[currentBoss].Icon:SetDesaturated(true)
 
-					raidBossesFrame[currentBoss]:Show()
+                    if(raidFrame.Bosses[currentBoss].Border) then
+                        raidFrame.Bosses[currentBoss].Border:SetColorTexture(1, 0, 0, 1);
+
+                    end
+
+                    raidFrame.Bosses[currentBoss].Icon:SetDesaturated(true)
+
+					raidFrame.Bosses[currentBoss]:Show()
 
 				else
-					raidBossesFrame[currentBoss]:Hide()
+					raidFrame.Bosses[currentBoss]:Hide()
 
 				end
 			end
 
-			raidBossesFrame:Show()
-			raidHeaderFrame:Show()
+            raidFrame:Show()
 
             raidCounter = raidCounter + 1
         end
@@ -125,14 +166,16 @@ function RaiderIOInformationPanelMixin:Flush()
 end
 
 function RaiderIOInformationPanelMixin:CalculatePanelHeight()
-    if(self.comment and self.comment ~= "") then
-        self.Comment:Show()
-        self:SetHeight(200)
+    if(self.Comment) then
+        if(self.comment and self.comment ~= "") then
+            self.Comment:Show()
+            self:SetHeight(200)
 
-    else
-        self.Comment:Hide()
-        self:SetHeight(160)
+        else
+            self.Comment:Hide()
+            self:SetHeight(160)
 
+        end
     end
 end
 
@@ -158,6 +201,11 @@ function RaiderIOInformationPanelMixin:SetOptionalData(comment, server, roles, r
     self.race = race
 end
 
+function RaiderIOInformationPanelMixin:RequestFillData()
+    self.mplusData = miog.getMPlusSortData(self.playerName, self.realm, self.region)
+    self.raidData = miog.getNewRaidSortData(self.playerName, self.realm, self.region)
+end
+
 function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
     self.mplusData = not refreshData and self.mplusData or miog.getMPlusSortData(self.playerName, self.realm, self.region)
 
@@ -177,7 +225,6 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
     end
 
 	if(self.mplusData) then
-
 		if(self.mplusData.previousScore.score > 0) then
 			self.PreviousData:SetText("Best m+ rating (S" .. self.mplusData.previousScore.season .. "): " .. WrapTextInColorCode(self.mplusData.previousScore.score, miog.createCustomColorForRating(self.mplusData.previousScore.score):GenerateHexColor()))
 
@@ -219,18 +266,19 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
 end
 
 function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
-    self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(self.playerName, self.realm)
+    self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(self.playerName, self.realm, self.region)
 
 	local raidMapIDSet = {}
+    local hasIcon = self.Raids.Raid1.Header.Icon
     
     if(self.raidData) then
         local raidCounter = 1
 
 	    for k, v in ipairs(miog.SEASONAL_MAP_IDS[self.seasonID].raids) do
-            local raidBossesFrame = self.Raids["Raid" .. raidCounter]
+            local raidFrame = self.Raids["Raid" .. raidCounter]
 
-            if(raidBossesFrame) then
-                local raidHeaderFrame = self.Raids["Raid" .. raidCounter .. "Header"]
+            if(raidFrame) then
+                local raidHeaderFrame = self.Raids["Raid" .. raidCounter].Header
 
                 for nmd = 1, 2, 1 do
                     local normalOrMainData = nmd == 1 and self.raidData.character or self.raidData.main
@@ -242,15 +290,22 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                             local currentTable = i == 1 and normalOrMainData.raids[v].awakened or normalOrMainData.raids[v].regular
                             if(currentTable) then
 
+                                --raidFrame.Bosses.Progress1:SetMinMaxValues(0, 10)
+                                --raidFrame.Bosses.Progress2:SetMinMaxValues(0, 10)
+
                                 for a = 3, 1, -1 do
                                     if(currentTable.difficulties[a]) then
-                                        for z = 1, 12, 1 do
+                                        for z = 1, 10, 1 do
                                             if(currentTable.difficulties[a].bosses[z] and not bossesDone[z]) then
                                                 local currentBoss = "Boss" .. z
 
                                                 if(currentTable.difficulties[a].bosses[z].killed) then
-                                                    raidBossesFrame[currentBoss].Border:SetColorTexture(miog.DIFFICULTY[a].miogColors:GetRGBA());
-                                                    raidBossesFrame[currentBoss].Icon:SetDesaturated(false)
+                                                    if(raidFrame.Bosses[currentBoss].Border) then
+                                                        raidFrame.Bosses[currentBoss].Border:SetColorTexture(miog.DIFFICULTY[a].miogColors:GetRGBA());
+
+                                                    end
+
+                                                    raidFrame.Bosses[currentBoss].Icon:SetDesaturated(false)
                                                     bossesDone[z] = true
 
                                                 else
@@ -265,13 +320,27 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                                 raidHeaderFrame.Name:SetText(normalOrMainData.raids[v].shortName)
                                             end
 
-                                            raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(miog.DIFFICULTY[a].shortName .. ":" .. currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
+                                            if(raidHeaderFrame.Progress1) then --miog.DIFFICULTY[a].shortName .. ":" .. 
+                                                raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
 
-                                            if(currentTable.difficulties[a-1]) then
-                                                raidHeaderFrame.Progress2:SetText(WrapTextInColorCode(miog.DIFFICULTY[a-1].shortName .. ":" .. currentTable.difficulties[a-1].parsedString, miog.DIFFICULTY[a-1].color))
+                                            elseif(raidFrame.Bosses.Progress1) then
+                                                raidFrame.Bosses.Progress1:SetStatusBarColor(miog.DIFFICULTY[a].baseColor.color:GetRGBA())
+
                                             end
 
-                                            raidHeaderFrame.Icon:SetScript("OnMouseDown", function()
+                                            if(currentTable.difficulties[a-1]) then
+                                                if(raidHeaderFrame.Progress2) then --miog.DIFFICULTY[a-1].shortName .. ":" .. 
+                                                    raidHeaderFrame.Progress2:SetText(WrapTextInColorCode(currentTable.difficulties[a-1].parsedString, miog.DIFFICULTY[a-1].color))
+
+                                                elseif(raidFrame.Bosses.Progress2) then
+                                                    raidFrame.Bosses.Progress2:SetStatusBarColor(miog.DIFFICULTY[a-1].baseColor.color:GetRGBA())
+
+                                                end
+
+                                            end
+
+                                            local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
+                                            texture:SetScript("OnMouseDown", function()
                                                 local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
                                                 local difficulty = a == 1 and 14 or a == 2 and 15 or 16
                                                 --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
@@ -297,29 +366,31 @@ end
 function RaiderIOInformationPanelMixin:ApplyFillData(refreshData)
     self:CalculatePanelHeight()
 
-	self.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (self.realm or GetRealmName() or "") .. " ")
-    
-    if(self.roles) then
-        if(self.roles.tank) then
-            self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.TANK_TEXTURE .. " ")
+    if(self.RaceRolesServer) then
+        self.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (self.realm or GetRealmName() or "") .. " ")
+        
+        if(self.roles) then
+            if(self.roles.tank) then
+                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.TANK_TEXTURE .. " ")
 
-        end
+            end
 
-        if(self.roles.healer) then
-            self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.HEALER_TEXTURE .. " ")
+            if(self.roles.healer) then
+                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.HEALER_TEXTURE .. " ")
 
-        end
+            end
 
-        if(self.roles.damager) then
-            self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.DPS_TEXTURE .. " ")
+            if(self.roles.damager) then
+                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.DPS_TEXTURE .. " ")
 
+            end
         end
     end
 
     self:ApplyMythicPlusData(refreshData)
     self:ApplyRaidData(refreshData)
 
-    if(self.comment) then
+    if(self.Comment and self.comment) then
 	    self.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((self.comment and self.comment) or ""))
     end
 end

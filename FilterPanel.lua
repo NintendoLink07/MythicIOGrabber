@@ -1147,29 +1147,29 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 				categorySettings[v.id].value = self:GetChecked()
 			end)
 			
-			miog.NewFilterPanel.ActivityRow1:Hide()
-			miog.NewFilterPanel.ActivityRow1.layoutIndex = nil
+			filterPanel.ActivityRow1:Hide()
+			filterPanel.ActivityRow1.layoutIndex = nil
 
-			miog.NewFilterPanel.ActivityRow2:Hide()
-			miog.NewFilterPanel.ActivityRow2.layoutIndex = nil
+			filterPanel.ActivityRow2:Hide()
+			filterPanel.ActivityRow2.layoutIndex = nil
 
-			miog.NewFilterPanel.ActivityRow3:Hide()
-			miog.NewFilterPanel.ActivityRow3.layoutIndex = nil
+			filterPanel.ActivityRow3:Hide()
+			filterPanel.ActivityRow3.layoutIndex = nil
 
-			miog.NewFilterPanel.ActivityRow4:Hide()
-			miog.NewFilterPanel.ActivityRow4.layoutIndex = nil
+			filterPanel.ActivityRow4:Hide()
+			filterPanel.ActivityRow4.layoutIndex = nil
 
-			miog.NewFilterPanel.ActivityBossRow1:Hide()
-			miog.NewFilterPanel.ActivityBossRow1.layoutIndex = nil
+			filterPanel.ActivityBossRow1:Hide()
+			filterPanel.ActivityBossRow1.layoutIndex = nil
 
-			miog.NewFilterPanel.ActivityBossRow2:Hide()
-			miog.NewFilterPanel.ActivityBossRow2.layoutIndex = nil
+			filterPanel.ActivityBossRow2:Hide()
+			filterPanel.ActivityBossRow2.layoutIndex = nil
 
-			miog.NewFilterPanel.ActivityBossRow3:Hide()
-			miog.NewFilterPanel.ActivityBossRow3.layoutIndex = nil
+			filterPanel.ActivityBossRow3:Hide()
+			filterPanel.ActivityBossRow3.layoutIndex = nil
 
-			miog.NewFilterPanel.ActivityBossRow4:Hide()
-			miog.NewFilterPanel.ActivityBossRow4.layoutIndex = nil
+			filterPanel.ActivityBossRow4:Hide()
+			filterPanel.ActivityBossRow4.layoutIndex = nil
 
 			if(panel == "LFGListFrame.SearchPanel" and (categoryID == 2 or categoryID == 3) or panel == "DropChecker") then
 				if(categoryID == 2) then
@@ -1208,7 +1208,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 						local row = i < 5 and 1 or i < 9 and 2 or i < 13 and 3 or 4
 						local column = i - ((row - 1) * 4)
 
-						local activityRow = miog.NewFilterPanel["ActivityRow" .. row]
+						local activityRow = filterPanel["ActivityRow" .. row]
 						local frame = activityRow["Activity" .. column]
 
 						if(sortedSeasonDungeons[i]) then
@@ -1273,7 +1273,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					end)
 
 					for i = 1, 4, 1 do
-						local bossRow = miog.NewFilterPanel["ActivityBossRow" .. i]
+						local bossRow = filterPanel["ActivityBossRow" .. i]
 
 						if(sortedExpansionRaids[i]) then
 							categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID] = categorySettings.activities[sortedExpansionRaids[i].groupFinderActivityGroupID] or {}
@@ -1369,7 +1369,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 						local row = i < 5 and 1 or i < 9 and 2 or i < 13 and 3 or 4
 						local column = i - ((row - 1) * 4)
 
-						local activityRow = miog.NewFilterPanel["ActivityRow" .. row]
+						local activityRow = filterPanel["ActivityRow" .. row]
 						local frame = activityRow["Activity" .. column]
 
 						if(sortedSeasonDungeons[i]) then
@@ -1445,7 +1445,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 						local row = overall < 5 and 1 or overall < 9 and 2 or overall < 13 and 3 or 4
 						local column = overall - ((row - 1) * 4)
 
-						local activityRow = miog.NewFilterPanel["ActivityRow" .. row]
+						local activityRow = filterPanel["ActivityRow" .. row]
 						local frame = activityRow["Activity" .. column]
 
 						if(sortedExpansionRaids[i]) then
@@ -1512,7 +1512,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 	end
 	
-	miog.NewFilterPanel:MarkDirty()
+	filterPanel:MarkDirty()
 end
 
 local function setupFilterPanel(resetSettings)

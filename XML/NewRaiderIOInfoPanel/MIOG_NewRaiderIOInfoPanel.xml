@@ -17,7 +17,6 @@
 
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <!--<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" />!-->
                 </Anchors>
             </Frame>
 
@@ -29,8 +28,8 @@
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="Raid1Header" inherits="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate" hidden="true">
-                        <Size y="20" />
+                    <Frame parentKey="Raid1" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
+                        <Size y="40" />
 
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
@@ -38,30 +37,12 @@
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="Raid1" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
-                        <Size y="20" />
-
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid1Header" relativePoint="BOTTOMLEFT"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1Header" relativePoint="BOTTOMRIGHT"/>
-                        </Anchors>
-                    </Frame>
-                    
-                    <Frame parentKey="Raid2Header" inherits="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate" hidden="true">
-                        <Size y="20" />
+                    <Frame parentKey="Raid2" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
+                        <Size y="40" />
 
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Raid1" relativePoint="BOTTOMLEFT"/>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1" relativePoint="BOTTOMRIGHT"/>
-                        </Anchors>
-                    </Frame>
-
-                    <Frame parentKey="Raid2" inherits="MIOG_NewRaiderIOInfoPanelTierTemplate" hidden="true">
-                        <Size y="20" />
-
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid2Header" relativePoint="BOTTOMLEFT"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid2Header" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
                     </Frame>
                 </Frames>
@@ -97,15 +78,17 @@
                         <OnEnter>
                             local parentPanel = self:GetParent()
 
-                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                            GameTooltip:SetText("The amount of keys in a specific keylevel bracket that have been completed:")
-                            GameTooltip:AddLine("2-3: " .. parentPanel.mplusData.keystoneMilestone2)
-                            GameTooltip:AddLine("4-6: " .. parentPanel.mplusData.keystoneMilestone4)
-                            GameTooltip:AddLine("7-9: " .. parentPanel.mplusData.keystoneMilestone7)
-                            GameTooltip:AddLine("10-11: " .. parentPanel.mplusData.keystoneMilestone10)
-                            GameTooltip:AddLine("12-14: " .. parentPanel.mplusData.keystoneMilestone12)
-                            GameTooltip:AddLine("15+: " .. parentPanel.mplusData.keystoneMilestone15)
-                            GameTooltip:Show()
+                            if(parentPanel.mplusData) then
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText("The amount of keys in a specific keylevel bracket that have been completed:")
+                                GameTooltip:AddLine("2-3: " .. parentPanel.mplusData.keystoneMilestone2)
+                                GameTooltip:AddLine("4-6: " .. parentPanel.mplusData.keystoneMilestone4)
+                                GameTooltip:AddLine("7-9: " .. parentPanel.mplusData.keystoneMilestone7)
+                                GameTooltip:AddLine("10-11: " .. parentPanel.mplusData.keystoneMilestone10)
+                                GameTooltip:AddLine("12-14: " .. parentPanel.mplusData.keystoneMilestone12)
+                                GameTooltip:AddLine("15+: " .. parentPanel.mplusData.keystoneMilestone15)
+                                GameTooltip:Show()
+                            end
 
                         </OnEnter>
 

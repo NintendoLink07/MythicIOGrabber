@@ -1,0 +1,33 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupManagerTierHeaderTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" enableMouseClicks="true" horizTile="true" vertTile="true" setAllPoints="true" />
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress1" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="24" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress2" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                    <Size y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="LEFT" x="42" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

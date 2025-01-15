@@ -1,0 +1,128 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupManagerTierTemplate" propagateMouseInput="Both" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Background" horizTile="true" vertTile="true" setAllPoints="true" />
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="Header">
+                <Size x="60" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+
+                <Layers>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Size x="30" />
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="3" />
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="3" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Progress1" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT"/>
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent.Name" relativePoint="RIGHT" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Progress2" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="RIGHT" />
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="Bosses" propagateMouseInput="Both" >
+                <Size y="22" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Boss1" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Boss2" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss1" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Boss3" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss2" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Boss4" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss3" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Boss5" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss4" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Boss6" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss5" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Boss7" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss6" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Boss8" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss7" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Boss9" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss8" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="Boss10" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Boss9" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

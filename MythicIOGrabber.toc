@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.0.13
+## Version: 3.0.14
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -40,6 +40,7 @@ AdventureJournal.lua
 PartyCheck.lua
 DropChecker.lua
 RaidPlanner.lua
+GroupManager.lua
 
 NewSettings.lua
 StatisticsRecorder.lua
@@ -98,6 +99,16 @@ XML\SearchPanel\MIOG_SearchResultFrameBossFrameTemplate.xml
 XML\ClassPanel\MIOG_ClassPanel.xml
 XML\ClassPanel\MIOG_ClassPanelClassFrameTemplate.xml
 XML\ClassPanel\MIOG_ClassPanelSpecFrameTemplate.xml
+
+XML\MIOG_GroupManager.xml
+XML\MIOG_GroupManagerCharacterTemplate.xml
+XML\MIOG_GroupManagerSpaceTemplate.xml
+XML\MIOG_GroupManagerGroupTemplate.xml
+XML\MIOG_GroupManagerDungeonTemplate.xml
+XML\MIOG_GroupManagerTierHeaderTemplate.xml
+XML\MIOG_GroupManagerTierTemplate.xml
+XML\MIOG_GroupManagerRaidBossTemplate.xml
+XML\MIOG_GroupManagerItemTemplate.xml
 
 XML\Teleports\MIOG_Teleports.xml
 XML\Teleports\MIOG_TeleportButtonTemplate.xml

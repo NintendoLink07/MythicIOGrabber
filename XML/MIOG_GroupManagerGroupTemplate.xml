@@ -1,0 +1,43 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupManagerGroupTemplate" inherits="BackdropTemplate" frameStrata="LOW" virtual="true">
+        <Size y="100" />
+
+        <Frames>
+            <Frame name="Space1" parentKey="Space1" inherits="MIOG_GroupManagerSpaceTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <Frame name="Space2" parentKey="Space2" inherits="MIOG_GroupManagerSpaceTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space1" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space1" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <Frame name="Space3" parentKey="Space3" inherits="MIOG_GroupManagerSpaceTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space2" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space2" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <Frame name="Space4" parentKey="Space4" inherits="MIOG_GroupManagerSpaceTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space3" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space3" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <Frame name="Space5" parentKey="Space5" inherits="MIOG_GroupManagerSpaceTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space4" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space4" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

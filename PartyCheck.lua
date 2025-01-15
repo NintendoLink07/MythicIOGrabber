@@ -18,6 +18,11 @@ local playerInInspection
 local collapsedList = {}
 local playerSpecs = {}
 
+miog.getPlayerSpec = function(name)
+	return playerSpecs[name]
+
+end
+
 local function createSinglePartyCheckFrame(memberFrame, member)
 	memberFrame.data = member
 	memberFrame.fixedWidth = miog.PartyCheck:GetWidth()
@@ -94,7 +99,7 @@ local function getOptionalPlayerData(fullName)
 						groupData[fullName].progressWeight = groupData[fullName].progressWeight + (v.weight or 0)
 					end
 					
-					groupData[fullName].progressTooltipData = groupData[fullName].progressTooltipData .. (i == 2 and "Main - " or "") .. v.shortName .. ": " .. wticc(miog.DIFFICULTY[v.difficulty].shortName .. ":" .. v.bossesKilled .. "/" .. #v.bosses, miog.DIFFICULTY[v.difficulty].color) .. "\r\n"
+					groupData[fullName].progressTooltipData = groupData[fullName].progressTooltipData .. (i == 2 and "Main - " or "") .. v.shortName .. ": " .. wticc(miog.DIFFICULTY[v.difficulty].shortName .. ":" .. v.kills .. "/" .. #v.bosses, miog.DIFFICULTY[v.difficulty].color) .. "\r\n"
 				end
 			end
 		end
@@ -216,6 +221,7 @@ local function updateGroupData()
 				elseif(name == shortName) then
 					unitID = "player"
 					groupOffset = -1
+
 				end
 
 				local playerName, realm = miog.createSplitName(name)
@@ -541,16 +547,18 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 
 		singleUnitInfo.unitId = singleUnitId
 
-		miog.checkSystem.groupMember[singleUnitInfo.nameFull] = miog.checkSystem.groupMember[singleUnitInfo.nameFull] or {}
+		local fullName = miog.createFullNameFrom("unitID", singleUnitId)
+
+		miog.checkSystem.groupMember[fullName] = miog.checkSystem.groupMember[fullName] or {}
 
 		for k, v in pairs(singleUnitInfo) do
-			miog.checkSystem.groupMember[singleUnitInfo.nameFull][k] = v
+			miog.checkSystem.groupMember[fullName][k] = v
 
 		end
 
-		playerSpecs[singleUnitInfo.nameFull] = specId ~= 0 and specId
+		playerSpecs[fullName] = specId ~= 0 and specId
 
-		if(groupData[singleUnitInfo.nameFull]) then
+		if(groupData[fullName]) then
 			--playerSpecs[singleUnitInfo.nameFull] = GetInspectSpecialization(groupData[singleUnitInfo.nameFull].unitID)
 
 			updateGroupData()
@@ -723,6 +731,7 @@ miog.loadPartyCheck = function()
 	ScrollView:SetElementFactory(CustomFactory)
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
+	
 	shortName = GetUnitName("player", false)
 	miog.fullPlayerName, miog.shortPlayerName = fullPlayerName, shortName
 

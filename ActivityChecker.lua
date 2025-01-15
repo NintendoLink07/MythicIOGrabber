@@ -138,6 +138,13 @@ local function getRegularDungeonLists(dungeonList)
 	end
 end
 
+local partyPlaylistEnumToIndex = {
+	[0] = "SoloGameMode",
+	[1] = "DuoGameMode",
+	[2] = "TrioGameMode",
+	[3] = "TrainingGameMode"
+}
+
 local function addPvpActivities(topButton)
 	local honorFrames = {
 		HonorFrame.BonusFrame.RandomBGButton,
@@ -157,6 +164,33 @@ local function addPvpActivities(topButton)
 	}
 
 	if(HonorFrame.TypeDropdown) then
+		if(C_GameEnvironmentManager.GetCurrentEventRealmQueues() ~= Enum.EventRealmQueues.None and C_LobbyMatchmakerInfo.GetQueueFromMainlineEnabled()) then
+			--/run 
+
+			topButton:CreateTitle(WOW_LABS_PLUNDERSTORM_CATEGORY)
+
+			for i = 0, 3, 1 do
+				if(i ~= 2) then
+					local activityButton = topButton:CreateRadio(i == 0 and FRONT_END_LOBBY_SOLOS or i == 1 and FRONT_END_LOBBY_DUOS or i == 2 and FRONT_END_LOBBY_TRIOS or FRONT_END_LOBBY_PRACTICE, function(index) return C_LobbyMatchmakerInfo.IsInQueue() and C_LobbyMatchmakerInfo.GetCurrQueueState() == partyPlaylistEnumToIndex[index] end, function(index)
+						local modeFrame = PlunderstormFrame.QueueSelect.QueueContainer[index == 0 and "Solo" or index == 1 and "Duo" or index == 2 and "Trio" or "Practice"]
+						
+						if(modeFrame) then
+							modeFrame:Click()
+
+						end
+			
+						C_LobbyMatchmakerInfo.EnterQueue(index or PlunderstormFrame.QueueSelect.useLocalPlayIndex);
+						MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="plunderstorm", id = index}
+
+					end, i)
+				end
+			end
+
+			local spacer1 = topButton:CreateSpacer()
+			local divider = topButton:CreateDivider()
+			local spacer2 = topButton:CreateSpacer()
+		end
+
 		local typeDrop = topButton:CreateFrame()
 		typeDrop:AddInitializer(function(blankFrame, description, menu)
 			blankFrame:SetSize(300, 25)

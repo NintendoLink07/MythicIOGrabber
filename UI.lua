@@ -216,6 +216,7 @@ miog.createFrames = function()
 		miog.loadPartyCheck()
 		miog.loadRaidPlanner()
 		miog.loadActivityChecker()
+		miog.loadGroupManager()
 
 		miog.AdventureJournal = miog.loadAdventureJournal()
 		miog.DropChecker = miog.loadDropChecker()

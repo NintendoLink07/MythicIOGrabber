@@ -1,15 +1,15 @@
-## [3.0.13](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.13) - 2025-01-06
+## [3.0.14](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.14) - 2025-01-15
+
+### Added
+
+- [MainFrame] Plunderstorm queues have been added to the PVP submenu in the queue dropdown.
+
+- Lots of stuff for upcoming features has been added in the background.
 
 ### Fixed
 
-- [Active queues] Decreased the amount of data that gets refreshed, resulting in a small performance bump.
+- [FilterPanel] Resolved an error where an algorithm tried to access the filter panel before it had been initialized.
 
-- [Active queues] The cancel button will not disappear anymore when you have had a manually listed group in the group finder.
+- [RaiderIOInfoPanel] The boss frames showing the actual progress are now permantently visible again.
 
-- [DropChecker] The search for items will now start at a single character entered instead of two.
-
-- [Options] The "Classic" background option is once again available.
-
-- [ApplicationViewer] The app viewer won't jump into the foreground anymore if the leader edited the listing / relisted the group.
-
-Renamed the "Statistics" tab in the mainframe to "Progress" since there's a lot of change incoming over the next two months and this fits more :).
+- Small performance improvements.

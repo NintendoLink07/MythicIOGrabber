@@ -199,6 +199,16 @@ local function createPVEFrameReplacement()
 			elseif(queueInfo.subtype == "brawlSpecial") then
 				C_PvP.JoinBrawl(true)
 
+			elseif(queueInfo.subtype == "plunderstorm") then
+				local modeFrame = PlunderstormFrame.QueueSelect.QueueContainer[queueInfo.id == 0 and "Solo" or queueInfo.id == 1 and "Duo" or queueInfo.id == 2 and "Trio" or "Practice"]
+						
+				if(modeFrame) then
+					modeFrame:Click()
+
+				end
+	
+				C_LobbyMatchmakerInfo.EnterQueue(queueInfo.id or PlunderstormFrame.QueueSelect.useLocalPlayIndex);
+
 			elseif(queueInfo.subtype == "pet") then
 				C_PetBattles.StartPVPMatchmaking()
 

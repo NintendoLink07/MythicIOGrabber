@@ -967,7 +967,7 @@ function ProgressTabMixin:UpdateCharacterRaidStatistics(guid)
 							if(difficulty and raidData.character.raids[v].regular.difficulties[difficulty]) then
 								local raiderIODifficultyData = raidData.character.raids[v].regular.difficulties[difficulty]
 
-								MIOG_NewSettings.accountStatistics.characters[guid].raid[v].regular[difficulty] = {ingame = false, kills = raiderIODifficultyData.bossesKilled, bosses = raiderIODifficultyData.bosses}
+								MIOG_NewSettings.accountStatistics.characters[guid].raid[v].regular[difficulty] = {ingame = false, kills = raiderIODifficultyData.kills, bosses = raiderIODifficultyData.bosses}
 
 								local criteriaString, criteriaType, completedCriteria, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible = GetAchievementCriteriaInfo(id, 1, true)
 

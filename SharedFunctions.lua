@@ -260,7 +260,7 @@ local function getNewRaidSortData(playerName, realm, region)
 					modeTable.difficulties[y.difficulty] = {
 						difficulty = y.difficulty,
 						current = d.current,
-						bossesKilled = y.kills,
+						kills = y.kills,
 						cleared = y.cleared,
 						mapID = mapID,
 						shortName = currentTable.raids[mapID].shortName,
@@ -1220,7 +1220,7 @@ local function insertLFGInfo(activityID)
 		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
 	end
 
-	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityIDs[1]].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
+	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityIDs[1]] and miog.ACTIVITY_INFO[entryInfo.activityIDs[1]].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
 	miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
 	miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)

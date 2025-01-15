@@ -19,9 +19,9 @@ miog.OnEvent = function(_, event, ...)
 		end
 		miog.loadNewSettings()
 		
-		miog.createFrames()
-
 		miog.loadRawData()
+
+		miog.createFrames()
 
 		miog.loadNewSettingsAfterFrames()
 		

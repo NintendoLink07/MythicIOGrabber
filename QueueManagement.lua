@@ -759,7 +759,8 @@ end
 
 local function updatePetBattleQueue()
 	local pbStatus, estimate, queued = C_PetBattles.GetPVPMatchmakingInfo();
-	if ( pbStatus ) then
+
+	if(pbStatus) then
 		local frameData = {
 			[1] = true,
 			[2] = "",
@@ -788,6 +789,42 @@ local function updatePetBattleQueue()
 	end
 end
 
+local function updatePlunderstormQueue()
+-- NOTE: Plunderstorm Queue is exclusive to all other queues
+	local queuedForPlunderstorm = C_LobbyMatchmakerInfo.IsInQueue();
+
+	local queueTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
+
+
+	if(queuedForPlunderstorm) then
+		local frameData = {
+			[1] = true,
+			[2] = "",
+			[11] = WOW_LABS_PLUNDERSTORM_CATEGORY,
+			[12] = 0,
+			[17] = {"queued", queueTime},
+			[18] = "PLUNDERSTORM",
+			[20] = "interface/calendar/holidays/calendar_plunderstormstart.blp",
+			[30] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/plunderstorm.png",
+		}
+
+		local queueState = C_LobbyMatchmakerInfo.GetCurrQueueState();
+
+		if(queueState == Enum.PlunderstormQueueState.Queued) then
+			local frame = createQueueFrame(frameData)
+
+			if(frame) then
+				frame.CancelApplication:SetAttribute("type", "macro")
+				frame.CancelApplication:SetAttribute("macrotext1", "/run C_LobbyMatchmakerInfo.AbandonQueue()")
+
+			end
+
+			queueIndex = queueIndex + 1
+
+		end
+	end
+end
+
 local function checkQueues()
 	if(not InCombatLockdown()) then
 		queueSystem.framePool:ReleaseAll()
@@ -801,6 +838,7 @@ local function checkQueues()
 		updatePVPQueues()
 		updateWorldPVPQueues()
 		updatePetBattleQueue()
+		updatePlunderstormQueue()
 		
 	else
 		miog.F.UPDATE_AFTER_COMBAT = true

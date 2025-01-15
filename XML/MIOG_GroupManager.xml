@@ -1,0 +1,374 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupManager" virtual="true">
+        <Frames>
+            <Frame parentKey="Groups">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" x="-2" y="-2"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Group1" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group2" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group3" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group1" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group4" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group2" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group2" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group5" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group3" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group3" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group6" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group4" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group4" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group7" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group5" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group5" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group8" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group6" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group6" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+            
+            <Frame parentKey="Indepth" mixin="RaiderIOInformationPanelMixin" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP"/>
+                            </Anchors>
+                        </FontString>
+                        
+                        <FontString parentKey="Level" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Spec">
+                            <Size x="16" y="16" />
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Level" relativePoint="TOPRIGHT" x="3"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="PreviousData" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-12"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent.Level" relativePoint="BOTTOMRIGHT" y="-12"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="MainData" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.PreviousData" relativePoint="BOTTOMLEFT" y="-3"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent.PreviousData" relativePoint="BOTTOMRIGHT" y="-3"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="MPlusKeys" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.MainData" relativePoint="BOTTOMLEFT" y="-3"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent.MainData" relativePoint="BOTTOMRIGHT" y="-3"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>  
+                </Layers>
+
+                <Frames>
+                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+                        <Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2" y="-2"/>
+						</Anchors>
+					</Button>
+
+                    <Frame parentKey="MythicPlus" inherits="StaticGridLayoutFrame">
+                        <KeyValues>
+                            <KeyValue key="childXPadding" value="4" type="number"/>
+                            <KeyValue key="childYPadding" value="2" type="number"/>
+                        </KeyValues>
+
+                        <Size y="56" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MPlusKeys" relativePoint="BOTTOMLEFT" y="-12"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MPlusKeys" relativePoint="BOTTOMRIGHT" y="-12"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Dungeon1" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="1" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon2" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="2" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon3" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="3" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon4" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="4" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon5" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="1" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                            
+                            <Frame parentKey="Dungeon6" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="2" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon7" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="3" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon8" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="4" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Raids">
+                        <Size y="56" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlus" relativePoint="BOTTOMLEFT" y="-3"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MythicPlus" relativePoint="BOTTOMRIGHT" y="-3"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Raid1" inherits="MIOG_GroupManagerTierTemplate" hidden="true">
+                                <Size y="27" />
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Raid2" inherits="MIOG_GroupManagerTierTemplate" hidden="true">
+                                <Size y="27" />
+
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Raid1" relativePoint="BOTTOMLEFT" y="-2"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1" relativePoint="BOTTOMRIGHT" y="-2"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <!--<Frame parentKey="Items" inherits="StaticGridLayoutFrame" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="childXPadding" value="4" type="number"/>
+                            <KeyValue key="childYPadding" value="4" type="number"/>
+                        </KeyValues>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Raids" relativePoint="BOTTOMLEFT" y="-3"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="HEADSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="1" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="NECKSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="2" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="SHOULDERSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="3" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="BACKSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="4" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                            
+                            <Frame parentKey="CHESTSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="5" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="WRISTSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="6" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="HANDSSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="7" type="number"/>
+                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                            <Frame parentKey="WAISTSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="1" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                            
+                            <Frame parentKey="LEGSSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="2" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="FEETSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="3" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="FINGER0SLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="4" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                            <Frame parentKey="FINGER1SLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="5" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                            
+                            <Frame parentKey="TRINKET0SLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="6" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="TRINKET1SLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="7" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="MAINHANDSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="8" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="SECONDARYHANDSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="9" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+
+                            <Frame parentKey="RANGEDSLOT" inherits="MIOG_GroupManagerItemTemplate">
+                                <KeyValues>
+                                    <KeyValue key="gridColumn" value="10" type="number"/>
+                                    <KeyValue key="gridRow" value="2" type="number"/>
+                                </KeyValues>
+                            </Frame>
+                        </Frames>
+                    </Frame>!-->
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="Overlay" inherits="HelpFrameContainerFrameTemplate" frameStrata="HIGH">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Indepth" relativePoint="TOPLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Indepth" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+                
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Text" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" setAllPoints="true" text="Click on a group member to see their progress data." />
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>
