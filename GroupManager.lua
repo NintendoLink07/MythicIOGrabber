@@ -181,7 +181,15 @@ local function createCharacterFrame(data)
     
     frame:SetBackdrop({bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=1, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
 
-    local color = C_ClassColor.GetClassColor(data.className)
+    local color
+
+    if(data.className) then
+        color = C_ClassColor.GetClassColor(data.className)
+
+    else
+        color = CreateColor(0.5, 0.5, 0.5, 1)
+
+    end
 
     frame:SetBackdropColor(color:GetRGBA())
     frame:SetBackdropBorderColor(color.r - 0.15, color.g - 0.15, color.b - 0.15, 1)
