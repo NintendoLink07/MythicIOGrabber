@@ -11,13 +11,19 @@ miog.updateCurrencies = function()
 		if(currencyTable) then
 			for k, v in ipairs(currencyTable) do
 				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
-				local currentFrame = miog.MainTab.Information.Currency[tostring(k)]
+				local currentFrame = miog.MainTab.Currency[tostring(k)]
+
+				local insert = ""
+
+				if(type(currencyInfo.maxQuantity) == "number" and currencyInfo.maxQuantity > 0) then
+					insert = "/" .. currencyInfo.maxQuantity
+				end
 
 				if(currencyInfo.totalEarned > 0) then
-					currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. "/" .. currencyInfo.maxQuantity .. ")")
+					currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. insert .. ")")
 
 				else
-					currentFrame.Text:SetText(currencyInfo.quantity .. "/" .. currencyInfo.maxQuantity)
+					currentFrame.Text:SetText(currencyInfo.quantity .. insert)
 
 				end
 				currentFrame.Icon:SetTexture(v.icon or currencyInfo.iconFileID)
@@ -31,7 +37,7 @@ miog.updateCurrencies = function()
 			end
 
 			for i = #currencyTable + 1, 6, 1 do
-				miog.MainTab.Information.Currency[tostring(i)]:Hide()
+				miog.MainTab.Currency[tostring(i)]:Hide()
 
 			end
 		else

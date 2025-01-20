@@ -166,10 +166,79 @@
                 <Frames>
                     <Frame parentKey="MainTab" setAllPoints="true">
                         <Frames>
-                            <Frame parentKey="QueueInformation">
+                            <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
+                                <KeyValues>
+                                    <KeyValue key="spacing" value="24" type="number"/>
+                                </KeyValues>
+
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"  />
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="200"/>
+                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" y="2"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="2"/>
+                                </Anchors>
+                                
+                                <Frames>
+                                    <Frame parentKey="Border" inherits="ContainerFrameCurrencyBorderTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="leftEdge" value="common-coinbox-left" type="string"/>
+                                            <KeyValue key="rightEdge" value="common-coinbox-right" type="string"/>
+                                            <KeyValue key="centerEdge" value="_common-coinbox-center" type="string"/>
+                                        </KeyValues>
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT" />
+                                            <Anchor point="BOTTOMRIGHT" />
+                                        </Anchors>
+                                    </Frame>
+                                    
+                                    <Frame parentKey="1" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="1" type="number" />
+                                        </KeyValues>
+                                    </Frame>
+
+                                    <Frame parentKey="2" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="2" type="number" />
+                                        </KeyValues>
+                                    </Frame>
+
+                                    <Frame parentKey="3" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="3" type="number" />
+                                        </KeyValues>
+                                    </Frame>
+
+                                    <Frame parentKey="4" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="4" type="number" />
+                                        </KeyValues>
+                                    </Frame>
+
+                                    <Frame parentKey="5" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="5" type="number" />
+                                        </KeyValues>
+                                    </Frame>
+
+                                    <Frame parentKey="6" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="6" type="number" />
+                                        </KeyValues>
+                                    </Frame>
+                                </Frames>
+
+                                <Scripts>
+                                    <OnShow>
+                                        self:MarkDirty()
+                                    </OnShow>
+                                </Scripts>
+                            </Frame>
+
+                            <Frame parentKey="QueueInformation">
+                                <Size x="200" />
+                                
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Currency" relativePoint="TOPLEFT"/>
                                 </Anchors>
 
                                 <Frames>
@@ -347,6 +416,10 @@
                                     </Button>
                                     
                                     <Frame parentKey="LastGroup" inherits="BackdropTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+                                        </KeyValues>
+
                                         <Size y="50" />
 
                                         <Anchors>
@@ -355,6 +428,16 @@
                                         </Anchors>
 
                                         <Layers>
+                                            <Layer level="BACKGROUND">
+                                                <Texture parentKey="Background" horizTile="true" vertTile="true">
+                                                    <Anchors>
+                                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
+                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
+                                                    </Anchors>
+                                                    <Color r="0" g="0" b="0" a="0.75" />
+                                                </Texture>
+                                            </Layer>
+
                                             <Layer level="OVERLAY">
                                                 <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
                                                 </FontString>
@@ -384,7 +467,7 @@
                                                     <Layer level="OVERLAY">
                                                         <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" text="Active queues">
                                                             <Anchors>
-                                                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                                                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-2"/>
                                                             </Anchors>
                                                         </FontString>
                                                     </Layer>
@@ -407,12 +490,12 @@
                                                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
                                                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
                                                     </Anchors>
-                                                    <Color r="0" g="0" b="0" a="0.7" />
+                                                    <Color r="0" g="0" b="0" a="0.75" />
                                                 </Texture>
                                             </Layer>
                                             <Layer level="BORDER">
                                                 <Texture parentKey="Divider" atlas="UI-LFG-DividerLine">
-                                                    <Size y="4" />
+                                                    <Size y="3" />
                                                     <Anchors>
                                                         <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" />
                                                         <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT" />
@@ -669,59 +752,15 @@
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT" y="-3"/>
                                         </Anchors>
                                     </Frame>
-
-                                    <Frame parentKey="Currency">
-                                        <Size x="40" y="120" />
-
-                                        <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
-                                        </Anchors>
-
-                                        <Frames>
-                                            <Frame parentKey="1" inherits="MIOG_CurrencySingleTemplate">
-                                                <Anchors>
-                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                                                </Anchors>
-                                            </Frame>
-
-                                            <Frame parentKey="2" inherits="MIOG_CurrencySingleTemplate">
-                                                <Anchors>
-                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.1" relativePoint="TOPRIGHT" />
-                                                </Anchors>
-                                            </Frame>
-
-                                            <Frame parentKey="3" inherits="MIOG_CurrencySingleTemplate">
-                                                <Anchors>
-                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.2" relativePoint="TOPRIGHT" />
-                                                </Anchors>
-                                            </Frame>
-
-                                            <Frame parentKey="4" inherits="MIOG_CurrencySingleTemplate">
-                                                <Anchors>
-                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.3" relativePoint="TOPRIGHT" />
-                                                </Anchors>
-                                            </Frame>
-
-                                            <Frame parentKey="5" inherits="MIOG_CurrencySingleTemplate">
-                                                <Anchors>
-                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.4" relativePoint="TOPRIGHT" />
-                                                </Anchors>
-                                            </Frame>
-
-                                            <Frame parentKey="6" inherits="MIOG_CurrencySingleTemplate">
-                                                <Anchors>
-                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.5" relativePoint="TOPRIGHT" />
-                                                </Anchors>
-                                            </Frame>
-                                        </Frames>
-                                    </Frame>
                                 </Frames>
                             </Frame>
+
                         </Frames>
                     </Frame>
+                    
 
                     <Frame parentKey="PartyCheck" inherits="MIOG_PartyCheck" hidden="true" setAllPoints="true" />
-                    <Frame parentKey="GroupManager" inherits="MIOG_GroupManager" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="GroupManager" inherits="MIOG_NewGroupManager" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Progress" inherits="MIOG_ProgressTab" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true" />
@@ -811,7 +850,7 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Group" hidden="true">
+            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Group">
                <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
                </Anchors>

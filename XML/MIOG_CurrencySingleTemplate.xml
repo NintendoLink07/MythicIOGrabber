@@ -1,14 +1,20 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_CurrencySingleTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size x="132" y="20" />
+    <Frame name="MIOG_CurrencySingleTemplate" inherits="ResizeLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="leftPadding" value="4" type="number" />
+        </KeyValues>
 
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
-                    <Size x="17" y="17" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="1" type="number" />
+                    </KeyValues>
+
+                    <Size x="12" y="12" />
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1" />
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                     </Anchors>
 
                     <Scripts>
@@ -20,9 +26,13 @@
             </Layer>
             
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0/0">
+                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0/0">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="2" type="number" />
+                    </KeyValues>
+
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-2"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
                     </Anchors>
                 </FontString>
             </Layer>

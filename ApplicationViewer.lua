@@ -215,6 +215,7 @@ local function createApplicantMemberFrame(applicantID, applicantIndex)
 			miog.checkEgoTrip(name)
 		end
 	end)
+	applicantMemberFrame:SetScript("OnMouseDown", LFGListApplicantMember_OnMouseDown)
 	applicantFrame.memberFrames[applicantIndex] = applicantMemberFrame
 
 	if(MIOG_NewSettings.favouredApplicants[name]) then

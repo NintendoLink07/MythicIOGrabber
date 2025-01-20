@@ -116,7 +116,7 @@ local function fillSpaceFramesTable()
             space.Number:SetText("#" .. i)
             
             miog.createFrameBorder(space, 1, CreateColorFromHexString(miog.CLRSCC.gray):GetRGBA())
-            space:SetBackdropColor(CreateColorFromHexString(miog.CLRSCC.black):GetRGBA())
+	        space:SetBackdropColor(0,0,0,0.75)
             tinsert(spaceFrames, space)
 
         end
@@ -282,6 +282,68 @@ local function createCharacterFrame(data)
     return frame
 end
 
+
+
+
+
+
+
+
+
+local readyCheckStatus = {}
+
+local function updateReadyStatus(frame, isReady)
+    if(frame) then
+        frame.Ready:SetColorTexture(unpack(isReady and {0, 1, 0, 1} or isReady == false and {1, 0, 0, 1} or {1, 1, 0, 1}))
+
+    end
+end
+
+local function managerEvents(_, event, ...)
+    if(event == "READY_CHECK") then -- initiatorName, readyCheckTimeLeft
+        miog.GroupManager.StatusBar.ReadyBox:SetColorTexture(1, 1, 0, 1)
+
+        readyCheckStatus = {}
+
+        local initName, timeLeft = ...
+
+        local fullName = miog.createFullNameFrom("unitName", initName)
+
+        readyCheckStatus[fullName] = true
+
+        updateReadyStatus(fullName, true)
+
+    elseif(event == "READY_CHECK_CONFIRM") then -- unitTarget, isReady
+        local unitID, isReady = ...
+
+        local fullName = miog.createFullNameFrom("unitID", unitID)
+        readyCheckStatus[fullName] = isReady
+
+        updateReadyStatus(fullName, isReady)
+    elseif(event == "READY_CHECK_FINISHED") then -- preempted
+		local allReady = true
+
+		for _, ready in pairs(readyCheckStatus) do
+			if(not ready) then
+				allReady = false
+
+				break
+			end
+
+		end
+
+		miog.GroupManager.StatusBar.ReadyBox:SetColorTexture(allReady and 0, 1, 0, 1 or 1, 0, 0, 1)
+    end
+end
+
+
+
+
+
+
+
+
+
 local function updateGroupData()
     framePool:ReleaseAll()
 
@@ -370,14 +432,8 @@ local function updateGroupData()
     end
 end
 
-local function managerEvents(_, event, ...)
-	if(event == "GROUP_ROSTER_UPDATE") then
-        updateGroupData()
-    end
-end
-
 miog.loadGroupManager = function()
-    miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
+    --[[miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
 
     framePool = CreateFramePool("Button", nil, "MIOG_GroupManagerCharacterTemplate", function(_, frame) frame:Hide() clearFrameFromSpace(frame) end)
 
@@ -399,5 +455,5 @@ miog.loadGroupManager = function()
         resetIndepthData()
     end)
 
-    resetIndepthData()
+    resetIndepthData()]]
 end

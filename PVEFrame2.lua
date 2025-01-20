@@ -238,7 +238,7 @@ local function createPVEFrameReplacement()
 	miog.PVPStatistics = miog.Progress.PVPStatistics
 	miog.PVPStatistics:OnLoad(3)
 
-	local r,g,b = CreateColorFromHexString(miog.CLRSCC.white):GetRGB()
+	--[[local r,g,b = CreateColorFromHexString(miog.CLRSCC.white):GetRGB()
 
 	for i = 1, 6, 1 do
 		local currentFrame = miog.MainTab.Information.Currency[tostring(i)]
@@ -246,7 +246,7 @@ local function createPVEFrameReplacement()
 		miog.createFrameBorder(currentFrame, 1, r, g, b, 0.2)
 		currentFrame:SetBackdropColor(r, g, b, 0.1)
 
-	end
+	end]]
 
 	pveFrame2.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
@@ -285,7 +285,6 @@ local function createPVEFrameReplacement()
 	--local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	--queueDropDown:OnLoad()
 	--queueDropDown:SetText("Select an activity")
-	miog.MainTab.QueueInformation.Panel:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	local formatter = CreateFromMixins(SecondsFormatterMixin)
 	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)

@@ -26,14 +26,14 @@ end
 local function createSinglePartyCheckFrame(memberFrame, member)
 	memberFrame.data = member
 	memberFrame.fixedWidth = miog.PartyCheck:GetWidth()
-	memberFrame.Group:SetText(member.online and member.group or WrapTextInColorCode(member.group, miog.CLRSCC.red))
-	memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
+	memberFrame.Index:SetText(member.online and member.group or WrapTextInColorCode(member.group, miog.CLRSCC.red))
 	memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
 	memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
+	memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
 
 	--miog.insertInfoIntoDropdown(member.name, miog.checkSystem.keystoneData[member.name])
 	
-	memberFrame:SetScript("OnMouseDown", function(self)
+	--[[memberFrame:SetScript("OnMouseDown", function(self)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
 		local frame = raiderIOPanels[member.name]
@@ -46,7 +46,7 @@ local function createSinglePartyCheckFrame(memberFrame, member)
 		collapsedList[member.name] = memberFrame.node:IsCollapsed()
 
 		--miog.PartyCheck:SetExpandedChild(member.name, memberFrame.node:IsCollapsed())
-	end)
+	end)]]
 
 	if(member.rank == 2) then
 		miog.PartyCheck.LeaderCrown:ClearAllPoints()
@@ -55,10 +55,10 @@ local function createSinglePartyCheckFrame(memberFrame, member)
 		miog.PartyCheck.LeaderCrown:Show()
 
 	end
-	memberFrame.ILvl:SetText(member.ilvl or "N/A")
-	memberFrame.Durability:SetText(member.durability or "N/A")
-	memberFrame.Keystone:SetTexture(member.keystone)
-	memberFrame.Keylevel:SetText("+" .. member.keylevel)
+	memberFrame.Itemlevel:SetText(member.ilvl or "N/A")
+	memberFrame.Durability:SetText(member.durability and "(" .. member.durability .. "%)" or "N/A")
+	--memberFrame.Keystone:SetTexture(member.keystone)
+	--memberFrame.Keylevel:SetText("+" .. member.keylevel)
 	memberFrame.Score:SetText(member.score or 0)
 	memberFrame.Progress:SetText(member.progress or "N/A")
 end
@@ -392,17 +392,17 @@ local function updateGroupData()
 
 		end
 
-		local sortingData = {}
+		local dataProvider = CreateDataProvider()
 
 		for _, member in pairs(groupData) do
-			table.insert(sortingData, member)
+			dataProvider:Insert(member)
 		end
 
 		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 
 		if(miog.PartyCheck) then
-			miog.PartyCheck:UpdateSortingData(sortingData)
 			miog.PartyCheck:SetScrollView(miog.PartyCheck.ScrollView)
+			miog.PartyCheck:SetDataProvider(dataProvider)
 
 			if(miog.PartyCheck:IsShown()) then
 				miog.PartyCheck:Sort()
@@ -439,6 +439,22 @@ local function updateGroupData()
 			end)
 		end
 	end
+end
+
+local readyCheckStatus = {}
+
+local function updateReadyStatus(frame, isReady)
+	if(not frame) then
+		miog.PartyCheck.ScrollBox:FindFrameByPredicate(function(frame, data)
+		
+		end)
+
+	end
+
+    if(frame) then
+        frame.Ready:SetColorTexture(unpack(isReady and {0, 1, 0, 1} or isReady == false and {1, 0, 0, 1} or {1, 1, 0, 1}))
+
+    end
 end
 
 local function inspectCoroutineEvents(_, event, ...)
@@ -516,7 +532,40 @@ local function inspectCoroutineEvents(_, event, ...)
 
 			updateGroupData()
 		end
-    end
+	elseif(event == "READY_CHECK") then -- initiatorName, readyCheckTimeLeft
+			miog.PartyCheck.StatusBar.ReadyBox:SetColorTexture(1, 1, 0, 1)
+	
+			readyCheckStatus = {}
+	
+			local initName, timeLeft = ...
+	
+			local fullName = miog.createFullNameFrom("unitName", initName)
+	
+			readyCheckStatus[fullName] = true
+	
+			updateReadyStatus(fullName, true)
+	
+	elseif(event == "READY_CHECK_CONFIRM") then -- unitTarget, isReady
+		local unitID, isReady = ...
+
+		local fullName = miog.createFullNameFrom("unitID", unitID)
+		readyCheckStatus[fullName] = isReady
+
+		updateReadyStatus(fullName, isReady)
+	elseif(event == "READY_CHECK_FINISHED") then -- preempted
+		local allReady = true
+
+		for _, ready in pairs(readyCheckStatus) do
+			if(not ready) then
+				allReady = false
+
+				break
+			end
+
+		end
+
+		miog.PartyCheck.StatusBar.ReadyBox:SetColorTexture(allReady and 0, 1, 0, 1 or 1, 0, 0, 1)
+	end
 end
 
 miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneData)
@@ -613,6 +662,28 @@ function miog.OnGearDurabilityUpdate(unitId, durability, unitGear, allUnitsGear)
 	end
 end
 
+local spaceFrames = {}
+
+local function fillSpaceFramesTable()
+    for i = 1, 40, 1 do
+        local group = ceil(i / 5)
+        local spaceNumber = i - (group - 1) * 5
+        local groupFrame = miog.PartyCheck.Groups["Group" .. group]
+        local space = groupFrame and miog.PartyCheck.Groups["Group" .. group]["Space" .. spaceNumber]
+
+        if(space) then
+            space.subgroupID = group
+            space.id = i
+            space.Number:SetText("#" .. i)
+            
+            miog.createFrameBorder(space, 1, CreateColorFromHexString(miog.CLRSCC.gray):GetRGBA())
+	        space:SetBackdropColor(0,0,0,0.75)
+            tinsert(spaceFrames, space)
+
+        end
+    end
+end
+
 miog.loadPartyCheck = function()
     miog.PartyCheck = miog.pveFrame2.TabFramesPanel.PartyCheck
 	miog.PartyCheck:SetScrollView(miog.PartyCheck.ScrollView)
@@ -668,21 +739,21 @@ miog.loadPartyCheck = function()
 	miog.PartyCheck:SetSettingsTable(MIOG_NewSettings.sortMethods.PartyCheck)
 	miog.PartyCheck:AddMultipleSortingParameters({
 		{name = "group"},
-		{name = "name", padding = 20},
-		{name = "role", padding = 80},
-		{name = "spec", padding = 30},
-		{name = "ilvl", padding = 20},
-		{name = "durability", padding = 30},
+		{name = "role"},
+		{name = "spec"},
+		{name = "name"},
+		{name = "ilvl", padding = 108},
+		{name = "durability", padding = 13},
+		{name = "score", padding = 18},
+		{name = "progressWeight", padding = 22},
 		{name = "keylevel", padding = 30},
-		{name = "score", padding = 45},
-		{name = "progressWeight", padding = 35},
 	})
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "GearDurabilityUpdate", "OnGearDurabilityUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
-
+	
 	miog.PartyCheck:RegisterEvent("PLAYER_ENTERING_WORLD")
 	miog.PartyCheck:RegisterEvent("GROUP_JOINED")
 	miog.PartyCheck:RegisterEvent("GROUP_LEFT")
@@ -690,50 +761,28 @@ miog.loadPartyCheck = function()
 	miog.PartyCheck:RegisterEvent("INSPECT_READY")
 	miog.PartyCheck:RegisterEvent("GROUP_ROSTER_UPDATE")
 	miog.PartyCheck:RegisterEvent("PLAYER_REGEN_ENABLED")
+	miog.PartyCheck:RegisterEvent("READY_CHECK")
+	miog.PartyCheck:RegisterEvent("READY_CHECK_CONFIRM")
+	miog.PartyCheck:RegisterEvent("READY_CHECK_FINISHED")
 	miog.PartyCheck:SetScript("OnEvent", inspectCoroutineEvents)
 
-	local ScrollView = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2)
+	local ScrollView = CreateScrollBoxListLinearView(0, 0, 0, 0, 2)
 
 	miog.PartyCheck.ScrollView = ScrollView
 	
-	ScrollUtil.InitScrollBoxListWithScrollBar(miog.PartyCheck.ScrollBox, miog.PartyCheck.ScrollBox.ScrollBar, ScrollView)
+	ScrollUtil.InitScrollBoxListWithScrollBar(miog.PartyCheck.ScrollBox, miog.PartyCheck.ScrollBar, ScrollView)
 
-	local function initializePartyFrames(frame, node)
-		local data = node:GetData()
-
-		if(data.template == "MIOG_PartyCheckPlayerTemplate") then
-			frame.node = node
+	ScrollView:SetElementInitializer("MIOG_NewGroupManagerCharacterTemplate", function(frame, data)
+		createSinglePartyCheckFrame(frame, data)
 	
-			createSinglePartyCheckFrame(frame, data)
-	
-		elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
-			raiderIOPanels[data.name] = {RaiderIOInformationPanel = frame}
-			
-			local playerName, realm = miog.createSplitName(data.name)
-			frame:OnLoad()
-			frame:SetPlayerData(playerName, realm)
-			frame:ApplyFillData()
-
-			if(data.classFileName) then
-				local r, g, b = C_ClassColor.GetClassColor(data.classFileName):GetRGB()
-
-				frame.Background:SetColorTexture(r, g, b, 0.5)
-			end
-		end
-	end
-	
-	local function CustomFactory(factory, node)
-		local data = node:GetData()
-		local template = data.template
-		factory(template, initializePartyFrames)
-	end
-
-	ScrollView:SetElementFactory(CustomFactory)
+	end)
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	
 	shortName = GetUnitName("player", false)
 	miog.fullPlayerName, miog.shortPlayerName = fullPlayerName, shortName
+
+    fillSpaceFramesTable()
 
 end
 

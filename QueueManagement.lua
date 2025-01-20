@@ -252,6 +252,8 @@ local function updateAllPVEQueues()
 
 					local frame
 
+					print(queueID, categoryID)
+
 					if(not hasData) then
 						frameData[17] = nil
 					end

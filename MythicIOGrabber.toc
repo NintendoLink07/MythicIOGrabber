@@ -100,6 +100,9 @@ XML\ClassPanel\MIOG_ClassPanel.xml
 XML\ClassPanel\MIOG_ClassPanelClassFrameTemplate.xml
 XML\ClassPanel\MIOG_ClassPanelSpecFrameTemplate.xml
 
+XML\MIOG_NewGroupManager.xml
+XML\MIOG_NewGroupManagerCharacterTemplate.xml
+
 XML\MIOG_GroupManager.xml
 XML\MIOG_GroupManagerCharacterTemplate.xml
 XML\MIOG_GroupManagerSpaceTemplate.xml

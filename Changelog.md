@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [3.0.15] - 2025-01-19
+
+### Changed
+
+- The currencies in the mainframe are now located at the bottom of the frame, similar to Blizzards design.
+
+### Fixed
+
+- Currencies that don't have a maximum quantity (e.g. crests) won't be formatted as if they would have a maximum quantity.
+
+
+
+
 ## [3.0.14] - 2025-01-15
 
 ### Added

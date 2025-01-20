@@ -3,7 +3,7 @@
     <Frame name="MIOG_GroupManagerSpaceTemplate" inherits="BackdropTemplate" virtual="true" frameStrata="MEDIUM">
         <Size y="19" />
 
-        <Layers>
+        <Layers>            
             <Layer level="OVERLAY" textureSubLevel="-1">
                 <FontString parentKey="Number" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Color r="0.5" g="0.5" b="0.5" />

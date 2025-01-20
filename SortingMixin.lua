@@ -246,6 +246,11 @@ function SortingMixin:SetCallback(func)
     self.func = func
 end
 
+function SortingMixin:SetDataProvider(dataProvider)
+    self.dataProvider = dataProvider
+
+end
+
 function SortingMixin:GetOrderedParameters()
     local orderedList = {}
 
@@ -259,15 +264,68 @@ function SortingMixin:GetOrderedParameters()
     return #orderedList > 0 and orderedList or self.sortingParameters
 end
 
+local function standardSort(k1, k2, parameters)
+    for k, v in ipairs(orderedList) do
+        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+            if(v.state == 1) then
+                return k1[v.name] > k2[v.name]
+
+            else
+                return k1[v.name] < k2[v.name]
+
+            end
+        end
+    end
+end
+
 function SortingMixin:Sort()
     if(self.sortingFunction) then
         table.sort(self.sortingData, function(k1, k2)
             self.sortingFunction(k1, k2)
         end)
+
     else
         local orderedList = self:GetOrderedParameters()
 
-        table.sort(self.sortingData, function(k1, k2)
+        if(self.scrollView) then
+            self.dataProvider:SetSortComparator(
+                function(k1, k2)
+                    for k, v in ipairs(orderedList) do
+                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+                            if(v.state == 1) then
+                                return k1[v.name] > k2[v.name]
+                
+                            else
+                                return k1[v.name] < k2[v.name]
+                
+                            end
+                        end
+                    end
+                end
+            )
+            self.dataProvider:Sort()
+            
+            self.scrollView:SetDataProvider(self.dataProvider)
+        else
+            table.sort(self.sortingData,
+                function(k1, k2)
+                    for k, v in ipairs(orderedList) do
+                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+                            if(v.state == 1) then
+                                return k1[v.name] > k2[v.name]
+                
+                            else
+                                return k1[v.name] < k2[v.name]
+                
+                            end
+                        end
+                    end
+                end
+            )
+            
+        end
+
+        --[[table.sort(self.sortingData, function(k1, k2)
             for k, v in ipairs(orderedList) do
                 if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
                     if(v.state == 1) then
@@ -279,35 +337,10 @@ function SortingMixin:Sort()
                     end
                 end
             end
-        end)
+        end)]]
         
         if(self.scrollView) then
-            local dataProvider = CreateTreeDataProvider()
-
-            for _, member in ipairs(self.sortingData) do
-                member.template = "MIOG_PartyCheckPlayerTemplate"
-                local baseFrameData = dataProvider:Insert(member)
-
-                baseFrameData:Insert({
-                    template = "MIOG_NewRaiderIOInfoPanel",
-                    name = member.name,
-                    classFileName = member.classFileName
-                    
-                })
-
-            end
-
-            self.scrollView:SetDataProvider(dataProvider)
-
-            for k, v in pairs(dataProvider:GetChildrenNodes()) do
-                if(v.data.collapsed == false) then
-                    v:SetCollapsed(v.data.collapsed)
-
-                else
-                    v:SetCollapsed(true)
-
-                end
-            end
+            
         end
     end
 end

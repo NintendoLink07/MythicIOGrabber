@@ -10,91 +10,179 @@
                 </Anchors>
             </Frame>
 
-            <!--<Frame name="group" parentKey="Gr" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="35" y="18"/>
-                
+            <Frame parentKey="DetailedInfo">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-3"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="TOP"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SortButtonRow" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
+
+                <Layers>
+                    
+                </Layers>
             </Frame>
 
-            <Frame name="shortName" parentKey="Name" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="100" y="18"/>
-                
+            <Frame parentKey="Groups" hidden="true">
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Gr" relativePoint="RIGHT" x="4"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame name="role" parentKey="Role" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="45" y="18"/>
-                
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="3"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame name="specID" parentKey="Spec" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="45" y="18"/>
-                
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="5"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame name="ilvl" parentKey="ILvl" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="44" y="18"/>
-                
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="4"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame name="durability" parentKey="Dur" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="44" y="18"/>
-                
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.ILvl" relativePoint="RIGHT" x="5"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame name="keylevel" parentKey="Key" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="49" y="18"/>
-                
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Dur" relativePoint="RIGHT" x="5"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame name="score" parentKey="Score" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="50" y="18"/>
-                
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Key" relativePoint="RIGHT" x="5"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame name="progressWeight" parentKey="Progress" inherits="MIOG_SortButtonWithTextTemplate">
-                <Size x="55" y="18"/>
-                
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="5"/>
-                </Anchors>
-            </Frame>!-->
-
-            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-15"/>
                 </Anchors>
 
                 <Frames>
-                    <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                    <Frame parentKey="Group1" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPRIGHT" x="-5"/>
-                            <Anchor point="BOTTOMRIGHT" x="-5"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP" />
                         </Anchors>
-                    </EventFrame>
+                    </Frame>
+                    <Frame parentKey="Group2" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group3" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group1" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group4" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group2" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group2" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group5" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group3" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group3" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group6" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group4" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group4" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group7" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group5" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group5" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="Group8" inherits="MIOG_GroupManagerGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group6" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group6" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-15"/>
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="3"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="3"/>
+                </Anchors>
+            </EventFrame>
+
+            <Frame parentKey="StatusBar">
+                <Size y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="ReadyBorder">
+                            <Size x="16" y="16"/>
+
+                            <Color r="0" g="0" b="0" a="0.75" />
+                            
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="ReadyBox">
+                            <Size x="16" y="16"/>
+
+                            <Color r="0" g="1" b="0" a="1" />
+                            
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.ReadyBorder" relativePoint="TOPLEFT" x="1" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ReadyBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                            </Anchors>
+                        </Texture>
+
+                        <FontString parentKey="ReadyText" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="Ready status: ">
+                            <Size y="18" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.ReadyBorder" relativePoint="LEFT" x="-2"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <CheckButton parentKey="DetailsButton" inherits="UIButtonTemplate">
+                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details.png" />
+                        <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details-highlight50.png" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details-highlight-checked.png"/>
+
+                        <Size x="16" y="16"/>
+                        
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.ReadyText" relativePoint="LEFT" x="-8"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                local showList = not self:GetChecked()
+                                self:GetParent().ListButton:SetChecked(showList)
+
+                                self:GetParent():GetParent().Groups:SetShown(not showList)
+                                self:GetParent():GetParent().ScrollBox:SetShown(showList)
+                                self:GetParent():GetParent().SortButtonRow:SetShown(showDetails)
+                            </OnClick>
+                        </Scripts>
+                    </CheckButton>
+
+                    <CheckButton parentKey="ListButton" inherits="UIButtonTemplate" checked="true">
+                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list.png" />
+                        <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list-highlight50.png" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list-highlight-checked.png"/>
+
+                        <Size x="16" y="16"/>
+                        
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.DetailsButton" relativePoint="LEFT" x="-4"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                local showDetails = not self:GetChecked()
+                                self:GetParent().DetailsButton:SetChecked(showDetails)
+
+                                self:GetParent():GetParent().ScrollBox:SetShown(not showDetails)
+                                self:GetParent():GetParent().SortButtonRow:SetShown(not showDetails)
+                                self:GetParent():GetParent().Groups:SetShown(showDetails)
+                            </OnClick>
+                        </Scripts>
+                    </CheckButton>
                 </Frames>
             </Frame>
         </Frames>
