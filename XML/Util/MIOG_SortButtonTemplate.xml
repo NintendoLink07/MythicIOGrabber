@@ -99,7 +99,19 @@
             </OnClick>
             <OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText("Current sort: "..self:GetStateName(self:GetActiveState()))
+
+                local title
+
+                if(self.tooltipTitle) then
+                    title = self.tooltipTitle
+
+                else
+                    title = "Current"
+
+                end
+
+                GameTooltip:SetText(title .. " sort: "..self:GetStateName(self:GetActiveState()))
+                
                 GameTooltip:Show()
             </OnEnter>
             <OnLeave>

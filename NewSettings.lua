@@ -124,7 +124,7 @@ local defaultSettings = {
     {name = "Sort methods", variableName = "MIOG_SortMethods", key="sortMethods", default={
         ["LFGListFrame.SearchPanel"] = {["primary"] = defaultSortState, ["secondary"] = defaultSortState, ["age"] = defaultSortState},
         ["LFGListFrame.ApplicationViewer"] = {["role"] = defaultSortState, ["primary"] = defaultSortState, ["secondary"] = defaultSortState, ["ilvl"] = defaultSortState},
-        ["PartyCheck"] = {},
+        ["GroupManager"] = {},
         ["Guild"] = {["level"] = defaultSortState, ["rank"] = defaultSortState, ["class"] = defaultSortState, ["keystone"] = defaultSortState, ["keylevel"] = defaultSortState, ["score"] = defaultSortState, ["progressWeight"] = defaultSortState, }}
     },
     {name = "Search Panel declined groups", variableName = "MIOG_DeclinedGroups", key="declinedGroups", default={}},
@@ -241,7 +241,7 @@ miog.loadNewSettingsAfterFrames = function()
     --[[for k, v in pairs(MIOG_NewSettings.sortMethods) do
         local buttonArray = k == "LFGListFrame.ApplicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons
         or k == "LFGListFrame.SearchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons
-        or k == "PartyCheck" and miog.PartyCheck and miog.PartyCheck.sortByCategoryButtons
+        or k == "GroupManager" and miog.GroupManager and miog.GroupManager.sortByCategoryButtons
         or k == "Guild" and miog.Guild and miog.Guild.sortByCategoryButtons
 
         if(buttonArray) then

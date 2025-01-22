@@ -71,6 +71,8 @@ function SortingMixin:CreateButtonsForParameters()
         button.parameter = v
         button.layoutIndex = k
 
+        button.tooltipTitle = v.tooltipTitle
+
         v.button = button
 
         if(v.state > 0) then
@@ -101,8 +103,9 @@ function SortingMixin:AddSingleSortingParameter(parameter, noCreation)
     if(self.settingsTable[parameter.name] and not self.settingsTable[parameter.name].currentState) then
         self.sortingParameters[index] = self.settingsTable[parameter.name]
         self.sortingParameters[index].padding = parameter.padding
+        self.sortingParameters[index].tooltipTitle = parameter.tooltipTitle
     else
-        self.sortingParameters[index] = {name = parameter.name, padding = parameter.padding, state = 0, index = index}
+        self.sortingParameters[index] = {name = parameter.name, padding = parameter.padding, state = 0, index = index, tooltipTitle = parameter.tooltipTitle}
 
     end
 

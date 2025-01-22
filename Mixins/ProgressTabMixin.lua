@@ -305,7 +305,7 @@ function ProgressTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
 function ProgressTabMixin:CreateDropdownEntry(fullName, rootDescription)
 	--self:CreateDebugKeyInfo(fullName, rootDescription)
 
-	local keystoneInfo = miog.checkSystem.keystoneData[fullName]
+	local keystoneInfo = miog.openRaidLib.GetAllKeystonesInfo()[fullName]
 
 	if(keystoneInfo and keystoneInfo.mapID > 0) then
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)

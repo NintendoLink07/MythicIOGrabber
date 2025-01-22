@@ -2001,8 +2001,6 @@ local function aj_events(_, event, ...)
     end
 end
 
-MIOG_AJ = aj_events
-
 
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
 

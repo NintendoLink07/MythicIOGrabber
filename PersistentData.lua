@@ -871,6 +871,8 @@ local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectIns
 	end
 end
 
+miog.CHALLENGE_MODE_INFO = {}
+
 miog.checkSingleMapIDForNewData = checkSingleMapIDForNewData
 
 local function loadRawData()
@@ -954,6 +956,12 @@ local function loadRawData()
 		if(miog.MAP_INFO[v[3]]) then
 			miog.MAP_INFO[v[3]].challengeModeID = v[2]
 		end
+
+		miog.CHALLENGE_MODE_INFO[v[2]] = {
+			name = v[1],
+			mapID = v[3],
+			expansionLevel = v[5],
+		}
 	end
 end
 

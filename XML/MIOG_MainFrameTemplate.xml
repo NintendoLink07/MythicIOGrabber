@@ -159,7 +159,7 @@
 
             <Frame parentKey="TabFramesPanel">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-5" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-3" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                 </Anchors>
 
@@ -758,9 +758,7 @@
                         </Frames>
                     </Frame>
                     
-
-                    <Frame parentKey="PartyCheck" inherits="MIOG_PartyCheck" hidden="true" setAllPoints="true" />
-                    <Frame parentKey="GroupManager" inherits="MIOG_NewGroupManager" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="GroupManager" inherits="MIOG_GroupManager" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Progress" inherits="MIOG_ProgressTab" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true" />
@@ -781,14 +779,14 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab2" inherits="MIOG_TabButtonTemplate" id="2" text="Party">
+            <Button name="$parentTab2" inherits="MIOG_TabButtonTemplate" id="2" text="Group">
                <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" />
                </Anchors>
 
                 <Scripts>
                     <OnLoad>
-                        self.frameName = "PartyCheck"
+                        self.frameName = "GroupManager"
                     </OnLoad>
                 </Scripts>
             </Button>

@@ -13,29 +13,29 @@
 
             <Frame name="Space2" parentKey="Space2" inherits="MIOG_GroupManagerSpaceTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Space1" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space1" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space1" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space1" relativePoint="BOTTOMRIGHT" y="-1"/>
                 </Anchors>
             </Frame>
 
             <Frame name="Space3" parentKey="Space3" inherits="MIOG_GroupManagerSpaceTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Space2" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space2" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space2" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space2" relativePoint="BOTTOMRIGHT" y="-1"/>
                 </Anchors>
             </Frame>
 
             <Frame name="Space4" parentKey="Space4" inherits="MIOG_GroupManagerSpaceTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Space3" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space3" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space3" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space3" relativePoint="BOTTOMRIGHT" y="-1"/>
                 </Anchors>
             </Frame>
 
             <Frame name="Space5" parentKey="Space5" inherits="MIOG_GroupManagerSpaceTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Space4" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space4" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Space4" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Space4" relativePoint="BOTTOMRIGHT" y="-1"/>
                 </Anchors>
             </Frame>
         </Frames>

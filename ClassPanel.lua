@@ -5,9 +5,6 @@ miog.createClassPanel = function()
     local classPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.MainFrame, "MIOG_ClassPanel")
 	classPanel:SetPoint("BOTTOMRIGHT", classPanel:GetParent(), "TOPRIGHT", 0, 1)
     classPanel:SetPoint("BOTTOMLEFT", classPanel:GetParent(), "TOPLEFT", 0, 1)
-	classPanel.LoadingSpinner:SetScript("OnMouseDown", function()
-		miog.resetInspectCoroutine()
-	end)
 
     local container = classPanel.Container
 

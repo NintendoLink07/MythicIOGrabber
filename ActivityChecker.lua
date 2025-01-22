@@ -170,7 +170,7 @@ local function addPvpActivities(topButton)
 			topButton:CreateTitle(WOW_LABS_PLUNDERSTORM_CATEGORY)
 
 			for i = 0, 3, 1 do
-				if(i ~= 2) then
+				--if(i ~= 2) then
 					local activityButton = topButton:CreateRadio(i == 0 and FRONT_END_LOBBY_SOLOS or i == 1 and FRONT_END_LOBBY_DUOS or i == 2 and FRONT_END_LOBBY_TRIOS or FRONT_END_LOBBY_PRACTICE, function(index) return C_LobbyMatchmakerInfo.IsInQueue() and C_LobbyMatchmakerInfo.GetCurrQueueState() == partyPlaylistEnumToIndex[index] end, function(index)
 						local modeFrame = PlunderstormFrame.QueueSelect.QueueContainer[index == 0 and "Solo" or index == 1 and "Duo" or index == 2 and "Trio" or "Practice"]
 						
@@ -183,7 +183,7 @@ local function addPvpActivities(topButton)
 						MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="plunderstorm", id = index}
 
 					end, i)
-				end
+				--end
 			end
 
 			local spacer1 = topButton:CreateSpacer()

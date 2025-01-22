@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.0.14a
+## Version: 3.1
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -28,7 +28,6 @@ ApplicationViewer.lua
 SearchPanel.lua
 EntryCreation.lua
 FilterPanel.lua
-InspectCoroutine.lua
 Calendar.lua
 SharedFunctions.lua
 ClassPanel.lua
@@ -37,10 +36,9 @@ LockoutCheck.lua
 LastInvites.lua
 GearingChart.lua
 AdventureJournal.lua
-PartyCheck.lua
+GroupManager.lua
 DropChecker.lua
 RaidPlanner.lua
-GroupManager.lua
 
 NewSettings.lua
 StatisticsRecorder.lua
@@ -54,15 +52,16 @@ FuzzyAlgorithm.lua
 ### MIXINS
 ##
 
-SortingMixin.lua
-MultiStateButton.lua
-ProgressTabMixin.lua
-FilterMixin.lua
-NewMultiStateButtonMixin.lua
-RaidSheetElementMixin.lua
-RaidSheetSpaceMixin.lua
-RewardTypeMixin.lua
-FakeDropdownMixin.lua
+Mixins\SortingMixin.lua
+Mixins\MultiStateButtonMixin.lua
+Mixins\ProgressTabMixin.lua
+Mixins\FilterMixin.lua
+Mixins\NewMultiStateButtonMixin.lua
+Mixins\RaidSheetElementMixin.lua
+Mixins\RaidSheetSpaceMixin.lua
+Mixins\RewardTypeMixin.lua
+Mixins\FakeDropdownMixin.lua
+Mixins\RaiderIOInformationPanelMixin.lua
 
 
 
@@ -80,11 +79,15 @@ XML\MIOG_LastInvitesTemplate.xml
 XML\MIOG_LastInvitesPlayerTemplate.xml
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_HolidayFrameTemplate.xml
-XML\MIOG_PartyCheck.xml
-XML\MIOG_PartyCheckPlayerTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_DropChecker.xml
 XML\MIOG_PopupFrame.xml
+
+XML\GroupManager\MIOG_GroupManager.xml
+XML\GroupManager\MIOG_GroupManagerDetailedCharacterTemplate.xml
+XML\GroupManager\MIOG_GroupManagerSpaceTemplate.xml
+XML\GroupManager\MIOG_GroupManagerGroupTemplate.xml
+XML\GroupManager\MIOG_GroupManagerListCharacterTemplate.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml
@@ -99,19 +102,6 @@ XML\SearchPanel\MIOG_SearchResultFrameBossFrameTemplate.xml
 XML\ClassPanel\MIOG_ClassPanel.xml
 XML\ClassPanel\MIOG_ClassPanelClassFrameTemplate.xml
 XML\ClassPanel\MIOG_ClassPanelSpecFrameTemplate.xml
-
-XML\MIOG_NewGroupManager.xml
-XML\MIOG_NewGroupManagerCharacterTemplate.xml
-
-XML\MIOG_GroupManager.xml
-XML\MIOG_GroupManagerCharacterTemplate.xml
-XML\MIOG_GroupManagerSpaceTemplate.xml
-XML\MIOG_GroupManagerGroupTemplate.xml
-XML\MIOG_GroupManagerDungeonTemplate.xml
-XML\MIOG_GroupManagerTierHeaderTemplate.xml
-XML\MIOG_GroupManagerTierTemplate.xml
-XML\MIOG_GroupManagerRaidBossTemplate.xml
-XML\MIOG_GroupManagerItemTemplate.xml
 
 XML\Teleports\MIOG_Teleports.xml
 XML\Teleports\MIOG_TeleportButtonTemplate.xml
@@ -128,7 +118,6 @@ XML\AdventureJournal\MIOG_AdventureJournalLootSlotLineTemplate.xml
 XML\AdventureJournal\MIOG_AdventureJournalLootItemSingleTemplate.xml
 XML\AdventureJournal\MIOG_AdventureJournalCreatureButtonTemplate.xml
 
-RaiderIOInformationPanelMixin.lua
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelRaidBossFrameTemplate.xml
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanel.xml
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelDungeonPanelTemplate.xml

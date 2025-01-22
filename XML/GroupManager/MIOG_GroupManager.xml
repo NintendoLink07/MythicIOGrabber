@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_PartyCheck" inherits="BackdropTemplate" mixin="SortingMixin" virtual="true">
+    <Frame name="MIOG_GroupManager" inherits="BackdropTemplate" mixin="SortingMixin" virtual="true">
         <Frames>
             <Frame parentKey="SortButtonRow" inherits="HorizontalLayoutFrame">
                 <Size y="20" />
@@ -78,6 +78,24 @@
                             <Anchor point="TOPRIGHT" relativeKey="$parent.Group6" relativePoint="BOTTOMRIGHT" />
                         </Anchors>
                     </Frame>
+
+                    <Frame parentKey="Tank" inherits="MIOG_IconWithTextTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group2" relativePoint="TOPRIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Healer" inherits="MIOG_IconWithTextTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Damager" inherits="MIOG_IconWithTextTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
                 </Frames>
             </Frame>
 
@@ -128,7 +146,7 @@
                             </Anchors>
                         </Texture>
 
-                        <FontString parentKey="ReadyText" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="Ready status: ">
+                        <FontString parentKey="ReadyText" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="Status: ">
                             <Size y="18" />
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent.ReadyBorder" relativePoint="LEFT" x="-2"/>
@@ -156,8 +174,14 @@
 
                                 self:GetParent():GetParent().Groups:SetShown(not showList)
                                 self:GetParent():GetParent().ScrollBox:SetShown(showList)
-                                self:GetParent():GetParent().SortButtonRow:SetShown(showDetails)
+                                self:GetParent():GetParent().SortButtonRow:SetShown(showList)
                             </OnClick>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(RAID_FRAMES_LABEL)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function = "GameTooltip_Hide" />
                         </Scripts>
                     </CheckButton>
 
@@ -181,8 +205,30 @@
                                 self:GetParent():GetParent().SortButtonRow:SetShown(not showDetails)
                                 self:GetParent():GetParent().Groups:SetShown(showDetails)
                             </OnClick>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(CLICK_FOR_MORE_INFO)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function = "GameTooltip_Hide" />
                         </Scripts>
                     </CheckButton>
+                    
+                    <Button parentKey="Refresh" inherits="BigRedRefreshButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.ListButton" relativePoint="LEFT" x="-4"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText("Try to refresh player data.")
+                                GameTooltip:Show()
+                            </OnEnter>
+
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+                    </Button>
                 </Frames>
             </Frame>
         </Frames>

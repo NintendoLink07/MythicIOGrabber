@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [3.1] - 2025-01-22
+
+### Added
+
+- The "Party" tab in the mainframe has been redesigned and the new group manager has been implemented!
+You can switch between these views in the topright corner in the "Party" tab.
+The standard view is similar to the old one but the new features are:
+    - A refresh button has been added near the topright corner to try to refresh and add missing data for players.
+    - Character players have a "Ready" box at the end of the line, indicating if they confirmed the ready check or not.
+    - In the topright corner a "Ready status" box has been implemented showing if the whole party/raid is ready.
+
+The new view integrates the raid manager from the social menu ('O' key shortcut).
+    - [This feature will be implemented with 3.1.1] You can click on a party/raid member and view detailed infos about their character, M+ and raid related.
+    
+### Changed
+
+- The [PartyCheck] tab has been renamed to [GroupManager].
+
+### Fixed
+
+- [SearchPanel] The autocomplete frame will now be in the toplayer of the frame so it doesn't get hidden by the "No groups found" overlay anymore.
+
+- [GroupManager] Multiple tooltip layout errors have been fixed.
+
+- Multiple performance issues have been fixed regarding party / raid member updates.
+There should be SIGNIFICANTLY less random framedrops when data of players is being requested.
+
+- Updated the OpenRaid library and deleted some old files.
+
+
+
 ## [3.0.15] - 2025-01-19
 
 ### Changed
@@ -15,7 +47,6 @@ and this project adheres to [Semantic Versioning].
 ### Fixed
 
 - Currencies that don't have a maximum quantity (e.g. crests) won't be formatted as if they would have a maximum quantity.
-
 
 
 
@@ -205,11 +236,11 @@ Blizzard sends search result data usually twice (except for rated BG's), the fir
 
 - [SearchPanel] Checks for both class and spec data are now more tight since for some reason there might be some data missing in the first few calls to retrieve data.
 
-- [PartyCheck] There will now be a check if the keystone data contains a character name (usually should but on very rare occassions it doesn't).
+- [GroupManager] There will now be a check if the keystone data contains a character name (usually should but on very rare occassions it doesn't).
 
 - [ReQueue] When logging into a different character the saved groups will now get wiped.
 
-- [PartyCheck] Switching to the PartyCheck tab will now always refresh the class bar at the top of the frame.
+- [GroupManager] Switching to the GroupManager tab will now always refresh the class bar at the top of the frame.
 
 
 
@@ -399,7 +430,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 
 ### Fixed
 
-- [PartyCheck] Being in a party where many members join and leave shouldn't create errors anymore.
+- [GroupManager] Being in a party where many members join and leave shouldn't create errors anymore.
 
 - [Active Queues] "The Codex of Chromie" will not cause an error anymore (and for that matter no other coming events that are not yet implemented will).
 
@@ -429,7 +460,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 
 - [RaidSheet] Dragging a character and releasing it above it's old space will now correctly set it to this space again.
 
-- [PartyCheck] Changed the algorithm for detecting the unitID back to my version instead of using Blizzard's, mine is more reliable.
+- [GroupManager] Changed the algorithm for detecting the unitID back to my version instead of using Blizzard's, mine is more reliable.
 
 
 
@@ -451,7 +482,7 @@ You can search for specific guildmates in the topleft corner.
 
 ### Changed
 
-- [SearchPanel] Implemented the new sorting method that was already active for [PartyCheck] and [ApplicationViewer]
+- [SearchPanel] Implemented the new sorting method that was already active for [GroupManager] and [ApplicationViewer]
 
 - [Lockouts] This frame has moved to the "More" dropdown menu in the title bar.
 
@@ -509,11 +540,11 @@ Though right now RaiderIO seems to have a bug that doesn't correctly transfer an
 
 - [FilterPanel] Re-implemented right-clicking the bossframes to reset them.
 
-- [PartyCheck] The character tooltip now displays the keystone dungeon name aswell as the level.
+- [GroupManager] The character tooltip now displays the keystone dungeon name aswell as the level.
 
-- [PartyCheck] Split up some methods for the spec, keystone and progress detection, should lag less when new people join the group.
+- [GroupManager] Split up some methods for the spec, keystone and progress detection, should lag less when new people join the group.
 
-- [PartyCheck] Fixed the width of certain elements of a character frame, now it shouldn't cut off the text anymore.
+- [GroupManager] Fixed the width of certain elements of a character frame, now it shouldn't cut off the text anymore.
 
 - Cleaned up old files and code, should improve load times of the addon on lower end machines a bit (we're talking still sub-seconds of loadtime improvement though)
 
@@ -597,7 +628,7 @@ Also squished alot of bugs where the logic was too convoluted to understand wher
 
 - [ApplicationViewer] The role count in the topright corner should now show the correct count again.
 
-- [PartyCheck] Keystone info now gets populated correctly.
+- [GroupManager] Keystone info now gets populated correctly.
 
 
 
@@ -623,7 +654,7 @@ Gonna investigate if I can check for delve completion and the level of it to dis
 
 - [MainFrame] The weekly Xal'atath affix will now be shown in the mainframe.
 
-- [PartyCheck] There will be no more errors when joining a group and getting their spec info right away due to Blizzard being a merciful god.
+- [GroupManager] There will be no more errors when joining a group and getting their spec info right away due to Blizzard being a merciful god.
 
 
 
@@ -645,16 +676,16 @@ Gonna investigate if I can check for delve completion and the level of it to dis
 
 ### Changed
 
-- [PartyCheck] PartyCheck (with all the gear/keystone info) has been re-enabled and it's info will now only be updated when the frame is shown.
+- [GroupManager] GroupManager (with all the gear/keystone info) has been re-enabled and it's info will now only be updated when the frame is shown.
 
-- [PartyCheck] The new sorting algorithm has been implemented, you can now sort for more than 2 things at once.
+- [GroupManager] The new sorting algorithm has been implemented, you can now sort for more than 2 things at once.
 Keep in mind: the more the addon has to sort a raid group the more it has to compute.
 
 - [M+ Statistics] "Turned off" the score increase calculation, waiting for tomorrow to see the actual formula for it.
 
 ### Fixed
 
-- [PartyCheck] The character frames with their RaiderIO info expanded will not close on PartyCheck getting a group update anymore.
+- [GroupManager] The character frames with their RaiderIO info expanded will not close on GroupManager getting a group update anymore.
 
 - [Lockouts] The lockouts will now be correctly refreshed when login in with a character and not just when opening the Lockouts frame.
 
@@ -674,7 +705,7 @@ Keep in mind: the more the addon has to sort a raid group the more it has to com
 
 ### Changed
 
-- [PartyCheck] Disabled the keylevel and gear info for now, they create 4-5 hard lags after combat.
+- [GroupManager] Disabled the keylevel and gear info for now, they create 4-5 hard lags after combat.
 Will be fixed by the end of the week, don't have much time right now.
 
 
@@ -689,7 +720,7 @@ Will be fixed by the end of the week, don't have much time right now.
 
 ### Fixed
 
-- [PartyCheck] Hovering over Brann in a Delve won't cause an error anymore.
+- [GroupManager] Hovering over Brann in a Delve won't cause an error anymore.
 
 - [FilterPanel] Unchecking your class now sets Blizzards "Needs my class" setting correctly and doesn't reset upon reopening the search panel.
 
@@ -831,7 +862,7 @@ Will revisit this in the future.
 
 ### Fixed
 
-- [PartyCheck] Players that are leaving the group won't be checked for gear anymore.
+- [GroupManager] Players that are leaving the group won't be checked for gear anymore.
 
 - [Active Queues] Cinderbrew Meadery now has an background image.
 
@@ -1129,7 +1160,7 @@ This is ONLY for the PVP queues, all the PVE ones still work how they used to wo
 
 - [SearchPanel] There should be no more "reset disallowed" errors.
 
-- [PartyCheck] The player should now be "inspectable" both in a group and solo.
+- [GroupManager] The player should now be "inspectable" both in a group and solo.
 
 - Multiple issues with the library "Open Raid Library" have been fixed.
 
@@ -1138,17 +1169,17 @@ This is ONLY for the PVP queues, all the PVE ones still work how they used to wo
 
 ### Changed
 
-- The new display method has now also been implemented into the [PartyCheck] tab, less laggy and it won't jump between the M+ and raid tab around anymore
+- The new display method has now also been implemented into the [GroupManager] tab, less laggy and it won't jump between the M+ and raid tab around anymore
 
 ### Fixed
 
 - [Class Panel] The players class is now always visible, instead of just when you're in a group.
 
-- [PartyCheck] The players itemlevel and durability should now always be refreshed.
+- [GroupManager] The players itemlevel and durability should now always be refreshed.
 
-- [PartyCheck] Party members itemlevel, durability, keystone and keylevel should now be always refreshed when a group update occurs.
+- [GroupManager] Party members itemlevel, durability, keystone and keylevel should now be always refreshed when a group update occurs.
 
-- [PartyCheck] The keystone levels should now reflect the level of the keystone, not the players level.
+- [GroupManager] The keystone levels should now reflect the level of the keystone, not the players level.
 
 
 ## [2.3.2] - 2024-07-21
@@ -1285,11 +1316,11 @@ Throughout the 2.3 version I'll apply it to the whole addon, making it need way 
 
 - [ApplicationViewer] The applicant's tooltip will now hide correctly after leaving the applicant frame.
 
-- [PartyCheck] While in a group the tooltips shouldn't get mixed up anymore.
+- [GroupManager] While in a group the tooltips shouldn't get mixed up anymore.
 
-- [PartyCheck] The leader icon isn't floating around the world anymore when you scroll down.
+- [GroupManager] The leader icon isn't floating around the world anymore when you scroll down.
 
-- [PartyCheck] There won't be any error anymore when someone leaves the raid/group while it's currently checking for their gear.
+- [GroupManager] There won't be any error anymore when someone leaves the raid/group while it's currently checking for their gear.
 
 - More performance fixes.
 
@@ -1311,9 +1342,9 @@ Doesn't save alot of memory (around 1-2 megabytes) but it's the first step.
 
 - The detailed information panel will now display the main's highest raid progress in the raid tab.
 
-- [PartyCheck] Specs and classes will now be identified more reliably.
+- [GroupManager] Specs and classes will now be identified more reliably.
 
-- [PartyCheck] Weapon enchants will now also be checked.
+- [GroupManager] Weapon enchants will now also be checked.
 
 - [Entry Creation] Setting an mythic plus or pvp rating will not set the other rating to the same value.
 
@@ -1322,7 +1353,7 @@ Doesn't save alot of memory (around 1-2 megabytes) but it's the first step.
 
 ### Fixed
 
-- [PartyCheck] Itemlevel and durability now also always update for players on your realm.
+- [GroupManager] Itemlevel and durability now also always update for players on your realm.
 
 - [Guild] Saved keystone info from guild members will not have priority over new incoming data.
 
@@ -1349,12 +1380,12 @@ Since guilds are usually over a hundred members big it might lag here and there 
 
 - [Gearing Chart] The chart fully fits into the actual window.
 
-- [PartyCheck] Reseting a secondary sorting method will not bug out the UI anymore.
+- [GroupManager] Reseting a secondary sorting method will not bug out the UI anymore.
 
-- [PartyCheck] Keystones of party/raid members only get checked when you actually switch to the PartyCheck tab.
+- [GroupManager] Keystones of party/raid members only get checked when you actually switch to the GroupManager tab.
 Decreases lag when calling the main window.
 
-- [PartyCheck] Hands won't be checked for enchants anymore.
+- [GroupManager] Hands won't be checked for enchants anymore.
 
 
 ## [2.1.5c] - 2024-06-20
@@ -1466,7 +1497,7 @@ This means korean, simplified and traditional chinese and russian characters sho
 ### Added
 
 - A new tab has appeared!
-Partycheck is now available.
+GroupManager is now available.
 
 Here you will see your group- / raid-members listed in a table, showing info like spec, role, itemlevel, repair%, keystone, score and raid progress.
 The table is sortable with 2 active sort methods, e.g. 1. sorted by role and 2. sorted by ilvl.
@@ -3023,7 +3054,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.0.13..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.1..HEAD
+[3.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1
+[3.0.14]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.14
 [3.0.13]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.13
 [3.0.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.12
 [3.0.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.11

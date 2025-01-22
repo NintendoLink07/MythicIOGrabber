@@ -995,7 +995,7 @@ miog.createSearchPanel = function()
 	local autoCompleteFrame = LFGListFrame.SearchPanel.AutoCompleteFrame
 	autoCompleteFrame:ClearAllPoints()
 	autoCompleteFrame:SetParent(searchPanel)
-	autoCompleteFrame:SetFrameStrata("DIALOG")
+	autoCompleteFrame:SetFrameStrata("FULLSCREEN")
 	autoCompleteFrame:SetWidth(searchBox:GetWidth())
 	autoCompleteFrame:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", -4, 1)
 
