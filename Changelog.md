@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.1.1] - 2025-01-26
+
+### Added
+
+- [GroupManager] You can now click on any character in your group and view their M+ and raid progress aswell as more general info.
+
+### Fixed
+
+- Any raider IO data relating to a player's main character now gets correctly parsed and shown.
+
+- Dungeons and bosses that haven't been completed yet by a character will now be desaturated in all raider IO panels.
+
+
+
 ## [3.1] - 2025-01-22
 
 ### Added

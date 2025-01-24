@@ -32,7 +32,7 @@
                 <FontString parentKey="Progress1" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                     <Size y="18" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="54" />
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="64" />
                     </Anchors>
                 </FontString>
 

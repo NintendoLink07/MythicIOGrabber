@@ -234,7 +234,7 @@ miog.standardSortFunction = standardSortFunction
 local function getNewRaidSortData(playerName, realm, region)
 	local profile
 	
-	if(RaiderIO) then 
+	if(RaiderIO) then
 		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
 	end
 	
@@ -243,6 +243,7 @@ local function getNewRaidSortData(playerName, realm, region)
 	if(profile) then
 		if(profile.raidProfile) then
 			raidData = {character = {raids = {}, ordered = {}}, main = {raids = {}, ordered = {}}}
+
 			for k, d in ipairs(profile.raidProfile.raidProgress) do
 				local currentTable = d.isMainProgress and raidData.main or raidData.character
 

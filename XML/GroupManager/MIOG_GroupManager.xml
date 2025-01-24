@@ -10,6 +10,287 @@
                 </Anchors>
             </Frame>
 
+            <Frame parentKey="StatusBar">
+                <Size y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="ReadyBorder">
+                            <Size x="16" y="16"/>
+
+                            <Color r="0" g="0" b="0" a="0.75" />
+                            
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="ReadyBox">
+                            <Size x="16" y="16"/>
+
+                            <Color r="0" g="1" b="0" a="1" />
+                            
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.ReadyBorder" relativePoint="TOPLEFT" x="1" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ReadyBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                            </Anchors>
+                        </Texture>
+
+                        <FontString parentKey="ReadyText" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="Status: ">
+                            <Size y="18" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.ReadyBorder" relativePoint="LEFT" x="-2"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <CheckButton parentKey="DetailsButton" inherits="UIButtonTemplate">
+                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details.png" />
+                        <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details-highlight50.png" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details-highlight-checked.png"/>
+
+                        <Size x="16" y="16"/>
+                        
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.ReadyText" relativePoint="LEFT" x="-8"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                local showDetails = not self:GetChecked()
+                                self:GetParent().ListButton:SetChecked(showDetails)
+
+                                self:GetParent():GetParent().Groups:SetShown(not showDetails)
+                                self:GetParent():GetParent().Indepth:SetShown(not showDetails)
+
+                                self:GetParent():GetParent().ScrollBox:SetShown(showDetails)
+                                self:GetParent():GetParent().SortButtonRow:SetShown(showDetails)
+                            </OnClick>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(RAID_FRAMES_LABEL)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function = "GameTooltip_Hide" />
+                        </Scripts>
+                    </CheckButton>
+
+                    <CheckButton parentKey="ListButton" inherits="UIButtonTemplate" checked="true">
+                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list.png" />
+                        <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list-highlight50.png" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list-highlight-checked.png"/>
+
+                        <Size x="16" y="16"/>
+                        
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.DetailsButton" relativePoint="LEFT" x="-4"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                local showList = not self:GetChecked()
+                                self:GetParent().DetailsButton:SetChecked(showList)
+
+                                self:GetParent():GetParent().ScrollBox:SetShown(not showList)
+                                self:GetParent():GetParent().SortButtonRow:SetShown(not showList)
+
+                                self:GetParent():GetParent().Groups:SetShown(showList)
+                            </OnClick>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(CLICK_FOR_MORE_INFO)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function = "GameTooltip_Hide" />
+                        </Scripts>
+                    </CheckButton>
+                    
+                    <Button parentKey="Refresh" inherits="BigRedRefreshButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.ListButton" relativePoint="LEFT" x="-4"/>
+                        </Anchors>
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText("Try to refresh player data.")
+                                GameTooltip:Show()
+                            </OnEnter>
+
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+            
+            <Frame parentKey="Indepth" frameStrata="HIGH" inherits="BackdropTemplate" mixin="RaiderIOInformationPanelMixin" hidden="true">
+                <KeyValues>
+                    <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.StatusBar" relativePoint="BOTTOM"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.StatusBar" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOM"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" horizTile="true" vertTile="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
+                            </Anchors>
+                            <Color r="0" g="0" b="0" a="0.95" />
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" y="-4"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Level" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="7"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Spec" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Level" relativePoint="RIGHT" x="7"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Guild" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-10"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Guild" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-10"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+                        <Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-4" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+                                self:GetParent():Hide()
+							</OnClick>
+						</Scripts>
+					</Button>
+
+                    <Frame parentKey="MythicPlus">
+                        <Size x="120" y="58" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Guild" relativePoint="BOTTOMLEFT" y="-10"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Dungeon1" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon2" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Dungeon1" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                            
+                            <Frame parentKey="Dungeon3" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Dungeon2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                            
+                            <Frame parentKey="Dungeon4" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Dungeon3" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon5" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon1" relativePoint="BOTTOMLEFT" y="-1"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Dungeon6" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Dungeon5" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                            
+                            <Frame parentKey="Dungeon7" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Dungeon6" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                            
+                            <Frame parentKey="Dungeon8" inherits="MIOG_GroupManagerDungeonTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Dungeon7" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Raids">
+                        <Size x="120" y="156" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlus" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3"/>
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Raid1" inherits="MIOG_GroupManagerTierTemplateNew" hidden="true">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Raid2" inherits="MIOG_GroupManagerTierTemplateNew" hidden="true">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Raid1" relativePoint="BOTTOMLEFT" y="-3"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Raid3" inherits="MIOG_GroupManagerTierTemplateNew" hidden="true">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Raid3" relativePoint="BOTTOMLEFT" y="-3"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Raid3" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+                </Frames>
+            </Frame>
+
             <Frame parentKey="DetailedInfo">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="TOP"/>
@@ -112,125 +393,6 @@
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="3"/>
                 </Anchors>
             </EventFrame>
-
-            <Frame parentKey="StatusBar">
-                <Size y="20" />
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
-
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="ReadyBorder">
-                            <Size x="16" y="16"/>
-
-                            <Color r="0" g="0" b="0" a="0.75" />
-                            
-                            <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="ReadyBox">
-                            <Size x="16" y="16"/>
-
-                            <Color r="0" g="1" b="0" a="1" />
-                            
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.ReadyBorder" relativePoint="TOPLEFT" x="1" y="-1"/>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ReadyBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
-                            </Anchors>
-                        </Texture>
-
-                        <FontString parentKey="ReadyText" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="Status: ">
-                            <Size y="18" />
-                            <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.ReadyBorder" relativePoint="LEFT" x="-2"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-
-                <Frames>
-                    <CheckButton parentKey="DetailsButton" inherits="UIButtonTemplate">
-                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details.png" />
-                        <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details-highlight50.png" alphaMode="ADD"/>
-                        <CheckedTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/details-highlight-checked.png"/>
-
-                        <Size x="16" y="16"/>
-                        
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.ReadyText" relativePoint="LEFT" x="-8"/>
-                        </Anchors>
-
-                        <Scripts>
-                            <OnClick>
-                                local showList = not self:GetChecked()
-                                self:GetParent().ListButton:SetChecked(showList)
-
-                                self:GetParent():GetParent().Groups:SetShown(not showList)
-                                self:GetParent():GetParent().ScrollBox:SetShown(showList)
-                                self:GetParent():GetParent().SortButtonRow:SetShown(showList)
-                            </OnClick>
-                            <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                GameTooltip:SetText(RAID_FRAMES_LABEL)
-                                GameTooltip:Show()
-                            </OnEnter>
-                            <OnLeave function = "GameTooltip_Hide" />
-                        </Scripts>
-                    </CheckButton>
-
-                    <CheckButton parentKey="ListButton" inherits="UIButtonTemplate" checked="true">
-                        <NormalTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list.png" />
-                        <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list-highlight50.png" alphaMode="ADD"/>
-                        <CheckedTexture file="Interface/Addons/MythicIOGrabber/res/infoIcons/list-highlight-checked.png"/>
-
-                        <Size x="16" y="16"/>
-                        
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.DetailsButton" relativePoint="LEFT" x="-4"/>
-                        </Anchors>
-
-                        <Scripts>
-                            <OnClick>
-                                local showDetails = not self:GetChecked()
-                                self:GetParent().DetailsButton:SetChecked(showDetails)
-
-                                self:GetParent():GetParent().ScrollBox:SetShown(not showDetails)
-                                self:GetParent():GetParent().SortButtonRow:SetShown(not showDetails)
-                                self:GetParent():GetParent().Groups:SetShown(showDetails)
-                            </OnClick>
-                            <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                GameTooltip:SetText(CLICK_FOR_MORE_INFO)
-                                GameTooltip:Show()
-                            </OnEnter>
-                            <OnLeave function = "GameTooltip_Hide" />
-                        </Scripts>
-                    </CheckButton>
-                    
-                    <Button parentKey="Refresh" inherits="BigRedRefreshButtonTemplate">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.ListButton" relativePoint="LEFT" x="-4"/>
-                        </Anchors>
-                        <Scripts>
-                            <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                GameTooltip:SetText("Try to refresh player data.")
-                                GameTooltip:Show()
-                            </OnEnter>
-
-                            <OnLeave function="GameTooltip_Hide" />
-                        </Scripts>
-                    </Button>
-                </Frames>
-            </Frame>
         </Frames>
 
         <Layers>

@@ -10,7 +10,6 @@ local groupData = {}
 local lastNotifyTime = 0
 local pityTimer = nil
 local playerInInspection
-local collapsedList = {}
 local playerSpecs = {}
 
 miog.getPlayerSpec = function(name)
@@ -39,6 +38,23 @@ local function customMenu(self, type)
 	UnitPopup_OpenMenu("MIOG_" .. strupper(type), contextData);
 end
 
+local function showIndepthData(data)
+	local indepthFrame = miog.GroupManager.Indepth
+
+	indepthFrame.Name:SetText(WrapTextInColorCode(data.shortName, C_ClassColor.GetClassColor(data.classFileName):GenerateHexColor()))
+	indepthFrame.Level:SetText(data.level)
+
+	local _, name = GetSpecializationInfoForSpecID(data.specID)
+
+	indepthFrame.Spec:SetText(name .. " " .. data.localizedClassName)
+	indepthFrame.Guild:SetText(GetGuildInfo(data.unitID) or "Currently guildless")
+
+	indepthFrame:SetPlayerData(data.name, data.realm)
+	indepthFrame:ApplyFillData()
+
+	indepthFrame:Show()
+end
+
 local function createSingleGroupManagerFrame(memberFrame, member)
 	memberFrame.data = member
 	memberFrame.id = member.index
@@ -50,21 +66,6 @@ local function createSingleGroupManagerFrame(memberFrame, member)
 	memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
 	memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
 	memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
-	
-	--[[memberFrame:SetScript("OnMouseDown", function(self)
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-		local frame = raiderIOPanels[member.name]
-		
-		frame.RaiderIOInformationPanel:SetPlayerData(member.name)
-		--currentFrame.RaiderIOInformationPanel:SetOptionalData(searchResultInfo.comment, realm)
-		frame.RaiderIOInformationPanel:ApplyFillData()
-
-		memberFrame.node:ToggleCollapsed()
-		collapsedList[member.name] = memberFrame.node:IsCollapsed()
-
-		--miog.GroupManager:SetExpandedChild(member.name, memberFrame.node:IsCollapsed())
-	end)]]
 
 	if(member.rank == 2) then
 		miog.GroupManager.LeaderCrown:ClearAllPoints()
@@ -76,8 +77,6 @@ local function createSingleGroupManagerFrame(memberFrame, member)
 
 	memberFrame.Itemlevel:SetText(member.ilvl or "N/A")
 	memberFrame.Durability:SetText(member.durability and "(" .. member.durability .. "%)" or "N/A")
-
-
 	memberFrame.Score:SetText(member.score or 0)
 	memberFrame.Progress:SetText(member.progress or "N/A")
 
@@ -98,6 +97,8 @@ local function createSingleGroupManagerFrame(memberFrame, member)
 				customMenu(self, "party")
 
 			end
+		elseif(button == "LeftButton") then
+			showIndepthData(self.data)
 		end
 	end)
 end
@@ -392,8 +393,6 @@ local function createCharacterFrame(data)
     frame.subgroupSpotID = data.subgroupSpotID
     frame.data = data
 
-	
-
     frame.Name:SetText(data.shortName)
     
     frame:SetBackdrop({bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=1, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
@@ -558,7 +557,7 @@ local function createCharacterFrame(data)
     frame:RequestFillData()
     frame:SetScript("OnClick", function(self, button)
 		if(button == "LeftButton") then
-        	--setIndepthData(self.data, self.mplusData)
+			showIndepthData(self.data)
 
 		else
 			if(IsInRaid()) then
@@ -701,6 +700,7 @@ local function updateGroupData()
 					name = fullName,
 					shortName = playerName,
 					classID = fileName and miog.CLASSFILE_TO_ID[fileName],
+					localizedClassName = class,
 					classFileName = fileName,
 					role = combatRole,
 					group = subgroup,
@@ -717,13 +717,10 @@ local function updateGroupData()
 
 					ilvl = 0,
 					durability = 0,
-					--hasWeaponEnchant = false,
 
 					progressWeight = 0,
 					progress = "",
 					score = 0,
-
-					collapsed = collapsedList[fullName]
 				}
 
 				getOptionalPlayerData(fullName)
@@ -800,7 +797,7 @@ local function updateGroupData()
 		end
 
 		if(hasNoData) then
-			local fileName, id = UnitClassBase("player")
+			local localizedClassName, fileName, id = UnitClass("player")
 			local bestMap = C_Map.GetBestMapForUnit("player")
 			local specID = GetSpecializationInfo(GetSpecialization())
 
@@ -811,6 +808,7 @@ local function updateGroupData()
 				shortName = UnitNameUnmodified("player"),
 				classID = id,
 				classFileName = fileName,
+				localizedClassName = localizedClassName,
 				role = "DAMAGER",
 				group = 0,
 				specID = specID,
@@ -825,8 +823,6 @@ local function updateGroupData()
 				progressWeight = 0,
 				progress = "",
 				score = 0,
-
-				collapsed = collapsedList[fullPlayerName]
 			}
 
 			playerSpecs[fullPlayerName] = specID
@@ -1139,6 +1135,7 @@ miog.loadGroupManager = function()
     miog.GroupManager.Groups.Tank.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png")
     miog.GroupManager.Groups.Healer.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png")
     miog.GroupManager.Groups.Damager.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
+	miog.GroupManager.Indepth:OnLoad("side")
 end
 
 

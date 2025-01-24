@@ -88,6 +88,10 @@ XML\GroupManager\MIOG_GroupManagerDetailedCharacterTemplate.xml
 XML\GroupManager\MIOG_GroupManagerSpaceTemplate.xml
 XML\GroupManager\MIOG_GroupManagerGroupTemplate.xml
 XML\GroupManager\MIOG_GroupManagerListCharacterTemplate.xml
+XML\GroupManager\MIOG_GroupManagerDungeonTemplate.xml
+XML\GroupManager\MIOG_GroupManagerTierTemplate.xml
+XML\GroupManager\MIOG_GroupManagerTierTemplateNew.xml
+XML\GroupManager\MIOG_GroupManagerRaidBossTemplate.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml

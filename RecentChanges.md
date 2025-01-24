@@ -9,7 +9,7 @@ The standard view is similar to the old one but the new features are:
     - Character players have a "Ready" box at the end of the line, indicating if they confirmed the ready check or not.
     - In the topright corner a "Ready status" box has been implemented showing if the whole party/raid is ready.
 
-The new view integrates the raid manager from the social menu ('O' key shortcut).
+- The new view integrates the raid manager from the social menu ('O' key shortcut).
     - [This feature will be implemented with 3.1.1] You can click on a party/raid member and view detailed infos about their character, M+ and raid related.
     
 ### Changed

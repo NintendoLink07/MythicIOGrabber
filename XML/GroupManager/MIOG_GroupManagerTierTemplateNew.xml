@@ -1,0 +1,130 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupManagerTierTemplateNew" propagateMouseInput="Both" virtual="true">
+        <Size y="49" />
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Background" horizTile="true" vertTile="true" setAllPoints="true" />
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="Header">
+                <Size x="120" y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Size x="80" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Progress1" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Size x="40" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Progress2" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                            <Size x="40" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="RIGHT"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="Bosses" inherits="StaticGridLayoutFrame" propagateMouseInput="Both" >
+                <Size y="29" />
+
+                <KeyValues>
+			        <KeyValue key="childXPadding" value="1" type="number"/>
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Boss1" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="1" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Boss2" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="2" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Boss3" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="3" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Boss4" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="4" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Boss5" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="5" type="number"/>
+                        </KeyValues>
+                    </Frame>
+                    <Frame parentKey="Boss6" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="6" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Boss7" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="7" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Boss8" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="8" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Boss9" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="9" type="number"/>
+                        </KeyValues>
+                    </Frame>
+                    
+                    <Frame parentKey="Boss10" inherits="MIOG_GroupManagerRaidBossTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                            <KeyValue key="gridColumn" value="10" type="number"/>
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>
