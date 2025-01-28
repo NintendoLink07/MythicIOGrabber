@@ -99,7 +99,6 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, v, isMainsFrame
 end
 
 function RaiderIOInformationPanelMixin:OnLoad(mode)
-    self:Flush()
     self:SetMode(mode)
     
     --self.seasonID = C_MythicPlus.GetCurrentSeason() > 0 and C_MythicPlus.GetCurrentSeason() or MIOG_FAILSAFE_SEASON_ID
@@ -138,39 +137,7 @@ function RaiderIOInformationPanelMixin:Flush()
     self.roles = nil
     self.race = nil
 
-    --[[for i = 1, 2, 1 do
-        local raidHeaderFrame = i == 1 and self.Raids["Raid1Header"] or self.Raids["Raid2Header"]
-        local raidBossesFrame = i == 1 and self.Raids["Raid1"] or self.Raids["Raid2"]
-
-        raidHeaderFrame.Icon:SetTexture(nil)
-        raidHeaderFrame.Name:SetText("")
-        raidHeaderFrame.Progress1:SetText("0/0")
-        raidHeaderFrame.Progress2:SetText("0/0")
-        
-        raidBossesFrame:Hide()
-
-        for k = 1, 12, 1 do
-            local bossFrame = raidBossesFrame["Boss" .. k]
-            bossFrame:Hide()
-            bossFrame.Icon:SetTexture(nil)
-            bossFrame.Icon:SetDesaturated(true)
-            bossFrame.Border:SetColorTexture(1,0,0,1)
-
-        end
-    end
-
-    self.PreviousData:SetText("")
-    self.MainData:SetText("")
-    self.MPlusKeys:SetText("")
-    self.RaceRolesServer:SetText("")
-    self.Comment:SetText("")]]
-
-    --[[for i = 1, 8, 1 do
-        local currentDungeon = self.MythicPlus["Dungeon" .. i]
-        currentDungeon.Name:SetText("0")
-        currentDungeon.Icon:SetTexture(nil)
-        currentDungeon.Icon:SetScript("OnMouseDown", nil)
-    end]]
+    self:OnLoad(self.mode)
 end
 
 function RaiderIOInformationPanelMixin:CalculatePanelHeight()

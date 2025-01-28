@@ -847,18 +847,6 @@
                     </OnLoad>
                 </Scripts>
             </Button>
-
-            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Group">
-               <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT" />
-               </Anchors>
-
-                <Scripts>
-                    <OnLoad>
-                        self.frameName = "GroupManager"
-                    </OnLoad>
-                </Scripts>
-            </Button>
         </Frames>
 
         <Layers>
@@ -877,7 +865,7 @@
             </OnDragStop>
 
             <OnLoad>
-                PanelTemplates_SetNumTabs(self, 8)
+                PanelTemplates_SetNumTabs(self, 7)
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());

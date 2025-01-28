@@ -1180,7 +1180,20 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
 					
 					table.sort(seasonGroup, function(k1, k2)
-						return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+						local ga1, ga2 = miog.GROUP_ACTIVITY[k1], miog.GROUP_ACTIVITY[k2]
+
+						if(ga1 and ga2) then
+							local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
+
+							return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+
+						elseif(ga1) then
+							return true
+
+						else
+							return false
+
+						end
 					end)
 
 					table.sort(expansionGroups, function(k1, k2)

@@ -7,13 +7,20 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.1.1] - 2025-01-26
+## [3.1.1] - 2025-01-28
 
 ### Added
 
 - [GroupManager] You can now click on any character in your group and view their M+ and raid progress aswell as more general info.
 
+- General data for 11.1 has been implemented.
+PTR should now work more reliably with this client.
+
 ### Fixed
+
+- [GroupManager] Ready check status now actually works.
+
+- [GroupManager] Player spec should be constantly visible in the raid frames.
 
 - Any raider IO data relating to a player's main character now gets correctly parsed and shown.
 
@@ -3068,7 +3075,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.1.1..HEAD
+[3.1.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.1
 [3.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1
 [3.0.14a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.14a
 [3.0.14]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.0.14

@@ -41,12 +41,14 @@ end
 local function showIndepthData(data)
 	local indepthFrame = miog.GroupManager.Indepth
 
+	indepthFrame:Flush()
+
 	indepthFrame.Name:SetText(WrapTextInColorCode(data.shortName, C_ClassColor.GetClassColor(data.classFileName):GenerateHexColor()))
-	indepthFrame.Level:SetText(data.level)
+	indepthFrame.Level:SetText("Level " .. data.level)
 
 	local _, name = GetSpecializationInfoForSpecID(data.specID)
 
-	indepthFrame.Spec:SetText(name .. " " .. data.localizedClassName)
+	indepthFrame.Spec:SetText(name and (name .. " " .. data.localizedClassName) or "???")
 	indepthFrame.Guild:SetText(GetGuildInfo(data.unitID) or "Currently guildless")
 
 	indepthFrame:SetPlayerData(data.name, data.realm)
@@ -410,7 +412,8 @@ local function createCharacterFrame(data)
     frame:SetBackdropColor(color:GetRGBA())
     frame:SetBackdropBorderColor(color.r - 0.15, color.g - 0.15, color.b - 0.15, 1)
     frame.Name:SetTextColor(1, 1, 1, 1)
-    frame.Spec:SetTexture(data.specID and miog.SPECIALIZATIONS[data.specID].squaredIcon)
+
+    frame.Spec:SetTexture(miog.SPECIALIZATIONS[data.specID or 0].squaredIcon)
 
 	if (data.rank == 2) then
 		frame.RaidRole:SetTexture("interface/groupframe/ui-group-leadericon.blp")
@@ -760,7 +763,7 @@ local function updateGroupData()
 					end
 				else
 					groupData[fullName].specID = GetSpecializationInfo(GetSpecialization())
-
+					playerSpecs[fullName] = groupData[fullName].specID
 				end
 
 				if(groupData[fullName].specID) then
@@ -904,13 +907,10 @@ end
 
 local readyCheckStatus = {}
 
-local function updateReadyStatus(frame, isReady)
-	if(not frame) then
-		miog.GroupManager.ScrollBox:FindFrameByPredicate(function(frame, data)
-		
-		end)
-
-	end
+local function updateReadyStatus(name, isReady)
+	local frame = miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+		return data.name == name
+	end)
 
     if(frame) then
         frame.Ready:SetColorTexture(unpack(isReady and {0, 1, 0, 1} or isReady == false and {1, 0, 0, 1} or {1, 1, 0, 1}))
@@ -1017,7 +1017,7 @@ local function groupManagerEvents(_, event, ...)
 
 		end
 
-		miog.GroupManager.StatusBar.ReadyBox:SetColorTexture(allReady and 0, 1, 0, 1 or 1, 0, 0, 1)
+		miog.GroupManager.StatusBar.ReadyBox:SetColorTexture(unpack(allReady and {0, 1, 0, 1} or {1, 0, 0, 1}))
 	end
 end
 
@@ -1066,7 +1066,7 @@ miog.loadGroupManager = function()
     miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
 	miog.GroupManager:SetScrollView(miog.GroupManager.ScrollView)
 
-    framePool = CreateFramePool("Button", nil, "MIOG_GroupManagerDetailedCharacterTemplate", function(_, frame) frame:Hide() clearFrameFromSpace(frame) end)
+    framePool = CreateFramePool("Button", nil, "MIOG_GroupManagerRaidFrameCharacterTemplate", function(_, frame) frame:Hide() clearFrameFromSpace(frame) end)
 
 	miog.GroupManager:SetScript("OnShow", function()
 		updateRaidLibData()
@@ -1094,7 +1094,7 @@ miog.loadGroupManager = function()
 		{name = "spec", tooltipTitle = SPECIALIZATION},
 		{name = "name", tooltipTitle = NAME},
 		{name = "ilvl", tooltipTitle = STAT_AVERAGE_ITEM_LEVEL, padding = 82},
-		{name = "durability", tooltipTitle = DURABILITY, padding = 10},
+		{name = "durability", tooltipTitle = DURABILITY, padding = 17},
 		{name = "score", tooltipTitle = PROVING_GROUNDS_SCORE, padding = 29},
 		{name = "progressWeight", tooltipTitle = PVP_PROGRESS_REWARDS_HEADER, padding = 26},
 		{name = "keylevel", tooltipTitle = WEEKLY_REWARDS_MYTHIC_KEYSTONE, padding = 41},

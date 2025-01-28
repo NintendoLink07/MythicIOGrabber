@@ -58,7 +58,7 @@
                 </FontString>
 
                 <FontString parentKey="Itemlevel" font="SystemFont_Shadow_Med1" justifyH="LEFT">
-                    <Size x="25" />
+                    <Size x="32" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="3"/>
                     </Anchors>
