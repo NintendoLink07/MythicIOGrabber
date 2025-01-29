@@ -68,7 +68,7 @@
             </EditBox>
 
             <EditBox parentKey="Rating" inherits="InputBoxTemplate" autoFocus="false" numeric="true" letters="4">
-                <Size x="100" y="25" />
+                <Size x="80" y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Description" relativePoint="BOTTOMLEFT" y="-20"/>
                 </Anchors>
@@ -109,7 +109,7 @@
             </EditBox>
 
             <EditBox parentKey="ItemLevel" inherits="InputBoxTemplate" autoFocus="false" numeric="true" letters="3">
-                <Size x="100" y="25" />
+                <Size x="80" y="25" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="10" />
                 </Anchors>
@@ -149,23 +149,23 @@
             </EditBox>
 
             <EditBox parentKey="VoiceChat" inherits="InputBoxTemplate" autoFocus="false" hidden="true">
-                <Size x="100" y="25" />
+                <Size x="80" y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Rating" relativePoint="BOTTOMLEFT" y="-20"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Rating" relativePoint="BOTTOMLEFT" y="-12"/>
                 </Anchors>
             </EditBox>
 
             <CheckButton parentKey="PrivateGroup" inherits="MIOG_MinimalCheckButtonTemplate">
                 <Size x="22" y="22" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.VoiceChat" relativePoint="BOTTOMLEFT" x="-6" y="-10"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.VoiceChat" relativePoint="BOTTOMLEFT" x="-7" y="-3"/>
                 </Anchors>
             </CheckButton>
 
             <CheckButton parentKey="CrossFaction" inherits="MIOG_MinimalCheckButtonTemplate">
                 <Size x="22" y="22" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.PrivateGroup" relativePoint="BOTTOMLEFT" y="-10"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.PrivateGroup" relativePoint="BOTTOMLEFT" y="-3"/>
                 </Anchors>
             </CheckButton>
         </Frames>

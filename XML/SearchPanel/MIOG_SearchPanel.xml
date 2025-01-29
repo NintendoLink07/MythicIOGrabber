@@ -76,7 +76,7 @@
                 </Anchors>
             </Frame>
             
-            <ScrollFrame parentKey="NewScrollFrame" inherits="ScrollFrameTemplate">
+            <ScrollFrame parentKey="NewScrollFrame" inherits="ScrollFrameTemplate" hidden="true">
                 <KeyValues>
                     <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
                 </KeyValues>
@@ -94,10 +94,10 @@
                 </ScrollChild>
             </ScrollFrame>
 
-            <!--<Frame parentKey="ScrollBox2" inherits="WowScrollBoxList" hidden="true">
+            <Frame parentKey="ScrollBox2" inherits="WowScrollBoxList">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ButtonPanel" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="BOTTOMLEFT" x="1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
                 </Anchors>
             </Frame>
 
@@ -106,7 +106,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox2" relativePoint="TOPRIGHT"/>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
-            </EventFrame>-->
+            </EventFrame>
             
             <Button parentKey="SignUpButton" inherits="UIPanelDynamicResizeButtonTemplate" text="Signup">
                 <Size y="20" />

@@ -163,25 +163,19 @@
 
                         <FontString parentKey="Level" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="7"/>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-2"/>
                             </Anchors>
                         </FontString>
 
                         <FontString parentKey="Spec" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Level" relativePoint="RIGHT" x="7"/>
+                                <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="7"/>
                             </Anchors>
                         </FontString>
 
                         <FontString parentKey="Guild" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-10"/>
-                            </Anchors>
-                        </FontString>
-
-                        <FontString parentKey="Guild" font="SystemFont_Shadow_Med1" justifyH="LEFT">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-10"/>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Level" relativePoint="BOTTOMLEFT" y="-2"/>
                             </Anchors>
                         </FontString>
                     </Layer>

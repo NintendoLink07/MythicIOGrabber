@@ -905,6 +905,23 @@ local function setClassSpecState(containerFrame, categorySettings)
 	containerFrame.Background:SetColorTexture(r, g, b, 0.5)
 end
 
+local function sortActivityGroup(k1, k2)
+	local ga1, ga2 = miog.GROUP_ACTIVITY[k1], miog.GROUP_ACTIVITY[k2]
+
+	if(ga1 and ga2) then
+		local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
+
+		return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+
+	elseif(ga1) then
+		return true
+
+	else
+		return false
+
+	end
+end
+
 local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 	MIOG_NewSettings.newFilterOptions[panel] = MIOG_NewSettings.newFilterOptions[panel] or {}
 	MIOG_NewSettings.newFilterOptions[panel][categoryID] = MIOG_NewSettings.newFilterOptions[panel][categoryID] or {}
@@ -1179,26 +1196,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					local seasonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
 					local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
 					
-					table.sort(seasonGroup, function(k1, k2)
-						local ga1, ga2 = miog.GROUP_ACTIVITY[k1], miog.GROUP_ACTIVITY[k2]
-
-						if(ga1 and ga2) then
-							local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
-
-							return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
-
-						elseif(ga1) then
-							return true
-
-						else
-							return false
-
-						end
-					end)
-
-					table.sort(expansionGroups, function(k1, k2)
-						return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
-					end)
+					table.sort(seasonGroup, sortActivityGroup)
+					table.sort(expansionGroups, sortActivityGroup)
 
 					if(seasonGroup and #seasonGroup > 0) then
 						for x, y in ipairs(seasonGroup) do

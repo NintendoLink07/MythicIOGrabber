@@ -689,7 +689,26 @@ miog.MAP_INFO = {
 		shortName = "NP",
 		iconName = "nerubarpalance",
 		bgName = "nerubarpalace",
+	},	
+	
+	[2769] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/ulgrax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/bloodboundhorror.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/sikran.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/rashanan.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/ovinax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/kyveza.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/silkencourt.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/queenansurek.png"},
+		},
+		shortName = "LOU",
+		iconName = "casino",
+		bgName = "casino",
 	},
+
+
+	
 
 	[2601] = {shortName = "KA", fileName = "khazalgar"},
 
@@ -711,6 +730,7 @@ miog.MAP_INFO = {
 	[2767] = {shortName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole",},
 	[2768] = {shortName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
 	
+	[2773] = {shortName = "OF", iconName = "waterworks", bgName = "dungeon_waterworks"},
 	[2774] = {shortName = "WORLD", fileName = "khazalgar",},
 	[2776] = {shortName = "CODEX", fileName = "kalimdor",},
 	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
@@ -735,18 +755,6 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 }
 
 miog.ACTIVITY_INFO = {}
-
-miog.SEASONAL_MAP_IDS = {
-	[12] = {dungeons = {2526, 2520, 2527, 2519, 2521, 2515, 2516, 2451}, raids = {2549, 2569, 2522}},
-	[13] = {dungeons = {2660, 2662, 2652, 2669, 670, 1822, 2290, 2286}, raids = {2657}}, --2651, 2661, 2649, 2648
-}
-
-for k, v in pairs(miog.SEASONAL_MAP_IDS) do
-	table.sort(v.dungeons, function(k1, k2)
-		return miog.MAP_INFO[k1].shortName < miog.MAP_INFO[k2].shortName
-
-	end)
-end
 
 miog.DROPCHECKER_MAP_IDS ={
 	--[13] = {dungeons = {2660, 2662, 2652, 2669, 2651, 2661, 2649, 2648}, raids = {2657}}, --670, 1822, 2290, 2286, 
@@ -828,7 +836,7 @@ local function checkForMapAchievements(mapID)
 end
 
 local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectInstance)
-	if(mapID > 0 and miog.MAP_INFO[mapID]) then --mapID > 0 and 
+	if(mapID and mapID > 0 and miog.MAP_INFO[mapID]) then --mapID > 0 and 
 		local bossIndex = 1;
 
 		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
@@ -955,6 +963,7 @@ local function loadRawData()
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
 		if(miog.MAP_INFO[v[3]]) then
 			miog.MAP_INFO[v[3]].challengeModeID = v[2]
+
 		end
 
 		miog.CHALLENGE_MODE_INFO[v[2]] = {

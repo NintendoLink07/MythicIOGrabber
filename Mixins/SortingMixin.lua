@@ -39,6 +39,10 @@ function SortingMixin:OnLoad(func)
     end)
 end
 
+function SortingMixin:SetTreeMode(bool)
+    self.treeMode = bool
+end
+
 function SortingMixin:SetSettingsTable(table)
     if(not table) then
         table = {}
@@ -291,23 +295,43 @@ function SortingMixin:Sort()
         local orderedList = self:GetOrderedParameters()
 
         if(self.scrollView) then
-            self.dataProvider:SetSortComparator(
-                function(k1, k2)
-                    for k, v in ipairs(orderedList) do
-                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-                            if(v.state == 1) then
-                                return k1[v.name] > k2[v.name]
-                
-                            else
-                                return k1[v.name] < k2[v.name]
-                
+            if(self.treeMode) then
+                self.dataProvider:SetSortComparator(
+                    function(k1, k2)
+                        for k, v in ipairs(orderedList) do
+                            if(v.state > 0 and k1.data[v.name] ~= k2.data[v.name]) then
+                                if(v.state == 1) then
+                                    return k1.data[v.name] > k2.data[v.name]
+                    
+                                else
+                                    return k1.data[v.name] < k2.data[v.name]
+                    
+                                end
                             end
                         end
                     end
-                end
-            )
+                )
+                
+            else
+                self.dataProvider:SetSortComparator(
+                    function(k1, k2)
+                        for k, v in ipairs(orderedList) do
+                            if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+                                if(v.state == 1) then
+                                    return k1[v.name] > k2[v.name]
+                    
+                                else
+                                    return k1[v.name] < k2[v.name]
+                    
+                                end
+                            end
+                        end
+                    end
+                )
+
+            end
+
             self.dataProvider:Sort()
-            
             self.scrollView:SetDataProvider(self.dataProvider)
         else
             table.sort(self.sortingData,
@@ -341,9 +365,5 @@ function SortingMixin:Sort()
                 end
             end
         end)]]
-        
-        if(self.scrollView) then
-            
-        end
     end
 end

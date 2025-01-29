@@ -265,7 +265,6 @@ hooksecurefunc("LFGListSearchPanel_SetCategory", function()
 end)
 
 local function gatherAllActivities(dropdown, rootDescription)
-
 	if(LFGListFrame.CategorySelection.selectedCategory == 1 or LFGListFrame.CategorySelection.selectedCategory == 6) then
 		local activityList = {}
 		local groups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, LFGListFrame.CategorySelection.selectedFilters)
@@ -287,7 +286,7 @@ local function gatherAllActivities(dropdown, rootDescription)
 
 		for k, v in ipairs(seasonGroups) do
 			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, v)
-			local activityID = activities[#activities]
+			local activityID = activities[#activities]C_LFGList.GetActivityGroupInfo(v)
 
 			tinsert(mythicPlusTable, {index = k, name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, groupID = v})
 		end

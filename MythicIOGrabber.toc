@@ -103,6 +103,7 @@ XML\SearchPanel\MIOG_SearchResultFrameTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameGroupMemberTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameSmallGroupMemberTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameBossFrameTemplate.xml
+XML\SearchPanel\MIOG_SearchPanelResultFrameTemplate.xml
 
 XML\ClassPanel\MIOG_ClassPanel.xml
 XML\ClassPanel\MIOG_ClassPanelClassFrameTemplate.xml

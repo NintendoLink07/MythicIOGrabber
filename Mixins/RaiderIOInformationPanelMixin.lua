@@ -4,30 +4,62 @@ RaiderIOInformationPanelMixin = {}
 
 MIOG_FAILSAFE_SEASON_ID = 13
 
+function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
+    local mythicPlusInfo = {}
+    local raidInfo = {}
+    
+    for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(2, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))) do
+        local activities = C_LFGList.GetAvailableActivities(2, v)
+        local activityID = activities[#activities]
+
+        tinsert(mythicPlusInfo, {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+    end
+
+    table.sort(mythicPlusInfo, function(k1, k2)
+        return k1.name < k2.name
+    end)
+
+    self.mythicPlusInfo = mythicPlusInfo
+
+    local raidGroups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters or LFGListFrame.CategorySelection.baseFilters);
+
+    for k, v in ipairs(raidGroups) do
+        local activities = C_LFGList.GetAvailableActivities(3, v)
+        local activityID = activities[#activities]
+
+        tinsert(raidInfo, {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+    end
+    
+    self.raidInfo = raidInfo
+end
+
 function RaiderIOInformationPanelMixin:OnLoadMPlus()
-	for k, v in ipairs(miog.SEASONAL_MAP_IDS[self.seasonID].dungeons) do
-		local currentDungeon = self.MythicPlus["Dungeon" .. k]
+    if(self.mythicPlusInfo) then
+        for k, data in ipairs(self.mythicPlusInfo) do
+            local currentDungeon = self.MythicPlus["Dungeon" .. k]
+            local mapData = miog.MAP_INFO[data.mapID]
 
-        currentDungeon.dungeonName = miog.MAP_INFO[v].name
+            currentDungeon.dungeonName = mapData.name
 
-        if(currentDungeon.Name) then
-		    currentDungeon.Name:SetText(miog.MAP_INFO[v].shortName)
-            
+            if(currentDungeon.Name) then
+                currentDungeon.Name:SetText(mapData.shortName)
+                
+            end
+
+            miog.checkSingleMapIDForNewData(data.mapID, nil, true)
+
+            currentDungeon.Icon:SetTexture(self.mode == "side" and mapData.horizontal or mapData.icon)
+            currentDungeon.Icon:SetDesaturation(0)
+            currentDungeon.Icon:SetScript("OnMouseDown", function()
+                local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
+                local difficulty = 23
+
+                --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+                EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+            end)
         end
-
-        miog.checkSingleMapIDForNewData(v, nil, true)
-
-		currentDungeon.Icon:SetTexture(self.mode == "side" and miog.MAP_INFO[v].horizontal or miog.MAP_INFO[v].icon)
-        currentDungeon.Icon:SetDesaturation(0)
-		currentDungeon.Icon:SetScript("OnMouseDown", function()
-			local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
-            local difficulty = 23
-
-			--difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-			EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
-
-		end)
-	end
+    end
 end
 
 function RaiderIOInformationPanelMixin:SetMode(mode)
@@ -98,31 +130,40 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, v, isMainsFrame
     raidFrame:Show()
 end
 
+function RaiderIOInformationPanelMixin:OnLoadRaid()
+    local raidCounter = 1
+
+    local lastID
+
+    for k, data in ipairs(self.raidInfo) do
+        local raidFrame = self.Raids["Raid" .. raidCounter]
+
+        if(raidFrame) then
+            self:SetupRaidFrame(raidFrame, data.mapID)
+
+            raidCounter = raidCounter + 1
+
+            lastID = data.mapID
+        end
+    end
+
+    if(self.Raids["Raid" .. raidCounter] and lastID) then
+        self:SetupRaidFrame(self.Raids["Raid" .. raidCounter], lastID, true) --main's raid frame
+
+    end
+end
+
 function RaiderIOInformationPanelMixin:OnLoad(mode)
     self:SetMode(mode)
     
     --self.seasonID = C_MythicPlus.GetCurrentSeason() > 0 and C_MythicPlus.GetCurrentSeason() or MIOG_FAILSAFE_SEASON_ID
     self.seasonID = MIOG_FAILSAFE_SEASON_ID
 
+    self:RetrieveRelevantGroups()
+
 	self:OnLoadMPlus()
-
-	local raidCounter = 1
-
-    local lastID
-
-    for k, v in ipairs(miog.SEASONAL_MAP_IDS[self.seasonID].raids) do
-        local raidFrame = self.Raids["Raid" .. raidCounter]
-
-        if(raidFrame) then
-            self:SetupRaidFrame(raidFrame, v)
-
-            raidCounter = raidCounter + 1
-
-            lastID = v
-        end
-    end
-
-    self:SetupRaidFrame(self.Raids["Raid" .. raidCounter], lastID, true) --main's raid frame
+    self:OnLoadRaid()
+	
 end
 
 function RaiderIOInformationPanelMixin:Flush()
@@ -184,16 +225,13 @@ end
 function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
     self.mplusData = not refreshData and self.mplusData or miog.getMPlusSortData(self.playerName, self.realm, self.region)
 
-    --local currentSeason = miog.MPLUS_SEASONS[miog.F.CURRENT_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason()]
-    --local previousSeason = miog.MPLUS_SEASONS[miog.F.PREVIOUS_SEASON] or miog.MPLUS_SEASONS[C_MythicPlus.GetCurrentSeason() - 1]
-
-    for k, v in ipairs(miog.SEASONAL_MAP_IDS[self.seasonID].dungeons) do
+    for k, data in ipairs(self.mythicPlusInfo) do
         local currentDungeon = self.MythicPlus["Dungeon" .. k]
 
-        if(self.mplusData and self.mplusData[v]) then
-            currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[v].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[v].chests)) or 0, self.mplusData and self.mplusData[v].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+        if(self.mplusData and self.mplusData[data.mapID]) then
+            currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.mapID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.mapID].chests)) or 0, self.mplusData and self.mplusData[data.mapID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
 
-            if(self.mplusData[v].level == 0) then
+            if(self.mplusData[data.mapID].level == 0) then
                 currentDungeon.Icon:SetDesaturation(0.7)
             end
         else
@@ -261,7 +299,7 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
     if(self.raidData) then
         local raidCounter = 1
 
-	    for k, v in ipairs(miog.SEASONAL_MAP_IDS[self.seasonID].raids) do
+	    for k, data in ipairs(self.raidInfo) do
             for nmd = 1, 2, 1 do
                 local raidFrame = self.Raids["Raid" .. raidCounter]
 
@@ -269,11 +307,11 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                     local raidHeaderFrame = self.Raids["Raid" .. raidCounter].Header
                     local normalOrMainData = nmd == 1 and self.raidData.character or self.raidData.main
 
-                    if(normalOrMainData.raids[v]) then    
+                    if(normalOrMainData.raids[data.mapID]) then    
                         local bossesDone = {}
     
                         for i = 1, 2, 1 do
-                            local currentTable = i == 1 and normalOrMainData.raids[v].awakened or normalOrMainData.raids[v].regular
+                            local currentTable = i == 1 and normalOrMainData.raids[data.mapID].awakened or normalOrMainData.raids[data.mapID].regular
     
                             if(currentTable) then
                                 for a = 3, 1, -1 do
@@ -296,9 +334,9 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                             end
                                         end
     
-                                        if(nmd == 1 and raidMapIDSet[v] ~= true or nmd == 2 and mainRaidMapIDSet[v] ~= true) then
-                                            if(normalOrMainData.raids[v].isAwakened) then
-                                                raidHeaderFrame.Name:SetText(normalOrMainData.raids[v].shortName)
+                                        if(nmd == 1 and raidMapIDSet[data.mapID] ~= true or nmd == 2 and mainRaidMapIDSet[data.mapID] ~= true) then
+                                            if(normalOrMainData.raids[data.mapID].isAwakened) then
+                                                raidHeaderFrame.Name:SetText(normalOrMainData.raids[data.mapID].shortName)
                                             end
     
                                             if(raidHeaderFrame.Progress1) then --miog.DIFFICULTY[a].shortName .. ":" .. 
@@ -321,7 +359,7 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
     
                                             local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
                                             texture:SetScript("OnMouseDown", function()
-                                                local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
+                                                local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
                                                 local difficulty = a == 1 and 14 or a == 2 and 15 or 16
                                                 --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
                                                 EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
@@ -329,10 +367,10 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                             end)
     
                                             if(nmd == 1) then
-                                                raidMapIDSet[v] = true
+                                                raidMapIDSet[data.mapID] = true
     
                                             elseif(nmd == 2) then
-                                                mainRaidMapIDSet[v] = true
+                                                mainRaidMapIDSet[data.mapID] = true
     
                                             end
     
