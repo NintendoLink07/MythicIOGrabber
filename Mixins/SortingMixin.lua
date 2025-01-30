@@ -286,6 +286,7 @@ local function standardSort(k1, k2, parameters)
 end
 
 function SortingMixin:Sort()
+
     if(self.sortingFunction) then
         table.sort(self.sortingData, function(k1, k2)
             self.sortingFunction(k1, k2)

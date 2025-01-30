@@ -3,14 +3,6 @@
     <Frame name="MIOG_NewRaiderIOInfoPanel" mixin="RaiderIOInformationPanelMixin" virtual="true" hidden="true">
         <Size y="200" />
 
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="Background" setAllPoints="true">
-                    <Color r="0" g="0" b="0" a="0.5" />
-                </Texture>
-            </Layer>
-        </Layers>
-
         <Frames>
             <Frame parentKey="MythicPlus" inherits="MIOG_NewRaiderIOInfoPanelDungeonPanelTemplate">
                 <Size x="120" y="160" />
@@ -115,7 +107,13 @@
                 </FontString>
             </Layer>
 
-            <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND" textureSubLevel="3">
+                <Texture parentKey="BackgroundOverlay" setAllPoints="true" />
+
+                <Texture parentKey="Background" setAllPoints="true">
+                    <Color r="0" g="0" b="0" a="0.5" />
+                </Texture>
+
                 <Texture parentKey="BaseInfoDivider" atlas="tab-divider-top">
                     <Color r="0" g="0" b="0" a="1" />
                     <Size y="2" />

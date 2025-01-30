@@ -11,15 +11,17 @@ local defaultSortState = {
 
 
 local function keepSignUpNote(self, resultID)
-    local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
-	--if ( searchResultInfo.activityID ~= self.activityID ) then
-		--C_LFGList.ClearApplicationTextFields();
-	--end
+    if(C_LFGList.HasSearchResultInfo(resultID)) then
+        local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
+        --if ( searchResultInfo.activityID ~= self.activityID ) then
+            --C_LFGList.ClearApplicationTextFields();
+        --end
 
-	self.resultID = resultID;
-	self.activityID = searchResultInfo.activityIDs[1];
-	LFGListApplicationDialog_UpdateRoles(self);
-	StaticPopupSpecial_Show(self);
+        self.resultID = resultID;
+        self.activityID = searchResultInfo.activityIDs[1];
+        LFGListApplicationDialog_UpdateRoles(self);
+        StaticPopupSpecial_Show(self);
+    end
 end
 
 LFGListApplicationDialog_Show = keepSignUpNote

@@ -75,24 +75,6 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25" />
                 </Anchors>
             </Frame>
-            
-            <ScrollFrame parentKey="NewScrollFrame" inherits="ScrollFrameTemplate" hidden="true">
-                <KeyValues>
-                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
-                </KeyValues>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="BOTTOMLEFT" x="1"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
-                </Anchors>
-
-                <ScrollChild>
-                    <Frame parentKey="Container" inherits="VerticalLayoutFrame" setAllPoints="true">
-                        <KeyValues>
-                            <KeyValue key="spacing" value="2" type="number" />
-                        </KeyValues>
-                    </Frame>
-                </ScrollChild>
-            </ScrollFrame>
 
             <Frame parentKey="ScrollBox2" inherits="WowScrollBoxList">
                 <Anchors>

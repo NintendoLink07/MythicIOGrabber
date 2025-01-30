@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [3.1.2] - 2025-01-30
 
+### Changed
+
+- [SearchPanel] Switched out the old code for the listing frame generation and implemented the new method I use almost everywhere else.
+The search panel should now be lagfree.
+
 ### Fixed
 
 - [EntryCreation] The "Faction only" checkbox in the group creator doesn't hover over the "Back" button anymore.

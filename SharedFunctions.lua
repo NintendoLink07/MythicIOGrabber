@@ -256,60 +256,62 @@ local function getNewRaidSortData(playerName, realm, region)
 
 	local raidInfo = retrieveCategoryGroups(2)
 
-	if(raidInfo and profile) then
-		if(profile.raidProfile) then
-			raidData = {character = {raids = {}, ordered = {}}, main = {raids = {}, ordered = {}}}
+	if(raidInfo) then
+		if(profile) then
+			if(profile.raidProfile) then
+				raidData = {character = {raids = {}, ordered = {}}, main = {raids = {}, ordered = {}}}
 
-			for k, d in ipairs(profile.raidProfile.raidProgress) do
-				local currentTable = d.isMainProgress and raidData.main or raidData.character
+				for k, d in ipairs(profile.raidProfile.raidProgress) do
+					local currentTable = d.isMainProgress and raidData.main or raidData.character
 
-				local mapID
-				local isAwakened = false
+					local mapID
+					local isAwakened = false
 
-				if(string.find(d.raid.mapId, 10000)) then
-					mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
-					isAwakened = d.current
+					if(string.find(d.raid.mapId, 10000)) then
+						mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
+						isAwakened = d.current
 
-				else
-					mapID = d.raid.mapId
+					else
+						mapID = d.raid.mapId
 
-				end
+					end
 
-				currentTable.raids[mapID] = currentTable.raids[mapID] or {regular = {difficulties = {}}, awakened = {difficulties = {}}, bossCount = d.raid.bossCount, isAwakened = isAwakened, shortName = d.raid.shortName}
+					currentTable.raids[mapID] = currentTable.raids[mapID] or {regular = {difficulties = {}}, awakened = {difficulties = {}}, bossCount = d.raid.bossCount, isAwakened = isAwakened, shortName = d.raid.shortName}
 
-				local modeTable = isAwakened and currentTable.raids[mapID].awakened or currentTable.raids[mapID].regular
+					local modeTable = isAwakened and currentTable.raids[mapID].awakened or currentTable.raids[mapID].regular
 
-				for x, y in ipairs(d.progress) do
-					modeTable.difficulties[y.difficulty] = {
-						difficulty = y.difficulty,
-						current = d.current,
-						kills = y.kills,
-						cleared = y.cleared,
-						mapID = mapID,
-						shortName = currentTable.raids[mapID].shortName,
-						weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal),
-						parsedString = y.kills .. "/" .. d.raid.bossCount,
-						bosses = {},
-					}
-
-					for a, b in ipairs(y.progress) do
-						modeTable.difficulties[y.difficulty].bosses[a] = {
-							killed = b.killed,
-							count = b.count,
+					for x, y in ipairs(d.progress) do
+						modeTable.difficulties[y.difficulty] = {
+							difficulty = y.difficulty,
+							current = d.current,
+							kills = y.kills,
+							cleared = y.cleared,
+							mapID = mapID,
+							shortName = currentTable.raids[mapID].shortName,
+							weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal),
+							parsedString = y.kills .. "/" .. d.raid.bossCount,
+							bosses = {},
 						}
+
+						for a, b in ipairs(y.progress) do
+							modeTable.difficulties[y.difficulty].bosses[a] = {
+								killed = b.killed,
+								count = b.count,
+							}
+						end
+
+						currentTable.ordered[#currentTable.ordered+1] = modeTable.difficulties[y.difficulty]
 					end
 
-					currentTable.ordered[#currentTable.ordered+1] = modeTable.difficulties[y.difficulty]
+					table.sort(currentTable.ordered, function(k1, k2)
+						if(k1.current == k2.current) then
+							return k1.weight > k2.weight
+							
+						end
+
+						return k1.current == k2.current
+					end)
 				end
-
-				table.sort(currentTable.ordered, function(k1, k2)
-					if(k1.current == k2.current) then
-						return k1.weight > k2.weight
-						
-					end
-
-					return k1.current == k2.current
-				end)
 			end
 		end
 	end
