@@ -314,32 +314,32 @@ local function getNewRaidSortData(playerName, realm, region)
 				end
 			end
 		end
-	end
 
-	if(not raidData) then
-		raidData = {
-			character = {
-				ordered = {
-					[1] = {mapID = (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1},
-					[2] = {mapID = (raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1},
+		if(not raidData) then
+			raidData = {
+				character = {
+					ordered = {
+						[1] = {mapID = (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1},
+						[2] = {mapID = (raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1},
+					},
+					raids = {}
 				},
-				raids = {}
-			},
-			main = {
-				ordered = {
-					[1] = {parsedString = "0/0", difficulty = -1},
-					[2] = {parsedString = "0/0", difficulty = -1},
+				main = {
+					ordered = {
+						[1] = {parsedString = "0/0", difficulty = -1},
+						[2] = {parsedString = "0/0", difficulty = -1},
+					},
+					raids = {}
 				},
-				raids = {}
-			},
-		}
-	else
-		raidData.character.ordered[1] = raidData.character.ordered[1] or {mapID = (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1}
-		raidData.character.ordered[2] = raidData.character.ordered[2] or {mapID = (raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1}
-
-		raidData.main.ordered[1] = raidData.main.ordered[1] or {parsedString = "0/0", difficulty = -1}
-		raidData.main.ordered[2] = raidData.main.ordered[2] or {parsedString = "0/0", difficulty = -1}
-
+			}
+		else
+			raidData.character.ordered[1] = raidData.character.ordered[1] or {mapID = (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1}
+			raidData.character.ordered[2] = raidData.character.ordered[2] or {mapID = (raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1}
+	
+			raidData.main.ordered[1] = raidData.main.ordered[1] or {parsedString = "0/0", difficulty = -1}
+			raidData.main.ordered[2] = raidData.main.ordered[2] or {parsedString = "0/0", difficulty = -1}
+	
+		end
 	end
 
 	return raidData

@@ -744,7 +744,7 @@ local function showStatusOverlay(status)
 		end)
 	else
 		miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
-		framePool:ReleaseAll()
+		miog.SearchPanel.ScrollBox:Flush()
 		miog.Plugin.FooterBar.Results:SetText("0(0)")
 	end
 	
@@ -762,6 +762,7 @@ local function updateResultList()
 end
 
 local function fullyUpdateSearchPanel()
+	miog.SearchPanel.Status:Hide()
 	updateResultList()
 end
 

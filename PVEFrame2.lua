@@ -456,7 +456,7 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.MoreButton:SetScript("OnClick", function(self)
 		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
 			rootDescription:CreateTitle("More");
-			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
+			--rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
 			--rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
 			rootDescription:SetTag("MIOG_MORE")

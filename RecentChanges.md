@@ -1,18 +1,16 @@
-## [3.1.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.1) - 2025-01-28
+## [3.1.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.2) - 2025-02-02
 
-### Added
+### Changed
 
-- [GroupManager] You can now click on any character in your group and view their M+ and raid progress aswell as more general info.
-
-- General data for 11.1 has been implemented.
-PTR should now work more reliably with this client.
+- [SearchPanel] Switched out the old code for the listing frame generation and implemented the new method I use almost everywhere else.
+The search panel should now be lagfree.
 
 ### Fixed
 
-- [GroupManager] Ready check status now actually works.
+- [EntryCreation] The "Faction only" checkbox in the group creator doesn't hover over the "Back" button anymore.
 
-- [GroupManager] Player spec should be constantly visible in the raid frames.
+- All relevant PTR data has been added for the new dungeon and the new raid.
 
-- Any raider IO data relating to a player's main character now gets correctly parsed and shown.
+- The queue dropdown and the dropdown list can't be clicked through anymore to avoid signing up for group when you don't hit the queue "button"
 
-- Dungeons and bosses that haven't been completed yet by a character will now be desaturated in all raider IO panels.
+- Updated the Open Raid library.

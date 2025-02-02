@@ -165,8 +165,6 @@ local function addPvpActivities(topButton)
 
 	if(HonorFrame.TypeDropdown) then
 		if(C_GameEnvironmentManager.GetCurrentEventRealmQueues() ~= Enum.EventRealmQueues.None and C_LobbyMatchmakerInfo.GetQueueFromMainlineEnabled()) then
-			--/run 
-
 			topButton:CreateTitle(WOW_LABS_PLUNDERSTORM_CATEGORY)
 
 			for i = 0, 3, 1 do
@@ -242,9 +240,9 @@ local function addPvpActivities(topButton)
 					v:ClearAllPoints()
 					v:SetAllPoints(blankFrame)
 					v:SetParent(blankFrame)
-					v:SetScript("OnHide", function(self)
+					--[[v:SetScript("OnHide", function(self)
 						--self:ClearAllPoints()
-					end)
+					end)]]
 				end)
 				test:SetScript("OnShow", function(self)
 					miog.hideAllPVPButtonAssets(v)
@@ -430,115 +428,6 @@ end
 local selectedDungeonsList = {}
 
 local function setupQueueDropdown(rootDescription)
-	--[[
-	local orderedList = {}
-	local lastRaidName
-	table.sort(orderedList, function(k1, k2)
-		return k1.id < k2.id
-	end)
-
-	for k, v in ipairs(orderedList) do
-	--for rfIndex = 1, GetNumRFDungeons() do
-		local id, name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, _, fileID, difficultyID, _, _, isHolidayDungeon, _, _, isTimewalkingDungeon, raidName, minGearLevel, isScaling, mapID = GetRFDungeonInfo(v.rfIndex)
-
-		local encounters;
-		local numEncounters = GetLFGDungeonNumEncounters(id);
-		for j = 1, numEncounters do
-			local bossName, _, isKilled = GetLFGDungeonEncounterInfo(id, j);
-			local colorCode = "";
-			if ( isKilled ) then
-				colorCode = RED_FONT_COLOR_CODE;
-			end
-			if encounters then
-				encounters = encounters.."|n"..colorCode..bossName..FONT_COLOR_CODE_CLOSE;
-			else
-				encounters = colorCode..bossName..FONT_COLOR_CODE_CLOSE;
-			end
-		end
-		
-		local modifiedInstanceTooltipText = "";
-		local icon = nil
-
-		if(mapID) then
-			local modifiedInstanceInfo = C_ModifiedInstance.GetModifiedInstanceInfoFromMapID(mapID)
-
-			if (modifiedInstanceInfo) then
-				icon = GetFinalNameFromTextureKit("%s-small", modifiedInstanceInfo.uiTextureKit);
-				modifiedInstanceTooltipText = "|n|n" .. modifiedInstanceInfo.description;
-
-			else
-			
-			end
-		end
-
-		if(lastRaidName ~= raidName) then
-			--local textLine = queueDropDown:CreateTextLine(nil, info.parentIndex, miog.MAP_INFO[mapID].shortName, icon)
-
-			if(icon) then
-				--textLine:SetTextColor(0.1,0.83,0.77,1)
-
-			end
-		end
-
-		tinsert(indicesList[indices["RAIDFINDER"] ], {
-			name = name,
-			typeID = typeID,
-			dungeonID = id,
-			icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSION_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil,
-			expansionLevel = miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel or expLevel,
-		})
-
-		--[ [local mode = GetLFGMode(3, id)
-		info.text = isHolidayDungeon and "(Event) " .. name or name
-		info.checked = mode == "queued"
-		--info.index = rfIndex
-		info.icon = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or nil
-		info.func = function()
-			ClearAllLFGDungeons(3);
-			SetLFGDungeon(3, id);
-			JoinSingleLFG(3, id);
-
-			MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = id}
-		end
-		
-		local tempFrame = queueDropDown:CreateEntryFrame(info)
-
-		tempFrame:SetScript("OnShow", function(self)
-			local tempMode = GetLFGMode(3, id)
-			self.Radio:SetChecked(tempMode == "queued")
-			
-		end)
-
-		tempFrame:HookScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetText(RAID_BOSSES)
-			GameTooltip:AddLine(encounters .. modifiedInstanceTooltipText, 1, 1, 1, true)
-			GameTooltip:Show()
-		end)
-
-		tempFrame:HookScript("OnLeave", function()
-			GameTooltip:Hide()
-		end)
-
-		if(icon) then
-			tempFrame.Name:SetTextColor(0.1,0.83,0.77,1)
-			
-		end
-		
-		blizzDesc[difficultyID] = blizzDesc[difficultyID] or {}
-		blizzDesc[difficultyID][#blizzDesc[difficultyID]+1] = {name = name, id = id, index = rfIndex, icon = info.icon}
-
-		lastRaidName = raidName] ]
-	end
-
-
-	]]
-	
-	--print("SLOCK")
-	--rootDescription:OnLoad()
-
-	--LFGEnabledList = GetLFDChoiceEnabledState(LFGEnabledList);	--We maintain this list in Lua
-
 	for k, v in ipairs(indicesList) do
 		local isPetBattle = k == indices["PET"]
 		
@@ -589,7 +478,6 @@ local function setupQueueDropdown(rootDescription)
 					end
 				elseif(isRaidFinder) then
 					if(lastRaidName ~= dungeonInfo.name2) then
-						--local textLine = queueDropDown:CreateTextLine(nil, info.parentIndex, miog.MAP_INFO[mapID].shortName, icon)
 						local title = activityButton:CreateTitle(dungeonInfo.name2)
 
 						if(icon) then

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.1.2] - 2025-01-30
+## [3.1.2] - 2025-02-02
 
 ### Changed
 
@@ -19,6 +19,10 @@ The search panel should now be lagfree.
 - [EntryCreation] The "Faction only" checkbox in the group creator doesn't hover over the "Back" button anymore.
 
 - All relevant PTR data has been added for the new dungeon and the new raid.
+
+- The queue dropdown and the dropdown list can't be clicked through anymore to avoid signing up for group when you don't hit the queue "button"
+
+- Updated the Open Raid library.
 
 
 

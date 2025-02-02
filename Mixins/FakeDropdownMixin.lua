@@ -56,6 +56,7 @@ function FakeDropdownListMixin:CreateList()
         self.type = "list"
 
         self.List = self.List or CreateFrame("Frame", "List", self, "VerticalLayoutFrame")
+        self.List:SetScript("OnMouseDown", function() end)
         self.List:SetFrameStrata("HIGH")
         self.List:SetPoint("TOPLEFT", self, "TOPRIGHT", 2, 0)
         self.List.topPadding = 5
