@@ -232,15 +232,20 @@ end
 miog.standardSortFunction = standardSortFunction
 
 local function retrieveCategoryGroups(categoryID)
-	local raidInfo = {}
+	local raidInfo
+
     local raidGroups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters or LFGListFrame.CategorySelection.baseFilters);
 
-    for k, v in ipairs(raidGroups) do
-        local activities = C_LFGList.GetAvailableActivities(categoryID, v)
-        local activityID = activities[#activities]
+	if(#raidGroups > 0) then
+		raidInfo = {}
+		
+		for k, v in ipairs(raidGroups) do
+			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
+			local activityID = activities[#activities]
 
-        tinsert(raidInfo, {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
-    end
+			tinsert(raidInfo, {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+		end
+	end
     
     return raidInfo
 end
@@ -736,6 +741,27 @@ end
 
 miog.getRaidSortData = getRaidSortData
 
+miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
+	local playerName, realm
+
+	if(data.resultID) then
+		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
+		--local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
+		playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
+
+	elseif(data.applicantID) then
+		playerName, realm = data.name, data.realm
+
+	end
+
+	frame:Flush()
+	frame:SetPlayerData(playerName, realm)
+	frame:SetOptionalData(searchResultInfo.comment, realm)
+	frame:ApplyFillData()
+
+	frame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].horizontal, "CLAMP", "MIRROR")
+	frame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
+end
 
 miog.hideSidePanel = function(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)

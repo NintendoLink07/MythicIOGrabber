@@ -21,7 +21,7 @@ local function findFrame(resultID)
 	return frame
 end
 
-local function resetFrame(pool, childFrame)
+local function resetFrame(_, childFrame)
     childFrame:Hide()
 	childFrame.layoutIndex = nil
 	childFrame.resultID = nil
@@ -32,7 +32,7 @@ end
 local function setScrollBoxFrameColors(resultFrame, resultID)
 	if(resultFrame and C_LFGList.HasSearchResultInfo(resultID)) then
 		local isEligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID, true)
-		local reason = miog.INELIGIBILITY_REASONS[reasonID]
+		--local reason = miog.INELIGIBILITY_REASONS[reasonID]
 		local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
@@ -302,6 +302,8 @@ local function createDataProviderWithUnsortedData()
 	local dataProvider = CreateTreeDataProvider()
 	local _, resultTable = C_LFGList.GetFilteredSearchResults()
 
+	local numOfFiltered = 0
+
 	for _, resultID in ipairs(resultTable) do
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
@@ -360,12 +362,15 @@ local function createDataProviderWithUnsortedData()
 				})
 
 				characterData:Insert({template = "MIOG_NewRaiderIOInfoPanel", resultID = resultID})
+			else
+				numOfFiltered = numOfFiltered + 1
+
 			end
 		end
 
 	end
 
-	return dataProvider
+	return dataProvider, numOfFiltered
 end
 
 local function addOneTimeFrames(frame)
@@ -397,20 +402,6 @@ end
 local function resetScrollBoxFrame(frame)
 	frame.CategoryInformation.ExpandFrame:SetState(false)
 	frame.CancelApplication:OnLoad()
-end
-
-local function updateRaiderIOScrollBoxFrameData(frame, data)
-	local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
-	local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
-	local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
-
-	frame:Flush()
-	frame:SetPlayerData(playerName, realm)
-	frame:SetOptionalData(searchResultInfo.comment, realm)
-	frame:ApplyFillData()
-
-	frame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].horizontal, "CLAMP", "MIRROR")
-	frame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 end
 
 local function updateOptionalScrollBoxFrameData(frame, data)
@@ -752,13 +743,15 @@ local function showStatusOverlay(status)
 end
 
 local function updateResultList()
-	local dataProvider = createDataProviderWithUnsortedData()
+	local dataProvider, numberOfResults = createDataProviderWithUnsortedData()
 	dataProvider:SetAllCollapsed(true);
 	
 	miog.SearchPanel:SetDataProvider(dataProvider)
 	miog.SearchPanel:Sort()
 
-	actualResults = 0
+	actualResults = miog.SearchPanel:GetNumberOfDataEntries()
+
+	miog.updateFooterBarResults(actualResults, numberOfResults, numberOfResults >= 100)
 end
 
 local function fullyUpdateSearchPanel()
@@ -944,7 +937,7 @@ miog.createSearchPanel = function()
 
 	C_CVar.SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_KEY_RANGE_GROUP_FINDER, true)
 
-	local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2);
+	local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 0);
 
 	local function Initializer(frame, node)
 		local data = node:GetData()
@@ -955,7 +948,7 @@ miog.createSearchPanel = function()
 			updateScrollBoxFrame(frame, data)
 
 		else
-			updateRaiderIOScrollBoxFrameData(frame, data)
+			miog.updateRaiderIOScrollBoxFrameData(frame, data)
 
 		end
 	end

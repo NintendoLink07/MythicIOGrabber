@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+    <Frame name="MIOG_ApplicantScrollBoxTemplate" inherits="VerticalLayoutFrame, BackdropTemplate" virtual="true">
+        <Frames>
+            <Frame parentKey="ScrollBox2" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

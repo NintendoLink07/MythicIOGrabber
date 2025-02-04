@@ -187,7 +187,6 @@ local function handler(msg, editBox)
 			miog.ApplicationViewer:Show()
 		end
 	elseif(command == "debugoff_av") then
-		miog.releaseApplicantFrames()
 		miog.resetArrays()
 
 	elseif(command == "debugon") then
@@ -204,7 +203,7 @@ local function handler(msg, editBox)
 
 		local index = 1
 		local tickRate = 0.2
-		local numberOfEntries = 33
+		local numberOfEntries = 100
 		local testLength = (tonumber(rest) or 10) / tickRate -- in seconds
 
 		miog.debug.currentAverageExecuteTime = {}
@@ -230,7 +229,6 @@ local function handler(msg, editBox)
 
 				print("Debug mode off - Normal applicant mode")
 				miog.F.IS_IN_DEBUG_MODE = false
-				miog.releaseApplicantFrames()
 				miog.resetArrays()
 			end
 		end)
@@ -250,7 +248,6 @@ local function handler(msg, editBox)
 
 		print("Debug mode off - Normal applicant mode")
 		miog.F.IS_IN_DEBUG_MODE = false
-		miog.releaseApplicantFrames()
 		miog.resetArrays()
 
 	elseif(command == "debug_sp_perfstart") then

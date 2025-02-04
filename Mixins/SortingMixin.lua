@@ -135,6 +135,17 @@ function SortingMixin:GetSortingData()
     return self.sortingData
 end
 
+function SortingMixin:GetNumberOfDataEntries()
+    if(self.dataProvider) then
+        return self.dataProvider:GetSize(true)
+
+    else
+        return #self.sortingData
+    end
+
+    return 0
+end
+
 function SortingMixin:SetSortingFunction(func)
     self.sortingFunction = func
 end
@@ -256,6 +267,10 @@ end
 function SortingMixin:SetDataProvider(dataProvider)
     self.dataProvider = dataProvider
 
+    if(self.scrollView) then
+        self.scrollView:SetDataProvider(self.dataProvider)
+
+    end
 end
 
 function SortingMixin:GetOrderedParameters()
@@ -286,7 +301,6 @@ local function standardSort(k1, k2, parameters)
 end
 
 function SortingMixin:Sort()
-
     if(self.sortingFunction) then
         table.sort(self.sortingData, function(k1, k2)
             self.sortingFunction(k1, k2)
@@ -302,6 +316,7 @@ function SortingMixin:Sort()
                         for k, v in ipairs(orderedList) do
                             if(v.state > 0 and k1.data[v.name] ~= k2.data[v.name]) then
                                 if(v.state == 1) then
+                                    --print(k1.data[v.name], k2.data[v.name])
                                     return k1.data[v.name] > k2.data[v.name]
                     
                                 else
@@ -333,7 +348,7 @@ function SortingMixin:Sort()
             end
 
             self.dataProvider:Sort()
-            self.scrollView:SetDataProvider(self.dataProvider)
+            --self.scrollView:SetDataProvider(self.dataProvider)
         else
             table.sort(self.sortingData,
                 function(k1, k2)

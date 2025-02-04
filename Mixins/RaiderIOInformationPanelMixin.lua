@@ -401,7 +401,7 @@ function RaiderIOInformationPanelMixin:ApplyFillData(refreshData)
     self:CalculatePanelHeight()
 
     if(self.RaceRolesServer) then
-        self.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION) .. "-" .. (self.realm or GetRealmName() or "") .. " ")
+        self.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION or "") .. "-" .. (self.realm or GetRealmName() or "") .. " ")
         
         if(self.roles) then
             if(self.roles.tank) then

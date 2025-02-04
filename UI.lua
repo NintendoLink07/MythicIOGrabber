@@ -197,6 +197,8 @@ miog.createFrames = function()
 	miog.NewFilterPanel = miog.loadNewFilterPanel()
 	miog.LastInvites = miog.loadLastInvitesPanel()
 	miog.ClassPanel = miog.createClassPanel()
+	
+	miog.loadInspectManagement()
 
 	if(MIOG_NewSettings.reQueue) then
 		miog.loadReQueue()

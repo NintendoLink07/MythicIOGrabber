@@ -1,0 +1,178 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+    <Frame name="MIOG_ApplicantMemberFrameTemplateNew" inherits="BackdropTemplate" virtual="true">
+        <Frames>
+            <Frame parentKey="StatusFrame" setAllPoints="true" framestrata="FULLSCREEN" hidden="true">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.7" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self:OnLoad()
+                        self:SetMaxStates(2)
+                        self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                        self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                        self:SetState(false)
+                    </OnLoad>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="Decline" inherits="IconButtonTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2"/>
+                </Anchors>
+            </Button>
+
+            <Button parentKey="Invite" inherits="IconButtonTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.Decline" relativePoint="LEFT" x="-2"/>
+                </Anchors>
+            </Button>
+        </Frames>
+
+        
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-1">
+                <Texture parentKey="Background" setAllPoints="true">
+                    <!--<Color r="0.16470588235294117" g="0.16862745098039217" b="0.17254901960784313" a="1" />!-->
+                </Texture>
+            </Layer>
+            
+            <Layer level="ARTWORK">
+                <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
+                    <Size x="10" y="10" />
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ExpandFrame" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med1"  justifyH="LEFT" enableMouseMotion="true">
+                    <Size x="105" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
+                    </Anchors>
+                    <Scripts>
+                        <OnLeave>
+                            GameTooltip:Hide()
+                        </OnLeave>
+                    </Scripts>
+                </FontString>
+            </Layer>
+            
+            <Layer level="ARTWORK">
+                <Texture parentKey="Race">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <Size  x="15" y="15" />
+                </Texture> 
+
+                <Texture parentKey="Spec">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Race" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <Size  x="15" y="15" />
+                </Texture> 
+
+                <Texture parentKey="Role">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT"/>
+                    </Anchors>
+                    <Size  x="19" y="19" />
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Primary" font="SystemFont_Shadow_Med1" justifyH="CENTER">
+                    <Size x="37" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="4" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Secondary" font="SystemFont_Shadow_Med1" justifyH="CENTER">
+                    <Size x="37" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="ItemLevel" font="SystemFont_Shadow_Med1" justifyH="CENTER">
+                    <Size x="44" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Friend" file="Interface\Addons\MythicIOGrabber\res\infoIcons\friend.png" hidden="true">
+                    <Size x="17" y="17" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" />
+                    </Anchors>
+                    <Scripts>
+
+                        <OnEnter>
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetText("On your friendlist")
+                            GameTooltip:Show()
+                        </OnEnter>
+            
+                        <OnLeave>
+                            GameTooltip:Hide()
+                        </OnLeave>
+                    </Scripts>
+                </Texture>
+                
+                <Texture parentKey="Premade" file="Interface\Addons\MythicIOGrabber\res\infoIcons\link.png" hidden="true">
+                    <Size x="17" y="17" />
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" y="-1"/>
+                    </Anchors>
+                    <Scripts>
+                        <OnLeave>
+                            GameTooltip:Hide()
+                        </OnLeave>
+                    </Scripts>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnLeave>
+			    GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Frame>
+</Ui>

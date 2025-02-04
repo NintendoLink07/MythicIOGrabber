@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.1.3] - 2025-02-03
+
+### Changed
+
+- [ApplicationViewer] The application viewer's frame system and much of its core code has been updated to the same one the search panel now uses.
+There should be almost no lag even when hundreds of players would apply at the same time.
+Before computing 100 applicants took > 1 second of lag, now it takes just around 0.01 to 0.02 seconds, barely noticable.
+
+### Fixed
+
+- [SearchPanel] The number of listings at the bottom of the search panel should now update correctly again.
+
+- [ClassPanel] The class panel will now correctly work in lite mode.
+
+- An error trying to fetch raid data right when the game gets started without any cached data available has been fixed.
+
+
 
 ## [3.1.2] - 2025-02-02
 
