@@ -1,13 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local searchResultSystem = {}
-searchResultSystem.declinedGroups = {}
-searchResultSystem.raidSortData = {}
-
-searchResultSystem.baseFrames = {}
-searchResultSystem.raiderIOPanels = {}
-
 local actualResults = 0
 local currentlySelectedID
 
@@ -299,8 +292,8 @@ local function groupSignup(resultID)
 end
 
 local function createDataProviderWithUnsortedData()
-	local dataProvider = CreateTreeDataProvider()
-	local _, resultTable = C_LFGList.GetFilteredSearchResults()
+	local dataProvider = {}
+	local total, resultTable = C_LFGList.GetFilteredSearchResults()
 
 	local numOfFiltered = 0
 
@@ -330,14 +323,14 @@ local function createDataProviderWithUnsortedData()
 
 				if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
 					primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
-					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo.bestRunLevel or 0
+					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
 					if(searchResultInfo.leaderName) then
-						searchResultSystem.raidSortData[searchResultInfo.leaderName] = {miog.getRaidSortData(searchResultInfo.leaderName)}
+						local raidData = {miog.getRaidSortData(searchResultInfo.leaderName)}
 
-						primarySortAttribute = searchResultSystem.raidSortData[searchResultInfo.leaderName][3][1].weight
-						secondarySortAttribute = searchResultSystem.raidSortData[searchResultInfo.leaderName][3][2].weight
+						primarySortAttribute = raidData[3][1].weight
+						secondarySortAttribute = raidData[3][2].weight
 
 					else
 						primarySortAttribute = 0
@@ -351,8 +344,9 @@ local function createDataProviderWithUnsortedData()
 
 				end
 
-				local characterData = dataProvider:Insert({
+				tinsert(dataProvider, {
 					template = "MIOG_SearchPanelResultFrameTemplate",
+					name = searchResultInfo.leaderName,
 					primary = primarySortAttribute,
 					appStatus = appStatus,
 					secondary = secondarySortAttribute,
@@ -360,8 +354,6 @@ local function createDataProviderWithUnsortedData()
 					age = searchResultInfo.age,
 					favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
 				})
-
-				characterData:Insert({template = "MIOG_NewRaiderIOInfoPanel", resultID = resultID})
 			else
 				numOfFiltered = numOfFiltered + 1
 
@@ -370,7 +362,7 @@ local function createDataProviderWithUnsortedData()
 
 	end
 
-	return dataProvider, numOfFiltered
+	return dataProvider, numOfFiltered, total
 end
 
 local function addOneTimeFrames(frame)
@@ -468,7 +460,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 			
 			local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 
-			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo, miog.getNewRaidSortData(playerName, realm), searchResultInfo.leaderPvpRatingInfo)
+			miog.setInfoIndicators(currentFrame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo[1], miog.getNewRaidSortData(playerName, realm), searchResultInfo.leaderPvpRatingInfo)
 		end
 	end
 end
@@ -743,15 +735,41 @@ local function showStatusOverlay(status)
 end
 
 local function updateResultList()
-	local dataProvider, numberOfResults = createDataProviderWithUnsortedData()
-	dataProvider:SetAllCollapsed(true);
+	local basicTable, numOfFiltered = createDataProviderWithUnsortedData()
+
+	if(basicTable) then
+		local orderedList = miog.SearchPanel:GetOrderedParameters()
+		table.sort(basicTable, function(k1, k2)
+			for k, v in ipairs(orderedList) do
+				if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+					if(v.state == 1) then
+						return k1[v.name] > k2[v.name]
+		
+					else
+						return k1[v.name] < k2[v.name]
+		
+					end
+				end
+			end
+		end)
+
+		local dataProvider = CreateTreeDataProvider()
+
+		for _, v in ipairs(basicTable) do
+			local finalData = dataProvider:Insert(v)
+			finalData:Insert({template = "MIOG_NewRaiderIOInfoPanel", resultID = v.resultID})
+			
+		end
+
+		dataProvider:SetAllCollapsed(true);
+		miog.SearchPanel:SetDataProvider(dataProvider)
+
+		actualResults = #basicTable
 	
-	miog.SearchPanel:SetDataProvider(dataProvider)
-	miog.SearchPanel:Sort()
+		miog.updateFooterBarResults(actualResults, numOfFiltered, numOfFiltered >= 100)
 
-	actualResults = miog.SearchPanel:GetNumberOfDataEntries()
-
-	miog.updateFooterBarResults(actualResults, numberOfResults, numberOfResults >= 100)
+		--miog.SearchPanel.ScrollBox2:Update()
+	end
 end
 
 local function fullyUpdateSearchPanel()
@@ -926,7 +944,7 @@ miog.createSearchPanel = function()
 	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
 	searchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
-	searchPanel:OnLoad()
+	searchPanel:OnLoad(fullyUpdateSearchPanel)
 	searchPanel:SetTreeMode(true)
 	searchPanel:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.SearchPanel"])
 	searchPanel:AddMultipleSortingParameters({
@@ -937,7 +955,7 @@ miog.createSearchPanel = function()
 
 	C_CVar.SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_KEY_RANGE_GROUP_FINDER, true)
 
-	local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 0);
+	local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 2);
 
 	local function Initializer(frame, node)
 		local data = node:GetData()

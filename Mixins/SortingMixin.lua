@@ -28,7 +28,7 @@ function SortingMixin:OnLoad(func)
 
             end
 
-            if(self.scrollView) then
+            if(self.scrollView and not self.externalSort) then
                 self:Sort()
             end
 
@@ -37,6 +37,10 @@ function SortingMixin:OnLoad(func)
             end
         end)
     end)
+end
+
+function SortingMixin:SetExternalSort(bool)
+    self.externalSort = bool
 end
 
 function SortingMixin:SetTreeMode(bool)
@@ -310,13 +314,14 @@ function SortingMixin:Sort()
         local orderedList = self:GetOrderedParameters()
 
         if(self.scrollView) then
+            self.scrollView:Flush()
+
             if(self.treeMode) then
                 self.dataProvider:SetSortComparator(
                     function(k1, k2)
                         for k, v in ipairs(orderedList) do
                             if(v.state > 0 and k1.data[v.name] ~= k2.data[v.name]) then
                                 if(v.state == 1) then
-                                    --print(k1.data[v.name], k2.data[v.name])
                                     return k1.data[v.name] > k2.data[v.name]
                     
                                 else
@@ -348,7 +353,8 @@ function SortingMixin:Sort()
             end
 
             self.dataProvider:Sort()
-            --self.scrollView:SetDataProvider(self.dataProvider)
+
+            self.scrollView:SetDataProvider(self.dataProvider)
         else
             table.sort(self.sortingData,
                 function(k1, k2)
@@ -367,19 +373,5 @@ function SortingMixin:Sort()
             )
             
         end
-
-        --[[table.sort(self.sortingData, function(k1, k2)
-            for k, v in ipairs(orderedList) do
-                if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-                    if(v.state == 1) then
-                        return k1[v.name] > k2[v.name]
-
-                    else
-                        return k1[v.name] < k2[v.name]
-
-                    end
-                end
-            end
-        end)]]
     end
 end

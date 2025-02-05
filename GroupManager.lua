@@ -898,7 +898,6 @@ local function groupManagerEvents(_, event, ...)
 			playerSpecs[fullName] = GetInspectSpecialization(groupData[fullName].unitID)
 
 			startUpdate = true
-
 		end
 
 		if(startUpdate) then
@@ -906,9 +905,11 @@ local function groupManagerEvents(_, event, ...)
 
 		end
 	elseif(event == "GROUP_JOINED") then
+		miog.GroupManager.ScrollView:Flush()
 		updateGroupData()
 
 	elseif(event == "GROUP_LEFT") then
+		miog.GroupManager.ScrollView:Flush()
 		updateGroupData()
 	
 	elseif(event == "GROUP_ROSTER_UPDATE") then
@@ -956,22 +957,28 @@ local function groupManagerEvents(_, event, ...)
 	end
 end
 
---[[local specName = singleUnitInfo.specName
+--[[
+local specName = singleUnitInfo.specName
 local role = singleUnitInfo.role
 local renown = singleUnitInfo.renown
 local covenantId = singleUnitInfo.covenantId
+local heroTalentId = singleUnitInfo.heroTalentId
 local talents = singleUnitInfo.talents
 local pvpTalents = singleUnitInfo.pvpTalents
-local conduits = singleUnitInfo.conduitsw
+local conduits = singleUnitInfo.conduits
 local class = singleUnitInfo.class
 local classId = singleUnitInfo.classId
 local className = singleUnitInfo.className
-local unitName = singleUnitInfo.name]]
+local unitName = singleUnitInfo.name
+local fullName = singleUnitInfo.nameFull
+]]
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 	if(singleUnitInfo) then
-		if(groupData[fullName]) then
-			updateGroupData()
-
+		if(groupData[singleUnitInfo.nameFull]) then
+			if(singleUnitInfo.specId and singleUnitInfo.specId > 0) then
+				playerSpecs[singleUnitInfo.nameFull] = singleUnitInfo.specId
+				updateGroupData()
+			end
 		end
 	end
 end

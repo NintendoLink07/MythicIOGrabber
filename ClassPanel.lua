@@ -67,8 +67,6 @@ local function updateGroupClassData()
 
         end
 	end
-
-    miog.updateGroupData()
 end
 
 local function classPanelEvents(_, event, ...)

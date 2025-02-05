@@ -161,18 +161,51 @@
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" y="-1"/>
                     </Anchors>
                     <Scripts>
-                        <OnLeave>
-                            GameTooltip:Hide()
-                        </OnLeave>
+                        <OnEnter>
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetText("Premades")
+                            GameTooltip:Show()
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
                     </Scripts>
                 </Texture>
             </Layer>
         </Layers>
 
         <Scripts>
-            <OnLeave>
-			    GameTooltip:Hide()
-            </OnLeave>
+            <OnMouseDown>
+                if(button == "RightButton") then
+                    MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+                        rootDescription:SetTag("MENU_LFG_FRAME_MEMBER_APPLY");
+
+                        local applicantID = self.applicantID;
+                        local memberIdx = self.memberIdx;
+                        local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole = C_LFGList.GetApplicantMemberInfo(applicantID, memberIdx);
+                        local applicantInfo = C_LFGList.GetApplicantInfo(applicantID);
+                        
+                        rootDescription:CreateTitle(name or "");
+
+                        local whisperButton = rootDescription:CreateButton(WHISPER, function()
+                            ChatFrame_SendTell(name);
+                        end);
+
+                        rootDescription:CreateButton(LFG_LIST_REPORT_PLAYER, function()
+                            LFGList_ReportApplicant(applicantID, name or "");
+                        end);
+
+                        local ignoreButton = rootDescription:CreateButton(IGNORE_PLAYER, function()
+                            C_FriendList.AddIgnore(name); 
+                            C_LFGList.DeclineApplicant(applicantID);
+                        end);
+
+                        if not name then
+                            whisperButton:SetEnabled(false);
+                            ignoreButton:SetEnabled(false);
+                        end
+                    end);
+                end
+            </OnMouseDown>
+            <OnLeave function="GameTooltip_Hide" />
         </Scripts>
     </Frame>
 </Ui>

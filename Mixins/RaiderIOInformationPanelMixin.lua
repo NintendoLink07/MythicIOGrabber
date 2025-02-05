@@ -35,29 +35,38 @@ end
 
 function RaiderIOInformationPanelMixin:OnLoadMPlus()
     if(self.mythicPlusInfo) then
-        for k, data in ipairs(self.mythicPlusInfo) do
-            local currentDungeon = self.MythicPlus["Dungeon" .. k]
-            local mapData = miog.MAP_INFO[data.mapID]
+        local done = {}
+        local k = 1
 
-            currentDungeon.dungeonName = mapData.name
+        for _, data in ipairs(self.mythicPlusInfo) do
+            if(not done[data.mapID]) then
+                local currentDungeon = self.MythicPlus["Dungeon" .. k]
+                local mapData = miog.MAP_INFO[data.mapID]
 
-            if(currentDungeon.Name) then
-                currentDungeon.Name:SetText(mapData.shortName)
-                
+                currentDungeon.dungeonName = mapData.name
+
+                if(currentDungeon.Name) then
+                    currentDungeon.Name:SetText(mapData.shortName)
+                    
+                end
+
+                miog.checkSingleMapIDForNewData(data.mapID, nil, true)
+
+                currentDungeon.Icon:SetTexture(self.mode == "side" and mapData.horizontal or mapData.icon)
+                currentDungeon.Icon:SetDesaturation(0)
+                currentDungeon.Icon:SetScript("OnMouseDown", function()
+                    local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
+                    local difficulty = 23
+
+                    --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+                    EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+                end)
+
+                done[data.mapID] = true
+
+                k = k + 1
             end
-
-            miog.checkSingleMapIDForNewData(data.mapID, nil, true)
-
-            currentDungeon.Icon:SetTexture(self.mode == "side" and mapData.horizontal or mapData.icon)
-            currentDungeon.Icon:SetDesaturation(0)
-            currentDungeon.Icon:SetScript("OnMouseDown", function()
-                local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
-                local difficulty = 23
-
-                --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-                EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
-
-            end)
         end
     end
 end
@@ -225,19 +234,27 @@ end
 function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
     self.mplusData = not refreshData and self.mplusData or miog.getMPlusSortData(self.playerName, self.realm, self.region)
 
-    for k, data in ipairs(self.mythicPlusInfo) do
-        local currentDungeon = self.MythicPlus["Dungeon" .. k]
+    local done = {}
+    local k = 1
 
-        if(self.mplusData and self.mplusData[data.mapID]) then
-            currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.mapID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.mapID].chests)) or 0, self.mplusData and self.mplusData[data.mapID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+    for _, data in ipairs(self.mythicPlusInfo) do
+        if(not done[data.mapID]) then
+            local currentDungeon = self.MythicPlus["Dungeon" .. k]
 
-            if(self.mplusData[data.mapID].level == 0) then
+            if(self.mplusData and self.mplusData[data.mapID]) then
+                currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.mapID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.mapID].chests)) or 0, self.mplusData and self.mplusData[data.mapID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+
+                if(self.mplusData[data.mapID].level == 0) then
+                    currentDungeon.Icon:SetDesaturation(0.7)
+                end
+            else
+                currentDungeon.Level:SetText(WrapTextInColorCode(0, miog.CLRSCC.red))
                 currentDungeon.Icon:SetDesaturation(0.7)
-            end
-        else
-            currentDungeon.Level:SetText(WrapTextInColorCode(0, miog.CLRSCC.red))
-            currentDungeon.Icon:SetDesaturation(0.7)
 
+            end
+
+            done[data.mapID] = true
+            k = k + 1
         end
     end
 

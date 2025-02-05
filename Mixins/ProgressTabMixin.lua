@@ -766,26 +766,37 @@ function ProgressTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, 
 			end
 		end
 
-		if(self.id == 1 or updateMPlus) then
-			self:UpdateCharacterMPlusStatistics(v.guid)
+		if(self.activityTable) then
+			if(self.id == 1 or updateMPlus) then
+				self:UpdateCharacterMPlusStatistics(v.guid)
 
-		elseif(self.id == 2 or updateRaid) then
-			self:UpdateCharacterRaidStatistics(v.guid)
+			elseif(self.id == 2 or updateRaid) then
+				self:UpdateCharacterRaidStatistics(v.guid)
 
-		elseif(self.id == 3 or updatePvp) then
-			self:UpdatePVPStatistics(v.guid)
+			elseif(self.id == 3 or updatePvp) then
+				self:UpdatePVPStatistics(v.guid)
 
+			end
 		end
-
 	end
 end
 
 function ProgressTabMixin:LoadActivities()
 	if(self.id == 1) then --M+
-		self.activityTable = miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()
+		self.activityTable = C_ChallengeMode.GetMapTable()
 
 	elseif(self.id == 2) then --RAID
-		self.activityTable = miog.SEASONAL_MAP_IDS[13].raids
+		local raidInfo = {}
+		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
+	
+		for k, v in ipairs(raidGroups) do
+			local activities = C_LFGList.GetAvailableActivities(3, v)
+			local activityID = activities[#activities]
+	
+			tinsert(raidInfo, miog.ACTIVITY_INFO[activityID].mapID)
+		end
+
+		self.activityTable = raidInfo
 
 	elseif(self.id == 3) then --PVP
 		self.activityTable = {1, 2, 3, 4}
@@ -993,7 +1004,7 @@ function ProgressTabMixin:UpdateCharacterMPlusStatistics(guid)
 	if(guid == playerGUID) then
 		MIOG_NewSettings.accountStatistics.characters[guid].mplus.score = {value = C_ChallengeMode.GetOverallDungeonScore(), ingame = true}
 
-		for _, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
+		for _, challengeMapID in pairs(self.activityTable) do
 			MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID] = {}
 
 			local intimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID)
@@ -1013,7 +1024,7 @@ function ProgressTabMixin:UpdateCharacterMPlusStatistics(guid)
 		end
 
 		if(intimeInfo or overtimeInfo) then
-			for _, challengeMapID in pairs(mapTable or miog.SEASONAL_CHALLENGE_MODES[13] or C_ChallengeMode.GetMapTable()) do
+			for _, challengeMapID in pairs(self.activityTable) do
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID] = {}
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo = intimeInfo and intimeInfo[challengeMapID] or MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo = overtimeInfo and overtimeInfo[challengeMapID] or MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo
@@ -1049,10 +1060,10 @@ function ProgressTabMixin:LoadCharacters()
 	self.Rows:SetDataProvider(columnProvider)
 end
 
-function ProgressTabMixin:UpdateStatistics()
+function ProgressTabMixin:UpdateStatistics(updateMPlus, updateRaid, updatePvp)
     self:LoadActivities()
 
-	self:UpdateAllCharacterStatistics()
+	self:UpdateAllCharacterStatistics(updateMPlus, updateRaid, updatePvp)
 
     self:LoadCharacters()
 end

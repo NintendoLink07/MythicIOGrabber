@@ -481,13 +481,8 @@ miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeon
 			end
 
 			if(dungeonData) then
-				if(dungeonData.finishedSuccess == true) then
-					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.C.GREEN_COLOR)
+				highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
 
-				elseif(dungeonData.finishedSuccess == false) then
-					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), miog.CLRSCC.red)
-
-				end
 			else
 				highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
 
@@ -742,24 +737,28 @@ end
 miog.getRaidSortData = getRaidSortData
 
 miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
-	local playerName, realm
+	local playerName, realm, comment, activityID
 
 	if(data.resultID) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 		--local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 		playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
+		comment = searchResultInfo.comment
+		activityID = searchResultInfo.activityIDs[1]
 
 	elseif(data.applicantID) then
 		playerName, realm = data.name, data.realm
+		comment = (miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(data.applicantID) or C_LFGList.GetApplicantInfo(data.applicantID)).comment
+		activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityIDs[1] or 0
 
 	end
-
+	
 	frame:Flush()
 	frame:SetPlayerData(playerName, realm)
-	frame:SetOptionalData(searchResultInfo.comment, realm)
-	frame:ApplyFillData()
+	frame:SetOptionalData(comment, realm)
+	frame:ApplyFillData(true)
 
-	frame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].horizontal, "CLAMP", "MIRROR")
+	frame.Background:SetTexture(miog.ACTIVITY_INFO[activityID].horizontal, "CLAMP", "MIRROR")
 	frame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 end
 

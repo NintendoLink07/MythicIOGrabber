@@ -203,7 +203,7 @@ local function handler(msg, editBox)
 
 		local index = 1
 		local tickRate = 0.2
-		local numberOfEntries = 100
+		local numberOfEntries = 33
 		local testLength = (tonumber(rest) or 10) / tickRate -- in seconds
 
 		miog.debug.currentAverageExecuteTime = {}

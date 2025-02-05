@@ -2,18 +2,9 @@ local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
 local applicantListSpacing = 4
-local applicationFrameIndex = 0
 local queueTimer
 
 local actualResults
-
-local function resetBaseFrame(pool, childFrame)
-    childFrame:Hide()
-	childFrame.layoutIndex = nil
-	childFrame.applicantID = nil
-	childFrame:ClearBackdrop()
-
-end
 
 local function resetArrays()
 	miog.DEBUG_APPLICANT_DATA = {}
@@ -108,71 +99,6 @@ local function newSort(idData1, idData2)
 	end
 end
 
-local function sortApplicantList(applicant1, applicant2)
-	local applicant1Member1 = applicant1[1]
-	local applicant2Member1 = applicant2[1]
-
-	for key, tableElement in pairs(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"]) do
-		if(tableElement.currentLayer == 1) then
-			local firstState = tableElement.currentState
-
-			for innerKey, innerTableElement in pairs(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"]) do
-
-				if(innerTableElement.currentLayer == 2) then
-					local secondState = innerTableElement.currentState
-
-					if(applicant1Member1.favoured and not applicant2Member1.favoured) then
-						return true
-
-					elseif(not applicant1Member1.favoured and applicant2Member1.favoured) then
-						return false
-
-					else
-						if(applicant1Member1[key] == applicant2Member1[key]) then
-							return secondState == 1 and applicant1Member1[innerKey] > applicant2Member1[innerKey] or secondState == 2 and applicant1Member1[innerKey] < applicant2Member1[innerKey]
-
-						elseif(applicant1Member1[key] ~= applicant2Member1[key]) then
-							return firstState == 1 and applicant1Member1[key] > applicant2Member1[key] or firstState == 2 and applicant1Member1[key] < applicant2Member1[key]
-
-						end
-					end
-				end
-
-			end
-
-			if(applicant1Member1.favoured and not applicant2Member1.favoured) then
-				return true
-
-			elseif(not applicant1Member1.favoured and applicant2Member1.favoured) then
-				return false
-
-			else
-				if(applicant1Member1[key] == applicant2Member1[key]) then
-					return firstState == 1 and applicant1Member1.applicantID > applicant2Member1.applicantID or firstState == 2 and applicant1Member1.applicantID < applicant2Member1.applicantID
-
-				elseif(applicant1Member1[key] ~= applicant2Member1[key]) then
-					return firstState == 1 and applicant1Member1[key] > applicant2Member1[key] or firstState == 2 and applicant1Member1[key] < applicant2Member1[key]
-
-				end
-			end
-
-		end
-
-	end
-
-	if(applicant1Member1.favoured and not applicant2Member1.favoured) then
-		return true
-
-	elseif(not applicant1Member1.favoured and applicant2Member1.favoured) then
-		return false
-
-	else
-		return applicant1Member1.applicantID < applicant2Member1.applicantID
-
-	end
-
-end
-
 local function updateApplicantMemberFrame(frame, data)
 	local applicantID, applicantIndex = data.applicantID, data.applicantIndex
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
@@ -213,36 +139,6 @@ local function updateApplicantMemberFrame(frame, data)
 			miog.checkEgoTrip(name)
 		end
 	end)
-	applicantMemberFrame:SetScript("OnMouseDown", function(self)
-		MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
-			rootDescription:SetTag("MENU_LFG_FRAME_MEMBER_APPLY");
-	
-			local applicantID = self.applicantID;
-			local memberIdx = self.memberIdx;
-			local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole = C_LFGList.GetApplicantMemberInfo(applicantID, memberIdx);
-			local applicantInfo = C_LFGList.GetApplicantInfo(applicantID);
-			
-			rootDescription:CreateTitle(name or "");
-	
-			local whisperButton = rootDescription:CreateButton(WHISPER, function()
-				ChatFrame_SendTell(name);
-			end);
-	
-			rootDescription:CreateButton(LFG_LIST_REPORT_PLAYER, function()
-				LFGList_ReportApplicant(applicantID, name or "");
-			end);
-	
-			local ignoreButton = rootDescription:CreateButton(IGNORE_PLAYER, function()
-				C_FriendList.AddIgnore(name); 
-				C_LFGList.DeclineApplicant(applicantID);
-			end);
-	
-			if not name then
-				whisperButton:SetEnabled(false);
-				ignoreButton:SetEnabled(false);
-			end
-		end);
-	end)
 
 	if(MIOG_NewSettings.favouredApplicants[name]) then
 		--applicantMemberFrame:ClearBackdrop()
@@ -257,7 +153,7 @@ local function updateApplicantMemberFrame(frame, data)
 	expandFrameButton:SetScript("OnClick", function(self)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-		local baseFrame = self:GetParent():GetParent()
+		local baseFrame = self:GetParent()
 			
 		self:AdvanceState()
 
@@ -270,8 +166,7 @@ local function updateApplicantMemberFrame(frame, data)
 	applicantMemberFrame.Background:SetColorTexture(r, g, b, 0.5)
 
 	local nameFontString = applicantMemberFrame.Name
-	--nameFontString:SetText(playerIsIgnored and wticc(playerName, "FFFF0000") or wticc(playerName, select(4, GetClassColor(class))))
-	nameFontString:SetText(data.applicantID .. " - " .. data.applicantIndex .. " - " .. playerName)
+	nameFontString:SetText(playerName)
 	nameFontString:SetScript("OnMouseDown", function(_, button)
 		if(button == "RightButton") then
 			local copybox = miog.ApplicationViewer.CopyBox
@@ -312,16 +207,6 @@ local function updateApplicantMemberFrame(frame, data)
 
 	applicantMemberFrame.Friend:SetShown(relationship and true or false)
 
-	if(applicantIndex > 1) then
-		applicantMemberFrame.Premade:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			--GameTooltip:SetText("Premades with " .. applicantFrame.memberFrames[1].nameFrame:GetText())
-			GameTooltip:Show()
-
-		end)
-
-	end
-
 	local declineButton = applicantMemberFrame.Decline
 	declineButton:OnLoad()
 	declineButton:SetScript("OnClick", function()
@@ -358,14 +243,7 @@ local function updateApplicantMemberFrame(frame, data)
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
 	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1]).categoryID
 
-	applicantMemberFrame.RaiderIOInformationPanel:OnLoad()
-	applicantMemberFrame.RaiderIOInformationPanel:SetPlayerData(playerName, realm)
-	applicantMemberFrame.RaiderIOInformationPanel:SetOptionalData(applicantData.comment, realm, {tank = tank, healer = healer, damager = damager})
-	applicantMemberFrame.RaiderIOInformationPanel:ApplyFillData()
-
-	miog.setInfoIndicators(applicantMemberFrame, categoryID, dungeonScore, dungeonData, applicantMemberFrame.RaiderIOInformationPanel.raidData, pvpData)
-
-	applicantMemberFrame:Show()
+	miog.setInfoIndicators(applicantMemberFrame, categoryID, dungeonScore, dungeonData, miog.getNewRaidSortData(playerName, realm), pvpData)
 end
 
 local function createDataProviderWithUnsortedData()
@@ -405,12 +283,12 @@ local function createDataProviderWithUnsortedData()
 					secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 				elseif(categoryID == 3) then
-					local raidData = miog.getRaidSortData(playerName .. "-" .. realm)
+					local raidData = {miog.getRaidSortData(playerName .. "-" .. realm)}
 
 					if(raidData) then
-						primarySortAttribute = raidData[1].weight
-						secondarySortAttribute = raidData[2].weight
-						favourPrimary = wticc(miog.DIFFICULTY[raidData[1].difficulty].shortName .. ":" .. raidData[1].progress .. "/" .. raidData[1].bossCount, miog.DIFFICULTY[raidData[1].difficulty].color)
+						primarySortAttribute = raidData[3][1].weight
+						secondarySortAttribute = raidData[3][2].weight
+						favourPrimary = wticc(miog.DIFFICULTY[raidData[3][1].difficulty].shortName .. ":" .. raidData[3][1].progress .. "/" .. raidData[3][1].bossCount, miog.DIFFICULTY[raidData[3][1].difficulty].color)
 
 					else
 						primarySortAttribute = 0
@@ -479,12 +357,10 @@ local function updateApplicantList()
 		for _, v in ipairs(basicTable) do
 			for _, y in ipairs(v) do
 				local finalData = dataProvider:Insert(y)
-				finalData:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = y.applicantID})
+				finalData:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = y.applicantID, name = y.name, realm = y.realm})
 			end
 
-			local dividerData = miog.tableCopy(v[1])
-			dividerData.template = "BackdropTemplate"
-			dataProvider:Insert(dividerData)
+			dataProvider:Insert({template = "BackdropTemplate"})
 		end
 
 		dataProvider:SetAllCollapsed(true);
@@ -649,7 +525,6 @@ local function createFullEntries(iterations)
 
 	local startTime = GetTimePreciseSec()
 	updateApplicantList()
-	--checkApplicantList(true)
 	local endTime = GetTimePreciseSec()
 
 	miog.debug.currentAverageExecuteTime[#miog.debug.currentAverageExecuteTime+1] = endTime - startTime
@@ -675,11 +550,9 @@ local function applicationViewerEvents(_, event, ...)
 
 				end
 
-				miog.ApplicationViewer.ScrollBox2:Flush()
-
-				miog.ApplicationViewer.CreationSettings.Timer:SetText("00:00:00")
-
 				miog.ApplicationViewer:Hide()
+				miog.ApplicationViewer.ScrollBox2:Flush()
+				miog.ApplicationViewer.CreationSettings.Timer:SetText("00:00:00")
 				
 				miog.setAffixes()
 			end
@@ -739,8 +612,7 @@ local function applicationViewerEvents(_, event, ...)
 end
 
 miog.createApplicationViewer = function()
-	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin.InsertFrame, "MIOG_ApplicationViewer") ---@class Frame
-	--applicationViewer.FramePanel.ScrollBar:SetPoint("TOPRIGHT", applicationViewer.FramePanel, "TOPRIGHT", -1, 0)
+	local applicationViewer = CreateFrame("Frame", "MythicIOGrabber_ApplicationViewer", miog.Plugin.InsertFrame, "MIOG_ApplicationViewer")
 
 	miog.createFrameBorder(applicationViewer, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.createFrameBorder(applicationViewer.TitleBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -824,6 +696,7 @@ miog.createApplicationViewer = function()
 
 	applicationViewer:OnLoad(updateApplicantList)
 	applicationViewer:SetTreeMode(true)
+	applicationViewer:SetExternalSort(true)
 	applicationViewer:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"])
 	applicationViewer:AddMultipleSortingParameters({
 		{name = "role", padding = 156},
@@ -831,9 +704,6 @@ miog.createApplicationViewer = function()
 		{name = "secondary", padding = 21},
 		{name = "ilvl", padding = 21},
 	})
-
-	--applicationViewer.FramePanel.Container:SetFixedWidth(applicationViewer.FramePanel:GetWidth())
-	--applicantFramePool = CreateFramePool("Frame", applicationViewer.FramePanel.Container, "MIOG_ApplicantFrameTemplate", resetBaseFrame)
 
 	local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 1);
 
@@ -875,7 +745,6 @@ miog.createApplicationViewer = function()
 	ScrollUtil.InitScrollBoxListWithScrollBar(applicationViewer.ScrollBox2, applicationViewer.ScrollBar, view);
 
 	applicationViewer:SetScrollView(view)
-	applicationViewer:SetSortingFunction(sortApplicantList)
 
 	return applicationViewer
 end
