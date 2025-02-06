@@ -622,7 +622,7 @@ local function updateGroupData()
 
 				elseif(name == shortName) then
 					unitID = "player"
-					groupOffset = -1
+					groupOffset = groupOffset - 1
 
 				end
 
@@ -659,7 +659,6 @@ local function updateGroupData()
 				}
 
 				getOptionalPlayerData(fullName)
-
 				
 				if(miog.GroupManager) then
                 	subgroupSpotsTaken[subgroup] = subgroupSpotsTaken[subgroup] + 1
@@ -673,28 +672,32 @@ local function updateGroupData()
 
 				end
 
+				if(playerInInspection == fullName and playerSpecs[fullName]) then
+					ClearInspectPlayer(true)
+
+				end
+
 				if(fullName ~= fullPlayerName) then
-					if(not playerSpecs[fullName] and not playerInInspection and CanInspect(groupData[fullName].unitID) and online) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
+					if(not playerInInspection and not playerSpecs[fullName] and CanInspect(groupData[fullName].unitID) and online) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 						playerInInspection = fullName
 
 						if(groupData[playerInInspection].classFileName) then
 							local color = C_ClassColor.GetClassColor(groupData[playerInInspection].classFileName)
 							currentInspectionName = color and WrapTextInColorCode(groupData[playerInInspection].shortName, color:GenerateHexColor()) or groupData[playerInInspection].shortName
-
-							C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE, function()
-								if(playerInInspection) then
-									NotifyInspect(groupData[playerInInspection].unitID)
-
-									pityTimer = C_Timer.NewTimer(10, function()
-										if(GetTimePreciseSec() - lastNotifyTime > 10) then
-											ClearInspectPlayer(true)
-											updateGroupData()
-									
-										end
-									end)
-								end
-							end)
+							
 						end
+
+						C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE, function()
+							if(playerInInspection and not playerSpecs[fullName]) then
+								NotifyInspect(groupData[playerInInspection].unitID)
+
+								pityTimer = C_Timer.NewTimer(10, function()
+									ClearInspectPlayer(true)
+									updateGroupData()
+								
+								end)
+							end
+						end)
 					end
 				else
 					groupData[fullName].specID = GetSpecializationInfo(GetSpecialization())
@@ -729,7 +732,9 @@ local function updateGroupData()
 		if(not inspectedPlayerStillInGroup) then
 			ClearInspectPlayer(true)
 
-		else
+		end
+
+		if(playerInInspection) then
 			miog.ClassPanel.LoadingSpinner:Show()
 
 		end
@@ -872,8 +877,6 @@ local function groupManagerEvents(_, event, ...)
 		local fullName = miog.createFullNameFrom("unitID", ...)
 
 		if(fullName and groupData[fullName]) then
-			--MIOG_InspectedNames[fullName] = nil
-			--MIOG_SavedSpecIDs[name] = nil
 			playerSpecs[fullName] = nil
 
 		end
@@ -884,18 +887,18 @@ local function groupManagerEvents(_, event, ...)
 
 		local startUpdate = false
 
+		if(groupData[fullName]) then
+			startUpdate = true
+			playerSpecs[fullName] = GetInspectSpecialization(groupData[fullName].unitID)
+
+		end
+
 		if(playerInInspection == fullName) then
 			ClearInspectPlayer(true)
 
 			if(pityTimer) then
 				pityTimer:Cancel()
 			end
-
-			startUpdate = true
-		end
-
-		if(groupData[fullName]) then
-			playerSpecs[fullName] = GetInspectSpecialization(groupData[fullName].unitID)
 
 			startUpdate = true
 		end
@@ -1014,6 +1017,7 @@ miog.loadInspectManagement = function()
 	inspectManager:RegisterEvent("INSPECT_READY")
 	inspectManager:RegisterEvent("GROUP_ROSTER_UPDATE")
 	inspectManager:RegisterEvent("PLAYER_REGEN_ENABLED")
+	inspectManager:SetScript("OnEvent", groupManagerEvents)
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	

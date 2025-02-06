@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.1.3a] - 2025-02-06
+
+### Fixed
+
+- [ApplicationViewer] Changing the group leader won't cause an error anymore.
+
+- [ApplicationViewer] Hovering over an applicant will now correctly show the tooltip.
+
+- [GroupManager] Hovering over the indepth window without having selected a player won't cause a LUA error anymore.
+
+- Recognition of player specs in your group should now work way better.
+
+
+
 ## [3.1.3] - 2025-02-05
 
 ### Changed
@@ -3130,7 +3144,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.1.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.1.3a..HEAD
+[3.1.3a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.3a
 [3.1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.3
 [3.1.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.2
 [3.1.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.1

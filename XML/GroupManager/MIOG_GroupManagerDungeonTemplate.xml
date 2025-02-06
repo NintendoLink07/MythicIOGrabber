@@ -18,9 +18,11 @@
 
         <Scripts>
             <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(self.dungeonName)
-                GameTooltip:Show()
+                if(self.dungeonName) then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.dungeonName)
+                    GameTooltip:Show()
+                end
             </OnEnter>
             <OnLeave function="GameTooltip_Hide" />
         </Scripts>

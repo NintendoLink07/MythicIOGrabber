@@ -22,9 +22,11 @@
 
         <Scripts>
             <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(self.name)
-                GameTooltip:Show()
+                if(self.name) then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.name)
+                    GameTooltip:Show()
+                end
             </OnEnter>
             <OnLeave function="GameTooltip_Hide" />
         </Scripts>

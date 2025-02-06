@@ -99,6 +99,137 @@ local function newSort(idData1, idData2)
 	end
 end
 
+local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
+	local applicantID = self.applicantID;
+	local memberIdx = self.memberIdx;
+
+	local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+	if ( not activeEntryInfo ) then
+		return;
+	end
+
+	local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1]);
+	if(not activityInfo) then
+		return;
+	end
+	local applicantInfo = C_LFGList.GetApplicantInfo(applicantID);
+	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID = C_LFGList.GetApplicantMemberInfo(applicantID, memberIdx);
+	local bestDungeonScoreForEntry = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, memberIdx, activeEntryInfo.activityIDs[1]);
+	local bestOverallScore = C_LFGList.GetApplicantBestDungeonScore(applicantID, memberIdx);
+	local pvpRatingForEntry = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, memberIdx, activeEntryInfo.activityIDs[1]);
+
+	GameTooltip:SetOwner(self, "ANCHOR_NONE");
+	GameTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 105, 0);
+
+	if ( name ) then
+		local classTextColor = RAID_CLASS_COLORS[class];
+		GameTooltip:SetText(name, classTextColor.r, classTextColor.g, classTextColor.b);
+		local classSpecializationName = localizedClass;
+		if(specID) then
+			local specName = PlayerUtil.GetSpecNameBySpecID(specID);
+			if(specName) then
+				classSpecializationName = CLUB_FINDER_LOOKING_FOR_CLASS_SPEC:format(specName, classSpecializationName);
+			end
+		end
+		if(UnitFactionGroup("player") ~= PLAYER_FACTION_GROUP[factionGroup]) then
+			GameTooltip_AddHighlightLine(GameTooltip, UNIT_TYPE_LEVEL_FACTION_TEMPLATE:format(level, classSpecializationName, FACTION_STRINGS[factionGroup]));
+		else
+			GameTooltip_AddHighlightLine(GameTooltip, UNIT_TYPE_LEVEL_TEMPLATE:format(level, classSpecializationName));
+		end
+	else
+		GameTooltip:SetText(" ");	--Just make it empty until we get the name update
+	end
+
+	if (activityInfo.isPvpActivity) then
+		GameTooltip_AddColoredLine(GameTooltip, LFG_LIST_ITEM_LEVEL_CURRENT_PVP:format(pvpItemLevel), HIGHLIGHT_FONT_COLOR);
+	else
+		GameTooltip_AddNormalLine(GameTooltip, LFG_LIST_ITEM_LEVEL_CURRENT:format(itemLevel));
+	end
+
+	if ( activityInfo.useHonorLevel ) then
+		GameTooltip:AddLine(string.format(LFG_LIST_HONOR_LEVEL_CURRENT_PVP, honorLevel), 1, 1, 1);
+	end
+	if ( applicantInfo.comment and applicantInfo.comment ~= "" ) then
+		GameTooltip:AddLine(" ");
+		GameTooltip:AddLine(string.format(LFG_LIST_COMMENT_FORMAT, applicantInfo.comment), LFG_LIST_COMMENT_FONT_COLOR.r, LFG_LIST_COMMENT_FONT_COLOR.g, LFG_LIST_COMMENT_FONT_COLOR.b, true);
+	end
+	if(LFGApplicationViewerRatingColumnHeader:IsShown()) then
+		if(pvpRatingForEntry) then
+			GameTooltip_AddNormalLine(GameTooltip, PVP_RATING_GROUP_FINDER:format(pvpRatingForEntry.activityName, pvpRatingForEntry.rating, PVPUtil.GetTierName(pvpRatingForEntry.tier)));
+		else
+			if(not dungeonScore) then
+				dungeonScore = 0;
+			end
+			GameTooltip_AddBlankLineToTooltip(GameTooltip);
+
+			local color = C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore);
+			if(not color) then
+				color = HIGHLIGHT_FONT_COLOR;
+			end
+			
+			GameTooltip:AddDoubleLine(DUNGEON_SCORE, color:WrapTextInColorCode(dungeonScore));
+
+			local function AddDungeonScore(leftText, dungeonScoreStruct)
+				if not dungeonScoreStruct or dungeonScoreStruct.mapScore == 0 or not dungeonScoreStruct.finishedSuccess then
+					GameTooltip:AddDoubleLine(leftText, GRAY_FONT_COLOR:WrapTextInColorCode(DUNGEON_SCORE_LINK_NO_SCORE));
+				else
+					local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(dungeonScoreStruct.mapScore);
+					if not color then
+						color = HIGHLIGHT_FONT_COLOR;
+					end
+
+					GameTooltip:AddDoubleLine(leftText, MakeRunLevelWithIncrement(dungeonScoreStruct).." "..color:WrapTextInColorCode(dungeonScoreStruct.mapName));
+				end
+			end
+
+			AddDungeonScore(LFG_LIST_BEST_FOR_DUNGEON, bestDungeonScoreForEntry);
+			AddDungeonScore(LFG_LIST_BEST_RUN, bestOverallScore);
+		end
+	end
+
+	--Add statistics
+	local stats = C_LFGList.GetApplicantMemberStats(applicantID, memberIdx);
+	local lastTitle = nil;
+
+	--Tank proving ground
+	if ( stats[23690] and stats[23690] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	elseif ( stats[23687] and stats[23687] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	elseif ( stats[23684] and stats[23684] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	end
+
+	--Healer proving ground
+	if ( stats[23691] and stats[23691] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	elseif ( stats[23688] and stats[23688] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	elseif ( stats[23685] and stats[23685] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	end
+
+	--Damage proving ground
+	if ( stats[23689] and stats[23689] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	elseif ( stats[23686] and stats[23686] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	elseif ( stats[23683] and stats[23683] > 0 ) then
+		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+	end
+
+	GameTooltip:Show();
+end
+
 local function updateApplicantMemberFrame(frame, data)
 	local applicantID, applicantIndex = data.applicantID, data.applicantIndex
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
@@ -133,7 +264,7 @@ local function updateApplicantMemberFrame(frame, data)
 
 		else
 			if(not miog.F.IS_IN_DEBUG_MODE) then
-				LFGListApplicantMember_OnEnter(self)
+				memberFrame_OnEnter(self)
 			end
 
 			miog.checkEgoTrip(name)
@@ -589,17 +720,21 @@ local function applicationViewerEvents(_, event, ...)
 		local canInvite = miog.checkIfCanInvite()
 
 		for _, frame in miog.ApplicationViewer.ScrollBox2:EnumerateFrames() do
-			frame.Invite:SetShown(canInvite)
-			frame.Decline:SetShown(canInvite)
+			if(frame.Invite) then
+				frame.Invite:SetShown(canInvite)
+				frame.Decline:SetShown(canInvite)
 
+			end
 		end
 	elseif(event == "GROUP_ROSTER_UPDATE") then
 		local canInvite = miog.checkIfCanInvite()
 
 		for _, frame in miog.ApplicationViewer.ScrollBox2:EnumerateFrames() do
-			frame.Invite:SetShown(canInvite)
-			frame.Decline:SetShown(canInvite)
+			if(frame.Invite) then
+				frame.Invite:SetShown(canInvite)
+				frame.Decline:SetShown(canInvite)
 
+			end
 		end
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
 		local newEntry, withData = ...
