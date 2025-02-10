@@ -380,25 +380,6 @@
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
             </EventFrame>
-
-            <ScrollFrame parentKey="FramePanel" inherits="ScrollFrameTemplate" hidden="true">
-                <KeyValues>
-                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
-                </KeyValues>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="BOTTOMLEFT" x="1"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
-                </Anchors>
-
-                <ScrollChild>
-                    <Frame parentKey="Container" inherits="VerticalLayoutFrame" setAllPoints="true">
-                        <KeyValues>
-                            <KeyValue key="spacing" value="4" type="number" />
-                            <KeyValue key="align" value="center" type="string" />
-                        </KeyValues>
-                    </Frame>
-                </ScrollChild>
-            </ScrollFrame>
             
             <EditBox parentKey="CopyBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="SystemFont_Shadow_Med1">
                 <Size y="20" />   

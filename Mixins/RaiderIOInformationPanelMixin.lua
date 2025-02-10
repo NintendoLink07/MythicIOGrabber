@@ -50,7 +50,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
                     
                 end
 
-                miog.checkSingleMapIDForNewData(data.mapID, nil, true)
+                miog.checkSingleMapIDForNewData(data.mapID, true)
 
                 currentDungeon.Icon:SetTexture(self.mode == "side" and mapData.horizontal or mapData.icon)
                 currentDungeon.Icon:SetDesaturation(0)
@@ -78,7 +78,7 @@ end
 function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, v, isMainsFrame) --mapID
     local raidHeaderFrame = raidFrame.Header
 
-    miog.checkSingleMapIDForNewData(v, nil, true)
+    miog.checkSingleMapIDForNewData(v, true)
 
     if(raidHeaderFrame.Progress1) then
         raidHeaderFrame.Progress1:SetText(WrapTextInColorCode("0/"..#miog.MAP_INFO[v].bosses, miog.CLRSCC.red))

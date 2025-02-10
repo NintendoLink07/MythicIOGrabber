@@ -292,7 +292,7 @@ local function groupSignup(resultID)
 end
 
 local function createDataProviderWithUnsortedData()
-	local dataProvider = {}
+	local treeDataProvider = CreateTreeDataProvider()
 	local total, resultTable = C_LFGList.GetFilteredSearchResults()
 
 	local numOfFiltered = 0
@@ -310,6 +310,7 @@ local function createDataProviderWithUnsortedData()
 
 				if(searchResultInfo.leaderName) then
 					nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+
 				end
 
 				if(nameTable and not nameTable[2]) then
@@ -344,25 +345,27 @@ local function createDataProviderWithUnsortedData()
 
 				end
 
-				tinsert(dataProvider, {
-					template = "MIOG_SearchPanelResultFrameTemplate",
-					name = searchResultInfo.leaderName,
-					primary = primarySortAttribute,
-					appStatus = appStatus,
-					secondary = secondarySortAttribute,
-					resultID = resultID,
-					age = searchResultInfo.age,
-					favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
-				})
-			else
+				treeDataProvider:Insert(
+					{
+						template = "MIOG_SearchPanelResultFrameTemplate",
+						name = searchResultInfo.leaderName,
+						primary = primarySortAttribute,
+						appStatus = appStatus,
+						secondary = secondarySortAttribute,
+						index = resultID,
+						resultID = resultID,
+						age = searchResultInfo.age,
+						favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
+					}
+				)
+
 				numOfFiltered = numOfFiltered + 1
 
 			end
 		end
-
 	end
 
-	return dataProvider, numOfFiltered, total
+	return treeDataProvider, numOfFiltered, total
 end
 
 local function addOneTimeFrames(frame)
@@ -734,47 +737,18 @@ local function showStatusOverlay(status)
 	miog.SearchPanel.Status.FontString:Show()
 end
 
-local function updateResultList()
-	local basicTable, numOfFiltered = createDataProviderWithUnsortedData()
-
-	if(basicTable) then
-		local orderedList = miog.SearchPanel:GetOrderedParameters()
-		table.sort(basicTable, function(k1, k2)
-			for k, v in ipairs(orderedList) do
-				if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-					if(v.state == 1) then
-						return k1[v.name] > k2[v.name]
-		
-					else
-						return k1[v.name] < k2[v.name]
-		
-					end
-				end
-			end
-		end)
-
-		local dataProvider = CreateTreeDataProvider()
-
-		for _, v in ipairs(basicTable) do
-			local finalData = dataProvider:Insert(v)
-			finalData:Insert({template = "MIOG_NewRaiderIOInfoPanel", resultID = v.resultID})
-			
-		end
-
-		dataProvider:SetAllCollapsed(true);
-		miog.SearchPanel:SetDataProvider(dataProvider)
-
-		actualResults = #basicTable
-	
-		miog.updateFooterBarResults(actualResults, numOfFiltered, numOfFiltered >= 100)
-
-		--miog.SearchPanel.ScrollBox2:Update()
-	end
-end
+local treeDataProvider, numOfFiltered, total
 
 local function fullyUpdateSearchPanel()
 	miog.SearchPanel.Status:Hide()
-	updateResultList()
+
+	treeDataProvider, numOfFiltered, total  = createDataProviderWithUnsortedData()
+
+	actualResults = total
+
+	miog.SearchPanel:SetDataProvider(treeDataProvider)
+
+	miog.updateFooterBarResults(numOfFiltered, actualResults, actualResults >= 100)
 end
 
 miog.fullyUpdateSearchPanel = fullyUpdateSearchPanel
@@ -786,8 +760,6 @@ local function searchResultsReceived()
 
 	LFGListFrame.SearchPanel.totalResults = numOfResults or 0
 	LFGListFrame.SearchPanel.results = table or {}
-	miog.SearchPanel.totalResults = numOfResults or 0
-	miog.SearchPanel.results = table or {}
 
 	if(LFGListFrame.SearchPanel.totalResults > 0) then
 		if(not blocked) then
@@ -810,7 +782,17 @@ local function searchPanelEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
 
 	elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
-		searchResultsReceived()
+		miog.SearchPanel.totalResults = LFGListFrame.SearchPanel.totalResults
+		miog.SearchPanel.results = LFGListFrame.SearchPanel.results
+
+		fullyUpdateSearchPanel()
+		
+		if(miog.SearchPanel:GetNumOfActiveSortMethods() > 0) then
+			C_Timer.After(0.55, function()
+				fullyUpdateSearchPanel()
+				blocked = false
+			end)
+		end
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then --update to title, ilvl, group members, etc
 		if(C_LFGList.HasSearchResultInfo(...)) then
@@ -831,7 +813,7 @@ local function searchPanelEvents(_, event, ...)
 			if(frame) then
 				updateScrollBoxFrame(frame, outData)
 
-			end			
+			end
 		end
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
 		showStatusOverlay(...)
@@ -861,11 +843,6 @@ end
 
 miog.createSearchPanel = function()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel") ---@class Frame
-	searchPanel:SetScript("OnShow", function()
-		local numberOfResults = #miog.SearchPanel:GetSortingData()
-		miog.updateFooterBarResults(actualResults, numberOfResults, numberOfResults >= 100)
-
-	end)
 
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
@@ -961,6 +938,7 @@ miog.createSearchPanel = function()
 		local data = node:GetData()
 
 		frame.node = node
+		
 
 		if(data.template == "MIOG_SearchPanelResultFrameTemplate") then
 			updateScrollBoxFrame(frame, data)
@@ -1004,7 +982,7 @@ miog.createSearchPanel = function()
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(searchPanel.ScrollBox2, searchPanel.ScrollBar, view);
 
-	searchPanel:SetScrollView(view)
+	searchPanel:SetScrollBox(searchPanel.ScrollBox2)
 
 	return searchPanel
 end

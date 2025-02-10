@@ -1,11 +1,15 @@
-## [3.1.3a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.3a) - 2025-02-06
+## [3.1.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.4) - 2025-02-10
+
+### Changed
+
+- [SearchPanel] Sorting algorithm improved, lag after sorting decreased.
+
+- Anything list that can be sorted (e.g. group finder, application viewer, etc.) now retains its scroll position after sorting (if possible).
 
 ### Fixed
 
-- [ApplicationViewer] Changing the group leader won't cause an error anymore.
+- [ApplicationViewer] Decreased the amount of lag sorting a big list of applicant creates.
 
-- [ApplicationViewer] Hovering over an applicant will now correctly show the tooltip.
+- [SearchPanel] The number of current listings in the footer bar of the search panel doesn't get updated anymore when switching from the search panel to another tab.
 
-- [GroupManager] Hovering over the indepth window without having selected a player won't cause a LUA error anymore.
-
-- Recognition of player specs in your group should now work way better.
+- [Progress] The lag created by switching to the raid progress tab has been eliminated.

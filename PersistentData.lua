@@ -811,21 +811,21 @@ for k, v in pairs(miog.RAW["BattlemasterList"]) do
 	}
 end
 
+
 local function checkForMapAchievements(mapID)
-	if(miog.MAP_INFO[mapID].achievementCategory) then
+	local achievementCategory = miog.MAP_INFO[mapID].achievementCategory
+
+	if(achievementCategory and not miog.MAP_INFO[mapID].achievementTable) then
 		miog.MAP_INFO[mapID].achievementTable = {}
 
-		local totalAchievements = GetCategoryNumAchievements(miog.MAP_INFO[mapID].achievementCategory)
+		for i = 1, GetCategoryNumAchievements(achievementCategory), 1 do
+			local id, name = GetAchievementInfo(achievementCategory, i)
 
-		for i = 1, totalAchievements, 1 do
-			local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(miog.MAP_INFO[mapID].achievementCategory, i)
-
-			
 			if(miog.fzy.has_match(miog.MAP_INFO[mapID].name, name)) then
 				table.insert(miog.MAP_INFO[mapID].achievementTable, id)
 
 				for x, y in ipairs(miog.MAP_INFO[mapID].bosses) do
-					if(string.find(name, y.name, nil, true)) then
+					if(string.find(name, y.name)) then
 						table.insert(y.achievements, id)
 
 					end
@@ -835,8 +835,10 @@ local function checkForMapAchievements(mapID)
 	end
 end
 
-local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectInstance)
-	if(mapID and mapID > 0 and miog.MAP_INFO[mapID]) then --mapID > 0 and 
+miog.checkForMapAchievements = checkForMapAchievements
+
+local function checkSingleMapIDForNewData(mapID, selectInstance)
+	if(mapID and mapID > 0 and miog.MAP_INFO[mapID]) then
 		local bossIndex = 1;
 
 		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
@@ -852,29 +854,23 @@ local function checkSingleMapIDForNewData(mapID, checkForAchievements, selectIns
 		end
 
 		while bossName do
-			--if(factionChecked) then
-				local id, _, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
-				
-				miog.MAP_INFO[mapID].bosses[bossIndex] = {
-					name = bossName,
-					journalEncounterID = journalEncounterID,
-					journalInstanceID = journalInstanceID,
-					dungeonEncounterID = dungeonEncounterID,
-					mapID = mapID,
-					orderIndex = id,
-					achievements = {},
-					id = id,
-					creatureDisplayInfoID = displayInfo,
-					icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
-				}
+			local id, _, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
+			
+			miog.MAP_INFO[mapID].bosses[bossIndex] = {
+				name = bossName,
+				journalEncounterID = journalEncounterID,
+				journalInstanceID = journalInstanceID,
+				dungeonEncounterID = dungeonEncounterID,
+				mapID = mapID,
+				orderIndex = id,
+				achievements = {},
+				id = id,
+				creatureDisplayInfoID = displayInfo,
+				icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
+			}
 
-				bossIndex = bossIndex + 1;
-				bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
-			--end
-		end
-
-		if(checkForAchievements) then
-			checkForMapAchievements(mapID)
+			bossIndex = bossIndex + 1;
+			bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
 		end
 	end
 end
@@ -947,7 +943,10 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[v[1]].vertical = miog.MAP_INFO[v[10]].vertical
 			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
 
-			checkForMapAchievements(v[10])
+			if(miog.MAP_INFO[v[10]].achievementCategory) then
+				checkForMapAchievements(v[10])
+			end
+			--checkForMapAchievements(v[10])
 
 			if(miog.ACTIVITY_INFO[v[1]].horizontal == nil) then
 				miog.ACTIVITY_INFO[v[1]].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4]]

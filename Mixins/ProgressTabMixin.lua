@@ -831,7 +831,9 @@ function ProgressTabMixin:LoadActivities()
 			columnProvider:Insert({mapID = miog.retrieveMapIDFromChallengeModeMap(activityEntry)});
 
 		elseif(self.id == 2) then
-			miog.checkSingleMapIDForNewData(activityEntry, true, true)
+			miog.checkSingleMapIDForNewData(activityEntry, true)
+			miog.checkForMapAchievements(activityEntry)
+			
 			columnProvider:Insert({mapID = activityEntry});
 
 		elseif(self.id == 3) then

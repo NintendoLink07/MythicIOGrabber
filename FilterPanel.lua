@@ -1268,7 +1268,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					if(seasonGroups and #seasonGroups > 0) then
 						for _, v in ipairs(seasonGroups) do
 							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
-							miog.checkSingleMapIDForNewData(activityInfo.mapID, false, true)
+							miog.checkSingleMapIDForNewData(activityInfo.mapID, true)
 							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, bosses = activityInfo.bosses}
 		
 						end

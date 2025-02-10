@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.1.4] - 2025-02-10
+
+### Changed
+
+- [SearchPanel] Sorting algorithm improved, lag after sorting decreased.
+
+- Anything list that can be sorted (e.g. group finder, application viewer, etc.) now retains its scroll position after sorting (if possible).
+
+### Fixed
+
+- [ApplicationViewer] Decreased the amount of lag sorting a big list of applicant creates.
+
+- [SearchPanel] The number of current listings in the footer bar of the search panel doesn't get updated anymore when switching from the search panel to another tab.
+
+- [Progress] The lag created by switching to the raid progress tab has been eliminated.
+
+
+
 ## [3.1.3a] - 2025-02-06
 
 ### Fixed
@@ -3144,7 +3162,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.1.3a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.1.4..HEAD
+[3.1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.4
 [3.1.3a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.3a
 [3.1.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.3
 [3.1.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.2

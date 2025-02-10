@@ -1,5 +1,3 @@
-local addonName, miog = ...
-
 SortingMixin = {}
 
 --[[
@@ -11,10 +9,11 @@ SortingMixin = {}
 
 local buttonPool
 
-function SortingMixin:OnLoad(func)
+function SortingMixin:OnLoad(func, parameters)
     self.sortingParameters = {}
     self.sortingData = {}
     self.expandedChildren = {}
+
 
     buttonPool = CreateFramePool("Button", self.SortButtonRow, "MIOG_SortButtonTemplate", function(pool, frame)
         frame:SetScript("OnClick", function(frameSelf, button)
@@ -28,19 +27,18 @@ function SortingMixin:OnLoad(func)
 
             end
 
-            if(self.scrollView and not self.externalSort) then
-                self:Sort()
-            end
+            if(self.scrollBox) then
+                if(not func) then
+                    self.scrollBox:GetDataProvider():Sort()
+                    self.scrollBox:Update()
 
-            if(func) then
-                func(true)
+                else
+                    func(parameters)
+
+                end
             end
         end)
     end)
-end
-
-function SortingMixin:SetExternalSort(bool)
-    self.externalSort = bool
 end
 
 function SortingMixin:SetTreeMode(bool)
@@ -56,8 +54,8 @@ function SortingMixin:SetSettingsTable(table)
     self.settingsTable = table
 end
 
-function SortingMixin:SetScrollView(scrollView)
-    self.scrollView = scrollView
+function SortingMixin:SetScrollBox(scrollBox)
+    self.scrollBox = scrollBox
 end
 
 function SortingMixin:SetPostCallback(func)
@@ -148,10 +146,6 @@ function SortingMixin:GetNumberOfDataEntries()
     end
 
     return 0
-end
-
-function SortingMixin:SetSortingFunction(func)
-    self.sortingFunction = func
 end
 
 function SortingMixin:GetParameterInfo(parameter)
@@ -268,13 +262,57 @@ function SortingMixin:SetCallback(func)
     self.func = func
 end
 
+function SortingMixin:SetExternalSort(bool)
+    self.externalSort = bool
+end
+
 function SortingMixin:SetDataProvider(dataProvider)
-    self.dataProvider = dataProvider
+	local orderedList = self:GetOrderedParameters()
 
-    if(self.scrollView) then
-        self.scrollView:SetDataProvider(self.dataProvider)
+    if(not self.externalSort) then
+        if(self.treeMode) then
+            dataProvider:SetSortComparator(
+                function(n1, n2)
+                    local k1 = n1.data
+                    local k2 = n2.data
 
+                    for _, v in ipairs(orderedList) do
+                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+                            if(v.state == 1) then
+                                return k1[v.name] > k2[v.name]
+                
+                            else
+                                return k1[v.name] < k2[v.name]
+                
+                            end
+                        else
+                            return k1.index > k2.index
+
+                        end
+                    end
+                end
+            )
+        else
+            dataProvider:SetSortComparator(
+                function(k1, k2)
+                    for _, v in ipairs(orderedList) do
+                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
+                            if(v.state == 1) then
+                                return k1[v.name] > k2[v.name]
+                
+                            else
+                                return k1[v.name] < k2[v.name]
+                
+                            end
+                        end
+                    end
+                end
+            )
+        end
     end
+
+    self.dataProvider = dataProvider
+    self.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
 end
 
 function SortingMixin:GetOrderedParameters()
@@ -288,90 +326,4 @@ function SortingMixin:GetOrderedParameters()
     end
 
     return #orderedList > 0 and orderedList or self.sortingParameters
-end
-
-local function standardSort(k1, k2, parameters)
-    for k, v in ipairs(orderedList) do
-        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-            if(v.state == 1) then
-                return k1[v.name] > k2[v.name]
-
-            else
-                return k1[v.name] < k2[v.name]
-
-            end
-        end
-    end
-end
-
-function SortingMixin:Sort()
-    if(self.sortingFunction) then
-        table.sort(self.sortingData, function(k1, k2)
-            self.sortingFunction(k1, k2)
-        end)
-
-    else
-        local orderedList = self:GetOrderedParameters()
-
-        if(self.scrollView) then
-            self.scrollView:Flush()
-
-            if(self.treeMode) then
-                self.dataProvider:SetSortComparator(
-                    function(k1, k2)
-                        for k, v in ipairs(orderedList) do
-                            if(v.state > 0 and k1.data[v.name] ~= k2.data[v.name]) then
-                                if(v.state == 1) then
-                                    return k1.data[v.name] > k2.data[v.name]
-                    
-                                else
-                                    return k1.data[v.name] < k2.data[v.name]
-                    
-                                end
-                            end
-                        end
-                    end
-                )
-                
-            else
-                self.dataProvider:SetSortComparator(
-                    function(k1, k2)
-                        for k, v in ipairs(orderedList) do
-                            if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-                                if(v.state == 1) then
-                                    return k1[v.name] > k2[v.name]
-                    
-                                else
-                                    return k1[v.name] < k2[v.name]
-                    
-                                end
-                            end
-                        end
-                    end
-                )
-
-            end
-
-            self.dataProvider:Sort()
-
-            self.scrollView:SetDataProvider(self.dataProvider)
-        else
-            table.sort(self.sortingData,
-                function(k1, k2)
-                    for k, v in ipairs(orderedList) do
-                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-                            if(v.state == 1) then
-                                return k1[v.name] > k2[v.name]
-                
-                            else
-                                return k1[v.name] < k2[v.name]
-                
-                            end
-                        end
-                    end
-                end
-            )
-            
-        end
-    end
 end

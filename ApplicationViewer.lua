@@ -381,9 +381,9 @@ local function createDataProviderWithUnsortedData()
 	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
 	local basicTable = {}
 	local numOfFiltered = 0
+	local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
 
 	if(activeEntry) then
-		local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
 		local activityID = activeEntry.activityID or 0
 		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1]).categoryID
 
@@ -438,11 +438,11 @@ local function createDataProviderWithUnsortedData()
 					secondarySortAttribute = pvpRatingInfo.rating
 
 				end
-
 				applicantInfos[applicantIndex] = {
 					template = "MIOG_ApplicantMemberFrameTemplateNew",
 					applicantIndex = applicantIndex,
 					applicantID = applicantID,
+					index = applicantID,
 					name = playerName,
 					realm = realm,
 					fullName = name,
@@ -466,6 +466,7 @@ local function createDataProviderWithUnsortedData()
 				end
 			end
 
+
 			if(allOkay) then
 				tinsert(basicTable, applicantInfos)
 				numOfFiltered = numOfFiltered + 1
@@ -474,11 +475,13 @@ local function createDataProviderWithUnsortedData()
 		end
 	end
 
-	return basicTable, numOfFiltered
+	return basicTable, numOfFiltered, #currentApplicants
 end
 
 local function updateApplicantList()
-	local basicTable, numOfFiltered = createDataProviderWithUnsortedData()
+	local basicTable, numOfFiltered, total = createDataProviderWithUnsortedData()
+
+	actualResults = total
 
 	if(basicTable) then
 		table.sort(basicTable, newSort)
@@ -498,11 +501,9 @@ local function updateApplicantList()
 		miog.ApplicationViewer:SetDataProvider(dataProvider)
 
 		actualResults = #basicTable
-	
-		miog.updateFooterBarResults(actualResults, numOfFiltered, numOfFiltered >= 100)
-
-		miog.ApplicationViewer.ScrollBox2:Update()
 	end
+
+	miog.updateFooterBarResults(numOfFiltered, actualResults, actualResults >= 100)
 end
 
 local function createAVSelfEntry(pvpBracket)
@@ -590,7 +591,7 @@ local function createFullEntries(iterations)
 
 	for index = 1, iterations, 1 do
 		local applicantID = random(10000, 99999)
-		local numMembers = 3
+		local numMembers = 1
 
 		miog.DEBUG_APPLICANT_DATA[applicantID] = {
 			applicantID = applicantID,
@@ -781,7 +782,6 @@ miog.createApplicationViewer = function()
 	applicationViewer.CreationSettings.EditBox:SetScript("OnEnterPressed", applicationViewer.CreationSettings.EditBox.UpdateButton:GetScript("OnClick"))
 
 	applicationViewer.InfoPanel.Description.Container:SetSize(applicationViewer.InfoPanel.Description:GetSize())
-
 	applicationViewer.InfoPanel.Description:SetScript("OnMouseDown", function(self)
 		if(self.lastClick and 0.2 > GetTime() - self.lastClick) then
 		end
@@ -840,7 +840,7 @@ miog.createApplicationViewer = function()
 		{name = "ilvl", padding = 21},
 	})
 
-	local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 1);
+	local view = CreateScrollBoxListTreeListView(0, 0, 1, 1, 0, 1);
 
 	local function Initializer(frame, node)
 		local data = node:GetData()
@@ -850,9 +850,7 @@ miog.createApplicationViewer = function()
 		if(data.template == "MIOG_ApplicantMemberFrameTemplateNew") then
 			updateApplicantMemberFrame(frame, data)
 
-		elseif(data.template == "BackdropTemplate") then
-
-		else
+		elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
 			miog.updateRaiderIOScrollBoxFrameData(frame, data)
 
 		end
@@ -867,19 +865,19 @@ miog.createApplicationViewer = function()
 	view:SetElementFactory(CustomFactory)
 
 	view:SetFrameFactoryResetter(function(pool, frame, new)
-		local template = pool:GetTemplate()
+		--local template = pool:GetTemplate()
 
 		frame:Hide()
 	end)
 
 	view:SetElementExtentCalculator(function(index, node)
 		local data = node:GetData()
-		return data.template == "MIOG_ApplicantMemberFrameTemplateNew" and 20 or data.template == "BackdropTemplate" and applicantListSpacing or 200
+		return data.template == "MIOG_NewRaiderIOInfoPanel" and 200 or data.template == "BackdropTemplate" and applicantListSpacing or 20
 	end)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(applicationViewer.ScrollBox2, applicationViewer.ScrollBar, view);
 
-	applicationViewer:SetScrollView(view)
+	applicationViewer:SetScrollBox(applicationViewer.ScrollBox2)
 
 	return applicationViewer
 end

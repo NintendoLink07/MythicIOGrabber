@@ -807,12 +807,7 @@ local function updateGroupData()
 			miog.GroupManager.Groups.Healer.Text:SetText(roleCount["HEALER"])
 			miog.GroupManager.Groups.Damager.Text:SetText(roleCount["DAMAGER"])
 
-			miog.GroupManager:SetScrollView(miog.GroupManager.ScrollView)
 			miog.GroupManager:SetDataProvider(dataProvider)
-
-			if(miog.GroupManager:IsShown()) then
-				miog.GroupManager:Sort()
-			end
 		end
 
 		if(miog.ClassPanel) then
@@ -1027,7 +1022,7 @@ end
 
 miog.loadGroupManager = function()
     miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
-	miog.GroupManager:SetScrollView(miog.GroupManager.ScrollView)
+	miog.GroupManager:SetScrollBox(miog.GroupManager.ScrollBox)
 
     framePool = CreateFramePool("Button", nil, "MIOG_GroupManagerRaidFrameCharacterTemplate", function(_, frame) frame:Hide() clearFrameFromSpace(frame) end)
 
@@ -1040,8 +1035,6 @@ miog.loadGroupManager = function()
 			updateGroupData()
 
 		end
-		
-		miog.GroupManager:Sort()
 	end)
 
 	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", function()
