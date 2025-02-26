@@ -746,8 +746,12 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 
 	if(data.resultID) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
-		--local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
-		playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
+
+		if(searchResultInfo.leaderName) then
+			--local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
+			playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
+		end
+		
 		comment = searchResultInfo.comment
 		activityID = searchResultInfo.activityIDs[1]
 

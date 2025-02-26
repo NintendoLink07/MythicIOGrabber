@@ -345,7 +345,7 @@ local function createDataProviderWithUnsortedData()
 
 				end
 
-				treeDataProvider:Insert(
+				local mainFrame = treeDataProvider:Insert(
 					{
 						template = "MIOG_SearchPanelResultFrameTemplate",
 						name = searchResultInfo.leaderName,
@@ -358,6 +358,11 @@ local function createDataProviderWithUnsortedData()
 						favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
 					}
 				)
+
+				mainFrame:Insert({
+					template = "MIOG_NewRaiderIOInfoPanel",
+					resultID = resultID,
+				})
 
 				numOfFiltered = numOfFiltered + 1
 
@@ -541,7 +546,7 @@ local function updateScrollBoxFrame(frame, data)
 		currentFrame.CategoryInformation.ExpandFrame:SetScript("OnClick", function(self)
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 			
-			currentFrame.CategoryInformation.ExpandFrame:AdvanceState()
+			self:AdvanceState()
 
 			currentFrame.node:SetCollapsed(not currentFrame.node:IsCollapsed())
 		end)
@@ -745,6 +750,8 @@ local function fullyUpdateSearchPanel()
 	treeDataProvider, numOfFiltered, total  = createDataProviderWithUnsortedData()
 
 	actualResults = total
+
+	treeDataProvider:SetAllCollapsed(true)
 
 	miog.SearchPanel:SetDataProvider(treeDataProvider)
 
@@ -981,7 +988,7 @@ miog.createSearchPanel = function()
 
 	view:SetElementExtentCalculator(function(index, node)
 		local data = node:GetData()
-		local height = data.template == "MIOG_SearchPanelResultFrameTemplate" and 40 or 200
+		local height = data.template == "MIOG_SearchPanelResultFrameTemplate" and 40 or 160
 		return height
 	end)
 

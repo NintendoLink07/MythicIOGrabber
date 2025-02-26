@@ -60,8 +60,6 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 
 				miog.initializeActivityDropdown(filters)
-
-				print(miog.ACTIVITY_BACKGROUNDS[LFGListFrame.SearchPanel.categoryID])
 			end
 		
 			PanelTemplates_SetTab(miog.pveFrame2, 1)

@@ -6,7 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.2] - 2025-02-26
+## [3.2.0a] - 2025-02-26
+
+### Fixed
+
+- [SearchPanel] Group listings can now be expanded again.
+
+- [GroupManager] There should be no more error when hovering over Brann in the group manager when you're in a delve.
+
+
+
+## [3.2.0] - 2025-02-26
 
 ### Added
 
@@ -3204,7 +3214,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.0a..HEAD
+[3.2.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.0a
 [3.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2
 [3.1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.4
 [3.1.3a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.3a

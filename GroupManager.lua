@@ -46,7 +46,7 @@ local function showIndepthData(data)
 
 	indepthFrame:Flush()
 
-	indepthFrame.Name:SetText(WrapTextInColorCode(data.shortName, C_ClassColor.GetClassColor(data.classFileName):GenerateHexColor()))
+	indepthFrame.Name:SetText(data.classFileName and WrapTextInColorCode(data.shortName, C_ClassColor.GetClassColor(data.classFileName):GenerateHexColor()) or data.shortName)
 	indepthFrame.Level:SetText("Level " .. data.level)
 
 	local _, name = GetSpecializationInfoForSpecID(data.specID)
@@ -70,7 +70,7 @@ local function createSingleGroupManagerFrame(memberFrame, member)
 	memberFrame.Index:SetText(member.online and member.group or WrapTextInColorCode(member.group, miog.CLRSCC.red))
 	memberFrame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (member.role .. "Icon.png" or "unknown.png"))
 	memberFrame.Spec:SetTexture(miog.SPECIALIZATIONS[member.specID or 0].squaredIcon)
-	memberFrame.Name:SetText(WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()))
+	memberFrame.Name:SetText(member.classFileName and WrapTextInColorCode(member.shortName, C_ClassColor.GetClassColor(member.classFileName):GenerateHexColor()) or member.shortName)
 
 	if(member.rank == 2) then
 		miog.GroupManager.LeaderCrown:ClearAllPoints()
@@ -678,7 +678,7 @@ local function updateGroupData()
 				end
 
 				if(fullName ~= fullPlayerName) then
-					if(not playerInInspection and not playerSpecs[fullName] and CanInspect(groupData[fullName].unitID) and online) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
+					if(not playerInInspection and not playerSpecs[fullName] and CanInspect(groupData[fullName].unitID) and online and UnitIsPlayer(unitID)) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 						playerInInspection = fullName
 
 						if(groupData[playerInInspection].classFileName) then
