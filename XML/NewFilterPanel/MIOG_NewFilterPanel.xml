@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_NewFilterPanel" inherits="BackdropTemplate, VerticalLayoutFrame" virtual="true">
+    <Frame name="MIOG_NewFilterPanel" inherits="BackdropTemplate, VerticalLayoutFrame" virtual="true" hidden="true">
         <Size x="230" />
 
         <KeyValues>

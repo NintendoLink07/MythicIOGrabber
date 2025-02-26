@@ -1,0 +1,94 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressFullCharacterTemplate" inherits="InsetFrameTemplate3, BackdropTemplate" virtual="true">
+        <Size x="100" y="220" />
+
+        <Frames>
+
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-5"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-5" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Class">
+                    <Size x="44" y="44" />
+
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" x="3" y="-6"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Spec">
+                    <Size x="44" y="44" />
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Name" relativePoint="BOTTOMRIGHT" x="-3" y="-4"/>
+                    </Anchors>
+                </Texture>
+            </Layer> 
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="MPlusRating" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" y="-3"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="RaidProgress1" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.MPlusRating" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="RaidProgress2" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress1" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="RaidProgress3" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress2" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Itemlevel" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress3" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <!--<FontString parentKey="PVPRating1" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress3" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="PVPRating2" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.PVPRating1" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="PVPRating3" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.PVPRating2" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="PVPRating4" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.PVPRating3" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>!-->
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

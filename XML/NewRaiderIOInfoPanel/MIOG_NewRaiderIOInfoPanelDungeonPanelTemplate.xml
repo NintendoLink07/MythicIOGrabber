@@ -11,7 +11,7 @@
             </Frame>
 
             <Frame parentKey="Dungeon2" inherits="MIOG_NewRaiderIOInfoPanelDungeonTemplate">
-                <Size y="20" />
+                <Size x="18" y="18" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon1" relativePoint="BOTTOMLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon1" relativePoint="BOTTOMRIGHT" />

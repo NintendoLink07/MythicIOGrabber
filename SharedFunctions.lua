@@ -210,8 +210,9 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 end
 
 local function calculateWeightedScore(difficulty, kills, bossCount, current, ordinal)
-	return (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (ordinal or 0)
+	return kills > 0 and (difficulty * difficulty * 10) + (kills / bossCount * 40) * (current and 1.5 or 1) or 0
 
+	--return (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (ordinal or 0)
 end
 
 miog.calculateWeightedScore = calculateWeightedScore
@@ -366,7 +367,6 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 		if(profile.mythicKeystoneProfile) then
 			if(profile.mythicKeystoneProfile.sortedDungeons) then
 				for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
-
 					if(returnAsBlizzardTable) then
 						local table
 
@@ -410,6 +410,10 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 				mplusData.keystoneMilestone10 = profile.mythicKeystoneProfile.keystoneMilestone10
 				mplusData.keystoneMilestone12 = profile.mythicKeystoneProfile.keystoneMilestone12
 				mplusData.keystoneMilestone15 = profile.mythicKeystoneProfile.keystoneMilestone15
+
+			else
+				mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
+
 			end
 
 		else
@@ -426,6 +430,7 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 				mplusData.keystoneMilestone10 = 0
 				mplusData.keystoneMilestone12 = 0
 				mplusData.keystoneMilestone15 = 0
+
 			else
 
 			end
@@ -765,7 +770,12 @@ end
 miog.hideSidePanel = function(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	self:GetParent():Hide()
-	self:GetParent():GetParent().ButtonPanel:Show()
+
+	local buttonPanel = self:GetParent():GetParent().ButtonPanel
+	buttonPanel:Show()
+
+	miog.ProgressPanel:ClearAllPoints()
+	miog.ProgressPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 0, -4)
 
 	MIOG_NewSettings.activeSidePanel = "none"
 end

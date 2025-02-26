@@ -93,14 +93,16 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, v, isMainsFrame
     local hasIcon = self.Raids.Raid1.Header.Icon
     local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
 
-    texture:SetTexture(hasIcon and miog.MAP_INFO[v].icon or miog.MAP_INFO[v].horizontal)
-    texture:SetScript("OnMouseDown", function()
-        local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
-        local difficulty = 16
-        --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-        EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+    if(texture) then
+        texture:SetTexture(hasIcon and miog.MAP_INFO[v].icon or miog.MAP_INFO[v].horizontal)
+        texture:SetScript("OnMouseDown", function()
+            local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
+            local difficulty = 16
+            --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+            EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
 
-    end)
+        end)
+    end
 
     raidHeaderFrame.Name:SetText(miog.MAP_INFO[v].shortName .. (isMainsFrame and "[Main]" or ""))
 
@@ -375,13 +377,16 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                             end
     
                                             local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
-                                            texture:SetScript("OnMouseDown", function()
-                                                local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
-                                                local difficulty = a == 1 and 14 or a == 2 and 15 or 16
-                                                --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-                                                EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
-                        
-                                            end)
+
+                                            if(texture) then
+                                                texture:SetScript("OnMouseDown", function()
+                                                    local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
+                                                    local difficulty = a == 1 and 14 or a == 2 and 15 or 16
+                                                    --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+                                                    EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+                            
+                                                end)
+                                            end
     
                                             if(nmd == 1) then
                                                 raidMapIDSet[data.mapID] = true

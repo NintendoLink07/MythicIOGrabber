@@ -574,7 +574,7 @@ end
 local currentInspectionName = ""
 
 local function updateGroupData()
-	if(not InCombatLockdown()) then
+	if(not InCombatLockdown() and miog.GroupManager:IsVisible()) then
 		miog.ClassPanel.LoadingSpinner:Hide()
 
 		if(miog.GroupManager) then
@@ -587,7 +587,7 @@ local function updateGroupData()
 			["TANK"] = 0,
 			["HEALER"] = 0,
 			["DAMAGER"] = 0,
-		}    
+		}
 		
 		local subgroupSpotsTaken = {
 			[1] = 0,
@@ -663,8 +663,8 @@ local function updateGroupData()
 				if(miog.GroupManager) then
                 	subgroupSpotsTaken[subgroup] = subgroupSpotsTaken[subgroup] + 1
 				
-					local playerFrame = createCharacterFrame(groupData[fullName])
-					bindFrameToSubgroupSpot(playerFrame, subgroup, subgroupSpotsTaken[subgroup])
+					--local playerFrame = createCharacterFrame(groupData[fullName])
+					--bindFrameToSubgroupSpot(playerFrame, subgroup, subgroupSpotsTaken[subgroup])
 				end
 
 				if(online and CanInspect(groupData[fullName].unitID)) then
@@ -773,8 +773,8 @@ local function updateGroupData()
 			getOptionalPlayerData(fullPlayerName)
 
 			if(miog.GroupManager) then
-				local playerFrame = createCharacterFrame(groupData[fullPlayerName])
-				bindFrameToSubgroupSpot(playerFrame, 1, 1)
+				--local playerFrame = createCharacterFrame(groupData[fullPlayerName])
+				--bindFrameToSubgroupSpot(playerFrame, 1, 1)
 			end
 
 			if(groupData[fullPlayerName].specID) then
@@ -942,11 +942,13 @@ local function groupManagerEvents(_, event, ...)
 	elseif(event == "READY_CHECK_FINISHED") then -- preempted
 		local allReady = true
 
-		for _, ready in pairs(readyCheckStatus) do
+		for fullName, ready in pairs(readyCheckStatus) do
+			updateReadyStatus(fullName)
+
 			if(not ready) then
 				allReady = false
 
-				break
+				--break
 			end
 
 		end

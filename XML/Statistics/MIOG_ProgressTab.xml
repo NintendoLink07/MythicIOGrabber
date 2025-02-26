@@ -2,25 +2,16 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ProgressTab" virtual="true">
         <Frames>
-            <Frame parentKey="MPlusStatistics" inherits="MIOG_ProgressLayoutTemplate" setAllPoints="true">
-            </Frame>
-
-            <Frame parentKey="RaidStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
-            </Frame>
-
-            <Frame parentKey="PVPStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
-            </Frame>
-
             <Frame parentKey="TabPanel" inherits="HorizontalLayoutFrame">
                 <KeyValues>
                     <KeyValue key="spacing" value="5" type="number"/>
                 </KeyValues>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-20" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-20"/>
                 </Anchors>
 
                 <Frames>
-                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Mythic Plus">
+                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Overview">
                         <Size y="25" />
                         <KeyValues>
                             <KeyValue key="layoutIndex" value="1" type="number"/>
@@ -30,6 +21,23 @@
                             <OnClick>
                                 self:GetParent():GetParent().RaidStatistics:Hide()
                                 self:GetParent():GetParent().PVPStatistics:Hide()
+                                self:GetParent():GetParent().MPlusStatistics:Hide()
+                                self:GetParent():GetParent().NewSystem:Show()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Mythic Plus">
+                        <Size y="25" />
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number"/>
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().RaidStatistics:Hide()
+                                self:GetParent():GetParent().PVPStatistics:Hide()
+                                self:GetParent():GetParent().NewSystem:Hide()
                                 self:GetParent():GetParent().MPlusStatistics:Show()
                             </OnClick>
                         </Scripts>
@@ -38,32 +46,94 @@
                     <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Raid">
                         <Size y="25" />
                         <KeyValues>
-                            <KeyValue key="layoutIndex" value="2" type="number"/>
+                            <KeyValue key="layoutIndex" value="3" type="number"/>
                         </KeyValues>
 
                         <Scripts>
                             <OnClick>
                                 self:GetParent():GetParent().MPlusStatistics:Hide()
                                 self:GetParent():GetParent().PVPStatistics:Hide()
+                                self:GetParent():GetParent().NewSystem:Hide()
                                 self:GetParent():GetParent().RaidStatistics:Show()
                             </OnClick>
                         </Scripts>
                     </Button>
 
-                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Player versus Player">
+                    <Button inherits="UIPanelDynamicResizeButtonTemplate" text="PVP">
                         <Size y="25" />
                         <KeyValues>
-                            <KeyValue key="layoutIndex" value="3" type="number"/>
+                            <KeyValue key="layoutIndex" value="4" type="number"/>
                         </KeyValues>
 
                         <Scripts>
                             <OnClick>
                                 self:GetParent():GetParent().RaidStatistics:Hide()
                                 self:GetParent():GetParent().MPlusStatistics:Hide()
+                                self:GetParent():GetParent().NewSystem:Hide()
                                 self:GetParent():GetParent().PVPStatistics:Show()
                             </OnClick>
                         </Scripts>
                     </Button>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="MPlusStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
+            </Frame>
+
+            <Frame parentKey="RaidStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
+            </Frame>
+
+            <Frame parentKey="PVPStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
+            </Frame>
+
+            <Frame parentKey="NewSystem" setAllPoints="true" mixin="ProgressTabMixin">
+                <Frames>
+                    <Frame parentKey="Columns" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-24"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="RIGHT" y="-24"/>
+                        </Anchors>
+
+                        <Frames>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Graph" inherits="ThinBorderTemplate" mixin="GraphMixin">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Columns" relativePoint="BOTTOMLEFT" x="1"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="1"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOM" y="4"/>
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="BACKGROUND">
+                                <Texture parentKey="Background">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                                    </Anchors>
+                                    <Color r="0" g="0" b="0" a="0.75" />
+                                </Texture>
+                            </Layer>
+                        </Layers>
+
+                        <Frames>
+                            <Frame parentKey="Checkboxes">
+                                <Size y="24" />
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                                </Anchors>
+
+                            </Frame>
+                            <Frame parentKey="Grid">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Checkboxes" relativePoint="BOTTOMLEFT" />
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
                 </Frames>
             </Frame>
         </Frames>

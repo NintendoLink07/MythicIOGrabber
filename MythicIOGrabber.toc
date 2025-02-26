@@ -1,12 +1,12 @@
-## Interface: 110007, 110100
+## Interface: 110100
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.1.4
+## Version: 3.2
 ## SavedVariables: MIOG_NewSettings
-## SavedVariablesPerCharacter: MIOG_QueueUpTime, MIOG_SavedSpecIDs, MIOG_CharacterSettings
+## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
 
 ## X-Curse-Project-ID: 916354
@@ -62,6 +62,7 @@ Mixins\RaidSheetSpaceMixin.lua
 Mixins\RewardTypeMixin.lua
 Mixins\FakeDropdownMixin.lua
 Mixins\RaiderIOInformationPanelMixin.lua
+Mixins\GraphMixin.lua
 
 
 
@@ -105,6 +106,9 @@ XML\SearchPanel\MIOG_SearchResultFrameGroupMemberTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameSmallGroupMemberTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameBossFrameTemplate.xml
 XML\SearchPanel\MIOG_SearchPanelResultFrameTemplate.xml
+XML\SearchPanel\MIOG_ProgressPanel.xml
+XML\SearchPanel\MIOG_ProgressPanelDungeonTemplate.xml
+XML\SearchPanel\MIOG_ProgressPanelTierTemplate.xml
 
 XML\ClassPanel\MIOG_ClassPanel.xml
 XML\ClassPanel\MIOG_ClassPanelClassFrameTemplate.xml
@@ -158,6 +162,7 @@ XML\Statistics\MIOG_ProgressRaidTemplate.xml
 XML\Statistics\MIOG_ProgressRaidCharacterTemplate.xml
 XML\Statistics\MIOG_ProgressBracketTemplate.xml
 XML\Statistics\MIOG_ProgressPVPCharacterTemplate.xml
+XML\Statistics\MIOG_ProgressFullCharacterTemplate.xml
 
 XML\Util\MIOG_MultiStateButtonTemplate.xml
 XML\Util\MIOG_SortButtonTemplate.xml
@@ -165,6 +170,7 @@ XML\Util\MIOG_SortButtonWithTextTemplate.xml
 XML\Util\MIOG_NavBarButtonTemplate.xml
 XML\Util\MIOG_TabButtonTemplate.xml
 XML\Util\MIOG_MinimalCheckButtonTemplate.xml
+XML\Util\MIOG_MinimalCheckButtonWithTextTemplate.xml
 XML\Util\MIOG_MenuButtonTemplate.xml
 XML\Util\MIOG_VerticalButtonTemplate.xml
 XML\Util\MIOG_MinimalHorizontalScrollBarTemplate.xml

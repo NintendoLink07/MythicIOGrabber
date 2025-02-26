@@ -115,6 +115,7 @@ local defaultSettings = {
     {name = "Requeue data", variableName = "MIOG_RequeueData", key="requeueData", default = {guids = {}}},
     {name = "Last used queue", variableName = "MIOG_LastUsedQueue", key="lastUsedQueue", default = {}},
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
+    {name = "Last set checkboxes", variableName = "MIOG_LastSetCheckboxes", key="lastSetCheckboxes", default={}},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
     {name = "Favoured applicants", variableName = "MIOG_FavouredApplicants", key="favouredApplicants", default={}, type="custom"},
     {name = "New filter options", variableName = "MIOG_NewFilterOptions", key="newFilterOptions", default={}},

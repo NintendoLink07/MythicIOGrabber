@@ -749,6 +749,11 @@ local function fullyUpdateSearchPanel()
 	miog.SearchPanel:SetDataProvider(treeDataProvider)
 
 	miog.updateFooterBarResults(numOfFiltered, actualResults, actualResults >= 100)
+		
+	if(numOfFiltered == 0) then
+		showStatusOverlay()
+
+	end
 end
 
 miog.fullyUpdateSearchPanel = fullyUpdateSearchPanel

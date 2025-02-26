@@ -1,0 +1,52 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressPanelDungeonTemplate" virtual="true">
+        <Size x="56" y="34" />
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true" propagateMouseInput="Motion">
+                    <Color r="0" g="0" b="0" a="1" />
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK" textureSubLevel="-7">
+                <Texture parentKey="TransparentDark"  propagateMouseInput="Motion">
+                    <Color r="0.1" g="0.1" b="0.1" a="0.65" />
+
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            
+            <Layer level="ARTWORK" textureSubLevel="-8">
+                <Texture parentKey="Icon" horizTile="true" vertTile="true" hWrapMode="MIRROR" vWrapMode="MIRROR" enableMouseClicks="true" propagateMouseInput="Motion">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Level" font="SystemFont_Shadow_Med1" justifyH="CENTER" propagateMouseInput="Motion">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnEnter>
+                if(self.dungeonName) then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.dungeonName)
+                    GameTooltip:Show()
+                end
+            </OnEnter>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

@@ -36,6 +36,19 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 			if(type == "search") then
 				openSearchPanel(categoryID, filters)
 
+				miog.ProgressPanel:SetShown(categoryID == 2 or categoryID == 3)
+
+				miog.ProgressPanel.MythicPlus:SetShown(categoryID == 2)
+				miog.ProgressPanel.Raids:SetShown(categoryID == 3 and filters == Enum.LFGListFilter.Recommended)
+
+				miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[LFGListFrame.SearchPanel.categoryID])
+
+				local playerName, realm = miog.createSplitName(UnitFullName("player"))
+				
+				miog.ProgressPanel:Flush()
+				miog.ProgressPanel:SetPlayerData(playerName, realm)
+				miog.ProgressPanel:ApplyFillData()
+				
 			else
 				LFGListFrame.CategorySelection.selectedCategory = categoryID
 				LFGListFrame.CategorySelection.selectedFilters = filters
@@ -47,6 +60,8 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
 
 				miog.initializeActivityDropdown(filters)
+
+				print(miog.ACTIVITY_BACKGROUNDS[LFGListFrame.SearchPanel.categoryID])
 			end
 		
 			PanelTemplates_SetTab(miog.pveFrame2, 1)
@@ -229,6 +244,8 @@ local function createPVEFrameReplacement()
 	end)
 
 	miog.Progress = pveFrame2.TabFramesPanel.Progress
+	miog.Progress.NewSystem:OnLoad(4)
+
     miog.MPlusStatistics = miog.Progress.MPlusStatistics
 	miog.MPlusStatistics:OnLoad(1)
 
