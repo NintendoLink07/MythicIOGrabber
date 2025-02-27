@@ -1,6 +1,10 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local currentlyInspectedPlayer, numPlayersWithSpec, numPlayersInspectable = "", 0, 0
+
+local classColors = {}
+
 local function updateGroupClassData()
 	if(not InCombatLockdown()) then
 		local classCount = {
@@ -19,28 +23,47 @@ local function updateGroupClassData()
 			[13] = 0,
 		}
 
-		local hasNoData = true
+		local roleCount = {
+			["TANK"] = 0,
+			["HEALER"] = 0,
+			["DAMAGER"] = 0,
+			["NONE"] = 0,
+		}
 
-		for groupIndex = 1, GetNumGroupMembers(), 1 do
-			local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
-			
-			if(name) then
-				if(classCount[miog.CLASSFILE_TO_ID[fileName] ]) then
-					classCount[miog.CLASSFILE_TO_ID[fileName] ] = classCount[miog.CLASSFILE_TO_ID[fileName] ] + 1
+        local numGroupMembers = GetNumGroupMembers()
 
-				end
+		if(numGroupMembers > 0) then
+            for groupIndex = 1, numGroupMembers, 1 do
+                local name, _, _, _, _, fileName, _, _, _, _, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+                
+                if(name) then
+                    if(classCount[miog.CLASSFILE_TO_ID[fileName] ]) then
+                        classCount[miog.CLASSFILE_TO_ID[fileName] ] = classCount[miog.CLASSFILE_TO_ID[fileName] ] + 1
 
-				hasNoData = false
-			end
-		end
+                    end
 
-		if(hasNoData) then
+                    if(roleCount[combatRole]) then
+                        roleCount[combatRole] = roleCount[combatRole] + 1
+        
+                    end
+                end
+            end
+        else
 			local _, id = UnitClassBase("player")
 			
 			if(classCount[id]) then
 				classCount[id] = classCount[id] + 1
 
 			end
+		end
+
+		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
+
+		if(miog.GroupManager) then
+			miog.GroupManager.Groups.Tank.Text:SetText(roleCount["TANK"])
+			miog.GroupManager.Groups.Healer.Text:SetText(roleCount["HEALER"])
+			miog.GroupManager.Groups.Damager.Text:SetText(roleCount["DAMAGER"])
+
 		end
 
         for classID, classEntry in ipairs(miog.CLASSES) do
@@ -50,21 +73,15 @@ local function updateGroupClassData()
             currentClassFrame.Icon:SetDesaturated(numOfClasses < 1)
 
             if(numOfClasses > 0) then
-                --local rPerc, gPerc, bPerc = GetClassColor(miog.CLASSES[classID].name)
-                --miog.createFrameBorder(currentClassFrame, 1, rPerc, gPerc, bPerc, 1)
                 currentClassFrame.FontString:SetText(numOfClasses)
-                currentClassFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(classEntry.name):GetRGBA())
-                currentClassFrame.layoutIndex = currentClassFrame.layoutIndex - 100
+                currentClassFrame.Border:SetColorTexture(classColors[classID]:GetRGBA())
+                currentClassFrame.layoutIndex = currentClassFrame.layoutIndex - 20
 
             else
                 currentClassFrame.FontString:SetText("")
                 currentClassFrame.Border:SetColorTexture(0, 0, 0, 1)
-                --miog.createFrameBorder(currentClassFrame, 1, 0, 0, 0, 1)
 
             end
-
-            miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
-
         end
 	end
 end
@@ -84,6 +101,14 @@ local function classPanelEvents(_, event, ...)
     end
 end
 
+miog.setInspectionData = function(currentName, playersWithSpec, inspectableMembers)
+    currentlyInspectedPlayer = currentName
+    numPlayersWithSpec = playersWithSpec
+    numPlayersInspectable = inspectableMembers
+    
+    miog.ClassPanel.StatusString:SetText((currentlyInspectedPlayer or "") .. "\n(" .. numPlayersWithSpec .. "/" .. numPlayersInspectable .. "/" .. GetNumGroupMembers() .. ")")
+end
+
 miog.createClassPanel = function()
     local classPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.MainFrame, "MIOG_ClassPanel")
 	classPanel:SetPoint("BOTTOMRIGHT", classPanel:GetParent(), "TOPRIGHT", 0, 1)
@@ -95,6 +120,10 @@ miog.createClassPanel = function()
     container.classFrames = {}
 
     for classID, classEntry in ipairs(miog.CLASSES) do
+        local classColor = C_ClassColor.GetClassColor(classEntry.name)
+
+        classColors[classID] = classColor
+
         local classFrame = CreateFrame("Frame", nil, container, "MIOG_ClassPanelClassFrameTemplate")
         classFrame.layoutIndex = classID
         classFrame:SetSize(container:GetHeight(), container:GetHeight())
@@ -116,14 +145,13 @@ miog.createClassPanel = function()
             local specFrame = CreateFrame("Frame", nil, specPanel, "MIOG_ClassPanelSpecFrameTemplate")
             specFrame:SetSize(specPanel.fixedHeight, specPanel.fixedHeight)
             specFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
+            specFrame.Border:SetColorTexture(classColor:GetRGBA())
             specFrame.leftPadding = 0
 
             specPanel.specFrames[specID] = specFrame
 
             specCounter = specCounter + 1
         end
-
-        specPanel:MarkDirty()
 
         classFrame:SetScript("OnEnter", function()
             specPanel:Show()
@@ -136,6 +164,15 @@ miog.createClassPanel = function()
     end
 
     container:MarkDirty()
+
+    classPanel.StatusString:SetText((currentlyInspectedPlayer or "") .. "\n(" .. numPlayersWithSpec .. "/" .. numPlayersInspectable .. "/" .. GetNumGroupMembers() .. ")")
+    classPanel.StatusString:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(numPlayersWithSpec .. " players with spec data.")
+        GameTooltip:AddLine(numPlayersInspectable .. " group members that are inspectable (not offline or some weird faction stuff interaction).")
+        GameTooltip:AddLine(GetNumGroupMembers() .. " total group members.")
+        GameTooltip:Show()
+    end)
 
     classPanel:RegisterEvent("PLAYER_ENTERING_WORLD")
     classPanel:RegisterEvent("GROUP_JOINED")

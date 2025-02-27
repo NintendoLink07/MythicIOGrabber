@@ -105,31 +105,33 @@
         
         <Scripts>
             <OnEnter>
-                if(self.data.unitID) then
-                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    GameTooltip:SetUnit(self.data.unitID)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetUnit(self.unit)
 
-                    if(self.data.rank == 2 ) then
+                if(self.id) then
+                    local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(self.id) --ONLY WORKS WHEN IN GROUP
+
+                    if(rank == 2 ) then
                         GameTooltip_AddBlankLineToTooltip(GameTooltip)
                         GameTooltip:AddLine("Rank: " .. RAID_LEADER)
 
-                    elseif(self.data.rank == 1 ) then
+                    elseif(rank == 1 ) then
                         GameTooltip_AddBlankLineToTooltip(GameTooltip)
                         GameTooltip:AddLine("Rank: " .. RAID_ASSISTANT)
 
                     else
-                        if(self.data.raidRole ~= nil) then
+                        if(role ~= nil) then
                             GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-                            if (self.data.raidRole == "MAINTANK" ) then
+                            if (role == "MAINTANK" ) then
                                 GameTooltip:AddLine("Raid role: " .. MAIN_TANK);
-                            elseif (self.data.raidRole == "MAINASSIST" ) then
+                            elseif (role == "MAINASSIST" ) then
                                 GameTooltip:AddLine("Raid role: " .. MAIN_ASSIST);
                             end
                         end
                     end
 
-                    if(self.data.keystone) then
+                    --[[if(self.data.keystone) then
                         GameTooltip_AddBlankLineToTooltip(GameTooltip)
                         GameTooltip:AddLine("Keystone: +" .. self.data.keylevel .. " " .. self.data.keyname)
 
@@ -192,15 +194,12 @@
                         GameTooltip:AddLine(WrapTextInColorCode("No data available (yet) for this player.", "FFFF0000"))
                         GameTooltip:AddLine(WrapTextInColorCode("This player may not have Details or MythicIOGrabber installed.", "FFFF0000"))
 
-                    end
+                    end]]--
 
                     GameTooltip:Show()
                 end
             </OnEnter>
             <OnLeave function="GameTooltip_Hide" />
-            <OnClick>
-                print("YE")
-            </OnClick>
         </Scripts>
     </Button>
 </Ui>

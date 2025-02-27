@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [3.2.1] - 2025-02-27
+
+### Fixed
+
+- [GroupManager] Fixed several performance issues. Should be less laggy now when people join your group and you have the group manager open and only small lags when having the group finder not open.
+
+- [Gearing] The gearing itemlevel chart has been updated.
+
+
+
 ## [3.2.0a] - 2025-02-26
 
 ### Fixed
@@ -3214,7 +3225,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.0a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.1..HEAD
+[3.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.1
 [3.2.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.0a
 [3.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2
 [3.1.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.1.4

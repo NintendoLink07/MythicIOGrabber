@@ -2,7 +2,9 @@ local addonName, miog = ...
 
 local currentChildren = {}
 
-miog.createTrackString = function(seasonID, itemLevel)
+local seasonID
+
+local function createTrackString(itemLevel)
     local trackString = ""
 
 	for x, y in pairs(miog.GEARING_CHART) do
@@ -37,16 +39,7 @@ miog.createTrackString = function(seasonID, itemLevel)
     return trackString
 end
 
-local forceSeasonID = 13
-
-miog.insertGearingData = function()
-    local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
-
-    if(not seasonID or seasonID == -1) then
-        seasonID = 12
-        
-    end
-
+local function insertGearingData()
     local gearingData = miog.GEARING_CHART[seasonID]
     local r, g, b
 
@@ -134,7 +127,7 @@ miog.insertGearingData = function()
                 currentChildren[a].DelvesVault:SetText(fullDelvesVaultText)
                 currentChildren[a].Dungeon:SetText(fullDungeonText)
                 currentChildren[a].DungeonVault:SetText(fullDungeonVaultText)
-                currentChildren[a].Track:SetText(miog.createTrackString(seasonID, tonumber(a)))
+                currentChildren[a].Track:SetText(createTrackString(tonumber(a)))
 
 
                 currentChildren[a].ItemLevel:SetTextColor(r, g, b, 1)
@@ -164,14 +157,8 @@ miog.loadGearingChart = function()
     singleGrid.Dungeon:SetText("Dungeon")
     singleGrid.DungeonVault:SetText("Dung Vlt")
     singleGrid.Other:SetText("Other")
-    --singleGrid.Progress:SetText("Progress")
     
-    local seasonID = forceSeasonID or C_MythicPlus.GetCurrentSeason()
-
-    if(not seasonID or seasonID == -1) then
-        seasonID = 12
-        
-    end
+    seasonID = 14 or C_MythicPlus.GetCurrentSeason() or miog.C.BACKUP_SEASON_ID
 
     for k, v in pairs(miog.GEARING_CHART) do
         if(k == seasonID) then
@@ -203,4 +190,6 @@ miog.loadGearingChart = function()
             end
         end
     end
+
+    insertGearingData()
 end

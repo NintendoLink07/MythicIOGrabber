@@ -1,8 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
-
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
 local function openSearchPanel(categoryID, filters, dontSearch)
@@ -482,44 +480,3 @@ local function createPVEFrameReplacement()
 end
 
 miog.createPVEFrameReplacement = createPVEFrameReplacement
-
-eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
-eventReceiver:RegisterEvent("PLAYER_LOGIN")
-eventReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
-eventReceiver:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
-eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
-eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
-eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
-eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-eventReceiver:RegisterEvent("ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED")
-
-eventReceiver:RegisterEvent("CHALLENGE_MODE_START")
-eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")
-eventReceiver:RegisterEvent("CHALLENGE_MODE_COMPLETED")
-
-eventReceiver:RegisterEvent("WEEKLY_REWARDS_UPDATE")
-
-
-
-eventReceiver:SetScript("OnEvent", miog.OnEvent)
-
---[[
-
-scriptReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
-scriptReceiver:RegisterEvent("GROUP_JOINED")
-scriptReceiver:RegisterEvent("GROUP_LEFT")
-scriptReceiver:RegisterEvent("INSPECT_READY")
-scriptReceiver:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-
-
-scriptReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-scriptReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
-scriptReceiver:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-scriptReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
-scriptReceiver:RegisterEvent("BATTLEFIELDS_SHOW")
-scriptReceiver:RegisterEvent("LFG_UPDATE")
-scriptReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-scriptReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
-
-]]

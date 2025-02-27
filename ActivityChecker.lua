@@ -1344,8 +1344,8 @@ local function activityEvents(_, event, ...)
     elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		refreshDungeonList()
 
-    elseif(event == "GROUP_ROSTER_UPDATE") then
-		refreshDungeonList()
+    --elseif(event == "GROUP_ROSTER_UPDATE") then
+		--refreshDungeonList()
     end
 
 	--miog.updateDropDown()
@@ -1357,7 +1357,7 @@ miog.loadActivityChecker = function()
 	eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
 	eventReceiver:RegisterEvent("LFG_UPDATE")
 	eventReceiver:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
-	eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
+	--eventReceiver:RegisterEvent("GROUP_ROSTER_UPDATE")
 	eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 	eventReceiver:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
 	eventReceiver:SetScript("OnEvent", activityEvents)

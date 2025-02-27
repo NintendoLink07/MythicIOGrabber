@@ -1,7 +1,7 @@
-## [3.2.0a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.0a) - 2025-02-26
+## [3.2.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.1) - 2025-02-27
 
 ### Fixed
 
-- [SearchPanel] Group listings can now be expanded again.
+- [GroupManager] Fixed several performance issues. Should be less laggy now when people join your group and you have the group manager open.
 
-- [GroupManager] There should be no more error when hovering over Brann in the group manager when you're in a delve.
+- [Gearing] The gearing itemlevel chart has been updated.

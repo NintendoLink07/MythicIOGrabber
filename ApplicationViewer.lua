@@ -361,7 +361,7 @@ local function updateApplicantMemberFrame(frame, data)
 
 	end)
 
-	if(applicantIndex == 1 and miog.F.CAN_INVITE == true or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
+	if(applicantIndex == 1 and miog.checkIfCanInvite() == true or applicantIndex == 1 and miog.F.IS_IN_DEBUG_MODE) then
 		declineButton:Show()
 		inviteButton:Show()
 

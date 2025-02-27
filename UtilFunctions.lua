@@ -405,20 +405,14 @@ end
 
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		--miog.ApplicationViewer.Browse:Show()
 		miog.ApplicationViewer.Delist:Show()
 		miog.ApplicationViewer.Edit:Show()
-
-		miog.F.CAN_INVITE = true
 
 		return true
 
 	else
-		--miog.ApplicationViewer.Browse:Hide()
 		miog.ApplicationViewer.Delist:Hide()
 		miog.ApplicationViewer.Edit:Hide()
-
-		miog.F.CAN_INVITE = false
 
 		return false
 

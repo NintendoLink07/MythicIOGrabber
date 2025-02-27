@@ -7,7 +7,7 @@ miog.referencePVPButtons = {}
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
 
-miog.OnEvent = function(_, event, ...)
+local function mainEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
         miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()
 
@@ -40,15 +40,13 @@ miog.OnEvent = function(_, event, ...)
 		end
 		
 		if(not miog.F.LITE_MODE) then
-			miog.insertGearingData()
-
 			if(PVPUIFrame) then
-				PVPUIFrame:HookScript("OnShow", function()
+				--[[PVPUIFrame:HookScript("OnShow", function()
 					--ConquestFrame.selectedButton = nil
 					--ConquestFrame.RatedBG.SelectedTexture:Hide()
 					--ConquestFrame.ratedSoloShuffleEnabled = false
 					--ConquestFrame.arenasEnabled = false
-				end)
+				end)]]
 				
 				hooksecurefunc("HonorFrame_InitSpecificButton", function(button, elementData)
 					button:SetHeight(40)
@@ -76,17 +74,9 @@ miog.OnEvent = function(_, event, ...)
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
 
-	elseif(event == "CHALLENGE_MODE_MAPS_UPDATE") then
-		--[[if(miog.F.MPLUS_SETUP_COMPLETE) then
-			miog.gatherMPlusStatistics()
-		end]]
-
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 		miog.setAffixes()
-		
-	elseif(event == "GROUP_ROSTER_UPDATE") then
-		--miog.openRaidLib.RequestKeystoneDataFromParty()
 	
 	elseif(event == "CURRENCY_DISPLAY_UPDATE") then
 		if(miog.MainTab) then
@@ -313,3 +303,21 @@ local function handler(msg, editBox)
 	end
 end
 SlashCmdList["MIOG"] = handler
+
+local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")
+eventReceiver:RegisterEvent("PLAYER_ENTERING_WORLD")
+eventReceiver:RegisterEvent("PLAYER_LOGIN")
+eventReceiver:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
+eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
+eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
+eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+eventReceiver:RegisterEvent("ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED")
+
+eventReceiver:RegisterEvent("CHALLENGE_MODE_START")
+eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")
+eventReceiver:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+
+eventReceiver:RegisterEvent("WEEKLY_REWARDS_UPDATE")
+
+eventReceiver:SetScript("OnEvent", mainEvents)
