@@ -1,7 +1,9 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local fullPlayerName, shortName
+local fullPlayerName, shortName, realm
+local currentInspectionName = ""
+local playersWithSpecData, inspectableMembers = 0, 0
 
 local groupData = {}
 
@@ -10,6 +12,9 @@ local pityTimer = nil
 local playerInInspection
 local playerSpecs = {}
 local playerKeystones = {}
+local playerRaidData = {}
+local playerMPlusData = {}
+local inspectList = {}
 
 local framePool
 
@@ -18,31 +23,39 @@ miog.getPlayerSpec = function(name)
 
 end
 
-local function getOptionalPlayerData(fullName)
-	local libName
+local function countPlayersWithSpecData()
+	playersWithSpecData, inspectableMembers = 0, 0
+
+	for _, data in pairs(groupData) do
+		if(playerSpecs[data.fullName] and playerSpecs[data.fullName] ~= 0) then
+			playersWithSpecData = playersWithSpecData + 1
+		end
+		
+		if(CanInspect(data.unitID)) then
+			inspectableMembers = inspectableMembers + 1
+		
+		end
+	end
+end
+
+local function updateInspectionText()
+	countPlayersWithSpecData()
+	miog.setInspectionData(currentInspectionName, playersWithSpecData, inspectableMembers)
+end
+
+local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 	local data = {}
 
-	if(fullName == miog.createFullNameFrom("unitID", "player")) then
-		libName = UnitName("player")
+	local playerGear = miog.openRaidLib.GetUnitGear(unitID)
 
-	else
-		libName = fullName
+	if(playerGear) then
+		data.ilvl = playerGear.ilevel or 0
+		data.durability = playerGear.durability or 0
 
-	end
-
-	local libData = miog.openRaidLib.GetAllUnitsGear()[libName]
-	local raidData = miog.getNewRaidSortData(miog.createSplitName(fullName))
-
-	data.keylevel = 0
-
-	if(libData) then
-		data.ilvl = libData.ilevel or 0
-		data.durability = libData.durability or 0
-
-		if(libData.noEnchants and #libData.noEnchants > 0) then
+		if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
 			data.missingEnchants = {}
 
-			for index, slotIdWithoutEnchant in ipairs (libData.noEnchants) do
+			for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
 				if(slotIdWithoutEnchant ~= 10) then
 					data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
 					
@@ -50,10 +63,10 @@ local function getOptionalPlayerData(fullName)
 			end
 		end
 
-		if(libData.noGems and #libData.noGems > 0) then
+		if(playerGear.noGems and #playerGear.noGems > 0) then
 			data.missingGems = {}
 
-			for index, slotIdWithEmptyGemSocket in ipairs (libData.noGems) do
+			for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
 				data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
 			end
 		end
@@ -63,53 +76,63 @@ local function getOptionalPlayerData(fullName)
 
 	end
 
+	data.keylevel = 0
+
 	if(playerKeystones[libName]) then
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(playerKeystones[libName].challengeMapID)
 
 		if(miog.CHALLENGE_MODE_INFO[id]) then
 			data.keystoneShortName = miog.MAP_INFO[miog.CHALLENGE_MODE_INFO[id].mapID].shortName
-			--data.keystone = texture
 			data.keylevel = playerKeystones[libName].level
 			data.keystoneFullName = mapName
 
 		end
 	end
+	
+	playerMPlusData[libName], playerRaidData[libName] = miog.getMPlusScoreAndRaidData(playerName, localRealm)
 
-	if(raidData) then
-		local charData = raidData.character
-		local mainData = raidData.main
-		
-		data.progressWeight = 0
+	data.progress = ""
 
-		for i = 1, 2, 1 do
-			local raidInfo = i == 1 and charData or mainData
+	--local tooltipTable = {}
+	local progressTable = {}
+
+
+
+	if(playerRaidData[libName]) then
+		--[[for i = 1, 2, 1 do
+			local raidInfo = i == 1 and playerRaidData[fullName].character or playerRaidData[fullName].main
 
 			for k, v in ipairs(raidInfo.ordered) do
 				if(v.difficulty > 0) then
 					if(i == 1) then
-						data.progress = (data.progress or "") .. wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " "
-						data.progressWeight = data.progressWeight + (v.weight or 0)
+						tinsert(progressTable, wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
+						
 					end
 					
-					data.progressTooltipData = (data.progressTooltipData or "") .. (i == 2 and "Main - " or "") .. v.shortName .. ": " .. wticc(miog.DIFFICULTY[v.difficulty].shortName .. ":" .. v.kills .. "/" .. #v.bosses, miog.DIFFICULTY[v.difficulty].color) .. "\r\n"
+					tinsert(tooltipTable, (i == 2 and "Main - " or "") .. v.shortName .. ": " .. wticc(miog.DIFFICULTY[v.difficulty].shortName .. ":" .. v.kills .. "/" .. #v.bosses, miog.DIFFICULTY[v.difficulty].color) .. "\r\n")
+					
 				end
 			end
 		end
+		data.progressTooltipData = table.concat(tooltipTable)]]--
+
+		for _, v in ipairs(playerRaidData[libName].character.ordered) do
+			if(v.difficulty > 0) then
+				tinsert(progressTable, wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
+				
+			end
+		end
+
+		data.progress = table.concat(progressTable)
+		data.progressWeight = playerRaidData[libName].character.progressWeight or 0
+
 	else
-		data.progress = "---"
 		data.progressWeight = 0
+		data.progress = "---"
 
 	end
 
-	local mplusData = miog.getMPlusSortData(miog.createSplitName(fullName))
-
-	if(mplusData) then
-		data.score = mplusData.score.score
-
-	else
-		data.score = 0
-		
-	end
+	data.score = playerMPlusData[libName]
 
 	return data
 end
@@ -154,7 +177,7 @@ local function showIndepthData(fileName, name, level, specID, className, unitID,
 	indepthFrame:Show()
 end
 
-local function updateSingleCharacterKeystoneData(fullName)
+local function updateSingleCharacterKeystoneData(fullName, frameIsAvailable)
 	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
 		return fullName == data.fullName
 
@@ -193,6 +216,39 @@ local function updateSingleCharacterSpecData(fullName, frameIsAvailable)
 		frame.Spec:SetTexture(miog.SPECIALIZATIONS[playerSpecs[fullName] or 0].squaredIcon)
 
 		frame.specID = playerSpecs[fullName]
+	end
+end
+
+local function updateSingleCharacterItemData(fullName, playerGear)
+	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+		return fullName == data.fullName
+
+	end)
+
+	if(frame) then
+		if(playerGear) then
+			--[[if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
+				data.missingEnchants = {}
+
+				for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
+					if(slotIdWithoutEnchant ~= 10) then
+						data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+						
+					end
+				end
+			end
+
+			if(playerGear.noGems and #playerGear.noGems > 0) then
+				data.missingGems = {}
+
+				for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
+					data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+				end
+			end]]
+			
+			frame.Itemlevel:SetText(playerGear.ilevel or "N/A")
+			frame.Durability:SetText(playerGear.durability and "(" .. playerGear.durability .. "%)" or "N/A")
+		end
 	end
 end
 
@@ -639,12 +695,89 @@ local function fillSpaceFramesTable()
     end
 end
 
-local currentInspectionName = ""
+local function removePlayerFromInspectList(fullName)
+	inspectList[fullName] = nil
+	miog.inspectNextCharacter()
 
-local function updateGroupData()	
-	if(not InCombatLockdown() and miog.GroupManager:IsShown()) then
-		--miog.ClassPanel.LoadingSpinner:Hide()
+end
 
+local function startNotify(fullName, delay)
+	--print(delay and "DELAY" or "START", fullName, playerInInspection, not playerSpecs[fullName], groupData[fullName], groupData[fullName] and CanInspect(groupData[fullName].unitID))
+
+	if(playerInInspection and not playerSpecs[fullName] and groupData[fullName] and CanInspect(groupData[fullName].unitID)) then
+		miog.ClassPanel.LoadingSpinner:SetShown(true)
+		local color = C_ClassColor.GetClassColor(groupData[playerInInspection].fileName)
+		currentInspectionName = color and WrapTextInColorCode(groupData[playerInInspection].name, color:GenerateHexColor()) or groupData[playerInInspection].name
+		NotifyInspect(groupData[fullName].unitID)
+
+		pityTimer = C_Timer.NewTimer(5, function()
+			ClearInspectPlayer(true)
+		
+		end)
+
+		return true
+	else
+		removePlayerFromInspectList(fullName)
+
+	end
+
+	return false
+end
+
+local function inspectCharacter(fullName)
+	if(groupData[fullName] and not playerSpecs[fullName]) then
+		if(not playerInInspection and UnitIsPlayer(groupData[fullName].unitID)) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
+			inspectList[fullName] = nil
+			playerInInspection = fullName
+
+			local time = GetTimePreciseSec()
+
+			if(time - lastNotifyTime > miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE) then
+				startNotify(fullName)
+
+			else
+				C_Timer.After(lastNotifyTime - time + miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE, function()
+					local success = startNotify(fullName, true)
+
+					if(not success) then
+						miog.inspectNextCharacter()
+
+					end
+				end)
+			end
+		end
+	else
+		removePlayerFromInspectList(fullName)
+
+	end
+
+	return false
+end
+
+local function inspectNextCharacter()
+	updateInspectionText()
+
+	for k, v in pairs(inspectList) do
+		local success = inspectCharacter(v)
+
+		if(success) then
+			break
+
+		end
+	end
+end
+
+miog.inspectNextCharacter = inspectNextCharacter
+
+local function addCharacterToInspectionList(fullName, unitID)
+	inspectList[fullName] = fullName
+
+end
+
+local function updateGroupData()
+	local start = GetTimePreciseSec()
+	print("START", start)
+	if(not InCombatLockdown()) then
 		--if(miog.GroupManager) then
 			--framePool:ReleaseAll()
 		--end
@@ -663,18 +796,16 @@ local function updateGroupData()
 		}
 
 		local specCount = {}
-
-		local playersWithSpecData, inspectableMembers, numOfMembers = 0, 0, GetNumGroupMembers()
-		local inspectedPlayerStillInGroup = false
+		local numOfMembers = GetNumGroupMembers()
 
 		if(numOfMembers > 0) then
 			for groupIndex = 1, numOfMembers, 1 do
-				local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+				local name, _, subgroup, _, _, fileName, _, online, _, _, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
 				if(name) then
 					local unitID
-					local playerName, realm = miog.createSplitName(name)
-					local fullName = playerName .. "-" .. (realm or "")
+					local playerName, localRealm = miog.createSplitName(name)
+					local fullName = playerName .. "-" .. (localRealm or "")
 
 					if(IsInRaid()) then
 						unitID = "raid" .. groupIndex
@@ -687,17 +818,6 @@ local function updateGroupData()
 
 					end
 
-					local data = getOptionalPlayerData(fullName)
-				
-					data.subgroup = subgroup
-					data.combatRole = combatRole
-					data.specID = playerSpecs[fullName] or 0
-					data.index = groupIndex
-					data.unitID = unitID
-					data.fullName = fullName
-					data.name = playerName
-					data.realm = realm
-					
 					if(miog.GroupManager) then
 						subgroupSpotsTaken[subgroup] = subgroupSpotsTaken[subgroup] + 1
 					
@@ -705,52 +825,37 @@ local function updateGroupData()
 						--bindFrameToSubgroupSpot(playerFrame, subgroup, subgroupSpotsTaken[subgroup])
 					end
 
-					if(playerInInspection == fullName and playerSpecs[fullName]) then
-						ClearInspectPlayer(true)
+					local data
 
-					end
+					if(fullName ~= fullPlayerName) then
+						data = getOptionalPlayerData(fullName, playerName, localRealm, unitID)
+						--data = {}
 
-					if(online and CanInspect(unitID)) then
-						inspectableMembers = inspectableMembers + 1
+						if(not playerSpecs[fullName] and playerSpecs[fullName] ~= 0) then
+							addCharacterToInspectionList(fullName, unitID)
 
-						if(fullName ~= fullPlayerName) then
-							if(not playerInInspection and not playerSpecs[fullName]and UnitIsPlayer(unitID)) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
-								playerInInspection = fullName
-	
-								local color = C_ClassColor.GetClassColor(fileName)
-								currentInspectionName = color and WrapTextInColorCode(playerName, color:GenerateHexColor()) or playerName
-	
-								C_Timer.After(miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE, function()
-									if(playerInInspection and not playerSpecs[fullName]) then
-										NotifyInspect(unitID)
-	
-										pityTimer = C_Timer.NewTimer(10, function()
-											ClearInspectPlayer(true)
-											updateGroupData()
-										
-										end)
-									end
-								end)
-							end
-						else
-							playerSpecs[fullName] = GetSpecializationInfo(GetSpecialization())
-	
+						end
+					else
+						data = getOptionalPlayerData(fullPlayerName, shortName, realm, unitID)
+
+						if(not playerSpecs[fullPlayerName]) then
+							playerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
+
 						end
 					end
 
+					data.subgroup = subgroup
+					data.specID = playerSpecs[fullName] or 0
+					data.combatRole = combatRole or GetSpecializationRoleByID(data.specID)
+					data.index = groupIndex
+					data.unitID = unitID
+					data.online = online
+					data.fullName = fullName
+					data.fileName = fileName
+					data.name = playerName
+					data.realm = realm
+					
 					specCount[data.specID] = specCount[data.specID] and specCount[data.specID] + 1 or 1
-
-					if(data.combatRole == nil) then
-						data.combatRole = GetSpecializationRoleByID(data.specID)
-					end
-
-					if(data.specID ~= 0) then
-						playersWithSpecData = playersWithSpecData + 1
-					end
-
-					if(fullName == playerInInspection) then
-						inspectedPlayerStillInGroup = true
-					end
 
 					groupData[fullName] = data
 				end
@@ -758,11 +863,10 @@ local function updateGroupData()
 		else
 			local localizedClassName, fileName, id = UnitClass("player")
 			local bestMap = C_Map.GetBestMapForUnit("player")
-			--local specID = GetSpecializationInfo(GetSpecialization())
 
 			playerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
 
-			local data = getOptionalPlayerData(fullPlayerName)
+			local data = getOptionalPlayerData(fullPlayerName, shortName, realm, "player")
 		
 			data.index = nil
 			data.unitID = "player"
@@ -770,35 +874,8 @@ local function updateGroupData()
 			data.name = UnitNameUnmodified("player")
 			data.specID = playerSpecs[fullPlayerName] or 0
 			data.subgroup = 0
+			data.online = true
 			data.combatRole = "DAMAGER"
-
-			--[[groupData[fullPlayerName] = {
-				index = nil,
-				unitID = "player",
-				name = fullPlayerName,
-				shortName = UnitNameUnmodified("player"),
-				classID = id,
-				classFileName = fileName,
-				localizedClassName = localizedClassName,
-				role = "DAMAGER",
-				group = 0,
-				specID = specID,
-				rank = nil,
-				level = UnitLevel("player"),
-				zone = bestMap and C_Map.GetMapInfo(bestMap).name or "N/A",
-				online = true,
-				dead = UnitIsDead("player"),
-				raidRole = nil,
-				masterLooter = nil,
-
-				progressWeight = 0,
-				progress = "",
-				score = 0,
-			}]]
-
-			--playerSpecs[fullPlayerName] = specID
-
-			--getOptionalPlayerData(fullPlayerName)
 
 			if(miog.GroupManager) then
 				--local playerFrame = createCharacterFrame(groupData[fullPlayerName])
@@ -811,25 +888,19 @@ local function updateGroupData()
 				if(data.combatRole == nil) then
 					data.combatRole = GetSpecializationRoleByID(data.specID)
 				end
-
-				if(data.specID ~= 0) then
-					playersWithSpecData = playersWithSpecData + 1
-				end
 			end
 
 			groupData[fullPlayerName] = data
-
-			inspectableMembers = inspectableMembers + 1
 		end
 
-		if(not inspectedPlayerStillInGroup) then
+		inspectNextCharacter()
+
+		local dataProvider = CreateDataProvider()
+			
+		if(playerInInspection and not groupData[playerInInspection] or playerSpecs[playerInInspection]) then
 			ClearInspectPlayer(true)
 
 		end
-
-		miog.ClassPanel.LoadingSpinner:SetShown(playerInInspection ~= nil)
-
-		local dataProvider = CreateDataProvider()
 
 		for _, member in pairs(groupData) do
 			dataProvider:Insert(member)
@@ -856,10 +927,8 @@ local function updateGroupData()
 		
 			miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
 		end
-
-		miog.setInspectionData(currentInspectionName, playersWithSpecData, inspectableMembers)
-
 	end
+	print("END", GetTimePreciseSec() - start)
 end
 
 local readyCheckStatus = {}
@@ -902,12 +971,13 @@ local function groupManagerEvents(_, event, ...)
 
 		if(groupData[fullName]) then
 			playerSpecs[fullName] = GetInspectSpecialization(groupData[fullName].unitID)
-
-			startUpdate = true
+	
+			updateSingleCharacterSpecData(fullName)
 		end
 
 		if(playerInInspection == fullName) then
 			ClearInspectPlayer(true)
+			miog.ClassPanel.LoadingSpinner:SetShown(false)
 
 			if(pityTimer) then
 				pityTimer:Cancel()
@@ -917,7 +987,7 @@ local function groupManagerEvents(_, event, ...)
 		end
 
 		if(startUpdate) then
-			updateGroupData()
+			inspectNextCharacter()
 
 		end
 	elseif(event == "GROUP_JOINED") then
@@ -992,11 +1062,18 @@ local fullName = singleUnitInfo.nameFull
 ]]
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 	if(singleUnitInfo) then
+		if(singleUnitInfo.nameFull == shortName) then
+			singleUnitInfo.nameFull = fullPlayerName
+		end
+
 		if(groupData[singleUnitInfo.nameFull]) then
 			if(singleUnitInfo.specId and singleUnitInfo.specId > 0) then
+
 				playerSpecs[singleUnitInfo.nameFull] = singleUnitInfo.specId
 				
 				updateSingleCharacterSpecData(singleUnitInfo.nameFull)
+
+				inspectNextCharacter()
 			end
 		end
 	end
@@ -1015,11 +1092,27 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneInfo)
 	end
 end
 
+miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
+	--[[local itemLevelNumber = unitGear.ilevel
+	local durabilityNumber = unitGear.durability
+	--hasWeaponEnchant is 1 have enchant or 0 is don't
+	local hasWeaponEnchantNumber = unitGear.weaponEnchant
+	local noEnchantTable = unitGear.noEnchants
+	local noGemsTable = unitGear.noGems
+
+	for index, slotIdWithoutEnchant in ipairs (noEnchantTable) do
+	end
+
+	for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
+	end]]
+
+	updateSingleCharacterItemData(miog.createFullNameFrom("unitID", unitId), unitGear)
+end
+
 local function updateRaidLibData()
 	local isInRaid, isInGroup = IsInRaid(), IsInGroup()
 
 	if(isInRaid or isInGroup) then
-		miog.openRaidLib.GetAllUnitsGear()
 		miog.openRaidLib.GetAllUnitsInfo()
 
 		if(isInRaid) then
@@ -1035,7 +1128,9 @@ end
 miog.loadInspectManagement = function()
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
-	
+	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
+   
+   --registering the callback:
 	local inspectManager = CreateFrame("Frame", nil)
 	inspectManager:Hide()
 
@@ -1050,7 +1145,7 @@ miog.loadInspectManagement = function()
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	
-	shortName = GetUnitName("player", false)
+	shortName, realm = miog.createSplitName(fullPlayerName)
 	miog.fullPlayerName, miog.shortPlayerName = fullPlayerName, shortName
 end
 
@@ -1073,6 +1168,7 @@ miog.loadGroupManager = function()
 
 	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", function()
 		updateRaidLibData()
+		updateGroupData()
 
 	end)
 
@@ -1114,9 +1210,20 @@ miog.loadGroupManager = function()
 	miog.GroupManager.Indepth:OnLoad("side")
 end
 
+hooksecurefunc("NotifyInspect", function()
+	lastNotifyTime = GetTimePreciseSec()
+
+	updateInspectionText()
+
+	--print("NOTIFY", currentInspectionName)
+end)
+
 hooksecurefunc("ClearInspectPlayer", function(own)
 	if(own) then
+		--print("CLEAR", currentInspectionName)
+
 		playerInInspection = nil
 		currentInspectionName = nil
+		updateInspectionText()
 	end
 end)

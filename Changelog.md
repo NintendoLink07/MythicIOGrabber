@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.2.2] - 2025-02-29
+
+### Fixed
+
+- The currencies in the mainframe have been updated to season 2.
+
+- [GroupManager] Altered the inspection algorithm, should be more reliable and less performance intensive.
+
+
+
 ## [3.2.1] - 2025-02-27
 
 ### Fixed

@@ -73,6 +73,7 @@ Mixins\GraphMixin.lua
 XML\MIOG_FakeDropdownButton.xml
 
 XML\MIOG_MainFrameTemplate.xml
+XML\MIOG_MainFrameRoleTemplate.xml
 XML\MIOG_Plugin.xml
 
 XML\MIOG_QueueFrame.xml

@@ -270,6 +270,7 @@ miog.C = {
 	-- I have played around with many different delays or different request "sets" (e.g. every 3 seconds 2 applicants, every 5 seconds 4 applicants) but nothing seems to work as well as: if number of members < 6 all instantly, otherwise every 1.5 seconds (?????????)
 	BLIZZARD_INSPECT_THROTTLE = 1.5,
 	BLIZZARD_INSPECT_THROTTLE_SAVE = 2,
+	BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE = 2.5,
 
 	BACKUP_SEASON_ID = 14,
 
@@ -307,12 +308,6 @@ miog.C = {
 	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:16:16|t",
 	STAR_TEXTURE = "⋆",
 	
-	AVAILABLE_ROLES = {
-		["TANK"] = false,
-		["HEALER"] = false,
-		["DAMAGER"] = false
-	},
-
 	SEASON_AVAILABLE = {
 		[12] = {
 			sinceEpoch = 1713942000,
@@ -369,6 +364,14 @@ miog.CURRENCY_INFO = {
 		{id = 2914,},
 		{id = 3008,},
 		{id = 2813,}, --catalyst
+	},
+	[14] = {
+		{id = 3107,},
+		{id = 3108,},
+		{id = 3109,},
+		{id = 3110,},
+		{id = 3008,},
+		{id = 3116,}, --catalyst
 	}
 }
 
@@ -377,13 +380,8 @@ miog.CURRENCY_INFO = {
 miog.F = {
 	IS_RAIDERIO_LOADED = false,
 	IS_IN_DEBUG_MODE = false,
-	
-	CURRENT_DUNGEON_DIFFICULTY = 0,
-	CURRENT_RAID_DIFFICULTY = 0,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],
-	CURRENT_SEASON = nil,
-	PREVIOUS_SEASON = nil,
 
 	LFG_STATE = "solo",
 

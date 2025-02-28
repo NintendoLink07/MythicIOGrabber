@@ -539,7 +539,8 @@ local function updateScrollBoxFrame(frame, data)
 		currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 
 		currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
-			EncounterJournal_OpenJournal(miog.F.CURRENT_DUNGEON_DIFFICULTY, instanceID, nil, nil, nil, nil)
+			local diff = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1]
+			EncounterJournal_OpenJournal(diff, instanceID, nil, nil, nil, nil)
 
 		end)
 
@@ -791,9 +792,7 @@ local function searchResultsReceived()
 end
 
 local function searchPanelEvents(_, event, ...)
-	if(event == "PLAYER_LOGIN") then
-
-	elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
+	if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
 		miog.SearchPanel.totalResults = LFGListFrame.SearchPanel.totalResults
 		miog.SearchPanel.results = LFGListFrame.SearchPanel.results
 

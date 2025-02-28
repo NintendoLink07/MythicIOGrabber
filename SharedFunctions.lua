@@ -4,7 +4,8 @@ local wticc = WrapTextInColorCode
 miog.ONCE = true
 
 miog.updateCurrencies = function()
-	local currentSeason = 13 or C_MythicPlus.GetCurrentSeason()
+	local currentSeason = miog.C.BACKUP_SEASON_ID or C_MythicPlus.GetCurrentSeason()
+
 	if(currentSeason > -1) then
 		local currencyTable = miog.CURRENCY_INFO[currentSeason]
 
@@ -210,7 +211,7 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 end
 
 local function calculateWeightedScore(difficulty, kills, bossCount, current, ordinal)
-	return kills > 0 and (difficulty * difficulty * 10) + (kills / bossCount * 40) * (current and 1.5 or 1) or 0
+	return kills > 0 and (difficulty * difficulty * difficulty * 10) + (kills / bossCount * 40) * (current and 1.5 or 1) or 0
 
 	--return (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (ordinal or 0)
 end
@@ -251,21 +252,17 @@ local function retrieveCategoryGroups(categoryID)
     return raidInfo
 end
 
-local function getNewRaidSortData(playerName, realm, region)
-	local profile
-	
-	if(RaiderIO) then
-		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
-	end
-	
+local function getNewRaidSortData(playerName, realm, region, existingProfile)
 	local raidData
 
 	local raidInfo = retrieveCategoryGroups(2)
 
-	if(raidInfo) then
+	if(raidInfo and RaiderIO) then
+		local profile = existingProfile or RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+		
 		if(profile) then
 			if(profile.raidProfile) then
-				raidData = {character = {raids = {}, ordered = {}}, main = {raids = {}, ordered = {}}}
+				raidData = {character = {raids = {}, ordered = {}, progressWeight = 0}, main = {raids = {}, ordered = {}, progressWeight = 0}}
 
 				for k, d in ipairs(profile.raidProfile.raidProgress) do
 					local currentTable = d.isMainProgress and raidData.main or raidData.character
@@ -287,6 +284,8 @@ local function getNewRaidSortData(playerName, realm, region)
 					local modeTable = isAwakened and currentTable.raids[mapID].awakened or currentTable.raids[mapID].regular
 
 					for x, y in ipairs(d.progress) do
+						local weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+
 						modeTable.difficulties[y.difficulty] = {
 							difficulty = y.difficulty,
 							current = d.current,
@@ -294,10 +293,12 @@ local function getNewRaidSortData(playerName, realm, region)
 							cleared = y.cleared,
 							mapID = mapID,
 							shortName = currentTable.raids[mapID].shortName,
-							weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal),
+							weight = weight,
 							parsedString = y.kills .. "/" .. d.raid.bossCount,
 							bosses = {},
 						}
+
+						currentTable.progressWeight = currentTable.progressWeight + weight
 
 						for a, b in ipairs(y.progress) do
 							modeTable.difficulties[y.difficulty].bosses[a] = {
@@ -353,94 +354,135 @@ end
 
 miog.getNewRaidSortData = getNewRaidSortData
 
-local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable)
+local function getMPlusScoreOnly(playerName, realm, region, existingProfile)
 	local profile
 	
 	if(RaiderIO) then
 		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region and strlower(region) or miog.F.CURRENT_REGION)
-	end
 
-	if(profile) then
-		local mplusData = {}
-		local intimeInfo, overtimeInfo
-
-		if(profile.mythicKeystoneProfile) then
-			if(profile.mythicKeystoneProfile.sortedDungeons) then
-				for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
-					if(returnAsBlizzardTable) then
-						local table
-
-						if(dungeonEntry.chests > 0) then
-							intimeInfo = intimeInfo or {}
-							table = intimeInfo
-
-						else
-							overtimeInfo = overtimeInfo or {}
-							table = overtimeInfo
-
-						end
-
-						table[dungeonEntry.dungeon.keystone_instance] = {
-							durationSec = dungeonEntry.dungeon.timers[dungeonEntry.chests == 0 and 3 or dungeonEntry.chests == 1 and 2 or dungeonEntry.chests == 2 and 1] + (dungeonEntry.chests < 3 and 1 or -1),
-							level = dungeonEntry.level,
-						}
-						
-						--table[dungeonEntry.dungeon.keystone_instance].dungeonScore = miog.calculateMapScore(dungeonEntry.dungeon.keystone_instance, table[dungeonEntry.dungeon.keystone_instance])
-
-					else
-						mplusData[dungeonEntry.dungeon.instance_map_id] = {
-							level = profile.mythicKeystoneProfile.dungeons[i],
-							chests = profile.mythicKeystoneProfile.dungeonUpgrades[i]
-						}
-
-					end
-				end
-			end
-
-			if(not returnAsBlizzardTable) then
-				mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
-				mplusData.previousScore = profile.mythicKeystoneProfile.mplusPrevious
-		
-				mplusData.mainScore = profile.mythicKeystoneProfile.mplusMainCurrent
-				mplusData.mainPreviousScore = profile.mythicKeystoneProfile.mplusMainPrevious
-		
-				mplusData.keystoneMilestone2 = profile.mythicKeystoneProfile.keystoneMilestone2
-				mplusData.keystoneMilestone4 = profile.mythicKeystoneProfile.keystoneMilestone4
-				mplusData.keystoneMilestone7 = profile.mythicKeystoneProfile.keystoneMilestone7
-				mplusData.keystoneMilestone10 = profile.mythicKeystoneProfile.keystoneMilestone10
-				mplusData.keystoneMilestone12 = profile.mythicKeystoneProfile.keystoneMilestone12
-				mplusData.keystoneMilestone15 = profile.mythicKeystoneProfile.keystoneMilestone15
-
-			else
-				mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
-
-			end
-
-		else
-			if(not returnAsBlizzardTable) then
-				mplusData.score = {score = 0}
-				mplusData.previousScore = {score = 0}
-		
-				mplusData.mainScore = {score = 0}
-				mplusData.mainPreviousScore = {score = 0}
-		
-				mplusData.keystoneMilestone2 = 0
-				mplusData.keystoneMilestone4 = 0
-				mplusData.keystoneMilestone7 = 0
-				mplusData.keystoneMilestone10 = 0
-				mplusData.keystoneMilestone12 = 0
-				mplusData.keystoneMilestone15 = 0
-
-			else
+		if(profile) then
+			if(profile.mythicKeystoneProfile) then
+				return profile.mythicKeystoneProfile.mplusCurrent.score
 
 			end
 		end
+	end
 
-		return mplusData, intimeInfo, overtimeInfo
+	return 0
+end
+miog.getMPlusScoreOnly = getMPlusScoreOnly
+
+
+local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable, existingProfile)
+	if(RaiderIO) then
+		local profile = existingProfile or RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region and strlower(region) or miog.F.CURRENT_REGION)
+
+		if(profile) then
+			local mplusData = {}
+			local intimeInfo, overtimeInfo
+	
+			if(profile.mythicKeystoneProfile) then
+				if(profile.mythicKeystoneProfile.sortedDungeons) then
+					for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
+						if(returnAsBlizzardTable) then
+							local table
+	
+							if(dungeonEntry.chests > 0) then
+								intimeInfo = intimeInfo or {}
+								table = intimeInfo
+	
+							else
+								overtimeInfo = overtimeInfo or {}
+								table = overtimeInfo
+	
+							end
+	
+							table[dungeonEntry.dungeon.keystone_instance] = {
+								durationSec = dungeonEntry.dungeon.timers[dungeonEntry.chests == 0 and 3 or dungeonEntry.chests == 1 and 2 or dungeonEntry.chests == 2 and 1] + (dungeonEntry.chests < 3 and 1 or -1),
+								level = dungeonEntry.level,
+							}
+							
+							--table[dungeonEntry.dungeon.keystone_instance].dungeonScore = miog.calculateMapScore(dungeonEntry.dungeon.keystone_instance, table[dungeonEntry.dungeon.keystone_instance])
+	
+						else
+							mplusData[dungeonEntry.dungeon.instance_map_id] = {
+								level = profile.mythicKeystoneProfile.dungeons[i],
+								chests = profile.mythicKeystoneProfile.dungeonUpgrades[i]
+							}
+	
+						end
+					end
+				end
+	
+				if(not returnAsBlizzardTable) then
+					mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
+					mplusData.previousScore = profile.mythicKeystoneProfile.mplusPrevious
+			
+					mplusData.mainScore = profile.mythicKeystoneProfile.mplusMainCurrent
+					mplusData.mainPreviousScore = profile.mythicKeystoneProfile.mplusMainPrevious
+			
+					mplusData.keystoneMilestone2 = profile.mythicKeystoneProfile.keystoneMilestone2
+					mplusData.keystoneMilestone4 = profile.mythicKeystoneProfile.keystoneMilestone4
+					mplusData.keystoneMilestone7 = profile.mythicKeystoneProfile.keystoneMilestone7
+					mplusData.keystoneMilestone10 = profile.mythicKeystoneProfile.keystoneMilestone10
+					mplusData.keystoneMilestone12 = profile.mythicKeystoneProfile.keystoneMilestone12
+					mplusData.keystoneMilestone15 = profile.mythicKeystoneProfile.keystoneMilestone15
+	
+				else
+					mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
+	
+				end
+	
+			else
+				if(not returnAsBlizzardTable) then
+					mplusData.score = {score = 0}
+					mplusData.previousScore = {score = 0}
+			
+					mplusData.mainScore = {score = 0}
+					mplusData.mainPreviousScore = {score = 0}
+			
+					mplusData.keystoneMilestone2 = 0
+					mplusData.keystoneMilestone4 = 0
+					mplusData.keystoneMilestone7 = 0
+					mplusData.keystoneMilestone10 = 0
+					mplusData.keystoneMilestone12 = 0
+					mplusData.keystoneMilestone15 = 0
+	
+				else
+	
+				end
+			end
+	
+			return mplusData, intimeInfo, overtimeInfo
+		end
 	end
 end
-
 miog.getMPlusSortData = getMPlusSortData
+
+
+local function getMPlusAndRaidData(playerName, realm, region)
+	local profile
+	
+	if(RaiderIO) then
+		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	end
+
+	return getMPlusSortData(playerName, realm, region, nil, profile), getNewRaidSortData(playerName, realm, region, profile)
+end
+miog.getMPlusAndRaidData = getMPlusAndRaidData
+
+
+local function getMPlusScoreAndRaidData(playerName, realm, region)
+	local profile
+	
+	if(RaiderIO) then
+		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	end
+
+	return getMPlusScoreOnly(playerName, realm, region, profile), getNewRaidSortData(playerName, realm, region, profile)
+end
+miog.getMPlusScoreAndRaidData = getMPlusScoreAndRaidData
+
 
 miog.updateFooterBarResults = function(filteredResultNumber, totalResultNumber, setSearchScript)
 	miog.Plugin.FooterBar.Results:SetText(filteredResultNumber .. "(" .. totalResultNumber .. ")")
@@ -956,15 +998,6 @@ end
 local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityIDs[1])
-
-	--miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons.secondary:Enable()
-
-	if(activityInfo.categoryID == 2) then --Dungeons
-		miog.F.CURRENT_DUNGEON_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_DUNGEON_DIFFICULTY
-
-	elseif(activityInfo.categoryID == 3) then --Raids
-		miog.F.CURRENT_RAID_DIFFICULTY = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1] or miog.F.CURRENT_RAID_DIFFICULTY
-	end
 
 	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityIDs[1]] and miog.ACTIVITY_INFO[entryInfo.activityIDs[1]].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 

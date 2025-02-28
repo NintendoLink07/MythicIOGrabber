@@ -240,30 +240,6 @@ miog.loadNewSettings = function()
 
 end
 
-miog.loadNewSettingsAfterFrames = function()
-    --[[for k, v in pairs(MIOG_NewSettings.sortMethods) do
-        local buttonArray = k == "LFGListFrame.ApplicationViewer" and miog.ApplicationViewer.ButtonPanel.sortByCategoryButtons
-        or k == "LFGListFrame.SearchPanel" and miog.SearchPanel.ButtonPanel.sortByCategoryButtons
-        or k == "GroupManager" and miog.GroupManager and miog.GroupManager.sortByCategoryButtons
-        or k == "Guild" and miog.Guild and miog.Guild.sortByCategoryButtons
-
-        if(buttonArray) then
-            for sortKey, row in pairs(v) do
-                if(buttonArray[sortKey]) then
-                    if(row.active == true) then
-                        buttonArray[sortKey]:SetState(row.active, row.currentState)
-                        buttonArray[sortKey].FontString:SetText(row.currentLayer)
-
-                    else
-                        buttonArray[sortKey]:SetState(false)
-
-                    end
-                end
-            end
-        end
-    end]]
-end
-
 function MIOG_OpenInterfaceOptions()
 	Settings.OpenToCategory(category:GetID())
 end

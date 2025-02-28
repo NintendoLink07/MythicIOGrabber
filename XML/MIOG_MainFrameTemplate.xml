@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" movable="true" hidden="true" virtual="true" registerForDrag="LeftButton" parent="UIParent"> <!-- mixin="WeeklyRewardsMixin" -->
+    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" movable="true" hidden="true" virtual="true" registerForDrag="LeftButton" parent="UIParent">
         <Frames>
             <Frame parentKey="CategoryHoverFrame" inherits="VerticalLayoutFrame" hidden="true" frameLevel="10000">
                 <KeyValues>
@@ -250,127 +250,37 @@
                                         </Anchors>
 
                                         <Frames>
-                                            <Frame parentKey="Leader">
-                                                <Size x="40" y="22" />
-
+                                            <Frame parentKey="Leader" inherits="MIOG_MainFrameRoleTemplate">
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5"/>
                                                 </Anchors>
-
-                                                <Frames>
-                                                    <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
-                                                        <Size x="22" y="22" />
-                                                        <Anchors>
-                                                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
-                                                        </Anchors>
-                                                    </CheckButton>
-                                                </Frames>
-
-                                                <Layers>
-                                                    <Layer level="ARTWORK">
-                                                        <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/leaderIcon.png">
-                                                            <Size x="18" y="18" />
-                                                            <Anchors>
-                                                                <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
-                                                            </Anchors>
-                                                        </Texture>
-                                                    </Layer>
-                                                </Layers>
                                             </Frame>
 
-                                            <Frame parentKey="Tank">
+                                            <Frame parentKey="Tank" inherits="MIOG_MainFrameRoleTemplate">
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="5"/>
                                                 </Anchors>
-
-                                                <Frames>
-                                                    <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
-                                                        <Size x="22" y="22" />
-                                                        <Anchors>
-                                                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
-                                                        </Anchors>
-                                                    </CheckButton>
-                                                </Frames>
-
-                                                <Layers>
-                                                    <Layer level="ARTWORK">
-                                                        <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/tankIcon.png">
-                                                            <Size x="18" y="18" />
-                                                            <Anchors>
-                                                                <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
-                                                            </Anchors>
-                                                        </Texture>
-                                                    </Layer>
-                                                </Layers>
                                             </Frame>
 
-                                            <Frame parentKey="Healer">
+                                            <Frame parentKey="Healer" inherits="MIOG_MainFrameRoleTemplate">
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="5"/>
                                                 </Anchors>
-
-                                                <Frames>
-                                                    <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
-                                                        <Size x="22" y="22" />
-                                                        <Anchors>
-                                                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
-                                                        </Anchors>
-                                                    </CheckButton>
-                                                </Frames>
-
-                                                <Layers>
-                                                    <Layer level="ARTWORK">
-                                                        <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png">
-                                                            <Size x="18" y="18" />
-                                                            <Anchors>
-                                                                <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
-                                                            </Anchors>
-                                                        </Texture>
-                                                    </Layer>
-                                                </Layers>
                                             </Frame>
 
-                                            <Frame parentKey="Damager">
+                                            <Frame parentKey="Damager" inherits="MIOG_MainFrameRoleTemplate">
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
                                                     <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="5"/>
                                                 </Anchors>
-
-                                                <Frames>
-                                                    <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
-                                                        <Size x="22" y="22" />
-                                                        <Anchors>
-                                                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
-                                                        </Anchors>
-                                                    </CheckButton>
-                                                </Frames>
-
-                                                <Layers>
-                                                    <Layer level="ARTWORK">
-                                                        <Texture parentKey="Icon" file="Interface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png">
-                                                            <Size x="18" y="18" />
-                                                            <Anchors>
-                                                                <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT" />
-                                                            </Anchors>
-                                                        </Texture>
-                                                    </Layer>
-                                                </Layers>
                                             </Frame>
-
                                         </Frames>
                                     </Frame>
-
-                                    <!--<DropdownButton parentKey="Local_SlickerDropdown" inherits="WowStyle1DropdownTemplate, MIOG_SlickerDropdownBaseTemplate">
-                                        <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT"/>
-                                        </Anchors>
-                                    </DropdownButton>!-->
 
                                     <DropdownButton parentKey="FakeDropdown" inherits="WowStyle1DropdownTemplate" mixin="FakeDropdownMixin">
                                         <Size y="25" />
@@ -383,21 +293,6 @@
                                             <OnClick method="OnClick" />
                                         </Scripts>
                                     </DropdownButton>
-
-                                    <!--<Frame parentKey="DropDown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" frameLevel="5">
-                                        <Size y="25" />
-                                        <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMRIGHT" x="-25"/>
-                                        </Anchors>
-                                    </Frame>!-->
-
-                                    <!--<DropdownButton parentKey="ActivityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
-                                        <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.BonusSpecificPoint" relativePoint="BOTTOMRIGHT" x="-25"/>
-                                        </Anchors>
-                                    </DropdownButton>!-->
 
                                     <Button parentKey="Requeue" inherits="BigRedRefreshButtonTemplate">
                                         <Size x="25" y="25" />

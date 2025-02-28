@@ -11,19 +11,14 @@ local function mainEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
         miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()
 
-		miog.C.AVAILABLE_ROLES["TANK"], miog.C.AVAILABLE_ROLES["HEALER"], miog.C.AVAILABLE_ROLES["DAMAGER"] = UnitGetAvailableRoles("player")
-
 		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
 			miog.F.IS_RAIDERIO_LOADED = true
 
 		end
+
 		miog.loadNewSettings()
-		
 		miog.loadRawData()
-
 		miog.createFrames()
-
-		miog.loadNewSettingsAfterFrames()
 		
 		EJ_SetDifficulty(8)
 		
@@ -38,42 +33,6 @@ local function mainEvents(_, event, ...)
 				miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k
 			end
 		end
-		
-		if(not miog.F.LITE_MODE) then
-			if(PVPUIFrame) then
-				--[[PVPUIFrame:HookScript("OnShow", function()
-					--ConquestFrame.selectedButton = nil
-					--ConquestFrame.RatedBG.SelectedTexture:Hide()
-					--ConquestFrame.ratedSoloShuffleEnabled = false
-					--ConquestFrame.arenasEnabled = false
-				end)]]
-				
-				hooksecurefunc("HonorFrame_InitSpecificButton", function(button, elementData)
-					button:SetHeight(40)
-					button.Bg:Hide()
-					button.Border:Hide()
-					button.Icon:Hide()
-					button.InfoText:Hide()
-					--button.SelectedTexture:Hide()
-
-					button:SetNormalAtlas("pvpqueue-button-casual-up")
-					button:SetPushedAtlas("pvpqueue-button-casual-down")
-					button:SetHighlightAtlas("pvpqueue-button-casual-highlight", "ADD")
-
-					button.SizeText:ClearAllPoints()
-					button.SizeText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
-					button.SizeText:SetPoint("LEFT", button, "LEFT", 5, 0)
-
-					button.NameText:ClearAllPoints()
-					button.NameText:SetFont("SystemFont_Shadow_Med1", 11, "OUTLINE")
-					button.NameText:SetTextColor(1, 1, 1, 1)
-					button.NameText:SetPoint("LEFT", button.SizeText, "RIGHT", 5, 0)
-				end)
-			end
-		end
-	elseif(event == "PLAYER_ENTERING_WORLD") then
-		C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
-
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 		miog.setAffixes()

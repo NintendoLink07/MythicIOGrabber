@@ -827,6 +827,8 @@ end
  --workaround, gets most characters if they've been converted with the warband feature, you don't even have to be logged in first or used this addon.
  --just has to have atleast a single type of currency (money (copper, silver, gold) doesn't count)
 function ProgressTabMixin:RequestAccountCharacters()
+	C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
+	
 	accountCharacters = {}
 
 	local charList = {}

@@ -79,14 +79,6 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 	end
 end
 
-local function setRoles()
-	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
-	
-	SetLFGRoles(queueRolePanel.Leader.Checkbox:GetChecked(), queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
-	SetPVPRoles(queueRolePanel.Tank.Checkbox:GetChecked(), queueRolePanel.Healer.Checkbox:GetChecked(), queueRolePanel.Damager.Checkbox:GetChecked())
-
-end
-
 local activityIndices = {
 	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
 	Enum.WeeklyRewardChestThresholdType.Raid, -- raid
@@ -130,13 +122,6 @@ local function createPVEFrameReplacement()
 		--miog.updateProgressData()
 
 		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_NewSettings.lastGroup)
-		
-		if(miog.F.CURRENT_SEASON == nil or miog.F.PREVIOUS_SEASON == nil) then
-			local currentSeason = C_MythicPlus.GetCurrentSeason()
-
-			miog.F.CURRENT_SEASON = currentSeason
-			miog.F.PREVIOUS_SEASON = currentSeason - 1
-		end
 
 		miog.F.CURRENT_REGION = miog.F.CURRENT_REGION or miog.C.REGIONS[GetCurrentRegion()]
 
@@ -265,39 +250,27 @@ local function createPVEFrameReplacement()
 	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 
 	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
-	local leader, tank, healer, damager = LFDQueueFrame_GetRoles()
+	local leaderChecked, tankChecked, healerChecked, damagerChecked = LFDQueueFrame_GetRoles()
 
-	queueRolePanel.Leader.Checkbox:SetChecked(leader)
-	queueRolePanel.Leader.Checkbox:SetScript("OnClick", function(self)
-		setRoles()
-	end)
+	queueRolePanel.Leader.Checkbox:SetChecked(leaderChecked)
+	queueRolePanel.Leader.Icon:SetTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/leaderIcon.png")
 
-	queueRolePanel.Tank.Checkbox:SetChecked(tank)
-	queueRolePanel.Tank.Checkbox:SetEnabled(miog.C.AVAILABLE_ROLES["TANK"])
-	queueRolePanel.Tank.Icon:SetDesaturated(not miog.C.AVAILABLE_ROLES["TANK"])
-	queueRolePanel.Tank.Checkbox:SetScript("OnClick", function(self)
-		setRoles()
-	end)
+	local tankAvailable, healerAvailable, damagerAvailable = UnitGetAvailableRoles("player")
 
-	queueRolePanel.Healer.Checkbox:SetChecked(healer)
-	queueRolePanel.Healer.Checkbox:SetEnabled(miog.C.AVAILABLE_ROLES["HEALER"])
-	queueRolePanel.Healer.Icon:SetDesaturated(not miog.C.AVAILABLE_ROLES["HEALER"])
-	queueRolePanel.Healer.Checkbox:SetScript("OnClick", function(self)
-		setRoles()
-	end)
+	queueRolePanel.Tank.Checkbox:SetChecked(tankChecked)
+	queueRolePanel.Tank.Checkbox:SetEnabled(tankAvailable)
+	queueRolePanel.Tank.Icon:SetTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/tankIcon.png")
+	queueRolePanel.Tank.Icon:SetDesaturated(not tankAvailable)
 
-	queueRolePanel.Damager.Checkbox:SetChecked(damager)
-	queueRolePanel.Damager.Checkbox:SetEnabled(miog.C.AVAILABLE_ROLES["DAMAGER"])
-	queueRolePanel.Damager.Icon:SetDesaturated(not miog.C.AVAILABLE_ROLES["DAMAGER"])
-	queueRolePanel.Damager.Checkbox:SetScript("OnClick", function(self)
-		setRoles()
-	end)
-	
-	setRoles()
+	queueRolePanel.Healer.Checkbox:SetChecked(healerChecked)
+	queueRolePanel.Healer.Checkbox:SetEnabled(healerAvailable)
+	queueRolePanel.Healer.Icon:SetTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png")
+	queueRolePanel.Healer.Icon:SetDesaturated(not healerAvailable)
 
-	--local queueDropDown = miog.MainTab.QueueInformation.DropDown
-	--queueDropDown:OnLoad()
-	--queueDropDown:SetText("Select an activity")
+	queueRolePanel.Damager.Checkbox:SetChecked(damagerChecked)
+	queueRolePanel.Damager.Checkbox:SetEnabled(damagerAvailable)
+	queueRolePanel.Damager.Icon:SetTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png")
+	queueRolePanel.Damager.Icon:SetDesaturated(not damagerAvailable)
 
 	local formatter = CreateFromMixins(SecondsFormatterMixin)
 	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
