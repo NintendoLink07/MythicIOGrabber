@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning].
 
 - The background images for the season 2 dungeons and raid have been updated.
 
+- The addon is tracking the vault rewards for all characters in the background.
+This will be part of a graph in v3.2.3 to track all chars individual progress of all vault categories.
+
 ### Changed
 
 - [GroupManager] The raid manager frames have been re-enabled, the performance issues should be resolved.

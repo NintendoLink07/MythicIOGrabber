@@ -8,7 +8,7 @@ function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
     local mythicPlusInfo = {}
     local raidInfo = {}
     
-    for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.CurrentExpansion))) do
+    for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
         local activities = C_LFGList.GetAvailableActivities(2, v)
         local activityID = activities[#activities]
 
@@ -340,6 +340,8 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                                 local currentBoss = "Boss" .. z
     
                                                 if(currentTable.difficulties[a].bosses[z].killed) then
+
+                                                    print(a, z)
     
                                                     if(raidFrame.Bosses[currentBoss].Border) then
                                                         raidFrame.Bosses[currentBoss].Border:SetColorTexture(miog.DIFFICULTY[a].miogColors:GetRGBA());

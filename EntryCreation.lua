@@ -282,8 +282,8 @@ local function gatherAllActivities(dropdown, rootDescription)
 		local mythicPlusTable = {}
 		local currentExpansionDungeons = {}
 
-		local seasonGroups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))
-
+		local seasonGroups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
+		
 		for k, v in ipairs(seasonGroups) do
 			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, v)
 			local activityID = activities[#activities]C_LFGList.GetActivityGroupInfo(v)

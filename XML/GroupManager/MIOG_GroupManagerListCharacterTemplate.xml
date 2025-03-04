@@ -14,9 +14,7 @@
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2"/>
                     </Anchors>
                 </FontString>
-            </Layer>
 
-            <Layer level="ARTWORK">
                 <Texture parentKey="Role">
                     <Size x="17" y="17"/>
                     
@@ -32,21 +30,7 @@
                         <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="4"/>
                     </Anchors>
                 </Texture>
-            </Layer>
 
-            <Layer level="ARTWORK">
-                <Texture parentKey="ReadyBorder">
-                    <Size x="17" y="17"/>
-
-                    <Color r="0" g="0" b="0" a="0.75" />
-                    
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-8"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-
-            <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                     <Size x="100" />
                     <Anchors>
@@ -88,6 +72,16 @@
                         <Anchor point="LEFT" relativeKey="$parent.Progress" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </FontString>
+
+                <Texture parentKey="ReadyBorder">
+                    <Size x="17" y="17"/>
+
+                    <Color r="0" g="0" b="0" a="0.75" />
+                    
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-8"/>
+                    </Anchors>
+                </Texture>
 
                 <Texture parentKey="Ready">
                     <Color r="0.2" g="0.2" b="0.2" a="0.75" />

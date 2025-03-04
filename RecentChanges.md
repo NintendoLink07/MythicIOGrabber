@@ -1,10 +1,11 @@
 ## [3.2.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2) - 2025-03-04
 
-### Added
-
 - The currencies in the mainframe have been updated to season 2.
 
 - The background images for the season 2 dungeons and raid have been updated.
+
+- The addon is tracking the vault rewards for all characters in the background.
+This will be part of a graph in v3.2.3 to track all chars individual progress of all vault categories.
 
 ### Changed
 
