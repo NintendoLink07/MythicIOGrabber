@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.2.2] - 2025-03-03
+## [3.2.2] - 2025-03-04
+
+### Added
+
+- The currencies in the mainframe have been updated to season 2.
+
+- The background images for the season 2 dungeons and raid have been updated.
+
+### Changed
+
+- [GroupManager] The raid manager frames have been re-enabled, the performance issues should be resolved.
+
+- [GroupManager] The character's guild line has been removed, because the retrieval of guild info has been flaky at best.
+
+- [GroupManager] All members in the normal list are now visually separated.
 
 ### Fixed
 
@@ -15,15 +29,7 @@ and this project adheres to [Semantic Versioning].
 
 - Thanks to the new Blizzard performance meters for addons I switched some things around and MIOG's startup lod times have been reduced by a factor of 3.
 
-- The currencies in the mainframe have been updated to season 2.
-
 - [GroupManager] Altered the inspection algorithm, should be more reliable and less performance intensive.
-
-- [GroupManager] The raid manager frames have been re-enabled, the performance issues should be resolved.
-
-- [GroupManager] The character's guild line has been removed, because the retrieval of guild info has been flaky at best.
-
-- [GroupManager] All members in the normal list are now visually separated.
 
 
 
@@ -3245,7 +3251,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.2..HEAD
+[3.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2
 [3.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.1
 [3.2.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.0a
 [3.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2
