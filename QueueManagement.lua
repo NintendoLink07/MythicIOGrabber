@@ -897,7 +897,7 @@ miog.loadQueueSystem = function()
 	--eventReceiver:RegisterEvent("LFG_UPDATE")
 	--eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")wdwwdwwasdwadw
 	--eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 	--eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
 	--eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")

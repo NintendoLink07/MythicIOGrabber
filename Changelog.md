@@ -7,13 +7,23 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.2.2] - 2025-02-29
+## [3.2.2] - 2025-03-03
 
 ### Fixed
+
+- Lite mode has been updated / fixed for 11.1.
+
+- Thanks to the new Blizzard performance meters for addons I switched some things around and MIOG's startup lod times have been reduced by a factor of 3.
 
 - The currencies in the mainframe have been updated to season 2.
 
 - [GroupManager] Altered the inspection algorithm, should be more reliable and less performance intensive.
+
+- [GroupManager] The raid manager frames have been re-enabled, the performance issues should be resolved.
+
+- [GroupManager] The character's guild line has been removed, because the retrieval of guild info has been flaky at best.
+
+- [GroupManager] All members in the normal list are now visually separated.
 
 
 

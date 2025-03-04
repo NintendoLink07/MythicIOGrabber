@@ -1,13 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Button name="MIOG_GroupManagerListCharacterTemplate" registerForClicks="RightButtonUp, LeftButtonUp" inherits="UIButtonTemplate" virtual="true">
-        <Size y="20" />
 
         <KeyValues>
 			<KeyValue key="expand" value="true" type="boolean"/>
 		</KeyValues>
-
-		<HighlightTexture parentKey="HighlightTexture" atlas="auctionhouse-ui-row-highlight" useAtlasSize="false" alphaMode="ADD" setAllPoints="true" />
 
         <Layers>
             <Layer level="OVERLAY">
@@ -199,6 +196,10 @@
                     GameTooltip:Show()
                 end
             </OnEnter>
+            <OnLoad>
+                self:SetNormalAtlas("communitiesfinder-card")
+                self:SetHighlightAtlas("communitiesfinder-card")
+            </OnLoad>
             <OnLeave function="GameTooltip_Hide" />
         </Scripts>
     </Button>

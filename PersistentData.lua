@@ -734,18 +734,18 @@ miog.MAP_INFO = {
 		shortName = "NP",
 		iconName = "nerubarpalance",
 		bgName = "nerubarpalace",
-	},	
+	},
 	
 	[2769] = {
 		bossIcons = {
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/ulgrax.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/bloodboundhorror.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/sikran.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/rashanan.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/ovinax.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/kyveza.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/silkencourt.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/queenansurek.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/vexie.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/carnage.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/rik.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/lockenstock.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/stix.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/bandit.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/mugzee.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/gallywix.png"},
 		},
 		shortName = "LOU",
 		iconName = "casino",
@@ -989,19 +989,15 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
 
 			if(miog.MAP_INFO[v[10]].achievementCategory) then
-				checkForMapAchievements(v[10])
-			end
-			--checkForMapAchievements(v[10])
+				--checkForMapAchievements(v[10])
 
-			if(miog.ACTIVITY_INFO[v[1]].horizontal == nil) then
-				miog.ACTIVITY_INFO[v[1]].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4]]
-				
 			end
-		else
-			miog.ACTIVITY_INFO[v[1]].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4]]
-
 		end
-	
+
+		if(miog.ACTIVITY_INFO[v[1]].horizontal == nil) then
+			miog.ACTIVITY_INFO[v[1]].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4]]
+			
+		end
 	end
 
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
@@ -1504,7 +1500,11 @@ miog.CLASSES = {
 	[100] =	{name = "EMPTY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/unknown.png", specs = {}},
 }
 
-miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID = {}
+miog.OFFICIAL_CLASSES = {}
+
+for i = 1, #miog.CLASSES, 1 do
+	miog.OFFICIAL_CLASSES[i] = miog.CLASSES[i]
+end
 
 miog.SPECIALIZATIONS = {
 	[0] = {name = "Unknown", class = miog.CLASSES[100], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png"},
@@ -1581,6 +1581,20 @@ miog.SPECIALIZATIONS = {
 	[1456] = {name = "Demon Hunter Initial", class = miog.CLASSES[12], icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png"},
 	[1465] = {name = "Evoker Initial", class = miog.CLASSES[13], icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png"},
 }
+
+miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID = {}
+
+for k, v in pairs(miog.SPECIALIZATIONS) do
+	if(k > 25) then
+		local _, localizedName, _, _, _, fileName = GetSpecializationInfoByID(k)
+
+		if(localizedName == "") then
+			localizedName = "Initial"
+		end
+
+		miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k
+	end
+end
 
 miog.RACES = {
 	[1] = "raceicon128-human-male",

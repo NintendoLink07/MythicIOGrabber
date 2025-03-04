@@ -173,11 +173,11 @@
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Guild" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                        <!--<FontString parentKey="Guild" font="SystemFont_Shadow_Med1" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.Level" relativePoint="BOTTOMLEFT" y="-2"/>
                             </Anchors>
-                        </FontString>
+                        </FontString>!-->
                     </Layer>
                 </Layers>
 
@@ -198,7 +198,7 @@
                         <Size x="120" y="58" />
 
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Guild" relativePoint="BOTTOMLEFT" y="-10"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Level" relativePoint="BOTTOMLEFT" y="-10"/>
                         </Anchors>
 
                         <Frames>

@@ -994,7 +994,7 @@ function ProgressTabMixin:LoadActivities()
 
 	elseif(self.id == 2) then --RAID
 		local raidInfo = {}
-		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
+		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
 	
 		for k, v in ipairs(raidGroups) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)
@@ -1012,7 +1012,7 @@ function ProgressTabMixin:LoadActivities()
 		self.mplusActivityTable = C_ChallengeMode.GetMapTable()
 
 		local raidInfo = {}
-		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
+		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
 	
 		for k, v in ipairs(raidGroups) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)
@@ -1125,7 +1125,20 @@ function ProgressTabMixin:UpdatePVPStatistics(guid)
 end
 
 local function checkForAchievements(type, guid, mapID)
-	local currTable = type == "awakened" and miog.MAP_INFO[mapID].achievementsAwakened or miog.MAP_INFO[mapID].achievementTable
+	local currTable
+	
+	if(type == "awakened") then
+		currTable = miog.MAP_INFO[mapID].achievementsAwakened
+
+	else
+		if(not miog.MAP_INFO[mapID].achievementTable) then
+			miog.checkForMapAchievements(mapID)
+
+		end
+
+		currTable = miog.MAP_INFO[mapID].achievementTable
+
+	end
 
 	for k, d in ipairs(currTable) do
 		local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy, isStatistic = GetAchievementInfo(d)

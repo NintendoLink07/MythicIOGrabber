@@ -8,7 +8,7 @@ function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
     local mythicPlusInfo = {}
     local raidInfo = {}
     
-    for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(2, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE))) do
+    for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.CurrentExpansion))) do
         local activities = C_LFGList.GetAvailableActivities(2, v)
         local activityID = activities[#activities]
 
@@ -21,7 +21,7 @@ function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
 
     self.mythicPlusInfo = mythicPlusInfo
 
-    local raidGroups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters or LFGListFrame.CategorySelection.baseFilters);
+    local raidGroups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or LFGListFrame.CategorySelection.selectedFilters or LFGListFrame.CategorySelection.baseFilters);
 
     for k, v in ipairs(raidGroups) do
         local activities = C_LFGList.GetAvailableActivities(3, v)

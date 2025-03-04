@@ -726,17 +726,7 @@ local function applicationViewerEvents(_, event, ...)
 				frame.Decline:SetShown(canInvite)
 
 			end
-		end
-	elseif(event == "GROUP_ROSTER_UPDATE") then
-		local canInvite = miog.checkIfCanInvite()
-
-		for _, frame in miog.ApplicationViewer.ScrollBox2:EnumerateFrames() do
-			if(frame.Invite) then
-				frame.Invite:SetShown(canInvite)
-				frame.Decline:SetShown(canInvite)
-
-			end
-		end
+		end		
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
 		local newEntry, withData = ...
 

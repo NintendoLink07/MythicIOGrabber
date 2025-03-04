@@ -15,24 +15,12 @@ local function mainEvents(_, event, ...)
 			miog.F.IS_RAIDERIO_LOADED = true
 
 		end
-
+		
 		miog.loadNewSettings()
 		miog.loadRawData()
 		miog.createFrames()
 		
 		EJ_SetDifficulty(8)
-		
-		for k, v in pairs(miog.SPECIALIZATIONS) do
-			if(k > 25) then
-				local _, localizedName, _, _, _, fileName = GetSpecializationInfoByID(k)
-
-				if(localizedName == "") then
-					localizedName = "Initial"
-				end
-
-				miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k
-			end
-		end
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 		miog.setAffixes()
@@ -41,9 +29,6 @@ local function mainEvents(_, event, ...)
 		if(miog.MainTab) then
 			miog.updateCurrencies()
 		end
-
-	elseif(event == "ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED") then
-		--miog.getAccountCharacters()
 		
 	elseif(event == "PLAYER_REGEN_DISABLED") then
 		if(miog.MainFrame:IsShown()) then
@@ -271,7 +256,6 @@ eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-eventReceiver:RegisterEvent("ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED")
 
 eventReceiver:RegisterEvent("CHALLENGE_MODE_START")
 eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")

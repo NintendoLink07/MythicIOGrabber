@@ -80,66 +80,6 @@ miog.resetNewRaiderIOInfoPanel = function(panel)
 	end
 end
 
-local function DEPRECATED_resetRaiderIOInformationPanel(childFrame)
-	if(childFrame.Hide) then
-		childFrame:Hide()
-
-	end
-
-	for k, v in pairs(childFrame.RaiderIOInformationPanel.MythicPlusPanel) do
-		if(type(v) == "table") then
-			if(k == "Status") then
-				v:Hide()
-				
-			else
-				v.Name:SetText("")
-				v.Primary:SetText("")
-				v.Secondary:SetText("")
-				v.Icon:SetTexture(nil)
-			
-			end
-		end
-	end
-
-	for k, v in pairs(childFrame.RaiderIOInformationPanel.RaidPanel) do
-		if(type(v) == "table") then
-			if(k == "Status") then
-				v:Hide()
-				
-			else
-				v.Name:SetText("")
-				v.Progress:SetText("")
-				v.Icon:SetTexture(nil)
-				
-				for x, y in pairs(v.BossFrames.UpperRow) do
-					if(type(y) == "table") then
-						y.Icon:SetTexture(nil)
-						y.Border:SetTexture(nil)
-						y.Index:SetText("")
-
-					end
-				end
-				
-				for x, y in pairs(v.BossFrames.LowerRow) do
-					if(type(y) == "table") then
-						y.Icon:SetTexture(nil)
-						y.Border:SetTexture(nil)
-						y.Index:SetText("")
-
-					end
-				end
-			end
-		end
-	end
-
-	childFrame.RaiderIOInformationPanel.InfoPanel.MPlusKeys:SetText("")
-	childFrame.RaiderIOInformationPanel.InfoPanel.Previous:SetText("")
-	childFrame.RaiderIOInformationPanel.InfoPanel.Main:SetText("")
-	childFrame.RaiderIOInformationPanel.InfoPanel.Realm:SetText("")
-end
-
-miog.resetRaiderIOInformationPanel = resetRaiderIOInformationPanel
-
 miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
 	local self = LFGListFrame.EntryCreation
@@ -254,100 +194,101 @@ end
 
 local function getNewRaidSortData(playerName, realm, region, existingProfile)
 	local raidData
-
 	local raidInfo = retrieveCategoryGroups(2)
 
-	if(raidInfo and RaiderIO) then
-		local profile = existingProfile or RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
-		
-		if(profile) then
-			if(profile.raidProfile) then
-				raidData = {character = {raids = {}, ordered = {}, progressWeight = 0}, main = {raids = {}, ordered = {}, progressWeight = 0}}
+	if(not (raidInfo and RaiderIO)) then
+		return
 
-				for k, d in ipairs(profile.raidProfile.raidProgress) do
-					local currentTable = d.isMainProgress and raidData.main or raidData.character
+	end
 
-					local mapID
-					local isAwakened = false
+	local profile = existingProfile or RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
 
-					if(string.find(d.raid.mapId, 10000)) then
-						mapID = tonumber(strsub(d.raid.mapId, strlen(d.raid.mapId) - 3))
-						isAwakened = d.current
+	if(profile and profile.raidProfile)then
+		raidData = {
+			character = { raids = {}, ordered = {}, progressWeight = 0 },
+			main = { raids = {}, ordered = {}, progressWeight = 0 }
+		}
 
-					else
-						mapID = d.raid.mapId
+		local profileProgress = profile.raidProfile.raidProgress
 
-					end
+		for i = 1, #profileProgress, 1 do
+			local d = profileProgress[i]
+			local currentTable = d.isMainProgress and raidData.main or raidData.character
+			local mapID = tonumber(string.sub(d.raid.mapId, -4)) or d.raid.mapId
+			local isAwakened = (mapID ~= d.raid.mapId) and d.current
 
-					currentTable.raids[mapID] = currentTable.raids[mapID] or {regular = {difficulties = {}}, awakened = {difficulties = {}}, bossCount = d.raid.bossCount, isAwakened = isAwakened, shortName = d.raid.shortName}
+			local raidEntry = currentTable.raids[mapID]
+			if(not raidEntry) then
+				raidEntry = {
+					regular = { difficulties = {} },
+					awakened = { difficulties = {} },
+					bossCount = d.raid.bossCount,
+					isAwakened = isAwakened,
+					shortName = d.raid.shortName
+				}
+				currentTable.raids[mapID] = raidEntry
+			end
 
-					local modeTable = isAwakened and currentTable.raids[mapID].awakened or currentTable.raids[mapID].regular
+			local modeTable = isAwakened and raidEntry.awakened or raidEntry.regular
 
-					for x, y in ipairs(d.progress) do
-						local weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+			local progress = d.progress
+			for j = 1, #progress, 1 do
+				local y = progress[j]
+				local difficulty = y.difficulty
+				local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
 
-						modeTable.difficulties[y.difficulty] = {
-							difficulty = y.difficulty,
-							current = d.current,
-							kills = y.kills,
-							cleared = y.cleared,
-							mapID = mapID,
-							shortName = currentTable.raids[mapID].shortName,
-							weight = weight,
-							parsedString = y.kills .. "/" .. d.raid.bossCount,
-							bosses = {},
-						}
+				local difficultyEntry = {
+					difficulty = difficulty,
+					current = d.current,
+					kills = y.kills,
+					cleared = y.cleared,
+					mapID = mapID,
+					shortName = raidEntry.shortName,
+					weight = weight,
+					parsedString = y.kills .. "/" .. d.raid.bossCount,
+					bosses = {}
+				}
 
-						currentTable.progressWeight = currentTable.progressWeight + weight
-
-						for a, b in ipairs(y.progress) do
-							modeTable.difficulties[y.difficulty].bosses[a] = {
-								killed = b.killed,
-								count = b.count,
-							}
-						end
-
-						currentTable.ordered[#currentTable.ordered+1] = modeTable.difficulties[y.difficulty]
-					end
-
-					table.sort(currentTable.ordered, function(k1, k2)
-						if(k1.current == k2.current) then
-							return k1.weight > k2.weight
-							
-						end
-
-						return k1.current == k2.current
-					end)
+				local bossProgress = y.progress
+				for a = 1, #bossProgress, 1 do
+					local b = bossProgress[a]
+					difficultyEntry.bosses[a] = { killed = b.killed, count = b.count }
 				end
+
+				modeTable.difficulties[difficulty] = difficultyEntry
+				currentTable.progressWeight = currentTable.progressWeight + weight
+				currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
 			end
 		end
 
-		if(not raidData) then
-			raidData = {
-				character = {
-					ordered = {
-						[1] = {mapID = (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1},
-						[2] = {mapID = (raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1},
-					},
-					raids = {}
-				},
-				main = {
-					ordered = {
-						[1] = {parsedString = "0/0", difficulty = -1},
-						[2] = {parsedString = "0/0", difficulty = -1},
-					},
-					raids = {}
-				},
-			}
-		else
-			raidData.character.ordered[1] = raidData.character.ordered[1] or {mapID = (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1}
-			raidData.character.ordered[2] = raidData.character.ordered[2] or {mapID = (raidInfo[2] or raidInfo[1]).mapID, parsedString = "0/0", difficulty = -1}
-	
-			raidData.main.ordered[1] = raidData.main.ordered[1] or {parsedString = "0/0", difficulty = -1}
-			raidData.main.ordered[2] = raidData.main.ordered[2] or {parsedString = "0/0", difficulty = -1}
-	
+		local function sortFunction(a, b)
+			return (a.current == b.current) and (a.weight > b.weight) or (a.current > b.current)
 		end
+
+		local characterOrdered = raidData.character.ordered
+		local mainOrdered = raidData.main.ordered
+
+		if #characterOrdered > 1 then table.sort(characterOrdered, sortFunction) end
+		if #mainOrdered > 1 then table.sort(mainOrdered, sortFunction) end
 	end
+
+	if(not raidData)then
+		raidData = {
+			character = { ordered = {}, raids = {} },
+			main = { ordered = {}, raids = {} }
+		}
+	end
+
+	local characterOrdered = raidData.character.ordered
+	local mainOrdered = raidData.main.ordered
+
+	local defaultMapID1 = (raidInfo[3] or raidInfo[2] or raidInfo[1]) and (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID or 0
+	local defaultMapID2 = (raidInfo[2] or raidInfo[1]) and (raidInfo[2] or raidInfo[1]).mapID or 0
+
+	characterOrdered[1] = characterOrdered[1] or { mapID = defaultMapID1, parsedString = "0/0", difficulty = -1 }
+	characterOrdered[2] = characterOrdered[2] or { mapID = defaultMapID2, parsedString = "0/0", difficulty = -1 }
+	mainOrdered[1] = mainOrdered[1] or { parsedString = "0/0", difficulty = -1 }
+	mainOrdered[2] = mainOrdered[2] or { parsedString = "0/0", difficulty = -1 }
 
 	return raidData
 end

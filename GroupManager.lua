@@ -18,9 +18,12 @@ local inspectList = {}
 
 local framePool
 
-miog.getPlayerSpec = function(name)
-	return playerSpecs[name]
-
+local function wipeAllData()
+	playerSpecs = {}
+	playerKeystones = {}
+	playerRaidData = {}
+	playerMPlusData = {}
+	inspectList = {}
 end
 
 local function countPlayersWithSpecData()
@@ -89,7 +92,10 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 		end
 	end
 	
-	playerMPlusData[libName], playerRaidData[libName] = miog.getMPlusScoreAndRaidData(playerName, localRealm)
+	playerMPlusData[libName] = playerMPlusData[libName] or miog.getMPlusScoreOnly(playerName, localRealm)
+	playerRaidData[libName] = playerRaidData[libName] or miog.getNewRaidSortData(playerName, localRealm)
+	
+	--playerMPlusData[libName] = miog.getMPlusScoreOnly(playerName, localRealm)
 
 	data.progress = ""
 
@@ -158,26 +164,31 @@ local function customMenu(self, type)
 	UnitPopup_OpenMenu("MIOG_" .. strupper(type), contextData);
 end
 
-local function showIndepthData(fileName, name, level, specID, className, unitID, realm)
+local function showIndepthData(data)
 	local indepthFrame = miog.GroupManager.Indepth
 
 	indepthFrame:Flush()
 
-	indepthFrame.Name:SetText(fileName and WrapTextInColorCode(name, C_ClassColor.GetClassColor(fileName):GenerateHexColor()) or name)
-	indepthFrame.Level:SetText("Level " .. level)
+	indepthFrame.Name:SetText(data.fileName and WrapTextInColorCode(data.name, C_ClassColor.GetClassColor(data.fileName):GenerateHexColor()) or data.name)
+	indepthFrame.Level:SetText("Level " .. data.level)
 
-	local _, specName = GetSpecializationInfoForSpecID(specID)
+	local _, specName = GetSpecializationInfoForSpecID(data.specID)
 
-	indepthFrame.Spec:SetText(specName and (specName .. " " .. className) or "???")
-	indepthFrame.Guild:SetText(GetGuildInfo(unitID) or "Currently guildless")
+	indepthFrame.Spec:SetText(specName and (specName .. " " .. data.className) or "???")
 
-	indepthFrame:SetPlayerData(name, realm)
+	--indepthFrame.Guild:SetText(GetGuildInfo(data.unitID) or "Currently guildless")
+
+	indepthFrame:SetPlayerData(data.name, data.realm)
 	indepthFrame:ApplyFillData()
 
 	indepthFrame:Show()
 end
 
 local function updateSingleCharacterKeystoneData(fullName, frameIsAvailable)
+	if(not miog.GroupManager:IsShown()) then
+		return
+	end
+
 	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
 		return fullName == data.fullName
 
@@ -207,6 +218,10 @@ local function updateSingleCharacterKeystoneData(fullName, frameIsAvailable)
 end
 
 local function updateSingleCharacterSpecData(fullName, frameIsAvailable)
+	if(not miog.GroupManager or not miog.GroupManager:IsShown()) then
+		return
+	end
+
 	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
 		return fullName == data.fullName
 
@@ -220,6 +235,10 @@ local function updateSingleCharacterSpecData(fullName, frameIsAvailable)
 end
 
 local function updateSingleCharacterItemData(fullName, playerGear)
+	if(not miog.GroupManager:IsShown()) then
+		return
+	end
+
 	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
 		return fullName == data.fullName
 
@@ -306,7 +325,7 @@ local function updateGroupManagerPlayerFrame(frame, data)
 
 			end
 		elseif(button == "LeftButton") then
-			showIndepthData(fileName, data.name, level, self.specID, class, data.unitID, data.realm)
+			showIndepthData(data)
 		end
 	end)
 end
@@ -446,17 +465,17 @@ local function createCharacterFrame(data)
 	frame.id = data.index
 	frame.name = data.name
 	frame.unit = data.unitID
-	frame.subgroupSpotID = data.subgroupSpotID
+	frame.subgroupSpotID = data.subgroup
 	frame.data = data
 
-	frame.Name:SetText(data.shortName)
+	frame.Name:SetText(data.name)
 	
 	frame:SetBackdrop({bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=1, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
 
 	local color
 
-	if(data.classFileName) then
-		color = C_ClassColor.GetClassColor(data.classFileName)
+	if(data.fileName) then
+		color = C_ClassColor.GetClassColor(data.fileName)
 
 	else
 		color = CreateColor(0.5, 0.5, 0.5, 1)
@@ -476,10 +495,10 @@ local function createCharacterFrame(data)
 		frame.RaidRole:SetTexture("interface/groupframe/ui-group-assistanticon.blp")
 
 	else
-		if(data.raidRole == "MAINTANK") then
+		if(data.role == "MAINTANK") then
 			frame.RaidRole:SetTexture("interface/groupframe/ui-group-maintankicon.blp")
 	
-		elseif(data.raidRole == "MAINASSIST") then
+		elseif(data.role == "MAINASSIST") then
 			frame.RaidRole:SetTexture("interface/groupframe/ui-group-mainassisticon.blp")
 	
 		else
@@ -504,12 +523,12 @@ local function createCharacterFrame(data)
 				GameTooltip:AddLine("Rank: " .. RAID_ASSISTANT)
 
 			else
-				if(self.data.raidRole ~= nil) then
+				if(self.data.role ~= nil) then
 					GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-					if (self.data.raidRole == "MAINTANK" ) then
+					if (self.data.role == "MAINTANK" ) then
 						GameTooltip:AddLine("Raid role: " .. MAIN_TANK);
-					elseif (self.data.raidRole == "MAINASSIST" ) then
+					elseif (self.data.role == "MAINASSIST" ) then
 						GameTooltip:AddLine("Raid role: " .. MAIN_ASSIST);
 					end
 				end
@@ -584,7 +603,6 @@ local function createCharacterFrame(data)
 		end
 	end)
 	frame:SetScript("OnLeave", GameTooltip_Hide)
-
 	frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	frame:RegisterForDrag("LeftButton")
 	frame:SetScript("OnDragStart", function(self)
@@ -755,6 +773,7 @@ local function inspectCharacter(fullName)
 end
 
 local function inspectNextCharacter()
+
 	updateInspectionText()
 
 	for k, v in pairs(inspectList) do
@@ -774,13 +793,16 @@ local function addCharacterToInspectionList(fullName, unitID)
 
 end
 
-local function updateGroupData()
-	local start = GetTimePreciseSec()
-	print("START", start)
-	if(not InCombatLockdown()) then
-		--if(miog.GroupManager) then
-			--framePool:ReleaseAll()
-		--end
+local lastCall = {
+	type = -1,
+	numMembers = -1,
+
+}
+
+local function updateGroupData(type, overwrite)
+	if(not InCombatLockdown() and (overwrite or (lastCall.type ~= type or lastCall.numMembers ~= GetNumGroupMembers()))) then
+		lastCall.type = type
+		lastCall.numMembers = GetNumGroupMembers()
 
 		groupData = {}
 		
@@ -797,17 +819,18 @@ local function updateGroupData()
 
 		local specCount = {}
 		local numOfMembers = GetNumGroupMembers()
+		local isInRaid = IsInRaid()
 
 		if(numOfMembers > 0) then
 			for groupIndex = 1, numOfMembers, 1 do
-				local name, _, subgroup, _, _, fileName, _, online, _, _, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+				local name, rank, subgroup, level, localizedClassName, fileName, _, online, _, role, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
 				if(name) then
 					local unitID
 					local playerName, localRealm = miog.createSplitName(name)
 					local fullName = playerName .. "-" .. (localRealm or "")
 
-					if(IsInRaid()) then
+					if(isInRaid) then
 						unitID = "raid" .. groupIndex
 
 					elseif(groupIndex > 1) then
@@ -816,13 +839,6 @@ local function updateGroupData()
 					else
 						unitID = "player"
 
-					end
-
-					if(miog.GroupManager) then
-						subgroupSpotsTaken[subgroup] = subgroupSpotsTaken[subgroup] + 1
-					
-						--local playerFrame = createCharacterFrame(data)
-						--bindFrameToSubgroupSpot(playerFrame, subgroup, subgroupSpotsTaken[subgroup])
 					end
 
 					local data
@@ -844,14 +860,18 @@ local function updateGroupData()
 						end
 					end
 
+					data.index = groupIndex
 					data.subgroup = subgroup
+					data.unitID = unitID
+					data.level = level
+					data.rank = rank
+					data.online = online
+					data.role = role
 					data.specID = playerSpecs[fullName] or 0
 					data.combatRole = combatRole or GetSpecializationRoleByID(data.specID)
-					data.index = groupIndex
-					data.unitID = unitID
-					data.online = online
 					data.fullName = fullName
 					data.fileName = fileName
+					data.className = localizedClassName
 					data.name = playerName
 					data.realm = realm
 					
@@ -869,66 +889,60 @@ local function updateGroupData()
 			local data = getOptionalPlayerData(fullPlayerName, shortName, realm, "player")
 		
 			data.index = nil
+			data.level = UnitLevel("player")
+			data.subgroup = 1
 			data.unitID = "player"
-			data.fullName = fullPlayerName
-			data.name = UnitNameUnmodified("player")
-			data.specID = playerSpecs[fullPlayerName] or 0
-			data.subgroup = 0
 			data.online = true
-			data.combatRole = "DAMAGER"
+			data.fullName = fullPlayerName
+			data.fileName = fileName
+			data.className = localizedClassName
+			data.name = UnitNameUnmodified("player")
+			data.realm = realm
+			data.specID = playerSpecs[fullPlayerName] or 0
+			data.combatRole = GetSpecializationRoleByID(data.specID)
 
-			if(miog.GroupManager) then
-				--local playerFrame = createCharacterFrame(groupData[fullPlayerName])
-				--bindFrameToSubgroupSpot(playerFrame, 1, 1)
-			end
-
-			if(data.specID) then
-				specCount[data.specID] = specCount[data.specID] and specCount[data.specID] + 1 or 1
-
-				if(data.combatRole == nil) then
-					data.combatRole = GetSpecializationRoleByID(data.specID)
-				end
-			end
+			specCount[data.specID] = specCount[data.specID] and specCount[data.specID] + 1 or 1
 
 			groupData[fullPlayerName] = data
 		end
 
 		inspectNextCharacter()
 
-		local dataProvider = CreateDataProvider()
-			
-		if(playerInInspection and not groupData[playerInInspection] or playerSpecs[playerInInspection]) then
-			ClearInspectPlayer(true)
+		if(miog.GroupManager) then
+			framePool:ReleaseAll()
 
-		end
+			local dataProvider = CreateDataProvider()
 
-		for _, member in pairs(groupData) do
-			dataProvider:Insert(member)
-		end
+			for _, data in pairs(groupData) do
+				dataProvider:Insert(data)
 
-		miog.GroupManager:SetDataProvider(dataProvider)
-
-		for classID, classEntry in ipairs(miog.CLASSES) do
-			for _, v in ipairs(classEntry.specs) do
-				local currentSpecFrame = miog.ClassPanel.Container.classFrames[classID].specPanel.specFrames[v]
-
-				if(specCount[v]) then
-					currentSpecFrame.layoutIndex = v
-					currentSpecFrame.FontString:SetText(specCount[v])
-					currentSpecFrame:Show()
-
-				else
-					currentSpecFrame:Hide()
-					currentSpecFrame.layoutIndex = nil
-
-				end
-
+				local playerFrame = createCharacterFrame(data)
+				bindFrameToSubgroupSpot(playerFrame, data.subgroup, subgroupSpotsTaken[data.subgroup])
+				subgroupSpotsTaken[data.subgroup] = subgroupSpotsTaken[data.subgroup] + 1
 			end
-		
-			miog.ClassPanel.Container.classFrames[classID].specPanel:MarkDirty()
+
+			miog.GroupManager:SetDataProvider(dataProvider)
 		end
+
+		for classID = 1, #miog.OFFICIAL_CLASSES, 1 do
+			local classEntry = miog.OFFICIAL_CLASSES[classID]
+            local classFrame = miog.ClassPanel.Container.classFrames[classID].specPanel
+
+            for _, v in ipairs(classEntry.specs) do
+                local specFrame = classFrame.specFrames[v]
+                if specCount[v] then
+                    specFrame.layoutIndex = v
+                    specFrame.FontString:SetText(specCount[v])
+                    specFrame:Show()
+                else
+                    specFrame:Hide()
+                    specFrame.layoutIndex = nil
+                end
+            end
+
+            classFrame:MarkDirty()
+        end
 	end
-	print("END", GetTimePreciseSec() - start)
 end
 
 local readyCheckStatus = {}
@@ -953,7 +967,7 @@ local function groupManagerEvents(_, event, ...)
 
         end
 
-		updateGroupData()
+		updateGroupData(1, true)
 
     elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
 		local fullName = miog.createFullNameFrom("unitID", ...)
@@ -991,21 +1005,20 @@ local function groupManagerEvents(_, event, ...)
 
 		end
 	elseif(event == "GROUP_JOINED") then
-		miog.GroupManager.ScrollView:Flush()
-		updateGroupData()
+		updateGroupData(2)
 
 	elseif(event == "GROUP_LEFT") then
-		miog.GroupManager.ScrollView:Flush()
-		updateGroupData()
-	
+		wipeAllData()
+
+		updateGroupData(3)
 	elseif(event == "GROUP_ROSTER_UPDATE") then
-		updateGroupData()
+		updateGroupData(4)
 
 	elseif(event == "PLAYER_REGEN_ENABLED") then
 		if(miog.F.UPDATE_AFTER_COMBAT) then
 			miog.F.UPDATE_AFTER_COMBAT = false
 
-			updateGroupData()
+			updateGroupData(5, true)
 		end
 	elseif(event == "READY_CHECK") then -- initiatorName, readyCheckTimeLeft
 			miog.GroupManager.StatusBar.ReadyBox:SetColorTexture(1, 1, 0, 1)
@@ -1126,9 +1139,8 @@ local function updateRaidLibData()
 end
 
 miog.loadInspectManagement = function()
-	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
-	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
+	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
    
    --registering the callback:
 	local inspectManager = CreateFrame("Frame", nil)
@@ -1153,6 +1165,8 @@ miog.loadGroupManager = function()
     miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
 	miog.GroupManager:SetScrollBox(miog.GroupManager.ScrollBox)
 
+	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
+
     framePool = CreateFramePool("Button", nil, "MIOG_GroupManagerRaidFrameCharacterTemplate", function(_, frame) frame:Hide() clearFrameFromSpace(frame) end)
 
 	miog.GroupManager:SetScript("OnShow", function()
@@ -1161,14 +1175,14 @@ miog.loadGroupManager = function()
 		local name = miog.createFullNameFrom("unitID", "player")
 
 		if(name) then
-			updateGroupData()
+			updateGroupData(6, true)
 
 		end
 	end)
 
 	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", function()
 		updateRaidLibData()
-		updateGroupData()
+		updateGroupData(7, true)
 
 	end)
 
@@ -1191,7 +1205,7 @@ miog.loadGroupManager = function()
 	miog.GroupManager:RegisterEvent("READY_CHECK_FINISHED")
 	miog.GroupManager:SetScript("OnEvent", groupManagerEvents)
 
-	local ScrollView = CreateScrollBoxListLinearView(0, 0, 0, 0, 2)
+	local ScrollView = CreateScrollBoxListLinearView(0, 0, 0, 0, 4)
 
 	miog.GroupManager.ScrollView = ScrollView
 	
@@ -1200,6 +1214,10 @@ miog.loadGroupManager = function()
 	ScrollView:SetElementInitializer("MIOG_GroupManagerListCharacterTemplate", function(frame, data)
 		updateGroupManagerPlayerFrame(frame, data)
 	
+	end)
+
+	ScrollView:SetElementExtentCalculator(function(index, data)
+		return GetNumGroupMembers() < 6 and 50 or 25
 	end)
 
     fillSpaceFramesTable()
@@ -1224,6 +1242,5 @@ hooksecurefunc("ClearInspectPlayer", function(own)
 
 		playerInInspection = nil
 		currentInspectionName = nil
-		updateInspectionText()
 	end
 end)

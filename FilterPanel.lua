@@ -1260,7 +1260,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					v.object:Show()
 					
 				elseif(categoryID == 3 and LFGListFrame.SearchPanel.filters == 1) then
-					local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.Recommended);
+					local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion));
 					local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 		
 					local sortedExpansionRaids = {}
@@ -1427,8 +1427,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 						frame.Text:SetScript("OnLeave", GameTooltip_Hide)
 
 					end
-
-					local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.Recommended);
+					local seasonGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion));
 					local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 		
 					local sortedExpansionRaids = {}
