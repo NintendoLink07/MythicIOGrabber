@@ -1,24 +1,13 @@
-## [3.2.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2) - 2025-03-04
-
-- The currencies in the mainframe have been updated to season 2.
-
-- The background images for the season 2 dungeons and raid have been updated.
-
-- The addon is tracking the vault rewards for all characters in the background.
-This will be part of a graph in v3.2.3 to track all chars individual progress of all vault categories.
-
-### Changed
-
-- [GroupManager] The raid manager frames have been re-enabled, the performance issues should be resolved.
-
-- [GroupManager] The character's guild line has been removed, because the retrieval of guild info has been flaky at best.
-
-- [GroupManager] All members in the normal list are now visually separated.
+## [3.2.2a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2a) - 2025-03-05
 
 ### Fixed
 
-- Lite mode has been updated / fixed for 11.1.
+- A few debug prints left in the code have been deleted.
 
-- Thanks to the new Blizzard performance meters for addons I switched some things around and MIOG's startup lod times have been reduced by a factor of 3.
+- Liberation of Undermine boss icons in the [GroupManager] and [SearchPanel] progress panel are now not just some red squares.
 
-- [GroupManager] Altered the inspection algorithm, should be more reliable and less performance intensive.
+- [Progress] The achievements for Liberation of Undermine are now properly being tracked.
+
+- [ApplicationViewer] Factions will now be correctly recognized again.
+
+- [GroupManager] ALL raid manager frames will now be correctly be shown instead of only 4 of every group, lol.

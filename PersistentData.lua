@@ -779,7 +779,6 @@ miog.MAP_INFO = {
 	[2774] = {shortName = "WORLD", fileName = "khazalgar",},
 	[2776] = {shortName = "CODEX", fileName = "kalimdor",},
 	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
-
 }
 
 miog.LFG_ID_INFO = {
@@ -1026,6 +1025,8 @@ miog.MAP_INFO[2569].achievementCategory = 15469 --ATSC
 miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
 
 miog.MAP_INFO[2657].achievementCategory = 15520 --NP
+
+miog.MAP_INFO[2769].achievementCategory = 15520 --LOU
 
 miog.WEIGHTS_TABLE = {
 	[1] = 10000,

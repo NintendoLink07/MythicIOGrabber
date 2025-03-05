@@ -99,6 +99,8 @@ local function newSort(idData1, idData2)
 	end
 end
 
+local FACTION_STRINGS = { [0] = FACTION_HORDE, [1] = FACTION_ALLIANCE};
+
 local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
 	local applicantID = self.applicantID;
 	local memberIdx = self.memberIdx;

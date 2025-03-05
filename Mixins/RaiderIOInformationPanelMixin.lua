@@ -340,9 +340,6 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                                 local currentBoss = "Boss" .. z
     
                                                 if(currentTable.difficulties[a].bosses[z].killed) then
-
-                                                    print(a, z)
-    
                                                     if(raidFrame.Bosses[currentBoss].Border) then
                                                         raidFrame.Bosses[currentBoss].Border:SetColorTexture(miog.DIFFICULTY[a].miogColors:GetRGBA());
     

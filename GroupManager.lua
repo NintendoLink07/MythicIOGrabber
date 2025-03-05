@@ -606,7 +606,7 @@ local function createCharacterFrame(data)
 	frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	frame:RegisterForDrag("LeftButton")
 	frame:SetScript("OnDragStart", function(self)
-		if(IsInRaid()) then
+		if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) then
 			self:StartMoving()
 
 		end
@@ -615,16 +615,17 @@ local function createCharacterFrame(data)
 	frame:SetScript("OnDragStop", function(self)
 		local isOverFrame, index = isFrameOverAnySpace(self)
 
-		if(isOverFrame and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) then
-			self:StopMovingOrSizing()
-			bindFrameToSpaceGroupIndex(frame, index)
-			swapButtonInRaidFrame(frame)
-			--swapButtonToSubgroupInRaidFrame(self, index)
+		self:StopMovingOrSizing()
 
-		else
-			self:StopMovingOrSizing()
-			bindFrameToSpace(frame, frame.occupiedSpace)
+		if(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
+			if(isOverFrame) then
+				bindFrameToSpaceGroupIndex(frame, index)
+				swapButtonInRaidFrame(frame)
+				--swapButtonToSubgroupInRaidFrame(self, index)
+			else
+				bindFrameToSpace(frame, frame.occupiedSpace)
 
+			end
 		end
 	end)
 	
@@ -917,8 +918,9 @@ local function updateGroupData(type, overwrite)
 				dataProvider:Insert(data)
 
 				local playerFrame = createCharacterFrame(data)
-				bindFrameToSubgroupSpot(playerFrame, data.subgroup, subgroupSpotsTaken[data.subgroup])
 				subgroupSpotsTaken[data.subgroup] = subgroupSpotsTaken[data.subgroup] + 1
+				bindFrameToSubgroupSpot(playerFrame, data.subgroup, subgroupSpotsTaken[data.subgroup])
+				
 			end
 
 			miog.GroupManager:SetDataProvider(dataProvider)

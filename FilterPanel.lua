@@ -1339,6 +1339,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 							bossRow.layoutIndex = nil
 
 						end
+						
+						bossRow:MarkDirty()
 					end
 
 					v.object:Show()

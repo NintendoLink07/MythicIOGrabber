@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.2.2a] - 2025-03-05
+
+### Fixed
+
+- A few debug prints left in the code have been deleted.
+
+- Liberation of Undermine boss icons in the [GroupManager] and [SearchPanel] progress panel are now not just some red squares.
+
+- [Progress] The achievements for Liberation of Undermine are now properly being tracked.
+
+- [ApplicationViewer] Factions will now be correctly recognized again.
+
+- [GroupManager] ALL raid manager frames will now be correctly be shown instead of only 4 of every group, lol.
+
+
 
 ## [3.2.2] - 2025-03-04
 
@@ -3254,7 +3269,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.2a..HEAD
+[3.2.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2a
 [3.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2
 [3.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.1
 [3.2.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.0a
