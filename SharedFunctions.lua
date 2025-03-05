@@ -192,9 +192,69 @@ local function retrieveCategoryGroups(categoryID)
     return raidInfo
 end
 
+miog.retrieveCurrentSeasonDungeonActivityGroups = function()
+	return C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
+end
+
+miog.retrieveCurrentRaidActivityGroups = function()
+	return C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
+end
+
+miog.retrieveCurrentSeasonDungeonActivityIDs = function(justIDs, sort)
+	local mythicPlusActivities = {}
+
+	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
+        local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
+        local activityID = activities[#activities]
+
+        tinsert(mythicPlusActivities, justIDs and activityID or {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+    end
+
+	if(sort and #mythicPlusActivities > 1) then
+		if(justIDs) then
+			table.sort(mythicPlusActivities, function(k1, k2)
+				return k1 < k2
+			end)
+		else
+			table.sort(mythicPlusActivities, function(k1, k2)
+				return k1.name < k2.name
+			end)
+		end
+	end
+
+	return mythicPlusActivities
+end
+
+miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
+	local raidActivities = {}
+
+	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)) do
+        local activities = C_LFGList.GetAvailableActivities(3, v)
+        local activityID = activities[#activities]
+
+        tinsert(raidActivities, justIDs and activityID or {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+    end
+
+	if(sort and #raidActivities > 1) then
+		if(justIDs) then
+			table.sort(raidActivities, function(k1, k2)
+				return k1 > k2
+			end)
+			
+		else
+			table.sort(raidActivities, function(k1, k2)
+				return k1.activityID > k2.activityID
+			end)
+
+		end
+	end
+
+	return raidActivities
+end
+
 local function getNewRaidSortData(playerName, realm, region, existingProfile)
 	local raidData
-	local raidInfo = retrieveCategoryGroups(2)
+	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
 
 	if(not (raidInfo and RaiderIO)) then
 		return
@@ -262,7 +322,7 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 		end
 
 		local function sortFunction(a, b)
-			return (a.current == b.current) and (a.weight > b.weight) or (a.current > b.current)
+			return (a.current == b.current) and (a.weight > b.weight) or false
 		end
 
 		local characterOrdered = raidData.character.ordered

@@ -360,7 +360,7 @@
                             </OnShow>
                             <OnClick>
                                 C_LFGList.RefreshApplicants()
-                                self:GetParent():GetParent().FramePanel:SetVerticalScroll(0)
+                                self:GetParent():GetParent().ScrollBox2:ScrollToBegin()
                             </OnClick>
                         </Scripts>
                     </Button>

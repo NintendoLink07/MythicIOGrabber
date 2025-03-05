@@ -31,6 +31,7 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true), function()
 			local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 
+
 			if(type == "search") then
 				openSearchPanel(categoryID, filters)
 
@@ -48,6 +49,7 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 				miog.ProgressPanel:ApplyFillData()
 				
 			else
+			miog.ProgressPanel:Hide()
 				LFGListFrame.CategorySelection.selectedCategory = categoryID
 				LFGListFrame.CategorySelection.selectedFilters = filters
 

@@ -102,8 +102,6 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 	--local tooltipTable = {}
 	local progressTable = {}
 
-
-
 	if(playerRaidData[libName]) then
 		--[[for i = 1, 2, 1 do
 			local raidInfo = i == 1 and playerRaidData[fullName].character or playerRaidData[fullName].main
@@ -122,10 +120,18 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 		end
 		data.progressTooltipData = table.concat(tooltipTable)]]--
 
+		local lastRaid
+
 		for _, v in ipairs(playerRaidData[libName].character.ordered) do
 			if(v.difficulty > 0) then
+				if(lastRaid and lastRaid ~= v.mapID) then
+					tinsert(progressTable, "\r\n")
+
+				end
+				
 				tinsert(progressTable, wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
 				
+				lastRaid = v.mapID
 			end
 		end
 
@@ -920,7 +926,7 @@ local function updateGroupData(type, overwrite)
 				local playerFrame = createCharacterFrame(data)
 				subgroupSpotsTaken[data.subgroup] = subgroupSpotsTaken[data.subgroup] + 1
 				bindFrameToSubgroupSpot(playerFrame, data.subgroup, subgroupSpotsTaken[data.subgroup])
-				
+
 			end
 
 			miog.GroupManager:SetDataProvider(dataProvider)
@@ -951,11 +957,11 @@ local readyCheckStatus = {}
 
 local function updateReadyStatus(name, isReady)
 	local frame = miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
-		return data.name == name
+		return data.fullName == name
 	end)
 
     if(frame) then
-        frame.Ready:SetColorTexture(unpack(isReady and {0, 1, 0, 1} or isReady == false and {1, 0, 0, 1} or {1, 1, 0, 1}))
+        frame.Ready:SetColorTexture(unpack(isReady and {0, 1, 0, 1} or isReady == false and {1, 0, 0, 1} or {0, 0, 0, 1}))
 
     end
 end
@@ -1039,6 +1045,7 @@ local function groupManagerEvents(_, event, ...)
 		local unitID, isReady = ...
 
 		local fullName = miog.createFullNameFrom("unitID", unitID)
+		
 		readyCheckStatus[fullName] = isReady
 
 		updateReadyStatus(fullName, isReady)
@@ -1163,6 +1170,11 @@ miog.loadInspectManagement = function()
 	miog.fullPlayerName, miog.shortPlayerName = fullPlayerName, shortName
 end
 
+local function updateAllData()
+	updateRaidLibData()
+	updateGroupData(6, true)
+end
+
 miog.loadGroupManager = function()
     miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
 	miog.GroupManager:SetScrollBox(miog.GroupManager.ScrollBox)
@@ -1177,18 +1189,14 @@ miog.loadGroupManager = function()
 		local name = miog.createFullNameFrom("unitID", "player")
 
 		if(name) then
-			updateGroupData(6, true)
+			updateGroupData(7, true)
 
 		end
 	end)
 
-	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", function()
-		updateRaidLibData()
-		updateGroupData(7, true)
+	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", updateAllData)
 
-	end)
-
-	miog.GroupManager:OnLoad()
+	miog.GroupManager:OnLoad(updateAllData)
 	miog.GroupManager:SetSettingsTable(MIOG_NewSettings.sortMethods.GroupManager)
 	miog.GroupManager:AddMultipleSortingParameters({
 		{name = "subgroup", tooltipTitle = GROUP},
@@ -1207,7 +1215,7 @@ miog.loadGroupManager = function()
 	miog.GroupManager:RegisterEvent("READY_CHECK_FINISHED")
 	miog.GroupManager:SetScript("OnEvent", groupManagerEvents)
 
-	local ScrollView = CreateScrollBoxListLinearView(0, 0, 0, 0, 4)
+	local ScrollView = CreateScrollBoxListLinearView(0, 0, 0, 0, 2)
 
 	miog.GroupManager.ScrollView = ScrollView
 	

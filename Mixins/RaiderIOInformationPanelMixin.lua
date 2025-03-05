@@ -4,33 +4,10 @@ RaiderIOInformationPanelMixin = {}
 
 MIOG_FAILSAFE_SEASON_ID = 13
 
-function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
-    local mythicPlusInfo = {}
-    local raidInfo = {}
+function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()    
+    self.mythicPlusInfo = miog.retrieveCurrentSeasonDungeonActivityIDs(false, true)
     
-    for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
-        local activities = C_LFGList.GetAvailableActivities(2, v)
-        local activityID = activities[#activities]
-
-        tinsert(mythicPlusInfo, {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
-    end
-
-    table.sort(mythicPlusInfo, function(k1, k2)
-        return k1.name < k2.name
-    end)
-
-    self.mythicPlusInfo = mythicPlusInfo
-
-    local raidGroups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or LFGListFrame.CategorySelection.selectedFilters or LFGListFrame.CategorySelection.baseFilters);
-
-    for k, v in ipairs(raidGroups) do
-        local activities = C_LFGList.GetAvailableActivities(3, v)
-        local activityID = activities[#activities]
-
-        tinsert(raidInfo, {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
-    end
-    
-    self.raidInfo = raidInfo
+    self.raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
 end
 
 function RaiderIOInformationPanelMixin:OnLoadMPlus()
@@ -155,6 +132,8 @@ function RaiderIOInformationPanelMixin:OnLoadRaid()
             raidCounter = raidCounter + 1
 
             lastID = data.mapID
+
+            self.raidFrames[data.mapID] = raidFrame
         end
     end
 
@@ -166,6 +145,8 @@ end
 
 function RaiderIOInformationPanelMixin:OnLoad(mode)
     self:SetMode(mode)
+	
+    self.raidFrames = {}
     
     --self.seasonID = C_MythicPlus.GetCurrentSeason() > 0 and C_MythicPlus.GetCurrentSeason() or MIOG_FAILSAFE_SEASON_ID
     self.seasonID = MIOG_FAILSAFE_SEASON_ID
@@ -174,7 +155,6 @@ function RaiderIOInformationPanelMixin:OnLoad(mode)
 
 	self:OnLoadMPlus()
     self:OnLoadRaid()
-	
 end
 
 function RaiderIOInformationPanelMixin:Flush()
@@ -320,13 +300,14 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
 
 	    for k, data in ipairs(self.raidInfo) do
             for nmd = 1, 2, 1 do
-                local raidFrame = self.Raids["Raid" .. raidCounter]
+                --local raidFrame = self.Raids["Raid" .. raidCounter]
+                local raidFrame = self.raidFrames[data.mapID]
 
                 if(raidFrame) then
-                    local raidHeaderFrame = self.Raids["Raid" .. raidCounter].Header
+                    local raidHeaderFrame = raidFrame.Header
                     local normalOrMainData = nmd == 1 and self.raidData.character or self.raidData.main
 
-                    if(normalOrMainData.raids[data.mapID]) then    
+                    if(normalOrMainData.raids[data.mapID]) then
                         local bossesDone = {}
     
                         for i = 1, 2, 1 do

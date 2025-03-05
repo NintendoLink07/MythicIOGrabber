@@ -1,13 +1,13 @@
-## [3.2.2a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2a) - 2025-03-05
+## [3.2.2b](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2b) - 2025-03-05
 
 ### Fixed
 
-- A few debug prints left in the code have been deleted.
+- [GroupManager] Progress data will now be visually split between NP and LOU progress.
 
-- Liberation of Undermine boss icons in the [GroupManager] and [SearchPanel] progress panel are now not just some red squares.
+- [GroupManager] Ready check status will now be correctly updated on all group members.
 
-- [Progress] The achievements for Liberation of Undermine are now properly being tracked.
+- [GroupManager] After clicking on a sort button the group manager will correctly update the visual data.
 
-- [ApplicationViewer] Factions will now be correctly recognized again.
+- [ApplicationViewer] Pressing the refresh button will now scroll to the beginning of the list instead of erroring out.
 
-- [GroupManager] ALL raid manager frames will now be correctly be shown instead of only 4 of every group, lol.
+- LOU / NP progress in the [GroupManager] and [SearchPanel] progress panel will now be correctly attributed to the correct raid.
