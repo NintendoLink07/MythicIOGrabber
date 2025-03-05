@@ -280,8 +280,8 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 			local raidEntry = currentTable.raids[mapID]
 			if(not raidEntry) then
 				raidEntry = {
-					regular = { difficulties = {} },
-					awakened = { difficulties = {} },
+					regular = { difficulties = {}, fullProgressString = ""},
+					awakened = { difficulties = {}, fullProgressString = ""},
 					bossCount = d.raid.bossCount,
 					isAwakened = isAwakened,
 					shortName = d.raid.shortName
@@ -827,6 +827,45 @@ miog.hideSidePanel = function(self)
 	MIOG_NewSettings.activeSidePanel = "none"
 end
 
+local function createFullName(type, value)
+	local realm = GetNormalizedRealmName()
+
+	if(not realm) then
+		return
+	end
+
+	if(type == "unitID") then
+		if(value == "player") then
+			local shortName, realm2 = UnitFullName(value)
+
+			if(shortName and realm2) then
+				name = shortName .. "-" .. realm2
+
+			else
+				name = UnitNameUnmodified("player") .. "-" .. realm
+			
+			end
+		else
+			name = GetUnitName(value, true)
+		
+		end
+	elseif(type == "unitName") then
+		local nameTable = miog.simpleSplit(value, "-")
+
+		if(nameTable[2]) then
+			return value
+
+		else
+			value = nameTable[1] .. "-" .. realm
+
+		end
+	end
+
+	return value
+end
+
+miog.createFullNameFrom = createFullName
+
 -- type == unitID or unitName
 -- value == (unitID) player, party3, raid29 or (unitName) Rhany, Merkuz, Solomeio-Ravencrest
 local function createFullNameFrom(type, value)
@@ -873,7 +912,7 @@ local function createFullNameFrom(type, value)
 	return name
 end
 
-miog.createFullNameFrom = createFullNameFrom
+--miog.createFullNameFrom = createFullNameFrom
 
 local function createShortNameFrom(type, value)
 	if(type == "unitID") then

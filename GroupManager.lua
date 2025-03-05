@@ -94,48 +94,28 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 	
 	playerMPlusData[libName] = playerMPlusData[libName] or miog.getMPlusScoreOnly(playerName, localRealm)
 	playerRaidData[libName] = playerRaidData[libName] or miog.getNewRaidSortData(playerName, localRealm)
-	
-	--playerMPlusData[libName] = miog.getMPlusScoreOnly(playerName, localRealm)
 
 	data.progress = ""
 
-	--local tooltipTable = {}
-	local progressTable = {}
-
 	if(playerRaidData[libName]) then
-		--[[for i = 1, 2, 1 do
-			local raidInfo = i == 1 and playerRaidData[fullName].character or playerRaidData[fullName].main
-
-			for k, v in ipairs(raidInfo.ordered) do
-				if(v.difficulty > 0) then
-					if(i == 1) then
-						tinsert(progressTable, wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
-						
-					end
-					
-					tinsert(tooltipTable, (i == 2 and "Main - " or "") .. v.shortName .. ": " .. wticc(miog.DIFFICULTY[v.difficulty].shortName .. ":" .. v.kills .. "/" .. #v.bosses, miog.DIFFICULTY[v.difficulty].color) .. "\r\n")
-					
-				end
-			end
-		end
-		data.progressTooltipData = table.concat(tooltipTable)]]--
-
-		local lastRaid
+		local raidTable = {}
 
 		for _, v in ipairs(playerRaidData[libName].character.ordered) do
 			if(v.difficulty > 0) then
-				if(lastRaid and lastRaid ~= v.mapID) then
-					tinsert(progressTable, "\r\n")
+				raidTable[v.mapID] = raidTable[v.mapID] or {}
 
-				end
-				
-				tinsert(progressTable, wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
-				
-				lastRaid = v.mapID
+				tinsert(raidTable[v.mapID], wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
+	
 			end
 		end
 
-		data.progress = table.concat(progressTable)
+		local newTable = {}
+
+		for k, v in pairs(raidTable) do
+			data.progress = table.concat(v) .. "\r\n"
+
+		end
+
 		data.progressWeight = playerRaidData[libName].character.progressWeight or 0
 
 	else

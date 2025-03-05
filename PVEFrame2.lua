@@ -238,16 +238,6 @@ local function createPVEFrameReplacement()
 	miog.PVPStatistics = miog.Progress.PVPStatistics
 	miog.PVPStatistics:OnLoad(3)
 
-	--[[local r,g,b = CreateColorFromHexString(miog.CLRSCC.white):GetRGB()
-
-	for i = 1, 6, 1 do
-		local currentFrame = miog.MainTab.Information.Currency[tostring(i)]
-
-		miog.createFrameBorder(currentFrame, 1, r, g, b, 0.2)
-		currentFrame:SetBackdropColor(r, g, b, 0.1)
-
-	end]]
-
 	pveFrame2.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
 

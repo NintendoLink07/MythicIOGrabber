@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.2.2c] - 2025-03-05
+
+### Fixed
+
+- [MainFrame] The currencies will stay in their frame like I asked them to.
+
+- [GroupManager] There shouldn't be character name retrieval problems anymore when you're fresh out of a loading screen and in a group.
+
+- [GroupManager] There shouldn't be a 3 to 4 line long progress indicator anymore.
+
+
+
 ## [3.2.2b] - 2025-03-05
 
 ### Fixed
@@ -3285,7 +3297,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.2a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.2c..HEAD
+[3.2.2c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2c
+[3.2.2b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2b
 [3.2.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2a
 [3.2.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2
 [3.2.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.1

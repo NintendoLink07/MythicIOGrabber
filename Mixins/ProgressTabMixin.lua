@@ -4,7 +4,7 @@ ProgressTabMixin = {}
 
 local accountCharacters
 
-local seasonOverride = -1
+local seasonOverride
 
 local function getChestsLevelForID(challengeMapID, durationSec)
 	local name, id, timeLimit, texture, backgroundTexture = C_ChallengeMode.GetMapUIInfo(challengeMapID)
@@ -774,7 +774,7 @@ function ProgressTabMixin:OnLoad(id)
 
 				for i = 1, 3, 1 do
 					local raidProgressFrame = frame["RaidProgress" .. i]
-					raidProgressFrame:SetText(string.format(miog.STRING_REPLACEMENTS["RAIDPROGRESS" .. i .. "SHORT"], (data.progress[v].regular[i] and data.progress[v].regular[i].kills or 0) .. "/" .. numBosses))
+					raidProgressFrame:SetText(string.format(miog.STRING_REPLACEMENTS["RAIDPROGRESS" .. i .. "SHORT"], (data.progress[v] and data.progress[v].regular and data.progress[v].regular[i] and data.progress[v].regular[i].kills or 0) .. "/" .. numBosses))
 					raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
 
 				end
@@ -897,7 +897,6 @@ local function addSeasonalChartData(guid)
 	MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID] = MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID] or {mplus = {weeklyData = {}}, raid = {weeklyData = {}}, pvp = {weeklyData = {}}, ilvl = {weeklyData = {}}, }
 
 	if(seasonID ~= -1) then
-
 		if(not MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.nextWeek or MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.nextWeek <= time()) then
 			MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter = MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter and MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter + 1 or 1
 			MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.nextWeek = time() + C_DateAndTime.GetSecondsUntilWeeklyReset()
@@ -940,7 +939,6 @@ local function addVaultProgress(guid)
 		hasAvailableRewards = C_WeeklyRewards.HasAvailableRewards(),
 		hasGeneratedRewards = C_WeeklyRewards.HasGeneratedRewards(),
 		canClaimRewards = C_WeeklyRewards.CanClaimRewards(),
-
 		availableTimestamp = hasRewardComing and (time() + C_DateAndTime.GetSecondsUntilWeeklyReset()) or nil
 	}
 
@@ -978,7 +976,14 @@ function ProgressTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, 
 	for guid, v in pairs(MIOG_NewSettings.accountStatistics.characters) do
 		self:CreateCharacterTables(guid, v)
 
-		checkIfItsTheFirstWeekOfSeasonForCharacter(guid)
+		local firstWeek, newOrNext = checkIfItsTheFirstWeekOfSeasonForCharacter(guid)
+
+		if(firstWeek and newOrNext == "next") then
+			MIOG_NewSettings.accountStatistics.characters[guid].mplus = {}
+			MIOG_NewSettings.accountStatistics.characters[guid].raid = {}
+			MIOG_NewSettings.accountStatistics.characters[guid].pvp = {}
+
+		end
 		
 		if(self.activityTable) then
 			if(self.id == 1 or updateMPlus) then
@@ -997,7 +1002,7 @@ function ProgressTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, 
 			self:UpdatePVPStatistics(guid)
 		end
 
-		if(guid == UnitGUID("player")) then		
+		if(guid == UnitGUID("player")) then
 			addVaultProgress(guid)
 
 			MIOG_NewSettings.accountStatistics.characters[guid].ilvl = select(2, GetAverageItemLevel()) or MIOG_NewSettings.accountStatistics.characters[guid].ilvl

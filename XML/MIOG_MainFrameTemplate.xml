@@ -168,7 +168,7 @@
                         <Frames>
                             <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
                                 <KeyValues>
-                                    <KeyValue key="spacing" value="24" type="number"/>
+                                    <KeyValue key="spacing" value="12" type="number"/>
                                 </KeyValues>
 
                                 <Anchors>
