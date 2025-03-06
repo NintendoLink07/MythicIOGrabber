@@ -1,43 +1,75 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ProgressFullCharacterTemplate" inherits="InsetFrameTemplate3, BackdropTemplate" virtual="true">
+    <Frame name="MIOG_ProgressFullCharacterTemplate" virtual="true">
         <Size x="100" y="220" />
 
-        <Frames>
+        <Layers>
+            <Layer level="BACKGROUND">
+				<Texture parentKey="CardBackground" atlas="guildfinder-card" useAtlasSize="true"/>
+			</Layer>
 
+			<Layer level="BORDER">
+				<Texture parentKey="GuildBannerBackground" atlas="guildfinder-card-guildbanner-background">
+					<Size y="96"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-10" y="20"/>
+						<Anchor point="TOPRIGHT" x="10" y="20"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+            
+			<Layer level="BORDER" textureSubLevel="-2">
+				<Texture parentKey="GuildBannerShadow" atlas="guildfinder-card-guildbanner-shadow">
+					<Size y="96"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="2">
+				<Texture parentKey="GuildBannerBorder" atlas="guildfinder-card-guildbanner-border">
+					<Size y="96"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    
+        <Frames>
+            <Frame parentKey="Class" inherits="MIOG_ProgressFullCharacterIconTemplate">
+                <Size x="36" y="36" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" x="6" y="-6"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Spec" inherits="MIOG_ProgressFullCharacterIconTemplate">
+                <Size x="36" y="36" />
+
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Name" relativePoint="BOTTOMRIGHT" x="-6" y="-6"/>
+                </Anchors>
+            </Frame>
         </Frames>
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-5" />
-                    </Anchors>
-                </FontString>
-            </Layer>
-
-            <Layer level="ARTWORK">
-                <Texture parentKey="Class">
-                    <Size x="44" y="44" />
-
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" x="3" y="-6"/>
-                    </Anchors>
-                </Texture>
-
-                <Texture parentKey="Spec">
-                    <Size x="44" y="44" />
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.Name" relativePoint="BOTTOMRIGHT" x="-3" y="-4"/>
-                    </Anchors>
-                </Texture>
-            </Layer> 
-
-            <Layer level="OVERLAY">
                 <FontString parentKey="MPlusRating" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" y="-3"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" x="-2" y="-10"/>
                     </Anchors>
                 </FontString>
 

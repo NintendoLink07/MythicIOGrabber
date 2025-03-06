@@ -80,6 +80,7 @@ end
 
 
 SLASH_MIOG1 = '/miog'
+
 local function handler(msg, editBox)
 	local command, rest = msg:match("^(%S*)%s*(.-)$")
 

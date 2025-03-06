@@ -6,6 +6,47 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.2.3] - 2025-03-07
+
+### Changed
+
+- [Progress] The character frames in the Overview panel now have a new design to make it more WoW-like.
+
+- Updated the Open Raid library.
+
+### Fixed
+
+- [SearchPanel] Switching between the raid categories and any other categories won't create lag anymore (at the cost of a bit more memory).
+
+- [GroupManager] The raid manager is visible again.
+
+- [GroupManager] Re-enabled checks for missing gems / enchants.
+
+- [GroupManager] Fixed my name retrieval function so the ready checks should be properly recognized now.
+
+- [DropChecker] Liberation of Undermine is now properly implemented and shouldn't cause an error anymore.
+
+- [FilterPanel] The progress panel beneath the filter panel now gets hidden when opening the DropChecker.
+
+### Known issues
+
+- [SearchPanel] Sometimes the first boss "is defeated" data doesn't get sent by Blizzard / doesn't get recognized by MIOG.
+This will be fixed in v3.2.4.
+
+
+
+## [3.2.2d] - 2025-03-05
+
+### Fixed
+
+- [MainFrame] The addon's frame strata has been changed so it is infront of all other UI elements just like the standard Blizzard frames.
+
+- [SearchPanel] The dungeon's abbreviation has been added to the progress panel frames.
+
+- RaiderIO dungeon data order should now be correct again.
+
+
+
 ## [3.2.2c] - 2025-03-05
 
 ### Fixed
@@ -3297,7 +3338,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.2c..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.3..HEAD
+[3.2.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.3
+[3.2.2d]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2d
 [3.2.2c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2c
 [3.2.2b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2b
 [3.2.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.2a

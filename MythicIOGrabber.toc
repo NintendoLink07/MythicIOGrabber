@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.2.2c
+## Version: 3.2.3
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -106,6 +106,7 @@ XML\SearchPanel\MIOG_SearchResultFrameTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameGroupMemberTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameSmallGroupMemberTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameBossFrameTemplate.xml
+XML\SearchPanel\MIOG_SearchResultFrameBossPanelTemplate.xml
 XML\SearchPanel\MIOG_SearchPanelResultFrameTemplate.xml
 XML\SearchPanel\MIOG_ProgressPanel.xml
 XML\SearchPanel\MIOG_ProgressPanelDungeonTemplate.xml
@@ -164,6 +165,7 @@ XML\Statistics\MIOG_ProgressRaidCharacterTemplate.xml
 XML\Statistics\MIOG_ProgressBracketTemplate.xml
 XML\Statistics\MIOG_ProgressPVPCharacterTemplate.xml
 XML\Statistics\MIOG_ProgressFullCharacterTemplate.xml
+XML\Statistics\MIOG_ProgressFullCharacterIconTemplate.xml
 
 XML\Util\MIOG_MultiStateButtonTemplate.xml
 XML\Util\MIOG_SortButtonTemplate.xml

@@ -285,23 +285,11 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="DetailedInfo">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="TOP"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.SortButtonRow" relativePoint="BOTTOMRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-
-                <Layers>
-                    
-                </Layers>
-            </Frame>
-
             <Frame parentKey="Groups" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-15"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
 
                 <Frames>

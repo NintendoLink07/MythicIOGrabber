@@ -31,7 +31,6 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true), function()
 			local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 
-
 			if(type == "search") then
 				openSearchPanel(categoryID, filters)
 
@@ -49,7 +48,8 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 				miog.ProgressPanel:ApplyFillData()
 				
 			else
-			miog.ProgressPanel:Hide()
+				miog.ProgressPanel:Hide()
+
 				LFGListFrame.CategorySelection.selectedCategory = categoryID
 				LFGListFrame.CategorySelection.selectedFilters = filters
 
@@ -435,7 +435,11 @@ local function createPVEFrameReplacement()
 		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
 			rootDescription:CreateTitle("More");
 			--rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
-			rootDescription:CreateButton("DropChecker", function() setCustomActivePanel("DropChecker") end)
+			rootDescription:CreateButton("DropChecker", function()
+				miog.ProgressPanel:Hide()
+				setCustomActivePanel("DropChecker")
+
+			end)
 			--rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
 			rootDescription:SetTag("MIOG_MORE")
 		end)

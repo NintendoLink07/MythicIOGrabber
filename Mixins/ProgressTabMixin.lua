@@ -752,9 +752,11 @@ function ProgressTabMixin:OnLoad(id)
 
 		characterView:SetElementInitializer("MIOG_ProgressFullCharacterTemplate", function(frame, data)
 			local classID = miog.CLASSFILE_TO_ID[data.classFile]
-			frame.Class:SetTexture(miog.CLASSES[classID].icon)
-			frame.Spec:SetTexture(data.spec and miog.SPECIALIZATIONS[data.spec].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
-			frame.Name:SetText(WrapTextInColorCode(data.name, C_ClassColor.GetClassColor(data.classFile):GenerateHexColor()))
+			local color = C_ClassColor.GetClassColor(data.classFile)
+
+			frame.Class.Icon:SetTexture(miog.CLASSES[classID].icon)
+			frame.Spec.Icon:SetTexture(data.spec and miog.SPECIALIZATIONS[data.spec].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
+			frame.Name:SetText(data.name)
 
 			frame.MPlusRating:SetText(string.format(miog.STRING_REPLACEMENTS["MPLUSRATINGSHORT"], data.score.value))
 			frame.MPlusRating:SetTextColor(miog.createCustomColorForRating(data.score.value):GetRGBA())
@@ -804,18 +806,17 @@ function ProgressTabMixin:OnLoad(id)
 				self.Graph:AddDataset({id= "raid", name = data.name, class = data.classFile, text = (difficulty or "") .. ": " .. kills .. "/" .. numBosses, values = weights})
 			end
 
-			--[[for k, v in ipairs(self.pvpActivityTable) do
-				frame["PVPRating" .. v]:SetText(string.format(miog.STRING_REPLACEMENTS["PVPRATING" .. v .. "SHORT"], (data.brackets[v] and data.brackets[v].rating or 0)))
-			end]]
-
 			frame.Itemlevel:SetText(string.format(miog.STRING_REPLACEMENTS["ILVLSHORT"], miog.round(data.ilvl, 2)))
 
 			self.Graph:AddDataset({id= "ilvl", name = data.name, class = data.classFile, values = data.seasonalData[seasonOverride or C_MythicPlus.GetCurrentSeason()].ilvl.weeklyData})
 
 			self.Graph:ResetAndDrawAllDatasets()
+
+			frame.GuildBannerBackground:SetVertexColor(color:GetRGB())
+			frame.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
 		end)
 
-		characterView:SetPadding(1, 1, 1, 1, 2);
+		characterView:SetPadding(1, 1, 1, 1, 10);
 		self.Columns:Init(characterView);
 
 		self.Graph:OnLoad()

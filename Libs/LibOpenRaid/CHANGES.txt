@@ -1,5 +1,239 @@
 Changes since tag v10.2.0.118
 
+commit 97f3bc20efa2de6474616f4787b2a1d5dca93535
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Tue Mar 4 15:36:30 2025 +0000
+
+    Update ThingsToMantain_WarWithin.lua
+    
+    Evangelism changed spellID but is otherwise the same it seems
+
+commit db267c529167378093d355edf44ba652925937a7
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Wed Feb 19 21:36:01 2025 +0000
+
+    Adjust a few spell Types
+    
+    Wraith Walk, Apotheosis and Emerald Communion - changed categories.
+
+commit 2acd338275d2c7705821a2172b471e85f70967ef
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Thu Jan 30 11:50:39 2025 -0300
+
+    Fixed an issue spell shared ids where it was triggering the cooldown without checking if the Unit has the spell available.
+
+commit c39a479c5f027405414e3c1781286a5f8719be89
+Author: potat0nerd <113597723+potat0nerd@users.noreply.github.com>
+Date:   Wed Jan 22 21:41:18 2025 +0100
+
+    Priest Fixes (#62)
+    
+    * Ultimate Penitence
+    
+    * Fix Halo SpellID
+
+commit 985f124a914e32d9c2c2ff6e2c46dda8d809a792
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon Jan 13 14:47:02 2025 -0300
+
+    Cooldown list update
+
+commit 454af0d0fb2fbb3078fff7679234f668cd1f8349
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Thu Dec 19 14:18:55 2024 -0300
+
+    Check if spell cooldown if lesser or equal to the current global cooldown
+
+commit 158b579ab731f631bbc5d0d7aa5ab55a5cfba918
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Dec 4 16:07:46 2024 -0300
+
+    Merge
+
+commit 36c926ad610ee8ab534e0865b2592315915d7dde
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Dec 4 15:25:31 2024 -0300
+
+    Major upgrade on UnitInfo: removed v9 covenants and added v11 heroTalentID, talents are now a exported string instead of spellIds
+
+commit a2fdcd2603069987ef6a2e4e2711b21048d9f6be
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Nov 20 14:21:47 2024 -0300
+
+    Changed Breath of Eons spellId from 403631 to 442204.
+
+commit d4950960f340c96f69515c050d3cba6857907154
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Nov 15 09:53:36 2024 -0300
+
+    Added 'cdType' key to healer cooldowns which tells if the cooldown is heal, damage reduction, etc. Added classes file.
+
+commit 9f2816b5397df32e08b7c32ffa1658b87317da67
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Thu Nov 14 15:11:44 2024 +0000
+
+    Update LibOpenRaid.lua
+    
+    Bump version after recent additions
+
+commit 50db2c02d53f9a5c47d41c428c1c4e203e6812f7
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Fri Nov 8 15:43:36 2024 +0000
+
+    Update ThingsToMantain_WarWithin.lua
+    
+    Add Kingsbane to Ass Rogue
+
+commit 6aa93518e59e10511f2890222cf7ec64a317eb5c
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Fri Nov 8 15:37:25 2024 +0000
+
+    Update ThingsToMantain_WarWithin.lua
+    
+    Add Doom Winds to Shaman CDs
+
+commit 4831bb6a1a4d9c22992a2c12e19e7ec0f1243a09
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Oct 18 13:12:03 2024 -0300
+
+    Auto remove spells that are not found in the client; Added LIB_OPEN_RAID_SPELL_INTERRUPT_BYCLASS[ClassName][SpellId] = spellData
+
+commit c97e0a34b62cd02d44e098e18d39653ff6484282
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Fri Oct 18 16:49:23 2024 +0100
+
+    Update ThingsToMantain_WarWithin.lua
+    
+    Fix Deathmark (rogue)
+
+commit 9edbdd437121b672c421d9caa6755cc9dc0aaee2
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Fri Oct 18 16:40:06 2024 +0100
+
+    Update ThingsToMantain_WarWithin.lua
+    
+    Fix Celestial Alignment (Druid) spellID
+
+commit b40cfb7193ad087d37960bc4c3570a4de70a0fa4
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sat Oct 5 16:58:04 2024 -0300
+
+    Version Up
+
+commit 46d385451fe9de17c00f78f5f479bfb6095eb5c3
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sat Oct 5 16:57:43 2024 -0300
+
+    Fix for pet spells
+
+commit b591bf2cd4314ff0ddb3241c85937c46813ecd9c
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Wed Sep 25 07:00:20 2024 +0100
+
+    Update ThingsToMantain_WarWithin.lua
+    
+    Add Engulf to Evoker
+
+commit b186c4494a74a71ca9c6cbbcacc15124fd335f3b
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Thu Sep 19 17:21:10 2024 -0300
+
+    Version bump
+
+commit 029924933bc658d54aa23ebcf94dd2747be5e6e0
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Thu Sep 19 15:26:42 2024 +0100
+
+    Update ThingsToMantain_WarWithin.lua
+    
+    Add Oppressing Roar new ID
+
+commit dc2d3e6d2077b388ad592976d061faafdc76b7eb
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Sep 11 08:44:18 2024 -0300
+
+    added hunter pvp crowd control
+
+commit 09a1abdc6159f49f857839e8266748fb726dd415
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Sun Sep 8 14:55:06 2024 +0100
+
+    Add Spells
+    
+    Celestial Conduit (Monk hero talent) and Halo (Priest)
+
+commit 93b6a8d1658f6137d8be8ce44c5c23006c34ff3f
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Sep 6 23:12:21 2024 -0300
+
+    Added enchant, potions, flasks, health and mana potions. Added some npcId > displayId, Added spited comm for logged messages
+
+commit 2952d15f07c3168a42a72f2da7c6d5bcc60d865c
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon Aug 26 11:06:11 2024 -0300
+
+    Added a protocol for string sharing
+
+commit 42804b4fe9576d4d708dafd0dec95c050119044a
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon Aug 19 11:49:31 2024 -0300
+
+    Fixed an issue where the lib wasn't caching the data for the local player
+
+commit 1adeaa7265102ad1d7b470753337185bc894b7e6
+Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
+Date:   Sun Aug 11 13:54:48 2024 +0100
+
+    Add spells to TWW
+
+commit c9ba3b97de945f4a7ad77fb41a3b741149957c05
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri Aug 9 20:52:04 2024 -0300
+
+    Added hunter Implosive Trap as type 8
+
+commit 3e79028101b67a4c3b4d8d4cdaff95484a8b82e6
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon Aug 5 13:44:58 2024 -0300
+
+    Check for keystone update when a backpack item is changed
+
+commit 579a054f7c0d90a6c359c33bb4d9d24a93be6f3b
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jul 31 23:07:00 2024 -0300
+
+    Send the keystone info after 2 seconds after the player entered in the world
+
+commit ded2fe78242e1d0d947aee6d16ee7725faee8685
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Tue Jul 30 12:55:46 2024 -0300
+
+    Added keystone item id for wow11
+
+commit 9e7ab41584a0e822be7f156711cc5fcf05ed241a
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jul 24 19:36:21 2024 -0300
+
+    Fixed not getting class spells and adding passive spells
+
+commit d13036727ee8700cd772f957e5663d12fe0dfcd9
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jul 24 16:08:52 2024 -0300
+
+    Check for V11 functions before V10
+
+commit de8eac448902e1b0b249a5ee214f1437a3229aba
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Tue Jul 9 12:49:53 2024 -0300
+
+    update
+
+commit 18dbeb1a0d6ed946b0b6a5ddc452348e9af6eb43
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Wed Jun 19 21:46:36 2024 -0300
+
+    Fix for GetSpellCharges
+
 commit c609d3bf26e1e216aa8c306bc52d85a693e19f3f
 Author: Tercio Jose <terciob19@hotmail.com>
 Date:   Sat Jun 15 11:29:48 2024 -0300

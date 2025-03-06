@@ -224,6 +224,7 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
             local currentDungeon = self.MythicPlus["Dungeon" .. k]
 
             if(self.mplusData and self.mplusData[data.mapID]) then
+                local mapData = miog.MAP_INFO[data.mapID]
                 currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.mapID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.mapID].chests)) or 0, self.mplusData and self.mplusData[data.mapID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
 
                 if(self.mplusData[data.mapID].level == 0) then

@@ -381,12 +381,12 @@ local function addOneTimeFrames(frame)
 
 	frame:SetBackdrop({edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 2})
 
-	frame.framePool = frame.framePool or CreateFramePoolCollection()
+	--[[frame.framePool = frame.framePool or CreateFramePoolCollection()
 	frame.framePool:GetOrCreatePool("Frame", nil, "MIOG_SmallGroupMemberTemplate", resetFrame)
 	frame.framePool:GetOrCreatePool("Frame", nil, "MIOG_ResultFrameBossFrameTemplate", function(_, childFrame)
 		childFrame:Hide()
 		childFrame.layoutIndex = nil
-	end)
+	end)]]--
 		
 	if(miog.F.LITE_MODE) then
 		frame.BasicInformation.Title:SetWidth(90)
@@ -510,29 +510,39 @@ local function updateScrollBoxFrame(frame, data)
 		local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 		currentFrame.resultID = data.resultID
 		
-		if(miog.MAP_INFO[mapID]) then
-			currentFrame.framePool:ReleaseAll()
-	
-			currentFrame.CategoryInformation.BossPanel.bossFrames = {}
-	
+		local bossPanel = currentFrame.CategoryInformation.BossPanel
+		
+		if(miog.MAP_INFO[mapID] and LFGListFrame.SearchPanel.categoryID == 3) then
 			if(#miog.MAP_INFO[mapID].bosses == 0) then
 				miog.checkSingleMapIDForNewData(mapID)
+
 			end
-	
-			for k, v in ipairs(miog.MAP_INFO[mapID].bosses) do
-				local bossFrame = currentFrame.framePool:Acquire("MIOG_ResultFrameBossFrameTemplate")
-				bossFrame:SetParent(currentFrame.CategoryInformation.BossPanel)
-				bossFrame.layoutIndex = k
-	
-				SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
-				bossFrame.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
-	
-				bossFrame:Show()
-	
-				currentFrame.CategoryInformation.BossPanel.bossFrames[k] = bossFrame
+
+			local frameCounter = 20
+			local bossInfo = miog.MAP_INFO[mapID].bosses
+
+
+			bossPanel.bossFrames = {}
+
+			for i = 20, 1, -1 do
+				local bossFrame = currentFrame.CategoryInformation.BossPanel["Boss" .. frameCounter]
+
+				if(bossInfo[i]) then
+					currentFrame.CategoryInformation.BossPanel.bossFrames[i] = bossFrame
+
+					SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo[i].creatureDisplayInfoID)
+					bossFrame:Show()
+
+					frameCounter = frameCounter - 1
+
+				else
+					bossFrame:Hide()
+
+				end
 			end
-	
-			currentFrame.CategoryInformation.BossPanel:MarkDirty()
+		else
+			bossPanel:Hide()
+
 		end
 
 		currentFrame.Background:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].horizontal, "CLAMP", "MIRROR")
@@ -612,12 +622,12 @@ local function updateScrollBoxFrame(frame, data)
 				if(encounterInfo) then
 					for k, v in ipairs(encounterInfo) do
 						encountersDefeated[v] = true
+
 					end
 				end
 
 				for k, v in ipairs(bossPanel.bossFrames) do
 					if(miog.MAP_INFO[mapID].bosses[k]) then
-
 						local currentBoss = miog.MAP_INFO[mapID].bosses[k]
 
 						if(encountersDefeated[currentBoss.name]) then

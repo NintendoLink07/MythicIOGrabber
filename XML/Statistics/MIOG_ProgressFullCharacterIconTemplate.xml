@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressFullCharacterIconTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" setAllPoints="true" />
+
+                <Texture parentKey="IconRing" atlas="communities-ring-gold">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon"/>
+                    </Anchors>
+                </Texture>
+
+                <MaskTexture parentKey="CircleMask" file="Interface\CharacterFrame\TempPortraitAlphaMask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Icon" x="3" y="-3"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon" x="-3" y="3"/>
+                    </Anchors>
+                    <MaskedTextures>
+                        <MaskedTexture childKey="Icon"/>
+                    </MaskedTextures>
+                </MaskTexture>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

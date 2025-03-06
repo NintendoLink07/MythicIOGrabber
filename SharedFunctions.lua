@@ -252,6 +252,15 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 	return raidActivities
 end
 
+miog.rpairs = function(t)
+	return function(t, i)
+		i = i - 1
+		if i ~= 0 then
+			return i, t[i]
+		end
+	end, t, #t + 1
+end
+
 local function getNewRaidSortData(playerName, realm, region, existingProfile)
 	local raidData
 	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
@@ -407,12 +416,13 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 	
 						else
 							mplusData[dungeonEntry.dungeon.instance_map_id] = {
-								level = profile.mythicKeystoneProfile.dungeons[i],
-								chests = profile.mythicKeystoneProfile.dungeonUpgrades[i]
+								level = profile.mythicKeystoneProfile.dungeons[dungeonEntry.dungeon.index],
+								chests = profile.mythicKeystoneProfile.dungeonUpgrades[dungeonEntry.dungeon.index]
 							}
 	
 						end
 					end
+
 				end
 	
 				if(not returnAsBlizzardTable) then
@@ -453,7 +463,7 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 	
 				end
 			end
-	
+
 			return mplusData, intimeInfo, overtimeInfo
 		end
 	end
@@ -829,6 +839,7 @@ end
 
 local function createFullName(type, value)
 	local realm = GetNormalizedRealmName()
+	local name
 
 	if(not realm) then
 		return
@@ -856,12 +867,12 @@ local function createFullName(type, value)
 			return value
 
 		else
-			value = nameTable[1] .. "-" .. realm
+			name = nameTable[1] .. "-" .. realm
 
 		end
 	end
 
-	return value
+	return name
 end
 
 miog.createFullNameFrom = createFullName

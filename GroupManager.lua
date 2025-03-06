@@ -14,6 +14,7 @@ local playerSpecs = {}
 local playerKeystones = {}
 local playerRaidData = {}
 local playerMPlusData = {}
+local playerGearData = {}
 local inspectList = {}
 
 local framePool
@@ -46,10 +47,102 @@ local function updateInspectionText()
 	miog.setInspectionData(currentInspectionName, playersWithSpecData, inspectableMembers)
 end
 
+
+
+local function updateSingleCharacterKeystoneData(fullName, frameIsAvailable)
+	if(not miog.GroupManager:IsShown()) then
+		return
+	end
+
+	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+		return fullName == data.fullName
+
+	end)
+
+	if(frame) then
+		if(playerKeystones[fullName]) then
+			if(playerKeystones[fullName].keystoneShortName) then
+				frame.Keystone:SetText("+" .. playerKeystones[fullName].keylevel .. " " .. playerKeystones[fullName].keystoneShortName)
+	
+			else
+				frame.Keystone:SetText("---")
+	
+			end
+
+			local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(playerKeystones[fullName].challengeMapID)
+
+			if(miog.CHALLENGE_MODE_INFO[id]) then
+				playerKeystones[fullName].keystoneShortName = miog.MAP_INFO[miog.CHALLENGE_MODE_INFO[id].mapID].shortName
+				--data.keystone = texture
+				playerKeystones[fullName].keylevel = playerKeystones[fullName].level
+				playerKeystones[fullName].keystoneFullName = mapName
+
+			end
+		end
+	end
+end
+
+local function updateSingleCharacterSpecData(fullName, frameIsAvailable)
+	if(not miog.GroupManager or not miog.GroupManager:IsShown()) then
+		return
+	end
+
+	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+		return fullName == data.fullName
+
+	end)
+
+	if(frame) then
+		frame.Spec:SetTexture(miog.SPECIALIZATIONS[playerSpecs[fullName] or 0].squaredIcon)
+
+		frame.specID = playerSpecs[fullName]
+	end
+end
+
+local function updateSingleCharacterItemData(fullName)
+	if(not miog.GroupManager:IsShown()) then
+		return
+	end
+
+	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+		return fullName == data.fullName
+
+	end)
+
+
+	local playerGear = playerGearData[fullName]
+
+	if(frame) then
+		if(playerGear) then
+			if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
+				data.missingEnchants = {}
+
+				for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
+					if(slotIdWithoutEnchant ~= 10) then
+						data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+						
+					end
+				end
+			end
+
+			if(playerGear.noGems and #playerGear.noGems > 0) then
+				data.missingGems = {}
+
+				for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
+					data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+				end
+			end
+			
+			frame.Itemlevel:SetText(playerGear.ilevel or "N/A")
+			frame.Durability:SetText(playerGear.durability and "(" .. playerGear.durability .. "%)" or "N/A")
+		end
+	end
+end
+
 local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 	local data = {}
 
-	local playerGear = miog.openRaidLib.GetUnitGear(unitID)
+	local playerGear = playerGearData[libName] or miog.openRaidLib.GetUnitGear(unitID)
 
 	if(playerGear) then
 		data.ilvl = playerGear.ilevel or 0
@@ -170,93 +263,6 @@ local function showIndepthData(data)
 	indepthFrame:Show()
 end
 
-local function updateSingleCharacterKeystoneData(fullName, frameIsAvailable)
-	if(not miog.GroupManager:IsShown()) then
-		return
-	end
-
-	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
-		return fullName == data.fullName
-
-	end)
-
-	if(frame) then
-		if(playerKeystones[fullName]) then
-			if(playerKeystones[fullName].keystoneShortName) then
-				frame.Keystone:SetText("+" .. playerKeystones[fullName].keylevel .. " " .. playerKeystones[fullName].keystoneShortName)
-	
-			else
-				frame.Keystone:SetText("---")
-	
-			end
-
-			local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(playerKeystones[fullName].challengeMapID)
-
-			if(miog.CHALLENGE_MODE_INFO[id]) then
-				playerKeystones[fullName].keystoneShortName = miog.MAP_INFO[miog.CHALLENGE_MODE_INFO[id].mapID].shortName
-				--data.keystone = texture
-				playerKeystones[fullName].keylevel = playerKeystones[fullName].level
-				playerKeystones[fullName].keystoneFullName = mapName
-
-			end
-		end
-	end
-end
-
-local function updateSingleCharacterSpecData(fullName, frameIsAvailable)
-	if(not miog.GroupManager or not miog.GroupManager:IsShown()) then
-		return
-	end
-
-	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
-		return fullName == data.fullName
-
-	end)
-
-	if(frame) then
-		frame.Spec:SetTexture(miog.SPECIALIZATIONS[playerSpecs[fullName] or 0].squaredIcon)
-
-		frame.specID = playerSpecs[fullName]
-	end
-end
-
-local function updateSingleCharacterItemData(fullName, playerGear)
-	if(not miog.GroupManager:IsShown()) then
-		return
-	end
-
-	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
-		return fullName == data.fullName
-
-	end)
-
-	if(frame) then
-		if(playerGear) then
-			--[[if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
-				data.missingEnchants = {}
-
-				for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
-					if(slotIdWithoutEnchant ~= 10) then
-						data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
-						
-					end
-				end
-			end
-
-			if(playerGear.noGems and #playerGear.noGems > 0) then
-				data.missingGems = {}
-
-				for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
-					data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
-				end
-			end]]
-			
-			frame.Itemlevel:SetText(playerGear.ilevel or "N/A")
-			frame.Durability:SetText(playerGear.durability and "(" .. playerGear.durability .. "%)" or "N/A")
-		end
-	end
-end
-
 local function updateGroupManagerPlayerFrame(frame, data)
 	local rank, _, level, class, fileName, zone, online, isDead, role, isML, _
 
@@ -270,6 +276,7 @@ local function updateGroupManagerPlayerFrame(frame, data)
 
 	end
 
+	frame.data = data
 	frame.id = data.index
 	frame.name = data.fullName
 	frame.unit = data.unitID
@@ -707,8 +714,6 @@ local function removePlayerFromInspectList(fullName)
 end
 
 local function startNotify(fullName, delay)
-	--print(delay and "DELAY" or "START", fullName, playerInInspection, not playerSpecs[fullName], groupData[fullName], groupData[fullName] and CanInspect(groupData[fullName].unitID))
-
 	if(playerInInspection and not playerSpecs[fullName] and groupData[fullName] and CanInspect(groupData[fullName].unitID)) then
 		miog.ClassPanel.LoadingSpinner:SetShown(true)
 		local color = C_ClassColor.GetClassColor(groupData[playerInInspection].fileName)
@@ -1094,7 +1099,7 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneInfo)
 	end
 end
 
-miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
+miog.OnGearUpdate = function(unitName, unitGear, allUnitsGear)
 	--[[local itemLevelNumber = unitGear.ilevel
 	local durabilityNumber = unitGear.durability
 	--hasWeaponEnchant is 1 have enchant or 0 is don't
@@ -1108,7 +1113,14 @@ miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
 	for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
 	end]]
 
-	updateSingleCharacterItemData(miog.createFullNameFrom("unitID", unitId), unitGear)
+	local name = miog.createFullNameFrom("unitName", unitName)
+
+	if(name) then
+		playerGearData[name] = unitGear
+
+		updateSingleCharacterItemData(name)
+
+	end
 end
 
 local function updateRaidLibData()
@@ -1131,7 +1143,6 @@ miog.loadInspectManagement = function()
 	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
    
-   --registering the callback:
 	local inspectManager = CreateFrame("Frame", nil)
 	inspectManager:Hide()
 
@@ -1222,15 +1233,12 @@ hooksecurefunc("NotifyInspect", function()
 	lastNotifyTime = GetTimePreciseSec()
 
 	updateInspectionText()
-
-	--print("NOTIFY", currentInspectionName)
 end)
 
 hooksecurefunc("ClearInspectPlayer", function(own)
 	if(own) then
-		--print("CLEAR", currentInspectionName)
-
 		playerInInspection = nil
 		currentInspectionName = nil
+		
 	end
 end)

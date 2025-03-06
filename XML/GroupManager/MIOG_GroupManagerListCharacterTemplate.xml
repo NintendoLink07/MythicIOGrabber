@@ -7,7 +7,28 @@
 		</KeyValues>
 
         <Layers>
-            <Layer level="OVERLAY">
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="ReadyBorder">
+                    <Size x="17" y="17"/>
+
+                    <Color r="0" g="0" b="0" a="0.75" />
+                    
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-8"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Ready">
+                    <Color r="0.2" g="0.2" b="0.2" a="0.75" />
+                    
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.ReadyBorder" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ReadyBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY" textureSubLevel="-1">
                 <FontString parentKey="Index" font="SystemFont_Shadow_Med1" justifyH="CENTER">
                     <Size x="17" />
                     <Anchors>
@@ -72,25 +93,6 @@
                         <Anchor point="LEFT" relativeKey="$parent.Progress" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </FontString>
-
-                <Texture parentKey="ReadyBorder">
-                    <Size x="17" y="17"/>
-
-                    <Color r="0" g="0" b="0" a="0.75" />
-                    
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-8"/>
-                    </Anchors>
-                </Texture>
-
-                <Texture parentKey="Ready">
-                    <Color r="0.2" g="0.2" b="0.2" a="0.75" />
-                    
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.ReadyBorder" relativePoint="TOPLEFT" x="1" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ReadyBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
-                    </Anchors>
-                </Texture>
             </Layer>
         </Layers> 
         
@@ -99,30 +101,32 @@
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 GameTooltip:SetUnit(self.unit)
 
-                if(self.id) then
-                    local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(self.id) --ONLY WORKS WHEN IN GROUP
+                if(self.unit) then
+                    if(self.id) then
+                        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(self.id) --ONLY WORKS WHEN IN GROUP
 
-                    if(rank == 2 ) then
-                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                        GameTooltip:AddLine("Rank: " .. RAID_LEADER)
-
-                    elseif(rank == 1 ) then
-                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                        GameTooltip:AddLine("Rank: " .. RAID_ASSISTANT)
-
-                    else
-                        if(role ~= nil) then
+                        if(rank == 2 ) then
                             GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine("Rank: " .. RAID_LEADER)
 
-                            if (role == "MAINTANK" ) then
-                                GameTooltip:AddLine("Raid role: " .. MAIN_TANK);
-                            elseif (role == "MAINASSIST" ) then
-                                GameTooltip:AddLine("Raid role: " .. MAIN_ASSIST);
+                        elseif(rank == 1 ) then
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine("Rank: " .. RAID_ASSISTANT)
+
+                        else
+                            if(role ~= nil) then
+                                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+                                if (role == "MAINTANK" ) then
+                                    GameTooltip:AddLine("Raid role: " .. MAIN_TANK);
+                                elseif (role == "MAINASSIST" ) then
+                                    GameTooltip:AddLine("Raid role: " .. MAIN_ASSIST);
+                                end
                             end
                         end
                     end
 
-                    --[[if(self.data.keystone) then
+                    if(self.data.keystone) then
                         GameTooltip_AddBlankLineToTooltip(GameTooltip)
                         GameTooltip:AddLine("Keystone: +" .. self.data.keylevel .. " " .. self.data.keyname)
 
@@ -185,7 +189,7 @@
                         GameTooltip:AddLine(WrapTextInColorCode("No data available (yet) for this player.", "FFFF0000"))
                         GameTooltip:AddLine(WrapTextInColorCode("This player may not have Details or MythicIOGrabber installed.", "FFFF0000"))
 
-                    end]]--
+                    end
 
                     GameTooltip:Show()
                 end

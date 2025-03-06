@@ -246,13 +246,9 @@
                         </Layers>
                     </Frame>
                     
-                    <Frame parentKey="BossPanel" inherits="HorizontalLayoutFrame" hidden="true">
-                        <KeyValues>
-                            <KeyValue key="fixedHeight" value="16" />
-                            <KeyValue key="leftPadding" value="5" />
-                        </KeyValues>
-
+                    <Frame parentKey="BossPanel" inherits="MIOG_SearchResultFrameBossPanelTemplate" hidden="true">
                         <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="5" y="1"/>
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="1"/>
                         </Anchors>
                     </Frame>

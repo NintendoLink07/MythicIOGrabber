@@ -11,7 +11,7 @@
 
             <Layer level="ARTWORK" textureSubLevel="-7">
                 <Texture parentKey="TransparentDark"  propagateMouseInput="Motion">
-                    <Color r="0.1" g="0.1" b="0.1" a="0.65" />
+                    <Color r="0.1" g="0.1" b="0.1" a="0.35" />
 
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
@@ -30,9 +30,15 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Level" font="SystemFont_Shadow_Med1" justifyH="CENTER" propagateMouseInput="Motion">
+                <FontString parentKey="Name" font="SystemFont_Shadow_Med2" justifyH="CENTER" propagateMouseInput="Motion">
                     <Anchors>
-                        <Anchor point="CENTER"/>
+                        <Anchor point="TOP" y="-1"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Level" font="SystemFont_Shadow_Med2" justifyH="CENTER" propagateMouseInput="Motion">
+                    <Anchors>
+                        <Anchor point="BOTTOM" y="1"/>
                     </Anchors>
                 </FontString>
             </Layer>
