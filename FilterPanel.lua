@@ -701,35 +701,33 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 					if(not settings.activities[activityInfo.groupFinderActivityGroupID].value) then
 						return false, "raidMismatch"
 
-					else
-						local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
+					end
 
-						local encountersDefeated = {}
+					local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
 
-						if(encounterInfo) then
-							for k, v in ipairs(encounterInfo) do
-								encountersDefeated[v] = true
-							end
+					local encountersDefeated = {}
+
+					if(encounterInfo) then
+						for k, v in ipairs(encounterInfo) do
+							encountersDefeated[v] = true
 						end
+					end
 
-						for k, v in pairs(settings.activities[activityInfo.groupFinderActivityGroupID].bosses) do
-							local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].bosses[k]
+					for k, v in pairs(settings.activities[activityInfo.groupFinderActivityGroupID].bosses) do
+						local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].bosses[k]
 
-							if(bossInfo) then
-								-- 1 either defeated or alive
-								-- 2 defeated
-								-- 3 alive
-								if(v == 2 and encountersDefeated[bossInfo.name] or v == 3 and not encountersDefeated[bossInfo.name]) then
-									return false, "bossSelectionMismatch"
+						if(bossInfo) then
+							-- 1 either defeated or alive
+							-- 2 defeated
+							-- 3 alive
+							if(v == 2 and (encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]) or v == 3 and not (encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName])) then
+								return false, "bossSelectionMismatch"
 
-								end
 							end
 						end
 					end
 
 					if(settings.kills) then
-						local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
-
 						local numberOfSlainEncounters = encounterInfo and #encounterInfo or 0
 
 						local minKills = settings.kills.minimum

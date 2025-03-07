@@ -898,10 +898,11 @@ local function checkSingleMapIDForNewData(mapID, selectInstance)
 		end
 
 		while bossName do
-			local id, _, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
+			local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
 			
 			miog.MAP_INFO[mapID].bosses[bossIndex] = {
 				name = bossName,
+				altName = name2,
 				journalEncounterID = journalEncounterID,
 				journalInstanceID = journalInstanceID,
 				dungeonEncounterID = dungeonEncounterID,

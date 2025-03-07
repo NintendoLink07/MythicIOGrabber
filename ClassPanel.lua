@@ -111,12 +111,12 @@ end
 
 miog.createClassPanel = function()
     local classPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.MainFrame, "MIOG_ClassPanel")
-	classPanel:SetPoint("BOTTOMRIGHT", classPanel:GetParent(), "TOPRIGHT", 0, 1)
-    classPanel:SetPoint("BOTTOMLEFT", classPanel:GetParent(), "TOPLEFT", 0, 1)
+    PixelUtil.SetPoint(classPanel, "BOTTOMRIGHT", classPanel:GetParent(), "TOPRIGHT", 0, 1)
+    PixelUtil.SetPoint(classPanel, "BOTTOMLEFT", classPanel:GetParent(), "TOPLEFT", 0, 1)
 
     local container = classPanel.Container
 
-    container:SetHeight(container:GetParent():GetHeight() - 5)
+    PixelUtil.SetHeight(container, container:GetParent():GetHeight() - 5)
     container.classFrames = {}
 
     for classID, classEntry in ipairs(miog.CLASSES) do
@@ -126,14 +126,14 @@ miog.createClassPanel = function()
 
         local classFrame = CreateFrame("Frame", nil, container, "MIOG_ClassPanelClassFrameTemplate")
         classFrame.layoutIndex = classID
-        classFrame:SetSize(container:GetHeight(), container:GetHeight())
+        PixelUtil.SetSize(classFrame, container:GetHeight(), container:GetHeight())
 
         classFrame.Icon:SetTexture(classEntry.icon)
         classFrame.leftPadding = 3
         container.classFrames[classID] = classFrame
 
         local specPanel = CreateFrame("Frame", nil, classFrame, "VerticalLayoutFrame, BackdropTemplate")
-        specPanel:SetPoint("TOP", classFrame, "BOTTOM", 0, -5)
+        PixelUtil.SetPoint(specPanel, "TOP", classFrame, "BOTTOM", 0, -5)
         specPanel.fixedHeight = classFrame:GetHeight() - 3
         specPanel.specFrames = {}
         specPanel:Hide()
@@ -143,7 +143,7 @@ miog.createClassPanel = function()
 
         for _, specID in ipairs(classEntry.specs) do
             local specFrame = CreateFrame("Frame", nil, specPanel, "MIOG_ClassPanelSpecFrameTemplate")
-            specFrame:SetSize(specPanel.fixedHeight, specPanel.fixedHeight)
+            PixelUtil.SetSize(specFrame, specPanel.fixedHeight, specPanel.fixedHeight)
             specFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
             specFrame.Border:SetColorTexture(classColor:GetRGBA())
             specFrame.leftPadding = 0

@@ -518,22 +518,23 @@ local function updateScrollBoxFrame(frame, data)
 
 			end
 
-			local frameCounter = 20
 			local bossInfo = miog.MAP_INFO[mapID].bosses
-
+			local bossCounter = #bossInfo
 
 			bossPanel.bossFrames = {}
 
 			for i = 20, 1, -1 do
-				local bossFrame = currentFrame.CategoryInformation.BossPanel["Boss" .. frameCounter]
+				local bossFrame = currentFrame.CategoryInformation.BossPanel["Boss" .. i]
 
-				if(bossInfo[i]) then
-					currentFrame.CategoryInformation.BossPanel.bossFrames[i] = bossFrame
+				if(bossInfo[bossCounter]) then
+					bossFrame.name = bossInfo[bossCounter].name
+					bossFrame.altName = bossInfo[bossCounter].altName
+					currentFrame.CategoryInformation.BossPanel.bossFrames[bossCounter] = bossFrame
 
-					SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo[i].creatureDisplayInfoID)
+					SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo[bossCounter].creatureDisplayInfoID)
 					bossFrame:Show()
 
-					frameCounter = frameCounter - 1
+					bossCounter = bossCounter - 1
 
 				else
 					bossFrame:Hide()
@@ -630,7 +631,7 @@ local function updateScrollBoxFrame(frame, data)
 					if(miog.MAP_INFO[mapID].bosses[k]) then
 						local currentBoss = miog.MAP_INFO[mapID].bosses[k]
 
-						if(encountersDefeated[currentBoss.name]) then
+						if(encountersDefeated[currentBoss.name] or encountersDefeated[currentBoss.altName]) then
 							v.Icon:SetDesaturated(true)
 							v.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
 

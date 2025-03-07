@@ -47,7 +47,9 @@ local function updateInspectionText()
 	miog.setInspectionData(currentInspectionName, playersWithSpecData, inspectableMembers)
 end
 
-
+miog.getKeystoneData = function(fullName)
+	return playerKeystones[fullName]
+end
 
 local function updateSingleCharacterKeystoneData(fullName, frameIsAvailable)
 	if(not miog.GroupManager:IsShown()) then
@@ -735,6 +737,8 @@ local function startNotify(fullName, delay)
 end
 
 local function inspectCharacter(fullName)
+	miog.ClassPanel.LoadingSpinner:SetShown(false)
+	
 	if(groupData[fullName] and not playerSpecs[fullName]) then
 		if(not playerInInspection and UnitIsPlayer(groupData[fullName].unitID)) then --  and (GetTimePreciseSec() - lastNotifyTime) > miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 			inspectList[fullName] = nil

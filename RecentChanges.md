@@ -1,24 +1,15 @@
-## [3.2.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.3) - 2025-03-07
-
-- [Progress] The character frames in the Overview panel now have a new design to make it more WoW-like.
-
-- Updated the Open Raid library.
+## [3.2.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.4) - 2025-03-07
 
 ### Fixed
 
-- [SearchPanel] Switching between the raid categories and any other categories won't create lag anymore (at the cost of a bit more memory).
+- [MainFrame] ReQueue groups are now visible again.
 
-- [GroupManager] The raid manager is visible again.
+- [Progress] Keystone data for the keystone dropdown now always get properly populated.
 
-- [GroupManager] Re-enabled checks for missing gems / enchants.
+- [SearchPanel] Bosses that have been defeated but have also an alternative name (Vexie and the Geargrinders / The Geargrinders) will now be more reliably detected.
 
-- [GroupManager] Fixed my name retrieval function so the ready checks should be properly recognized now.
+- [SearchPanel] All unused boss frames will now be hidden when switching categories from "Raids - Legacy" to "Raids".
 
-- [DropChecker] Liberation of Undermine is now properly implemented and shouldn't cause an error anymore.
+- [SearchPanel] By default all bosses are assumed to be alive (in the past groups seemed to be fully cleared without any encounter defeated info).
 
-- [FilterPanel] The progress panel beneath the filter panel now gets hidden when opening the DropChecker.
-
-### Known issues
-
-- [SearchPanel] Sometimes the first boss "is defeated" data doesn't get sent by Blizzard / doesn't get recognized by MIOG.
-This will be fixed in v3.2.4.
+- [FilterPanel] Bosses that have been defeated but have also an alternative name (Vexie and the Geargrinders / The Geargrinders) can now be more reliably filtered out.

@@ -327,7 +327,7 @@ function ProgressTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
 function ProgressTabMixin:CreateDropdownEntry(fullName, rootDescription)
 	--self:CreateDebugKeyInfo(fullName, rootDescription)
 
-	local keystoneInfo = miog.openRaidLib.GetAllKeystonesInfo()[fullName]
+	local keystoneInfo = miog.getKeystoneData(fullName)
 
 	if(keystoneInfo and keystoneInfo.mapID > 0) then
 		local mapName, id, timeLimit, texture, background = C_ChallengeMode.GetMapUIInfo(keystoneInfo.challengeMapID)
@@ -703,8 +703,6 @@ function ProgressTabMixin:OnLoad(id)
 		if(self.id == 1) then
 			self.Info.KeystoneDropdown:SetDefaultText("Keystones")
 			self.Info.KeystoneDropdown:SetupMenu(function(dropdown, rootDescription)
-				--local shortName = GetUnitName("player", false)
-				local fullPlayerName = miog.createFullNameFrom("unitID", "player")
 
 				local numGroupMembers = GetNumGroupMembers()
 
@@ -732,6 +730,7 @@ function ProgressTabMixin:OnLoad(id)
 						self:CreateDropdownEntry(fullName, rootDescription)
 					end
 				else
+					local fullPlayerName = miog.createFullNameFrom("unitID", "player")
 					self:CreateDropdownEntry(fullPlayerName, rootDescription)
 
 				end
