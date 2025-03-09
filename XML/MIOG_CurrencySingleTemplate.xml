@@ -32,7 +32,7 @@
                     </KeyValues>
 
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1"/>
                     </Anchors>
                 </FontString>
             </Layer>

@@ -416,19 +416,13 @@ local function createDataProviderWithUnsortedData()
 					secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 				elseif(categoryID == 3) then
-					local raidData = {miog.getRaidSortData(playerName .. "-" .. realm)}
+					local raidData = miog.getNewRaidSortData(playerName, realm)
 
-					if(raidData) then
-						primarySortAttribute = raidData[3][1].weight
-						secondarySortAttribute = raidData[3][2].weight
-						favourPrimary = wticc(miog.DIFFICULTY[raidData[3][1].difficulty].shortName .. ":" .. raidData[3][1].progress .. "/" .. raidData[3][1].bossCount, miog.DIFFICULTY[raidData[3][1].difficulty].color)
-
-					else
-						primarySortAttribute = 0
-						secondarySortAttribute = 0
-						favourPrimary = 0
+					primarySortAttribute = raidData.character.ordered[1].weight
+					secondarySortAttribute = raidData.character.ordered[2].weight
 					
-					end
+					favourPrimary = raidData.character.ordered[1].weight and wticc(raidData.character.ordered[1].shortName .. ":" .. raidData.character.ordered[1].parsedString, miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color) or 0
+
 
 				elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 					if(not miog.F.IS_IN_DEBUG_MODE) then

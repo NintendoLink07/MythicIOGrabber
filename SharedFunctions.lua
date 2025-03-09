@@ -3,6 +3,10 @@ local wticc = WrapTextInColorCode
 
 miog.ONCE = true
 
+miog.getRaiderIOProfile = function(playerName, realm, region)
+	return RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+end
+
 miog.updateCurrencies = function()
 	local currentSeason = miog.C.BACKUP_SEASON_ID or C_MythicPlus.GetCurrentSeason()
 
@@ -150,10 +154,11 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 	end
 end
 
-local function calculateWeightedScore(difficulty, kills, bossCount, current, ordinal)
-	return kills > 0 and (difficulty * difficulty * difficulty * 10) + (kills / bossCount * 40) * (current and 1.5 or 1) or 0
-
-	--return (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (miog.WEIGHTS_TABLE[current and 1 or 2] * difficulty + miog.WEIGHTS_TABLE[current and 2 or 3] * kills / bossCount) + (ordinal or 0)
+local function calculateWeightedScore(difficulty, kills, bossCount, isCurrentSeason)
+    if kills == 0 then return 0 end
+    
+    local seasonFactor = isCurrentSeason and 3 or 1 -- Boost new raid significantly
+    return ((difficulty * 3) * 20 + (kills / bossCount * 40)) ^ seasonFactor
 end
 
 miog.calculateWeightedScore = calculateWeightedScore
@@ -261,7 +266,221 @@ miog.rpairs = function(t)
 	end, t, #t + 1
 end
 
-local function getNewRaidSortData(playerName, realm, region, existingProfile)
+local function revisedRaidSortData(playerName, realm, region, existingProfile)
+	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+
+	if(not (raidInfo and RaiderIO)) then
+		return
+
+	end
+
+	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
+	local raidData
+
+	if(profile and profile.raidProfile) then
+		raidData = {
+			character = { ordered = {}, progressWeight = 0 },
+			main = { ordered = {}, progressWeight = 0 }
+		}
+
+		local profileProgress = profile.raidProfile.raidProgress
+
+		for k, v in ipairs(raidInfo) do
+			for i = 1, #profileProgress, 1 do
+				local d = profileProgress[i]
+				local mapID = tonumber(string.sub(d.raid.mapId, -4)) or d.raid.mapId
+
+
+				local currentTable = d.isMainProgress and raidData.main or raidData.character
+				local isAwakened = (mapID ~= d.raid.mapId) and d.current
+
+				local raidEntry = currentTable.raids[mapID]
+				if(not raidEntry) then
+					raidEntry = {
+						regular = { difficulties = {}},
+						awakened = { difficulties = {}},
+						bossCount = d.raid.bossCount,
+						isAwakened = isAwakened,
+						shortName = d.raid.shortName
+					}
+					currentTable.raids[mapID] = raidEntry
+				end
+
+				local modeTable = isAwakened and raidEntry.awakened or raidEntry.regular
+
+				local progress = d.progress
+				for j = 1, #progress, 1 do
+					local y = progress[j]
+					local difficulty = y.difficulty
+					local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+
+					local difficultyEntry = {
+						difficulty = difficulty,
+						current = d.current,
+						mapID = mapID,
+						weight = weight,
+						parsedString = y.kills .. "/" .. d.raid.bossCount,
+					}
+
+					modeTable.difficulties[difficulty] = difficultyEntry
+					currentTable.progressWeight = currentTable.progressWeight + weight
+					currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
+				end
+			end
+		end
+	end
+
+	return raidData
+end
+
+local function sortFunction(a, b)
+	return (a.current == b.current) and (a.weight > b.weight) or false
+end
+
+local append = table.insert -- Localizing function for speed
+
+local function getRaidProgressDataOnly(playerName, realm, region, existingProfile)
+    local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+    if not raidInfo then return end
+
+    local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
+    if not (profile and profile.raidProfile) then return end
+
+    local raidData = {
+        character = { ordered = {}, progressWeight = 0 },
+        main = { ordered = {}, progressWeight = 0 }
+    }
+    local profileProgress = profile.raidProfile.raidProgress
+
+    for i = 1, #profileProgress do
+        local d = profileProgress[i]
+        local currentTable = d.isMainProgress and raidData.main or raidData.character
+        local d_raid = d.raid
+        local mapID = tonumber(d_raid.mapId) or d_raid.mapId
+        local d_bossCount, d_current = d_raid.bossCount, d.current
+        local progress = d.progress
+
+        for j = 1, #progress do
+            local y = progress[j]
+            local difficulty, kills = y.difficulty, y.kills
+            local weight = calculateWeightedScore(y.difficulty, y.kills, d_bossCount, d_current)
+
+            append(currentTable.ordered, {
+                difficulty = difficulty,
+                mapID = mapID,
+                current = d_current,
+                weight = weight,
+                parsedString = kills .. "/" .. d_bossCount
+            })
+            currentTable.progressWeight = currentTable.progressWeight + weight
+        end
+    end
+
+    table.sort(raidData.character.ordered, sortFunction)
+    table.sort(raidData.main.ordered, sortFunction)
+
+    local r1, r2, r3 = raidInfo[1], raidInfo[2], raidInfo[3]
+    local defaultMapID1 = (r3 and r3.mapID) or (r2 and r2.mapID) or (r1 and r1.mapID) or 0
+    local defaultMapID2 = (r2 and r2.mapID) or (r1 and r1.mapID) or 0
+
+    local characterOrdered, mainOrdered = raidData.character.ordered, raidData.main.ordered
+
+    if #characterOrdered < 1 then append(characterOrdered, { mapID = defaultMapID1, parsedString = "0/0", difficulty = -1, weight = 0}) end
+    if #characterOrdered < 2 then append(characterOrdered, { mapID = defaultMapID2, parsedString = "0/0", difficulty = -1, weight = 0 }) end
+    if #mainOrdered < 1 then append(mainOrdered, { parsedString = "0/0", difficulty = -1, weight = 0 }) end
+    if #mainOrdered < 2 then append(mainOrdered, { parsedString = "0/0", difficulty = -1, weight = 0 }) end
+
+    return raidData
+end
+
+miog.getRaidProgressDataOnly = getRaidProgressDataOnly
+
+--[[local function getRaidProgressDataOnly(playerName, realm, region, existingProfile)
+	local start = GetTimePreciseSec()
+	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+
+	if(not (raidInfo and RaiderIO)) then
+		return
+
+	end
+
+	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
+
+	local raidData
+
+	if(profile and profile.raidProfile)then
+		raidData = {
+			character = { ordered = {}, progressWeight = 0 },
+			main = { ordered = {}, progressWeight = 0 }
+		}
+
+		local profileProgress = profile.raidProfile.raidProgress
+
+		for i = 1, #profileProgress, 1 do
+			local d = profileProgress[i]
+			local currentTable = d.isMainProgress and raidData.main or raidData.character
+			local mapID = tonumber(string.sub(d.raid.mapId, -4)) or d.raid.mapId
+			--local isAwakened = (mapID ~= d.raid.mapId) and d.current
+
+			local progress = d.progress
+			
+			for j = 1, #progress, 1 do
+				local y = progress[j]
+				local difficulty = y.difficulty
+				local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+
+				local difficultyEntry = {
+					difficulty = difficulty,
+					mapID = mapID,
+					current = d.current,
+					weight = weight,
+					parsedString = y.kills .. "/" .. d.raid.bossCount,
+				}
+
+				currentTable.progressWeight = currentTable.progressWeight + weight
+
+				tinsert(currentTable.ordered, difficultyEntry)
+				--currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
+			end
+		end
+
+		local function sortFunction(a, b)
+			return (a.current == b.current) and (a.weight > b.weight) or false
+		end
+
+		local characterOrdered = raidData.character.ordered
+		local mainOrdered = raidData.main.ordered
+
+		if #characterOrdered > 1 then table.sort(characterOrdered, sortFunction) end
+		if #mainOrdered > 1 then table.sort(mainOrdered, sortFunction) end
+	end
+
+	if(not raidData)then
+		raidData = {
+			character = { ordered = {}},
+			main = { ordered = {}}
+		}
+	end
+
+	local characterOrdered = raidData.character.ordered
+	local mainOrdered = raidData.main.ordered
+
+	local defaultMapID1 = (raidInfo[3] or raidInfo[2] or raidInfo[1]) and (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID or 0
+	local defaultMapID2 = (raidInfo[2] or raidInfo[1]) and (raidInfo[2] or raidInfo[1]).mapID or 0
+
+	characterOrdered[1] = characterOrdered[1] or { mapID = defaultMapID1, parsedString = "0/0", difficulty = -1 }
+	characterOrdered[2] = characterOrdered[2] or { mapID = defaultMapID2, parsedString = "0/0", difficulty = -1 }
+	mainOrdered[1] = mainOrdered[1] or { parsedString = "0/0", difficulty = -1 }
+	mainOrdered[2] = mainOrdered[2] or { parsedString = "0/0", difficulty = -1 }
+
+	local ende = GetTimePreciseSec()
+
+	print("V1:", ende - start)
+
+	return raidData
+end]]
+
+local function getRaidProgressData(playerName, realm, region, existingProfile)
 	local raidData
 	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
 
@@ -270,7 +489,7 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 
 	end
 
-	local profile = existingProfile or RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
 
 	if(profile and profile.raidProfile)then
 		raidData = {
@@ -289,8 +508,101 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 			local raidEntry = currentTable.raids[mapID]
 			if(not raidEntry) then
 				raidEntry = {
-					regular = { difficulties = {}, fullProgressString = ""},
-					awakened = { difficulties = {}, fullProgressString = ""},
+					regular = { difficulties = {}},
+					awakened = { difficulties = {}},
+					bossCount = d.raid.bossCount,
+					isAwakened = isAwakened,
+					shortName = d.raid.shortName
+				}
+				currentTable.raids[mapID] = raidEntry
+			end
+
+			local modeTable = isAwakened and raidEntry.awakened or raidEntry.regular
+
+			local progress = d.progress
+			for j = 1, #progress, 1 do
+				local y = progress[j]
+				local difficulty = y.difficulty
+				local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+
+				local difficultyEntry = {
+					difficulty = difficulty,
+					current = d.current,
+					mapID = mapID,
+					weight = weight,
+					parsedString = y.kills .. "/" .. d.raid.bossCount,
+				}
+
+				modeTable.difficulties[difficulty] = difficultyEntry
+				currentTable.progressWeight = currentTable.progressWeight + weight
+				currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
+			end
+		end
+
+		local function sortFunction(a, b)
+			return (a.current == b.current) and (a.weight > b.weight) or false
+		end
+
+		local characterOrdered = raidData.character.ordered
+		local mainOrdered = raidData.main.ordered
+
+		if #characterOrdered > 1 then table.sort(characterOrdered, sortFunction) end
+		if #mainOrdered > 1 then table.sort(mainOrdered, sortFunction) end
+	end
+
+	if(not raidData)then
+		raidData = {
+			character = { ordered = {}, raids = {} },
+			main = { ordered = {}, raids = {} }
+		}
+	end
+
+	local characterOrdered = raidData.character.ordered
+	local mainOrdered = raidData.main.ordered
+
+	local defaultMapID1 = (raidInfo[3] or raidInfo[2] or raidInfo[1]) and (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID or 0
+	local defaultMapID2 = (raidInfo[2] or raidInfo[1]) and (raidInfo[2] or raidInfo[1]).mapID or 0
+
+	characterOrdered[1] = characterOrdered[1] or { mapID = defaultMapID1, parsedString = "0/0", difficulty = -1 }
+	characterOrdered[2] = characterOrdered[2] or { mapID = defaultMapID2, parsedString = "0/0", difficulty = -1 }
+	mainOrdered[1] = mainOrdered[1] or { parsedString = "0/0", difficulty = -1 }
+	mainOrdered[2] = mainOrdered[2] or { parsedString = "0/0", difficulty = -1 }
+
+	return raidData
+end
+
+miog.getRaidProgressData = getRaidProgressData
+
+local function getNewRaidSortData(playerName, realm, region, existingProfile)
+	local raidData
+	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+
+	if(not (raidInfo and RaiderIO)) then
+		return
+
+	end
+
+	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
+
+	if(profile and profile.raidProfile)then
+		raidData = {
+			character = { raids = {}, ordered = {}, progressWeight = 0 },
+			main = { raids = {}, ordered = {}, progressWeight = 0 }
+		}
+
+		local profileProgress = profile.raidProfile.raidProgress
+
+		for i = 1, #profileProgress, 1 do
+			local d = profileProgress[i]
+			local currentTable = d.isMainProgress and raidData.main or raidData.character
+			local mapID = tonumber(string.sub(d.raid.mapId, -4)) or d.raid.mapId
+			local isAwakened = (mapID ~= d.raid.mapId) and d.current
+
+			local raidEntry = currentTable.raids[mapID]
+			if(not raidEntry) then
+				raidEntry = {
+					regular = { difficulties = {}},
+					awakened = { difficulties = {}},
 					bossCount = d.raid.bossCount,
 					isAwakened = isAwakened,
 					shortName = d.raid.shortName
@@ -368,13 +680,11 @@ local function getMPlusScoreOnly(playerName, realm, region, existingProfile)
 	local profile
 	
 	if(RaiderIO) then
-		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region and strlower(region) or miog.F.CURRENT_REGION)
+		profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
 
-		if(profile) then
-			if(profile.mythicKeystoneProfile) then
-				return profile.mythicKeystoneProfile.mplusCurrent.score
+		if(profile and profile.mythicKeystoneProfile) then
+			return profile.mythicKeystoneProfile.mplusCurrent.score
 
-			end
 		end
 	end
 
@@ -385,7 +695,7 @@ miog.getMPlusScoreOnly = getMPlusScoreOnly
 
 local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable, existingProfile)
 	if(RaiderIO) then
-		local profile = existingProfile or RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region and strlower(region) or miog.F.CURRENT_REGION)
+		local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
 
 		if(profile) then
 			local mplusData = {}
@@ -475,7 +785,7 @@ local function getMPlusAndRaidData(playerName, realm, region)
 	local profile
 	
 	if(RaiderIO) then
-		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+		profile = miog.getRaiderIOProfile(playerName, realm, region)
 	end
 
 	return getMPlusSortData(playerName, realm, region, nil, profile), getNewRaidSortData(playerName, realm, region, profile)
@@ -487,7 +797,7 @@ local function getMPlusScoreAndRaidData(playerName, realm, region)
 	local profile
 	
 	if(RaiderIO) then
-		profile = RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+		profile = miog.getRaiderIOProfile(playerName, realm, region)
 	end
 
 	return getMPlusScoreOnly(playerName, realm, region, profile), getNewRaidSortData(playerName, realm, region, profile)
@@ -571,40 +881,6 @@ local function getRaidSortData(playerName)
 		profile = RaiderIO.GetProfile(playerName)
 
 	end
-
-	--[[
-
-		raidProgress table
-			1 table
-				current bool
-				isMainProgress bool
-
-				raid table
-					bossCount number
-					id number
-					mapID number
-					ordinal number
-					name string
-					shortName string
-
-				progress table
-					1
-						cleared bool
-						obsolete bool
-						difficulty number
-						kills number
-						progress table
-							1
-								killed bool
-								count number
-								difficulty number
-								index number
-
-				
-
-
-
-	]]
 
 	local currentData = {}
 	local nonCurrentData = {}

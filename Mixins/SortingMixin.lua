@@ -138,8 +138,8 @@ function SortingMixin:GetSortingData()
 end
 
 function SortingMixin:GetNumberOfDataEntries()
-    if(self.dataProvider) then
-        return self.dataProvider:GetSize(true)
+    if(self.scrollBox:GetDataProvider()) then
+        return self.scrollBox:GetDataProvider():GetSize(true)
 
     else
         return #self.sortingData
@@ -268,6 +268,7 @@ end
 
 function SortingMixin:SetDataProvider(dataProvider)
 	local orderedList = self:GetOrderedParameters()
+    local orderedListLen = #orderedList
 
     if(not self.externalSort) then
         if(self.treeMode) then
@@ -276,13 +277,15 @@ function SortingMixin:SetDataProvider(dataProvider)
                     local k1 = n1.data
                     local k2 = n2.data
 
-                    for _, v in ipairs(orderedList) do
-                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-                            if(v.state == 1) then
-                                return k1[v.name] > k2[v.name]
+                    for i = 1, orderedListLen do
+                        local state, name = orderedList[i].state, orderedList[i].name
+
+                        if(state > 0 and k1[name] ~= k2[name]) then
+                            if(state == 1) then
+                                return k1[name] > k2[name]
                 
                             else
-                                return k1[v.name] < k2[v.name]
+                                return k1[name] < k2[name]
                 
                             end
                         else
@@ -295,13 +298,15 @@ function SortingMixin:SetDataProvider(dataProvider)
         else
             dataProvider:SetSortComparator(
                 function(k1, k2)
-                    for _, v in ipairs(orderedList) do
-                        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-                            if(v.state == 1) then
-                                return k1[v.name] > k2[v.name]
+                    for i = 1, orderedListLen do
+                        local state, name = orderedList[i].state, orderedList[i].name
+
+                        if(state > 0 and k1[name] ~= k2[name]) then
+                            if(state == 1) then
+                                return k1[name] > k2[name]
                 
                             else
-                                return k1[v.name] < k2[v.name]
+                                return k1[name] < k2[name]
                 
                             end
                         end
@@ -311,7 +316,6 @@ function SortingMixin:SetDataProvider(dataProvider)
         end
     end
 
-    self.dataProvider = dataProvider
     self.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
 end
 

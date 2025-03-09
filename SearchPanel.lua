@@ -4,22 +4,12 @@ local wticc = WrapTextInColorCode
 local actualResults = 0
 local currentlySelectedID
 
-local framePool
-
 local function findFrame(resultID)
 	local frame = miog.SearchPanel.ScrollBox2:FindFrameByPredicate(function(localFrame, node)
 		return node.data.resultID == resultID
 	end)
 
 	return frame
-end
-
-local function resetFrame(_, childFrame)
-    childFrame:Hide()
-	childFrame.layoutIndex = nil
-	childFrame.resultID = nil
-
-	childFrame.CategoryInformation.BossPanel:Hide()
 end
 
 local function setScrollBoxFrameColors(resultFrame, resultID)
@@ -147,6 +137,8 @@ local function updateScrollBoxFrameApplicationStatus(resultFrame, resultID, new,
 
 	return false
 end
+
+miog.updateScrollBoxFrameApplicationStatus = updateScrollBoxFrameApplicationStatus
 
 local function updateScrollBoxFrameStatus(resultFrame, resultID)
 	resultFrame.StatusFrame:Hide()
@@ -328,10 +320,10 @@ local function createDataProviderWithUnsortedData()
 
 				elseif(LFGListFrame.SearchPanel.categoryID == 3) then
 					if(searchResultInfo.leaderName) then
-						local raidData = {miog.getRaidSortData(searchResultInfo.leaderName)}
+						local raidData = miog.getNewRaidSortData(nameTable[1], nameTable[2])
 
-						primarySortAttribute = raidData[3][1].weight
-						secondarySortAttribute = raidData[3][2].weight
+						primarySortAttribute = raidData.character.ordered[1].weight or 0
+						secondarySortAttribute = raidData.character.ordered[2].weight or 0
 
 					else
 						primarySortAttribute = 0

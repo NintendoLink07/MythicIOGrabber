@@ -126,6 +126,7 @@ miog.APPLICANT_STATUS_INFO = {
 	["declined_delisted"] = {statusString = "DELISTED", color = miog.CLRSCC["red"]},
 	["debug"] = {statusString = "GONE BABY", color = miog.CLRSCC["red"]},
 	["none"] = {statusString = "NONE", color = miog.CLRSCC["green"]},
+	["requeue"] = {statusString = "REQUEUED", color = miog.CLRSCC["blue"]}
 }
 
 miog.FILTER_DESCRIPTIONS = {
@@ -270,7 +271,7 @@ miog.C = {
 	-- I have played around with many different delays or different request "sets" (e.g. every 3 seconds 2 applicants, every 5 seconds 4 applicants) but nothing seems to work as well as: if number of members < 6 all instantly, otherwise every 1.5 seconds (?????????)
 	BLIZZARD_INSPECT_THROTTLE = 1.5,
 	BLIZZARD_INSPECT_THROTTLE_SAVE = 2,
-	BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE = 2.5,
+	BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE = 3,
 
 	BACKUP_SEASON_ID = 14,
 

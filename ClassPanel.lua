@@ -1,8 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local currentlyInspectedPlayer, numPlayersWithSpec, numPlayersInspectable = "", 0, 0
-
 local classColors = {}
 
 local function updateGroupClassData()
@@ -101,14 +99,6 @@ local function classPanelEvents(_, event, ...)
     end
 end
 
-miog.setInspectionData = function(currentName, playersWithSpec, inspectableMembers)
-    currentlyInspectedPlayer = currentName
-    numPlayersWithSpec = playersWithSpec
-    numPlayersInspectable = inspectableMembers
-    
-    miog.ClassPanel.StatusString:SetText((currentlyInspectedPlayer or "") .. "\n(" .. numPlayersWithSpec .. "/" .. numPlayersInspectable .. "/" .. GetNumGroupMembers() .. ")")
-end
-
 miog.createClassPanel = function()
     local classPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.MainFrame, "MIOG_ClassPanel")
     PixelUtil.SetPoint(classPanel, "BOTTOMRIGHT", classPanel:GetParent(), "TOPRIGHT", 0, 1)
@@ -165,11 +155,13 @@ miog.createClassPanel = function()
 
     container:MarkDirty()
 
-    classPanel.StatusString:SetText((currentlyInspectedPlayer or "") .. "\n(" .. numPlayersWithSpec .. "/" .. numPlayersInspectable .. "/" .. GetNumGroupMembers() .. ")")
+    classPanel.StatusString:SetText("\n(1/1/" .. GetNumGroupMembers() .. ")")
     classPanel.StatusString:SetScript("OnEnter", function(self)
+        local specs, members = miog.countPlayersWithData()
+
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(numPlayersWithSpec .. " players with spec data.")
-        GameTooltip:AddLine(numPlayersInspectable .. " group members that are inspectable (not offline or some weird faction stuff interaction).")
+        GameTooltip:SetText(specs .. " players with spec data.")
+        GameTooltip:AddLine(members .. " group members that are inspectable (not offline or some weird faction stuff interaction).")
         GameTooltip:AddLine(GetNumGroupMembers() .. " total group members.")
         GameTooltip:Show()
     end)

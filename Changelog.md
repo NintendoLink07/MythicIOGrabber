@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.2.5] - 2025-03-08
+
+### Fixed
+
+- RaiderIO raid data retrieval has been optimized. Everything that pulls this data (group manager, search panel, etc.) will see big performance improvements and therefore less lags.
+
+- [SearchPanel/ApplicationViewer] Changed the algorithm for the raid progress calculation, now someone with 4/8H LOU is higher rated than someone with 4/8M NP.
+
+
+
 ## [3.2.4] - 2025-03-07
 
 ### Fixed

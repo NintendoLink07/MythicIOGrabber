@@ -288,6 +288,13 @@ local function events(_, event, ...)
             if(C_LFGList.HasSearchResultInfo(resultID) and not searchResultInfo.isDelisted) then --checking that it's not delisted
                 addPartyGUID(searchResultInfo.partyGUID, resultID) --adding to GUID list for later checks
 
+                local frame = miog.SearchPanel.ScrollBox2:FindFrameByPredicate(function(localFrame, node)
+                    return node.data.resultID == resultID
+                end)
+                
+                if(frame) then
+                    miog.updateScrollBoxFrameApplicationStatus(frame, resultID, "requeue")
+                end
             end
             
         elseif(new == "applied") then
