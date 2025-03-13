@@ -16,7 +16,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="FontString" font="SystemFont_Shadow_Med2_Outline" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="N/A" wordwrap="false">
+                <FontString parentKey="FontString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="N/A" wordwrap="false">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.Icon" relativePoint="CENTER" />
                     </Anchors>

@@ -3,7 +3,7 @@
     <Frame name="MIOG_ProgressCharacterTemplate" inherits="BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" text="NAME">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" text="NAME">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-3"/>
                     </Anchors>
@@ -17,7 +17,7 @@
             </Layer>
 
             <Layer level="ARTWORK">
-                <Texture parentKey="VaultAvailable" atlas="mythicplus-dragonflight-greatvault-collect" hidden="true">
+                <Texture parentKey="VaultStatus" atlas="mythicplus-dragonflight-greatvault-collect" hidden="true">
                     <Size x="16" y="16" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="105" y="-2"/>

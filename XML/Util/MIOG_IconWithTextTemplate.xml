@@ -13,7 +13,7 @@
             </Layer>
 
             <Layer level="OVERLAY" textureSubLevel="-1">
-                <FontString parentKey="Text" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3"/>
                     </Anchors>

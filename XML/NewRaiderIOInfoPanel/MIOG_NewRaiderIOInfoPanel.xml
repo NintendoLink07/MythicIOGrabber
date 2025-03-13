@@ -43,7 +43,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="PreviousData" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="PreviousData" font="GameFontHighlight" justifyH="LEFT">
                     <Size y="20" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Raids" relativePoint="BOTTOMLEFT"/>
@@ -51,7 +51,7 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="MainData" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="MainData" font="GameFontHighlight" justifyH="LEFT">
                     <Size y="20" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.PreviousData" relativePoint="BOTTOMLEFT" />
@@ -59,7 +59,7 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="MPlusKeys" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="MPlusKeys" font="GameFontHighlight" justifyH="LEFT">
                     <Size y="20" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.MainData" relativePoint="BOTTOMLEFT" />
@@ -90,7 +90,7 @@
                     </Scripts>
                 </FontString>
 
-                <FontString parentKey="RaceRolesServer" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="">
+                <FontString parentKey="RaceRolesServer" font="GameFontHighlight" justifyH="LEFT" text="">
                     <Size y="20" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.MPlusKeys" relativePoint="BOTTOMLEFT" />
@@ -98,7 +98,7 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Comment" font="SystemFont_Shadow_Med1" justifyH="LEFT" spacing="4">
+                <FontString parentKey="Comment" font="GameFontHighlight" justifyH="LEFT" spacing="4">
                     <Size y="40" />
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="1"/>

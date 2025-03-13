@@ -3,7 +3,7 @@
     <Button name="MIOG_MenuButtonTemplate" inherits="BackdropTemplate, UIButtonTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Title" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
+                <FontString parentKey="Title" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="HERE GOES YOUR TITLE">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                     </Anchors>

@@ -321,6 +321,11 @@ miog.C = {
 				amirdrassilDate2 = 1713942000 + 604800 * 5,
 				fullRelease = 1713942000 + 604800 * 6,
 			}
+		},
+		[14] = { --patchweek
+			year = 2025,
+			month = 3,
+			day = 3,
 		}
 	},
 
@@ -858,7 +863,7 @@ end
 
 
 local function checkForMapAchievements(mapID)
-	local achievementCategory = miog.MAP_INFO[mapID].achievementCategory
+	--[[local achievementCategory = miog.MAP_INFO[mapID].achievementCategory
 
 	if(achievementCategory and not miog.MAP_INFO[mapID].achievementTable) then
 		miog.MAP_INFO[mapID].achievementTable = {}
@@ -873,6 +878,31 @@ local function checkForMapAchievements(mapID)
 					if(string.find(name, y.name)) then
 						table.insert(y.achievements, id)
 
+					end
+				end
+			end
+		end
+	end]]
+
+	local mapInfo = miog.MAP_INFO[mapID]
+	local achievementCategory = mapInfo.achievementCategory
+
+	if achievementCategory and not mapInfo.achievementTable then
+		local achievementTable = {}
+		local bosses = mapInfo.bosses
+		mapInfo.achievementTable = achievementTable
+
+		local numAchievements = GetCategoryNumAchievements(achievementCategory)
+
+		for i = 1, numAchievements do
+			local id, name = GetAchievementInfo(achievementCategory, i)
+
+			if miog.fzy.has_match(mapInfo.name, name) then
+				achievementTable[#achievementTable + 1] = id
+
+				for _, boss in ipairs(bosses) do
+					if string.find(name, boss.name, 1, true) then
+						boss.achievements[#boss.achievements + 1] = id
 					end
 				end
 			end

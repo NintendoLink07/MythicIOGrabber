@@ -28,7 +28,7 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
 
 	for i = 1, categoryInfo.separateRecommended and 2 or 1, 1 do
-		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, true), function()
+		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, false), function()
 			local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 
 			if(type == "search") then
@@ -72,12 +72,15 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 			miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 		end)
 
+		local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+
 		categoryButton:SetTooltip(function(tooltip, elementDescription)
-			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
 			if(not canUse) then
 				GameTooltip_SetTitle(tooltip, failureReason);
 			end
 		end)
+
+		categoryButton:SetEnabled(canUse)
 	end
 end
 

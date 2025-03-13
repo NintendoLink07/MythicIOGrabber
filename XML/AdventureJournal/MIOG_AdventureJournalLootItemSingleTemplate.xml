@@ -22,7 +22,7 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="AbilityName" maxLines="1">
+                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="AbilityName" maxLines="1">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1" />
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />

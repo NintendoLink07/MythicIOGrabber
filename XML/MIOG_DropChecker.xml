@@ -7,7 +7,7 @@
         </Anchors>
 
         <Frames>
-            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1">
+            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="GameFontHighlight">
                 <Size y="24" />
 
                 <Anchors>

@@ -48,6 +48,7 @@ local function refreshCharacterInfo()
                     mapID = instanceId,
                     index = index,
                     numEncounters = numEncounters,
+                    cleared = numEncounters == encounterProgress,
                     resetDate = time() + reset,
                     bosses = bosses
                 }
@@ -97,6 +98,7 @@ miog.loadLockoutCheck = function()
                 elementFrame.Name:SetText(miog.MAP_INFO[elementData.mapID].shortName or elementData.name)
                 elementFrame.Icon:SetTexture(elementData.icon)
                 elementFrame.Difficulty:SetText(WrapTextInColorCode(miog.DIFFICULTY_ID_INFO[elementData.difficulty].shortName, miog.DIFFICULTY_ID_TO_COLOR[elementData.difficulty]:GenerateHexColor()))
+                elementFrame.Checkmark:SetShown(elementData.cleared)
     
                 elementFrame:SetScript("OnEnter", function(self)
                     RequestRaidInfo()

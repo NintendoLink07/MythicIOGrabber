@@ -4,7 +4,10 @@ local wticc = WrapTextInColorCode
 miog.ONCE = true
 
 miog.getRaiderIOProfile = function(playerName, realm, region)
-	return RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+	if(RaiderIO) then
+		return RaiderIO.GetProfile(playerName, realm or GetNormalizedRealmName(), region or miog.F.CURRENT_REGION)
+
+	end
 end
 
 miog.updateCurrencies = function()
@@ -692,6 +695,21 @@ local function getMPlusScoreOnly(playerName, realm, region, existingProfile)
 end
 miog.getMPlusScoreOnly = getMPlusScoreOnly
 
+miog.checkAllSeasonalMapIDs = function()
+    local mythicPlusInfo = miog.retrieveCurrentSeasonDungeonActivityIDs(false, true)
+
+	for k, v in ipairs(mythicPlusInfo) do
+		miog.checkForMapAchievements(v.mapID)
+
+	end
+    
+    local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+
+	for k, v in ipairs(raidInfo) do
+		miog.checkForMapAchievements(v.mapID)
+
+	end
+end
 
 local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable, existingProfile)
 	if(RaiderIO) then
@@ -718,7 +736,7 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 							end
 	
 							table[dungeonEntry.dungeon.keystone_instance] = {
-								durationSec = dungeonEntry.dungeon.timers[dungeonEntry.chests == 0 and 3 or dungeonEntry.chests == 1 and 2 or dungeonEntry.chests == 2 and 1] + (dungeonEntry.chests < 3 and 1 or -1),
+								durationSec = dungeonEntry.dungeon.timers[dungeonEntry.chests == 0 and 3 or dungeonEntry.chests == 1 and 2 or 1] + (dungeonEntry.chests < 3 and 1 or -1),
 								level = dungeonEntry.level,
 							}
 							

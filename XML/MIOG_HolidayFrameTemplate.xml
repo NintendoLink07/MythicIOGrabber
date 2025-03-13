@@ -20,7 +20,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Title" font="SystemFont_Shadow_Med1">
+                        <FontString parentKey="Title" font="GameFontHighlight">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="3"/>
                                 <Anchor point="BOTTOMRIGHT" x="-3"/>

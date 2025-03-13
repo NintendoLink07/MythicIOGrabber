@@ -11,7 +11,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="PlayerName">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="PlayerName">
                     <Anchors>
                         <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-5"/>
                     </Anchors>

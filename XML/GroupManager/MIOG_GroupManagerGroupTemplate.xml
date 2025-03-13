@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_GroupManagerGroupTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size y="100" />
+        <Size y="95" />
 
         <Frames>
             <Frame name="Space1" parentKey="Space1" inherits="MIOG_GroupManagerSpaceTemplate">

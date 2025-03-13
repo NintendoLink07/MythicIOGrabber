@@ -10,7 +10,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                        <FontString parentKey="Current" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
@@ -27,7 +27,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                        <FontString parentKey="Current" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
@@ -44,7 +44,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Current" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                        <FontString parentKey="Current" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>

@@ -6,6 +6,8 @@
             <KeyValue key="expand" value="true" type="boolean" />
         </KeyValues>
 
+        <Size y="20" />
+
         <Frames>
             <Frame parentKey="Activity1" inherits="MIOG_NewFilterPanelTextSettingTemplate">
                 <KeyValues>

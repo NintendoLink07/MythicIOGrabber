@@ -8,7 +8,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Level" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Level" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="CENTER"/>
                     </Anchors>

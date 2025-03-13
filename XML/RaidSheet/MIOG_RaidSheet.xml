@@ -2,7 +2,7 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_RaidSheet" virtual="true">
         <Frames>
-            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1">
+            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="GameFontHighlight">
                 <Size x="100" y="25" />
 
                 <Anchors>
@@ -98,7 +98,7 @@
                 </Anchors>
             </DropdownButton>
             
-            <EditBox parentKey="CreateSettingsBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="SystemFont_Shadow_Med1" hidden="true">
+            <EditBox parentKey="CreateSettingsBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="GameFontHighlight" hidden="true">
                 <Size x="200" y="25" />
                 <Anchors>
                     <Anchor point="CENTER"/>

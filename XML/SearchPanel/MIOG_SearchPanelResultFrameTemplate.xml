@@ -105,28 +105,28 @@
                     </Layer>
                     
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Title" font="SystemFont_Shadow_Med1" justifyH="LEFT" outline="NORMAL">
+                        <FontString parentKey="Title" font="GameFontHighlight" justifyH="LEFT" outline="NORMAL">
                             <Size x="140" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Primary" font="SystemFont_Shadow_Med1" justifyH="CENTER" text="0">
+                        <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER" text="0">
                             <Size x="37" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="4" />
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Secondary" font="SystemFont_Shadow_Med1" justifyH="CENTER" text="0">
+                        <FontString parentKey="Secondary" font="GameFontHighlight" justifyH="CENTER" text="0">
                             <Size x="37" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="3"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Age" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="0:00:00">
+                        <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" text="0:00:00">
                             <Size x="70" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="13"/>
@@ -176,7 +176,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="DifficultyZone" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                        <FontString parentKey="DifficultyZone" font="GameFontHighlight" justifyH="LEFT">
                             <Size x="140" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="2" />
@@ -185,7 +185,7 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="RoleComposition" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                        <FontString parentKey="RoleComposition" font="GameFontHighlight" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" />
                             </Anchors>
@@ -259,6 +259,15 @@
         <Scripts>
             <OnMouseDown>
                 if(button == "LeftButton") then
+                    if(self.resultID and C_LFGList.HasSearchResultInfo(self.resultID) and (UnitIsGroupLeader("player") or not IsInGroup() or not IsInRaid())) then
+                        local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(self.resultID)
+                        local searchResultInfo = C_LFGList.GetSearchResultInfo(self.resultID)
+
+                        if (appStatus ~= "none" or pendingStatus or searchResultInfo.isDelisted) then
+                            return false
+                        end
+                    end
+
                     LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, self.resultID)
                     LFGListApplicationDialog_Show(LFGListApplicationDialog, self.resultID)
 

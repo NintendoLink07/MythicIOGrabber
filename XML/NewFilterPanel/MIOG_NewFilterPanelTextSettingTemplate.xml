@@ -18,7 +18,7 @@
         
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="2"/>
                     </Anchors>

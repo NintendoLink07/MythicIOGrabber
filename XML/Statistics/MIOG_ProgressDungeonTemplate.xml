@@ -3,7 +3,7 @@
     <Frame name="MIOG_ProgressDungeonTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Level" font="SystemFont_Shadow_Med3" outline="NORMAL" justifyH="CENTER" text="Level1">
+                <FontString parentKey="Level" font="GameFontHighlight" outline="NORMAL" justifyH="CENTER" text="Level1">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
                     </Anchors>

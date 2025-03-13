@@ -24,19 +24,19 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Age" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Age">
+                <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Age">
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="5" y="3" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Wait" font="SystemFont_Shadow_Med1" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="Wait">
+                <FontString parentKey="Wait" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="Wait">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Age" relativePoint="RIGHT" x="3" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="Name" wordwrap="true" spacing="0">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="Name" wordwrap="true" spacing="0">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-5"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent.CancelApplication" relativePoint="TOPLEFT" x="-2"/>

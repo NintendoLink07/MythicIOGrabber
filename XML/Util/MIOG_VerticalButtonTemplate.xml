@@ -3,7 +3,7 @@
     <Button name="MIOG_VerticalButtonTemplate" inherits="UIButtonTemplate, BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="FontString" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="FontString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
                     </Anchors>

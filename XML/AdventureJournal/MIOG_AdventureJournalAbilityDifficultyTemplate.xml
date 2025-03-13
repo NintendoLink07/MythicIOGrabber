@@ -3,7 +3,7 @@
     <Frame name="MIOG_AdventureJournalAbilityDifficultyTemplate2" inherits="ResizeLayoutFrame" virtual="true">        
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size x="80" />
                     <Anchors>
                         <Anchor point="TOPLEFT" x="3" />
@@ -11,7 +11,7 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Description" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true" nonspacewrap="true">
+                <FontString parentKey="Description" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true" nonspacewrap="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT" x="3" />
                         <Anchor point="TOPRIGHT" x="-3" />

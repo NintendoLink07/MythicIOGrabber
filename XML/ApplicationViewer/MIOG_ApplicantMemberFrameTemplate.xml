@@ -22,7 +22,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
@@ -92,7 +92,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1"  justifyH="LEFT" enableMouseMotion="true">
+                        <FontString parentKey="Name" font="GameFontHighlight"  justifyH="LEFT" enableMouseMotion="true">
                             <Size x="105" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
@@ -129,21 +129,21 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Primary" font="SystemFont_Shadow_Med1" justifyH="CENTER">
+                        <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER">
                             <Size x="37" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="4" />
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Secondary" font="SystemFont_Shadow_Med1" justifyH="CENTER">
+                        <FontString parentKey="Secondary" font="GameFontHighlight" justifyH="CENTER">
                             <Size x="37" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="3"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="ItemLevel" font="SystemFont_Shadow_Med1" justifyH="CENTER">
+                        <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER">
                             <Size x="44" y="20" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" />

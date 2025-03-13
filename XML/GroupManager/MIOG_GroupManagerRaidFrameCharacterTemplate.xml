@@ -32,7 +32,7 @@
             </Layer>
 
             <Layer level="OVERLAY" textureSubLevel="1">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="3"/>
                         <Anchor point="RIGHT" relativeKey="$parent.RaidRole" relativePoint="LEFT" x="-3"/>

@@ -22,21 +22,21 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT">
                     <Size y="18" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="5" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Progress1" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Progress1" font="GameFontHighlight" justifyH="LEFT">
                     <Size y="18" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="64" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Progress2" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Progress2" font="GameFontHighlight" justifyH="LEFT">
                     <Size y="18" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="LEFT" x="42" />

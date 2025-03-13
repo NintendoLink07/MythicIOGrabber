@@ -53,7 +53,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Remaining" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" text="0" outline="NORMAL" >
+                <FontString parentKey="Remaining" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" text="0" outline="NORMAL" >
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-4"/>
                     </Anchors>

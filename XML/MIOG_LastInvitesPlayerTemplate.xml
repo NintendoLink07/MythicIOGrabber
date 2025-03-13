@@ -10,7 +10,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size x="100" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3"/>
@@ -34,7 +34,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Primary" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="3"/>
                     </Anchors>

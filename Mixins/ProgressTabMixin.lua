@@ -6,6 +6,12 @@ local accountCharacters
 
 local seasonOverride
 
+local activityIndices = {
+	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
+	Enum.WeeklyRewardChestThresholdType.Raid, -- raid
+	Enum.WeeklyRewardChestThresholdType.World, -- world/delves
+}
+
 local function getChestsLevelForID(challengeMapID, durationSec)
 	local name, id, timeLimit, texture, backgroundTexture = C_ChallengeMode.GetMapUIInfo(challengeMapID)
 
@@ -484,7 +490,7 @@ function ProgressTabMixin:OnLoad(id)
 			local isPvp = data.template == "MIOG_ProgressPVPCharacterTemplate"
 			local isAll = data.template == "MIOG_ProgressFullCharacterTemplate"
 
-			local file, height, flags = _G["SystemFont_Shadow_Med1"]:GetFont()
+			local file, height, flags = _G["GameFontHighlight"]:GetFont()
 
 			if(data.guid == UnitGUID("player")) then
 				frame.Name:SetFont(file, height + 2, flags)
@@ -510,29 +516,29 @@ function ProgressTabMixin:OnLoad(id)
 				end
 			end
 			
-			if(self.id < 3) then
+			--if(self.id < 3) then
 				if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp) then
 					if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp < time()) then
-						frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-collect")
-						frame.VaultAvailable.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
+						frame.VaultStatus:SetAtlas("gficon-chest-evergreen-greatvault-collect")
+						frame.VaultStatus.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
 					
 					elseif(MIOG_NewSettings.accountStatistics.characters[data.guid].vaultProgress[self.id == 2 and 3 or 1]) then
-						frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-complete")
-						frame.VaultAvailable.tooltipText = "Your weekly rewards in your great vault will be available in " .. SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true) .. "."
+						frame.VaultStatus:SetAtlas("gficon-chest-evergreen-greatvault-complete")
+						frame.VaultStatus.tooltipText = "Your weekly rewards in your great vault will be available in " .. SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true) .. "."
 
 					else
-						frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-incomplete")
-						frame.VaultAvailable.tooltipText = "You have no activity in this category completed."
+						frame.VaultStatus:SetAtlas("gficon-chest-evergreen-greatvault-incomplete")
+						frame.VaultStatus.tooltipText = "You have no activity in this category completed."
 
 					end
 				else
-					frame.VaultAvailable:SetAtlas("gficon-chest-evergreen-greatvault-incomplete")
-					frame.VaultAvailable.tooltipText = "No great vault activity yet completed."
+					frame.VaultStatus:SetAtlas("gficon-chest-evergreen-greatvault-incomplete")
+					frame.VaultStatus.tooltipText = "No great vault activity yet completed."
 					
 				end
 
-				frame.VaultAvailable:Show()
-			end
+				frame.VaultStatus:Show()
+			--end
 
 			if(isDungeon) then
 				frame.Score:SetText(data.score.value)
@@ -760,16 +766,16 @@ function ProgressTabMixin:OnLoad(id)
 			frame.MPlusRating:SetText(string.format(miog.STRING_REPLACEMENTS["MPLUSRATINGSHORT"], data.score.value))
 			frame.MPlusRating:SetTextColor(miog.createCustomColorForRating(data.score.value):GetRGBA())
 
-			local mplusData = {}
+			--[[local mplusData = {}
 			
 			for k, info in ipairs(data.seasonalData[seasonOverride or C_MythicPlus.GetCurrentSeason()].mplus.weeklyData) do
 				tinsert(mplusData, info.score.value)
 
 			end
 
-			self.Graph:AddDataset({id= "mplus", name = data.name, class = data.classFile, values = mplusData})
+			self.Graph:AddDataset({id= "mplus", name = data.name, class = data.classFile, values = mplusData})]]
 
-			for k, v in ipairs(self.raidActivityTable) do
+			for _, v in ipairs(self.raidActivityTable) do
 				miog.checkSingleMapIDForNewData(v, true)
 				local numBosses = #miog.MAP_INFO[v].bosses
 
@@ -780,7 +786,7 @@ function ProgressTabMixin:OnLoad(id)
 
 				end
 			
-				local weights = {}
+				--[[local weights = {}
 				local kills = 0
 				local difficulty
 				local lastWeight = 0
@@ -802,28 +808,103 @@ function ProgressTabMixin:OnLoad(id)
 					end
 				end
 
-				self.Graph:AddDataset({id= "raid", name = data.name, class = data.classFile, text = (difficulty or "") .. ": " .. kills .. "/" .. numBosses, values = weights})
+				self.Graph:AddDataset({id= "raid", name = data.name, class = data.classFile, text = (difficulty or "") .. ": " .. kills .. "/" .. numBosses, values = weights})]]
 			end
 
 			frame.Itemlevel:SetText(string.format(miog.STRING_REPLACEMENTS["ILVLSHORT"], miog.round(data.ilvl, 2)))
 
-			self.Graph:AddDataset({id= "ilvl", name = data.name, class = data.classFile, values = data.seasonalData[seasonOverride or C_MythicPlus.GetCurrentSeason()].ilvl.weeklyData})
+			--[[self.Graph:AddDataset({id= "ilvl", name = data.name, class = data.classFile, values = data.seasonalData[seasonOverride or C_MythicPlus.GetCurrentSeason()].ilvl.weeklyData})
 
-			self.Graph:ResetAndDrawAllDatasets()
+			self.Graph:ResetAndDrawAllDatasets()]]
 
 			frame.GuildBannerBackground:SetVertexColor(color:GetRGB())
 			frame.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
+
+			if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp) then
+				if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp < time()) then
+					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-collect")
+					frame.VaultStatus.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
+				
+				elseif(MIOG_NewSettings.accountStatistics.characters[data.guid].vaultProgress[self.id == 2 and 3 or 1]) then
+					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-complete")
+					frame.VaultStatus.tooltipText = "Your weekly rewards in your great vault will be available in " .. SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true) .. "."
+
+				else
+					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-incomplete")
+					frame.VaultStatus.tooltipText = "You have no activity in this category completed."
+
+				end
+			else
+				frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-incomplete")
+				frame.VaultStatus.tooltipText = "No great vault activity yet completed."
+				
+			end
+
+			if(data.vaultProgress) then
+				GameTooltip:SetOwner(frame.VaultStatus, "ANCHOR_RIGHT")
+
+				for k, v in ipairs(activityIndices) do
+					local activities = data.vaultProgress[v]
+
+					local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or frame.WorldStatus
+
+					if(activities) then
+						currentFrame.frameType = "progress"
+
+						currentFrame:SetInfo(activities)
+
+						local farthestActivity = currentFrame:GetFarthestActivity(true)
+						currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
+						currentFrame:SetValue(farthestActivity.progress)
+
+						local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
+
+						local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
+						local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+						dimColor[4] = 0.1
+							
+						currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+						miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
+
+						currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold)
+						currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+
+					else
+						currentFrame:SetMinMaxValues(0, 0)
+						currentFrame:SetValue(0)
+						currentFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+						currentFrame.Text:SetText("0/0")
+						currentFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+
+					end
+				end
+			else
+				for k, v in ipairs(activityIndices) do
+					local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or frame.WorldStatus
+
+					currentFrame:SetMinMaxValues(0, 0)
+					currentFrame:SetValue(0)
+					currentFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+					currentFrame.Text:SetText("0/0")
+					currentFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+
+				end
+			end
+
+			frame.VaultStatus:Show()
+
+			
 		end)
 
 		characterView:SetPadding(1, 1, 1, 1, 10);
 		self.Columns:Init(characterView);
 
-		self.Graph:OnLoad()
+		--[[self.Graph:OnLoad()
 		self.Graph:SetIdentifiers({
 			{id = "mplus", name = "M+"},
 			{id = "raid", name = "Raid"},
 			{id = "ilvl", name = "I-Lvl"}
-		}, MIOG_NewSettings.lastSetCheckboxes, "Progress")
+		}, MIOG_NewSettings.lastSetCheckboxes, "Progress")]]
 
 	end
 end
@@ -891,36 +972,65 @@ local function checkIfItsTheFirstWeekOfSeasonForCharacter(guid)
 	return false, (seasonOverride or C_MythicPlus.GetCurrentSeason()) == -1 and "offseason" or "old"
 end
 
+local function calculateWeeksSinceSeasonStart()
+	local lastWeeklyReset = C_DateAndTime.GetWeeklyResetStartTime()
+	local seasonStart = time(miog.C.SEASON_AVAILABLE[14])
+
+	local currentWeekOfSeason = 0
+
+	local startTime = lastWeeklyReset
+
+	while(startTime > seasonStart) do
+		startTime = startTime - (1 * 60 * 60 * 24 * 7)
+
+		currentWeekOfSeason = currentWeekOfSeason + 1
+	end
+
+	return currentWeekOfSeason
+end
+
+local function checkForIncompleteWeek1Data(seasonalData, tbl)
+	for k, v in pairs(tbl) do
+		if(seasonalData[v].weeklyData[0] and not seasonalData[v].weeklyData[1] and seasonalData[v].weeklyData[2]) then
+			seasonalData[v].weeklyData[1] = seasonalData[v].weeklyData[0]
+
+		end
+	end
+end
+
 local function addSeasonalChartData(guid)
 	local seasonID = seasonOverride or C_MythicPlus.GetCurrentSeason()
 
+	local currentWeek = calculateWeeksSinceSeasonStart()
+
 	MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID] = MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID] or {mplus = {weeklyData = {}}, raid = {weeklyData = {}}, pvp = {weeklyData = {}}, ilvl = {weeklyData = {}}, }
 
-	if(seasonID ~= -1) then
-		if(not MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.nextWeek or MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.nextWeek <= time()) then
-			MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter = MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter and MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter + 1 or 1
-			MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.nextWeek = time() + C_DateAndTime.GetSecondsUntilWeeklyReset()
+	local seasonalData = MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID]
 
-			local lastWeek = MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter - 1
+	if(seasonID ~= -1) then
+		if(not seasonalData.nextWeek or seasonalData.nextWeek <= time()) then
+			seasonalData.weekCounter = currentWeek
+			seasonalData.nextWeek = time() + C_DateAndTime.GetSecondsUntilWeeklyReset()
+
+			local lastWeek = currentWeek - 1
 
 			if(lastWeek - 1 ~= 0) then
-				MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].mplus.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].mplus
-				MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].raid.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].raid
-				MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].pvp.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].pvp
-				MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].ilvl.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].ilvl
+				seasonalData.mplus.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].mplus
+				seasonalData.raid.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].raid
+				seasonalData.pvp.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].pvp
+				seasonalData.ilvl.weeklyData[lastWeek] = MIOG_NewSettings.accountStatistics.characters[guid].ilvl
 			end
 		end
 		
-		MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].mplus.weeklyData[MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter] = MIOG_NewSettings.accountStatistics.characters[guid].mplus
-		MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].raid.weeklyData[MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter] = MIOG_NewSettings.accountStatistics.characters[guid].raid
-		MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].pvp.weeklyData[MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter] = MIOG_NewSettings.accountStatistics.characters[guid].pvp
-		MIOG_NewSettings.accountStatistics.characters[guid].seasonalData[seasonID].ilvl.weeklyData[MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter] = MIOG_NewSettings.accountStatistics.characters[guid].ilvl
+		seasonalData.mplus.weeklyData[currentWeek] = MIOG_NewSettings.accountStatistics.characters[guid].mplus
+		seasonalData.raid.weeklyData[currentWeek] = MIOG_NewSettings.accountStatistics.characters[guid].raid
+		seasonalData.pvp.weeklyData[currentWeek] = MIOG_NewSettings.accountStatistics.characters[guid].pvp
+		seasonalData.ilvl.weeklyData[currentWeek] = MIOG_NewSettings.accountStatistics.characters[guid].ilvl
 
-	else
-		MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.weekCounter = 0
-		MIOG_NewSettings.accountStatistics.characters[guid].seasonalData.nextWeek = time() + C_DateAndTime.GetSecondsUntilWeeklyReset()
+		checkForIncompleteWeek1Data(seasonalData, {"mplus", "raid", "pvp", "ilvl"})
 		
 	end
+
 end
 
 --C_WeeklyRewards.AreRewardsForCurrentRewardPeriod()
@@ -942,11 +1052,41 @@ local function addVaultProgress(guid)
 		availableTimestamp = hasRewardComing and (time() + C_DateAndTime.GetSecondsUntilWeeklyReset()) or nil
 	}
 
+	local exampleLinks = {}
+
 	for i, activityInfo in ipairs(C_WeeklyRewards.GetActivities()) do
 		MIOG_NewSettings.accountStatistics.characters[guid].vaultProgress[activityInfo.type] = MIOG_NewSettings.accountStatistics.characters[guid].vaultProgress[activityInfo.type] or {}
-		
-		tinsert(MIOG_NewSettings.accountStatistics.characters[guid].vaultProgress[activityInfo.type], activityInfo)
+		activityInfo.raidEncounterInfo = {}
 
+		if(activityInfo.type == Enum.WeeklyRewardChestThresholdType.Activities) then
+			local runHistory = C_MythicPlus.GetRunHistory(false, true);
+
+			activityInfo.runHistory = runHistory
+		
+		elseif(activityInfo.type == Enum.WeeklyRewardChestThresholdType.Raid) then
+			local encounters = C_WeeklyRewards.GetActivityEncounterInfo(activityInfo.type, activityInfo.index);
+
+			activityInfo.raidEncounterInfo[activityInfo.index] = encounters
+		end
+
+		exampleLinks[activityInfo.type] = exampleLinks[activityInfo.type] or {}
+
+		local item, upgrade = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activityInfo.id)
+
+		exampleLinks[activityInfo.type][activityInfo.id] = {item = item, upgrade = upgrade}
+
+		activityInfo.hasRewards = C_WeeklyRewards.HasAvailableRewards()
+
+		tinsert(MIOG_NewSettings.accountStatistics.characters[guid].vaultProgress[activityInfo.type], activityInfo)
+	end
+
+	for k, v in ipairs(activityIndices) do
+		local progress = MIOG_NewSettings.accountStatistics.characters[guid].vaultProgress[v]
+
+		for i = 1, 3, 1 do
+			progress[i].exampleLinks = exampleLinks[v]
+
+		end
 	end
 end
 
@@ -963,7 +1103,52 @@ function ProgressTabMixin:CreateCharacterTables(guid, v)
 	MIOG_NewSettings.accountStatistics.characters[guid].nextRewards = MIOG_NewSettings.accountStatistics.characters[guid].nextRewards or {}
 end
 
-function ProgressTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, updatePvp)
+function ProgressTabMixin:UpdateSingleCharacterStatistics(specificGUID)
+	local guid = specificGUID or UnitGUID("player")
+	local playerStats = MIOG_NewSettings.accountStatistics.characters[guid]
+
+	self:CreateCharacterTables(guid, playerStats)
+
+	local firstWeek, newOrNext = checkIfItsTheFirstWeekOfSeasonForCharacter(guid)
+
+	if(firstWeek and newOrNext == "next") then
+		playerStats.mplus = {}
+		playerStats.raid = {}
+		playerStats.pvp = {}
+
+	end
+	
+	if(self.activityTable) then
+		if(self.id == 1) then
+			self:UpdateCharacterMPlusStatistics(guid)
+
+		elseif(self.id == 2) then
+			self:UpdateCharacterRaidStatistics(guid)
+
+		elseif(self.id == 3) then
+			self:UpdatePVPStatistics(guid)
+
+		end
+	else
+		self:UpdateCharacterMPlusStatistics(guid)
+		self:UpdateCharacterRaidStatistics(guid)
+		self:UpdatePVPStatistics(guid)
+	end
+
+	if(guid == UnitGUID("player")) then
+		addVaultProgress(guid)
+
+		playerStats.ilvl = select(2, GetAverageItemLevel()) or playerStats.ilvl
+
+	else
+		playerStats.ilvl = playerStats.ilvl or 0
+
+	end
+
+	addSeasonalChartData(guid)
+end
+
+function ProgressTabMixin:UpdateAllCharacterStatistics()
 	if(not accountCharacters) then
 		self:RequestAccountCharacters()
 	end
@@ -974,45 +1159,7 @@ function ProgressTabMixin:UpdateAllCharacterStatistics(updateMPlus, updateRaid, 
 	end
 
 	for guid, v in pairs(MIOG_NewSettings.accountStatistics.characters) do
-		self:CreateCharacterTables(guid, v)
-
-		local firstWeek, newOrNext = checkIfItsTheFirstWeekOfSeasonForCharacter(guid)
-
-		if(firstWeek and newOrNext == "next") then
-			MIOG_NewSettings.accountStatistics.characters[guid].mplus = {}
-			MIOG_NewSettings.accountStatistics.characters[guid].raid = {}
-			MIOG_NewSettings.accountStatistics.characters[guid].pvp = {}
-
-		end
-		
-		if(self.activityTable) then
-			if(self.id == 1 or updateMPlus) then
-				self:UpdateCharacterMPlusStatistics(guid)
-
-			elseif(self.id == 2 or updateRaid) then
-				self:UpdateCharacterRaidStatistics(guid)
-
-			elseif(self.id == 3 or updatePvp) then
-				self:UpdatePVPStatistics(guid)
-
-			end
-		else
-			self:UpdateCharacterMPlusStatistics(guid)
-			self:UpdateCharacterRaidStatistics(guid)
-			self:UpdatePVPStatistics(guid)
-		end
-
-		if(guid == UnitGUID("player")) then
-			addVaultProgress(guid)
-
-			MIOG_NewSettings.accountStatistics.characters[guid].ilvl = select(2, GetAverageItemLevel()) or MIOG_NewSettings.accountStatistics.characters[guid].ilvl
-
-		else
-			MIOG_NewSettings.accountStatistics.characters[guid].ilvl = MIOG_NewSettings.accountStatistics.characters[guid].ilvl or 0
-
-		end
-
-		addSeasonalChartData(guid)
+		self:UpdateSingleCharacterStatistics(guid)
 	end
 end
 
@@ -1040,7 +1187,7 @@ function ProgressTabMixin:LoadActivities()
 		self.mplusActivityTable = C_ChallengeMode.GetMapTable()
 
 		local raidInfo = {}
-		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
+		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
 	
 		for k, v in ipairs(raidGroups) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)
@@ -1097,7 +1244,7 @@ function ProgressTabMixin:LoadActivities()
 		self.Columns:GetView():SetElementExtent(400 / #self.activityTable)
 		self.Columns:SetDataProvider(columnProvider);
 	else
-		self.Graph:ReleaseEverything()
+		--self.Graph:ReleaseEverything()
 
 	end
 end
@@ -1153,7 +1300,7 @@ function ProgressTabMixin:UpdatePVPStatistics(guid)
 end
 
 local function checkForAchievements(type, guid, mapID)
-	local currTable
+	--[[local currTable
 	
 	if(type == "awakened") then
 		currTable = miog.MAP_INFO[mapID].achievementsAwakened
@@ -1191,11 +1338,54 @@ local function checkForAchievements(type, guid, mapID)
 				table.insert(MIOG_NewSettings.accountStatistics.characters[guid].raid[mapID][type][difficulty].bosses, {id = id, criteriaID = criteriaID, killed = completedCriteria, quantity = quantity})
 			end
 		end
+	end]]
+
+	local currTable = miog.MAP_INFO[mapID].achievementsAwakened
+
+	if type ~= "awakened" then
+		if not miog.MAP_INFO[mapID].achievementTable then
+			miog.checkForMapAchievements(mapID)
+			
+		end
+		currTable = miog.MAP_INFO[mapID].achievementTable
+	end
+
+	local raidData = MIOG_NewSettings.accountStatistics.characters[guid].raid[mapID][type]
+
+	for _, achievementID in ipairs(currTable) do
+		local id, name, _, _, _, _, _, description = GetAchievementInfo(achievementID)
+		local searchFor = (type == "awakened") and description or name
+
+		local difficulty = string.find(searchFor, "Normal") and 1 
+						or string.find(searchFor, "Heroic") and 2 
+						or string.find(searchFor, "Mythic") and 3
+
+		if difficulty then
+			local difficultyData = raidData[difficulty] or { ingame = true, kills = 0, bosses = {} }
+			raidData[difficulty] = difficultyData
+
+			local numCriteria = (type == "regular") and 1 or GetAchievementNumCriteria(id)
+
+			for i = 1, numCriteria do
+				local _, _, completedCriteria, quantity, _, _, _, _, _, criteriaID = GetAchievementCriteriaInfo(id, i, true)
+
+				if completedCriteria then
+					difficultyData.kills = difficultyData.kills + 1
+				end
+
+				table.insert(difficultyData.bosses, {
+					id = id,
+					criteriaID = criteriaID,
+					killed = completedCriteria,
+					quantity = quantity
+				})
+			end
+		end
 	end
 end
 
 function ProgressTabMixin:UpdateCharacterRaidStatistics(guid)
-	if(self.activityTable or self.raidActivityTable) then
+	--[[if(self.activityTable or self.raidActivityTable) then
 		local playerGUID = UnitGUID("player")
 
 		if(guid == playerGUID) then
@@ -1254,11 +1444,84 @@ function ProgressTabMixin:UpdateCharacterRaidStatistics(guid)
 
 			MIOG_NewSettings.accountStatistics.characters[guid].progressWeight = progressWeight
 		end
+	end]]
+
+	if self.activityTable or self.raidActivityTable then
+		local playerGUID = UnitGUID("player")
+		local charData = MIOG_NewSettings.accountStatistics.characters[guid]
+		local raidTable = charData.raid
+		local activityTable = self.activityTable or self.raidActivityTable
+	
+		if guid == playerGUID then
+			for _, mapID in ipairs(activityTable) do
+				raidTable[mapID] = {regular = {}, awakened = {}}
+	
+				if miog.MAP_INFO[mapID].achievementsAwakened then
+					checkForAchievements("awakened", guid, mapID)
+				end
+	
+				checkForAchievements("regular", guid, mapID)
+			end
+	
+			self:CalculateProgressWeightViaAchievements(guid)
+		else
+			local raidData = miog.getNewRaidSortData(charData.name, charData.realm)
+			local progressWeight = charData.progressWeight or 0
+	
+			if raidData and raidData.character then
+				for _, mapID in ipairs(activityTable) do
+					-- Only create table if it doesn't exist
+					if not raidTable[mapID] then
+						raidTable[mapID] = {regular = {}, awakened = {}}
+						local mapInfo = miog.MAP_INFO[mapID]
+						local characterRaid = raidData.character.raids[mapID]
+	
+						if characterRaid then
+							-- Calculate progress weight from difficulties
+							for _, difficultyData in pairs(characterRaid.regular.difficulties) do
+								progressWeight = progressWeight + difficultyData.weight
+							end
+	
+							-- Process bosses and achievements
+							for bossIndex, bossData in pairs(mapInfo.bosses) do
+								for _, achievementID in ipairs(bossData.achievements) do
+									local id, name, _, _, _, _, _, _, _, _, _, _, _, _, _ = GetAchievementInfo(achievementID)
+									local difficulty = string.find(name, "Normal") and 1 
+													or string.find(name, "Heroic") and 2 
+													or string.find(name, "Mythic") and 3
+	
+									if difficulty and characterRaid.regular.difficulties[difficulty] then
+										local raiderIODifficultyData = characterRaid.regular.difficulties[difficulty]
+	
+										raidTable[mapID].regular[difficulty] = {
+											ingame = false,
+											kills = raiderIODifficultyData.kills,
+											bosses = raiderIODifficultyData.bosses
+										}
+	
+										local _, _, _, _, _, _, _, _, _, criteriaID, _ = GetAchievementCriteriaInfo(id, 1, true)
+	
+										raidTable[mapID].regular[difficulty].bosses[bossIndex] = {
+											id = id,
+											criteriaID = criteriaID,
+											killed = raiderIODifficultyData.bosses[bossIndex].killed,
+											quantity = raiderIODifficultyData.bosses[bossIndex].count
+										}
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+	
+			charData.progressWeight = progressWeight
+		end
 	end
 end
 
 function ProgressTabMixin:UpdateCharacterMPlusStatistics(guid)
-	if(self.activityTable or self.mplusActivityTable) then
+	--[[if(self.activityTable or self.mplusActivityTable) then
 		local playerGUID = UnitGUID("player")
 
 		if(guid == playerGUID) then
@@ -1287,6 +1550,44 @@ function ProgressTabMixin:UpdateCharacterMPlusStatistics(guid)
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID] = {}
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo = intimeInfo and intimeInfo[challengeMapID] or MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].intimeInfo
 				MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo = overtimeInfo and overtimeInfo[challengeMapID] or MIOG_NewSettings.accountStatistics.characters[guid].mplus[challengeMapID].overtimeInfo
+			end
+		end
+	end]]
+
+	if self.activityTable or self.mplusActivityTable then
+		local playerGUID = UnitGUID("player")
+		local charData = MIOG_NewSettings.accountStatistics.characters[guid]
+		local mplusData = charData.mplus
+	
+		if guid == playerGUID then
+			-- Update the player's Mythic+ score
+			mplusData.score = { value = C_ChallengeMode.GetOverallDungeonScore(), ingame = true }
+	
+			-- Use a local variable to avoid multiple lookups
+			local activityTable = self.activityTable or self.mplusActivityTable
+	
+			for _, challengeMapID in pairs(activityTable) do
+				local intimeInfo, overtimeInfo = C_MythicPlus.GetSeasonBestForMap(challengeMapID)
+				mplusData[challengeMapID] = { intimeInfo = intimeInfo, overtimeInfo = overtimeInfo }
+			end
+		else
+			-- Ensure score table exists
+			mplusData.score = mplusData.score or { value = 0, ingame = true }
+	
+			-- Fetch external Mythic+ data
+			local externalData, intimeInfo, overtimeInfo = miog.getMPlusSortData(charData.name, charData.realm, nil, true)
+	
+			-- Only update score if the stored score is zero
+			if externalData and mplusData.score.value == 0 then
+				mplusData.score = { value = externalData.score.score, ingame = false }
+			end
+	
+			local activityTable = self.activityTable or self.mplusActivityTable
+			for _, challengeMapID in pairs(activityTable) do
+				local challengeData = mplusData[challengeMapID] or {}
+				challengeData.intimeInfo = intimeInfo and intimeInfo[challengeMapID] or challengeData.intimeInfo
+				challengeData.overtimeInfo = overtimeInfo and overtimeInfo[challengeMapID] or challengeData.overtimeInfo
+				mplusData[challengeMapID] = challengeData
 			end
 		end
 	end
@@ -1333,6 +1634,7 @@ function ProgressTabMixin:LoadCharacters()
 			progressWeight = v.progressWeight,
 			combinedWeight = v.mplus.score.value + v.progressWeight + v.rating,
 
+			vaultProgress = v.vaultProgress,
 			seasonalData = v.seasonalData,
 		})
 
@@ -1347,10 +1649,10 @@ function ProgressTabMixin:LoadCharacters()
 	scrollBox:SetDataProvider(dataProvider)
 end
 
-function ProgressTabMixin:UpdateStatistics(updateMPlus, updateRaid, updatePvp)
+function ProgressTabMixin:UpdateStatistics()
 	self:LoadActivities()
-
-	self:UpdateAllCharacterStatistics(updateMPlus, updateRaid, updatePvp)
+	--self:UpdateSingleCharacterStatistics()
+	self:UpdateAllCharacterStatistics()
 
 	self:LoadCharacters()
 end

@@ -11,63 +11,63 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="ItemLevel" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="1" type="number" />
                     </KeyValues>
                     <Size x="35" />
                 </FontString>
 
-                <FontString parentKey="Track" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Track" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="2" type="number" />
                     </KeyValues>
                     <Size x="60" />
                 </FontString>
 
-                <FontString parentKey="Delves" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Delves" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="3" type="number" />
                     </KeyValues>
                     <Size x="45" />
                 </FontString>
 
-                <FontString parentKey="DelvesVault" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="DelvesVault" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="4" type="number" />
                     </KeyValues>
                     <Size x="65" />
                 </FontString>
 
-                <FontString parentKey="Dungeon" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Dungeon" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="5" type="number" />
                     </KeyValues>
                     <Size x="70" />
                 </FontString>
 
-                <FontString parentKey="DungeonVault" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="DungeonVault" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="6" type="number" />
                     </KeyValues>
                     <Size x="70" />
                 </FontString>
 
-                <FontString parentKey="Raid" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Raid" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="7" type="number" />
                     </KeyValues>
                     <Size x="80" />
                 </FontString>
 
-                <FontString parentKey="Other" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Other" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="8" type="number" />
                     </KeyValues>
                     <Size x="55" />
                 </FontString>
 
-                <!--<FontString parentKey="Progress" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <!--<FontString parentKey="Progress" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="8" type="number" />
                     </KeyValues>

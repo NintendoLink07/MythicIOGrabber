@@ -131,7 +131,7 @@
                             </Layer>
 
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="No ability data found for this encounter (encounters before Cataclysm have no ability descriptions).">
+                                <FontString parentKey="FontString" font="GameFontHighlight" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="No ability data found for this encounter (encounters before Cataclysm have no ability descriptions).">
                                     <Anchors>
                                         <Anchor point="TOP" relativeKey="$parent.Background" relativePoint="TOP" y="-20"/>
                                         <Anchor point="LEFT" relativeKey="$parent.Background" relativePoint="LEFT"/>
@@ -235,7 +235,7 @@
                                         <Anchor point="BOTTOM" x="0" y="6"/>
                                     </Anchors>
                                 </FontString>
-                                <FontString parentKey="modelDisplayIdLabel" inherits="SystemFont_Shadow_Med1" justifyH="LEFT" hidden="true" text="Display ID:">
+                                <FontString parentKey="modelDisplayIdLabel" inherits="GameFontHighlight" justifyH="LEFT" hidden="true" text="Display ID:">
                                     <Size x="60" y="0"/>
                                     <Anchors>
                                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.imageTitle" relativePoint="TOPLEFT" x="30" y="6"/>
@@ -253,7 +253,7 @@
                                         <Anchor point="BOTTOM" relativeKey="$parent.imageTitle" relativePoint="TOP" x="0" y="26"/>
                                     </Anchors>
                                 </FontString>
-                                <FontString parentKey="modelNameLabel" inherits="SystemFont_Shadow_Med1" justifyH="LEFT" hidden="true" text="Model Path:">
+                                <FontString parentKey="modelNameLabel" inherits="GameFontHighlight" justifyH="LEFT" hidden="true" text="Model Path:">
                                     <Size x="320" y="0"/>
                                     <Anchors>
                                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.modelName" relativePoint="TOPLEFT" x="0" y="6"/>

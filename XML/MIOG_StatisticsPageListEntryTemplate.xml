@@ -4,14 +4,14 @@
         <Size y="20" />
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
                         <Anchor point="LEFT"/>
                         <Anchor point="RIGHT" x="-40"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Value" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString parentKey="Value" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" />
                     </Anchors>

@@ -21,6 +21,10 @@ local function mainEvents(_, event, ...)
 		miog.createFrames()
 		
 		EJ_SetDifficulty(8)
+
+	elseif(event == "PLAYER_ENTERING_WORLD") then
+		miog.checkAllSeasonalMapIDs()
+		
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 		miog.setAffixes()

@@ -101,6 +101,14 @@ end
 
 local FACTION_STRINGS = { [0] = FACTION_HORDE, [1] = FACTION_ALLIANCE};
 
+local function MakeRunLevelWithIncrement(dungeonScoreStruct)
+	local pluses = "";
+	for i = 1, dungeonScoreStruct.bestLevelIncrement do
+		pluses = pluses..GROUPFINDER_PLUS;
+	end
+	return pluses..HIGHLIGHT_FONT_COLOR:WrapTextInColorCode(dungeonScoreStruct.bestRunLevel);
+end
+
 local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
 	local applicantID = self.applicantID;
 	local memberIdx = self.memberIdx;

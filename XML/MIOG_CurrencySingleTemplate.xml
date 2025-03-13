@@ -26,7 +26,7 @@
             </Layer>
             
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0/0">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0/0">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="2" type="number" />
                     </KeyValues>

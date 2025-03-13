@@ -80,7 +80,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Results" font="SystemFont_Shadow_Med2" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
+                        <FontString parentKey="Results" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3" />
                             </Anchors>

@@ -11,42 +11,42 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Text1" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="A group is not compatible with your filters anymore.">
+                <FontString parentKey="Text1" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="A group is not compatible with your filters anymore.">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="1" type="number" />
                         <KeyValue key="expand" value="true" type="boolean" />
                     </KeyValues>
                 </FontString>
 
-                <FontString parentKey="Text2" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Reason">
+                <FontString parentKey="Text2" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Reason">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="2" type="number" />
                         <KeyValue key="expand" value="true" type="boolean" />
                     </KeyValues>
                 </FontString>
 
-                <FontString parentKey="Text3" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Activity">
+                <FontString parentKey="Text3" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Activity">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="3" type="number" />
                         <KeyValue key="expand" value="true" type="boolean" />
                     </KeyValues>
                 </FontString>
 
-                <FontString parentKey="Text4" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Leader">
+                <FontString parentKey="Text4" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Leader">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="4" type="number" />
                         <KeyValue key="expand" value="true" type="boolean" />
                     </KeyValues>
                 </FontString>
 
-                <FontString parentKey="Text5" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Cancel the application?">
+                <FontString parentKey="Text5" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Cancel the application?">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="5" type="number" />
                         <KeyValue key="expand" value="true" type="boolean" />
                     </KeyValues>
                 </FontString>
 
-                <FontString parentKey="Text6" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Remaining applications: 0">
+                <FontString parentKey="Text6" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Remaining applications: 0">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="6" type="number" />
                         <KeyValue key="expand" value="true" type="boolean" />

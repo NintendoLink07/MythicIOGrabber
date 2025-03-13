@@ -29,12 +29,31 @@
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Container" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
+
+                <Scripts>
+                    <OnEnter>
+                        if(self.inspectList) then
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetText("Players to be inspected:")
+
+                            for k, v in pairs(self.inspectList) do
+                                GameTooltip:AddLine(k)
+
+                            end
+
+                            GameTooltip:Show()
+
+                        end
+                    </OnEnter>
+                    <OnLeave function="GameTooltip_Hide" />
+
+                </Scripts>
             </Frame>
         </Frames>
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="StatusString" font="SystemFont_Shadow_Med1" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
+                <FontString parentKey="StatusString" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
                     <Size x="145" y="27" />
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.LoadingSpinner" relativePoint="LEFT" />

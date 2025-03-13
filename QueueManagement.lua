@@ -229,157 +229,161 @@ local function updateAllPVEQueues()
 				mode, submode = GetLFGMode(categoryID, queueID);
 				local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
 
-				if(mode == "queued" and activeID == queueID or categoryID == LE_LFG_CATEGORY_RF) then
+				if(mode == "queued") then
 					if(isSpecificQueue) then
 						table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
+
 					end
 
-					local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
+					if(activeID == queueID or categoryID == LE_LFG_CATEGORY_RF) then
 
-					local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
+						local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
 
-					local isFollowerDungeon = queueID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(queueID)
+						local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
 
-					local frameData = {
-						[1] = hasData,
-						[2] = isFollowerDungeon and LFG_TYPE_FOLLOWER_DUNGEON or subtypeID == 1 and LFG_TYPE_DUNGEON or subtypeID == 2 and LFG_TYPE_HEROIC_DUNGEON or subtypeID == 3 and RAID_FINDER,
-						[11] = isSpecificQueue and MULTIPLE_DUNGEONS or name,
-						[12] = myWait,
-						[17] = {"queued", queuedTime},
-						[18] = queueID,
-						[20] = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
-						or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
-						[30] = miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].horizontal or (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].horizontal or fileID
-					}
+						local isFollowerDungeon = queueID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(queueID)
 
-					local frame
+						local frameData = {
+							[1] = hasData,
+							[2] = isFollowerDungeon and LFG_TYPE_FOLLOWER_DUNGEON or subtypeID == 1 and LFG_TYPE_DUNGEON or subtypeID == 2 and LFG_TYPE_HEROIC_DUNGEON or subtypeID == 3 and RAID_FINDER,
+							[11] = isSpecificQueue and MULTIPLE_DUNGEONS or name,
+							[12] = myWait,
+							[17] = {"queued", queuedTime},
+							[18] = queueID,
+							[20] = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
+							or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
+							[30] = miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].horizontal or (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].horizontal or fileID
+						}
 
-					if(not hasData) then
-						frameData[17] = nil
-					end
+						local frame
 
-					frame = createQueueFrame(frameData)
-
-					if(frame) then
-						if(categoryID == 3 and activeID == queueID and length > 1) then
-							frame.ActiveIDFrame:Show()
-
-						else
-							frame.ActiveIDFrame:Hide()
-						
-						end
-					
-						frame.CancelApplication:SetAttribute("type", "macro")
-						frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
-
-						if(mapID and not isSpecificQueue) then
-							frame:SetScript("OnMouseDown", function()
-								EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].journalInstanceID, nil, nil, nil, nil)
-							end)
+						if(not hasData) then
+							frameData[17] = nil
 						end
 
-						frame:SetScript("OnEnter", function(self)
-							local tooltip = GameTooltip
-							tooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0)
-	
-							tooltip:SetText(isSpecificQueue and MULTIPLE_DUNGEONS or name, 1, 1, 1, true);
+						frame = createQueueFrame(frameData)
 
-							if(hasData) then
-								if(name2 and name ~= name2) then
-									tooltip:AddLine(name2)
-									
-								end
+						if(frame) then
+							if(categoryID == 3 and activeID == queueID and length > 1) then
+								frame.ActiveIDFrame:Show()
 
-								tooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[difficulty].name))
-
-								if(IsPlayerAtEffectiveMaxLevel() and minLevel == UnitLevel("player")) then
-									tooltip:AddLine("Max level dungeon")
-									
-								else
-									tooltip:AddLine(isScalingDungeon and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
-
-								end
-								tooltip:AddLine(string.format("%d - %d players", minPlayersDisband and minPlayersDisband > 0 and minPlayersDisband or 1, maxPlayers))
-	
-								GameTooltip_AddBlankLineToTooltip(GameTooltip)
-
-								if(noPartialClear) then
-									tooltip:AddLine("This will be a fresh ID.")
-
-								else
-									tooltip:AddLine("This group could have already killed some bosses.")
-
-								end
-
-								if(isTimewalker) then
-									tooltip:AddLine(PLAYER_DIFFICULTY_TIMEWALKER)
-								end
-
-								if(isHoliday) then
-									tooltip:AddLine(CALENDAR_FILTER_HOLIDAYS)
-								end
-
-								if(bonusRep > 0) then
-									tooltip:AddLine(string.format(LFG_BONUS_REPUTATION, bonusRep))
-									
-								end
-	
-								tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds));
-	
-								if ( queuedTime > 0 ) then
-									tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", formatter:Format(GetTime() - queuedTime)));
-								end
-	
-								GameTooltip_AddBlankLineToTooltip(GameTooltip)
-								
-								tooltip:AddLine("Wait times:");
-	
-								if ( myWait > 0 ) then
-									tooltip:AddLine(string.format("~ |cffffffff%s|r", formatter:Format(myWait)));
-								end
-	
-								if ( averageWait > 0 ) then
-									tooltip:AddLine(string.format("Ø |cffffffff%s|r", formatter:Format(averageWait)));
-								end
-	
-								if ( tankWait > 0 ) then
-									tooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", formatter:Format(tankWait)));
-								end
-	
-								if ( healerWait > 0 ) then
-									tooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", formatter:Format(healerWait)));
-								end
-	
-								if ( damageWait > 0 ) then
-									tooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", formatter:Format(damageWait)));
-								end
-	
-								if(isSpecificQueue) then
-									GameTooltip_AddBlankLineToTooltip(GameTooltip)
-	
-									tooltip:AddLine(QUEUED_FOR_SHORT)
-	
-									table.sort(specificQueueDungeons, function(k1, k2)
-										if(k1.difficulty == k2.difficulty) then
-											return k1.dungeonID < k2.dungeonID
-										end
-	
-										return k1.difficulty < k2.difficulty
-									end)
-	
-									for _, v in ipairs(specificQueueDungeons) do
-										tooltip:AddLine(v.difficulty .. " " .. v.name)
-	
-									end
-								end
-	
 							else
-								tooltip:AddLine(WrapTextInColorCode("Still waiting for data from Blizzard...", miog.CLRSCC.red));
+								frame.ActiveIDFrame:Hide()
 							
 							end
-	
-							GameTooltip:Show()
-						end)
+						
+							frame.CancelApplication:SetAttribute("type", "macro")
+							frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
+
+							if(mapID and not isSpecificQueue) then
+								frame:SetScript("OnMouseDown", function()
+									EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].journalInstanceID, nil, nil, nil, nil)
+								end)
+							end
+
+							frame:SetScript("OnEnter", function(self)
+								local tooltip = GameTooltip
+								tooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0)
+		
+								tooltip:SetText(isSpecificQueue and MULTIPLE_DUNGEONS or name, 1, 1, 1, true);
+
+								if(hasData) then
+									if(name2 and name ~= name2) then
+										tooltip:AddLine(name2)
+										
+									end
+
+									tooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[difficulty].name))
+
+									if(IsPlayerAtEffectiveMaxLevel() and minLevel == UnitLevel("player")) then
+										tooltip:AddLine("Max level dungeon")
+										
+									else
+										tooltip:AddLine(isScalingDungeon and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
+
+									end
+									tooltip:AddLine(string.format("%d - %d players", minPlayersDisband and minPlayersDisband > 0 and minPlayersDisband or 1, maxPlayers))
+		
+									GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+									if(noPartialClear) then
+										tooltip:AddLine("This will be a fresh ID.")
+
+									else
+										tooltip:AddLine("This group could have already killed some bosses.")
+
+									end
+
+									if(isTimewalker) then
+										tooltip:AddLine(PLAYER_DIFFICULTY_TIMEWALKER)
+									end
+
+									if(isHoliday) then
+										tooltip:AddLine(CALENDAR_FILTER_HOLIDAYS)
+									end
+
+									if(bonusRep > 0) then
+										tooltip:AddLine(string.format(LFG_BONUS_REPUTATION, bonusRep))
+										
+									end
+		
+									tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds));
+		
+									if ( queuedTime > 0 ) then
+										tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", formatter:Format(GetTime() - queuedTime)));
+									end
+		
+									GameTooltip_AddBlankLineToTooltip(GameTooltip)
+									
+									tooltip:AddLine("Wait times:");
+		
+									if ( myWait > 0 ) then
+										tooltip:AddLine(string.format("~ |cffffffff%s|r", formatter:Format(myWait)));
+									end
+		
+									if ( averageWait > 0 ) then
+										tooltip:AddLine(string.format("Ø |cffffffff%s|r", formatter:Format(averageWait)));
+									end
+		
+									if ( tankWait > 0 ) then
+										tooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", formatter:Format(tankWait)));
+									end
+		
+									if ( healerWait > 0 ) then
+										tooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", formatter:Format(healerWait)));
+									end
+		
+									if ( damageWait > 0 ) then
+										tooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", formatter:Format(damageWait)));
+									end
+		
+									if(isSpecificQueue) then
+										GameTooltip_AddBlankLineToTooltip(GameTooltip)
+		
+										tooltip:AddLine(QUEUED_FOR_SHORT)
+		
+										table.sort(specificQueueDungeons, function(k1, k2)
+											if(k1.difficulty == k2.difficulty) then
+												return k1.dungeonID < k2.dungeonID
+											end
+		
+											return k1.difficulty < k2.difficulty
+										end)
+		
+										for _, v in ipairs(specificQueueDungeons) do
+											tooltip:AddLine(v.difficulty .. " " .. v.name)
+		
+										end
+									end
+		
+								else
+									tooltip:AddLine(WrapTextInColorCode("Still waiting for data from Blizzard...", miog.CLRSCC.red));
+								
+								end
+		
+								GameTooltip:Show()
+							end)
+						end
 					end
 				end
 			end

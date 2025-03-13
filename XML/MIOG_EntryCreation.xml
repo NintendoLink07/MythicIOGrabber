@@ -20,7 +20,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="CategoryName" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" wordwrap="false">
+                <FontString parentKey="CategoryName" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" wordwrap="false">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-5"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-5" y="-5"/>
@@ -191,49 +191,49 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="NameString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title" wordwrap="false">
+                <FontString parentKey="NameString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Title" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Name" relativePoint="TOPLEFT" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="DescriptionString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Description" wordwrap="false">
+                <FontString parentKey="DescriptionString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Description" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Description" relativePoint="TOPLEFT" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="RatingString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Rating" wordwrap="false">
+                <FontString parentKey="RatingString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Rating" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Rating" relativePoint="TOPLEFT" x="-5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="ItemLevelString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Item level" wordwrap="false">
+                <FontString parentKey="ItemLevelString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Item level" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.ItemLevel" relativePoint="TOPLEFT" x="-5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="VoiceChatString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Voice Chat" wordwrap="false">
+                <FontString parentKey="VoiceChatString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Voice Chat" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.VoiceChat" relativePoint="TOPLEFT" x="-5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="PrivateGroupString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to private" wordwrap="false">
+                <FontString parentKey="PrivateGroupString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to private" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.PrivateGroup" relativePoint="RIGHT" x="5" />
                     </Anchors>
                 </FontString>
                 
-                <FontString parentKey="CrossFactionString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to your faction only" wordwrap="false">
+                <FontString parentKey="CrossFactionString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Set group to your faction only" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.CrossFaction" relativePoint="RIGHT" x="5" />

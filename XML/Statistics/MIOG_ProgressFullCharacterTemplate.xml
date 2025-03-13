@@ -12,8 +12,8 @@
 				<Texture parentKey="GuildBannerBackground" atlas="guildfinder-card-guildbanner-background">
 					<Size y="96"/>
 					<Anchors>
-						<Anchor point="TOPLEFT" x="-10" y="20"/>
-						<Anchor point="TOPRIGHT" x="10" y="20"/>
+						<Anchor point="TOPLEFT" x="-8" y="5"/>
+						<Anchor point="TOPRIGHT" x="8" y="5"/>
 					</Anchors>
 				</Texture>
 			</Layer>
@@ -36,9 +36,27 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+            
+            <Layer level="ARTWORK">
+                <Texture parentKey="VaultStatus">
+                    <Size x="48" y="44" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.GuildBannerBackground" relativePoint="BOTTOM" y="24"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            GameTooltip:SetOwner(self)
+                            GameTooltip:SetText(self.tooltipText)
+                            GameTooltip:Show()
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+            </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med3" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2" />
@@ -67,60 +85,146 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="MPlusRating" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="MPlusRating" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" x="-2" y="-10"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" x="-2" y="-24"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="RaidProgress1" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="RaidProgress1" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.MPlusRating" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="RaidProgress2" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="RaidProgress2" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress1" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="RaidProgress3" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="RaidProgress3" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress2" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Itemlevel" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Itemlevel" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress3" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <!--<FontString parentKey="PVPRating1" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <!--<FontString parentKey="PVPRating1" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress3" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="PVPRating2" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="PVPRating2" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.PVPRating1" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="PVPRating3" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="PVPRating3" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.PVPRating2" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="PVPRating4" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="PVPRating4" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.PVPRating3" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>!-->
             </Layer>
         </Layers>
+
+        <Frames>
+            <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin">  <!--  mixin="WeeklyRewardsActivityMixin"-->
+                <BarTexture atlas="ui-castingbar-filling-standard" />
+                <Size x="90" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Itemlevel" relativePoint="BOTTOMLEFT" y="-1"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/dungeonrewardsbackground.png" setAllPoints="true" />
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Text" font="GameFontHighlight" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Color r="1" g="0" b="0" a="1" />
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Scripts>
+                    <OnEnter method="OnEnter" />
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
+            </StatusBar>
+            
+            <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin">  <!--  mixin="WeeklyRewardsActivityMixin"-->
+                <BarTexture atlas="ui-castingbar-filling-standard" />
+                <Size x="90" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.MPlusStatus" relativePoint="BOTTOMLEFT" y="-1"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/raidrewardsbackground.png" setAllPoints="true" />
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Text" font="GameFontHighlight" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Color r="1" g="0" b="0" a="1" />
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Scripts>
+                    <OnEnter method="OnEnter" />
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
+            </StatusBar>
+
+            <StatusBar parentKey="WorldStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin">  <!--  mixin="WeeklyRewardsActivityMixin"-->
+                <BarTexture atlas="ui-castingbar-filling-standard" />
+                <Size x="90" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.RaidStatus" relativePoint="BOTTOMLEFT" y="-1"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/pvprewardsbackground.png" setAllPoints="true" />
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Text" font="GameFontHighlight" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Color r="1" g="0" b="0" a="1" />
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Scripts>
+                    <OnEnter method="OnEnter" />
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
+            </StatusBar>
+        </Frames>
     </Frame>
 </Ui>

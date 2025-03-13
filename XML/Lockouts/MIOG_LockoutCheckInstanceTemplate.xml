@@ -19,18 +19,26 @@
                     </Anchors>
                 </Texture>
 
-                <FontString parentKey="Difficulty" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="DifficultyName">
+                <FontString parentKey="Difficulty" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="DifficultyName">
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3" />
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="InstanceName">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="InstanceName">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
                         <Anchor point="RIGHT" relativeKey="$parent.Difficulty" relativePoint="LEFT" x="-3" />
                     </Anchors>
                 </FontString>
+
+                <Texture parentKey="Checkmark" atlas="AlliedRace-UnlockingFrame-Checkmark" hidden="true">
+                    <Size x="16" y="16" />
+
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-2"/>
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
     </Button>

@@ -15,24 +15,6 @@
                 </Anchors>
 
                 <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med2" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
-                            </Anchors>
-
-                            <Scripts>
-                                <OnEnter>
-                                    if(self:IsTruncated()) then
-                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                        GameTooltip:SetText(self:GetText())
-                                        GameTooltip:Show()
-                                    end
-                                </OnEnter>
-                                <OnLeave function="GameTooltip_Hide" />
-                            </Scripts>
-                        </FontString>
-                    </Layer>
                     <Layer level="ARTWORK">
                         <Texture parentKey="Faction">
                             <Size x="18" y="18" />
@@ -61,7 +43,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="Roles" font="SystemFont_Shadow_Med1" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="0/0/0" wordwrap="false">
+                                <FontString parentKey="Roles" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="0/0/0" wordwrap="false">
                                     <Anchors>
                                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
                                     </Anchors>
@@ -70,6 +52,28 @@
                         </Layers>
                     </Frame>
                 </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
+                                <Anchor point="RIGHT" relativeKey="$parent.GroupComposition" relativePoint="LEFT" x="-3" />
+                            </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    if(self:IsTruncated()) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                        GameTooltip:SetText(self:GetText())
+                                        GameTooltip:Show()
+                                    end
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                            </Scripts>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </Frame>
 
             <Frame parentKey="InfoPanel" inherits="BackdropTemplate">
@@ -115,7 +119,7 @@
                             <Frame parentKey="Container" setAllPoints="true">
                                 <Layers>
                                     <Layer level="OVERLAY">
-                                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true" />
+                                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true" />
                                     </Layer>
                                 </Layers>
                             </Frame>
@@ -132,7 +136,7 @@
                 </Anchors>
 
                 <Frames>
-                    <EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false" font="SystemFont_Shadow_Med1" hidden="true">
+                    <EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false" font="GameFontHighlight" hidden="true">
                         <Frames>
                             <Button parentKey="UpdateButton" inherits="UIPanelButtonTemplate" text="Update">
                                 <Size x="60" y="20" />
@@ -264,7 +268,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="5"/>
                                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
@@ -303,7 +307,7 @@
                             </Layer>
 
                             <Layer level="OVERLAY">
-                                <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="5"/>
                                         <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
@@ -325,7 +329,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Timer" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0:00:00" wordwrap="true" nonspacewrap="true">
+                        <FontString parentKey="Timer" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0:00:00" wordwrap="true" nonspacewrap="true">
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3" />
                             </Anchors>
@@ -381,7 +385,7 @@
                 </Anchors>
             </EventFrame>
             
-            <EditBox parentKey="CopyBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="SystemFont_Shadow_Med1">
+            <EditBox parentKey="CopyBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="GameFontHighlight">
                 <Size y="20" />   
                 
                 <Scripts>

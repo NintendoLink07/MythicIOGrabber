@@ -133,13 +133,13 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="TitleString" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
+                        <FontString parentKey="TitleString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
                         </FontString>
                         
-                        <FontString parentKey="RaiderIOLoaded" font="SystemFont_Shadow_Med1" justifyH="RIGHT" hidden="true">
+                        <FontString parentKey="RaiderIOLoaded" font="GameFontHighlight" justifyH="RIGHT" hidden="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.TitleString" relativePoint="RIGHT" x="3" />
                             </Anchors>
@@ -168,7 +168,7 @@
                         <Frames>
                             <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
                                 <KeyValues>
-                                    <KeyValue key="spacing" value="12" type="number"/>
+                                    <KeyValue key="spacing" value="7" type="number"/>
                                 </KeyValues>
 
                                 <Anchors>
@@ -334,7 +334,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
+                                                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
                                                 </FontString>
                                             </Layer>
                                         </Layers>
@@ -360,7 +360,7 @@
 
                                                 <Layers>
                                                     <Layer level="OVERLAY">
-                                                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" text="Active queues">
+                                                        <FontString parentKey="FontString" font="GameFontHighlight" text="Active queues">
                                                             <Anchors>
                                                                 <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-2"/>
                                                             </Anchors>
@@ -368,7 +368,7 @@
                                                     </Layer>
 
                                                     <Layer level="OVERLAY">
-                                                        <FontString parentKey="FakeApps" font="SystemFont_Shadow_Med1">
+                                                        <FontString parentKey="FakeApps" font="GameFontHighlight">
                                                             <Anchors>
                                                                 <Anchor point="LEFT" relativeKey="$parent.FontString" relativePoint="RIGHT" x="5"/>
                                                             </Anchors>
@@ -444,7 +444,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="Activity 1 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" font="GameFontHighlight" text="Activity 1 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -475,7 +475,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="Activity 2 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" font="GameFontHighlight" text="Activity 2 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -506,7 +506,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" font="GameFontHighlight" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
@@ -541,7 +541,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
@@ -627,7 +627,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="SystemFont_Shadow_Med1" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                                                     <Color r="1" g="0" b="0" a="1" />
                                                     <Anchors>
                                                         <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>

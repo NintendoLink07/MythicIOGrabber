@@ -76,7 +76,7 @@ function FakeDropdownListMixin:CreateList()
         self.List.framePoolCollection:GetOrCreatePool("Button", self.List, "MIOG_FakeDropdownButton", resetBasePoolFrame)
 
         self.List.texturePool = self.List.texturePool or CreateTexturePool(self.List, "ARTWORK", nil, nil, function(pool, texture) texture.layoutIndex = nil texture:SetTexture(nil) end)
-        self.List.fontStringPool = self.List.fontStringPool or CreateFontStringPool(self.List, "OVERLAY", nil, "SystemFont_Shadow_Med1", function(pool, fontString) fontString.layoutIndex = nil fontString:SetText(nil) end)
+        self.List.fontStringPool = self.List.fontStringPool or CreateFontStringPool(self.List, "OVERLAY", nil, "GameFontHighlight", function(pool, fontString) fontString.layoutIndex = nil fontString:SetText(nil) end)
     end
 
 end

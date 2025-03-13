@@ -3,7 +3,7 @@
     <Frame name="MIOG_OptionsPanel" inherits="BackdropTemplate" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Title" font="SystemFont_Shadow_Med1" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber" wordwrap="false">
+                <FontString parentKey="Title" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber" wordwrap="false">
 
                     <Anchors>
                         <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" />
@@ -59,7 +59,7 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true">
                     <Size y="40" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="3" />

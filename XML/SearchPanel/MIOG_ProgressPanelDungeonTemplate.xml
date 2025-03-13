@@ -30,13 +30,13 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med2" justifyH="CENTER" propagateMouseInput="Motion">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" propagateMouseInput="Motion">
                     <Anchors>
                         <Anchor point="TOP" y="-1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Level" font="SystemFont_Shadow_Med2" justifyH="CENTER" propagateMouseInput="Motion">
+                <FontString parentKey="Level" font="GameFontHighlight" justifyH="CENTER" propagateMouseInput="Motion">
                     <Anchors>
                         <Anchor point="BOTTOM" y="1"/>
                     </Anchors>

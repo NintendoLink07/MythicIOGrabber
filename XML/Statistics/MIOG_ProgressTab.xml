@@ -90,15 +90,15 @@
                 <Frames>
                     <Frame parentKey="Columns" inherits="WowScrollBoxList">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-24"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="RIGHT" y="-24"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="RIGHT" y="-25"/>
                         </Anchors>
 
                         <Frames>
                         </Frames>
                     </Frame>
 
-                    <Frame parentKey="Graph" inherits="ThinBorderTemplate" mixin="GraphMixin">
+                    <!--<Frame parentKey="Graph" inherits="ThinBorderTemplate" mixin="GraphMixin">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Columns" relativePoint="BOTTOMLEFT" x="1"/>
                             <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="1"/>
@@ -133,7 +133,7 @@
                                 </Anchors>
                             </Frame>
                         </Frames>
-                    </Frame>
+                    </Frame>!-->
                 </Frames>
             </Frame>
         </Frames>

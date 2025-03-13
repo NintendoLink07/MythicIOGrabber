@@ -29,7 +29,7 @@
             </Layer>
 
             <Layer level="OVERLAY" textureSubLevel="-1">
-                <FontString parentKey="Index" font="SystemFont_Shadow_Med1" justifyH="CENTER">
+                <FontString parentKey="Index" font="GameFontHighlight" justifyH="CENTER">
                     <Size x="17" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2"/>
@@ -52,42 +52,42 @@
                     </Anchors>
                 </Texture>
 
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT">
                     <Size x="100" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Itemlevel" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Itemlevel" font="GameFontHighlight" justifyH="LEFT">
                     <Size x="32" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Durability" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Durability" font="GameFontHighlight" justifyH="LEFT">
                     <Size x="47" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Itemlevel" relativePoint="RIGHT" x="4"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Score" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Score" font="GameFontHighlight" justifyH="LEFT">
                     <Size x="44" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Durability" relativePoint="RIGHT" x="2"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Progress" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Progress" font="GameFontHighlight" justifyH="LEFT">
                     <Size x="59" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Score" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="Keystone" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Keystone" font="GameFontHighlight" justifyH="LEFT">
                     <Size x="82" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Progress" relativePoint="RIGHT" x="3"/>

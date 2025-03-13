@@ -43,7 +43,7 @@
                             </Anchors>
                         </Texture>
 
-                        <FontString parentKey="ReadyText" font="SystemFont_Shadow_Med1" justifyH="LEFT" text="Status: ">
+                        <FontString parentKey="ReadyText" font="GameFontHighlight" justifyH="LEFT" text="Status: ">
                             <Size y="18" />
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent.ReadyBorder" relativePoint="LEFT" x="-2"/>
@@ -155,25 +155,25 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="6" y="-4"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Level" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                        <FontString parentKey="Level" font="GameFontHighlight" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-2"/>
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Spec" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                        <FontString parentKey="Spec" font="GameFontHighlight" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="7"/>
                             </Anchors>
                         </FontString>
 
-                        <!--<FontString parentKey="Guild" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                        <!--<FontString parentKey="Guild" font="GameFontHighlight" justifyH="LEFT">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.Level" relativePoint="BOTTOMLEFT" y="-2"/>
                             </Anchors>
@@ -301,44 +301,44 @@
                     </Frame>
                     <Frame parentKey="Group2" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP" />
                         </Anchors>
                     </Frame>
                     <Frame parentKey="Group3" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group1" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMLEFT" y="-6"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group1" relativePoint="BOTTOMRIGHT" y="-6"/>
                         </Anchors>
                     </Frame>
                     <Frame parentKey="Group4" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Group2" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group2" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group2" relativePoint="BOTTOMLEFT" y="-6"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group2" relativePoint="BOTTOMRIGHT" y="-6"/>
                         </Anchors>
                     </Frame>
                     <Frame parentKey="Group5" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Group3" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group3" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group3" relativePoint="BOTTOMLEFT" y="-6"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group3" relativePoint="BOTTOMRIGHT" y="-6"/>
                         </Anchors>
                     </Frame>
                     <Frame parentKey="Group6" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Group4" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group4" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group4" relativePoint="BOTTOMLEFT" y="-6"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group4" relativePoint="BOTTOMRIGHT" y="-6"/>
                         </Anchors>
                     </Frame>
                     <Frame parentKey="Group7" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Group5" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group5" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group5" relativePoint="BOTTOMLEFT" y="-6"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group5" relativePoint="BOTTOMRIGHT" y="-6"/>
                         </Anchors>
                     </Frame>
                     <Frame parentKey="Group8" inherits="MIOG_GroupManagerGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Group6" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group6" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group6" relativePoint="BOTTOMLEFT" y="-6"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Group6" relativePoint="BOTTOMRIGHT" y="-6"/>
                         </Anchors>
                     </Frame>
 

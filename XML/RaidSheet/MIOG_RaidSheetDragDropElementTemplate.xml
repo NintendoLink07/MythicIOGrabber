@@ -20,7 +20,7 @@
             </Layer>
 
             <Layer level="OVERLAY" textureSubLevel="-1">
-                <FontString parentKey="Name" font="SystemFont_Shadow_Med1" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.Spec" relativePoint="TOPRIGHT" x="2"/>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />

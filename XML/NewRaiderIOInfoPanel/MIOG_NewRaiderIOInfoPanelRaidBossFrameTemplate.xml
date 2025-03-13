@@ -19,7 +19,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Index" font="SystemFont_Shadow_Med1" justifyH="LEFT">
+                <FontString parentKey="Index" font="GameFontHighlight" justifyH="LEFT">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
                     </Anchors>

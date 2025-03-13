@@ -89,13 +89,15 @@ end
 
 local function setUpPlaystyleDropDown()
 	miog.EntryCreation.PlaystyleDropDown:SetupMenu(function(dropdown, rootDescription)
-		local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity)
-	
-		for k, playstyleInfo in ipairs(playstyles) do
-			local activityButton = rootDescription:CreateRadio(C_LFGList.GetPlaystyleString(playstyleInfo, activityInfo), function(playstyle) return playstyle == LFGListFrame.EntryCreation.selectedPlaystyle end, function(playstyle)
-				LFGListEntryCreation_OnPlayStyleSelectedInternal(LFGListFrame.EntryCreation, playstyle)
-	
-			end, playstyleInfo)
+		if(LFGListFrame.EntryCreation.selectedActivity) then
+			local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity)
+		
+			for k, playstyleInfo in ipairs(playstyles) do
+				local activityButton = rootDescription:CreateRadio(C_LFGList.GetPlaystyleString(playstyleInfo, activityInfo), function(playstyle) return playstyle == LFGListFrame.EntryCreation.selectedPlaystyle end, function(playstyle)
+					LFGListEntryCreation_OnPlayStyleSelectedInternal(LFGListFrame.EntryCreation, playstyle)
+		
+				end, playstyleInfo)
+			end
 		end
 	end)
 	
@@ -489,8 +491,11 @@ local function selectKeystoneOrFirst()
 		end
 	end
 
-	-- set to first group found in all activities // default
-	LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory, defaultGroup and defaultGroup > 0 and defaultGroup or nil, defaultActivity)
+	if(defaultActivity) then
+		-- set to first group found in all activities // default
+		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory, defaultGroup and defaultGroup > 0 and defaultGroup or nil, defaultActivity)
+		
+	end
 end
 
 local function initializeActivityDropdown()

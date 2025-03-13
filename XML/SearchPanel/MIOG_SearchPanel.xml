@@ -22,7 +22,7 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" hidden="true" justifyH="CENTER" wordwrap="true" nonspacewrap="true">
+                        <FontString parentKey="FontString" font="GameFontHighlight" hidden="true" justifyH="CENTER" wordwrap="true" nonspacewrap="true">
                             <Anchors>
                                 <Anchor point="TOP" relativeKey="$parent.Background" relativePoint="TOP" y="-20"/>
                                 <Anchor point="LEFT" relativeKey="$parent.Background" relativePoint="LEFT"/>

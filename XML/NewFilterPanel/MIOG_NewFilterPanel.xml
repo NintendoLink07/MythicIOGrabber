@@ -23,7 +23,7 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="FontString" font="SystemFont_Shadow_Med1" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="Filters are only available in the search panel, application viewer or drop checker.">
+                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="CENTER" wordwrap="true" nonspacewrap="true" text="Filters are only available in the search panel, application viewer or drop checker.">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-20"/>
                                 <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-20"/>
