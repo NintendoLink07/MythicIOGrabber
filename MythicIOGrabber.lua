@@ -1,11 +1,25 @@
 local addonName, miog = ...
 
+miog.AceComm = LibStub:GetLibrary("AceComm-3.0")
+miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
+
 miog.debug = {}
 
 miog.referencePVPButtons = {}
 
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
+
+local miogPlayers = {}
+
+local function printMIOGPlayers(...)
+	local prefix, text, channel, sender = ...
+
+	if(prefix == "MIOG_DEBUG" and not miogPlayers[sender]) then
+		print("Found a MIOG player: " .. sender)
+		miogPlayers[sender] = true
+	end
+end
 
 local function mainEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
@@ -25,6 +39,16 @@ local function mainEvents(_, event, ...)
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		miog.checkAllSeasonalMapIDs()
 		
+		local isLogin, isReload
+
+		if(isLogin or isReload) then
+			local accInfo = C_BattleNet.GetAccountInfoByGUID(UnitGUID("player"))
+			if(accInfo.battleTag == "Rhany#219034") then
+				miog.AceComm:RegisterComm("MIOG_DEBUG", printMIOGPlayers)
+
+			end
+		end
+
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
 		miog.setAffixes()

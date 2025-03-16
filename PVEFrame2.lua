@@ -1,8 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-
 local function openSearchPanel(categoryID, filters, dontSearch)
 	--LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
 

@@ -376,8 +376,9 @@ miog.CURRENCY_INFO = {
 		{id = 3108,},
 		{id = 3109,},
 		{id = 3110,},
-		{id = 3008,},
+		{id = 3008,}, --valorstones
 		{id = 3116,}, --catalyst
+		{id = 3132, icon="5929751", spark = true}, --spark
 	}
 }
 

@@ -19,21 +19,19 @@ miog.updateCurrencies = function()
 		if(currencyTable) then
 			for k, v in ipairs(currencyTable) do
 				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
+
 				local currentFrame = miog.MainTab.Currency[tostring(k)]
 
-				local insert = ""
-
-				if(type(currencyInfo.maxQuantity) == "number" and currencyInfo.maxQuantity > 0) then
-					insert = "/" .. currencyInfo.maxQuantity
-				end
-
 				if(currencyInfo.totalEarned > 0) then
-					currentFrame.Text:SetText(currencyInfo.quantity .. " (" .. currencyInfo.totalEarned .. insert .. ")")
+					local leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
+
+					currentFrame.Text:SetText((v.spark and C_Item.GetItemCount(230905, true, true, true, true) or currencyInfo.quantity) .. " (" .. (leftToEarn > 0 and WrapTextInColorCode(leftToEarn, miog.CLRSCC.green) or WrapTextInColorCode(leftToEarn, miog.CLRSCC.red)) .. ")")
 
 				else
-					currentFrame.Text:SetText(currencyInfo.quantity .. insert)
+					currentFrame.Text:SetText(currencyInfo.quantity .. "/" .. currencyInfo.maxQuantity)
 
 				end
+
 				currentFrame.Icon:SetTexture(v.icon or currencyInfo.iconFileID)
 				currentFrame.Icon:SetScript("OnEnter", function(self)
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -44,7 +42,7 @@ miog.updateCurrencies = function()
 				
 			end
 
-			for i = #currencyTable + 1, 6, 1 do
+			for i = #currencyTable + 1, 7, 1 do
 				miog.MainTab.Currency[tostring(i)]:Hide()
 
 			end
@@ -1324,7 +1322,9 @@ miog.getActiveSortMethods = function(panel)
 end
 
 miog.checkEgoTrip = function(name)
-	if(name == "Rhany-Ravencrest" or name == "Gerhanya-Ravencrest") then
+	local fullName = createFullNameFrom("unitName", name)
+	
+	if(fullName == "Rhany-Ravencrest" or fullName == "Gerhanya-Ravencrest" or fullName == "Latimeria-Ravencrest") then
 		GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
 
 	end

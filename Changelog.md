@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [3.2.7] - 2025-03-16
+
+### Added
+
+- Fractured Sparks of Fortunes have been added to the currency tracker in the mainframe.
+
+- Added a communication library for future features.
+
+### Changed
+
+- To combat the longer list of currencies all currencies now only display the amount left to earn in parentheses.
+Color-coded with red if nothing is left to earn this week or green if you still have some currency left to earn.
+
+### Fixed
+
+- [GroupManager] Showing indepth data will now correctly use the chosen player's realm instead of your own one.
+
+- [Progress] The vault status icon now gets when looking at the PVP overview.
+
+
+
 ## [3.2.6] - 2025-03-13
 
 ### Added
@@ -3413,7 +3435,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.6..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.2.7..HEAD
+[3.2.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.7
 [3.2.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.6
 [3.2.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.5
 [3.2.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.4

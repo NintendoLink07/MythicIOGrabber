@@ -516,7 +516,7 @@ function ProgressTabMixin:OnLoad(id)
 				end
 			end
 			
-			--if(self.id < 3) then
+			if(self.id < 3) then
 				if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp) then
 					if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp < time()) then
 						frame.VaultStatus:SetAtlas("gficon-chest-evergreen-greatvault-collect")
@@ -538,7 +538,11 @@ function ProgressTabMixin:OnLoad(id)
 				end
 
 				frame.VaultStatus:Show()
-			--end
+
+			else
+				frame.VaultStatus:Hide()
+				
+			end
 
 			if(isDungeon) then
 				frame.Score:SetText(data.score.value)
@@ -820,8 +824,8 @@ function ProgressTabMixin:OnLoad(id)
 			frame.GuildBannerBackground:SetVertexColor(color:GetRGB())
 			frame.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
 
-			if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp) then
-				if(MIOG_NewSettings.accountStatistics.characters[data.guid].nextRewards.availableTimestamp < time()) then
+			if(data.nextRewards.availableTimestamp) then
+				if(data.nextRewards.availableTimestamp < time()) then
 					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-collect")
 					frame.VaultStatus.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
 				
@@ -893,7 +897,6 @@ function ProgressTabMixin:OnLoad(id)
 
 			frame.VaultStatus:Show()
 
-			
 		end)
 
 		characterView:SetPadding(1, 1, 1, 1, 10);
@@ -924,7 +927,19 @@ function ProgressTabMixin:RequestAccountCharacters()
 	local specID = GetSpecializationInfo(GetSpecialization())
 	table.insert(accountCharacters, {guid = playerGUID, name = name, realm = realmName, classFile = englishClass, spec = specID})
 
-	for i = 1, 5000, 1 do
+	for currencyID, currencyInfo in pairs(miog.RAW["Currency"]) do
+		local accountCurrencyData = C_CurrencyInfo.FetchCurrencyDataFromAccountCharacters(currencyID)
+
+		if(accountCurrencyData) then
+			for k, v in pairs(accountCurrencyData) do
+				charList[v.characterGUID] = true
+
+			end
+		end
+
+	end
+
+	--[[for i = 1, 5000, 1 do
 		info = C_CurrencyInfo.GetCurrencyListInfo(i)
 
 		if(info) then
@@ -937,7 +952,7 @@ function ProgressTabMixin:RequestAccountCharacters()
 				end
 			end
 		end
-	end
+	end]]
 
 	for k, v in pairs(charList) do
 		localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(k)
@@ -1633,6 +1648,7 @@ function ProgressTabMixin:LoadCharacters()
 			progress = v.raid,
 			progressWeight = v.progressWeight,
 			combinedWeight = v.mplus.score.value + v.progressWeight + v.rating,
+			nextRewards = v.nextRewards,
 
 			vaultProgress = v.vaultProgress,
 			seasonalData = v.seasonalData,
@@ -1642,8 +1658,13 @@ function ProgressTabMixin:LoadCharacters()
 	end
 
 	if(self.id == 4) then
-		dataProvider:RemoveIndexRange(floor(self:GetWidth() / 100) + 1, dataProvider:GetSize())
+		local startIndex = floor(self:GetWidth() / 100) + 1
+		local providerSize = dataProvider:GetSize()
 
+		if(providerSize > startIndex) then
+			dataProvider:RemoveIndexRange(startIndex, providerSize)
+
+		end
 	end
 
 	scrollBox:SetDataProvider(dataProvider)
@@ -1653,6 +1674,5 @@ function ProgressTabMixin:UpdateStatistics()
 	self:LoadActivities()
 	--self:UpdateSingleCharacterStatistics()
 	self:UpdateAllCharacterStatistics()
-
 	self:LoadCharacters()
 end

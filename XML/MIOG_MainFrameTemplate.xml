@@ -168,7 +168,7 @@
                         <Frames>
                             <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
                                 <KeyValues>
-                                    <KeyValue key="spacing" value="7" type="number"/>
+                                    <KeyValue key="spacing" value="12" type="number"/>
                                 </KeyValues>
 
                                 <Anchors>
@@ -220,6 +220,12 @@
                                     </Frame>
 
                                     <Frame parentKey="6" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="6" type="number" />
+                                        </KeyValues>
+                                    </Frame>
+
+                                    <Frame parentKey="7" inherits="MIOG_CurrencySingleTemplate">
                                         <KeyValues>
                                             <KeyValue key="layoutIndex" value="6" type="number" />
                                         </KeyValues>

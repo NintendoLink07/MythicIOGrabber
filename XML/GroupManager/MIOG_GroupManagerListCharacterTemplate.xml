@@ -191,6 +191,13 @@
 
                     end
 
+                    local fullName = self.data.fullName
+	
+                    if(fullName == "Rhany-Ravencrest" or fullName == "Gerhanya-Ravencrest" or fullName == "Latimeria-Ravencrest") then
+                        GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
+
+                    end
+
                     GameTooltip:Show()
                 end
             </OnEnter>

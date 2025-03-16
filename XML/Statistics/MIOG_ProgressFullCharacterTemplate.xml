@@ -87,7 +87,7 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="MPlusRating" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" x="-2" y="-24"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" x="-2" y="-26"/>
                     </Anchors>
                 </FontString>
 

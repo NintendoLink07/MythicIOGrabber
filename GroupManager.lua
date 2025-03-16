@@ -1,7 +1,7 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local fullPlayerName, shortName, realm
+local fullPlayerName, shortName, playerRealm
 
 local groupData = {}
 
@@ -251,6 +251,9 @@ local function showIndepthData(data)
 	--indepthFrame.Guild:SetText(GetGuildInfo(data.unitID) or "Currently guildless")
 
 	indepthFrame:SetPlayerData(data.name, data.realm)
+
+	print(data.name, data.realm)
+
 	indepthFrame:ApplyFillData()
 
 	indepthFrame:Show()
@@ -279,7 +282,7 @@ local function updateGroupManagerPlayerFrame(frame, data)
 	-- Assign frame values efficiently
 	frame.data = data
 	frame.id = data.index
-	frame.name = fullName
+	--frame.name = fullName
 	frame.unit = data.unitID
 	frame.specID = specID
 
@@ -705,10 +708,6 @@ local lastCall = {
 
 }
 
-local function updateSpecPanels()
-
-end
-
 local function updateGroupData(type, overwrite)
 	if(not InCombatLockdown() and (overwrite or (lastCall.type ~= type or lastCall.numMembers ~= GetNumGroupMembers()))) then
 		lastCall.type = type
@@ -738,8 +737,11 @@ local function updateGroupData(type, overwrite)
 
 				if(name) then
 					local unitID
-					local playerName, localRealm = miog.createSplitName(name)
+					local playerName, realm = miog.createSplitName(name)
 					local fullName = miog.createFullNameFrom("unitName", name)
+
+					miog.AceComm:SendCommMessage("MIOG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
+					--C_ChatInfo.SendAddonMessageLogged("MIOG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
 
 					if(isInRaid) then
 						unitID = "raid" .. groupIndex
@@ -757,7 +759,7 @@ local function updateGroupData(type, overwrite)
 					local data
 
 					if(fullName ~= fullPlayerName) then
-						data = getOptionalPlayerData(fullName, playerName, localRealm, unitID)
+						data = getOptionalPlayerData(fullName, playerName, realm, unitID)
 						--data = {}
 
 						if(not playerSpecs[fullName] or playerSpecs[fullName] == 0 and not playerInInspection == fullName) then
@@ -798,7 +800,7 @@ local function updateGroupData(type, overwrite)
 
 			playerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
 
-			local data = getOptionalPlayerData(fullPlayerName, shortName, realm, "player")
+			local data = getOptionalPlayerData(fullPlayerName, shortName, playerRealm, "player")
 		
 			data.index = nil
 			data.level = UnitLevel("player")
@@ -809,7 +811,7 @@ local function updateGroupData(type, overwrite)
 			data.fileName = fileName
 			data.className = localizedClassName
 			data.name = UnitNameUnmodified("player")
-			data.realm = realm
+			data.realm = playerRealm
 			data.specID = playerSpecs[fullPlayerName] or 0
 			data.combatRole = GetSpecializationRoleByID(data.specID)
 
@@ -873,6 +875,8 @@ end
 
 local function groupManagerEvents(_, event, ...)
     if(event == "PLAYER_ENTERING_WORLD") then
+		--C_ChatInfo.RegisterAddonMessagePrefix("MIOG")
+
         local isInitialLogin, isReloadingUi = ...
 
 		--miog.openRaidLib.GetAllUnitsInfo()
@@ -1048,7 +1052,7 @@ miog.loadInspectManagement = function()
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	
-	shortName, realm = miog.createSplitName(fullPlayerName)
+	shortName, playerRealm = miog.createSplitName(fullPlayerName)
 	miog.fullPlayerName, miog.shortPlayerName = fullPlayerName, shortName
 end
 
