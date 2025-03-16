@@ -875,11 +875,6 @@ end
 
 local function groupManagerEvents(_, event, ...)
     if(event == "PLAYER_ENTERING_WORLD") then
-		--C_ChatInfo.RegisterAddonMessagePrefix("MIOG")
-
-        local isInitialLogin, isReloadingUi = ...
-
-		--miog.openRaidLib.GetAllUnitsInfo()
 		updateGroupData(1, true)
 
     elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
@@ -1034,7 +1029,6 @@ local function updateRaidLibData()
 end
 
 miog.loadInspectManagement = function()
-	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
    
 	local inspectManager = CreateFrame("Frame", nil)
@@ -1065,6 +1059,7 @@ miog.loadGroupManager = function()
     miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
 	miog.GroupManager:SetScrollBox(miog.GroupManager.ScrollBox)
 
+	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
 
     framePool = CreateFramePool("Button", nil, "MIOG_GroupManagerRaidFrameCharacterTemplate", function(_, frame) frame:Hide() clearFrameFromSpace(frame) end)
