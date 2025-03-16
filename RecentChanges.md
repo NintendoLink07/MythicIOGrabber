@@ -1,3 +1,11 @@
+## [3.2.7a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.7a) - 2025-03-16
+
+### Fixed
+
+- Deleted a debug print.
+
+
+
 ## [3.2.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.7) - 2025-03-16
 
 ### Added

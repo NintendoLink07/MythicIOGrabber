@@ -252,8 +252,6 @@ local function showIndepthData(data)
 
 	indepthFrame:SetPlayerData(data.name, data.realm)
 
-	print(data.name, data.realm)
-
 	indepthFrame:ApplyFillData()
 
 	indepthFrame:Show()
