@@ -860,6 +860,8 @@ local function checkPlayerInspectionStatus(fullName, openRaidSpec)
 		playerSpecs[fullName] = openRaidSpec or GetInspectSpecialization(groupData[fullName].unitID)
 
 		updateSingleCharacterSpecData(fullName)
+		
+		updateInspectionText()
 	end
 
 	if(playerInInspection == fullName) then

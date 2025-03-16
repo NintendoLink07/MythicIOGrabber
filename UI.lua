@@ -10,6 +10,21 @@ local panels
         _ (any) - Unused argument, part of the hook signature.
         panel (table/string) - The panel to activate and display.
 ]]
+local function setProgressPanelInfo(categoryID)
+	miog.ProgressPanel:SetShown(categoryID == 2 or categoryID == 3)
+
+	miog.ProgressPanel.MythicPlus:SetShown(categoryID == 2)
+	miog.ProgressPanel.Raids:SetShown(categoryID == 3)
+
+	miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
+
+	local playerName, realm = miog.createSplitName(UnitFullName("player"))
+	
+	miog.ProgressPanel:Flush()
+	miog.ProgressPanel:SetPlayerData(playerName, realm)
+	miog.ProgressPanel:ApplyFillData()
+end
+
 local function setActivePanel(_, panel)
 	for k, v in pairs(panels) do
 		if(v) then
@@ -46,6 +61,14 @@ local function setActivePanel(_, panel)
 			miog.ProgressPanel:SetPoint("TOPLEFT", miog.Plugin.ButtonPanel, "BOTTOMLEFT", 0, -4)
 		
 		end
+	end
+
+	if(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
+		setProgressPanelInfo(miog.getCurrentCategoryID())
+
+	else
+		miog.ProgressPanel:Hide()
+
 	end
 
 	if(panel == LFGListFrame.ApplicationViewer) then
@@ -247,6 +270,7 @@ miog.createFrames = function()
 		miog.EntryCreation,
 		miog.AdventureJournal,
 		miog.RaiderIOChecker,
+		miog.ProgressPanel,
 		miog.DropChecker,
 	}
 end

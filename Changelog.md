@@ -21,7 +21,9 @@ Color-coded with red if nothing is left to earn this week or green if you still 
 
 ### Fixed
 
-- [GroupManager] Showing indepth data will now correctly use the chosen player's realm instead of your own one.
+- [ApplicationViewer] The progress panel will now correctly be populated with data.
+
+- [GroupManager] Showing indepth data will now correctly use the chosen player's realm instead of your own.
 
 - [Progress] The vault status icon now gets when looking at the PVP overview.
 
