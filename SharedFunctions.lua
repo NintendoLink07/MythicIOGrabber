@@ -23,7 +23,15 @@ miog.updateCurrencies = function()
 				local currentFrame = miog.MainTab.Currency[tostring(k)]
 
 				if(currencyInfo.totalEarned > 0) then
-					local leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
+					local leftToEarn
+
+					if(currencyInfo.maxQuantity > 0) then
+						leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
+
+					else
+						leftToEarn = 0
+
+					end
 
 					currentFrame.Text:SetText((v.spark and C_Item.GetItemCount(230905, true, true, true, true) or currencyInfo.quantity) .. " (" .. (leftToEarn > 0 and WrapTextInColorCode(leftToEarn, miog.CLRSCC.green) or WrapTextInColorCode(leftToEarn, miog.CLRSCC.red)) .. ")")
 

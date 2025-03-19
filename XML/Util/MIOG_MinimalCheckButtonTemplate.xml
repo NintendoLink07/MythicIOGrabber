@@ -7,9 +7,10 @@
         <DisabledCheckedTexture atlas="checkmark-minimal-disabled" />
 
         <Scripts>
-            <OnClick>
+            <PreClick>
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            </OnClick>
+                
+            </PreClick>
         </Scripts>
     </CheckButton>
 </Ui>

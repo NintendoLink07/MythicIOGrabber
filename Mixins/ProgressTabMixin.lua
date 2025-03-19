@@ -246,20 +246,34 @@ local function round(n)
  -- 3 untimed 150, JIT 180, 2chest 187.5, 3chest 195, 1 affix
  -- 2 untimed 135, JIT 165, 2chest 172.5, 3chest 180, 1 affix
 
+
+
+
+
 local function calculateMapScore(challengeMapID, info)
 	local _, _, mapTimer = C_ChallengeMode.GetMapUIInfo(challengeMapID)
 
 	if(info.durationSec > mapTimer * 1.4) then
 		return 0
 	end
+	
+	local fastestTimePossible = mapTimer * 0.6
 
-	local timerDifference = (mapTimer - info.durationSec)
-	local overtime = timerDifference <= 0
+	local timerDifference = mapTimer - (info.durationSec < fastestTimePossible and fastestTimePossible or info.durationSec)
+	local overtime = timerDifference < 0
 
-    local level = overtime and info.level > 10 and 10 or info.level
+	--local level = overtime and info.level > 10 and 10 or info.level
 
-	local baseScore = 125 + level * 15
+    local level = min(info.level, 10)
+
+	local baseScore = 120 + level * 15
+
 	local timerBonus = (timerDifference / (mapTimer * 0.4)) * 15
+	--[[
+	local affixBonus = (level > 11 and 5 or level > 9 and 4 or level > 6 and 3 or level > 3 and 2 or 1) * 10
+	local extraBonus = (level > 11 and 10 or level > 6 and 5 or 0)
+	]]
+
 	local affixBonus = (level > 11 and 5 or level > 9 and 4 or level > 6 and 3 or level > 3 and 2 or 1) * 10
 	local extraBonus = (level > 11 and 10 or level > 6 and 5 or 0)
 
@@ -284,15 +298,22 @@ local function calculateNewScore(mapID, newLevel, guid, customTimer)
 		local info = intimeInfo or overtimeInfo
 		local dungeonScore = info and info.dungeonScore or 0
 	
-		overTimeGain = calculateMapScore(mapID, {level = newLevel, durationSec = customTimer <= 0 and timeLimit * (1 - (customTimer / 100)) or timeLimit})
+		overTimeGain = calculateMapScore(mapID, {level = newLevel, durationSec = customTimer < 0 and timeLimit * (1 - (customTimer / 100)) or timeLimit})
 		lowGain = calculateMapScore(mapID, {level = newLevel, durationSec = timeLimit - 0.1})
-		highGain = calculateMapScore(mapID, {level = newLevel, durationSec = customTimer > 0 and timeLimit - timeLimit * (customTimer / 100) or timeLimit - 0.1})
+		highGain = calculateMapScore(mapID, {level = newLevel, durationSec = customTimer >= 0 and timeLimit - timeLimit * (customTimer / 100) or timeLimit - 0.1})
 
 		return max(round(overTimeGain - dungeonScore), 0), max(round(lowGain - dungeonScore), 0), max(round(highGain - dungeonScore), 0)
 	end
 	
 	return 0, 0, 0
- end
+end
+
+
+ --  7 untimed 245, JIT 260, 2chest 267.5, 3chest 275, 3 bonus score
+ 
+ --  6 untimed 215, JIT 230, 2chest 237.5, 3chest 245, 2 bonus score
+ --  5 untimed 200, JIT 215, 2chest 222.5, 3chest 230, 2 bonus score
+
 
 function ProgressTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
 	local newKeystoneInfo = {}

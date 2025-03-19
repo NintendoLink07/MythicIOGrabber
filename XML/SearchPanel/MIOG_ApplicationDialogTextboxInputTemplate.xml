@@ -1,0 +1,43 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ApplicationDialogTextboxInputTemplate" virtual="true">
+        <Frames>
+            <Button parentKey="DeleteButton" inherits="UIButtonTemplate">
+				<Size x="30" y="30"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+				</Anchors>
+				<KeyValues>
+					<KeyValue key="buttonArtKit" value="128-redbutton-minus" type="string"/>
+				</KeyValues>
+			</Button>
+
+            <EditBox parentKey="InputBox" multiLine="true" autoFocus="false" letters="63">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeKey="$parent.DeleteButton" relativePoint="TOPLEFT"/>
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+                
+                <Scripts>
+                    <OnKeyDown>
+                        if(key == "ESCAPE" or key == "ENTER") then
+                            self:ClearFocus()
+
+                        end
+                    </OnKeyDown>
+                </Scripts>
+
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture atlas="VAS-inputBox" setAllPoints="true" />
+                    </Layer>
+                </Layers>
+
+                <FontString inherits="GameFontHighlight" />
+
+			    <TextInsets left="7" right="7" bottom="6" top="6"/>
+            </EditBox>
+        </Frames>
+    </Frame>
+</Ui>

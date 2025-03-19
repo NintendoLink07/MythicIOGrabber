@@ -14,7 +14,6 @@ function SortingMixin:OnLoad(func, parameters)
     self.sortingData = {}
     self.expandedChildren = {}
 
-
     buttonPool = CreateFramePool("Button", self.SortButtonRow, "MIOG_SortButtonTemplate", function(pool, frame)
         frame:SetScript("OnClick", function(frameSelf, button)
             if(button == "LeftButton") then
@@ -171,14 +170,16 @@ function SortingMixin:CheckOrderStatus(parameterInfo)
         parameterInfo.order = nil
         parameterInfo.button.FontString:SetText(parameterInfo.order)
 
-        for k, v in ipairs(self.sortingParameters) do
+        for _, v in ipairs(self.sortingParameters) do
             if(v.order and v.order > oldOrder) then
                 v.order = v.order - 1
                 v.button.FontString:SetText(v.order)
+
+                self.settingsTable[v.name].order = v.order
             end
         end
     else
-        parameterInfo.order = not parameterInfo.order and self:GetNumOfActiveSortMethods() or parameterInfo.order
+        parameterInfo.order = parameterInfo.order or self:GetNumOfActiveSortMethods()
         parameterInfo.button.FontString:SetText(parameterInfo.order)
 
     end
@@ -267,56 +268,59 @@ function SortingMixin:SetExternalSort(bool)
 end
 
 function SortingMixin:SetDataProvider(dataProvider)
-	local orderedList = self:GetOrderedParameters()
-    local orderedListLen = #orderedList
+    if(dataProvider) then
+        local orderedList = self:GetOrderedParameters()
+        local orderedListLen = #orderedList
 
-    if(not self.externalSort) then
-        if(self.treeMode) then
-            dataProvider:SetSortComparator(
-                function(n1, n2)
-                    local k1 = n1.data
-                    local k2 = n2.data
+        if(not self.externalSort) then
+            if(self.treeMode) then
+                dataProvider:SetSortComparator(
+                    function(n1, n2)
+                        local k1 = n1.data
+                        local k2 = n2.data
 
-                    for i = 1, orderedListLen do
-                        local state, name = orderedList[i].state, orderedList[i].name
+                        for i = 1, orderedListLen do
+                            local state, name = orderedList[i].state, orderedList[i].name
 
-                        if(state > 0 and k1[name] ~= k2[name]) then
-                            if(state == 1) then
-                                return k1[name] > k2[name]
-                
+                            if(state > 0 and k1[name] ~= k2[name]) then
+                                if(state == 1) then
+                                    return k1[name] > k2[name]
+                    
+                                else
+                                    return k1[name] < k2[name]
+                    
+                                end
                             else
-                                return k1[name] < k2[name]
-                
-                            end
-                        else
-                            return k1.index > k2.index
+                                return k1.index > k2.index
 
-                        end
-                    end
-                end
-            )
-        else
-            dataProvider:SetSortComparator(
-                function(k1, k2)
-                    for i = 1, orderedListLen do
-                        local state, name = orderedList[i].state, orderedList[i].name
-
-                        if(state > 0 and k1[name] ~= k2[name]) then
-                            if(state == 1) then
-                                return k1[name] > k2[name]
-                
-                            else
-                                return k1[name] < k2[name]
-                
                             end
                         end
                     end
-                end
-            )
+                )
+            else
+                dataProvider:SetSortComparator(
+                    function(k1, k2)
+                        for i = 1, orderedListLen do
+                            local state, name = orderedList[i].state, orderedList[i].name
+
+                            if(state > 0 and k1[name] ~= k2[name]) then
+                                if(state == 1) then
+                                    return k1[name] > k2[name]
+                    
+                                else
+                                    return k1[name] < k2[name]
+                    
+                                end
+                            end
+                        end
+                    end
+                )
+            end
         end
-    end
 
-    self.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
+        self.scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
+
+    end
 end
 
 function SortingMixin:GetOrderedParameters()

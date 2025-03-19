@@ -95,6 +95,7 @@ miog.defaultFilters = defaultFilters
 local defaultSettings = {
     {name = "Frame manually resized", variableName = "MIOG_ManualResize", key="manualResize", default=0},
     {name = "Active side panel", variableName = "MIOG_SidePanel", key="activeSidePanel", default="none"},
+    {name = "App dialog box extended", variableName = "MIOG_AppDialogBoxExtented", key="appDialogBoxExtented", default=true},
     {name = "Mythic+ Statistics", variableName = "MIOG_MPlusStats", key="mplusStats", default={}},
     {name = "PVP Statistics", variableName = "MIOG_PVPStats", key="pvpStats", default={}},
     {name = "Raid Statistics", variableName = "MIOG_RaidStats", key="raidStats", default={}},
@@ -119,6 +120,7 @@ local defaultSettings = {
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
     {name = "Favoured applicants", variableName = "MIOG_FavouredApplicants", key="favouredApplicants", default={}, type="custom"},
     {name = "New filter options", variableName = "MIOG_NewFilterOptions", key="newFilterOptions", default={}},
+    {name = "AppDialog texts", variableName = "MIOG_AppDialogTexts", key="appDialogTexts", default={}},
     {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={
         ["LFGListFrame.SearchPanel"] = defaultFilters,
         ["LFGListFrame.ApplicationViewer"] = defaultFilters,

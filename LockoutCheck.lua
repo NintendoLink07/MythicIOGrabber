@@ -78,7 +78,6 @@ hooksecurefunc("RequestRaidInfo", function()
 end)
 
 miog.loadLockoutCheck = function()
-    --local lockoutCheck = CreateFrame("Frame", "MythicIOGrabber_LockoutCheck", miog.Plugin.InsertFrame, "MIOG_LockoutCheck")
     local lockoutCheck = miog.pveFrame2.TabFramesPanel.Lockouts
 
     fullPlayerName = miog.createFullNameFrom("unitID", "player")

@@ -2,7 +2,10 @@ local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
 local function openSearchPanel(categoryID, filters, dontSearch)
-	--LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+	if(LFGListFrame.CategorySelection.selectedCategory ~= categoryID) then
+		LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+
+	end
 
 	LFGListFrame.CategorySelection.selectedCategory = categoryID
 	LFGListFrame.CategorySelection.selectedFilters = filters or 0

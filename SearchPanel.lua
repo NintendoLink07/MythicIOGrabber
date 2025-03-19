@@ -619,25 +619,27 @@ local function updateScrollBoxFrame(frame, data)
 					end
 				end
 
-				for k, v in ipairs(bossPanel.bossFrames) do
-					if(miog.MAP_INFO[mapID].bosses[k]) then
-						local currentBoss = miog.MAP_INFO[mapID].bosses[k]
+				if(bossPanel.bossFrames) then
+					for k, v in ipairs(bossPanel.bossFrames) do
+						if(miog.MAP_INFO[mapID].bosses[k]) then
+							local currentBoss = miog.MAP_INFO[mapID].bosses[k]
 
-						if(encountersDefeated[currentBoss.name] or encountersDefeated[currentBoss.altName]) then
-							v.Icon:SetDesaturated(true)
-							v.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+							if(encountersDefeated[currentBoss.name] or encountersDefeated[currentBoss.altName]) then
+								v.Icon:SetDesaturated(true)
+								v.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+
+							else
+								v.Icon:SetDesaturated(false)
+								v.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
+
+							end
 
 						else
-							v.Icon:SetDesaturated(false)
-							v.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
+							v.Border:SetColorTexture(0,0,0,0)
 
 						end
 
-					else
-						v.Border:SetColorTexture(0,0,0,0)
-
 					end
-
 				end
 
 				currentFrame.encounterInfo = encounterInfo
@@ -997,6 +999,73 @@ miog.createSearchPanel = function()
 	ScrollUtil.InitScrollBoxListWithScrollBar(searchPanel.ScrollBox2, searchPanel.ScrollBar, view);
 
 	searchPanel:SetScrollBox(searchPanel.ScrollBox2)
+
+	local appDialogParentFrame = CreateFrame("Frame", nil, LFGListApplicationDialog, "MIOG_ApplicationDialogParentTemplate")
+
+	local textboxView = CreateScrollBoxListLinearView(4, 2, 1, 1, 2);
+	
+	local function repopulateAppDialogBox()
+		local provider = CreateDataProvider()
+		for k, v in ipairs(MIOG_NewSettings.appDialogTexts) do
+			provider:Insert({index = k, text = v})
+	
+		end
+
+		if(provider:GetSize() == 0) then
+			provider:Insert({index = 1, text = ""})
+
+		end
+
+		textboxView:SetDataProvider(provider)
+	end
+
+	appDialogParentFrame.Checkbox:SetScript("OnClick", function(self)
+		local currentState = self:GetChecked()
+		self:GetParent().Textbox:SetShown(currentState)
+		MIOG_NewSettings.appDialogBoxExtented = currentState
+	end)
+	appDialogParentFrame.Checkbox:SetChecked(MIOG_NewSettings.appDialogBoxExtented)
+	appDialogParentFrame.Textbox:SetShown(MIOG_NewSettings.appDialogBoxExtented)
+
+	textboxView:SetElementInitializer("MIOG_ApplicationDialogTextboxInputTemplate", function(frame, data)
+		frame.InputBox:SetText(data.text)
+
+		MIOG_NewSettings.appDialogTexts[data.index] = data.text
+
+		frame.InputBox:SetScript("OnTextChanged", function(self, userInput)
+			if(userInput) then
+				MIOG_NewSettings.appDialogTexts[data.index] = self:GetText()
+
+			end
+		end)
+
+		if(data.index > 1) then
+			frame.DeleteButton:SetScript("OnClick", function(self, button)
+				table.remove(MIOG_NewSettings.appDialogTexts, data.index)
+
+				repopulateAppDialogBox()
+			end)
+		else
+			frame.DeleteButton:Hide()
+
+		end
+	end)
+	textboxView:SetElementExtent(48)
+	textboxView:SetElementResetter(function(frame, data)
+		frame.DeleteButton:Show()
+
+	end)
+	ScrollUtil.InitScrollBoxListWithScrollBar(appDialogParentFrame.Textbox.ScrollBox, appDialogParentFrame.Textbox.ScrollBar, textboxView);
+
+	repopulateAppDialogBox(true)
+
+	appDialogParentFrame.AddInputBoxButton:SetParent(appDialogParentFrame.Textbox)
+	appDialogParentFrame.AddInputBoxButton:SetScript("OnClick", function(self, button)
+		local provider = textboxView:GetDataProvider()
+
+		provider:Insert({index = provider:GetSize() + 1, text = ""})
+		
+	end)
 
 	return searchPanel
 end

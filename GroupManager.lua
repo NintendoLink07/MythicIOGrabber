@@ -92,6 +92,7 @@ local function updateSingleCharacterItemData(fullName)
 	if(not miog.GroupManager:IsShown()) then
 		return
 	end
+	
 
 	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
 		return fullName == data.fullName
@@ -155,6 +156,7 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 
 			for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
 				data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+				
 			end
 		end
 	else
@@ -988,7 +990,7 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneInfo)
 	end
 end
 
-miog.OnGearUpdate = function(unitName, unitGear, allUnitsGear)
+miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
 	--[[local itemLevelNumber = unitGear.ilevel
 	local durabilityNumber = unitGear.durability
 	--hasWeaponEnchant is 1 have enchant or 0 is don't
@@ -1002,7 +1004,7 @@ miog.OnGearUpdate = function(unitName, unitGear, allUnitsGear)
 	for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
 	end]]
 
-	local name = miog.createFullNameFrom("unitName", unitName)
+	local name = miog.createFullNameFrom("unitID", unitId)
 
 	if(name) then
 		playerGearData[name] = unitGear

@@ -159,6 +159,7 @@ function MultiStateButtonMixin:AdvanceState()
 
     self:SetAllTextures(self.currentState)
 
+    return self:GetActiveStateValue()
 end
 
 function MultiStateButtonMixin:SetTexturesForSpecificState(state, normal, pushed, highlight, disabled, checked, disabledChecked)

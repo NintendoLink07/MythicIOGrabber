@@ -15,7 +15,7 @@ local miogPlayers = {}
 local function printMIOGPlayers(...)
 	local prefix, text, channel, sender = ...
 
-	if(prefix == "MIOG_DEBUG" and not miogPlayers[sender]) then
+	if(prefix == "MIOG_DEBUG" and not miogPlayers[sender] and not sender == UnitFullName("player")) then
 		print("Found a MIOG player: " .. sender)
 		miogPlayers[sender] = true
 	end
@@ -43,7 +43,7 @@ local function mainEvents(_, event, ...)
 
 		if(isLogin or isReload) then
 			local accInfo = C_BattleNet.GetAccountInfoByGUID(UnitGUID("player"))
-			if(accInfo.battleTag == "Rhany#219034") then
+			if(accInfo.battleTag == "Rhany#21903") then
 				miog.AceComm:RegisterComm("MIOG_DEBUG", printMIOGPlayers)
 
 			end

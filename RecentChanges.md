@@ -1,28 +1,18 @@
-## [3.2.7a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.7a) - 2025-03-16
-
-### Fixed
-
-- Deleted a debug print.
-
-
-
-## [3.2.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.7) - 2025-03-16
+## [3.2.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.8) - 2025-03-19
 
 ### Added
 
-- Fractured Sparks of Fortunes have been added to the currency tracker in the mainframe.
-
-- Added a communication library for future features.
-
-### Changed
-
-- To combat the longer list of currencies all currencies now only display the amount left to earn in parentheses.
-Color-coded with red if nothing is left to earn this week or green if you still have some currency left to earn.
+- [SearchPanel] A small (togglable) panel has been added on the right side of the application box that pops up when you signup to a group.
+There you can set different signup text and manually copy them into the box.
 
 ### Fixed
 
-- [ApplicationViewer] The progress panel will now correctly be populated with data.
+- [SearchPanel] Upon switching search panel categories (e.g. dungeons to raid, raid to questing, etc.) the text field will now get wiped.
 
-- [GroupManager] Showing indepth data will now correctly use the chosen player's realm instead of your own.
+- [SearchPanel] The search panel won't try to iterate through the boss frames in any other category other than raid.
 
-- [Progress] The vault status icon now gets when looking at the PVP overview.
+- [GroupManager] Gear data from players will now update correctly.
+
+- [Progress] The keystone time calculator algorithm has been adjusted / corrected.
+
+- All elements that are sortable will now correctly transfer their state into the MIOG settings (was previously not the case when > 2 options were active and you disabled one of them).

@@ -426,8 +426,8 @@ local function createDataProviderWithUnsortedData()
 				elseif(categoryID == 3) then
 					local raidData = miog.getNewRaidSortData(playerName, realm)
 
-					primarySortAttribute = raidData.character.ordered[1].weight
-					secondarySortAttribute = raidData.character.ordered[2].weight
+					primarySortAttribute = raidData.character.ordered[1].weight or 0
+					secondarySortAttribute = raidData.character.ordered[2].weight or 0
 					
 					favourPrimary = raidData.character.ordered[1].weight and wticc(raidData.character.ordered[1].shortName .. ":" .. raidData.character.ordered[1].parsedString, miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color) or 0
 
@@ -453,7 +453,7 @@ local function createDataProviderWithUnsortedData()
 					role = assignedRole,
 					class = class,
 					specID = specID,
-					ilvl = itemLevel,
+					ilvl = itemLevel or 0,
 
 					primary = primarySortAttribute,
 					favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary,
