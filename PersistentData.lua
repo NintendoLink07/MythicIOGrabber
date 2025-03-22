@@ -1346,7 +1346,139 @@ miog.GEARING_CHART = {
 	},
 }
 
-miog.getAdjustedItemLevel = function(seasonID, jumps)
+miog.NEW_GEARING_DATA = {
+	[14] = {
+		baseItemlevel = 597,
+		maxItemlevel = 678,
+
+		tracks = {
+			[1] = {name = "Explorer", length = 8},
+			[2] = {name = "Adventurer", length = 8},
+			[3] = {name = "Veteran", length = 8},
+			[4] = {name = "Champion", length = 8},
+			[5] = {name = "Hero", length = 6},
+			[6] = {name = "Myth", length = 6},
+
+		},
+
+		allItemlevels = {},
+		usedItemlevels = {},
+
+		dungeon = {
+			info = {
+				[1] = {jumps = -1, name="Normal", ignoreForVault=true},
+				[2] = {jumps = 7, name="Heroic/TW"},
+				[3] = {jumps = 12, vaultOffset = 3, name="Mythic"},
+				[4] = {jumps = 13, vaultOffset = 3, name="+2"},
+				[5] = {jumps = 13, vaultOffset = 3, name="+3"},
+				[6] = {jumps = 14, vaultOffset = 3, name="+4"},
+				[7] = {jumps = 15, vaultOffset = 2, name="+5"},
+				[8] = {jumps = 16, vaultOffset = 2, name="+6"},
+				[9] = {jumps = 16, vaultOffset = 3, name="+7"},
+				[10] = {jumps = 17, vaultOffset = 2, name="+8"},
+				[11] = {jumps = 17, vaultOffset = 2, name="+9"},
+				[12] = {jumps = 18, vaultOffset = 2, name="+10"},
+			},
+			usedItemlevels = {
+
+			},
+			vault = {
+				usedItemlevels = {
+	
+				},
+				offset = 4,
+
+			},
+		},
+		
+		raid = {
+			info = {
+				[1] = {jumps = 8, name="LFR"},
+				[2] = {jumps = 12, name="Normal"},
+				[3] = {jumps = 16, name="Heroic"},
+				[4] = {jumps = 20, name="Mythic"},
+			},
+			usedItemlevels = {
+
+			},
+			veryRare = {
+				info = {
+					[1] = {jumps = 13, name="Rare LFR"},
+					[2] = {jumps = 17, name="Rare Normal"},
+					[3] = {jumps = 21, name="Rare Heroic"},
+					[4] = {jumps = 25, name="Rare Mythic"},
+				},
+				usedItemlevels = {
+	
+				},
+			}
+		},
+
+		delves = {
+			info = {
+				[1] = {jumps = 4, vaultOffset = 4, name="T1"},
+				[2] = {jumps = 5, vaultOffset = 3, name="T2"},
+				[3] = {jumps = 6, vaultOffset = 3, name="T3"},
+				[4] = {jumps = 7, vaultOffset = 5, name="T4"},
+				[5] = {jumps = 8, vaultOffset = 6, name="T5"},
+				[6] = {jumps = 9, vaultOffset = 6, name="T6"},
+				[7] = {jumps = 12, vaultOffset = 4, name="T7+"},
+			},
+			usedItemlevels = {
+
+			},
+			bountiful = {
+				info = {
+					[1] = {jumps = 9, name="T4B"},
+					[2] = {jumps = 11, name="T5B"},
+					[3] = {jumps = 13, name="T6B"},
+					[4] = {jumps = 15, name="T7B"},
+					[5] = {jumps = 16, name="T8B+"},
+				},
+				usedItemlevels = {
+	
+				},
+			},
+			vault = {
+				usedItemlevels = {
+	
+				},
+				offset = 4,
+
+			},
+		},
+
+		other = {
+			info = {
+				--{jumps = 6, name="EnchWeather1"},
+				--{jumps = 7, name="EnchWeather2"},
+				--{jumps = 8, name="EnchWeather3"},
+				--{jumps = 9, name="EnchWeather4"},
+				{jumps = 10, name="EnchWeather5"},
+				--{jumps = 11, name="Spark1"},
+				--{jumps = 12, name="Spark2"},
+				--{jumps = 13, name="Spark3"},
+				--{jumps = 14, name="Spark4"},
+				{jumps = 15, name="Spark5"},
+				--{jumps = 15, name="Runed1"},
+				--{jumps = 16, name="Runed2"},
+				--{jumps = 17, name="Runed3"},
+				--{jumps = 18, name="Runed4"},
+				{jumps = 19, name="Runed5"},
+				--{jumps = 20, name="Gilded1"},
+				--{jumps = 21, name="Gilded2"},
+				--{jumps = 22, name="Gilded3"},
+				--{jumps = 23, name="Gilded4"},
+				{jumps = 24, name="Gilded5"},
+			},
+			usedItemlevels = {
+
+			},
+		},
+	}
+}
+
+local function getAdjustedItemLevel(seasonID, jumps)
     local jumpsCompleted = 1
     local newItemLevel = miog.GEARING_CHART[seasonID].baseItemLevel
 	local start = jumps < 0 and -1 or 1
@@ -1365,7 +1497,10 @@ miog.getAdjustedItemLevel = function(seasonID, jumps)
     return newItemLevel
 end
 
-miog.getJumpsForItemLevel = function(seasonID, itemLevel, startIndex)
+miog.getAdjustedItemLevel = getAdjustedItemLevel
+
+
+local function getJumpsForItemLevel(seasonID, itemLevel, startIndex)
 	local totalJumps = 0
 	startIndex = startIndex or 1
 	local jumpsCompleted = startIndex or 1
@@ -1389,6 +1524,133 @@ miog.getJumpsForItemLevel = function(seasonID, itemLevel, startIndex)
     end
 
     return nil
+end
+
+miog.getJumpsForItemLevel = getJumpsForItemLevel
+
+for k, v in pairs(miog.NEW_GEARING_DATA) do
+	for x, y in ipairs(v.tracks) do
+		y.data = {}
+
+		for i = 1, y.length, 1 do
+			local jumps = (i - 1) + (x - 1) * 4
+
+			y.data[i] = getAdjustedItemLevel(k, jumps)
+		end
+
+		y.baseItemLevel = y.data[1]
+		y.maxItemLevel = y.data[y.length]
+
+		if(x == #v.tracks) then
+			v.maxUpgradeItemLevel = y.maxItemLevel
+
+		end
+	end
+
+	for x, y in ipairs(v.dungeon.info) do
+		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
+
+		v.dungeon.usedItemlevels[currentItemlevel] = v.dungeon.usedItemlevels[currentItemlevel] or {}
+		tinsert(v.dungeon.usedItemlevels[currentItemlevel], y.name)
+
+		v.usedItemlevels[currentItemlevel] = true
+
+		if(not y.ignoreForVault) then
+			local vaultLevel = getAdjustedItemLevel(k, y.jumps + (y.vaultOffset or v.dungeon.vault.offset))
+			v.dungeon.vault.usedItemlevels[vaultLevel] = v.dungeon.vault.usedItemlevels[vaultLevel] or {}
+			tinsert(v.dungeon.vault.usedItemlevels[vaultLevel], y.name)
+			v.usedItemlevels[vaultLevel] = true
+
+		end
+
+		if(y.jumps < 0) then
+			tinsert(v.allItemlevels, currentItemlevel)
+		end
+	end
+
+	for x, y in ipairs(v.raid.info) do
+		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
+
+		v.raid.usedItemlevels[currentItemlevel] = v.raid.usedItemlevels[currentItemlevel] or {}
+		tinsert(v.raid.usedItemlevels[currentItemlevel], y.name)
+
+		v.usedItemlevels[currentItemlevel] = true
+
+	end
+
+	if(v.raid.veryRare) then
+		for x, y in pairs(v.raid.veryRare.info) do
+			local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
+
+			v.raid.usedItemlevels[currentItemlevel] = v.raid.usedItemlevels[currentItemlevel] or {}
+			tinsert(v.raid.usedItemlevels[currentItemlevel], y.name)
+
+			v.usedItemlevels[currentItemlevel] = true
+			
+		end
+	end
+
+	for x, y in ipairs(v.delves.info) do
+		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
+
+		v.delves.usedItemlevels[currentItemlevel] = v.delves.usedItemlevels[currentItemlevel] or {}
+		tinsert(v.delves.usedItemlevels[currentItemlevel], y.name)
+
+		v.usedItemlevels[currentItemlevel] = true
+
+		if(not y.ignoreForVault) then
+			local vaultLevel = getAdjustedItemLevel(k, y.jumps + (y.vaultOffset or v.delves.vault.offset))
+			v.delves.vault.usedItemlevels[vaultLevel] = v.delves.vault.usedItemlevels[vaultLevel] or {}
+			tinsert(v.delves.vault.usedItemlevels[vaultLevel], y.name)
+			v.usedItemlevels[vaultLevel] = true
+
+		end
+	end
+
+	if(v.delves.bountiful) then
+		for x, y in pairs(v.delves.bountiful.info) do
+			local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
+
+			v.delves.usedItemlevels[currentItemlevel] = v.delves.usedItemlevels[currentItemlevel] or {}
+			tinsert(v.delves.usedItemlevels[currentItemlevel], y.name)
+
+			v.usedItemlevels[currentItemlevel] = true
+			
+		end
+	end
+
+	for x, y in ipairs(v.other.info) do
+		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
+
+		v.other.usedItemlevels[currentItemlevel] = v.other.usedItemlevels[currentItemlevel] or {}
+		tinsert(v.other.usedItemlevels[currentItemlevel], y.name)
+
+		v.usedItemlevels[currentItemlevel] = true
+	end
+
+	-- calc all itemlevels
+    local currentIlvl = v.baseItemlevel
+    local offset = 0
+
+    while(currentIlvl < v.maxItemlevel) do
+        if(offset == 0) then
+			tinsert(v.allItemlevels, currentIlvl)
+            
+        else
+            currentIlvl = currentIlvl + miog.ITEM_LEVEL_JUMPS[offset]
+
+        end
+    
+		tinsert(v.allItemlevels, currentIlvl)
+    
+        if(offset == 4) then
+            offset = 1
+    
+        else
+            offset = offset + 1
+    
+        end
+    end
 end
 
 for k, v in pairs(miog.GEARING_CHART) do

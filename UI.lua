@@ -250,7 +250,7 @@ miog.createFrames = function()
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
 		miog.loadCalendarSystem()
-		miog.loadGearingChart()
+		miog.loadGearingTable()
 		miog.loadGroupManager()
 		miog.loadRaidPlanner()
 		miog.loadActivityChecker()

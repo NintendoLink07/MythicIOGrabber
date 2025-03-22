@@ -5,7 +5,7 @@ local currentChildren = {}
 local seasonID
 
 local function createTrackString(itemLevel)
-    local trackString = ""
+    local trackString
 
 	for x, y in pairs(miog.GEARING_CHART) do
         if(x == seasonID) then
@@ -18,7 +18,8 @@ local function createTrackString(itemLevel)
                     
                     for i = 1, currentEntry.length, 1 do
                         if(currentEntry.data[i] == itemLevel) then
-                            trackString = trackString .. WrapTextInColorCode(i .. "/" .. currentEntry.length, miog.ITEM_QUALITY_COLORS[k - 1].color:GenerateHexColor()) .. "  "
+                            local tempString = WrapTextInColorCode(i .. "/" .. currentEntry.length, miog.ITEM_QUALITY_COLORS[k - 1].color:GenerateHexColor())
+                            trackString = trackString and trackString .. " " .. tempString or tempString
                         end
                     end
                 end
@@ -29,7 +30,8 @@ local function createTrackString(itemLevel)
                     
                 for i = 1, currentEntry.length, 1 do
                     if(currentEntry.data[i] == itemLevel) then
-                        trackString = trackString .. WrapTextInColorCode(i .. "/" .. currentEntry.length, miog.ITEM_QUALITY_COLORS[#y.trackInfo - 1].color:GenerateHexColor()) .. "  "
+                        local tempString = WrapTextInColorCode(i .. "/" .. currentEntry.length, miog.ITEM_QUALITY_COLORS[#y.trackInfo - 1].color:GenerateHexColor())
+                        trackString = trackString and trackString .. " " .. tempString or tempString
                     end
                 end
             end
@@ -37,6 +39,32 @@ local function createTrackString(itemLevel)
     end
 
     return trackString
+end
+
+local function getColorForItemlevel(itemlevel)
+    local gearingData = miog.NEW_GEARING_DATA[seasonID]
+    local color
+
+    for x, y in ipairs(gearingData.tracks) do
+        if(itemlevel > gearingData.maxUpgradeItemLevel) then
+            color = miog.ITEM_QUALITY_COLORS[6].color
+            
+        else
+            for n = 1, y.length, 1 do
+                if(not gearingData.awakenedInfo and itemlevel == y.data[n] or x ~= #gearingData.tracks and itemlevel == y.data[n]) then
+                    color = miog.ITEM_QUALITY_COLORS[x - 1].color
+                    
+                end
+            end
+        end
+    end
+
+    if(color == nil) then
+        color = miog.ITEM_QUALITY_COLORS[0].color
+
+    end
+
+    return color:GenerateHexColor()
 end
 
 local function insertGearingData()
@@ -142,35 +170,64 @@ local function insertGearingData()
     end
 end
 
-miog.loadGearingChart = function()
-    miog.Gearing = miog.pveFrame2.TabFramesPanel.Gearing
+local function checkTable(name, itemlevel)
+    local string
 
-    local singleGrid = CreateFrame("Frame", nil, miog.Gearing.RowLayout, "MIOG_GearingChartLine")
-    singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
-    singleGrid.layoutIndex = 1
+    if(miog.NEW_GEARING_DATA[seasonID][name].usedItemlevels[itemlevel]) then
+        for x, y in ipairs(miog.NEW_GEARING_DATA[seasonID][name].usedItemlevels[itemlevel]) do
+            if(string) then
+                string = string .. "/" .. y
 
-    singleGrid.ItemLevel:SetText("ILvl")
-    singleGrid.Track:SetText("Track")
-    singleGrid.Delves:SetText("Delves")
-    singleGrid.DelvesVault:SetText("Delves Vlt")
-    singleGrid.Raid:SetText("Raid")
-    singleGrid.Dungeon:SetText("Dungeon")
-    singleGrid.DungeonVault:SetText("Dung Vlt")
-    singleGrid.Other:SetText("Other")
-    
+            else
+                string = y
+
+            end
+        end
+    end
+
+    return string and WrapTextInColorCode(string, getColorForItemlevel(itemlevel))
+end
+
+local function checkSubtable(name, subname, itemlevel)
+    local string
+
+    if(miog.NEW_GEARING_DATA[seasonID][name][subname].usedItemlevels[itemlevel]) then
+
+        for x, y in ipairs(miog.NEW_GEARING_DATA[seasonID][name][subname].usedItemlevels[itemlevel]) do
+            if(string) then
+                string = string .. "/" .. y
+
+            else
+                string = y
+
+            end
+        end
+    end
+
+    return string and WrapTextInColorCode(string, getColorForItemlevel(itemlevel))
+end
+
+miog.loadGearingTable = function()
+    miog.Gearing = miog.pveFrame2.TabFramesPanel.GearingTable
+
+    miog.Gearing.GearingTable:OnLoad(nil, nil, 2, 2)
+    local headers = {
+        {name = "ILvl"},
+        {name = "Track"},
+        {name = "Delves", checkbox = true},
+        {name = "Vault", id = "Delves", checkbox = true},
+        {name = "Raid", checkbox = true},
+        {name = "Dungeon", checkbox = true},
+        {name = "Vault", id = "Dungeon",  checkbox = true},
+        {name = "Other", checkbox = true},
+    }
+    miog.Gearing.GearingTable:CreateTable(false, headers, MIOG_NewSettings.gearingTable.headers)
+
     seasonID = 14 or C_MythicPlus.GetCurrentSeason() or miog.C.BACKUP_SEASON_ID
 
-    for k, v in pairs(miog.GEARING_CHART) do
-        if(k == seasonID) then
-            for a, b in pairs(v.itemLevelInfo) do
-                singleGrid = CreateFrame("Frame", nil, miog.Gearing.RowLayout, "MIOG_GearingChartLine")
-                singleGrid.fixedWidth = miog.Gearing.RowLayout:GetWidth()
-                singleGrid.layoutIndex = a
-
-                currentChildren[a] = singleGrid
-            end
-
-            for a, b in ipairs(v.trackInfo) do
+    for k, v in pairs(miog.NEW_GEARING_DATA[seasonID]) do
+        if(k == "tracks") then
+            for a, b in ipairs(v) do
                 local currentLegendFrame = miog.Gearing.Legend["Track" .. a]
 
                 if(currentLegendFrame) then
@@ -183,13 +240,39 @@ miog.loadGearingChart = function()
                     end)
                 end
             end
-
-            if(not v.awakenedInfo) then
-                miog.Gearing.Legend["Track7"]:Hide()
-                miog.Gearing.Legend:SetWidth(miog.Gearing.Legend:GetWidth() - miog.Gearing.Legend["Track7"]:GetWidth())
-            end
         end
     end
 
-    insertGearingData()
+    if(not miog.NEW_GEARING_DATA[seasonID].awakenedInfo) then
+        miog.Gearing.Legend["Track7"]:Hide()
+        miog.Gearing.Legend:SetWidth(miog.Gearing.Legend:GetWidth() - miog.Gearing.Legend["Track7"]:GetWidth())
+    end
+
+    local counter = 1
+
+    local fullTable = {}
+
+    for k, v in ipairs(headers) do
+        fullTable[k] = {}
+    end
+
+    for k, v in pairs(miog.NEW_GEARING_DATA[seasonID].allItemlevels) do
+        if(miog.NEW_GEARING_DATA[seasonID].usedItemlevels[v]) then
+            tinsert(fullTable[1], counter, WrapTextInColorCode(v, getColorForItemlevel(v)))
+            tinsert(fullTable[2], counter, createTrackString(v))
+            tinsert(fullTable[3], counter, checkTable("delves", v))
+            tinsert(fullTable[4], counter, checkSubtable("delves", "vault", v))
+            tinsert(fullTable[5], counter, checkTable("raid", v))
+            tinsert(fullTable[6], counter, checkTable("dungeon", v))
+            tinsert(fullTable[7], counter, checkSubtable("dungeon", "vault", v))
+            tinsert(fullTable[8], counter, checkTable("other", v))
+
+            counter = counter + 1
+        end
+    end
+
+    for k, v in ipairs(fullTable) do
+        miog.Gearing.GearingTable:AddTextToColumn(v, k)
+
+    end
 end

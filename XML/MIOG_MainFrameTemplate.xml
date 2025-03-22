@@ -662,7 +662,7 @@
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupManager" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Progress" inherits="MIOG_ProgressTab" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
-                    <Frame parentKey="Gearing" inherits="MIOG_GearingChart" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />
                 </Frames>
@@ -722,7 +722,7 @@
                 </Anchors>
                 <Scripts>
                     <OnLoad>
-                        self.frameName = "Gearing"
+                        self.frameName = "GearingTable"
                     </OnLoad>
                 </Scripts>
             </Button>

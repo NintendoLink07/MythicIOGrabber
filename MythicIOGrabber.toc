@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.2.8
+## Version: 3.3.0
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -34,7 +34,7 @@ ClassPanel.lua
 LockoutCheck.lua
 
 LastInvites.lua
-GearingChart.lua
+GearingTable.lua
 AdventureJournal.lua
 GroupManager.lua
 DropChecker.lua
@@ -63,6 +63,7 @@ Mixins\RewardTypeMixin.lua
 Mixins\FakeDropdownMixin.lua
 Mixins\RaiderIOInformationPanelMixin.lua
 Mixins\GraphMixin.lua
+Mixins\TableMixin.lua
 
 
 
@@ -122,9 +123,8 @@ XML\Teleports\MIOG_Teleports.xml
 XML\Teleports\MIOG_TeleportButtonTemplate.xml
 XML\Teleports\MIOG_TeleportLogoTemplate.xml
 
-XML\GearingChart\MIOG_GearingChart.xml
-XML\GearingChart\MIOG_GearingChartLine.xml
-XML\GearingChart\MIOG_GearingChartLegendTextureTemplate.xml
+XML\GearingTable\MIOG_GearingTable.xml
+XML\GearingTable\MIOG_GearingTableLegendTextureTemplate.xml
 
 XML\AdventureJournal\MIOG_AdventureJournal.xml
 XML\AdventureJournal\MIOG_AdventureJournalAbilityTemplate.xml
@@ -188,3 +188,7 @@ XML\MIOG_StatisticsPageListHeaderTemplate.xml
 XML\RaidSheet\MIOG_RaidSheet.xml
 XML\RaidSheet\MIOG_RaidSheetDragDropSpaceTemplate.xml
 XML\RaidSheet\MIOG_RaidSheetDragDropElementTemplate.xml
+
+XML\TableMixinTemplates\MIOG_TableCellTemplate.xml
+XML\TableMixinTemplates\MIOG_TableCellWithCheckboxTemplate.xml
+XML\TableMixinTemplates\MIOG_TableDivider.xml

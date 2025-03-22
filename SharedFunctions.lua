@@ -164,10 +164,10 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 end
 
 local function calculateWeightedScore(difficulty, kills, bossCount, isCurrentSeason)
-    if kills == 0 then return 0 end
-    
-    local seasonFactor = isCurrentSeason and 3 or 1 -- Boost new raid significantly
-    return ((difficulty * 3) * 20 + (kills / bossCount * 40)) ^ seasonFactor
+	if kills == 0 then return 0 end
+
+	local seasonFactor = isCurrentSeason and 4 or 1 -- Increase impact of current season
+	return ((difficulty * 5) * 30 + (kills / bossCount * 20)) ^ seasonFactor
 end
 
 miog.calculateWeightedScore = calculateWeightedScore

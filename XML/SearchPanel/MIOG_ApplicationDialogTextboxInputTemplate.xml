@@ -27,7 +27,6 @@
                     </OnKeyDown>
                 </Scripts>
 
-
                 <Layers>
                     <Layer level="BACKGROUND">
                         <Texture atlas="VAS-inputBox" setAllPoints="true" />

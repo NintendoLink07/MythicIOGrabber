@@ -156,7 +156,7 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 
 			for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
 				data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
-				
+
 			end
 		end
 	else
@@ -193,10 +193,9 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 
 				tinsert(raidTable[v.mapID], wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
 	
+				--print(libName, v.mapID, v.weight, miog.DIFFICULTY[v.difficulty].shortName, v.parsedString)
 			end
 		end
-
-		local newTable = {}
 
 		for k, v in pairs(raidTable) do
 			data.progress = data.progress .. table.concat(v) .. "\r\n"

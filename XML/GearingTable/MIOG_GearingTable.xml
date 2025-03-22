@@ -1,17 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_GearingChart" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_GearingTable" inherits="BackdropTemplate" virtual="true">
         <Frames>
-		    <Frame parentKey="RowLayout" inherits="VerticalLayoutFrame">
-			    <KeyValues>
-				    <KeyValue key="spacing" value="7" type="number" />
-			    </KeyValues>
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
-            </Frame>
+            <Frame parentKey="GearingTable" inherits="StaticGridLayoutFrame" mixin="TableMixin" setAllPoints="true"/>
 
             <Frame parentKey="Legend" frameStrata="HIGH">
                 <Size x="180" y="25" />
@@ -21,43 +12,43 @@
 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="Track1" inherits="MIOG_GearingChartLegendTextureTemplate">
+                        <Texture parentKey="Track1" inherits="MIOG_GearingTableLegendTextureTemplate">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track2" inherits="MIOG_GearingChartLegendTextureTemplate">
+                        <Texture parentKey="Track2" inherits="MIOG_GearingTableLegendTextureTemplate">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track1" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track3" inherits="MIOG_GearingChartLegendTextureTemplate">
+                        <Texture parentKey="Track3" inherits="MIOG_GearingTableLegendTextureTemplate">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track2" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track4" inherits="MIOG_GearingChartLegendTextureTemplate">
+                        <Texture parentKey="Track4" inherits="MIOG_GearingTableLegendTextureTemplate">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track3" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track5" inherits="MIOG_GearingChartLegendTextureTemplate">
+                        <Texture parentKey="Track5" inherits="MIOG_GearingTableLegendTextureTemplate">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track4" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track6" inherits="MIOG_GearingChartLegendTextureTemplate">
+                        <Texture parentKey="Track6" inherits="MIOG_GearingTableLegendTextureTemplate">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track5" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track7" inherits="MIOG_GearingChartLegendTextureTemplate">
+                        <Texture parentKey="Track7" inherits="MIOG_GearingTableLegendTextureTemplate">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track6" relativePoint="RIGHT" x="5"/>
                             </Anchors>

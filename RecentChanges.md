@@ -1,18 +1,14 @@
-## [3.2.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.8) - 2025-03-19
+## [3.3.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.3.0) - 2025-03-23
 
 ### Added
 
-- [SearchPanel] A small (togglable) panel has been added on the right side of the application box that pops up when you signup to a group.
-There you can set different signup text and manually copy them into the box.
+- [UpgradeFinder] has been added to the feature set!
+In the new tab at the bottomright of the frame the tab "Upgrades" can be found.
+There you can click on any character item slot to find item level upgrades from all sources.
 
-### Fixed
+### Changed
 
-- [SearchPanel] Upon switching search panel categories (e.g. dungeons to raid, raid to questing, etc.) the text field will now get wiped.
-
-- [SearchPanel] The search panel won't try to iterate through the boss frames in any other category other than raid.
-
-- [GroupManager] Gear data from players will now update correctly.
-
-- [Progress] The keystone time calculator algorithm has been adjusted / corrected.
-
-- All elements that are sortable will now correctly transfer their state into the MIOG settings (was previously not the case when > 2 options were active and you disabled one of them).
+- [Gearing] The gearing table has been updated, individual columns can now be enabled/disabled.
+Cells now have a background that distinguishes them more from the background.
+Gearing item level data has been corrected and bountiful delves and enchanted weathered crests have been added to the table.
+Gearing data item level calculation has been improved and simplified for upcoming season data.
