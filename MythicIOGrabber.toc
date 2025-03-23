@@ -118,6 +118,8 @@ XML\SearchPanel\MIOG_ApplicationDialogParentTemplate.xml
 XML\ClassPanel\MIOG_ClassPanel.xml
 XML\ClassPanel\MIOG_ClassPanelClassFrameTemplate.xml
 XML\ClassPanel\MIOG_ClassPanelSpecFrameTemplate.xml
+XML\ClassPanel\MIOG_ClassPanelMinimalFrameTemplate.xml
+XML\ClassPanel\MIOG_ClassPanelMinimalFrameWithInnerCircleTemplate.xml
 
 XML\Teleports\MIOG_Teleports.xml
 XML\Teleports\MIOG_TeleportButtonTemplate.xml

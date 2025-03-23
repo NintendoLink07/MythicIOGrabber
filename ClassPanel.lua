@@ -64,23 +64,30 @@ local function updateGroupClassData()
 
 		end
 
+        local height = miog.ClassPanel.Container:GetHeight()
+
         for classID, classEntry in ipairs(miog.CLASSES) do
             local numOfClasses = classCount[classID]
             local currentClassFrame = miog.ClassPanel.Container.classFrames[classID]
             currentClassFrame.layoutIndex = classID
-            currentClassFrame.Icon:SetDesaturated(numOfClasses < 1)
 
-            if(numOfClasses > 0) then
+            local hasNoCharacters = numOfClasses < 1
+            currentClassFrame.Icon:SetDesaturated(hasNoCharacters)
+            currentClassFrame:SetAlpha(hasNoCharacters and 0.5 or 1)
+
+            if(not hasNoCharacters) then
                 currentClassFrame.FontString:SetText(numOfClasses)
-                currentClassFrame.Border:SetColorTexture(classColors[classID]:GetRGBA())
                 currentClassFrame.layoutIndex = currentClassFrame.layoutIndex - 20
+                PixelUtil.SetSize(currentClassFrame, height, height)
 
             else
                 currentClassFrame.FontString:SetText("")
-                currentClassFrame.Border:SetColorTexture(0, 0, 0, 1)
+                PixelUtil.SetSize(currentClassFrame, 12, 12)
 
             end
         end
+
+        miog.ClassPanel.Container:MarkDirty()
 	end
 end
 
@@ -114,12 +121,12 @@ miog.createClassPanel = function()
 
         classColors[classID] = classColor
 
-        local classFrame = CreateFrame("Frame", nil, container, "MIOG_ClassPanelClassFrameTemplate")
+        local classFrame = CreateFrame("Frame", nil, container, "MIOG_ClassPanelMinimalFrameTemplate")
         classFrame.layoutIndex = classID
         PixelUtil.SetSize(classFrame, container:GetHeight(), container:GetHeight())
 
         classFrame.Icon:SetTexture(classEntry.icon)
-        classFrame.leftPadding = 3
+        classFrame.Border:SetColorTexture(classColor:GetRGBA())
         container.classFrames[classID] = classFrame
 
         local specPanel = CreateFrame("Frame", nil, classFrame, "VerticalLayoutFrame, BackdropTemplate")
@@ -132,11 +139,10 @@ miog.createClassPanel = function()
         local specCounter = 1
 
         for _, specID in ipairs(classEntry.specs) do
-            local specFrame = CreateFrame("Frame", nil, specPanel, "MIOG_ClassPanelSpecFrameTemplate")
+            local specFrame = CreateFrame("Frame", nil, specPanel, "MIOG_ClassPanelMinimalFrameTemplate")
             PixelUtil.SetSize(specFrame, specPanel.fixedHeight, specPanel.fixedHeight)
             specFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
             specFrame.Border:SetColorTexture(classColor:GetRGBA())
-            specFrame.leftPadding = 0
 
             specPanel.specFrames[specID] = specFrame
 
@@ -163,6 +169,24 @@ miog.createClassPanel = function()
         GameTooltip:SetText(specs .. " players with spec data.")
         GameTooltip:AddLine(members .. " group members that are inspectable (not offline or some weird faction stuff interaction).")
         GameTooltip:AddLine(GetNumGroupMembers() .. " total group members.")
+
+        if(self.inspectList) then
+
+            local headerMissing = true
+
+            for k, v in pairs(self.inspectList) do
+                if(headerMissing) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine("Players to be inspected:")
+
+                    headerMissing = false
+                end
+
+                GameTooltip:AddLine(k)
+
+            end
+
+        end
         GameTooltip:Show()
     end)
 

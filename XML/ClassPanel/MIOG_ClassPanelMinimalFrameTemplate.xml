@@ -1,0 +1,47 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ClassPanelMinimalFrameTemplate" virtual="true">
+        <KeyValues>
+            <KeyValue key="align" value="bottom" type="string"/>
+        </KeyValues>
+
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true" />
+
+                <MaskTexture parentKey="BorderMask" file="Interface\Common\common-iconmask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Border" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" />
+					</Anchors>
+					<MaskedTextures>
+						<MaskedTexture childKey="Border"/>
+					</MaskedTextures>
+				</MaskTexture>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Border" x="1" y="-1"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" x="-1" y="1"/>
+					</Anchors>
+                </Texture>
+
+                <MaskTexture parentKey="IconMask" file="Interface\Common\common-iconmask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Icon" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon" />
+					</Anchors>
+					<MaskedTextures>
+						<MaskedTexture childKey="Icon"/>
+					</MaskedTextures>
+				</MaskTexture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="FontString" font="GameFontNormalLargeOutline" justifyH="CENTER" justifyV="MIDDLE" text="0" wordwrap="false" setAllPoints="true" />
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

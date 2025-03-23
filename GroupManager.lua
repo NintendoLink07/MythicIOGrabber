@@ -6,7 +6,11 @@ local fullPlayerName, shortName, playerRealm
 local groupData = {}
 
 local lastNotifyTime = 0
-local pityTimer = nil
+
+local restartTimer
+
+local pityTimers = {}
+local nextInspectTimer
 local playerInInspection
 local playerSpecs = {}
 local playerKeystones = {}
@@ -15,13 +19,27 @@ local playerMPlusData = {}
 local playerGearData = {}
 local inspectList = {}
 
+local timeouts = {}
+
 local framePool
 
 local function wipeAllData()
+	for k, v in pairs(pityTimers) do
+		v:Cancel()
+		
+	end
+
+	if(nextInspectTimer) then
+		nextInspectTimer:Cancel()
+
+	end
+
+	timeouts = {}
 	playerSpecs = {}
 	playerKeystones = {}
 	playerRaidData = {}
 	playerMPlusData = {}
+	playerGearData = {}
 	playerInInspection = nil
 	inspectList = {}
 end
@@ -84,8 +102,6 @@ local function updateSingleCharacterSpecData(fullName, frameIsAvailable)
 
 		frame.specID = playerSpecs[fullName]
 	end
-
-	removePlayerFromInspectList(fullName)
 end
 
 local function updateSingleCharacterItemData(fullName)
@@ -556,7 +572,7 @@ local function canInspectPlayer(fullName)
 
 	end
 
-	if(CanInspect(data.unitID) and data.online ~= false) then
+	if(UnitIsPlayer(data.unitID) and CanInspect(data.unitID) and (data.online ~= false or UnitIsConnected(data.unitID))) then
 		return true
 
 	end
@@ -631,70 +647,170 @@ local function updateInspectionText()
 
 	local specs, members = countPlayersWithData()
 
-    miog.ClassPanel.StatusString:SetText(name .. "\n(" .. specs .. "/" .. members .. "/" .. GetNumGroupMembers() .. ")")
-	miog.ClassPanel.LoadingSpinner:SetShown(groupData[playerInInspection] ~= nil)
-end
+	local numGroupMembers = GetNumGroupMembers()
 
-local function startNotify()
-	if(playerInInspection) then
-		if(groupData[playerInInspection] and not playerSpecs[playerInInspection] and canInspectPlayer(playerInInspection)) then
-			NotifyInspect(groupData[playerInInspection].unitID)
-
-			pityTimer = C_Timer.NewTimer(5, function()
-				if(groupData[playerInInspection]) then
-					addCharacterToInspectionList(playerInInspection, groupData[playerInInspection].unitID)
-
-				end
-
-				ClearInspectPlayer(true)
-				miog.inspectNextCharacter()
-				
-			end)
-
-			return true
-		else
-			removePlayerFromInspectList(playerInInspection)
+	if(not (specs == members == numGroupMembers)) then
+		if(restartTimer) then
+			restartTimer:Cancel()
 
 		end
+
+		restartTimer = C_Timer.NewTimer(5, function()
+			miog.inspectNextCharacter()
+
+		end)
+
+	end
+
+    miog.ClassPanel.StatusString:SetText(name .. "\n(" .. specs .. "/" .. members .. "/" .. numGroupMembers .. ")")
+	miog.ClassPanel.StatusString.inspectList = inspectList
+	miog.ClassPanel.LoadingSpinner:SetShown(playerInInspection ~= nil)
+end
+
+local function cancelPityTimer(fullName)
+	if(pityTimers[fullName]) then
+		pityTimers[fullName]:Cancel()
+		pityTimers[fullName] = nil
 	end
 end
 
-local function inspectCharacter(fullName)
-	if(groupData[fullName] and not playerSpecs[fullName]) then
-		if(playerInInspection == nil and UnitIsPlayer(groupData[fullName].unitID)) then
-			inspectList[fullName] = nil
-			playerInInspection = fullName
-			updateInspectionText()
+local function clearCharacter(fullName)
+	if(playerInInspection == fullName) then
+		print("CLEAR", fullName, playerInInspection, playerInInspection == fullName)
+		ClearInspectPlayer(true)
+		playerInInspection = nil
 
-			local time = GetTimePreciseSec()
+		cancelPityTimer(fullName)
+	end
 
-			if(time - lastNotifyTime > miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE) then
-				return startNotify()
+	removePlayerFromInspectList(fullName)
+	updateInspectionText()
 
-			else
-				C_Timer.After(lastNotifyTime - time + miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE, function()
-					startNotify()
+	miog.inspectNextCharacter()
+end
+
+local function checkTimeouts(fullName)
+	return not timeouts[fullName] or timeouts[fullName] < 3
+end
+
+local function startNotify(fullName)
+	if(fullName) then
+		if(groupData[fullName]) then
+			print("HAS DATA", fullName)
+			if(not playerSpecs[fullName] and canInspectPlayer(fullName) and checkTimeouts(fullName)) then
+				print("NO SPEC AND CAN", fullName)
+				playerInInspection = fullName
+				print("INSPECT", playerInInspection)
+
+				NotifyInspect(groupData[playerInInspection].unitID)
+
+				pityTimers[fullName] = C_Timer.NewTimer(5, function()
+					print("PITY FOR", fullName)
+
+					timeouts[fullName] = timeouts[fullName] and timeouts[fullName] + 1 or 1
+
+					if(groupData[fullName]) then
+						--addCharacterToInspectionList(fullName)
+
+					end
+
+					clearCharacter(fullName)
 					
 				end)
+
+				return true
 			end
 		end
-	else
-		removePlayerFromInspectList(fullName)
 
+		removePlayerFromInspectList(fullName)
+	end
+end
+
+local function cancelInspectTimer()
+	if(nextInspectTimer) then
+		nextInspectTimer:Cancel()
+		nextInspectTimer = nil
 	end
 
-	return false
+end
+
+local function startNewInspectTimer(nextCharacter, startTime)
+	cancelInspectTimer()
+
+	nextInspectTimer = C_Timer.NewTimer(lastNotifyTime - startTime + miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE, function()
+		local notifySuccess = miog.checkForNextExecution(nextCharacter)
+
+		if(not notifySuccess) then
+			clearCharacter(nextCharacter)
+
+		end
+		
+	end)
+end
+
+local function checkForNextExecution(nextCharacter)
+	local time = GetTimePreciseSec()
+	local notifyIsAvailable = time - lastNotifyTime > miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE
+
+	if(checkTimeouts(nextCharacter)) then
+		if(notifyIsAvailable) then
+			--cancelPityTimer()
+
+			print("AVAIL", nextCharacter)
+			return startNotify(nextCharacter)
+			
+		else
+			print("TIMER", nextCharacter)
+			playerInInspection = nextCharacter
+
+			startNewInspectTimer(nextCharacter, time)
+
+			return true
+		end
+	else
+		print("TIMED OUT", nextCharacter)
+	end
+end
+
+miog.checkForNextExecution = checkForNextExecution
+
+local function getNextCharacter()
+	for k, v in pairs(inspectList) do
+		return k, v
+	end
 end
 
 local function inspectNextCharacter()
-	updateInspectionText()
+	if(playerInInspection == nil) then
+		local notifySuccess = false
+		local nextCharacter = getNextCharacter()
 
-	for fullName, unitID in pairs(inspectList) do
-		local success = inspectCharacter(fullName)
+		while nextCharacter do
+			print("----------------------------")
+		
+			notifySuccess = checkForNextExecution(nextCharacter)
 
-		if(success) then
-			break
+			if(not notifySuccess) then
+				local lastCharacter = nextCharacter
+				nextCharacter = getNextCharacter()
 
+				print("FAULTY", lastCharacter, nextCharacter, timeouts[lastCharacter])
+
+				if(lastCharacter == nextCharacter) then
+					print("SAME", lastCharacter)
+					timeouts[lastCharacter] = timeouts[lastCharacter] and timeouts[lastCharacter] + 1 or 1
+
+					startNewInspectTimer(lastCharacter, GetTimePreciseSec())
+
+					nextCharacter = nil
+					
+				end
+
+				break
+			else
+				nextCharacter = nil
+
+			end
 		end
 	end
 end
@@ -739,7 +855,10 @@ local function updateGroupData(type, overwrite)
 					local playerName, realm = miog.createSplitName(name)
 					local fullName = miog.createFullNameFrom("unitName", name)
 
-					miog.AceComm:SendCommMessage("MIOG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
+					if(online) then
+						miog.AceComm:SendCommMessage("MIOG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
+
+					end
 					--C_ChatInfo.SendAddonMessageLogged("MIOG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
 
 					if(isInRaid) then
@@ -762,6 +881,7 @@ local function updateGroupData(type, overwrite)
 						--data = {}
 
 						if(not playerSpecs[fullName] or playerSpecs[fullName] == 0 and not playerInInspection == fullName) then
+							--print("ADD", fullName)
 							addCharacterToInspectionList(fullName, unitID)
 
 						end
@@ -834,11 +954,11 @@ local function updateGroupData(type, overwrite)
 			miog.GroupManager:SetDataProvider(dataProvider)
 
 		end
+		
+		updateInspectionText()
 	end
 
 	inspectNextCharacter(3)
-
-	miog.ClassPanel.LoadingSpinner.inspectList = inspectList
 end
 
 local readyCheckStatus = {}
@@ -854,24 +974,15 @@ local function updateReadyStatus(name, isReady)
     end
 end
 
-local function checkPlayerInspectionStatus(fullName, openRaidSpec)
+local function checkPlayerInspectionStatus(fullName, openRaidSpec, type)
 	if(groupData[fullName]) then
 		playerSpecs[fullName] = openRaidSpec or GetInspectSpecialization(groupData[fullName].unitID)
 
 		updateSingleCharacterSpecData(fullName)
-		
-		updateInspectionText()
+
 	end
 
-	if(playerInInspection == fullName) then
-		ClearInspectPlayer(true)
-
-		if(pityTimer) then
-			pityTimer:Cancel()
-		end
-
-		inspectNextCharacter(4)
-	end
+	clearCharacter(fullName)
 end
 
 local function groupManagerEvents(_, event, ...)
@@ -890,7 +1001,9 @@ local function groupManagerEvents(_, event, ...)
 		local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(...)
 		local fullName = miog.createFullNameFrom("unitName", name .. "-" .. realmName)
 
-		checkPlayerInspectionStatus(fullName)
+		print("READY", fullName)
+
+		checkPlayerInspectionStatus(fullName, nil, 1)
 	elseif(event == "GROUP_JOINED") then
 		updateGroupData(2)
 
@@ -969,7 +1082,7 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 
 		if(groupData[singleUnitInfo.nameFull]) then
 			if(singleUnitInfo.specId and singleUnitInfo.specId > 0) then
-				checkPlayerInspectionStatus(singleUnitInfo.nameFull, singleUnitInfo.specId)
+				checkPlayerInspectionStatus(singleUnitInfo.nameFull, singleUnitInfo.specId, 2)
 
 			end
 		end
@@ -1069,7 +1182,14 @@ miog.loadGroupManager = function()
 		updateAllData()
 	end)
 
-	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", updateAllData)
+	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", function()
+		updateAllData()
+
+		if(playerInInspection) then
+			clearCharacter(playerInInspection)
+
+		end
+	end)
 
 	miog.GroupManager:OnLoad(updateAllData)
 	miog.GroupManager:SetSettingsTable(MIOG_NewSettings.sortMethods.GroupManager)
@@ -1116,12 +1236,4 @@ end
 hooksecurefunc("NotifyInspect", function()
 	lastNotifyTime = GetTimePreciseSec()
 	updateInspectionText()
-end)
-
-hooksecurefunc("ClearInspectPlayer", function(own)
-	if(own) then
-		playerInInspection = nil
-		updateInspectionText()
-		
-	end
 end)

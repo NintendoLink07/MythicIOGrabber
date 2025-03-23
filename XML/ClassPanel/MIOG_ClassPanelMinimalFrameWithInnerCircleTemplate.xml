@@ -1,0 +1,29 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ClassPanelMinimalFrameWithInnerCircleTemplate" virtual="true">
+        <KeyValues>
+            <KeyValue key="align" value="bottom" type="string"/>
+        </KeyValues>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" setAllPoints="true" />
+
+                <Texture parentKey="Texture" setAllPoints="true" />
+
+                <MaskTexture parentKey="TextureMask" file="Interface\Addons\MythicIOGrabber\res\masks\anim_create_copy.png" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Texture" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Texture" />
+					</Anchors>
+					<MaskedTextures>
+						<MaskedTexture childKey="Texture"/>
+					</MaskedTextures>
+				</MaskTexture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="FontString" font="GameFontNormalMed3Outline" justifyH="CENTER" justifyV="MIDDLE" text="0" wordwrap="false" setAllPoints="true" />
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

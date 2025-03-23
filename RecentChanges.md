@@ -12,3 +12,11 @@ There you can click on any character item slot to find item level upgrades from 
 Cells now have a background that distinguishes them more from the background.
 Gearing item level data has been corrected and bountiful delves and enchanted weathered crests have been added to the table.
 Gearing data item level calculation has been improved and simplified for upcoming season data.
+
+- [ClassPanel] The class panel has been slightly redesigned.
+Classes that aren't in your group have their icon reduced in size.
+The number font size in the class and the spec frames has been increased.
+
+### Fixed
+
+- [GroupManager] There should be no more system messages when players join or leave the group and a atleast one player in your group is offline.

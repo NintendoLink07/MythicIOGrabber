@@ -4,6 +4,10 @@
         <Size y="32" />
         <Frames>
             <Frame parentKey="Container" inherits="HorizontalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="spacing" value="2" type="number" />
+                </KeyValues>
+
                 <Anchors>
                     <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
                 </Anchors>
@@ -29,25 +33,6 @@
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Container" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
-
-                <Scripts>
-                    <OnEnter>
-                        if(self.inspectList) then
-                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                            GameTooltip:SetText("Players to be inspected:")
-
-                            for k, v in pairs(self.inspectList) do
-                                GameTooltip:AddLine(k)
-
-                            end
-
-                            GameTooltip:Show()
-
-                        end
-                    </OnEnter>
-                    <OnLeave function="GameTooltip_Hide" />
-
-                </Scripts>
             </Frame>
         </Frames>
 
