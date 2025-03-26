@@ -39,11 +39,11 @@ local function mainEvents(_, event, ...)
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		miog.checkAllSeasonalMapIDs()
 		
-		local isLogin, isReload
+		local isLogin, isReload = ...
 
 		if(isLogin or isReload) then
 			local accInfo = C_BattleNet.GetAccountInfoByGUID(UnitGUID("player"))
-			if(accInfo.battleTag == "Rhany#21903") then
+			if(accInfo and accInfo.battleTag == "Rhany#21903") then
 				miog.AceComm:RegisterComm("MIOG_DEBUG", printMIOGPlayers)
 
 			end

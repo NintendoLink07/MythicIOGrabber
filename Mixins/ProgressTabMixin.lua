@@ -478,10 +478,14 @@ function ProgressTabMixin:OnLoad(id)
 		activityView:SetElementInitializer("MIOG_ProgressColumnTemplate", function(frame, data)
 			local shortName
 			if(data.type == "pvp") then
-				local i = data.index
 
-				shortName = i == 1 and ARENA_2V2 or i == 2 and ARENA_3V3 or i == 3 and ARENA_5V5 or BATTLEGROUND_10V10
-				frame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. shortName .. ".png")
+				local bracketInfo = miog.PVP_BRACKET_INFO[data.index]
+
+				if(bracketInfo) then
+					shortName = bracketInfo.shortName
+
+					frame.Background:SetTexture(bracketInfo.fileName)
+				end
 
 			else
 				local mapInfo = miog.MAP_INFO[data.mapID]
@@ -666,26 +670,31 @@ function ProgressTabMixin:OnLoad(id)
 
 					end)
 
-
 				end
 
-				for i = 1, 4, 1 do
-					local bracketFrame = frame["Bracket" .. i]
+				local ratingAbove0 = false
+
+				for index, bracketInfo in ipairs(miog.PVP_BRACKET_INFO) do
+					local bracketFrame = frame["Bracket" .. index]
 					bracketFrame:SetWidth(self.Columns:GetView():GetElementExtent())
 					bracketFrame:SetHeight(frame:GetHeight())
-					bracketFrame.layoutIndex = i
+					bracketFrame.layoutIndex = index
 
 					local rating
 					local seasonBest
 
-					if(MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[i]) then
-						rating = MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[i].rating
-						seasonBest = MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[i].seasonBest
+					if(MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[bracketInfo.id]) then
+						rating = MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[bracketInfo.id].rating
+						seasonBest = MIOG_NewSettings.accountStatistics.characters[data.guid].brackets[bracketInfo.id].seasonBest
 
 					else
 						rating = 0
 						seasonBest = 0
 
+					end
+
+					if(rating > 0) then
+						ratingAbove0 = true
 					end
 
 					bracketFrame.Level1:SetText(rating)
@@ -697,6 +706,9 @@ function ProgressTabMixin:OnLoad(id)
 					bracketFrame.Level2:SetTextColor(desaturatedColors.r * 0.6, desaturatedColors.g * 0.6, desaturatedColors.b * 0.6, 1)
 
 				end
+
+				frame.Rank:SetShown(ratingAbove0)
+
 			elseif(isAll) then
 				frame.Score:SetText(data.score.value)
 
@@ -1130,7 +1142,7 @@ function ProgressTabMixin:CreateCharacterTables(guid, v)
 	MIOG_NewSettings.accountStatistics.characters[guid] = MIOG_NewSettings.accountStatistics.characters[guid] or {}
 	MIOG_NewSettings.accountStatistics.characters[guid].name = MIOG_NewSettings.accountStatistics.characters[guid].name or v.name
 	MIOG_NewSettings.accountStatistics.characters[guid].fullName = MIOG_NewSettings.accountStatistics.characters[guid].fullName or miog.createFullNameFrom("unitName", v.name .. "-" .. v.realm)
-	MIOG_NewSettings.accountStatistics.characters[guid].spec = MIOG_NewSettings.accountStatistics.characters[guid].spec or v.spec
+	MIOG_NewSettings.accountStatistics.characters[guid].spec = v.spec or MIOG_NewSettings.accountStatistics.characters[guid].spec
 	MIOG_NewSettings.accountStatistics.characters[guid].classFile = MIOG_NewSettings.accountStatistics.characters[guid].classFile or v.classFile
 	MIOG_NewSettings.accountStatistics.characters[guid].mplus = MIOG_NewSettings.accountStatistics.characters[guid].mplus or {}
 	MIOG_NewSettings.accountStatistics.characters[guid].raid = MIOG_NewSettings.accountStatistics.characters[guid].raid or {}
@@ -1139,9 +1151,9 @@ function ProgressTabMixin:CreateCharacterTables(guid, v)
 	MIOG_NewSettings.accountStatistics.characters[guid].nextRewards = MIOG_NewSettings.accountStatistics.characters[guid].nextRewards or {}
 end
 
-function ProgressTabMixin:UpdateSingleCharacterStatistics(specificGUID)
+function ProgressTabMixin:UpdateSingleCharacterStatistics(specificGUID, v)
 	local guid = specificGUID or UnitGUID("player")
-	local playerStats = MIOG_NewSettings.accountStatistics.characters[guid]
+	local playerStats = v
 
 	self:CreateCharacterTables(guid, playerStats)
 
@@ -1185,9 +1197,9 @@ function ProgressTabMixin:UpdateSingleCharacterStatistics(specificGUID)
 end
 
 function ProgressTabMixin:UpdateAllCharacterStatistics()
-	if(not accountCharacters) then
+	--if(not accountCharacters) then
 		self:RequestAccountCharacters()
-	end
+	--end
 
 	for _, v in ipairs(accountCharacters) do
 		self:CreateCharacterTables(v.guid, v)
@@ -1195,7 +1207,7 @@ function ProgressTabMixin:UpdateAllCharacterStatistics()
 	end
 
 	for guid, v in pairs(MIOG_NewSettings.accountStatistics.characters) do
-		self:UpdateSingleCharacterStatistics(guid)
+		self:UpdateSingleCharacterStatistics(guid, v)
 	end
 end
 
@@ -1217,7 +1229,7 @@ function ProgressTabMixin:LoadActivities()
 		self.activityTable = raidInfo
 
 	elseif(self.id == 3) then --PVP
-		self.activityTable = {1, 2, 3, 4}
+		self.activityTable = miog.PVP_BRACKET_INFO
 
 	else
 		self.mplusActivityTable = C_ChallengeMode.GetMapTable()
@@ -1233,8 +1245,7 @@ function ProgressTabMixin:LoadActivities()
 		end
 
 		self.raidActivityTable = raidInfo
-
-		self.pvpActivityTable = {1, 2, 3, 4}
+		self.pvpActivityTable = miog.PVP_BRACKET_INFO
 	end
 
 	if(self.id < 4) then
@@ -1272,7 +1283,7 @@ function ProgressTabMixin:LoadActivities()
 				columnProvider:Insert({mapID = activityEntry});
 
 			elseif(self.id == 3) then
-				columnProvider:Insert({type = "pvp", index = activityEntry});
+				columnProvider:Insert({type = "pvp", index = index});
 
 			end
 		end
@@ -1313,10 +1324,13 @@ function ProgressTabMixin:UpdatePVPStatistics(guid)
 
 		MIOG_NewSettings.accountStatistics.characters[playerGUID].brackets = {}
 
-		for i = 1, 4, 1 do
-			local rating, seasonBest, weeklyBest, seasonPlayed, seasonWon, weeklyPlayed, weeklyWon, cap = GetPersonalRatedInfo(i) -- 1 == 2v2, 2 == 3v3, 3 == 5v5, 4 == 10v10
+		for index, bracketInfo in ipairs(miog.PVP_BRACKET_INFO) do
+		--for i = 1, 5, 1 do
+			-- 1 == 2v2, 2 == 3v3, 3 == 5v5, 4 == 10v10, Solo Arena == 7, Solo BG == 9
 
-			MIOG_NewSettings.accountStatistics.characters[playerGUID].brackets[i] = {rating = rating, seasonBest = seasonBest}
+			local rating, seasonBest, weeklyBest, seasonPlayed, seasonWon, weeklyPlayed, weeklyWon, lastWeeksBest, hasWon, pvpTier, ranking, roundsSeasonPlayed, roundsSeasonWon, roundsWeeklyPlayed, roundsWeeklyWon = GetPersonalRatedInfo(bracketInfo.id);
+
+			MIOG_NewSettings.accountStatistics.characters[playerGUID].brackets[bracketInfo.id] = {rating = rating, seasonBest = seasonBest}
 
 			highestRating = rating > highestRating and rating or highestRating
 
@@ -1693,7 +1707,6 @@ end
 
 function ProgressTabMixin:UpdateStatistics()
 	self:LoadActivities()
-	--self:UpdateSingleCharacterStatistics()
 	self:UpdateAllCharacterStatistics()
 	self:LoadCharacters()
 end

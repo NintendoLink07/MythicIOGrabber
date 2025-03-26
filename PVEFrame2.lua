@@ -199,8 +199,49 @@ local function createPVEFrameReplacement()
 			elseif(queueInfo.subtype == "pet") then
 				C_PetBattles.StartPVPMatchmaking()
 
+			else
+				UIErrorsFrame:AddExternalErrorMessage("[MIOG]: Requeuing for pvp queues is not possible via the requeue button.\n\rPlease requeue using the dropdown menu.");
+
 			end
 		end
+	end)
+	miog.MainTab.QueueInformation.Requeue:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText("Queue up for the same activity you queued for the last time.")
+		if(MIOG_NewSettings.lastUsedQueue) then
+			if(MIOG_NewSettings.lastUsedQueue.type == "pve") then
+				GameTooltip:AddLine("Last activity: " .. GetLFGDungeonInfo(MIOG_NewSettings.lastUsedQueue.id))
+
+			elseif(MIOG_NewSettings.lastUsedQueue.type == "pvp") then
+				local activity
+
+				if(MIOG_NewSettings.lastUsedQueue.subtype == "plunderstorm") then
+					local index = MIOG_NewSettings.lastUsedQueue.index
+					local modeString = index == 0 and FRONT_END_LOBBY_SOLOS or index == 1 and FRONT_END_LOBBY_DUOS or index == 2 and FRONT_END_LOBBY_TRIOS or FRONT_END_LOBBY_PRACTICE
+
+					activity = modeString
+
+				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "skirmish") then
+					activity = SKIRMISH
+
+				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "brawl") then
+					_, activity = C_PvP.GetActiveBrawlInfo()
+
+				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "brawlSpecial") then
+					_, activity = C_PvP.GetSpecialEventBrawlInfo()
+
+				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "pet") then
+					activity = PET_BATTLE_PVP_QUEUE
+
+				else
+					activity = MIOG_NewSettings.lastUsedQueue.alias or ""
+
+				end
+
+				GameTooltip:AddLine("Last activity: " .. activity)
+			end
+		end
+		GameTooltip:Show()
 	end)
 
 	hooksecurefunc("PVEFrame_ToggleFrame", function()

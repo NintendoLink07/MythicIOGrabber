@@ -211,6 +211,7 @@ miog.loadGearingTable = function()
     miog.Gearing = miog.pveFrame2.TabFramesPanel.GearingTable
 
     miog.Gearing.GearingTable:OnLoad(nil, nil, 2, 2)
+    
     local headers = {
         {name = "ILvl"},
         {name = "Track"},

@@ -25,6 +25,10 @@ miog.STRING_REPLACEMENTS = {
 	["PVPRATING5V5SHORT"] = "5v5: %d",
 	["PVPRATING10V10FULL"] = "10v10 Rating: %d",
 	["PVPRATING10V10SHORT"] = "10v10: %d",
+	["PVPRATINGSOLOFULL"] = "Solo Shuffle Rating: %d",
+	["PVPRATINGSOLOSHORT"] = "Solo: %d",
+	["PVPRATINGSOLOBGFULL"] = "Solo BG Rating: %d",
+	["PVPRATINGSOLOBGSHORT"] = "Solo BG: %d",
 	["ILVLSHORT"] = "I-Lvl: %d",
 }
 
@@ -48,6 +52,12 @@ local function addStringReplacementAlternatives()
 
 	miog.STRING_REPLACEMENTS["PVPRATING4FULL"] = miog.STRING_REPLACEMENTS["PVPRATING10V10FULL"]
 	miog.STRING_REPLACEMENTS["PVPRATING4SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING10V10SHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING7FULL"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOFULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING7SHORT"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOSHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING9FULL"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGFULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING9SHORT"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGSHORT"]
 
 end
 
@@ -430,6 +440,16 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 		["Heroic"] = {15, 2, 30},
 		["Mythic"] = {16, 2, 20},
 	},
+}
+
+miog.PVP_BRACKET_INFO = {
+	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloArena.png"}, --Solo Arena
+	{id = 9, alias = PVP_RATED_BG_BLITZ, shortName = "Solo BG", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloBG.png"}, --Solo BG
+	{id = 1, alias = ARENA_2V2, shortName = ARENA_2V2, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/2v2.png"}, --2v2
+	{id = 2, alias = ARENA_3V3, shortName = ARENA_3V3, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/3v3.png"}, --3v3
+	--{id = 3, alias = ARENA_5V5, shortName = ARENA_5V5, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/5v5.png"}, --5v5
+	{id = 4, alias = BATTLEGROUND_10V10, shortName = BATTLEGROUND_10V10, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/10v10.png"}, --10v10
+
 }
 
 miog.MAP_INFO = {

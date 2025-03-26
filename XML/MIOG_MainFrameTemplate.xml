@@ -306,12 +306,6 @@
                                             <Anchor point="LEFT" relativeKey="$parent.FakeDropdown" relativePoint="RIGHT" x="2"/>
                                         </Anchors>
                                         <Scripts>
-                                            <OnEnter>
-                                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                                GameTooltip:SetText("Queue up for the same activity you queued for the last time")
-                                                GameTooltip:Show()
-                                            </OnEnter>
-
                                             <OnLeave function="GameTooltip_Hide" />
                                         </Scripts>
                                     </Button>

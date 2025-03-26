@@ -7,7 +7,7 @@
 		</KeyValues>
 
         <Layers>
-            <Layer level="OVERLAY" textureSubLevel="1">
+            <Layer level="OVERLAY" textureSubLevel="2">
                 <Texture parentKey="ReadyBorder">
                     <Size x="17" y="17"/>
 
@@ -24,6 +24,12 @@
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.ReadyBorder" relativePoint="TOPLEFT" x="1" y="-1"/>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ReadyBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="RaidRole">                    
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.ReadyBorder" relativePoint="LEFT" x="-20"/>
                     </Anchors>
                 </Texture>
             </Layer>

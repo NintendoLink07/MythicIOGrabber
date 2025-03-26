@@ -24,12 +24,18 @@ function TableMixin:OnLoad(sizeW, sizeH, spacing, spacingH)
     self.cellWidth = sizeW or 40
     self.cellHeight = sizeH or 16
 
+    local dividers = CreateFrame("Frame", "DividersParentFrame", self, "VerticalLayoutFrame")
+    dividers:SetAllPoints(self)
+    dividers:Show()
+    
+    self.Dividers = dividers
+
     self.pools = CreateFramePoolCollection()
 	--self.pools:CreatePool("Frame", self, "MIOG_TableColumnTemplate")
 	--self.pools:CreatePool("Frame", self, "MIOG_TableRowTemplate")
 	self.pools:CreatePool("Frame", self, "MIOG_TableCellTemplate", resetFrame)
 	self.pools:CreatePool("Frame", self, "MIOG_TableCellWithCheckboxTemplate", resetFrame)
-	self.pools:CreatePool("Frame", self, "MIOG_TableDivider", resetFrame)
+	self.pools:CreatePool("Frame", self.Dividers, "MIOG_TableDivider", resetFrame)
 
     self.standardAtlas = "VAS-inputBox"
 end
@@ -45,13 +51,26 @@ local function getMaximumSize(textWidth, currentWidth)
     return textWidth > 1 and textWidth + 5 or 1
 end
 
-function TableMixin:AddLineToCells(firstCell, lastCell)
-    local chartLine = self.pools:Acquire("MIOG_TableDivider")
-    chartLine:SetPoint("TOPLEFT", firstCell, "BOTTOMLEFT", 0, 2)
-    chartLine:SetPoint("RIGHT", self, "RIGHT")
-    chartLine:Show()
+function TableMixin:AddRowLines(numOfLines)
+    local lastLine
 
-    tinsert(self.lines, chartLine)
+    local height = i == 1 and 16 or self.cellHeight + 2
+
+
+    for i = 1, numOfLines, 1 do
+        local chartLine = self.pools:Acquire("MIOG_TableDivider")
+        chartLine:SetHeight(2)
+        local indexOffset = -16
+
+        chartLine:SetPoint("TOPLEFT", lastLine or self, lastLine and "BOTTOMLEFT" or "TOPLEFT", 0, indexOffset)
+        chartLine:SetPoint("TOPRIGHT", lastLine or self, lastLine and "BOTTOMRIGHT" or "TOPRIGHT", 0, indexOffset)
+        chartLine:Show()
+
+        tinsert(self.lines, chartLine)
+
+        lastLine = chartLine
+    end
+
 end
 
 function TableMixin:CreateHeaders(tbl, settingsTable)
@@ -66,7 +85,7 @@ function TableMixin:CreateHeaders(tbl, settingsTable)
         frame.gridRow = 1
         frame.gridColumn = k
         frame.minimumWidth = getMaximumSize(frame.Checkbox and (frame.Text:GetStringWidth() + frame.Checkbox:GetWidth()) or frame.Text:GetStringWidth(), frame:GetWidth())
-        frame.minimumHeight = 16
+        frame.minimumHeight = self.cellHeight
 
         if(isCheckbox) then
             if(settingsTable[settingsName] ~= nil) then
@@ -100,8 +119,6 @@ function TableMixin:CreateHeaders(tbl, settingsTable)
         frame:Show()
         frame:MarkDirty()
     end
-
-    self:AddLineToCells(self.headers[1], self.headers[#self.headers])
 end
 
 function TableMixin:AddNewRow(showAll)
@@ -163,9 +180,9 @@ function TableMixin:CreateTable(showAll, headerData, settingsTable)
 
             self.cells[i][k] = frame
         end
-
-        self:AddLineToCells(self.cells[i][1], self.cells[i][self.iterationsColumns])
     end
+
+    self:AddRowLines(self.iterationsRows - (headerData and 0 or 1))
 
     self:MarkDirty()
 end

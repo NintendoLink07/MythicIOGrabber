@@ -208,8 +208,7 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 				raidTable[v.mapID] = raidTable[v.mapID] or {}
 
 				tinsert(raidTable[v.mapID], wticc(v.parsedString, miog.DIFFICULTY[v.difficulty].color) .. " ")
-	
-				--print(libName, v.mapID, v.weight, miog.DIFFICULTY[v.difficulty].shortName, v.parsedString)
+
 			end
 		end
 
@@ -275,24 +274,11 @@ local function showIndepthData(data)
 end
 
 local function updateGroupManagerPlayerFrame(frame, data)
-	local rank, _, level, class, fileName, zone, online, isDead, role, isML
-
-	-- Fetch data based on group status
-	if data.index then
-		_, rank, _, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(data.index)
-
-	else
-		class, fileName = UnitClass("player")
-		level = UnitLevel("player")
-		online = true
-	end
-
 	-- Cache repeated lookups
 	local fullName = data.fullName
 	local specID = playerSpecs[fullName] or 0
-	local leaderCrown = miog.GroupManager.LeaderCrown
 	local keystoneText = data.keystoneShortName and ("+" .. data.keylevel .. " " .. data.keystoneShortName) or "---"
-	local colorizedSubgroup = online and data.subgroup or WrapTextInColorCode(data.subgroup, miog.CLRSCC.red)
+	local colorizedSubgroup = data.online and data.subgroup or WrapTextInColorCode(data.subgroup, miog.CLRSCC.red)
 
 	-- Assign frame values efficiently
 	frame.data = data
@@ -303,7 +289,7 @@ local function updateGroupManagerPlayerFrame(frame, data)
 
 	frame.Index:SetText(colorizedSubgroup)
 	frame.Role:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/" .. (data.combatRole and data.combatRole .. "Icon.png" or "unknown.png"))
-	frame.Name:SetText(fileName and WrapTextInColorCode(data.name, C_ClassColor.GetClassColor(fileName):GenerateHexColor()) or data.name)
+	frame.Name:SetText(data.fileName and WrapTextInColorCode(data.name, C_ClassColor.GetClassColor(data.fileName):GenerateHexColor()) or data.name)
 	frame.Spec:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
 	frame.Itemlevel:SetText(data.ilvl or "N/A")
 	frame.Durability:SetText(data.durability and "(" .. data.durability .. "%)" or "N/A")
@@ -311,12 +297,23 @@ local function updateGroupManagerPlayerFrame(frame, data)
 	frame.Progress:SetText(data.progress or "N/A")
 	frame.Keystone:SetText(keystoneText)
 
-	-- Handle leader crown efficiently
-	if rank == 2 then
-		leaderCrown:ClearAllPoints()
-		leaderCrown:SetPoint("RIGHT", frame.Group, "RIGHT")
-		leaderCrown:SetParent(frame)
-		leaderCrown:Show()
+	if (data.rank == 2) then
+		frame.RaidRole:SetTexture("interface/groupframe/ui-group-leadericon.blp")
+
+	elseif (data.rank == 1) then
+		frame.RaidRole:SetTexture("interface/groupframe/ui-group-assistanticon.blp")
+
+	else
+		if(data.role == "MAINTANK") then
+			frame.RaidRole:SetTexture("interface/groupframe/ui-group-maintankicon.blp")
+	
+		elseif(data.role == "MAINASSIST") then
+			frame.RaidRole:SetTexture("interface/groupframe/ui-group-mainassisticon.blp")
+	
+		else
+			frame.RaidRole:SetTexture(nil)
+			
+		end
 	end
 
 	-- Optimize click handling
@@ -676,7 +673,7 @@ end
 
 local function clearCharacter(fullName)
 	if(playerInInspection == fullName) then
-		print("CLEAR", fullName, playerInInspection, playerInInspection == fullName)
+		--print("CLEAR", fullName, playerInInspection, playerInInspection == fullName)
 		ClearInspectPlayer(true)
 		playerInInspection = nil
 
@@ -696,16 +693,15 @@ end
 local function startNotify(fullName)
 	if(fullName) then
 		if(groupData[fullName]) then
-			print("HAS DATA", fullName)
+			--print("HAS DATA", fullName)
 			if(not playerSpecs[fullName] and canInspectPlayer(fullName) and checkTimeouts(fullName)) then
-				print("NO SPEC AND CAN", fullName)
 				playerInInspection = fullName
-				print("INSPECT", playerInInspection)
+				--print("INSPECT", playerInInspection)
 
 				NotifyInspect(groupData[playerInInspection].unitID)
 
 				pityTimers[fullName] = C_Timer.NewTimer(5, function()
-					print("PITY FOR", fullName)
+					--print("PITY FOR", fullName)
 
 					timeouts[fullName] = timeouts[fullName] and timeouts[fullName] + 1 or 1
 
@@ -756,11 +752,11 @@ local function checkForNextExecution(nextCharacter)
 		if(notifyIsAvailable) then
 			--cancelPityTimer()
 
-			print("AVAIL", nextCharacter)
+			--print("AVAIL", nextCharacter)
 			return startNotify(nextCharacter)
 			
 		else
-			print("TIMER", nextCharacter)
+			--print("TIMER", nextCharacter)
 			playerInInspection = nextCharacter
 
 			startNewInspectTimer(nextCharacter, time)
@@ -768,7 +764,7 @@ local function checkForNextExecution(nextCharacter)
 			return true
 		end
 	else
-		print("TIMED OUT", nextCharacter)
+		--print("TIMED OUT", nextCharacter)
 	end
 end
 
@@ -786,7 +782,7 @@ local function inspectNextCharacter()
 		local nextCharacter = getNextCharacter()
 
 		while nextCharacter do
-			print("----------------------------")
+			--print("----------------------------")
 		
 			notifySuccess = checkForNextExecution(nextCharacter)
 
@@ -794,10 +790,10 @@ local function inspectNextCharacter()
 				local lastCharacter = nextCharacter
 				nextCharacter = getNextCharacter()
 
-				print("FAULTY", lastCharacter, nextCharacter, timeouts[lastCharacter])
+				--print("FAULTY", lastCharacter, nextCharacter, timeouts[lastCharacter])
 
 				if(lastCharacter == nextCharacter) then
-					print("SAME", lastCharacter)
+					--print("SAME", lastCharacter)
 					timeouts[lastCharacter] = timeouts[lastCharacter] and timeouts[lastCharacter] + 1 or 1
 
 					startNewInspectTimer(lastCharacter, GetTimePreciseSec())
@@ -856,10 +852,9 @@ local function updateGroupData(type, overwrite)
 					local fullName = miog.createFullNameFrom("unitName", name)
 
 					if(online) then
-						miog.AceComm:SendCommMessage("MIOG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
+						miog.AceComm:SendCommMessage("MIOG_DEBUG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
 
 					end
-					--C_ChatInfo.SendAddonMessageLogged("MIOG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
 
 					if(isInRaid) then
 						unitID = "raid" .. groupIndex
@@ -881,7 +876,6 @@ local function updateGroupData(type, overwrite)
 						--data = {}
 
 						if(not playerSpecs[fullName] or playerSpecs[fullName] == 0 and not playerInInspection == fullName) then
-							--print("ADD", fullName)
 							addCharacterToInspectionList(fullName, unitID)
 
 						end
@@ -920,7 +914,8 @@ local function updateGroupData(type, overwrite)
 			playerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
 
 			local data = getOptionalPlayerData(fullPlayerName, shortName, playerRealm, "player")
-		
+
+
 			data.index = nil
 			data.level = UnitLevel("player")
 			data.subgroup = 1
@@ -1001,7 +996,7 @@ local function groupManagerEvents(_, event, ...)
 		local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(...)
 		local fullName = miog.createFullNameFrom("unitName", name .. "-" .. realmName)
 
-		print("READY", fullName)
+		--print("READY", fullName)
 
 		checkPlayerInspectionStatus(fullName, nil, 1)
 	elseif(event == "GROUP_JOINED") then

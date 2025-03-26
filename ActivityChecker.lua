@@ -169,7 +169,8 @@ local function addPvpActivities(topButton)
 
 			for i = 0, 3, 1 do
 				--if(i ~= 2) then
-					local activityButton = topButton:CreateRadio(i == 0 and FRONT_END_LOBBY_SOLOS or i == 1 and FRONT_END_LOBBY_DUOS or i == 2 and FRONT_END_LOBBY_TRIOS or FRONT_END_LOBBY_PRACTICE, function(index) return C_LobbyMatchmakerInfo.IsInQueue() and C_LobbyMatchmakerInfo.GetCurrQueueState() == partyPlaylistEnumToIndex[index] end, function(index)
+					local modeString = i == 0 and FRONT_END_LOBBY_SOLOS or i == 1 and FRONT_END_LOBBY_DUOS or i == 2 and FRONT_END_LOBBY_TRIOS or FRONT_END_LOBBY_PRACTICE
+					local activityButton = topButton:CreateRadio(modeString, function(index) return C_LobbyMatchmakerInfo.IsInQueue() and C_LobbyMatchmakerInfo.GetCurrQueueState() == partyPlaylistEnumToIndex[index] end, function(index)
 						local modeFrame = PlunderstormFrame.QueueSelect.QueueContainer[index == 0 and "Solo" or index == 1 and "Duo" or index == 2 and "Trio" or "Practice"]
 						
 						if(modeFrame) then
@@ -429,117 +430,119 @@ local selectedDungeonsList = {}
 
 local function setupQueueDropdown(rootDescription)
 	for k, v in ipairs(indicesList) do
-		local isPetBattle = k == indices["PET"]
-		
-		local activityButton
-		
-		if(isPetBattle) then
-			activityButton = rootDescription:CreateRadio(PET_BATTLE_PVP_QUEUE, function() return C_PetBattles.GetPVPMatchmakingInfo() ~= nil end, function()
-				C_PetBattles.StartPVPMatchmaking()
-	
-				MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
-
-			end)
-		else
-			activityButton = rootDescription:CreateButton(indicesInfo[k].var, function(index)
-			end, k)
-		end
-
-		local lastRaidName, lastExpansion
-
 		local isSpecific = k == indices["SPECIFIC"]
 		local isRaidFinder = k == indices["RAIDFINDER"]
 		local isEvent = k == indices["EVENT"]
 		local isPvp = k == indices["PVP"]
 
-		activityButton:SetEnabled(isPetBattle and true or isPvp and (C_PvP.CanPlayerUseRatedPVPUI() or C_LFGInfo.CanPlayerUsePremadeGroup()) and true or isSpecific and #indicesList[2] > 0 and true or #v > 0)
 
-		local queueButton
+		if(not isEvent and true or isEvent and #v > 0) then
+			local isPetBattle = k == indices["PET"]
+			
+			local activityButton
+			
+			if(isPetBattle) then
+				activityButton = rootDescription:CreateRadio(PET_BATTLE_PVP_QUEUE, function() return C_PetBattles.GetPVPMatchmakingInfo() ~= nil end, function()
+					C_PetBattles.StartPVPMatchmaking()
+		
+					MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
 
-		if(isPvp) then
-			addPvpActivities(activityButton)
+				end)
+			else
+				activityButton = rootDescription:CreateButton(indicesInfo[k].var, function(index)
+				end, k)
+			end
 
-		else
-			for listIndex, dungeonInfo in ipairs(v) do
-				if(isSpecific) then
-					if(dungeonInfo.typeID ~= 6) then
-						if(lastExpansion ~= dungeonInfo.expansionLevel) then
+			local lastRaidName, lastExpansion
+			activityButton:SetEnabled(isPetBattle and true or isPvp and (C_PvP.CanPlayerUseRatedPVPUI() or C_LFGInfo.CanPlayerUsePremadeGroup()) and true or isSpecific and #indicesList[2] > 0 and true or #v > 0)
+
+			local queueButton
+
+			if(isPvp) then
+				addPvpActivities(activityButton)
+
+			else
+				for listIndex, dungeonInfo in ipairs(v) do
+					if(isSpecific) then
+						if(dungeonInfo.typeID ~= 6) then
+							if(lastExpansion ~= dungeonInfo.expansionLevel) then
+								local title = activityButton:CreateTitle(miog.EXPANSION_INFO[dungeonInfo.expansionLevel][1])
+								
+							end
+
+							queueButton = activityButton:CreateCheckbox(dungeonInfo.name .. " " .. (dungeonInfo.subtypeID == 1 and PLAYER_DIFFICULTY1 or dungeonInfo.subtypeID == 2 and PLAYER_DIFFICULTY2 or ""), function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end, function(dungeonID)
+								selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
+
+								LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
+							end, dungeonInfo.dungeonID)
+
+							lastExpansion = dungeonInfo.expansionLevel
+						end
+					elseif(isRaidFinder) then
+						if(lastRaidName ~= dungeonInfo.name2) then
+							local title = activityButton:CreateTitle(dungeonInfo.name2)
+
+							if(icon) then
+								--textLine:SetTextColor(0.1,0.83,0.77,1)
+
+							end
+						end
+
+						queueButton = activityButton:CreateRadio(dungeonInfo.name, function(dungeonID) return GetLFGMode(3, dungeonID) == "queued" end, function(dungeonID)
+							ClearAllLFGDungeons(3);
+							SetLFGDungeon(3, dungeonID);
+							JoinSingleLFG(3, dungeonID);
+
+							MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = dungeonID}
+						end, dungeonInfo.dungeonID)
+
+						lastRaidName = dungeonInfo.name2
+					else
+						if(not isEvent and lastExpansion ~= dungeonInfo.expansionLevel) then
 							local title = activityButton:CreateTitle(miog.EXPANSION_INFO[dungeonInfo.expansionLevel][1])
 							
 						end
 
-						queueButton = activityButton:CreateCheckbox(dungeonInfo.name .. " " .. (dungeonInfo.subtypeID == 1 and PLAYER_DIFFICULTY1 or dungeonInfo.subtypeID == 2 and PLAYER_DIFFICULTY2 or ""), function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end, function(dungeonID)
-							selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
-
-							LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
+						queueButton = activityButton:CreateRadio(dungeonInfo.name, function(dungeonID) return GetLFGMode(1, dungeonID) == "queued" end, function(dungeonID)
+							ClearAllLFGDungeons(1);
+							SetLFGDungeon(1, dungeonID);
+							JoinSingleLFG(1, dungeonID);
+			
+							MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
 						end, dungeonInfo.dungeonID)
 
 						lastExpansion = dungeonInfo.expansionLevel
 					end
-				elseif(isRaidFinder) then
-					if(lastRaidName ~= dungeonInfo.name2) then
-						local title = activityButton:CreateTitle(dungeonInfo.name2)
 
-						if(icon) then
-							--textLine:SetTextColor(0.1,0.83,0.77,1)
-
-						end
+					if(queueButton) then
+						queueButton:AddInitializer(function(button, description, menu)
+							if(dungeonInfo.icon) then
+								local leftTexture = button:AttachTexture();
+								leftTexture:SetSize(16, 16);
+								leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+								leftTexture:SetTexture(dungeonInfo.icon);
+				
+								button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+				
+								return button.fontString:GetUnboundedStringWidth() + 18 + 5
+							end
+						end)
 					end
-
-					queueButton = activityButton:CreateRadio(dungeonInfo.name, function(dungeonID) return GetLFGMode(3, dungeonID) == "queued" end, function(dungeonID)
-						ClearAllLFGDungeons(3);
-						SetLFGDungeon(3, dungeonID);
-						JoinSingleLFG(3, dungeonID);
-
-						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = dungeonID}
-					end, dungeonInfo.dungeonID)
-
-					lastRaidName = dungeonInfo.name2
-				else
-					if(not isEvent and lastExpansion ~= dungeonInfo.expansionLevel) then
-						local title = activityButton:CreateTitle(miog.EXPANSION_INFO[dungeonInfo.expansionLevel][1])
-						
-					end
-
-					queueButton = activityButton:CreateRadio(dungeonInfo.name, function(dungeonID) return GetLFGMode(1, dungeonID) == "queued" end, function(dungeonID)
-						ClearAllLFGDungeons(1);
-						SetLFGDungeon(1, dungeonID);
-						JoinSingleLFG(1, dungeonID);
-		
-						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
-					end, dungeonInfo.dungeonID)
-
-					lastExpansion = dungeonInfo.expansionLevel
-				end
-
-				if(queueButton) then
-					queueButton:AddInitializer(function(button, description, menu)
-						if(dungeonInfo.icon) then
-							local leftTexture = button:AttachTexture();
-							leftTexture:SetSize(16, 16);
-							leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-							leftTexture:SetTexture(dungeonInfo.icon);
-			
-							button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-			
-							return button.fontString:GetUnboundedStringWidth() + 18 + 5
-						end
-					end)
 				end
 			end
-		end
 
-		if(isSpecific) then
-			queueButton = activityButton:CreateTemplate("UIPanelButtonTemplate", "Button")
-			queueButton:AddInitializer(function(button, description, menu)
-				button:SetScript("OnClick", function(_, buttonName)
-					LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
+			if(isSpecific) then
+				queueButton = activityButton:CreateTemplate("UIPanelButtonTemplate", "Button")
+				queueButton:AddInitializer(function(button, description, menu)
+					button:SetScript("OnClick", function(_, buttonName)
+						LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
 
-					MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
+						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
+					end);
+
+					button:SetText("Queue for multiple dungeons")
 				end);
-
-				button:SetText("Queue for multiple dungeons")
-			end);
+			end
 		end
 	end
 end

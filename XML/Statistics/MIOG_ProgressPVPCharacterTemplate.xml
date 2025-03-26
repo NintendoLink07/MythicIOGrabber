@@ -18,6 +18,9 @@
 
             <Frame parentKey="Bracket4" inherits="MIOG_ProgressBracketTemplate">
             </Frame>
+
+            <Frame parentKey="Bracket5" inherits="MIOG_ProgressBracketTemplate">
+            </Frame>
         </Frames>
 
         <Layers>

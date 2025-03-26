@@ -378,7 +378,7 @@
         </Frames>
 
         <Layers>
-            <Layer level="ARTWORK">
+            <Layer level="OVERLAY">
                 <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png" hidden="true">
                     <Size x="14" y="14" />
                 </Texture>

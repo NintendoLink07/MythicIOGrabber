@@ -893,26 +893,6 @@ local function createFilterPopup()
 	end)
 end
 
-miog.loadQueueSystem = function()
-	queueSystem.framePool = CreateFramePool("Button", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
-	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
-
-	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
-
-	--eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-	--eventReceiver:RegisterEvent("LFG_UPDATE")
-	--eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")wdwwdwwasdwadw
-	--eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-	--eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
-	--eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
-	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
-	eventReceiver:SetScript("OnEvent", miog.queueEvents)
-
-	createFilterPopup()
-end
-
 local function queueEvents(_, event, ...)
 	if(event == "PLAYER_REGEN_ENABLED") then
 		if(miog.F.UPDATE_AFTER_COMBAT) then
@@ -923,4 +903,47 @@ local function queueEvents(_, event, ...)
 	end
 end
 
-miog.queueEvents = queueEvents
+miog.loadQueueSystem = function()
+	queueSystem.framePool = CreateFramePool("Button", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
+	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
+
+	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
+
+	--eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+	--eventReceiver:RegisterEvent("LFG_UPDATE")
+	--eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
+	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
+	--eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+	--eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
+	--eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
+	
+	hooksecurefunc("JoinArena", function()
+		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA}
+	end)
+
+	hooksecurefunc("JoinRatedSoloShuffle", function()
+		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_SOLO_SHUFFLE}
+	end)
+
+	hooksecurefunc("JoinRatedBattlefield", function()
+		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BATTLEGROUND}
+	end)
+
+	hooksecurefunc(C_PvP, "JoinRatedBGBlitz", function()
+		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BG_BLITZ}
+	end)
+
+	hooksecurefunc("JoinBattlefield", function()
+		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=BATTLEGROUND}
+	end)
+
+	hooksecurefunc("JoinSkirmish", function()
+		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA_CASUAL}
+	end)
+
+	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
+	eventReceiver:SetScript("OnEvent", queueEvents)
+
+	createFilterPopup()
+end
