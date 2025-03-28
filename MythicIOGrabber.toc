@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.2.9
+## Version: 3.3.0
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -54,7 +54,6 @@ FuzzyAlgorithm.lua
 
 Mixins\SortingMixin.lua
 Mixins\MultiStateButtonMixin.lua
-Mixins\ProgressTabMixin.lua
 Mixins\FilterMixin.lua
 Mixins\NewMultiStateButtonMixin.lua
 Mixins\RaidSheetElementMixin.lua
@@ -64,6 +63,7 @@ Mixins\FakeDropdownMixin.lua
 Mixins\RaiderIOInformationPanelMixin.lua
 Mixins\GraphMixin.lua
 Mixins\TableMixin.lua
+Mixins\ProgressionTabMixin.lua
 
 
 
@@ -170,6 +170,7 @@ XML\Statistics\MIOG_ProgressBracketTemplate.xml
 XML\Statistics\MIOG_ProgressPVPCharacterTemplate.xml
 XML\Statistics\MIOG_ProgressFullCharacterTemplate.xml
 XML\Statistics\MIOG_ProgressFullCharacterIconTemplate.xml
+XML\Statistics\MIOG_ProgressionVerticalCharacterTemplate.xml
 
 XML\Util\MIOG_MultiStateButtonTemplate.xml
 XML\Util\MIOG_SortButtonTemplate.xml

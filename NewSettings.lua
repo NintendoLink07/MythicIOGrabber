@@ -132,6 +132,7 @@ local defaultSettings = {
         ["GroupManager"] = {},
         ["Guild"] = {["level"] = defaultSortState, ["rank"] = defaultSortState, ["class"] = defaultSortState, ["keystone"] = defaultSortState, ["keylevel"] = defaultSortState, ["score"] = defaultSortState, ["progressWeight"] = defaultSortState, }}
     },
+    {name = "Progress activity visibility", variableName = "MIOG_ProgressActivityVisibility", key="progressActivityVisibility", default={}},
     {name = "Search Panel declined groups", variableName = "MIOG_DeclinedGroups", key="declinedGroups", default={}},
     {name = "Account-wide lockouts", variableName = "MIOG_Lockouts", key="lockoutCheck", default={}},
     {name = "Gearing table", variableName = "MIOG_GearingTable", key="gearingTable", default={headers = {}}},

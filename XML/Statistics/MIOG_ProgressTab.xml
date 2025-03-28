@@ -77,16 +77,7 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="MPlusStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
-            </Frame>
-
-            <Frame parentKey="RaidStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
-            </Frame>
-
-            <Frame parentKey="PVPStatistics" inherits="MIOG_ProgressLayoutTemplate" hidden="true" setAllPoints="true">
-            </Frame>
-
-            <Frame parentKey="NewSystem" setAllPoints="true" mixin="ProgressTabMixin">
+            <Frame parentKey="NewSystem" setAllPoints="true" mixin="ProgressionTabMixin">
                 <Frames>
                     <Frame parentKey="Columns" inherits="WowScrollBoxList">
                         <Anchors>
@@ -135,7 +126,30 @@
                         </Frames>
                     </Frame>!-->
                 </Frames>
+
+                <Scripts>
+                    <OnShow method="OnShow" />
+                </Scripts>
             </Frame>
+
+            <Frame parentKey="MPlusStatistics" inherits="MIOG_ProgressLayoutTemplate" mixin="ProgressionTabMixin" hidden="true" setAllPoints="true">
+                <Scripts>
+                    <OnShow method="OnShow" />
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="RaidStatistics" inherits="MIOG_ProgressLayoutTemplate" mixin="ProgressionTabMixin" hidden="true" setAllPoints="true">
+                <Scripts>
+                    <OnShow method="OnShow" />
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="PVPStatistics" inherits="MIOG_ProgressLayoutTemplate" mixin="ProgressionTabMixin" hidden="true" setAllPoints="true">
+                <Scripts>
+                    <OnShow method="OnShow" />
+                </Scripts>
+            </Frame>
+
         </Frames>
     </Frame>
 </Ui>

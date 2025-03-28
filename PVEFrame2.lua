@@ -257,16 +257,16 @@ local function createPVEFrameReplacement()
 	end)
 
 	miog.Progress = pveFrame2.TabFramesPanel.Progress
-	miog.Progress.NewSystem:OnLoad(4)
+	miog.Progress.NewSystem:OnLoad("all", MIOG_NewSettings)
 
     miog.MPlusStatistics = miog.Progress.MPlusStatistics
-	miog.MPlusStatistics:OnLoad(1)
+	miog.MPlusStatistics:OnLoad("mplus", MIOG_NewSettings)
 
 	miog.RaidStatistics = miog.Progress.RaidStatistics
-	miog.RaidStatistics:OnLoad(2)
+	miog.RaidStatistics:OnLoad("raid", MIOG_NewSettings)
 
 	miog.PVPStatistics = miog.Progress.PVPStatistics
-	miog.PVPStatistics:OnLoad(3)
+	miog.PVPStatistics:OnLoad("pvp", MIOG_NewSettings)
 
 	pveFrame2.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
 	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)

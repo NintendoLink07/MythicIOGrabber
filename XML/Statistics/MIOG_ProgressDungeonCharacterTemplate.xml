@@ -4,6 +4,7 @@
         <KeyValues>
             <KeyValue key="spacing" value="2" />
             <KeyValue key="leftPadding" value="125" type="number" />
+            <KeyValue key="minimumHeight" value="32" type="number" />
         </KeyValues>
 
         <Frames>

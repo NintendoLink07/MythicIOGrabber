@@ -383,8 +383,6 @@ function ProgressTabMixin:CreateDropdownEntry(fullName, rootDescription)
 			return button.fontString:GetUnboundedStringWidth() + 14 + 2
 		end)
 	end
-	
-	
 end
 
 function ProgressTabMixin:StartScoreCalculationForCharacter(frame, guid)
@@ -1197,9 +1195,9 @@ function ProgressTabMixin:UpdateSingleCharacterStatistics(specificGUID, v)
 end
 
 function ProgressTabMixin:UpdateAllCharacterStatistics()
-	--if(not accountCharacters) then
+	if(not accountCharacters) then
 		self:RequestAccountCharacters()
-	--end
+	end
 
 	for _, v in ipairs(accountCharacters) do
 		self:CreateCharacterTables(v.guid, v)

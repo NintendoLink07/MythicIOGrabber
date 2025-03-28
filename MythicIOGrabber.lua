@@ -101,7 +101,6 @@ local function mainEvents(_, event, ...)
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
 
 	elseif(event == "WEEKLY_REWARDS_UPDATE") then
-		ProgressTabMixin:UpdateAllCharacterStatistics(true, true, true)
 
 	end
 end

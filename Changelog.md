@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [3.3.0] - 2025-03-30
+
+### Added
+
+- [Progress] All activities in the panels can now be hidden/shown via the dropdown menu in the topleft.
+This saves between reloads/relogs.
+
+
+
 ## [3.2.9] - 2025-03-26
 
 ### Added

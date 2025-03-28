@@ -452,6 +452,12 @@ miog.PVP_BRACKET_INFO = {
 
 }
 
+miog.PVP_BRACKET_IDS_TO_INFO = {}
+
+for k, v in ipairs(miog.PVP_BRACKET_INFO) do
+	miog.PVP_BRACKET_IDS_TO_INFO[v.id] = v
+end
+
 miog.MAP_INFO = {
 	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground"},
 	[489] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
