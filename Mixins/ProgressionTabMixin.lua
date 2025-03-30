@@ -492,8 +492,6 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
 	if(self.type == "raid" or self.type == "all") then --RAID
 		local raidInfo = {}
 		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
-
-		DevTools_Dump(raidGroups)
 	
 		for k, v in ipairs(raidGroups) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)
@@ -535,6 +533,61 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
     return activityProvider
 end
 
+function ProgressionTabMixin:PopulateActivities()
+	if(self.type ~= "all") then
+		local activityProvider = self:GatherActivitiesForDataProvider()
+
+		self.currentActivities = self.type == "mplus" and mythicPlusActivities or self.type == "raid" and raidActivities or pvpActivities
+
+		local activityView = self.Columns:GetView()
+		
+		activityView:SetElementExtent(400 / activityProvider:GetSize())
+		self.Columns:SetDataProvider(activityProvider)
+
+		self.Info.VisibilityDropdown:SetDefaultText("Change activity visibility")
+        self.Info.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
+            for k, v in ipairs(self.currentActivities) do
+                local shortName
+
+                if(self.type == "pvp") then
+                    local bracketInfo = miog.PVP_BRACKET_IDS_TO_INFO[v]
+    
+                    if(bracketInfo) then
+                        shortName = bracketInfo.shortName
+                    end
+
+                elseif(self.type == "raid") then
+                    local mapInfo = miog.MAP_INFO[v]
+
+                    if(mapInfo) then
+                        shortName = mapInfo.shortName
+                    end
+
+                elseif(self.type == "mplus") then
+                    local mapInfo = miog.MAP_INFO[miog.retrieveMapIDFromChallengeModeMap(v)]
+
+                    if(mapInfo) then
+                        shortName = mapInfo.shortName
+                    end
+
+                end
+
+                rootDescription:CreateCheckbox(shortName,
+                    function(index)
+                        return self.mainSettings.progressActivityVisibility[self.type][index] ~= false
+                    end,
+                    function(index)
+                        self.mainSettings.progressActivityVisibility[self.type][index] = not self:VisibilitySelected(self.type, index)
+                        local dp = self:GatherActivitiesForDataProvider()
+                        activityView:SetElementExtent(400 / dp:GetSize())
+                        activityView:SetDataProvider(dp)
+						self:PopulateViews()
+                    end, v)
+            end
+        end)
+	end
+end
+
 function ProgressionTabMixin:OnLoad(type, tempSettings)
     self.type = type
 	self.template = type == "mplus" and "MIOG_ProgressDungeonCharacterTemplate" or type == "raid" and "MIOG_ProgressRaidCharacterTemplate" or type == "pvp" and "MIOG_ProgressPVPCharacterTemplate" or "MIOG_ProgressFullCharacterTemplate"
@@ -544,10 +597,6 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
     self.mainSettings.progressActivityVisibility[self.type] = self.mainSettings.progressActivityVisibility[self.type] or {}
 
     playerGUID = UnitGUID("player")
-    
-    local activityView = CreateScrollBoxListLinearView();
-
-    local activityProvider = self:GatherActivitiesForDataProvider()
 
     if(self.type == "all") then
         local horizonalView = CreateScrollBoxListLinearView();
@@ -662,6 +711,8 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
         self.horizontalView = horizonalView
     else
 		miog.createFrameBorder(self.Selection, 1, CreateColorFromHexString(miog.CLRSCC.silver):GetRGBA())
+	
+		local activityView = CreateScrollBoxListLinearView();
 		activityView:SetHorizontal(true)
 		activityView:SetElementInitializer("MIOG_ProgressColumnTemplate", function(frame, data)
 			local shortName
@@ -687,13 +738,11 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 
             miog.createFrameBorder(frame, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 		end)
-
-        local activities = self.type == "mplus" and mythicPlusActivities or self.type == "raid" and raidActivities or pvpActivities
         
 		activityView:SetPadding(1, 1, 1, 1, 2);
-		activityView:SetElementExtent(400 / activityProvider:GetSize())
 		self.Columns:Init(activityView);
-        self.Columns:SetDataProvider(activityProvider)
+		
+		self:PopulateActivities()
 
 		local characterView = CreateScrollBoxListLinearView();
 
@@ -786,7 +835,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 
 				local counter = 1
 
-				for index, challengeMapID in ipairs(activities) do
+				for index, challengeMapID in ipairs(self.currentActivities) do
 					local isVisible = self:VisibilitySelected(self.type, challengeMapID)
 
 					local dungeonFrame = frame["Dungeon" .. index]
@@ -823,7 +872,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			elseif(isRaid) then
 				local counter = 1
 
-				for index, mapID in ipairs(activities) do
+				for index, mapID in ipairs(self.currentActivities) do
 					local isVisible = self:VisibilitySelected(self.type, mapID)
 					local raidFrame = frame["Raid" .. index]
 
@@ -897,7 +946,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 				
 				local counter = 1
 
-				for index, id in ipairs(activities) do
+				for index, id in ipairs(self.currentActivities) do
 					local isVisible = self:VisibilitySelected(self.type, index)
 					local bracketFrame = frame["Bracket" .. index]
 
@@ -1001,53 +1050,13 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			self.Info.TimePercentage:Hide()
 
 		end
-
-        self.Info.VisibilityDropdown:SetDefaultText("Change activity visibility")
-        self.Info.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
-            for k, v in ipairs(activities) do
-                local shortName
-
-                if(self.type == "pvp") then
-                    local bracketInfo = miog.PVP_BRACKET_IDS_TO_INFO[v]
-    
-                    if(bracketInfo) then
-                        shortName = bracketInfo.shortName
-                    end
-
-                elseif(self.type == "raid") then
-                    local mapInfo = miog.MAP_INFO[v]
-
-                    if(mapInfo) then
-                        shortName = mapInfo.shortName
-                    end
-
-                elseif(self.type == "mplus") then
-                    local mapInfo = miog.MAP_INFO[miog.retrieveMapIDFromChallengeModeMap(v)]
-
-                    if(mapInfo) then
-                        shortName = mapInfo.shortName
-                    end
-
-                end
-
-                rootDescription:CreateCheckbox(shortName,
-                    function(index)
-                        return self.mainSettings.progressActivityVisibility[self.type][index] ~= false
-                    end,
-                    function(index)
-                        self.mainSettings.progressActivityVisibility[self.type][index] = not self:VisibilitySelected(self.type, index)
-                        local dp = self:GatherActivitiesForDataProvider()
-                        activityView:SetElementExtent(400 / dp:GetSize())
-                        activityView:SetDataProvider(dp)
-						self:PopulateViews()
-                    end, v)
-            end
-        end)
     end
 end
 
 function ProgressionTabMixin:OnShow()
-    if(self.type == "all") then
+	self:PopulateActivities()
+
+	if(self.type == "all") then
         self:UpdateAllData()
 
     elseif(self.type == "mplus") then
