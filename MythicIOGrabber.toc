@@ -195,3 +195,9 @@ XML\RaidSheet\MIOG_RaidSheetDragDropElementTemplate.xml
 XML\TableMixinTemplates\MIOG_TableCellTemplate.xml
 XML\TableMixinTemplates\MIOG_TableCellWithCheckboxTemplate.xml
 XML\TableMixinTemplates\MIOG_TableDivider.xml
+
+XML\MIOG_UpgradeFinder.xml
+XML\UpgradeFinder\MIOG_UpgradeFinderItemSingleTemplate.xml
+XML\UpgradeFinder\MIOG_UpgradeFinderSlotItemTemplate.xml
+UpgradeFinder.lua
+Mixins\ItemUpgradeFinderMixin.lua

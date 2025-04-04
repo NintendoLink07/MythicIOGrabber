@@ -659,6 +659,7 @@
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
                 </Frames>
             </Frame>
 
@@ -742,6 +743,18 @@
                     </OnLoad>
                 </Scripts>
             </Button>
+
+            <Button name="$parentTab8" inherits="MIOG_TabButtonTemplate" id="8" text="Upgrades">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab7" relativePoint="RIGHT"/>
+                </Anchors>
+                
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "UpgradeFinder"
+                    </OnLoad>
+                </Scripts>
+            </Button>
         </Frames>
 
         <Layers>
@@ -760,7 +773,7 @@
             </OnDragStop>
 
             <OnLoad>
-                PanelTemplates_SetNumTabs(self, 7)
+                PanelTemplates_SetNumTabs(self, 8)
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());

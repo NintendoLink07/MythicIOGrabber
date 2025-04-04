@@ -519,8 +519,6 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
     end
     
     if(self.type == "pvp" or self.type == "all") then --PVP
-        --pvpActivities = miog.PVP_BRACKET_INFO
-    
         for _, id in ipairs(pvpActivities) do
             if(self:VisibilitySelected(self.type, id)) then
                 activityProvider:Insert({id = id});
@@ -534,9 +532,9 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
 end
 
 function ProgressionTabMixin:PopulateActivities()
-	if(self.type ~= "all") then
-		local activityProvider = self:GatherActivitiesForDataProvider()
+	local activityProvider = self:GatherActivitiesForDataProvider()
 
+	if(self.type ~= "all") then
 		self.currentActivities = self.type == "mplus" and mythicPlusActivities or self.type == "raid" and raidActivities or pvpActivities
 
 		local activityView = self.Columns:GetView()

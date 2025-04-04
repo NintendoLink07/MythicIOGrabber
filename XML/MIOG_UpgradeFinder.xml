@@ -1,0 +1,129 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_UpgradeFinder" virtual="true">
+        <Frames>
+            <ItemButton name="MIOG_CharHeadSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" x="4" y="-2"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharNeckSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharHeadSlot" relativePoint="BOTTOMLEFT"  x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharShoulderSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharNeckSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharBackSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharShoulderSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharChestSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharBackSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharShirtSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharChestSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharTabardSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharShirtSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharWristSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharTabardSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharHandsSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" x="-4" y="-2"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharWaistSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharHandsSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharLegsSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharWaistSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharFeetSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharLegsSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharFinger0Slot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharFeetSlot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharFinger1Slot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharFinger0Slot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharTrinket0Slot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharFinger1Slot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharTrinket1Slot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharTrinket0Slot" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </ItemButton>
+            <ItemButton name="MIOG_CharMainHandSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" x="130" y="16"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture inherits="Char-Slot-Bottom-Left">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPLEFT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </ItemButton>
+            <ItemButton name="MIOG_CharSecondaryHandSlot" inherits="MIOG_UpgradeFinderSlotItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharMainHandSlot" relativePoint="TOPRIGHT" x="5" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture inherits="Char-Slot-Bottom-Right">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPRIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </ItemButton>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="MIOG_CharHeadSlot" relativePoint="TOPRIGHT" x="4"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="MIOG_CharTrinket1Slot" relativePoint="BOTTOMLEFT" x="-12"/>
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
+        </Frames>
+    </Frame>
+</Ui>

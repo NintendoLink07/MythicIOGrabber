@@ -257,6 +257,7 @@ miog.createFrames = function()
 
 		miog.AdventureJournal = miog.loadAdventureJournal()
 		miog.DropChecker = miog.loadDropChecker()
+		miog.UpgradeFinder = miog.loadUpgradeFinder()
 		miog.LockoutCheck = miog.loadLockoutCheck()
 	end
 
