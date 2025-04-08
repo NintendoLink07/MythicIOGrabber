@@ -156,7 +156,7 @@ local function mplusOnEnter(self, playerGUID)
 
 	local intimeInfo = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].intimeInfo
 	local overtimeInfo = MIOG_NewSettings.accountStatistics.characters[playerGUID].mplus[challengeMapID].overtimeInfo
-	local overtimeHigher = intimeInfo and overtimeInfo and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
+	local overtimeHigher = intimeInfo and overtimeInfo and intimeInfo.dungeonScore and overtimeInfo.dungeonScore and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
 	local overallScore = overtimeHigher and overtimeInfo.dungeonScore or intimeInfo and intimeInfo.dungeonScore or 0
 
 	if(intimeInfo or overtimeInfo) then
@@ -588,7 +588,7 @@ end
 
 function ProgressionTabMixin:OnLoad(type, tempSettings)
     self.type = type
-	self.template = type == "mplus" and "MIOG_ProgressDungeonCharacterTemplate" or type == "raid" and "MIOG_ProgressRaidCharacterTemplate" or type == "pvp" and "MIOG_ProgressPVPCharacterTemplate" or "MIOG_ProgressFullCharacterTemplate"
+	self.template = type == "mplus" and "MIOG_ProgressDungeonCharacterTemplate" or type == "raid" and "MIOG_ProgressRaidCharacterTemplate" or type == "pvp" and "MIOG_ProgressPVPCharacterTemplate" or "MIOG_ProgressionVerticalCharacterTemplate"
     self.mainSettings = tempSettings
     self.settings = tempSettings.accountStatistics.characters
 
@@ -599,7 +599,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
     if(self.type == "all") then
         local horizonalView = CreateScrollBoxListLinearView();
 		horizonalView:SetHorizontal(true)
-		horizonalView:SetElementInitializer("MIOG_ProgressionVerticalCharacterTemplate", function(frame, data)
+		horizonalView:SetElementInitializer(self.template, function(frame, data)
             local classID = miog.CLASSFILE_TO_ID[data.classFile]
 			local color = C_ClassColor.GetClassColor(data.classFile)
 
@@ -653,7 +653,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 				for k, v in ipairs(activityIndices) do
 					local activities = data.vaultProgress[v]
 
-					local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or frame.WorldStatus
+					local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or k == 3 and frame.WorldStatus
 
 					if(activities) then
 						currentFrame.frameType = "progress"
@@ -685,6 +685,26 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 
 					end
 				end
+
+				local pvpFrame = frame.PVPStatus
+				pvpFrame.frameType = "progress"
+
+				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(Constants.CurrencyConsts.CONQUEST_CURRENCY_ID);
+				local maxProgress = currencyInfo.maxQuantity;
+				local progress = math.min(currencyInfo.totalEarned, maxProgress);
+				local percentage = progress / maxProgress * 100
+				local currentColor = percentage >= 100 and miog.CLRSCC.green or percentage >= 66 and miog.CLRSCC.yellow or percentage >= 33 and miog.CLRSCC.orange or miog.CLRSCC.red
+				local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+				dimColor[4] = 0.1
+					
+				pvpFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+				miog.createFrameWithBackgroundAndBorder(pvpFrame, 1, unpack(dimColor))
+
+				pvpFrame:SetMinMaxValues(0, maxProgress)
+				pvpFrame:SetValue(progress)
+				pvpFrame.Text:SetText(progress .. "/" .. maxProgress)
+				pvpFrame.Text:SetTextColor(CreateColorFromHexString(percentage == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+
 			else
 				for k, v in ipairs(activityIndices) do
 					local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or frame.WorldStatus
@@ -696,6 +716,13 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 					currentFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
 
 				end
+
+				local pvpFrame = frame.PVPStatus
+				pvpFrame:SetMinMaxValues(0, 0)
+				pvpFrame:SetValue(0)
+				pvpFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+				pvpFrame.Text:SetText("0/0")
+				pvpFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
 			end
 
 			frame.VaultStatus:Show()
@@ -848,7 +875,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 						local intimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo
 						local overtimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo
 
-						local overtimeHigher = intimeInfo and overtimeInfo and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
+						local overtimeHigher = intimeInfo and overtimeInfo and intimeInfo.dungeonScore and overtimeInfo.dungeonScore and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
 
 						dungeonFrame.Level:SetText(overtimeHigher and overtimeInfo.level or intimeInfo and intimeInfo.level or 0)
 						dungeonFrame.Level:SetTextColor(CreateColorFromHexString(overtimeHigher and overtimeInfo.level and miog.CLRSCC.red or intimeInfo and intimeInfo.level and miog.CLRSCC.green or miog.CLRSCC.gray):GetRGBA())
@@ -1108,7 +1135,7 @@ function HasRewardsComingReset()
 	return false
 end
 
-function ProgressionTabMixin:AddVaultProgress()
+function ProgressionTabMixin:AddWeeklyProgress()
 	local hasRewardComing = HasRewardsComingReset()
 
 	self.settings[playerGUID].vaultProgress = {}
@@ -1137,6 +1164,7 @@ function ProgressionTabMixin:AddVaultProgress()
 			local encounters = C_WeeklyRewards.GetActivityEncounterInfo(activityInfo.type, activityInfo.index);
 
 			activityInfo.raidEncounterInfo[activityInfo.index] = encounters
+
 		end
 
 		exampleLinks[activityInfo.type] = exampleLinks[activityInfo.type] or {}
@@ -1149,6 +1177,9 @@ function ProgressionTabMixin:AddVaultProgress()
 
 		tinsert(self.settings[playerGUID].vaultProgress[activityInfo.type], activityInfo)
 	end
+
+	self.settings[playerGUID].vaultProgress[2] = C_WeeklyRewards.GetConquestWeeklyProgress()
+	
 
 	for k, v in ipairs(activityIndices) do
 		local progress = self.settings[playerGUID].vaultProgress[v]
@@ -1486,7 +1517,7 @@ function ProgressionTabMixin:UpdateAllData()
             end
         end
 
-        self:AddVaultProgress()
+        self:AddWeeklyProgress()
     end
 
     self:UpdateMythicPlusProgress()

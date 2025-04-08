@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ProgressionVerticalCharacterTemplate" virtual="true">
-        <Size y="220" />
+        <Size y="240" />
         <Layers>
             <Layer level="BACKGROUND">
 				<Texture parentKey="CardBackground" atlas="guildfinder-card" useAtlasSize="true"/>
@@ -178,6 +178,34 @@
                 <Size x="90" y="16" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.RaidStatus" relativePoint="BOTTOMLEFT" y="-1"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/pvprewardsbackground.png" setAllPoints="true" />
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Text" font="GameFontHighlight" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Color r="1" g="0" b="0" a="1" />
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Scripts>
+                    <OnEnter method="OnEnter" />
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
+            </StatusBar>
+
+            <StatusBar parentKey="PVPStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin">  <!--  mixin="WeeklyRewardsActivityMixin"-->
+                <BarTexture atlas="ui-castingbar-filling-standard" />
+                <Size x="90" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.WorldStatus" relativePoint="BOTTOMLEFT" y="-1"/>
                 </Anchors>
 
                 <Layers>

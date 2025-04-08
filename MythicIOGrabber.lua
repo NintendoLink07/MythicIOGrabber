@@ -2,6 +2,7 @@ local addonName, miog = ...
 
 miog.AceComm = LibStub:GetLibrary("AceComm-3.0")
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
+miog.tradeSkill = LibStub:GetLibrary("LibTradeSkillRecipes-1")
 
 miog.debug = {}
 
@@ -101,6 +102,9 @@ local function mainEvents(_, event, ...)
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
 
 	elseif(event == "WEEKLY_REWARDS_UPDATE") then
+
+	elseif event == "OPEN_RECIPE_RESPONSE" then
+		print(...)
 
 	end
 end
@@ -284,6 +288,7 @@ eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+eventReceiver:RegisterEvent("OPEN_RECIPE_RESPONSE")
 
 eventReceiver:RegisterEvent("CHALLENGE_MODE_START")
 eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")

@@ -82,7 +82,7 @@
                     <Frame parentKey="Columns" inherits="WowScrollBoxList">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="RIGHT" y="-25"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>

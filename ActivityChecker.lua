@@ -26,6 +26,61 @@ local indicesInfo = {
 	[8] = {id = "PET", var = PET_BATTLE_PVP_QUEUE},
 }
 
+local function hideAllPVPButtonAssets(button)
+	if(button.Tier) then
+		button.Tier:ClearAllPoints()
+		button.Tier:SetSize(20, 20)
+		button.Tier:SetPoint("LEFT", button, "LEFT")
+		button.Tier:Hide()
+
+		button.TierIcon:ClearAllPoints()
+		button.TierIcon:SetSize(5, 5)
+		button.TierIcon:SetPoint("CENTER", button.Tier, "CENTER")
+		button.TierIcon:Hide()
+	end
+
+	if(button.TeamSizeText) then
+		button.TeamSizeText:ClearAllPoints()
+		button.TeamSizeText:SetPoint("LEFT", button.Tier, "RIGHT")
+		button.TeamSizeText:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
+	end
+
+	if(button.TeamTypeText) then
+		button.TeamTypeText:ClearAllPoints()
+		button.TeamTypeText:SetPoint("LEFT", button.TeamSizeText, "RIGHT")
+		button.TeamTypeText:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
+	end
+
+	if(button.LevelRequirement and button.LevelRequirement:GetText()) then
+		button.LevelRequirement:Hide()
+		button:Enable()
+
+		button:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(self.Title:GetText(), 1, 1, 1);
+			GameTooltip:AddLine(self.LevelRequirement:GetText(), 1, 0, 0, true);
+			GameTooltip:Show();
+		end)
+	end
+
+	if(button.CurrentRating) then
+		button.CurrentRating:Hide()
+	end
+
+	if(button.Title) then
+		button.Title:ClearAllPoints()
+		button.Title:SetPoint("LEFT", button, "LEFT", 20, 0)
+		button.Title:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
+
+	end
+
+	if(button.Reward) then
+		button.Reward:Hide()
+	end
+end
+
+miog.hideAllPVPButtonAssets = hideAllPVPButtonAssets
+
 local function updateRandomDungeons(blizzDesc)
 	--[[local queueDropDown = miog.MainTab.QueueInformation.DropDown
 	local info = {}
@@ -237,16 +292,16 @@ local function addPvpActivities(topButton)
 			else
 				test:AddInitializer(function(blankFrame, description, menu)
 					blankFrame:SetSize(300, 25)
+					blankFrame.linkedFrameName = v:GetDebugName()
 	
+					v.baseName = blankFrame.linkedFrameName
 					v:ClearAllPoints()
 					v:SetAllPoints(blankFrame)
 					v:SetParent(blankFrame)
-					--[[v:SetScript("OnHide", function(self)
-						--self:ClearAllPoints()
-					end)]]
 				end)
-				test:SetScript("OnShow", function(self)
-					miog.hideAllPVPButtonAssets(v)
+				test:SetScript("OnShow", function()
+					hideAllPVPButtonAssets(v)
+
 				end)
 
 				if(v == HonorFrame.BonusFrame.RandomBGButton) then
@@ -306,7 +361,7 @@ local function addPvpActivities(topButton)
 
 			end)
 			test:SetScript("OnShow", function(self)
-				miog.hideAllPVPButtonAssets(v)
+				hideAllPVPButtonAssets(v)
 			end)
 		end
 
@@ -897,74 +952,6 @@ end
 
 miog.updateRaidFinder = updateRaidFinder
 
-local function hideAllPVPButtonAssets(button)
-	if(button.Tier) then
-		button.Tier:ClearAllPoints()
-		button.Tier:SetSize(20, 20)
-		button.Tier:SetPoint("LEFT", button, "LEFT")
-		button.Tier:Hide()
-
-		button.TierIcon:ClearAllPoints()
-		button.TierIcon:SetSize(5, 5)
-		button.TierIcon:SetPoint("CENTER", button.Tier, "CENTER")
-		button.TierIcon:Hide()
-	end
-
-	if(button.TeamSizeText) then
-		button.TeamSizeText:ClearAllPoints()
-		button.TeamSizeText:SetPoint("LEFT", button.Tier, "RIGHT")
-		button.TeamSizeText:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
-	end
-
-	if(button.TeamTypeText) then
-		button.TeamTypeText:ClearAllPoints()
-		button.TeamTypeText:SetPoint("LEFT", button.TeamSizeText, "RIGHT")
-		button.TeamTypeText:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
-	end
-
-	if(button.LevelRequirement and button.LevelRequirement:GetText()) then
-		button.LevelRequirement:Hide()
-		button:Enable()
-
-		button:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-			GameTooltip:SetText(self.Title:GetText(), 1, 1, 1);
-			GameTooltip:AddLine(self.LevelRequirement:GetText(), 1, 0, 0, true);
-			GameTooltip:Show();
-		end)
-	end
-
-	if(button.CurrentRating) then
-		button.CurrentRating:Hide()
-	end
-
-	if(button.Title) then
-		button.Title:ClearAllPoints()
-		button.Title:SetPoint("LEFT", button, "LEFT", 20, 0)
-		button.Title:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
-
-	end
-
-	if(button.Reward) then
-		button.Reward:Hide()
-	end
-end
-
-miog.hideAllPVPButtonAssets = hideAllPVPButtonAssets
-
-local function resetPVPFrame(frame, parent, setScript)
-	frame:ClearAllPoints()
-	frame:SetParent(parent)
-	frame:SetWidth(parent:GetWidth())
-	frame:SetHeight(20)
-
-	if(setScript) then
-		hideAllPVPButtonAssets(frame)
-		--frame:HookScript("OnShow", function(self)
-		--end)
-	end
-end
-
 local function updatePVP(parent)
 	if(HonorFrame and ConquestFrame) then
 		local groupSize = IsInGroup() and GetNumGroupMembers() or 1;
@@ -1387,6 +1374,10 @@ miog.loadActivityChecker = function()
 			--HonorFrame.TypeDropdown:GetParent():GetParent():MarkDirty()
 		end)
 	end
+
+	hooksecurefunc("PVPUIFrame_ConfigureRewardFrame", function(frame)
+		hideAllPVPButtonAssets(frame:GetParent())
+	end)
 
 	LFGDungeonList_Setup()
 end

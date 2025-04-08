@@ -72,6 +72,8 @@ local function findNextBaseItemLevelBonusID(bonusID, ascending)
     end
 end
 
+local alreadyIn = {}
+
 local function printAllBonusIDs(link)
     local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
     local array = {strsplit(":", linkOptions)}
@@ -84,13 +86,13 @@ local function printAllBonusIDs(link)
 
         local actualBonusID = findActualBonusID(bonusID)
         local bonusIDType = findBonusIDType(actualBonusID)
+
+        print(actualBonusID, bonusID, bonusIDType)
     end
 end
 
 miog.printAllBonusIDs = printAllBonusIDs
 
--- champion track bonus start id =????? 3524
--- hero track bonus start id =????? 
 
 --[[
 
@@ -100,27 +102,35 @@ miog.printAllBonusIDs = printAllBonusIDs
 ]]
 
 --[[
-    not
-    10396
-    6652
-    11343
-    10390
-    11964
-    10383
+    mythic+ tag 10390
+    fortune crafted 12040
 
 ]]
 
 --[[
-    maybe mandatory
+    base 593 10421
+    base 662 25167
+]]
 
-    10390
-    6652
-    10383
-    11988
+local function addBonusIDsToArray(array, ...)
+    local tempArray = {...}
+    local size = #tempArray
+
+    array[13] = tonumber(array[13]) + size
+
+    for i = 1, size, 1 do
+        table.insert(array, i + 13, tempArray[i])
+
+    end
+    
+end
+
+--[[
+    577, 544, 610
 
 ]]
 
-local function setItemLinkArrayToSpecificItemLevel(link, ilvl, linkIsArray)
+local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray)
     local array
     local linkType, linkOptions, displayText
 
@@ -133,14 +143,18 @@ local function setItemLinkArrayToSpecificItemLevel(link, ilvl, linkIsArray)
 
     end
 
-    array[12] = 33
+    array[12] = type == "mythicPlus" and 34 or type == "crafting" and 13
 
-    --table.insert(array, 14, 12042)
-    local bestBonusID = findCorrectBonusID(655 - ilvl)
-    table.insert(array, 14, 11985)
-    table.insert(array, 15, bestBonusID)
+    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and 655 or type == "crafting" and 675) - ilvl)
 
-    array[13] = tonumber(array[13]) + 2
+    if(type == "mythicPlus") then
+        addBonusIDsToArray(array, 10390, 11987, bestBonusID)
+
+    elseif(type == "crafting") then
+        addBonusIDsToArray(array, 21612, 10240, bestBonusID)
+        
+
+    end
 
     if(not linkIsArray) then
         local newLink = LinkUtil.FormatLink(linkType, displayText, unpack(array))
@@ -164,7 +178,7 @@ local function removeItemLevelsFromItemLink(link, linkIsArray)
 
     end
 
-	local numBonusIDs = tonumber(array[13])
+	local numBonusIDs = tonumber(array[13]) or 0
 
     local toBeRemoved = {}
 
@@ -174,7 +188,7 @@ local function removeItemLevelsFromItemLink(link, linkIsArray)
         local actualBonusID = findActualBonusID(bonusID)
         local bonusIDType = findBonusIDType(actualBonusID)
         
-        if(bonusIDType == 1 or bonusIDType == 42) then -- remove anything with base itemlevel, item level addition or subtraction
+        if(bonusIDType == 1 or bonusIDType == 42 or bonusIDType == 0) then -- remove anything with base itemlevel, item level addition or subtraction
             tinsert(toBeRemoved, i)
 
         end
@@ -197,17 +211,17 @@ local function removeItemLevelsFromItemLink(link, linkIsArray)
     return array
 end
 
-local function removeAndSetItemLinkItemLevels(link)
+local function removeAndSetItemLinkItemLevels(link, type)
     local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
     local array = {strsplit(":", linkOptions)}
 
-    local removedArray = removeItemLevelsFromItemLink(array, true)
+    array = removeItemLevelsFromItemLink(array, true)
 
     local _, _, ilvl = C_Item.GetDetailedItemLevelInfo(link)
 
-    local setArray = setItemLinkArrayToSpecificItemLevel(removedArray, ilvl, true)
+    array = setItemLinkArrayToSpecificItemLevel(array, ilvl, type, true)
 
-    return LinkUtil.FormatLink(linkType, displayText, unpack(setArray))
+    return LinkUtil.FormatLink(linkType, displayText, unpack(array))
 end
 
 local function replaceOptionsInItemLink(link, itemLevel)
@@ -358,7 +372,18 @@ local function initializeLootFrames(frame, elementData)
         frame.BasicInformation.Icon:SetTexture(elementData.icon)
         frame.BasicInformation.Itemlevel:SetText("[" .. elementData.itemlevel .. "]")
         frame.BasicInformation.Name:SetText(formattedText or elementData.name)
-        frame.BasicInformation.Instance:SetText(elementData.instanceName)
+
+        if(elementData.difficultyID) then
+            frame.BasicInformation.Difficulty:SetText("[" .. WrapTextInColorCode(
+            miog.DIFFICULTY_ID_INFO[elementData.difficultyID].shortName .. (elementData.rarity == 1 and " - Rare" or ""), miog.DIFFICULTY_ID_TO_COLOR[elementData.difficultyID]:GenerateHexColor()) .. "]")
+
+        else
+            frame.BasicInformation.Difficulty:SetText("")
+
+        end
+
+        frame.BasicInformation.Instance:SetText(elementData.instanceName or "")
+
 
         if(elementData.color) then
             frame.BasicInformation.Name:SetTextColor(elementData.color.r, elementData.color.g, elementData.color.b, 1)
@@ -375,10 +400,19 @@ local function initializeLootFrames(frame, elementData)
             GameTooltip:SetHyperlink(elementData.itemLink)
             GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-            local encounterName, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(elementData.encounterID)
-            local instanceName = EJ_GetInstanceInfo(journalInstanceID)
+            if(elementData.encounterID) then
+                local encounterName, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(elementData.encounterID)
+                local instanceName = EJ_GetInstanceInfo(journalInstanceID)
 
-            GameTooltip:AddLine("[" .. instanceName .. "]: " .. encounterName)
+                GameTooltip:AddLine("[" .. instanceName .. "]: " .. encounterName)
+
+            end
+
+            if(elementData.rarity > 0) then
+                GameTooltip:AddLine(elementData.rarity == 1 and EJ_ITEM_CATEGORY_VERY_RARE or EJ_ITEM_CATEGORY_EXTREMELY_RARE)
+
+            end
+
             GameTooltip:Show()
         end)
 
@@ -401,8 +435,35 @@ local function CustomFactory(factory, data)
     factory(template, initializeLootFrames)
 end
 
+local ProfessionsCustomerOrdersEvents =
+{
+    "PLAYER_MONEY",
+};
+
+local function professionsFrameOnShow()
+    local self = ProfessionsCustomerOrdersFrame
+    FrameUtil.RegisterFrameForEvents(self, ProfessionsCustomerOrdersEvents);
+
+    self:UpdateMoneyFrame();
+    self:SetPortraitToUnit("npc");
+    self:SelectMode(ProfessionsCustomerOrdersMode.Browse);
+
+    self.BrowseOrders:Init();
+
+    PlaySound(SOUNDKIT.AUCTION_WINDOW_OPEN);
+
+	self:ShowCurrentPage();
+	C_CraftingOrders.OpenCustomerCraftingOrders();
+end
+
 miog.loadUpgradeFinder = function()
     local upgradeFinder = miog.pveFrame2.TabFramesPanel.UpgradeFinder
+
+    upgradeFinder:SetScript("OnShow", function()
+        ProfessionsCustomerOrders_LoadUI();
+        professionsFrameOnShow()
+    
+    end)
 
     local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2)
     view:SetPadding(1, 1, 1, 1, 4)
@@ -410,6 +471,10 @@ miog.loadUpgradeFinder = function()
     view:SetElementFactory(CustomFactory)
     
     ScrollUtil.InitScrollBoxListWithScrollBar(upgradeFinder.ScrollBox, upgradeFinder.ScrollBar, view)
+    
+    ProfessionsCustomerOrders_LoadUI();
+    --ShowUIPanel(ProfessionsCustomerOrdersFrame);
+    --HideUIPanel(ProfessionsCustomerOrdersFrame);
 
     return upgradeFinder
 end
@@ -426,7 +491,7 @@ local function requestAllLootForMapID(info, filterID)
         EJ_SelectInstance(journalInstanceID)
 
         local isRaid = EJ_InstanceIsRaid()
-        EJ_SetDifficulty(isRaid and (not info.active and 14 or 16) or (not info.active and 8 or 23))
+        EJ_SetDifficulty(isRaid and (not info.active and 14 or 16) or (not info.active and 23 or 8))
 
         for i = 1, EJ_GetNumLoot(), 1 do
             local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
@@ -510,13 +575,9 @@ local function sortItems(k1, k2)
     return k1.itemlevel > k2.itemlevel
 end
 
-local function findApplicableItems(instanceList, itemLevelToBeat)
+local function findApplicablePVEItems(dataProvider, instanceList, itemLevelToBeat)
 	local specID = GetSpecializationInfo(GetSpecialization())
-
     local mainStat = miog.SPECIALIZATIONS[specID].stat
-
-    local dataProvider = CreateDataProvider()
-    dataProvider:SetSortComparator(sortItems)
 
     for instanceIndex, v in ipairs(instanceList) do
         EncounterJournal.instanceID = instanceID;
@@ -543,7 +604,7 @@ local function findApplicableItems(instanceList, itemLevelToBeat)
                         local itemLink
 
                         if(not isRaid and v.active) then
-                            local newLink = removeAndSetItemLinkItemLevels(itemInfo.link)
+                            local newLink = removeAndSetItemLinkItemLevels(itemInfo.link, "mythicPlus")
 
                             itemLink = newLink
 
@@ -562,7 +623,9 @@ local function findApplicableItems(instanceList, itemLevelToBeat)
                                 template = "MIOG_UpgradeFinderItemSingleTemplate",
                                 name = itemInfo.name,
                                 icon = itemInfo.icon,
+                                rarity = itemInfo.displayAsVeryRare and 1 or itemInfo.displayAsExtremelyRare and 2 or 0,
                                 encounterID = itemInfo.encounterID,
+                                difficultyID = difficultyID,
                                 itemLink = itemLink,
                                 isRaid = isRaid,
                                 instanceName = instanceName,
@@ -575,12 +638,137 @@ local function findApplicableItems(instanceList, itemLevelToBeat)
             end
         end
     end
-
-    miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
 end
 
-miog.updateItemList = function(filterID, itemlevel)
+local invSlotToFilterType = {
+    [0] = 14,
+    [1] = 0,
+    [2] = 1,
+    [3] = 2,
+    [4] = 14,
+    [5] = 4,
+    [6] = 8,
+    [7] = 7,
+    [8] = 9,
+    [9] = 5,
+    [10] = 6,
+    [11] = 12,
+    [12] = 13,
+    [13] = 10,
+    [14] = 11,
+    [15] = 10,
+    [16] = 3,
+    [17] = 10,
+    [18] = 14,
+    [19] = 14,
+    [20] = 14,
+    [21] = 10,
+    [22] = 10,
+    [23] = 11,
+    [24] = 14,
+    [25] = 10,
+    [26] = 10,
+
+}
+
+local function findApplicableCraftingItems(dataProvider, filterID, itemLevelToBeat)
+    if(ProfessionsCustomerOrdersFrame) then
+        local specID = GetSpecializationInfo(GetSpecialization())
+        local mainStat = miog.SPECIALIZATIONS[specID].stat
+
+        local categoryFilters = ProfessionsCustomerOrdersFrame.BrowseOrders.CategoryList:GetCategoryFilters();
+        local searchBoxText = ProfessionsCustomerOrdersFrame.BrowseOrders.SearchBar.SearchBox:GetText();
+        local searchText = searchBoxText ~= "" and searchBoxText or nil;
+        local filterDropdown = ProfessionsCustomerOrdersFrame.BrowseOrders.SearchBar.FilterDropdown;
+        local minLevel, maxLevel = filterDropdown.minLevel, filterDropdown.maxLevel;
+
+        local searchParams =
+        {
+            isFavoritesSearch = false,
+            -- All filters are ignored for favorites searches
+            categoryFilters = categoryFilters,
+            searchText = searchText,
+            minLevel = minLevel,
+            maxLevel = maxLevel,
+            uncollectedOnly = filterDropdown.filters[Enum.AuctionHouseFilter.UncollectedOnly],
+            usableOnly = true, --filterDropdown.filters[Enum.AuctionHouseFilter.UsableOnly],
+            upgradesOnly = filterDropdown.filters[Enum.AuctionHouseFilter.UpgradesOnly],
+            currentExpansionOnly = filterDropdown.filters[Enum.AuctionHouseFilter.CurrentExpansionOnly],
+            includePoor = filterDropdown.filters[Enum.AuctionHouseFilter.PoorQuality],
+            includeCommon = filterDropdown.filters[Enum.AuctionHouseFilter.CommonQuality],
+            includeUncommon = filterDropdown.filters[Enum.AuctionHouseFilter.UncommonQuality],
+            includeRare = filterDropdown.filters[Enum.AuctionHouseFilter.RareQuality],
+            includeEpic = filterDropdown.filters[Enum.AuctionHouseFilter.EpicQuality],
+            includeLegendary = filterDropdown.filters[Enum.AuctionHouseFilter.LegendaryQuality],
+            includeArtifact = filterDropdown.filters[Enum.AuctionHouseFilter.ArtifactQuality],
+        };
+
+        local searchResults = C_CraftingOrders.GetCustomerOptions(searchParams);
+
+        for k, v in pairs(searchResults.options) do
+            if(v.iLvlMax == 675) then
+                local item = Item:CreateFromItemID(v.itemID)
+
+                if(invSlotToFilterType[item:GetInventoryType()] == filterID) then
+                    local newLink = removeAndSetItemLinkItemLevels(item:GetItemLink(), "crafting")
+                    local statTable = C_Item.GetItemStats(newLink)
+                            
+                    if(statTable[mainStat] or hasNoMainStatOnIt(statTable)) then
+                        item = Item:CreateFromItemLink(newLink)
+
+                        --print(filterID, v.itemName, item:GetInventoryType(), item:GetInventoryTypeName(), C_Transmog.GetSlotForInventoryType(type))
+
+                        dataProvider:Insert({
+                            template = "MIOG_UpgradeFinderItemSingleTemplate",
+                            name = v.itemName,
+                            icon = item:GetItemIcon(),
+                            rarity = 0,
+                            encounterID = nil,
+                            difficultyID = nil,
+                            itemLink = newLink,
+                            isRaid = nil,
+                            instanceName = nil,
+                            itemlevel = item:GetCurrentItemLevel(),
+                            color = item:GetItemQualityColor()
+                        })
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function findItems(filterID, itemlevel)
     local instanceList = findAllRelevantMapIDs(filterID)
 
-    findApplicableItems(instanceList, itemlevel)
+    local dataProvider = CreateDataProvider()
+    dataProvider:SetSortComparator(sortItems)
+
+    findApplicablePVEItems(dataProvider, instanceList, itemlevel)
+    findApplicableCraftingItems(dataProvider, filterID, itemlevel)
+
+    miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
+
+    return dataProvider:GetSize()
+end
+
+miog.updateItemList = function(filterID, itemlevel, invSlotID)
+    local specID = GetSpecializationInfo(GetSpecialization())
+    local _, _, classID = UnitClass("player")
+
+    EJ_SetLootFilter(classID, specID);
+
+    local size = findItems(filterID, itemlevel)
+
+    if(size == 0 and (filterID == 10 or filterID == 11)) then
+        local wasMainBefore = filterID == 10
+        local newFilterID = wasMainBefore and 11 or 10
+        --local newInvSlotID = wasMainBefore and 17 or 16
+
+        --local item = Item:CreateFromEquipmentSlot(newInvSlotID)
+        --local newIlvl = item:GetCurrentItemLevel()
+
+        findItems(newFilterID, itemlevel)
+        
+    end
 end

@@ -263,8 +263,8 @@ miog.DIFFICULTY_ID_INFO[0] = {name = " ", shortName = " ", type="party"}
 miog.DUNGEON_DIFFICULTIES = {
 	DifficultyUtil.ID.DungeonNormal,
 	DifficultyUtil.ID.DungeonHeroic,
-	DifficultyUtil.ID.DungeonChallenge,
 	DifficultyUtil.ID.DungeonMythic,
+	DifficultyUtil.ID.DungeonChallenge,
 }
 
 miog.RAID_DIFFICULTIES = {

@@ -22,19 +22,26 @@
                     </Layer>
 
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Itemlevel" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="[LVL]" maxLines="1">
+                        <FontString parentKey="Itemlevel" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" />
                             </Anchors>
                         </FontString>
                         
-                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="ItemName" maxLines="1">
+                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Itemlevel" relativePoint="RIGHT" x="2" />
                             </Anchors>
                         </FontString>
                         
-                        <FontString parentKey="Instance" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="InstanceName" maxLines="1">
+                        <FontString parentKey="Difficulty" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="2" />
+                            </Anchors>
+                        </FontString>
+                        
+                        
+                        <FontString parentKey="Instance" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
                             <Anchors>
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
                             </Anchors>

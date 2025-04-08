@@ -21,7 +21,11 @@ local keyToFilterType = {
     ["NoFilter"] = 15,
 }
 
-function ItemUpgradeFinderMixin:GetFilterID()
+local invSlotToFilterType = {
+   -- ["HEAD"]
+}
+
+function ItemUpgradeFinderMixin:GetShortName()
     local offset = 0
     local name = self:GetName()
 
@@ -32,24 +36,26 @@ function ItemUpgradeFinderMixin:GetFilterID()
 
     local slotName = strsub(name, 10, strlen(name) - 4 - offset)
     
-	return keyToFilterType[slotName];
+    return slotName
+end
+
+function ItemUpgradeFinderMixin:GetFilterID()
+	return keyToFilterType[self:GetShortName()];
+
 end
 
 function ItemUpgradeFinderMixin:OnClick()
     if(self.filterID) then
         local item = Item:CreateFromEquipmentSlot(self:GetID())
-        local linkType, linkOptions, displayText = LinkUtil.ExtractLink(item:GetItemLink())
-        local itemlevel = item:GetCurrentItemLevel()
+        local itemlevel = item:GetCurrentItemLevel() or 0
 
-        --miog.removeItemLevelBonusIDsFromLink(item:GetItemLink())
+        miog.updateItemList(self.filterID, itemlevel, self.invSlotName)
 
-        --miog.printAllBonusIDs(item:GetItemLink())
-
-        miog.updateItemList(self.filterID, itemlevel)
     end
 end
 
 function ItemUpgradeFinderMixin:OnLoad()
     PaperDollItemSlotButton_OnLoad(self)
     self.filterID = self:GetFilterID()
+    self.invSlotName = strupper(self:GetShortName()) .. "SLOT"
 end
