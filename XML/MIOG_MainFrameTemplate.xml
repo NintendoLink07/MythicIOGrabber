@@ -440,7 +440,7 @@
 
                                         <Layers>
                                             <Layer level="BACKGROUND">
-                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/dungeonrewardsbackground.png" setAllPoints="true" />
+                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/dungeonrewardsbackground.png" setAllPoints="true" />
                                             </Layer>
 
                                             <Layer level="OVERLAY">
@@ -471,7 +471,7 @@
 
                                         <Layers>
                                             <Layer level="BACKGROUND">
-                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/raidrewardsbackground.png" setAllPoints="true" />
+                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/raidrewardsbackground.png" setAllPoints="true" />
                                             </Layer>
 
                                             <Layer level="OVERLAY">
@@ -502,7 +502,7 @@
 
                                         <Layers>
                                             <Layer level="BACKGROUND">
-                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/pvprewardsbackground.png" setAllPoints="true" />
+                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/worldrewardsbackground.png" setAllPoints="true" />
                                             </Layer>
 
                                             <Layer level="OVERLAY">

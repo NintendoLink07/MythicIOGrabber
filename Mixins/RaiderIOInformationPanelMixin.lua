@@ -121,7 +121,7 @@ end
 function RaiderIOInformationPanelMixin:OnLoadRaid()
     local raidCounter = 1
 
-    local lastID
+    local firstID
 
     for k, data in ipairs(self.raidInfo) do
         local raidFrame = self.Raids["Raid" .. raidCounter]
@@ -131,14 +131,17 @@ function RaiderIOInformationPanelMixin:OnLoadRaid()
 
             raidCounter = raidCounter + 1
 
-            lastID = data.mapID
+            if(k == 1) then
+                firstID = data.mapID
+
+            end
 
             self.raidFrames[data.mapID] = raidFrame
         end
     end
 
-    if(self.Raids["Raid" .. raidCounter] and lastID) then
-        self:SetupRaidFrame(self.Raids["Raid" .. raidCounter], lastID, true) --main's raid frame
+    if(self.Raids["Raid" .. raidCounter] and firstID) then
+        self:SetupRaidFrame(self.Raids["Raid" .. raidCounter], firstID, true) --main's raid frame
 
     end
 end
@@ -301,8 +304,7 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
 
 	    for k, data in ipairs(self.raidInfo) do
             for nmd = 1, 2, 1 do
-                --local raidFrame = self.Raids["Raid" .. raidCounter]
-                local raidFrame = self.raidFrames[data.mapID]
+                local raidFrame = nmd == 1 and self.raidFrames[data.mapID] or self.Raids["Raid3"]
 
                 if(raidFrame) then
                     local raidHeaderFrame = raidFrame.Header

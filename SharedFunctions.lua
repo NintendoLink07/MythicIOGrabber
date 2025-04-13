@@ -245,8 +245,9 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)) do
         local activities = C_LFGList.GetAvailableActivities(3, v)
         local activityID = activities[#activities]
+		local name, order = C_LFGList.GetActivityGroupInfo(v)
 
-        tinsert(raidActivities, justIDs and activityID or {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+        tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
     end
 
 	if(sort and #raidActivities > 1) then
@@ -257,7 +258,12 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 			
 		else
 			table.sort(raidActivities, function(k1, k2)
-				return k1.activityID > k2.activityID
+				if(k1.order == k2.order) then
+					return k1.activityID > k2.activityID
+
+				end
+
+				return k1.order < k2.order
 			end)
 
 		end
@@ -265,6 +271,8 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 
 	return raidActivities
 end
+
+MIOG_GETRAIDS = miog.retrieveCurrentRaidActivityIDs
 
 miog.rpairs = function(t)
 	return function(t, i)

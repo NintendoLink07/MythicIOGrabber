@@ -47,9 +47,8 @@ end
 function ItemUpgradeFinderMixin:OnClick()
     if(self.filterID) then
         local item = Item:CreateFromEquipmentSlot(self:GetID())
-        local itemlevel = item:GetCurrentItemLevel() or 0
 
-        miog.updateItemList(self.filterID, itemlevel, self.invSlotName)
+        miog.updateItemList(self.filterID, item, self.invSlotName)
 
     end
 end

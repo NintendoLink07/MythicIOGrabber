@@ -2,6 +2,7 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ClassPanel" inherits="BackdropTemplate" virtual="true">
         <Size y="32" />
+
         <Frames>
             <Frame parentKey="Container" inherits="HorizontalLayoutFrame">
                 <KeyValues>
@@ -12,21 +13,6 @@
                     <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
                 </Anchors>
             </Frame>
-
-            <StatusBar parentKey="InspectStatus" inherits="BackdropTemplate" orientation="HORIZONTAL" frameStrata="DIALOG" hidden="true">
-                <Size y="4" />
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Container" relativePoint="BOTTOMLEFT" y="-4"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Container" relativePoint="BOTTOMRIGHT" y="-4"/>
-                </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-                        self:SetMinMaxValues(0, 40)
-                        self:SetValue(0)
-                    </OnLoad>
-                </Scripts>
-            </StatusBar>
                         
             <Frame parentKey="LoadingSpinner" inherits="LoadingSpinnerTemplate" hidden="true">
                 <Size x="27" y="27" />
@@ -38,10 +24,9 @@
 
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="StatusString" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
-                    <Size x="145" y="27" />
+                <FontString parentKey="Status" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="" wordwrap="true">
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.LoadingSpinner" relativePoint="LEFT" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LoadingSpinner" relativePoint="BOTTOMLEFT" x="-2"/>
                     </Anchors>
 
                     <Scripts>  
@@ -49,6 +34,18 @@
                             GameTooltip:Hide()
                         </OnLeave>
                     </Scripts>
+                </FontString>
+
+                <FontString parentKey="InspectionName" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativeKey="$parent.Status" relativePoint="TOP" y="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="GroupComp" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Status" relativePoint="LEFT" x="-24"/>
+                    </Anchors>
                 </FontString>
             </Layer>
         </Layers>

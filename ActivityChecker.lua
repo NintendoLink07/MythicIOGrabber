@@ -456,20 +456,35 @@ local function refreshDungeonList()
 			typeID = typeID,
 			subtypeID = subtypeID,
 			dungeonID = dungeonID,
-			icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon 
-			or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon 
+			icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon
+			or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon
 			or fileID
 			or miog.EXPANSION_INFO[expLevel][3]
 			or nil,
 			expansionLevel = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel or miog.LFG_DUNGEONS_INFO[dungeonID] and miog.LFG_DUNGEONS_INFO[dungeonID].expansionLevel or expLevel,
 		})
+
+		
 	end
 
 	for k, v in ipairs(indicesInfo) do
+		local isLFR = k == 6
+
 		table.sort(indicesList[k], function(k1, k2)
 			if(k1.expansionLevel == k2.expansionLevel) then
 				if(k1.typeID == k2.typeID) then
-					return k1.name < k2.name
+					if(not isLFR) then
+						return k1.name < k2.name
+
+					else
+						if(k1.name2 == k2.name2) then
+							return k1.dungeonID < k2.dungeonID
+							
+						end
+
+						return k1.name2 < k2.name2
+
+					end
 				end
 	
 				return k1.typeID > k2.typeID

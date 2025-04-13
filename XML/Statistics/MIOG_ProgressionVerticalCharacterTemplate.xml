@@ -86,7 +86,7 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="MPlusRating" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" x="-2" y="-26"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Class" relativePoint="BOTTOMLEFT" x="-2" y="-30"/>
                     </Anchors>
                 </FontString>
 
@@ -121,12 +121,12 @@
                 <BarTexture atlas="ui-castingbar-filling-standard" />
                 <Size x="90" y="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Itemlevel" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Itemlevel" relativePoint="BOTTOMLEFT" y="-2"/>
                 </Anchors>
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/dungeonrewardsbackground.png" setAllPoints="true" />
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/dungeonrewardsbackground.png" setAllPoints="true" />
                     </Layer>
 
                     <Layer level="OVERLAY">
@@ -154,7 +154,7 @@
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/raidrewardsbackground.png" setAllPoints="true" />
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/raidrewardsbackground.png" setAllPoints="true" />
                     </Layer>
 
                     <Layer level="OVERLAY">
@@ -182,7 +182,7 @@
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/pvprewardsbackground.png" setAllPoints="true" />
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/worldrewardsbackground.png" setAllPoints="true" />
                     </Layer>
 
                     <Layer level="OVERLAY">
@@ -210,7 +210,7 @@
 
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/horizontal/pvprewardsbackground.png" setAllPoints="true" />
+                        <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/pvprewardsbackground.png" setAllPoints="true" />
                     </Layer>
 
                     <Layer level="OVERLAY">

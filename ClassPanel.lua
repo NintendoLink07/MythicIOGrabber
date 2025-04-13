@@ -55,6 +55,7 @@ local function updateGroupClassData()
 			end
 		end
 
+		miog.ClassPanel.GroupComp:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
 
 		if(miog.GroupManager) then
@@ -161,13 +162,13 @@ miog.createClassPanel = function()
 
     container:MarkDirty()
 
-    classPanel.StatusString:SetText("\n(1/1/" .. GetNumGroupMembers() .. ")")
-    classPanel.StatusString:SetScript("OnEnter", function(self)
+    classPanel.Status:SetText("\n(1/1/" .. GetNumGroupMembers() .. ")")
+    classPanel.Status:SetScript("OnEnter", function(self)
         local specs, members = miog.countPlayersWithData()
 
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(specs .. " players with spec data.")
-        GameTooltip:AddLine(members .. " group members that are inspectable (not offline or some weird faction stuff interaction).")
+        GameTooltip:AddLine(members .. " group members that are inspectable (not offline or some weird faction interaction).")
         GameTooltip:AddLine(GetNumGroupMembers() .. " total group members.")
 
         if(self.inspectList) then

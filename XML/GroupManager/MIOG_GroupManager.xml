@@ -276,8 +276,8 @@
 
                             <Frame parentKey="Raid3" inherits="MIOG_GroupManagerTierTemplateNew" hidden="true">
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.Raid3" relativePoint="BOTTOMLEFT" y="-3"/>
-                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Raid3" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Raid2" relativePoint="BOTTOMLEFT" y="-3"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.Raid2" relativePoint="BOTTOMRIGHT" y="-3"/>
                                 </Anchors>
                             </Frame>
                         </Frames>

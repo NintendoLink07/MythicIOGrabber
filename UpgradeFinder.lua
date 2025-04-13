@@ -60,20 +60,6 @@ local function findBonusIDType(bonusID)
     end
 end
 
---[[
-
-]]
-
-local function findNextBaseItemLevelBonusID(bonusID, ascending)
-    for k, v in pairs(miog.RAW["ItemBonus"]) do
-        if(v[1] == bonusID) then
-            return v[7]
-        end
-    end
-end
-
-local alreadyIn = {}
-
 local function printAllBonusIDs(link)
     local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
     local array = {strsplit(":", linkOptions)}
@@ -95,9 +81,23 @@ miog.printAllBonusIDs = printAllBonusIDs
 
 
 --[[
+    exp 1/8 11942
+    exp 8/8 11949
+
+    adv 1/8 11950
+    adv 8/8 11957
+
+    vet 1/8 11969
+    vet 8/8 11976
+
+    champ 1/8 11977
+    champ 8/8 11984
 
     hero 1/6 11985
     hero 6/6 11990
+
+    myth 1/6 11991
+    myth 6/6 11996
 
 ]]
 
@@ -124,11 +124,6 @@ local function addBonusIDsToArray(array, ...)
     end
     
 end
-
---[[
-    577, 544, 610
-
-]]
 
 local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray)
     local array
@@ -165,6 +160,44 @@ local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray
     return array
 end
 
+
+local tracks = {
+    {name = "Explorer", range = {11942, 11949}},
+    {name = "Adventurer", range = {11950, 11957}},
+    {name = "Veteran", range = {11969, 11976}},
+    {name = "Champion", range = {11977, 11984}},
+    {name = "Hero", range = {11985, 11990}},
+    {name = "Myth", range = {11991, 11996}},
+}
+
+local function findMaxItemLevelOfTrack(trackNameOrIndex)
+    for k, v in ipairs(tracks) do
+        if(trackNameOrIndex == k or trackNameOrIndex == v.name) then
+            return v.range[2] - v.range[1] + 1
+
+        end
+    end
+end
+
+local function findTrackTypeOfItemLink(link)
+    local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
+    local array = {strsplit(":", linkOptions)}
+
+    local numBonusIDs = tonumber(array[13]) or 0
+
+    for i = 14, 13 + numBonusIDs, 1 do
+        local bonusID = tonumber(array[i])
+
+        for k = 1, #tracks, 1 do
+            local trackInfo = tracks[k]
+
+            if(bonusID >= trackInfo.range[1] and bonusID <= trackInfo.range[2]) then
+                return trackInfo.name
+
+            end
+        end
+    end
+end
 
 local function removeItemLevelsFromItemLink(link, linkIsArray)
     local array, linkType, linkOptions, displayText
@@ -224,126 +257,6 @@ local function removeAndSetItemLinkItemLevels(link, type)
     return LinkUtil.FormatLink(linkType, displayText, unpack(array))
 end
 
-local function replaceOptionsInItemLink(link, itemLevel)
-    local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
-    local array = {strsplit(":", linkOptions)}
-
-    local index = 12
-    --array[index] = tbl[1]
-
-    index = index + 1
-
-    local difference = 655 - 437
-
-	local numBonusIDs = tonumber(array[index])
-
-    array[index] = numBonusIDs and tostring(numBonusIDs + 1) or "0"
-end
-
-local function replaceModInItemLink(link, contentTuningID)
-	local xd, linkOptions = LinkUtil.ExtractLink(link)
-	local item = {strsplit(":", linkOptions)}
-
-	local idx = 13
-	local numBonusIDs = tonumber(item[idx])
-	idx = idx + (numBonusIDs or 0) + 1
-
-    local toReplace = ""
-    local replacementString = ""
-    
-    local numModifiers = tonumber(item[idx])
-	if numModifiers then
-		for i = 1, numModifiers do
-			local offset = i*2
-
-            toReplace = item[idx+offset-1] .. ":" .. item[idx+offset]
-            replacementString = item[idx+offset-1] .. ":" .. contentTuningID
-		end
-		idx = idx + numModifiers*2 + 1
-	else
-		idx = idx + 1
-	end
-
-    local string, count = string.gsub(link, toReplace, replacementString)
-
-    return string
-end
-
-local function ParseItemLink(link)
-	local _, linkOptions = LinkUtil.ExtractLink(link)
-	local item = {strsplit(":", linkOptions)}
-	local t = {}
-
-	for k, v in pairs(simpleTypes) do
-		t[k] = tonumber(item[v])
-	end
-
-	for i = 1, 4 do
-		local gem = tonumber(item[i+2])
-		if gem then
-			t.gems = t.gems or {}
-			t.gems[i] = gem
-		end
-	end
-
-	local idx = 13
-	local numBonusIDs = tonumber(item[idx])
-	if numBonusIDs then
-		t.bonusIDs = {}
-		for i = 1, numBonusIDs do
-			t.bonusIDs[i] = tonumber(item[idx+i])
-		end
-	end
-	idx = idx + (numBonusIDs or 0) + 1
-
-	local numModifiers = tonumber(item[idx])
-	if numModifiers then
-		t.modifiers = {}
-		for i = 1, numModifiers do
-			local offset = i*2
-
-            local id1 = tonumber(item[idx+offset-1])
-            local id2 = tonumber(item[idx+offset])
-
-			t.modifiers[i] = {
-				{id = id1, enum = getEnumKey(id1)},
-				{id = id2, enum = getEnumKey(id2)},
-			}
-            
-            --[[local id = tonumber(item[idx+offset-1])
-            t.modifiers[i] = {
-                id = id,
-                enum = getEnumKey(id)
-            }]]
-		end
-		idx = idx + numModifiers*2 + 1
-	else
-		idx = idx + 1
-	end
-
-	for i = 1, 3 do
-		local relicNumBonusIDs = tonumber(item[idx])
-		if relicNumBonusIDs then
-			t.relicBonusIDs = t.relicBonusIDs or {}
-			t.relicBonusIDs[i] = {}
-			for j = 1, relicNumBonusIDs do
-				t.relicBonusIDs[i][j] = tonumber(item[idx+j])
-			end
-		end
-		idx = idx + (relicNumBonusIDs or 0) + 1
-	end
-
-	local crafterGUID = item[idx]
-	if #crafterGUID > 0 then
-		t.crafterGUID = crafterGUID
-	end
-	idx = idx + 1
-
-	t.extraEnchantID = tonumber(item[idx])
-
-	return t
-end
-
 local function initializeLootFrames(frame, elementData)
     if(elementData.template == "MIOG_UpgradeFinderItemSingleTemplate") then
         local formattedText
@@ -370,7 +283,15 @@ local function initializeLootFrames(frame, elementData)
         end
 
         frame.BasicInformation.Icon:SetTexture(elementData.icon)
-        frame.BasicInformation.Itemlevel:SetText("[" .. elementData.itemlevel .. "]")
+
+        if(elementData.itemlevel) then
+            frame.BasicInformation.Itemlevel:SetText("[" .. elementData.itemlevel .. "]")
+
+        else
+            frame.BasicInformation.Itemlevel:SetText("")
+
+        end
+
         frame.BasicInformation.Name:SetText(formattedText or elementData.name)
 
         if(elementData.difficultyID) then
@@ -395,26 +316,31 @@ local function initializeLootFrames(frame, elementData)
 
         --frame.itemLink = elementData.link
         
-        frame:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetHyperlink(elementData.itemLink)
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        if(elementData.itemLink) then 
+            frame:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetHyperlink(elementData.itemLink)
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-            if(elementData.encounterID) then
-                local encounterName, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(elementData.encounterID)
-                local instanceName = EJ_GetInstanceInfo(journalInstanceID)
+                if(elementData.encounterID) then
+                    local encounterName, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(elementData.encounterID)
+                    local instanceName = EJ_GetInstanceInfo(journalInstanceID)
 
-                GameTooltip:AddLine("[" .. instanceName .. "]: " .. encounterName)
+                    GameTooltip:AddLine("[" .. instanceName .. "]: " .. encounterName)
 
-            end
+                end
 
-            if(elementData.rarity > 0) then
-                GameTooltip:AddLine(elementData.rarity == 1 and EJ_ITEM_CATEGORY_VERY_RARE or EJ_ITEM_CATEGORY_EXTREMELY_RARE)
+                if(elementData.rarity > 0) then
+                    GameTooltip:AddLine(elementData.rarity == 1 and EJ_ITEM_CATEGORY_VERY_RARE or EJ_ITEM_CATEGORY_EXTREMELY_RARE)
 
-            end
+                end
 
-            GameTooltip:Show()
-        end)
+                GameTooltip:Show()
+            end)
+        else
+            frame:SetScript("OnEnter", nil)
+
+        end
 
     else
         frame.Name:SetText(elementData.name)
@@ -575,11 +501,12 @@ local function sortItems(k1, k2)
     return k1.itemlevel > k2.itemlevel
 end
 
-local function findApplicablePVEItems(dataProvider, instanceList, itemLevelToBeat)
+local function findApplicablePVEItems(dataProvider, instanceList, item)
 	local specID = GetSpecializationInfo(GetSpecialization())
     local mainStat = miog.SPECIALIZATIONS[specID].stat
+    local itemLevelToBeat = item:GetCurrentItemLevel()
 
-    for instanceIndex, v in ipairs(instanceList) do
+    for _, v in ipairs(instanceList) do
         EncounterJournal.instanceID = instanceID;
         EncounterJournal.encounterID = nil;
 
@@ -613,12 +540,19 @@ local function findApplicablePVEItems(dataProvider, instanceList, itemLevelToBea
 
                         end
 
-                        local item = Item:CreateFromItemLink(itemLink)
-                        local itemLevel = item:GetCurrentItemLevel()
+                        local newItem = Item:CreateFromItemLink(itemLink)
+                        local itemLevel = newItem:GetCurrentItemLevel()
 
                         local statTable = C_Item.GetItemStats(itemInfo.link)
+
+                        local trackType1 = findTrackTypeOfItemLink(itemLink)
+                        local trackType2 = findTrackTypeOfItemLink(item:GetItemLink())
+
+                        local isOverIlvl = itemLevel >= itemLevelToBeat
+                        local isOverIlvlRaid = isRaid and isOverIlvl
+                        local isOverIlvlMPlus = not isRaid and (isOverIlvl or (v.active and trackType1 and trackType2 and (trackType1 == trackType2 or findMaxItemLevelOfTrack(trackType1) >= itemLevelToBeat)))
                         
-                        if(itemLevel >= itemLevelToBeat and (statTable[mainStat] or hasNoMainStatOnIt(statTable))) then
+                        if(isOverIlvlRaid or isOverIlvlMPlus and (statTable[mainStat] or hasNoMainStatOnIt(statTable))) then
                             dataProvider:Insert({
                                 template = "MIOG_UpgradeFinderItemSingleTemplate",
                                 name = itemInfo.name,
@@ -630,7 +564,7 @@ local function findApplicablePVEItems(dataProvider, instanceList, itemLevelToBea
                                 isRaid = isRaid,
                                 instanceName = instanceName,
                                 itemlevel = itemLevel,
-                                color = item:GetItemQualityColor()
+                                color = newItem:GetItemQualityColor()
                             })
                         end
                     end
@@ -716,21 +650,21 @@ local function findApplicableCraftingItems(dataProvider, filterID, itemLevelToBe
                     if(statTable[mainStat] or hasNoMainStatOnIt(statTable)) then
                         item = Item:CreateFromItemLink(newLink)
 
-                        --print(filterID, v.itemName, item:GetInventoryType(), item:GetInventoryTypeName(), C_Transmog.GetSlotForInventoryType(type))
-
-                        dataProvider:Insert({
-                            template = "MIOG_UpgradeFinderItemSingleTemplate",
-                            name = v.itemName,
-                            icon = item:GetItemIcon(),
-                            rarity = 0,
-                            encounterID = nil,
-                            difficultyID = nil,
-                            itemLink = newLink,
-                            isRaid = nil,
-                            instanceName = nil,
-                            itemlevel = item:GetCurrentItemLevel(),
-                            color = item:GetItemQualityColor()
-                        })
+                        if(item:GetCurrentItemLevel() >= itemLevelToBeat) then
+                            dataProvider:Insert({
+                                template = "MIOG_UpgradeFinderItemSingleTemplate",
+                                name = v.itemName,
+                                icon = item:GetItemIcon(),
+                                rarity = 0,
+                                encounterID = nil,
+                                difficultyID = nil,
+                                itemLink = newLink,
+                                isRaid = nil,
+                                instanceName = "Crafting",
+                                itemlevel = item:GetCurrentItemLevel(),
+                                color = item:GetItemQualityColor()
+                            })
+                        end
                     end
                 end
             end
@@ -738,13 +672,17 @@ local function findApplicableCraftingItems(dataProvider, filterID, itemLevelToBe
     end
 end
 
-local function findItems(filterID, itemlevel)
+local function findItems(filterID, item)
     local instanceList = findAllRelevantMapIDs(filterID)
 
     local dataProvider = CreateDataProvider()
     dataProvider:SetSortComparator(sortItems)
 
-    findApplicablePVEItems(dataProvider, instanceList, itemlevel)
+    local itemlevel = item:GetCurrentItemLevel() or 0
+
+    findApplicablePVEItems(dataProvider, instanceList, item)
+
+
     findApplicableCraftingItems(dataProvider, filterID, itemlevel)
 
     miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
@@ -752,13 +690,24 @@ local function findItems(filterID, itemlevel)
     return dataProvider:GetSize()
 end
 
-miog.updateItemList = function(filterID, itemlevel, invSlotID)
+local function showNothingFoundMessage()
+    local dataProvider = CreateDataProvider()
+    dataProvider:SetSortComparator(sortItems)
+    dataProvider:Insert({
+        template = "MIOG_UpgradeFinderItemSingleTemplate",
+        name = "No item upgrades found for this slot.",
+        rarity = 0,
+    })
+    miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
+end
+
+miog.updateItemList = function(filterID, item, invSlotID)
     local specID = GetSpecializationInfo(GetSpecialization())
     local _, _, classID = UnitClass("player")
 
     EJ_SetLootFilter(classID, specID);
 
-    local size = findItems(filterID, itemlevel)
+    local size = findItems(filterID, item)
 
     if(size == 0 and (filterID == 10 or filterID == 11)) then
         local wasMainBefore = filterID == 10
@@ -768,7 +717,12 @@ miog.updateItemList = function(filterID, itemlevel, invSlotID)
         --local item = Item:CreateFromEquipmentSlot(newInvSlotID)
         --local newIlvl = item:GetCurrentItemLevel()
 
-        findItems(newFilterID, itemlevel)
+        size = findItems(newFilterID, item)
         
+    end
+
+    if(size == 0) then
+        showNothingFoundMessage()
+
     end
 end

@@ -1,38 +1,32 @@
-## [3.2.9](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.2.9) - 2025-03-26
+## [3.3.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.3.0) - 2025-04-13
 
 ### Added
 
-- [Progress] Solo Arena and Solo BG have been added to the PVP progress panel.
+- [UpgradeFinder] has been implemented, accessable via the new tab at the bottom of the mainframe!
+Find upgrades (itemlevel only) by clicking on the item slot you want to find upgrades for.
+Shows the icon, itemlevel, name, difficulty and where to find it.
+Currently world bosses, raid and M+ are supported, other sources like crafting are getting implemented with the next update.
 
-- [GroupManager] Leader, main assist, assist and main tank icons are now shown in the standard group list on the left side of the ready check status.
+- [Progress] All activities in the panels can now be hidden/shown via the dropdown menu in the topleft.
+This saves between reloads/relogs.
 
-### Changed
-
-- [Gearing] The gearing table has been updated, individual columns can now be enabled/disabled.
-Cells now have a background that distinguishes them more from the background.
-Gearing item level data has been corrected and bountiful delves and enchanted weathered crests have been added to the table.
-Gearing data item level calculation has been improved and simplified for upcoming season data.
-
-- [ClassPanel] The class panel has been slightly redesigned.
-Classes that aren't in your group have their icon reduced in size.
-The number font size in the class and the spec frames has been increased.
-
-- [Progress] The tier icon that indicates the next tier for the character is now only being shown if the character has atleast a single rating point.
+- [Progress] A new background has been added for both the [MainFrame] and the [Progress] frame world vault background.
 
 ### Fixed
 
-- [Progress] The spec icon of characters on the overview page now gets correctly updated when switching specs.
+- [Progress] Hovering over the M+ keylevels won't cause a tooltip error anymore.
 
-- [GroupManager] There should be no more system messages when players join or leave the group and a atleast one player in your group is offline.
+- [GroupManager] The indepth inspection panel won't overwrite your chars data with your mains data.
 
-- An issue has been resolved trying to request bnet account info before the data was loaded.
+- [GroupManager] The indepth inspection panel will now correctly use the newest raid id while checking your main's data.
 
-- A error message is shown when you try to requeue for any PVP queue (since Blizzard doesn't allow queueing up for those queues with just 1 click and without their PVP dropdown frames).
+- [MainFrame] The raid finder queues are now sorted first by raid name and then by their wing index.
 
-- The event category in the queue dropdown now gets hidden if there are no active event queue available.
+- Hiding the mainframe via the micro menu button or the 'i' (default) hotkey while having the PVP queue selection open won't show the default blizzard reward icons anymore.
 
-### Upcoming
+### Known issues
 
-- [Progress] PVP conquest progress bars added to the overview characters.
-
-- [Progress] Hiding specific activities
+- [UpgradeFinder] Depending on the class and spec not all loot gets fully loaded after clicking a slot.
+You currently have to re-click the slot one more time.
+After that all slots should load all the items right away.
+This issue is fixed in v3.3.1.
