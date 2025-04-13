@@ -180,20 +180,22 @@ local function findMaxItemLevelOfTrack(trackNameOrIndex)
 end
 
 local function findTrackTypeOfItemLink(link)
-    local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
-    local array = {strsplit(":", linkOptions)}
+    if(link) then
+        local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
+        local array = {strsplit(":", linkOptions)}
 
-    local numBonusIDs = tonumber(array[13]) or 0
+        local numBonusIDs = tonumber(array[13]) or 0
 
-    for i = 14, 13 + numBonusIDs, 1 do
-        local bonusID = tonumber(array[i])
+        for i = 14, 13 + numBonusIDs, 1 do
+            local bonusID = tonumber(array[i])
 
-        for k = 1, #tracks, 1 do
-            local trackInfo = tracks[k]
+            for k = 1, #tracks, 1 do
+                local trackInfo = tracks[k]
 
-            if(bonusID >= trackInfo.range[1] and bonusID <= trackInfo.range[2]) then
-                return trackInfo.name
+                if(bonusID >= trackInfo.range[1] and bonusID <= trackInfo.range[2]) then
+                    return trackInfo.name
 
+                end
             end
         end
     end
@@ -501,10 +503,35 @@ local function sortItems(k1, k2)
     return k1.itemlevel > k2.itemlevel
 end
 
-local function findApplicablePVEItems(dataProvider, instanceList, item)
+local function findMainHandItemLevel()
+    local mainHandItem = Item:CreateFromEquipmentSlot(16)
+    
+    if(mainHandItem:GetInventoryType() == 17) then --TWOHANDED
+        return mainHandItem:GetCurrentItemLevel()
+
+    elseif(mainHandItem:GetInventoryType() == 13) then --ONEHANDED
+        return 0
+
+    else
+        return 0
+
+    end
+end
+
+local function findApplicablePVEItems(dataProvider, instanceList, item, filterID)
 	local specID = GetSpecializationInfo(GetSpecialization())
     local mainStat = miog.SPECIALIZATIONS[specID].stat
     local itemLevelToBeat = item:GetCurrentItemLevel()
+
+    if(not itemLevelToBeat) then
+        if(filterID == 11) then
+            itemLevelToBeat = findMainHandItemLevel()
+
+        else
+            itemLevelToBeat = 0
+
+        end
+    end
 
     for _, v in ipairs(instanceList) do
         EncounterJournal.instanceID = instanceID;
@@ -680,9 +707,7 @@ local function findItems(filterID, item)
 
     local itemlevel = item:GetCurrentItemLevel() or 0
 
-    findApplicablePVEItems(dataProvider, instanceList, item)
-
-
+    findApplicablePVEItems(dataProvider, instanceList, item, filterID)
     findApplicableCraftingItems(dataProvider, filterID, itemlevel)
 
     miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
@@ -701,7 +726,7 @@ local function showNothingFoundMessage()
     miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
 end
 
-miog.updateItemList = function(filterID, item, invSlotID)
+miog.updateItemList = function(filterID, item)
     local specID = GetSpecializationInfo(GetSpecialization())
     local _, _, classID = UnitClass("player")
 
@@ -717,7 +742,7 @@ miog.updateItemList = function(filterID, item, invSlotID)
         --local item = Item:CreateFromEquipmentSlot(newInvSlotID)
         --local newIlvl = item:GetCurrentItemLevel()
 
-        size = findItems(newFilterID, item)
+        size = findItems(newFilterID, item, invSlotID)
         
     end
 

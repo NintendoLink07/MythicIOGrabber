@@ -1,4 +1,14 @@
-## [3.3.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.3.0) - 2025-04-13
+## [3.3.0a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.3.0a) - 2025-04-13
+
+### Fixed
+
+- [UpgradeFinder] Clicking on an empty slot won't create an error anymore.
+
+- [UpgradeFinder] Clicking on an offhand slot while you have a mainhand equipped will now show
+
+
+
+## [3.3.0] - 2025-04-13
 
 ### Added
 
@@ -35,4 +45,4 @@ This saves between reloads/relogs.
 - [UpgradeFinder] Depending on the class and spec not all loot gets fully loaded after clicking a slot.
 You currently have to re-click the slot one more time.
 After that all slots should load all the items right away.
-This issue is fixed in v3.3.1.
+This issue is fixed in v3.3.2.
