@@ -1498,6 +1498,14 @@ function ProgressionTabMixin:CreateCharacterTables(guid, v)
 	characterStats.spec = v.spec or characterStats.spec
 	characterStats.classFile = v.classFile or characterStats.classFile
 
+	if(guid == UnitGUID("player")) then
+		characterStats.ilvl = select(2, GetAverageItemLevel()) or v.ilvl
+
+	else
+		characterStats.ilvl = characterStats.ilvl or 0
+
+	end
+
     createProgressTables(characterStats)
 end
 
@@ -1508,13 +1516,6 @@ function ProgressionTabMixin:UpdateAllData()
         for guid, v in pairs(accountCharacters) do
             self:CreateCharacterTables(guid, v)
 
-            if(guid == UnitGUID("player")) then
-                v.ilvl = select(2, GetAverageItemLevel()) or v.ilvl
-        
-            else
-                v.ilvl = v.ilvl or 0
-        
-            end
         end
 
         self:AddWeeklyProgress()

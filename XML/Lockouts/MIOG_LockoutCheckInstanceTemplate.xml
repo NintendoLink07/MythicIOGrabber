@@ -8,9 +8,6 @@
 
         <Layers>
             <Layer level="ARTWORK">
-            </Layer>
-
-            <Layer level="OVERLAY">
                 <Texture parentKey="Icon">
                     <Size x="16" y="16" />
 
@@ -31,7 +28,10 @@
                         <Anchor point="RIGHT" relativeKey="$parent.Difficulty" relativePoint="LEFT" x="-3" />
                     </Anchors>
                 </FontString>
+            </Layer>
 
+            <Layer level="OVERLAY">
+                
                 <Texture parentKey="Checkmark" atlas="AlliedRace-UnlockingFrame-Checkmark" hidden="true">
                     <Size x="16" y="16" />
 

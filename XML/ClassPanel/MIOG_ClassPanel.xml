@@ -46,6 +46,31 @@
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.Status" relativePoint="LEFT" x="-24"/>
                     </Anchors>
+
+                    <Scripts>  
+                        <OnEnter>
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetText("Group compositition:")
+
+                            if(self.tanks) then
+                                GameTooltip:AddLine(self.tanks .. " Tanks")
+
+                            end
+
+                            if(self.healers) then
+                                GameTooltip:AddLine(self.healers .. " Healers")
+
+                            end
+
+                            if(self.damager) then
+                                GameTooltip:AddLine(self.damager .. " DPS")
+
+                            end
+
+                            GameTooltip:Show()
+                        </OnEnter>
+                        <OnLeave function = "GameTooltip_Hide"/>
+                    </Scripts>
                 </FontString>
             </Layer>
         </Layers>

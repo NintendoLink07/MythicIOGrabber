@@ -55,13 +55,21 @@ local function updateGroupClassData()
 			end
 		end
 
-		miog.ClassPanel.GroupComp:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
-		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"])
+        local roleCountTank, roleCountHealer, roleCountDamager = roleCount["TANK"], roleCount["HEALER"], roleCount["DAMAGER"]
+        local roleCountString = roleCountTank .. "/" .. roleCountHealer .. "/" .. roleCountDamager
+
+
+
+		miog.ClassPanel.GroupComp:SetText(roleCountString)
+        miog.ClassPanel.GroupComp.tanks = roleCountTank
+        miog.ClassPanel.GroupComp.healers = roleCountHealer
+        miog.ClassPanel.GroupComp.damager = roleCountDamager
+		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCountString)
 
 		if(miog.GroupManager) then
-			miog.GroupManager.Groups.Tank.Text:SetText(roleCount["TANK"])
-			miog.GroupManager.Groups.Healer.Text:SetText(roleCount["HEALER"])
-			miog.GroupManager.Groups.Damager.Text:SetText(roleCount["DAMAGER"])
+			miog.GroupManager.Groups.Tank.Text:SetText(roleCountTank)
+			miog.GroupManager.Groups.Healer.Text:SetText(roleCountHealer)
+			miog.GroupManager.Groups.Damager.Text:SetText(roleCountDamager)
 
 		end
 
@@ -162,7 +170,7 @@ miog.createClassPanel = function()
 
     container:MarkDirty()
 
-    classPanel.Status:SetText("\n(1/1/" .. GetNumGroupMembers() .. ")")
+    classPanel.Status:SetText("[1/1/" .. GetNumGroupMembers() .. "]")
     classPanel.Status:SetScript("OnEnter", function(self)
         local specs, members = miog.countPlayersWithData()
 

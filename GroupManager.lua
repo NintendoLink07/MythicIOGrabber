@@ -660,7 +660,7 @@ local function updateInspectionText()
 	end
 
 	miog.ClassPanel.InspectionName:SetText(name)
-    miog.ClassPanel.Status:SetText(specs .. "/" .. members .. "/" .. numGroupMembers .. ")")
+    miog.ClassPanel.Status:SetText("[" .. specs .. "/" .. members .. "/" .. numGroupMembers .. "]")
 	miog.ClassPanel.Status.inspectList = inspectList
 	miog.ClassPanel.LoadingSpinner:SetShown(playerInInspection ~= nil)
 end

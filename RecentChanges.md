@@ -12,15 +12,21 @@ This saves between reloads/relogs.
 
 - [Progress] A new background has been added for both the [MainFrame] and the [Progress] frame world vault background.
 
+- [ClassPanel] Group comp text has been added to the left of the class panel, showing you the # of tanks, healers and damager in your group.
+
 ### Fixed
 
 - [Progress] Hovering over the M+ keylevels won't cause a tooltip error anymore.
+
+- [Progress] Itemlevel data will now get updated correctly.
 
 - [GroupManager] The indepth inspection panel won't overwrite your chars data with your mains data.
 
 - [GroupManager] The indepth inspection panel will now correctly use the newest raid id while checking your main's data.
 
 - [MainFrame] The raid finder queues are now sorted first by raid name and then by their wing index.
+
+- [Lockouts] The checkmark icon when you fully cleared an instance will now be on the top layer, not clipping into the underlying frame.
 
 - Hiding the mainframe via the micro menu button or the 'i' (default) hotkey while having the PVP queue selection open won't show the default blizzard reward icons anymore.
 
