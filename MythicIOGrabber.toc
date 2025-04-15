@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.3.0a
+## Version: 3.3.1
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_QueueUpTime
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -39,6 +39,7 @@ AdventureJournal.lua
 GroupManager.lua
 DropChecker.lua
 RaidPlanner.lua
+UpgradeFinder.lua
 
 NewSettings.lua
 StatisticsRecorder.lua
@@ -64,6 +65,7 @@ Mixins\RaiderIOInformationPanelMixin.lua
 Mixins\GraphMixin.lua
 Mixins\TableMixin.lua
 Mixins\ProgressionTabMixin.lua
+Mixins\ItemUpgradeFinderMixin.lua
 
 
 
@@ -199,5 +201,3 @@ XML\TableMixinTemplates\MIOG_TableDivider.xml
 XML\MIOG_UpgradeFinder.xml
 XML\UpgradeFinder\MIOG_UpgradeFinderItemSingleTemplate.xml
 XML\UpgradeFinder\MIOG_UpgradeFinderSlotItemTemplate.xml
-UpgradeFinder.lua
-Mixins\ItemUpgradeFinderMixin.lua

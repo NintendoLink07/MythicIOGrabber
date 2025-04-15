@@ -5,13 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [3.3.1] - 2025-04-17
+
+### Added
+
+- [Progress] The honor level and the honor level progress have been added to both the main [Progress] tab and the inner PvP frame.
+
+### Fixed
+
+- [Progress] The selection border of the currently selected keystone will disappear if you decide to hide a M+ dungeon.
+
+- [Progress] The keystone score calculation should now show the correct score gains.
+
+- [UpgradeFinder] All items should now instantly load without having to re-click the slot icon.
+
+
+
 ## [3.3.0a] - 2025-04-13
 
 ### Fixed
 
 - [UpgradeFinder] Clicking on an empty slot won't create an error anymore.
 
-- [UpgradeFinder] Clicking on an offhand slot while you have a mainhand equipped will now show
+- [UpgradeFinder] Clicking on an offhand slot while you have a mainhand equipped will now show.
 
 
 

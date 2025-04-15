@@ -11,6 +11,8 @@ local simpleTypes = {
 	itemContext = 12,
 }
 
+local itemIDsToLoad = {}
+
 local function getEnumKeyForItemMods(number)
     for k, v in pairs(Enum.ItemModification) do
         if(v == number) then
@@ -407,12 +409,8 @@ miog.loadUpgradeFinder = function()
     return upgradeFinder
 end
 
-local currentItemIDs
-
-local function requestAllLootForMapID(info, filterID)
+local function requestAllLootForMapID(info)
     local mapInfo = miog.MAP_INFO[info.mapID]
-    C_EncounterJournal.SetSlotFilter(filterID)
-
     local journalInstanceID = mapInfo.journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(info.mapID) or EJ_GetInstanceForMap(info.mapID) or nil
 
     if(journalInstanceID and journalInstanceID > 0 and C_EncounterJournal.InstanceHasLoot(journalInstanceID)) then
@@ -421,11 +419,13 @@ local function requestAllLootForMapID(info, filterID)
         local isRaid = EJ_InstanceIsRaid()
         EJ_SetDifficulty(isRaid and (not info.active and 14 or 16) or (not info.active and 23 or 8))
 
-        for i = 1, EJ_GetNumLoot(), 1 do
+        local numLoot = EJ_GetNumLoot()
+
+        for i = 1, numLoot, 1 do
             local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
 
             if(not itemInfo.name) then
-                currentItemIDs[itemInfo.itemID] = {hasData = false, journalInstanceID = journalInstanceID}
+                itemIDsToLoad[itemInfo.itemID] = {isRaid = isRaid, journalInstanceID = journalInstanceID, active = info.active, difficultyID = EJ_GetDifficulty()}
 
             end
         end
@@ -435,9 +435,8 @@ local function requestAllLootForMapID(info, filterID)
 
 end
 
-local function findAllRelevantMapIDs(filterID)
+local function findAllRelevantMapIDs()
     local instanceList = {}
-    currentItemIDs = {}
 
     local dungeonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
     local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE))
@@ -482,7 +481,7 @@ local function findAllRelevantMapIDs(filterID)
     end
 
     for k, info in ipairs(listWithMapIDs) do
-        local tbl = requestAllLootForMapID(info, filterID)
+        local tbl = requestAllLootForMapID(info)
 
         if(tbl) then
             tbl.active = info.active
@@ -518,9 +517,72 @@ local function findMainHandItemLevel()
     end
 end
 
+local function addSinglePVEItemID(itemID)
+
+    local ejInfo = C_EncounterJournal.GetLootInfo(itemID)
+    local info = itemIDsToLoad[itemID]
+ 
+    if(info and ejInfo) then
+        local specID = GetSpecializationInfo(GetSpecialization())
+        local mainStat = miog.SPECIALIZATIONS[specID].stat
+        local item = Item:CreateFromItemID(itemID)
+        local itemLink
+
+        if(not info.isRaid and info.active) then
+            local newLink = removeAndSetItemLinkItemLevels(item.link, "mythicPlus")
+
+            itemLink = newLink
+
+        else
+            itemLink = item:GetItemLink()
+
+        end
+
+        local newItem = Item:CreateFromItemLink(itemLink)
+        local itemLevel = newItem:GetCurrentItemLevel()
+
+        local statTable = C_Item.GetItemStats(itemLink)
+
+        local trackType1 = findTrackTypeOfItemLink(itemLink)
+        local trackType2 = findTrackTypeOfItemLink(item:GetItemLink())
+
+        local isOverIlvl = itemLevel >= itemLevelToBeat
+        local isOverIlvlRaid = info.isRaid and isOverIlvl
+        local isOverIlvlMPlus = not info.isRaid and (isOverIlvl or (info.active and trackType1 and trackType2 and (trackType1 == trackType2 or findMaxItemLevelOfTrack(trackType1) >= itemLevelToBeat)))
+        
+        if(isOverIlvlRaid or isOverIlvlMPlus and (statTable[mainStat] or hasNoMainStatOnIt(statTable))) then
+            local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID, _, _, mapID = EJ_GetInstanceInfo(info.journalInstanceID);
+
+            miog.UpgradeFinder.ScrollBox:GetDataProvider():Insert({
+                template = "MIOG_UpgradeFinderItemSingleTemplate",
+                name = item:GetItemName(),
+                icon = item:GetItemIcon(),
+                rarity = ejInfo.displayAsVeryRare and 1 or ejInfo.displayAsExtremelyRare and 2 or 0,
+                encounterID = ejInfo.encounterID,
+                difficultyID = info.difficultyID,
+                itemLink = itemLink,
+                isRaid = info.isRaid,
+                instanceName = instanceName,
+                itemlevel = itemLevel,
+                itemID = newItem:GetItemID(),
+                color = newItem:GetItemQualityColor()
+            })
+        end
+    end
+end
+
+local function checkSinglePVEItem(itemID)
+    local frame = miog.UpgradeFinder.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+        return data.itemID == itemID
+    end)
+
+    if(not frame) then
+        return true
+
+    end
+end
+
 local function findApplicablePVEItems(dataProvider, instanceList, item, filterID)
-	local specID = GetSpecializationInfo(GetSpecialization())
-    local mainStat = miog.SPECIALIZATIONS[specID].stat
     local itemLevelToBeat = item:GetCurrentItemLevel()
 
     if(not itemLevelToBeat) then
@@ -556,25 +618,25 @@ local function findApplicablePVEItems(dataProvider, instanceList, item, filterID
 
                     if(not itemInfo.weaponTypeError and not itemInfo.handError) then
                         local itemLink
-
+                
                         if(not isRaid and v.active) then
                             local newLink = removeAndSetItemLinkItemLevels(itemInfo.link, "mythicPlus")
-
+                
                             itemLink = newLink
-
+                
                         else
                             itemLink = itemInfo.link
-
+                
                         end
-
+                
                         local newItem = Item:CreateFromItemLink(itemLink)
                         local itemLevel = newItem:GetCurrentItemLevel()
-
+                
                         local statTable = C_Item.GetItemStats(itemInfo.link)
-
+                
                         local trackType1 = findTrackTypeOfItemLink(itemLink)
                         local trackType2 = findTrackTypeOfItemLink(item:GetItemLink())
-
+                
                         local isOverIlvl = itemLevel >= itemLevelToBeat
                         local isOverIlvlRaid = isRaid and isOverIlvl
                         local isOverIlvlMPlus = not isRaid and (isOverIlvl or (v.active and trackType1 and trackType2 and (trackType1 == trackType2 or findMaxItemLevelOfTrack(trackType1) >= itemLevelToBeat)))
@@ -591,6 +653,7 @@ local function findApplicablePVEItems(dataProvider, instanceList, item, filterID
                                 isRaid = isRaid,
                                 instanceName = instanceName,
                                 itemlevel = itemLevel,
+                                itemID = newItem:GetItemID(),
                                 color = newItem:GetItemQualityColor()
                             })
                         end
@@ -700,7 +763,9 @@ local function findApplicableCraftingItems(dataProvider, filterID, itemLevelToBe
 end
 
 local function findItems(filterID, item)
-    local instanceList = findAllRelevantMapIDs(filterID)
+    C_EncounterJournal.SetSlotFilter(filterID)
+
+    local instanceList = findAllRelevantMapIDs()
 
     local dataProvider = CreateDataProvider()
     dataProvider:SetSortComparator(sortItems)
@@ -726,7 +791,11 @@ local function showNothingFoundMessage()
     miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
 end
 
+local lastFilter, lastItem
+
 miog.updateItemList = function(filterID, item)
+    lastFilter, lastItem = filterID, item
+
     local specID = GetSpecializationInfo(GetSpecialization())
     local _, _, classID = UnitClass("player")
 
@@ -751,3 +820,22 @@ miog.updateItemList = function(filterID, item)
 
     end
 end
+
+local function ufEvents(_, event, itemID)
+    if(itemID) then
+        if(checkSinglePVEItem(itemID)) then
+            addSinglePVEItemID(itemID)
+
+        end
+    else
+        if(lastFilter and lastItem) then
+            miog.updateItemList(lastFilter, lastItem)
+
+        end
+    end
+end
+
+local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_UFEventReceiver")
+
+eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
+eventReceiver:SetScript("OnEvent", ufEvents)

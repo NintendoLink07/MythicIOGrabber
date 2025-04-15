@@ -113,6 +113,12 @@
                         <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress3" relativePoint="BOTTOMLEFT" y="-1"/>
                     </Anchors>
                 </FontString>
+
+                <FontString parentKey="Honor" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Itemlevel" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
             </Layer>
         </Layers>
 
@@ -121,7 +127,7 @@
                 <BarTexture atlas="ui-castingbar-filling-standard" />
                 <Size x="90" y="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Itemlevel" relativePoint="BOTTOMLEFT" y="-2"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Honor" relativePoint="BOTTOMLEFT" y="-2"/>
                 </Anchors>
 
                 <Layers>

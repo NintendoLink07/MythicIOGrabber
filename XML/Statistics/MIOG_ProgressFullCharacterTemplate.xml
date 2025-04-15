@@ -115,6 +115,12 @@
                     </Anchors>
                 </FontString>
 
+                <FontString parentKey="Honor" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Itemlevel" relativePoint="BOTTOMLEFT" y="-1"/>
+                    </Anchors>
+                </FontString>
+
                 <!--<FontString parentKey="PVPRating1" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.RaidProgress3" relativePoint="BOTTOMLEFT" y="-1"/>

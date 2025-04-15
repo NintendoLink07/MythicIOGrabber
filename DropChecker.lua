@@ -534,7 +534,7 @@ miog.loadDropChecker = function()
     return dropChecker
 end
 
-local function dcEvents(_, event, ...)
+local function dcEvents(localSelf, event, ...)
     if(currentItemIDs and currentItemIDs[...]) then
         currentItemIDs[...].hasData = true
 

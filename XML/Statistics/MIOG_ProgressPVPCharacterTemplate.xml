@@ -33,6 +33,20 @@
                     </Anchors>
                 </Texture>
             </Layer>
+            
+            <Layer level="OVERLAY">
+                <FontString parentKey="HonorLevel" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" text="CURRENT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="96" y="-3"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="HonorProgress" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" text="CURRENT">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="1"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
         </Layers>
     </Frame>
 </Ui>

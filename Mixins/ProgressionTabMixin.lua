@@ -3,8 +3,6 @@ local accountCharacters
 local playerGUID
 local mythicPlusActivities, raidActivities
 
-local eventReceiver = Creatr
-
 local activityIndices = {
 	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
 	Enum.WeeklyRewardChestThresholdType.Raid, -- raid
@@ -262,6 +260,12 @@ local function round(n)
 
 
 
+ --  7 untimed 245, JIT 260, 2chest 267.5, 3chest 275, 3 bonus score
+ 
+ --  6 untimed 215, JIT 230, 2chest 237.5, 3chest 245, 2 bonus score
+ --  5 untimed 200, JIT 215, 2chest 222.5, 3chest 230, 2 bonus score
+
+
 local function calculateMapScore(challengeMapID, info)
 	local _, _, mapTimer = C_ChallengeMode.GetMapUIInfo(challengeMapID)
 
@@ -274,10 +278,7 @@ local function calculateMapScore(challengeMapID, info)
 	local timerDifference = mapTimer - (info.durationSec < fastestTimePossible and fastestTimePossible or info.durationSec)
 	local overtime = timerDifference < 0
 
-	--local level = overtime and info.level > 10 and 10 or info.level
-
-    local level = min(info.level, 10)
-
+	local level = overtime and info.level > 10 and 10 or info.level
 	local baseScore = 120 + level * 15
 
 	local timerBonus = (timerDifference / (mapTimer * 0.4)) * 15
@@ -319,12 +320,6 @@ local function calculateNewScore(mapID, newLevel, guid, customTimer)
 	
 	return 0, 0, 0
 end
-
-
- --  7 untimed 245, JIT 260, 2chest 267.5, 3chest 275, 3 bonus score
- 
- --  6 untimed 215, JIT 230, 2chest 237.5, 3chest 245, 2 bonus score
- --  5 untimed 200, JIT 215, 2chest 222.5, 3chest 230, 2 bonus score
 
 
 function ProgressionTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
@@ -427,7 +422,7 @@ function ProgressionTabMixin:FindFrameWithMatchingDataElement(scrollList, elemen
 	end
 end
 
-function ProgressionTabMixin:SetMPlusScoreInfo()
+function ProgressionTabMixin:ShowMapIDSelectionFrame()
 	if(self.currentKeystoneInfo) then
 		local columnFrame
 
@@ -451,17 +446,25 @@ function ProgressionTabMixin:SetMPlusScoreInfo()
 			self.Selection:SetPoint("TOPLEFT", columnFrame, "TOPLEFT")
 			self.Selection:SetPoint("BOTTOMRIGHT", columnFrame, "BOTTOMRIGHT")
 			self.Selection:Show()
-		end
-
-		if(self.currentUnitName == miog.createFullNameFrom("unitID", "player")) then
-			local frame = self:FindFrameWithMatchingDataElement(self.Rows, "guid", UnitGUID("player"))
-
-			self:StartScoreCalculationForCharacter(frame, UnitGUID("player"))
 
 		else
-			self:StartScoreCalculationForAllCharacters()
+			self.Selection:Hide()
 
 		end
+	end
+end
+
+function ProgressionTabMixin:SetMPlusScoreInfo()
+	self:ShowMapIDSelectionFrame()
+
+	if(self.currentUnitName == miog.createFullNameFrom("unitID", "player")) then
+		local frame = self:FindFrameWithMatchingDataElement(self.Rows, "guid", UnitGUID("player"))
+
+		self:StartScoreCalculationForCharacter(frame, UnitGUID("player"))
+
+	else
+		self:StartScoreCalculationForAllCharacters()
+
 	end
 end
 
@@ -579,7 +582,10 @@ function ProgressionTabMixin:PopulateActivities()
                         local dp = self:GatherActivitiesForDataProvider()
                         activityView:SetElementExtent(400 / dp:GetSize())
                         activityView:SetDataProvider(dp)
+
 						self:PopulateViews()
+						
+						self:ShowMapIDSelectionFrame()
                     end, v)
             end
         end)
@@ -623,6 +629,8 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			end
 
 			frame.Itemlevel:SetText(string.format(miog.STRING_REPLACEMENTS["ILVLSHORT"], miog.round(data.ilvl, 2)))
+
+			frame.Honor:SetText("Honorlevel: " .. data.honor.level)
 
 			frame.GuildBannerBackground:SetVertexColor(color:GetRGB())
 			frame.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
@@ -788,6 +796,10 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 					frame.Score:SetFont(file, height + 2, flags)
 					frame.ScoreIncrease:SetFont(file, height + 2, flags)
 
+				elseif(isPvp) then
+					frame.HonorLevel:SetFont(file, height + 2, flags)
+					frame.HonorProgress:SetFont(file, height + 2, flags)
+
 				elseif(isAll) then
 					frame.Score:SetFont(file, height + 2, flags)
 
@@ -798,6 +810,10 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 				if(isDungeon) then
 					frame.Score:SetFont(file, height, flags)
 					frame.ScoreIncrease:SetFont(file, height, flags)
+
+				elseif(isPvp) then
+					frame.HonorLevel:SetFont(file, height, flags)
+					frame.HonorProgress:SetFont(file, height, flags)
 
 				elseif(isAll) then
 					frame.Score:SetFont(file, height, flags)
@@ -829,6 +845,9 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 				frame.VaultStatus:Show()
 
 			else
+				frame.HonorLevel:SetText(data.honor.level)
+				frame.HonorProgress:SetText(data.honor.current .. "/" .. data.honor.maximum)
+				
 				frame.VaultStatus:Hide()
 				
 			end
@@ -1031,7 +1050,6 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 		if(self.type == "mplus") then
 			self.Info.KeystoneDropdown:SetDefaultText("Keystones")
 			self.Info.KeystoneDropdown:SetupMenu(function(dropdown, rootDescription)
-
 				local numGroupMembers = GetNumGroupMembers()
 
 				if(numGroupMembers > 0) then
@@ -1215,11 +1233,21 @@ function ProgressionTabMixin:UpdateSingleCharacterPVPProgress(guid)
 
 		charData.tierInfo = {tierID, nextTierID}
 		charData.rating = highestRating
+		charData.honor = {
+			current = UnitHonor("player"),
+			maximum = UnitHonorMax("player"),
+			level = UnitLevel("player")
+		}
 
 	else
 		charData.brackets = charData.brackets or {}
 		charData.tierInfo = charData.tierInfo or {}
 		charData.rating = charData.rating or 0
+		charData.honor = {
+			current = 0,
+			maximum = 0,
+			level = 0,
+		}
 
 	end
 end
@@ -1421,6 +1449,7 @@ function ProgressionTabMixin:PopulateViews()
 			spec = v.spec,
 			ilvl = v.ilvl,
 
+			honor = v.honor,
 			score = v.mplus.score,
 			brackets = v.brackets,
 			rating = v.rating,
@@ -1446,6 +1475,8 @@ function ProgressionTabMixin:PopulateViews()
 			dataProvider:RemoveIndexRange(startIndex, providerSize)
 
 		end
+
+		
 	else
 		scrollBox = self.Rows
     end
