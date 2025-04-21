@@ -338,7 +338,7 @@ local function gatherAllActivities(dropdown, rootDescription)
 			for k, activityID in ipairs(worldBossActivity) do
 				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 
-				tinsert(raidList, {index = k, name = activityInfo.fullName, activityID = activityID, groupID = 0})
+				tinsert(raidList, {index = k, name = activityInfo.name, activityID = activityID, groupID = 0})
 			end
 			
 			addActivityListToDropdown(raidList, rootDescription)
@@ -369,7 +369,7 @@ local function gatherAllActivities(dropdown, rootDescription)
 		for k, v in ipairs(pvpActivities) do
 			local activityInfo = C_LFGList.GetActivityInfoTable(v)
 
-			tinsert(pvpTable, {index = k, name = activityInfo.fullName, activityID = v, groupID = 0})
+			tinsert(pvpTable, {index = k, name = activityInfo.name, activityID = v, groupID = 0})
 		end
 
 		addActivityListToDropdown(pvpTable, rootDescription)

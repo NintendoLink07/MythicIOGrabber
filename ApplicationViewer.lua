@@ -694,15 +694,15 @@ local function applicationViewerEvents(_, event, ...)
 			end
 		else
 			if(... == true) then --NEW LISTING
-				MIOG_QueueUpTime = GetTimePreciseSec()
+				MIOG_NewSettings.queueUpTime = GetTimePreciseSec()
 
 			elseif(... == false) then --RELOAD, LOADING SCREENS OR SETTINGS EDIT
-				MIOG_QueueUpTime = (MIOG_QueueUpTime and MIOG_QueueUpTime > 0) and MIOG_QueueUpTime or GetTimePreciseSec()
+				MIOG_NewSettings.queueUpTime = MIOG_NewSettings.queueUpTime > 0 and MIOG_NewSettings.queueUpTime or GetTimePreciseSec()
 
 			end
 
 			queueTimer = C_Timer.NewTicker(1, function()
-				miog.ApplicationViewer.CreationSettings.Timer:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_QueueUpTime))
+				miog.ApplicationViewer.CreationSettings.Timer:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_NewSettings.queueUpTime))
 
 			end)
 

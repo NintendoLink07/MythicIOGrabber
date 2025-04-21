@@ -127,6 +127,29 @@ local function addBonusIDsToArray(array, ...)
     
 end
 
+local function setItemLinkToSpecificItemLevel(link, ilvl, type)
+    local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
+    local array = {strsplit(":", linkOptions)}
+
+    array[12] = type == "mythicPlus" and 34 or type == "crafting" and 13
+
+    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and 655 or type == "crafting" and 675) - ilvl)
+
+    if(type == "mythicPlus") then
+        addBonusIDsToArray(array, 10390, 11987, bestBonusID)
+
+    elseif(type == "crafting") then
+        addBonusIDsToArray(array, 21612, 10240, bestBonusID)
+        
+    end
+
+    local newLink = LinkUtil.FormatLink(linkType, displayText, unpack(array))
+
+    return newLink
+end
+
+miog.setItemLinkToSpecificItemLevel = setItemLinkToSpecificItemLevel
+
 local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray)
     local array
     local linkType, linkOptions, displayText
@@ -261,6 +284,8 @@ local function removeAndSetItemLinkItemLevels(link, type)
     return LinkUtil.FormatLink(linkType, displayText, unpack(array))
 end
 
+miog.removeAndSetItemLinkItemLevels = removeAndSetItemLinkItemLevels
+
 local function initializeLootFrames(frame, elementData)
     if(elementData.template == "MIOG_UpgradeFinderItemSingleTemplate") then
         local formattedText
@@ -386,29 +411,6 @@ local function professionsFrameOnShow()
 	C_CraftingOrders.OpenCustomerCraftingOrders();
 end
 
-miog.loadUpgradeFinder = function()
-    local upgradeFinder = miog.pveFrame2.TabFramesPanel.UpgradeFinder
-
-    upgradeFinder:SetScript("OnShow", function()
-        ProfessionsCustomerOrders_LoadUI();
-        professionsFrameOnShow()
-    
-    end)
-
-    local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2)
-    view:SetPadding(1, 1, 1, 1, 4)
-
-    view:SetElementFactory(CustomFactory)
-    
-    ScrollUtil.InitScrollBoxListWithScrollBar(upgradeFinder.ScrollBox, upgradeFinder.ScrollBar, view)
-    
-    ProfessionsCustomerOrders_LoadUI();
-    --ShowUIPanel(ProfessionsCustomerOrdersFrame);
-    --HideUIPanel(ProfessionsCustomerOrdersFrame);
-
-    return upgradeFinder
-end
-
 local function requestAllLootForMapID(info)
     local mapInfo = miog.MAP_INFO[info.mapID]
     local journalInstanceID = mapInfo.journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(info.mapID) or EJ_GetInstanceForMap(info.mapID) or nil
@@ -518,7 +520,6 @@ local function findMainHandItemLevel()
 end
 
 local function addSinglePVEItemID(itemID)
-
     local ejInfo = C_EncounterJournal.GetLootInfo(itemID)
     local info = itemIDsToLoad[itemID]
  
@@ -584,6 +585,8 @@ end
 
 local function findApplicablePVEItems(dataProvider, instanceList, item, filterID)
     local itemLevelToBeat = item:GetCurrentItemLevel()
+    local specID = GetSpecializationInfo(GetSpecialization())
+    local mainStat = miog.SPECIALIZATIONS[specID].stat
 
     if(not itemLevelToBeat) then
         if(filterID == 11) then
@@ -634,14 +637,14 @@ local function findApplicablePVEItems(dataProvider, instanceList, item, filterID
                 
                         local statTable = C_Item.GetItemStats(itemInfo.link)
                 
-                        local trackType1 = findTrackTypeOfItemLink(itemLink)
+                        local trackType1 = findTrackTypeOfItemLink(newItem:GetItemLink())
                         local trackType2 = findTrackTypeOfItemLink(item:GetItemLink())
                 
                         local isOverIlvl = itemLevel >= itemLevelToBeat
                         local isOverIlvlRaid = isRaid and isOverIlvl
                         local isOverIlvlMPlus = not isRaid and (isOverIlvl or (v.active and trackType1 and trackType2 and (trackType1 == trackType2 or findMaxItemLevelOfTrack(trackType1) >= itemLevelToBeat)))
                         
-                        if(isOverIlvlRaid or isOverIlvlMPlus and (statTable[mainStat] or hasNoMainStatOnIt(statTable))) then
+                        if((isOverIlvlRaid or isOverIlvlMPlus) and (statTable[mainStat] or hasNoMainStatOnIt(statTable))) then
                             dataProvider:Insert({
                                 template = "MIOG_UpgradeFinderItemSingleTemplate",
                                 name = itemInfo.name,
@@ -835,7 +838,30 @@ local function ufEvents(_, event, itemID)
     end
 end
 
-local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_UFEventReceiver")
+miog.loadUpgradeFinder = function()
+    local upgradeFinder = miog.pveFrame2.TabFramesPanel.UpgradeFinder
 
-eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
-eventReceiver:SetScript("OnEvent", ufEvents)
+    upgradeFinder:SetScript("OnShow", function()
+        ProfessionsCustomerOrders_LoadUI();
+        professionsFrameOnShow()
+    
+    end)
+
+    local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2)
+    view:SetPadding(1, 1, 1, 1, 4)
+
+    view:SetElementFactory(CustomFactory)
+    
+    ScrollUtil.InitScrollBoxListWithScrollBar(upgradeFinder.ScrollBox, upgradeFinder.ScrollBar, view)
+    
+    ProfessionsCustomerOrders_LoadUI();
+    --ShowUIPanel(ProfessionsCustomerOrdersFrame);
+    --HideUIPanel(ProfessionsCustomerOrdersFrame);
+
+    local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_UFEventReceiver")
+
+    eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
+    eventReceiver:SetScript("OnEvent", ufEvents)
+
+    return upgradeFinder
+end

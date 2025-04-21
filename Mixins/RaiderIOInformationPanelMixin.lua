@@ -4,7 +4,7 @@ RaiderIOInformationPanelMixin = {}
 
 MIOG_FAILSAFE_SEASON_ID = 13
 
-function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()    
+function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
     self.mythicPlusInfo = miog.retrieveCurrentSeasonDungeonActivityIDs(false, true)
     
     self.raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
@@ -18,18 +18,16 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
         for _, data in ipairs(self.mythicPlusInfo) do
             if(not done[data.mapID]) then
                 local currentDungeon = self.MythicPlus["Dungeon" .. k]
-                local mapData = miog.MAP_INFO[data.mapID]
+                local mapInfo = miog.getMapInfo(data.mapID, true)
 
-                currentDungeon.dungeonName = mapData.name
+                currentDungeon.dungeonName = mapInfo.name
 
                 if(currentDungeon.Name) then
-                    currentDungeon.Name:SetText(mapData.shortName)
+                    currentDungeon.Name:SetText(mapInfo.shortName)
                     
                 end
 
-                miog.checkSingleMapIDForNewData(data.mapID, true)
-
-                currentDungeon.Icon:SetTexture(self.mode == "side" and mapData.horizontal or mapData.icon)
+                currentDungeon.Icon:SetTexture(self.mode == "side" and mapInfo.horizontal or mapInfo.icon)
                 currentDungeon.Icon:SetDesaturation(0)
                 currentDungeon.Icon:SetScript("OnMouseDown", function()
                     local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)

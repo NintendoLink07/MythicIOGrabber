@@ -112,7 +112,7 @@ local function createPVEFrameReplacement()
 
 		--miog.updateProgressData()
 
-		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_NewSettings.lastGroup)
+		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_CharacterSettings.lastGroup)
 
 		miog.F.CURRENT_REGION = miog.F.CURRENT_REGION or miog.C.REGIONS[GetCurrentRegion()]
 
@@ -163,7 +163,7 @@ local function createPVEFrameReplacement()
 	end)
 
 	miog.MainTab.QueueInformation.Requeue:SetScript("OnClick", function()
-		local queueInfo = MIOG_NewSettings.lastUsedQueue
+		local queueInfo = MIOG_CharacterSettings.lastUsedQueue
 
 		if(queueInfo.type == "pve") then
 			if(queueInfo.subtype == "multidng") then
@@ -208,33 +208,33 @@ local function createPVEFrameReplacement()
 	miog.MainTab.QueueInformation.Requeue:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		GameTooltip:SetText("Queue up for the same activity you queued for the last time.")
-		if(MIOG_NewSettings.lastUsedQueue) then
-			if(MIOG_NewSettings.lastUsedQueue.type == "pve") then
-				GameTooltip:AddLine("Last activity: " .. GetLFGDungeonInfo(MIOG_NewSettings.lastUsedQueue.id))
+		if(MIOG_CharacterSettings.lastUsedQueue) then
+			if(MIOG_CharacterSettings.lastUsedQueue.type == "pve") then
+				GameTooltip:AddLine("Last activity: " .. GetLFGDungeonInfo(MIOG_CharacterSettings.lastUsedQueue.id))
 
-			elseif(MIOG_NewSettings.lastUsedQueue.type == "pvp") then
+			elseif(MIOG_CharacterSettings.lastUsedQueue.type == "pvp") then
 				local activity
 
-				if(MIOG_NewSettings.lastUsedQueue.subtype == "plunderstorm") then
-					local index = MIOG_NewSettings.lastUsedQueue.index
+				if(MIOG_CharacterSettings.lastUsedQueue.subtype == "plunderstorm") then
+					local index = MIOG_CharacterSettings.lastUsedQueue.index
 					local modeString = index == 0 and FRONT_END_LOBBY_SOLOS or index == 1 and FRONT_END_LOBBY_DUOS or index == 2 and FRONT_END_LOBBY_TRIOS or FRONT_END_LOBBY_PRACTICE
 
 					activity = modeString
 
-				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "skirmish") then
+				elseif(MIOG_CharacterSettings.lastUsedQueue.subtype == "skirmish") then
 					activity = SKIRMISH
 
-				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "brawl") then
+				elseif(MIOG_CharacterSettings.lastUsedQueue.subtype == "brawl") then
 					_, activity = C_PvP.GetActiveBrawlInfo()
 
-				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "brawlSpecial") then
+				elseif(MIOG_CharacterSettings.lastUsedQueue.subtype == "brawlSpecial") then
 					_, activity = C_PvP.GetSpecialEventBrawlInfo()
 
-				elseif(MIOG_NewSettings.lastUsedQueue.subtype == "pet") then
+				elseif(MIOG_CharacterSettings.lastUsedQueue.subtype == "pet") then
 					activity = PET_BATTLE_PVP_QUEUE
 
 				else
-					activity = MIOG_NewSettings.lastUsedQueue.alias or ""
+					activity = MIOG_CharacterSettings.lastUsedQueue.alias or ""
 
 				end
 
@@ -396,36 +396,12 @@ local function createPVEFrameReplacement()
 
 			end
 
-			--[[local dd = rootDescription:CreateTemplate("WowStyle1DropdownTemplate")
-			dd:AddInitializer(function(frame, description, menu)
-				frame:SetDefaultText("My Dropdown");
-				frame:SetupMenu(function(dropdown, rootDescription)
-					rootDescription:CreateButton("TEST", function(index)
-						
-			
-					end)
-					rootDescription:CreateButton("TEST2", function(index)
-						
-			
-					end)
-				end)
-			
-	
-			end)]]
-
 			rootDescription:SetTag("MIOG_FINDGROUP")
 		end)
 
 		currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
 	end)
 
-	--[[miog.MainTab.QueueInformation.ActivityDropdown:SetDefaultText("Select an activity...")
-	miog.MainTab.QueueInformation.ActivityDropdown:SetupMenu(function(dropdown, rootDescription)
-		--miog.setupQueueDropdown(rootDescription)
-
-	end)]]
-
-	--miog.updateDropDown()
 	miog.MainTab.QueueInformation.FakeDropdown:SetupMenu(miog.setupQueueDropdown)
 	miog.MainTab.QueueInformation.FakeDropdown:SetDefaultText("Select an activity...")
 
@@ -464,7 +440,7 @@ local function createPVEFrameReplacement()
 	miog.pveFrame2.TitleBar.MoreButton:SetScript("OnClick", function(self)
 		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
 			rootDescription:CreateTitle("More");
-			--rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
+			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
 			rootDescription:CreateButton("DropChecker", function()
 				miog.ProgressPanel:Hide()
 				setCustomActivePanel("DropChecker")

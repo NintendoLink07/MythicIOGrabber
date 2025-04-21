@@ -1,0 +1,52 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_JournalSourceTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size y="20" />
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="16" y="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">                
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" />
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
+                    </Anchors>
+                </FontString>
+            </Layer>    
+        </Layers>
+
+        <Scripts>
+            <OnLoad>
+                self:SetBackdrop( {edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+                self:SetBackdropBorderColor(PAPER_FRAME_EXPANDED_COLOR:GetRGB())
+            </OnLoad>
+        </Scripts>
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true">
+                    <Size x="12" y="12"/>
+                </Texture>
+            </Layer>
+        </Layers>
+                        
+        <Scripts>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+            <OnMouseDown>
+                if(IsLeftShiftKeyDown()) then
+                    ChatEdit_InsertLink(self.itemLink)
+                end
+            </OnMouseDown>
+        </Scripts>
+    </Frame>
+</Ui>

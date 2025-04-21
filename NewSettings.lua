@@ -9,7 +9,6 @@ local defaultSortState = {
     active = false,
 }
 
-
 local function keepSignUpNote(self, resultID)
     if(C_LFGList.HasSearchResultInfo(resultID)) then
         local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
@@ -95,7 +94,6 @@ miog.defaultFilters = defaultFilters
 local defaultSettings = {
     {name = "Frame manually resized", variableName = "MIOG_ManualResize", key="manualResize", default=0},
     {name = "Active side panel", variableName = "MIOG_SidePanel", key="activeSidePanel", default="none"},
-    {name = "App dialog box extended", variableName = "MIOG_AppDialogBoxExtented", key="appDialogBoxExtented", default=true},
     {name = "Mythic+ Statistics", variableName = "MIOG_MPlusStats", key="mplusStats", default={}},
     {name = "PVP Statistics", variableName = "MIOG_PVPStats", key="pvpStats", default={}},
     {name = "Raid Statistics", variableName = "MIOG_RaidStats", key="raidStats", default={}},
@@ -114,13 +112,11 @@ local defaultSettings = {
     {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},
     {name = "Last invited applicants", variableName = "MIOG_LastInvitedApplicants", key="lastInvitedApplicants", default={}},
     {name = "Requeue data", variableName = "MIOG_RequeueData", key="requeueData", default = {guids = {}}},
-    {name = "Last used queue", variableName = "MIOG_LastUsedQueue", key="lastUsedQueue", default = {}},
-    {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
+    {name = "Queue up time", variableName = "MIOG_QueueUpTime", key="queueUpTime", default=0},
     {name = "Last set checkboxes", variableName = "MIOG_LastSetCheckboxes", key="lastSetCheckboxes", default={}},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
     {name = "Favoured applicants", variableName = "MIOG_FavouredApplicants", key="favouredApplicants", default={}, type="custom"},
     {name = "New filter options", variableName = "MIOG_NewFilterOptions", key="newFilterOptions", default={}},
-    {name = "AppDialog texts", variableName = "MIOG_AppDialogTexts", key="appDialogTexts", default={}},
     {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={
         ["LFGListFrame.SearchPanel"] = defaultFilters,
         ["LFGListFrame.ApplicationViewer"] = defaultFilters,
@@ -151,9 +147,11 @@ local function setSettingValue(value)
 
 end
 
-local function createDefaultSettings()
-    for k, v in ipairs(defaultSettings) do
-        local setting = Settings.RegisterAddOnSetting(category, v.variableName, v.key, MIOG_NewSettings, type(v.default), v.name, v.default)
+local function createDefaultSettings(overwriteSettings)
+    local globalSettings = overwriteSettings and MIOG_CharacterSettings or MIOG_NewSettings
+
+    for k, v in ipairs(overwriteSettings or defaultSettings) do
+        local setting = Settings.RegisterAddOnSetting(category, v.variableName, v.key, globalSettings, type(v.default), v.name, v.default)
 
         if(v.type) then
             if(v.type == "checkbox") then
@@ -163,8 +161,8 @@ local function createDefaultSettings()
                 local GetOptions
 
                 if(v.key == "backgroundOptions") then
-                    if(MIOG_NewSettings.backgroundOptions > #miog.EXPANSION_INFO) then
-                        MIOG_NewSettings.backgroundOptions = v.default
+                    if(globalSettings.backgroundOptions > #miog.EXPANSION_INFO) then
+                        globalSettings.backgroundOptions = v.default
                         
                     end
 
@@ -212,9 +210,9 @@ local function createDefaultSettings()
         end
 
         if(v.key == "declinedGroups") then
-            for x, y in pairs(MIOG_NewSettings.declinedGroups) do
+            for x, y in pairs(globalSettings.declinedGroups) do
                 if(y.timestamp < time() - 900) then
-                    MIOG_NewSettings.declinedGroups[x] = nil
+                    globalSettings.declinedGroups[x] = nil
                     
                 end
             end
@@ -222,8 +220,8 @@ local function createDefaultSettings()
 
         if(type(v.default) == "table") then
             for x, y in pairs(v.default) do
-                if(not MIOG_NewSettings[v.key][x]) then
-                    MIOG_NewSettings[v.key][x] = y
+                if(not globalSettings[v.key][x]) then
+                    globalSettings[v.key][x] = y
                     
                 end
             end
@@ -237,6 +235,7 @@ end
 
 miog.loadNewSettings = function()
     createDefaultSettings()
+    createDefaultSettings(miog.characterSettings)
 
     miog.F.LITE_MODE = MIOG_NewSettings.liteMode
 

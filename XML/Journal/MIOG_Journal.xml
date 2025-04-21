@@ -1,0 +1,57 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_Journal" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+        
+        <Frames>
+            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" mixin="SearchBoxFiltersMixin" autoFocus="false" font="GameFontHighlight">
+                <Size y="24" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="6"/>
+                    <Anchor point="TOPRIGHT" x="-2" />
+                </Anchors>
+            </EditBox>
+
+            <DropdownButton parentKey="InstanceDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="224" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="BossDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="224" y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="DifficultyDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </DropdownButton>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropdown" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </EventFrame>
+        </Frames>
+    </Frame>
+</Ui>

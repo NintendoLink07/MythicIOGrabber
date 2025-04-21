@@ -542,7 +542,7 @@ local function updateGroupApplications()
 								frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
 
 								if(MIOG_NewSettings.filterPopup and not disabledPopups[v] and not searchResultInfo.isDelisted) then
-									setupFilterPopup(v, reason[1], searchResultInfo.name, activityInfo.fullName, searchResultInfo.leaderName)
+									setupFilterPopup(v, reason[1], searchResultInfo.name, activityInfo.name, searchResultInfo.leaderName)
 
 									showFilterPopup = true
 								end
@@ -919,27 +919,27 @@ miog.loadQueueSystem = function()
 	--eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 	
 	hooksecurefunc("JoinArena", function()
-		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA}
+		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA}
 	end)
 
 	hooksecurefunc("JoinRatedSoloShuffle", function()
-		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_SOLO_SHUFFLE}
+		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_SOLO_SHUFFLE}
 	end)
 
 	hooksecurefunc("JoinRatedBattlefield", function()
-		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BATTLEGROUND}
+		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BATTLEGROUND}
 	end)
 
 	hooksecurefunc(C_PvP, "JoinRatedBGBlitz", function()
-		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BG_BLITZ}
+		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BG_BLITZ}
 	end)
 
 	hooksecurefunc("JoinBattlefield", function()
-		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=BATTLEGROUND}
+		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=BATTLEGROUND}
 	end)
 
 	hooksecurefunc("JoinSkirmish", function()
-		MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA_CASUAL}
+		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA_CASUAL}
 	end)
 
 	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")

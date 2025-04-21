@@ -116,7 +116,7 @@ local function classPanelEvents(_, event, ...)
 end
 
 miog.createClassPanel = function()
-    local classPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.MainFrame, "MIOG_ClassPanel")
+    local classPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.F.LITE_MODE and PVEFrame or miog.pveFrame2, "MIOG_ClassPanel")
     PixelUtil.SetPoint(classPanel, "BOTTOMRIGHT", classPanel:GetParent(), "TOPRIGHT", 0, 1)
     PixelUtil.SetPoint(classPanel, "BOTTOMLEFT", classPanel:GetParent(), "TOPLEFT", 0, 1)
 

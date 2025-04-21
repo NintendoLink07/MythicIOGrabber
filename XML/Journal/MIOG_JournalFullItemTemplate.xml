@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_JournalFullItemTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size y="20" />
+        <Frames>
+            <Frame parentKey="Source" inherits="MIOG_JournalSourceTemplate">
+                <Size x="256" y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Item" inherits="MIOG_JournalItemTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Source" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

@@ -493,26 +493,32 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
     end
 
 	if(self.type == "raid" or self.type == "all") then --RAID
-		local raidInfo = {}
-		local raidGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
-	
-		for k, v in ipairs(raidGroups) do
+		raidActivities = {}
+
+		for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)
 			local activityID = activities[#activities]
-            miog.checkSingleMapIDForNewData(miog.ACTIVITY_INFO[activityID].mapID, true)
-            miog.checkForMapAchievements(miog.ACTIVITY_INFO[activityID].mapID)
-            
-			tinsert(raidInfo, miog.ACTIVITY_INFO[activityID].mapID)
+			local name, order = C_LFGList.GetActivityGroupInfo(v)
+			local mapID = miog.ACTIVITY_INFO[activityID].mapID
+
+            miog.checkSingleMapIDForNewData(mapID, true)
+            miog.checkForMapAchievements(mapID)
+
+			tinsert(raidActivities, {name = name, order = order, activityID = activityID, mapID = mapID})
 		end
 
-		raidActivities = raidInfo
-        
-        table.sort(raidActivities, function(k1, k2)
-            return miog.MAP_INFO[k1].shortName < miog.MAP_INFO[k2].shortName
+		table.sort(raidActivities, function(k1, k2)
+			if(k1.order == k2.order) then
+				return k1.activityID > k2.activityID
 
-        end)
+			end
 
-        for _, mapID in ipairs(raidActivities) do
+			return k1.order < k2.order
+		end)
+
+        for _, info in ipairs(raidActivities) do
+			local mapID = info.mapID
+
             if(self:VisibilitySelected(self.type, mapID)) then
                 activityProvider:Insert({mapID = mapID, index = mapID});
 
@@ -549,6 +555,7 @@ function ProgressionTabMixin:PopulateActivities()
         self.Info.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
             for k, v in ipairs(self.currentActivities) do
                 local shortName
+				local value
 
                 if(self.type == "pvp") then
                     local bracketInfo = miog.PVP_BRACKET_IDS_TO_INFO[v]
@@ -557,20 +564,26 @@ function ProgressionTabMixin:PopulateActivities()
                         shortName = bracketInfo.shortName
                     end
 
+					value = v
+
                 elseif(self.type == "raid") then
-                    local mapInfo = miog.MAP_INFO[v]
+                    local mapInfo = miog.MAP_INFO[v.mapID]
 
                     if(mapInfo) then
                         shortName = mapInfo.shortName
                     end
+
+					value = v.mapID
 
                 elseif(self.type == "mplus") then
                     local mapInfo = miog.MAP_INFO[miog.retrieveMapIDFromChallengeModeMap(v)]
 
                     if(mapInfo) then
                         shortName = mapInfo.shortName
+
                     end
 
+					value = v
                 end
 
                 rootDescription:CreateCheckbox(shortName,
@@ -586,7 +599,7 @@ function ProgressionTabMixin:PopulateActivities()
 						self:PopulateViews()
 						
 						self:ShowMapIDSelectionFrame()
-                    end, v)
+                    end, value)
             end
         end)
 	end
@@ -616,17 +629,19 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			frame.MPlusRating:SetText(string.format(miog.STRING_REPLACEMENTS["MPLUSRATINGSHORT"], data.score.value))
 			frame.MPlusRating:SetTextColor(miog.createCustomColorForRating(data.score.value):GetRGBA())
 
-			for _, v in ipairs(raidActivities) do
-				miog.checkSingleMapIDForNewData(v, true)
-				local numBosses = #miog.MAP_INFO[v].bosses
+			--for _, info in ipairs(raidActivities) do
 
-				for i = 1, 3, 1 do
-					local raidProgressFrame = frame["RaidProgress" .. i]
-					raidProgressFrame:SetText(string.format(miog.STRING_REPLACEMENTS["RAIDPROGRESS" .. i .. "SHORT"], (data.progress[v] and data.progress[v].regular and data.progress[v].regular[i] and data.progress[v].regular[i].kills or 0) .. "/" .. numBosses))
-					raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
+			local mapID = raidActivities[1].mapID
+			local mapInfo = miog.getMapInfo(mapID, true)
+			local numBosses = #mapInfo.bosses
 
-				end
+			for i = 1, 3, 1 do
+				local raidProgressFrame = frame["RaidProgress" .. i]
+				raidProgressFrame:SetText(string.format(miog.STRING_REPLACEMENTS["RAIDPROGRESS" .. i .. "SHORT"], (data.progress[mapID] and data.progress[mapID].regular and data.progress[mapID].regular[i] and data.progress[mapID].regular[i].kills or 0) .. "/" .. numBosses))
+				raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
+
 			end
+			--end
 
 			frame.Itemlevel:SetText(string.format(miog.STRING_REPLACEMENTS["ILVLSHORT"], miog.round(data.ilvl, 2)))
 
@@ -916,7 +931,9 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			elseif(isRaid) then
 				local counter = 1
 
-				for index, mapID in ipairs(self.currentActivities) do
+				for index, info in ipairs(self.currentActivities) do
+					local mapID = info.mapID
+
 					local isVisible = self:VisibilitySelected(self.type, mapID)
 					local raidFrame = frame["Raid" .. index]
 
@@ -1256,9 +1273,11 @@ function ProgressionTabMixin:CalculateProgressWeightViaAchievements(guid)
 	local charData = self.settings[guid]
 	local progressWeight = 0
 
-	for k, v in ipairs(raidActivities) do
-		if(charData.raid[v].regular) then
-			for difficultyIndex, table in pairs(charData.raid[v].regular) do
+	for k, info in ipairs(raidActivities) do
+		local mapID = info.mapID
+
+		if(charData.raid[mapID].regular) then
+			for difficultyIndex, table in pairs(charData.raid[mapID].regular) do
 				progressWeight = progressWeight + miog.calculateWeightedScore(difficultyIndex, table.kills, #table.bosses, true, 1)
 
 
@@ -1323,7 +1342,9 @@ function ProgressionTabMixin:UpdateSingleCharacterRaidProgress(guid)
     local raidTable = charData.raid
 
     if guid == playerGUID then
-        for _, mapID in ipairs(raidActivities) do
+        for _, info in ipairs(raidActivities) do
+			local mapID = info.mapID
+
             raidTable[mapID] = {regular = {}, awakened = {}}
 
             if miog.MAP_INFO[mapID].achievementsAwakened then
@@ -1339,7 +1360,8 @@ function ProgressionTabMixin:UpdateSingleCharacterRaidProgress(guid)
         local progressWeight = charData.progressWeight or 0
 
         if raidData and raidData.character then
-            for _, mapID in ipairs(raidActivities) do
+            for _, info in ipairs(raidActivities) do
+				local mapID = info.mapID
                 -- Only create table if it doesn't exist
                 if not raidTable[mapID] then
                     raidTable[mapID] = {regular = {}, awakened = {}}

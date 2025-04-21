@@ -1027,7 +1027,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 				local isRaid = categoryID == 3
 		
 				if(isPvp or isDungeon or isRaid) then
-					for _, y in ipairs(isRaid and miog.RAID_DIFFICULTIES or isPvp and {6, 7} or isDungeon and miog.DUNGEON_DIFFICULTIES or {}) do
+					for _, y in ipairs(isRaid and {miog.RAID_DIFFICULTIES[2], miog.RAID_DIFFICULTIES[3], miog.RAID_DIFFICULTIES[4]} or isPvp and {6, 7} or isDungeon and miog.DUNGEON_DIFFICULTIES or {}) do
 						local difficultyMenu = rootDescription:CreateRadio(isPvp and (y == 6 and "2v2" or "3v3") or miog.DIFFICULTY_ID_INFO[y].name, function(difficultyIndex) return difficultyIndex == selectedDifficultyIndex end, function(difficultyIndex)
 							selectedDifficultyIndex = difficultyIndex
 							MIOG_NewSettings.newFilterOptions["LFGListFrame.SearchPanel"][LFGListFrame.SearchPanel.categoryID].difficulty.id = difficultyIndex

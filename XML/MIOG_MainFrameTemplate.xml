@@ -658,7 +658,8 @@
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
-                    <Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />
+                    <!--<Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />!-->
+                    <Frame parentKey="Journal" inherits="MIOG_Journal" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
                 </Frames>
             </Frame>
@@ -733,13 +734,24 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Lockouts">
+            <!--<Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Lockouts">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
                     <OnLoad>
                         self.frameName = "Lockouts"
+                    </OnLoad>
+                </Scripts>
+            </Button>!-->
+
+            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Journal">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        self.frameName = "Journal"
                     </OnLoad>
                 </Scripts>
             </Button>

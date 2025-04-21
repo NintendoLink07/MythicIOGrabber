@@ -1,0 +1,89 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_JournalItemTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size y="20" />
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="16" y="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
+                    <Size x="32" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Percentage" font="GameFontHighlightSmall" justifyH="RIGHT" justifyV="MIDDLE" wordwrap="false">
+                    <Anchors>
+                        <Anchor point="RIGHT" x="-2"/>
+                    </Anchors>
+                </FontString>
+                
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="2" />
+                        <Anchor point="RIGHT" relativeKey="$parent.Percentage" relativePoint="LEFT" x="-2" />
+                    </Anchors>
+                </FontString>
+            </Layer>    
+        </Layers>
+
+        <Scripts>
+            <OnLoad>
+                self:SetBackdrop( {edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+                self:SetBackdropBorderColor(PAPER_FRAME_EXPANDED_COLOR:GetRGB())
+            </OnLoad>
+        </Scripts>
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true">
+                    <Size x="12" y="12"/>
+                </Texture>
+            </Layer>
+        </Layers>
+                        
+        <Scripts>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+                if(self.itemLink) then
+                    GameTooltip:SetHyperlink(self.itemLink)
+
+                end
+
+                if(self.encounterID) then
+                    local encounterName, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(self.encounterID)
+                    local instanceName = EJ_GetInstanceInfo(journalInstanceID)
+
+                    GameTooltip:AddLine("[" .. instanceName .. "]: " .. encounterName)
+
+                end
+
+                if(self.displayAsVeryRare) then
+                    GameTooltip:AddLine(EJ_ITEM_CATEGORY_VERY_RARE)
+
+                elseif(self.displayAsExtremelyRare) then
+                    GameTooltip:AddLine(EJ_ITEM_CATEGORY_EXTREMELY_RARE)
+
+                end
+
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave function="GameTooltip_Hide" />
+            <OnMouseDown>
+                if(IsLeftShiftKeyDown()) then
+                    ChatEdit_InsertLink(self.itemLink)
+                end
+            </OnMouseDown>
+        </Scripts>
+    </Frame>
+</Ui>

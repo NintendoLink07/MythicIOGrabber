@@ -518,17 +518,11 @@ miog.loadDropChecker = function()
 
     dropChecker.ScrollBox:SetDataProvider(CreateDataProvider())
 
-    dropChecker.SearchBox:SetScript("OnTextChanged", function(self)
+    dropChecker.SearchBox:SetScript("OnTextChanged", function(self, key)
         SearchBoxTemplate_OnTextChanged(self)
 
-        if(key == "ESCAPE" or key == "ENTER") then
-            self:Hide()
-            self:ClearFocus()
-    
-        else
-            checkAllItemIDs()
+        checkAllItemIDs()
 
-        end
     end)
 
     return dropChecker

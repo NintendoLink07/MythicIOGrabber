@@ -111,7 +111,7 @@ local function updateRandomDungeons(blizzDesc)
 
 					GetLFGDungeonInfo
 
-					MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = id}
+					MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="dng", id = id}
 				end
 				
 				local tempFrame = queueDropDown:CreateEntryFrame(info)
@@ -234,7 +234,7 @@ local function addPvpActivities(topButton)
 						end
 			
 						C_LobbyMatchmakerInfo.EnterQueue(index or PlunderstormFrame.QueueSelect.useLocalPlayIndex);
-						MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="plunderstorm", id = index}
+						MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="plunderstorm", id = index}
 
 					end, i)
 				--end
@@ -515,7 +515,7 @@ local function setupQueueDropdown(rootDescription)
 				activityButton = rootDescription:CreateRadio(PET_BATTLE_PVP_QUEUE, function() return C_PetBattles.GetPVPMatchmakingInfo() ~= nil end, function()
 					C_PetBattles.StartPVPMatchmaking()
 		
-					MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
+					MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
 
 				end)
 			else
@@ -563,7 +563,7 @@ local function setupQueueDropdown(rootDescription)
 							SetLFGDungeon(3, dungeonID);
 							JoinSingleLFG(3, dungeonID);
 
-							MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = dungeonID}
+							MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="raid", id = dungeonID}
 						end, dungeonInfo.dungeonID)
 
 						lastRaidName = dungeonInfo.name2
@@ -578,7 +578,7 @@ local function setupQueueDropdown(rootDescription)
 							SetLFGDungeon(1, dungeonID);
 							JoinSingleLFG(1, dungeonID);
 			
-							MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
+							MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
 						end, dungeonInfo.dungeonID)
 
 						lastExpansion = dungeonInfo.expansionLevel
@@ -607,7 +607,7 @@ local function setupQueueDropdown(rootDescription)
 					button:SetScript("OnClick", function(_, buttonName)
 						LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
 
-						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
+						MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
 					end);
 
 					button:SetText("Queue for multiple dungeons")
@@ -661,7 +661,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 						SetLFGDungeon(1, id);
 						JoinSingleLFG(1, id);
 
-						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = id}
+						MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="dng", id = id}
 					end
 					
 					--[[local tempFrame = queueDropDown:CreateEntryFrame(info)
@@ -727,7 +727,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 						SetLFGDungeon(1, dungeonID);
 						JoinSingleLFG(1, dungeonID);
 
-						MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
+						MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="dng", id = dungeonID}
 
 					end
 				end
@@ -819,7 +819,7 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 		queueDropDown:CreateFunctionButton(nil, overwrittenParentIndex, "Queue for multiple dungeons", function()
 			LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
 
-			MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
 		end)
 	
 	end
@@ -925,7 +925,7 @@ local function updateRaidFinder(blizzDesc)
 			SetLFGDungeon(3, id);
 			JoinSingleLFG(3, id);
 
-			MIOG_NewSettings.lastUsedQueue = {type = "pve", subtype="raid", id = id}
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="raid", id = id}
 		end
 		
 		local tempFrame = queueDropDown:CreateEntryFrame(info)
@@ -1165,7 +1165,7 @@ local function updatePVP2()
 
 						info.func = function()
 							JoinSkirmish(4)
-							MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="skirmish", id = 0}
+							MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="skirmish", id = 0}
 						end
 
 						--info.tooltipTitle = info.text
@@ -1185,7 +1185,7 @@ local function updatePVP2()
 						info.func = function()
 							C_PvP.JoinBrawl()
 
-							MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="brawl", id = 0}
+							MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="brawl", id = 0}
 						end
 
 						--info.tooltipTitle = info.text
@@ -1204,7 +1204,7 @@ local function updatePVP2()
 						info.func = function()
 							C_PvP.JoinBrawl(true)
 
-							MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="brawlSpecial", id = 0}
+							MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="brawlSpecial", id = 0}
 						end
 						
 						brawl2 = queueDropDown:CreateEntryFrame(info)
@@ -1300,7 +1300,7 @@ local function updateDropDown()
 		info.func = function()
 			C_PetBattles.StartPVPMatchmaking()
 
-			MIOG_NewSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="pet", id = 0}
 		end
 
 		local tempFrame = queueDropDown:CreateEntryFrame(info)

@@ -268,6 +268,7 @@ miog.DUNGEON_DIFFICULTIES = {
 }
 
 miog.RAID_DIFFICULTIES = {
+	DifficultyUtil.ID.PrimaryRaidLFR,
 	DifficultyUtil.ID.PrimaryRaidNormal,
 	DifficultyUtil.ID.PrimaryRaidHeroic,
 	DifficultyUtil.ID.PrimaryRaidMythic,
@@ -863,6 +864,10 @@ miog.BATTLEMASTER_INFO = {
 
 }
 
+miog.ENCOUNTER_INFO = {
+	
+}
+
 for k, v in pairs(miog.RAW["BattlemasterList"]) do
 	miog.BATTLEMASTER_INFO[v[1]] = {
 		name = v[2],
@@ -939,16 +944,55 @@ end
 
 miog.checkForMapAchievements = checkForMapAchievements
 
+local function checkJournalInstanceIDForNewData(journalInstanceID)
+	EJ_SelectInstance(journalInstanceID)
+    local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID);
+
+	local mapInfo = miog.MAP_INFO[mapID]
+	mapInfo.isRaid = EJ_InstanceIsRaid()
+
+	local counter = 1
+
+	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID = EJ_GetEncounterInfoByIndex(counter, journalInstanceID);
+
+	while(bossName) do
+		local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature (boss)
+		
+		mapInfo.bosses[counter] = {
+			name = bossName,
+			altName = name2,
+			journalEncounterID = journalEncounterID,
+			journalInstanceID = journalInstanceID,
+			dungeonEncounterID = dungeonEncounterID,
+			mapID = mapID,
+			orderIndex = id,
+			achievements = {},
+			id = id,
+			creatureDisplayInfoID = displayInfo,
+			icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[counter].icon or iconImage
+		}
+
+		miog.ENCOUNTER_INFO[journalEncounterID] = {index = counter, creatureDisplayInfoID = displayInfo}
+
+		counter = counter + 1
+		bossName, _, journalEncounterID, _ = EJ_GetEncounterInfoByIndex(counter, journalInstanceID);
+	end
+
+	return mapInfo
+end
+
+miog.checkJournalInstanceIDForNewData = checkJournalInstanceIDForNewData
+
 local function checkSingleMapIDForNewData(mapID, selectInstance)
 	if(mapID and mapID > 0 and miog.MAP_INFO[mapID]) then
 		local bossIndex = 1;
 
 		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
-		miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
 
 		if(not bossName) then
 			if(selectInstance) then
 				EJ_SelectInstance(miog.MAP_INFO[mapID].journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID))
+				miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
 
 			end
 
@@ -956,7 +1000,7 @@ local function checkSingleMapIDForNewData(mapID, selectInstance)
 		end
 
 		while bossName do
-			local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID)
+			local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature (boss)
 			
 			miog.MAP_INFO[mapID].bosses[bossIndex] = {
 				name = bossName,
@@ -972,11 +1016,23 @@ local function checkSingleMapIDForNewData(mapID, selectInstance)
 				icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
 			}
 
+			miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo}
+
 			bossIndex = bossIndex + 1;
 			bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
 		end
 	end
 end
+
+local function getMapInfo(mapID, selectInstance)
+	if(mapID) then
+		checkSingleMapIDForNewData(mapID, selectInstance)
+
+		return miog.MAP_INFO[mapID]
+	end
+end
+
+miog.getMapInfo = getMapInfo
 
 miog.CHALLENGE_MODE_INFO = {}
 
@@ -1015,7 +1071,7 @@ local function loadRawData()
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
 		miog.ACTIVITY_INFO[v[1]] = {
-			fullName = v[2],
+			name = v[2],
 			difficultyName = v[3],
 			categoryID = v[4],
 	
@@ -1031,20 +1087,23 @@ local function loadRawData()
 		miog.GROUP_ACTIVITY[v[6]] = miog.GROUP_ACTIVITY[v[6]] or {activityIDs = {}}
 		miog.GROUP_ACTIVITY[v[6]].activityID = v[1]
 		miog.GROUP_ACTIVITY[v[6]].activityIDs[v[1]] = true
+
+		local mapInfo = getMapInfo(v[10])
 		
-		if(miog.MAP_INFO[v[10]]) then
+		if(mapInfo) then
 			miog.MAP_INFO[v[10]].groupFinderActivityGroupID = v[6]
 
-			miog.ACTIVITY_INFO[v[1]].instanceType = miog.MAP_INFO[v[10]].instanceType
-			miog.ACTIVITY_INFO[v[1]].expansionLevel = miog.MAP_INFO[v[10]].expansionLevel
-			miog.ACTIVITY_INFO[v[1]].bosses = miog.MAP_INFO[v[10]].bosses
-			miog.ACTIVITY_INFO[v[1]].shortName = miog.MAP_INFO[v[10]].shortName
+			miog.ACTIVITY_INFO[v[1]].instanceType = mapInfo.instanceType
+			miog.ACTIVITY_INFO[v[1]].expansionLevel = mapInfo.expansionLevel
+			miog.ACTIVITY_INFO[v[1]].bosses = mapInfo.bosses
+			miog.ACTIVITY_INFO[v[1]].shortName = mapInfo.shortName
 
-			miog.ACTIVITY_INFO[v[1]].fileName = miog.MAP_INFO[v[10]].fileName
-			miog.ACTIVITY_INFO[v[1]].bgName = miog.MAP_INFO[v[10]].bgName
-			miog.ACTIVITY_INFO[v[1]].horizontal = miog.MAP_INFO[v[10]].horizontal
-			miog.ACTIVITY_INFO[v[1]].vertical = miog.MAP_INFO[v[10]].vertical
-			miog.ACTIVITY_INFO[v[1]].icon = miog.MAP_INFO[v[10]].icon
+			miog.ACTIVITY_INFO[v[1]].fileName = mapInfo.fileName
+			miog.ACTIVITY_INFO[v[1]].bgName = mapInfo.bgName
+			miog.ACTIVITY_INFO[v[1]].horizontal = mapInfo.horizontal
+			miog.ACTIVITY_INFO[v[1]].vertical = mapInfo.vertical
+			miog.ACTIVITY_INFO[v[1]].icon = mapInfo.icon
+			miog.ACTIVITY_INFO[v[1]].journalInstanceID = mapInfo.journalInstanceID
 
 			if(miog.MAP_INFO[v[10]].achievementCategory) then
 				--checkForMapAchievements(v[10])

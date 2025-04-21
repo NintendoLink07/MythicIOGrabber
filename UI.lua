@@ -96,10 +96,6 @@ local function setActivePanel(_, panel)
 
 		end
 
-	elseif(panel == "AdventureJournal") then
-		miog.AdventureJournal:Show()
-		miog.NewFilterPanel.Lock:Show()
-
 	elseif(panel == "RaiderIOChecker") then
 		miog.RaiderIOChecker:Show()
 		miog.NewFilterPanel.Lock:Show()
@@ -255,10 +251,10 @@ miog.createFrames = function()
 		miog.loadRaidPlanner()
 		miog.loadActivityChecker()
 
-		miog.AdventureJournal = miog.loadAdventureJournal()
+		miog.Journal = miog.loadJournal()
 		miog.DropChecker = miog.loadDropChecker()
 		miog.UpgradeFinder = miog.loadUpgradeFinder()
-		miog.LockoutCheck = miog.loadLockoutCheck()
+		--miog.LockoutCheck = miog.loadLockoutCheck()
 	end
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
@@ -269,7 +265,6 @@ miog.createFrames = function()
 		miog.ApplicationViewer,
 		miog.SearchPanel,
 		miog.EntryCreation,
-		miog.AdventureJournal,
 		miog.RaiderIOChecker,
 		miog.ProgressPanel,
 		miog.DropChecker,

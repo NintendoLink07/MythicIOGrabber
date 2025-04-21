@@ -4,9 +4,9 @@
 ## OptionalDeps: RaiderIO
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.3.1
+## Version: 3.4.0
 ## SavedVariables: MIOG_NewSettings
-## SavedVariablesPerCharacter: MIOG_QueueUpTime
+## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
 
 ## X-Curse-Project-ID: 916354
@@ -42,6 +42,7 @@ RaidPlanner.lua
 UpgradeFinder.lua
 
 NewSettings.lua
+CharacterSettings.lua
 StatisticsRecorder.lua
 MythicRequeue.lua
 
@@ -66,6 +67,7 @@ Mixins\GraphMixin.lua
 Mixins\TableMixin.lua
 Mixins\ProgressionTabMixin.lua
 Mixins\ItemUpgradeFinderMixin.lua
+Mixins\SearchBoxFiltersMixin.lua
 
 
 
@@ -185,6 +187,7 @@ XML\Util\MIOG_MenuButtonTemplate.xml
 XML\Util\MIOG_VerticalButtonTemplate.xml
 XML\Util\MIOG_MinimalHorizontalScrollBarTemplate.xml
 XML\Util\MIOG_IconWithTextTemplate.xml
+XML\MIOG_SearchBoxFilterTemplate.xml
 
 XML\MIOG_StatisticsPage.xml
 XML\MIOG_StatisticsPageListEntryTemplate.xml
@@ -198,6 +201,11 @@ XML\TableMixinTemplates\MIOG_TableCellTemplate.xml
 XML\TableMixinTemplates\MIOG_TableCellWithCheckboxTemplate.xml
 XML\TableMixinTemplates\MIOG_TableDivider.xml
 
-XML\MIOG_UpgradeFinder.xml
+XML\UpgradeFinder\MIOG_UpgradeFinder.xml
 XML\UpgradeFinder\MIOG_UpgradeFinderItemSingleTemplate.xml
 XML\UpgradeFinder\MIOG_UpgradeFinderSlotItemTemplate.xml
+
+XML\Journal\MIOG_Journal.xml
+XML\Journal\MIOG_JournalSourceTemplate.xml
+XML\Journal\MIOG_JournalItemTemplate.xml
+XML\Journal\MIOG_JournalFullItemTemplate.xml

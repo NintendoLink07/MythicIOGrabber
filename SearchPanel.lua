@@ -435,7 +435,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 
 			end
 
-			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor))
+			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.name), titleZoneColor))
 
 			if(not questTagInfo) then
 				currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].icon or nil)
@@ -506,7 +506,7 @@ local function updateScrollBoxFrame(frame, data)
 		
 		if(miog.MAP_INFO[mapID] and LFGListFrame.SearchPanel.categoryID == 3) then
 			if(#miog.MAP_INFO[mapID].bosses == 0) then
-				miog.checkSingleMapIDForNewData(mapID)
+				miog.checkSingleMapIDForNewData(mapID, true)
 
 			end
 
@@ -845,10 +845,10 @@ local function searchPanelEvents(_, event, ...)
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 
-			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].name or activityInfo.fullName
+			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].name or activityInfo.name
 			miog.MainTab.QueueInformation.LastGroup.Text:SetText(lastGroup)
 
-			MIOG_NewSettings.lastGroup = lastGroup
+			MIOG_CharacterSettings.lastGroup = lastGroup
 		end
 
 	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then
@@ -858,7 +858,7 @@ local function searchPanelEvents(_, event, ...)
 end
 
 miog.createSearchPanel = function()
-	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel") ---@class Frame
+	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel")
 
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
@@ -1006,7 +1006,7 @@ miog.createSearchPanel = function()
 	
 	local function repopulateAppDialogBox()
 		local provider = CreateDataProvider()
-		for k, v in ipairs(MIOG_NewSettings.appDialogTexts) do
+		for k, v in ipairs(MIOG_CharacterSettings.appDialogTexts) do
 			provider:Insert({index = k, text = v})
 	
 		end
@@ -1022,26 +1022,26 @@ miog.createSearchPanel = function()
 	appDialogParentFrame.Checkbox:SetScript("OnClick", function(self)
 		local currentState = self:GetChecked()
 		self:GetParent().Textbox:SetShown(currentState)
-		MIOG_NewSettings.appDialogBoxExtented = currentState
+		MIOG_CharacterSettings.appDialogBoxExtented = currentState
 	end)
-	appDialogParentFrame.Checkbox:SetChecked(MIOG_NewSettings.appDialogBoxExtented)
-	appDialogParentFrame.Textbox:SetShown(MIOG_NewSettings.appDialogBoxExtented)
+	appDialogParentFrame.Checkbox:SetChecked(MIOG_CharacterSettings.appDialogBoxExtented)
+	appDialogParentFrame.Textbox:SetShown(MIOG_CharacterSettings.appDialogBoxExtented)
 
 	textboxView:SetElementInitializer("MIOG_ApplicationDialogTextboxInputTemplate", function(frame, data)
 		frame.InputBox:SetText(data.text)
 
-		MIOG_NewSettings.appDialogTexts[data.index] = data.text
+		MIOG_CharacterSettings.appDialogTexts[data.index] = data.text
 
 		frame.InputBox:SetScript("OnTextChanged", function(self, userInput)
 			if(userInput) then
-				MIOG_NewSettings.appDialogTexts[data.index] = self:GetText()
+				MIOG_CharacterSettings.appDialogTexts[data.index] = self:GetText()
 
 			end
 		end)
 
 		if(data.index > 1) then
 			frame.DeleteButton:SetScript("OnClick", function(self, button)
-				table.remove(MIOG_NewSettings.appDialogTexts, data.index)
+				table.remove(MIOG_CharacterSettings.appDialogTexts, data.index)
 
 				repopulateAppDialogBox()
 			end)

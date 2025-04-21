@@ -112,25 +112,6 @@ local function searchForFirstResultID()
     end
 end
 
---[[local function getNextListingFromQueue() --deprecated
-    for _, v in ipairs(searchResults) do
-        local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
-
-		if(C_LFGList.HasSearchResultInfo(v) and not searchResultInfo.isDelisted) then
-            local partyGUID = searchResultInfo.partyGUID
-
-			if(MIOG_NewSettings.requeueData.guids[partyGUID]) then
-				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
-
-				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
-					return v
-
-                end
-			end
-		end
-    end
-end]]
-
 local function makeFunctionsPublic()
     MR_GetNumberOfPartyGUIDs = getNumberOfPartyGUIDs
     MR_GetSavedPartyGUIDs = getSavedPartyGUIDs
