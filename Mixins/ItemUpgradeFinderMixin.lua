@@ -58,3 +58,11 @@ function ItemUpgradeFinderMixin:OnLoad()
     self.filterID = self:GetFilterID()
     self.invSlotName = strupper(self:GetShortName()) .. "SLOT"
 end
+
+function ItemUpgradeFinderMixin:OnShow()
+    PaperDollItemSlotButton_OnShow(self)
+
+    local item = Item:CreateFromEquipmentSlot(self:GetID())
+
+    self.ItemLevel:SetText(WrapTextInColorCode(item:GetCurrentItemLevel(), item:GetItemQualityColor().color:GenerateHexColor()))
+end

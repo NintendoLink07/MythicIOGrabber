@@ -7,14 +7,32 @@
         </Anchors>
         
         <Frames>
+            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
+                <Size x="22" y="22" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" x="-2" />
+                </Anchors>
+        
+                <Scripts>
+                    <OnEnter>
+                        local enabled = self:GetChecked()
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                        GameTooltip:SetText("When enabled: while gathering data from multiple difficulties all itemlevel versions of an item are displayed.")
+                        GameTooltip:AddLine("Current status: " .. (enabled and WrapTextInColorCode("Enabled", "FF00FF00") or WrapTextInColorCode("Disabled", "FFFF0000")))
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
+            </CheckButton>
+
             <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" mixin="SearchBoxFiltersMixin" autoFocus="false" font="GameFontHighlight">
                 <Size y="24" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" x="6"/>
-                    <Anchor point="TOPRIGHT" x="-2" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Checkbox" relativePoint="TOPLEFT" x="-2"/>
                 </Anchors>
-            </EditBox>
+            </EditBox> 
 
             <DropdownButton parentKey="InstanceDropdown" inherits="WowStyle1DropdownTemplate">
                 <Size x="224" y="25" />
@@ -38,10 +56,26 @@
                 </Anchors>
             </DropdownButton>
 
-            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+            <DropdownButton parentKey="SlotDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="ArmorDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.BossDropdown" relativePoint="BOTTOMLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropdown" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </DropdownButton>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SlotDropdown" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ArmorDropdown" relativePoint="BOTTOMRIGHT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
             </Frame>

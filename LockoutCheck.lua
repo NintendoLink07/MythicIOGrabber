@@ -38,7 +38,7 @@ local function refreshCharacterInfo()
             end
 
             if(not allBossesAlive) then
-                MIOG_NewSettings.lockoutCheck[fullPlayerName][#MIOG_NewSettings.lockoutCheck[fullPlayerName]+1] = {
+                tinsert(MIOG_NewSettings.lockoutCheck[fullPlayerName], {
                     id = lockoutId,
                     name = name,
                     difficulty = difficultyId,
@@ -51,7 +51,7 @@ local function refreshCharacterInfo()
                     cleared = numEncounters == encounterProgress,
                     resetDate = time() + reset,
                     bosses = bosses
-                }
+                })
             end
         end
     end
@@ -59,23 +59,14 @@ local function refreshCharacterInfo()
     for i = 1, GetNumSavedWorldBosses(), 1 do
         local name, worldBossID, reset = GetSavedWorldBossInfo(i)
 
-        MIOG_NewSettings.lockoutCheck[fullPlayerName][#MIOG_NewSettings.lockoutCheck[fullPlayerName] + 1] = {
+        tinsert(MIOG_NewSettings.lockoutCheck[fullPlayerName], {
             id = worldBossID,
             name = name,
             isWorldBoss = true,
             resetDate = time() + reset,
-        }
+        })
     end
 end
-
-hooksecurefunc("RequestRaidInfo", function()
-    fullPlayerName = miog.createFullNameFrom("unitID", "player")
-
-    if(fullPlayerName) then
-        refreshCharacterInfo()
-        
-    end
-end)
 
 miog.loadLockoutCheck = function()
     local lockoutCheck = miog.pveFrame2.TabFramesPanel.Lockouts
@@ -214,7 +205,7 @@ miog.loadLockoutCheck = function()
     
         for k, v in pairs(MIOG_NewSettings.lockoutCheck) do
             if(#v > 0) then
-                orderedCharacterTable[#orderedCharacterTable+1] = k
+                tinsert(orderedCharacterTable, k)
 
             else
                 MIOG_NewSettings.lockoutCheck[k] = nil

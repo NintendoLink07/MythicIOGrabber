@@ -2,11 +2,22 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_UpgradeFinderSlotItemTemplate" inherits="PaperDollItemSlotButtonTemplate" mixin="ItemUpgradeFinderMixin" virtual="true">
         <Scripts>
+            <OnShow method="OnShow" />
             <OnClick method="OnClick" />
             <OnLoad method="OnLoad" />
             <OnDragStart />
             <OnDragStop />
         </Scripts>
+
+         <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="ItemLevel" font="GameFontHighlightMed2Outline" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>
     

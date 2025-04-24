@@ -1,6 +1,8 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+PLUNDERSTORM_ACTIVE = C_GameEnvironmentManager and C_GameEnvironmentManager.GetCurrentEventRealmQueues() ~= Enum.EventRealmQueues.None and C_LobbyMatchmakerInfo.GetQueueFromMainlineEnabled()
+
 local randomBGFrame, randomEpicBGFrame, arena1Frame, brawl1Frame, brawl2Frame, specificBox
 
 local indices = {
@@ -219,7 +221,7 @@ local function addPvpActivities(topButton)
 	}
 
 	if(HonorFrame.TypeDropdown) then
-		if(C_GameEnvironmentManager.GetCurrentEventRealmQueues() ~= Enum.EventRealmQueues.None and C_LobbyMatchmakerInfo.GetQueueFromMainlineEnabled()) then
+		if(PLUNDERSTORM_ACTIVE) then
 			topButton:CreateTitle(WOW_LABS_PLUNDERSTORM_CATEGORY)
 
 			for i = 0, 3, 1 do

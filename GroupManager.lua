@@ -19,6 +19,8 @@ local playerMPlusData = {}
 local playerGearData = {}
 local inspectList = {}
 
+local manualItemlevels = {}
+
 local timeouts = {}
 
 local framePool
@@ -42,6 +44,185 @@ local function wipeAllData()
 	playerGearData = {}
 	playerInInspection = nil
 	inspectList = {}
+end
+
+local two_hand = {
+	["INVTYPE_2HWEAPON"] = true,
+ 	["INVTYPE_RANGED"] = true,
+	["INVTYPE_RANGEDRIGHT"] = true,
+}
+
+local function calcItemLevel(unitid, guid, shout)
+
+	--[[if (type(unitid) == "table") then
+		shout = unitid [3]
+		guid = unitid [2]
+		unitid = unitid [1]
+	end]]
+
+	--disable due to changes to CheckInteractDistance()
+	if (not InCombatLockdown() and unitid and UnitIsPlayer(unitid) and CanInspect(unitid)) then
+
+		--16 = all itens including main and off hand
+		local item_amount = 16
+		local item_level = 0
+		local failed = 0
+
+		for equip_id = 1, 17 do
+			if (equip_id ~= 4) then --shirt slot
+				local item = GetInventoryItemLink(unitid, equip_id)
+				if (item) then
+					local _, _, itemRarity, iLevel, _, _, _, _, equipSlot = C_Item.GetItemInfo(item)
+					if (iLevel) then
+						item_level = item_level + iLevel
+
+						--16 = main hand 17 = off hand
+						-- if using a two-hand, ignore the off hand slot
+						if (equip_id == 16 and two_hand [equipSlot]) then
+							item_amount = 15
+							break
+						end
+					end
+				else
+					failed = failed + 1
+					if (failed > 2) then
+						break
+					end
+				end
+			end
+		end
+
+		local average
+
+		if(failed == 0) then
+			average = item_level / item_amount
+
+			miog.round(average, 0)
+
+		end
+
+		--register
+		--[[if (average > 0) then
+			if (shout) then
+				Details:Msg(UnitName(unitid) .. " item level: " .. average)
+			end
+
+			if (average > MIN_ILEVEL_TO_STORE) then
+				local unitName = Details:GetFullName(unitid)
+				Details.item_level_pool [guid] = {name = unitName, ilvl = average, time = time()}
+			end
+		end
+
+		local spec
+		local talents = {}
+
+		if (not DetailsFramework.IsTimewalkWoW()) then
+			spec = GetInspectSpecialization(unitid)
+			if (spec and spec ~= 0) then
+				Details.cached_specs [guid] = spec
+				Details:SendEvent("UNIT_SPEC", nil, unitid, spec, guid)
+			end
+
+			--------------------------------------------------------------------------------------------------------
+
+			for i = 1, 7 do
+				for o = 1, 3 do
+					--need to review this in classic
+					local talentID, name, texture, selected, available = GetTalentInfo(i, o, 1, true, unitid)
+					if (selected) then
+						tinsert(talents, talentID)
+						break
+					end
+				end
+			end
+
+			if (talents [1]) then
+				Details.cached_talents [guid] = talents
+				Details:SendEvent("UNIT_TALENTS", nil, unitid, talents, guid)
+			end
+		end
+
+		--------------------------------------------------------------------------------------------------------
+
+		if (ilvl_core.forced_inspects [guid]) then
+			if (type(ilvl_core.forced_inspects [guid].callback) == "function") then
+				local okey, errortext = pcall(ilvl_core.forced_inspects[guid].callback, guid, unitid, ilvl_core.forced_inspects[guid].param1, ilvl_core.forced_inspects[guid].param2)
+				if (not okey) then
+					Details:Msg("Error on QueryInspect callback: " .. errortext)
+				end
+			end
+			ilvl_core.forced_inspects [guid] = nil
+		end
+
+		--------------------------------------------------------------------------------------------------------
+		]]
+
+		return average
+	end
+end
+
+
+local function getPlayerGemsAndEnchantInfo()
+    --hold equipmentSlotId of equipment with a gem socket but it's empty
+    local slotsWithoutGems = {}
+    --hold equipmentSlotId of equipments without an enchant
+    local slotsWithoutEnchant = {}
+
+    local gearWithEnchantIds = {}
+
+    for equipmentSlotId = 1, 17 do
+        local itemLink = GetInventoryItemLink("player", equipmentSlotId)
+        if (itemLink) then
+            --get the information from the item
+            local _, itemId, enchantId, gemId1, gemId2, gemId3, gemId4, suffixId, uniqueId, levelOfTheItem, specId, upgradeInfo, instanceDifficultyId, numBonusIds, restLink = strsplit(":", itemLink)
+            local gemsIds = {gemId1, gemId2, gemId3, gemId4}
+
+            --enchant
+                --check if the slot can receive enchat and if the equipment has an enchant
+                local enchantAttribute = LIB_OPEN_RAID_ENCHANT_SLOTS[equipmentSlotId]
+                local nEnchantId = 0
+
+                if (enchantAttribute) then --this slot can receive an enchant
+                    if (enchantId and enchantId ~= "") then
+                        local number = tonumber(enchantId)
+                        nEnchantId = number
+                        gearWithEnchantIds[#gearWithEnchantIds+1] = nEnchantId
+                    else
+                        gearWithEnchantIds[#gearWithEnchantIds+1] = 0
+                    end
+
+                    --6400 and above is dragonflight enchantId number space
+                    if (nEnchantId < 6300 and not LIB_OPEN_RAID_DEATHKNIGHT_RUNEFORGING_ENCHANT_IDS[nEnchantId]) then
+                        slotsWithoutEnchant[#slotsWithoutEnchant+1] = equipmentSlotId
+                    end
+                end
+
+            --gems
+                --local itemStatsTable = {}
+                --fill the table above with information about the item
+                --GetItemStats(itemLink, itemStatsTable) --deprecated in 10.2.5
+                local itemStatsTable = GetItemStats(itemLink)
+
+                --check if the item has a socket
+                if (itemStatsTable) then
+                    if (itemStatsTable.EMPTY_SOCKET_PRISMATIC) then
+                        --check if the socket is empty
+                        for i = 1, itemStatsTable.EMPTY_SOCKET_PRISMATIC do
+                            local gemId = tonumber(gemsIds[i])
+                            if (not gemId or gemId == 0) then
+                                slotsWithoutGems[#slotsWithoutGems+1] = equipmentSlotId
+
+                            --check if the gem is not a valid gem (deprecated gem)
+                            elseif (gemId < 180000) then
+                                slotsWithoutGems[#slotsWithoutGems+1] = equipmentSlotId
+                            end
+                        end
+                    end
+                end
+        end
+    end
+
+    return slotsWithoutGems, slotsWithoutEnchant
 end
 
 local function removePlayerFromInspectList(fullName)
@@ -118,32 +299,42 @@ local function updateSingleCharacterItemData(fullName)
 
 	local playerGear = playerGearData[fullName]
 
-	if(frame and playerGear) then
-		local data = frame.data
-		data.ilvl = playerGear.ilevel or 0
-		data.durability = playerGear.durability or 0
+	if(frame) then 
+		if(playerGear) then
+			local data = frame.data
+			data.ilvl = playerGear.ilevel or 0
+			data.durability = playerGear.durability or 0
 
-		if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
-			data.missingEnchants = {}
+			if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
+				data.missingEnchants = {}
 
-			for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
-				if(slotIdWithoutEnchant ~= 10) then
-					data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
-					
+				for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
+					if(slotIdWithoutEnchant ~= 10) then
+						data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+						
+					end
 				end
 			end
-		end
 
-		if(playerGear.noGems and #playerGear.noGems > 0) then
-			data.missingGems = {}
+			if(playerGear.noGems and #playerGear.noGems > 0) then
+				data.missingGems = {}
 
-			for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
-				data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+				for index, slotIdWithEmptyGemSocket in ipairs (playerGear.noGems) do
+					data.missingGems[index] = miog.SLOT_ID_INFO[slotIdWithEmptyGemSocket].localizedName
+				end
 			end
+			
+			frame.Itemlevel:SetText(playerGear.ilevel or "N/A")
+			frame.Durability:SetText(playerGear.durability and "(" .. playerGear.durability .. "%)" or "N/A")
 		end
-		
-		frame.Itemlevel:SetText(playerGear.ilevel or "N/A")
-		frame.Durability:SetText(playerGear.durability and "(" .. playerGear.durability .. "%)" or "N/A")
+
+	else
+		data.ilvl = manualItemlevels[fullName] or 0
+		data.durability = playerGear.durability or 0
+
+		frame.Itemlevel:SetText(manualItemlevels[fullName] or "N/A")
+		frame.Durability:SetText("N/A")
+
 	end
 end
 
@@ -176,7 +367,7 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 			end
 		end
 	else
-		data.ilvl = 0
+		data.ilvl = manualItemlevels[libName] or 0
 		data.durability = 0
 
 	end
@@ -674,7 +865,6 @@ end
 
 local function clearCharacter(fullName)
 	if(playerInInspection == fullName) then
-		--print("CLEAR", fullName, playerInInspection, playerInInspection == fullName)
 		ClearInspectPlayer(true)
 		playerInInspection = nil
 
@@ -694,16 +884,12 @@ end
 local function startNotify(fullName)
 	if(fullName) then
 		if(groupData[fullName]) then
-			--print("HAS DATA", fullName)
 			if(not playerSpecs[fullName] and canInspectPlayer(fullName) and checkTimeouts(fullName)) then
 				playerInInspection = fullName
-				--print("INSPECT", playerInInspection)
 
 				NotifyInspect(groupData[playerInInspection].unitID)
 
 				pityTimers[fullName] = C_Timer.NewTimer(5, function()
-					--print("PITY FOR", fullName)
-
 					timeouts[fullName] = timeouts[fullName] and timeouts[fullName] + 1 or 1
 
 					if(groupData[fullName]) then
@@ -753,19 +939,15 @@ local function checkForNextExecution(nextCharacter)
 		if(notifyIsAvailable) then
 			--cancelPityTimer()
 
-			--print("AVAIL", nextCharacter)
 			return startNotify(nextCharacter)
 			
 		else
-			--print("TIMER", nextCharacter)
 			playerInInspection = nextCharacter
 
 			startNewInspectTimer(nextCharacter, time)
 
 			return true
 		end
-	else
-		--print("TIMED OUT", nextCharacter)
 	end
 end
 
@@ -783,7 +965,6 @@ local function inspectNextCharacter()
 		local nextCharacter = getNextCharacter()
 
 		while nextCharacter do
-			--print("----------------------------")
 		
 			notifySuccess = checkForNextExecution(nextCharacter)
 
@@ -791,10 +972,7 @@ local function inspectNextCharacter()
 				local lastCharacter = nextCharacter
 				nextCharacter = getNextCharacter()
 
-				--print("FAULTY", lastCharacter, nextCharacter, timeouts[lastCharacter])
-
 				if(lastCharacter == nextCharacter) then
-					--print("SAME", lastCharacter)
 					timeouts[lastCharacter] = timeouts[lastCharacter] and timeouts[lastCharacter] + 1 or 1
 
 					startNewInspectTimer(lastCharacter, GetTimePreciseSec())
@@ -851,11 +1029,6 @@ local function updateGroupData(type, overwrite)
 					local unitID
 					local playerName, realm = miog.createSplitName(name)
 					local fullName = miog.createFullNameFrom("unitName", name)
-
-					if(online) then
-						miog.AceComm:SendCommMessage("MIOG_DEBUG", "Hey, I'm " .. UnitName("player"), "WHISPER", fullName)
-
-					end
 
 					if(isInRaid) then
 						unitID = "raid" .. groupIndex
@@ -974,6 +1147,8 @@ local function checkPlayerInspectionStatus(fullName, openRaidSpec, type)
 	if(groupData[fullName]) then
 		playerSpecs[fullName] = openRaidSpec or GetInspectSpecialization(groupData[fullName].unitID)
 
+		manualItemlevels[fullName] = calcItemLevel(groupData[fullName].unitID)
+
 		updateSingleCharacterSpecData(fullName)
 
 	end
@@ -996,8 +1171,6 @@ local function groupManagerEvents(_, event, ...)
 	elseif(event == "INSPECT_READY") then
 		local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(...)
 		local fullName = miog.createFullNameFrom("unitName", name .. "-" .. realmName)
-
-		--print("READY", fullName)
 
 		checkPlayerInspectionStatus(fullName, nil, 1)
 	elseif(event == "GROUP_JOINED") then
@@ -1112,10 +1285,12 @@ miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
 	for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
 	end]]
 
+
 	local name = miog.createFullNameFrom("unitID", unitId)
 
 	if(name) then
-		playerGearData[name] = unitGear
+
+		--playerGearData[name] = unitGear
 
 		updateSingleCharacterItemData(name)
 
@@ -1127,6 +1302,7 @@ local function updateRaidLibData()
 
 	if(isInRaid or isInGroup) then
 		miog.openRaidLib.GetAllUnitsInfo()
+		miog.openRaidLib.GetAllUnitsGear()
 
 		if(isInRaid) then
 			miog.openRaidLib.RequestKeystoneDataFromRaid()

@@ -1,8 +1,6 @@
 local addonName, miog = ...
 
-miog.AceComm = LibStub:GetLibrary("AceComm-3.0")
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-miog.tradeSkill = LibStub:GetLibrary("LibTradeSkillRecipes-1")
 
 miog.debug = {}
 
@@ -40,15 +38,15 @@ local function mainEvents(_, event, ...)
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		miog.checkAllSeasonalMapIDs()
 		
-		local isLogin, isReload = ...
+		--[[local isLogin, isReload = ...
 
 		if(isLogin or isReload) then
 			local accInfo = C_BattleNet.GetAccountInfoByGUID(UnitGUID("player"))
 			if(accInfo and accInfo.battleTag == "Rhany#21903") then
-				miog.AceComm:RegisterComm("MIOG_DEBUG", printMIOGPlayers)
+				--miog.AceComm:RegisterComm("MIOG_DEBUG", printMIOGPlayers)
 
 			end
-		end
+		end]]
 
     elseif(event == "MYTHIC_PLUS_CURRENT_AFFIX_UPDATE") then
 		C_MythicPlus.GetCurrentAffixes() -- Safety call, so Affixes are 100% available
@@ -100,11 +98,6 @@ local function mainEvents(_, event, ...)
 
 	elseif(event == "CHALLENGE_MODE_COMPLETED") then
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
-
-	elseif(event == "WEEKLY_REWARDS_UPDATE") then
-
-	elseif event == "OPEN_RECIPE_RESPONSE" then
-		print(...)
 
 	end
 end

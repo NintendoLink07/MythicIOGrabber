@@ -59,6 +59,20 @@ function SearchBoxFiltersMixin:ShowFilter(id, name, callback)
     filter:GetParent():MarkDirty()
 end
 
+function SearchBoxFiltersMixin:GetNumActiveFilters()
+    return self.filterPool:GetNumActive()
+end
+
+function SearchBoxFiltersMixin:IsIDActive(id)
+    for widget in self.filterPool:EnumerateActive() do
+        if(widget.id == id) then
+            return true
+        end
+    end
+
+    return false
+end
+
 function SearchBoxFiltersMixin:GetIDHierarchyOrder(id)
     for k, v in ipairs(self.hierarchy) do
         if(v.id == id) then

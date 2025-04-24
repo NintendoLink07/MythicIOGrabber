@@ -1,4 +1,4 @@
-## Interface: 110100
+## Interface: 110105
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO
@@ -187,7 +187,7 @@ XML\Util\MIOG_MenuButtonTemplate.xml
 XML\Util\MIOG_VerticalButtonTemplate.xml
 XML\Util\MIOG_MinimalHorizontalScrollBarTemplate.xml
 XML\Util\MIOG_IconWithTextTemplate.xml
-XML\MIOG_SearchBoxFilterTemplate.xml
+XML\Util\MIOG_SearchBoxFilterTemplate.xml
 
 XML\MIOG_StatisticsPage.xml
 XML\MIOG_StatisticsPageListEntryTemplate.xml

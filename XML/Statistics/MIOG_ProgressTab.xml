@@ -82,49 +82,11 @@
                     <Frame parentKey="Columns" inherits="WowScrollBoxList">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="40"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="2"/>
                         </Anchors>
-
-                        <Frames>
-                        </Frames>
                     </Frame>
 
-                    <!--<Frame parentKey="Graph" inherits="ThinBorderTemplate" mixin="GraphMixin">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Columns" relativePoint="BOTTOMLEFT" x="1"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="1"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOM" y="4"/>
-                        </Anchors>
-
-                        <Layers>
-                            <Layer level="BACKGROUND">
-                                <Texture parentKey="Background">
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
-                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
-                                    </Anchors>
-                                    <Color r="0" g="0" b="0" a="0.75" />
-                                </Texture>
-                            </Layer>
-                        </Layers>
-
-                        <Frames>
-                            <Frame parentKey="Checkboxes">
-                                <Size y="24" />
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                                </Anchors>
-
-                            </Frame>
-                            <Frame parentKey="Grid">
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.Checkboxes" relativePoint="BOTTOMLEFT" />
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                                </Anchors>
-                            </Frame>
-                        </Frames>
-                    </Frame>!-->
+                 
                 </Frames>
 
                 <Scripts>
