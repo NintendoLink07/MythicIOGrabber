@@ -64,5 +64,8 @@ function ItemUpgradeFinderMixin:OnShow()
 
     local item = Item:CreateFromEquipmentSlot(self:GetID())
 
-    self.ItemLevel:SetText(WrapTextInColorCode(item:GetCurrentItemLevel(), item:GetItemQualityColor().color:GenerateHexColor()))
+    if(item:GetCurrentItemLevel()) then
+        self.ItemLevel:SetText(WrapTextInColorCode(item:GetCurrentItemLevel(), item:GetItemQualityColor().color:GenerateHexColor()))
+
+    end
 end

@@ -850,6 +850,7 @@ end
 
 miog.isMIOGHQLoaded = function()
 	return true
+	--return C_AddOns.IsAddOnLoaded("MythicIO - Resources")
 end
 
 miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeonScore, dungeonData, raidData, pvpData)

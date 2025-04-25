@@ -435,7 +435,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 
 			end
 
-			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.name), titleZoneColor))
+			currentFrame.CategoryInformation.DifficultyZone:SetText(wticc((difficultyZoneText and difficultyZoneText .. " - " or "") .. (shortName or activityInfo.fullName), titleZoneColor))
 
 			if(not questTagInfo) then
 				currentFrame.BasicInformation.Icon:SetTexture(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].icon or nil)

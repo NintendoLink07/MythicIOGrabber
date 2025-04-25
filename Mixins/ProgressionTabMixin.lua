@@ -64,6 +64,7 @@ local function sortByProgress(k1, k2)
             return false
         end
         -- Compare scores
+
         return k1.progressWeight > k2.progressWeight
     elseif k1 then
         return true  -- k1 is valid, k2 is nil
@@ -1496,14 +1497,13 @@ function ProgressionTabMixin:UpdateSingleCharacterPVPProgress(guid)
 end
 
 function ProgressionTabMixin:CalculateProgressWeightViaAchievements(guid)
-	local charData = self.settings[guid]
 	local progressWeight = 0
 
 	for k, info in ipairs(raidActivities) do
 		local mapID = info.mapID
 
-		if(charData.raid[mapID].regular) then
-			for difficultyIndex, table in pairs(charData.raid[mapID].regular) do
+		if(self.settings[guid].raid[mapID].regular) then
+			for difficultyIndex, table in pairs(self.settings[guid].raid[mapID].regular) do
 				progressWeight = progressWeight + miog.calculateWeightedScore(difficultyIndex, table.kills, #table.bosses, true, 1)
 
 
@@ -1514,7 +1514,7 @@ function ProgressionTabMixin:CalculateProgressWeightViaAchievements(guid)
 		end
 	end
 
-	charData.progressWeight = progressWeight
+	self.settings[guid].progressWeight = progressWeight
 end
 
 function ProgressionTabMixin:CheckForAchievements(guid, type, mapID)
@@ -1579,8 +1579,6 @@ function ProgressionTabMixin:UpdateSingleCharacterRaidProgress(guid)
 
             self:CheckForAchievements(guid, "regular", mapID)
         end
-
-        self:CalculateProgressWeightViaAchievements(guid)
     else
         local raidData = miog.getNewRaidSortData(charData.name, charData.realm)
         local progressWeight = charData.progressWeight or 0
@@ -1635,6 +1633,8 @@ function ProgressionTabMixin:UpdateSingleCharacterRaidProgress(guid)
 
         charData.progressWeight = progressWeight
     end
+
+	self:CalculateProgressWeightViaAchievements(guid)
 end
 
 function ProgressionTabMixin:UpdateSingleCharacterMythicPlusProgress(guid)

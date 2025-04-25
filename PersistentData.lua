@@ -443,22 +443,6 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 	},
 }
 
-miog.PVP_BRACKET_INFO = {
-	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloArena.png"}, --Solo Arena
-	{id = 9, alias = PVP_RATED_BG_BLITZ, shortName = "Solo BG", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloBG.png"}, --Solo BG
-	{id = 1, alias = ARENA_2V2, shortName = ARENA_2V2, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/2v2.png"}, --2v2
-	{id = 2, alias = ARENA_3V3, shortName = ARENA_3V3, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/3v3.png"}, --3v3
-	--{id = 3, alias = ARENA_5V5, shortName = ARENA_5V5, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/5v5.png"}, --5v5
-	{id = 4, alias = BATTLEGROUND_10V10, shortName = BATTLEGROUND_10V10, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/10v10.png"}, --10v10
-
-}
-
-miog.PVP_BRACKET_IDS_TO_INFO = {}
-
-for k, v in ipairs(miog.PVP_BRACKET_INFO) do
-	miog.PVP_BRACKET_IDS_TO_INFO[v.id] = v
-end
-
 miog.MAP_INFO = {
 	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground"},
 	[489] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
@@ -1038,6 +1022,22 @@ miog.CHALLENGE_MODE_INFO = {}
 
 miog.checkSingleMapIDForNewData = checkSingleMapIDForNewData
 
+miog.PVP_BRACKET_INFO = {
+	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloArena.png"}, --Solo Arena
+	{id = 9, alias = PVP_RATED_BG_BLITZ, shortName = "Solo BG", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloBG.png"}, --Solo BG
+	{id = 1, alias = ARENA_2V2, shortName = ARENA_2V2, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/2v2.png"}, --2v2
+	{id = 2, alias = ARENA_3V3, shortName = ARENA_3V3, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/3v3.png"}, --3v3
+	--{id = 3, alias = ARENA_5V5, shortName = ARENA_5V5, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/5v5.png"}, --5v5
+	{id = 4, alias = BATTLEGROUND_10V10, shortName = BATTLEGROUND_10V10, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/10v10.png"}, --10v10
+
+}
+
+miog.PVP_BRACKET_IDS_TO_INFO = {}
+
+for k, v in ipairs(miog.PVP_BRACKET_INFO) do
+	miog.PVP_BRACKET_IDS_TO_INFO[v.id] = v
+end
+
 local function loadRawData()
 	local loadHQData = miog.isMIOGHQLoaded()
 
@@ -1057,13 +1057,16 @@ local function loadRawData()
 		if(background) then
 			if(loadHQData) then
 				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. background .. ".png"
-				mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. background .. ".png"
+				--mapInfo.horizontal = "Interface/Addons/MythicIO - Resources/backgrounds/horizontal/" .. background .. ".png"
+				--mapInfo.vertical = "Interface/Addons/MythicIO - Resources/backgrounds/vertical/" .. background .. ".png"
 				
 			else
 				mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-				mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
+				--mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
 
 			end
+
+			mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. background .. ".png"
 
 			mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.fileName or mapInfo.iconName) .. ".blp"
 		end

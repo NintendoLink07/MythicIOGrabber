@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [3.4.1] - 2025-04-25
+
+### Fixed
+
+- [UpgradeFinder] Having a shirt equipped won't cause an error anymore.
+
+- [Progress] Raid progress is now properly saved and re-applied on login.
+
+- [SearchPanel] Opening the questing or custom categories won't create an error for specific groups anymore.
+
+- More code changes to split off the custom upscaled images into an own addon to keep the main addons filesize low.
+
+
 
 ## [3.4.0] - 2025-04-24
 
@@ -14,7 +27,6 @@ and this project adheres to [Semantic Versioning].
     Here you can select an instance (boss and difficulty optional) and see all the loot that drops.
     - Similar to the normal Adventure Journal you can change slot and class, but in addition you can filter for mounts, recipes, tokens and for specific armor types.
     - You can also just search for items by name! The search is currently limited to current activities only (so everything in the current expansion), due to performance reasons.
-    - 
 
 - [Progress] The honor level and the honor level progress have been added to both the main [Progress] tab and the inner PvP frame.
 
@@ -47,7 +59,7 @@ The saved app dialog texts, last used queue and last group are now character-spe
 
 ### Known issues
 
-- Group itemlevel, durability and enchant data doesn't not get transmitted between players.
+- Group itemlevel, durability and enchant data isn't getting transmitted between players.
 This has been the case since 11.1.5.
 A fix is in the works, probably coming with v3.4.2 or v3.4.3.
 
@@ -3605,7 +3617,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.0..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.1..HEAD
+[3.4.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.1
 [3.4.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.0
 [3.3.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.3.0a
 [3.3.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.3.0
