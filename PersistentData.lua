@@ -775,12 +775,13 @@ miog.MAP_INFO = {
 
 	[2601] = {shortName = "KA", fileName = "khazalgar"},
 
+	--interface/delves/110
 	[2664] = {shortName = "FF", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "fungalfolly",},
 	[2679] = {shortName = "MMC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "mycomancercavern",},
 	[2680] = {shortName = "ECM", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "earthcrawlmines",},
 	[2681] = {shortName = "KR", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "kriegvalsrest",},
 	[2682] = {shortName = "ZL", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "zekvirslair",},
-	[2683] = {shortName = "WW", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "waterworks",},
+	[2683] = {shortName = "WW", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "delve_waterworks",},
 	[2684] = {shortName = "DP", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "dreadpit",},
 	[2685] = {shortName = "SB", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "skitteringbreach",},
 	[2686] = {shortName = "NFS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "nightfallsanctum",},
@@ -792,8 +793,13 @@ miog.MAP_INFO = {
 	[2710] = {shortName = "ATM", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "awakeningthemachine",},
 	[2767] = {shortName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole",},
 	[2768] = {shortName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
+
+	--interface/delves/111
+	[2815] = {shortName = "ES9", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "excavationsite9",},
+	[2826] = {shortName = "SS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sidestreetsluice",},
+	[2831] = {shortName = "UDC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "underpinsdemolitioncompetition",},
 	
-	[2773] = {shortName = "OF", iconName = "waterworks", bgName = "dungeon_waterworks"},
+	[2773] = {shortName = "OF", fileName = "waterworks"},
 	[2774] = {shortName = "WORLD", fileName = "khazalgar",},
 	[2776] = {shortName = "CODEX", fileName = "kalimdor",},
 	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
@@ -932,8 +938,7 @@ local function checkJournalInstanceIDForNewData(journalInstanceID)
 	EJ_SelectInstance(journalInstanceID)
     local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID);
 
-	local mapInfo = miog.MAP_INFO[mapID]
-	mapInfo.isRaid = EJ_InstanceIsRaid()
+	miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
 
 	local counter = 1
 
@@ -942,7 +947,7 @@ local function checkJournalInstanceIDForNewData(journalInstanceID)
 	while(bossName) do
 		local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature (boss)
 		
-		mapInfo.bosses[counter] = {
+		miog.MAP_INFO[mapID].bosses[counter] = {
 			name = bossName,
 			altName = name2,
 			journalEncounterID = journalEncounterID,
@@ -953,7 +958,7 @@ local function checkJournalInstanceIDForNewData(journalInstanceID)
 			achievements = {},
 			id = id,
 			creatureDisplayInfoID = displayInfo,
-			icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[counter].icon or iconImage
+			--icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[counter].icon or iconImage
 		}
 
 		miog.ENCOUNTER_INFO[journalEncounterID] = {index = counter, creatureDisplayInfoID = displayInfo}
@@ -962,7 +967,7 @@ local function checkJournalInstanceIDForNewData(journalInstanceID)
 		bossName, _, journalEncounterID, _ = EJ_GetEncounterInfoByIndex(counter, journalInstanceID);
 	end
 
-	return mapInfo
+	return miog.MAP_INFO[mapID]
 end
 
 miog.checkJournalInstanceIDForNewData = checkJournalInstanceIDForNewData
@@ -1023,12 +1028,12 @@ miog.CHALLENGE_MODE_INFO = {}
 miog.checkSingleMapIDForNewData = checkSingleMapIDForNewData
 
 miog.PVP_BRACKET_INFO = {
-	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloArena.png"}, --Solo Arena
-	{id = 9, alias = PVP_RATED_BG_BLITZ, shortName = "Solo BG", fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/soloBG.png"}, --Solo BG
-	{id = 1, alias = ARENA_2V2, shortName = ARENA_2V2, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/2v2.png"}, --2v2
-	{id = 2, alias = ARENA_3V3, shortName = ARENA_3V3, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/3v3.png"}, --3v3
-	--{id = 3, alias = ARENA_5V5, shortName = ARENA_5V5, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/5v5.png"}, --5v5
-	{id = 4, alias = BATTLEGROUND_10V10, shortName = BATTLEGROUND_10V10, fileName = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/10v10.png"}, --10v10
+	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = "tolvirarena", pathName = "Interface/GLUES/LOADINGSCREENS/LoadScreenTolvirArena.blp"}, --Solo Arena
+	{id = 9, alias = PVP_RATED_BG_BLITZ, shortName = "Solo BG", fileName = "twinpeaksbg", pathName = "Interface/GLUES/LOADINGSCREENS/LoadScreenTwinPeaksBG.blp"}, --Solo BG
+	{id = 1, alias = ARENA_2V2, shortName = ARENA_2V2, fileName = "enigmaarena", pathName = "Interface/GLUES/LOADINGSCREENS/Expansion08/Main/LoadScreen_EnigmaArena.blp"}, --2v2
+	{id = 2, alias = ARENA_3V3, shortName = ARENA_3V3, fileName = "blackrookholdarena", pathName = "Interface/GLUES/LOADINGSCREENS/LoadingScreen_BlackrookHoldArena_wide.blp"}, --3v3
+	--{id = 3, alias = ARENA_5V5, shortName = ARENA_5V5, fileName = "maldraxxuscoliseum", pathName = "Interface/GLUES/LOADINGSCREENS/Expansion08/Main/LoadScreen_MaldraxxusColiseum.blp"}, --5v5
+	{id = 4, alias = BATTLEGROUND_10V10, shortName = BATTLEGROUND_10V10, fileName = "earthenbattleground", pathName = "Interface/GLUES/LOADINGSCREENS/Expansion10/Main/Loadscreen_EarthenBattleground.blp"}, --10v10
 
 }
 
@@ -1041,32 +1046,40 @@ end
 local function loadRawData()
 	local loadHQData = miog.isMIOGHQLoaded()
 
+	for k, v in pairs(miog.PVP_BRACKET_INFO) do
+		if(loadHQData) then
+			v.vertical = MythicIO.GetBackgroundImage(v.fileName, true)
+			
+		else
+			v.vertical = v.pathName
+			
+		end
+
+	end
+
 	for k, v in pairs(miog.RAW["Map"]) do
 		miog.MAP_INFO[v[1]] = miog.MAP_INFO[v[1]] or {}
 
 		local mapInfo = miog.MAP_INFO[v[1]]
 
-		miog.MAP_INFO[v[1]].name = v[3]
-		miog.MAP_INFO[v[1]].instanceType = v[10]
-		miog.MAP_INFO[v[1]].expansionLevel = v[12]
-		miog.MAP_INFO[v[1]].bosses = {}
-		miog.MAP_INFO[v[1]].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
+		mapInfo.name = v[3]
+		mapInfo.instanceType = v[10]
+		mapInfo.expansionLevel = v[12]
+		mapInfo.bosses = {}
+		mapInfo.journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
 		
-		local background = mapInfo.fileName or mapInfo.bgName
+		local background = mapInfo.bgName or mapInfo.fileName
 		
 		if(background) then
 			if(loadHQData) then
-				mapInfo.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. background .. ".png"
-				--mapInfo.horizontal = "Interface/Addons/MythicIO - Resources/backgrounds/horizontal/" .. background .. ".png"
-				--mapInfo.vertical = "Interface/Addons/MythicIO - Resources/backgrounds/vertical/" .. background .. ".png"
+				mapInfo.horizontal = MythicIO.GetBackgroundImage(background)
+				mapInfo.vertical = MythicIO.GetBackgroundImage(background, true)
 				
 			else
 				mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-				--mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
+				mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
 
 			end
-
-			mapInfo.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/vertical/" .. background .. ".png"
 
 			mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.fileName or mapInfo.iconName) .. ".blp"
 		end
@@ -1074,6 +1087,7 @@ local function loadRawData()
 	
 	for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
 		miog.ACTIVITY_INFO[v[1]] = {
+			activityID = v[1],
 			name = v[2],
 			difficultyName = v[3],
 			categoryID = v[4],
@@ -1100,6 +1114,7 @@ local function loadRawData()
 			miog.ACTIVITY_INFO[v[1]].expansionLevel = mapInfo.expansionLevel
 			miog.ACTIVITY_INFO[v[1]].bosses = mapInfo.bosses
 			miog.ACTIVITY_INFO[v[1]].shortName = mapInfo.shortName
+			miog.ACTIVITY_INFO[v[1]].extractedName = mapInfo.name
 
 			miog.ACTIVITY_INFO[v[1]].fileName = mapInfo.fileName
 			miog.ACTIVITY_INFO[v[1]].bgName = mapInfo.bgName

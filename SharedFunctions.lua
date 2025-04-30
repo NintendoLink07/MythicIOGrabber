@@ -239,6 +239,31 @@ miog.retrieveCurrentSeasonDungeonActivityIDs = function(justIDs, sort)
 	return mythicPlusActivities
 end
 
+miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
+	local mythicPlusActivities = {}
+
+	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
+        local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
+        local activityID = activities[#activities]
+
+        tinsert(mythicPlusActivities, justIDs and activityID or {shortName = miog.ACTIVITY_INFO[activityID].shortName, activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+    end
+
+	if(sort and #mythicPlusActivities > 1) then
+		if(justIDs) then
+			table.sort(mythicPlusActivities, function(k1, k2)
+				return k1 < k2
+			end)
+		else
+			table.sort(mythicPlusActivities, function(k1, k2)
+				return k1.shortName < k2.shortName
+			end)
+		end
+	end
+
+	return mythicPlusActivities
+end
+
 miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 	local raidActivities = {}
 
@@ -849,8 +874,8 @@ miog.updateFooterBarResults = function(filteredResultNumber, totalResultNumber, 
 end
 
 miog.isMIOGHQLoaded = function()
-	return true
-	--return C_AddOns.IsAddOnLoaded("MythicIO - Resources")
+	--return true
+	return C_AddOns.IsAddOnLoaded("MythicIO - Resources")
 end
 
 miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeonScore, dungeonData, raidData, pvpData)

@@ -631,9 +631,11 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			end
 		end)
 
-        local horizonalView = CreateScrollBoxListLinearView();
-		horizonalView:SetHorizontal(true)
-		horizonalView:SetElementInitializer(self.template, function(frame, data)
+		self.Columns:SetHorizontal(true)
+
+        local horizontalView = CreateScrollBoxListLinearView();
+		horizontalView:SetHorizontal(true)
+		horizontalView:SetElementInitializer(self.template, function(frame, data)
             local classID = miog.CLASSFILE_TO_ID[data.classFile]
 			local color = C_ClassColor.GetClassColor(data.classFile)
 
@@ -856,11 +858,11 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			end
         end)
 
-		horizonalView:SetPadding(1, 1, 1, 1, 7);
-        horizonalView:SetElementExtent(100)
+		horizontalView:SetPadding(1, 1, 1, 1, 7);
+        horizontalView:SetElementExtent(100)
 
-		self.Columns:Init(horizonalView);
-        self.horizontalView = horizonalView
+		ScrollUtil.InitScrollBoxListWithScrollBar(self.Columns, self.ScrollBar, horizontalView);
+        self.horizontalView = horizontalView
     else
 		miog.createFrameBorder(self.Selection, 1, CreateColorFromHexString(miog.CLRSCC.silver):GetRGBA())
 	
@@ -875,7 +877,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
                 if(bracketInfo) then
                     shortName = bracketInfo.shortName
 
-                    frame.Background:SetTexture(bracketInfo.fileName, "MIRROR", "MIRROR")
+                    frame.Background:SetTexture(bracketInfo.vertical, "MIRROR", "MIRROR")
                 end
 
             else
@@ -1295,8 +1297,6 @@ function ProgressionTabMixin:UpdateLockoutData()
 
 	checkEntriesForExpiration()
 
-	refreshCharacterInfo()
-
 	--[[
 	table.sort(MIOG_NewSettings.lockoutCheck[fullPlayerName], function(k1, k2)
 		if(k1.isRaid == k2.isRaid) then
@@ -1339,6 +1339,7 @@ function ProgressionTabMixin:UpdateLockoutData()
 end
 
 function ProgressionTabMixin:OnShow()
+	self:UpdateLockoutData()
 	self:PopulateActivities()
 
 	if(self.type == "all") then
@@ -1480,7 +1481,7 @@ function ProgressionTabMixin:UpdateSingleCharacterPVPProgress(guid)
 		charData.honor = {
 			current = UnitHonor("player"),
 			maximum = UnitHonorMax("player"),
-			level = UnitLevel("player")
+			level = UnitHonorLevel("player")
 		}
 
 	else

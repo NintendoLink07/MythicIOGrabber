@@ -97,7 +97,7 @@ local function calcItemLevel(unitid, guid, shout)
 		if(failed == 0) then
 			average = item_level / item_amount
 
-			miog.round(average, 0)
+			average = miog.round(average, 0)
 
 		end
 

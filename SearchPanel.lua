@@ -394,6 +394,14 @@ end
 local function resetScrollBoxFrame(frame)
 	frame.CategoryInformation.ExpandFrame:SetState(false)
 	frame.CancelApplication:OnLoad()
+
+	for i = 1, 20, 1 do
+		local bossFrame = frame.CategoryInformation.BossPanel["Boss" .. i]
+
+		bossFrame:Hide()
+		bossFrame.name = nil
+		bossFrame.altName = nil
+	end
 end
 
 local function updateOptionalScrollBoxFrameData(frame, data)
@@ -528,9 +536,6 @@ local function updateScrollBoxFrame(frame, data)
 
 					bossCounter = bossCounter - 1
 
-				else
-					bossFrame:Hide()
-
 				end
 			end
 		else
@@ -598,7 +603,6 @@ local function updateScrollBoxFrame(frame, data)
 		local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
 
 		local memberPanel = currentFrame.CategoryInformation.MemberPanel
-		local bossPanel = currentFrame.CategoryInformation.BossPanel
 
 		memberPanel:SetShown(activityInfo.categoryID ~= 3)
 		bossPanel:SetShown(activityInfo.categoryID == 3 and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID > 0)

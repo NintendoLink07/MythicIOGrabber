@@ -82,11 +82,20 @@
                     <Frame parentKey="Columns" inherits="WowScrollBoxList">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="2"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="20"/>
                         </Anchors>
-                    </Frame>
+                    </Frame> 
+                    <EventFrame parentKey="ScrollBar" inherits="MIOG_MinimalHorizontalScrollBarTemplate">
+                        <Size y="16" />
+                        <KeyValues>
+                            <KeyValue key="minThumbExtent" value="10" type="number"/>
+                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
 
-                 
+                    </EventFrame>
                 </Frames>
 
                 <Scripts>

@@ -482,7 +482,7 @@ function ProgressTabMixin:OnLoad(id)
 				if(bracketInfo) then
 					shortName = bracketInfo.shortName
 
-					frame.Background:SetTexture(bracketInfo.fileName)
+					frame.Background:SetTexture(bracketInfo.vertical)
 				end
 
 			else

@@ -3,6 +3,5 @@
 	
 	<Include file="LibOpenRaid\lib.xml"/>
 	<Include file="LibDeflate\lib.xml"/>
-	<Include file="LibTradeSkillRecipes\lib.xml"/>
 	<Include file="AceComm-3.0\AceComm-3.0.xml"/>
 </Ui>

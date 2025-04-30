@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.4.1
+## Version: 3.4.2
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -31,7 +31,7 @@ FilterPanel.lua
 Calendar.lua
 SharedFunctions.lua
 ClassPanel.lua
-LockoutCheck.lua
+#LockoutCheck.lua
 
 LastInvites.lua
 GearingTable.lua
@@ -146,7 +146,7 @@ XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelDungeonTemplate.xml
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelTierHeaderTemplate.xml
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelTierTemplate.xml
 
-XML\Lockouts\MIOG_LockoutCheck.xml
+#XML\Lockouts\MIOG_LockoutCheck.xml
 XML\Lockouts\MIOG_LockoutCheckCharacterTemplate.xml
 XML\Lockouts\MIOG_LockoutCheckInstanceTemplate.xml
 
