@@ -255,6 +255,9 @@ local function createJournalInstanceListFromJournalInfo()
     return instanceList
 end
 
+-- /tinspect C_LFGList.GetAvailableActivities(3, nil, Enum.LFGListFilter.CurrentExpansion)
+-- /tinspect C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
+
 local function createJournalInstanceListFromActivityGroups()
     local instanceList = {}
     local groupsDone = {}
@@ -276,7 +279,7 @@ local function createJournalInstanceListFromActivityGroups()
     addGroupsToList(instanceList, raidGroups, groupsDone, false)
     --addGroupsToList(instanceList, otherRaidGroups, groupsDone, false)
 
-    if(worldBossActivity and #worldBossActivity > 0) then
+    --[[if(worldBossActivity and #worldBossActivity > 0) then
         for _, v in ipairs(worldBossActivity) do
             local activityInfo = miog.ACTIVITY_INFO[v]
             activityInfo.isActive = false
@@ -284,7 +287,7 @@ local function createJournalInstanceListFromActivityGroups()
             activityInfo.name = activityInfo.extractedName
             tinsert(instanceList, activityInfo)
         end
-    end
+    end]]
 
     return instanceList
 end
@@ -757,11 +760,11 @@ local function createCurrentActivitiesTable()
     table.sort(list, function(k1, k2)
         if(k1.isRaid == k2.isRaid) then
             if(k1.isRaid) then
-                return k1.activityID < k2.activityID
+                return k1.groupFinderActivityGroupID < k2.groupFinderActivityGroupID
                 
             end
             
-            return k1.name < k2.name
+            return k1.fullName < k2.fullName
             
         end
 

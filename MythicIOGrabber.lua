@@ -31,6 +31,7 @@ local function mainEvents(_, event, ...)
 		
 		miog.loadNewSettings()
 		miog.loadRawData()
+		
 		miog.createFrames()
 		
 		EJ_SetDifficulty(8)

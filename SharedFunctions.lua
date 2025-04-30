@@ -220,8 +220,9 @@ miog.retrieveCurrentSeasonDungeonActivityIDs = function(justIDs, sort)
 	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
         local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
         local activityID = activities[#activities]
+		local activityInfo = miog.requestActivityInfoIfNeeded(activityID)
 
-        tinsert(mythicPlusActivities, justIDs and activityID or {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+        tinsert(mythicPlusActivities, justIDs and activityID or {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = activityInfo.mapID})
     end
 
 	if(sort and #mythicPlusActivities > 1) then
@@ -246,7 +247,9 @@ miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
         local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
         local activityID = activities[#activities]
 
-        tinsert(mythicPlusActivities, justIDs and activityID or {shortName = miog.ACTIVITY_INFO[activityID].shortName, activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+		local activityInfo = miog.requestActivityInfoIfNeeded(activityID)
+
+        tinsert(mythicPlusActivities, justIDs and activityID or {abbreviatedName = activityInfo.abbreviatedName, activityID = activityID, mapID = activityInfo.mapID})
     end
 
 	if(sort and #mythicPlusActivities > 1) then
@@ -256,7 +259,7 @@ miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
 			end)
 		else
 			table.sort(mythicPlusActivities, function(k1, k2)
-				return k1.shortName < k2.shortName
+				return k1.abbreviatedName < k2.abbreviatedName
 			end)
 		end
 	end
@@ -271,8 +274,9 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
         local activities = C_LFGList.GetAvailableActivities(3, v)
         local activityID = activities[#activities]
 		local name, order = C_LFGList.GetActivityGroupInfo(v)
+		local activityInfo = miog.requestActivityInfoIfNeeded(activityID)
 
-        tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
+        tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
     end
 
 	if(sort and #raidActivities > 1) then

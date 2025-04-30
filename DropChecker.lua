@@ -183,14 +183,6 @@ local function loadLoot()
     miog.DropChecker.ScrollBox:SetDataProvider(dataProvider)
 end
 
-local function getMaxDifficultyForMapID(mapID)
-    local instanceType = miog.MAP_INFO[mapID].instanceType
-
-    if(instanceType == 2) then
-        
-    end
-end
-
 local function requestAllLootForMapID(mapID)
     local mapInfo = miog.MAP_INFO[mapID]
     local settings = MIOG_NewSettings.newFilterOptions["DropChecker"] and MIOG_NewSettings.newFilterOptions["DropChecker"][0]

@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning].
 ### Changed
 
 - All upscaled images are now integrated into a separate addon because the addon grows rapidly in size (atm its around 80mb while most addons are in the 1-5mb range).
-[MythicIO - Resources](https://www.curseforge.com/wow/addons/mythicio-resources)
+If you like the upscaled images you can download the following addon: [MythicIO - Resources](https://www.curseforge.com/wow/addons/mythicio-resources)
 This decreased the main addon's filesize by 35mb.
 
 - All background image options for the main frame have been resized.

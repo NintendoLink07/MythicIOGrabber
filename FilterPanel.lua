@@ -909,7 +909,7 @@ local function sortActivityGroup(k1, k2)
 	if(ga1 and ga2) then
 		local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
 
-		return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+		return miog.GROUP_ACTIVITY[k1].abbreviatedName < miog.GROUP_ACTIVITY[k2].abbreviatedName
 
 	elseif(ga1) then
 		return true
@@ -1200,7 +1200,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					if(seasonGroup and #seasonGroup > 0) then
 						for x, y in ipairs(seasonGroup) do
 							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
-							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
 							addedIDs[y] = true
 						end
 					end
@@ -1209,7 +1209,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 						for x, y in ipairs(expansionGroups) do
 							if(not addedIDs[y]) then
 								local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
-								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
 							end
 						end
 					end
@@ -1267,14 +1267,14 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 						for _, v in ipairs(seasonGroups) do
 							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
 							miog.checkSingleMapIDForNewData(activityInfo.mapID, true)
-							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, bosses = activityInfo.bosses}
+							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName, bosses = activityInfo.bosses}
 		
 						end
 					end
 		
 					if(worldBossActivity and #worldBossActivity > 0) then
 						local activityInfo = C_LFGList.GetActivityInfoTable(worldBossActivity[1])
-						sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName}
+						sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName}
 		
 					end
 		
@@ -1351,17 +1351,17 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
 					
 					table.sort(seasonGroup, function(k1, k2)
-						return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+						return miog.GROUP_ACTIVITY[k1].abbreviatedName < miog.GROUP_ACTIVITY[k2].abbreviatedName
 					end)
 
 					table.sort(expansionGroups, function(k1, k2)
-						return miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k1].activityID].shortName < miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[k2].activityID].shortName
+						return miog.GROUP_ACTIVITY[k1].abbreviatedName < miog.GROUP_ACTIVITY[k2].abbreviatedName
 					end)
 
 					if(seasonGroup and #seasonGroup > 0) then
 						for x, y in ipairs(seasonGroup) do
-							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
-							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+							local groupActivityInfo = miog.GROUP_ACTIVITY[y]
+							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupActivityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
 							addedIDs[y] = true
 						end
 					end
@@ -1369,8 +1369,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					if(expansionGroups and #expansionGroups > 0) then
 						for x, y in ipairs(expansionGroups) do
 							if(not addedIDs[y]) then
-								local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
-								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+								local groupActivityInfo = miog.GROUP_ACTIVITY[y]
+								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupActivityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
 							end
 						end
 					end
@@ -1433,10 +1433,10 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					local sortedExpansionRaids = {}
 		
 					if(seasonGroups and #seasonGroups > 0) then
-						for _, v in ipairs(seasonGroups) do
+						for _, x in ipairs(seasonGroups) do
 							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
 							miog.checkSingleMapIDForNewData(activityInfo.mapID)
-							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.shortName, bosses = activityInfo.bosses}
+							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = x, name = activityInfo.abbreviatedName, bosses = activityInfo.bosses}
 		
 						end
 					end

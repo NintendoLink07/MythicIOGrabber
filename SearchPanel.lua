@@ -849,7 +849,7 @@ local function searchPanelEvents(_, event, ...)
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
 
-			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].name or activityInfo.name
+			local lastGroup = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].fullName or activityInfo.fullName
 			miog.MainTab.QueueInformation.LastGroup.Text:SetText(lastGroup)
 
 			MIOG_CharacterSettings.lastGroup = lastGroup
