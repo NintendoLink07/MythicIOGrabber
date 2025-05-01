@@ -569,7 +569,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 		if(C_LFGList.HasSearchResultInfo(resultOrApplicant)) then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultOrApplicant)
 
-			local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
+			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
 			settings = MIOG_NewSettings.newFilterOptions[panel][activityInfo.categoryID]
 
@@ -577,7 +577,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 			local isDungeon = activityInfo.categoryID == 2
 			local isRaid = activityInfo.categoryID == 3
 
-			miog.checkSingleMapIDForNewData(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].mapID)
+			miog.checkSingleMapIDForNewData(activityInfo.mapID)
 			
 			if(LFGListFrame.SearchPanel.categoryID and activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID and not borderMode) then
 				return false, "incorrectCategory"
@@ -593,7 +593,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 			if(settings.difficulty.value) then
 				if(isDungeon or isRaid) then
-					if(miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].difficultyID ~= settings.difficulty.id
+					if(activityInfo and activityInfo.difficultyID ~= settings.difficulty.id
 					)then
 						return false, "incorrectDifficulty"
 
@@ -714,7 +714,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 					end
 
 					for k, v in pairs(settings.activities[activityInfo.groupFinderActivityGroupID].bosses) do
-						local bossInfo = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].bosses[k]
+						local bossInfo = activityInfo.bosses[k]
 
 						if(bossInfo) then
 							-- 1 either defeated or alive
@@ -904,12 +904,12 @@ local function setClassSpecState(containerFrame, categorySettings)
 end
 
 local function sortActivityGroup(k1, k2)
-	local ga1, ga2 = miog.GROUP_ACTIVITY[k1], miog.GROUP_ACTIVITY[k2]
+	local ga1, ga2 = miog.requestGroupInfo(k1), miog.requestGroupInfo(k2)
 
 	if(ga1 and ga2) then
-		local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
+		--local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
 
-		return miog.GROUP_ACTIVITY[k1].abbreviatedName < miog.GROUP_ACTIVITY[k2].abbreviatedName
+		return ga1.abbreviatedName < ga2.abbreviatedName
 
 	elseif(ga1) then
 		return true
@@ -1199,8 +1199,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 
 					if(seasonGroup and #seasonGroup > 0) then
 						for x, y in ipairs(seasonGroup) do
-							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
-							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+							local groupInfo = miog.requestGroupInfo(y)
+							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupInfo.abbreviatedName, activityID = groupInfo.highestDifficultyActivityID}
 							addedIDs[y] = true
 						end
 					end
@@ -1208,8 +1208,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					if(expansionGroups and #expansionGroups > 0) then
 						for x, y in ipairs(expansionGroups) do
 							if(not addedIDs[y]) then
-								local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[y].activityID]
-								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+								local groupInfo = miog.requestGroupInfo(y)
+								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupInfo.abbreviatedName, activityID = groupInfo.highestDifficultyActivityID}
 							end
 						end
 					end
@@ -1264,8 +1264,9 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					local sortedExpansionRaids = {}
 		
 					if(seasonGroups and #seasonGroups > 0) then
-						for _, v in ipairs(seasonGroups) do
-							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
+						for _, x in ipairs(seasonGroups) do
+							local groupInfo = miog.requestGroupInfo(x)
+							local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
 							miog.checkSingleMapIDForNewData(activityInfo.mapID, true)
 							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName, bosses = activityInfo.bosses}
 		
@@ -1351,17 +1352,19 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE));
 					
 					table.sort(seasonGroup, function(k1, k2)
-						return miog.GROUP_ACTIVITY[k1].abbreviatedName < miog.GROUP_ACTIVITY[k2].abbreviatedName
+						local groupInfo1, groupInfo2 = miog.requestGroupInfo(k1), miog.requestGroupInfo(k2)
+						return groupInfo1.abbreviatedName < groupInfo2.abbreviatedName
 					end)
 
 					table.sort(expansionGroups, function(k1, k2)
-						return miog.GROUP_ACTIVITY[k1].abbreviatedName < miog.GROUP_ACTIVITY[k2].abbreviatedName
+						local groupInfo1, groupInfo2 = miog.requestGroupInfo(k1), miog.requestGroupInfo(k2)
+						return groupInfo1.abbreviatedName < groupInfo2.abbreviatedName
 					end)
 
 					if(seasonGroup and #seasonGroup > 0) then
 						for x, y in ipairs(seasonGroup) do
-							local groupActivityInfo = miog.GROUP_ACTIVITY[y]
-							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupActivityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+							local groupInfo = miog.requestGroupInfo(y)
+							sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupInfo.abbreviatedName, activityID = groupInfo.activityID}
 							addedIDs[y] = true
 						end
 					end
@@ -1369,8 +1372,8 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					if(expansionGroups and #expansionGroups > 0) then
 						for x, y in ipairs(expansionGroups) do
 							if(not addedIDs[y]) then
-								local groupActivityInfo = miog.GROUP_ACTIVITY[y]
-								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupActivityInfo.abbreviatedName, activityID = miog.GROUP_ACTIVITY[y].activityID}
+								local groupInfo = miog.requestGroupInfo(y)
+								sortedSeasonDungeons[#sortedSeasonDungeons + 1] = {groupFinderActivityGroupID = y, name = groupInfo.abbreviatedName, activityID = groupInfo.activityID}
 							end
 						end
 					end
@@ -1434,8 +1437,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 		
 					if(seasonGroups and #seasonGroups > 0) then
 						for _, x in ipairs(seasonGroups) do
-							local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
-							miog.checkSingleMapIDForNewData(activityInfo.mapID)
+							local activityInfo = miog.requestActivityInfo(miog.GROUP_ACTIVITY[v].activityID)
 							sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = x, name = activityInfo.abbreviatedName, bosses = activityInfo.bosses}
 		
 						end

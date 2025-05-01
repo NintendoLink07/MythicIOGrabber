@@ -161,7 +161,7 @@ local function updateFakeGroupApplications()
 						if(appStatus ~= "applied") then
 							local identifier = "FAKE_APPLICATION_FOR_RESULT_" .. resultID
 							local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-							local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
+							local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 							local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 					
 							local frameData = {
@@ -171,9 +171,9 @@ local function updateFakeGroupApplications()
 								[12] = -1,
 								--[17] = {"duration", appDuration},
 								[18] = identifier,
-								[20] = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].icon or nil,
+								[20] = activityInfo.icon or nil,
 								[21] = resultID + 1000,
-								[30] = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].horizontal or nil
+								[30] = activityInfo.horizontal or nil
 							}
 
 							local frame = createQueueFrame(frameData)
@@ -444,7 +444,7 @@ local function updateCurrentListing()
 	if ( isActive ) then
 		local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
 		local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants();
-		local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1])
+		local activityInfo = miog.requestActivityInfo(activeEntryInfo.activityIDs[1])
 		local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 
 		local unitName, unitID = miog.getGroupLeader()
@@ -456,9 +456,9 @@ local function updateCurrentListing()
 			[12] = -1,
 			[17] = {"duration", activeEntryInfo.duration},
 			[18] = "YOURLISTING",
-			[20] = miog.ACTIVITY_INFO[activeEntryInfo.activityIDs[1]].icon or nil,
+			[20] = activityInfo.icon,
 			[21] = -2,
-			[30] = miog.ACTIVITY_INFO[activeEntryInfo.activityIDs[1]] and miog.ACTIVITY_INFO[activeEntryInfo.activityIDs[1]].horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or nil
+			[30] = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
 		}
 
 		local frame = createQueueFrame(frameData)
@@ -502,7 +502,7 @@ local function updateGroupApplications()
 
 				if(appStatus == "applied") then
 					local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-					local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
+					local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 					local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 			
 					local frameData = {
@@ -512,9 +512,9 @@ local function updateGroupApplications()
 						[12] = -1,
 						[17] = {"duration", appDuration},
 						[18] = identifier,
-						[20] = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].icon or nil,
+						[20] = activityInfo.icon,
 						[21] = id,
-						[30] = miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]] and miog.ACTIVITY_INFO[searchResultInfo.activityIDs[1]].horizontal or nil
+						[30] = activityInfo.horizontal or nil
 					}
 
 					local frame = createQueueFrame(frameData)

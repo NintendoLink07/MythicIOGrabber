@@ -450,8 +450,8 @@ local function findAllRelevantMapIDs()
     
     if(dungeonGroup and #dungeonGroup > 0) then
         for _, v in ipairs(dungeonGroup) do
-            local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
-            listWithMapIDs[#listWithMapIDs + 1] = {mapID = activityInfo.mapID, active = true}
+            local groupInfo = miog.requestGroupInfo(v)
+            listWithMapIDs[#listWithMapIDs + 1] = {mapID = groupInfo.mapID, active = true}
             seasonalDungeonsDone[v] = true
         end
     end
@@ -459,8 +459,8 @@ local function findAllRelevantMapIDs()
     if(expansionGroups and #expansionGroups > 0) then
         for _, v in ipairs(expansionGroups) do
             if(not seasonalDungeonsDone[v]) then
-                local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
-                listWithMapIDs[#listWithMapIDs + 1] = {mapID = activityInfo.mapID, active = false}
+                local groupInfo = miog.requestGroupInfo(v)
+                listWithMapIDs[#listWithMapIDs + 1] = {mapID = groupInfo.mapID, active = false}
                 
             end
         end
@@ -468,17 +468,17 @@ local function findAllRelevantMapIDs()
 
     if(seasonGroups and #seasonGroups > 0) then
         for _, v in ipairs(seasonGroups) do
-            local activityInfo = miog.ACTIVITY_INFO[miog.GROUP_ACTIVITY[v].activityID]
-            listWithMapIDs[#listWithMapIDs + 1] = {mapID = activityInfo.mapID, active = true}
+            local groupInfo = miog.requestGroupInfo(v)
+            listWithMapIDs[#listWithMapIDs + 1] = {mapID = groupInfo.mapID, active = true}
 
         end
     end
 
     if(worldBossActivity and #worldBossActivity > 0) then
         for _, v in ipairs(worldBossActivity) do
-            local activityInfo = miog.ACTIVITY_INFO[v]
-
-            listWithMapIDs[#listWithMapIDs + 1] = {mapID = activityInfo.mapID, active = false}
+            local groupInfo = miog.requestGroupInfo(v)
+            listWithMapIDs[#listWithMapIDs + 1] = {mapID = activigroupInfotyInfo.mapID, active = false}
+            
         end
     end
 

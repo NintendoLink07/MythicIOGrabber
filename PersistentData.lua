@@ -8,6 +8,8 @@ for _, colorElement in pairs(miog.ITEM_QUALITY_COLORS) do
 	colorElement.desaturatedHex = CreateColor(unpack(colorElement.desaturatedRGB)):GenerateHexColor()
 end
 
+local testString = ""
+
 miog.STRING_REPLACEMENTS = {
 	["NORMALRAIDPROGRESSFULL"] = "Normal: %s",
 	["HEROICRAIDPROGRESSFULL"] = "Heroic: %s",
@@ -727,7 +729,6 @@ miog.MAP_INFO = {
 	[2574] = {shortName = "WORLD", fileName = "dragonislescontinent",},
 	[2579] = {shortName = "DOTI", fileName = "dawnoftheinfinite"},
 
-
 	-- THE WAR WITHIN
 	[2648] = {shortName = "ROOK", fileName = "therookery"},
 	[2649] = {shortName = "PSF", fileName = "prioryofthesacredflames"},
@@ -738,41 +739,8 @@ miog.MAP_INFO = {
 	[2662] = {shortName = "DB", fileName = "thedawnbreaker"},
 	[2669] = {shortName = "COT", fileName = "cityofthreads"},
 
-	[2657] = {
-		bossIcons = {
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ulgrax.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/bloodboundhorror.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/sikran.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/rashanan.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ovinax.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/kyveza.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/silkencourt.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/queenansurek.png"},
-		},
-		shortName = "NP",
-		iconName = "nerubarpalance",
-		bgName = "nerubarpalace",
-	},
-	
-	[2769] = {
-		bossIcons = {
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/vexie.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/carnage.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/rik.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/lockenstock.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/stix.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/bandit.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/mugzee.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/gallywix.png"},
-		},
-		shortName = "LOU",
-		iconName = "casino",
-		bgName = "casino",
-	},
-
-
-	
-
+	[2657] = {shortName = "NP", fileName = "nerubarpalace", iconName = "nerubarpalance",},
+	[2769] = {shortName = "LOU", fileName = "casino", iconName = "casino",},
 	[2601] = {shortName = "KA", fileName = "khazalgar"},
 
 	--interface/delves/110
@@ -1055,46 +1023,26 @@ miog.CUSTOM_CATEGORY_ORDER = {
 	[9] = 6,
 }
 
---[[
-
-activityID = v[1],
-			name = v[2],
-			difficultyName = v[3],
-			categoryID = v[4],
-	
-			groupFinderActivityGroupID = v[6],
-	
-			mapID = v[10],
-
-			difficultyID = v[11],
-	
-			maxPlayers = v[13],
-
-			]]
-
-local function loadGroupData()
-	for categoryIndex, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
-		for activityIndex, groupID in pairs(C_LFGList.GetAvailableActivityGroups(categoryID)) do
-			miog.GROUP_ACTIVITY[groupID] = {activityIDs = {}}
-		end
-
-	end
-end
 
 local function addMapDataToActivity(mapID, activityID)
 	local mapInfo = miog.MAP_INFO[mapID]
 
-	miog.ACTIVITY_INFO[activityID].bosses = mapInfo.bosses
 	miog.ACTIVITY_INFO[activityID].icon = mapInfo.icon
-
-	miog.ACTIVITY_INFO[activityID].expansionLevel = mapInfo.expansionLevel
-	miog.ACTIVITY_INFO[activityID].extractedName = mapInfo.name
-
-	--miog.ACTIVITY_INFO[v[1] ].fileName = mapInfo.fileName
-	--miog.ACTIVITY_INFO[v[1] ].bgName = mapInfo.bgName
-	miog.ACTIVITY_INFO[activityID].horizontal = mapInfo.horizontal
-	miog.ACTIVITY_INFO[activityID].vertical = mapInfo.vertical
+	miog.ACTIVITY_INFO[activityID].bosses = mapInfo.bosses
 	miog.ACTIVITY_INFO[activityID].journalInstanceID = mapInfo.journalInstanceID
+
+	miog.ACTIVITY_INFO[activityID].extractedName = mapInfo.name
+	miog.ACTIVITY_INFO[activityID].expansionLevel = mapInfo.expansionLevel
+
+	miog.ACTIVITY_INFO[activityID].vertical = mapInfo.vertical
+	miog.ACTIVITY_INFO[activityID].horizontal = mapInfo.horizontal
+end
+
+local function addActivityDataToGroup(activityID, groupID)
+	local activityInfo = miog.ACTIVITY_INFO[activityID]
+
+	miog.GROUP_ACTIVITY[groupID].abbreviatedName = activityInfo.abbreviatedName
+	miog.GROUP_ACTIVITY[groupID].mapID = activityInfo.mapID
 end
 
 local function addActivityInfo(activityID)
@@ -1105,30 +1053,68 @@ local function addActivityInfo(activityID)
 
 	miog.ACTIVITY_INFO[activityID] = activityInfo
 
-	miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID] = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID] or {activityIDs = {}}
-	miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].activityID = activityID
-	miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].abbreviatedName = activityInfo.abbreviatedName
-	tinsert(miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].activityIDs, activityID)
-	
-	addMapDataToActivity(activityInfo.mapID, activityID)
-end
+	if(activityInfo.groupFinderActivityGroupID ~= 0) then
+		addActivityDataToGroup(activityID, activityInfo.groupFinderActivityGroupID)
 
-local function requestActivityInfoIfNeeded(activityID)
-	if(not miog.ACTIVITY_INFO[activityID]) then
-		addActivityInfo(activityID)
+	end
+	
+	if(activityInfo.mapID ~= 0) then
+		addMapDataToActivity(activityInfo.mapID, activityID)
 
 	end
 
 	return miog.ACTIVITY_INFO[activityID]
 end
 
-miog.requestActivityInfoIfNeeded = requestActivityInfoIfNeeded
+local function addGroupInfo(groupID, categoryID)
+	miog.GROUP_ACTIVITY[groupID] = {activityIDs = {}}
 
-local function loadActivitiesData()
-	for categoryIndex, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
-		for activityIndex, activityID in pairs(C_LFGList.GetAvailableActivities(categoryID)) do
+	local activities = C_LFGList.GetAvailableActivities(categoryID, groupID)
+
+	for k, v in ipairs(activities) do
+		tinsert(miog.GROUP_ACTIVITY[groupID].activityIDs, v)
+		addActivityInfo(v)
+
+	end
+
+	miog.GROUP_ACTIVITY[groupID].highestDifficultyActivityID = miog.GROUP_ACTIVITY[groupID].activityIDs[#miog.GROUP_ACTIVITY[groupID].activityIDs]
+
+	return miog.GROUP_ACTIVITY[groupID]
+end
+
+local function createGroupWithActivityIDIfNeeded(activityID)
+	if(not miog.ACTIVITY_INFO[activityID]) then
+		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+
+		if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
+			addGroupInfo(activityInfo.groupFinderActivityGroupID)
+
+		else
 			addActivityInfo(activityID)
 
+		end
+	end
+
+	return miog.ACTIVITY_INFO[activityID]
+end
+
+local function requestActivityInfo(activityID)
+	return createGroupWithActivityIDIfNeeded(activityID)
+end
+
+miog.requestActivityInfo = requestActivityInfo
+
+local function requestGroupInfo(groupID)
+	return miog.GROUP_ACTIVITY[groupID] or addGroupInfo(groupID)
+
+end
+
+miog.requestGroupInfo = requestGroupInfo
+
+local function loadGroupData()
+	for categoryIndex, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
+		for groupIndex, groupID in pairs(C_LFGList.GetAvailableActivityGroups(categoryID)) do
+			addGroupInfo(groupID, categoryID)
 		end
 	end
 end
@@ -1237,8 +1223,8 @@ local function loadRawData()
 		}
 	end
 	
+	--loadActivitiesData()
 	loadGroupData()
-	loadActivitiesData()
 end
 
 miog.loadRawData = loadRawData

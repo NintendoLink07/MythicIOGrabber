@@ -187,25 +187,6 @@ end
 
 miog.standardSortFunction = standardSortFunction
 
-local function retrieveCategoryGroups(categoryID)
-	local raidInfo
-
-    local raidGroups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters or LFGListFrame.CategorySelection.baseFilters);
-
-	if(#raidGroups > 0) then
-		raidInfo = {}
-		
-		for k, v in ipairs(raidGroups) do
-			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
-			local activityID = activities[#activities]
-
-			tinsert(raidInfo, {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = miog.ACTIVITY_INFO[activityID].mapID})
-		end
-	end
-    
-    return raidInfo
-end
-
 miog.retrieveCurrentSeasonDungeonActivityGroups = function()
 	return C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
 end
@@ -220,7 +201,7 @@ miog.retrieveCurrentSeasonDungeonActivityIDs = function(justIDs, sort)
 	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
         local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
         local activityID = activities[#activities]
-		local activityInfo = miog.requestActivityInfoIfNeeded(activityID)
+		local activityInfo = miog.requestActivityInfo(activityID)
 
         tinsert(mythicPlusActivities, justIDs and activityID or {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = activityInfo.mapID})
     end
@@ -247,7 +228,7 @@ miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
         local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
         local activityID = activities[#activities]
 
-		local activityInfo = miog.requestActivityInfoIfNeeded(activityID)
+		local activityInfo = miog.requestActivityInfo(activityID)
 
         tinsert(mythicPlusActivities, justIDs and activityID or {abbreviatedName = activityInfo.abbreviatedName, activityID = activityID, mapID = activityInfo.mapID})
     end
@@ -274,7 +255,7 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
         local activities = C_LFGList.GetAvailableActivities(3, v)
         local activityID = activities[#activities]
 		local name, order = C_LFGList.GetActivityGroupInfo(v)
-		local activityInfo = miog.requestActivityInfoIfNeeded(activityID)
+		local activityInfo = miog.requestActivityInfo(activityID)
 
         tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
     end
@@ -1158,7 +1139,8 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 	frame:SetOptionalData(comment, realm)
 	frame:ApplyFillData(true)
 
-	frame.Background:SetTexture(miog.ACTIVITY_INFO[activityID].horizontal, "CLAMP", "MIRROR")
+	local activityInfo = miog.requestActivityInfo(activityID)
+	frame.Background:SetTexture(activityInfo.horizontal, "CLAMP", "MIRROR")
 	frame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 end
 
@@ -1388,9 +1370,8 @@ end
 
 local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
-	local activityInfo = C_LFGList.GetActivityInfoTable(activityID or entryInfo.activityIDs[1])
-
-	miog.ApplicationViewer.InfoPanel.Background:SetTexture(miog.ACTIVITY_INFO[entryInfo.activityIDs[1]] and miog.ACTIVITY_INFO[entryInfo.activityIDs[1]].horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
+	local activityInfo = miog.requestActivityInfo(entryInfo.activityIDs[1])
+	miog.ApplicationViewer.InfoPanel.Background:SetTexture(activityInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
 	miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
 	miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)

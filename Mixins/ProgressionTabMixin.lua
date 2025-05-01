@@ -504,7 +504,8 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
 			local activities = C_LFGList.GetAvailableActivities(3, v)
 			local activityID = activities[#activities]
 			local name, order = C_LFGList.GetActivityGroupInfo(v)
-			local mapID = miog.ACTIVITY_INFO[activityID].mapID
+            local activityInfo = miog.requestActivityInfo(activityID)
+			local mapID = activityInfo.mapID
 
             miog.checkSingleMapIDForNewData(mapID, true)
             miog.checkForMapAchievements(mapID)

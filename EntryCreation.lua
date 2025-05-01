@@ -165,18 +165,20 @@ local function addActivityListToDropdown(list, rootDescription)
 			LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, LFGListFrame.CategorySelection.selectedCategory, v.groupID, v.activityID)
 		end, v)
 
-		activityButton:AddInitializer(function(button, description, menu)
-			if(miog.ACTIVITY_INFO[v.activityID] and miog.ACTIVITY_INFO[v.activityID].icon) then
+		local activityInfo = miog.requestActivityInfo(v.activityID)
+
+		if(activityInfo) then
+			activityButton:AddInitializer(function(button, description, menu)
 				local leftTexture = button:AttachTexture();
 				leftTexture:SetSize(16, 16);
 				leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-				leftTexture:SetTexture(miog.ACTIVITY_INFO[v.activityID].icon);
+				leftTexture:SetTexture(activityInfo.icon);
 
 				button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
 
 				return button.fontString:GetUnboundedStringWidth() + 18 + 5
-			end
-		end)
+			end)
+		end
 
 		if(not defaultGroup and not defaultActivity and k == 1) then
 			defaultGroup = v.groupID
@@ -211,8 +213,9 @@ local function addExpansionHeadersToDropdown(rootDescription)
 			for _, y in ipairs(allExpansionsGroups) do
 				local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, y)
 				local activityID = activities[#activities]
+				local activityInfo = miog.requestActivityInfo(activityID)
 
-				if(miog.ACTIVITY_INFO[activityID].expansionLevel == i) then
+				if(activityInfo.expansionLevel == i) then
 					tinsert(expansionGroupList, {name = C_LFGList.GetActivityGroupInfo(y), activityID = activityID, groupID = y})
 
 				end
@@ -221,10 +224,11 @@ local function addExpansionHeadersToDropdown(rootDescription)
 			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, 0, 6)
 
 			for _, activityID in ipairs(activities) do
-				if(miog.ACTIVITY_INFO[activityID].expansionLevel == i) then
-					local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+				local activityInfo = miog.requestActivityInfo(activityID)
 
-					tinsert(expansionGroupList, {name = activityInfo.shortName, activityID = activityID, groupID = 0})
+				if(activityInfo.expansionLevel == i) then
+					tinsert(expansionGroupList, {name = activityInfo.abbreviatedName, activityID = activityID, groupID = 0})
+
 				end
 			end
 	
@@ -240,16 +244,20 @@ local function addExpansionHeadersToDropdown(rootDescription)
 
 				end, v)
 
-				activityButton:AddInitializer(function(button, description, menu)
-					local leftTexture = button:AttachTexture();
-					leftTexture:SetSize(16, 16);
-					leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-					leftTexture:SetTexture(miog.ACTIVITY_INFO[v.activityID].icon);
+				local activityInfo = miog.requestActivityInfo(v.activityID)
 
-					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+				if(activityInfo) then
+					activityButton:AddInitializer(function(button, description, menu)
+						local leftTexture = button:AttachTexture();
+						leftTexture:SetSize(16, 16);
+						leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+						leftTexture:SetTexture(activityInfo.icon);
 
-					return button.fontString:GetUnboundedStringWidth() + 18 + 5
-				end)
+						button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+						return button.fontString:GetUnboundedStringWidth() + 18 + 5
+					end)
+				end
 
 				if(not selectedExpansion and not defaultGroup and not defaultActivity and k == 1) then
 					defaultGroup = v.groupID
@@ -385,7 +393,8 @@ end
 local function updateEntryCreation()
 	local entryCreation = miog.EntryCreation
 	local categoryInfo = C_LFGList.GetLfgCategoryInfo(LFGListFrame.EntryCreation.selectedCategory);
-	local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity);
+	local activityInfo = miog.requestActivityInfo(LFGListFrame.EntryCreation.selectedActivity)
+	--local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity);
 	local groupName = C_LFGList.GetActivityGroupInfo(LFGListFrame.EntryCreation.selectedGroup);
 	
 	setUpDifficultyDropDown()
@@ -440,16 +449,16 @@ local function updateEntryCreation()
 
 	end
 
-	if(miog.ACTIVITY_INFO[LFGListFrame.EntryCreation.selectedActivity]) then
+	if(activityInfo) then
 		if(miog.isMIOGHQLoaded()) then
 			entryCreation.Background:SetVertTile(false)
 			entryCreation.Background:SetHorizTile(false)
-			entryCreation.Background:SetTexture(miog.ACTIVITY_INFO[LFGListFrame.EntryCreation.selectedActivity].horizontal, "CLAMP", "CLAMP")
+			entryCreation.Background:SetTexture(activityInfo.horizontal, "CLAMP", "CLAMP")
 
 		else
 			entryCreation.Background:SetVertTile(true)
 			entryCreation.Background:SetHorizTile(true)
-			entryCreation.Background:SetTexture(miog.ACTIVITY_INFO[LFGListFrame.EntryCreation.selectedActivity].horizontal, "MIRROR", "MIRROR")
+			entryCreation.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
 
 		end
 
