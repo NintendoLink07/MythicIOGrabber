@@ -276,8 +276,6 @@ local function updateApplicantMemberFrame(frame, data)
 			if(not miog.F.IS_IN_DEBUG_MODE) then
 				memberFrame_OnEnter(self)
 			end
-
-			miog.checkEgoTrip(name)
 		end
 	end)
 
@@ -705,8 +703,6 @@ local function applicationViewerEvents(_, event, ...)
 				miog.ApplicationViewer.CreationSettings.Timer:SetText(miog.secondsToClock(GetTimePreciseSec() - MIOG_NewSettings.queueUpTime))
 
 			end)
-
-			miog.ApplicationViewer:Show()
 		end
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then --ONE APPLICANT
 		local applicantData = C_LFGList.GetApplicantInfo(...)
@@ -845,7 +841,7 @@ miog.createApplicationViewer = function()
 			updateApplicantMemberFrame(frame, data)
 
 		elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
-			miog.updateRaiderIOScrollBoxFrameData(frame, data)
+			--miog.updateRaiderIOScrollBoxFrameData(frame, data)
 
 		end
 	end

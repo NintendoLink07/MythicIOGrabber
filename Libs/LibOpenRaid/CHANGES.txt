@@ -1,5 +1,33 @@
 Changes since tag v10.2.0.118
 
+commit 90aa1e5133a1629dcf7c77eab631ee91da033c36
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sun May 4 20:13:59 2025 -0300
+
+    Version Bump
+
+commit 1469a81181447ea38c45cacb8498038b13ee0988
+Author: Elehiggle <Elehiggle@users.noreply.github.com>
+Date:   Mon May 5 01:04:41 2025 +0200
+
+    Fix broken itemLink parsing
+    
+    As per new itemLink changes introducing itemQuality as first property.
+
+commit 1469a81181447ea38c45cacb8498038b13ee0988
+Author: Elehiggle <Elehiggle@users.noreply.github.com>
+Date:   Mon May 5 01:04:41 2025 +0200
+
+    Fix broken itemLink parsing
+    
+    As per new itemLink changes introducing itemQuality as first property.
+
+commit e54bc05cc9d6ac2d5ff814c5b48d5d39c4be7dfa
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sat May 3 17:03:39 2025 -0300
+
+    Mists of Pandaria support
+
 commit 124f9444d104cc234be67f5e990b86a44e044a9e
 Author: Tercio Jose <terciob19@hotmail.com>
 Date:   Sat Apr 26 12:17:32 2025 -0300

@@ -730,6 +730,7 @@ miog.MAP_INFO = {
 	[2579] = {shortName = "DOTI", fileName = "dawnoftheinfinite"},
 
 	-- THE WAR WITHIN
+	[2601] = {shortName = "KA", fileName = "khazalgar"},
 	[2648] = {shortName = "ROOK", fileName = "therookery"},
 	[2649] = {shortName = "PSF", fileName = "prioryofthesacredflames"},
 	[2651] = {shortName = "DFC", fileName = "darkflamecleft"},
@@ -738,11 +739,39 @@ miog.MAP_INFO = {
 	[2661] = {shortName = "CBM", fileName = "cinderbrewmeadery"},
 	[2662] = {shortName = "DB", fileName = "thedawnbreaker"},
 	[2669] = {shortName = "COT", fileName = "cityofthreads"},
+	[2657] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ulgrax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/bloodboundhorror.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/sikran.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/rashanan.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ovinax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/kyveza.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/silkencourt.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/queenansurek.png"},
+		},
+		shortName = "NP",
+		iconName = "nerubarpalance",
+		bgName = "nerubarpalace",
+	},
 
-	[2657] = {shortName = "NP", fileName = "nerubarpalace", iconName = "nerubarpalance",},
-	[2769] = {shortName = "LOU", fileName = "casino", iconName = "casino",},
-	[2601] = {shortName = "KA", fileName = "khazalgar"},
+	[2769] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/vexie.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/carnage.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/rik.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/lockenstock.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/stix.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/bandit.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/mugzee.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/gallywix.png"},
+		},
+		shortName = "LOU",
+		iconName = "casino",
+		bgName = "casino",
+	},
 
+	
 	--interface/delves/110
 	[2664] = {shortName = "FF", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "fungalfolly",},
 	[2679] = {shortName = "MMC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "mycomancercavern",},

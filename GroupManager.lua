@@ -299,7 +299,7 @@ local function updateSingleCharacterItemData(fullName)
 
 	local playerGear = playerGearData[fullName]
 
-	if(frame) then 
+	if(frame) then
 		if(playerGear) then
 			local data = frame.data
 			data.ilvl = playerGear.ilevel or 0
@@ -327,7 +327,6 @@ local function updateSingleCharacterItemData(fullName)
 			frame.Itemlevel:SetText(playerGear.ilevel or "N/A")
 			frame.Durability:SetText(playerGear.durability and "(" .. playerGear.durability .. "%)" or "N/A")
 		end
-
 	else
 		data.ilvl = manualItemlevels[fullName] or 0
 		data.durability = playerGear.durability or 0

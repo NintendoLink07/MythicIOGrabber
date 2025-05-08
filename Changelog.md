@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.4.3] - 2025-05-09
+
+### Changed
+
+- [Journal] "Current activities" now only includes the most recent raid.
+
+- [Journal] Items now display their appropriate slot, when applicable.
+
+- All Dragonflight boss icons have been removed, lowering the addon's filesize.
+
+- OpenRaid library updated.
+
+### Fixed
+
+- [Journal] Items duplicating by the amount of activities has been corrected.
+
+- [Journal] Items now correctly reload after clearing all filters.
+
+- [Journal] Performance while loading has been improved, still a bit laggy when requesting loot data from all current activities (e.g. searching for an item or having no filters active).
+
+
+
 ## [3.4.2] - 2025-04-30
 
 ### Changed
@@ -3654,6 +3676,7 @@ Basically just the rating for the bracket and the tier they're currently in
 
 <!-- Versions -->
 [unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.2..HEAD
+[3.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.3
 [3.4.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.2
 [3.4.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.1
 [3.4.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.0

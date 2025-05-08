@@ -14,10 +14,17 @@
             </Layer>
 
             <Layer level="OVERLAY">
+                <FontString parentKey="Slot" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
+                    <Size x="90" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" />
+                    </Anchors>
+                </FontString>
+
                 <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
                     <Size x="32" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" />
+                        <Anchor point="LEFT" relativeKey="$parent.Slot" relativePoint="RIGHT" x="3" />
                     </Anchors>
                 </FontString>
 

@@ -9,8 +9,15 @@ local selectedItemClass, selectedItemSubClass
 local selectedArmor, selectedClass, selectedSpec
 local selectedTier
 
+local itemsToFilter
+local currentItemData
+
 local loadedItems = {}
-local loading = false
+local loading
+
+local searchBoxText = ""
+local noFilter = false
+local searching = false
 
 local armorTypeInfo = {
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Cloth)},
@@ -59,21 +66,21 @@ local difficultyOrder = {
 }
 
 
-local function fuzzyCheck(text, itemData)
+local function fuzzyCheck(text, data)
     local filterArray = {}
 
-    for k, v in ipairs(itemData) do
+    for k, v in pairs(data) do
         table.insert(filterArray, v.name)
-
+        --data.index = k
     end
 
-    local result = miog.fzy.filter(text, filterArray)
+    local results = miog.fzy.filter(text, filterArray)
 
-    table.sort(result, function(k1, k2)
+    table.sort(results, function(k1, k2)
         return k1[3] > k2[3]
     end)
 
-    return result
+    return results
 end
 
 local function checkIfItemIsFiltered(item)
@@ -120,14 +127,15 @@ local function sortByEncounterIndex(k1, k2)
 
                     return diffOrder1 > diffOrder2
                 else
-                    return k1.itemLevel > k2.itemLevel
+                    return k1.itemID > k2.itemID
+                    --return k1.itemLevel > k2.itemLevel
 
                 end
             end
         end
 
         return k1.encounterIndex < k2.encounterIndex
-        
+
     end
 
     return k1.index > k2.index
@@ -135,7 +143,7 @@ local function sortByEncounterIndex(k1, k2)
 end
 
 local function shouldDisplayDifficultyForCurrentJournalInstance()
-	return select(9, EJ_GetInstanceInfo(selectedInstance));
+	return select(9, EJ_GetInstanceInfo());
 
 end
 
@@ -153,6 +161,14 @@ end
 
 local function getRaidDifficulties()
     return {17, 14, 15, 16}
+end
+
+local function selectInstance(journalInstanceID, id)
+    selectedInstance = journalInstanceID
+    EJ_SelectInstance(journalInstanceID)
+
+    print(id)
+
 end
 
 local function getDifficultiesForJournalInstance(journalInstanceID)
@@ -259,6 +275,23 @@ end
 -- /tinspect C_LFGList.GetAvailableActivities(3, nil, Enum.LFGListFilter.CurrentExpansion)
 -- /tinspect C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
 
+local function addMostCurrentRaidToList(instanceList, groups)
+    local highestIDRaid = -1
+
+    if(groups and #groups > 0) then
+        for _, v in ipairs(groups) do
+            local groupInfo = miog.requestGroupInfo(v)
+            local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
+            activityInfo.isRaid = true
+            activityInfo.name = activityInfo.extractedName
+
+            highestIDRaid = highestIDRaid > groupInfo.highestDifficultyActivityID and highestIDRaid or groupInfo.highestDifficultyActivityID
+        end
+    end
+
+    tinsert(instanceList, miog.requestActivityInfo(highestIDRaid))
+end
+
 local function createJournalInstanceListFromActivityGroups()
     local instanceList = {}
     local groupsDone = {}
@@ -277,7 +310,8 @@ local function createJournalInstanceListFromActivityGroups()
     --addGroupsToList(instanceList, otherDungeons, groupsDone, false)
     --addGroupsToList(instanceList, expansionDungeons, groupsDone, false)
 
-    addGroupsToList(instanceList, raidGroups, groupsDone, false)
+    --addGroupsToList(instanceList, raidGroups, groupsDone, false)
+    addMostCurrentRaidToList(instanceList, raidGroups)
     --addGroupsToList(instanceList, otherRaidGroups, groupsDone, false)
 
     --[[if(worldBossActivity and #worldBossActivity > 0) then
@@ -299,7 +333,7 @@ local function loadAllItemsFromActivities(skipCheck)
     if(not skipCheck) then
         loading = requestAllItemsFromActivities(instanceList)
     end
-    
+
     local searchBoxText = miog.Journal.SearchBox:GetText()
     local noFilter = C_EncounterJournal.GetSlotFilter() == 15
     local searching = searchBoxText ~= ""
@@ -332,7 +366,7 @@ local function loadAllItemsFromActivities(skipCheck)
                 else
                     difficultyID = EJ_GetDifficulty()
                 end
-            
+
                 local numOfLoot = EJ_GetNumLoot()
 
                 for i = 1, numOfLoot, 1 do
@@ -372,7 +406,7 @@ local function loadAllItemsFromActivities(skipCheck)
                                 else
 
                                 end
-                                
+
                             else
                                 table.insert(namesToFilter, itemInfo)
                                 itemData[itemInfo.itemID] = {itemLevel = currentItemLevel, index = #namesToFilter, name = item:GetItemName()}
@@ -405,15 +439,15 @@ local function loadAllItemsFromActivities(skipCheck)
 
                         dataProvider:Insert(itemInfo)
                     end
-                    
+
                 end
-        
+
             end
         end
 
         if(searching) then
             local results = fuzzyCheck(searchBoxText, namesToFilter)
-            
+
             for k, v in ipairs(results) do
                 local itemInfo = namesToFilter[v[1]]
 
@@ -448,14 +482,238 @@ local function loadAllItemsFromActivities(skipCheck)
                         dataProvider:Insert(itemInfo)
                     end
                 end
-    
+
             end
         end
-    
+
         dataProvider:SetSortComparator(sortByEncounterIndex)
         miog.Journal.ScrollBox:SetDataProvider(dataProvider)
 
     end
+end
+
+local function requestItemsForDifficulty(difficultyID)
+    if(difficultyID) then
+        EJ_SetDifficulty(difficultyID)
+
+    end
+
+    local numOfLoot = EJ_GetNumLoot()
+
+    for i = 1, numOfLoot, 1 do
+        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
+
+        if(not itemInfo.name) then
+            loadedItems[itemInfo.itemID] = loadedItems[itemInfo.itemID] and loadedItems[itemInfo.itemID] + 1 or 1
+
+        end
+    end
+end
+
+local function cnt(c, itemID)
+    print("COUNT", itemID)
+    return #c
+end
+
+local function loadItemsForDifficulty(difficultyID, dataProvider)
+    EJ_SetDifficulty(difficultyID)
+
+    local numOfLoot = EJ_GetNumLoot()
+
+    local displayDifferentItems = miog.Journal.Checkbox:GetChecked()
+
+    local stillLoading = false
+
+    for i = 1, numOfLoot, 1 do
+        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
+
+        if(not itemInfo.name) then
+            loadedItems[itemInfo.itemID] = loadedItems[itemInfo.itemID] and loadedItems[itemInfo.itemID] + 1 or 1
+            stillLoading = true
+
+        elseif(not stillLoading) then
+            --local item = Item:CreateFromItemLink(itemInfo.link)
+
+            if(searching) then
+                itemInfo.difficultyID = difficultyID
+                itemInfo.index = i
+
+                if(displayDifferentItems) then
+                    table.insert(itemsToFilter, itemInfo)
+
+                else
+                    table.insert(itemsToFilter, itemInfo)
+
+                    --local currentItemLevel = item:GetCurrentItemLevel()
+                    
+                    if(not currentItemData[itemInfo.itemID]) then
+                        currentItemData[itemInfo.itemID] = {difficultyID = difficultyID, name = itemInfo.name, itemInfo = itemInfo, filterIndex = #itemsToFilter}
+
+                    elseif(difficultyOrder[difficultyID] > difficultyOrder[currentItemData[itemInfo.itemID].difficultyID]) then
+                        table.remove(itemsToFilter, currentItemData[itemInfo.itemID].filterIndex)
+                        currentItemData[itemInfo.itemID] = {difficultyID = difficultyID, name = itemInfo.name, itemInfo = itemInfo, filterIndex = #itemsToFilter}
+
+                    end
+
+
+                        --[[if(currentItemLevel >= itemData[itemInfo.itemID].itemLevel) then
+                            for x = 1, cnt(namesToFilter, itemInfo.itemID), 1 do
+                                local info = namesToFilter[x]
+
+                                if(info and info.itemID == itemInfo.itemID) then
+                                    table.remove(namesToFilter, x)
+                                    offset = offset and offset + 1 or 1
+
+                                    break
+                                end
+                            end
+
+                            --table.insert(namesToFilter, itemInfo)
+                            itemData[itemInfo.itemID] = {itemLevel = currentItemLevel, index = #namesToFilter, name = item:GetItemName()}
+                        end]]
+
+                        --if(currentItemLevel >= itemData[itemInfo.itemID].itemLevel) then
+                            --itemData[itemInfo.itemID] = {itemLevel = currentItemLevel, name = item:GetItemName(), itemInfo = itemInfo}
+
+                        --end
+                    --else
+                     --   itemData[itemInfo.itemID] = {itemLevel = currentItemLevel, name = item:GetItemName()}
+
+                    --end
+
+                end
+            elseif(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) then
+                local encounterInfo = miog.ENCOUNTER_INFO[itemInfo.encounterID]
+
+                itemInfo.index = i
+                --itemInfo.itemLevel = item:GetCurrentItemLevel()
+                itemInfo.difficultyID = difficultyID
+
+                if(encounterInfo) then
+                    itemInfo.encounterIndex = encounterInfo and encounterInfo.index
+
+                else
+                    itemInfo.encounterIndex = 0
+
+                end
+
+
+
+                --[[
+                
+                
+                INSERT IS THE PROBLEM, LOOK AT INIT
+                
+                
+                ]]
+
+
+                dataProvider:Insert(itemInfo)
+            end
+        end
+    end
+    
+    return stillLoading
+end
+
+local function isItemDataStillMissing()
+    for _ in pairs(loadedItems) do
+        return true
+
+    end
+
+    return false
+end
+
+local timesLoaded = {}
+
+local function loadItemsFromInstance(journalInstanceID, dataProvider)
+    --timesLoaded[journalInstanceID] = timesLoaded[journalInstanceID] and timesLoaded[journalInstanceID] + 1 or 1
+
+    local startTime = GetTimePreciseSec()
+    selectInstance(journalInstanceID, 1)
+
+    local stillLoading = false
+    local numOfDiffs = 0
+
+    if(not selectedDifficulty and shouldDisplayDifficultyForCurrentJournalInstance()) then
+        for _, difficultyID in ipairs(EJ_DIFFICULTIES) do
+            if EJ_IsValidInstanceDifficulty(difficultyID) then
+                if(not stillLoading) then
+                    stillLoading = loadItemsForDifficulty(difficultyID, dataProvider)
+
+                end
+
+                --print("NUM LOOT", difficultyID, EJ_GetNumLoot())
+
+                numOfDiffs = numOfDiffs + 1
+            end
+        end
+    else
+        stillLoading = loadItemsForDifficulty(selectedDifficulty or EJ_InstanceIsRaid() and 14 or 1, dataProvider)
+
+    end
+
+    loading = stillLoading
+
+    local endTime = GetTimePreciseSec()
+end
+
+local function loadItemsFromCurrentActivities(dataProvider)
+    local instanceList = createJournalInstanceListFromActivityGroups()
+
+    local startTime = GetTimePreciseSec()
+    for _, v in ipairs(instanceList) do
+        loadItemsFromInstance(v.journalInstanceID, dataProvider)
+
+    end
+    local endTime = GetTimePreciseSec()
+    print("INSTANCES", endTime - startTime)
+
+    startTime = GetTimePreciseSec()
+    if(searching and not loading) then
+        local results = fuzzyCheck(searchBoxText, itemsToFilter)
+
+        for k, v in ipairs(results) do
+            local itemInfo = currentItemData[itemsToFilter[v[1]].itemID].itemInfo
+
+            if(itemInfo) then
+                if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) then
+                    local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(itemInfo.encounterID)
+
+                    local encounterInfo = miog.ENCOUNTER_INFO[itemInfo.encounterID]
+
+                    local item = Item:CreateFromItemLink(itemInfo.link)
+
+                    itemInfo.index = itemInfo.index
+                    itemInfo.itemLevel = item:GetCurrentItemLevel()
+                    itemInfo.difficultyID = itemInfo.difficultyID
+                    itemInfo.sourceName = encounterName
+                    itemInfo.sourceIconType = "portrait"
+
+                    if(encounterInfo) then
+                        itemInfo.encounterIndex = encounterInfo and encounterInfo.index
+                        itemInfo.creatureDisplayInfoID = encounterInfo and encounterInfo.creatureDisplayInfoID
+                    else
+                        itemInfo.encounterIndex = 0
+
+                        local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+                        itemInfo.creatureDisplayInfoID = sectionInfo.creatureDisplayID
+
+                    end
+
+                    itemInfo.positions = v[2]
+                    itemInfo.score = v[3]
+
+                    dataProvider:Insert(itemInfo)
+                end
+            end
+
+        end
+    end
+    endTime = GetTimePreciseSec()
+    print("FILTER", endTime - startTime)
+
 end
 
 local function loadAllItemsFromInstance(skipCheck)
@@ -482,13 +740,13 @@ local function loadAllItemsFromInstance(skipCheck)
             else
                 difficultyID = EJ_GetDifficulty()
             end
-        
+
             local numOfLoot = EJ_GetNumLoot()
-    
+
             for i = 1, numOfLoot, 1 do
                 local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
 
-                if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) then        
+                if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) then
                     local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(itemInfo.encounterID)
 
                     local encounterInfo = miog.ENCOUNTER_INFO[itemInfo.encounterID]
@@ -515,34 +773,56 @@ local function loadAllItemsFromInstance(skipCheck)
                     dataProvider:Insert(itemInfo)
                 end
             end
-    
+
         end
-    
+
         dataProvider:SetSortComparator(sortByEncounterIndex)
         miog.Journal.ScrollBox:SetDataProvider(dataProvider)
 
     end
 end
 
-local function loadAllItems(skipCheck)
-    local numFiltersActive = miog.Journal.SearchBox:GetNumActiveFilters()
+local function loadAllItems(id)
+    miog.Journal.ScrollBox:Flush()
+    local dataProvider = CreateDataProvider()
+    dataProvider:SetSortComparator(sortByEncounterIndex)
+
+    --local numFiltersActive = miog.Journal.SearchBox:GetNumActiveFilters()
+
+    searchBoxText = miog.Journal.SearchBox:GetText()
+    noFilter = C_EncounterJournal.GetSlotFilter() == 15
+    searching = searchBoxText ~= ""
+
+    loading = false
+
+    itemsToFilter = {}
+    currentItemData = {}
+
+    print("LOAD ALL", id, selectedInstance)
 
     if(selectedInstance) then
-        loadAllItemsFromInstance(skipCheck)
-        
+        loadItemsFromInstance(selectedInstance, dataProvider)
+
     else
-        loadAllItemsFromActivities(skipCheck)
+        loadItemsFromCurrentActivities(dataProvider)
+        selectedInstance = nil
 
     end
+
+    miog.Journal.ScrollBox:SetDataProvider(dataProvider)
 end
 
 local function resetInstance()
+    print("RESET")
+
     selectedInstance = nil
     EncounterJournal.instanceID = nil;
 
     miog.Journal.ScrollBox:Flush()
     miog.Journal.InstanceDropdown:SetText(miog.Journal.InstanceDropdown:GetDefaultText())
     miog.Journal.BossDropdown:SetText(miog.Journal.BossDropdown:GetDefaultText())
+
+    loadAllItems(10)
 end
 
 local function resetEncounter()
@@ -588,21 +868,11 @@ local function selectTier(index, triggerEJ)
     end
 end
 
-local function setLootRetrieval(journalInstanceID, journalEncounterID, difficultyID, tierID, triggerEJ)
+local function setJournalIDs(journalInstanceID, journalEncounterID, difficultyID, tierID, triggerEJ)
     miog.Journal.SearchBox:ClearAllFilters()
 
     if(tierID) then
         selectTier(tierID, triggerEJ)
-    end
-
-    if(journalInstanceID) then
-        if(selectedInstance ~= journalInstanceID) then
-            resetEncounter()
-            resetDifficulty()
-
-        end
-        
-        selectedInstance = journalInstanceID
     end
 
     if(journalEncounterID) then
@@ -612,113 +882,43 @@ local function setLootRetrieval(journalInstanceID, journalEncounterID, difficult
 
     if(difficultyID) then
         selectedDifficulty = difficultyID
-        
+
     end
-    
-    if(selectedInstance) then
+
+    if(journalInstanceID) then
+        selectInstance(journalInstanceID, 3)
+
+        if(selectedInstance ~= journalInstanceID) then
+            resetEncounter()
+            resetDifficulty()
+
+        end
+
         miog.checkJournalInstanceIDForNewData(selectedInstance)
 
-        EncounterJournal.instanceID = instanceID;
-        EncounterJournal.encounterID = nil;
-        EJ_SelectInstance(selectedInstance)
+        EncounterJournal.instanceID = journalInstanceID;
+        --EncounterJournal.encounterID = nil;
 
         miog.Journal.DifficultyDropdown:SetShown(shouldDisplayDifficultyForCurrentJournalInstance())
 
         if(selectedEncounter) then
             local name = EJ_GetEncounterInfo(selectedEncounter)
-            miog.Journal.BossDropdown:SetText(name)
+            miog.Journal.BossDropdown:OverrideText(name)
 
             EJ_SelectEncounter(selectedEncounter)
             EncounterJournal.encounterID = selectedEncounter;
-            
+
         end
 
         if(selectedDifficulty) then
             EJ_SetDifficulty(selectedDifficulty)
-            
+
         end
-
-    else
-        miog.Journal.ScrollBox:Flush()
-
     end
 
     miog.refreshFilters()
 
-    loadAllItems()
-end
-
-local function updateScrollBoxItem(frame, data)
-    frame.Item.Icon:SetTexture(data.icon)
-    
-    local formattedText
-
-    if(data.positions) then
-        formattedText = ""
-
-        local positionArray = {}
-
-        for k, v in ipairs(data.positions) do
-            positionArray[v] = true
-        end
-
-        for i = 1, strlen(data.name), 1 do
-            if(positionArray[i]) then
-                formattedText = formattedText .. WrapTextInColorCode(strsub(data.name, i, i), miog.CLRSCC.green)
-
-            else
-                formattedText = formattedText .. strsub(data.name, i, i)
-
-            end
-
-        end
-    end
-
-    if(data.score) then
-        if(data.score < math.huge) then
-            local percentage = data.score / strlen(data.name) * 100
-            frame.Item.Percentage:SetText(miog.round3(percentage, 2) .. "%")
-            
-        else
-            frame.Item.Percentage:SetText("100%")
-
-        end
-
-    else
-        frame.Item.Percentage:SetText("")
-
-    end
-
-    frame.Item.Name:SetText(formattedText or data.name)
-
-    if(data.link) then
-        frame.Item.ItemLevel:SetText(data.itemLevel)
-        frame.Item.itemLink = data.link
-    end
-
-    frame.Item.encounterID = data.encounterID
-
-    --
-    --EXTRA DATA
-    --
-
-    frame.Source.Name:SetText(WrapTextInColorCode("[" .. miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. data.sourceName)
-
-    if(data.sourceIconType == "portrait") then
-        SetPortraitTextureFromCreatureDisplayID(frame.Source.Icon, data.creatureDisplayInfoID)
-
-        frame.Source:SetScript("OnMouseDown", function(self, button)
-            setLootRetrieval(nil, data.encounterID)
-
-        end)
-
-    else
-        frame.Source.Icon:SetTexture(data.sourceIcon)
-        frame.Source:SetScript("OnMouseDown", function(self, button)
-
-        end)
-
-    end
+    loadAllItems(2)
 end
 
 local function refreshFilters()
@@ -736,17 +936,17 @@ local function refreshFilters()
         local encounterName = EJ_GetEncounterInfo(selectedEncounter)
         miog.Journal.SearchBox:ShowFilter("encounter", encounterName, function()
             resetEncounter()
-            setLootRetrieval()
+            setJournalIDs()
 
         end)
     end
 
     if(selectedDifficulty) then
         local difficultyName = miog.DIFFICULTY_ID_INFO[selectedDifficulty].name
-        miog.Journal.SearchBox:ShowFilter("difficulty", difficultyName, function() 
+        miog.Journal.SearchBox:ShowFilter("difficulty", difficultyName, function()
             resetDifficulty()
-            setLootRetrieval()
-            
+            setJournalIDs()
+
         end)
 
     end
@@ -762,11 +962,11 @@ local function createCurrentActivitiesTable()
         if(k1.isRaid == k2.isRaid) then
             if(k1.isRaid) then
                 return k1.groupFinderActivityGroupID < k2.groupFinderActivityGroupID
-                
+
             end
-            
+
             return k1.fullName < k2.fullName
-            
+
         end
 
         return k1.isRaid and true or k2.isRaid and false
@@ -787,7 +987,7 @@ local function loadInstanceInfo()
 		expInfo.icon = expansionInfo and expansionInfo.logo
 
 		expansionTable[#expansionTable+1] = expInfo
-			
+
 	end
 
     journalInfo = {}
@@ -796,7 +996,7 @@ local function loadInstanceInfo()
         selectTier(x, true)
         --EJ_SelectTier(x)
         journalInfo[x] = {}
-        
+
         for k = 1, 2, 1 do
             local checkForRaid = k == 1 and true or false
 
@@ -826,17 +1026,17 @@ local function loadInstanceInfo()
             if(k1.isRaid == k2.isRaid) then
                 if(k1.isRaid) then
                     return k1.index < k2.index
-                    
+
                 end
-                
+
                 return k1.name < k2.name
-                
+
             end
 
             return k1.isRaid and true or k2.isRaid and false
         end)
     end
-    
+
 end
 
 ---[[
@@ -886,12 +1086,12 @@ local function createEncounterSubmenu(parent, localInfo)
 
         while name do
             tinsert(bossTable, {encounterID = journalEncounterID, name = name})
-            
+
             counter = counter + 1
-            
+
             name, _, journalEncounterID, _, _, _, _, mapID = EJ_GetEncounterInfoByIndex(counter, journalInstanceID)
         end
-        
+
         local mapInfo = miog.checkJournalInstanceIDForNewData(journalInstanceID)
 
         local tier = localInfo and localInfo.tier or mapInfo.expansionLevel and mapInfo.expansionLevel + 1
@@ -899,21 +1099,21 @@ local function createEncounterSubmenu(parent, localInfo)
         if(#bossTable == 0) then
             for i = 1, #mapInfo.bosses, 1 do
                 local v = mapInfo.bosses[i]
-                
+
                 tinsert(bossTable, {encounterID = v.journalEncounterID, name = v.name})
             end
 
         end
-    
+
         for k, v in ipairs(bossTable) do
             local encounterButton = parent:CreateRadio(v.name, function(encounterID) return selectedEncounter == encounterID end, function(encounterID)
                 if(tier) then
                     selectTier(tier, true)
                     --EJ_SelectTier(tier)
                 end
-                
-                setLootRetrieval(journalInstanceID, encounterID)
-                
+
+                setJournalIDs(journalInstanceID, encounterID)
+
             end, v.encounterID)
 
             if(miog.ENCOUNTER_INFO[v.encounterID]) then
@@ -937,7 +1137,7 @@ local function createDifficultySubmenu(parent, callback, journalInstanceID)
     for index, id in ipairs(instanceID and getDifficultiesForJournalInstance(instanceID) or getRaidDifficulties()) do
         local diffName = miog.DIFFICULTY_ID_INFO[id].name
         local difficultyButton = parent:CreateRadio(diffName, callback, function(difficultyID)
-            setLootRetrieval(nil, nil, difficultyID)
+            setJournalIDs(nil, nil, difficultyID)
 
         end, id)
     end
@@ -946,7 +1146,7 @@ end
 local function createInstanceButton(parent, info)
     if(info.journalInstanceID) then
         local instanceButton = parent:CreateRadio(info.name, function(localInfo) return selectedInstance == localInfo.journalInstanceID end, function(localInfo)
-            setLootRetrieval(localInfo.journalInstanceID, nil, nil, localInfo.tier or 100, localInfo.tier and true or false)
+            setJournalIDs(localInfo.journalInstanceID, nil, nil, localInfo.tier or 100, localInfo.tier and true or false)
 
         end, info)
 
@@ -971,7 +1171,7 @@ miog.loadJournal = function()
             local mapInfo = miog.MAP_INFO[mapID]
 
             if(mapInfo and mapInfo.journalInstanceID) then
-                setLootRetrieval(mapInfo.journalInstanceID, nil, nil, mapInfo.expansionLevel)
+                setJournalIDs(mapInfo.journalInstanceID, nil, nil, mapInfo.expansionLevel)
 
             end
         end
@@ -1042,7 +1242,7 @@ miog.loadJournal = function()
         createEncounterSubmenu(rootDescription)
     end)
 
-    
+
 	local difficultyDropdown = journal.DifficultyDropdown
     difficultyDropdown:SetDefaultText("Select a difficulty")
     difficultyDropdown:SetupMenu(function(dropdown, rootDescription)
@@ -1052,18 +1252,79 @@ miog.loadJournal = function()
 
     local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
     ScrollUtil.InitScrollBoxListWithScrollBar(journal.ScrollBox, journal.ScrollBar, view);
-	
+
 	view:SetElementInitializer("MIOG_JournalFullItemTemplate", function(frame, data)
-        --initScrollBoxFrame(frame, data)
-        updateScrollBoxItem(frame, data)
-    
+        frame.Item.Icon:SetTexture(data.icon)
+        local formattedText
+
+        --[[if(data.positions) then
+            formattedText = ""
+
+            local positionArray = {}
+
+            for k, v in ipairs(data.positions) do
+                positionArray[v] = true
+            end
+
+            for i = 1, strlen(data.name), 1 do
+                if(positionArray[i]) then
+                    formattedText = formattedText .. WrapTextInColorCode(strsub(data.name, i, i), miog.CLRSCC.green)
+
+                else
+                    formattedText = formattedText .. strsub(data.name, i, i)
+
+                end
+
+            end
+        end
+
+        if(data.score) then
+            if(data.score < math.huge) then
+                local percentage = data.score / strlen(data.name) * 100
+                frame.Item.Percentage:SetText(miog.round3(percentage, 2) .. "%")
+
+            else
+                frame.Item.Percentage:SetText("100%")
+
+            end
+
+        else
+            frame.Item.Percentage:SetText("")
+
+        end]]
+
+        frame.Item.Name:SetText(formattedText or data.name)
+
+        if(data.slot) then
+            frame.Item.Slot:SetText(data.slot)
+        end
+
+        local item = Item:CreateFromItemLink(data.link)
+        frame.Item.ItemLevel:SetText(item:GetCurrentItemLevel())
+        frame.Item.itemLink = data.link
+        frame.Item.encounterID = data.encounterID
+
+        --
+        --EXTRA DATA
+        --
+
+        local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
+        local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+
+        frame.Source.Name:SetText(WrapTextInColorCode("[" .. miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
+
+        --SetPortraitTextureFromCreatureDisplayID(frame.Source.Icon, sectionInfo.creatureDisplayID)
+
+        frame.Source:SetScript("OnMouseDown", function(self, button)
+            setJournalIDs(nil, data.encounterID)
+
+        end)
     end)
 
     journal.SearchBox:SetScript("OnTextChanged", function(self, key)
         SearchBoxTemplate_OnTextChanged(self)
 
-        loadAllItems()
-
+        loadAllItems(8)
     end)
 
     journal.SlotDropdown:SetDefaultText("Equipment slots")
@@ -1073,11 +1334,11 @@ miog.loadJournal = function()
             selectedItemSubClass = nil
             C_EncounterJournal.ResetSlotFilter()
 
-            loadAllItems()
+            loadAllItems(9)
 
         end)
 
-        
+
         local sortedFilters = {}
 
         for k, v in pairs(Enum.ItemSlotFilterType) do
@@ -1090,7 +1351,7 @@ miog.loadJournal = function()
                 selectedItemSubClass = nil
 
                 C_EncounterJournal.SetSlotFilter(index)
-                loadAllItems()
+                loadAllItems(10)
 
             end, i)
         end
@@ -1098,18 +1359,18 @@ miog.loadJournal = function()
         rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
-            
+
             C_EncounterJournal.SetSlotFilter(14)
-            loadAllItems()
+            loadAllItems(11)
 
         end, {class = 15, subclass = 5})
 
         rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
-            
+
             C_EncounterJournal.SetSlotFilter(14)
-            loadAllItems()
+            loadAllItems(12)
 
         end, {class = 9, subclass = nil})
 
@@ -1118,7 +1379,7 @@ miog.loadJournal = function()
             selectedItemSubClass = data.subclass
 
             C_EncounterJournal.SetSlotFilter(14)
-            loadAllItems()
+            loadAllItems(13)
 
         end, {class = 15, subclass = 0})
     end)
@@ -1130,14 +1391,14 @@ miog.loadJournal = function()
         rootDescription:CreateButton(CLEAR_ALL, function(index)
             resetClassSpecAndArmor()
 
-            loadAllItems()
+            loadAllItems(14)
         end)
 
         local classButton = rootDescription:CreateButton("Classes")
 
         classButton:CreateButton(CLEAR_ALL, function(index)
             resetClassAndSpec()
-            loadAllItems()
+            loadAllItems(15)
 
         end)
 
@@ -1146,7 +1407,7 @@ miog.loadJournal = function()
                 selectedClass = k
                 selectedSpec = nil
                 EJ_SetLootFilter(selectedClass, selectedSpec)
-                loadAllItems()
+                loadAllItems(16)
 
                 if(dropdown:IsMenuOpen()) then
                     dropdown:CloseMenu()
@@ -1160,7 +1421,7 @@ miog.loadJournal = function()
                     selectedClass = k
                     selectedSpec = id
                     EJ_SetLootFilter(k, id)
-                    loadAllItems()
+                    loadAllItems(17)
 
                     if(dropdown:IsMenuOpen()) then
                         dropdown:CloseMenu()
@@ -1173,143 +1434,20 @@ miog.loadJournal = function()
 
         armorButton:CreateButton(CLEAR_ALL, function(index)
             resetArmorType()
-            loadAllItems()
+            loadAllItems(18)
 
         end)
 
         for k, v in ipairs(armorTypeInfo) do
 	        armorButton:CreateRadio(v.name, function(name) return name == selectedArmor end, function(name)
                 selectedArmor = v.name
-                loadAllItems()
+                loadAllItems(19)
 
             end, v.name)
-            
+
         end
 
     end)
-
-    --[[journal.SettingsBar.ArmorDropdown:SetDefaultText("Armor types")
-    journal.SettingsBar.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
-        rootDescription:CreateButton(CLEAR_ALL, function(index)
-            selectedArmor = nil
-            selectedClass = nil
-            selectedSpec = nil
-            
-            EJ_ResetLootFilter()
-            requestAllItemsFromCurrentEncounter()
-
-        end)
-
-        local classButton = rootDescription:CreateButton("Classes")
-
-        classButton:CreateButton(CLEAR_ALL, function(index)
-            selectedClass = nil
-            selectedSpec = nil
-            EJ_ResetLootFilter()
-            requestAllItemsFromCurrentEncounter()
-
-        end)
-
-        for k, v in ipairs(miog.CLASSES) do
-	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(index) return index == selectedClass end, function(name)
-                selectedClass = k
-                selectedSpec = nil
-                EJ_SetLootFilter(selectedClass, selectedSpec)
-                requestAllItemsFromCurrentEncounter()
-
-                if(dropdown:IsMenuOpen()) then
-                    dropdown:CloseMenu()
-                end
-            end, k)
-
-            for x, y in ipairs(v.specs) do
-                local id, specName, description, icon, role, classFile, className = GetSpecializationInfoByID(y)
-
-                classMenu:CreateRadio(specName, function(specID) return specID == selectedSpec end, function(name)
-                    selectedClass = k
-                    selectedSpec = id
-                    EJ_SetLootFilter(k, id)
-                    requestAllItemsFromCurrentEncounter()
-
-                    if(dropdown:IsMenuOpen()) then
-                        dropdown:CloseMenu()
-                    end
-                end, id)
-            end
-        end
-
-        local armorButton = rootDescription:CreateButton("Armor")
-
-        armorButton:CreateButton(CLEAR_ALL, function(index)
-            selectedArmor = nil
-            requestAllItemsFromCurrentEncounter()
-
-        end)
-
-        for k, v in ipairs(armorTypeInfo) do
-	        armorButton:CreateRadio(v.name, function(name) return name == selectedArmor end, function(name)
-                selectedArmor = v.name
-                requestAllItemsFromCurrentEncounter()
-            end, v.name)
-            
-        end
-
-    end)
-
-    journal.SettingsBar.SlotDropdown:SetDefaultText("Equipment slots")
-    journal.SettingsBar.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
-        rootDescription:CreateButton(CLEAR_ALL, function(index)
-            selectedItemClass = nil
-            selectedItemSubClass = nil
-            C_EncounterJournal.ResetSlotFilter()
-            requestAllItemsFromCurrentEncounter()
-
-        end)
-
-        
-        local sortedFilters = {}
-
-        for k, v in pairs(Enum.ItemSlotFilterType) do
-            sortedFilters[v] = k
-        end
-
-        for i = 0, #sortedFilters - 1, 1 do
-	        rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(index) return index == C_EncounterJournal.GetSlotFilter() end, function(index)
-                selectedItemClass = nil
-                selectedItemSubClass = nil
-                C_EncounterJournal.SetSlotFilter(index)
-                requestAllItemsFromCurrentEncounter()
-
-            end, i)
-        end
-
-        rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
-            selectedItemClass = data.class
-            selectedItemSubClass = data.subclass
-            
-            C_EncounterJournal.SetSlotFilter(14)
-            requestAllItemsFromCurrentEncounter()
-
-        end, {class = 15, subclass = 5})
-
-        rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
-            selectedItemClass = data.class
-            selectedItemSubClass = data.subclass
-            
-            C_EncounterJournal.SetSlotFilter(14)
-            requestAllItemsFromCurrentEncounter()
-
-        end, {class = 9, subclass = nil})
-
-        rootDescription:CreateRadio("Tokens", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
-            selectedItemClass = data.class
-            selectedItemSubClass = data.subclass
-
-            C_EncounterJournal.SetSlotFilter(14)
-            requestAllItemsFromCurrentEncounter()
-
-        end, {class = 15, subclass = 0})
-    end)]]
 
     return journal
 end
@@ -1324,8 +1462,6 @@ local function journalEvents(_, event, ...)
                     loadedItems[...] = nil
                 end
 
-                MIOG_ITEMS = loadedItems
-
                 for _ in pairs(loadedItems) do
                     return
 
@@ -1333,7 +1469,7 @@ local function journalEvents(_, event, ...)
 
                 loading = false
 
-                loadAllItems(true)
+                loadAllItems(20)
             end
         end
     end
