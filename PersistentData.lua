@@ -1115,12 +1115,14 @@ local function createGroupWithActivityIDIfNeeded(activityID)
 	if(not miog.ACTIVITY_INFO[activityID]) then
 		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 
-		if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
-			addGroupInfo(activityInfo.groupFinderActivityGroupID)
+		if(activityInfo) then
+			if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
+				addGroupInfo(activityInfo.groupFinderActivityGroupID)
 
-		else
-			addActivityInfo(activityID)
+			else
+				addActivityInfo(activityID)
 
+			end
 		end
 	end
 

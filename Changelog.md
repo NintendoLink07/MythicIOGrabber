@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning].
 
 - [Journal] Items now correctly reload after clearing all filters.
 
+- [Journal] The instance dropdown will now correctly set the index of the main categories.
+
 - [Journal] Performance while loading has been improved, still a bit laggy when requesting loot data from all current activities (e.g. searching for an item or having no filters active).
 
 
