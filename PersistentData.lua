@@ -250,8 +250,15 @@ for i = 0, 230, 1 do -- max # of difficulties in wago tools Difficulty
 	local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic, toggleDifficultyID, isLFR, minGroupSize, maxGroupSize = GetDifficultyInfo(i)
 
 	if(name) then
-		miog.DIFFICULTY_ID_INFO[i] = {name = i == 8 and "Mythic+" or name, shortName = (i == 1 or i == 3 or i == 4 or i == 9 or i == 14) and "N" or (i == 2 or i == 5 or i == 6 or i == 15 or i == 24 or i == 33) and "H" or i == 8 and "M+" or (i == 7 or i == 17) and "LFR" or (i == 16 or i == 23) and "M",
-		type = groupType, isHeroic = isHeroic, isChallengeMode = isChallengeMode, isLFR = isLFR, toggleDifficulty = toggleDifficultyID, color = miog.DIFFICULTY_ID_TO_COLOR[i] and miog.DIFFICULTY_ID_TO_COLOR[i]}
+		miog.DIFFICULTY_ID_INFO[i] = {
+			name = i == 8 and "Mythic+" or name,
+			shortName = miog.DIFFICULTY_ID_TO_SHORT_NAME[i],
+			type = groupType,
+			isHeroic = isHeroic,
+			isChallengeMode = isChallengeMode,
+			isLFR = isLFR,
+			toggleDifficulty = toggleDifficultyID,
+			color = miog.DIFFICULTY_ID_TO_COLOR[i] and miog.DIFFICULTY_ID_TO_COLOR[i]}
 
 		if(miog.DIFFICULTY_ID_INFO[i].shortName) then
 			miog.DIFFICULTY_ID_INFO[i].customDifficultyOrderIndex = miog.CUSTOM_DIFFICULTY_ORDER[miog.DIFFICULTY_ID_INFO[i].shortName]

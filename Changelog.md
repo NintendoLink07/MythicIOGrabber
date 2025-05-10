@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning].
 
 - [Journal] Performance while loading has been improved, still a bit laggy when requesting loot data from all current activities (e.g. searching for an item or having no filters active).
 
+- [Journal] Toys now get properly recognized.
+
 
 
 ## [3.4.2] - 2025-04-30
