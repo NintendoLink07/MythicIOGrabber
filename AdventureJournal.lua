@@ -157,30 +157,33 @@ local function checkIfItemIsFiltered(item)
     return false
 end
 
-local function sortByItemLevel(k1, k2)
-    if(k1.itemLevel ~= k2.itemLevel) then
-        return k1.itemLevel > k2.itemLevel
+local function sortByEncounterIndex(k1B, k2B)
+    local k1, k2 = k1B.data, k2B.data
 
-    end
+    if(k1.mapID == k2.mapID) then
+        if(k1.encounterIndex == k2.encounterIndex) then
+            if(k1.difficultyID and k2.difficultyID) then
+                if(k1.difficultyID ~= k2.difficultyID) then
+                    local diffOrder1, diffOrder2 = difficultyOrder[k1.difficultyID], difficultyOrder[k2.difficultyID]
 
-    return k1.index > k2.index
-end
+                    return diffOrder1 > diffOrder2
 
-local function sortByEncounterIndex(k1, k2)
-    if(k1.encounterIndex == k2.encounterIndex) then
-        if(k1.difficultyID and k2.difficultyID) then
-            if(k1.difficultyID ~= k2.difficultyID) then
-                local diffOrder1, diffOrder2 = difficultyOrder[k1.difficultyID], difficultyOrder[k2.difficultyID]
+                elseif(k1.itemlevel and k2.itemlevel) then
+                    if(k1.itemlevel == k2.itemlevel) then
+                        return k1.filterType < k2.filterType
 
-                return diffOrder1 > diffOrder2
-            else
-                return k1.itemID > k2.itemID
+                    else
+                        return k1.itemlevel > k2.itemlevel
 
+                    end
+                end
             end
         end
+
+        return k1.encounterIndex > k2.encounterIndex
     end
 
-    return k1.index > k2.index
+    return k1.mapID > k2.mapID
 
 end
 
@@ -297,12 +300,23 @@ local function loadItems()
 
     local difficultyID = EJ_GetDifficulty()
 
+    local startTime = GetTimePreciseSec()
+
+    local _, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
+    miog.checkSingleMapIDForNewData(mapID)
+
     for i = 1, EJ_GetNumLoot() do
 		local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
         itemInfo.index = i
         itemInfo.difficultyID = difficultyID
-        --local item = Item:CreateFromItemLink(itemInfo.link)
-        --local itemlevel = item:GetCurrentItemLevel()
+        itemInfo.encounterIndex = miog.ENCOUNTER_INFO[itemInfo.encounterID] and miog.ENCOUNTER_INFO[itemInfo.encounterID].index or 0
+
+        if(itemInfo.link) then
+            local item = Item:CreateFromItemLink(itemInfo.link)
+            itemInfo.itemlevel = item:GetCurrentItemLevel()
+        end
+
+        itemInfo.mapID = mapID
 
 		if itemInfo.displayAsPerPlayerLoot then
 			tinsert(lootTable, itemInfo)
@@ -321,6 +335,10 @@ local function loadItems()
 
 		end
 	end
+
+    local endTime = GetTimePreciseSec()
+
+    print("REQUEST", endTime - startTime)
 
     return lootTable
 
@@ -373,68 +391,6 @@ local function loadItems()
             end
         end
     end]]
-end
-
-local function loadItemsForDifficulty(difficultyID, dataProvider)
-    EJ_SetDifficulty(difficultyID)
-
-    local numOfLoot = EJ_GetNumLoot()
-
-    local displayDifferentItems = miog.Journal.Checkbox:GetChecked()
-
-    local stillLoading = false
-
-    for i = 1, numOfLoot, 1 do
-        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
-
-        if(not itemInfo.name) then
-            loadedItems[itemInfo.itemID] = loadedItems[itemInfo.itemID] and loadedItems[itemInfo.itemID] + 1 or 1
-            stillLoading = true
-
-        elseif(not stillLoading) then
-            --local item = Item:CreateFromItemLink(itemInfo.link)
-
-            if(searching) then
-                itemInfo.difficultyID = difficultyID
-                itemInfo.index = i
-
-                if(displayDifferentItems) then
-                    table.insert(itemsToFilter, itemInfo)
-
-                else
-                    table.insert(itemsToFilter, itemInfo)
-                    
-                    if(not currentItemData[itemInfo.itemID]) then
-                        currentItemData[itemInfo.itemID] = {difficultyID = difficultyID, name = itemInfo.name, itemInfo = itemInfo, filterIndex = #itemsToFilter}
-
-                    elseif(difficultyOrder[difficultyID] > difficultyOrder[currentItemData[itemInfo.itemID].difficultyID]) then
-                        table.remove(itemsToFilter, currentItemData[itemInfo.itemID].filterIndex)
-                        currentItemData[itemInfo.itemID] = {difficultyID = difficultyID, name = itemInfo.name, itemInfo = itemInfo, filterIndex = #itemsToFilter}
-
-                    end
-
-                end
-            elseif(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) then
-                local encounterInfo = miog.ENCOUNTER_INFO[itemInfo.encounterID]
-
-                itemInfo.index = i
-                --itemInfo.itemLevel = item:GetCurrentItemLevel()
-                itemInfo.difficultyID = difficultyID
-
-                if(encounterInfo) then
-                    itemInfo.encounterIndex = encounterInfo and encounterInfo.index
-
-                else
-                    itemInfo.encounterIndex = 0
-
-                end
-
-                dataProvider:Insert(itemInfo)
-            end
-        end
-    end
-    
-    return stillLoading
 end
 
 function concatenateTables(t1, t2)
@@ -614,42 +570,88 @@ local function refreshFilters()
 end
 
 local function updateLoot()
-    print("UPDATE LOOT", GetTimePreciseSec())
+    local startTime = GetTimePreciseSec()
 
     refreshFilters()
     
     miog.Journal.ScrollBox:Flush()
-    local dataProvider = CreateDataProvider()
-    dataProvider:SetSortComparator(sortByEncounterIndex)
-
     searchBoxText = miog.Journal.SearchBox:GetText()
     noFilter = C_EncounterJournal.GetSlotFilter() == 15
     searching = searchBoxText ~= ""
 
     missingItems = {}
 
-    itemsToFilter = {}
-    currentItemData = {}
-
     local mainLootTable
+    local dataProvider
 
     if(selectedInstance) then
-        mainLootTable = loadItemsFromInstance(selectedInstance, dataProvider)
+        mainLootTable = loadItemsFromInstance(selectedInstance)
+        dataProvider = CreateTreeDataProvider()
+        dataProvider:SetSortComparator(sortByEncounterIndex)
 
     else
-        mainLootTable = loadItemsFromCurrentActivities(dataProvider)
+        mainLootTable = loadItemsFromCurrentActivities()
+        dataProvider = CreateDataProvider()
         selectedInstance = nil
 
     end
 
+
+    --[[
+    
+    Sort before
+    Create headers
+    Add children to headers
+    EA repframe
+    
+    
+    
+    ]]
+
+
+
     if(mainLootTable) then
+        local lastEncounter
+        local parent
+
         for i = 1, #mainLootTable do
-            dataProvider:Insert(mainLootTable[i])
+            local itemInfo = mainLootTable[i]
             
+            if(selectedInstance) then
+                if(lastEncounter ~= itemInfo.encounterID) then
+                    parent = dataProvider:Insert({
+                        template = "MIOG_JournalSourceTemplate",
+                        difficultyID = itemInfo.difficultyID,
+                        encounterID = itemInfo.encounterID,
+                        encounterIndex = itemInfo.encounterIndex,
+                        mapID = itemInfo.mapID
+                    })
+
+                    print(parent == nil)
+
+                end
+
+                print(lastEncounter, itemInfo.encounterID, parent == nil)
+
+                itemInfo.template = "MIOG_JournalItemTemplate"
+
+                parent:Insert(mainLootTable[i])
+
+            else
+                itemInfo.template = "MIOG_JournalFullItemTemplate"
+                dataProvider:Insert(mainLootTable[i])
+
+            end
+
+            lastEncounter = itemInfo.encounterID
         end
 
         miog.Journal.ScrollBox:SetDataProvider(dataProvider)
     end
+
+    local endTime = GetTimePreciseSec()
+
+    print("UPDATE LOOT", endTime - startTime)
 end
 
 miog.updateLoot = updateLoot
@@ -815,6 +817,157 @@ end
 ---
 ---]]
 
+local function updateFullItemFrame(frame, data)
+    frame.Item.Icon:SetTexture(data.icon)
+    local formattedText
+
+    if(data.positions) then
+        formattedText = ""
+
+        local positionArray = {}
+
+        for k, v in ipairs(data.positions) do
+            positionArray[v] = true
+        end
+
+        for i = 1, strlen(data.name), 1 do
+            if(positionArray[i]) then
+                formattedText = formattedText .. WrapTextInColorCode(strsub(data.name, i, i), miog.CLRSCC.green)
+
+            else
+                formattedText = formattedText .. strsub(data.name, i, i)
+
+            end
+
+        end
+    end
+
+    --[[if(data.score) then
+        if(data.score < math.huge) then
+            local percentage = data.score / strlen(data.name) * 100
+            frame.Item.Percentage:SetText(miog.round3(percentage, 2) .. "%")
+
+        else
+            frame.Item.Percentage:SetText("100%")
+
+        end
+
+    else
+        frame.Item.Percentage:SetText("")
+
+    end]]
+
+    frame.Item.Name:SetText(formattedText or data.name)
+
+
+    if(data.link) then
+        local item = Item:CreateFromItemLink(data.link)
+        frame.Item.ItemLevel:SetText(item:GetCurrentItemLevel())
+        frame.Item.itemLink = data.link
+
+        if(data.slot) then
+            if(data.filterType == 14) then
+                local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(data.link)
+
+                local type = getItemClassSubClassName(data.itemID, classID, subclassID)
+                
+                frame.Item.Slot:SetText(type)
+
+            else
+                frame.Item.Slot:SetText(data.slot)
+
+            end
+        end
+    end
+
+    frame.Item.encounterID = data.encounterID
+
+    --
+    --EXTRA DATA
+    --
+
+    local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
+    local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+
+    frame.Source.Name:SetText(WrapTextInColorCode("[" .. miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
+
+    --SetPortraitTextureFromCreatureDisplayID(frame.Source.Icon, sectionInfo.creatureDisplayID)
+end
+
+local function updatePartialItemFrame(frame, data)
+    frame.Icon:SetTexture(data.icon)
+    local formattedText
+
+    if(data.positions) then
+        formattedText = ""
+
+        local positionArray = {}
+
+        for k, v in ipairs(data.positions) do
+            positionArray[v] = true
+        end
+
+        for i = 1, strlen(data.name), 1 do
+            if(positionArray[i]) then
+                formattedText = formattedText .. WrapTextInColorCode(strsub(data.name, i, i), miog.CLRSCC.green)
+
+            else
+                formattedText = formattedText .. strsub(data.name, i, i)
+
+            end
+
+        end
+    end
+
+    --[[if(data.score) then
+        if(data.score < math.huge) then
+            local percentage = data.score / strlen(data.name) * 100
+            frame.Percentage:SetText(miog.round3(percentage, 2) .. "%")
+
+        else
+            frame.Percentage:SetText("100%")
+
+        end
+
+    else
+        frame.Percentage:SetText("")
+
+    end]]
+
+    frame.Name:SetText(formattedText or data.name)
+
+
+    if(data.link) then
+        local item = Item:CreateFromItemLink(data.link)
+        frame.ItemLevel:SetText(item:GetCurrentItemLevel())
+        frame.itemLink = data.link
+
+        if(data.slot) then
+            if(data.filterType == 14) then
+                local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(data.link)
+
+                local type = getItemClassSubClassName(data.itemID, classID, subclassID)
+                
+                frame.Slot:SetText(type)
+
+            else
+                frame.Slot:SetText(data.slot)
+
+            end
+        end
+    end
+
+    frame.encounterID = data.encounterID
+end
+
+local function updateSourceFrame(frame, data)
+    local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
+    local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+
+    frame.Name:SetText(WrapTextInColorCode("[" .. miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
+
+    --SetPortraitTextureFromCreatureDisplayID(frame.Icon, sectionInfo.creatureDisplayID)
+end
 
 miog.loadJournal = function()
     local journal = miog.pveFrame2.TabFramesPanel.Journal
@@ -831,6 +984,7 @@ miog.loadJournal = function()
     end)
     journal.SearchBox:OnLoad()
     journal.SearchBox:SetHierarchy({{id = "instance", order = 1}, {id = "difficulty", order = 2}, {id = "encounter", order = 2}})
+	journal.SearchBox.Instructions:SetText("Enter atleast 3 characters to search...");
 
     loadInstanceInfo()
 
@@ -986,85 +1140,37 @@ miog.loadJournal = function()
         end
     end)
 
-    local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
+	local view = CreateScrollBoxListTreeListView(6, 1, 1, 1, 1, 2);
+    --local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
+
+    local function initFrames(frame, node)
+		local data = node:GetData()
+
+		frame.node = node
+
+		if(data.template == "MIOG_JournalFullItemTemplate") then
+			updateFullItemFrame(frame, data)
+
+		elseif(data.template == "MIOG_JournalItemTemplate") then
+			updatePartialItemFrame(frame, data)
+
+		elseif(data.template == "MIOG_JournalSourceTemplate") then
+			updateSourceFrame(frame, data)
+
+		end
+	end
+	
+	local function customFactory(factory, node)
+		local data = node:GetData()
+		local template = data.template
+
+		factory(template, initFrames)
+	end
+	
+	view:SetElementFactory(customFactory)
+
+    
     ScrollUtil.InitScrollBoxListWithScrollBar(journal.ScrollBox, journal.ScrollBar, view);
-
-	view:SetElementInitializer("MIOG_JournalFullItemTemplate", function(frame, data)
-        frame.Item.Icon:SetTexture(data.icon)
-        local formattedText
-
-        if(data.positions) then
-            formattedText = ""
-
-            local positionArray = {}
-
-            for k, v in ipairs(data.positions) do
-                positionArray[v] = true
-            end
-
-            for i = 1, strlen(data.name), 1 do
-                if(positionArray[i]) then
-                    formattedText = formattedText .. WrapTextInColorCode(strsub(data.name, i, i), miog.CLRSCC.green)
-
-                else
-                    formattedText = formattedText .. strsub(data.name, i, i)
-
-                end
-
-            end
-        end
-
-        --[[if(data.score) then
-            if(data.score < math.huge) then
-                local percentage = data.score / strlen(data.name) * 100
-                frame.Item.Percentage:SetText(miog.round3(percentage, 2) .. "%")
-
-            else
-                frame.Item.Percentage:SetText("100%")
-
-            end
-
-        else
-            frame.Item.Percentage:SetText("")
-
-        end]]
-
-        frame.Item.Name:SetText(formattedText or data.name)
-
-
-        if(data.link) then
-            local item = Item:CreateFromItemLink(data.link)
-            frame.Item.ItemLevel:SetText(item:GetCurrentItemLevel())
-            frame.Item.itemLink = data.link
-
-            if(data.slot) then
-                if(data.filterType == 14) then
-                    local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(data.link)
-
-                    local type = getItemClassSubClassName(data.itemID, classID, subclassID)
-                    
-                    frame.Item.Slot:SetText(type)
-
-                else
-                    frame.Item.Slot:SetText(data.slot)
-
-                end
-            end
-        end
-
-        frame.Item.encounterID = data.encounterID
-
-        --
-        --EXTRA DATA
-        --
-
-        local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
-        local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
-
-        frame.Source.Name:SetText(WrapTextInColorCode("[" .. miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
-
-        --SetPortraitTextureFromCreatureDisplayID(frame.Source.Icon, sectionInfo.creatureDisplayID)
-    end)
 
     journal.SearchBox:SetScript("OnTextChanged", function(self, manual)
         SearchBoxTemplate_OnTextChanged(self)
@@ -1136,8 +1242,6 @@ miog.loadJournal = function()
 
     journal.ArmorDropdown:SetDefaultText("Armor types")
     journal.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
-        local ejClass, ejSpec = EJ_GetLootFilter()
-
         rootDescription:CreateButton(CLEAR_ALL, function(index)
             resetClassSpecAndArmor()
             updateLoot()
@@ -1153,29 +1257,22 @@ miog.loadJournal = function()
         end)
 
         for k, v in ipairs(miog.CLASSES) do
-	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(index) return index == ejClass end, function(name)
+	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(index) return index == selectedClass end, function(name)
                 selectedClass = k
                 selectedSpec = nil
                 EJ_SetLootFilter(selectedClass, selectedSpec)
                 updateLoot()
-
-                if(dropdown:IsMenuOpen()) then
-                    dropdown:CloseMenu()
-                end
             end, k)
 
             for x, y in ipairs(v.specs) do
                 local id, specName, description, icon, role, classFile, className = GetSpecializationInfoByID(y)
 
-                classMenu:CreateRadio(specName, function(specID) return specID == ejSpec end, function(name)
+                classMenu:CreateRadio(specName, function(specID) return specID == selectedSpec end, function(name)
                     selectedClass = k
                     selectedSpec = id
                     EJ_SetLootFilter(k, id)
-                updateLoot()
-
-                    if(dropdown:IsMenuOpen()) then
-                        dropdown:CloseMenu()
-                    end
+                    updateLoot()
+                    
                 end, id)
             end
         end

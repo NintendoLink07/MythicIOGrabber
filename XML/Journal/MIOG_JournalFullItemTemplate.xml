@@ -3,10 +3,27 @@
     <Frame name="MIOG_JournalFullItemTemplate" inherits="BackdropTemplate" virtual="true">
         <Size y="20" />
         <Frames>
+            <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin" hidden="true">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
+                </Anchors>
+
+                <Scripts>
+                    <OnLoad>
+                        self:OnLoad()
+                        self:SetMaxStates(2)
+                        self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                        self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                        self:SetState(false)
+                    </OnLoad>
+                </Scripts>
+            </Button>
+
             <Frame parentKey="Source" inherits="MIOG_JournalSourceTemplate">
                 <Size x="256" y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ExpandFrame" relativePoint="TOPRIGHT" />
                 </Anchors>
             </Frame>
 

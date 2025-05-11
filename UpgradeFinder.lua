@@ -476,13 +476,15 @@ local function findAllRelevantMapIDs()
 
     if(worldBossActivity and #worldBossActivity > 0) then
         for _, v in ipairs(worldBossActivity) do
-            local groupInfo = miog.requestGroupInfo(v)
-            listWithMapIDs[#listWithMapIDs + 1] = {mapID = activigroupInfotyInfo.mapID, active = false}
+            local activityInfo = miog.requestActivityInfo(v)
+            listWithMapIDs[#listWithMapIDs + 1] = {mapID = activityInfo.mapID, active = false}
             
         end
     end
 
     for k, info in ipairs(listWithMapIDs) do
+        print(k, info.mapID)
+
         local tbl = requestAllLootForMapID(info)
 
         if(tbl) then

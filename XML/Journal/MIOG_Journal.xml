@@ -7,7 +7,7 @@
         </Anchors>
         
         <Frames>
-            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
+            <!--<CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
                 <Size x="22" y="22" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" x="-2" />
@@ -23,14 +23,14 @@
                     </OnEnter>
                     <OnLeave function="GameTooltip_Hide" />
                 </Scripts>
-            </CheckButton>
+            </CheckButton>!-->
 
             <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" mixin="SearchBoxFiltersMixin" autoFocus="false" font="GameFontHighlight">
                 <Size y="24" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" x="6"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Checkbox" relativePoint="TOPLEFT" x="-2"/>
+                    <Anchor point="TOPRIGHT" x="-2"/>
                 </Anchors>
             </EditBox> 
 

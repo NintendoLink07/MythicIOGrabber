@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning].
 
 - [Journal] Items now display their appropriate slot, when applicable.
 
+- [Journal] Items now get sorted by more characteristics.
+
 - All Dragonflight boss icons have been removed, lowering the addon's filesize.
 
 - OpenRaid library updated.
