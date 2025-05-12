@@ -1009,13 +1009,22 @@ local function checkSingleMapIDForNewData(mapID, selectInstance)
 				icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
 			}
 
-			miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo}
+			miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = miog.MAP_INFO[mapID].bosses[bossIndex]}
 
 			bossIndex = bossIndex + 1;
 			bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
 		end
 	end
 end
+
+local function getEncounterInfo(journalEncounterID)
+	if(journalEncounterID) then
+		return miog.ENCOUNTER_INFO[journalEncounterID]
+
+	end
+end
+
+miog.getEncounterInfo = getEncounterInfo
 
 local function getMapInfo(mapID, selectInstance)
 	if(mapID) then
@@ -1026,6 +1035,16 @@ local function getMapInfo(mapID, selectInstance)
 end
 
 miog.getMapInfo = getMapInfo
+
+local function getJournalInstanceInfo(journalInstanceID)
+	if(journalInstanceID) then
+    	local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID);
+		
+		return miog.MAP_INFO[mapID] or getMapInfo(mapID, true)
+	end
+end
+
+miog.getJournalInstanceInfo = getJournalInstanceInfo
 
 miog.CHALLENGE_MODE_INFO = {}
 

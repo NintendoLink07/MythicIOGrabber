@@ -15,9 +15,9 @@
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Slot" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
-                    <Size x="90" />
+                    <Size x="112" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" />
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
                     </Anchors>
                 </FontString>
 
@@ -27,17 +27,11 @@
                         <Anchor point="LEFT" relativeKey="$parent.Slot" relativePoint="RIGHT" x="3" />
                     </Anchors>
                 </FontString>
-
-                <FontString parentKey="Percentage" font="GameFontHighlightSmall" justifyH="RIGHT" justifyV="MIDDLE" wordwrap="false">
-                    <Anchors>
-                        <Anchor point="RIGHT" x="-2"/>
-                    </Anchors>
-                </FontString>
                 
                 <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="2" />
-                        <Anchor point="RIGHT" relativeKey="$parent.Percentage" relativePoint="LEFT" x="-2" />
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
                     </Anchors>
                 </FontString>
             </Layer>    

@@ -157,8 +157,8 @@ local function checkIfItemIsFiltered(item)
     return false
 end
 
-local function sortByEncounterIndex(k1B, k2B)
-    local k1, k2 = k1B.data, k2B.data
+local function sortByEncounterIndex(k1, k2)
+    --local k1, k2 = k1B.data, k2B.data
 
     if(k1.mapID == k2.mapID) then
         if(k1.encounterIndex == k2.encounterIndex) then
@@ -168,14 +168,19 @@ local function sortByEncounterIndex(k1B, k2B)
 
                     return diffOrder1 > diffOrder2
 
-                elseif(k1.itemlevel and k2.itemlevel) then
-                    if(k1.itemlevel == k2.itemlevel) then
-                        return k1.filterType < k2.filterType
+                --else
+                    --if(k1.template ~= k2.template) then
+                        --return k1.template == "MIOG_JournalSourceTemplate"
+                        
+                    elseif(k1.itemlevel and k2.itemlevel) then
+                        if(k1.itemlevel == k2.itemlevel) then
+                            return k1.filterType < k2.filterType
 
-                    else
-                        return k1.itemlevel > k2.itemlevel
+                        else
+                            return k1.itemlevel > k2.itemlevel
 
-                    end
+                        end
+                    --end
                 end
             end
         end
@@ -297,9 +302,7 @@ end
 
 local function loadItems()
     local lootTable = {}
-
     local difficultyID = EJ_GetDifficulty()
-
     local startTime = GetTimePreciseSec()
 
     local _, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
@@ -335,10 +338,6 @@ local function loadItems()
 
 		end
 	end
-
-    local endTime = GetTimePreciseSec()
-
-    print("REQUEST", endTime - startTime)
 
     return lootTable
 
@@ -582,20 +581,17 @@ local function updateLoot()
     missingItems = {}
 
     local mainLootTable
-    local dataProvider
+    local dataProvider = CreateTreeDataProvider()
 
     if(selectedInstance) then
         mainLootTable = loadItemsFromInstance(selectedInstance)
-        dataProvider = CreateTreeDataProvider()
-        dataProvider:SetSortComparator(sortByEncounterIndex)
+        --dataProvider:SetSortComparator(sortByEncounterIndex)
 
     else
         mainLootTable = loadItemsFromCurrentActivities()
-        dataProvider = CreateDataProvider()
         selectedInstance = nil
 
     end
-
 
     --[[
     
@@ -604,34 +600,30 @@ local function updateLoot()
     Add children to headers
     EA repframe
     
-    
-    
     ]]
 
-
+    table.sort(mainLootTable, sortByEncounterIndex)
 
     if(mainLootTable) then
-        local lastEncounter
+        local lastEncounter, lastDifficulty
         local parent
 
         for i = 1, #mainLootTable do
             local itemInfo = mainLootTable[i]
             
             if(selectedInstance) then
-                if(lastEncounter ~= itemInfo.encounterID) then
+                if(lastEncounter ~= itemInfo.encounterID or lastDifficulty ~= itemInfo.difficultyID) then
                     parent = dataProvider:Insert({
                         template = "MIOG_JournalSourceTemplate",
                         difficultyID = itemInfo.difficultyID,
                         encounterID = itemInfo.encounterID,
                         encounterIndex = itemInfo.encounterIndex,
-                        mapID = itemInfo.mapID
+                        mapID = itemInfo.mapID,
+                        source = "instance",
+                        expandable = true,
                     })
 
-                    print(parent == nil)
-
                 end
-
-                print(lastEncounter, itemInfo.encounterID, parent == nil)
 
                 itemInfo.template = "MIOG_JournalItemTemplate"
 
@@ -639,10 +631,12 @@ local function updateLoot()
 
             else
                 itemInfo.template = "MIOG_JournalFullItemTemplate"
+                itemInfo.source = "activity"
                 dataProvider:Insert(mainLootTable[i])
 
             end
 
+            lastDifficulty = itemInfo.difficultyID
             lastEncounter = itemInfo.encounterID
         end
 
@@ -886,11 +880,13 @@ local function updateFullItemFrame(frame, data)
     --EXTRA DATA
     --
 
-    local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
-    local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+    local encounterName, _, journalEncounterID, rootSectionID, _, journalInstanceID, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
+    local mapData = miog.getJournalInstanceInfo(journalInstanceID)
 
     frame.Source.Name:SetText(WrapTextInColorCode("[" .. miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
+    frame.Source.Icon:SetTexture(mapData.icon)
 
+    --local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
     --SetPortraitTextureFromCreatureDisplayID(frame.Source.Icon, sectionInfo.creatureDisplayID)
 end
 
@@ -962,11 +958,24 @@ end
 
 local function updateSourceFrame(frame, data)
     local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
-    local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+    --local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
 
     frame.Name:SetText(WrapTextInColorCode("[" .. miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
+    frame.Icon:ClearAllPoints()
 
-    --SetPortraitTextureFromCreatureDisplayID(frame.Icon, sectionInfo.creatureDisplayID)
+    if(data.expandable) then
+        frame.Icon:SetPoint("LEFT", frame.ExpandFrame, "RIGHT", 2, 0)
+        frame.ExpandFrame:Show()
+
+    else
+        frame.Icon:SetPoint("LEFT", frame, "LEFT", 2, 0)
+        frame.ExpandFrame:Hide()
+
+    end
+
+    local encData = miog.getEncounterInfo(data.encounterID)
+
+    SetPortraitTextureFromCreatureDisplayID(frame.Icon, encData.creatureDisplayInfoID)
 end
 
 miog.loadJournal = function()
@@ -1140,7 +1149,7 @@ miog.loadJournal = function()
         end
     end)
 
-	local view = CreateScrollBoxListTreeListView(6, 1, 1, 1, 1, 2);
+	local view = CreateScrollBoxListTreeListView(12, 1, 1, 1, 1, 2);
     --local view = CreateScrollBoxListLinearView(1, 1, 1, 1, 2);
 
     local function initFrames(frame, node)
@@ -1156,6 +1165,7 @@ miog.loadJournal = function()
 
 		elseif(data.template == "MIOG_JournalSourceTemplate") then
 			updateSourceFrame(frame, data)
+            frame.ExpandFrame:SetState(false)
 
 		end
 	end
@@ -1168,7 +1178,6 @@ miog.loadJournal = function()
 	end
 	
 	view:SetElementFactory(customFactory)
-
     
     ScrollUtil.InitScrollBoxListWithScrollBar(journal.ScrollBox, journal.ScrollBar, view);
 

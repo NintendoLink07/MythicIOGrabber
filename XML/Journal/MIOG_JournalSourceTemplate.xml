@@ -3,12 +3,40 @@
     <Frame name="MIOG_JournalSourceTemplate" inherits="BackdropTemplate" virtual="true">
         <Size y="20" />
 
+        <Frames>
+            <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin" hidden="true">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2" />
+                </Anchors>
+
+                <Scripts>
+                    <OnLoad>
+                        self:OnLoad()
+                        self:SetMaxStates(2)
+                        self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                        self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                        self:SetState(false)
+                    </OnLoad>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+                        local baseFrame = self:GetParent()
+                            
+                        self:AdvanceState()
+
+                        baseFrame.node:SetCollapsed(not baseFrame.node:IsCollapsed())
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Icon">
                     <Size x="16" y="16" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2" />
                     </Anchors>
                 </Texture>
             </Layer>
