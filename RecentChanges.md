@@ -1,32 +1,34 @@
-## [3.4.2](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.2) - 2025-04-30
+## [3.4.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.3) - 2025-05-13
 
 ### Changed
 
-- All upscaled images are now integrated into a separate addon because the addon grows rapidly in size (atm its around 80mb while most addons are in the 1-5mb range).
-If you like the upscaled images you can download the following addon: [MythicIO - Resources](https://www.curseforge.com/wow/addons/mythicio-resources)
-This decreased the main addon's filesize by 35mb.
+- [Journal] "Current activities" now only includes the most recent raid.
 
-- All background image options for the main frame have been resized.
-This reduced the addon's filesize by another 18mb.
+- [Journal] Items now display their appropriate slot, when applicable.
+
+- [Journal] Items now get sorted by more characteristics.
+
+- All Dragonflight boss icons have been removed, lowering the addon's filesize.
+
+- OpenRaid library updated.
 
 ### Fixed
 
-- [Journal] The journal won't get stuck in an instance anymore by manually updating the selected instance of Blizzard's adventure journal.
+- [Journal] Items duplicating by the amount of activities has been corrected.
 
-- [Journal] You can now change the difficulty when you don't have an instance selected.
+- [Journal] Items now correctly reload after clearing all filters.
 
-- [GroupManager] The itemlevel gets now rounded down and gets displayed without any decimals to preserve the UI spacing.
+- [Journal] The instance dropdown will now correctly set the index of the main categories.
 
-- [Progress] The honor level now gets updated correctly (was using UnitLevel instead of UnitHonorLevel, lol).
+- [Journal] Performance while loading has been improved, still a bit laggy when requesting loot data from all current activities (e.g. searching for an item or having no filters active).
 
-- [Progress] A scrollbar has been implemented for the main view to see more than 5 characters at a time.
+- [Journal] Toys now get properly recognized.
 
-- [Progress] Lockouts should now correctly get updated once you log in with a character.
+- [GroupManager] There won't be any errors anymore when players rapidly leave and join the group, e.g. on a world boss.
 
-- [SearchPanel] A rare error has been resolved where a dungeon listing's first boss data would stick around when you switched to the raid category and block all the raid listing's first boss data from being applied.
+- [GroupManager] Itemlevels and durability of other players are now retrievable again.
 
-- All raider io dungeon panels (like the progress panels, group manager inspection panel, etc.) are now sorted by the dungeon's abbreviation.
+### Known issues
 
-- Load up data collection now correctly recognizes if an instance is a raid or not (important for many different parts of the addon).
-
-- Open Raid library updated.
+- [Journal] When selecting an instance with a equipment slot pre selected no results will be shown until you either remove the filter or reclick it.
+This is fixed in v3.4.4.
