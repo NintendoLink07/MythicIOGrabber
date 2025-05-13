@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.4.3] - 2025-05-09
+## [3.4.3] - 2025-05-13
 
 ### Changed
 
@@ -31,6 +31,15 @@ and this project adheres to [Semantic Versioning].
 - [Journal] Performance while loading has been improved, still a bit laggy when requesting loot data from all current activities (e.g. searching for an item or having no filters active).
 
 - [Journal] Toys now get properly recognized.
+
+- [GroupManager] There won't be any errors anymore when players rapidly leave and join the group, e.g. on a world boss.
+
+- [GroupManager] Itemlevels and durability of other players are now retrievable again.
+
+### Known issues
+
+- [Journal] When selecting an instance with a equipment slot pre selected no results will be shown until you either remove the filter or reclick it.
+This is fixed in v3.4.4.
 
 
 
@@ -3681,7 +3690,7 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.3..HEAD
 [3.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.3
 [3.4.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.2
 [3.4.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.1

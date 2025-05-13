@@ -286,16 +286,15 @@ local function updateSingleCharacterSpecData(fullName, frameIsAvailable)
 end
 
 local function updateSingleCharacterItemData(fullName)
-	if(not miog.GroupManager:IsShown()) then
-		return
-	end
+	--if(not miog.GroupManager:IsShown()) then
+		--return
+	--end
 	
 
 	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
 		return fullName == data.fullName
 
 	end)
-
 
 	local playerGear = playerGearData[fullName]
 
@@ -305,13 +304,15 @@ local function updateSingleCharacterItemData(fullName)
 			data.ilvl = playerGear.ilevel or 0
 			data.durability = playerGear.durability or 0
 
-			if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
-				data.missingEnchants = {}
+			if(playerGear.noEnchants) then
+				if(#playerGear.noEnchants > 0) then
+					data.missingEnchants = {}
 
-				for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
-					if(slotIdWithoutEnchant ~= 10) then
-						data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
-						
+					for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
+						if(slotIdWithoutEnchant ~= 10) then
+							data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+							
+						end
 					end
 				end
 			end
@@ -327,13 +328,6 @@ local function updateSingleCharacterItemData(fullName)
 			frame.Itemlevel:SetText(playerGear.ilevel or "N/A")
 			frame.Durability:SetText(playerGear.durability and "(" .. playerGear.durability .. "%)" or "N/A")
 		end
-	else
-		data.ilvl = manualItemlevels[fullName] or 0
-		data.durability = playerGear.durability or 0
-
-		frame.Itemlevel:SetText(manualItemlevels[fullName] or "N/A")
-		frame.Durability:SetText("N/A")
-
 	end
 end
 
@@ -346,13 +340,15 @@ local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 		data.ilvl = playerGear.ilevel or 0
 		data.durability = playerGear.durability or 0
 
-		if(playerGear.noEnchants and #playerGear.noEnchants > 0) then
-			data.missingEnchants = {}
+		if(playerGear.noEnchants) then
+			if(#playerGear.noEnchants > 0) then
+				data.missingEnchants = {}
 
-			for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
-				if(slotIdWithoutEnchant ~= 10) then
-					data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
-					
+				for index, slotIdWithoutEnchant in ipairs (playerGear.noEnchants) do
+					if(slotIdWithoutEnchant ~= 10) then
+						data.missingEnchants[index] = miog.SLOT_ID_INFO[slotIdWithoutEnchant].localizedName
+						
+					end
 				end
 			end
 		end
@@ -1146,7 +1142,7 @@ local function checkPlayerInspectionStatus(fullName, openRaidSpec, type)
 	if(groupData[fullName]) then
 		playerSpecs[fullName] = openRaidSpec or GetInspectSpecialization(groupData[fullName].unitID)
 
-		manualItemlevels[fullName] = calcItemLevel(groupData[fullName].unitID)
+		--manualItemlevels[fullName] = calcItemLevel(groupData[fullName].unitID)
 
 		updateSingleCharacterSpecData(fullName)
 
@@ -1284,12 +1280,10 @@ miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
 	for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
 	end]]
 
-
 	local name = miog.createFullNameFrom("unitID", unitId)
 
 	if(name) then
-
-		--playerGearData[name] = unitGear
+		playerGearData[name] = unitGear
 
 		updateSingleCharacterItemData(name)
 

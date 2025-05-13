@@ -31,7 +31,6 @@ FilterPanel.lua
 Calendar.lua
 SharedFunctions.lua
 ClassPanel.lua
-#LockoutCheck.lua
 
 LastInvites.lua
 GearingTable.lua
@@ -146,7 +145,6 @@ XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelDungeonTemplate.xml
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelTierHeaderTemplate.xml
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelTierTemplate.xml
 
-#XML\Lockouts\MIOG_LockoutCheck.xml
 XML\Lockouts\MIOG_LockoutCheckCharacterTemplate.xml
 XML\Lockouts\MIOG_LockoutCheckInstanceTemplate.xml
 

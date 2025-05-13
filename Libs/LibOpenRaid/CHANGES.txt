@@ -1,5 +1,23 @@
 Changes since tag v10.2.0.118
 
+commit 333c76f929b5a4dd81d4276fb76a21dd1a0bac8d
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sun May 11 11:37:34 2025 -0300
+
+    Version Bump
+
+commit b9c74390012f7ee4efc741f0e2c50974b06c3849
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sun May 11 11:36:21 2025 -0300
+
+    Fix comm bigger than 255 bytes being ignore.
+
+commit fd7b6a04e830abe746d6987b9978bf538d091cb3
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Fri May 9 14:38:53 2025 -0300
+
+    Fix itemlink string manipulation
+
 commit 90aa1e5133a1629dcf7c77eab631ee91da033c36
 Author: Tercio Jose <terciob19@hotmail.com>
 Date:   Sun May 4 20:13:59 2025 -0300

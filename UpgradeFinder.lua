@@ -483,8 +483,6 @@ local function findAllRelevantMapIDs()
     end
 
     for k, info in ipairs(listWithMapIDs) do
-        print(k, info.mapID)
-
         local tbl = requestAllLootForMapID(info)
 
         if(tbl) then

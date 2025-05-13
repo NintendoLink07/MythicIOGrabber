@@ -107,6 +107,12 @@
                         GameTooltip:AddLine(WrapTextInColorCode("Fully enchanted", "FF00FF00"))
 
                     end
+
+                else
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine(WrapTextInColorCode("No data available (yet) for this player.", "FFFF0000"))
+                    GameTooltip:AddLine(WrapTextInColorCode("This player may not have Details or MythicIOGrabber installed.", "FFFF0000"))
+
                 end
 
                 if(self.data.missingGems) then
@@ -125,13 +131,6 @@
                         GameTooltip:AddLine(WrapTextInColorCode("All sockets filled", "FF00FF00"))
 
                     end
-                end
-
-                if(not self.data.missingEnchants) then
-                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                    GameTooltip:AddLine(WrapTextInColorCode("No data available (yet) for this player.", "FFFF0000"))
-                    GameTooltip:AddLine(WrapTextInColorCode("This player may not have Details or MythicIOGrabber installed.", "FFFF0000"))
-
                 end
 
                 local fullName = self.data.fullName

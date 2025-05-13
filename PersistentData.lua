@@ -1017,9 +1017,18 @@ local function checkSingleMapIDForNewData(mapID, selectInstance)
 	end
 end
 
+local function checkForNewEncounterInfo(journalEncounterID)
+	local _, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(journalEncounterID)
+	local _, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID)
+
+	checkSingleMapIDForNewData(mapID, true)
+
+	return miog.ENCOUNTER_INFO[journalEncounterID]
+end
+
 local function getEncounterInfo(journalEncounterID)
 	if(journalEncounterID) then
-		return miog.ENCOUNTER_INFO[journalEncounterID]
+		return miog.ENCOUNTER_INFO[journalEncounterID] or checkForNewEncounterInfo(journalEncounterID)
 
 	end
 end
