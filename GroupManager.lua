@@ -819,7 +819,7 @@ miog.countPlayersWithData = countPlayersWithData
 local function updateInspectionText()
 	local name
 
-	if(playerInInspection and groupData[playerInInspection]) then
+	if(playerInInspection and groupData[playerInInspection] and groupData[playerInInspection].fileName) then
 		local color = C_ClassColor.GetClassColor(groupData[playerInInspection].fileName)
 		name = color and WrapTextInColorCode(groupData[playerInInspection].name, color:GenerateHexColor()) or groupData[playerInInspection].name
 
