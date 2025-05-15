@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.4.3b] - 2025-05-14
+
+### Fixed
+
+- [GroupCreator] An error has been resolved where the group creator tried to use map data that isn't / wasn't available yet.
+
+
+
 ## [3.4.3a] - 2025-05-14
 
 ### Fixed

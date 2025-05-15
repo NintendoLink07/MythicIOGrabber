@@ -50,70 +50,74 @@ function RaiderIOInformationPanelMixin:SetMode(mode)
     self.mode = mode
 end
 
-function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, v, isMainsFrame) --mapID
+function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsFrame) --mapID
     local raidHeaderFrame = raidFrame.Header
 
-    miog.checkSingleMapIDForNewData(v, true)
+    local mapInfo = miog.getMapInfo(mapID, true)
 
-    if(raidHeaderFrame.Progress1) then
-        raidHeaderFrame.Progress1:SetText(WrapTextInColorCode("0/"..#miog.MAP_INFO[v].bosses, miog.CLRSCC.red))
-        raidHeaderFrame.Progress2:SetText(WrapTextInColorCode("0/"..#miog.MAP_INFO[v].bosses, miog.CLRSCC.red))
+    if(mapInfo) then
+        local numBosses = #mapInfo.bosses
 
-    elseif(raidFrame.Bosses.Progress1) then
-        raidFrame.Bosses.Progress1:SetMinMaxValues(0, 10)
-        raidFrame.Bosses.Progress2:SetMinMaxValues(0, 10)
+        if(raidHeaderFrame.Progress1) then
+            raidHeaderFrame.Progress1:SetText(WrapTextInColorCode("0/"..numBosses, miog.CLRSCC.red))
+            raidHeaderFrame.Progress2:SetText(WrapTextInColorCode("0/"..numBosses, miog.CLRSCC.red))
 
-    end
-
-    local hasIcon = self.Raids.Raid1.Header.Icon
-    local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
-
-    if(texture) then
-        texture:SetTexture(hasIcon and miog.MAP_INFO[v].icon or miog.MAP_INFO[v].horizontal)
-        texture:SetScript("OnMouseDown", function()
-            local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
-            local difficulty = 16
-            --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-            EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
-
-        end)
-    end
-
-    raidHeaderFrame.Name:SetText(miog.MAP_INFO[v].shortName .. (isMainsFrame and "[Main]" or ""))
-
-    for i = 1, 10, 1 do
-        local currentBoss = "Boss" .. i
-
-        if(miog.MAP_INFO[v].bosses[i]) then
-            if(raidFrame.Bosses[currentBoss].Index) then
-                raidFrame.Bosses[currentBoss].Index:SetText(i)
-
-            end
-
-            raidFrame.Bosses[currentBoss].name = miog.MAP_INFO[v].bosses[i].name
-            raidFrame.Bosses[currentBoss].Icon:SetTexture(miog.MAP_INFO[v].bosses[i].icon)
-            raidFrame.Bosses[currentBoss].Icon:SetScript("OnMouseDown", function()
-                local instanceID = C_EncounterJournal.GetInstanceForGameMap(v)
-                local difficulty = 16
-                EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
-            end)
-
-            if(raidFrame.Bosses[currentBoss].Border) then
-                raidFrame.Bosses[currentBoss].Border:SetColorTexture(1, 0, 0, 1);
-
-            end
-
-            raidFrame.Bosses[currentBoss].Icon:SetDesaturated(true)
-
-            raidFrame.Bosses[currentBoss]:Show()
-
-        else
-            raidFrame.Bosses[currentBoss]:Hide()
+        elseif(raidFrame.Bosses.Progress1) then
+            raidFrame.Bosses.Progress1:SetMinMaxValues(0, 10)
+            raidFrame.Bosses.Progress2:SetMinMaxValues(0, 10)
 
         end
-    end
 
-    raidFrame:Show()
+        local hasIcon = self.Raids.Raid1.Header.Icon
+        local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
+
+        if(texture) then
+            texture:SetTexture(hasIcon and mapInfo.icon or mapInfo.horizontal)
+            texture:SetScript("OnMouseDown", function()
+                local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+                local difficulty = 16
+                --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+                EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+            end)
+        end
+
+        raidHeaderFrame.Name:SetText(mapInfo.shortName .. (isMainsFrame and "[Main]" or ""))
+
+        for i = 1, 10, 1 do
+            local currentBoss = "Boss" .. i
+
+            if(mapInfo.bosses[i]) then
+                if(raidFrame.Bosses[currentBoss].Index) then
+                    raidFrame.Bosses[currentBoss].Index:SetText(i)
+
+                end
+
+                raidFrame.Bosses[currentBoss].name = mapInfo.bosses[i].name
+                raidFrame.Bosses[currentBoss].Icon:SetTexture(mapInfo.bosses[i].icon)
+                raidFrame.Bosses[currentBoss].Icon:SetScript("OnMouseDown", function()
+                    local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+                    local difficulty = 16
+                    EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
+                end)
+
+                if(raidFrame.Bosses[currentBoss].Border) then
+                    raidFrame.Bosses[currentBoss].Border:SetColorTexture(1, 0, 0, 1);
+
+                end
+
+                raidFrame.Bosses[currentBoss].Icon:SetDesaturated(true)
+
+                raidFrame.Bosses[currentBoss]:Show()
+
+            else
+                raidFrame.Bosses[currentBoss]:Hide()
+
+            end
+        end
+
+        raidFrame:Show()
+    end
 end
 
 function RaiderIOInformationPanelMixin:OnLoadRaid()
@@ -225,7 +229,6 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
             local currentDungeon = self.MythicPlus["Dungeon" .. k]
 
             if(self.mplusData and self.mplusData[data.mapID]) then
-                local mapData = miog.MAP_INFO[data.mapID]
                 currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.mapID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.mapID].chests)) or 0, self.mplusData and self.mplusData[data.mapID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
 
                 if(self.mplusData[data.mapID].level == 0) then

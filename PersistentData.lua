@@ -1091,15 +1091,17 @@ miog.CUSTOM_CATEGORY_ORDER = {
 local function addMapDataToActivity(mapID, activityID)
 	local mapInfo = miog.MAP_INFO[mapID]
 
-	miog.ACTIVITY_INFO[activityID].icon = mapInfo.icon
-	miog.ACTIVITY_INFO[activityID].bosses = mapInfo.bosses
-	miog.ACTIVITY_INFO[activityID].journalInstanceID = mapInfo.journalInstanceID
+	if(mapInfo) then
+		miog.ACTIVITY_INFO[activityID].icon = mapInfo.icon
+		miog.ACTIVITY_INFO[activityID].bosses = mapInfo.bosses
+		miog.ACTIVITY_INFO[activityID].journalInstanceID = mapInfo.journalInstanceID
 
-	miog.ACTIVITY_INFO[activityID].extractedName = mapInfo.name
-	miog.ACTIVITY_INFO[activityID].expansionLevel = mapInfo.expansionLevel
+		miog.ACTIVITY_INFO[activityID].extractedName = mapInfo.name
+		miog.ACTIVITY_INFO[activityID].expansionLevel = mapInfo.expansionLevel
 
-	miog.ACTIVITY_INFO[activityID].vertical = mapInfo.vertical
-	miog.ACTIVITY_INFO[activityID].horizontal = mapInfo.horizontal
+		miog.ACTIVITY_INFO[activityID].vertical = mapInfo.vertical
+		miog.ACTIVITY_INFO[activityID].horizontal = mapInfo.horizontal
+	end
 end
 
 local function addActivityDataToGroup(activityID, groupID)

@@ -546,7 +546,7 @@ local function refreshFilters()
         end)
 
         if(selectedEncounter) then
-            local encounterName = EJ_GetEncounterInfo(EJ_GetEncounterInfo(selectedEncounter))
+            local encounterName = select(1, EJ_GetEncounterInfo(selectedEncounter))
             miog.Journal.SearchBox:ShowFilter("encounter", encounterName, function()
                 resetEncounter()
 
@@ -1160,6 +1160,7 @@ miog.loadJournal = function()
         rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
+            selectedSlot = nil
 
             C_EncounterJournal.SetSlotFilter(14)
             updateLoot()
@@ -1169,6 +1170,7 @@ miog.loadJournal = function()
         rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
+            selectedSlot = nil
 
             C_EncounterJournal.SetSlotFilter(14)
             updateLoot()
@@ -1178,6 +1180,7 @@ miog.loadJournal = function()
         rootDescription:CreateRadio("Tokens", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
             selectedItemClass = data.class
             selectedItemSubClass = data.subclass
+            selectedSlot = nil
 
             C_EncounterJournal.SetSlotFilter(14)
             updateLoot()

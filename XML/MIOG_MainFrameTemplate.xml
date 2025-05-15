@@ -240,7 +240,7 @@
                             </Frame>
 
                             <Frame parentKey="QueueInformation">
-                                <Size x="200" />
+                                <Size x="190" />
                                 
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
@@ -334,8 +334,7 @@
                                             </Layer>
 
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true">
-                                                </FontString>
+                                                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true" />
                                             </Layer>
                                         </Layers>
                                     </Frame>
