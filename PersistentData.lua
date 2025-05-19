@@ -1035,12 +1035,16 @@ end
 
 miog.getEncounterInfo = getEncounterInfo
 
-local function getMapInfo(mapID, selectInstance)
+local function requestMapInfo(mapID, selectInstance)
 	if(mapID) then
 		checkSingleMapIDForNewData(mapID, selectInstance)
 
 		return miog.MAP_INFO[mapID]
 	end
+end
+
+local function getMapInfo(mapID, selectInstance)
+	return miog.MAP_INFO[mapID] or requestMapInfo(mapID, selectInstance)
 end
 
 miog.getMapInfo = getMapInfo

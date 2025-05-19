@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.4.3a
+## Version: 3.4.4
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -67,6 +67,7 @@ Mixins\TableMixin.lua
 Mixins\ProgressionTabMixin.lua
 Mixins\ItemUpgradeFinderMixin.lua
 Mixins\SearchBoxFiltersMixin.lua
+Mixins\SortBarMixin.lua
 
 
 

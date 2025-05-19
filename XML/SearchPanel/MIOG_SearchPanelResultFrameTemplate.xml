@@ -159,6 +159,15 @@
                                 self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
                                 self:SetState(false)
                             </OnLoad>
+                            <OnClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                
+                                self:AdvanceState()
+
+                                local node = self:GetParent():GetParent().node
+
+                                node:SetCollapsed(not node:IsCollapsed())
+                            </OnClick>
                         </Scripts>
                     </Button>
                 </Frames>

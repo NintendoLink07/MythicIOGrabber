@@ -6,8 +6,8 @@ MIOG_FAILSAFE_SEASON_ID = 13
 
 function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
     self.mythicPlusInfo = miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus(false, true)
-    
     self.raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+
 end
 
 function RaiderIOInformationPanelMixin:OnLoadMPlus()

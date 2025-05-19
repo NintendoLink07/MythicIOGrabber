@@ -841,7 +841,7 @@ miog.createApplicationViewer = function()
 			updateApplicantMemberFrame(frame, data)
 
 		elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
-			--miog.updateRaiderIOScrollBoxFrameData(frame, data)
+			miog.updateRaiderIOScrollBoxFrameData(frame, data)
 
 		end
 	end

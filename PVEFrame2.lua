@@ -110,8 +110,6 @@ local function createPVEFrameReplacement()
 
 		C_Calendar.OpenCalendar();
 
-		--miog.updateProgressData()
-
 		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_CharacterSettings.lastGroup)
 
 		miog.F.CURRENT_REGION = miog.F.CURRENT_REGION or miog.C.REGIONS[GetCurrentRegion()]

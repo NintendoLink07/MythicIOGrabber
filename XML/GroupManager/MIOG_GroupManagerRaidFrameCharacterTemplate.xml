@@ -108,10 +108,11 @@
 
                     end
 
-                else
+                --[[else
                     GameTooltip_AddBlankLineToTooltip(GameTooltip)
                     GameTooltip:AddLine(WrapTextInColorCode("No data available (yet) for this player.", "FFFF0000"))
                     GameTooltip:AddLine(WrapTextInColorCode("This player may not have Details or MythicIOGrabber installed.", "FFFF0000"))
+                    ]]--
 
                 end
 

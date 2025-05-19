@@ -6,11 +6,19 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.4.3b] - 2025-05-14
+## [3.4.4] - 2025-05-18
 
 ### Fixed
 
+- [SearchPanel] Groups you've applied to will now automatically pin themselves to the top of the list.
+
 - [GroupCreator] An error has been resolved where the group creator tried to use map data that isn't / wasn't available yet.
+
+- [ApplicationViewer] The raider io panel will now be properly be populated with data and not just be a beautiful black box.
+
+- The [SearchPanel], [ApplicationViewer] and [GroupCreator]'s resize button won't cause the frame to get stuck in place anymore.
+
+- The last group you joined will now also get saved when you're in lite mode.
 
 
 
@@ -3706,7 +3714,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.3a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.4..HEAD
+[3.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.4
 [3.4.3a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.3a
 [3.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.3
 [3.4.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.2

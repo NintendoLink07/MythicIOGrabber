@@ -143,7 +143,7 @@ local function createQueueFrame(queueInfo)
 end
 
 local function updateFakeGroupApplications()
-	if(MR_GetNumberOfPartyGUIDs) then
+	if(MR_GetNumberOfPartyGUIDs and not miog.F.LITE_MODE) then
 		local numOfSavedGUIDs = MR_GetNumberOfPartyGUIDs()
 
 		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
@@ -839,7 +839,9 @@ local function checkQueues()
 
 		updateAllPVEQueues()
 		updateCurrentListing()
+
 		updateFakeGroupApplications()
+
 		updateGroupApplications()
 		updatePVPQueues()
 		updateWorldPVPQueues()

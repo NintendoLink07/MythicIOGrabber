@@ -105,6 +105,12 @@
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.FooterBar" relativePoint="TOPRIGHT" />
                 </Anchors>
+
+                <Scripts>
+                    <OnDragStart>
+                        self:GetParent():StartSizing()
+                    </OnDragStart>
+                </Scripts>
             </Button>
         </Frames>
     </Frame>
