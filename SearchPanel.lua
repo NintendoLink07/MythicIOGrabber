@@ -847,6 +847,9 @@ local function fullyUpdateSearchPanel()
 		local k1 = getSortCriteriaForSearchResult(resultID1)
 		local k2 = getSortCriteriaForSearchResult(resultID2)
 
+		--local k1 = n1.data
+		--local k2 = n2.data
+
 		if(k1.appStatus == "applied" and k2.appStatus ~= "applied") then
 			return true
 
@@ -882,6 +885,23 @@ local function fullyUpdateSearchPanel()
 
 	end
 end
+
+local function refreshScrollBox()
+	--local dp = miog.SearchPanel.ScrollBox2:GetDataProvider()
+
+	if(dp) then
+		miog.SearchPanel.ScrollBox2:Flush()
+
+		dp:Sort()
+
+		miog.SearchPanel.ScrollBox2:SetDataProvider(dp)
+
+	else
+		fullyUpdateSearchPanel()
+
+	end
+end
+
 
 miog.fullyUpdateSearchPanel = fullyUpdateSearchPanel
 
@@ -919,7 +939,7 @@ local function searchPanelEvents(_, event, ...)
 		
 		if(miog.SearchPanel:GetNumOfActiveSortMethods() > 0) then
 			C_Timer.After(0.55, function()
-				miog.SearchPanel.ScrollBox2:GetDataProvider():Sort()
+				fullyUpdateSearchPanel()
 			end)
 		end
 
@@ -941,8 +961,6 @@ local function searchPanelEvents(_, event, ...)
 
 			if(frame) then
 				updateScrollBoxFrame(frame, outData)
-
-				miog.SearchPanel.ScrollBox2:GetDataProvider():Sort()
 			end
 		end
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
@@ -967,8 +985,8 @@ local function searchPanelEvents(_, event, ...)
 
 			MIOG_CharacterSettings.lastGroup = lastGroup
 
-		else
-			fullyUpdateSearchPanel()
+		elseif(new == "applied") then
+			refreshScrollBox()
 
 		end
 
