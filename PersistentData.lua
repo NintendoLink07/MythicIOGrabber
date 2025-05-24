@@ -163,7 +163,7 @@ miog.INELIGIBILITY_REASONS = {
 	["hardDeclined"] = {"You have been hard declined from this group.", "Hard declined", },
 	["incorrectDifficulty"] = {"The difficulty ID doesn't not match the one you selected.", "Incorrect difficulty", },
 	["incorrectBracket"] = {"The bracket ID doesn't not match the one you selected.", "Incorrect bracket", },
-	["partyFit"] = {"No more slots for your role.", "No slots", },
+	["partyFit"] = {"No more slots for the roles of the players in your group.", "No slots", },
 	["ressFit"] = {"If you join there won't be anyone who has a class ress ability.", "No ress", },
 	["lustFit"] = {"If you join there won't be anyone with a lust effect.", "No lust", },
 	["affixFit"] = {"If you join there won't be anyone to deal with this weeks affixes.", "No affix coverage", },
@@ -183,6 +183,7 @@ miog.INELIGIBILITY_REASONS = {
 	["ageMismatch"] = {"Your age filters do not match with this listing.", "Age mismatch"},
 	["ageLowerMismatch"] = {"Your lowest age filter do not match with this listing.", "Lowest age mismatch"},
 	["ageHigherMismatch"] = {"Your highest rating age do not match with this listing.", "Highest age mismatch"},
+	["exceededMaxPlayers"] = {"The number of players in your group plus the number of members in this listings group exceed the maximum allowed number of players for this activity.", "Too many players"}
 
 }
 
@@ -1089,6 +1090,23 @@ miog.CUSTOM_CATEGORY_ORDER = {
 	[7] = 9,
 	[8] = 8,
 	[9] = 6,
+}
+
+miog.BACKUP_SEASONAL_IDS = {
+	[2] = {
+		322,
+		324,
+		325,
+		327,
+		371,
+		266,
+		140,
+		257,
+	},
+	[3] = {
+		362,
+		377,
+	}
 }
 
 

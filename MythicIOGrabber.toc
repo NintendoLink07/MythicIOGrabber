@@ -36,7 +36,6 @@ LastInvites.lua
 GearingTable.lua
 AdventureJournal.lua
 GroupManager.lua
-DropChecker.lua
 RaidPlanner.lua
 UpgradeFinder.lua
 
@@ -131,13 +130,6 @@ XML\Teleports\MIOG_TeleportLogoTemplate.xml
 
 XML\GearingTable\MIOG_GearingTable.xml
 XML\GearingTable\MIOG_GearingTableLegendTextureTemplate.xml
-
-XML\AdventureJournal\MIOG_AdventureJournal.xml
-XML\AdventureJournal\MIOG_AdventureJournalAbilityTemplate.xml
-XML\AdventureJournal\MIOG_AdventureJournalLootItemTemplate.xml
-XML\AdventureJournal\MIOG_AdventureJournalLootSlotLineTemplate.xml
-XML\AdventureJournal\MIOG_AdventureJournalLootItemSingleTemplate.xml
-XML\AdventureJournal\MIOG_AdventureJournalCreatureButtonTemplate.xml
 
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelRaidBossFrameTemplate.xml
 XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanel.xml

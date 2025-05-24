@@ -299,7 +299,7 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
 	local raidMapIDSet = {}
 	local mainRaidMapIDSet = {}
     local hasIcon = self.Raids.Raid1.Header.Icon
-    
+
     if(self.raidData) then
         local raidCounter = 1
 

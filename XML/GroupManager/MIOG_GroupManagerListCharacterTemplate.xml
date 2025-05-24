@@ -154,24 +154,6 @@
 
                     end
 
-                    if(self.data.missingEnchants) then
-                        if(#self.data.missingEnchants > 0) then
-                            local missingEnchants = ""
-
-                            for k, v in ipairs(self.data.missingEnchants) do
-                                missingEnchants = missingEnchants .. v .. " "
-
-                            end 
-                            
-                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                            GameTooltip:AddLine(WrapTextInColorCode("Unenchanted slots: " .. missingEnchants, "FFFF0000"))
-                        else
-                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                            GameTooltip:AddLine(WrapTextInColorCode("Fully enchanted", "FF00FF00"))
-
-                        end
-                    end
-
                     if(self.data.missingGems) then
                         if(#self.data.missingGems > 0) then
                             local missingGems = ""
@@ -190,10 +172,28 @@
                         end
                     end
 
-                    if(not self.data.missingEnchants) then
+                    if(self.data.missingEnchants) then
+                        if(#self.data.missingEnchants > 0) then
+                            local missingEnchants = ""
+
+                            for k, v in ipairs(self.data.missingEnchants) do
+                                missingEnchants = missingEnchants .. v .. " "
+
+                            end
+                            
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine(WrapTextInColorCode("Unenchanted slots: " .. missingEnchants, "FFFF0000"))
+                        else
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine(WrapTextInColorCode("Fully enchanted", "FF00FF00"))
+
+                        end
+
+                    --[[else
                         GameTooltip_AddBlankLineToTooltip(GameTooltip)
                         GameTooltip:AddLine(WrapTextInColorCode("No data available (yet) for this player.", "FFFF0000"))
                         GameTooltip:AddLine(WrapTextInColorCode("This player may not have Details or MythicIOGrabber installed.", "FFFF0000"))
+                        ]]--
 
                     end
 

@@ -11,24 +11,31 @@ local panels
         panel (table/string) - The panel to activate and display.
 ]]
 local function setProgressPanelInfo(categoryID)
-	miog.ProgressPanel:SetShown(categoryID == 2 or categoryID == 3)
+	if(IsPlayerAtEffectiveMaxLevel()) then
+		miog.ProgressPanel:SetShown(categoryID == 2 or categoryID == 3)
 
-	miog.ProgressPanel.MythicPlus:SetShown(categoryID == 2)
-	miog.ProgressPanel.Raids:SetShown(categoryID == 3)
+		miog.ProgressPanel.MythicPlus:SetShown(categoryID == 2)
+		miog.ProgressPanel.Raids:SetShown(categoryID == 3)
 
-	miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
+		miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
 
-	local playerName, realm = miog.createSplitName(UnitFullName("player"))
-	
-	miog.ProgressPanel:Flush()
-	miog.ProgressPanel:SetPlayerData(playerName, realm)
-	miog.ProgressPanel:ApplyFillData()
+		local playerName, realm = miog.createSplitName(UnitFullName("player"))
+		
+		miog.ProgressPanel:Flush()
+		miog.ProgressPanel:SetPlayerData(playerName, realm)
+		miog.ProgressPanel:ApplyFillData()
+		
+	else
+		miog.ProgressPanel:Hide()
+
+	end
 end
 
 local function setActivePanel(_, panel)
 	for k, v in pairs(panels) do
 		if(v) then
 			v:Hide()
+
 		end
 	end
 
@@ -37,7 +44,7 @@ local function setActivePanel(_, panel)
 	if(miog.F.LITE_MODE and panel ~= LFGListFrame.CategorySelection) then
 		panel:Hide()
 
-	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel or panel == "DropChecker") then
+	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
 		miog.Plugin.ButtonPanel:Hide()
 
 		if(MIOG_NewSettings.activeSidePanel == "filter") then
@@ -99,9 +106,6 @@ local function setActivePanel(_, panel)
 	elseif(panel == "RaiderIOChecker") then
 		miog.RaiderIOChecker:Show()
 		miog.NewFilterPanel.Lock:Show()
-
-	elseif(panel == "DropChecker") then
-		miog.DropChecker:Show()
 
 	else
 		miog.Plugin:Hide()
@@ -251,9 +255,7 @@ miog.createFrames = function()
 		miog.loadActivityChecker()
 
 		miog.Journal = miog.loadJournal()
-		miog.DropChecker = miog.loadDropChecker()
 		miog.UpgradeFinder = miog.loadUpgradeFinder()
-		--miog.LockoutCheck = miog.loadLockoutCheck()
 	end
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)

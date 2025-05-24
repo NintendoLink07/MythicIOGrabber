@@ -178,18 +178,6 @@ local function swapElements(element1, element2)
     saveInfoToSlot(space1Index)
 end
 
-local function debug_CheckOccupiedSpaces()
-    for i = 1, numberOfSpaces, 1 do
-        local space = miog.RaidSheet.Sheet["Space" .. i]
-        
-        if(space.occupied) then
-            print(i, "is occupied")
-
-        end
-
-    end
-end
-
 local function tryToSetFrame(self, populateFirstSlot)
     local hadSlotBefore = self.occupiedSpace
     local newSlotFound = false

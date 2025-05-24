@@ -35,6 +35,13 @@ local function mainEvents(_, event, ...)
 		miog.createFrames()
 		
 		EJ_SetDifficulty(8)
+		
+		if(C_LFGList.HasActiveEntryInfo()) then
+			miog.setActivePanel(nil, "LFGListFrame.ApplicationViewer")
+
+			miog.Plugin:Show()
+			miog.ApplicationViewer:Show()
+		end
 
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		miog.checkAllSeasonalMapIDs()
@@ -71,24 +78,26 @@ local function mainEvents(_, event, ...)
 
 		end
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
-		if(C_LFGList.HasActiveEntryInfo() and not miog.EntryCreation:IsVisible()) then
-			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
-			local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1])
+		if(C_LFGList.HasActiveEntryInfo()) then
+			if(not miog.EntryCreation:IsVisible()) then
+				local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+				local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1])
 
-			LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
+				LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
 
-			--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
-			--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
+				--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
+				--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
 
-			LFGListFrame.CategorySelection.selectedCategory = activityInfo.categoryID
-			LFGListFrame.CategorySelection.selectedFilters = activityInfo.filters
+				LFGListFrame.CategorySelection.selectedCategory = activityInfo.categoryID
+				LFGListFrame.CategorySelection.selectedFilters = activityInfo.filters
 
-			LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
+				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
 
-			LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
-			--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
-			
-			miog.initializeActivityDropdown()
+				LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
+				--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
+				
+				miog.initializeActivityDropdown()
+			end
 		end
 
 	elseif(event == "CHALLENGE_MODE_START") then

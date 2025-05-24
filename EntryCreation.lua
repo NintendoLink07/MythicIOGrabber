@@ -535,23 +535,26 @@ function LFGListEntryCreationActivityFinder_Accept(self)
 end
 
 function LFGListEntryCreation_UpdateValidState(self)
-	local errorText;
-	local activityInfo = C_LFGList.GetActivityInfoTable(self.selectedActivity)
-	local maxNumPlayers = activityInfo and  activityInfo.maxNumPlayers or 0;
-	local mythicPlusDisableActivity = not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity) and (activityInfo.isMythicPlusActivity and not C_LFGList.GetKeystoneForActivity(self.selectedActivity));
-	if ( maxNumPlayers > 0 and GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) >= maxNumPlayers ) then
-		errorText = string.format(LFG_LIST_TOO_MANY_FOR_ACTIVITY, maxNumPlayers);
-	elseif (mythicPlusDisableActivity) then
-		errorText = LFG_AUTHENTICATOR_BUTTON_MYTHIC_PLUS_TOOLTIP;
-	elseif ( LFGListEntryCreation_GetSanitizedName(self) == "" ) then
-		errorText = LFG_LIST_MUST_HAVE_NAME;
+	if(self.selectedActivity) then
+		local errorText;
+
+		local activityInfo = C_LFGList.GetActivityInfoTable(self.selectedActivity)
+		local maxNumPlayers = activityInfo and  activityInfo.maxNumPlayers or 0;
+		local mythicPlusDisableActivity = not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity) and (activityInfo.isMythicPlusActivity and not C_LFGList.GetKeystoneForActivity(self.selectedActivity));
+		if ( maxNumPlayers > 0 and GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) >= maxNumPlayers ) then
+			errorText = string.format(LFG_LIST_TOO_MANY_FOR_ACTIVITY, maxNumPlayers);
+		elseif (mythicPlusDisableActivity) then
+			errorText = LFG_AUTHENTICATOR_BUTTON_MYTHIC_PLUS_TOOLTIP;
+		elseif ( LFGListEntryCreation_GetSanitizedName(self) == "" ) then
+			errorText = LFG_LIST_MUST_HAVE_NAME;
+		end
+
+		LFGListEntryCreation_UpdateAuthenticatedState(self);
+
+		LFGListFrame.EntryCreation.ListGroupButton.DisableStateClickButton:SetShown(mythicPlusDisableActivity);
+		LFGListFrame.EntryCreation.ListGroupButton:SetEnabled(not errorText and not mythicPlusDisableActivity);
+		LFGListFrame.EntryCreation.ListGroupButton.errorText = errorText;
 	end
-
-	LFGListEntryCreation_UpdateAuthenticatedState(self);
-
-	LFGListFrame.EntryCreation.ListGroupButton.DisableStateClickButton:SetShown(mythicPlusDisableActivity);
-	LFGListFrame.EntryCreation.ListGroupButton:SetEnabled(not errorText and not mythicPlusDisableActivity);
-	LFGListFrame.EntryCreation.ListGroupButton.errorText = errorText;
 end
 
 function LFGListEntryCreation_UpdateAuthenticatedState(self)

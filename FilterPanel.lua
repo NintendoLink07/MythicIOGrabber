@@ -466,93 +466,142 @@ local function createSpacer(parent, filterID)
 	return divider
 end
 
-local function HasRemainingSlotsForBloodlust(resultID)
-	if(id == 3 or id == 7 or id == 8 or id == 13) then
-		return true
+local function HasEnoughSlotsForPlayersInGroup(resultID)
 
-	end
-
-	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
-	if roles then
-		if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
-			return true
-		end
-
-		local playerRole = GetSpecializationRole(GetSpecialization())
-
-		if(playerRole == "DAMAGER" and (roles["HEALER_REMAINING"] > 0 or roles["DAMAGER_REMAINING"] > 1)) then
-			return true
-
-		end
-
-		if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0) then
-			return true
-
-		end
-
-		for k, v in pairs(roles) do
-			if((k == "HUNTER" or k == "SHAMAN" or k == "MAGE" or k == "EVOKER") and v > 0) then
-				return true
-
-			end
-		end
-	end
-end
-
-local function HasRemainingSlotsForBattleResurrection(resultID)
-	if(id == 2 or id == 6 or id == 9 or id == 11) then
-		return true
-
-	end
-
-	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
-	if roles then
-		if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
-			return true
-		end
-
-		local playerRole = GetSpecializationRole(GetSpecialization())
-
-		if(playerRole == "DAMAGER" and (roles["HEALER_REMAINING"] > 0 or roles["DAMAGER_REMAINING"] > 1)) then
-			return true
-
-		end
-
-		if(playerRole == "HEALER" and roles["DAMAGER_REMAINING"] > 0 or roles["TANK_REMAINING"] > 0) then
-			return true
-
-		end
-
-		if(playerRole == "TANK" and roles["DAMAGER_REMAINING"] > 0 or roles["HEALER_REMAINING"] > 0) then
-			return true
-
-		end
-
-		for k, v in pairs(roles) do
-			if((k == "PALADIN" or k == "DEATHKNIGHT" or k == "WARLOCK" or k == "DRUID") and v > 0) then
-				return true
-
-			end
-		end
-	end
 end
 
 local function HasRemainingSlotsForLocalPlayerRole(resultID) -- LFGList.lua local function HasRemainingSlotsForLocalPlayerRole(lfgresultID)
 	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
 
-	if roles then
-		if(roles["TANK_REMAINING"] == 0 and roles["HEALER_REMAINING"] == 0 and roles["DAMAGER_REMAINING"] == 0) then
-			return true
-		end
+	local roleCount = {
+		["TANK"] = 0,
+		["HEALER"] = 0,
+		["DAMAGER"] = 0,
+	}
 
-		local playerRole = GetSpecializationRole(GetSpecialization())
-		if playerRole then
-			local remainingRoleKey = miog.roleRemainingKeyLookup[playerRole]
-			if remainingRoleKey then
-				return (roles[remainingRoleKey] or 0) > 0
+	if roles then
+		local numOfMembers = GetNumGroupMembers()
+		if(numOfMembers > 0) then
+			for groupIndex = 1, numOfMembers, 1 do
+				local _, _, _, _, _, _, _, _, _, _, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+
+				if combatRole then
+					local remainingRoleKey = miog.roleRemainingKeyLookup[combatRole]
+					if remainingRoleKey then
+						if roles[remainingRoleKey] == roleCount[combatRole] then
+							return false
+
+						else
+							roleCount[combatRole] = roleCount[combatRole] + 1
+
+						end
+					end
+				end
+			end
+
+			return true
+		else
+			local playerRole = GetSpecializationRole(GetSpecialization())
+			if playerRole then
+				local remainingRoleKey = miog.roleRemainingKeyLookup[playerRole]
+				if remainingRoleKey then
+					return (roles[remainingRoleKey] or 0) > 0
+
+				end
 			end
 		end
 	end
+
+	return false
+end
+
+local function HasRemainingSlotsForBattleResurrection(resultID, playerSpaceLeft)
+	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
+
+	for fileName, v in pairs(roles) do
+		if((fileName == "PALADIN" or fileName == "DEATHKNIGHT" or fileName == "WARLOCK" or fileName == "DRUID") and v > 0) then
+			return true
+
+		end
+	end
+
+	local numOfMembers = GetNumGroupMembers()
+	if(numOfMembers > 0) then
+		playerSpaceLeft = playerSpaceLeft - numOfMembers
+
+		for groupIndex = 1, numOfMembers, 1 do
+			local _, _, _, _, _, fileName = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+
+			if((fileName == "PALADIN" or fileName == "DEATHKNIGHT" or fileName == "WARLOCK" or fileName == "DRUID")) then
+				return playerSpaceLeft > -1
+
+			end
+		end
+
+		return playerSpaceLeft > 0
+
+	else
+		playerSpaceLeft = playerSpaceLeft - 1
+
+		if(id == 2 or id == 6 or id == 9 or id == 11) then
+			return playerSpaceLeft > -1
+
+		else
+			return playerSpaceLeft > 0
+
+		end
+	end
+
+	return false
+end
+
+local function HasRemainingSlotsForBloodlust(resultID, playerSpaceLeft)
+	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
+
+	for fileName, v in pairs(roles) do
+		if((fileName == "HUNTER" or fileName == "SHAMAN" or fileName == "MAGE" or fileName == "EVOKER") and v > 0) then
+			return true
+
+		end
+	end
+
+	local numOfMembers = GetNumGroupMembers()
+	if(numOfMembers > 0) then
+		playerSpaceLeft = playerSpaceLeft - numOfMembers
+
+		for groupIndex = 1, numOfMembers, 1 do
+			local _, _, _, _, _, fileName = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+
+			if((fileName == "HUNTER" or fileName == "SHAMAN" or fileName == "MAGE" or fileName == "EVOKER")) then
+				return playerSpaceLeft > -1
+
+			end
+		end
+
+		return playerSpaceLeft > 0
+	else
+		playerSpaceLeft = playerSpaceLeft - 1
+
+		if(id == 3 or id == 7 or id == 8 or id == 13) then
+			return playerSpaceLeft > -1
+
+		else
+			return playerSpaceLeft > 0
+		end
+	end
+
+	return false
+end
+
+local function checkIfPlayersFitIntoGroup(maxNumPlayers, listingPlayers)
+	local groupMembers = GetNumGroupMembers()
+
+	if((listingPlayers + groupMembers) > maxNumPlayers) then
+		return false
+
+	end
+
+	return true
 end
 
 local function checkEligibility(panel, _, resultOrApplicant, borderMode)
@@ -782,17 +831,28 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 				end
 			end
 
-			if(settings.partyFit and not HasRemainingSlotsForLocalPlayerRole(searchResultInfo.searchResultID)) then
-				return false, "partyFit"
-		
+			local spaceLeft = activityInfo.maxNumPlayers - searchResultInfo.numMembers
+
+			local hasSlotsForPlayers = HasRemainingSlotsForLocalPlayerRole(searchResultInfo.searchResultID)
+
+			if(settings.partyFit) then
+				if(not hasSlotsForPlayers) then
+					return false, "partyFit"
+
+				else
+					if(not checkIfPlayersFitIntoGroup(activityInfo.maxNumPlayers, searchResultInfo.numMembers)) then
+						return false, "exceededMaxPlayers"
+
+					end
+				end
 			end
 		
-			if(settings.ressFit and not HasRemainingSlotsForBattleResurrection(searchResultInfo.searchResultID)) then
+			if(settings.ressFit and not HasRemainingSlotsForBattleResurrection(searchResultInfo.searchResultID, spaceLeft)) then
 				return false, "ressFit"
 		
 			end
 		
-			if(settings.lustFit and not HasRemainingSlotsForBloodlust(searchResultInfo.searchResultID)) then
+			if(settings.lustFit and not HasRemainingSlotsForBloodlust(searchResultInfo.searchResultID, spaceLeft)) then
 				return false, "lustFit"
 		
 			end

@@ -224,24 +224,34 @@ end
 miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
 	local mythicPlusActivities = {}
 
-	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
-        local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
-        local activityID = activities[#activities]
+	if(IsPlayerAtEffectiveMaxLevel()) then
+		local groups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
 
-		local activityInfo = miog.requestActivityInfo(activityID)
+		--[[if(#groups ~= #miog.BACKUP_SEASONAL_IDS[2]) then
+			groups = miog.BACKUP_SEASONAL_IDS[2]
 
-        tinsert(mythicPlusActivities, justIDs and activityID or {abbreviatedName = activityInfo.abbreviatedName, activityID = activityID, mapID = activityInfo.mapID})
-    end
+		end]]
 
-	if(sort and #mythicPlusActivities > 1) then
-		if(justIDs) then
-			table.sort(mythicPlusActivities, function(k1, k2)
-				return k1 < k2
-			end)
-		else
-			table.sort(mythicPlusActivities, function(k1, k2)
-				return k1.abbreviatedName < k2.abbreviatedName
-			end)
+		for k, v in ipairs(groups) do
+			local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
+
+			local activityID = activities[#activities]
+
+			local activityInfo = miog.requestActivityInfo(activityID)
+
+			tinsert(mythicPlusActivities, justIDs and activityID or {abbreviatedName = activityInfo.abbreviatedName, activityID = activityID, mapID = activityInfo.mapID})
+		end
+
+		if(sort) then
+			if(justIDs) then
+				table.sort(mythicPlusActivities, function(k1, k2)
+					return k1 < k2
+				end)
+			else
+				table.sort(mythicPlusActivities, function(k1, k2)
+					return k1.abbreviatedName < k2.abbreviatedName
+				end)
+			end
 		end
 	end
 
@@ -251,38 +261,45 @@ end
 miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 	local raidActivities = {}
 
-	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)) do
-        local activities = C_LFGList.GetAvailableActivities(3, v)
-        local activityID = activities[#activities]
-		local name, order = C_LFGList.GetActivityGroupInfo(v)
-		local activityInfo = miog.requestActivityInfo(activityID)
+	if(IsPlayerAtEffectiveMaxLevel()) then
+		local groups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
+		
+		--[[if(#groups ~= #miog.BACKUP_SEASONAL_IDS[3]) then
+			groups = miog.BACKUP_SEASONAL_IDS[3]
 
-        tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
-    end
+		end]]
 
-	if(sort and #raidActivities > 1) then
-		if(justIDs) then
-			table.sort(raidActivities, function(k1, k2)
-				return k1 > k2
-			end)
-			
-		else
-			table.sort(raidActivities, function(k1, k2)
-				if(k1.order == k2.order) then
-					return k1.activityID > k2.activityID
+		for k, v in ipairs(groups) do
+			local activities = C_LFGList.GetAvailableActivities(3, v)
+			local activityID = activities[#activities]
+			local name, order = C_LFGList.GetActivityGroupInfo(v)
+			local activityInfo = miog.requestActivityInfo(activityID)
 
-				end
+			tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
+		end
 
-				return k1.order < k2.order
-			end)
+		if(sort and #raidActivities > 1) then
+			if(justIDs) then
+				table.sort(raidActivities, function(k1, k2)
+					return k1 > k2
+				end)
+				
+			else
+				table.sort(raidActivities, function(k1, k2)
+					if(k1.order == k2.order) then
+						return k1.activityID > k2.activityID
 
+					end
+
+					return k1.order < k2.order
+				end)
+
+			end
 		end
 	end
 
 	return raidActivities
 end
-
-MIOG_GETRAIDS = miog.retrieveCurrentRaidActivityIDs
 
 miog.rpairs = function(t)
 	return function(t, i)
@@ -421,91 +438,6 @@ local function getRaidProgressDataOnly(playerName, realm, region, existingProfil
 end
 
 miog.getRaidProgressDataOnly = getRaidProgressDataOnly
-
---[[local function getRaidProgressDataOnly(playerName, realm, region, existingProfile)
-	local start = GetTimePreciseSec()
-	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
-
-	if(not (raidInfo and RaiderIO)) then
-		return
-
-	end
-
-	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
-
-	local raidData
-
-	if(profile and profile.raidProfile)then
-		raidData = {
-			character = { ordered = {}, progressWeight = 0 },
-			main = { ordered = {}, progressWeight = 0 }
-		}
-
-		local profileProgress = profile.raidProfile.raidProgress
-
-		for i = 1, #profileProgress, 1 do
-			local d = profileProgress[i]
-			local currentTable = d.isMainProgress and raidData.main or raidData.character
-			local mapID = tonumber(string.sub(d.raid.mapId, -4)) or d.raid.mapId
-			--local isAwakened = (mapID ~= d.raid.mapId) and d.current
-
-			local progress = d.progress
-			
-			for j = 1, #progress, 1 do
-				local y = progress[j]
-				local difficulty = y.difficulty
-				local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
-
-				local difficultyEntry = {
-					difficulty = difficulty,
-					mapID = mapID,
-					current = d.current,
-					weight = weight,
-					parsedString = y.kills .. "/" .. d.raid.bossCount,
-				}
-
-				currentTable.progressWeight = currentTable.progressWeight + weight
-
-				tinsert(currentTable.ordered, difficultyEntry)
-				--currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
-			end
-		end
-
-		local function sortFunction(a, b)
-			return (a.current == b.current) and (a.weight > b.weight) or false
-		end
-
-		local characterOrdered = raidData.character.ordered
-		local mainOrdered = raidData.main.ordered
-
-		if #characterOrdered > 1 then table.sort(characterOrdered, sortFunction) end
-		if #mainOrdered > 1 then table.sort(mainOrdered, sortFunction) end
-	end
-
-	if(not raidData)then
-		raidData = {
-			character = { ordered = {}},
-			main = { ordered = {}}
-		}
-	end
-
-	local characterOrdered = raidData.character.ordered
-	local mainOrdered = raidData.main.ordered
-
-	local defaultMapID1 = (raidInfo[3] or raidInfo[2] or raidInfo[1]) and (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID or 0
-	local defaultMapID2 = (raidInfo[2] or raidInfo[1]) and (raidInfo[2] or raidInfo[1]).mapID or 0
-
-	characterOrdered[1] = characterOrdered[1] or { mapID = defaultMapID1, parsedString = "0/0", difficulty = -1 }
-	characterOrdered[2] = characterOrdered[2] or { mapID = defaultMapID2, parsedString = "0/0", difficulty = -1 }
-	mainOrdered[1] = mainOrdered[1] or { parsedString = "0/0", difficulty = -1 }
-	mainOrdered[2] = mainOrdered[2] or { parsedString = "0/0", difficulty = -1 }
-
-	local ende = GetTimePreciseSec()
-
-	print("V1:", ende - start)
-
-	return raidData
-end]]
 
 local function getRaidProgressData(playerName, realm, region, existingProfile)
 	local raidData

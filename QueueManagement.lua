@@ -445,45 +445,48 @@ local function updateCurrentListing()
 		local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
 		local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants();
 		local activityInfo = miog.requestActivityInfo(activeEntryInfo.activityIDs[1])
-		local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 
-		local unitName, unitID = miog.getGroupLeader()
+		if(activityInfo) then
+			local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 
-		local frameData = {
-			[1] = true,
-			[2] = groupInfo or activityInfo.shortName,
-			[11] = unitID == "player" and "Your Listing" or (unitName or "Unknown") .. "'s Listing",
-			[12] = -1,
-			[17] = {"duration", activeEntryInfo.duration},
-			[18] = "YOURLISTING",
-			[20] = activityInfo.icon,
-			[21] = -2,
-			[30] = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
-		}
+			local unitName, unitID = miog.getGroupLeader()
 
-		local frame = createQueueFrame(frameData)
+			local frameData = {
+				[1] = true,
+				[2] = groupInfo or activityInfo.shortName,
+				[11] = unitID == "player" and ("Your Listing" .. " (" .. numApplicants .. ")") or (unitName or "Unknown") .. "'s Listing",
+				[12] = -1,
+				[17] = {"duration", activeEntryInfo.duration},
+				[18] = "YOURLISTING",
+				[20] = activityInfo.icon,
+				[21] = -2,
+				[30] = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
+			}
 
-		if(frame) then
-			frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
-			frame.CancelApplication:SetAttribute("type", "macro")
-			frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
+			local frame = createQueueFrame(frameData)
 
-			frame:SetScript("OnMouseDown", function()
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
-			end)
-			frame:SetScript("OnEnter", function(self)
-				self.BackgroundHover:Show()
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants))
+			if(frame) then
+				frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
+				frame.CancelApplication:SetAttribute("type", "macro")
+				frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
 
-				if(activeEntryInfo.questID and activeEntryInfo.questID > 0) then
-					GameTooltip:AddLine(LFG_TYPE_QUEST .. ": " .. C_QuestLog.GetTitleForQuestID(activeEntryInfo.questID))
-					
-				end
+				frame:SetScript("OnMouseDown", function()
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
+				end)
+				frame:SetScript("OnEnter", function(self)
+					self.BackgroundHover:Show()
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					GameTooltip:SetText(string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants))
 
-				GameTooltip:Show()
-			end)
+					if(activeEntryInfo.questID and activeEntryInfo.questID > 0) then
+						GameTooltip:AddLine(LFG_TYPE_QUEST .. ": " .. C_QuestLog.GetTitleForQuestID(activeEntryInfo.questID))
+						
+					end
+
+					GameTooltip:Show()
+				end)
+			end
 		end
 	end
 end
