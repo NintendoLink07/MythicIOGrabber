@@ -34,7 +34,7 @@
 						</Anchors>
                     </Button>
                     
-                    <Button parentKey="MoreButton" inherits="MIOG_NavBarButtonTemplate">
+                    <Button parentKey="MoreButton" inherits="MIOG_NavBarButtonTemplate" hidden="true">
                         <Size x="62" y="20" />
 
 						<Anchors>

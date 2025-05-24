@@ -26,7 +26,7 @@ Comparing the activities max players to the listings current members plus the nu
 
 - Any lfg data relating to the seasonal / expansion activities (e.g. seasonal dungeons, current raid) will only be shown when the player is at max level.
 *This is due to Blizzard only sending partial or no info about those activities when the player isn't max level.
-Improves performance and eliminates incorrect data being shown.
+Improves performance and eliminates incorrect data being shown.*
 
 ### Fixed
 
