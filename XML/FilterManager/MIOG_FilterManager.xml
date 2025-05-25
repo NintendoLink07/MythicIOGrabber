@@ -1,0 +1,207 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_FilterManager" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true" hidden="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Status" font="GameFontHighlight" justifyH="LEFT" text="Status">
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="ClassFilters" inherits="ResizeLayoutFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Status" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Class1" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class2" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class1" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class3" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class2" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class4" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class3" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class5" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class4" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class6" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class5" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class7" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class6" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class8" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class7" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class9" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class8" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class10" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class9" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class11" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class10" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+
+                        <Frames>
+                            <Frame parentKey="Spec4" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec3" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Frame parentKey="Class12" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class11" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Class13" inherits="MIOG_FilterManagerSingleClassTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class12" relativePoint="BOTTOMLEFT" />
+                        </Anchors>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

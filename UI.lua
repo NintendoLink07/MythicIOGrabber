@@ -233,6 +233,7 @@ miog.createFrames = function()
 	miog.NewFilterPanel = miog.loadNewFilterPanel()
 	miog.LastInvites = miog.loadLastInvitesPanel()
 	miog.ClassPanel = miog.createClassPanel()
+	miog.FilterManager = miog.loadFilterManager()
 	
 	local progressPanel = CreateFrame("Frame", "ProgressPanel", miog.Plugin, "MIOG_ProgressPanel")
 	miog.createFrameBorder(progressPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())

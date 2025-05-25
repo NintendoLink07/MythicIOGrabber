@@ -876,7 +876,7 @@ local function fullyUpdateSearchPanel()
 		end
 	end)
 
-	miog.SearchPanel.ScrollBox2:SetDataProvider(treeDataProvider)
+	miog.SearchPanel.ScrollBox2:SetDataProvider(treeDataProvider, true)
 
 	miog.updateFooterBarResults(numOfFiltered, actualResults, actualResults >= 100)
 		
@@ -894,7 +894,7 @@ local function refreshScrollBox()
 
 		dp:Sort()
 
-		miog.SearchPanel.ScrollBox2:SetDataProvider(dp)
+		miog.SearchPanel.ScrollBox2:SetDataProvider(dp, true)
 
 	else
 		fullyUpdateSearchPanel()
@@ -1152,7 +1152,7 @@ miog.createSearchPanel = function()
 
 		end
 
-		textboxView:SetDataProvider(provider)
+		textboxView:SetDataProvider(provider, true)
 	end
 
 	appDialogParentFrame.Checkbox:SetScript("OnClick", function(self)

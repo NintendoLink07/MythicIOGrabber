@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.4.5] - 2025-05-30
+
+### Fixed
+
+- [SearchPanel] After applying to a group the scroll frame will retain it's current scroll position.
+
+
+
 ## [3.4.4] - 2025-05-24
 
 ### Changed

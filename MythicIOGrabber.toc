@@ -31,6 +31,7 @@ FilterPanel.lua
 Calendar.lua
 SharedFunctions.lua
 ClassPanel.lua
+FilterManager.lua
 
 LastInvites.lua
 GearingTable.lua
@@ -200,3 +201,7 @@ XML\Journal\MIOG_Journal.xml
 XML\Journal\MIOG_JournalSourceTemplate.xml
 XML\Journal\MIOG_JournalItemTemplate.xml
 XML\Journal\MIOG_JournalFullItemTemplate.xml
+
+XML\FilterManager\MIOG_FilterManager.xml
+XML\FilterManager\MIOG_FilterManagerSingleClassTemplate.xml
+XML\FilterManager\MIOG_FilterManagerSingleIconTemplate.xml
