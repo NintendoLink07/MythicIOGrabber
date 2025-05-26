@@ -70,17 +70,7 @@ local function setActivePanel(_, panel)
 		end
 	end
 
-	if(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
-		setProgressPanelInfo(miog.getCurrentCategoryID())
-
-	else
-		miog.ProgressPanel:Hide()
-
-	end
-
 	if(panel == LFGListFrame.ApplicationViewer) then
-		miog.ApplicationViewer:Show()
-
 		if(UnitIsGroupLeader("player")) then
 			miog.ApplicationViewer.Delist:Show()
 			miog.ApplicationViewer.Edit:Show()
@@ -90,6 +80,8 @@ local function setActivePanel(_, panel)
 			miog.ApplicationViewer.Edit:Hide()
 			
 		end
+
+		miog.ApplicationViewer:Show()
 
 	elseif(panel == LFGListFrame.SearchPanel) then
 		miog.SearchPanel:Show()
@@ -110,6 +102,15 @@ local function setActivePanel(_, panel)
 	else
 		miog.Plugin:Hide()
 		miog.NewFilterPanel.Lock:Show()
+
+	end
+
+	if(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
+		setProgressPanelInfo(miog.getCurrentCategoryID())
+
+		miog.filter.refreshFilters()
+	else
+		miog.ProgressPanel:Hide()
 
 	end
 	

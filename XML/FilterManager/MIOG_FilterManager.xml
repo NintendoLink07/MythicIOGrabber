@@ -202,6 +202,13 @@
                     </Frame>
                 </Frames>
             </Frame>
+
+            <Frame parentKey="Difficulty" inherits="MIOG_FilterManagerDropdownTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassFilters" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="RIGHT"/>
+                </Anchors>
+            </Frame>
         </Frames>
     </Frame>
 </Ui>

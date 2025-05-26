@@ -295,7 +295,7 @@ local function createDataProviderWithUnsortedData()
 			if(searchResultInfo and not searchResultInfo.hasSelf) then
 				local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 				
-				if(appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)) then
+				if(appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID) and miog.filter.checkIfSearchResultIsEligible(resultID)) then
 					local primarySortAttribute, secondarySortAttribute
 
 					local nameTable

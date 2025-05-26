@@ -205,3 +205,4 @@ XML\Journal\MIOG_JournalFullItemTemplate.xml
 XML\FilterManager\MIOG_FilterManager.xml
 XML\FilterManager\MIOG_FilterManagerSingleClassTemplate.xml
 XML\FilterManager\MIOG_FilterManagerSingleIconTemplate.xml
+XML\FilterManager\MIOG_FilterManagerDropdownTemplate.xml
