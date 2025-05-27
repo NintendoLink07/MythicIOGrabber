@@ -206,3 +206,4 @@ XML\FilterManager\MIOG_FilterManager.xml
 XML\FilterManager\MIOG_FilterManagerSingleClassTemplate.xml
 XML\FilterManager\MIOG_FilterManagerSingleIconTemplate.xml
 XML\FilterManager\MIOG_FilterManagerDropdownTemplate.xml
+XML\FilterManager\MIOG_FilterManagerMultiSpinnerTemplate.xml

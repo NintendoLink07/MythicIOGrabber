@@ -209,6 +209,27 @@
                     <Anchor point="RIGHT"/>
                 </Anchors>
             </Frame>
+
+            <Frame parentKey="Tank" inherits="MIOG_FilterManagerMultiSpinnerTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="RIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Healer" inherits="MIOG_FilterManagerMultiSpinnerTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Tank" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="RIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Damager" inherits="MIOG_FilterManagerMultiSpinnerTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Healer" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="RIGHT"/>
+                </Anchors>
+            </Frame>
         </Frames>
     </Frame>
 </Ui>

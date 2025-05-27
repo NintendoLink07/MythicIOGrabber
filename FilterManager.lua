@@ -78,8 +78,7 @@ local function checkIfSearchResultIsEligible(resultID)
 
 	if(settings.difficulty.value) then
 		if(isDungeon or isRaid) then
-			if(activityInfo and activityInfo.difficultyID ~= settings.difficulty.id
-			)then
+			if(activityInfo and activityInfo.difficultyID ~= settings.difficulty.id) then
 				return false, "incorrectDifficulty"
 
 			end
@@ -88,6 +87,27 @@ local function checkIfSearchResultIsEligible(resultID)
 				return false, "incorrectBracket"
 
 			end
+		end
+	end
+
+	if(settings.tank.value) then
+		if(settings.tank.minimum and roleCount["TANK"] < settings.tank.minimum or settings.tank.maximum and roleCount["TANK"] > settings.tank.maximum) then
+			return false, "incorrectNumberOfRoles"
+
+		end
+	end
+
+	if(settings.healer.value) then
+		if(settings.healer.minimum and roleCount["HEALER"] < settings.healer.minimum or settings.healer.maximum and roleCount["HEALER"] > settings.healer.maximum) then
+			return false, "incorrectNumberOfRoles"
+
+		end
+	end
+
+	if(settings.damager.value) then
+		if(settings.damager.minimum and roleCount["DAMAGER"] < settings.damager.minimum or settings.damager.maximum and roleCount["DAMAGER"] > settings.damager.maximum) then
+			return false, "incorrectNumberOfRoles"
+
 		end
 	end
 	
@@ -123,6 +143,8 @@ local function changeSetting(value, ...)
 		local parameterArray = {...}
 
 		for k, v in ipairs(parameterArray) do
+			print(k, v, lastSetting[v])
+
 			if(k == #parameterArray) then
 				lastSetting[v] = value
 
@@ -190,8 +212,10 @@ local function initializeSetting(...)
 end
 
 local function refreshFilters()
+	local filterManager = miog.FilterManager
+
 	for classIndex, classInfo in ipairs(miog.CLASSES) do
-		local singleClassFilter = miog.FilterManager.ClassFilters["Class" .. classIndex]
+		local singleClassFilter = filterManager.ClassFilters["Class" .. classIndex]
 
 		local classSetting = retrieveSetting("classes", classIndex)
 		singleClassFilter.ClassFrame.CheckButton:SetChecked(classSetting == nil and true or classSetting)
@@ -205,7 +229,13 @@ local function refreshFilters()
 	end
 
 	local difficultySetting = retrieveSetting("difficulty", "value")
-	miog.FilterManager.Difficulty.CheckButton:SetChecked(difficultySetting == nil and true or difficultySetting)
+	filterManager.Difficulty.CheckButton:SetChecked(difficultySetting == nil and true or difficultySetting)
+	
+	local tankSetting = retrieveSetting("tank")
+	filterManager.Tank.Minimum:SetValue(tankSetting.minimum)
+	filterManager.Tank.Maximum:SetValue(tankSetting.maximum)
+	filterManager.Tank.Link:SetChecked(tankSetting.linked)
+	filterManager.Tank.CheckButton:SetChecked(tankSetting.value)
 
 	currentSettings = MIOG_CharacterSettings.filters["SearchPanel"][LFGListFrame.SearchPanel.categoryID or LFGListFrame.CategorySelection.selectedCategory]
 end
@@ -219,16 +249,15 @@ local function loadFilterManager()
 	
 	for categoryIndex, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
 		for index, panel in pairs(panels) do
-			--MIOG_CharacterSettings.filters[panel][categoryID] = MIOG_CharacterSettings.filters[panel][categoryID] or {}
 			initializeSetting(panel, categoryID, "classes")
 			initializeSetting(panel, categoryID, "specs")
 			initializeSetting(panel, categoryID, "difficulty")
+			initializeSetting(panel, categoryID, "tank")
+			initializeSetting(panel, categoryID, "healer")
+			initializeSetting(panel, categoryID, "damager")
 
 		end
 	end
-
-	--initializeSetting("classes")
-	--initializeSetting("specs")
 
 	for classIndex, classInfo in ipairs(miog.CLASSES) do
 		local r, g, b = GetClassColor(classInfo.name)
@@ -308,6 +337,104 @@ local function loadFilterManager()
 
 	filterManager.Difficulty.CheckButton:SetScript("OnClick", function(self)
 		changeSetting(self:GetChecked(), "difficulty", "value")
+		setStatus("change")
+	end)
+
+	local buttons = {
+		"Tank",
+		"Healer",
+		"Damager",
+	}
+
+	for k, spinnerString in ipairs(buttons) do
+		local spinner = filterManager[spinnerString]
+		local nameLower = strlower(spinnerString)
+
+		spinner.CheckButton:SetScript("OnClick", function(self)
+			changeSetting(self:GetChecked(), nameLower, "value")
+			setStatus("change")
+		end)
+
+		spinner.Link:SetScript("OnClick", function(self)
+			changeSetting(self:GetChecked(), nameLower, "linked")
+
+		end)
+
+		spinner.Minimum:SetScript("OnTextChanged", function(self, userInput)
+			if(userInput) then
+				local spinnerValue = self:GetNumber()
+
+				if(spinnerValue) then
+					changeSetting(spinnerValue, nameLower, "minimum")
+
+					local maximum = retrieveSetting(nameLower, "maximum")
+
+					if(maximum < spinnerValue) then
+						spinner.Maximum:SetValue(spinnerValue)
+						maximum = spinnerValue
+
+					end
+				end
+			end
+		end)
+		spinner.Minimum:SetMinMaxValues(0, 40)
+		
+		spinner.Maximum:SetScript("OnTextChanged", function(self, userInput)
+			if(userInput) then
+				local spinnerValue = self:GetNumber()
+
+				if(spinnerValue) then
+					changeSetting(spinnerValue, nameLower, "maximum")
+
+					local minimum = retrieveSetting(nameLower, "minimum")
+
+					if(minimum > spinnerValue) then
+						spinner.Minimum:SetValue(spinnerValue)
+						minimum = spinnerValue
+
+					end
+				end
+			end
+		end)
+		spinner.Maximum:SetMinMaxValues(0, 40)
+
+		spinner.Minimum.DecrementButton:SetScript("OnMouseDown", function(self)
+			local parentSpinner = self:GetParent()
+			parentSpinner:Decrement()
+
+			local spinnerValue = parentSpinner:GetValue()
+
+			parentSpinner:ClearFocus()
+			changeSetting(spinnerValue, nameLower, "minimum")
+		end)
+
+		spinner.Minimum.IncrementButton:SetScript("OnMouseDown", function(self)
+			local parentSpinner = self:GetParent()
+			parentSpinner:Increment()
+
+			local spinnerValue = parentSpinner:GetValue()
+
+			local maximum = retrieveSetting(nameLower, "maximum")
+			if(not maximum or maximum < spinnerValue) then
+				spinner.Maximum:SetValue(spinnerValue)
+				changeSetting(spinnerValue, nameLower, "maximum")
+
+			end
+
+			parentSpinner:ClearFocus()
+			changeSetting(spinnerValue, nameLower, "minimum")
+		end)
+	end
+
+	
+
+	filterManager.Healer.CheckButton:SetScript("OnClick", function(self)
+		changeSetting(self:GetChecked(), "healer", "value")
+		setStatus("change")
+	end)
+
+	filterManager.Damager.CheckButton:SetScript("OnClick", function(self)
+		changeSetting(self:GetChecked(), "damager", "value")
 		setStatus("change")
 	end)
 
