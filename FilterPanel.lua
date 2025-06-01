@@ -831,8 +831,6 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 				end
 			end
 
-			local spaceLeft = activityInfo.maxNumPlayers - searchResultInfo.numMembers
-
 			local hasSlotsForPlayers = HasRemainingSlotsForLocalPlayerRole(searchResultInfo.searchResultID)
 
 			if(settings.partyFit) then
@@ -846,6 +844,8 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 					end
 				end
 			end
+
+			local spaceLeft = activityInfo.maxNumPlayers - searchResultInfo.numMembers
 		
 			if(settings.ressFit and not HasRemainingSlotsForBattleResurrection(searchResultInfo.searchResultID, spaceLeft)) then
 				return false, "ressFit"

@@ -1,33 +1,60 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_FilterManager" inherits="BackdropTemplate, ResizeLayoutFrame" virtual="true" hidden="true">
+    <Frame name="MIOG_FilterManager" inherits="BackdropTemplate, VerticalLayoutFrame" virtual="true" hidden="true">
+        <KeyValues>
+            <KeyValue key="spacing" value="2" type="number" />
+            <KeyValue key="leftPadding" value="2" type="number" />
+            <KeyValue key="rightPadding" value="2" type="number" />
+        </KeyValues>
+
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Status" font="GameFontHighlight" justifyH="LEFT" text="Status">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="1" type="number" />
+                    </KeyValues>
                     <Size y="20" />
                     <Anchors>
                         <Anchor point="TOPLEFT" />
                     </Anchors>
                 </FontString>
             </Layer>
+
+            <Layer level="BACKGROUND" textureSubLevel="-7">
+                <Texture parentKey="TransparentDark" >
+                    <Color r="0.1" g="0.1" b="0.1" a="0.85" />
+
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="BACKGROUND" textureSubLevel="-8">
+                <Texture parentKey="Background" horizTile="true" vertTile="true" hWrapMode="MIRROR" vWrapMode="MIRROR" setAllPoints="true" />
+            </Layer>
         </Layers>
 
         <Frames>
-            <Frame parentKey="ClassFilters" inherits="ResizeLayoutFrame">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Status" relativePoint="BOTTOMLEFT" />
-                </Anchors>
+            <Frame parentKey="ClassFilters">
+                <Size y="262" />
+                <KeyValues>
+                    <KeyValue key="expand" value="true" type="boolean" />
+                    <KeyValue key="layoutIndex" value="2" type="number" />
+                </KeyValues>
 
                 <Frames>
                     <Frame parentKey="Class1" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
                                 <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
+                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="2"/>
                                 </Anchors>
                             </Frame>
                         </Frames>
@@ -35,200 +62,380 @@
 
                     <Frame parentKey="Class2" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class1" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class1" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class1" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class3" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class2" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class2" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class2" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class4" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class3" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class3" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class3" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class5" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class4" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class4" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class4" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class6" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class5" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class5" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class5" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class7" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class6" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class6" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class6" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class8" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class7" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class7" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class7" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class9" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class8" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class8" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class8" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class10" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class9" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class9" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class9" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class11" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class10" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class10" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class10" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
-                        </Frames>
 
-                        <Frames>
                             <Frame parentKey="Spec4" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec3" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="4" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
 
                     <Frame parentKey="Class12" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class11" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class11" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class11" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Class13" inherits="MIOG_FilterManagerSingleClassTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Class12" relativePoint="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Class12" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Class12" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Frames>
                             <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Spec2" relativePoint="RIGHT" x="1"/>
-                                </Anchors>
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
                     </Frame>
                 </Frames>
             </Frame>
 
-            <Frame parentKey="Difficulty" inherits="MIOG_FilterManagerDropdownTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassFilters" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="RIGHT"/>
-                </Anchors>
+            <Frame parentKey="PartyFit" inherits="MIOG_FilterManagerTextFilterTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="3" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="RessFit" inherits="MIOG_FilterManagerTextFilterTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="4" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="LustFit" inherits="MIOG_FilterManagerTextFilterTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="5" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="Decline" inherits="MIOG_FilterManagerTextFilterTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="6" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="Age" inherits="MIOG_FilterManagerMultiInputsTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="7" type="number" />
+                </KeyValues>
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Spacer" atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                    <Size x="200" y="2" />
+
+                    <KeyValues>
+                        <KeyValue key="expand" value="true" type="boolean" />
+                        <KeyValue key="layoutIndex" value="8" type="number" />
+                        <KeyValue key="topPadding" value="5" type="number" />
+                        <KeyValue key="bottomPadding" value="4" type="number" />
+                    </KeyValues>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="Rating" inherits="MIOG_FilterManagerMultiInputsTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="9" type="number" />
+                </KeyValues>
             </Frame>
 
             <Frame parentKey="Tank" inherits="MIOG_FilterManagerMultiSpinnerTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Difficulty" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="RIGHT"/>
-                </Anchors>
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="10" type="number" />
+                </KeyValues>
             </Frame>
 
             <Frame parentKey="Healer" inherits="MIOG_FilterManagerMultiSpinnerTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Tank" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="RIGHT"/>
-                </Anchors>
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="11" type="number" />
+                </KeyValues>
             </Frame>
 
             <Frame parentKey="Damager" inherits="MIOG_FilterManagerMultiSpinnerTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Healer" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="RIGHT"/>
-                </Anchors>
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="12" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="Difficulty" inherits="MIOG_FilterManagerDropdownTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="13" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="Activities" inherits="MIOG_FilterManagerTextFilterTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="14" type="number" />
+                </KeyValues>
+            </Frame>
+
+            <Frame parentKey="ActivityGrid" inherits="ResizeLayoutFrame">
+                <Size y="80" />
+
+                <KeyValues>
+                    <KeyValue key="expand" value="true" type="boolean" />
+                    <KeyValue key="layoutIndex" value="15" type="number" />
+                    <KeyValue key="childXPadding" value="2" type="number"/>
+                    <KeyValue key="childYPadding" value="4" type="number"/>
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Activity1" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity2" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity1" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity3" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity2" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity4" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity3" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity5" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Activity1" relativePoint="BOTTOMLEFT" y="-4"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity6" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity5" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity7" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity6" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity8" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity7" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity9" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Activity5" relativePoint="BOTTOMLEFT" y="-4"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity10" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity9" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity11" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity10" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity12" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity11" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity13" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Activity9" relativePoint="BOTTOMLEFT" y="-4"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity14" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity13" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity15" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity14" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Activity16" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Activity15" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="ProgressPanel" inherits="MIOG_ProgressPanel">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="20" type="number" />
+                </KeyValues>
             </Frame>
         </Frames>
     </Frame>

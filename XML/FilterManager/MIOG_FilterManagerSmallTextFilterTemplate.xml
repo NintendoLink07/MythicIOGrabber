@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_FilterManagerSingleIconTemplate" mixin="FilterMixin" virtual="true">        
-        <Size x="50" y="20" />
+    <Frame name="MIOG_FilterManagerSmallTextFilterTemplate" virtual="true">
+        <Size x="60" y="20" />
 
         <Frames>
             <CheckButton parentKey="CheckButton" inherits="MIOG_MinimalCheckButtonTemplate">
@@ -13,17 +13,16 @@
         </Frames>
         
         <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="Icon">
-                    <Size x="16" y="16" />
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.CheckButton" relativePoint="RIGHT" />
+                        <Anchor point="LEFT" relativeKey="$parent.CheckButton" relativePoint="RIGHT" x="2"/>
                     </Anchors>
 
                     <Scripts>
                         <OnLeave function="GameTooltip_Hide" />
                     </Scripts>
-                </Texture>
+                </FontString>
             </Layer>
         </Layers>
     </Frame>

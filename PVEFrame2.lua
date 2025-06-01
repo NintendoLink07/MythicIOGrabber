@@ -11,6 +11,8 @@ local function openSearchPanel(categoryID, filters, dontSearch)
 	LFGListFrame.CategorySelection.selectedFilters = filters or 0
 
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters or 0, LFGListFrame.baseFilters)
+	
+	LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 
 	if(not dontSearch) then
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
@@ -19,8 +21,6 @@ local function openSearchPanel(categoryID, filters, dontSearch)
 		miog.SearchPanel.Status:Hide()
 
 	end
-	
-	LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 end
 
 miog.openSearchPanel = openSearchPanel
@@ -435,21 +435,6 @@ local function createPVEFrameReplacement()
 	end
 
 	miog.pveFrame2.TitleBar.MoreButton.Text:SetText("More")
-	--[[miog.pveFrame2.TitleBar.MoreButton:SetScript("OnClick", function(self)
-		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.MoreButton, function(ownerRegion, rootDescription)
-			rootDescription:CreateTitle("More");
-			rootDescription:CreateButton("Adventure Journal", function() setCustomActivePanel("AdventureJournal") end)
-			rootDescription:CreateButton("DropChecker", function()
-				miog.ProgressPanel:Hide()
-				setCustomActivePanel("DropChecker")
-
-			end)
-			--rootDescription:CreateButton("RaiderIOChecker", function() setCustomActivePanel("RaiderIOChecker") end)
-			rootDescription:SetTag("MIOG_MORE")
-		end)
-
-		currentMenu:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
-	end)]]
 end
 
 miog.createPVEFrameReplacement = createPVEFrameReplacement

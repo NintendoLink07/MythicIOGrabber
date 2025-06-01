@@ -50,22 +50,13 @@ local function setActivePanel(_, panel)
 		if(MIOG_NewSettings.activeSidePanel == "filter") then
 			miog.NewFilterPanel.Lock:Hide()
 			miog.NewFilterPanel:Show()
-			
-			miog.ProgressPanel:SetPoint("TOPLEFT", miog.NewFilterPanel, "BOTTOMLEFT", 0, -5)
-			miog.ProgressPanel:SetPoint("TOPRIGHT", miog.NewFilterPanel, "BOTTOMRIGHT", 0, -5)
 
 		elseif(MIOG_NewSettings.activeSidePanel == "invites") then
 			miog.LastInvites:Show()
 
-			miog.ProgressPanel:ClearAllPoints()
-			miog.ProgressPanel:SetPoint("TOPLEFT", miog.LastInvites, "BOTTOMLEFT", 0, -5)
-
 		else
 			miog.NewFilterPanel:Hide()
 			miog.Plugin.ButtonPanel:Show()
-
-			miog.ProgressPanel:ClearAllPoints()
-			miog.ProgressPanel:SetPoint("TOPLEFT", miog.Plugin.ButtonPanel, "BOTTOMLEFT", 0, -4)
 		
 		end
 	end
@@ -177,9 +168,6 @@ miog.createFrames = function()
 		miog.LastInvites:Hide()
 		miog.NewFilterPanel:Show()
 
-		miog.ProgressPanel:SetPoint("TOPLEFT", miog.NewFilterPanel, "BOTTOMLEFT", 0, -5)
-		miog.ProgressPanel:SetPoint("TOPRIGHT", miog.NewFilterPanel, "BOTTOMRIGHT", 0, -5)
-
 		MIOG_NewSettings.activeSidePanel = "filter"
 
 		if(LFGListFrame.activePanel ~= LFGListFrame.SearchPanel and LFGListFrame.activePanel ~= LFGListFrame.ApplicationViewer) then
@@ -199,8 +187,6 @@ miog.createFrames = function()
 
 		miog.LastInvites:Show()
 		miog.NewFilterPanel:Hide()
-
-		miog.ProgressPanel:SetPoint("TOPLEFT", miog.LastInvites, "BOTTOMLEFT", 0, -5)
 	end)
 
 	miog.createFrameBorder(miog.Plugin.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -236,11 +222,6 @@ miog.createFrames = function()
 	miog.ClassPanel = miog.createClassPanel()
 	miog.FilterManager = miog.loadFilterManager()
 	
-	local progressPanel = CreateFrame("Frame", "ProgressPanel", miog.Plugin, "MIOG_ProgressPanel")
-	miog.createFrameBorder(progressPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-
-	miog.ProgressPanel = progressPanel
-	
 	miog.loadInspectManagement()
 
 	if(MIOG_NewSettings.reQueue) then
@@ -268,8 +249,5 @@ miog.createFrames = function()
 		miog.ApplicationViewer,
 		miog.SearchPanel,
 		miog.EntryCreation,
-		miog.RaiderIOChecker,
-		miog.ProgressPanel,
-		miog.DropChecker,
 	}
 end

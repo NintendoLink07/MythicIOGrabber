@@ -1083,9 +1083,6 @@ miog.hideSidePanel = function(self)
 	local buttonPanel = self:GetParent():GetParent().ButtonPanel
 	buttonPanel:Show()
 
-	miog.ProgressPanel:ClearAllPoints()
-	miog.ProgressPanel:SetPoint("TOPLEFT", buttonPanel, "BOTTOMLEFT", 0, -4)
-
 	MIOG_NewSettings.activeSidePanel = "none"
 end
 

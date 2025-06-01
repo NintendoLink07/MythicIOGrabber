@@ -53,7 +53,7 @@ local function refreshPartyGUIDs()
 				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
-                    if(not MIOG_NewSettings.clearFakeApps or miog.checkEligibility("LFGListFrame.SearchPanel", nil, v, true)) then
+                    if(not MIOG_NewSettings.clearFakeApps or miog.filter.checkIfSearchResultIsEligible(resultID, true)) then
                         newPartyGUIDs[partyGUID] = {resultID = v, timestamp = MIOG_NewSettings.requeueData.guids[partyGUID] and MIOG_NewSettings.requeueData.guids[partyGUID].timestamp or GetTimePreciseSec()}
                         
                     end

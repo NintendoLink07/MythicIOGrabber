@@ -143,10 +143,10 @@ miog.APPLICANT_STATUS_INFO = {
 
 miog.FILTER_DESCRIPTIONS = {
 	["roles"] = "Allows/disallows all groups where a party members has the specific role.",
-	["partyFit"] = "Checks if you / the applicant fits the party, e.g. there is a healer missing and you're a healer.",
-	["ressFit"] = "Checks if you / the applicant has a battle resurrection.",
-	["lustFit"] = "Checks if you / the applicant has a lust/heroism effect.",
-	["hideHardDecline"] = "Checks if the group has actively declined you before, e.g. clicked the X button on your application.",
+	["partyfit"] = "Checks if you / the applicant fits the party, e.g. there is a healer missing and you're a healer.",
+	["ressfit"] = "Checks if you / the applicant has a battle resurrection.",
+	["lustfit"] = "Checks if you / the applicant has a lust/heroism effect.",
+	["decline"] = "Checks if the group has actively declined you before, e.g. clicked the X button on your application.",
 	["difficulty"] = "Set the difficulty of the groups you wanna see.",
 	["tank"] = "Select the number of tanks the groups should have. Clicking the link icon and the link icon of another role filter will check if atleast 1 of them passes (e.g. you wanna have atleast a tank or healer in the group).",
 	["healer"] = "Select the number of healers the groups should have. Clicking the link icon and the link icon of another role filter will check if atleast 1 of them passes (e.g. you wanna have atleast a tank or healer in the group).",
@@ -1110,6 +1110,22 @@ miog.BACKUP_SEASONAL_IDS = {
 }
 
 
+local function addMapDataToGroup(mapID, groupID)
+	local mapInfo = miog.MAP_INFO[mapID]
+
+	if(mapInfo) then
+		miog.GROUP_ACTIVITY[groupID].icon = mapInfo.icon
+		miog.GROUP_ACTIVITY[groupID].bosses = mapInfo.bosses
+		miog.GROUP_ACTIVITY[groupID].journalInstanceID = mapInfo.journalInstanceID
+
+		miog.GROUP_ACTIVITY[groupID].extractedName = mapInfo.name
+		miog.GROUP_ACTIVITY[groupID].expansionLevel = mapInfo.expansionLevel
+
+		miog.GROUP_ACTIVITY[groupID].vertical = mapInfo.vertical
+		miog.GROUP_ACTIVITY[groupID].horizontal = mapInfo.horizontal
+	end
+end
+
 local function addMapDataToActivity(mapID, activityID)
 	local mapInfo = miog.MAP_INFO[mapID]
 
@@ -1162,6 +1178,11 @@ local function addGroupInfo(groupID, categoryID)
 	for k, v in ipairs(activities) do
 		tinsert(miog.GROUP_ACTIVITY[groupID].activityIDs, v)
 		addActivityInfo(v)
+
+	end
+
+	if(miog.GROUP_ACTIVITY[groupID].mapID) then
+		addMapDataToGroup(miog.GROUP_ACTIVITY[groupID].mapID, groupID)
 
 	end
 

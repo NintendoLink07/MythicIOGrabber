@@ -13,7 +13,7 @@ end
 
 local function setScrollBoxFrameColors(resultFrame, resultID)
 	if(resultFrame and C_LFGList.HasSearchResultInfo(resultID)) then
-		local isEligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID, true)
+		local isEligible, reasonID = miog.filter.checkIfSearchResultIsEligible(resultID)
 		--local reason = miog.INELIGIBILITY_REASONS[reasonID]
 		local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
@@ -234,7 +234,7 @@ local function createResultTooltip(resultID, resultFrame)
 			GameTooltip:AddLine(searchResultInfo.leaderName .. " is on your favoured player list.")
 		end
 
-		local success, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID)
+		local success, reasonID = miog.filter.checkIfSearchResultIsEligible(resultID)
 		local reason = miog.INELIGIBILITY_REASONS[reasonID]
 
 		if(not success and reason) then
@@ -295,7 +295,7 @@ local function createDataProviderWithUnsortedData()
 			if(searchResultInfo and not searchResultInfo.hasSelf) then
 				local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 				
-				if(appStatus == "applied" or miog.checkEligibility("LFGListFrame.SearchPanel", nil, resultID) and miog.filter.checkIfSearchResultIsEligible(resultID)) then
+				if(appStatus == "applied" or miog.filter.checkIfSearchResultIsEligible(resultID)) then
 					local primarySortAttribute, secondarySortAttribute
 
 					local nameTable

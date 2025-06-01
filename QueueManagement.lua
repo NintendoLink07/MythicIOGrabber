@@ -535,7 +535,7 @@ local function updateGroupApplications()
 							LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 						end)
 
-						local eligible, reasonID = miog.checkEligibility("LFGListFrame.SearchPanel", nil, id, true)
+						local eligible, reasonID = miog.filter.checkIfSearchResultIsEligible(resultID, true)
 						local reason = miog.INELIGIBILITY_REASONS[reasonID]
 
 						if(eligible == false) then

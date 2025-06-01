@@ -1,6 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_FilterManagerSingleClassTemplate" virtual="true">
+    <Frame name="MIOG_FilterManagerSingleClassTemplate" inherits="HorizontalLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="expand" value="true" type="boolean" />
+        </KeyValues>
+
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Border" setAllPoints="true" />
@@ -18,21 +22,21 @@
 
         <Frames>
             <Frame parentKey="ClassFrame" inherits="MIOG_FilterManagerSingleIconTemplate">
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent" x="1"/>
-                </Anchors>
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="1" type="number" />
+                </KeyValues>
             </Frame>
 
             <Frame parentKey="Spec1" inherits="MIOG_FilterManagerSingleIconTemplate">
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.ClassFrame" relativePoint="RIGHT" x="1"/>
-                </Anchors>
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="2" type="number" />
+                </KeyValues>
             </Frame>
 
             <Frame parentKey="Spec2" inherits="MIOG_FilterManagerSingleIconTemplate">
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Spec1" relativePoint="RIGHT" x="1"/>
-                </Anchors>
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="3" type="number" />
+                </KeyValues>
             </Frame>
         </Frames>
     </Frame>

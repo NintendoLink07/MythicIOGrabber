@@ -1,5 +1,17 @@
 Changes since tag v10.2.0.118
 
+commit 8bab6252365022b8e6e91a04d09cd6ed1f72a6a7
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon May 19 15:05:04 2025 -0300
+
+    Ensure the global config spell table exists.
+
+commit f3c94987f7423a80f36c83c5b3eaf29fa2624e34
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon May 19 15:00:34 2025 -0300
+
+    Added latency compensation and faster ticks for interrupt spells.
+
 commit 333c76f929b5a4dd81d4276fb76a21dd1a0bac8d
 Author: Tercio Jose <terciob19@hotmail.com>
 Date:   Sun May 11 11:37:34 2025 -0300
