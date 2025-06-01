@@ -498,13 +498,13 @@ local function updateGroupApplications()
 	local applications = C_LFGList.GetApplications()
 	if(applications) then
 		for _, v in ipairs(applications) do
-			local id, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(v)
+			local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(v)
 
-			if(id) then
-				local identifier = "APPLICATION_" .. id
+			if(resultID) then
+				local identifier = "APPLICATION_" .. resultID
 
 				if(appStatus == "applied") then
-					local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
+					local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
 					local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 					local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 			
@@ -516,7 +516,7 @@ local function updateGroupApplications()
 						[17] = {"duration", appDuration},
 						[18] = identifier,
 						[20] = activityInfo.icon,
-						[21] = id,
+						[21] = resultID,
 						[30] = activityInfo.horizontal or nil
 					}
 
@@ -526,7 +526,7 @@ local function updateGroupApplications()
 
 					if(frame) then
 						frame.CancelApplication:SetAttribute("type", "macro")
-						frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. id .. ")")
+						frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.CancelApplication(" .. resultID .. ")")
 
 						frame:SetScript("OnMouseDown", function()
 							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -553,7 +553,7 @@ local function updateGroupApplications()
 						end
 
 						frame:SetScript("OnEnter", function(self)
-							miog.createResultTooltip(id, frame)
+							miog.createResultTooltip(resultID, frame)
 
 							GameTooltip:Show()
 						end)

@@ -1270,56 +1270,6 @@ local function loadRawData()
 			mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.fileName or mapInfo.iconName) .. ".blp"
 		end
 	end
-	
-	--[[for k, v in pairs(miog.RAW["GroupFinderActivity"]) do
-		miog.ACTIVITY_INFO[v[1] ] = {
-			activityID = v[1],
-			name = v[2],
-			difficultyName = v[3],
-			categoryID = v[4],
-	
-			groupFinderActivityGroupID = v[6],
-	
-			mapID = v[10],
-
-			difficultyID = v[11],
-	
-			maxPlayers = v[13],
-		}
-
-		miog.GROUP_ACTIVITY[v[6] ] = miog.GROUP_ACTIVITY[v[6] ] or {activityIDs = {}}
-		miog.GROUP_ACTIVITY[v[6] ].activityID = v[1]
-		miog.GROUP_ACTIVITY[v[6] ].activityIDs[v[1] ] = true
-
-		local mapInfo = getMapInfo(v[10])
-		
-		if(mapInfo) then
-			miog.MAP_INFO[v[10] ].activityID = v[1]
-			miog.MAP_INFO[v[10] ].groupFinderActivityGroupID = v[6]
-
-			miog.ACTIVITY_INFO[v[1] ].expansionLevel = mapInfo.expansionLevel
-			miog.ACTIVITY_INFO[v[1] ].bosses = mapInfo.bosses
-			miog.ACTIVITY_INFO[v[1] ].shortName = mapInfo.shortName
-			miog.ACTIVITY_INFO[v[1] ].extractedName = mapInfo.name
-
-			miog.ACTIVITY_INFO[v[1] ].fileName = mapInfo.fileName
-			miog.ACTIVITY_INFO[v[1] ].bgName = mapInfo.bgName
-			miog.ACTIVITY_INFO[v[1] ].horizontal = mapInfo.horizontal
-			miog.ACTIVITY_INFO[v[1] ].vertical = mapInfo.vertical
-			miog.ACTIVITY_INFO[v[1] ].icon = mapInfo.icon
-			miog.ACTIVITY_INFO[v[1] ].journalInstanceID = mapInfo.journalInstanceID
-
-			if(miog.MAP_INFO[v[10] ].achievementCategory) then
-				--checkForMapAchievements(v[10])
-
-			end
-		end
-
-		if(miog.ACTIVITY_INFO[v[1] ].horizontal == nil) then
-			miog.ACTIVITY_INFO[v[1] ].horizontal = miog.ACTIVITY_BACKGROUNDS[v[4] ]
-			
-		end
-	end]]
 
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
 		if(miog.MAP_INFO[v[3]]) then

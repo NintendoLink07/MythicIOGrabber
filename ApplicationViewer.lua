@@ -459,7 +459,7 @@ local function createDataProviderWithUnsortedData()
 					favoured = MIOG_NewSettings.favouredApplicants[name] and true or false
 				}
 
-				local showFrame, _ = miog.checkEligibility("LFGListFrame.ApplicationViewer", _, applicantInfos[applicantIndex])
+				local showFrame, _ = miog.filter.checkIfApplicantIsEligible(applicantInfos[applicantIndex])
 
 				if(not showFrame) then
 					allOkay = false

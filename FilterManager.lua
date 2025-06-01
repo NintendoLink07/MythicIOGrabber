@@ -187,6 +187,93 @@ local function checkIfPlayersFitIntoGroup(maxNumPlayers, listingPlayers)
 	return true
 end
 
+local function checkIfApplicantIsEligible(applicantData)
+	if(currentSettings) then
+		local settings = currentSettings
+		local categoryID = getCurrentCategoryID("ApplicationViewer")
+
+		local isPvp = categoryID == 4 or categoryID == 7
+		local isDungeon = categoryID == 2
+
+		local hasRess, hasLust = false, false
+
+		if(settings.ressfit or settings.lustfit) then
+			local numGroupMembers = GetNumGroupMembers()
+
+			for groupIndex = 1, numGroupMembers, 1 do
+                local _, _, _, _, _, fileName = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+
+				--classCount[fileName] = classCount[fileName] + 1
+
+				if(not hasRess and fileName == "PALADIN" or fileName == "DEATHKNIGHT" or fileName == "WARLOCK" or fileName == "DRUID") then
+					hasRess = true
+					
+				end
+
+				if(not hasLust and fileName == "HUNTER" or fileName == "SHAMAN" or fileName == "MAGE" or fileName == "EVOKER") then
+					hasLust = true
+					
+				end
+			end
+		end
+
+
+		if(settings.ressfit and not hasRess) then
+			return false, "ressFit"
+	
+		end
+
+		if(settings.lustfit and not hasLust) then
+			return false, "lustFit"
+	
+		end
+
+		--[[if(settings.roles[applicantData.role] == false) then
+			return false, "incorrectRoles"
+	
+		end]]
+	
+		if(settings.classes[miog.CLASSFILE_TO_ID[applicantData.class]] == false) then
+			return false, "classFiltered"
+		
+		end
+
+		if(settings.specs[applicantData.specID] == false) then
+			return false, "specFiltered"
+
+		end
+
+		if(isDungeon or isPvp) then
+			if(settings.rating.enabled) then
+				local min = settings.rating.minimum
+				local max = settings.rating.maximum
+
+				local applicantRating = applicantData.rating
+
+				if min ~= 0 and max ~= 0 then
+					if applicantRating < min or applicantRating > max then
+						return false, "ratingMismatch"
+					end
+				elseif min ~= 0 then
+					if applicantRating < min then
+						return false, "ratingLowerMismatch"
+					end
+				elseif max ~= 0 then
+					if applicantRating >= max then
+						return false, "ratingHigherMismatch"
+					end
+				end
+			end
+		end
+		
+		return true, "allGood"
+	end
+
+	return true, "noSettingsFound"
+end
+
+miog.filter.checkIfApplicantIsEligible = checkIfApplicantIsEligible
+
 local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 	if(currentSettings) then
 		local roleCount = {
@@ -335,7 +422,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 			end
 		end
 
-		if(settings.activities.enabled and (isRaid or isDungeon) and not settings.activities[activityInfo.groupFinderActivityGroupID]) then
+		if(settings.activities.enabled and (isRaid or isDungeon) and settings.activities[activityInfo.groupFinderActivityGroupID] == false) then
 			if(isDungeon) then
 				return false, "dungeonMismatch"
 
@@ -357,12 +444,6 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 end
 
 miog.filter.checkIfSearchResultIsEligible = checkIfSearchResultIsEligible
-
-local function checkIfApplicantIsEligible(applicantID)
-
-end
-
-miog.filter.checkIfApplicantIsEligible = checkIfApplicantIsEligible
 
 
 local function setStatus(type)
@@ -522,10 +603,10 @@ local function refreshFilters()
 	end
 
 	local lustFit = retrieveSetting("lustfit")
-	filterManager.LustFit.CheckButton:SetChecked(lustFit == nil and true or lustFit)
+	filterManager.LustFit.CheckButton:SetChecked(lustFit == nil and false or lustFit)
 
 	local ressSetting = retrieveSetting("ressfit")
-	filterManager.RessFit.CheckButton:SetChecked(ressSetting == nil and true or ressSetting)
+	filterManager.RessFit.CheckButton:SetChecked(ressSetting == nil and false or ressSetting)
 	
 	local isLFG = panel == "SearchPanel"
 
@@ -542,10 +623,10 @@ local function refreshFilters()
 
 	if(isLFG) then
 		local partySetting = retrieveSetting("partyfit")
-		filterManager.PartyFit.CheckButton:SetChecked(partySetting == nil and true or partySetting)
+		filterManager.PartyFit.CheckButton:SetChecked(partySetting == nil and false or partySetting)
 
 		local decline = retrieveSetting("decline")
-		filterManager.Decline.CheckButton:SetChecked(decline == nil and true or decline)
+		filterManager.Decline.CheckButton:SetChecked(decline == nil and false or decline)
 		
 		refreshInputFilters()
 		refreshSpinnerFilters()
@@ -567,7 +648,18 @@ local function refreshFilters()
 			local currentGroups = i == 1 and seasonGroups or otherGroups
 
 			for k, groupID in ipairs(currentGroups) do
-				tinsert(allGroups, groupID)
+				tinsert(allGroups, {groupID = groupID})
+
+			end
+		end
+
+		if(categoryID == 3) then
+			local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
+
+			if(worldBossActivity and #worldBossActivity > 0) then
+				local activityInfo = C_LFGList.GetActivityInfoTable(worldBossActivity[1])
+				
+				tinsert(allGroups, {groupID = activityInfo.groupFinderActivityGroupID, mapID = activityInfo.mapID})
 
 			end
 		end
@@ -575,16 +667,28 @@ local function refreshFilters()
 		for rowCounter = 1, 4, 1 do
 			for activityCounter = 1, 4, 1 do
 				local counter = (rowCounter - 1) * 4 + activityCounter
-				local groupID = allGroups[counter]
+				local groupData = allGroups[counter]
 				local activityFilter = filterManager.ActivityGrid["Activity" .. counter]
 
-				if(groupID) then
-					local groupInfo = miog.requestGroupInfo(groupID)
+				if(groupData and groupData.groupID) then
+					local info
+
+					if(groupData.groupID > 0) then
+						info = miog.requestGroupInfo(groupData.groupID)
+						activityFilter.mapID = nil
+						activityFilter.groupID = groupData.groupID
+
+					else
+						info = miog.getMapInfo(groupData.mapID)
+						activityFilter.groupID = nil
+						activityFilter.mapID = groupData.mapID
+
+					end
+
 					--activityFilter.Icon:SetTexture(groupInfo.icon)
-					activityFilter.Text:SetText(groupInfo.abbreviatedName)
-					activityFilter.groupID = groupID
+					activityFilter.Text:SetText(info.abbreviatedName or info.shortName)
 					
-					local groupSetting = retrieveSetting("activities", groupID)
+					local groupSetting = retrieveSetting("activities", groupData.groupID)
 					activityFilter.CheckButton:SetChecked(groupSetting == nil and true or groupSetting)
 					activityFilter:Show()
 
@@ -975,11 +1079,17 @@ local function loadFilterManager()
 		activityFilter.Text:SetScript("OnEnter", function(self)
 			local groupID = self:GetParent().groupID
 
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
 			if(groupID) then
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				GameTooltip:SetText(C_LFGList.GetActivityGroupInfo(groupID) or "")
-				GameTooltip:Show()
+
+			elseif(self:GetParent().mapID) then
+				GameTooltip:SetText(miog.getMapInfo(self:GetParent().mapID).name)
+
 			end
+
+			GameTooltip:Show()
 		end)
 		activityFilter.CheckButton:SetScript("OnClick", function(self)
 			local groupID = self:GetParent().groupID
