@@ -301,15 +301,6 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 	return raidActivities
 end
 
-miog.rpairs = function(t)
-	return function(t, i)
-		i = i - 1
-		if i ~= 0 then
-			return i, t[i]
-		end
-	end, t, #t + 1
-end
-
 local function revisedRaidSortData(playerName, realm, region, existingProfile)
 	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
 

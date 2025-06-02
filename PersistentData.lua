@@ -284,6 +284,35 @@ miog.RAID_DIFFICULTIES = {
 	DifficultyUtil.ID.PrimaryRaidMythic,
 }
 
+miog.DELVE_TIERS = {
+
+}
+
+local normalDelveActivities = C_LFGList.GetAvailableActivities(121, 341)
+
+for k, v in ipairs(normalDelveActivities) do
+	local activityInfo = C_LFGList.GetActivityInfoTable(v)
+	tinsert(miog.DELVE_TIERS, activityInfo.shortName)
+
+end
+
+miog.rpairs = function(t)
+	return function(t, i)
+		i = i - 1
+		if i ~= 0 then
+			return i, t[i]
+		end
+	end, t, #t + 1
+end
+
+local highDelveActivities = C_LFGList.GetAvailableActivities(121, 334)
+
+for k, v in miog.rpairs(highDelveActivities) do
+	local activityInfo = C_LFGList.GetActivityInfoTable(v)
+	tinsert(miog.DELVE_TIERS, activityInfo.shortName)
+
+end
+
 --CONSTANTS
 miog.C = {
 	-- 1.5 seconds seems to be the internal throttle of the inspect function / Blizzard's inspect data provider.
@@ -1151,7 +1180,7 @@ end
 
 local function addActivityInfo(activityID)
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-	activityInfo.shortName = nil
+	--activityInfo.shortName = nil
 	activityInfo.abbreviatedName = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].shortName
 	activityInfo.journalInstanceID = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].journalInstanceID
 

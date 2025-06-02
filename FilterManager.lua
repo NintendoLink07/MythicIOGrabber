@@ -274,6 +274,8 @@ end
 
 miog.filter.checkIfApplicantIsEligible = checkIfApplicantIsEligible
 
+-- DELVE ACTIVITIES NOT GETTING FILTERED?
+
 local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 	if(currentSettings) then
 		local roleCount = {
@@ -289,6 +291,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 		local isPvp = categoryID == 4 or categoryID == 7
 		local isDungeon = categoryID == 2
 		local isRaid = categoryID == 3
+		local isDelve = categoryID == 121
 		local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
 		for i = 1, searchResultInfo.numMembers, 1 do
@@ -419,6 +422,12 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 					return false, "incorrectBracket"
 
 				end
+
+			elseif(isDelve) then
+				if(activityInfo.shortName ~= settings.difficulty.id) then
+					return false, "incorrectTier"
+
+				end
 			end
 		end
 
@@ -448,11 +457,11 @@ miog.filter.checkIfSearchResultIsEligible = checkIfSearchResultIsEligible
 
 local function setStatus(type)
 	if(type == "change") then
-		miog.FilterManager.Status:SetText("Refresh panel")
+		miog.FilterManager.Status:SetText("Refresh search")
 		miog.FilterManager.Status:SetTextColor(1, 1, 0, 1)
 
 	elseif(type == "refreshed") then
-		miog.FilterManager.Status:SetText("All good")
+		miog.FilterManager.Status:SetText("Filters applied")
 		miog.FilterManager.Status:SetTextColor(0, 1, 0, 1)
 
 	end
@@ -609,6 +618,9 @@ local function refreshFilters()
 	filterManager.RessFit.CheckButton:SetChecked(ressSetting == nil and false or ressSetting)
 	
 	local isLFG = panel == "SearchPanel"
+	local isPvp = categoryID == 4 or categoryID == 7
+	local isDungeon = categoryID == 2
+	local isPvE =  categoryID == 2 or categoryID == 3 or categoryID == 121
 
 	filterManager.PartyFit:SetShown(isLFG)
 	filterManager.Decline:SetShown(isLFG)
@@ -617,9 +629,10 @@ local function refreshFilters()
 	filterManager.Healer:SetShown(isLFG)
 	filterManager.Damager:SetShown(isLFG)
 	filterManager.Age:SetShown(isLFG)
-	filterManager.Difficulty:SetShown(isLFG)
-	filterManager.Activities:SetShown(isLFG)
-	filterManager.ActivityGrid:SetShown(isLFG)
+	filterManager.Rating:SetShown(isLFG and (isPvp or isDungeon))
+	filterManager.Difficulty:SetShown(isLFG and isPvE)
+	filterManager.Activities:SetShown(isLFG and isPvE)
+	filterManager.ActivityGrid:SetShown(isLFG and isPvE)
 
 	if(isLFG) then
 		local partySetting = retrieveSetting("partyfit")
@@ -725,9 +738,9 @@ local function createFilterWithText(filter, text)
 	end)
 end
 
-local function loadFilterManager()
+local function loadFilterManager()	
 	local filterManager = CreateFrame("Frame", "FilterManager", miog.Plugin, "MIOG_FilterManager")
-	filterManager:SetPoint("TOPLEFT", miog.NewFilterPanel, "TOPRIGHT", 5, 0)
+	filterManager:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
 
 	miog.createFrameBorder(filterManager, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	filterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
@@ -810,10 +823,11 @@ local function loadFilterManager()
 			local isPvp = categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9
 			local isDungeon = categoryID == 2
 			local isRaid = categoryID == 3
+			local isDelve = categoryID == 121
 
-			if(isPvp or isDungeon or isRaid) then
-				for _, y in ipairs(isRaid and {miog.RAID_DIFFICULTIES[2], miog.RAID_DIFFICULTIES[3], miog.RAID_DIFFICULTIES[4]} or isPvp and {6, 7} or isDungeon and miog.DUNGEON_DIFFICULTIES or {}) do
-					local difficultyMenu = rootDescription:CreateRadio(isPvp and (y == 6 and "2v2" or "3v3") or miog.DIFFICULTY_ID_INFO[y].name, function(difficultyIndex) return difficultyIndex == selectedDifficultyIndex end, function(difficultyIndex)
+			if(isPvp or isDungeon or isRaid or isDelve) then
+				for _, y in ipairs(isRaid and {miog.RAID_DIFFICULTIES[2], miog.RAID_DIFFICULTIES[3], miog.RAID_DIFFICULTIES[4]} or isPvp and {6, 7} or isDungeon and miog.DUNGEON_DIFFICULTIES or isDelve and miog.DELVE_TIERS or {}) do
+					local difficultyMenu = rootDescription:CreateRadio(isPvp and (y == 6 and "2v2" or "3v3") or isDelve and y or miog.DIFFICULTY_ID_INFO[y].name, function(difficultyIndex) return difficultyIndex == selectedDifficultyIndex end, function(difficultyIndex)
 						selectedDifficultyIndex = difficultyIndex
 						changeSetting(difficultyIndex, "difficulty", "id")
 						setStatus("change")

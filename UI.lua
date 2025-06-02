@@ -44,21 +44,6 @@ local function setActivePanel(_, panel)
 	if(miog.F.LITE_MODE and panel ~= LFGListFrame.CategorySelection) then
 		panel:Hide()
 
-	elseif(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
-		miog.Plugin.ButtonPanel:Hide()
-
-		if(MIOG_NewSettings.activeSidePanel == "filter") then
-			miog.NewFilterPanel.Lock:Hide()
-			miog.NewFilterPanel:Show()
-
-		elseif(MIOG_NewSettings.activeSidePanel == "invites") then
-			miog.LastInvites:Show()
-
-		else
-			miog.NewFilterPanel:Hide()
-			miog.Plugin.ButtonPanel:Show()
-		
-		end
 	end
 
 	if(panel == LFGListFrame.ApplicationViewer) then
@@ -78,7 +63,6 @@ local function setActivePanel(_, panel)
 		miog.SearchPanel:Show()
 
 	elseif(panel == LFGListFrame.EntryCreation) then
-		miog.NewFilterPanel.Lock:Show()
 		miog.EntryCreation:Show()
 
 		if(miog.F.LITE_MODE) then
@@ -88,11 +72,9 @@ local function setActivePanel(_, panel)
 
 	elseif(panel == "RaiderIOChecker") then
 		miog.RaiderIOChecker:Show()
-		miog.NewFilterPanel.Lock:Show()
 
 	else
 		miog.Plugin:Hide()
-		miog.NewFilterPanel.Lock:Show()
 
 	end
 
@@ -104,8 +86,6 @@ local function setActivePanel(_, panel)
 		miog.ProgressPanel:Hide()
 
 	end
-	
-	miog.setupFilterPanel()
 end
 
 miog.setActivePanel = setActivePanel
@@ -160,40 +140,6 @@ miog.createFrames = function()
 	miog.Plugin:SetScript("OnEnter", function()
 	
 	end)
-	
-	miog.Plugin.ButtonPanel.FilterButton:SetScript("OnClick", function()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		miog.Plugin.ButtonPanel:Hide()
-
-		miog.LastInvites:Hide()
-		miog.NewFilterPanel:Show()
-
-		MIOG_NewSettings.activeSidePanel = "filter"
-
-		if(LFGListFrame.activePanel ~= LFGListFrame.SearchPanel and LFGListFrame.activePanel ~= LFGListFrame.ApplicationViewer) then
-			miog.NewFilterPanel.Lock:Show()
-
-		else
-			miog.NewFilterPanel.Lock:Hide()
-		
-		end
-	end)
-
-	miog.Plugin.ButtonPanel.LastInvitesButton:SetScript("OnClick", function()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		miog.Plugin.ButtonPanel:Hide()
-
-		MIOG_NewSettings.activeSidePanel = "invites"
-
-		miog.LastInvites:Show()
-		miog.NewFilterPanel:Hide()
-	end)
-
-	miog.createFrameBorder(miog.Plugin.ButtonPanel.FilterButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	miog.Plugin.ButtonPanel.FilterButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	miog.createFrameBorder(miog.Plugin.ButtonPanel.LastInvitesButton, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	miog.Plugin.ButtonPanel.LastInvitesButton:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	miog.Plugin.Resize:SetScript("OnDragStop", function(self)
 		self:GetParent():StopMovingOrSizing()
@@ -217,8 +163,7 @@ miog.createFrames = function()
 	miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
 	miog.EntryCreation = miog.createEntryCreation()
-	miog.NewFilterPanel = miog.loadNewFilterPanel()
-	miog.LastInvites = miog.loadLastInvitesPanel()
+	--miog.LastInvites = miog.loadLastInvitesPanel()
 	miog.ClassPanel = miog.createClassPanel()
 	miog.FilterManager = miog.loadFilterManager()
 	

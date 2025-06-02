@@ -1640,7 +1640,7 @@ miog.loadNewFilterPanel = function()
 	local spacer = setupSpacer("ActivitiesSpacer", "activitiesSpacer")
 	local activitiesOption = setupTextSetting("Activities", "Activities", "activities")
 
-	setupFilterPanel()
+	--setupFilterPanel()
 
 	filterPanel:MarkDirty()
 	
