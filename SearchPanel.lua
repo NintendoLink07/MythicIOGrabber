@@ -294,8 +294,10 @@ local function createDataProviderWithUnsortedData()
 
 			if(searchResultInfo and not searchResultInfo.hasSelf) then
 				local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+
+				local status, reason =  miog.filter.checkIfSearchResultIsEligible(resultID)
 				
-				if(appStatus == "applied" or miog.filter.checkIfSearchResultIsEligible(resultID)) then
+				if(appStatus == "applied" or status) then
 					local primarySortAttribute, secondarySortAttribute
 
 					local nameTable

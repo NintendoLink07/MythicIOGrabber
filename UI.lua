@@ -82,7 +82,9 @@ local function setActivePanel(_, panel)
 		setProgressPanelInfo(miog.getCurrentCategoryID())
 
 		miog.filter.refreshFilters()
+		miog.FilterManager:Show()
 	else
+		miog.FilterManager:Hide()
 		miog.ProgressPanel:Hide()
 
 	end

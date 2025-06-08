@@ -211,3 +211,4 @@ XML\FilterManager\MIOG_FilterManagerTextFilterTemplate.xml
 XML\FilterManager\MIOG_FilterManagerMultiInputsTemplate.xml
 XML\FilterManager\MIOG_FilterManagerSmallTextFilterTemplate.xml
 XML\FilterManager\MIOG_FilterManagerSmallTextAndIconFilterTemplate.xml
+XML\FilterManager\MIOG_FilterManagerActivityBossesTemplate.xml

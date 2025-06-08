@@ -432,8 +432,26 @@
                 </Frames>
             </Frame>
 
+            <Frame parentKey="ActivityBosses" inherits="ResizeLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="expand" value="true" type="boolean" />
+                    <KeyValue key="layoutIndex" value="15" type="number" />
+                    <KeyValue key="childXPadding" value="2" type="number"/>
+                    <KeyValue key="childYPadding" value="4" type="number"/>
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Bosses1" inherits="MIOG_FilterManagerActivityBossesTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+            
             <Frame parentKey="ProgressPanel" inherits="MIOG_ProgressPanel">
                 <KeyValues>
+                    <KeyValue key="expand" value="true" type="boolean" />
                     <KeyValue key="layoutIndex" value="20" type="number" />
                 </KeyValues>
             </Frame>

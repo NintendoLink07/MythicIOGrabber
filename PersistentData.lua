@@ -163,6 +163,7 @@ miog.INELIGIBILITY_REASONS = {
 	["hardDeclined"] = {"You have been hard declined from this group.", "Hard declined", },
 	["incorrectDifficulty"] = {"The difficulty ID doesn't not match the one you selected.", "Incorrect difficulty", },
 	["incorrectBracket"] = {"The bracket ID doesn't not match the one you selected.", "Incorrect bracket", },
+	["incorrectTier"] = {"The tier doesn't not match the one you selected.", "Incorrect tier", },
 	["partyFit"] = {"No more slots for the roles of the players in your group.", "No slots", },
 	["ressFit"] = {"If you join there won't be anyone who has a class ress ability.", "No ress", },
 	["lustFit"] = {"If you join there won't be anyone with a lust effect.", "No lust", },
@@ -175,6 +176,7 @@ miog.INELIGIBILITY_REASONS = {
 	["ratingLowerMismatch"] = {"Your lowest rating filter do not match with this listing.", "Lowest Rating mismatch"},
 	["ratingHigherMismatch"] = {"Your highest rating filter do not match with this listing.", "Highest Rating mismatch"},
 	["dungeonMismatch"] = {"Your dungeon selection does not match with this listing.", "Dungeon mismatch"},
+	["delveMismatch"] = {"Your delve selection does not match with this listing.", "Delve mismatch"},
 	["raidMismatch"] = {"Your raid selection does not match with this listing.", "Raid mismatch"},
 	["bossSelectionMismatch"] = {"Your boss selection does not match with this listing.", "Boss selection mismatch"},
 	["bossKillsMismatch"] = {"Your boss kills filters do not match with this listing.", "Boss kills mismatch"},
@@ -288,14 +290,6 @@ miog.DELVE_TIERS = {
 
 }
 
-local normalDelveActivities = C_LFGList.GetAvailableActivities(121, 341)
-
-for k, v in ipairs(normalDelveActivities) do
-	local activityInfo = C_LFGList.GetActivityInfoTable(v)
-	tinsert(miog.DELVE_TIERS, activityInfo.shortName)
-
-end
-
 miog.rpairs = function(t)
 	return function(t, i)
 		i = i - 1
@@ -303,14 +297,6 @@ miog.rpairs = function(t)
 			return i, t[i]
 		end
 	end, t, #t + 1
-end
-
-local highDelveActivities = C_LFGList.GetAvailableActivities(121, 334)
-
-for k, v in miog.rpairs(highDelveActivities) do
-	local activityInfo = C_LFGList.GetActivityInfoTable(v)
-	tinsert(miog.DELVE_TIERS, activityInfo.shortName)
-
 end
 
 --CONSTANTS
@@ -1074,7 +1060,7 @@ local function requestMapInfo(mapID, selectInstance)
 end
 
 local function getMapInfo(mapID, selectInstance)
-	return miog.MAP_INFO[mapID] or requestMapInfo(mapID, selectInstance)
+	return not selectInstance and miog.MAP_INFO[mapID] or requestMapInfo(mapID, selectInstance)
 end
 
 miog.getMapInfo = getMapInfo

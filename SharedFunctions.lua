@@ -1210,8 +1210,6 @@ miog.getGroupLeader = function()
 end
 
 hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
-	miog.blizzardFilters = C_LFGList.GetAdvancedFilter()
-
 	LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
 	LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
 	LFGListFrame.SearchPanel.FilterButton:Hide()

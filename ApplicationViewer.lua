@@ -248,6 +248,7 @@ local function updateApplicantMemberFrame(frame, data)
 	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID
 	local dungeonData, pvpData, rioProfile
 
+
 	if(miog.F.IS_IN_DEBUG_MODE) then
 		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
 
@@ -730,7 +731,7 @@ local function applicationViewerEvents(_, event, ...)
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
 		local newEntry, withData = ...
 
-		if(not newEntry and not withData or withData) then --REFRESH APP LIST
+		if(withData or not newEntry) then --REFRESH APP LIST
 			updateApplicantList()
 			
 		end

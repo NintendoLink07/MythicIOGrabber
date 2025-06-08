@@ -1,7 +1,7 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
--- /dump C_LFGList.GetAdvancedFilter()
+-- /tinspect C_LFGList.GetAdvancedFilter()
 
 local allFilters = {}
 local _, id = UnitClassBase("player")
