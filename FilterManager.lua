@@ -444,6 +444,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 				end
 
 			elseif(isRaid and raidFiltersAt1) then
+
 				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
 
 				local encountersDefeated = {}

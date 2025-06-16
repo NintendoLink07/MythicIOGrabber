@@ -647,77 +647,108 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			frame.MPlusRating:SetText(string.format(miog.STRING_REPLACEMENTS["MPLUSRATINGSHORT"], data.score.value))
 			frame.MPlusRating:SetTextColor(miog.createCustomColorForRating(data.score.value):GetRGBA())
 
-			--for _, info in ipairs(raidActivities) do
+			if(raidActivities[1]) then
+				local mapID = raidActivities[1].mapID
+				local mapInfo = miog.getMapInfo(mapID, true)
+				local numBosses = #mapInfo.bosses
 
-			local mapID = raidActivities[1].mapID
-			local mapInfo = miog.getMapInfo(mapID, true)
-			local numBosses = #mapInfo.bosses
-
-			for i = 1, 3, 1 do
-				local raidProgressFrame = frame["RaidProgress" .. i]
-				raidProgressFrame:SetText(string.format(miog.STRING_REPLACEMENTS["RAIDPROGRESS" .. i .. "SHORT"], (data.progress[mapID] and data.progress[mapID].regular and data.progress[mapID].regular[i] and data.progress[mapID].regular[i].kills or 0) .. "/" .. numBosses))
-				raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
-
-			end
-			--end
-
-			frame.Itemlevel:SetText(string.format(miog.STRING_REPLACEMENTS["ILVLSHORT"], miog.round(data.ilvl, 2)))
-
-			frame.Honor:SetText("Honorlevel: " .. data.honor.level)
-
-			frame.GuildBannerBackground:SetVertexColor(color:GetRGB())
-			frame.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
-
-			if(data.nextRewards.availableTimestamp) then
-				if(data.nextRewards.availableTimestamp < time()) then
-					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-collect")
-					frame.VaultStatus.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
-				
-				elseif(MIOG_NewSettings.accountStatistics.characters[data.guid].vaultProgress[self.id == 2 and 3 or 1]) then
-					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-complete")
-					frame.VaultStatus.tooltipText = "Your weekly rewards in your great vault will be available in " .. SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true) .. "."
-
-				else
-					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-incomplete")
-					frame.VaultStatus.tooltipText = "You have no activity in this category completed."
+				for i = 1, 3, 1 do
+					local raidProgressFrame = frame["RaidProgress" .. i]
+					raidProgressFrame:SetText(string.format(miog.STRING_REPLACEMENTS["RAIDPROGRESS" .. i .. "SHORT"], (data.progress[mapID] and data.progress[mapID].regular and data.progress[mapID].regular[i] and data.progress[mapID].regular[i].kills or 0) .. "/" .. numBosses))
+					raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
 
 				end
-			else
-				frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-incomplete")
-				frame.VaultStatus.tooltipText = "No great vault activity yet completed."
-				
-			end
+				--end
 
-			if(data.vaultProgress) then
-				GameTooltip:SetOwner(frame.VaultStatus, "ANCHOR_RIGHT")
+				frame.Itemlevel:SetText(string.format(miog.STRING_REPLACEMENTS["ILVLSHORT"], miog.round(data.ilvl, 2)))
 
-				for k, v in ipairs(activityIndices) do
-					local activities = data.vaultProgress[v]
+				frame.Honor:SetText("Honorlevel: " .. data.honor.level)
 
-					local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or k == 3 and frame.WorldStatus
+				frame.GuildBannerBackground:SetVertexColor(color:GetRGB())
+				frame.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
 
-					if(activities) then
-						currentFrame.frameType = "progress"
-
-						currentFrame:SetInfo(activities)
-
-						local farthestActivity = currentFrame:GetFarthestActivity(true)
-						currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
-						currentFrame:SetValue(farthestActivity.progress)
-
-						local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
-
-						local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
-						local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
-						dimColor[4] = 0.1
-							
-						currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
-						miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
-
-						currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold)
-						currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+				if(data.nextRewards.availableTimestamp) then
+					if(data.nextRewards.availableTimestamp < time()) then
+						frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-collect")
+						frame.VaultStatus.tooltipText = MYTHIC_PLUS_COLLECT_GREAT_VAULT
+					
+					elseif(MIOG_NewSettings.accountStatistics.characters[data.guid].vaultProgress[self.id == 2 and 3 or 1]) then
+						frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-complete")
+						frame.VaultStatus.tooltipText = "Your weekly rewards in your great vault will be available in " .. SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true) .. "."
 
 					else
+						frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-incomplete")
+						frame.VaultStatus.tooltipText = "You have no activity in this category completed."
+
+					end
+				else
+					frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-incomplete")
+					frame.VaultStatus.tooltipText = "No great vault activity yet completed."
+					
+				end
+
+				if(data.vaultProgress) then
+					GameTooltip:SetOwner(frame.VaultStatus, "ANCHOR_RIGHT")
+
+					for k, v in ipairs(activityIndices) do
+						local activities = data.vaultProgress[v]
+
+						local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or k == 3 and frame.WorldStatus
+
+						if(activities) then
+							currentFrame.frameType = "progress"
+
+							currentFrame:SetInfo(activities)
+
+							local farthestActivity = currentFrame:GetFarthestActivity(true)
+							currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
+							currentFrame:SetValue(farthestActivity.progress)
+
+							local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
+
+							local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
+							local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+							dimColor[4] = 0.1
+								
+							currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+							miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
+
+							currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold)
+							currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+
+						else
+							currentFrame:SetMinMaxValues(0, 0)
+							currentFrame:SetValue(0)
+							currentFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+							currentFrame.Text:SetText("0/0")
+							currentFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+
+						end
+					end
+
+					local pvpFrame = frame.PVPStatus
+					pvpFrame.frameType = "progress"
+
+					local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(Constants.CurrencyConsts.CONQUEST_CURRENCY_ID);
+					local maxProgress = currencyInfo.maxQuantity;
+					local progress = math.min(currencyInfo.totalEarned, maxProgress);
+					local percentage = progress / maxProgress * 100
+					local currentColor = percentage >= 100 and miog.CLRSCC.green or percentage >= 66 and miog.CLRSCC.yellow or percentage >= 33 and miog.CLRSCC.orange or miog.CLRSCC.red
+					local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+					dimColor[4] = 0.1
+						
+					pvpFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+					miog.createFrameWithBackgroundAndBorder(pvpFrame, 1, unpack(dimColor))
+
+					pvpFrame:SetMinMaxValues(0, maxProgress)
+					pvpFrame:SetValue(progress)
+					pvpFrame.Text:SetText(progress .. "/" .. maxProgress)
+					pvpFrame.Text:SetTextColor(CreateColorFromHexString(percentage == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+
+				else
+					for k, v in ipairs(activityIndices) do
+						local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or frame.WorldStatus
+
 						currentFrame:SetMinMaxValues(0, 0)
 						currentFrame:SetValue(0)
 						currentFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
@@ -725,137 +756,106 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 						currentFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
 
 					end
+
+					local pvpFrame = frame.PVPStatus
+					pvpFrame:SetMinMaxValues(0, 0)
+					pvpFrame:SetValue(0)
+					pvpFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
+					pvpFrame.Text:SetText("0/0")
+					pvpFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
 				end
 
-				local pvpFrame = frame.PVPStatus
-				pvpFrame.frameType = "progress"
+				frame.VaultStatus:Show()
 
-				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(Constants.CurrencyConsts.CONQUEST_CURRENCY_ID);
-				local maxProgress = currencyInfo.maxQuantity;
-				local progress = math.min(currencyInfo.totalEarned, maxProgress);
-				local percentage = progress / maxProgress * 100
-				local currentColor = percentage >= 100 and miog.CLRSCC.green or percentage >= 66 and miog.CLRSCC.yellow or percentage >= 33 and miog.CLRSCC.orange or miog.CLRSCC.red
-				local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
-				dimColor[4] = 0.1
-					
-				pvpFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
-				miog.createFrameWithBackgroundAndBorder(pvpFrame, 1, unpack(dimColor))
-
-				pvpFrame:SetMinMaxValues(0, maxProgress)
-				pvpFrame:SetValue(progress)
-				pvpFrame.Text:SetText(progress .. "/" .. maxProgress)
-				pvpFrame.Text:SetTextColor(CreateColorFromHexString(percentage == 0 and currentColor or "FFFFFFFF"):GetRGBA())
-
-			else
-				for k, v in ipairs(activityIndices) do
-					local currentFrame = k == 1 and frame.MPlusStatus or k == 2 and frame.RaidStatus or frame.WorldStatus
-
-					currentFrame:SetMinMaxValues(0, 0)
-					currentFrame:SetValue(0)
-					currentFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
-					currentFrame.Text:SetText("0/0")
-					currentFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
-
-				end
-
-				local pvpFrame = frame.PVPStatus
-				pvpFrame:SetMinMaxValues(0, 0)
-				pvpFrame:SetValue(0)
-				pvpFrame:SetStatusBarColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
-				pvpFrame.Text:SetText("0/0")
-				pvpFrame.Text:SetTextColor(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
-			end
-
-			frame.VaultStatus:Show()
-
-			local view = CreateScrollBoxListLinearView();
-			view:SetElementInitializer("MIOG_LockoutCheckInstanceTemplate", function(elementFrame, data)
-				if(not data.isWorldBoss) then
-					elementFrame.Name:SetText(miog.MAP_INFO[data.mapID].shortName or data.name)
-					elementFrame.Icon:SetTexture(data.icon)
-					elementFrame.Difficulty:SetText(WrapTextInColorCode(miog.DIFFICULTY_ID_INFO[data.difficulty].shortName, miog.DIFFICULTY_ID_TO_COLOR[data.difficulty]:GenerateHexColor()))
-					elementFrame.Checkmark:SetShown(data.cleared)
-		
-					elementFrame:SetScript("OnEnter", function(localSelf)
-						RequestRaidInfo()
-
-						GameTooltip:SetOwner(localSelf, "ANCHOR_RIGHT")
-						GameTooltip:SetText(miog.MAP_INFO[data.mapID].name)
-						GameTooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[data.difficulty].name))
-						GameTooltip:AddLine(string.format(data.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(data.resetDate - time()) .. " (" .. date("%x %X", data.resetDate) .. ")"))
-
-						local setAliveEncounters, setDefeatedEncounters = false, false
-
-						for i = 1, data.numEncounters, 1 do
-							local isKilled = data.bosses[i].isKilled
-							local bossName = data.bosses[i].bossName
-
-							if(not isKilled) then
-								if(not setAliveEncounters) then
-									GameTooltip_AddBlankLineToTooltip(GameTooltip)
-									GameTooltip:AddLine("Encounters available: ")
-									setAliveEncounters = true
-									
-								end
-
-								GameTooltip:AddLine(WrapTextInColorCode(isKilled and "Defeated " or "Alive ", isKilled and miog.CLRSCC.red or miog.CLRSCC.green) ..  bossName)
-
-							end
-						end
-
-						for i = 1, data.numEncounters, 1 do
-							local isKilled = data.bosses[i].isKilled
-							local bossName = data.bosses[i].bossName
-							--local bossName, fileDataID, isKilled, unknown4 = GetSavedInstanceEncounterInfo(index, i)
-
-							if(isKilled) then
-								if(not setDefeatedEncounters) then
-									GameTooltip_AddBlankLineToTooltip(GameTooltip)
-									GameTooltip:AddLine("Encounters defeated: ")
-									setDefeatedEncounters = true
-									
-								end
-
-								GameTooltip:AddLine(WrapTextInColorCode(isKilled and "Defeated " or "Alive ", isKilled and miog.CLRSCC.red or miog.CLRSCC.green) ..  bossName)
-							end
-						end
-		
-						GameTooltip:Show()
-					end)
-				elseif(MIOG_NOTDISABLED) then
-					elementFrame.Name:SetText("OWB")
-					elementFrame:SetScript("OnEnter", function(self)
-						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-
-						GameTooltip:SetText(data.name)
-						GameTooltip:AddLine("World Boss")
-						GameTooltip:AddLine(string.format(data.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(data.resetDate - time()) .. " (" .. date("%x %X", data.resetDate) .. ")"))
-
-						GameTooltip:Show()
-					end)
-
-				end
-
-				elementFrame:SetScript("OnLeave", function()
-					GameTooltip:Hide()
-				end)
-			end);
+				local view = CreateScrollBoxListLinearView();
+				view:SetElementInitializer("MIOG_LockoutCheckInstanceTemplate", function(elementFrame, data)
+					if(not data.isWorldBoss) then
+						elementFrame.Name:SetText(miog.MAP_INFO[data.mapID].shortName or data.name)
+						elementFrame.Icon:SetTexture(data.icon)
+						elementFrame.Difficulty:SetText(WrapTextInColorCode(miog.DIFFICULTY_ID_INFO[data.difficulty].shortName, miog.DIFFICULTY_ID_TO_COLOR[data.difficulty]:GenerateHexColor()))
+						elementFrame.Checkmark:SetShown(data.cleared)
 			
-			view:SetPadding(1, 1, 1, 1, 2);
+						elementFrame:SetScript("OnEnter", function(localSelf)
+							RequestRaidInfo()
 
-			frame.ScrollBox:Init(view);
+							GameTooltip:SetOwner(localSelf, "ANCHOR_RIGHT")
+							GameTooltip:SetText(miog.MAP_INFO[data.mapID].name)
+							GameTooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[data.difficulty].name))
+							GameTooltip:AddLine(string.format(data.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(data.resetDate - time()) .. " (" .. date("%x %X", data.resetDate) .. ")"))
 
-			local dataProvider = CreateDataProvider();
+							local setAliveEncounters, setDefeatedEncounters = false, false
+
+							for i = 1, data.numEncounters, 1 do
+								local isKilled = data.bosses[i].isKilled
+								local bossName = data.bosses[i].bossName
+
+								if(not isKilled) then
+									if(not setAliveEncounters) then
+										GameTooltip_AddBlankLineToTooltip(GameTooltip)
+										GameTooltip:AddLine("Encounters available: ")
+										setAliveEncounters = true
+										
+									end
+
+									GameTooltip:AddLine(WrapTextInColorCode(isKilled and "Defeated " or "Alive ", isKilled and miog.CLRSCC.red or miog.CLRSCC.green) ..  bossName)
+
+								end
+							end
+
+							for i = 1, data.numEncounters, 1 do
+								local isKilled = data.bosses[i].isKilled
+								local bossName = data.bosses[i].bossName
+								--local bossName, fileDataID, isKilled, unknown4 = GetSavedInstanceEncounterInfo(index, i)
+
+								if(isKilled) then
+									if(not setDefeatedEncounters) then
+										GameTooltip_AddBlankLineToTooltip(GameTooltip)
+										GameTooltip:AddLine("Encounters defeated: ")
+										setDefeatedEncounters = true
+										
+									end
+
+									GameTooltip:AddLine(WrapTextInColorCode(isKilled and "Defeated " or "Alive ", isKilled and miog.CLRSCC.red or miog.CLRSCC.green) ..  bossName)
+								end
+							end
 			
-			if(MIOG_NewSettings.lockoutCheck[data.fullName]) then
-				local settings = MIOG_NewSettings.lockoutCheck[data.fullName]
+							GameTooltip:Show()
+						end)
+					elseif(MIOG_NOTDISABLED) then
+						elementFrame.Name:SetText("OWB")
+						elementFrame:SetScript("OnEnter", function(self)
+							GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-				for a, b in ipairs(settings) do
-					dataProvider:Insert(b);
+							GameTooltip:SetText(data.name)
+							GameTooltip:AddLine("World Boss")
+							GameTooltip:AddLine(string.format(data.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(data.resetDate - time()) .. " (" .. date("%x %X", data.resetDate) .. ")"))
 
+							GameTooltip:Show()
+						end)
+
+					end
+
+					elementFrame:SetScript("OnLeave", function()
+						GameTooltip:Hide()
+					end)
+				end);
+				
+				view:SetPadding(1, 1, 1, 1, 2);
+
+				frame.ScrollBox:Init(view);
+
+				local dataProvider = CreateDataProvider();
+				
+				if(MIOG_NewSettings.lockoutCheck[data.fullName]) then
+					local settings = MIOG_NewSettings.lockoutCheck[data.fullName]
+
+					for a, b in ipairs(settings) do
+						dataProvider:Insert(b);
+
+					end
+
+					frame.ScrollBox:SetDataProvider(dataProvider);
 				end
-
-				frame.ScrollBox:SetDataProvider(dataProvider);
 			end
         end)
 

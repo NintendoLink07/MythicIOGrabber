@@ -6,11 +6,22 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.4.5] - 2025-05-30
+## [3.4.5] - 2025-06-16
+
+### Changed
+
+- The filter panel has been reworked:
+    - When you change a setting that is getting applied by Blizzard interally to pre-filter the results you're getting a "warning" shows up asking you to refresh the search panel.
+    This way you get more accurate results by Blizzard.
+
+    - Some logic tweaks
+
 
 ### Fixed
 
 - [SearchPanel] After applying to a group the scroll frame will retain it's current scroll position.
+
+- [Progress] Multiple issues regarding the vault status in the overview screen have been resolved.
 
 
 

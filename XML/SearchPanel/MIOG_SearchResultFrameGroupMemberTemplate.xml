@@ -17,9 +17,14 @@
         </Layers>
 
         <Scripts>
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
+            <OnEnter>
+                if(self.leaderName) then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], self.leaderName))
+                    GameTooltip:Show()
+                end
+            </OnEnter>
+            <OnLeave function="GameTooltip_Hide" />
         </Scripts>
 
     </Frame>

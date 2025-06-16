@@ -1,6 +1,10 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local formatter = CreateFromMixins(SecondsFormatterMixin)
+formatter:SetStripIntervalWhitespace(true)
+formatter:Init(0, SecondsFormatter.Abbreviation.None)
+
 local currentlySelectedID
 
 local function findFrame(resultID)
@@ -297,7 +301,7 @@ local function createDataProviderWithUnsortedData()
 
 				local status, reason =  miog.filter.checkIfSearchResultIsEligible(resultID)
 				
-				if(appStatus == "applied" or status) then
+				if(appStatus == "applied" or status ~= false) then
 					local primarySortAttribute, secondarySortAttribute
 
 					local nameTable
@@ -525,18 +529,9 @@ local function sortSmallGroup(k1, k2)
 	end
 end
 
-local function initialUpdateScrollBoxFrame(frame, data)
-
-end
+local firstID
 
 local function updateScrollBoxFrame(frame, data)
-	--[[
-	
-	split into 2 functions
-	
-	]]
-
-
 	if(C_LFGList.HasSearchResultInfo(data.resultID)) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 		local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
@@ -545,43 +540,12 @@ local function updateScrollBoxFrame(frame, data)
 		local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 		currentFrame.resultID = data.resultID
 		
-		local bossPanel = currentFrame.CategoryInformation.BossPanel
-		local mapInfo = miog.getMapInfo(mapID, true)
-		
-		if(mapInfo and LFGListFrame.SearchPanel.categoryID == 3) then
-			local bossData = mapInfo.bosses
-
-			local bossCounter = #bossData
-
-			bossPanel.bossFrames = {}
-
-			for i = 20, 1, -1 do
-				local bossFrame = currentFrame.CategoryInformation.BossPanel["Boss" .. i]
-				local bossInfo = bossData[bossCounter]
-
-				if(bossInfo) then
-					bossFrame.name = bossInfo.name
-					bossFrame.altName = bossInfo.altName
-					currentFrame.CategoryInformation.BossPanel.bossFrames[bossCounter] = bossFrame
-
-					SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
-					bossFrame:Show()
-
-					bossCounter = bossCounter - 1
-
-				end
-			end
-		else
-			bossPanel:Hide()
-
-		end
-
 		currentFrame.Background:SetTexture(activityInfo.horizontal, "CLAMP", "MIRROR")
 		currentFrame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
 
 		currentFrame.BasicInformation.Icon:SetScript("OnMouseDown", function()
-			local diff = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1]
-			EncounterJournal_OpenJournal(diff, instanceID, nil, nil, nil, nil)
+			--local diff = miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName] and miog.DIFFICULTY_NAMES_TO_ID[activityInfo.categoryID][activityInfo.shortName][1]
+			EncounterJournal_OpenJournal(activityInfo.difficultyID, instanceID, nil, nil, nil, nil)
 
 		end)
 
@@ -590,12 +554,18 @@ local function updateScrollBoxFrame(frame, data)
 
 		end
 
+		if(not firstID) then
+			firstID = data.resultID
+
+		end
+
 		local ageNumber = searchResultInfo.age
-		currentFrame.BasicInformation.Age:Show()
 		currentFrame.BasicInformation.Age:SetText(miog.secondsToClock(ageNumber))
 		currentFrame.BasicInformation.Age:SetTextColor(1, 1, 1, 1)
 		currentFrame.BasicInformation.Age.ageTicker = C_Timer.NewTicker(1, function()
 			ageNumber = ageNumber + 1
+				
+
 			currentFrame.BasicInformation.Age:SetText(miog.secondsToClock(ageNumber))
 
 		end)
@@ -603,7 +573,15 @@ local function updateScrollBoxFrame(frame, data)
 
 		currentFrame.AcceptInvite:Hide()
 
-		local orderedList = {}
+		local isRaid = activityInfo.categoryID == 3
+
+		local memberPanel = currentFrame.CategoryInformation.MemberPanel
+		memberPanel:SetShown(not isRaid)
+
+		local bossPanel = currentFrame.CategoryInformation.BossPanel
+		bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
+
+		currentFrame.CategoryInformation.DifficultyZone:SetWidth(not isRaid and 100 or LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
 
 		local roleCount = {
 			["TANK"] = 0,
@@ -611,137 +589,131 @@ local function updateScrollBoxFrame(frame, data)
 			["DAMAGER"] = 0,
 		}
 
-		for i = 1, searchResultInfo.numMembers, 1 do
-			local role, class, _, specLocalized, isLeader = C_LFGList.GetSearchResultMemberInfo(data.resultID, i)
-
-			if(role or class) then
-				table.insert(orderedList, {leader = isLeader, role = role, class = class, specID = class and specLocalized and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]})
-
+		if(isRaid) then
+			for i = 1, searchResultInfo.numMembers, 1 do
+				local role = C_LFGList.GetSearchResultMemberInfo(data.resultID, i)
 
 				if(role) then
 					roleCount[role] = roleCount[role] + 1
 
 				end
 			end
-		end
 
-		local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
-
-		local memberPanel = currentFrame.CategoryInformation.MemberPanel
-
-		memberPanel:SetShown(activityInfo.categoryID ~= 3)
-		bossPanel:SetShown(activityInfo.categoryID == 3 and activityInfo.difficultyID and activityInfo.difficultyID > 0)
-		currentFrame.CategoryInformation.DifficultyZone:SetWidth(activityInfo.categoryID ~= 3 and 100 or LFGListFrame.SearchPanel.filters == Enum.LFGListFilter.NotRecommended and 60 or 140)
-
-		currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
-
-		if(activityInfo.categoryID == 3) then
 			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
+			local encountersDefeated = {}
 
-			if(currentFrame.encounterInfo ~= encounterInfo or encounterInfo == {}) then
-				local encountersDefeated = {}
+			if(encounterInfo) then
+				for k, v in ipairs(encounterInfo) do
+					encountersDefeated[v] = true
 
-				if(encounterInfo) then
-					for k, v in ipairs(encounterInfo) do
-						encountersDefeated[v] = true
+				end
+			end
+
+			local mapInfo = miog.getMapInfo(mapID, true)
+
+			if(mapInfo) then
+				local bossData = mapInfo.bosses
+
+				local bossCounter = #bossData
+
+				for i = 20, 1, -1 do
+					local bossFrame = currentFrame.CategoryInformation.BossPanel["Boss" .. i]
+					local bossInfo = bossData[bossCounter]
+
+					if(bossInfo) then
+						local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+
+						bossFrame.Icon:SetDesaturated(bossDefeated)
+						bossFrame.Border:SetColorTexture(CreateColorFromHexString(bossDefeated and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
+
+						SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+						bossFrame:Show()
+
+						bossCounter = bossCounter - 1
+
+					else
+						bossFrame:Hide()
 
 					end
 				end
-
-				if(bossPanel.bossFrames) then
-					for k, v in ipairs(bossPanel.bossFrames) do
-						if(mapInfo.bosses[k]) then
-							local currentBoss = mapInfo.bosses[k]
-
-							if(encountersDefeated[currentBoss.name] or encountersDefeated[currentBoss.altName]) then
-								v.Icon:SetDesaturated(true)
-								v.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.red):GetRGBA())
-
-							else
-								v.Icon:SetDesaturated(false)
-								v.Border:SetColorTexture(CreateColorFromHexString(miog.CLRSCC.green):GetRGBA())
-
-							end
-
-						else
-							v.Border:SetColorTexture(0,0,0,0)
-
-						end
-
-					end
-				end
-
-				currentFrame.encounterInfo = encounterInfo
-			else
-
 			end
-		end
-
-		if(activityInfo.categoryID ~= 3) then
-			for i = 1, 1, 1 do
-				if(roleCount["TANK"] < 1 and searchResultInfo.numMembers < groupLimit) then
-					table.insert(orderedList, {class = "DUMMY", role = "TANK", specID = 20})
-				end
-			end
-
-			for i = 2, 2, 1 do
-				if(roleCount["HEALER"] < 1 and searchResultInfo.numMembers < groupLimit) then
-					table.insert(orderedList, {class = "DUMMY", role = "HEALER", specID = 20})
-					roleCount["HEALER"] = roleCount["HEALER"] + 1
-
-				end
-			end
-
-			for i = 3, 5, 1 do
-				if(roleCount["DAMAGER"] < 3 and searchResultInfo.numMembers < groupLimit) then
-					table.insert(orderedList, {class = "DUMMY", role = "DAMAGER", specID = 20})
-					roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
-				end
-			end
-
-			table.sort(orderedList, sortSmallGroup)
+		else
+			local memberList = {}
+			local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
 
 			for i = 1, 5, 1 do
-				if(i <= groupLimit) then
-					local currentMemberFrame = memberPanel[tostring(i)]
+				local role, class, _, specLocalized, isLeader = C_LFGList.GetSearchResultMemberInfo(data.resultID, i)
 
-					currentMemberFrame.Icon:SetTexture(orderedList[i].specID and miog.SPECIALIZATIONS[orderedList[i].specID] and miog.SPECIALIZATIONS[orderedList[i].specID].squaredIcon or
-					orderedList[i].class and miog.CLASSFILE_TO_ID[orderedList[i].class] and miog.CLASSES[miog.CLASSFILE_TO_ID[orderedList[i].class]].icon)
+				if(role or class) then
+					table.insert(memberList, {leader = isLeader, role = role, class = class, specID = class and specLocalized and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]})
 
-					if(orderedList[i].class ~= "DUMMY") then
-						currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(orderedList[i].class):GetRGBA())
+					if(role) then
+						roleCount[role] = roleCount[role] + 1
+
+					end
+					
+				elseif(i <= groupLimit) then
+					if(roleCount["TANK"] < 1 and searchResultInfo.numMembers < groupLimit) then
+						tinsert(memberList, {class = "DUMMY", role = "TANK", specID = 20})
+
+					end
+
+					if(roleCount["HEALER"] < 1 and searchResultInfo.numMembers < groupLimit) then
+						table.insert(memberList, {class = "DUMMY", role = "HEALER", specID = 20})
+						roleCount["HEALER"] = roleCount["HEALER"] + 1
+
+					end
+
+					for _ = 3, 5, 1 do
+						if(roleCount["DAMAGER"] < 3 and searchResultInfo.numMembers < groupLimit) then
+							table.insert(memberList, {class = "DUMMY", role = "DAMAGER", specID = 20})
+							roleCount["DAMAGER"] = roleCount["DAMAGER"] + 1
+						end
+					end
+
+					break
+				end
+			end
+
+			table.sort(memberList, sortSmallGroup)
+
+			for i = 1, 5, 1 do
+				local currentMemberFrame = memberPanel.memberFrames[i]
+				local underLimit = i <= groupLimit
+					
+				if(underLimit) then
+					local memberData = memberList[i]
+
+					currentMemberFrame.Icon:SetTexture(memberData.specID and miog.SPECIALIZATIONS[memberData.specID] and miog.SPECIALIZATIONS[memberData.specID].squaredIcon or
+					memberData.class and miog.CLASSFILE_TO_ID[memberData.class] and miog.CLASSES[miog.CLASSFILE_TO_ID[memberData.class]].icon)
+
+					if(memberData.class ~= "DUMMY") then
+						currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(memberData.class):GetRGBA())
 
 					else
 						currentMemberFrame.Border:SetColorTexture(0, 0, 0, 0)
 
 					end
 
-					if(orderedList[i].leader) then
+					if(memberData.leader) then
 						memberPanel.LeaderCrown:ClearAllPoints()
 						memberPanel.LeaderCrown:SetParent(currentMemberFrame)
 						memberPanel.LeaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
-						memberPanel.LeaderCrown:SetShown(true)
+						memberPanel.LeaderCrown:Show()
 
-						currentMemberFrame:SetMouseMotionEnabled(true)
-						currentMemberFrame:SetScript("OnEnter", function()
-							GameTooltip:SetOwner(currentMemberFrame, "ANCHOR_RIGHT")
-							GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], searchResultInfo.leaderName or ""))
-							GameTooltip:Show()
+						currentMemberFrame.leaderName = searchResultInfo.leaderName
 
-						end)
 					else
-						currentMemberFrame:SetScript("OnEnter", nil)
+						currentMemberFrame.leaderName = nil
 
 					end
-
-					memberPanel[tostring(i)]:Show()
-
-				else
-					memberPanel[tostring(i)]:Hide()
-
 				end
+				
+				currentMemberFrame:SetShown(underLimit)
 			end
 		end
+
+		currentFrame.CategoryInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
 
 		updateOptionalScrollBoxFrameData(frame, data)
 		updateScrollBoxFrameStatus(frame, data.resultID)

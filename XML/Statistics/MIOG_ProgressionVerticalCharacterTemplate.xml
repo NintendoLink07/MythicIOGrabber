@@ -44,9 +44,11 @@
 
                     <Scripts>
                         <OnEnter>
-                            GameTooltip:SetOwner(self)
-                            GameTooltip:SetText(self.tooltipText)
-                            GameTooltip:Show()
+                            if(self.tooltipText) then
+                                GameTooltip:SetOwner(self)
+                                GameTooltip:SetText(self.tooltipText)
+                                GameTooltip:Show()
+                            end
                         </OnEnter>
                         <OnLeave function="GameTooltip_Hide" />
                     </Scripts>

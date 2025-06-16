@@ -203,46 +203,56 @@
                 </Layers>
 
                 <Frames>
-                    <Frame parentKey="MemberPanel" hidden="true">
-                        <Size x="145" y="20"/>
+                    <Frame parentKey="MemberPanel" hidden="true" inherits="HorizontalLayoutFrame">
+                        <Size y="20"/>
+
+                        <KeyValues>
+                            <KeyValue key="spacing" value="13" type="number" />
+                        </KeyValues>
+
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-21"/>
                         </Anchors>
 
                         <Frames>
-                            <Frame parentKey="1" inherits="MIOG_GroupMemberTemplate">
+                            <Frame parentKey="1" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="16" y="16" />
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
-                                </Anchors>
+
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="1" type="number" />
+                                </KeyValues>
                             </Frame>
 
-                            <Frame parentKey="2" inherits="MIOG_GroupMemberTemplate">
+                            <Frame parentKey="2" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="16" y="16" />
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.1" relativePoint="RIGHT" x="13"/>
-                                </Anchors>
+
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="2" type="number" />
+                                </KeyValues>
                             </Frame>
 
-                            <Frame parentKey="3" inherits="MIOG_GroupMemberTemplate">
+                            <Frame parentKey="3" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="16" y="16" />
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.2" relativePoint="RIGHT" x="13"/>
-                                </Anchors>
+
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                </KeyValues>
                             </Frame>
 
-                            <Frame parentKey="4" inherits="MIOG_GroupMemberTemplate">
+                            <Frame parentKey="4" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="16" y="16" />
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.3" relativePoint="RIGHT" x="13"/>
-                                </Anchors>
+
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="4" type="number" />
+                                </KeyValues>
                             </Frame>
 
-                            <Frame parentKey="5" inherits="MIOG_GroupMemberTemplate">
+                            <Frame parentKey="5" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
                                 <Size x="16" y="16" />
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.4" relativePoint="RIGHT" x="13"/>
-                                </Anchors>
+
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="5" type="number" />
+                                </KeyValues>
                             </Frame>
                         </Frames>
 
@@ -286,9 +296,7 @@
 
                 end
             </OnMouseDown>
-            <OnLeave>
-		        GameTooltip:Hide()
-            </OnLeave>
+            <OnLeave function="GameTooltip_Hide" />
         </Scripts>
     </Frame>
 </Ui>
