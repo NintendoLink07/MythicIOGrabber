@@ -281,8 +281,8 @@
                             <OnEnter>
                                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                 GameTooltip:SetText(C_LFGList.HasActiveEntryInfo()
-                                and C_LFGList.GetActiveEntryInfo().requiredDungeonScore and string.format(GROUP_FINDER_MYTHIC_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredDungeonScore)
-                                or C_LFGList.GetActiveEntryInfo().requiredPvpRating and string.format(GROUP_FINDER_PVP_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredPvpRating)
+                                and (C_LFGList.GetActiveEntryInfo().requiredDungeonScore and string.format(GROUP_FINDER_MYTHIC_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredDungeonScore)
+                                or C_LFGList.GetActiveEntryInfo().requiredPvpRating and string.format(GROUP_FINDER_PVP_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredPvpRating))
                                 or "Rating required: 0")
                                 GameTooltip:Show()
                             </OnEnter>

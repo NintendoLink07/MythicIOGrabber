@@ -34,7 +34,7 @@
             <CheckButton parentKey="Link" inherits="UICheckButtonTemplate">
                 <Size x="10" y="10" />
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="2"/>
+                    <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="4"/>
                 </Anchors>
 
                 <NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\filterLinkGray.png" />
@@ -44,17 +44,17 @@
                 
             </CheckButton>
 
-            <EditBox parentKey="Maximum" letters="2" inherits="NumericInputSpinnerTemplate">
-                <Size x="25" y="20"/>
-                <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent" x="-20"/>
-                </Anchors>
-            </EditBox>
-
             <EditBox parentKey="Minimum" letters="2" inherits="NumericInputSpinnerTemplate">
                 <Size x="25" y="20"/>
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.Maximum.DecrementButton" relativePoint="LEFT" x="-24"/>
+                    <Anchor point="LEFT" relativeKey="$parent.Link" relativePoint="RIGHT" x="36"/>
+                </Anchors>
+            </EditBox>
+
+            <EditBox parentKey="Maximum" letters="2" inherits="NumericInputSpinnerTemplate">
+                <Size x="25" y="20"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Minimum" relativePoint="RIGHT" x="50"/>
                 </Anchors>
             </EditBox>
         </Frames>

@@ -296,6 +296,8 @@ end
 function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
     self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(self.playerName, self.realm, self.region)
 
+    MIOG_TBL = self.raidData
+
 	local raidMapIDSet = {}
 	local mainRaidMapIDSet = {}
     local hasIcon = self.Raids.Raid1.Header.Icon
@@ -342,22 +344,11 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                                 raidHeaderFrame.Name:SetText(normalOrMainData.raids[data.mapID].shortName)
                                             end
     
-                                            if(raidHeaderFrame.Progress1) then --miog.DIFFICULTY[a].shortName .. ":" .. 
-                                                raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
-    
-                                            elseif(raidFrame.Bosses.Progress1) then
-                                                raidFrame.Bosses.Progress1:SetStatusBarColor(miog.DIFFICULTY[a].baseColor.color:GetRGBA())
-    
-                                            end
+                                            raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
     
                                             if(currentTable.difficulties[a-1]) then
-                                                if(raidHeaderFrame.Progress2) then --miog.DIFFICULTY[a-1].shortName .. ":" .. 
-                                                    raidHeaderFrame.Progress2:SetText(WrapTextInColorCode(currentTable.difficulties[a-1].parsedString, miog.DIFFICULTY[a-1].color))
+                                                raidHeaderFrame.Progress2:SetText(WrapTextInColorCode(currentTable.difficulties[a-1].parsedString, miog.DIFFICULTY[a-1].color))
     
-                                                elseif(raidFrame.Bosses.Progress2) then
-                                                    raidFrame.Bosses.Progress2:SetStatusBarColor(miog.DIFFICULTY[a-1].baseColor.color:GetRGBA())
-    
-                                                end
                                             end
     
                                             local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background

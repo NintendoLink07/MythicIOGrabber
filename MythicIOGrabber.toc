@@ -1,4 +1,4 @@
-## Interface: 110105
+## Interface: 110107
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO, MythicIO - Resources
@@ -88,7 +88,6 @@ XML\MIOG_LastInvitesPlayerTemplate.xml
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_HolidayFrameTemplate.xml
 XML\MIOG_OptionsPanel.xml
-XML\MIOG_DropChecker.xml
 XML\MIOG_PopupFrame.xml
 
 XML\GroupManager\MIOG_GroupManager.xml
@@ -168,18 +167,18 @@ XML\Statistics\MIOG_ProgressFullCharacterTemplate.xml
 XML\Statistics\MIOG_ProgressFullCharacterIconTemplate.xml
 XML\Statistics\MIOG_ProgressionVerticalCharacterTemplate.xml
 
-XML\Util\MIOG_MultiStateButtonTemplate.xml
-XML\Util\MIOG_SortButtonTemplate.xml
-XML\Util\MIOG_SortButtonWithTextTemplate.xml
-XML\Util\MIOG_NavBarButtonTemplate.xml
-XML\Util\MIOG_TabButtonTemplate.xml
-XML\Util\MIOG_MinimalCheckButtonTemplate.xml
-XML\Util\MIOG_MinimalCheckButtonWithTextTemplate.xml
-XML\Util\MIOG_MenuButtonTemplate.xml
-XML\Util\MIOG_VerticalButtonTemplate.xml
-XML\Util\MIOG_MinimalHorizontalScrollBarTemplate.xml
-XML\Util\MIOG_IconWithTextTemplate.xml
-XML\Util\MIOG_SearchBoxFilterTemplate.xml
+XML\Misc\MIOG_MultiStateButtonTemplate.xml
+XML\Misc\MIOG_SortButtonTemplate.xml
+XML\Misc\MIOG_SortButtonWithTextTemplate.xml
+XML\Misc\MIOG_NavBarButtonTemplate.xml
+XML\Misc\MIOG_TabButtonTemplate.xml
+XML\Misc\MIOG_MinimalCheckButtonTemplate.xml
+XML\Misc\MIOG_MinimalCheckButtonWithTextTemplate.xml
+XML\Misc\MIOG_MenuButtonTemplate.xml
+XML\Misc\MIOG_VerticalButtonTemplate.xml
+XML\Misc\MIOG_MinimalHorizontalScrollBarTemplate.xml
+XML\Misc\MIOG_IconWithTextTemplate.xml
+XML\Misc\MIOG_SearchBoxFilterTemplate.xml
 
 XML\MIOG_StatisticsPage.xml
 XML\MIOG_StatisticsPageListEntryTemplate.xml

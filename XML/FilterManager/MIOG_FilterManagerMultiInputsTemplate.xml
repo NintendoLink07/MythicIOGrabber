@@ -41,7 +41,7 @@
             <EditBox parentKey="Minimum" inherits="InputBoxTemplate" autoFocus="false">
                 <Size x="60" y="20" />
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.Maximum" relativePoint="LEFT" x="-2"/>
+                    <Anchor point="RIGHT" relativeKey="$parent.Maximum" relativePoint="LEFT" x="-4"/>
                 </Anchors>
             </EditBox>
         </Frames>

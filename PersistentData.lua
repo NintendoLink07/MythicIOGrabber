@@ -83,7 +83,13 @@ miog.CLRSCC = { -- from clrs.cc
 	["gray"] = "FFAAAAAA",
 	["silver"] = "FFDDDDDD",
 	["white"] = "FFFFFFFF",
+	colors = {},
 }
+
+for k, v in pairs(miog.CLRSCC) do
+	miog.CLRSCC.colors[k] = CreateColorFromHexString(v)
+
+end
 
 miog.SLOT_ID_INFO = {
 	[0] = {slotName = "AMMOSLOT", localizedName = nil},
@@ -110,6 +116,7 @@ miog.SLOT_ID_INFO = {
 
 for i = 0, #miog.SLOT_ID_INFO, 1 do
 	miog.SLOT_ID_INFO[i].localizedName = _G[miog.SLOT_ID_INFO[i].slotName]
+
 end
 
 miog.AJ_CLRSCC = {
@@ -249,7 +256,7 @@ miog.CUSTOM_DIFFICULTY_ORDER = {
 	["M+"] = 5,
 }
 
-for i = 0, 230, 1 do -- max # of difficulties in wago tools Difficulty
+for i = 0, 250, 1 do -- https://wago.tools/db2/Difficulty
 	local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic, toggleDifficultyID, isLFR, minGroupSize, maxGroupSize = GetDifficultyInfo(i)
 
 	if(name) then
@@ -844,10 +851,6 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 
 miog.ACTIVITY_INFO = {}
 
-miog.DROPCHECKER_MAP_IDS ={
-	--[13] = {dungeons = {2660, 2662, 2652, 2669, 2651, 2661, 2649, 2648}, raids = {2657}}, --670, 1822, 2290, 2286, 
-}
-
 miog.SEASONAL_CHALLENGE_MODES = {
 	[12] = {399, 400, 401, 402, 403, 404, 405, 406},
 	[13] = {353, 375, 376, 501, 502, 503, 505, 507},
@@ -994,41 +997,46 @@ miog.checkJournalInstanceIDForNewData = checkJournalInstanceIDForNewData
 
 local function checkSingleMapIDForNewData(mapID, selectInstance)
 	if(mapID and mapID > 0 and miog.MAP_INFO[mapID]) then
-		local bossIndex = 1;
+		local bossIndex = 1
+		local journalInstanceID = miog.MAP_INFO[mapID].journalInstanceID
 
-		local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
+		local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID)
 
 		if(not bossName) then
 			if(selectInstance) then
-				EJ_SelectInstance(miog.MAP_INFO[mapID].journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID))
+				EJ_SelectInstance(journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID))
 				miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
 
 			end
 
-			bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex);
+			bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex);
 		end
 
-		while bossName do
-			local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature (boss)
-			
-			miog.MAP_INFO[mapID].bosses[bossIndex] = {
-				name = bossName,
-				altName = name2,
-				journalEncounterID = journalEncounterID,
-				journalInstanceID = journalInstanceID,
-				dungeonEncounterID = dungeonEncounterID,
-				mapID = mapID,
-				orderIndex = id,
-				achievements = {},
-				id = id,
-				creatureDisplayInfoID = displayInfo,
-				icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
-			}
+		if(miog.MAP_INFO[mapID].numOfBosses == 0) then
+			while bossName do
+				local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature (boss)
+				
+				miog.MAP_INFO[mapID].bosses[bossIndex] = {
+					name = bossName,
+					altName = name2,
+					journalEncounterID = journalEncounterID,
+					journalInstanceID = journalInstanceID,
+					dungeonEncounterID = dungeonEncounterID,
+					mapID = mapID,
+					orderIndex = id,
+					achievements = {},
+					id = id,
+					creatureDisplayInfoID = displayInfo,
+					icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
+				}
 
-			miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = miog.MAP_INFO[mapID].bosses[bossIndex]}
+				miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = miog.MAP_INFO[mapID].bosses[bossIndex]}
 
-			bossIndex = bossIndex + 1;
-			bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, miog.MAP_INFO[mapID].journalInstanceID);
+				bossIndex = bossIndex + 1;
+				bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+			end
+
+			miog.MAP_INFO[mapID].numOfBosses = bossIndex - 1
 		end
 	end
 end
@@ -1267,6 +1275,7 @@ local function loadRawData()
 		mapInfo.name = v[3]
 		mapInfo.expansionLevel = v[12]
 		mapInfo.bosses = {}
+		mapInfo.numOfBosses = 0
 		mapInfo.journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
 
 		local background = mapInfo.bgName or mapInfo.fileName

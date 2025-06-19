@@ -119,8 +119,7 @@ local defaultSettings = {
     {name = "New filter options", variableName = "MIOG_NewFilterOptions", key="newFilterOptions", default={}},
     {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={
         ["LFGListFrame.SearchPanel"] = defaultFilters,
-        ["LFGListFrame.ApplicationViewer"] = defaultFilters,
-        ["DropChecker"] = defaultFilters}
+        ["LFGListFrame.ApplicationViewer"] = defaultFilters,}
     },
     {name = "Sort methods", variableName = "MIOG_SortMethods", key="sortMethods", default={
         ["LFGListFrame.SearchPanel"] = {["primary"] = defaultSortState, ["secondary"] = defaultSortState, ["age"] = defaultSortState},

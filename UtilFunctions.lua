@@ -286,7 +286,10 @@ miog.deepCopyTable = function(orig, copies)
     return copy
 end
 
-miog.secondsToClock = function(stringSeconds)
+--[[miog.secondsToClock = function(stringSeconds)
+		startTime = GetTimePreciseSec()
+
+
 	local seconds = tonumber(stringSeconds)
 
 	if seconds <= 0 then
@@ -296,12 +299,37 @@ miog.secondsToClock = function(stringSeconds)
 		local hours = string.format("%01.f", math.floor(seconds/3600))
 		local mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)))
 		local secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60))
-		return
+		local string = 
 		hours..":"..
 		mins..":"..
 		secs
 
+		endTime = GetTimePreciseSec()
+
+		print("A1", endTime - startTime)
+
+
+		return string
+
 	end
+end]]
+
+miog.secondsToClock = function(seconds)
+	if seconds <= 0 then
+		return "0:00:00"
+	end
+
+	local hours = math.floor(seconds / 3600)
+	local mins = math.floor((seconds % 3600) / 60)
+	local secs = tonumber(string.format("%02.f", seconds % 60))
+
+	local result = hours .. ":"
+	if mins < 10 then result = result .. "0" end
+	result = result .. mins .. ":"
+	if secs < 10 then result = result .. "0" end
+	result = result .. secs
+
+	return result
 end
 
 miog.retrieveMapIDFromGFID = function(groupFinderID)

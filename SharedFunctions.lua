@@ -593,7 +593,12 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 		end
 
 		local function sortFunction(a, b)
-			return (a.current == b.current) and (a.weight > b.weight) or false
+			if(a.current == b.current) then
+				return a.weight > b.weight
+
+			end
+
+			return a.current
 		end
 
 		local characterOrdered = raidData.character.ordered
@@ -789,55 +794,68 @@ end
 miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeonScore, dungeonData, raidData, pvpData)
 	local primaryIndicator, secondaryIndicator = frameWithDoubleIndicators.Primary, frameWithDoubleIndicators.Secondary
 
-	if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
-		if(pvpData.tier and pvpData.tier ~= "N/A") then
-			local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
-			primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
-			secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+	if(categoryID == 3) then
+		if(raidData) then
+			local orderedData1 = raidData.character.ordered[1]
+			local orderedData2 = raidData.character.ordered[2]
 
-		else
-			primaryIndicator:SetText(0)
-			secondaryIndicator:SetText("Unra")
-		
-		end
-	
-	elseif(categoryID ~= 3) then
-		if(dungeonScore > 0) then
-			local reqScore = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredDungeonScore or 0
-			local highestKeyForDungeon
-
-			if(reqScore > dungeonScore) then
-				primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC.red))
-
-			else
-				primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
+			if(orderedData1) then
+				primaryIndicator:SetText(wticc(orderedData1.parsedString, orderedData1.current and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated))
 
 			end
 
-			if(dungeonData) then
-				highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
-
-			else
-				highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
+			if(orderedData2) then
+				secondaryIndicator:SetText(wticc(orderedData2.parsedString, orderedData2.current and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
 
 			end
 
-			secondaryIndicator:SetText(highestKeyForDungeon)
+			return
+		end
+	else
+		if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
+			if(pvpData.tier and pvpData.tier ~= "N/A") then
+				local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
+				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
+				secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+
+			else
+				primaryIndicator:SetText(0)
+				secondaryIndicator:SetText("Unra")
+			
+			end
+
+			return
 		else
-			primaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
-			secondaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
+			if(dungeonScore > 0) then
+				local reqScore = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredDungeonScore or 0
+				local highestKeyForDungeon
 
-		end
-	elseif(raidData) then
-		if(raidData.character.ordered[1]) then
-			primaryIndicator:SetText(wticc(raidData.character.ordered[1].parsedString, raidData.character.ordered[1].current and miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color or miog.DIFFICULTY[raidData.character.ordered[1].difficulty].desaturated))
-		end
+				if(reqScore > dungeonScore) then
+					primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC.red))
 
-		if(raidData.character.ordered[2]) then
-			secondaryIndicator:SetText(wticc(raidData.character.ordered[2].parsedString, raidData.character.ordered[2].current and miog.DIFFICULTY[raidData.character.ordered[2].difficulty].color or miog.DIFFICULTY[raidData.character.ordered[2].difficulty].desaturated))
-		end
+				else
+					primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
 
+				end
+
+				if(dungeonData) then
+					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
+
+				else
+					highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
+
+				end
+
+				secondaryIndicator:SetText(highestKeyForDungeon)
+
+				return
+			end
+		end
 	end
+	
+	local zeroText = wticc("0", miog.DIFFICULTY[-1].color)
+	primaryIndicator:SetText(zeroText)
+	secondaryIndicator:SetText(zeroText)
 end
 
 local function getRaidSortData(playerName)
@@ -1228,17 +1246,11 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 end)
 
 miog.getCurrentCategoryID = function()
-	local currentPanel = miog.DropChecker and miog.DropChecker:IsShown() and "DropChecker" or LFGListFrame.activePanel:GetDebugName()
-	local categoryID
+	local currentPanel = LFGListFrame.activePanel:GetDebugName()
+	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
+	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
+	LFGListFrame.CategorySelection.selectedCategory
 
-	if(currentPanel ~= "DropChecker") then
-		categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
-		or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
-		LFGListFrame.CategorySelection.selectedCategory
-	else
-		categoryID = 0
-
-	end
 
 
 	return categoryID, currentPanel

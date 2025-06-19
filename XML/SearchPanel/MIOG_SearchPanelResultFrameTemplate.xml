@@ -58,17 +58,6 @@
                 </Scripts>
             </Button>
 
-            <Button parentKey="AcceptInvite" inherits="IconButtonTemplate" hidden="true">
-                <KeyValues>
-                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
-                    <KeyValue key="iconSize" value="16" type="number" />
-                </KeyValues>
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.CancelApplication" relativePoint="LEFT" x="-5" />
-                </Anchors>
-            </Button>
-
             <Frame parentKey="BasicInformation">
                 <Size y="20" />
 
@@ -101,21 +90,37 @@
                                 <Anchor point="TOPLEFT" relativeKey="$parent.IconBorder" relativePoint="TOPLEFT" x="1" y="-1" />
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent.IconBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                             </Anchors>
+
+                            <Scripts>
+                                <OnMouseDown>
+                                    if(self.difficultyID and self.instanceID) then
+			                            EncounterJournal_OpenJournal(self.difficultyID, self.instanceID, nil, nil, nil, nil)
+                                    
+                                    end
+                                </OnMouseDown>
+                            </Scripts>
                         </Texture>
                     </Layer>
                     
                     <Layer level="OVERLAY">
                         <FontString parentKey="Title" font="GameFontHighlight" justifyH="LEFT" outline="NORMAL">
-                            <Size x="140" y="20"/>
+                            <Size x="120" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="RoleComposition" font="GameFontHighlight" justifyH="LEFT">
+                            <Size x="55" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="4" />
                             </Anchors>
                         </FontString>
 
                         <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER" text="0">
                             <Size x="37" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="4" />
+                                <Anchor point="LEFT" relativeKey="$parent.RoleComposition" relativePoint="RIGHT" x="4" />
                             </Anchors>
                         </FontString>
 
@@ -129,7 +134,7 @@
                         <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" text="0:00:00">
                             <Size x="70" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="13"/>
+                                <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="10"/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -186,17 +191,9 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString parentKey="DifficultyZone" font="GameFontHighlight" justifyH="LEFT">
-                            <Size x="140" y="20"/>
+                            <Size x="104" y="20"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="2" />
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="RoleComposition" font="GameFontHighlight" justifyH="LEFT">
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" />
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -207,11 +204,12 @@
                         <Size y="20"/>
 
                         <KeyValues>
+                            <KeyValue key="fixedWidth" value="144" type="number" />
                             <KeyValue key="spacing" value="13" type="number" />
                         </KeyValues>
 
                         <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-21"/>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
                         </Anchors>
 
                         <Frames>
@@ -267,8 +265,8 @@
                     
                     <Frame parentKey="BossPanel" inherits="MIOG_SearchResultFrameBossPanelTemplate" hidden="true">
                         <Anchors>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="5" y="1"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-5" y="1"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="4" y="2"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
                         </Anchors>
                     </Frame>
                 </Frames>

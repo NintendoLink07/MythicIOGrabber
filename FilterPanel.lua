@@ -117,10 +117,7 @@ end
 local function convertAndRefresh()
 	convertFiltersToAdvancedBlizzardFilters()
 		
-	if(miog.DropChecker and miog.DropChecker:IsShown()) then
-		miog.checkAllDropCheckerItemIDs()
-
-	elseif(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
+	if(LFGListFrame.activePanel == LFGListFrame.SearchPanel) then
 		miog.fullyUpdateSearchPanel()
 
 	elseif(LFGListFrame.activePanel == LFGListFrame.ApplicationViewer) then
@@ -1246,7 +1243,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 			filterPanel.ActivityBossRow4:Hide()
 			filterPanel.ActivityBossRow4.layoutIndex = nil
 
-			if(panel == "LFGListFrame.SearchPanel" and (categoryID == 2 or categoryID == 3) or panel == "DropChecker") then
+			if(panel == "LFGListFrame.SearchPanel" and (categoryID == 2 or categoryID == 3)) then
 				if(categoryID == 2) then
 					local sortedSeasonDungeons = {}
 					local addedIDs = {}
