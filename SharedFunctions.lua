@@ -166,8 +166,8 @@ end
 local function calculateWeightedScore(difficulty, kills, bossCount, isCurrentSeason)
 	if kills == 0 then return 0 end
 
-	local seasonFactor = isCurrentSeason and 4 or 1 -- Increase impact of current season
-	return ((difficulty * 5) * 30 + (kills / bossCount * 20)) ^ seasonFactor
+	local seasonFactor = isCurrentSeason and 100 or 1 -- Increase impact of current season
+	return ((difficulty * 5) * 30 + (kills / bossCount * 20)) * seasonFactor
 end
 
 miog.calculateWeightedScore = calculateWeightedScore
@@ -369,7 +369,12 @@ local function revisedRaidSortData(playerName, realm, region, existingProfile)
 end
 
 local function sortFunction(a, b)
-	return (a.current == b.current) and (a.weight > b.weight) or false
+	if(a.current == b.current) then
+		return a.weight > b.weight
+
+	end
+
+	return a.current
 end
 
 local append = table.insert -- Localizing function for speed
@@ -430,7 +435,7 @@ end
 
 miog.getRaidProgressDataOnly = getRaidProgressDataOnly
 
-local function getRaidProgressData(playerName, realm, region, existingProfile)
+local function getOnlyPlayerRaidData(playerName, realm, region, existingProfile)
 	local raidData
 	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
 
@@ -444,84 +449,74 @@ local function getRaidProgressData(playerName, realm, region, existingProfile)
 	if(profile and profile.raidProfile)then
 		raidData = {
 			character = { raids = {}, ordered = {}, progressWeight = 0 },
-			main = { raids = {}, ordered = {}, progressWeight = 0 }
 		}
+
+		local currentTable = raidData.character
 
 		local profileProgress = profile.raidProfile.raidProgress
 
 		for i = 1, #profileProgress, 1 do
 			local d = profileProgress[i]
-			local currentTable = d.isMainProgress and raidData.main or raidData.character
-			local mapID = tonumber(string.sub(d.raid.mapId, -4)) or d.raid.mapId
-			local isAwakened = (mapID ~= d.raid.mapId) and d.current
+			if(not d.isMainProgress) then
+				local mapID = d.raid.mapId % 10000
+				local isAwakened = (mapID ~= d.raid.mapId) and d.current
 
-			local raidEntry = currentTable.raids[mapID]
-			if(not raidEntry) then
-				raidEntry = {
-					regular = { difficulties = {}},
-					awakened = { difficulties = {}},
-					bossCount = d.raid.bossCount,
-					isAwakened = isAwakened,
-					shortName = d.raid.shortName
-				}
-				currentTable.raids[mapID] = raidEntry
+				local raidEntry = currentTable.raids[mapID]
+				if(not raidEntry) then
+					raidEntry = {
+						regular = { difficulties = {}},
+						awakened = { difficulties = {}},
+						isAwakened = isAwakened,
+					}
+					currentTable.raids[mapID] = raidEntry
+				end
+
+				local modeTable = isAwakened and raidEntry.awakened or raidEntry.regular
+
+				local progress = d.progress
+				for j = 1, #progress, 1 do
+					local y = progress[j]
+					local difficulty = y.difficulty
+					local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+
+					local difficultyEntry = {
+						difficulty = difficulty,
+						current = d.current,
+						weight = weight,
+						parsedString = y.kills .. "/" .. d.raid.bossCount,
+						--parsedString = string.format("%d/%d", y.kills, d.raid.bossCount)
+					}
+
+					modeTable.difficulties[difficulty] = difficultyEntry
+					currentTable.progressWeight = currentTable.progressWeight + weight
+					currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
+				end
 			end
-
-			local modeTable = isAwakened and raidEntry.awakened or raidEntry.regular
-
-			local progress = d.progress
-			for j = 1, #progress, 1 do
-				local y = progress[j]
-				local difficulty = y.difficulty
-				local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
-
-				local difficultyEntry = {
-					difficulty = difficulty,
-					current = d.current,
-					mapID = mapID,
-					weight = weight,
-					parsedString = y.kills .. "/" .. d.raid.bossCount,
-				}
-
-				modeTable.difficulties[difficulty] = difficultyEntry
-				currentTable.progressWeight = currentTable.progressWeight + weight
-				currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
-			end
-		end
-
-		local function sortFunction(a, b)
-			return (a.current == b.current) and (a.weight > b.weight) or false
 		end
 
 		local characterOrdered = raidData.character.ordered
-		local mainOrdered = raidData.main.ordered
 
 		if #characterOrdered > 1 then table.sort(characterOrdered, sortFunction) end
-		if #mainOrdered > 1 then table.sort(mainOrdered, sortFunction) end
 	end
 
 	if(not raidData)then
 		raidData = {
 			character = { ordered = {}, raids = {} },
-			main = { ordered = {}, raids = {} }
 		}
 	end
 
 	local characterOrdered = raidData.character.ordered
-	local mainOrdered = raidData.main.ordered
 
 	local defaultMapID1 = (raidInfo[3] or raidInfo[2] or raidInfo[1]) and (raidInfo[3] or raidInfo[2] or raidInfo[1]).mapID or 0
 	local defaultMapID2 = (raidInfo[2] or raidInfo[1]) and (raidInfo[2] or raidInfo[1]).mapID or 0
 
 	characterOrdered[1] = characterOrdered[1] or { mapID = defaultMapID1, parsedString = "0/0", difficulty = -1 }
 	characterOrdered[2] = characterOrdered[2] or { mapID = defaultMapID2, parsedString = "0/0", difficulty = -1 }
-	mainOrdered[1] = mainOrdered[1] or { parsedString = "0/0", difficulty = -1 }
-	mainOrdered[2] = mainOrdered[2] or { parsedString = "0/0", difficulty = -1 }
 
 	return raidData
 end
 
-miog.getRaidProgressData = getRaidProgressData
+miog.getOnlyPlayerRaidData = getOnlyPlayerRaidData
 
 local function getNewRaidSortData(playerName, realm, region, existingProfile)
 	local raidData
@@ -590,15 +585,6 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 				currentTable.progressWeight = currentTable.progressWeight + weight
 				currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
 			end
-		end
-
-		local function sortFunction(a, b)
-			if(a.current == b.current) then
-				return a.weight > b.weight
-
-			end
-
-			return a.current
 		end
 
 		local characterOrdered = raidData.character.ordered

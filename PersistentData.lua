@@ -184,6 +184,7 @@ miog.INELIGIBILITY_REASONS = {
 	["ratingHigherMismatch"] = {"Your highest rating filter do not match with this listing.", "Highest Rating mismatch"},
 	["dungeonMismatch"] = {"Your dungeon selection does not match with this listing.", "Dungeon mismatch"},
 	["delveMismatch"] = {"Your delve selection does not match with this listing.", "Delve mismatch"},
+	["pvpMismatch"] = {"Your pvp mode selection does not match with this listing.", "PVP mismatch"},
 	["raidMismatch"] = {"Your raid selection does not match with this listing.", "Raid mismatch"},
 	["bossSelectionMismatch"] = {"Your boss selection does not match with this listing.", "Boss selection mismatch"},
 	["bossKillsMismatch"] = {"Your boss kills filters do not match with this listing.", "Boss kills mismatch"},
@@ -2017,7 +2018,6 @@ miog.CLASSFILE_TO_ID = {
 	["DUMMY"] = 20,
 }
 
-
 miog.SLOT_FILTER_TO_NAME = {
 	[Enum.ItemSlotFilterType.Head] = INVTYPE_HEAD,
 	[Enum.ItemSlotFilterType.Neck] = INVTYPE_NECK,
@@ -2061,6 +2061,12 @@ miog.CLASSES = {
 	[22] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/empty.png", specs = {}},
 	[100] =	{name = "EMPTY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/unknown.png", specs = {}},
 }
+
+miog.CLASSFILE_TO_INFO = {}
+
+for k, v in pairs(miog.CLASSES) do
+	miog.CLASSFILE_TO_INFO[v.name] = v
+end
 
 miog.OFFICIAL_CLASSES = {}
 

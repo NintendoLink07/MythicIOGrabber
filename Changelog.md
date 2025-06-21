@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.4.5] - 2025-06-19
+## [3.5] - 2025-06-21
 
 ### Changed
 
@@ -40,11 +40,20 @@ and this project adheres to [Semantic Versioning].
 
 - [SearchPanel] 2v2 arena groups will now correctly show the icon of the player that created the listing.
 
+- [SearchPanel] PVP queues will now correctly show the rating for the respective mode (2v2, rbg, etc.).
+
+- [SearchPanel] Fixed the edge case of opening the "custom" search panel category and showing no search results until about a second later.
+
 - [Progress] Multiple issues regarding the vault status in the overview screen have been resolved.
 
 - [MainFrame] Dastardly Duos won't cause an error while hovering over the card in the "Active queues" panel anymore.
 
 - [ApplicationViewer] Specific pvp categories won't create an error anymore when hovering over the rating.
+
+### Upcoming
+
+- The 3.5 versions will mostly include performance-, logic- and bugfixes.
+Versions 3.6 and forward will include new features coming with 11.2.
 
 
 
@@ -3778,7 +3787,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.4.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5..HEAD
+[3.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5
 [3.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.4
 [3.4.3a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.3a
 [3.4.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.3

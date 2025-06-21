@@ -1,35 +1,48 @@
-## [3.4.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.4) - 2025-05-24
+## [3.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5) - 2025-06-21
 
 ### Changed
 
-- [SearchPanel] Your party members will now be taken into account when using the "party fit", "ress fit" and "lust fit" filters.
+- The filter panel has been reworked:
+    - Filters that get applied after MIOG got the results and filters that get sent with the initial request for the results have been visually split.
+    Filters at the top (class/spec filters, party/ress/lust, hide declines and age) are getting applied after the list of results has been received.
+    Exception: the class filter of your current class, this is for Blizzard's "needs my class" filter.
 
-- [SearchPanel] The "party fit" filter will now also check for the maximum amount of players allowed for the activity.
-*This has been changed because you could theoretically have 29 tanks in a raid and Blizzards data would say there are still 30 spots for dps left.
-Comparing the activities max players to the listings current members plus the number of your group members fixes this.*
+    Filters beneath the line separator are being sent with the initial request for results, meaning to get the most groups that you want to join you should always have them configured correctly.
+    Especially the "Activities" filter(s) are important, searching for groups with the filter enabled but DFC disabled will not show DFC groups even after re-enabling the filter when you have the results.
+    You have to click the search button again with the filter enabled to show DFC groups.
+    Exception: Boss filters in the raid category
+ 
+    - When you change a setting that is getting applied by Blizzard interally to pre-filter the results you're getting a "warning" shows up asking you to refresh the search panel.
+    
+    - Spec filters can only be enabled/disabled when the respective class filter is enabled.
 
-- [SearchPanel] If you have both the "lust fit" and "ress fit" filters enabled: it will now check both filters correctly in succession.
+    - Class filters will now change their color when disabled/enabled, spec filters will de-/saturate the respective icon.
 
-- [MainFrame] The number of applicant will now be shown in brackets in the "Your listing" queue frame.
+    - Bosses will only be visible when their raid activity filter has been enabled.
 
-- [MainFrame] Relogging when you have a group listed will now automatically show the [ApplicationViewer].
-
-- [SearchPanel] The progress panel below the filters is now only visible for max level characters.
-
-- Any lfg data relating to the seasonal / expansion activities (e.g. seasonal dungeons, current raid) will only be shown when the player is at max level.
-*This is due to Blizzard only sending partial or no info about those activities when the player isn't max level.
-Improves performance and eliminates incorrect data being shown.*
+    - Some logic tweaks which improve performance of both the filter panel and the search panel.
 
 ### Fixed
 
-- [SearchPanel] Groups you've applied to will now automatically pin themselves to the top of the list.
+- [SearchPanel] Improved performance a lot upon a category (e.g. dungeons, quest, raids, raids legacy, etc.).
 
-- [GroupCreator] An error has been resolved where the group creator tried to use map data that isn't / wasn't available yet.
+- [SearchPanel] Ordering of results is now correctly taking into account multiple search parameters.
 
-- [ApplicationViewer] The raider io panel will now be properly be populated with data and not just be a beautiful black box.
+- [SearchPanel] After applying to a group the scroll frame will retain it's current scroll position.
 
-- The [SearchPanel], [ApplicationViewer] and [GroupCreator]'s resize button won't cause the frame to get stuck in place anymore.
+- [SearchPanel] 2v2 arena groups will now correctly show the icon of the player that created the listing.
 
-- Relogging when you have a group listed will not show the [SearchPanel], [ApplicationViewer] and [GroupCreator] at the same time.
+- [SearchPanel] PVP queues will now correctly show the rating for the respective mode (2v2, rbg, etc.).
 
-- The last group you joined will now also get saved when you're in lite mode.
+- [SearchPanel] Fixed the edge case of opening the "custom" search panel category and showing no search results until about a second later.
+
+- [Progress] Multiple issues regarding the vault status in the overview screen have been resolved.
+
+- [MainFrame] Dastardly Duos won't cause an error while hovering over the card in the "Active queues" panel anymore.
+
+- [ApplicationViewer] Specific pvp categories won't create an error anymore when hovering over the rating.
+
+### Upcoming
+
+- The 3.5 versions will mostly include performance-, logic- and bugfixes.
+Versions 3.6 and forward will include new features coming with 11.2.

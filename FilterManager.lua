@@ -363,23 +363,25 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 			end
 		end
 
-		local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
+		local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating) or searchResultInfo.leaderOverallDungeonScore or 0
 
 		if(isDungeon or isPvp) then
 			if(currentSettings.rating.enabled) then
-				local minimumOk = currentSettings.rating.minimum and currentSettings.rating.minimum ~= 0
-				local maximumOk = currentSettings.rating.maximum and currentSettings.rating.maximum ~= 0
+				local minimum = currentSettings.rating.minimum
+				local maximum = currentSettings.rating.maximum
+				local minimumOk = minimum and minimum ~= 0
+				local maximumOk = maximum and maximum ~= 0
 
 				if minimumOk and maximumOk then
-					if rating < min or rating > max then
+					if rating < minimum or rating > maximum then
 						return false, "ratingMismatch"
 					end
 				elseif minimumOk then
-					if rating < min then
+					if rating < minimum then
 						return false, "ratingLowerMismatch"
 					end
 				elseif maximumOk then
-					if rating >= max then
+					if rating >= maximum then
 						return false, "ratingHigherMismatch"
 					end
 				end
@@ -430,10 +432,9 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 			end
 		end
 		
-
-		if(currentSettings.activities.enabled and (isRaid or isDungeon or isDelve)) then
+		if(currentSettings.activities.enabled) then
 			local raidFiltersAt1 = LFGListFrame.SearchPanel.filters == 1
-			
+
 			if(currentSettings.activities[activityInfo.groupFinderActivityGroupID] == false) then
 				if(isDungeon) then
 					return false, "dungeonMismatch"
@@ -475,6 +476,12 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 						end
 					end
 				end
+
+			elseif(isPvp) then
+				if(currentSettings.activities[searchResultInfo.activityIDs[1]] == false) then
+					return false, "pvpMismatch"
+				end
+
 			end
 		end
 			
@@ -522,14 +529,14 @@ local function saveToAdvancedFilter()
 
 		miogFilters.activities = {}
 
-		if(currentSettings.activities.enabled) then
+		--[[if(currentSettings.activities.enabled) then
 			for k, v in pairs(currentSettings.activities) do
-				if(k ~= "enabled" and v) then
+				if(type(k) == "number") then
 					miogFilters.activities[#miogFilters.activities+1] = k
 
 				end
 			end
-		end
+		end]]
 
 		C_LFGList.SaveAdvancedFilter(miogFilters)
 	end
@@ -549,35 +556,75 @@ local function setStatus(type)
 	end
 end
 
+local function changeSettingWithoutPanelRefresh(value, ...)
+	local panel, categoryID = getCurrentPanelAndCategoryID()
+	if not (panel and categoryID) then return end
+
+	local lastSetting = MIOG_CharacterSettings.filters[panel][categoryID]
+	local keyCount = select("#", ...)
+
+	for i = 1, keyCount - 1 do
+		local key = select(i, ...)
+		local nextSetting = lastSetting[key]
+
+		if not nextSetting then
+			nextSetting = {}
+			lastSetting[key] = nextSetting
+		end
+
+		lastSetting = nextSetting
+	end
+
+	local finalKey = select(keyCount, ...)
+	lastSetting[finalKey] = value
+
+	return true
+end
+
+local function refreshPanel(panel)
+	if(not panel) then
+		panel = getCurrentPanel()
+
+	end
+
+	if(panel == "SearchPanel") then
+		miog.fullyUpdateSearchPanel()
+
+	elseif(panel == "ApplicationViewer") then
+		C_LFGList.RefreshApplicants()
+
+	end
+end
+
 local function changeSetting(value, ...)
 	local panel, categoryID = getCurrentPanelAndCategoryID()
+	if not (panel and categoryID) then return end
 
-	if(panel and categoryID) then
-		local lastSetting = MIOG_CharacterSettings.filters[panel][categoryID]
-		local parameterArray = {...}
+	local lastSetting = MIOG_CharacterSettings.filters[panel][categoryID]
+	local keyCount = select("#", ...)
 
-		for k, v in ipairs(parameterArray) do
-			if(k == #parameterArray) then
-				lastSetting[v] = value
+	for i = 1, keyCount - 1 do
+		local key = select(i, ...)
+		local sub = lastSetting[key]
 
-				if(panel == "SearchPanel") then
-					miog.fullyUpdateSearchPanel()
-
-				elseif(panel == "ApplicationViewer") then
-					C_LFGList.RefreshApplicants()
-
-				end
-
-				return true
-			elseif(lastSetting[v]) then
-				lastSetting = lastSetting[v]
-
-			else
-				lastSetting[v] = {}
-
-			end
+		if not sub then
+			sub = {}
+			lastSetting[key] = sub
 		end
+
+		lastSetting = sub
 	end
+
+	local finalKey = select(keyCount, ...)
+	lastSetting[finalKey] = value
+
+	if panel == "SearchPanel" then
+		miog.fullyUpdateSearchPanel()
+	elseif panel == "ApplicationViewer" then
+		C_LFGList.RefreshApplicants()
+	end
+
+	return true
 end
 
 -- classes index
@@ -1284,7 +1331,18 @@ local function loadFilterManager()
 	createFilterWithText(filterManager.Activities, "Activities")
 
 	filterManager.Activities.CheckButton:SetScript("OnClick", function(self)
-		changeSetting(self:GetChecked(), "activities", "enabled")
+		changeSettingWithoutPanelRefresh(self:GetChecked(), "activities", "enabled")
+
+		for i = 1, 16, 1 do
+			local activityFilter = filterManager.ActivityGrid["Activity" .. i]
+
+			if(activityFilter.filterID) then
+				changeSettingWithoutPanelRefresh(activityFilter.CheckButton:GetChecked(), "activities", activityFilter.filterID)
+				
+			end
+		end
+		
+		refreshPanel()
 		setStatus("change")
 	end)
 
