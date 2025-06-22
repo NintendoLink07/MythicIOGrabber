@@ -139,16 +139,22 @@
                             </Anchors>
                         </FontString>
                         
-                        <FontString parentKey="RaiderIOLoaded" font="GameFontHighlight" justifyH="RIGHT" hidden="true">
+                        <FontString parentKey="RaiderIOLoaded" font="GameFontHighlight" justifyH="RIGHT" hidden="true" text="[RaiderIO missing]">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.TitleString" relativePoint="RIGHT" x="3" />
                             </Anchors>
                             <Scripts>
+                                <OnShow>
+                                    self:SetTextColor(1, 0, 0, 1)
+
+                                </OnShow>
+
                                 <OnEnter>
                                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                                     GameTooltip:SetText("RaiderIO has been disabled in the addon settings.")
                                     GameTooltip:AddLine("There will be no data for M+ and raid progress.")
                                     GameTooltip:Show()
+
                                 </OnEnter>
                                 <OnLeave function="GameTooltip_Hide" />
                             </Scripts>

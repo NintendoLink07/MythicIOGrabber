@@ -191,7 +191,7 @@ local function checkIfApplicantIsEligible(applicantData)
 	if(currentSettings) then
 		local categoryID = getCurrentCategoryID("ApplicationViewer")
 
-		local isPvp = categoryID == 4 or categoryID == 7
+		local isArenaPvp = categoryID == 4 or categoryID == 7
 		local isDungeon = categoryID == 2
 
 		local hasRess, hasLust = false, false
@@ -242,7 +242,7 @@ local function checkIfApplicantIsEligible(applicantData)
 
 		end
 
-		if(isDungeon or isPvp) then
+		if(isDungeon or isArenaPvp) then
 			if(currentSettings.rating.enabled) then
 				local min = currentSettings.rating.minimum
 				local max = currentSettings.rating.maximum
@@ -284,7 +284,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 		local categoryID = getCurrentCategoryID("SearchPanel")
-		local isPvp = categoryID == 4 or categoryID == 7
+		local isArenaPvp = categoryID == 4 or categoryID == 7
 		local isDungeon = categoryID == 2
 		local isRaid = categoryID == 3
 		local isDelve = categoryID == 121
@@ -363,9 +363,9 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 			end
 		end
 
-		local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating) or searchResultInfo.leaderOverallDungeonScore or 0
+		local rating = isArenaPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating) or searchResultInfo.leaderOverallDungeonScore or 0
 
-		if(isDungeon or isPvp) then
+		if(isDungeon or isArenaPvp) then
 			if(currentSettings.rating.enabled) then
 				local minimum = currentSettings.rating.minimum
 				local maximum = currentSettings.rating.maximum
@@ -418,7 +418,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 					return false, "incorrectDifficulty"
 
 				end
-			elseif(isPvp) then
+			elseif(isArenaPvp) then
 				if(searchResultInfo.activityIDs[1] ~= currentSettings.difficulty.id) then
 					return false, "incorrectBracket"
 
@@ -442,12 +442,16 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 				elseif(isDelve) then
 					return false, "delveMismatch"
 
-				elseif(isRaid and raidFiltersAt1) then
+				elseif(currentSettings.activities[activityInfo.groupFinderActivityGroupID] == false) then --for regular raids
 					return false, "raidMismatch"
 
 				end
 
 			elseif(isRaid and raidFiltersAt1) then
+				if(currentSettings.activities[activityInfo.mapID] == false) then -- for world boss activities specifically
+					return false, "raidMismatch"
+
+				end
 
 				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID)
 
@@ -462,14 +466,16 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 				local bossTable = currentSettings.activityBosses[activityInfo.groupFinderActivityGroupID]
 
 				if(bossTable) then
-					for k, v in pairs(bossTable) do
-						local bossInfo = activityInfo.bosses[k]
+					for index, state in pairs(bossTable) do
+						local bossInfo = activityInfo.bosses[index]
 
-						if(bossInfo) then
+						if(state > 1 and bossInfo) then
+							local bossIsDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName] or false
 							-- 1 either defeated or alive
-							-- 2 defeated
-							-- 3 alive
-							if(v == 2 and (encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]) or v == 3 and not (encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName])) then
+							-- 2 alive
+							-- 3 defeated
+
+							if(bossIsDefeated and state == 2 or not bossIsDefeated and state == 3) then
 								return false, "bossSelectionMismatch"
 
 							end
@@ -477,7 +483,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 					end
 				end
 
-			elseif(isPvp) then
+			elseif(isArenaPvp) then
 				if(currentSettings.activities[searchResultInfo.activityIDs[1]] == false) then
 					return false, "pvpMismatch"
 				end
@@ -755,12 +761,16 @@ local function refreshFilters()
 	filterManager.RessFit.CheckButton:SetChecked(ressSetting == nil and false or ressSetting)
 	
 	local isLFG = panel == "SearchPanel"
-	local isPvp = categoryID == 4 or categoryID == 7
+	local isArenaPvp = categoryID == 4 or categoryID == 7
 	local isDungeon = categoryID == 2
 	local isRaid = categoryID == 3
 	local isDelve = categoryID == 121
 	local isPvE =  isDungeon or isRaid or isDelve
+	local isLFGRaid = isLFG and isRaid
+	local isRatingCategory = isDungeon or isArenaPvp
+	local isActivityCategory = isLFG and isPvE or isArenaPvp
 
+	filterManager.Status:SetShown(isLFG)
 	filterManager.PartyFit:SetShown(isLFG)
 	filterManager.Decline:SetShown(isLFG)
 	filterManager.Spacer:SetShown(isLFG)
@@ -768,10 +778,11 @@ local function refreshFilters()
 	filterManager.Healer:SetShown(isLFG)
 	filterManager.Damager:SetShown(isLFG)
 	filterManager.Age:SetShown(isLFG)
-	filterManager.Rating:SetShown(isLFG and (isDungeon or isPvp))
+	filterManager.Rating:SetShown(isLFG and isRatingCategory)
 	filterManager.Difficulty:SetShown(isLFG and isPvE)
-	filterManager.Activities:SetShown(isLFG and (isPvE or isPvp))
-	filterManager.ActivityGrid:SetShown(isLFG and (isPvE or isPvp))
+	filterManager.Activities:SetShown(isActivityCategory)
+	filterManager.ActivityGrid:SetShown(filterManager.Activities:IsShown())
+	filterManager.ActivityBosses:SetShown(isLFGRaid)
 
 	if(isLFG) then
 		local partySetting = retrieveSetting("partyfit")
@@ -814,7 +825,7 @@ local function refreshFilters()
 				tinsert(allGroups, {filterID = activityInfo.mapID, isWorld = true})
 
 			end
-		elseif(isPvp) then
+		elseif(isArenaPvp) then
 			local pvpActivities = C_LFGList.GetAvailableActivities(categoryID)
 
 			if(pvpActivities and #pvpActivities > 0) then
@@ -826,15 +837,14 @@ local function refreshFilters()
 			end
 		end
 
-		filterManager.ActivityBosses:SetShown(isRaid)
-
 		for rowCounter = 1, 4, 1 do
 			for activityCounter = 1, 4, 1 do
 				local counter = (rowCounter - 1) * 4 + activityCounter
 				local groupData = allGroups[counter]
 				local activityFilter = filterManager.ActivityGrid["Activity" .. counter]
+				local hasData = groupData ~= nil
 
-				if(groupData) then
+				if(hasData) then
 					local info
 
 					if(groupData.isPvE) then
@@ -870,7 +880,7 @@ local function refreshFilters()
 
 				if(bossParent) then
 					local groupSetting = retrieveSetting("activities", data.filterID)
-					bossParent:SetShown(groupSetting)
+					bossParent:SetShown(groupSetting ~= false and true or false)
 					local info
 					
 					if(data.isPvE) then
@@ -895,8 +905,16 @@ local function refreshFilters()
 							bossFrame:SetScript("OnClick", function(self, button)
 								local currentState = retrieveSetting("activityBosses", data.filterID)
 
-								if(button == "LeftButton" and currentState and currentState[i]) then
-									changeSetting(currentState[i] == 3 and 1 or currentState[i] + 1, "activityBosses", data.filterID, i)
+								if(button == "LeftButton") then
+									if(currentState) then
+										if(currentState[i]) then
+											changeSetting(currentState[i] == 3 and 1 or currentState[i] + 1, "activityBosses", data.filterID, i)
+
+										else
+											changeSetting(2, "activityBosses", data.filterID, i)
+
+										end
+									end
 
 								else
 									changeSetting(1, "activityBosses", data.filterID, i)
@@ -928,6 +946,12 @@ local function refreshFilters()
 
 	currentSettings = MIOG_CharacterSettings.filters[panel][categoryID]
 
+	filterManager.ActivityGrid:MarkDirty()
+
+	MIOG_KARMA = function() filterManager.ActivityGrid:MarkDirty() end
+	MIOG_K = filterManager.ActivityGrid
+
+	filterManager.ActivityBosses:MarkDirty()
 	filterManager:MarkDirty()
 end
 
@@ -1341,7 +1365,7 @@ local function loadFilterManager()
 				
 			end
 		end
-		
+
 		refreshPanel()
 		setStatus("change")
 	end)
@@ -1388,8 +1412,6 @@ local function loadFilterManager()
 	miog.createFrameBorder(filterManager.ProgressPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	miog.ProgressPanel = filterManager.ProgressPanel
-
-	filterManager:MarkDirty()
 
 	return filterManager
 end

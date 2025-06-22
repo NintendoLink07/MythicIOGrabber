@@ -11,7 +11,7 @@ local panels
         panel (table/string) - The panel to activate and display.
 ]]
 local function setProgressPanelInfo(categoryID)
-	if(IsPlayerAtEffectiveMaxLevel()) then
+	if(miog.ProgressPanel and IsPlayerAtEffectiveMaxLevel()) then
 		miog.ProgressPanel:SetShown(categoryID == 2 or categoryID == 3)
 
 		miog.ProgressPanel.MythicPlus:SetShown(categoryID == 2)
@@ -46,7 +46,7 @@ local function setActivePanel(_, panel)
 
 	end
 
-	if(panel == LFGListFrame.ApplicationViewer) then
+	if(miog.ApplicationViewer and panel == LFGListFrame.ApplicationViewer) then
 		if(UnitIsGroupLeader("player")) then
 			miog.ApplicationViewer.Delist:Show()
 			miog.ApplicationViewer.Edit:Show()
@@ -78,15 +78,17 @@ local function setActivePanel(_, panel)
 
 	end
 
-	if(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
-		setProgressPanelInfo(miog.getCurrentCategoryID())
+	if(miog.FilterManager) then
+		if((miog.ApplicationViewer and panel == LFGListFrame.ApplicationViewer) or (miog.SearchPanel and panel == LFGListFrame.SearchPanel)) then
+			setProgressPanelInfo(miog.getCurrentCategoryID())
 
-		miog.filter.refreshFilters()
-		miog.FilterManager:Show()
-	else
-		miog.FilterManager:Hide()
-		miog.ProgressPanel:Hide()
+			miog.FilterManager:Show()
+			miog.filter.refreshFilters()
+		else
+			miog.FilterManager:Hide()
+			miog.ProgressPanel:Hide()
 
+		end
 	end
 end
 
@@ -165,7 +167,7 @@ miog.createFrames = function()
 	miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
 	miog.EntryCreation = miog.createEntryCreation()
-	--miog.LastInvites = miog.loadLastInvitesPanel()
+	miog.LastInvites = miog.loadLastInvitesPanel()
 	miog.ClassPanel = miog.createClassPanel()
 	miog.FilterManager = miog.loadFilterManager()
 	

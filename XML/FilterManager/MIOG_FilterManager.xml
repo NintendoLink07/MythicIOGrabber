@@ -13,6 +13,7 @@
                 <FontString parentKey="Status" font="GameFontHighlight" justifyH="LEFT" text="Status">
                     <KeyValues>
                         <KeyValue key="layoutIndex" value="1" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
                     </KeyValues>
                     <Size y="20" />
                     <Anchors>
@@ -325,11 +326,135 @@
                 </KeyValues>
             </Frame>
 
-            <Frame parentKey="ActivityGrid" inherits="ResizeLayoutFrame">
-                <Size y="80" />
+            
+            <!--
 
+            <Frame parentKey="ActivityGrid" inherits="StaticGridLayoutFrame">
                 <KeyValues>
                     <KeyValue key="expand" value="true" type="boolean" />
+                    <KeyValue key="layoutIndex" value="15" type="number" />
+                    <KeyValue key="childXPadding" value="2" type="number"/>
+                    <KeyValue key="childYPadding" value="4" type="number"/>
+                </KeyValues>
+
+                <Frames>
+                    <Frame parentKey="Activity1" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number" />
+                            <KeyValue key="gridColumn" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity2" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number" />
+                            <KeyValue key="gridColumn" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity3" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number" />
+                            <KeyValue key="gridColumn" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity4" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="1" type="number" />
+                            <KeyValue key="gridColumn" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity5" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="2" type="number" />
+                            <KeyValue key="gridColumn" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity6" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="2" type="number" />
+                            <KeyValue key="gridColumn" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity7" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="2" type="number" />
+                            <KeyValue key="gridColumn" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity8" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="2" type="number" />
+                            <KeyValue key="gridColumn" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity9" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="3" type="number" />
+                            <KeyValue key="gridColumn" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity10" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="3" type="number" />
+                            <KeyValue key="gridColumn" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity11" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="3" type="number" />
+                            <KeyValue key="gridColumn" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity12" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="3" type="number" />
+                            <KeyValue key="gridColumn" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity13" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="4" type="number" />
+                            <KeyValue key="gridColumn" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity14" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="4" type="number" />
+                            <KeyValue key="gridColumn" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity15" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="4" type="number" />
+                            <KeyValue key="gridColumn" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Activity16" inherits="MIOG_FilterManagerSmallTextFilterTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridRow" value="4" type="number" />
+                            <KeyValue key="gridColumn" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+            -->
+
+            <Frame parentKey="ActivityGrid" inherits="ResizeLayoutFrame">
+                <KeyValues>
                     <KeyValue key="layoutIndex" value="15" type="number" />
                     <KeyValue key="childXPadding" value="2" type="number"/>
                     <KeyValue key="childYPadding" value="4" type="number"/>
@@ -434,37 +559,39 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="ActivityBosses" inherits="ResizeLayoutFrame">
+            <Frame parentKey="ActivityBosses" inherits="VerticalLayoutFrame" hidden="true">
                 <KeyValues>
                     <KeyValue key="expand" value="true" type="boolean" />
-                    <KeyValue key="layoutIndex" value="15" type="number" />
-                    <KeyValue key="childXPadding" value="2" type="number"/>
-                    <KeyValue key="childYPadding" value="4" type="number"/>
+                    <KeyValue key="layoutIndex" value="16" type="number" />
                 </KeyValues>
 
                 <Frames>
-                    <Frame parentKey="Bosses1" inherits="MIOG_FilterManagerActivityBossesTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT"/>
-                        </Anchors>
+                    <Frame parentKey="Bosses1" inherits="MIOG_FilterManagerActivityBossesTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
                     </Frame>
                     
-                    <Frame parentKey="Bosses2" inherits="MIOG_FilterManagerActivityBossesTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Bosses1" relativePoint="BOTTOMLEFT"/>
-                        </Anchors>
+                    <Frame parentKey="Bosses2" inherits="MIOG_FilterManagerActivityBossesTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
                     </Frame>
                     
-                    <Frame parentKey="Bosses3" inherits="MIOG_FilterManagerActivityBossesTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Bosses2" relativePoint="BOTTOMLEFT"/>
-                        </Anchors>
+                    <Frame parentKey="Bosses3" inherits="MIOG_FilterManagerActivityBossesTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
                     </Frame>
                     
-                    <Frame parentKey="Bosses4" inherits="MIOG_FilterManagerActivityBossesTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Bosses3" relativePoint="BOTTOMLEFT"/>
-                        </Anchors>
+                    <Frame parentKey="Bosses4" inherits="MIOG_FilterManagerActivityBossesTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
                     </Frame>
                 </Frames>
             </Frame>

@@ -266,9 +266,6 @@ local function createPVEFrameReplacement()
 	miog.PVPStatistics = miog.Progress.PVPStatistics
 	miog.PVPStatistics:OnLoad("pvp", MIOG_NewSettings)
 
-	pveFrame2.TitleBar.RaiderIOLoaded:SetText(WrapTextInColorCode("NO R.IO", miog.CLRSCC["red"]))
-	pveFrame2.TitleBar.RaiderIOLoaded:SetShown(not miog.F.IS_RAIDERIO_LOADED)
-
 	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
 	local leaderChecked, tankChecked, healerChecked, damagerChecked = LFDQueueFrame_GetRoles()
 
@@ -345,8 +342,7 @@ local function createPVEFrameReplacement()
 					if(v.known) then
 						local myCooldown = tpButton.Cooldown
 						
-						tpButton:HookScript("OnShow", function()
-							
+						tpButton:HookScript("OnShow", function()							
 							local spellCooldownInfo = C_Spell.GetSpellCooldown(v.spellID)
 							--local start, duration, _, modrate = GetSpellCooldown(v.spellID)
 							myCooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.modRate)

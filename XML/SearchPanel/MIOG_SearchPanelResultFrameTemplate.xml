@@ -40,7 +40,7 @@
                 
                 <Size x="16" y="16" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-7" y="-2" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-2" />
                 </Anchors>
 
                 <Scripts>

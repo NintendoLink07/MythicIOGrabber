@@ -95,17 +95,25 @@ local function updateScrollBoxFrameApplicationStatus(resultFrame, resultID, new)
 		
 		resultFrame.StatusFrame:Hide()
 
+		local ageValue
+		local ageText
+		local ageObject = resultFrame.BasicInformation.Age
+		
+		if(ageObject.ageTicker) then
+			ageObject.ageTicker:Cancel()
+
+		end
+
 		if(appStatus ~= "none") then
 			if(appStatus == "applied") then
 				resultFrame.CancelApplication:Show()
 
-				local ageNumber = appDuration or 0
-				resultFrame.BasicInformation.Age:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
-				resultFrame.BasicInformation.Age:SetTextColor(miog.CLRSCC.colors.purple:GetRGBA())
-
-				resultFrame.BasicInformation.Age.ageTicker = C_Timer.NewTicker(1, function()
-					ageNumber = ageNumber - 1
-					resultFrame.BasicInformation.Age:SetText("[" .. miog.secondsToClock(ageNumber) .. "]")
+				ageValue = appDuration
+				ageObject:SetTextColor(miog.CLRSCC.colors.purple:GetRGBA())
+				ageText = "[" .. miog.secondsToClock(ageValue or 0) .. "]"
+				ageObject.ageTicker = C_Timer.NewTicker(1, function()
+					ageValue = ageValue - 1
+					ageObject:SetText("[" .. miog.secondsToClock(ageValue or 0) .. "]")
 
 				end)
 			else
@@ -121,24 +129,33 @@ local function updateScrollBoxFrameApplicationStatus(resultFrame, resultID, new)
 						MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] = {timestamp = time(), activeDecline = appStatus == "declined"}
 
 					end
-
 				end
 			end
 		else
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+			
+			ageValue = searchResultInfo.age
+			ageObject:SetTextColor(1, 1, 1, 1)
+			ageText = miog.secondsToClock(ageValue or 0)
+			ageObject.ageTicker = C_Timer.NewTicker(1, function()
+				ageValue = ageValue + 1
+
+				ageObject:SetText(miog.secondsToClock(ageValue or 0))
+
+			end)
 
 			resultFrame.CancelApplication:Hide()
 
 			if(searchResultInfo.isDelisted) then
-				if(resultFrame.BasicInformation.Age.ageTicker) then
-					resultFrame.BasicInformation.Age.ageTicker:Cancel()
-
-				end
-
 				resultFrame.StatusFrame:Show()
 				resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO["declined_delisted"].statusString, miog.APPLICANT_STATUS_INFO["declined_delisted"].color))
+
+			else
+				
 			end
 		end
+
+		ageObject:SetText(ageText)
 	end
 end
 
@@ -312,8 +329,10 @@ local function createDataProviderWithUnsortedData()
 						if(searchResultInfo.leaderName) then
 							local raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
 
-							primarySortAttribute = raidData.character.ordered[1].weight or 0
-							secondarySortAttribute = raidData.character.ordered[2].weight or 0
+							if(raidData) then
+								primarySortAttribute = raidData.character.ordered[1].weight or 0
+								secondarySortAttribute = raidData.character.ordered[2].weight or 0
+							end
 
 						else
 							primarySortAttribute = 0
@@ -603,16 +622,6 @@ local function updateScrollBoxFrame(frame, data)
 			currentFrame.BasicInformation.Age.ageTicker:Cancel()
 
 		end
-
-		local ageNumber = searchResultInfo.age
-		currentFrame.BasicInformation.Age:SetText(miog.secondsToClock(ageNumber))
-		currentFrame.BasicInformation.Age:SetTextColor(1, 1, 1, 1)
-		currentFrame.BasicInformation.Age.ageTicker = C_Timer.NewTicker(1, function()
-			ageNumber = ageNumber + 1
-
-			currentFrame.BasicInformation.Age:SetText(miog.secondsToClock(ageNumber))
-
-		end)
 
 		currentFrame.CategoryInformation.Comment:SetShown(searchResultInfo.comment ~= "")
 

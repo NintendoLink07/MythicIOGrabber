@@ -429,7 +429,6 @@ miog.CURRENCY_INFO = {
 
 --CHANGING VARIABLES
 miog.F = {
-	IS_RAIDERIO_LOADED = false,
 	IS_IN_DEBUG_MODE = false,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],

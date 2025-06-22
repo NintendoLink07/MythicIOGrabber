@@ -24,11 +24,6 @@ local function mainEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
         miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()
 
-		if(C_AddOns.IsAddOnLoaded("RaiderIO")) then
-			miog.F.IS_RAIDERIO_LOADED = true
-
-		end
-		
 		miog.loadNewSettings()
 		miog.loadRawData()
 		
@@ -37,15 +32,19 @@ local function mainEvents(_, event, ...)
 		EJ_SetDifficulty(8)
 		
 		if(C_LFGList.HasActiveEntryInfo()) then
-			miog.setActivePanel(nil, "LFGListFrame.ApplicationViewer")
+			miog.setActivePanel(nil, LFGListFrame.ApplicationViewer)
 
-			miog.Plugin:Show()
-			miog.ApplicationViewer:Show()
 		end
+
+		LFGListFrame.ApplicationViewer.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnScroll, function() GameTooltip:Hide() end)
 
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		miog.checkAllSeasonalMapIDs()
 		
+		if(miog.pveFrame2) then
+			miog.MainFrame.TitleBar.RaiderIOLoaded:SetShown(not C_AddOns.IsAddOnLoaded("RaiderIO"))
+
+		end
 		--[[local isLogin, isReload = ...
 
 		if(isLogin or isReload) then
@@ -79,7 +78,7 @@ local function mainEvents(_, event, ...)
 		end
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo()) then
-			if(not miog.EntryCreation:IsVisible()) then
+			if(miog.EntryCreation and not miog.EntryCreation:IsVisible()) then
 				local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 				local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1])
 

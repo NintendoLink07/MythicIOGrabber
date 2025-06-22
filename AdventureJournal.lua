@@ -912,6 +912,17 @@ local function updateFullItemFrame(frame, data)
     updateSourceFrame(frame.Source, data, true)
 end
 
+local function journalEvents(_, event, itemID)
+    if(event == "EJ_LOOT_DATA_RECIEVED" and itemID and missingItems[itemID]) then
+        missingItems[itemID] = nil
+
+        if(not areItemsStillMissing()) then
+            updateLoot()
+
+        end
+    end
+end
+
 miog.loadJournal = function()
     local journal = miog.pveFrame2.TabFramesPanel.Journal
     journal:SetScript("OnShow", function()
@@ -1244,23 +1255,10 @@ miog.loadJournal = function()
 
     end)
 
+    local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
+
+    eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
+    eventReceiver:SetScript("OnEvent", journalEvents)
+
     return journal
 end
-
-
-
-local function journalEvents(_, event, itemID)
-    if(event == "EJ_LOOT_DATA_RECIEVED" and itemID and missingItems[itemID]) then
-        missingItems[itemID] = nil
-
-        if(not areItemsStillMissing()) then
-            updateLoot()
-
-        end
-    end
-end
-
-local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_AJEventReceiver")
-
-eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
-eventReceiver:SetScript("OnEvent", journalEvents)

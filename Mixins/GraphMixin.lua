@@ -3,7 +3,7 @@ GraphMixin = {}
 function GraphMixin:OnLoad()
     self.gridPool = EditModeUtil.CreateLinePool(self.Grid, "EditModeGridLineTemplate");
     self.gridSpacing = 20
-	hooksecurefunc("UpdateUIParentPosition", function() if self:IsShown() then self:UpdateGrid() end end);
+	--hooksecurefunc("UpdateUIParentPosition", function() if self:IsShown() then self:UpdateGrid() end end);
 
     self.dotPool = CreateTexturePool(self, "ARTWORK", nil, nil, function(pool, frame) frame:SetScript("OnEnter", nil) frame:Hide() frame.line = nil end)
     self.linePool = EditModeUtil.CreateLinePool(self, "EditModeGridLineTemplate");

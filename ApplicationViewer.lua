@@ -423,13 +423,19 @@ local function createDataProviderWithUnsortedData()
 					secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 				elseif(categoryID == 3) then
-					local raidData = miog.getNewRaidSortData(playerName, realm)
+					--local raidData = miog.getNewRaidSortData(playerName, realm)
 
-					primarySortAttribute = raidData.character.ordered[1].weight or 0
-					secondarySortAttribute = raidData.character.ordered[2].weight or 0
-					
-					favourPrimary = raidData.character.ordered[1].weight and wticc(raidData.character.ordered[1].shortName .. ":" .. raidData.character.ordered[1].parsedString, miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color) or 0
+					if(raidData) then
+						primarySortAttribute = raidData.character.ordered[1].weight or 0
+						secondarySortAttribute = raidData.character.ordered[2].weight or 0
+						
+						favourPrimary = raidData.character.ordered[1].weight and wticc(raidData.character.ordered[1].shortName .. ":" .. raidData.character.ordered[1].parsedString, miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color) or 0
 
+					else
+						primarySortAttribute = 0
+						secondarySortAttribute = 0
+
+					end
 
 				elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 					if(not miog.F.IS_IN_DEBUG_MODE) then
@@ -525,11 +531,7 @@ local function createAVSelfEntry(pvpBracket)
 
 	miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID] = {}
 
-	local rioProfile
-
-	if(miog.F.IS_RAIDERIO_LOADED) then
-		rioProfile = RaiderIO.GetProfile(UnitFullName("player"))
-	end
+	local rioProfile = miog.getRaiderIOProfile(UnitFullName("player"))
 
 	local className, classFile = UnitClass("player")
 	local specID = GetSpecializationInfo(GetSpecialization())
@@ -614,11 +616,8 @@ local function createFullEntries(iterations)
 			local rating = 0
 
 			local debugProfile = miog.DEBUG_RAIDER_IO_PROFILES[numbers[random(1, #miog.DEBUG_RAIDER_IO_PROFILES)]]
-			local rioProfile
 
-			if(miog.F.IS_RAIDERIO_LOADED) then
-				rioProfile = RaiderIO.GetProfile(debugProfile[1], debugProfile[2], debugProfile[3])
-			end
+			local rioProfile = miog.getRaiderIOProfile(debugProfile[1], debugProfile[2], debugProfile[3])
 
 			local classID = random(1, 13)
 			local classInfo = C_CreatureInfo.GetClassInfo(classID) or {"WARLOCK", "Warlock"}

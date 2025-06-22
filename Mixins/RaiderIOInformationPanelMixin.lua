@@ -296,8 +296,6 @@ end
 function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
     self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(self.playerName, self.realm, self.region)
 
-    MIOG_TBL = self.raidData
-
 	local raidMapIDSet = {}
 	local mainRaidMapIDSet = {}
     local hasIcon = self.Raids.Raid1.Header.Icon

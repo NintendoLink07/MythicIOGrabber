@@ -64,7 +64,11 @@ local function updateGroupClassData()
         miog.ClassPanel.GroupComp.tanks = roleCountTank
         miog.ClassPanel.GroupComp.healers = roleCountHealer
         miog.ClassPanel.GroupComp.damager = roleCountDamager
-		miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCountString)
+
+        if(miog.ApplicationViewer) then
+		    miog.ApplicationViewer.TitleBar.GroupComposition.Roles:SetText(roleCountString)
+
+        end
 
 		if(miog.GroupManager) then
 			miog.GroupManager.Groups.Tank.Text:SetText(roleCountTank)

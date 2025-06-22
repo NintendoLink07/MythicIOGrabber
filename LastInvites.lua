@@ -156,7 +156,7 @@ local function addFavouredButtonsToPlayer(rootDescription, contextData)
     rootDescription:CreateButton(MIOG_NewSettings.favouredApplicants[fullName] and "Unfavour" or "Favour", function()
         if(not MIOG_NewSettings.favouredApplicants[fullName]) then
             
-            local profile = miog.F.IS_RAIDERIO_LOADED and RaiderIO.GetProfile(name, server, miog.F.CURRENT_REGION)
+            local profile = miog.getRaiderIOProfile(name, server, miog.F.CURRENT_REGION)
 
             local applicantData = {
                 name = name,
@@ -213,7 +213,7 @@ miog.addFavouredButtonsToUnitPopup = function(dropdownMenu, _, _, ...)
 					info.arg1 = fullName
 
 				else
-					local profile = miog.F.IS_RAIDERIO_LOADED and RaiderIO.GetProfile(name, server, miog.F.CURRENT_REGION)
+					local profile = miog.getRaiderIOProfile(name, server, miog.F.CURRENT_REGION)
 
 					local applicantData = {
 						name = name,

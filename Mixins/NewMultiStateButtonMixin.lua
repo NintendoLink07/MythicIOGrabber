@@ -28,6 +28,14 @@ function NewMultiStateButtonMixin:SetState(state)
         local r, g, b, a = unpack(self.colorTable[self.currentState])
         self.Border:SetColorTexture(r, g, b, a)
     end
+
+    if(self.currentState == self.maxStates) then
+        self.Icon:SetDesaturated(true)
+
+    else
+        self.Icon:SetDesaturated(false)
+
+    end
 end
 
 function NewMultiStateButtonMixin:AdvanceState()
