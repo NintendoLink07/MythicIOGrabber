@@ -405,25 +405,19 @@
                                         </Layers>
                                         
                                         <Frames>
-                                            <ScrollFrame parentKey="ScrollFrame" inherits="BackdropTemplate, ScrollFrameTemplate">
-                                                <KeyValues>
-                                                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
-                                                </KeyValues>
-
+                                            <Frame parentKey="QueueScrollBox" inherits="WowScrollBoxList">
                                                 <Anchors>
                                                     <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" x="4" y="-5"/>
                                                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="3"/>
                                                 </Anchors>
+                                            </Frame>
 
-                                                <ScrollChild>
-                                                    <Frame parentKey="Container" inherits="VerticalLayoutFrame, BackdropTemplate" setAllPoints="true">
-                                                        <KeyValues>
-                                                            <KeyValue key="align" value="top" />
-                                                            <KeyValue key="spacing" value="0" />
-                                                        </KeyValues>
-                                                    </Frame>
-                                                </ScrollChild>
-                                            </ScrollFrame>
+                                            <EventFrame parentKey="QueueScrollBar" inherits="MinimalScrollBar">
+                                                <Anchors>
+                                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="TOPRIGHT"/>
+                                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="BOTTOMRIGHT" />
+                                                </Anchors>
+                                            </EventFrame>
                                         </Frames>
                                     </Frame>
                                 </Frames>

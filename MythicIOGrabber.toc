@@ -90,6 +90,8 @@ XML\MIOG_HolidayFrameTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_PopupFrame.xml
 
+XML\QueueManager\MIOG_QueueFrameTemplate.xml
+
 XML\GroupManager\MIOG_GroupManager.xml
 XML\GroupManager\MIOG_GroupManagerRaidFrameCharacterTemplate.xml
 XML\GroupManager\MIOG_GroupManagerSpaceTemplate.xml

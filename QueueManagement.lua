@@ -65,7 +65,7 @@ local function resetQueueFrame(_, frame)
 end
 
 local function createQueueFrame(queueInfo)
-	if(not InCombatLockdown()) then
+	if(not InCombatLockdown() and true == false) then
 		local queueFrame = queueSystem.queueFrames[queueInfo[18]]
 
 		if(not queueSystem.queueFrames[queueInfo[18]]) then
@@ -209,9 +209,10 @@ end
 
 miog.updateFakeGroupApplications = updateFakeGroupApplications
 
-local function updateAllPVEQueues()
+local function updateAllPVEQueues(dataProvider)
 	for categoryID = 1, NUM_LE_LFG_CATEGORYS do
 		local mode, submode = GetLFGMode(categoryID);
+		local isRF = categoryID == LE_LFG_CATEGORY_RF
 
 		if (mode and submode ~= "noteleport" ) then
 			queuedList = GetLFGQueuedList(categoryID, queuedList) or {}
@@ -222,171 +223,35 @@ local function updateAllPVEQueues()
 			end
 		
 			local activeID = select(18, GetLFGQueueStats(categoryID));
-			local isSpecificQueue = categoryID == LE_LFG_CATEGORY_LFD and length > 1
+			local isMultiDungeon = categoryID == LE_LFG_CATEGORY_LFD and length > 1
 			local specificQueueDungeons = {}
 
 			for queueID, queued in pairs(queuedList) do
 				mode, submode = GetLFGMode(categoryID, queueID);
 				local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
 
-				if(mode == "queued") then
-					if(isSpecificQueue) then
-						table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
+				--if(mode == "queued") then
+				if(isMultiDungeon) then
+					table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
 
-					end
-
-					if(activeID == queueID or categoryID == LE_LFG_CATEGORY_RF) then
-
-						local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID);
-
-						local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
-
-						local isFollowerDungeon = queueID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(queueID)
-
-						local frameData = {
-							[1] = hasData,
-							[2] = isFollowerDungeon and LFG_TYPE_FOLLOWER_DUNGEON or subtypeID == 1 and LFG_TYPE_DUNGEON or subtypeID == 2 and LFG_TYPE_HEROIC_DUNGEON or subtypeID == 3 and RAID_FINDER,
-							[11] = isSpecificQueue and MULTIPLE_DUNGEONS or name,
-							[12] = myWait,
-							[17] = {"queued", queuedTime},
-							[18] = queueID,
-							[20] = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
-							or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
-							[30] = miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].horizontal or (isSpecificQueue or mapID == nil) and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png" or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].horizontal or fileID
-						}
-
-						local frame
-
-						if(not hasData) then
-							frameData[17] = nil
-						end
-
-						frame = createQueueFrame(frameData)
-
-						if(frame) then
-							if(categoryID == 3 and activeID == queueID and length > 1) then
-								frame.ActiveIDFrame:Show()
-
-							else
-								frame.ActiveIDFrame:Hide()
-							
-							end
-						
-							frame.CancelApplication:SetAttribute("type", "macro")
-							frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
-
-							if(mapID and not isSpecificQueue) then
-								frame:SetScript("OnMouseDown", function()
-									EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].journalInstanceID, nil, nil, nil, nil)
-								end)
-							end
-
-							frame:SetScript("OnEnter", function(self)
-								local tooltip = GameTooltip
-								tooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0)
-		
-								tooltip:SetText(isSpecificQueue and MULTIPLE_DUNGEONS or name, 1, 1, 1, true);
-
-								if(hasData) then
-									if(name2 and name ~= name2) then
-										tooltip:AddLine(name2)
-										
-									end
-
-									tooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[difficulty].name))
-
-									if(IsPlayerAtEffectiveMaxLevel() and minLevel == UnitLevel("player")) then
-										tooltip:AddLine("Max level dungeon")
-										
-									else
-										tooltip:AddLine(isScalingDungeon and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
-
-									end
-									tooltip:AddLine(string.format("%d - %d players", minPlayersDisband and minPlayersDisband > 0 and minPlayersDisband or 1, maxPlayers))
-		
-									GameTooltip_AddBlankLineToTooltip(GameTooltip)
-
-									if(noPartialClear) then
-										tooltip:AddLine("This will be a fresh ID.")
-
-									else
-										tooltip:AddLine("This group could have already killed some bosses.")
-
-									end
-
-									if(isTimewalker) then
-										tooltip:AddLine(PLAYER_DIFFICULTY_TIMEWALKER)
-									end
-
-									if(isHoliday) then
-										tooltip:AddLine(CALENDAR_FILTER_HOLIDAYS)
-									end
-
-									if(bonusRep > 0) then
-										tooltip:AddLine(string.format(LFG_BONUS_REPUTATION, bonusRep))
-										
-									end
-		
-									tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds));
-		
-									if ( queuedTime > 0 ) then
-										tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", formatter:Format(GetTime() - queuedTime)));
-									end
-		
-									GameTooltip_AddBlankLineToTooltip(GameTooltip)
-									
-									tooltip:AddLine("Wait times:");
-		
-									if ( myWait > 0 ) then
-										tooltip:AddLine(string.format("~ |cffffffff%s|r", formatter:Format(myWait)));
-									end
-		
-									if ( averageWait > 0 ) then
-										tooltip:AddLine(string.format("Ø |cffffffff%s|r", formatter:Format(averageWait)));
-									end
-		
-									if ( tankWait > 0 ) then
-										tooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", formatter:Format(tankWait)));
-									end
-		
-									if ( healerWait > 0 ) then
-										tooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", formatter:Format(healerWait)));
-									end
-		
-									if ( damageWait > 0 ) then
-										tooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", formatter:Format(damageWait)));
-									end
-		
-									if(isSpecificQueue) then
-										GameTooltip_AddBlankLineToTooltip(GameTooltip)
-		
-										tooltip:AddLine(QUEUED_FOR_SHORT)
-		
-										table.sort(specificQueueDungeons, function(k1, k2)
-											if(k1.difficulty == k2.difficulty) then
-												return k1.dungeonID < k2.dungeonID
-											end
-		
-											return k1.difficulty < k2.difficulty
-										end)
-		
-										for _, v in ipairs(specificQueueDungeons) do
-											tooltip:AddLine(v.difficulty .. " " .. v.name)
-		
-										end
-									end
-		
-								else
-									tooltip:AddLine(WrapTextInColorCode("Still waiting for data from Blizzard...", miog.CLRSCC.red));
-								
-								end
-		
-								GameTooltip:Show()
-							end)
-						end
-					end
 				end
+
+				if(activeID == queueID or isRF) then
+					dataProvider:Insert({
+						type = "categories",
+						mode = mode,
+						submode = submode,
+						categoryID = categoryID,
+						queueID = queueID,
+						activeID = activeID,
+						isCurrentlyActive = queueID == activeID,
+						isMultiDungeon = isMultiDungeon,
+					})
+				end
+				--end
 			end
+		end
+	end
 		
 			--[[if(activeID) then
 				if ( mode == "queued" ) then
@@ -432,10 +297,6 @@ local function updateAllPVEQueues()
 					--QueueStatusEntry_SetMinimalDisplay(entry, GetDisplayNameFromCategory(category), QUEUED_STATUS_UNKNOWN, subTitle, extraText);
 				end
 			end]]
-			
-			queueIndex = queueIndex + 1
-		end
-	end
 end
 
 local function updateCurrentListing()
@@ -835,21 +696,27 @@ local function updatePlunderstormQueue()
 end
 
 local function checkQueues()
+	local dataProvider = CreateDataProvider()
+
 	if(not InCombatLockdown()) then
-		queueSystem.framePool:ReleaseAll()
-		queueSystem.queueFrames = {}
-		queueIndex = 1
+		--queueSystem.framePool:ReleaseAll()
+		--queueSystem.queueFrames = {}
+		--queueIndex = 1
 
-		updateAllPVEQueues()
-		updateCurrentListing()
+		updateAllPVEQueues(dataProvider)
+		--updateCurrentListing(dataProvider)
 
-		updateFakeGroupApplications()
+		--updateFakeGroupApplications(dataProvider)
 
-		updateGroupApplications()
-		updatePVPQueues()
-		updateWorldPVPQueues()
-		updatePetBattleQueue()
-		updatePlunderstormQueue()
+		--updateGroupApplications(dataProvider)
+		--updatePVPQueues(dataProvider)
+		--updateWorldPVPQueues(dataProvider)
+		--updatePetBattleQueue(dataProvider)
+		--updatePlunderstormQueue(dataProvider)
+
+		
+		local scrollbox = miog.MainTab.QueueInformation.Panel.QueueScrollBox
+		scrollbox:SetDataProvider(dataProvider)
 		
 	else
 		miog.F.UPDATE_AFTER_COMBAT = true
@@ -909,8 +776,222 @@ local function queueEvents(_, event, ...)
 end
 
 miog.loadQueueSystem = function()
-	queueSystem.framePool = CreateFramePool("Button", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
+	local scrollbox = miog.MainTab.QueueInformation.Panel.QueueScrollBox
+	local scrollbar = miog.MainTab.QueueInformation.Panel.QueueScrollBar
+	--queueSystem.framePool = CreateFramePool("Button", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
+
+	local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 2);
+
+	view:SetElementInitializer("MIOG_QueueFrameTemplate", function(frame, data)
+		local queueID = data.queueID
+		local categoryID = data.categoryID
+
+		local activityName, backgroundImage, timeInQueue, timeToMatch
+
+		if(data.type == "categories") then
+			local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
+			local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID)
+
+			local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
+
+			local isFollowerDungeon = queueID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(queueID)
+
+			activityName = data.isMultiDungeon and MULTIPLE_DUNGEONS or name
+			timeInQueue = GetTime() - queuedTime
+			timeToMatch = myWait or 0
+
+			print(myWait, averageWait)
+
+			if(categoryID == LE_LFG_CATEGORY_RF and data.isCurrentlyActive) then
+				frame.ActiveIDFrame:Show()
+
+			end
+
+			backgroundImage = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].horizontal or fileID
+			
+			if(mapID and not data.isMultiDungeon) then
+				frame:SetScript("OnMouseDown", function(self, button)
+					if(button == "LeftButton") then
+						EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].journalInstanceID)
+
+					end
+
+				end)
+			end
+
+			frame:SetScript("OnEnter", function(self)
+				local tooltip = GameTooltip
+				tooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+				tooltip:SetText(data.isMultiDungeon and MULTIPLE_DUNGEONS or activityName, 1, 1, 1, true);
+
+				if(hasData) then
+					if(name2 and name ~= name2) then
+						tooltip:AddLine(name2)
+						
+					end
+
+					tooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[difficulty].name))
+
+					if(IsPlayerAtEffectiveMaxLevel() and minLevel == UnitLevel("player")) then
+						tooltip:AddLine("Max level dungeon")
+						
+					else
+						tooltip:AddLine(isScalingDungeon and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
+
+					end
+					tooltip:AddLine(string.format("%d - %d players", minPlayersDisband and minPlayersDisband > 0 and minPlayersDisband or 1, maxPlayers))
+
+					GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+					if(noPartialClear) then
+						tooltip:AddLine("This will be a fresh ID.")
+
+					else
+						tooltip:AddLine("This group could have already killed some bosses.")
+
+					end
+
+					if(isTimewalker) then
+						tooltip:AddLine(PLAYER_DIFFICULTY_TIMEWALKER)
+					end
+
+					if(isHoliday) then
+						tooltip:AddLine(CALENDAR_FILTER_HOLIDAYS)
+					end
+
+					if(bonusRep > 0) then
+						tooltip:AddLine(string.format(LFG_BONUS_REPUTATION, bonusRep))
+						
+					end
+
+					tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds));
+
+					if ( queuedTime > 0 ) then
+						tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", formatter:Format(GetTime() - queuedTime)));
+					end
+
+					GameTooltip_AddBlankLineToTooltip(GameTooltip)
+					
+					tooltip:AddLine("Wait times:");
+
+					if ( myWait > 0 ) then
+						tooltip:AddLine(string.format("~ |cffffffff%s|r", formatter:Format(myWait)));
+					end
+
+					if ( averageWait > 0 ) then
+						tooltip:AddLine(string.format("Ø |cffffffff%s|r", formatter:Format(averageWait)));
+					end
+
+					if ( tankWait > 0 ) then
+						tooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", formatter:Format(tankWait)));
+					end
+
+					if ( healerWait > 0 ) then
+						tooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", formatter:Format(healerWait)));
+					end
+
+					if ( damageWait > 0 ) then
+						tooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", formatter:Format(damageWait)));
+					end
+
+					if(isSpecificQueue) then
+						GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+						tooltip:AddLine(QUEUED_FOR_SHORT)
+
+						table.sort(specificQueueDungeons, function(k1, k2)
+							if(k1.difficulty == k2.difficulty) then
+								return k1.dungeonID < k2.dungeonID
+							end
+
+							return k1.difficulty < k2.difficulty
+						end)
+
+						for _, v in ipairs(specificQueueDungeons) do
+							tooltip:AddLine(v.difficulty .. " " .. v.name)
+
+						end
+					end
+
+				else
+					tooltip:AddLine(WrapTextInColorCode("Still waiting for data from Blizzard...", miog.CLRSCC.red));
+				
+				end
+
+				GameTooltip:Show()
+			end)
+		else
+			frame.ActiveIDFrame:Hide()
+
+		end
+
+		--mode = mode,
+		--submode = submode,
+		--hasData = hasData,
+		--activityTypeString = isFollowerDungeon and LFG_TYPE_FOLLOWER_DUNGEON or subtypeID == 1 and LFG_TYPE_DUNGEON or subtypeID == 2 and LFG_TYPE_HEROIC_DUNGEON or subtypeID == 3 and RAID_FINDER,
+		--,
+		--multiDungeon = isSpecificQueue,
+		--timeInQueue = myWait,
+		--type = "lfg",
+		--queueType = "queue",
+		--typeValue = queuedTime,
+		--id = queueID,
+		--icon = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
+		--or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
+		--activeID = categoryID == 3 and activeID == queueID and length > 1,
+		--difficulty = difficulty,
+		--mapID = mapID,
+
+		frame.Name:SetText(activityName)
+
+		if(frame.Age.Ticker) then
+			frame.Age.Ticker:Cancel()
+			frame.Age.Ticker = nil
+		end
+
+		local queueInfo = {}
+			if(data.type == "categories") then
+				frame.Age:SetText(miog.secondsToClock(timeInQueue))
+				frame.Age.Ticker = C_Timer.NewTicker(1, function()
+					timeInQueue = timeInQueue + 1
+					frame.Age:SetText(miog.secondsToClock(timeInQueue))
+
+				end)
+			elseif(data.type == "listing") then
+				ageNumber = queueInfo[17][2]
+
+				frame.Age.Ticker = C_Timer.NewTicker(1, function()
+					ageNumber = ageNumber - 1
+					frame.Age:SetText(miog.secondsToClock(ageNumber))
+
+				end)
+			
+			end
+
+		frame.CancelApplication:RegisterForClicks("LeftButtonDown")
+		frame.CancelApplication:SetAttribute("type", "macro")
+		frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
+
+		frame.Wait:SetText(timeToMatch ~= -1 and "(" .. (timeToMatch ~= -1 and miog.secondsToClock(timeToMatch)) .. ")" or "")
+
+		local isHQ = miog.isMIOGHQLoaded()
+		
+		if(isHQ) then
+			frame.Background:SetVertTile(false)
+			frame.Background:SetHorizTile(false)
+			frame.Background:SetTexture(backgroundImage, "CLAMP", "CLAMP")
+			
+		else
+			frame.Background:SetVertTile(true)
+			frame.Background:SetHorizTile(true)
+			frame.Background:SetTexture(backgroundImage, "MIRROR", "MIRROR")
+
+		end
+	end)
+
+	ScrollUtil.InitScrollBoxListWithScrollBar(scrollbox, scrollbar, view);
 
 	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
 
