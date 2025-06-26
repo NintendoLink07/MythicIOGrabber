@@ -68,6 +68,7 @@ Mixins\ProgressionTabMixin.lua
 Mixins\ItemUpgradeFinderMixin.lua
 Mixins\SearchBoxFiltersMixin.lua
 Mixins\SortBarMixin.lua
+Mixins\QueueFrameMixin.lua
 
 
 
@@ -91,6 +92,8 @@ XML\MIOG_OptionsPanel.xml
 XML\MIOG_PopupFrame.xml
 
 XML\QueueManager\MIOG_QueueFrameTemplate.xml
+XML\QueueManager\MIOG_QueueLFGFrameTemplate.xml
+XML\QueueManager\MIOG_QueueListingFrameTemplate.xml
 
 XML\GroupManager\MIOG_GroupManager.xml
 XML\GroupManager\MIOG_GroupManagerRaidFrameCharacterTemplate.xml

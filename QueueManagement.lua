@@ -176,7 +176,7 @@ local function updateFakeGroupApplications()
 								[30] = activityInfo.horizontal or nil
 							}
 
-							local frame = createQueueFrame(frameData)
+							--local frame = createQueueFrame(frameData)
 
 							if(frame) then
 								frame:SetAlpha(0.5)
@@ -187,11 +187,11 @@ local function updateFakeGroupApplications()
 									LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 								end)
 
-								frame:SetScript("OnEnter", function(self)
-									miog.createResultTooltip(id, frame)
+								--frame:SetScript("OnEnter", function(self)
+									--miog.createResultTooltip(id, frame)
 
-									GameTooltip:Show()
-								end)
+								--	GameTooltip:Show()
+								--end)
 
 								frame.CancelApplication:SetAttribute("type", "macro")
 								frame.CancelApplication:SetAttribute("macrotext1", "/run MIOG_DeletePartyGUID(" .. tostring(searchResultInfo.partyGUID) .. ")")
@@ -224,20 +224,13 @@ local function updateAllPVEQueues(dataProvider)
 		
 			local activeID = select(18, GetLFGQueueStats(categoryID));
 			local isMultiDungeon = categoryID == LE_LFG_CATEGORY_LFD and length > 1
-			local specificQueueDungeons = {}
 
 			for queueID, queued in pairs(queuedList) do
 				mode, submode = GetLFGMode(categoryID, queueID);
-				local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
-
-				--if(mode == "queued") then
-				if(isMultiDungeon) then
-					table.insert(specificQueueDungeons, {dungeonID = queueID, name = name, difficulty = subtypeID == 1 and "Normal" or subtypeID == 2 and "Heroic"})
-
-				end
 
 				if(activeID == queueID or isRF) then
 					dataProvider:Insert({
+						template = "MIOG_QueueLFGFrameTemplate",
 						type = "categories",
 						mode = mode,
 						submode = submode,
@@ -299,56 +292,15 @@ local function updateAllPVEQueues(dataProvider)
 			end]]
 end
 
-local function updateCurrentListing()
+local function updateCurrentListing(dataProvider)
 	--Try LFGList entries
-	local isActive = C_LFGList.HasActiveEntryInfo();
-	if ( isActive ) then
-		local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
-		local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants();
-		local activityInfo = miog.requestActivityInfo(activeEntryInfo.activityIDs[1])
+	local isActive = C_LFGList.HasActiveEntryInfo()
 
-		if(activityInfo) then
-			local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
-
-			local unitName, unitID = miog.getGroupLeader()
-
-			local frameData = {
-				[1] = true,
-				[2] = groupInfo or activityInfo.shortName,
-				[11] = unitID == "player" and ("Your Listing" .. " (" .. numApplicants .. ")") or (unitName or "Unknown") .. "'s Listing",
-				[12] = -1,
-				[17] = {"duration", activeEntryInfo.duration},
-				[18] = "YOURLISTING",
-				[20] = activityInfo.icon,
-				[21] = -2,
-				[30] = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
-			}
-
-			local frame = createQueueFrame(frameData)
-
-			if(frame) then
-				frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
-				frame.CancelApplication:SetAttribute("type", "macro")
-				frame.CancelApplication:SetAttribute("macrotext1", "/run C_LFGList.RemoveListing()")
-
-				frame:SetScript("OnMouseDown", function()
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-					LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
-				end)
-				frame:SetScript("OnEnter", function(self)
-					self.BackgroundHover:Show()
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-					GameTooltip:SetText(string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants))
-
-					if(activeEntryInfo.questID and activeEntryInfo.questID > 0) then
-						GameTooltip:AddLine(LFG_TYPE_QUEST .. ": " .. C_QuestLog.GetTitleForQuestID(activeEntryInfo.questID))
-						
-					end
-
-					GameTooltip:Show()
-				end)
-			end
-		end
+	if (isActive) then
+		dataProvider:Insert({
+			template = "MIOG_QueueListingFrameTemplate",
+			type = "listing",
+		})
 	end
 end
 
@@ -704,7 +656,7 @@ local function checkQueues()
 		--queueIndex = 1
 
 		updateAllPVEQueues(dataProvider)
-		--updateCurrentListing(dataProvider)
+		updateCurrentListing(dataProvider)
 
 		--updateFakeGroupApplications(dataProvider)
 
@@ -783,25 +735,33 @@ miog.loadQueueSystem = function()
 
 	local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 2);
 
-	view:SetElementInitializer("MIOG_QueueFrameTemplate", function(frame, data)
-		local queueID = data.queueID
-		local categoryID = data.categoryID
+	local function Initializer(frame, data)
+		frame.isMultiDungeon = data.isMultiDungeon
+		frame.queueID = data.queueID
+		frame.categoryID = data.categoryID
 
-		local activityName, backgroundImage, timeInQueue, timeToMatch
+		local activityName, backgroundImage, timeInQueue, timeToMatch, macrotext
 
-		if(data.type == "categories") then
+		if(frame.Age.Ticker) then
+			frame.Age.Ticker:Cancel()
+			frame.Age.Ticker = nil
+		end
+
+		if(data.template == "MIOG_QueueLFGFrameTemplate") then
+			local queueID = data.queueID
+			local categoryID = data.categoryID
+
 			local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
-			local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID)
 
 			local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
 
 			local isFollowerDungeon = queueID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(queueID)
 
+			macrotext = "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")"
+
 			activityName = data.isMultiDungeon and MULTIPLE_DUNGEONS or name
 			timeInQueue = GetTime() - queuedTime
 			timeToMatch = myWait or 0
-
-			print(myWait, averageWait)
 
 			if(categoryID == LE_LFG_CATEGORY_RF and data.isCurrentlyActive) then
 				frame.ActiveIDFrame:Show()
@@ -820,161 +780,61 @@ miog.loadQueueSystem = function()
 				end)
 			end
 
-			frame:SetScript("OnEnter", function(self)
-				local tooltip = GameTooltip
-				tooltip:SetOwner(self, "ANCHOR_RIGHT")
+			--mode = mode,
+			--submode = submode,
+			--hasData = hasData,
+			--activityTypeString = isFollowerDungeon and LFG_TYPE_FOLLOWER_DUNGEON or subtypeID == 1 and LFG_TYPE_DUNGEON or subtypeID == 2 and LFG_TYPE_HEROIC_DUNGEON or subtypeID == 3 and RAID_FINDER,
+			--,
+			--multiDungeon = isSpecificQueue,
+			--timeInQueue = myWait,
+			--type = "lfg",
+			--queueType = "queue",
+			--typeValue = queuedTime,
+			--id = queueID,
+			--icon = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
+			--or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
+			--activeID = categoryID == 3 and activeID == queueID and length > 1,
+			--difficulty = difficulty,
+			--mapID = mapID,
 
-				tooltip:SetText(data.isMultiDungeon and MULTIPLE_DUNGEONS or activityName, 1, 1, 1, true);
-
-				if(hasData) then
-					if(name2 and name ~= name2) then
-						tooltip:AddLine(name2)
-						
-					end
-
-					tooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[difficulty].name))
-
-					if(IsPlayerAtEffectiveMaxLevel() and minLevel == UnitLevel("player")) then
-						tooltip:AddLine("Max level dungeon")
-						
-					else
-						tooltip:AddLine(isScalingDungeon and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
-
-					end
-					tooltip:AddLine(string.format("%d - %d players", minPlayersDisband and minPlayersDisband > 0 and minPlayersDisband or 1, maxPlayers))
-
-					GameTooltip_AddBlankLineToTooltip(GameTooltip)
-
-					if(noPartialClear) then
-						tooltip:AddLine("This will be a fresh ID.")
-
-					else
-						tooltip:AddLine("This group could have already killed some bosses.")
-
-					end
-
-					if(isTimewalker) then
-						tooltip:AddLine(PLAYER_DIFFICULTY_TIMEWALKER)
-					end
-
-					if(isHoliday) then
-						tooltip:AddLine(CALENDAR_FILTER_HOLIDAYS)
-					end
-
-					if(bonusRep > 0) then
-						tooltip:AddLine(string.format(LFG_BONUS_REPUTATION, bonusRep))
-						
-					end
-
-					tooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds));
-
-					if ( queuedTime > 0 ) then
-						tooltip:AddLine(string.format("Queued for: |cffffffff%s|r", formatter:Format(GetTime() - queuedTime)));
-					end
-
-					GameTooltip_AddBlankLineToTooltip(GameTooltip)
-					
-					tooltip:AddLine("Wait times:");
-
-					if ( myWait > 0 ) then
-						tooltip:AddLine(string.format("~ |cffffffff%s|r", formatter:Format(myWait)));
-					end
-
-					if ( averageWait > 0 ) then
-						tooltip:AddLine(string.format("Ø |cffffffff%s|r", formatter:Format(averageWait)));
-					end
-
-					if ( tankWait > 0 ) then
-						tooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", formatter:Format(tankWait)));
-					end
-
-					if ( healerWait > 0 ) then
-						tooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", formatter:Format(healerWait)));
-					end
-
-					if ( damageWait > 0 ) then
-						tooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", formatter:Format(damageWait)));
-					end
-
-					if(isSpecificQueue) then
-						GameTooltip_AddBlankLineToTooltip(GameTooltip)
-
-						tooltip:AddLine(QUEUED_FOR_SHORT)
-
-						table.sort(specificQueueDungeons, function(k1, k2)
-							if(k1.difficulty == k2.difficulty) then
-								return k1.dungeonID < k2.dungeonID
-							end
-
-							return k1.difficulty < k2.difficulty
-						end)
-
-						for _, v in ipairs(specificQueueDungeons) do
-							tooltip:AddLine(v.difficulty .. " " .. v.name)
-
-						end
-					end
-
-				else
-					tooltip:AddLine(WrapTextInColorCode("Still waiting for data from Blizzard...", miog.CLRSCC.red));
-				
-				end
-
-				GameTooltip:Show()
-			end)
-		else
-			frame.ActiveIDFrame:Hide()
-
-		end
-
-		--mode = mode,
-		--submode = submode,
-		--hasData = hasData,
-		--activityTypeString = isFollowerDungeon and LFG_TYPE_FOLLOWER_DUNGEON or subtypeID == 1 and LFG_TYPE_DUNGEON or subtypeID == 2 and LFG_TYPE_HEROIC_DUNGEON or subtypeID == 3 and RAID_FINDER,
-		--,
-		--multiDungeon = isSpecificQueue,
-		--timeInQueue = myWait,
-		--type = "lfg",
-		--queueType = "queue",
-		--typeValue = queuedTime,
-		--id = queueID,
-		--icon = miog.DIFFICULTY_ID_INFO[difficulty] and miog.DIFFICULTY_ID_INFO[difficulty].isLFR and fileID
-		--or mapID and miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or miog.LFG_ID_INFO[queueID] and miog.LFG_ID_INFO[queueID].icon or fileID or miog.findBattlegroundIconByName(name) or miog.findBrawlIconByName(name) or nil,
-		--activeID = categoryID == 3 and activeID == queueID and length > 1,
-		--difficulty = difficulty,
-		--mapID = mapID,
-
-		frame.Name:SetText(activityName)
-
-		if(frame.Age.Ticker) then
-			frame.Age.Ticker:Cancel()
-			frame.Age.Ticker = nil
-		end
-
-		local queueInfo = {}
-			if(data.type == "categories") then
+			frame.Age.Ticker = C_Timer.NewTicker(1, function()
+				timeInQueue = timeInQueue + 1
 				frame.Age:SetText(miog.secondsToClock(timeInQueue))
+
+			end)
+
+			frame.Wait:SetText(timeToMatch ~= -1 and "(" .. (timeToMatch ~= -1 and miog.secondsToClock(timeToMatch)) .. ")" or "")
+
+		elseif(data.template == "MIOG_QueueListingFrameTemplate") then
+			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+			local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
+			local activityInfo = miog.requestActivityInfo(activeEntryInfo.activityIDs[1])
+
+			if(activityInfo) then
+				local unitName, unitID = miog.getGroupLeader()
+
+				macrotext = "/run C_LFGList.RemoveListing()"
+				backgroundImage = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
+
+				frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
+
+				timeInQueue = activeEntryInfo.duration
+
 				frame.Age.Ticker = C_Timer.NewTicker(1, function()
-					timeInQueue = timeInQueue + 1
+					timeInQueue = timeInQueue - 1
 					frame.Age:SetText(miog.secondsToClock(timeInQueue))
 
 				end)
-			elseif(data.type == "listing") then
-				ageNumber = queueInfo[17][2]
 
-				frame.Age.Ticker = C_Timer.NewTicker(1, function()
-					ageNumber = ageNumber - 1
-					frame.Age:SetText(miog.secondsToClock(ageNumber))
-
-				end)
-			
+				activityName = unitID == "player" and ("Your Listing" .. " (" .. numApplicants .. ")") or (unitName or "Unknown") .. "'s Listing"
+				
 			end
 
-		frame.CancelApplication:RegisterForClicks("LeftButtonDown")
-		frame.CancelApplication:SetAttribute("type", "macro")
-		frame.CancelApplication:SetAttribute("macrotext1", "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")")
+			frame.Wait:SetText("")
+		end
 
-		frame.Wait:SetText(timeToMatch ~= -1 and "(" .. (timeToMatch ~= -1 and miog.secondsToClock(timeToMatch)) .. ")" or "")
+		frame.CancelApplication:RegisterForClicks("LeftButtonDown")
+		frame.CancelApplication:SetAttribute("macrotext1", macrotext)
 
 		local isHQ = miog.isMIOGHQLoaded()
 		
@@ -989,7 +849,17 @@ miog.loadQueueSystem = function()
 			frame.Background:SetTexture(backgroundImage, "MIRROR", "MIRROR")
 
 		end
-	end)
+
+		frame.Name:SetText(activityName)
+		frame.Age:SetText(miog.secondsToClock(timeInQueue))
+	end
+	
+	local function CustomFactory(factory, data)
+		local template = data.template
+		factory(template, Initializer)
+	end
+	
+	view:SetElementFactory(CustomFactory)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(scrollbox, scrollbar, view);
 
