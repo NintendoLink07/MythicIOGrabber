@@ -1,0 +1,17 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_QueueFakeApplicationFrameTemplate" inherits="MIOG_QueueFrameTemplate" mixin="QueueFrameMixin" virtual="true">
+        <Size y="45" />
+
+        <Scripts>
+			<OnClick>
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, self.categoryID, LFGListFrame.SearchPanel.preferredFilters or 0, LFGListFrame.baseFilters)
+				LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+			</OnClick>
+            
+            <OnLoad method="OnLoad" />
+        </Scripts>
+    </Button>
+</Ui>

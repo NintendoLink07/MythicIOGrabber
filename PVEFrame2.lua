@@ -165,6 +165,10 @@ local function createPVEFrameReplacement()
 
 		if(queueInfo.type == "pve") then
 			if(queueInfo.subtype == "multidng") then
+				for k, v in pairs(queueInfo.id) do
+					LFGEnabledList[v] = v
+
+				end
 				LFG_JoinDungeon(1, "specific", queueInfo.id, {})
 				
 			else
@@ -206,9 +210,21 @@ local function createPVEFrameReplacement()
 	miog.MainTab.QueueInformation.Requeue:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		GameTooltip:SetText("Queue up for the same activity you queued for the last time.")
+
 		if(MIOG_CharacterSettings.lastUsedQueue) then
 			if(MIOG_CharacterSettings.lastUsedQueue.type == "pve") then
-				GameTooltip:AddLine("Last activity: " .. GetLFGDungeonInfo(MIOG_CharacterSettings.lastUsedQueue.id))
+				if(type(MIOG_CharacterSettings.lastUsedQueue.id) == "table") then
+					GameTooltip:AddLine("Last activity: Multiple dungeons ")
+
+					for k, v in pairs(MIOG_CharacterSettings.lastUsedQueue.id) do
+						local name, _, _, _, _, _, _, _, _, _, _, difficulty = GetLFGDungeonInfo(v)
+						GameTooltip:AddLine(name .. " - " .. GetDifficultyInfo(difficulty))
+
+					end
+				else
+					GameTooltip:AddLine("Last activity: " .. GetLFGDungeonInfo(MIOG_CharacterSettings.lastUsedQueue.id))
+
+				end
 
 			elseif(MIOG_CharacterSettings.lastUsedQueue.type == "pvp") then
 				local activity

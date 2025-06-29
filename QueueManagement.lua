@@ -142,11 +142,11 @@ local function createQueueFrame(queueInfo)
 	end
 end
 
-local function updateFakeGroupApplications()
+local function updateFakeGroupApplications(dataProvider)
 	if(MR_GetNumberOfPartyGUIDs and not miog.F.LITE_MODE) then
 		local numOfSavedGUIDs = MR_GetNumberOfPartyGUIDs()
 
-		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
+		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
 
 		if(numOfSavedGUIDs> 0) then
 			local total, resultTable = C_LFGList.GetFilteredSearchResults()
@@ -159,12 +159,19 @@ local function updateFakeGroupApplications()
 						local id, appStatus = C_LFGList.GetApplicationInfo(resultID)
 		
 						if(appStatus ~= "applied") then
-							local identifier = "FAKE_APPLICATION_FOR_RESULT_" .. resultID
-							local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-							local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
-							local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
+							--local identifier = "FAKE_APPLICATION_FOR_RESULT_" .. resultID
+							--local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
+							--local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+							--local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 					
-							local frameData = {
+							
+
+							dataProvider:Insert({
+								template = "MIOG_QueueFakeApplicationFrameTemplate",
+								resultID = resultID,
+							})
+
+							--[[local frameData = {
 								[1] = true,
 								[2] = groupInfo,
 								[11] = searchResultInfo.name,
@@ -194,14 +201,14 @@ local function updateFakeGroupApplications()
 								--end)
 
 								frame.CancelApplication:SetAttribute("type", "macro")
-								frame.CancelApplication:SetAttribute("macrotext1", "/run MIOG_DeletePartyGUID(" .. tostring(searchResultInfo.partyGUID) .. ")")
-							end
+								frame.CancelApplication:SetAttribute("macrotext1", "/run MIOG_DeletePartyGUID(" .. tostring(C_LFGList.GetSearchResultInfo(resultID).partyGUID) .. ")")
+							end]]
 						end
 					end
 				end
 			end
 		else
-			miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.Title.FakeApps:SetText("")
+			miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.FakeApps:SetText("")
 
 		end
 	end
@@ -228,7 +235,7 @@ local function updateAllPVEQueues(dataProvider)
 			for queueID, queued in pairs(queuedList) do
 				mode, submode = GetLFGMode(categoryID, queueID);
 
-				if(activeID == queueID or isRF) then
+				--if(activeID == queueID or isRF) then
 					dataProvider:Insert({
 						template = "MIOG_QueueLFGFrameTemplate",
 						mode = mode,
@@ -239,7 +246,7 @@ local function updateAllPVEQueues(dataProvider)
 						isCurrentlyActive = queueID == activeID,
 						isMultiDungeon = isMultiDungeon,
 					})
-				end
+				--end
 				--end
 			end
 		end
@@ -315,7 +322,7 @@ local function updateGroupApplications(dataProvider)
 			if(resultID) then
 				--local identifier = "APPLICATION_" .. resultID
 
-				--if(appStatus == "applied") then
+				if(appStatus == "applied") then
 					--local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
 					--local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 					--local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
@@ -346,7 +353,7 @@ local function updateGroupApplications(dataProvider)
 					--end
 
 					--queueIndex = queueIndex + 1
-				--end
+				end
 			end
 		end
 	end
@@ -560,19 +567,9 @@ local function updateWorldPVPQueues(dataProvider)
 end
 
 local function updatePetBattleQueue(dataProvider)
-	local pbStatus = C_PetBattles.GetPVPMatchmakingInfo();
+	local pbStatus = C_PetBattles.GetPVPMatchmakingInfo()
 
 	if(pbStatus) then
-		--[[local frameData = {
-			[1] = true,
-			[2] = "",
-			[11] = "Pet Battle",
-			[12] = estimate,
-			[17] = {"queued", queued},
-			[18] = "PETBATTLE",
-			[20] = miog.C.STANDARD_FILE_PATH .. "/infoIcons/petbattle.png",
-			[30] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/petbattle.png",
-		}]]
 		dataProvider:Insert({
 			template = "MIOG_QueueFramePVPTemplate",
 			type = "petbattle",
@@ -581,38 +578,13 @@ local function updatePetBattleQueue(dataProvider)
 end
 
 local function updatePlunderstormQueue(dataProvider)
--- NOTE: Plunderstorm Queue is exclusive to all other queues
-	local queuedForPlunderstorm = C_LobbyMatchmakerInfo.IsInQueue();
-
-	local queueTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
-
+	local queuedForPlunderstorm = C_LobbyMatchmakerInfo.IsInQueue()
 
 	if(queuedForPlunderstorm) then
-		local frameData = {
-			[1] = true,
-			[2] = "",
-			[11] = WOW_LABS_PLUNDERSTORM_CATEGORY,
-			[12] = 0,
-			[17] = {"queued", queueTime},
-			[18] = "PLUNDERSTORM",
-			[20] = "interface/calendar/holidays/calendar_plunderstormstart.blp",
-			[30] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/plunderstorm.png",
-		}
-
-		local queueState = C_LobbyMatchmakerInfo.GetCurrQueueState();
-
-		if(queueState == Enum.PlunderstormQueueState.Queued) then
-			local frame = createQueueFrame(frameData)
-
-			if(frame) then
-				frame.CancelApplication:SetAttribute("type", "macro")
-				frame.CancelApplication:SetAttribute("macrotext1", "/run C_LobbyMatchmakerInfo.AbandonQueue()")
-
-			end
-
-			queueIndex = queueIndex + 1
-
-		end
+		dataProvider:Insert({
+			template = "MIOG_QueueFramePVPTemplate",
+			type = "plunderstorm",
+		})
 	end
 end
 
@@ -633,12 +605,14 @@ local function checkQueues()
 		updatePVPQueues(dataProvider)
 		updateWorldPVPQueues(dataProvider)
 		updatePetBattleQueue(dataProvider)
-		--updatePlunderstormQueue(dataProvider)
+		updatePlunderstormQueue(dataProvider)
 
 		
 		local scrollbox = miog.MainTab.QueueInformation.Panel.QueueScrollBox
 		scrollbox:SetDataProvider(dataProvider)
 		
+		miog.MainTab.QueueInformation.Panel.Title:SetShown(dataProvider:GetSize() == 0)
+
 	else
 		miog.F.UPDATE_AFTER_COMBAT = true
 
@@ -718,6 +692,9 @@ miog.loadQueueSystem = function()
 		end
 
 		frame.Name:SetTextColor(1, 1, 1, 1)
+		frame:SetAlpha(1)
+
+		local isFakeApp = data.template == "MIOG_QueueFakeApplicationFrameTemplate"
 
 		if(data.template == "MIOG_QueueLFGFrameTemplate") then
 			local queueID = data.queueID
@@ -733,7 +710,7 @@ miog.loadQueueSystem = function()
 
 			activityName = data.isMultiDungeon and MULTIPLE_DUNGEONS or name
 			timeInQueue = queuedTime and GetTime() - queuedTime or 0
-			timeToMatch = myWait or 0
+			timeToMatch = myWait or averageWait or 0
 
 			if(hasData) then
 				frame.Age.Ticker = C_Timer.NewTicker(1, function()
@@ -750,18 +727,8 @@ miog.loadQueueSystem = function()
 				if(totalNumOfPlayers > 1) then
 					frame.Name:SetTextColor(1, 1, 0, 1)
 
-					activityName = activityName .. " (" .. (totalNumOfPlayers / maxPlayers * 100) .. "%)"
+					activityName = "(" .. (totalNumOfPlayers / maxPlayers * 100) .. "%) " .. activityName
 
-				end
-
-				if(categoryID == LE_LFG_CATEGORY_RF) then
-					if(data.isCurrentlyActive) then
-						frame.ActiveIDFrame:Show()
-
-					else
-						frame.ActiveIDFrame:Hide()
-
-					end
 				end
 			else
 				frame.Wait:Hide()
@@ -777,13 +744,15 @@ miog.loadQueueSystem = function()
 			backgroundImage = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].horizontal or fileID
 			
 			if(mapID and not data.isMultiDungeon) then
-				frame:SetScript("OnMouseDown", function(self, button)
+				frame:SetScript("OnClick", function(self, button)
 					if(button == "LeftButton") then
 						EncounterJournal_OpenJournal(difficulty, miog.MAP_INFO[mapID].journalInstanceID)
 
 					end
 
 				end)
+			else
+				frame:SetScript("OnClick", nil)
 			end
 
 			--mode = mode,
@@ -830,16 +799,24 @@ miog.loadQueueSystem = function()
 
 			frame.Wait:Hide()
 
-		elseif(data.template == "MIOG_QueueApplicationFrameTemplate") then
-			macrotext = "/run C_LFGList.CancelApplication(" .. data.resultID .. ")"
+		elseif(data.template == "MIOG_QueueApplicationFrameTemplate" or isFakeApp) then
+			if(isFakeApp) then
+				frame:SetAlpha(0.5)
+				macrotext = "/run MIOG_DeletePartyGUID(" .. tostring(C_LFGList.GetSearchResultInfo(data.resultID).partyGUID) .. ")"
+				timeInQueue = GetTime()
 
-			local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(data.resultID)
-			timeInQueue = appDuration
+			else
+				macrotext = "/run C_LFGList.CancelApplication(" .. data.resultID .. ")"
+
+				local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(data.resultID)
+				timeInQueue = appDuration
+			end
 
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
 			activityName = searchResultInfo.name
+			backgroundImage = activityInfo.horizontal
 
 			frame.categoryID = activityInfo.categoryID
 
@@ -955,6 +932,14 @@ miog.loadQueueSystem = function()
 
 				timeToMatch = estimated
 				timeInQueue = GetTime() - queuedTime
+
+			elseif(data.type == "plunderstorm") then
+				local queueTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
+
+				macrotext = "/run C_LobbyMatchmakerInfo.AbandonQueue()"
+				mapName = WOW_LABS_PLUNDERSTORM_CATEGORY
+				timeInQueue = GetTime() - queueTime
+			
 			end
 			
 			activityName = mapName
@@ -1002,13 +987,13 @@ miog.loadQueueSystem = function()
 	
 	local scrollBoxAnchorsWithBar =
 	{
-		CreateAnchor("TOPLEFT", miog.MainTab.QueueInformation.Panel.Title, "BOTTOMLEFT", 3, -5),
-		CreateAnchor("BOTTOMRIGHT", miog.MainTab.QueueInformation.Panel, "BOTTOMRIGHT", -10, 3);
+		CreateAnchor("TOPLEFT", 7, -12),
+		CreateAnchor("BOTTOMRIGHT", -20, 9);
 	}
 	local scrollBoxAnchorsWithoutBar =
 	{
 		scrollBoxAnchorsWithBar[1],
-		CreateAnchor("BOTTOMRIGHT", miog.MainTab.QueueInformation.Panel, "BOTTOMRIGHT", -3, 3);
+		CreateAnchor("BOTTOMRIGHT", -7, 9);
 	}
 	ScrollUtil.AddManagedScrollBarVisibilityBehavior(scrollbox, scrollbar, scrollBoxAnchorsWithBar, scrollBoxAnchorsWithoutBar)
 

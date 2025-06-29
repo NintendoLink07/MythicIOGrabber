@@ -264,7 +264,7 @@
                                         <Frames>
                                             <Frame parentKey="Leader" inherits="MIOG_MainFrameRoleTemplate">
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2"/>
                                                 </Anchors>
                                             </Frame>
 
@@ -272,7 +272,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="5"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="8"/>
                                                 </Anchors>
                                             </Frame>
 
@@ -280,7 +280,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="5"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="8"/>
                                                 </Anchors>
                                             </Frame>
 
@@ -288,7 +288,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="5"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="8"/>
                                                 </Anchors>
                                             </Frame>
                                         </Frames>
@@ -297,8 +297,8 @@
                                     <DropdownButton parentKey="FakeDropdown" inherits="WowStyle1DropdownTemplate" mixin="FakeDropdownMixin">
                                         <Size y="25" />
                                         <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT" x="2"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-27"/>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT" x="4" y="-8"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-25" y="-8"/>
                                         </Anchors>
 
                                         <Scripts>
@@ -345,79 +345,45 @@
                                         </Layers>
                                     </Frame>
 
-                                    <Frame parentKey="Panel" inherits="BackdropTemplate" frameLevel="2">
-                                        <KeyValues>
-                                            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
-                                        </KeyValues>
-
+                                    <Frame parentKey="Panel" frameLevel="2">
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.FakeDropdown" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT" x="10"/>
                                         </Anchors>
-
-                                        <Frames>
-                                            <Frame parentKey="Title" inherits="BackdropTemplate">
-                                                <Size y="20" />
-                                                <Anchors>
-                                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
-                                                </Anchors>
-
-                                                <Layers>
-                                                    <Layer level="OVERLAY">
-                                                        <FontString parentKey="FontString" font="GameFontHighlight" text="Active queues">
-                                                            <Anchors>
-                                                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-2"/>
-                                                            </Anchors>
-                                                        </FontString>
-                                                    </Layer>
-
-                                                    <Layer level="OVERLAY">
-                                                        <FontString parentKey="FakeApps" font="GameFontHighlight">
-                                                            <Anchors>
-                                                                <Anchor point="LEFT" relativeKey="$parent.FontString" relativePoint="RIGHT" x="5"/>
-                                                            </Anchors>
-                                                        </FontString>
-                                                    </Layer>
-                                                </Layers>
-                                            </Frame>
-                                        </Frames>
 
                                         <Layers>
                                             <Layer level="BACKGROUND">
+                                                <Texture parentKey="BaseBackground" atlas="AdventureMap-InsetMapBorder" useAtlasSize="false" setAllPoints="true" />
+                                            
                                                 <Texture parentKey="Background" horizTile="true" vertTile="true">
                                                     <Anchors>
-                                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
-                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
+                                                        <Anchor point="TOPLEFT" relativeKey="$parent.BaseBackground" relativePoint="TOPLEFT" x="4" y="-12"/>
+                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BaseBackground" relativePoint="BOTTOMRIGHT" x="-6" y="11"/>
                                                     </Anchors>
-                                                    <Color r="0" g="0" b="0" a="0.75" />
+                                                    <Color r="0" g="0" b="0" a="0.5" />
                                                 </Texture>
                                             </Layer>
-                                            <Layer level="BORDER">
-                                                <Texture parentKey="Divider" atlas="UI-LFG-DividerLine">
-                                                    <Size y="3" />
+
+                                            <Layer level="OVERLAY">
+                                                <FontString parentKey="Title" font="GameFontHighlight" text="Your active queues will be displayed here">
                                                     <Anchors>
-                                                        <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" />
-                                                        <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT" />
+                                                        <Anchor point="LEFT" />
+                                                        <Anchor point="RIGHT" />
                                                     </Anchors>
-                                                </Texture>
+                                                </FontString>
+
+                                                <FontString parentKey="FakeApps" font="GameFontHighlight">
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                                                    </Anchors>
+                                                </FontString>
                                             </Layer>
                                         </Layers>
                                         
                                         <Frames>
-                                            <Frame parentKey="QueueScrollBox" inherits="WowScrollBoxList">
-                                                <Anchors>
-                                                    <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" x="4" y="-5"/>
-                                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="3"/>
-                                                </Anchors>
-                                            </Frame>
+                                            <Frame parentKey="QueueScrollBox" inherits="WowScrollBoxList" />
 
-                                            <EventFrame parentKey="QueueScrollBar" inherits="MinimalScrollBar">
-                                                <Anchors>
-                                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="TOPRIGHT"/>
-                                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="BOTTOMRIGHT" />
-                                                </Anchors>
-                                            </EventFrame>
+                                            <EventFrame parentKey="QueueScrollBar" inherits="MinimalScrollBar" />
                                         </Frames>
                                     </Frame>
                                 </Frames>

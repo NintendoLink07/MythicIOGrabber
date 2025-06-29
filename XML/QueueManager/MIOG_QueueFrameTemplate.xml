@@ -3,28 +3,18 @@
     <Button name="MIOG_QueueFrameTemplate" virtual="true">
         <Size y="45" />
 
-        <HighlightTexture parentKey="BackgroundHover" atlas="pvpqueue-button-casual-highlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
+        <HighlightTexture parentKey="BackgroundHover" atlas="ClickCastList-ButtonHighlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
 
         <Frames>
             <Button parentKey="CancelApplication" inherits="BigRedExitButtonTemplate, SecureActionButtonTemplate">
                 <Size x="20" y="20" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" x="-3" y="-3" />
+                    <Anchor point="TOPRIGHT" />
                 </Anchors>
             </Button>
         </Frames>
 
         <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="ActiveIDFrame" hidden="true">
-                    <Size x="9" y="9" />
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
-                    </Anchors>
-                    <Color r="1" g="0" b="0" a="1" />
-                </Texture>
-            </Layer>
-
             <Layer level="OVERLAY">
                 <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
@@ -40,7 +30,7 @@
 
                 <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="Name" wordwrap="true" spacing="0">
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="5" y="-5"/>
+                        <Anchor point="TOPLEFT" x="4" y="-4"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent.CancelApplication" relativePoint="TOPLEFT" x="-2"/>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Age" relativePoint="TOPRIGHT"/>
                     </Anchors>
@@ -48,12 +38,14 @@
             </Layer>
 
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background" horizTile="true" vertTile="true" setAllPoints="true" />
+                <Texture parentKey="BaseBackground" setAllPoints="true" atlas="ClickCastList-ButtonBackground" />
+                <Texture parentKey="Background" horizTile="true" vertTile="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.BaseBackground" relativePoint="TOPLEFT" x="2" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BaseBackground" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                    </Anchors>
+                </Texture>
 
-            </Layer>
-
-            <Layer level="BORDER">
-                <Texture parentKey="Border" alphaMode="ADD" atlas="perks-list-borderlines" useAtlasSize="false" setAllPoints="true" />
             </Layer>
         </Layers>
 

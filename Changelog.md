@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.5.2] - 2025-06-30
+
+### Changed
+
+- The active queues panel has been reworked: performance improvements, design updates and tooltip updates.
+
+- When a dungeon group or raid finder group is being put together by Blizzard (e.g. you're still missing a tank, 2 heals and 7 dps) the queue frame will be updated to reflect that.
+
+### Fixed
+
+- You can now use the requeue button when you queued for multiple dungeons before.
+
+- Fixed an error where you couldn't view the dungeons of a multi dungeon queue when hovering over the requeue button.
+
+- Previously capped currencies that have been uncapped later in the season won't display the weekly cap anymore.
+
+
+
 ## [3.5.1] - 2025-06-22
 
 ### Fixed
@@ -3817,7 +3835,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.2..HEAD
+[3.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.2
 [3.5.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.1
 [3.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5
 [3.4.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.4.4
