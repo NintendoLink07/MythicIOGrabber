@@ -422,7 +422,7 @@ miog.CURRENCY_INFO = {
 		{id = 3110,},
 		{id = 3008,}, --valorstones
 		{id = 3116,}, --catalyst
-		{id = 3132, icon="5929751", spark = true}, --spark
+		{id = 3132, icon="5929751", spark = true, sparkItem = 230905}, --spark
 	}
 }
 
@@ -476,7 +476,7 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 }
 
 miog.MAP_INFO = {
-	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground"},
+	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground", toastBG = ""},
 	[489] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
 	[529] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
 	[559] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg"},

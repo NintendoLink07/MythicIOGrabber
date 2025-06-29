@@ -27,7 +27,6 @@
 					GameTooltip:Show()
 				end
             </OnEnter>
-            <OnLoad method="OnLoad" />
         </Scripts>
     </Button>
 </Ui>

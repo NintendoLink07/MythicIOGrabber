@@ -1374,19 +1374,36 @@ miog.loadActivityChecker = function()
 			local isBonus = value == "bonus"
 			local isSpecific = value == "specific"
 
-			randomBGFrame:SetShown(isBonus)
+			if(randomBGFrame) then
+				randomBGFrame:SetShown(isBonus)
 
-			randomEpicBGFrame:SetShown(isBonus)
+			end
 
-			arena1Frame:SetShown(isBonus)
+			if(randomEpicBGFrame) then
+				randomEpicBGFrame:SetShown(isBonus)
 
-			brawl1Frame:SetShown(isBonus)
+			end
 
-			brawl2Frame:SetShown(isBonus)
+			if(arena1Frame) then
+				arena1Frame:SetShown(isBonus)
 
-			specificBox:SetShown(isSpecific)
+			end
 
-			specificBox:GetParent():MarkDirty()
+			if(brawl1Frame) then
+				brawl1Frame:SetShown(isBonus)
+
+			end
+
+			if(brawl2Frame) then
+				brawl2Frame:SetShown(isBonus)
+
+			end
+
+			if(specificBox) then
+				specificBox:SetShown(isSpecific)
+				specificBox:GetParent():MarkDirty()
+
+			end
 
 			--HonorFrame.TypeDropdown:GetParent():GetParent():MarkDirty()
 		end)

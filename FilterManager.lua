@@ -685,9 +685,13 @@ local function refreshInputFilters(specificFilter)
 		local nameLower = strlower(inputString)
 
 		local filterSetting = retrieveSetting(nameLower)
-		filterObject.Minimum:SetNumber(filterSetting.minimum or 0)
-		filterObject.Maximum:SetNumber(filterSetting.maximum or 0)
-		filterObject.CheckButton:SetChecked(filterSetting.enabled)
+
+		if(filterSetting) then
+			filterObject.Minimum:SetNumber(filterSetting.minimum or 0)
+			filterObject.Maximum:SetNumber(filterSetting.maximum or 0)
+			filterObject.CheckButton:SetChecked(filterSetting.enabled)
+
+		end
 	end
 
 end

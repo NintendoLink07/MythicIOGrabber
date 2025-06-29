@@ -10,7 +10,10 @@ function QueueFrameMixin:OnLoad()
     self.CancelApplication:SetAttribute("type", "macro")
 end
 
-function QueueFrameMixin:RetrieveQueueList()
+
+QueueLFGFrameMixin = CreateFromMixins(QueueFrameMixin)
+
+function QueueLFGFrameMixin:RetrieveQueueList()
     local length = 0
     local queuedList = GetLFGQueuedList(self.categoryID, {}) or {}
 

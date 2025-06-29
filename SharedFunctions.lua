@@ -21,24 +21,22 @@ miog.updateCurrencies = function()
 				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
 
 				local currentFrame = miog.MainTab.Currency[tostring(k)]
+				local text = currencyInfo.quantity
 
 				if(currencyInfo.totalEarned > 0) then
-					local leftToEarn
-
 					if(currencyInfo.maxQuantity > 0) then
-						leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
-
-					else
-						leftToEarn = 0
+						local leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
+				
+						text = text .. " (" .. (leftToEarn > 0 and WrapTextInColorCode(leftToEarn, miog.CLRSCC.green) or WrapTextInColorCode(leftToEarn, miog.CLRSCC.red)) .. ")"
 
 					end
 
-					currentFrame.Text:SetText((v.spark and C_Item.GetItemCount(230905, true, true, true, true) or currencyInfo.quantity) .. " (" .. (leftToEarn > 0 and WrapTextInColorCode(leftToEarn, miog.CLRSCC.green) or WrapTextInColorCode(leftToEarn, miog.CLRSCC.red)) .. ")")
-
 				else
-					currentFrame.Text:SetText(currencyInfo.quantity .. "/" .. currencyInfo.maxQuantity)
+					text = text .. "/" .. currencyInfo.maxQuantity
 
 				end
+
+				currentFrame.Text:SetText(text)
 
 				currentFrame.Icon:SetTexture(v.icon or currencyInfo.iconFileID)
 				currentFrame.Icon:SetScript("OnEnter", function(self)

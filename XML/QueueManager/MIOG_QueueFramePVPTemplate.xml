@@ -1,0 +1,66 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_QueueFramePVPTemplate" inherits="MIOG_QueueFrameTemplate" mixin="QueueLFGFrameMixin" virtual="true">
+        <Size y="45" />
+
+        <Scripts>
+            <OnEnter>
+				local index = self.index
+				local type = self.type
+
+				local mapName, queuedTime, estimatedTime, role, teamSize, assignedSpec
+
+				if(type == "battlefield") then
+					_, mapName, teamSize, _, _, _, _, role = GetBattlefieldStatus(index)
+					queuedTime = GetBattlefieldTimeWaited(index) / 1000
+					estimatedTime = GetBattlefieldEstimatedWaitTime(index) / 1000
+					assignedSpec = C_PvP.GetAssignedSpecForBattlefieldQueue(index);
+
+				elseif(type == "world") then
+					_, mapName, _, _, estimatedTime, queuedTime = GetWorldPVPQueueStatus(data.index)
+
+				elseif(type == "openWorld") then
+					mapName = GetRealZoneText()
+
+					queuedTime = GetTime()
+					estimatedTime = -1
+
+				elseif(type == "petbattle") then
+					mapName = "Pet Battle"
+
+					local _, estimated, queued = C_PetBattles.GetPVPMatchmakingInfo()
+
+					estimatedTime = estimated
+					queuedTime = GetTime() - queued
+				end
+
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText(mapName, 1, 1, 1, true)
+
+				if(role and role ~= "") then
+					GameTooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper))
+				end
+
+				if(assignedSpec) then
+					GameTooltip:AddLine(ASSIGNED_COLON .. miog.SPECIALIZATIONS[assignedSpec].name)
+				end
+				
+				GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+				if(queuedTime and queuedTime > 0) then
+					GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(queuedTime, false, false, 1, false)))
+				end
+
+				if(estimatedTime and estimatedTime > 0) then
+					GameTooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(estimatedTime, false, false, 1, false)))
+				end
+
+				if(teamSize and teamSize > 0) then
+					GameTooltip:AddLine(teamSize)
+				end
+
+				GameTooltip:Show()
+            </OnEnter>
+        </Scripts>
+    </Button>
+</Ui>

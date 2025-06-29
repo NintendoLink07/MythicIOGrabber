@@ -3,6 +3,8 @@
     <Button name="MIOG_QueueFrameTemplate" virtual="true">
         <Size y="45" />
 
+        <HighlightTexture parentKey="BackgroundHover" atlas="pvpqueue-button-casual-highlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
+
         <Frames>
             <Button parentKey="CancelApplication" inherits="BigRedExitButtonTemplate, SecureActionButtonTemplate">
                 <Size x="20" y="20" />
@@ -47,16 +49,20 @@
 
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background" horizTile="true" vertTile="true" setAllPoints="true" />
-                <Texture parentKey="BackgroundHover" atlas="pvpqueue-button-casual-highlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
+
+            </Layer>
+
+            <Layer level="BORDER">
+                <Texture parentKey="Border" alphaMode="ADD" atlas="perks-list-borderlines" useAtlasSize="false" setAllPoints="true" />
             </Layer>
         </Layers>
 
         <Scripts>
             <OnLeave>
-                self.BackgroundHover:Hide()
                 GameTooltip_Hide()
             
             </OnLeave>
+            <OnLoad method="OnLoad" />
         </Scripts>
     </Button>
 </Ui>

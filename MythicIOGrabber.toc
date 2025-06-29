@@ -94,6 +94,9 @@ XML\MIOG_PopupFrame.xml
 XML\QueueManager\MIOG_QueueFrameTemplate.xml
 XML\QueueManager\MIOG_QueueLFGFrameTemplate.xml
 XML\QueueManager\MIOG_QueueListingFrameTemplate.xml
+XML\QueueManager\MIOG_QueueApplicationFrameTemplate.xml
+XML\QueueManager\MIOG_QueueFramePVPTemplate.xml
+
 
 XML\GroupManager\MIOG_GroupManager.xml
 XML\GroupManager\MIOG_GroupManagerRaidFrameCharacterTemplate.xml
