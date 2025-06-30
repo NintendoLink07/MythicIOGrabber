@@ -233,9 +233,9 @@ local function updateAllPVEQueues(dataProvider)
 			local isMultiDungeon = categoryID == LE_LFG_CATEGORY_LFD and length > 1
 
 			for queueID, queued in pairs(queuedList) do
-				mode, submode = GetLFGMode(categoryID, queueID);
-
-				--if(activeID == queueID or isRF) then
+				mode, submode = GetLFGMode(categoryID, queueID)
+				
+				if(activeID == queueID or isRF) then
 					dataProvider:Insert({
 						template = "MIOG_QueueLFGFrameTemplate",
 						mode = mode,
@@ -246,7 +246,7 @@ local function updateAllPVEQueues(dataProvider)
 						isCurrentlyActive = queueID == activeID,
 						isMultiDungeon = isMultiDungeon,
 					})
-				--end
+				end
 				--end
 			end
 		end
@@ -676,7 +676,7 @@ miog.loadQueueSystem = function()
 	--queueSystem.framePool = CreateFramePool("Button", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
 
-	local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 2);
+	local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 3);
 
 	local function Initializer(frame, data)
 		frame.isMultiDungeon = data.isMultiDungeon
@@ -710,7 +710,7 @@ miog.loadQueueSystem = function()
 
 			activityName = data.isMultiDungeon and MULTIPLE_DUNGEONS or name
 			timeInQueue = queuedTime and GetTime() - queuedTime or 0
-			timeToMatch = myWait or averageWait or 0
+			timeToMatch = myWait and myWait > -1 and myWait or averageWait and averageWait > -1 and averageWait or -1
 
 			if(hasData) then
 				frame.Age.Ticker = C_Timer.NewTicker(1, function()
@@ -881,6 +881,7 @@ miog.loadQueueSystem = function()
 
 					if(not backgroundImage) then
 						local numOfEntries = mapIDTable and #mapIDTable or 0
+						
 						if(numOfEntries > 0) then
 							if(numOfEntries == 1) then
 								backgroundImage = miog.MAP_INFO[mapIDTable[1]].horizontal
@@ -932,6 +933,7 @@ miog.loadQueueSystem = function()
 
 				timeToMatch = estimated
 				timeInQueue = GetTime() - queuedTime
+				backgroundImage = "interface/petbattles/petbattlesqueue.blp"
 
 			elseif(data.type == "plunderstorm") then
 				local queueTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
@@ -987,13 +989,13 @@ miog.loadQueueSystem = function()
 	
 	local scrollBoxAnchorsWithBar =
 	{
-		CreateAnchor("TOPLEFT", 7, -12),
-		CreateAnchor("BOTTOMRIGHT", -20, 9);
+		CreateAnchor("TOPLEFT", 3, -4),
+		CreateAnchor("BOTTOMRIGHT", -16, 3);
 	}
 	local scrollBoxAnchorsWithoutBar =
 	{
 		scrollBoxAnchorsWithBar[1],
-		CreateAnchor("BOTTOMRIGHT", -7, 9);
+		CreateAnchor("BOTTOMRIGHT", -3, 3);
 	}
 	ScrollUtil.AddManagedScrollBarVisibilityBehavior(scrollbox, scrollbar, scrollBoxAnchorsWithBar, scrollBoxAnchorsWithoutBar)
 

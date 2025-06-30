@@ -15,6 +15,19 @@
         </Frames>
 
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="BaseBackground" setAllPoints="true" atlas="ClickCastList-ButtonBackground" />
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Background" horizTile="true" vertTile="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.BaseBackground" relativePoint="TOPLEFT" x="2" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BaseBackground" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
             <Layer level="OVERLAY">
                 <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
@@ -35,17 +48,6 @@
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Age" relativePoint="TOPRIGHT"/>
                     </Anchors>
                 </FontString>
-            </Layer>
-
-            <Layer level="BACKGROUND">
-                <Texture parentKey="BaseBackground" setAllPoints="true" atlas="ClickCastList-ButtonBackground" />
-                <Texture parentKey="Background" horizTile="true" vertTile="true">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.BaseBackground" relativePoint="TOPLEFT" x="2" y="-2"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BaseBackground" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
-                    </Anchors>
-                </Texture>
-
             </Layer>
         </Layers>
 

@@ -476,39 +476,39 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 }
 
 miog.MAP_INFO = {
-	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground", toastBG = ""},
-	[489] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
-	[529] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
-	[559] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg"},
-	[562] = {shortName = "BEA", icon = "interface/lfgframe/lfgicon-bladesedgearena.blp", fileName = "bladesedgearena"},
-	[566] = {shortName = "EOTS", icon = "interface/lfgframe/lfgicon-netherbattlegrounds.blp", fileName = "netherbattleground"},
-	[572] = {shortName = "ROL", icon = "interface/lfgframe/lfgicon-ruinsoflordaeron.blp", fileName = "ruinsoflordaeronbg"},
-	[607] = {shortName = "SOTA", icon = "interface/lfgframe/lfgicon-strandoftheancients.blp", fileName = "northrendbg"},
-	[617] = {shortName = "DS", icon = "interface/lfgframe/lfgicon-dalaransewers.blp", fileName = "dalaransewersarena"},
-	[618] = {shortName = "ROV", icon = "interface/lfgframe/lfgicon-ringofvalor.blp", fileName = "orgrimmararena"},
-	[628] = {shortName = "IOC", icon = "interface/lfgframe/lfgicon-isleofconquest.blp", fileName = "isleofconquest"},
-	[726] = {shortName = "TP", icon = "interface/lfgframe/lfgicon-twinpeaksbg.blp", fileName = "twinpeaksbg"},
-	[727] = {shortName = "SSM", icon = "interface/lfgframe/lfgicon-silvershardmines.blp", fileName = "silvershardmines"},
-	[761] = {shortName = "BFG", icon = "interface/lfgframe/lfgicon-thebattleforgilneas.blp", fileName = "gilneasbg2"},
-	[968] = {shortName = "EOTS", icon = "interface/lfgframe/lfgicon-netherbattlegrounds.blp", fileName = "netherbattleground"},
-	[980] = {shortName = "TVA", icon = "interface/lfgframe/lfgicon-tolvirarena.blp", fileName = "tolvirarena"},
-	[998] = {shortName = "TOK", icon = "interface/lfgframe/lfgicon-templeofkotmogu.blp", fileName = "templeofkotmogu"},
-	[1105] = {shortName = "DWD", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush"},
-	[1134] = {shortName = "TP", icon = "interface/lfgframe/lfgicon-shadopanbg.blp", fileName = "shadowpan_bg"},
-	[1191] = {shortName = "ASH", icon = "interface/lfgframe/lfgicon-ashran.blp", fileName = "ashran"},
-	[1504] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookholdarena.blp", fileName = "blackrookholdarena"},
-	[1505] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg"},
-	[1552] = {shortName = "AF", icon = "interface/lfgframe/lfgicon-valsharraharena.blp", fileName = "arenavalsharah"},
-	[1672] = {shortName = "BEA", icon = "interface/lfgframe/lfgicon-bladesedgearena.blp", fileName = "bladesedgearena"},
-	[1681] = {shortName = "AB-W", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasinwinter"},
-	[1715] = {shortName = "BBM", icon = "interface/lfgframe/lfgicon-blackrockdepths.blp", fileName = "blackrockdepths"},
-	[1782] = {shortName = "SST", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore"},
-	[1803] = {shortName = "SSH", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore"},
-	[2106] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update"},
-	[2107] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
-	[2177] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update"},
-	[2118] = {shortName = "BFW", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "wintergrasp"},
-	[2245] = {shortName = "DWG", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush"},
+	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground", toastBG = "PvpBg-AlteracValley-ToastBG", pvp = "true"},
+	[489] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update", toastBG = "PvpBg-WarsongGulch-ToastBG", pvp = "true"},
+	[529] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update", toastBG = "PvpBg-ArathiBasin-ToastBG", pvp = "true"},
+	[559] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg", toastBG = "PvpBg-NagrandArena-ToastBG", pvp = "true"},
+	[562] = {shortName = "BEA", icon = "interface/lfgframe/lfgicon-bladesedgearena.blp", fileName = "bladesedgearena", toastBG = "PvpBg-BladesEdgeArena-ToastBG", pvp = "true"},
+	[566] = {shortName = "EOTS", icon = "interface/lfgframe/lfgicon-netherbattlegrounds.blp", fileName = "netherbattleground", toastBG = "PvpBg-EyeOfTheStorm-ToastBG", pvp = "true"},
+	[572] = {shortName = "ROL", icon = "interface/lfgframe/lfgicon-ruinsoflordaeron.blp", fileName = "ruinsoflordaeronbg", toastBG = "PvpBg-RuinsofLordaeron-ToastBG", pvp = "true"},
+	[607] = {shortName = "SOTA", icon = "interface/lfgframe/lfgicon-strandoftheancients.blp", fileName = "northrendbg", toastBG ="PvpBg-StrandOfTheAncients-ToastBG", pvp = "true"},
+	[617] = {shortName = "DS", icon = "interface/lfgframe/lfgicon-dalaransewers.blp", fileName = "dalaransewersarena", toastBG = "PvpBg-DalaranSewers-ToastBG", pvp = "true"},
+	[618] = {shortName = "ROV", icon = "interface/lfgframe/lfgicon-ringofvalor.blp", fileName = "orgrimmararena", toastBG = "PvpBg-TheRingofValor-ToastBG", pvp = "true"},
+	[628] = {shortName = "IOC", icon = "interface/lfgframe/lfgicon-isleofconquest.blp", fileName = "isleofconquest", toastBG = "PvpBg-IsleOfConquest-ToastBG"}, pvp = "true",
+	[726] = {shortName = "TP", icon = "interface/lfgframe/lfgicon-twinpeaksbg.blp", fileName = "twinpeaksbg", toastBG = "PvpBg-TwinPeaks-ToastBG", pvp = "true"},
+	[727] = {shortName = "SSM", icon = "interface/lfgframe/lfgicon-silvershardmines.blp", fileName = "silvershardmines", pvp = "true"},
+	[761] = {shortName = "BFG", icon = "interface/lfgframe/lfgicon-thebattleforgilneas.blp", fileName = "gilneasbg2", toastBG = "PvpBg-Gilneas-ToastBG", pvp = "true"},
+	[968] = {shortName = "EOTS", icon = "interface/lfgframe/lfgicon-netherbattlegrounds.blp", fileName = "netherbattleground", toastBG = "PvpBg-EyeOfTheStorm-ToastBG", pvp = "true"},
+	[980] = {shortName = "TVA", icon = "interface/lfgframe/lfgicon-tolvirarena.blp", fileName = "tolvirarena", pvp = "true"},
+	[998] = {shortName = "TOK", icon = "interface/lfgframe/lfgicon-templeofkotmogu.blp", fileName = "templeofkotmogu", pvp = "true"},
+	[1105] = {shortName = "DWD", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush", pvp = "true"},
+	[1134] = {shortName = "TP", icon = "interface/lfgframe/lfgicon-shadopanbg.blp", fileName = "shadowpan_bg", pvp = "true"},
+	[1191] = {shortName = "ASH", icon = "interface/lfgframe/lfgicon-ashran.blp", fileName = "ashran", pvp = "true"},
+	[1504] = {shortName = "BRH", icon = "interface/lfgframe/lfgicon-blackrookholdarena.blp", fileName = "blackrookholdarena", pvp = "true"},
+	[1505] = {shortName = "NA", icon = "interface/lfgframe/lfgicon-nagrandarena.blp", fileName = "nagrandarenabg", toastBG = "PvpBg-NagrandArena-ToastBG", pvp = "true"},
+	[1552] = {shortName = "AF", icon = "interface/lfgframe/lfgicon-valsharraharena.blp", fileName = "arenavalsharah", pvp = "true"},
+	[1672] = {shortName = "BEA", icon = "interface/lfgframe/lfgicon-bladesedgearena.blp", fileName = "bladesedgearena", toastBG = "PvpBg-BladesEdgeArena-ToastBG", pvp = "true"},
+	[1681] = {shortName = "AB-W", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasinwinter", toastBG = "PvpBg-ArathiBasin-ToastBG", pvp = "true"},
+	[1715] = {shortName = "BBM", icon = "interface/lfgframe/lfgicon-blackrockdepths.blp", fileName = "blackrockdepths", pvp = "true"},
+	[1782] = {shortName = "SST", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore", pvp = "true"},
+	[1803] = {shortName = "SSH", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore", pvp = "true"},
+	[2106] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update", toastBG = "PvpBg-WarsongGulch-ToastBG", pvp = "true"},
+	[2107] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update", toastBG = "PvpBg-ArathiBasin-ToastBG", pvp = "true"},
+	[2177] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update", toastBG = "PvpBg-ArathiBasin-ToastBG", pvp = "true"},
+	[2118] = {shortName = "BFW", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "wintergrasp", pvp = "true"},
+	[2245] = {shortName = "DWG", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush", pvp = "true"},
 
 	-- RAIDS
 
@@ -1285,13 +1285,17 @@ local function loadRawData()
 				mapInfo.horizontal = MythicIO.GetBackgroundImage(background)
 				mapInfo.vertical = MythicIO.GetBackgroundImage(background, true)
 				
+			elseif(mapInfo.pvp) then
+				mapInfo.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
+				mapInfo.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
+				
 			else
 				mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
 				mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
 
 			end
 
-			mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.fileName or mapInfo.iconName) .. ".blp"
+			mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.iconName or mapInfo.fileName) .. ".blp"
 		end
 	end
 

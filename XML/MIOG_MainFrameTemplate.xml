@@ -178,8 +178,8 @@
                                 </KeyValues>
 
                                 <Anchors>
-                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" y="2"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="2"/>
+                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="3"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
                                 </Anchors>
                                 
                                 <Frames>
@@ -246,11 +246,11 @@
                             </Frame>
 
                             <Frame parentKey="QueueInformation">
-                                <Size x="190" />
+                                <Size x="194" />
                                 
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Currency" relativePoint="TOPLEFT"/>
+                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Currency" relativePoint="TOPLEFT" y="5"/>
                                 </Anchors>
 
                                 <Frames>
@@ -272,7 +272,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="8"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="11"/>
                                                 </Anchors>
                                             </Frame>
 
@@ -280,7 +280,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="8"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="11"/>
                                                 </Anchors>
                                             </Frame>
 
@@ -288,7 +288,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="8"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="11"/>
                                                 </Anchors>
                                             </Frame>
                                         </Frames>
@@ -297,8 +297,8 @@
                                     <DropdownButton parentKey="FakeDropdown" inherits="WowStyle1DropdownTemplate" mixin="FakeDropdownMixin">
                                         <Size y="25" />
                                         <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT" x="4" y="-8"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-25" y="-8"/>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT" x="4" y="-4"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-26" y="-4"/>
                                         </Anchors>
 
                                         <Scripts>
@@ -316,54 +316,33 @@
                                         </Scripts>
                                     </Button>
                                     
-                                    <Frame parentKey="LastGroup" inherits="BackdropTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
-                                        </KeyValues>
-
+                                    <Frame parentKey="LastGroup" inherits="InsetFrameTemplate3">
                                         <Size y="50" />
 
                                         <Anchors>
-                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="2"/>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="4"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                                         </Anchors>
 
                                         <Layers>
-                                            <Layer level="BACKGROUND">
-                                                <Texture parentKey="Background" horizTile="true" vertTile="true">
-                                                    <Anchors>
-                                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-1"/>
-                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
-                                                    </Anchors>
-                                                    <Color r="0" g="0" b="0" a="0.75" />
-                                                </Texture>
-                                            </Layer>
-
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="" setAllPoints="true" />
+                                                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
+                                                    <Anchors>
+                                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2"/>
+                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                                                    </Anchors>
+                                                </FontString>
                                             </Layer>
                                         </Layers>
                                     </Frame>
 
-                                    <Frame parentKey="Panel" frameLevel="2">
+                                    <Frame parentKey="Panel"  inherits="InsetFrameTemplate3" frameLevel="2">
                                         <Anchors>
-                                            <Anchor point="TOPLEFT" relativeKey="$parent.FakeDropdown" relativePoint="BOTTOMLEFT"/>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT" x="10"/>
+                                            <Anchor point="TOPLEFT" relativeKey="$parent.FakeDropdown" relativePoint="BOTTOMLEFT" y="-4"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT" y="2"/>
                                         </Anchors>
 
                                         <Layers>
-                                            <Layer level="BACKGROUND">
-                                                <Texture parentKey="BaseBackground" atlas="AdventureMap-InsetMapBorder" useAtlasSize="false" setAllPoints="true" />
-                                            
-                                                <Texture parentKey="Background" horizTile="true" vertTile="true">
-                                                    <Anchors>
-                                                        <Anchor point="TOPLEFT" relativeKey="$parent.BaseBackground" relativePoint="TOPLEFT" x="4" y="-12"/>
-                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BaseBackground" relativePoint="BOTTOMRIGHT" x="-6" y="11"/>
-                                                    </Anchors>
-                                                    <Color r="0" g="0" b="0" a="0.5" />
-                                                </Texture>
-                                            </Layer>
-
                                             <Layer level="OVERLAY">
                                                 <FontString parentKey="Title" font="GameFontHighlight" text="Your active queues will be displayed here">
                                                     <Anchors>
@@ -755,14 +734,6 @@
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());
             </OnLoad>
-
-            <OnMouseDown>
-                <!--self.TabFramesPanel.MainTab.QueueInformation.DropDown.List:Hide()
-
-                if(self.TabFramesPanel.MainTab.QueueInformation.DropDown.currentList) then
-                    self.TabFramesPanel.MainTab.QueueInformation.DropDown.currentList:Hide()
-                end!-->
-            </OnMouseDown>
 
             <OnShow>
                 PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
