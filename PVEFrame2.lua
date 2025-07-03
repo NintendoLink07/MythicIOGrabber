@@ -71,8 +71,8 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 end
 
 local activityIndices = {
-	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
 	Enum.WeeklyRewardChestThresholdType.Raid, -- raid
+	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
 	Enum.WeeklyRewardChestThresholdType.World, -- world/delves
 }
 
@@ -135,15 +135,17 @@ local function createPVEFrameReplacement()
 		end
 
 		for k, v in ipairs(activityIndices) do
+
 			local activities = C_WeeklyRewards.GetActivities(v)
 
-			local currentFrame = k == 1 and miog.MainTab.Information.MPlusStatus or k == 2 and miog.MainTab.Information.RaidStatus or miog.MainTab.Information.WorldStatus
 
+			local currentFrame = miog.MainTab.Information["TestVaultProgress" .. k]
+			--local currentFrame = k == 1 and miog.MainTab.Information.MPlusStatus or k == 2 and miog.MainTab.Information.RaidStatus or miog.MainTab.Information.WorldStatus
 			currentFrame:SetInfo(activities)
 
 			local farthestActivity = currentFrame:GetFarthestActivity(true)
-			currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
-			currentFrame:SetValue(farthestActivity.progress)
+			--currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
+			--currentFrame:SetValue(farthestActivity.progress)
 
 			local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
 
@@ -151,12 +153,45 @@ local function createPVEFrameReplacement()
 			local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
 			dimColor[4] = 0.1
 				
-			currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
-			miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
+			--currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+			--miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
 
-			currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (k == 1 and "Dungeons" or k == 2 and "Bosses" or k == 3 and "World" or ""))
-			currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+			--currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (k == 1 and "Dungeons" or k == 2 and "Bosses" or k == 3 and "World" or ""))
+			--currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
 
+			local startIndex = 8 - farthestActivity.threshold
+			local endIndex = farthestActivity.threshold - startIndex
+
+			currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress" .. (startIndex + 1)], "CENTER", 1, 1)
+			
+			for i = 1, endIndex, 1 do
+				local singleFrame = currentFrame["Progress" .. startIndex + i]
+				singleFrame.progressFrameIndex = i
+
+				local isCompleted = farthestActivity.progress >= i
+
+				if(isCompleted) then
+					singleFrame:SetAtlas("activities-complete-diamond")
+					--currentFrame.GlowBarBlue:SetShown(i > 1)
+					currentFrame.GlowBarBlue:Show()
+					currentFrame.GlowBarBlue:SetPoint("RIGHT", currentFrame["Progress" .. (startIndex + i)], "CENTER", 1, 1)
+
+				else
+					singleFrame:SetAtlas("activities-incomplete-diamond")
+
+				end
+			end
+			
+			currentFrame.GlowBarYellow:SetPoint("LEFT", currentFrame["Progress" .. (startIndex + 1)], "LEFT", 3, 1)
+
+			if(farthestActivity.progress < farthestActivity.threshold and farthestActivity.threshold < 8) then
+				for i = 1, startIndex, 1 do
+					local singleFrame = currentFrame["Progress" .. i]
+					singleFrame:Hide()
+					singleFrame.progressFrameIndex = nil
+
+				end
+			end
 		end
 	end)
 

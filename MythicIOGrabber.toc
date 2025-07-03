@@ -77,6 +77,7 @@ Mixins\QueueFrameMixin.lua
 ##
 
 XML\MIOG_FakeDropdownButton.xml
+XML\MIOG_TestVaultProgress.xml
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_MainFrameRoleTemplate.xml

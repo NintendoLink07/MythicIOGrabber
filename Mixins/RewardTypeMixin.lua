@@ -152,7 +152,7 @@ function RewardTypeMixin:HasHighestRewardBeenUnlocked(info)
     return false
 end
 
-function RewardTypeMixin:OnEnter()
+function RewardTypeMixin:OnEnter(childIndex)
     if(self.info) then
         GameTooltip:SetOwner(self)
 
@@ -308,11 +308,16 @@ function RewardTypeMixin:OnEnter()
                         lastInstanceID = instanceID;
                     end
                     if name then
+                        --local isIndexEqual = childIndex == index
+
+                        --print(childIndex, index)
+
                         if encounter.bestDifficulty > 0 then
+
                             local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty) or miog.DIFFICULTY_ID_INFO[encounter.bestDifficulty].name
-                            GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName), miog.DIFFICULTY_ID_TO_COLOR[encounter.bestDifficulty]);
+                            GameTooltip_AddColoredLine(GameTooltip, (isIndexEqual and "[" or "") .. string.format(WEEKLY_REWARDS_COMPLETED_ENCOUNTER, name, completedDifficultyName) .. (isIndexEqual and "]" or ""), miog.DIFFICULTY_ID_TO_COLOR[encounter.bestDifficulty]);
                         else
-                            GameTooltip_AddColoredLine(GameTooltip, string.format(DASH_WITH_TEXT, name), DISABLED_FONT_COLOR);
+                            GameTooltip_AddColoredLine(GameTooltip, (isIndexEqual and "[" or "") .. string.format(DASH_WITH_TEXT, name) .. (isIndexEqual and "]" or ""), DISABLED_FONT_COLOR);
                         end
                     end
                 end

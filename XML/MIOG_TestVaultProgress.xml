@@ -1,0 +1,160 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_TestVaultProgress" mixin="RewardTypeMixin" virtual="true">
+        <Size x="160" y="21" />
+        
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Background" vertTile="true" horizTile="true" hidden="true">
+                    <Size x="64" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent"/>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent"/>
+					</Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <Texture parentKey="Progress1" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <!--<Anchor point="LEFT" relativeKey="$parent.Background" relativePoint="RIGHT" x="4" y="-1"/>!-->
+                        <Anchor point="LEFT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+
+                <Texture parentKey="Progress2" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="RIGHT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+
+                <Texture parentKey="Progress3" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress2" relativePoint="RIGHT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+
+                <Texture parentKey="Progress4" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress3" relativePoint="RIGHT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+
+                <Texture parentKey="Progress5" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress4" relativePoint="RIGHT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+
+                <Texture parentKey="Progress6" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress5" relativePoint="RIGHT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+
+                <Texture parentKey="Progress7" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress6" relativePoint="RIGHT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+
+                <Texture parentKey="Progress8" atlas="activities-incomplete-diamond">
+                    <Size x="20" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress7" relativePoint="RIGHT"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            self:GetParent():OnEnter(self.progressFrameIndex)
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK" textureSubLevel="-2">
+                <Texture parentKey="GlowBarBlue" atlas="activities-complete-line" hidden="true">
+                    <Size y="5" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="CENTER" x="1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK" textureSubLevel="-3">
+                <Texture parentKey="GlowBarYellow" atlas="activities-bar-background-glow">
+                    <Size y="5" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="CENTER" x="1" y="1"/>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress8" relativePoint="CENTER" x="-4" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnMouseDown>
+                WeeklyRewards_ShowUI()
+            </OnMouseDown>
+            <OnEnter method="OnEnter" />
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

@@ -581,6 +581,24 @@
                                         </Layers>
                                     </Frame>
 
+                                    <Frame parentKey="TestVaultProgress1" inherits="MIOG_TestVaultProgress">
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                        </Anchors>
+                                    </Frame>
+
+                                    <Frame parentKey="TestVaultProgress2" inherits="MIOG_TestVaultProgress">
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.TestVaultProgress1" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                        </Anchors>
+                                    </Frame>
+
+                                    <Frame parentKey="TestVaultProgress3" inherits="MIOG_TestVaultProgress">
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.TestVaultProgress2" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                        </Anchors>
+                                    </Frame>
+
                                     <Frame parentKey="Holiday" inherits="VerticalLayoutFrame">
                                         <KeyValues>
                                             <KeyValue key="spacing" value="5" />
@@ -592,6 +610,8 @@
                                         </Anchors>
                                     </Frame>
                                 </Frames>
+
+                                
                             </Frame>
 
                         </Frames>
