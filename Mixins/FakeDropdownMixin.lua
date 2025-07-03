@@ -81,6 +81,12 @@ function FakeDropdownListMixin:CreateList()
 
 end
 
+function FakeDropdownListMixin:CloseMenus()
+    self:HideAllLists()
+
+    dropdown:ResetPools()
+end
+
 function FakeDropdownListMixin:SetInitParameters(text, checkFunc, func, value)
     self.Text:SetText(text)
 

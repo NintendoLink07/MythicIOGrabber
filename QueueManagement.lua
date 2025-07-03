@@ -815,7 +815,7 @@ miog.loadQueueSystem = function()
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
-			activityName = searchResultInfo.name
+			activityName = searchResultInfo.name .. " - " .. activityInfo.name
 			backgroundImage = activityInfo.horizontal
 
 			frame.categoryID = activityInfo.categoryID

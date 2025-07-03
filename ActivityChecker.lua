@@ -610,6 +610,8 @@ local function setupQueueDropdown(rootDescription)
 						LFG_JoinDungeon(1, "specific", selectedDungeonsList, {})
 
 						MIOG_CharacterSettings.lastUsedQueue = {type = "pve", subtype="multidng", id = selectedDungeonsList}
+
+						rootDescription:CloseMenus()
 					end);
 
 					button:SetText("Queue for multiple dungeons")
