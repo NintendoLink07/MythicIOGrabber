@@ -1,0 +1,108 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_VaultProgressWorldTemplate" inherits="MIOG_VaultProgressTemplate" virtual="true">
+        <KeyValues>
+			<KeyValue key="stride" value="8" type="number"/>
+        </KeyValues>
+        <Layers>
+           <Layer level="OVERLAY">
+                <Texture parentKey="Progress8" atlas="activities-reward-border">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="1" type="number" />
+                    </KeyValues>
+                </Texture>
+
+                <Texture parentKey="Progress8Check" atlas="activities-icon-checkmark" hidden="true">
+                    <Size x="10" y="10" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.Progress8" />
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Progress7" atlas="activities-complete-diamond">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="2" type="number" />
+                    </KeyValues>
+                </Texture>
+
+                <Texture parentKey="Progress6" atlas="activities-complete-diamond">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="3" type="number" />
+                    </KeyValues>
+                </Texture>
+
+                <Texture parentKey="Progress5" atlas="activities-complete-diamond">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="4" type="number" />
+                    </KeyValues>
+                </Texture>
+
+                <Texture parentKey="Progress4" atlas="activities-reward-border">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="5" type="number" />
+                    </KeyValues>
+                </Texture>
+
+                <Texture parentKey="Progress4Check" atlas="activities-icon-checkmark" hidden="true">
+                    <Size x="10" y="10" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.Progress4" />
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Progress3" atlas="activities-complete-diamond">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="6" type="number" />
+                    </KeyValues>
+                </Texture>
+
+                <Texture parentKey="Progress2" atlas="activities-reward-border">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="7" type="number" />
+                    </KeyValues>
+                </Texture>
+
+                <Texture parentKey="Progress2Check" atlas="activities-icon-checkmark" hidden="true">
+                    <Size x="10" y="10" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.Progress2" />
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Progress1" atlas="activities-complete-diamond">
+                    <Size x="20" y="20" />
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="8" type="number" />
+                    </KeyValues>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Progress8Text" inherits="GameFontHighlight" outline="THICK">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.Progress8" relativePoint="TOP" y="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress4Text" inherits="GameFontHighlight" outline="THICK">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.Progress4" relativePoint="TOP" y="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress2Text" inherits="GameFontHighlight" outline="THICK">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.Progress2" relativePoint="TOP" y="2"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

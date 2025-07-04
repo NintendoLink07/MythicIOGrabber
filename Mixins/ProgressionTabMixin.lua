@@ -242,7 +242,6 @@ local function round(n)
 	return math.floor(n+0.5)
  end
 
-
  -- 14 untimed 290, JIT 395, 2chest 402.5, 3chest 410, 1 affix (counts)
  -- 13 untimed 290, JIT 380, 2chest 387.5, 3chest 395, 1 affix
  -- 12 untimed 290, JIT 365, 2chest 372.5, 3chest 380, 1 affix

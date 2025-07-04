@@ -1,5 +1,7 @@
 local addonName, miog = ...
 
+miog.gearing = {}
+
 local currentChildren = {}
 
 local seasonID
@@ -66,6 +68,8 @@ local function getColorForItemlevel(itemlevel)
 
     return color:GenerateHexColor()
 end
+
+miog.gearing.getColorForItemlevel = getColorForItemlevel
 
 local function insertGearingData()
     local gearingData = miog.GEARING_CHART[seasonID]

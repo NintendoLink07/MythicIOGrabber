@@ -1,0 +1,80 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_VaultProgressTemplate" mixin="RewardTypeMixin" inherits="GridLayoutFrame" virtual="true">   
+        <Size y="26" />
+
+        <KeyValues>
+			<KeyValue key="childXPadding" value="4" type="number"/>
+			<KeyValue key="minimumWidth" value="276" type="number"/>
+			<KeyValue key="isHorizontal" value="true" type="boolean"/>
+			<KeyValue key="layoutFramesGoingRight" value="false" type="boolean"/>
+        </KeyValues>
+             
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="BarBorder" atlas="activities-bar-border" setAllPoints="true" />
+            </Layer>
+
+            <Layer level="BORDER" textureSubLevel="1">
+                <Texture parentKey="BarBorderGlow" atlas="activities-bar-border-glow" alphaMode="ADD" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.BarBorder" x="-1" y="1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBorder" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="BACKGROUND">
+                <Texture parentKey="GlowBarBlue" atlas="activities-bar-fill" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.BarBorder" relativePoint="TOPLEFT" x="1" y="-3"/>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.BarBorder" relativePoint="BOTTOMLEFT" x="1" y="4"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture parentKey="BarFillGlow" atlas="activities-bar-fill-glow"  alphaMode="ADD" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.GlowBarBlue" relativePoint="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.GlowBarBlue" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            
+            <Layer level="BACKGROUND" textureSubLevel="-1">
+
+                <Texture parentKey="BarBackground" atlas="activities-bar-background">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.BarBorder" relativePoint="TOPLEFT" x="2" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBorder" relativePoint="BOTTOMRIGHT" x="-3" y="4"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="LEFT" x="5"/>
+                    </Anchors>
+                </FontString>
+
+                <Texture parentKey="Checkmark" atlas="activities-icon-checkmark" hidden="true">
+                    <Size x="14" y="14" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="TOPRIGHT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+        </Layers>
+
+        <Scripts>
+            <OnMouseDown>
+                WeeklyRewards_ShowUI()
+            </OnMouseDown>
+            <OnEnter method="OnEnter" />
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

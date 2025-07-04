@@ -72,6 +72,32 @@ function RewardTypeMixin:GetRaidName()
     end
 end
 
+function RewardTypeMixin:GetAllItemlevels()
+    local table = {}
+
+    for i = 1, 3, 1 do
+        local activities = self.activities[i]
+
+        local item, upgrade = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activities.id)
+
+        local ilvl = C_Item.GetDetailedItemLevelInfo(item)
+
+        if(ilvl) then
+            tinsert(table, ilvl)
+
+        end
+    end
+    
+    return table
+end
+
+function RewardTypeMixin:GetHighestItemlevel()
+    local farthestCompletedActivity = self:GetFarthestActivity()
+    local item, upgrade = C_WeeklyRewards.GetExampleRewardItemHyperlinks(farthestCompletedActivity.id)
+
+    return C_Item.GetDetailedItemLevelInfo(item)
+end
+
 function RewardTypeMixin:AddUpgradeDataToTooltip(enum)
     local farthestCompletedActivity = self:GetFarthestActivity()
     local currentDifficultyID = farthestCompletedActivity.level;
@@ -381,6 +407,7 @@ function RewardTypeMixin:OnEnter(childIndex)
             end
 
             local itemLevel
+
 
             if(item) then
                 itemLevel = C_Item.GetDetailedItemLevelInfo(item)

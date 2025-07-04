@@ -370,8 +370,8 @@
 
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
-                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-180"/>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT"/>
                                 </Anchors>
 
                                 <Frames>
@@ -467,33 +467,7 @@
                                             <OnLeave function="GameTooltip_Hide" />
                                         </Scripts>
                                     </StatusBar>
-                                    
-                                    <Frame parentKey="Keystone" inherits="BackdropTemplate">
-                                        <Size x="200" y="20" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.WorldStatus" relativePoint="BOTTOMRIGHT"/>
-                                        </Anchors>
 
-                                        <Layers>
-                                            <Layer level="ARTWORK">
-                                                <Texture parentKey="Icon" atlas="Dungeon">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" text="NO KEYSTONE" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <Color r="1" g="0" b="0" a="1" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                    </Frame>
                                     <Frame parentKey="Affixes">
                                         <Size x="20" y="20" />
 
@@ -581,24 +555,6 @@
                                         </Layers>
                                     </Frame>
 
-                                    <Frame parentKey="TestVaultProgress1" inherits="MIOG_TestVaultProgress">
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT" y="-3"/>
-                                        </Anchors>
-                                    </Frame>
-
-                                    <Frame parentKey="TestVaultProgress2" inherits="MIOG_TestVaultProgress">
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.TestVaultProgress1" relativePoint="BOTTOMRIGHT" y="-3"/>
-                                        </Anchors>
-                                    </Frame>
-
-                                    <Frame parentKey="TestVaultProgress3" inherits="MIOG_TestVaultProgress">
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.TestVaultProgress2" relativePoint="BOTTOMRIGHT" y="-3"/>
-                                        </Anchors>
-                                    </Frame>
-
                                     <Frame parentKey="Holiday" inherits="VerticalLayoutFrame">
                                         <KeyValues>
                                             <KeyValue key="spacing" value="5" />
@@ -609,11 +565,65 @@
                                             <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT" y="-3"/>
                                         </Anchors>
                                     </Frame>
+
+                                    <Frame parentKey="VaultProgress3" inherits="MIOG_VaultProgressWorldTemplate">
+                                        <Anchors>
+                                            <Anchor point="BOTTOMRIGHT" y="1"/>
+                                        </Anchors>
+                                    </Frame>
+
+                                    <Frame parentKey="VaultProgress2" inherits="MIOG_VaultProgressDungeonTemplate">
+                                        <Anchors>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress3" relativePoint="TOPRIGHT" y="6"/>
+                                        </Anchors>
+                                    </Frame>
+
+                                    <Frame parentKey="VaultProgress1" inherits="MIOG_VaultProgressRaidTemplate">
+                                        <Anchors>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress2" relativePoint="TOPRIGHT" y="6"/>
+                                        </Anchors>
+                                    </Frame>
+
+                                    <Frame parentKey="Keystone" inherits="BackdropTemplate">
+                                        <Size x="276" y="20" />
+                                        <Anchors>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" y="6"/>
+                                        </Anchors>
+
+                                        <Layers>
+                                            <Layer level="BORDER">
+                                                <Texture parentKey="BarBorder" atlas="activities-bar-border" setAllPoints="true" />
+                                            </Layer>
+
+                                            <Layer level="BACKGROUND">
+                                                <Texture parentKey="BarBackground">
+                                                    <Anchors>
+                                                        <Anchor point="TOPLEFT" relativeKey="$parent.BarBorder" relativePoint="TOPLEFT" x="1" y="-3"/>
+                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBorder" relativePoint="BOTTOMRIGHT" x="-2" y="4"/>
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+
+                                            <Layer level="ARTWORK">
+                                                <Texture parentKey="Icon" file="interface/icons/inv_relics_hourglass_02.blp">
+                                                    <Size x="13" y="13" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.BarBorder" x="4" y="1"/>
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+
+                                            <Layer level="OVERLAY">
+                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" text="No keystone found" outline="NORMAL">
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="4" y="-1"/>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
                                 </Frames>
-
-                                
                             </Frame>
-
                         </Frames>
                     </Frame>
                     

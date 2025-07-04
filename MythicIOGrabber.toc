@@ -77,7 +77,14 @@ Mixins\QueueFrameMixin.lua
 ##
 
 XML\MIOG_FakeDropdownButton.xml
-XML\MIOG_TestVaultProgress.xml
+
+XML\VaultProgress\MIOG_VaultProgressTemplate.xml
+XML\VaultProgress\MIOG_VaultProgressRaidTemplate.xml
+XML\VaultProgress\MIOG_VaultProgressDungeonTemplate.xml
+XML\VaultProgress\MIOG_VaultProgressWorldTemplate.xml
+
+
+
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_MainFrameRoleTemplate.xml

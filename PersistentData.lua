@@ -475,6 +475,38 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 	},
 }
 
+miog.KEYSTONE_LEVEL_BASE_VALUES = {
+	[2] = 165,
+	[3] = 180,
+	[4] = 205,
+	[5] = 190,
+	[6] = 205,
+	[7] = 220,
+	[8] = 235,
+	[9] = 265,
+	[10] = 280,
+	[11] = 295,
+	[12] = 320,
+	[13] = 335,
+	[14] = 365,
+	[15] = 380,
+	[16] = 395,
+	[17] = 410,
+	[18] = 425,
+	[19] = 440,
+	[20] = 455,
+	[21] = 470,
+	[22] = 485,
+	[23] = 500,
+	[24] = 515,
+	[25] = 530,
+	[26] = 545,
+	[27] = 560,
+	[28] = 575,
+	[29] = 590,
+	[30] = 605,
+}
+
 miog.MAP_INFO = {
 	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground", toastBG = "PvpBg-AlteracValley-ToastBG", pvp = "true"},
 	[489] = {shortName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update", toastBG = "PvpBg-WarsongGulch-ToastBG", pvp = "true"},

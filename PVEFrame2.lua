@@ -118,14 +118,14 @@ local function createPVEFrameReplacement()
 
 		if(regularActivityID) then
 			miog.MainTab.Information.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
-			miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForRating(regularLevel * 130):GetRGBA())
+			miog.MainTab.Information.Keystone.BarBackground:SetColorTexture(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[regularLevel + 3] * 8):GetRGBA())
 			
 		else
 			local timewalkingActivityID, timewalkingGroupID, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
 
 			if(timewalkingActivityID) then
 				miog.MainTab.Information.Keystone.Text:SetText("+" .. timewalkingLevel .. " " .. C_LFGList.GetActivityGroupInfo(timewalkingGroupID))
-				miog.MainTab.Information.Keystone.Text:SetTextColor(miog.createCustomColorForRating(timewalkingLevel * 130):GetRGBA())
+				miog.MainTab.Information.Keystone.BarBackground:SetColorTexture(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[timewalkingLevel] * 8):GetRGBA())
 				
 			else
 				miog.MainTab.Information.Keystone.Text:SetText("NO KEYSTONE")
@@ -135,11 +135,9 @@ local function createPVEFrameReplacement()
 		end
 
 		for k, v in ipairs(activityIndices) do
-
 			local activities = C_WeeklyRewards.GetActivities(v)
 
-
-			local currentFrame = miog.MainTab.Information["TestVaultProgress" .. k]
+			local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
 			--local currentFrame = k == 1 and miog.MainTab.Information.MPlusStatus or k == 2 and miog.MainTab.Information.RaidStatus or miog.MainTab.Information.WorldStatus
 			currentFrame:SetInfo(activities)
 
@@ -159,36 +157,46 @@ local function createPVEFrameReplacement()
 			--currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (k == 1 and "Dungeons" or k == 2 and "Bosses" or k == 3 and "World" or ""))
 			--currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
 
-			local startIndex = 8 - farthestActivity.threshold
-			local endIndex = farthestActivity.threshold - startIndex
+			currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
+			currentFrame.Text:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
 
-			currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress" .. (startIndex + 1)], "CENTER", 1, 1)
+			local ilvls = currentFrame:GetAllItemlevels()
+
+			farthestActivity.progress = 6
 			
-			for i = 1, endIndex, 1 do
-				local singleFrame = currentFrame["Progress" .. startIndex + i]
+			for i = 1, farthestActivity.threshold, 1 do
+				local progressFrameString = "Progress" .. i
+				local singleFrame = currentFrame[progressFrameString]
 				singleFrame.progressFrameIndex = i
 
 				local isCompleted = farthestActivity.progress >= i
 
 				if(isCompleted) then
-					singleFrame:SetAtlas("activities-complete-diamond")
+					local checkmark = currentFrame[progressFrameString .. "Check"]
+
+					if(checkmark) then
+						checkmark:Show()
+
+						local text = currentFrame[progressFrameString .. "Text"]
+						local ilvl = tremove(ilvls, 1) or 662
+						text:SetText(WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)))
+
+						if(farthestActivity.progress == farthestActivity.threshold) then
+							currentFrame.BarFillGlow:Show()
+							currentFrame.BarBorderGlow:Show()
+							currentFrame.Checkmark:Show()
+
+						end
+					end
+
+					--singleFrame:SetAtlas("activities-complete-diamond")
 					--currentFrame.GlowBarBlue:SetShown(i > 1)
 					currentFrame.GlowBarBlue:Show()
-					currentFrame.GlowBarBlue:SetPoint("RIGHT", currentFrame["Progress" .. (startIndex + i)], "CENTER", 1, 1)
+					currentFrame.GlowBarBlue:SetPoint("RIGHT", singleFrame, "RIGHT", -4, 0)
 
 				else
-					singleFrame:SetAtlas("activities-incomplete-diamond")
-
-				end
-			end
-			
-			currentFrame.GlowBarYellow:SetPoint("LEFT", currentFrame["Progress" .. (startIndex + 1)], "LEFT", 3, 1)
-
-			if(farthestActivity.progress < farthestActivity.threshold and farthestActivity.threshold < 8) then
-				for i = 1, startIndex, 1 do
-					local singleFrame = currentFrame["Progress" .. i]
-					singleFrame:Hide()
-					singleFrame.progressFrameIndex = nil
+					singleFrame:SetDesaturated(true)
+					--singleFrame:SetAtlas("activities-incomplete-diamond")
 
 				end
 			end
