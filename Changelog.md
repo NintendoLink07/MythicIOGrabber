@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [3.5.3] - 2025-07-05
+
+### Added
+
+- [SearchPanel] A text indicating the usual keystone range of the leader has been added to the dungeon category.
+
+### Changed
+
+- The vault progress bars have been redesigned to be more inline with Blizzard's design and display additional data on a first glance:
+    - Vault slot unlocks
+    - Itemlevel of the vault slot
+    The progress bar's will glow and have a checkmark when all slots have been unlocked.
+
+### Fixed
+
+- Multiple errors relating to data requests have been resolved.
+
+
 
 ## [3.5.2] - 2025-07-03
 

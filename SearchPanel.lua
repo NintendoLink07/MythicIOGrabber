@@ -287,11 +287,89 @@ local function groupSignup(resultID)
 	end
 end
 
+function NearestValue(number)
+	local closest = math.huge
+	local index = 0
+
+    for i = 2, 30, 1 do
+		local otherNumber = miog.KEYSTONE_BASE_SCORE[i]
+		if math.abs(number - otherNumber) < math.abs(number - closest) then
+			closest = otherNumber
+			index = i
+		end
+	end
+
+
+    return index, closest
+end
+
+local equalizeTable = {}
+
+function median( t )
+  local temp={}
+
+  -- deep copy table so that when we sort it, the original is unchanged
+  -- also weed out any non numbers
+  for k,v in pairs(t) do
+    if type(v) == 'number' then
+      table.insert( temp, v )
+    end
+  end
+
+  table.sort( temp )
+
+  -- If we have an even number of table elements or odd.
+  if math.fmod(#temp,2) == 0 then
+    -- return mean value of middle two elements
+    return ( temp[#temp/2] + temp[(#temp/2)+1] ) / 2
+  else
+    -- return middle element
+    return temp[math.ceil(#temp/2)]
+  end
+end
+
+function mean( t )
+  local sum = 0
+  local count= 0
+
+  for k,v in pairs(t) do
+    if type(v) == 'number' then
+      sum = sum + v
+      count = count + 1
+    end
+  end
+
+  return (sum / count)
+end
+
+function standardDeviation( t )
+  local m
+  local vm
+  local sum = 0
+  local count = 0
+  local result
+
+  m = mean( t )
+
+  for k,v in pairs(t) do
+    if type(v) == 'number' then
+      vm = v - m
+      sum = sum + (vm * vm)
+      count = count + 1
+    end
+  end
+
+  result = math.sqrt(sum / (count-1))
+
+  return result
+end
+
 local function createDataProviderWithUnsortedData()
 	local treeDataProvider = CreateTreeDataProvider()
 	local actualResults, resultTable = C_LFGList.GetFilteredSearchResults()
 
 	local numOfFiltered = 0
+	equalizeTable = {}
 
 	for _, resultID in ipairs(resultTable) do
 		if(C_LFGList.HasSearchResultInfo(resultID)) then
@@ -324,6 +402,18 @@ local function createDataProviderWithUnsortedData()
 					if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
 						primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
 						secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
+
+						--[[if(searchResultInfo.leaderOverallDungeonScore and searchResultInfo.leaderOverallDungeonScore > 0) then
+							local string = rawget(searchResultInfo, "name")
+
+							local substring = string:gsub("%D", "")
+							local onlyNumbers = tonumber(substring)
+
+							if(onlyNumbers) then
+								equalizeTable[onlyNumbers] = equalizeTable[onlyNumbers] or {}
+								tinsert(equalizeTable[onlyNumbers], searchResultInfo.leaderOverallDungeonScore)
+							end
+						end]]
 
 					elseif(LFGListFrame.SearchPanel.categoryID == 3) then
 						if(searchResultInfo.leaderName) then
@@ -627,6 +717,7 @@ local function updateScrollBoxFrame(frame, data)
 
 		local categoryID = activityInfo.categoryID
 		local isRaid = categoryID == 3
+		local isDungeon = categoryID == 2
 		--local isPvE = categoryID == 1 or categoryID == 2 or categoryID == 6 or categoryID == 121
 
 		local memberPanel = currentFrame.CategoryInformation.MemberPanel
@@ -778,7 +869,36 @@ local function updateScrollBoxFrame(frame, data)
 					end
 				end
 			end
+
+			if(categoryID == 2) then
+				if(searchResultInfo.leaderOverallDungeonScore) then
+					--local string = rawget(searchResultInfo, "name")
+
+					--local substring = string:gsub("%D", "")
+					--local onlyNumbers = tonumber(substring)
+
+					--print(string:gsub("|", "||"), resultID, onlyNumbers)
+
+					--if(onlyNumbers) then
+						--local mean = mean(equalizeTable[onlyNumbers])
+						local keylevel, score = NearestValue(searchResultInfo.leaderOverallDungeonScore)
+						local lower, higher = keylevel, keylevel + 1
+
+						if(lower >= 2) then
+							currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(lower, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[lower]):GenerateHexColor()) .. "-" .. wticc(higher, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[higher]):GenerateHexColor()) .. ")")
+
+						else
+							currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(0, miog.createCustomColorForRating(0):GenerateHexColor()) .. ")")
+
+						end
+						--print("The keylevel of " .. onlyNumbers .. " is likely " .. keylevel - 2 .. " to " .. keylevel - 1, searchResultInfo.name, score, mean)
+					--end
+				end
+
+			end
 		end
+
+		currentFrame.CategoryInformation.Keyrange:SetShown(isDungeon)
 
 		currentFrame.BasicInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
 

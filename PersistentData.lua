@@ -476,36 +476,43 @@ miog.DIFFICULTY_NAMES_TO_ID = {
 }
 
 miog.KEYSTONE_LEVEL_BASE_VALUES = {
-	[2] = 165,
-	[3] = 180,
-	[4] = 205,
-	[5] = 190,
-	[6] = 205,
-	[7] = 220,
-	[8] = 235,
-	[9] = 265,
-	[10] = 280,
-	[11] = 295,
-	[12] = 320,
-	[13] = 335,
-	[14] = 365,
-	[15] = 380,
-	[16] = 395,
-	[17] = 410,
-	[18] = 425,
-	[19] = 440,
-	[20] = 455,
-	[21] = 470,
-	[22] = 485,
-	[23] = 500,
-	[24] = 515,
-	[25] = 530,
-	[26] = 545,
-	[27] = 560,
-	[28] = 575,
-	[29] = 590,
-	[30] = 605,
+	[2] = 155,
+	[3] = 170,
+	[4] = 200,
+	[5] = 215,
+	[6] = 230,
+	[7] = 260,
+	[8] = 275,
+	[9] = 290,
+	[10] = 320,
+	[11] = 335,
+	[12] = 365,
+	[13] = 380,
+	[14] = 395,
+	[15] = 410,
+	[16] = 425,
+	[17] = 440,
+	[18] = 455,
+	[19] = 470,
+	[20] = 485,
+	[21] = 500,
+	[22] = 515,
+	[23] = 530,
+	[24] = 545,
+	[25] = 560,
+	[26] = 575,
+	[27] = 590,
+	[28] = 605,
+	[29] = 620,
+	[30] = 635,
 }
+
+miog.KEYSTONE_BASE_SCORE = {}
+
+for k = 2, 30, 1 do
+	miog.KEYSTONE_BASE_SCORE[k] = miog.KEYSTONE_LEVEL_BASE_VALUES[k] * 8
+
+end
 
 miog.MAP_INFO = {
 	[30] = {shortName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground", toastBG = "PvpBg-AlteracValley-ToastBG", pvp = "true"},
@@ -1197,29 +1204,25 @@ local function addMapDataToActivity(mapID, activityID)
 	end
 end
 
-local function addActivityDataToGroup(activityID, groupID)
-	local activityInfo = miog.ACTIVITY_INFO[activityID]
-
-	miog.GROUP_ACTIVITY[groupID].abbreviatedName = activityInfo.abbreviatedName
-	miog.GROUP_ACTIVITY[groupID].mapID = activityInfo.mapID
-end
-
 local function addActivityInfo(activityID)
 	local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-	--activityInfo.shortName = nil
-	activityInfo.abbreviatedName = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].shortName
-	activityInfo.journalInstanceID = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].journalInstanceID
 
-	miog.ACTIVITY_INFO[activityID] = activityInfo
+	if(activityInfo) then
+		activityInfo.abbreviatedName = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].shortName
+		activityInfo.journalInstanceID = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].journalInstanceID
 
-	if(activityInfo.groupFinderActivityGroupID ~= 0) then
-		addActivityDataToGroup(activityID, activityInfo.groupFinderActivityGroupID)
+		miog.ACTIVITY_INFO[activityID] = activityInfo
 
-	end
-	
-	if(activityInfo.mapID ~= 0) then
-		addMapDataToActivity(activityInfo.mapID, activityID)
+		if(activityInfo.groupFinderActivityGroupID and activityInfo.groupFinderActivityGroupID > 0) then
+			miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].abbreviatedName = activityInfo.abbreviatedName
+			miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID = activityInfo.mapID
 
+		end
+		
+		if(activityInfo.mapID ~= 0) then
+			addMapDataToActivity(activityInfo.mapID, activityID)
+
+		end
 	end
 
 	return miog.ACTIVITY_INFO[activityID]
@@ -1232,8 +1235,11 @@ local function addGroupInfo(groupID, categoryID)
 
 	for k, v in ipairs(activities) do
 		tinsert(miog.GROUP_ACTIVITY[groupID].activityIDs, v)
-		addActivityInfo(v)
 
+		if(not miog.ACTIVITY_INFO[v]) then
+			addActivityInfo(v)
+
+		end
 	end
 
 	if(miog.GROUP_ACTIVITY[groupID].mapID) then
@@ -1246,26 +1252,71 @@ local function addGroupInfo(groupID, categoryID)
 	return miog.GROUP_ACTIVITY[groupID]
 end
 
-local function createGroupWithActivityIDIfNeeded(activityID)
-	if(not miog.ACTIVITY_INFO[activityID]) then
+local function addActivityAndGroupInfo(activityID, groupID)
+	if(activityID and not miog.ACTIVITY_INFO[activityID]) then
 		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 
 		if(activityInfo) then
-			if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
-				addGroupInfo(activityInfo.groupFinderActivityGroupID)
+			activityInfo.abbreviatedName = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].shortName
+			activityInfo.journalInstanceID = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].journalInstanceID
 
-			else
-				addActivityInfo(activityID)
+			miog.ACTIVITY_INFO[activityID] = activityInfo
+
+			if(activityInfo.groupFinderActivityGroupID and activityInfo.groupFinderActivityGroupID > 0) then
+				if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
+					addGroupInfo(activityInfo.groupFinderActivityGroupID)
+				end
+
+				miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].abbreviatedName = activityInfo.abbreviatedName
+				miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID = activityInfo.mapID
+
+			end
+			
+			if(activityInfo.mapID ~= 0) then
+				addMapDataToActivity(activityInfo.mapID, activityID)
 
 			end
 		end
 	end
 
-	return miog.ACTIVITY_INFO[activityID]
+	if(groupID and not miog.GROUP_ACTIVITY[groupID]) then
+		miog.GROUP_ACTIVITY[groupID] = {activityIDs = {}}
+
+		local activities = C_LFGList.GetAvailableActivities(categoryID, groupID)
+
+		for k, v in ipairs(activities) do
+			tinsert(miog.GROUP_ACTIVITY[groupID].activityIDs, v)
+
+			if(not miog.ACTIVITY_INFO[v]) then
+				addActivityInfo(v)
+
+			end
+		end
+
+		if(miog.GROUP_ACTIVITY[groupID].mapID) then
+			addMapDataToGroup(miog.GROUP_ACTIVITY[groupID].mapID, groupID)
+
+		end
+
+		miog.GROUP_ACTIVITY[groupID].highestDifficultyActivityID = miog.GROUP_ACTIVITY[groupID].activityIDs[#miog.GROUP_ACTIVITY[groupID].activityIDs]
+
+	end
 end
 
 local function requestActivityInfo(activityID)
-	return createGroupWithActivityIDIfNeeded(activityID)
+	if(not miog.ACTIVITY_INFO[activityID]) then
+		addActivityAndGroupInfo(activityID)
+		
+	else
+		local activityInfo = miog.ACTIVITY_INFO[activityID]
+
+		if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
+			addActivityAndGroupInfo(activityID, activityInfo.groupFinderActivityGroupID)
+
+		end
+	end
+
+	return miog.ACTIVITY_INFO[activityID]
 end
 
 miog.requestActivityInfo = requestActivityInfo

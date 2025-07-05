@@ -157,16 +157,21 @@ local function createPVEFrameReplacement()
 			--currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (k == 1 and "Dungeons" or k == 2 and "Bosses" or k == 3 and "World" or ""))
 			--currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
 
-			currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
-			currentFrame.Text:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
+			currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft(), currentFrame.ThresholdBar:GetRight())
+			--currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
+			currentFrame.ThresholdBar.Text:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
 
 			local ilvls = currentFrame:GetAllItemlevels()
 
-			farthestActivity.progress = 6
+			currentFrame.ThresholdBar:SetValue(0)
+			local currentValue = currentFrame["Progress1"]:GetLeft() - 4
+			
+			local all = farthestActivity.progress == farthestActivity.threshold
 			
 			for i = 1, farthestActivity.threshold, 1 do
 				local progressFrameString = "Progress" .. i
 				local singleFrame = currentFrame[progressFrameString]
+				singleFrame:SetParent(currentFrame.ThresholdBar)
 				singleFrame.progressFrameIndex = i
 
 				local isCompleted = farthestActivity.progress >= i
@@ -175,30 +180,41 @@ local function createPVEFrameReplacement()
 					local checkmark = currentFrame[progressFrameString .. "Check"]
 
 					if(checkmark) then
+						checkmark:SetParent(currentFrame.ThresholdBar)
 						checkmark:Show()
 
 						local text = currentFrame[progressFrameString .. "Text"]
+						text:SetParent(currentFrame.ThresholdBar)
 						local ilvl = tremove(ilvls, 1) or 662
 						text:SetText(WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)))
 
-						if(farthestActivity.progress == farthestActivity.threshold) then
-							currentFrame.BarFillGlow:Show()
-							currentFrame.BarBorderGlow:Show()
-							currentFrame.Checkmark:Show()
-
-						end
 					end
 
 					--singleFrame:SetAtlas("activities-complete-diamond")
 					--currentFrame.GlowBarBlue:SetShown(i > 1)
-					currentFrame.GlowBarBlue:Show()
-					currentFrame.GlowBarBlue:SetPoint("RIGHT", singleFrame, "RIGHT", -4, 0)
+
+					currentValue = currentValue + singleFrame:GetWidth() + 4
+
+					currentFrame.ThresholdBar:SetValue(currentValue)
+					--currentFrame.GlowBarBlue:SetPoint("RIGHT", singleFrame, "RIGHT", -4, 0)
 
 				else
 					singleFrame:SetDesaturated(true)
 					--singleFrame:SetAtlas("activities-incomplete-diamond")
 
 				end
+			end
+
+			if(all) then
+				currentFrame.ThresholdBar.BarFillGlow:Show()
+				currentFrame.ThresholdBar.BarBorderGlow:Show()
+				currentFrame.ThresholdBar.Checkmark:Show()
+				currentFrame.ThresholdBar.End:Hide()
+
+			else
+				currentFrame.ThresholdBar.End:ClearAllPoints()
+				currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 0)
+				currentFrame.ThresholdBar.End:Show()
 			end
 		end
 	end)

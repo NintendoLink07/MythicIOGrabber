@@ -178,7 +178,7 @@
                                 </KeyValues>
 
                                 <Anchors>
-                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="4" y="3"/>
+                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="3"/>
                                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
                                 </Anchors>
                                 
@@ -246,7 +246,7 @@
                             </Frame>
 
                             <Frame parentKey="QueueInformation">
-                                <Size x="194" />
+                                <Size x="190" />
                                 
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
@@ -584,7 +584,7 @@
                                         </Anchors>
                                     </Frame>
 
-                                    <Frame parentKey="Keystone" inherits="BackdropTemplate">
+                                    <Frame parentKey="Keystone" inherits="BackdropTemplate" hidden="true">
                                         <Size x="276" y="20" />
                                         <Anchors>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" y="6"/>

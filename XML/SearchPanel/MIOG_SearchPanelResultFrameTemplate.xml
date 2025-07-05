@@ -196,6 +196,12 @@
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="2" />
                             </Anchors>
                         </FontString>
+
+                        <FontString parentKey="Keyrange" font="GameFontHighlight" justifyH="LEFT" hidden="true">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="14" />
+                            </Anchors>
+                        </FontString>
                     </Layer>
                 </Layers>
 

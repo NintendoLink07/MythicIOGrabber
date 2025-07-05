@@ -4,13 +4,14 @@
         <KeyValues>
 			<KeyValue key="stride" value="8" type="number"/>
         </KeyValues>
+
         <Layers>
-           <Layer level="OVERLAY">
+            <Layer level="OVERLAY">
                 <Texture parentKey="Progress8" atlas="activities-reward-border">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="1" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT"/>
+                    </Anchors>
                 </Texture>
 
                 <Texture parentKey="Progress8Check" atlas="activities-icon-checkmark" hidden="true">
@@ -22,30 +23,30 @@
 
                 <Texture parentKey="Progress7" atlas="activities-complete-diamond">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="2" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress8" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
                 </Texture>
 
                 <Texture parentKey="Progress6" atlas="activities-complete-diamond">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="3" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress7" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
                 </Texture>
 
                 <Texture parentKey="Progress5" atlas="activities-complete-diamond">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="4" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress6" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
                 </Texture>
 
                 <Texture parentKey="Progress4" atlas="activities-reward-border">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="5" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress5" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
                 </Texture>
 
                 <Texture parentKey="Progress4Check" atlas="activities-icon-checkmark" hidden="true">
@@ -57,16 +58,16 @@
 
                 <Texture parentKey="Progress3" atlas="activities-complete-diamond">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="6" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress4" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
                 </Texture>
 
                 <Texture parentKey="Progress2" atlas="activities-reward-border">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="7" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress3" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
                 </Texture>
 
                 <Texture parentKey="Progress2Check" atlas="activities-icon-checkmark" hidden="true">
@@ -78,13 +79,11 @@
 
                 <Texture parentKey="Progress1" atlas="activities-complete-diamond">
                     <Size x="20" y="20" />
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="8" type="number" />
-                    </KeyValues>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.Progress2" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
                 </Texture>
-            </Layer>
 
-            <Layer level="OVERLAY">
                 <FontString parentKey="Progress8Text" inherits="GameFontHighlight" outline="THICK">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.Progress8" relativePoint="TOP" y="2"/>

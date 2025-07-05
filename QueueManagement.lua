@@ -598,8 +598,7 @@ local function checkQueues()
 
 		updateAllPVEQueues(dataProvider)
 		updateCurrentListing(dataProvider)
-
-		--updateFakeGroupApplications(dataProvider)
+		updateFakeGroupApplications(dataProvider)
 
 		updateGroupApplications(dataProvider)
 		updatePVPQueues(dataProvider)
@@ -815,7 +814,7 @@ miog.loadQueueSystem = function()
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
-			activityName = searchResultInfo.name .. " - " .. activityInfo.name
+			activityName = searchResultInfo.name .. " - " .. (activityInfo.name or "")
 			backgroundImage = activityInfo.horizontal
 
 			frame.categoryID = activityInfo.categoryID

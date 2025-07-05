@@ -289,8 +289,7 @@ local function events(_, event, ...)
 
         elseif(new ~= "invited") then
             setupApplyPopup()
-
-            miog.updateFakeGroupApplications()
+            QueueStatusFrame:Update()
 
         end
     end
