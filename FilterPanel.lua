@@ -858,7 +858,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 		end
 	elseif(panel == "LFGListFrame.ApplicationViewer") then
-		local categoryID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or LFGListFrame.CategorySelection.selectedCategory
+		local categoryID = C_LFGList.HasActiveEntryInfo() and miog.requestActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or LFGListFrame.CategorySelection.selectedCategory
 
 		settings = MIOG_NewSettings.newFilterOptions[panel][categoryID]
 		
@@ -964,7 +964,7 @@ local function sortActivityGroup(k1, k2)
 	local ga1, ga2 = miog.requestGroupInfo(k1), miog.requestGroupInfo(k2)
 
 	if(ga1 and ga2) then
-		--local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
+		--local fn1, fn2 = miog.requestActivityInfo(ga1.activityID).fullName, miog.requestActivityInfo(ga2.activityID).fullName
 
 		return ga1.abbreviatedName < ga2.abbreviatedName
 
@@ -1331,7 +1331,7 @@ local function setFilterVisibilityByCategoryAndPanel(categoryID, panel)
 					end
 		
 					if(worldBossActivity and #worldBossActivity > 0) then
-						local activityInfo = C_LFGList.GetActivityInfoTable(worldBossActivity[1])
+						local activityInfo = miog.requestActivityInfo(worldBossActivity[1])
 						sortedExpansionRaids[#sortedExpansionRaids + 1] = {groupFinderActivityGroupID = activityInfo.groupFinderActivityGroupID, name = activityInfo.abbreviatedName}
 		
 					end

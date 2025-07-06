@@ -37,6 +37,10 @@ function RewardTypeMixin:GetNextHigherActivity()
     end
 end
 
+function RewardTypeMixin:GetActivity(index)
+    return self.activities[index]
+end
+
 function RewardTypeMixin:GetFarthestActivity(includeLocked)
     return self.activities[includeLocked and #self.activities or self.farthestSlot]
 

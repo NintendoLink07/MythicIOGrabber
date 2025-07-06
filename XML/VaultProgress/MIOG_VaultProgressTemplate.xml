@@ -1,13 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_VaultProgressTemplate" mixin="RewardTypeMixin" virtual="true">   
-        <Size x="276" y="20" />
+        <Size x="276" y="16" />
              
         <Frames>
-            <StatusBar parentKey="ThresholdBar" frameBuffer="true" >
+            <StatusBar parentKey="ThresholdBar">
                 <Anchors>
-                    <Anchor point="TOPLEFT" x="2" y="-2"/>
-                    <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
                 </Anchors>
                 <BarTexture parentKey="BarFill" atlas="activities-bar-fill"/>
 
@@ -40,7 +40,7 @@
                         </Texture>
 
                         <Texture parentKey="End" atlas="activities-bar-end" hidden="true">
-                            <Size x="6" y="20" />
+                            <Size x="6" y="22" />
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">

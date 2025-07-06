@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [3.5.3] - 2025-07-05
+## [3.5.3] - 2025-07-06
 
 ### Added
 
-- [SearchPanel] A text indicating the usual keystone range of the leader has been added to the dungeon category.
+- [SearchPanel] A text indicating the typical keystone range of the leader has been added to the dungeon category.
 
 ### Changed
 
@@ -18,9 +18,13 @@ and this project adheres to [Semantic Versioning].
     - Itemlevel of the vault slot
     The progress bar's will glow and have a checkmark when all slots have been unlocked.
 
+- The mythic plus information (weekly affix, level and name of keystone) have been moved above the vault progress bars and into a single bar.
+
 ### Fixed
 
 - Multiple errors relating to data requests have been resolved.
+
+- Small performance improvements when requesting activity data(e.g. dungeon/raid/world boss info).
 
 
 
@@ -3857,7 +3861,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.3..HEAD
+[3.5.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.3
 [3.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.2
 [3.5.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.1
 [3.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5

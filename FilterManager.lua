@@ -39,7 +39,7 @@ local function getCurrentCategoryID(panel)
 		LFGListFrame.CategorySelection.selectedCategory
 
 	elseif(panel == "ApplicationViewer") then
-		return C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
+		return C_LFGList.HasActiveEntryInfo() and miog.requestActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
 		LFGListFrame.CategorySelection.selectedCategory
 
 	end
@@ -535,14 +535,14 @@ local function saveToAdvancedFilter()
 
 		miogFilters.activities = {}
 
-		--[[if(currentSettings.activities.enabled) then
+		if(currentSettings.activities.enabled) then
 			for k, v in pairs(currentSettings.activities) do
-				if(type(k) == "number") then
+				if(type(k) == "number" and v) then
 					miogFilters.activities[#miogFilters.activities+1] = k
 
 				end
 			end
-		end]]
+		end
 
 		C_LFGList.SaveAdvancedFilter(miogFilters)
 	end
@@ -715,7 +715,7 @@ local function sortActivityGroup(k1, k2)
 	local ga1, ga2 = miog.requestGroupInfo(k1), miog.requestGroupInfo(k2)
 
 	if(ga1 and ga2) then
-		--local fn1, fn2 = C_LFGList.GetActivityInfoTable(ga1.activityID).fullName, C_LFGList.GetActivityInfoTable(ga2.activityID).fullName
+		--local fn1, fn2 = miog.requestActivityInfo(ga1.activityID).fullName, miog.requestActivityInfo(ga2.activityID).fullName
 
 		return ga1.abbreviatedName < ga2.abbreviatedName
 
@@ -824,7 +824,7 @@ local function refreshFilters()
 			local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
 			if(worldBossActivity and #worldBossActivity > 0) then
-				local activityInfo = C_LFGList.GetActivityInfoTable(worldBossActivity[1])
+				local activityInfo = miog.requestActivityInfo(worldBossActivity[1])
 				
 				tinsert(allGroups, {filterID = activityInfo.mapID, isWorld = true})
 
@@ -855,7 +855,7 @@ local function refreshFilters()
 						info = miog.requestGroupInfo(groupData.filterID)
 
 					elseif(groupData.isPvp) then
-						info = C_LFGList.GetActivityInfoTable(groupData.filterID)
+						info = miog.requestActivityInfo(groupData.filterID)
 						
 					elseif(groupData.isWorld) then
 						info = miog.getMapInfo(groupData.filterID)
@@ -980,7 +980,7 @@ local function retrieveDelveTiers()
 	local normalDelveActivities = C_LFGList.GetAvailableActivities(121, 341)
 
 	for k, v in ipairs(normalDelveActivities) do
-		local activityInfo = C_LFGList.GetActivityInfoTable(v)
+		local activityInfo = miog.requestActivityInfo(v)
 		tinsert(miog.DELVE_TIERS, activityInfo.shortName)
 
 	end
@@ -988,7 +988,7 @@ local function retrieveDelveTiers()
 	local highDelveActivities = C_LFGList.GetAvailableActivities(121, 334)
 
 	for k, v in miog.rpairs(highDelveActivities) do
-		local activityInfo = C_LFGList.GetActivityInfoTable(v)
+		local activityInfo = miog.requestActivityInfo(v)
 		tinsert(miog.DELVE_TIERS, activityInfo.shortName)
 
 	end

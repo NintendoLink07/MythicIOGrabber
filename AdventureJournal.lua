@@ -220,7 +220,7 @@ local function addGroupsToList(list, groups, blockList, isActive)
                 local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
                 activityInfo.isActive = isActive
                 activityInfo.isRaid = not isActive
-                activityInfo.name = activityInfo.extractedName
+                activityInfo.name = activityInfo.mapName
                 tinsert(list, activityInfo)
                 blockList[v] = true
             end
@@ -252,7 +252,7 @@ local function addMostCurrentRaidToList(instanceList, groups)
             local groupInfo = miog.requestGroupInfo(v)
             local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
             activityInfo.isRaid = true
-            activityInfo.name = activityInfo.extractedName
+            activityInfo.name = activityInfo.mapName
 
             highestIDRaid = highestIDRaid > groupInfo.highestDifficultyActivityID and highestIDRaid or groupInfo.highestDifficultyActivityID
         end
@@ -288,7 +288,7 @@ local function createJournalInstanceListFromActivityGroups()
             local activityInfo = miog.ACTIVITY_INFO[v]
             activityInfo.isActive = false
             activityInfo.isRaid = true
-            activityInfo.name = activityInfo.extractedName
+            activityInfo.name = activityInfo.mapName
             tinsert(instanceList, activityInfo)
         end
     end]]

@@ -90,7 +90,7 @@ end
 local function setUpPlaystyleDropDown()
 	miog.EntryCreation.PlaystyleDropDown:SetupMenu(function(dropdown, rootDescription)
 		if(LFGListFrame.EntryCreation.selectedActivity) then
-			local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity)
+			local activityInfo = miog.requestActivityInfo(LFGListFrame.EntryCreation.selectedActivity)
 		
 			for k, playstyleInfo in ipairs(playstyles) do
 				local activityButton = rootDescription:CreateRadio(C_LFGList.GetPlaystyleString(playstyleInfo, activityInfo), function(playstyle) return playstyle == LFGListFrame.EntryCreation.selectedPlaystyle end, function(playstyle)
@@ -123,7 +123,7 @@ local function setUpDifficultyDropDown()
 		end
 
 		for k, v in ipairs(activities) do
-			local activityInfo = C_LFGList.GetActivityInfoTable(v)
+			local activityInfo = miog.requestActivityInfo(v)
 
 			if(activityInfo.shortName) then
 				local activityButton = rootDescription:CreateRadio(activityInfo.shortName, function(data) return data.activityID == LFGListFrame.EntryCreation.selectedActivity end, function(data)
@@ -150,7 +150,7 @@ function LFGListEntryCreation_SetTitleFromActivityInfo(self)
 		return;
 	end
 	local activityID = activeEntryInfo and activeEntryInfo.activityIDs[1] or (self.selectedActivity or 0);
-	local activityInfo =  C_LFGList.GetActivityInfoTable(activityID);
+	local activityInfo =  miog.requestActivityInfo(activityID);
 	if((activityInfo and activityInfo.isMythicPlusActivity) or not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity)) then
 		--Is protected, first showed up in 11.0.2
 		--C_LFGList.SetEntryTitle(self.selectedActivity, self.selectedGroup, self.selectedPlaystyle);
@@ -344,9 +344,9 @@ local function gatherAllActivities(dropdown, rootDescription)
 			local worldBossActivity = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, 0, 5)
 
 			for k, activityID in ipairs(worldBossActivity) do
-				local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+				local activityInfo = miog.requestActivityInfo(activityID)
 
-				tinsert(raidList, {index = k, name = activityInfo.name, activityID = activityID, groupID = 0})
+				tinsert(raidList, {index = k, name = activityInfo.mapName, activityID = activityID, groupID = 0})
 			end
 			
 			addActivityListToDropdown(raidList, rootDescription)
@@ -375,9 +375,9 @@ local function gatherAllActivities(dropdown, rootDescription)
 		local pvpActivities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, 0, LFGListFrame.CategorySelection.selectedFilters);
 
 		for k, v in ipairs(pvpActivities) do
-			local activityInfo = C_LFGList.GetActivityInfoTable(v)
+			local activityInfo = miog.requestActivityInfo(v)
 
-			tinsert(pvpTable, {index = k, name = activityInfo.name, activityID = v, groupID = 0})
+			tinsert(pvpTable, {index = k, name = activityInfo.mapName, activityID = v, groupID = 0})
 		end
 
 		addActivityListToDropdown(pvpTable, rootDescription)
@@ -394,7 +394,6 @@ local function updateEntryCreation()
 	local entryCreation = miog.EntryCreation
 	local categoryInfo = C_LFGList.GetLfgCategoryInfo(LFGListFrame.EntryCreation.selectedCategory);
 	local activityInfo = miog.requestActivityInfo(LFGListFrame.EntryCreation.selectedActivity)
-	--local activityInfo = C_LFGList.GetActivityInfoTable(LFGListFrame.EntryCreation.selectedActivity);
 	local groupName = C_LFGList.GetActivityGroupInfo(LFGListFrame.EntryCreation.selectedGroup);
 	
 	setUpDifficultyDropDown()
@@ -476,7 +475,7 @@ local function selectKeystoneOrFirst()
 	-- set to currently listed group if one is found
 	if(C_LFGList.HasActiveEntryInfo()) then
 		local entryInfo = C_LFGList.GetActiveEntryInfo()
-		local activityInfo = C_LFGList.GetActivityInfoTable(entryInfo.activityIDs[1])
+		local activityInfo = miog.requestActivityInfo(entryInfo.activityIDs[1])
 
 		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, activityInfo.categoryID, activityInfo.groupFinderActivityGroupID, entryInfo.activityIDs[1])
 		return
@@ -538,7 +537,7 @@ function LFGListEntryCreation_UpdateValidState(self)
 	if(self.selectedActivity) then
 		local errorText;
 
-		local activityInfo = C_LFGList.GetActivityInfoTable(self.selectedActivity)
+		local activityInfo = miog.requestActivityInfo(self.selectedActivity)
 		local maxNumPlayers = activityInfo and  activityInfo.maxNumPlayers or 0;
 		local mythicPlusDisableActivity = not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity) and (activityInfo.isMythicPlusActivity and not C_LFGList.GetKeystoneForActivity(self.selectedActivity));
 		if ( maxNumPlayers > 0 and GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) >= maxNumPlayers ) then

@@ -814,7 +814,7 @@ miog.loadQueueSystem = function()
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
-			activityName = searchResultInfo.name .. " - " .. (activityInfo.name or "")
+			activityName = searchResultInfo.name .. " - " .. (activityInfo.mapName or "")
 			backgroundImage = activityInfo.horizontal
 
 			frame.categoryID = activityInfo.categoryID
@@ -829,7 +829,7 @@ miog.loadQueueSystem = function()
 					frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
 
 					--[[if(MIOG_NewSettings.filterPopup and not disabledPopups[v] and not searchResultInfo.isDelisted) then
-						setupFilterPopup(v, reason[1], searchResultInfo.name, activityInfo.name, searchResultInfo.leaderName)
+						setupFilterPopup(v, reason[1], searchResultInfo.name, activityInfo.mapName, searchResultInfo.leaderName)
 
 						showFilterPopup = true
 					end]]

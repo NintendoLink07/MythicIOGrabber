@@ -1013,7 +1013,7 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 
 		if(searchResultInfo.leaderName) then
-			--local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1])
+			--local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 			playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 		end
 		
@@ -1200,7 +1200,7 @@ end)
 miog.getCurrentCategoryID = function()
 	local currentPanel = LFGListFrame.activePanel:GetDebugName()
 	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
-	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActivityInfoTable(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
+	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and miog.requestActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
 	LFGListFrame.CategorySelection.selectedCategory
 
 

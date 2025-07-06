@@ -118,7 +118,7 @@ local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
 		return;
 	end
 
-	local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1]);
+	local activityInfo = miog.requestActivityInfo(activeEntryInfo.activityIDs[1])
 	if(not activityInfo) then
 		return;
 	end
@@ -381,7 +381,7 @@ local function updateApplicantMemberFrame(frame, data)
 	end
 	
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
-	local categoryID = activeEntry and C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1]).categoryID
+	local categoryID = activeEntry and miog.requestActivityInfo(activeEntry.activityIDs[1]).categoryID
 
 	miog.setInfoIndicators(applicantMemberFrame, categoryID, dungeonScore, dungeonData, miog.getNewRaidSortData(playerName, realm), pvpData)
 end
@@ -394,7 +394,7 @@ local function createDataProviderWithUnsortedData()
 
 	if(activeEntry) then
 		local activityID = activeEntry.activityID or 0
-		local categoryID = C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1]).categoryID
+		local categoryID = miog.requestActivityInfo(activeEntry.activityIDs[1]).categoryID
 
 		for _, applicantID in pairs(currentApplicants) do
 			local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)

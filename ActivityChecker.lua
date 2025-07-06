@@ -130,8 +130,6 @@ local function updateRandomDungeons(blizzDesc)
 	end]]
 end
 
-miog.updateRandomDungeons = updateRandomDungeons
-
 local function sortAndAddDungeonList(list, enableOnShow)
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
 
@@ -495,7 +493,6 @@ local function refreshDungeonList()
 			return k1.expansionLevel > k2.expansionLevel
 		end)
 	end
-
 end
 
 local selectedDungeonsList = {}
@@ -506,7 +503,6 @@ local function setupQueueDropdown(rootDescription)
 		local isRaidFinder = k == indices["RAIDFINDER"]
 		local isEvent = k == indices["EVENT"]
 		local isPvp = k == indices["PVP"]
-
 
 		if(not isEvent and true or isEvent and #v > 0) then
 			local isPetBattle = k == indices["PET"]
@@ -526,7 +522,8 @@ local function setupQueueDropdown(rootDescription)
 			end
 
 			local lastRaidName, lastExpansion
-			activityButton:SetEnabled(isPetBattle and true or isPvp and (C_PvP.CanPlayerUseRatedPVPUI() or C_LFGInfo.CanPlayerUsePremadeGroup()) and true or isSpecific and #indicesList[2] > 0 and true or #v > 0)
+			activityButton:SetEnabled(isPetBattle and (not C_LobbyMatchmakerInfo.IsInQueue() and C_PetJournal.IsFindBattleEnabled() and C_PetJournal.IsJournalUnlocked())
+				or isPvp and (C_PvP.CanPlayerUseRatedPVPUI() or C_LFGInfo.CanPlayerUsePremadeGroup()) and true or isSpecific and #indicesList[2] > 0 and true or #v > 0)
 
 			local queueButton
 
@@ -829,8 +826,6 @@ local function updateDungeons(overwrittenParentIndex, blizzDesc)
 	end
 end
 
-miog.updateDungeons = updateDungeons
-
 local function updateRaidFinder(blizzDesc)
 	---@diagnostic disable-next-line: undefined-field
 	local queueDropDown = miog.MainTab.QueueInformation.DropDown
@@ -968,8 +963,6 @@ local function updateRaidFinder(blizzDesc)
 
 	end
 end
-
-miog.updateRaidFinder = updateRaidFinder
 
 local function updatePVP(parent)
 	if(HonorFrame and ConquestFrame) then
@@ -1271,7 +1264,7 @@ end
 
 local function updateDropDown()
 	if(not InCombatLockdown()) then
-		local blizzardDropDownDescriptions = {}
+		--[[local blizzardDropDownDescriptions = {}
 
 		local queueDropDown = miog.MainTab.QueueInformation.DropDown
 		queueDropDown:ResetDropDown()
@@ -1320,22 +1313,20 @@ local function updateDropDown()
 
 		updateRandomDungeons(blizzardDropDownDescriptions)
 		updateDungeons(nil, blizzardDropDownDescriptions)
-		updateDungeons(indices["SPECIFIC"], blizzardDropDownDescriptions)
+		updateDungeons(indices["SPECIFIC"], blizzardDropDownDescriptions)]]
 
 		refreshDungeonList()
-		updateRaidFinder(blizzardDropDownDescriptions)
+		--updateRaidFinder(blizzardDropDownDescriptions)
 
-		if(HonorFrame and HonorFrame.TypeDropdown) then
-			updatePVP2()
+		--if(HonorFrame and HonorFrame.TypeDropdown) then
+		--	updatePVP2()
 
-		end
+		--end
 	else
 		miog.F.UPDATE_AFTER_COMBAT = true
 	
 	end
 end
-
-miog.updateDropDown = updateDropDown
 
 local function activityEvents(_, event, ...)
     if(event == "LFG_UPDATE_RANDOM_INFO") then

@@ -1,0 +1,30 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_VaultProgressRewardTemplate" virtual="true">
+        <Size x="16" y="16" />
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="Diamond" atlas="activities-complete-diamond" setAllPoints="true" hidden="true" />
+
+                <Texture parentKey="Ring" atlas="activities-reward-border" setAllPoints="true" hidden="true" />
+                
+                <Texture parentKey="Glow" alphaMode="ADD" atlas="activities-complete-diamond-glow" setAllPoints="true" hidden="true" />
+
+                <Texture parentKey="Checkmark" atlas="activities-icon-checkmark" hidden="true">
+                    <Size x="8" y="8" />
+                    <Anchors>
+                        <Anchor point="CENTER" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="5">
+            
+                <FontString parentKey="Text" inherits="GameFontHighlight" outline="THICK" hidden="true">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOP" y="2"/>
+                    </Anchors>
+                </FontString>  
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

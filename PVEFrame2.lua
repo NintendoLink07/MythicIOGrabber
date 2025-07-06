@@ -114,108 +114,129 @@ local function createPVEFrameReplacement()
 
 		miog.F.CURRENT_REGION = miog.F.CURRENT_REGION or miog.C.REGIONS[GetCurrentRegion()]
 
-		local regularActivityID, regularGroupID, regularLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
+		local isMaxLevel = IsPlayerAtEffectiveMaxLevel()
 
-		if(regularActivityID) then
-			miog.MainTab.Information.Keystone.Text:SetText("+" .. regularLevel .. " " .. C_LFGList.GetActivityGroupInfo(regularGroupID))
-			miog.MainTab.Information.Keystone.BarBackground:SetColorTexture(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[regularLevel + 3] * 8):GetRGBA())
-			
-		else
-			local timewalkingActivityID, timewalkingGroupID, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
+		if(isMaxLevel) then
+			miog.MainTab.Information.KeystoneStatusBar:SetMinMaxValues(0, 100)
+			miog.MainTab.Information.KeystoneStatusBar:SetValue(100)
+			local regularActivityID, _, regularLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
+			local activityInfo
 
-			if(timewalkingActivityID) then
-				miog.MainTab.Information.Keystone.Text:SetText("+" .. timewalkingLevel .. " " .. C_LFGList.GetActivityGroupInfo(timewalkingGroupID))
-				miog.MainTab.Information.Keystone.BarBackground:SetColorTexture(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[timewalkingLevel] * 8):GetRGBA())
-				
+			if(regularActivityID) then
+				activityInfo = miog.requestActivityInfo(regularActivityID)
+				miog.MainTab.Information.KeystoneStatusBar.Text:SetText("+" .. regularLevel .. " " .. activityInfo.mapName)
+				miog.MainTab.Information.KeystoneStatusBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[regularLevel + 3] * 8):GetRGBA())
 			else
-				miog.MainTab.Information.Keystone.Text:SetText("NO KEYSTONE")
-				miog.MainTab.Information.Keystone.Text:SetTextColor(1, 0, 0, 1)
-			
-			end
-		end
+				local timewalkingActivityID, _, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
 
-		for k, v in ipairs(activityIndices) do
-			local activities = C_WeeklyRewards.GetActivities(v)
-
-			local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
-			--local currentFrame = k == 1 and miog.MainTab.Information.MPlusStatus or k == 2 and miog.MainTab.Information.RaidStatus or miog.MainTab.Information.WorldStatus
-			currentFrame:SetInfo(activities)
-
-			local farthestActivity = currentFrame:GetFarthestActivity(true)
-			--currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
-			--currentFrame:SetValue(farthestActivity.progress)
-
-			local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
-
-			local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
-			local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
-			dimColor[4] = 0.1
-				
-			--currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
-			--miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
-
-			--currentFrame.Text:SetText((activities[3].progress <= activities[3].threshold and activities[3].progress or activities[3].threshold) .. "/" .. activities[3].threshold .. " " .. (k == 1 and "Dungeons" or k == 2 and "Bosses" or k == 3 and "World" or ""))
-			--currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
-
-			currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft(), currentFrame.ThresholdBar:GetRight())
-			--currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
-			currentFrame.ThresholdBar.Text:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
-
-			local ilvls = currentFrame:GetAllItemlevels()
-
-			currentFrame.ThresholdBar:SetValue(0)
-			local currentValue = currentFrame["Progress1"]:GetLeft() - 4
-			
-			local all = farthestActivity.progress == farthestActivity.threshold
-			
-			for i = 1, farthestActivity.threshold, 1 do
-				local progressFrameString = "Progress" .. i
-				local singleFrame = currentFrame[progressFrameString]
-				singleFrame:SetParent(currentFrame.ThresholdBar)
-				singleFrame.progressFrameIndex = i
-
-				local isCompleted = farthestActivity.progress >= i
-
-				if(isCompleted) then
-					local checkmark = currentFrame[progressFrameString .. "Check"]
-
-					if(checkmark) then
-						checkmark:SetParent(currentFrame.ThresholdBar)
-						checkmark:Show()
-
-						local text = currentFrame[progressFrameString .. "Text"]
-						text:SetParent(currentFrame.ThresholdBar)
-						local ilvl = tremove(ilvls, 1) or 662
-						text:SetText(WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)))
-
-					end
-
-					--singleFrame:SetAtlas("activities-complete-diamond")
-					--currentFrame.GlowBarBlue:SetShown(i > 1)
-
-					currentValue = currentValue + singleFrame:GetWidth() + 4
-
-					currentFrame.ThresholdBar:SetValue(currentValue)
-					--currentFrame.GlowBarBlue:SetPoint("RIGHT", singleFrame, "RIGHT", -4, 0)
-
+				if(timewalkingActivityID) then
+					activityInfo = miog.requestActivityInfo(timewalkingActivityID)
+					miog.MainTab.Information.KeystoneStatusBar.Text:SetText("+" .. timewalkingLevel .. " " .. activityInfo.mapName)
+					miog.MainTab.Information.KeystoneStatusBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[timewalkingLevel] * 8):GetRGBA())
+					
 				else
-					singleFrame:SetDesaturated(true)
-					--singleFrame:SetAtlas("activities-incomplete-diamond")
-
+					miog.MainTab.Information.KeystoneStatusBar.Text:SetText("No keystone found")
+					miog.MainTab.Information.KeystoneStatusBar:SetStatusBarColor(0, 0, 0, 1)
+				
 				end
 			end
 
-			if(all) then
-				currentFrame.ThresholdBar.BarFillGlow:Show()
-				currentFrame.ThresholdBar.BarBorderGlow:Show()
-				currentFrame.ThresholdBar.Checkmark:Show()
-				currentFrame.ThresholdBar.End:Hide()
+			for k, v in ipairs(activityIndices) do
+				local activities = C_WeeklyRewards.GetActivities(v)
 
-			else
-				currentFrame.ThresholdBar.End:ClearAllPoints()
-				currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 0)
-				currentFrame.ThresholdBar.End:Show()
+				local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
+				--local currentFrame = k == 1 and miog.MainTab.Information.MPlusStatus or k == 2 and miog.MainTab.Information.RaidStatus or miog.MainTab.Information.WorldStatus
+				currentFrame:SetInfo(activities)
+
+				local farthestActivity = currentFrame:GetFarthestActivity(true)
+				--currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
+				--currentFrame:SetValue(farthestActivity.progress)
+
+				local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
+
+				local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
+				local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+				dimColor[4] = 0.1
+					
+				--currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
+				--miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
+
+				--currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
+
+				currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft(), currentFrame.ThresholdBar:GetRight())
+				--currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
+				currentFrame.ThresholdBar.Text:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
+
+				local ilvls = currentFrame:GetAllItemlevels()
+
+				currentFrame.ThresholdBar:SetValue(0)
+				local currentValue = currentFrame["Progress1"]:GetLeft() - 4
+				
+				local all = farthestActivity.progress == farthestActivity.threshold
+				
+				for i = 1, farthestActivity.threshold, 1 do
+					local progressFrameString = "Progress" .. i
+					local singleFrame = currentFrame[progressFrameString]
+					singleFrame:SetParent(currentFrame.ThresholdBar)
+					singleFrame.progressFrameIndex = i
+
+					local isCompleted = farthestActivity.progress >= i
+					local activityIndex = activities[1].threshold == i and 1 or activities[2].threshold == i and 2 or activities[3].threshold == i and 3
+					local activityCompleted = isCompleted and activityIndex
+
+					local checkmark = singleFrame.Checkmark
+					local text = singleFrame.Text
+
+					if(activityCompleted) then
+						local ilvl = tremove(ilvls, 1)
+						text:SetText(ilvl and WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)) or "")
+						text:SetParent(currentFrame.ThresholdBar)
+						text:Show()
+
+						checkmark:SetParent(currentFrame.ThresholdBar)
+						checkmark:Show()
+
+					else
+						text:Hide()
+						checkmark:Hide()
+
+					end
+
+					singleFrame.Ring:SetShown(activityIndex)
+					singleFrame.Diamond:SetShown(not activityIndex)
+					singleFrame.Glow:SetShown(not activityIndex and isCompleted)
+
+					if(isCompleted) then
+						currentValue = currentValue + singleFrame:GetWidth() + 4
+						currentFrame.ThresholdBar:SetValue(currentValue)
+
+					else
+						singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(true)
+
+					end
+				end
+
+				if(all) then
+					currentFrame.ThresholdBar.BarFillGlow:Show()
+					currentFrame.ThresholdBar.BarBorderGlow:Show()
+					currentFrame.ThresholdBar.Checkmark:Show()
+					currentFrame.ThresholdBar.End:Hide()
+
+				else
+					currentFrame.ThresholdBar.End:ClearAllPoints()
+					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 4, 0)
+					currentFrame.ThresholdBar.End:Show()
+				end
 			end
+
+		else
+			for k, v in ipairs(activityIndices) do
+				local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
+				currentFrame:Hide()
+
+			end
+
+			miog.MainTab.Information.KeystoneStatusBar:Hide()
 		end
 	end)
 

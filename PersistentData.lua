@@ -1180,7 +1180,7 @@ local function addMapDataToGroup(mapID, groupID)
 		miog.GROUP_ACTIVITY[groupID].bosses = mapInfo.bosses
 		miog.GROUP_ACTIVITY[groupID].journalInstanceID = mapInfo.journalInstanceID
 
-		miog.GROUP_ACTIVITY[groupID].extractedName = mapInfo.name
+		miog.GROUP_ACTIVITY[groupID].mapName = mapInfo.name
 		miog.GROUP_ACTIVITY[groupID].expansionLevel = mapInfo.expansionLevel
 
 		miog.GROUP_ACTIVITY[groupID].vertical = mapInfo.vertical
@@ -1196,7 +1196,7 @@ local function addMapDataToActivity(mapID, activityID)
 		miog.ACTIVITY_INFO[activityID].bosses = mapInfo.bosses
 		miog.ACTIVITY_INFO[activityID].journalInstanceID = mapInfo.journalInstanceID
 
-		miog.ACTIVITY_INFO[activityID].extractedName = mapInfo.name
+		miog.ACTIVITY_INFO[activityID].mapName = mapInfo.name
 		miog.ACTIVITY_INFO[activityID].expansionLevel = mapInfo.expansionLevel
 
 		miog.ACTIVITY_INFO[activityID].vertical = mapInfo.vertical

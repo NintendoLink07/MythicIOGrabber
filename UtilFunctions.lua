@@ -11,14 +11,14 @@ miog.endTime = function()
 end
 
 miog.setAffixes = function()
-	if(miog.MainTab) then
+	if(not miog.F.LITE_MODE) then
 		local affixIDs = C_MythicPlus.GetCurrentAffixes()
 
-		if(affixIDs and #affixIDs > 0 and not miog.F.LITE_MODE) then
-			local name, _, filedataid = C_ChallengeMode.GetAffixInfo(affixIDs[1].id)
+		if(affixIDs and #affixIDs > 0) then
+			local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixIDs[1].id)
 
-			miog.MainTab.Information.Affixes.Affix1:SetTexture(filedataid)
-			miog.MainTab.Information.Affixes.tooltipText = name
+			miog.MainTab.Information.KeystoneStatusBar.Affix:SetTexture(filedataid)
+			miog.MainTab.Information.KeystoneStatusBar.Affix.affixID = affixIDs[1].id
 
 		else
 			return nil

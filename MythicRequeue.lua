@@ -150,7 +150,7 @@ end
 local function getCategoryIDOfFirstResult()
     local _, info = searchForFirstResultID()
 
-    local activityInfo = C_LFGList.GetActivityInfoTable(info.activityID)
+    local activityInfo = miog.requestActivityInfo(info.activityID)
 
     return activityInfo and activityInfo.categoryID
 end

@@ -179,7 +179,7 @@
 
                                 <Anchors>
                                     <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="3"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="3"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="3"/>
                                 </Anchors>
                                 
                                 <Frames>
@@ -272,7 +272,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="11"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Leader" relativePoint="RIGHT" x="9"/>
                                                 </Anchors>
                                             </Frame>
 
@@ -280,7 +280,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="11"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Tank" relativePoint="RIGHT" x="9"/>
                                                 </Anchors>
                                             </Frame>
 
@@ -288,7 +288,7 @@
                                                 <Size x="40" y="22" />
 
                                                 <Anchors>
-                                                    <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="11"/>
+                                                    <Anchor point="LEFT" relativeKey="$parent.Healer" relativePoint="RIGHT" x="9"/>
                                                 </Anchors>
                                             </Frame>
                                         </Frames>
@@ -328,8 +328,8 @@
                                             <Layer level="OVERLAY">
                                                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
                                                     <Anchors>
-                                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2"/>
-                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                                                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="4" y="-4"/>
+                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="4"/>
                                                     </Anchors>
                                                 </FontString>
                                             </Layer>
@@ -371,191 +371,11 @@
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT" x="-4" y="4"/>
                                 </Anchors>
 
                                 <Frames>
-                                    <StatusBar parentKey="MPlusStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin"> <!--  mixin="WeeklyRewardsActivityMixin"-->
-                                        <BarTexture atlas="ui-castingbar-filling-standard" />
-                                        <Size x="144" y="16" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="BACKGROUND">
-                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/dungeonrewardsbackground.png" setAllPoints="true" />
-                                            </Layer>
-
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="GameFontHighlight" text="Activity 1 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <Color r="1" g="0" b="0" a="1" />
-                                                    <Anchors>
-                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-
-                                        <Scripts>
-                                            <OnMouseDown>
-                                                WeeklyRewards_ShowUI()
-                                            </OnMouseDown>
-                                            <OnEnter method="OnEnter" />
-                                            <OnLeave function="GameTooltip_Hide" />
-                                        </Scripts>
-                                    </StatusBar>
-
-                                    <StatusBar parentKey="RaidStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin"> <!--  mixin="WeeklyRewardsActivityMixin"-->
-                                        <BarTexture atlas="ui-castingbar-filling-standard" />
-                                        <Size x="144" y="16" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.MPlusStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="BACKGROUND">
-                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/raidrewardsbackground.png" setAllPoints="true" />
-                                            </Layer>
-
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="GameFontHighlight" text="Activity 2 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <Color r="1" g="0" b="0" a="1" />
-                                                    <Anchors>
-                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-
-                                        <Scripts>
-                                            <OnMouseDown>
-                                                WeeklyRewards_ShowUI()
-                                            </OnMouseDown>
-                                            <OnEnter method="OnEnter" />
-                                            <OnLeave function="GameTooltip_Hide" />
-                                        </Scripts>
-                                    </StatusBar>
-
-                                    <StatusBar parentKey="WorldStatus" inherits="BackdropTemplate" mixin="RewardTypeMixin">  <!--  mixin="WeeklyRewardsActivityMixin"-->
-                                        <BarTexture atlas="ui-castingbar-filling-standard" />
-                                        <Size x="144" y="16" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RaidStatus" relativePoint="BOTTOMRIGHT" y="-3"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="BACKGROUND">
-                                                <Texture parentKey="Background" file="Interface/Addons/MythicIOGrabber/res/backgrounds/worldrewardsbackground.png" setAllPoints="true" />
-                                            </Layer>
-
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="GameFontHighlight" text="Activity 3 inactive" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <Color r="1" g="0" b="0" a="1" />
-                                                    <Anchors>
-                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-1"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-
-                                        <Scripts>
-                                            <OnMouseDown>
-                                                WeeklyRewards_ShowUI()
-                                            </OnMouseDown>
-                                            <OnEnter method="OnEnter" />
-                                            <OnLeave function="GameTooltip_Hide" />
-                                        </Scripts>
-                                    </StatusBar>
-
-                                    <Frame parentKey="Affixes">
-                                        <Size x="20" y="20" />
-
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>
-                                        </Anchors>
-                                        
-                                        <Layers>
-                                            <Layer level="ARTWORK">
-                                                <Texture parentKey="Affix1">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
-                                                    </Anchors>
-                                                </Texture>
-
-                                                <!--<Texture parentKey="Affix2">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Affix1" relativePoint="RIGHT" />
-                                                    </Anchors>
-                                                </Texture>
-
-                                                <Texture parentKey="Affix3">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Affix2" relativePoint="RIGHT" />
-                                                    </Anchors>
-                                                </Texture>
-
-                                                <Texture parentKey="Affix4">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Affix3" relativePoint="RIGHT" />
-                                                    </Anchors>
-                                                </Texture>
-
-                                                <Texture parentKey="Affix5">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Affix4" relativePoint="RIGHT" />
-                                                    </Anchors>
-                                                </Texture>!-->
-                                            </Layer>
-                                        </Layers>
-
-                                        <Scripts>
-                                            <OnEnter>
-                                                if(self.tooltipText) then
-                                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                                    GameTooltip:SetText(self.tooltipText)
-                                                    GameTooltip:Show()
-                                                end
-                                            </OnEnter>
-                                            <OnLeave>
-                                                GameTooltip:Hide()
-                                            </OnLeave>
-                                        </Scripts>
-                                    </Frame>
-
-                                    <Frame parentKey="Awakened" inherits="BackdropTemplate" hidden="true">
-                                        <Size x="200" y="20" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Keystone" relativePoint="BOTTOMRIGHT"/>
-                                        </Anchors>
-
-                                        <Layers>
-                                            <Layer level="ARTWORK">
-                                                <Texture parentKey="Icon" atlas="Raid">
-                                                    <Size x="20" y="20" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" text="NO AWAKENED RAID" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                                                    <Color r="1" g="0" b="0" a="1" />
-                                                    <Anchors>
-                                                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" x="-5"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                    </Frame>
-
-                                    <Frame parentKey="Holiday" inherits="VerticalLayoutFrame">
+                                    <Frame parentKey="Holiday" inherits="VerticalLayoutFrame" hidden="true">
                                         <KeyValues>
                                             <KeyValue key="spacing" value="5" />
                                         </KeyValues>
@@ -568,7 +388,7 @@
 
                                     <Frame parentKey="VaultProgress3" inherits="MIOG_VaultProgressWorldTemplate">
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" y="1"/>
+                                            <Anchor point="BOTTOMRIGHT"/>
                                         </Anchors>
                                     </Frame>
 
@@ -584,44 +404,51 @@
                                         </Anchors>
                                     </Frame>
 
-                                    <Frame parentKey="Keystone" inherits="BackdropTemplate" hidden="true">
-                                        <Size x="276" y="20" />
+                                    <StatusBar parentKey="KeystoneStatusBar" frameBuffer="true" >
+                                        <BarTexture atlas="ui-castingbar-filling-standard" />
+                                        <Size x="278" y="16" />
                                         <Anchors>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" y="6"/>
                                         </Anchors>
 
                                         <Layers>
-                                            <Layer level="BORDER">
-                                                <Texture parentKey="BarBorder" atlas="activities-bar-border" setAllPoints="true" />
-                                            </Layer>
-
-                                            <Layer level="BACKGROUND">
-                                                <Texture parentKey="BarBackground">
-                                                    <Anchors>
-                                                        <Anchor point="TOPLEFT" relativeKey="$parent.BarBorder" relativePoint="TOPLEFT" x="1" y="-3"/>
-                                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBorder" relativePoint="BOTTOMRIGHT" x="-2" y="4"/>
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-
-                                            <Layer level="ARTWORK">
-                                                <Texture parentKey="Icon" file="interface/icons/inv_relics_hourglass_02.blp">
-                                                    <Size x="13" y="13" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.BarBorder" x="4" y="1"/>
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" text="No keystone found" outline="NORMAL">
+                                                <Texture parentKey="Affix">
+                                                    <Size x="14" y="14" />
                                                     <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="4" y="-1"/>
+                                                        <Anchor point="LEFT" relativeKey="$parent" x="2"/>
+                                                    </Anchors>
+
+                                                    <Scripts>
+                                                        <OnEnter>
+                                                            if(self.affixID) then
+                                                                local name, desc, filedataid = C_ChallengeMode.GetAffixInfo(self.affixID)
+                                                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                                                GameTooltip:SetText(name)
+                                                                GameTooltip:AddLine(desc)
+                                                                GameTooltip:Show()
+                                                            end
+                                                        </OnEnter>
+                                                        <OnLeave function="GameTooltip_Hide" />
+                                                    </Scripts>
+                                                </Texture>
+
+                                                <Texture parentKey="Icon" file="interface/icons/inv_relics_hourglass_02.blp">
+                                                    <Size x="14" y="14" />
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Affix" relativePoint="RIGHT" />
+                                                    </Anchors>
+                                                </Texture>
+
+                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" justifyH="LEFT" text="No keystone found" outline="NORMAL">
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="4"/>
+                                                        <Anchor point="RIGHT" relativeKey="$parent" x="-2"/>
                                                     </Anchors>
                                                 </FontString>
                                             </Layer>
                                         </Layers>
-                                    </Frame>
+                                    </StatusBar>
                                 </Frames>
                             </Frame>
                         </Frames>
