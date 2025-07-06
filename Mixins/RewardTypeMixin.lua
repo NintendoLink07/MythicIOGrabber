@@ -46,7 +46,16 @@ function RewardTypeMixin:GetFarthestActivity(includeLocked)
 
 end
 
+function RewardTypeMixin:ResetAllData()
+    self.activities = nil
+    self.farthestSlot = nil
+    self.highestSlot = nil
+    self.info = nil
+end
+
 function RewardTypeMixin:SetInfo(activities)
+    self:ResetAllData()
+    
     self.activities = activities
 
     self:SetHighestCurrentActivity()

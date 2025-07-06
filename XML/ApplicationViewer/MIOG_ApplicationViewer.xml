@@ -395,7 +395,30 @@
                             self:ClearFocus()
 
                         end
+
+                        self.keyArray[key] = true
+
+                        if((self.keyArray["LCTRL"] or self.keyArray["RCTRL"]) and self.keyArray["C"]) then
+                            self.keyArray["LCTRL"] = nil
+                            self.keyArray["RCTRL"] = nil
+                            self.keyArray["C"] = nil
+
+                            C_Timer.After(0.1, function()
+                                self:Hide()
+                                self:ClearFocus()
+                            end)
+                        end
                     </OnKeyDown>
+
+                    <OnKeyUp>
+                        self.keyArray[key] = nil
+
+                    </OnKeyUp>
+
+                    <OnLoad>
+                        self.keyArray = {}
+                        
+                    </OnLoad>
                 </Scripts>
             </EditBox>
 

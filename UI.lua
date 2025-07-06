@@ -105,9 +105,10 @@ miog.createFrames = function()
 	-- OnOpen usually generates an error and doesn't really do anything important, so mask it with a dummy function
 	C_EncounterJournal.OnOpen = miog.dummyFunction
 
-	local settingsButton = CreateFrame("Button")
+	local settingsButton = CreateFrame("Button", nil, nil, "UIButtonTemplate")
 	settingsButton:SetSize(20, 20)
-	settingsButton:SetNormalTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/settingGear.png")
+	settingsButton:SetNormalAtlas("QuestLog-icon-setting")
+	settingsButton:SetHighlightAtlas("QuestLog-icon-setting")
 	settingsButton:SetScript("OnClick", function()
 		MIOG_OpenInterfaceOptions()
 	end)
@@ -180,13 +181,13 @@ miog.createFrames = function()
 
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
-		miog.loadCalendarSystem()
+		--miog.loadCalendarSystem()
 		miog.loadGearingTable()
 		miog.loadGroupManager()
 		miog.loadRaidPlanner()
 		miog.loadActivityChecker()
 
-		miog.Journal = miog.loadJournal()
+		miog.Drops = miog.loadJournal()
 		miog.UpgradeFinder = miog.loadUpgradeFinder()
 	end
 

@@ -17,8 +17,8 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="OVERLAY" textureSubLevel="5">
             
+            <Layer level="OVERLAY" textureSubLevel="5">
                 <FontString parentKey="Text" inherits="GameFontHighlight" outline="THICK" hidden="true">
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOP" y="2"/>

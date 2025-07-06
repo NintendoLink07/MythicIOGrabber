@@ -298,7 +298,7 @@
                                         <Size y="25" />
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMLEFT" x="4" y="-4"/>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-26" y="-4"/>
+                                            <Anchor point="TOPRIGHT" relativeKey="$parent.RolePanel" relativePoint="BOTTOMRIGHT" x="-27" y="-4"/>
                                         </Anchors>
 
                                         <Scripts>
@@ -371,18 +371,20 @@
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT" x="-4" y="4"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT" x="-5" y="4"/>
                                 </Anchors>
 
                                 <Frames>
-                                    <Frame parentKey="Holiday" inherits="VerticalLayoutFrame" hidden="true">
+                                    <Frame parentKey="Holiday" inherits="HorizontalLayoutFrame">
                                         <KeyValues>
                                             <KeyValue key="spacing" value="5" />
                                         </KeyValues>
-                                        <Size x="165" y="120" />
+
+                                        <Size y="40" />
 
                                         <Anchors>
-                                            <Anchor point="TOPRIGHT" relativeKey="$parent.Affixes" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                            <Anchor point="TOPLEFT" y="-3"/>
+                                            <Anchor point="TOPRIGHT" y="-3"/>
                                         </Anchors>
                                     </Frame>
 
@@ -406,9 +408,9 @@
 
                                     <StatusBar parentKey="KeystoneStatusBar" frameBuffer="true" >
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
-                                        <Size x="278" y="16" />
+                                        <Size x="280" y="16" />
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" y="6"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" x="2" y="6"/>
                                         </Anchors>
 
                                         <Layers>
@@ -449,6 +451,14 @@
                                             </Layer>
                                         </Layers>
                                     </StatusBar>
+
+                                    <Frame parentKey="HolidayScrollBox" inherits="WowScrollBoxList">
+                                        <Size x="256" />
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT" x="-2" y="-3"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.KeystoneStatusBar" relativePoint="TOPRIGHT" />
+                                        </Anchors>
+                                    </Frame>
                                 </Frames>
                             </Frame>
                         </Frames>
@@ -460,7 +470,7 @@
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <!--<Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />!-->
-                    <Frame parentKey="Journal" inherits="MIOG_Journal" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="Drops" inherits="MIOG_Drops" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
                 </Frames>
             </Frame>
@@ -546,13 +556,13 @@
                 </Scripts>
             </Button>!-->
 
-            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Journal">
+            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Drops">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
                     <OnLoad>
-                        self.frameName = "Journal"
+                        self.frameName = "Drops"
                     </OnLoad>
                 </Scripts>
             </Button>

@@ -166,7 +166,7 @@ local function sortByEncounterIndex(k1, k2)
 
                 --else
                     --if(k1.template ~= k2.template) then
-                        --return k1.template == "MIOG_JournalSourceTemplate"
+                        --return k1.template == "MIOG_DropsSourceTemplate"
                         
                     elseif(k1.itemlevel and k2.itemlevel) then
                         if(k1.itemlevel == k2.itemlevel) then
@@ -513,9 +513,9 @@ local function resetInstance()
     selectedInstance = nil
     EncounterJournal.instanceID = nil;
 
-    miog.Journal.ScrollBox:Flush()
-    miog.Journal.InstanceDropdown:SetText(miog.Journal.InstanceDropdown:GetDefaultText())
-    miog.Journal.BossDropdown:SetText(miog.Journal.BossDropdown:GetDefaultText())
+    miog.Drops.ScrollBox:Flush()
+    miog.Drops.InstanceDropdown:SetText(miog.Drops.InstanceDropdown:GetDefaultText())
+    miog.Drops.BossDropdown:SetText(miog.Drops.BossDropdown:GetDefaultText())
 
     miog.updateLoot()
 end
@@ -524,14 +524,14 @@ local function resetEncounter()
     selectedEncounter = nil
     EncounterJournal.encounterID = nil;
 
-    miog.Journal.BossDropdown:SetText(miog.Journal.BossDropdown:GetDefaultText())
+    miog.Drops.BossDropdown:SetText(miog.Drops.BossDropdown:GetDefaultText())
 
     miog.updateLoot()
 end
 
 local function resetDifficulty()
     selectedDifficulty = nil
-    miog.Journal.DifficultyDropdown:SetText(miog.Journal.DifficultyDropdown:GetDefaultText())
+    miog.Drops.DifficultyDropdown:SetText(miog.Drops.DifficultyDropdown:GetDefaultText())
 
     miog.updateLoot()
 end
@@ -540,14 +540,14 @@ local function refreshFilters()
     if(selectedInstance) then
         local instanceName = EJ_GetInstanceInfo(selectedInstance)
 
-        miog.Journal.SearchBox:ShowFilter("instance", instanceName, function()
+        miog.Drops.SearchBox:ShowFilter("instance", instanceName, function()
             resetInstance()
 
         end)
 
         if(selectedEncounter) then
             local encounterName = select(1, EJ_GetEncounterInfo(selectedEncounter))
-            miog.Journal.SearchBox:ShowFilter("encounter", encounterName, function()
+            miog.Drops.SearchBox:ShowFilter("encounter", encounterName, function()
                 resetEncounter()
 
             end)
@@ -555,7 +555,7 @@ local function refreshFilters()
         
         if(selectedDifficulty) then
             local difficultyName = miog.DIFFICULTY_ID_INFO[selectedDifficulty].name
-            miog.Journal.SearchBox:ShowFilter("difficulty", difficultyName, function()
+            miog.Drops.SearchBox:ShowFilter("difficulty", difficultyName, function()
                 resetDifficulty()
 
             end)
@@ -567,8 +567,8 @@ end
 local function updateLoot()
     refreshFilters()
     
-    miog.Journal.ScrollBox:Flush()
-    searchBoxText = miog.Journal.SearchBox:GetText()
+    miog.Drops.ScrollBox:Flush()
+    searchBoxText = miog.Drops.SearchBox:GetText()
     noFilter = C_EncounterJournal.GetSlotFilter() == 15
     
     if(selectedSlot) then
@@ -614,7 +614,7 @@ local function updateLoot()
             if(selectedInstance) then
                 if(lastEncounter ~= itemInfo.encounterID or lastDifficulty ~= itemInfo.difficultyID) then
                     parent = dataProvider:Insert({
-                        template = "MIOG_JournalSourceTemplate",
+                        template = "MIOG_DropsSourceTemplate",
                         difficultyID = itemInfo.difficultyID,
                         encounterID = itemInfo.encounterID,
                         encounterIndex = itemInfo.encounterIndex,
@@ -625,12 +625,12 @@ local function updateLoot()
 
                 end
 
-                itemInfo.template = "MIOG_JournalItemTemplate"
+                itemInfo.template = "MIOG_DropsItemTemplate"
 
                 parent:Insert(mainLootTable[i])
 
             else
-                itemInfo.template = "MIOG_JournalFullItemTemplate"
+                itemInfo.template = "MIOG_DropsFullItemTemplate"
                 itemInfo.source = "activity"
                 dataProvider:Insert(mainLootTable[i])
 
@@ -640,7 +640,7 @@ local function updateLoot()
             lastEncounter = itemInfo.encounterID
         end
 
-        miog.Journal.ScrollBox:SetDataProvider(dataProvider)
+        miog.Drops.ScrollBox:SetDataProvider(dataProvider)
     end
 end
 
@@ -672,13 +672,13 @@ local function resetClassAndSpec()
     selectedSpec = nil
     EJ_ResetLootFilter()
 
-    miog.Journal.ArmorDropdown:SetText(miog.Journal.ArmorDropdown:GetDefaultText())
+    miog.Drops.ArmorDropdown:SetText(miog.Drops.ArmorDropdown:GetDefaultText())
 end
 
 local function resetArmorType()
     selectedArmor = nil
 
-    miog.Journal.ArmorDropdown:SetText(miog.Journal.ArmorDropdown:GetDefaultText())
+    miog.Drops.ArmorDropdown:SetText(miog.Drops.ArmorDropdown:GetDefaultText())
 end
 
 
@@ -924,7 +924,7 @@ local function journalEvents(_, event, itemID)
 end
 
 miog.loadJournal = function()
-    local journal = miog.pveFrame2.TabFramesPanel.Journal
+    local journal = miog.pveFrame2.TabFramesPanel.Drops
     journal:SetScript("OnShow", function()
         if(not selectedInstance) then
             local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, mapID, instanceGroupSize, LfgDungeonID = GetInstanceInfo()
@@ -1102,13 +1102,13 @@ miog.loadJournal = function()
 
 		frame.node = node
 
-		if(data.template == "MIOG_JournalFullItemTemplate") then
+		if(data.template == "MIOG_DropsFullItemTemplate") then
 			updateFullItemFrame(frame, data)
 
-		elseif(data.template == "MIOG_JournalItemTemplate") then
+		elseif(data.template == "MIOG_DropsItemTemplate") then
 			updatePartialItemFrame(frame, data)
 
-		elseif(data.template == "MIOG_JournalSourceTemplate") then
+		elseif(data.template == "MIOG_DropsSourceTemplate") then
 			updateSourceFrame(frame, data)
             frame.ExpandFrame:SetState(false)
 

@@ -276,29 +276,19 @@ local function updateApplicantMemberFrame(frame, data)
 		else
 			if(not miog.F.IS_IN_DEBUG_MODE) then
 				memberFrame_OnEnter(self)
+
+			else
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText("Raid Shadow Legends")
+				GameTooltip:Show()
+
 			end
 		end
 	end)
 
-	if(MIOG_NewSettings.favouredApplicants[name]) then
-		--applicantMemberFrame:ClearBackdrop()
-		--miog.createFrameBorder(applicantMemberFrame, 1, CreateColorFromHexString("FFe1ad21"):GetRGBA())
-	
-	end
-
 	local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
 	applicantMemberStatusFrame:Hide()
 
-	local expandFrameButton = applicantMemberFrame.ExpandFrame
-	expandFrameButton:SetScript("OnClick", function(self)
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-		local baseFrame = self:GetParent()
-			
-		self:AdvanceState()
-
-		baseFrame.node:SetCollapsed(not baseFrame.node:IsCollapsed())
-	end)
 	applicantMemberFrame.Comment:SetShown(applicantData.comment ~= "" and applicantData.comment ~= nil)
 
 	local r, g, b = C_ClassColor.GetClassColor(class):GetRGB()
@@ -312,7 +302,7 @@ local function updateApplicantMemberFrame(frame, data)
 			local copybox = miog.ApplicationViewer.CopyBox
 			copybox:SetText("https://raider.io/characters/" .. miog.F.CURRENT_REGION .. "/" .. miog.REALM_LOCAL_NAMES[realm] .. "/" .. playerName)
 			copybox:SetPoint("LEFT", applicantMemberFrame, "LEFT", 6, 0)
-			copybox:SetPoint("RIGHT", applicantMemberFrame, "RIGHT", -6, 0)
+			copybox:SetPoint("RIGHT", applicantMemberFrame, "RIGHT", -4, 0)
 			copybox:Show()
 			copybox:SetFocus()
 
@@ -386,18 +376,26 @@ local function updateApplicantMemberFrame(frame, data)
 	miog.setInfoIndicators(applicantMemberFrame, categoryID, dungeonScore, dungeonData, miog.getNewRaidSortData(playerName, realm), pvpData)
 end
 
+local function getApplicants()
+	return miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
+end
+
+local function getApplicantInfo(applicantID)
+	return miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
+end
+
 local function createDataProviderWithUnsortedData()
 	local activeEntry = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
 	local basicTable = {}
 	local numOfFiltered = 0
-	local currentApplicants = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicants() or C_LFGList.GetApplicants()
+	local currentApplicants = getApplicants()
 
 	if(activeEntry) then
 		local activityID = activeEntry.activityID or 0
 		local categoryID = miog.requestActivityInfo(activeEntry.activityIDs[1]).categoryID
 
 		for _, applicantID in pairs(currentApplicants) do
-			local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
+			local applicantData = getApplicantInfo(applicantID)
 			local applicantInfos = {}
 
 			local allOkay = true
@@ -423,13 +421,14 @@ local function createDataProviderWithUnsortedData()
 					secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 				elseif(categoryID == 3) then
+					local raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
 					--local raidData = miog.getNewRaidSortData(playerName, realm)
 
 					if(raidData) then
 						primarySortAttribute = raidData.character.ordered[1].weight or 0
 						secondarySortAttribute = raidData.character.ordered[2].weight or 0
 						
-						favourPrimary = raidData.character.ordered[1].weight and wticc(raidData.character.ordered[1].shortName .. ":" .. raidData.character.ordered[1].parsedString, miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color) or 0
+						--favourPrimary = raidData.character.ordered[1].weight and wticc(raidData.character.ordered[1].shortName .. ":" .. raidData.character.ordered[1].parsedString, miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color) or 0
 
 					else
 						primarySortAttribute = 0
@@ -461,9 +460,9 @@ local function createDataProviderWithUnsortedData()
 					ilvl = itemLevel or 0,
 
 					primary = primarySortAttribute,
-					favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary,
+					--favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary,
 					secondary = secondarySortAttribute,
-					favoured = MIOG_NewSettings.favouredApplicants[name] and true or false
+					--favoured = MIOG_NewSettings.favouredApplicants[name] and true or false
 				}
 
 				local showFrame, _ = miog.filter.checkIfApplicantIsEligible(applicantInfos[applicantIndex])
@@ -485,6 +484,10 @@ local function createDataProviderWithUnsortedData()
 	end
 
 	return basicTable, numOfFiltered, #currentApplicants
+end
+
+local function refreshApplicantList()
+
 end
 
 local function updateApplicantList()
@@ -596,7 +599,7 @@ local function createFullEntries(iterations)
 
 	for index = 1, iterations, 1 do
 		local applicantID = random(10000, 99999)
-		local numMembers = 1
+		local numMembers = 2
 
 		miog.DEBUG_APPLICANT_DATA[applicantID] = {
 			applicantID = applicantID,
@@ -669,6 +672,7 @@ miog.createFullEntries = createFullEntries
 local function applicationViewerEvents(_, event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
 		updateApplicantList()
+
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then
 		local entryInfo = C_LFGList.GetActiveEntryInfo()
 
@@ -733,6 +737,7 @@ local function applicationViewerEvents(_, event, ...)
 		if(withData or not newEntry) then --REFRESH APP LIST
 			updateApplicantList()
 			
+			refreshApplicantList()
 		end
 	end
 end

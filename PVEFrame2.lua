@@ -209,6 +209,7 @@ local function createPVEFrameReplacement()
 					if(isCompleted) then
 						currentValue = currentValue + singleFrame:GetWidth() + 4
 						currentFrame.ThresholdBar:SetValue(currentValue)
+						singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(false)
 
 					else
 						singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(true)
@@ -224,7 +225,7 @@ local function createPVEFrameReplacement()
 
 				else
 					currentFrame.ThresholdBar.End:ClearAllPoints()
-					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 4, 0)
+					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 0)
 					currentFrame.ThresholdBar.End:Show()
 				end
 			end

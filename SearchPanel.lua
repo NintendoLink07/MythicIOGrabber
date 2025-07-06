@@ -83,6 +83,9 @@ local function setScrollBoxFrameColors(resultFrame, resultID)
 		if(color) then
 			local r, g, b = color:GetRGB()
 			resultFrame.Background:SetVertexColor(r, g, b, 0.4)
+			
+		else
+			resultFrame.Background:SetVertexColor(1, 1, 1, 1)
 		end
 	end
 end
@@ -704,7 +707,7 @@ local function updateScrollBoxFrame(frame, data)
 		local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 		currentFrame.resultID = data.resultID
 		
-		currentFrame.Background:SetTexture(activityInfo.horizontal, "CLAMP", "MIRROR")
+		currentFrame.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
 		currentFrame.difficultyID = activityInfo.difficultyID
 		currentFrame.instanceID = instanceID
 

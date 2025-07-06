@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [3.5.4] - 2025-07-10
+
+### Changed
+
+- [ApplicationViewer] CTRL+C automatically closes the copybox after copying.
+
+- [ApplicationViewer] Only right clicking the name of the applicant will show the url copybox instead of right clicking in all of the reserved space for the name.
+
+- The "Journal" tab has been renamed to "Drops" to accurately describe the tab on a first glance.
+
+- The settings button has been updated with new art.
+
+### Fixed
+
+- [SearchPanel] Group listing's right side background texture should be correctly displayed.
+
+- [SearchPanel] Group listing's backgrounds will now reset back to their original color.
+
+- [ApplicationViewer] Hovering over an applicants name will not hide the tooltip anymore.
+
+- Vault progress bar icons will now correctly be de-/saturated upon unlocking a new vault slot.
+
+
+
 ## [3.5.3] - 2025-07-06
 
 ### Added
@@ -267,7 +292,7 @@ This reduced the addon's filesize by another 18mb.
 
 ### Added
 
-- The new [Journal] has been implemented, accessible via the "Journal" tab at the bottomright of the mainframe.
+- The new [Journal] has been implemented, accessible via the "Drops" tab at the bottomright of the mainframe.
     Here you can select an instance (boss and difficulty optional) and see all the loot that drops.
     - Similar to the normal Adventure Journal you can change slot and class, but in addition you can filter for mounts, recipes, tokens and for specific armor types.
     - You can also just search for items by name! The search is currently limited to current activities only (so everything in the current expansion), due to performance reasons.

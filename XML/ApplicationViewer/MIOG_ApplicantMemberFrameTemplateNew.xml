@@ -32,6 +32,15 @@
                         self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
                         self:SetState(false)
                     </OnLoad>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+                        local baseFrame = self:GetParent()
+                            
+                        self:AdvanceState()
+
+		                baseFrame.node:SetCollapsed(not baseFrame.node:IsCollapsed())
+                    </OnClick>
                 </Scripts>
             </Button>
 
@@ -76,25 +85,19 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="GameFontHighlight"  justifyH="LEFT" enableMouseMotion="true">
-                    <Size x="105" y="20" />
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" enableMouseMotion="true" propagateMouseInput="Motion">
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" />
                     </Anchors>
-                    <Scripts>
-                        <OnLeave>
-                            GameTooltip:Hide()
-                        </OnLeave>
-                    </Scripts>
                 </FontString>
             </Layer>
             
             <Layer level="ARTWORK">
                 <Texture parentKey="Race">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="120"/>
                     </Anchors>
-                    <Size  x="15" y="15" />
+                    <Size x="15" y="15" />
                 </Texture> 
 
                 <Texture parentKey="Spec">

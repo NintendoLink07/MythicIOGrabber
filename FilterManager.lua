@@ -283,7 +283,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 		}
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-		local categoryID = getCurrentCategoryID("SearchPanel")
+		local categoryID = miog.requestActivityInfo(searchResultInfo.activityIDs[1]).categoryID or getCurrentCategoryID("SearchPanel")
 		local isArenaPvp = categoryID == 4 or categoryID == 7
 		local isDungeon = categoryID == 2
 		local isRaid = categoryID == 3

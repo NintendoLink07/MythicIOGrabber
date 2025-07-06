@@ -1,83 +1,36 @@
 local addonName, miog = ...
+local longestHoliday
 
-local wticc = WrapTextInColorCode
-
-local calendarCoroutine = nil
-
-local framePool
-local counter = 0
-
-local function resetHolidayFrame(_, frame)
-	frame:Hide()
-	frame.layoutIndex = nil
-
-	frame.DateBar.Title:SetText()
-
----@diagnostic disable-next-line: undefined-field
-	miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
+local function sortCalendarDates(k1, k2)
+    return k1.timeTillEnd < k2.timeTillEnd
 end
 
 local function requestCalendarEventInfo(offsetMonths, monthDay, numEvents)
+    local dataProvider = CreateDataProvider()
+
+    longestHoliday = 0
+
 	for i = 1, numEvents, 1 do
         local info = C_Calendar.GetHolidayInfo(offsetMonths, monthDay, i)
 
         if(info and info.endTime and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.endTime) >= 0 and C_DateAndTime.CompareCalendarTime(C_DateAndTime.GetCurrentCalendarTime(), info.startTime) < 0) then
-            counter = counter + 1
-            
-            local cFrame = framePool:Acquire()
-            cFrame.layoutIndex = counter
-
-            --cFrame.Icon:SetTexture(info.texture)
-            --cFrame.Icon:SetTexCoord(0, 0.70, 0, 0.70)
-            cFrame.DateBar.Title:SetText(info.name)
-            
-            local startTimeSeconds = time({year = info.startTime.year, month = info.startTime.month, day = info.startTime.monthDay, hour = info.startTime.hour, minute = info.startTime.minute})
             local endTimeSeconds = time({year = info.endTime.year, month = info.endTime.month, day = info.endTime.monthDay, hour = info.endTime.hour, minute = info.endTime.minute})
-            local totalDurationInSeconds = endTimeSeconds - startTimeSeconds
-            local currentProgress = time() - startTimeSeconds
             local timeTillEnd = endTimeSeconds - time()
 
-            local formatter = CreateFromMixins(SecondsFormatterMixin)
-            formatter:SetStripIntervalWhitespace(true)
-            formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
-            
-            local timeTillEndPerc = currentProgress / totalDurationInSeconds
+            info.endTimeSeconds = endTimeSeconds
+            info.timeTillEnd = timeTillEnd
+            dataProvider:Insert(info)
 
-            cFrame.DateBar:SetStatusBarColor(timeTillEndPerc, 1 - timeTillEndPerc, 0, 1)
-            cFrame.DateBar:SetMinMaxValues(0, 1)
-            cFrame.DateBar:SetValue(timeTillEndPerc)
-
-            cFrame.DateBar.Title:SetText(cFrame.DateBar.Title:GetText() .. ": " .. formatter:Format(timeTillEnd))
-
-            cFrame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(info.name, nil, nil, nil, nil, true)
-                GameTooltip:AddLine(string.format(MONTHLY_ACTIVITIES_DAYS, formatter:Format(timeTillEnd)))
-                GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                GameTooltip:AddLine("Start: " .. date("%x - %X", startTimeSeconds))
-                GameTooltip:AddLine("End: " .. date("%x - %X", endTimeSeconds))
-
-                if(info.description ~= "") then
-                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                    GameTooltip:AddLine(info.description, 1, 1, 1, true)
-                end
-
-                GameTooltip:Show()
-            end)
-
-            cFrame:Show()
-
-            miog.MainTab.Information.Holiday:MarkDirty()
+            longestHoliday = timeTillEnd > longestHoliday and timeTillEnd or longestHoliday
         end
 	end
+    
+    dataProvider:SetSortComparator(sortCalendarDates)
+    miog.MainTab.Information.HolidayScrollBox:SetDataProvider(dataProvider)
 end
 
 local function calendarOnEvent(_, event, ...)
     if(event == "CALENDAR_UPDATE_EVENT_LIST") then
-        if(framePool) then
-            framePool:ReleaseAll()
-        end
-
         local currentTime = miog.F.CURRENT_DATE or C_DateAndTime.GetCurrentCalendarTime()
         local offset = 0
 
@@ -87,28 +40,13 @@ local function calendarOnEvent(_, event, ...)
 
         local numEvents = C_Calendar.GetNumDayEvents(offset, currentTime.monthDay)
 
-        if(calendarCoroutine) then
-            local status = coroutine.status(calendarCoroutine)
-
-            if(status == "dead") then
-                calendarCoroutine = coroutine.create(requestCalendarEventInfo)
-                coroutine.resume(calendarCoroutine, offset, currentTime.monthDay, numEvents)
-
-            end
-                
-            if(status == "suspended") then
-                coroutine.resume(calendarCoroutine, offset, currentTime.monthDay, numEvents)
-
-            end
-        end
+        requestCalendarEventInfo(offset, currentTime.monthDay, numEvents)
     end
 end
 
 miog.calendarOnEvent = calendarOnEvent
 
 miog.loadCalendarSystem = function()
-    framePool = CreateFramePool("Frame", miog.MainTab.Information.Holiday, "MIOG_HolidayFrameTemplate", resetHolidayFrame)
-
     local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_CalendarEventReceiver")
     
     eventReceiver:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
@@ -120,5 +58,44 @@ miog.loadCalendarSystem = function()
     
     eventReceiver:SetScript("OnEvent", calendarOnEvent)
 
-    calendarCoroutine = coroutine.create(requestCalendarEventInfo)
+    local horizontalView = CreateScrollBoxListLinearView()
+
+    horizontalView:SetElementInitializer("MIOG_HolidayFrameTemplate", function(frame, data)
+        frame.DateBar.Title:SetText(data.name)
+
+        local startTimeSeconds = time({year = data.startTime.year, month = data.startTime.month, day = data.startTime.monthDay, hour = data.startTime.hour, minute = data.startTime.minute})
+        local totalDurationInSeconds = data.endTimeSeconds - startTimeSeconds
+        local currentProgress = time() - startTimeSeconds
+
+        local formatter = CreateFromMixins(SecondsFormatterMixin)
+        formatter:SetStripIntervalWhitespace(true)
+        formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
+        
+        local timeTillEndPerc = currentProgress / totalDurationInSeconds
+        local progressDependingOnLongestHoliday = data.timeTillEnd / longestHoliday
+
+        frame.DateBar:SetStatusBarColor(1 - progressDependingOnLongestHoliday, progressDependingOnLongestHoliday, 0, 1)
+        frame.DateBar:SetMinMaxValues(0, 1)
+        frame.DateBar:SetValue(data.timeTillEnd / longestHoliday)
+
+        frame.DateBar.Title:SetText(frame.DateBar.Title:GetText() .. ": " .. formatter:Format(data.timeTillEnd))
+
+        frame:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(data.name, nil, nil, nil, nil, true)
+            GameTooltip:AddLine(string.format(MONTHLY_ACTIVITIES_DAYS, formatter:Format(data.timeTillEnd)))
+            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+            GameTooltip:AddLine("Start: " .. date("%x - %X", startTimeSeconds))
+            GameTooltip:AddLine("End: " .. date("%x - %X", data.endTimeSeconds))
+
+            if(data.description ~= "") then
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                GameTooltip:AddLine(data.description, 1, 1, 1, true)
+            end
+
+            GameTooltip:Show()
+        end)
+    end)
+    horizontalView:SetPadding(1, 1, 1, 1, 4)
+    miog.MainTab.Information.HolidayScrollBox:Init(horizontalView)
 end
