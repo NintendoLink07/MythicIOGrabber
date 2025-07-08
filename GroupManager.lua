@@ -291,7 +291,7 @@ local function updateSingleCharacterItemData(fullName)
 	--end
 	
 
-	local frame = frameIsAvailable or miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+	local frame = miog.GroupManager.ScrollBox:FindFrameByPredicate(function(localFrame, data)
 		return fullName == data.fullName
 
 	end)

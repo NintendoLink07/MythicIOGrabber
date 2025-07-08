@@ -154,7 +154,7 @@ function RaidSheetElementMixin:OnEnter()
     end
 
     if self.memberInfo then
-		GameTooltip:SetOwner(self);
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 
 		local name = self.memberInfo.name;
 		if name and self.memberInfo.timerunningSeasonID then

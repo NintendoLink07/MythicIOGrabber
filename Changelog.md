@@ -8,7 +8,15 @@ and this project adheres to [Semantic Versioning].
 
 ## [3.5.4] - 2025-07-10
 
+### Added
+
+- [Ports] TWW Raid teleportation spells have been added to the Ports tab
+
 ### Changed
+
+- [Gearing] Gearing data for season 3 has been implemented.
+
+- [Gearing] The fallback season id for gearing data will always be the last season (only applicable between seasons)
 
 - [ApplicationViewer] CTRL+C automatically closes the copybox after copying.
 

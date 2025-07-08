@@ -317,8 +317,6 @@ miog.C = {
 	BLIZZARD_INSPECT_THROTTLE_SAVE = 2,
 	BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE = 3,
 
-	BACKUP_SEASON_ID = 14,
-
 	PLAYER_GUID = UnitGUID("player"),
     
     --
@@ -869,6 +867,15 @@ miog.MAP_INFO = {
 	[2774] = {shortName = "WORLD", fileName = "khazalgar",},
 	[2776] = {shortName = "CODEX", fileName = "kalimdor",},
 	[2792] = {shortName = "BRD", fileName = "blackrockdepths"},
+
+	
+	[2810] = {shortName = "MFO", fileName = "manaforgeomega"},
+	[2827] = {shortName = "HVS", fileName = "horrificvisionstormwind"},
+	[2828] = {shortName = "HVO", fileName = "horrificvisionorgrimmar"},
+	[2830] = {shortName = "EDA", fileName = "ecodomealdani"},
+	[2849] = {shortName = "DD", fileName = "dastardlydome"},
+	[2872] = {shortName = "UM", fileName = "undermine"},
+	[2951] = {shortName = "DD", fileName = "voidrazorsanctuary"},
 }
 
 miog.LFG_ID_INFO = {
@@ -1252,7 +1259,7 @@ local function addGroupInfo(groupID, categoryID)
 	return miog.GROUP_ACTIVITY[groupID]
 end
 
-local function addActivityAndGroupInfo(activityID, groupID)
+local function addActivityAndGroupInfo(activityID, groupID, categoryID)
 	if(activityID and not miog.ACTIVITY_INFO[activityID]) then
 		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 
@@ -1384,6 +1391,10 @@ local function loadRawData()
 
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
 		if(miog.MAP_INFO[v[3]]) then
+
+			if(v[3] == 2441) then
+				print(v[3], v[2])
+			end
 			miog.MAP_INFO[v[3]].challengeModeID = v[2]
 
 		end
@@ -1414,6 +1425,23 @@ miog.MAP_INFO[2657].achievementCategory = 15520 --NP
 
 miog.MAP_INFO[2769].achievementCategory = 15520 --LOU
 
+miog.TELEPORT_FLYOUT_IDS = {
+	[1] = {id = 230, expansion = 3, type="dungeon"},
+	[2] = {id = 84, expansion = 4, type="dungeon"},
+	[3] = {id = 96, expansion = 5, type="dungeon"},
+	[4] = {id = 224, expansion = 6, type="dungeon"},
+	[5] = {id = 223, expansion = 7, type="dungeon"},
+
+	[6] = {id = 220, expansion = 8, type="dungeon"},
+	[7] = {id = 222, expansion = 8, type="raid"},
+
+	[8] = {id = 227, expansion = 9, type="dungeon"},
+	[9] = {id = 231, expansion = 9, type="raid"},
+
+	[10] = {id = 232, expansion = 10, type="dungeon"},
+	[11] = {id = 242, expansion = 10, type="dungeon"},
+}
+
 miog.WEIGHTS_TABLE = {
 	[1] = 10000,
 	[2] = 100,
@@ -1431,22 +1459,6 @@ miog.BASE_ITEM_TRACK_INFO = {
 	[4] = {length = 8},
 	[5] = {length = 6},
 	[6] = {length = 4},
-}
-
-miog.TELEPORT_FLYOUT_IDS = {
-	[1] = {id = 230, expansion = 3, type="dungeon"},
-	[2] = {id = 84, expansion = 4, type="dungeon"},
-	[3] = {id = 96, expansion = 5, type="dungeon"},
-	[4] = {id = 224, expansion = 6, type="dungeon"},
-	[5] = {id = 223, expansion = 7, type="dungeon"},
-
-	[6] = {id = 220, expansion = 8, type="dungeon"},
-	[7] = {id = 222, expansion = 8, type="raid"},
-
-	[8] = {id = 227, expansion = 9, type="dungeon"},
-	[9] = {id = 231, expansion = 9, type="raid"},
-
-	[10] = {id = 232, expansion = 10, type="dungeon"},
 }
 
 miog.GEARING_CHART = {
@@ -1610,7 +1622,7 @@ miog.GEARING_CHART = {
 	[14] = {
 		maxJumps = 0,
 		baseItemLevel = 597,
-		maxItemLevel = 678,
+		maxItemLevel = 684,
 		dungeon = {
 			info = {
 				[1] = {jumps = -1, name="Normal", ignoreForVault=true},
@@ -1699,10 +1711,271 @@ miog.GEARING_CHART = {
 	},
 }
 
+local fullStep = 13
+local quarterSteps = {
+	3, 3, 3, 4
+}
+
+miog.ITEM_LEVEL_DATA = {
+	[14] = {
+		referenceMinLevel = 597,
+		referenceMinLevelStepIndex = 0,
+		referenceMaxLevel = 678,
+		revisedMaxLevel = 684,
+
+		itemLevelList = {},
+
+		tracks = {
+			[1] = {name = "Explorer", length = 8},
+			[2] = {name = "Adventurer", length = 8},
+			[3] = {name = "Veteran", length = 8},
+			[4] = {name = "Champion", length = 8},
+			[5] = {name = "Hero", length = 6, revisedLength = 8},
+			[6] = {name = "Myth", length = 6, revisedLength = 8},
+
+		},
+
+		data = {
+			dungeon = {
+				[1] = {steps = -1, name="Normal", ignoreForVault=true},
+				[2] = {steps = 7, vaultOffset = 4, name="Heroic/TW"},
+				[3] = {steps = 12, vaultOffset = 3, name="Mythic"},
+				[4] = {steps = 13, vaultOffset = 3, name="+2"},
+				[5] = {steps = 13, vaultOffset = 3, name="+3"},
+				[6] = {steps = 14, vaultOffset = 3, name="+4"},
+				[7] = {steps = 15, vaultOffset = 2, name="+5"},
+				[8] = {steps = 16, vaultOffset = 2, name="+6"},
+				[9] = {steps = 16, vaultOffset = 3, name="+7"},
+				[10] = {steps = 17, vaultOffset = 2, name="+8"},
+				[11] = {steps = 17, vaultOffset = 2, name="+9"},
+				[12] = {steps = 18, vaultOffset = 2, name="+10"},
+			},
+			raid = {
+				[1] = {steps = 8, name="LFR"},
+				[2] = {steps = 12, name="Normal"},
+				[3] = {steps = 16, name="Heroic"},
+				[4] = {steps = 20, name="Mythic"},
+
+			},
+			raidVeryRare = {
+				[1] = {steps = 13, name="Rare LFR"},
+				[2] = {steps = 17, name="Rare Normal"},
+				[3] = {steps = 21, name="Rare Heroic"},
+				[4] = {steps = 25, name="Rare Mythic"},
+			},
+			delves = {
+				[1] = {steps = 4, vaultOffset = 4, name="T1"},
+				[2] = {steps = 5, vaultOffset = 3, name="T2"},
+				[3] = {steps = 6, vaultOffset = 3, name="T3"},
+				[4] = {steps = 7, vaultOffset = 5, name="T4"},
+				[5] = {steps = 8, vaultOffset = 6, name="T5"},
+				[6] = {steps = 9, vaultOffset = 6, name="T6"},
+				[7] = {steps = 12, vaultOffset = 4, name="T7+"},
+			},
+			delvesBountiful = {
+				[1] = {steps = 9, name="T4B"},
+				[2] = {steps = 11, name="T5B"},
+				[3] = {steps = 13, name="T6B"},
+				[4] = {steps = 15, name="T7B"},
+				[5] = {steps = 16, name="T8B+"},
+			},
+			crafting = {
+				{steps = 10, name="EnchWeather5"},
+				{steps = 15, name="Spark5"},
+				{steps = 19, name="Runed5"},
+				{steps = 24, name="Gilded5"},
+			},
+		},
+	},
+}
+
+local function getItemLevelIncreaseViaSteps(steps, argIndex)
+	if(steps >= 4 and steps % 4 == 0) then
+		return steps / 4 * fullStep
+
+	else
+		local ilvl = 0
+		local negative = steps < 0 and true or false
+		local index = argIndex or negative and 4 or 1
+
+		for i = negative and -1 or 1, steps, negative and -1 or 1 do
+			if(negative) then
+				ilvl = ilvl - quarterSteps[index]
+
+				index = index - 1
+
+				if(index == 0) then
+					index = 4
+				end
+			else
+				ilvl = ilvl + quarterSteps[index]
+
+				index = index + 1
+
+				if(index == 5) then
+					index = 1
+				end
+			end
+		end
+
+		return ilvl, index
+	end
+end
+
+for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
+	for trackIndex, data in ipairs(seasonalData.tracks) do
+		data.minLevel = seasonalData.referenceMinLevel + (trackIndex - 1) * fullStep
+		data.maxLevel = data.minLevel + getItemLevelIncreaseViaSteps((data.revisedLength or data.length) - 1)
+
+	end
+
+	for category, categoryData in pairs(seasonalData.data) do
+		for index, ilvlData in ipairs(categoryData) do
+			local level, offset = getItemLevelIncreaseViaSteps(ilvlData.steps)
+			ilvlData.level = seasonalData.referenceMinLevel + level
+
+			if(ilvlData.vaultOffset) then
+				ilvlData.vaultLevel = ilvlData.level + getItemLevelIncreaseViaSteps(ilvlData.vaultOffset, offset)
+
+			end
+		end
+	end
+end
+
 miog.NEW_GEARING_DATA = {
 	[14] = {
 		baseItemlevel = 597,
-		maxItemlevel = 678,
+		maxItemlevel = 684, --was 678
+
+		tracks = {
+			[1] = {name = "Explorer", length = 8},
+			[2] = {name = "Adventurer", length = 8},
+			[3] = {name = "Veteran", length = 8},
+			[4] = {name = "Champion", length = 8},
+			[5] = {name = "Hero", length = 8}, --was 6
+			[6] = {name = "Myth", length = 8}, --was 6
+
+		},
+
+		allItemlevels = {},
+		usedItemlevels = {},
+
+		dungeon = {
+			info = {
+				[1] = {jumps = -1, name="Normal", ignoreForVault=true},
+				[2] = {jumps = 7, name="Heroic/TW"},
+				[3] = {jumps = 12, vaultOffset = 3, name="Mythic"},
+				[4] = {jumps = 13, vaultOffset = 3, name="+2"},
+				[5] = {jumps = 13, vaultOffset = 3, name="+3"},
+				[6] = {jumps = 14, vaultOffset = 3, name="+4"},
+				[7] = {jumps = 15, vaultOffset = 2, name="+5"},
+				[8] = {jumps = 16, vaultOffset = 2, name="+6"},
+				[9] = {jumps = 16, vaultOffset = 3, name="+7"},
+				[10] = {jumps = 17, vaultOffset = 2, name="+8"},
+				[11] = {jumps = 17, vaultOffset = 2, name="+9"},
+				[12] = {jumps = 18, vaultOffset = 2, name="+10"},
+			},
+			usedItemlevels = {
+
+			},
+			vault = {
+				usedItemlevels = {
+	
+				},
+				offset = 4,
+
+			},
+		},
+		
+		raid = {
+			info = {
+				[1] = {jumps = 8, name="LFR"},
+				[2] = {jumps = 12, name="Normal"},
+				[3] = {jumps = 16, name="Heroic"},
+				[4] = {jumps = 20, name="Mythic"},
+			},
+			usedItemlevels = {
+
+			},
+			veryRare = {
+				info = {
+					[1] = {jumps = 13, name="Rare LFR"},
+					[2] = {jumps = 17, name="Rare Normal"},
+					[3] = {jumps = 21, name="Rare Heroic"},
+					[4] = {jumps = 25, name="Rare Mythic"},
+				},
+				usedItemlevels = {
+	
+				},
+			}
+		},
+
+		delves = {
+			info = {
+				[1] = {jumps = 4, vaultOffset = 4, name="T1"},
+				[2] = {jumps = 5, vaultOffset = 3, name="T2"},
+				[3] = {jumps = 6, vaultOffset = 3, name="T3"},
+				[4] = {jumps = 7, vaultOffset = 5, name="T4"},
+				[5] = {jumps = 8, vaultOffset = 6, name="T5"},
+				[6] = {jumps = 9, vaultOffset = 6, name="T6"},
+				[7] = {jumps = 12, vaultOffset = 4, name="T7+"},
+			},
+			usedItemlevels = {
+
+			},
+			bountiful = {
+				info = {
+					[1] = {jumps = 9, name="T4B"},
+					[2] = {jumps = 11, name="T5B"},
+					[3] = {jumps = 13, name="T6B"},
+					[4] = {jumps = 15, name="T7B"},
+					[5] = {jumps = 16, name="T8B+"},
+				},
+				usedItemlevels = {
+	
+				},
+			},
+			vault = {
+				usedItemlevels = {
+	
+				},
+				offset = 4,
+
+			},
+		},
+
+		other = {
+			info = {
+				--{jumps = 6, name="EnchWeather1"},
+				--{jumps = 7, name="EnchWeather2"},
+				--{jumps = 8, name="EnchWeather3"},
+				--{jumps = 9, name="EnchWeather4"},
+				{jumps = 10, name="EnchWeather5"},
+				--{jumps = 11, name="Spark1"},
+				--{jumps = 12, name="Spark2"},
+				--{jumps = 13, name="Spark3"},
+				--{jumps = 14, name="Spark4"},
+				{jumps = 15, name="Spark5"},
+				--{jumps = 15, name="Runed1"},
+				--{jumps = 16, name="Runed2"},
+				--{jumps = 17, name="Runed3"},
+				--{jumps = 18, name="Runed4"},
+				{jumps = 19, name="Runed5"},
+				--{jumps = 20, name="Gilded1"},
+				--{jumps = 21, name="Gilded2"},
+				--{jumps = 22, name="Gilded3"},
+				--{jumps = 23, name="Gilded4"},
+				{jumps = 24, name="Gilded5"},
+			},
+			usedItemlevels = {
+
+			},
+		},
+	},
+	[15] = {
+		baseItemlevel = 642,
+		baseJumpIndex = 4,
+		maxItemlevel = 723,
 
 		tracks = {
 			[1] = {name = "Explorer", length = 8},
@@ -1833,7 +2106,7 @@ miog.NEW_GEARING_DATA = {
 
 local function getAdjustedItemLevel(seasonID, jumps)
     local jumpsCompleted = 1
-    local newItemLevel = miog.GEARING_CHART[seasonID].baseItemLevel
+    local newItemLevel = miog.NEW_GEARING_DATA[seasonID].baseItemlevel
 	local start = jumps < 0 and -1 or 1
 	local step = start
 
@@ -1851,7 +2124,6 @@ local function getAdjustedItemLevel(seasonID, jumps)
 end
 
 miog.getAdjustedItemLevel = getAdjustedItemLevel
-
 
 local function getJumpsForItemLevel(seasonID, itemLevel, startIndex)
 	local totalJumps = 0
@@ -1878,8 +2150,6 @@ local function getJumpsForItemLevel(seasonID, itemLevel, startIndex)
 
     return nil
 end
-
-miog.getJumpsForItemLevel = getJumpsForItemLevel
 
 for k, v in pairs(miog.NEW_GEARING_DATA) do
 	for x, y in ipairs(v.tracks) do
@@ -2006,7 +2276,7 @@ for k, v in pairs(miog.NEW_GEARING_DATA) do
     end
 end
 
-for k, v in pairs(miog.GEARING_CHART) do
+--[[for k, v in pairs(miog.GEARING_CHART) do
 	for x, y in ipairs(v.trackInfo) do
 		y.data = {}
 
@@ -2085,7 +2355,7 @@ for k, v in pairs(miog.GEARING_CHART) do
 		awakenedTrackTable.baseItemLevel = awakenedTrackTable.data[1]
 		awakenedTrackTable.maxItemLevel = awakenedTrackTable.data[awakenedTrackTable.length]
 	end
-end
+end]]--
 
 miog.CLASSFILE_TO_ID = {
 	["WARRIOR"] = 1,

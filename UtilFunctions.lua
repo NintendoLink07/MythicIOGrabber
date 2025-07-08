@@ -341,17 +341,17 @@ miog.retrieveMapIDFromGFID = function(groupFinderID)
 end
 
 miog.retrieveMapIDFromChallengeModeMap = function(challengeID)
-	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
-		if(v[2] == challengeID) then
-			return v[3]
+	for k, v in pairs(miog.CHALLENGE_MODE_INFO) do
+		if(k == challengeID) then
+			return v.mapID
 		end
 	end
 end
 
 miog.retrieveShortNameFromChallengeModeMap = function(challengeID)
-	for k, v in pairs(miog.MAP_INFO) do
-		if(v.challengeModeID == challengeID) then
-			return v.shortName
+	for k, v in pairs(miog.CHALLENGE_MODE_INFO) do
+		if(challengeID == k) then
+			return miog.MAP_INFO[v.mapID].shortName
 		end
 	end
 end

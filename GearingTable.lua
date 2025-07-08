@@ -211,10 +211,25 @@ local function checkSubtable(name, subname, itemlevel)
     return string and WrapTextInColorCode(string, getColorForItemlevel(itemlevel))
 end
 
+local function retrieveSeasonID()
+    seasonID = 14 or C_MythicPlus.GetCurrentSeason()
+
+    if(seasonID < 1) then
+        for k, v in pairs(miog.NEW_GEARING_DATA) do
+            if(v > seasonID) then
+                seasonID = v
+
+            end
+        end
+    end
+end
+
 miog.loadGearingTable = function()
     miog.Gearing = miog.pveFrame2.TabFramesPanel.GearingTable
 
     miog.Gearing.GearingTable:OnLoad(nil, nil, 2, 2)
+    
+    retrieveSeasonID()
     
     local headers = {
         {name = "ILvl"},
@@ -228,24 +243,23 @@ miog.loadGearingTable = function()
     }
     miog.Gearing.GearingTable:CreateTable(false, headers, MIOG_NewSettings.gearingTable.headers)
 
-    seasonID = 14 or C_MythicPlus.GetCurrentSeason() or miog.C.BACKUP_SEASON_ID
 
-    for k, v in pairs(miog.NEW_GEARING_DATA[seasonID]) do
-        if(k == "tracks") then
-            for a, b in ipairs(v) do
-                local currentLegendFrame = miog.Gearing.Legend["Track" .. a]
+    for k, v in pairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
+        --if(k == "tracks") then
+            for trackIndex, data in ipairs(v) do
+                local currentLegendFrame = miog.Gearing.Legend["Track" .. trackIndex]
 
                 if(currentLegendFrame) then
-                    currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[a - 1].color:GetRGBA())
+                    currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GetRGBA())
                     currentLegendFrame:SetScript("OnEnter", function(self)
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                         GameTooltip:SetText(b.name)
-                        GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. b.baseItemLevel .. " - " .. b.maxItemLevel)
+                        GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.baseItemLevel .. " - " .. data.maxItemLevel)
                         GameTooltip:Show()
                     end)
                 end
             end
-        end
+        --end
     end
 
     if(not miog.NEW_GEARING_DATA[seasonID].awakenedInfo) then

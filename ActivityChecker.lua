@@ -551,10 +551,6 @@ local function setupQueueDropdown(rootDescription)
 						if(lastRaidName ~= dungeonInfo.name2) then
 							local title = activityButton:CreateTitle(dungeonInfo.name2)
 
-							if(icon) then
-								--textLine:SetTextColor(0.1,0.83,0.77,1)
-
-							end
 						end
 
 						queueButton = activityButton:CreateRadio(dungeonInfo.name, function(dungeonID) return GetLFGMode(3, dungeonID) == "queued" end, function(dungeonID)
