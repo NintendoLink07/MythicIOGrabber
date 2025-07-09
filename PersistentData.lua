@@ -1824,22 +1824,48 @@ end
 
 for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 	for trackIndex, data in ipairs(seasonalData.tracks) do
+		data.itemlevels = {}
+
 		data.minLevel = seasonalData.referenceMinLevel + (trackIndex - 1) * fullStep
 		data.maxLevel = data.minLevel + getItemLevelIncreaseViaSteps((data.revisedLength or data.length) - 1)
 
+		for i = 1, data.revisedLength or data.length, 1 do
+			data.itemlevels[i] = data.minLevel + getItemLevelIncreaseViaSteps(i - 1)
+
+		end
 	end
+
+	local usedItemlevels = {}
 
 	for category, categoryData in pairs(seasonalData.data) do
 		for index, ilvlData in ipairs(categoryData) do
 			local level, offset = getItemLevelIncreaseViaSteps(ilvlData.steps)
 			ilvlData.level = seasonalData.referenceMinLevel + level
 
+			if(not usedItemlevels[ilvlData.level]) then
+				tinsert(seasonalData.itemLevelList, ilvlData.level)
+
+			end
+
+			usedItemlevels[ilvlData.level] = true
+
 			if(ilvlData.vaultOffset) then
 				ilvlData.vaultLevel = ilvlData.level + getItemLevelIncreaseViaSteps(ilvlData.vaultOffset, offset)
 
+				if(not usedItemlevels[ilvlData.vaultLevel]) then
+					tinsert(seasonalData.itemLevelList, ilvlData.vaultLevel)
+
+				end
+
+				usedItemlevels[ilvlData.vaultLevel] = true
 			end
 		end
 	end
+
+	table.sort(seasonalData.itemLevelList, function(k1, k2)
+		return k1 < k2
+
+	end)
 end
 
 miog.NEW_GEARING_DATA = {

@@ -9,38 +9,31 @@ local seasonID
 local function createTrackString(itemLevel)
     local trackString
 
-	for x, y in pairs(miog.GEARING_CHART) do
-        if(x == seasonID) then
+	for trackIndex, trackInfo in ipairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
+        --if(x == seasonID) then
             --REVERSED, SO NEW TRACKS ARE INFRONT
-            for k = #y.trackInfo, 1, -1 do
-                if(y.awakenedInfo and k == #y.trackInfo) then
+        --for k = #y.tracks, 1, -1 do
+        for index = trackInfo.length, 1, -1 do
+        --for index, trackItemLevel in pairs(trackInfo.itemlevels) do
+            local trackItemLevel = trackInfo.itemlevels[index]
+            if(trackItemLevel == itemLevel) then
+                local tempString = WrapTextInColorCode(index .. "/" .. trackInfo.length, miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GenerateHexColor())
+                trackString = trackString and trackString .. " " .. tempString or tempString
 
-                else
-                    local currentEntry = y.trackInfo[k]
-                    
-                    for i = 1, currentEntry.length, 1 do
-                        if(currentEntry.data[i] == itemLevel) then
-                            local tempString = WrapTextInColorCode(i .. "/" .. currentEntry.length, miog.ITEM_QUALITY_COLORS[k - 1].color:GenerateHexColor())
-                            trackString = trackString and trackString .. " " .. tempString or tempString
-                        end
-                    end
-                end
-            end
-
-            if(y.awakenedInfo) then
-                local currentEntry = y.trackInfo[#y.trackInfo]
-                    
-                for i = 1, currentEntry.length, 1 do
-                    if(currentEntry.data[i] == itemLevel) then
-                        local tempString = WrapTextInColorCode(i .. "/" .. currentEntry.length, miog.ITEM_QUALITY_COLORS[#y.trackInfo - 1].color:GenerateHexColor())
-                        trackString = trackString and trackString .. " " .. tempString or tempString
-                    end
-                end
             end
         end
+
+            --[[for i = 1, #trackInfo.itemlevels, 1 do
+                if(currentEntry.level == itemLevel) then
+                    local tempString = WrapTextInColorCode(i .. "/" .. currentEntry.length, miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GenerateHexColor())
+                    trackString = trackString and trackString .. " " .. tempString or tempString
+                end
+            end]]
+        --end
+        --end
     end
 
-    return trackString
+    return trackString or ""
 end
 
 local function getColorForItemlevel(itemlevel)
@@ -177,7 +170,7 @@ end
 local function checkTable(name, itemlevel)
     local string
 
-    if(miog.NEW_GEARING_DATA[seasonID][name].usedItemlevels[itemlevel]) then
+    if(miog.ITEM_LEVEL_DATA[seasonID][name].usedItemlevels[itemlevel]) then
         for x, y in ipairs(miog.NEW_GEARING_DATA[seasonID][name].usedItemlevels[itemlevel]) do
             if(string) then
                 string = string .. "/" .. y
@@ -253,7 +246,7 @@ miog.loadGearingTable = function()
                     currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GetRGBA())
                     currentLegendFrame:SetScript("OnEnter", function(self)
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetText(b.name)
+                        GameTooltip:SetText(data.name)
                         GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.baseItemLevel .. " - " .. data.maxItemLevel)
                         GameTooltip:Show()
                     end)
@@ -275,7 +268,62 @@ miog.loadGearingTable = function()
         fullTable[k] = {}
     end
 
-    for k, v in pairs(miog.NEW_GEARING_DATA[seasonID].allItemlevels) do
+    local seasonalData = miog.ITEM_LEVEL_DATA[seasonID]
+
+    --[[for trackIndex, data in ipairs(seasonalData.tracks) do
+        data.minLevel = seasonalData.referenceMinLevel + (trackIndex - 1) * fullStep
+        data.maxLevel = data.minLevel + getItemLevelIncreaseViaSteps((data.revisedLength or data.length) - 1)
+
+    end]]
+
+    local levelToIndex = {
+
+    }
+
+    for index, itemlevel in ipairs(seasonalData.itemLevelList) do
+        tinsert(fullTable[1], WrapTextInColorCode(itemlevel, getColorForItemlevel(itemlevel)))
+        tinsert(fullTable[2], createTrackString(itemlevel))
+
+        levelToIndex[itemlevel] = index
+    end
+
+    local indices = {
+        ["delves"] = 1,
+        ["delvesBountiful"] = 1,
+        ["dungeon"] = 4,
+        ["raid"] = 3,
+        ["crafting"] = 6,
+    }
+
+    local vaultIndices = {
+        ["delves"] = 2,
+        ["dungeon"] = 5,
+    }
+
+    for category, categoryData in pairs(seasonalData.data) do
+        for index, data in ipairs(categoryData) do
+            if(indices[category]) then
+                local tableIndex = levelToIndex[data.level]
+                fullTable[indices[category] + 2][tableIndex] = WrapTextInColorCode(data.name, getColorForItemlevel(data.level))
+
+            end
+
+            if(vaultIndices[category] and not data.ignoreForVault) then
+                local tableIndex = levelToIndex[data.vaultLevel]
+                fullTable[indices[category] + 2][tableIndex] = WrapTextInColorCode(data.name, getColorForItemlevel(data.vaultLevel))
+
+            end
+        end
+
+        --local level, offset = getItemLevelIncreaseViaSteps(ilvlData.steps)
+        --ilvlData.level = seasonalData.referenceMinLevel + level
+
+        --if(ilvlData.vaultOffset) then
+            --ilvlData.vaultLevel = ilvlData.level + getItemLevelIncreaseViaSteps(ilvlData.vaultOffset, offset)
+
+        -- end
+    end
+    --[[for k, v in pairs(miog.NEW_GEARING_DATA[seasonID].allItemlevels) do
         if(miog.NEW_GEARING_DATA[seasonID].usedItemlevels[v]) then
             tinsert(fullTable[1], counter, WrapTextInColorCode(v, getColorForItemlevel(v)))
             tinsert(fullTable[2], counter, createTrackString(v))
@@ -288,7 +336,7 @@ miog.loadGearingTable = function()
 
             counter = counter + 1
         end
-    end
+    end]]
 
     for k, v in ipairs(fullTable) do
         miog.Gearing.GearingTable:AddTextToColumn(v, k)
