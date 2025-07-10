@@ -1391,10 +1391,6 @@ local function loadRawData()
 
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
 		if(miog.MAP_INFO[v[3]]) then
-
-			if(v[3] == 2441) then
-				print(v[3], v[2])
-			end
 			miog.MAP_INFO[v[3]].challengeModeID = v[2]
 
 		end
@@ -1719,7 +1715,7 @@ local quarterSteps = {
 miog.ITEM_LEVEL_DATA = {
 	[14] = {
 		referenceMinLevel = 597,
-		referenceMinLevelStepIndex = 0,
+		referenceMinLevelStepIndex = 1,
 		referenceMaxLevel = 678,
 		revisedMaxLevel = 684,
 
@@ -1783,54 +1779,184 @@ miog.ITEM_LEVEL_DATA = {
 				{steps = 10, name="EnchWeather5"},
 				{steps = 15, name="Spark5"},
 				{steps = 19, name="Runed5"},
+				{steps = 21, name="Runed5+Matrix"},
+				{steps = 24, name="Gilded5"},
+				{steps = 26, name="Gilded5+Matrix"},
+			},
+		},
+	},
+	[15] = {
+		referenceMinLevel = 642,
+		referenceMinLevelStepIndex = 3,
+		referenceMaxLevel = 723,
+
+		itemLevelList = {},
+
+		tracks = {
+			[1] = {name = "Explorer", length = 8},
+			[2] = {name = "Adventurer", length = 8},
+			[3] = {name = "Veteran", length = 8},
+			[4] = {name = "Champion", length = 8},
+			[5] = {name = "Hero", length = 6},
+			[6] = {name = "Myth", length = 6},
+
+		},
+
+		data = {
+			dungeon = {
+				[1] = {steps = -1, name="Normal", ignoreForVault=true},
+				[2] = {steps = 7, vaultOffset = 4, name="Heroic/TW"},
+				[3] = {steps = 12, vaultOffset = 3, name="Mythic"},
+				[4] = {steps = 13, vaultOffset = 3, name="+2"},
+				[5] = {steps = 13, vaultOffset = 3, name="+3"},
+				[6] = {steps = 14, vaultOffset = 3, name="+4"},
+				[7] = {steps = 15, vaultOffset = 2, name="+5"},
+				[8] = {steps = 16, vaultOffset = 2, name="+6"},
+				[9] = {steps = 16, vaultOffset = 2, name="+7"},
+				[10] = {steps = 17, vaultOffset = 2, name="+8"},
+				[11] = {steps = 17, vaultOffset = 2, name="+9"},
+				[12] = {steps = 18, vaultOffset = 2, name="+10"},
+			},
+			raid = {
+				{steps = 9, name="LFR 1-3"},
+				{steps = 10, name="LFR 4-6"},
+				{steps = 11, name="LFR 7-9"},
+				{steps = 13, name="Normal 1-3"},
+				{steps = 14, name="Normal 4-6"},
+				{steps = 15, name="Normal 7-9"},
+				{steps = 17, name="Heroic 1-3"},
+				{steps = 18, name="Heroic 4-6"},
+				{steps = 19, name="Heroic 7-9"},
+				{steps = 21, name="Mythic 1-3"},
+				{steps = 22, name="Mythic 4-6"},
+				{steps = 23, name="Mythic 7-9"},
+
+			},
+			raidVeryRare = {
+				[1] = {steps = 13, name="Rare LFR"},
+				[2] = {steps = 17, name="Rare Normal"},
+				[3] = {steps = 21, name="Rare Heroic"},
+				[4] = {steps = 25, name="Rare Mythic"},
+			},
+			delves = {
+				[1] = {steps = 4, vaultOffset = 4, name="T1"},
+				[2] = {steps = 5, vaultOffset = 3, name="T2"},
+				[3] = {steps = 6, vaultOffset = 3, name="T3"},
+				[4] = {steps = 7, vaultOffset = 5, name="T4"},
+				[5] = {steps = 8, vaultOffset = 6, name="T5"},
+				[6] = {steps = 9, vaultOffset = 6, name="T6"},
+				[7] = {steps = 12, vaultOffset = 4, name="T7+"},
+			},
+			delvesBountiful = {
+				[1] = {steps = 9, name="T4B"},
+				[2] = {steps = 11, name="T5B"},
+				[3] = {steps = 13, name="T6B"},
+				[4] = {steps = 15, name="T7B"},
+				[5] = {steps = 16, name="T8B+"},
+			},
+			crafting = {
+				{steps = 10, name="EnchWeather5"},
+				{steps = 15, name="Spark5"},
+				{steps = 19, name="Runed5"},
 				{steps = 24, name="Gilded5"},
 			},
 		},
 	},
 }
 
+local function getItemLevelForStepCount(steps, offset)
+	local itemLevel = 0
+	local isNegative = steps < 0
+	local arrayIndex = offset or isNegative and 4 or 1
+
+	if(steps ~= 0) then
+		local stepCounter = 0
+
+		if(isNegative) then
+			for i = 0, steps + 1, -1 do
+				itemLevel = itemLevel - quarterSteps[arrayIndex]
+
+				arrayIndex = arrayIndex - 1
+				stepCounter = stepCounter - 1
+
+				if(stepCounter == steps) then
+					break
+
+				elseif(arrayIndex < 1) then
+					arrayIndex = 4
+
+				end
+			end
+		else
+			for i = 0, steps - 1, 1 do
+				itemLevel = itemLevel + quarterSteps[arrayIndex]
+
+				arrayIndex = arrayIndex + 1
+				stepCounter = stepCounter + 1
+
+				if(stepCounter == steps) then
+					break
+
+				elseif(arrayIndex > 4) then
+					arrayIndex = 1
+
+				end
+			end
+		end
+	end
+
+	return itemLevel, arrayIndex
+end
+
 local function getItemLevelIncreaseViaSteps(steps, argIndex)
-	if(steps >= 4 and steps % 4 == 0) then
-		return steps / 4 * fullStep
+	--[[if(steps >= 4 and steps % 4 == 0) then
+		return steps / 4 * fullStep, 0
 
 	else
 		local ilvl = 0
 		local negative = steps < 0 and true or false
-		local index = argIndex or negative and 4 or 1
+		local index = negative and 4 or 1
+		local quarterIndex
 
-		for i = negative and -1 or 1, steps, negative and -1 or 1 do
+		local forLoopLength = steps %
+
+		for i = negative and -1 or argIndex and argIndex > 0 and argIndex or 1, steps, negative and -1 or 1 do
 			if(negative) then
 				ilvl = ilvl - quarterSteps[index]
 
 				index = index - 1
 
-				if(index == 0) then
+				if(i == 0) then
 					index = 4
+
 				end
 			else
+				if(i%4 == 0) then
+					index = 1
+					
+				end
+
 				ilvl = ilvl + quarterSteps[index]
 
 				index = index + 1
-
-				if(index == 5) then
-					index = 1
-				end
 			end
 		end
 
-		return ilvl, index
-	end
+		return ilvl, index % 4
+	end]]
 end
 
 for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 	for trackIndex, data in ipairs(seasonalData.tracks) do
 		data.itemlevels = {}
 
-		data.minLevel = seasonalData.referenceMinLevel + (trackIndex - 1) * fullStep
-		data.maxLevel = data.minLevel + getItemLevelIncreaseViaSteps((data.revisedLength or data.length) - 1)
+		data.minLevel = seasonalData.referenceMinLevel + (trackIndex - 1) * getItemLevelForStepCount(4, seasonalData.referenceMinLevelStepIndex)
+		local level = getItemLevelForStepCount((data.revisedLength or data.length) - 1, seasonalData.referenceMinLevelStepIndex)
+		data.maxLevel = data.minLevel + level
 
 		for i = 1, data.revisedLength or data.length, 1 do
-			data.itemlevels[i] = data.minLevel + getItemLevelIncreaseViaSteps(i - 1)
+			local innerLevel = getItemLevelForStepCount(i - 1, seasonalData.referenceMinLevelStepIndex)
+			data.itemlevels[i] = data.minLevel + innerLevel
 
 		end
 	end
@@ -1839,7 +1965,7 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 
 	for category, categoryData in pairs(seasonalData.data) do
 		for index, ilvlData in ipairs(categoryData) do
-			local level, offset = getItemLevelIncreaseViaSteps(ilvlData.steps)
+			local level = getItemLevelForStepCount(ilvlData.steps, seasonalData.referenceMinLevelStepIndex)
 			ilvlData.level = seasonalData.referenceMinLevel + level
 
 			if(not usedItemlevels[ilvlData.level]) then
@@ -1850,7 +1976,7 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 			usedItemlevels[ilvlData.level] = true
 
 			if(ilvlData.vaultOffset) then
-				ilvlData.vaultLevel = ilvlData.level + getItemLevelIncreaseViaSteps(ilvlData.vaultOffset, offset)
+				ilvlData.vaultLevel = seasonalData.referenceMinLevel + getItemLevelForStepCount(ilvlData.vaultOffset + ilvlData.steps, seasonalData.referenceMinLevelStepIndex)
 
 				if(not usedItemlevels[ilvlData.vaultLevel]) then
 					tinsert(seasonalData.itemLevelList, ilvlData.vaultLevel)

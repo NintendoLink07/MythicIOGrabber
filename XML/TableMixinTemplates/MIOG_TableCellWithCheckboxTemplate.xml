@@ -3,7 +3,7 @@
     <Frame name="MIOG_TableCellWithCheckboxTemplate" inherits="ResizeLayoutFrame" virtual="true">
         <Frames>
             <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
-                <Size x="16" y="16" />
+                <Size x="14" y="14" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
                 </Anchors>

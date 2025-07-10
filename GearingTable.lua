@@ -13,11 +13,13 @@ local function createTrackString(itemLevel)
         --if(x == seasonID) then
             --REVERSED, SO NEW TRACKS ARE INFRONT
         --for k = #y.tracks, 1, -1 do
-        for index = trackInfo.length, 1, -1 do
+        local length = trackInfo.revisedLength or trackInfo.length
+        for index = length, 1, -1 do
         --for index, trackItemLevel in pairs(trackInfo.itemlevels) do
             local trackItemLevel = trackInfo.itemlevels[index]
+
             if(trackItemLevel == itemLevel) then
-                local tempString = WrapTextInColorCode(index .. "/" .. trackInfo.length, miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GenerateHexColor())
+                local tempString = WrapTextInColorCode(index .. "/" .. length, miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GenerateHexColor())
                 trackString = trackString and trackString .. " " .. tempString or tempString
 
             end
@@ -36,21 +38,14 @@ local function createTrackString(itemLevel)
     return trackString or ""
 end
 
-local function getColorForItemlevel(itemlevel)
-    local gearingData = miog.NEW_GEARING_DATA[seasonID]
+local function getColorForItemlevel(itemLevel)
+    local gearingData = miog.ITEM_LEVEL_DATA[seasonID]
     local color
-
-    for x, y in ipairs(gearingData.tracks) do
-        if(itemlevel > gearingData.maxUpgradeItemLevel) then
-            color = miog.ITEM_QUALITY_COLORS[6].color
+    
+	for trackIndex, trackInfo in ipairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
+        if(itemLevel >= trackInfo.itemlevels[1] and itemLevel <= trackInfo.itemlevels[#trackInfo.itemlevels]) then
+            color = miog.ITEM_QUALITY_COLORS[trackIndex - 1].color
             
-        else
-            for n = 1, y.length, 1 do
-                if(not gearingData.awakenedInfo and itemlevel == y.data[n] or x ~= #gearingData.tracks and itemlevel == y.data[n]) then
-                    color = miog.ITEM_QUALITY_COLORS[x - 1].color
-                    
-                end
-            end
         end
     end
 
@@ -205,12 +200,12 @@ local function checkSubtable(name, subname, itemlevel)
 end
 
 local function retrieveSeasonID()
-    seasonID = 14 or C_MythicPlus.GetCurrentSeason()
+    seasonID = -1 or C_MythicPlus.GetCurrentSeason()
 
     if(seasonID < 1) then
-        for k, v in pairs(miog.NEW_GEARING_DATA) do
-            if(v > seasonID) then
-                seasonID = v
+        for k in pairs(miog.NEW_GEARING_DATA) do
+            if(k > seasonID) then
+                seasonID = k
 
             end
         end
@@ -237,9 +232,9 @@ miog.loadGearingTable = function()
     miog.Gearing.GearingTable:CreateTable(false, headers, MIOG_NewSettings.gearingTable.headers)
 
 
-    for k, v in pairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
+    for trackIndex, data in pairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
         --if(k == "tracks") then
-            for trackIndex, data in ipairs(v) do
+            --for trackIndex, data in ipairs(v) do
                 local currentLegendFrame = miog.Gearing.Legend["Track" .. trackIndex]
 
                 if(currentLegendFrame) then
@@ -247,11 +242,11 @@ miog.loadGearingTable = function()
                     currentLegendFrame:SetScript("OnEnter", function(self)
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                         GameTooltip:SetText(data.name)
-                        GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.baseItemLevel .. " - " .. data.maxItemLevel)
+                        GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.minLevel .. " - " .. data.maxLevel)
                         GameTooltip:Show()
                     end)
                 end
-            end
+            --end
         --end
     end
 
@@ -303,14 +298,18 @@ miog.loadGearingTable = function()
     for category, categoryData in pairs(seasonalData.data) do
         for index, data in ipairs(categoryData) do
             if(indices[category]) then
+                local categoryIndex = indices[category] + 2
                 local tableIndex = levelToIndex[data.level]
-                fullTable[indices[category] + 2][tableIndex] = WrapTextInColorCode(data.name, getColorForItemlevel(data.level))
+                local existingText = fullTable[categoryIndex][tableIndex]
+                fullTable[categoryIndex][tableIndex] = WrapTextInColorCode(existingText and (existingText .. " / " .. data.name) or data.name, getColorForItemlevel(data.level))
 
             end
 
             if(vaultIndices[category] and not data.ignoreForVault) then
+                local categoryIndex = vaultIndices[category] + 2
                 local tableIndex = levelToIndex[data.vaultLevel]
-                fullTable[indices[category] + 2][tableIndex] = WrapTextInColorCode(data.name, getColorForItemlevel(data.vaultLevel))
+                local existingText = fullTable[categoryIndex][tableIndex]
+                fullTable[categoryIndex][tableIndex] = WrapTextInColorCode(existingText and (existingText .. " / " .. data.name) or data.name, getColorForItemlevel(data.vaultLevel))
 
             end
         end

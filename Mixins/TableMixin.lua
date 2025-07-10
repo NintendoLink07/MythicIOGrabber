@@ -22,7 +22,7 @@ function TableMixin:OnLoad(sizeW, sizeH, spacing, spacingH)
     end
 
     self.cellWidth = sizeW or 40
-    self.cellHeight = sizeH or 16
+    self.cellHeight = sizeH or 14
 
     local dividers = CreateFrame("Frame", "DividersParentFrame", self, "VerticalLayoutFrame")
     dividers:SetAllPoints(self)
@@ -54,13 +54,11 @@ end
 function TableMixin:AddRowLines(numOfLines)
     local lastLine
 
-    local height = i == 1 and 16 or self.cellHeight + 2
-
 
     for i = 1, numOfLines, 1 do
         local chartLine = self.pools:Acquire("MIOG_TableDivider")
-        chartLine:SetHeight(2)
-        local indexOffset = -16
+        chartLine:SetHeight(self.spacingH or self.spacing or 2)
+        local indexOffset = -14
 
         chartLine:SetPoint("TOPLEFT", lastLine or self, lastLine and "BOTTOMLEFT" or "TOPLEFT", 0, indexOffset)
         chartLine:SetPoint("TOPRIGHT", lastLine or self, lastLine and "BOTTOMRIGHT" or "TOPRIGHT", 0, indexOffset)
@@ -131,7 +129,7 @@ function TableMixin:AddNewRow(showAll)
         frame.Background:SetAtlas(self.standardAtlas)
         frame.gridRow = start
         frame.gridColumn = k
-        frame.minimumHeight = 16
+        frame.minimumHeight = 14
         frame:MarkDirty()
 
         if(showAll) then
@@ -170,7 +168,7 @@ function TableMixin:CreateTable(showAll, headerData, settingsTable)
             frame.Background:SetAtlas(self.standardAtlas)
             frame.gridRow = i + self.headerOffset
             frame.gridColumn = k
-            frame.minimumHeight = 16
+            frame.minimumHeight = 14
             frame:MarkDirty()
 
             if(showAll) then

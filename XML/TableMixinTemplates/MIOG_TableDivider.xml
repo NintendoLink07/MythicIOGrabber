@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_TableDivider" virtual="true">
-        <Size y="16" />
+        <Size y="14" />
 
         <Layers>
             <Layer level="ARTWORK">
