@@ -75,7 +75,7 @@ local function setScrollBoxFrameColors(resultFrame, resultID)
 			resultFrame.Background:SetVertexColor(r, g, b, 0.4)
 			
 		else
-			resultFrame.Background:SetVertexColor(1, 1, 1, 1)
+			resultFrame.Background:SetVertexColor(1, 1, 1, 0.4)
 		end
 	end
 end

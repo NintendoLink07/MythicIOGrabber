@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [3.5.4a] - 2025-07-12
+
+### Changed
+
+- [ApplicationViewer] The applicant scrollbox now gets refreshed everytime it gets displayed..
+
+- [SearchPanel] The background images has a slight transparency to increase readability.
+
+
 
 ## [3.5.4] - 2025-07-12
 
@@ -3900,7 +3909,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.4a..HEAD
+[3.5.4a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.4a
 [3.5.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.4
 [3.5.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.3
 [3.5.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.2

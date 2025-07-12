@@ -420,7 +420,7 @@ local function createDataProviderWithUnsortedData()
 					secondarySortAttribute = miog.F.IS_IN_DEBUG_MODE and bestDungeonScoreForListing.bestRunLevel or C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID).bestRunLevel
 
 				elseif(categoryID == 3) then
-					local raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
+					local raidData = miog.getOnlyPlayerRaidData(playerName, realm)
 					--local raidData = miog.getNewRaidSortData(playerName, realm)
 
 					if(raidData) then
@@ -479,10 +479,6 @@ local function createDataProviderWithUnsortedData()
 	end
 
 	return basicTable, numOfFiltered, #currentApplicants
-end
-
-local function refreshApplicantList()
-
 end
 
 local function updateApplicantList()
@@ -665,10 +661,7 @@ end
 miog.createFullEntries = createFullEntries
 
 local function applicationViewerEvents(_, event, ...)
-	if(event == "PLAYER_ENTERING_WORLD") then
-		updateApplicantList()
-
-	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then
+	if(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then
 		local entryInfo = C_LFGList.GetActiveEntryInfo()
 
 		if(entryInfo) then
@@ -731,8 +724,7 @@ local function applicationViewerEvents(_, event, ...)
 
 		if(withData or not newEntry) then --REFRESH APP LIST
 			updateApplicantList()
-			
-			refreshApplicantList()
+
 		end
 	end
 end

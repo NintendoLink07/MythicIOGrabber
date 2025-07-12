@@ -476,5 +476,12 @@
                 </Scripts>
             </Button>
         </Frames>
+        <Scripts>
+            <OnShow>
+                C_LFGList.RefreshApplicants()
+                self.ScrollBox2:ScrollToBegin()
+
+            </OnShow>
+        </Scripts>
     </Frame>
 </Ui>

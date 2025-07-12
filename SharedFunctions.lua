@@ -1047,7 +1047,7 @@ miog.hideSidePanel = function(self)
 	MIOG_NewSettings.activeSidePanel = "none"
 end
 
-local function createFullName(type, value)
+local function createFullNameFrom(type, value)
 	local realm = GetNormalizedRealmName()
 	local name
 
@@ -1085,55 +1085,7 @@ local function createFullName(type, value)
 	return name
 end
 
-miog.createFullNameFrom = createFullName
-
--- type == unitID or unitName
--- value == (unitID) player, party3, raid29 or (unitName) Rhany, Merkuz, Solomeio-Ravencrest
-local function createFullNameFrom(type, value)
-	local name
-
-	local realm = GetNormalizedRealmName()
-
-	if(realm) then
-		if(type == "unitID") then
-			if(value == "player") then
-				local shortName, realm2 = UnitFullName(value)
-
-				if(shortName and realm2) then
-					name = shortName .. "-" .. realm2
-
-				else
-					name = UnitNameUnmodified("player") .. "-" .. realm
-				
-				end
-
-			else
-				name = GetUnitName(value, true)
-			
-			end
-
-		elseif(type == "unitName") then
-			name = value
-			
-		else
-			return nil
-			
-		end
-
-		if(name) then
-			local nameTable = miog.simpleSplit(name, "-")
-			
-			if(not nameTable[2]) then
-				name = nameTable[1] .. "-" .. realm
-
-			end
-		end
-	end
-
-	return name
-end
-
---miog.createFullNameFrom = createFullNameFrom
+miog.createFullNameFrom = createFullNameFrom
 
 local function createShortNameFrom(type, value)
 	if(type == "unitID") then
