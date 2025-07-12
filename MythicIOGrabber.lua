@@ -272,12 +272,6 @@ local function handler(msg, editBox)
 		print("Debug mode off - Normal search result mode")
 		miog.F.IS_IN_DEBUG_MODE = false
 
-	elseif(command == "favour") then
-
-        local playerName, realm = miog.createSplitName(rest)
-
-		MIOG_NewSettings.favouredApplicants[rest] = {name = playerName, fullName = rest}
-
 	end
 end
 SlashCmdList["MIOG"] = handler

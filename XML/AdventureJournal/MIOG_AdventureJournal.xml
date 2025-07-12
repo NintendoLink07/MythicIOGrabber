@@ -87,13 +87,6 @@
                             <Anchor point="LEFT" relativeKey="$parent.SlotDropdown" relativePoint="RIGHT"/>
                         </Anchors>
                     </DropdownButton>
-            
-                    <!--<Frame parentKey="KeylevelDropdown" inherits="MIOG_DropDownMenu" mixin="SlickDropDown" hidden="true">
-                        <Size x="40" y="24" />
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.ArmorDropdown" relativePoint="RIGHT"/>
-                        </Anchors>
-                    </Frame>!-->
                 </Frames>
             </Frame>
                                         

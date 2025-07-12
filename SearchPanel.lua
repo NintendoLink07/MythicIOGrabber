@@ -46,16 +46,6 @@ local function setScrollBoxFrameColors(resultFrame, resultID)
 			color = CreateColorFromHexString(miog.C.SECONDARY_TEXT_COLOR)
 			resultFrame:SetBackdropBorderColor(color:GetRGBA())
 
-		elseif(MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName]) then
-			if(isEligible) then
-				color = CreateColorFromHexString("FFe1ad21")
-				resultFrame:SetBackdropBorderColor(color:GetRGBA())
-
-			else
-				color = miog.CLRSCC.colors.orange
-				resultFrame:SetBackdropBorderColor(color:GetRGBA())
-
-			end
 		else
 			if(isEligible) then
 				if(MR_GetSavedPartyGUIDs) then
@@ -236,11 +226,6 @@ local function createResultTooltip(resultID, resultFrame)
 
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(C_LFGList.GetActivityFullName(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode))
-
-		if(MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName]) then
-			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(searchResultInfo.leaderName .. " is on your favoured player list.")
-		end
 
 		local success, reasonID = miog.filter.checkIfSearchResultIsEligible(resultID)
 		local reason = miog.INELIGIBILITY_REASONS[reasonID]
@@ -458,7 +443,6 @@ local function createDataProviderWithUnsortedData()
 							index = resultID,
 							resultID = resultID,
 							age = searchResultInfo.age,
-							favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
 						}
 					)
 
@@ -875,27 +859,16 @@ local function updateScrollBoxFrame(frame, data)
 
 			if(categoryID == 2) then
 				if(searchResultInfo.leaderOverallDungeonScore) then
-					--local string = rawget(searchResultInfo, "name")
+					local keylevel, score = NearestValue(searchResultInfo.leaderOverallDungeonScore)
+					local lower, higher = keylevel, keylevel + 1
 
-					--local substring = string:gsub("%D", "")
-					--local onlyNumbers = tonumber(substring)
+					if(lower >= 2) then
+						currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(lower, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[lower]):GenerateHexColor()) .. "-" .. wticc(higher, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[higher]):GenerateHexColor()) .. ")")
 
-					--print(string:gsub("|", "||"), resultID, onlyNumbers)
+					else
+						currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(0, miog.createCustomColorForRating(0):GenerateHexColor()) .. ")")
 
-					--if(onlyNumbers) then
-						--local mean = mean(equalizeTable[onlyNumbers])
-						local keylevel, score = NearestValue(searchResultInfo.leaderOverallDungeonScore)
-						local lower, higher = keylevel, keylevel + 1
-
-						if(lower >= 2) then
-							currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(lower, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[lower]):GenerateHexColor()) .. "-" .. wticc(higher, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[higher]):GenerateHexColor()) .. ")")
-
-						else
-							currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(0, miog.createCustomColorForRating(0):GenerateHexColor()) .. ")")
-
-						end
-						--print("The keylevel of " .. onlyNumbers .. " is likely " .. keylevel - 2 .. " to " .. keylevel - 1, searchResultInfo.name, score, mean)
-					--end
+					end
 				end
 
 			end
@@ -986,7 +959,6 @@ local function getSortCriteriaForSearchResult(resultID)
 				index = resultID,
 				resultID = resultID,
 				age = searchResultInfo.age,
-				favoured = searchResultInfo.leaderName and MIOG_NewSettings.favouredApplicants[searchResultInfo.leaderName] and true or false
 			}
 		end
 	end

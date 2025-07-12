@@ -402,7 +402,6 @@ local function createDataProviderWithUnsortedData()
 
 			for applicantIndex = 1, applicantData.numMembers, 1 do
 				local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo
-				local favourPrimary
 
 				if(miog.F.IS_IN_DEBUG_MODE) then
 					name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
@@ -427,8 +426,6 @@ local function createDataProviderWithUnsortedData()
 					if(raidData) then
 						primarySortAttribute = raidData.character.ordered[1].weight or 0
 						secondarySortAttribute = raidData.character.ordered[2].weight or 0
-						
-						--favourPrimary = raidData.character.ordered[1].weight and wticc(raidData.character.ordered[1].shortName .. ":" .. raidData.character.ordered[1].parsedString, miog.DIFFICULTY[raidData.character.ordered[1].difficulty].color) or 0
 
 					else
 						primarySortAttribute = 0
@@ -460,9 +457,7 @@ local function createDataProviderWithUnsortedData()
 					ilvl = itemLevel or 0,
 
 					primary = primarySortAttribute,
-					--favourPrimary = categoryID ~= 3 and primarySortAttribute or favourPrimary,
 					secondary = secondarySortAttribute,
-					--favoured = MIOG_NewSettings.favouredApplicants[name] and true or false
 				}
 
 				local showFrame, _ = miog.filter.checkIfApplicantIsEligible(applicantInfos[applicantIndex])

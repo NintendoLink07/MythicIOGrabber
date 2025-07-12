@@ -76,6 +76,98 @@ local activityIndices = {
 	Enum.WeeklyRewardChestThresholdType.World, -- world/delves
 }
 
+local function addTeleportButtons()
+	local lastExpansionFrames = {}
+
+	for index, info in ipairs(miog.TELEPORT_FLYOUT_IDS) do
+		local name, description, numSlots, isKnown = GetFlyoutInfo(info.id)
+
+		local expansionInfo = GetExpansionDisplayInfo(info.expansion)
+
+		local logoFrame = miog.Teleports[tostring(info.expansion)]
+
+		if(logoFrame and expansionInfo) then
+			logoFrame.Texture:SetTexture(expansionInfo.logo)
+
+			local expNameTable = {}
+
+			for k = 1, numSlots, 1 do
+				local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(info.id, k)
+				local desc = C_Spell.GetSpellDescription(flyoutSpellID)
+				local tableIndex = #expNameTable + 1
+				local mapID = miog.TELEPORT_SPELLS_TO_MAP[flyoutSpellID]
+				local shortName = mapID and miog.MAP_INFO[mapID].shortName or ""
+
+				expNameTable[tableIndex] = {name = spellName, desc = desc, spellID = flyoutSpellID, type = info.type, known = spellKnown, shortName = shortName}
+
+				if(desc == "") then
+					local spell = Spell:CreateFromSpellID(flyoutSpellID)
+					spell:ContinueOnSpellLoad(function()
+						addTeleportButtons()
+
+					end)
+
+					return false
+
+				end
+			end
+
+			table.sort(expNameTable, function(k1, k2)
+				if(k1.type == "dungeon") then
+					return k1.shortName < k2.shortName
+
+				else
+					return k1.spellID < k2.spellID
+
+				end
+			end)
+
+			for k, v in ipairs(expNameTable) do
+				local spellInfo = C_Spell.GetSpellInfo(v.spellID)
+				local tpButton = CreateFrame("Button", nil, miog.Teleports, "MIOG_TeleportButtonTemplate")
+				tpButton:SetNormalTexture(spellInfo.iconID)
+				tpButton:GetNormalTexture():SetDesaturated(not v.known)
+				tpButton:SetPoint("LEFT", lastExpansionFrames[info.expansion] or logoFrame, "RIGHT", lastExpansionFrames[info.expansion] and k == 1 and 18 or 3, 0)
+
+				lastExpansionFrames[info.expansion] = tpButton
+
+				if(v.known) then
+					local myCooldown = tpButton.Cooldown
+					
+					tpButton:HookScript("OnShow", function()
+						local spellCooldownInfo = C_Spell.GetSpellCooldown(v.spellID)
+						--local start, duration, _, modrate = GetSpellCooldown(v.spellID)
+						myCooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.modRate)
+
+						local secondsLeft = spellCooldownInfo.duration - (GetTime() - spellCooldownInfo.startTime)
+						local text = secondsLeft > 0 and WrapTextInColorCode("Remaining CD: " .. formatter:Format(secondsLeft), miog.CLRSCC.red) or WrapTextInColorCode("Ready", miog.CLRSCC.green)
+
+						miog.Teleports.Remaining:SetText(text)
+					end)
+
+					tpButton:SetHighlightAtlas("communities-create-avatar-border-hover")
+					tpButton:SetAttribute("type", "spell")
+					tpButton:SetAttribute("spell", spellInfo.name)
+					tpButton:RegisterForClicks("LeftButtonDown")
+
+					tpButton.Text:SetText(v.shortName or WrapTextInColorCode("MISSING", "FFFF0000"))
+
+				end
+
+				local spell = Spell:CreateFromSpellID(v.spellID)
+				spell:ContinueOnSpellLoad(function()
+					tpButton:SetScript("OnEnter", function(self)
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+						GameTooltip_AddHighlightLine(GameTooltip, v.name)
+						GameTooltip:AddLine(spell:GetSpellDescription())
+						GameTooltip:Show()
+					end)
+				end)
+			end
+		end
+	end
+end
+
 local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
 	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
@@ -388,91 +480,6 @@ local function createPVEFrameReplacement()
 
 	local formatter = CreateFromMixins(SecondsFormatterMixin)
 	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
-
-	local function addTeleportButtons()
-		local lastExpansionFrames = {}
-
-		for index, info in ipairs(miog.TELEPORT_FLYOUT_IDS) do
-			local name, description, numSlots, isKnown = GetFlyoutInfo(info.id)
-
-			local expansionInfo = GetExpansionDisplayInfo(info.expansion)
-
-			local logoFrame = miog.Teleports[tostring(info.expansion)]
-
-			if(logoFrame and expansionInfo) then
-				logoFrame.Texture:SetTexture(expansionInfo.logo)
-
-				local expNameTable = {}
-
-				for k = 1, numSlots, 1 do
-					local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(info.id, k)
-					local desc = C_Spell.GetSpellDescription(flyoutSpellID)
-					local tableIndex = #expNameTable + 1
-
-					expNameTable[tableIndex] = {name = spellName, desc = desc, spellID = flyoutSpellID, known = spellKnown}
-
-					if(desc == "") then
-						local spell = Spell:CreateFromSpellID(flyoutSpellID)
-						spell:ContinueOnSpellLoad(function()
-							addTeleportButtons()
-
-						end)
-
-						return false
-
-					end
-				end
-
-				table.sort(expNameTable, function(k1, k2)
-					return k1.desc < k2.desc
-				end)
-
-				for k, v in ipairs(expNameTable) do
-					local spellInfo = C_Spell.GetSpellInfo(v.spellID)
-					local tpButton = CreateFrame("Button", nil, miog.Teleports, "MIOG_TeleportButtonTemplate")
-					tpButton:SetNormalTexture(spellInfo.iconID)
-					tpButton:GetNormalTexture():SetDesaturated(not v.known)
-					tpButton:SetPoint("LEFT", lastExpansionFrames[info.expansion] or logoFrame, "RIGHT", lastExpansionFrames[info.expansion] and k == 1 and 18 or 3, 0)
-
-					lastExpansionFrames[info.expansion] = tpButton
-
-					if(v.known) then
-						local myCooldown = tpButton.Cooldown
-						
-						tpButton:HookScript("OnShow", function()							
-							local spellCooldownInfo = C_Spell.GetSpellCooldown(v.spellID)
-							--local start, duration, _, modrate = GetSpellCooldown(v.spellID)
-							myCooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.modRate)
-
-							local secondsLeft = spellCooldownInfo.duration - (GetTime() - spellCooldownInfo.startTime)
-							local text = secondsLeft > 0 and WrapTextInColorCode("Remaining CD: " .. formatter:Format(secondsLeft), miog.CLRSCC.red) or WrapTextInColorCode("Ready", miog.CLRSCC.green)
-
-							miog.Teleports.Remaining:SetText(text)
-						end)
-
-						tpButton:SetHighlightAtlas("communities-create-avatar-border-hover")
-						tpButton:SetAttribute("type", "spell")
-						tpButton:SetAttribute("spell", spellInfo.name)
-						tpButton:RegisterForClicks("LeftButtonDown")
-					end
-
-					local spell = Spell:CreateFromSpellID(v.spellID)
-					spell:ContinueOnSpellLoad(function()
-						tpButton:SetScript("OnEnter", function(self)
-							GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-							GameTooltip_AddHighlightLine(GameTooltip, v.name)
-							GameTooltip:AddLine(spell:GetSpellDescription())
-							GameTooltip:Show()
-						end)
-					end)
-
-					tpButton:SetScript("OnLeave", function()
-						GameTooltip:Hide()
-					end)
-				end
-			end
-		end
-	end
 
 	addTeleportButtons()
 	

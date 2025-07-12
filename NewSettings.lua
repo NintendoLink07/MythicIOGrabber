@@ -106,16 +106,13 @@ local defaultSettings = {
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions() - 1, type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
         miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-        miog.LastInvites.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
         miog.FilterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
     end},
     {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},
-    {name = "Last invited applicants", variableName = "MIOG_LastInvitedApplicants", key="lastInvitedApplicants", default={}},
     {name = "Requeue data", variableName = "MIOG_RequeueData", key="requeueData", default = {guids = {}}},
     {name = "Queue up time", variableName = "MIOG_QueueUpTime", key="queueUpTime", default=0},
     {name = "Last set checkboxes", variableName = "MIOG_LastSetCheckboxes", key="lastSetCheckboxes", default={}},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
-    {name = "Favoured applicants", variableName = "MIOG_FavouredApplicants", key="favouredApplicants", default={}, type="custom"},
     {name = "New filter options", variableName = "MIOG_NewFilterOptions", key="newFilterOptions", default={}},
     {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={
         ["LFGListFrame.SearchPanel"] = defaultFilters,
@@ -177,15 +174,7 @@ local function createDefaultSettings(overwriteSettings)
 
                 Settings.CreateDropdown(category, setting, GetOptions, v.tooltip);
             elseif(v.type == "custom") then
-                if(v.key == "favouredApplicants") then
-                    local scrollBox = miog.loadFavouredPlayersPanel(SettingsPanel)
-
-                    local subcategory, subcategoryLayout = Settings.RegisterCanvasLayoutSubcategory(category, scrollBox, "Favour");
-                    
-                    subcategoryLayout:AddAnchorPoint("TOPLEFT", 10, -10);
-                    subcategoryLayout:AddAnchorPoint("BOTTOMRIGHT", -10, 10);
-
-                elseif(v.key == "accountStatistics") then
+                if(v.key == "accountStatistics") then
                     local scrollBox = miog.createStatisticsInterfacePanelPage(SettingsPanel)
 
                     local subcategory, subcategoryLayout = Settings.RegisterCanvasLayoutSubcategory(category, scrollBox, "LFG Statistics");
@@ -237,8 +226,6 @@ miog.loadNewSettings = function()
     createDefaultSettings(miog.characterSettings)
 
     miog.F.LITE_MODE = MIOG_NewSettings.liteMode
-
-    miog.refreshFavouredPlayers()
 
 end
 

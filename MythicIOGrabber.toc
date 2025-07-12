@@ -32,7 +32,6 @@ SharedFunctions.lua
 ClassPanel.lua
 FilterManager.lua
 
-LastInvites.lua
 GearingTable.lua
 AdventureJournal.lua
 GroupManager.lua
@@ -93,8 +92,6 @@ XML\MIOG_Plugin.xml
 
 XML\MIOG_QueueFrame.xml
 XML\MIOG_EntryCreation.xml
-XML\MIOG_LastInvitesTemplate.xml
-XML\MIOG_LastInvitesPlayerTemplate.xml
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_PopupFrame.xml

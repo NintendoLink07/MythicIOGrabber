@@ -3,10 +3,22 @@
     <Button name="MIOG_TeleportButtonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
         <Size x="35" y="35" />
 
-        <Frames>
-            <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" setAllPoints="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="top"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
 
-            </Cooldown>
+        <Frames>
+            <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" setAllPoints="true" />
         </Frames>
+
+        <Scripts>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
     </Button>
 </Ui>

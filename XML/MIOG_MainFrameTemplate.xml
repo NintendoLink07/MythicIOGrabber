@@ -10,7 +10,7 @@
             </Frame>
 
             <Frame parentKey="TitleBar">
-                <Size y="23" />
+                <Size y="20" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
@@ -18,16 +18,16 @@
 
                 <Frames>
                     <Button parentKey="CreateGroupButton" inherits="MIOG_NavBarButtonTemplate">
-                        <Size x="56" y="20" />
+                        <Size x="56" y="19" />
 
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2" />
+							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
 						</Anchors>
 
                     </Button>
                     
                     <Button parentKey="FindGroupButton" inherits="MIOG_NavBarButtonTemplate">
-                        <Size x="50" y="20" />
+                        <Size x="50" y="19" />
 
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent.CreateGroupButton" relativePoint="RIGHT" x="2" />
@@ -35,7 +35,7 @@
                     </Button>
                     
                     <Button parentKey="MoreButton" inherits="MIOG_NavBarButtonTemplate" hidden="true">
-                        <Size x="62" y="20" />
+                        <Size x="62" y="19" />
 
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent.FindGroupButton" relativePoint="RIGHT" x="2" />
@@ -43,9 +43,9 @@
                     </Button>
 
                     <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
-                        <Size x="20" y="20"/>
+                        <Size x="19" y="19"/>
 						<Anchors>
-							<Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
+							<Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1" y="-1"/>
 						</Anchors>
 						<Scripts>
 							<OnClick>
@@ -60,7 +60,7 @@
                             <KeyValue key="newbieText" value="NEWBIE_TOOLTIP_LFGPARENT" type="global"/>
                         </KeyValues>
 
-                        <Size x="20" y="20"/>
+                        <Size x="19" y="19"/>
 
 						<Anchors>
 							<Anchor point="RIGHT" relativeKey="$parent.Settings" relativePoint="LEFT" x="-2"/>

@@ -106,7 +106,7 @@ miog.createFrames = function()
 	C_EncounterJournal.OnOpen = miog.dummyFunction
 
 	local settingsButton = CreateFrame("Button", nil, nil, "UIButtonTemplate")
-	settingsButton:SetSize(20, 20)
+	settingsButton:SetSize(19, 19)
 	settingsButton:SetNormalAtlas("QuestLog-icon-setting")
 	settingsButton:SetHighlightAtlas("QuestLog-icon-setting")
 	settingsButton:SetScript("OnClick", function()
@@ -168,7 +168,6 @@ miog.createFrames = function()
 	miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
 	miog.EntryCreation = miog.createEntryCreation()
-	miog.LastInvites = miog.loadLastInvitesPanel()
 	miog.ClassPanel = miog.createClassPanel()
 	miog.FilterManager = miog.loadFilterManager()
 	

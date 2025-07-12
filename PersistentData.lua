@@ -546,57 +546,6 @@ miog.MAP_INFO = {
 	[2177] = {shortName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update", toastBG = "PvpBg-ArathiBasin-ToastBG", pvp = "true"},
 	[2118] = {shortName = "BFW", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "wintergrasp", pvp = "true"},
 	[2245] = {shortName = "DWG", icon = "interface/lfgframe/lfgicon-deepwindgorge.blp", fileName = "goldrush", pvp = "true"},
-
-	-- RAIDS
-
-	[2444] = {
-		shortName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dragonislescontinent.png", fileName = "dragonislescontinent",
-	},
-	[2549] = {
-		bossIcons = {
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
-		},
-		shortName = "ATDH",
-		fileName = "emeralddream",
-	},
-	[2569] = { -- interface/icons/inv_achievement_raiddragon
-		bossIcons = {
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/chamber.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/experiment.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/assault.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashok.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/zskarn.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
-		},
-		shortName = "ATSC",
-		fileName = "aberrus",
-	},
-	[2522] = {
-		bossIcons = {
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
-			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
-		},
-		shortName = "VOTI",
-		fileName = "vaultoftheincarnates",
-	},
-
 		
 	--VANILLA
 	[36] = {shortName = "DM", fileName = "deadmines"},
@@ -702,7 +651,7 @@ miog.MAP_INFO = {
 
 	-- MISTS OF PANDARIA
 	--[870] = {shortName = "RPD", icon = ""}, --RANDOM PANDARIA DUNGEON
-	[960] = {shortName = "TOJS", fileName = "templeofthejadeserpent"},
+	[960] = {shortName = "TOTJS", fileName = "templeofthejadeserpent"},
 	[961] = {shortName = "SSB", fileName = "stormstoutbrewery"},
 	[959] = {shortName = "SPM", fileName = "shadowpanmonastery"},
 	[994] = {shortName = "MSP", fileName = "mogushanpalace"},
@@ -732,8 +681,8 @@ miog.MAP_INFO = {
 	--[1220] = {shortName = "RLD", icon = ""}, --RANDOM LEGION DUNGEON
 	[1458] = {shortName = "NL", fileName = "neltharionslair"},
 	[1466] = {shortName = "DHT", fileName = "darkheartthicket"},
-	[1477] = {shortName = "HoV", fileName = "hallsofvalor"},
-	[1571] = {shortName = "CoS", fileName = "courtofstars"},
+	[1477] = {shortName = "HOV", fileName = "hallsofvalor"},
+	[1571] = {shortName = "COS", fileName = "courtofstars"},
 	[1501] = {shortName = "BRH", fileName = "blackrookhold"},
 	[1456] = {shortName = "EOA", fileName = "eyeofazshara"},
 	[1544] = {shortName = "AOVH", fileName = "assaultonviolethold"},
@@ -779,8 +728,8 @@ miog.MAP_INFO = {
 	[2286] = {shortName = "NW", fileName = "necroticwake"},
 	[2293] = {shortName = "TOP", fileName = "theaterofpain"},
 	[2296] = {shortName = "CN", fileName = "castlenathria"},
-	[2450] = {shortName = "SOD", fileName = "sanctumofdomination"},
 	[2441] = {shortName = "TAZA", fileName = "tazaveshtheveiledmarket"},
+	[2450] = {shortName = "SOD", fileName = "sanctumofdomination"},
 	[2481] = {shortName = "SFO", fileName = "sepulcherofthefirstones"},
 	[2559] = {shortName = "WORLD", iconName = "shadowlands", bgName = "shadowlandscontinent",},
 
@@ -795,6 +744,55 @@ miog.MAP_INFO = {
 	[2527] = {shortName = "HOI", fileName = "hallsofinfusion"},
 	[2574] = {shortName = "WORLD", fileName = "dragonislescontinent",},
 	[2579] = {shortName = "DOTI", fileName = "dawnoftheinfinite"},
+
+	
+	[2444] = {
+		shortName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dragonislescontinent.png", fileName = "dragonislescontinent",
+	},
+	[2549] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/gnarlroot.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/igira.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/volcoross.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/council.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/larodar.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/nymue.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/smolderon.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/tindral.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atdh/fyrakk.png"},
+		},
+		shortName = "ATDH",
+		fileName = "emeralddream",
+	},
+	[2569] = { -- interface/icons/inv_achievement_raiddragon
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/kazzara.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/chamber.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/experiment.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/assault.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/rashok.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/zskarn.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/magmorax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/neltharion.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/atsc/sarkareth.png"},
+		},
+		shortName = "ATSC",
+		fileName = "aberrus",
+	},
+	[2522] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/eranog.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/terros.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/council.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/sennarth.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/dathea.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/kurog.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/diurna.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/voti/raszageth.png"},
+		},
+		shortName = "VOTI",
+		fileName = "vaultoftheincarnates",
+	},
 
 	-- THE WAR WITHIN
 	[2601] = {shortName = "KA", fileName = "khazalgar"},
@@ -1435,7 +1433,86 @@ miog.TELEPORT_FLYOUT_IDS = {
 	[9] = {id = 231, expansion = 9, type="raid"},
 
 	[10] = {id = 232, expansion = 10, type="dungeon"},
-	[11] = {id = 242, expansion = 10, type="dungeon"},
+	[11] = {id = 242, expansion = 10, type="raid"},
+}
+
+miog.TELEPORT_SPELLS_TO_MAP = {
+	[445424] = 670,
+	[410080] = 657,
+	[424142] = 643,
+
+	[131225] = 962,
+	[131222] = 1008,
+	[131231] = 1001,
+	[131229] = 1004,
+	[131232] = 1007,
+	[131206] = 959,
+	[131228] = 1011,
+	[131205] = 961,
+	[131204] = 960,
+
+	[159897] = 1182,
+	[159895] = 1175,
+	[159900] = 1208,
+	[159901] = 1279,
+	[159896] = 1195,
+	[159899] = 1176,
+	[159898] = 1209,
+	[159902] = 1358,
+
+	[424153] = 1501,
+	[393766] = 1571,
+	[424163] = 1466,
+	[393764] = 1477,
+	[373262] = 1651,
+	[410078] = 1458,
+
+	[424187] = 1763,
+	[410071] = 1754,
+	[373274] = 2097,
+	[464256] = 1822,
+	[445418] = 1822,
+	[467555] = 1594,
+	[467553] = 1594,
+	[410074] = 1841,
+	[424167] = 1862,
+
+	[354468] = 2291,
+	[354465] = 2287,
+	[354464] = 2290,
+	[354463] = 2289,
+	[354469] = 2284,
+	[354466] = 2285,
+	[367416] = 2441,
+	[354462] = 2286,
+	[354467] = 2293,
+	[373190] = 2296,
+	[373191] = 2450,
+	[373192] = 2481,
+
+	[393273] = 2526,
+	[393267] = 2520,
+	[424197] = 2579,
+	[393283] = 2527,
+	[393276] = 2519,
+	[393256] = 2521,
+	[393279] = 2515,
+	[393262] = 2516,
+	[393222] = 2451,
+	[432257] = 2569,
+	[432258] = 2549,
+	[432254] = 2522,
+
+	[445417] = 2660,
+	[445440] = 2661,
+	[445416] = 2669,
+	[445441] = 2651,
+	[1216786] = 2773,
+	[445444] = 2649,
+	[445414] = 2662,
+	[445443] = 2648,
+	[445269] = 2652,
+	[1226482] = 2769,
 }
 
 miog.WEIGHTS_TABLE = {
