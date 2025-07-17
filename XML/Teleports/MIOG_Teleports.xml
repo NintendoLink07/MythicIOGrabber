@@ -49,6 +49,14 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.9" relativePoint="BOTTOMLEFT" y="-4"/>
                 </Anchors>
             </Frame>
+
+            <Frame parentKey="Dungeons">
+
+            </Frame>
+
+            <Frame parentKey="Raids">
+
+            </Frame>
         </Frames>
 
         <Layers>

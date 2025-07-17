@@ -5,13 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [3.5.5] - 2025-07-19
+
+### Fixed
+
+- [SearchPanel] An error has been resolved trying to parse a non existing leader name.
+
+- [RaidPlanner] Fixed an error message popping up when there wasn't actually any error.
+
+- [FilterManager] Fixed a specific edge case with the role filters not working.
+
+- Small performance improvements.
+
+
+
 ## [3.5.4a] - 2025-07-12
 
 ### Changed
 
 - [ApplicationViewer] The applicant scrollbox now gets refreshed everytime it gets displayed..
 
-- [SearchPanel] The background images has a slight transparency to increase readability.
+- [SearchPanel] The background images have a slight transparency to increase readability.
 
 
 

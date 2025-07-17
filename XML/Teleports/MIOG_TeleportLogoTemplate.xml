@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_TeleportLogoTemplate" inherits="BackdropTemplate" virtual="true" toplevel="true">
-        <Size x="70" y="40" />
+        <Size x="50" y="40" />
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="Texture" setAllPoints="true" />

@@ -4,4 +4,4 @@
 
 - [ApplicationViewer] The applicant scrollbox now gets refreshed everytime it gets displayed..
 
-- [SearchPanel] The background images has a slight transparency to increase readability.
+- [SearchPanel] The background images have a slight transparency to increase readability.

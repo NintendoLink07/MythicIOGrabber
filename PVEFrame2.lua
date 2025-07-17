@@ -1,6 +1,12 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local activityIndices = {
+	Enum.WeeklyRewardChestThresholdType.Raid, -- raid
+	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
+	Enum.WeeklyRewardChestThresholdType.World, -- world/delves
+}
+
 local function openSearchPanel(categoryID, filters, dontSearch)
 	if(LFGListFrame.CategorySelection.selectedCategory ~= categoryID) then
 		LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
@@ -69,12 +75,6 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 		categoryButton:SetEnabled(canUse)
 	end
 end
-
-local activityIndices = {
-	Enum.WeeklyRewardChestThresholdType.Raid, -- raid
-	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
-	Enum.WeeklyRewardChestThresholdType.World, -- world/delves
-}
 
 local function addTeleportButtons()
 	local lastExpansionFrames = {}

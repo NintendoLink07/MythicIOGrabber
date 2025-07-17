@@ -466,8 +466,6 @@ local function setupSaveData()
                         miog.RaidSheet.CreateSettingsBox:SetFocus()
     
                     end)
-    
-                    return button.fontstring:GetUnboundedStringWidth() + 2 - 16 - 16 - 3
                 end)
             end
         end

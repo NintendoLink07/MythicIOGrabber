@@ -388,28 +388,61 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 			end
 		end
 
-		local tanksOk = not currentSettings.tank.enabled or roleCount["TANK"] >= currentSettings.tank.minimum and roleCount["TANK"] <= currentSettings.tank.maximum
-		local healersOk = not currentSettings.healer.enabled or roleCount["HEALER"] >= currentSettings.healer.minimum and roleCount["HEALER"] <= currentSettings.healer.maximum
-		local damagerOk = not currentSettings.damager.enabled or roleCount["DAMAGER"] >= currentSettings.damager.minimum and roleCount["DAMAGER"] <= currentSettings.damager.maximum
+		local tankCountIncorrect
+		local healerCountIncorrect
+		local damagerCountIncorrect
+		local isLinkedTankStatusIncorrect
+		local isLinkedHealerStatusIncorrect
+		local isLinkedDamagerStatusIncorrect
+		
+		if(currentSettings.tank.enabled) then
+			tankCountIncorrect = roleCount["TANK"] > currentSettings.tank.maximum or roleCount["TANK"] < currentSettings.tank.minimum
 
-		if(not tanksOk and (currentSettings.tank.linked ~= true or currentSettings.tank.linked == true and currentSettings.healer.linked == false and currentSettings.damager.linked == false)
-		or not healersOk and (currentSettings.healer.linked ~= true or currentSettings.healer.linked == true and currentSettings.damager.linked == false and currentSettings.tank.linked == false)
-		or not damagerOk and (currentSettings.damager.linked ~= true or currentSettings.damager.linked == true and currentSettings.tank.linked == false and currentSettings.healer.linked == false)) then
-			return false, "incorrectNumberOfRoles"
+			if(tankCountIncorrect) then
+				if(not currentSettings.tank.linked) then
+					return false, "incorrectNumberOfRoles"
+
+				else
+					isLinkedTankStatusIncorrect = currentSettings.tank.linked and tankCountIncorrect
+
+				end
+			end
 		end
 
-		if(currentSettings.tank.linked and currentSettings.healer.linked and not tanksOk and not healersOk
-		or currentSettings.healer.linked and currentSettings.damager.linked and not healersOk and not damagerOk
-		or currentSettings.damager.linked and currentSettings.tank.linked and not damagerOk and not tanksOk) then
-			return false, "incorrectNumberOfRoles"
-			
+		if(currentSettings.healer.enabled) then
+			healerCountIncorrect = roleCount["HEALER"] > currentSettings.healer.maximum or roleCount["HEALER"] < currentSettings.healer.minimum
+
+			if(healerCountIncorrect) then
+				if(not currentSettings.healer.linked) then
+					return false, "incorrectNumberOfRoles"
+
+				else
+					isLinkedHealerStatusIncorrect = currentSettings.healer.linked and healerCountIncorrect
+
+				end
+			end
 		end
 
-		if(currentSettings.tank.linked and currentSettings.healer.linked and not tanksOk and not healersOk
-		or currentSettings.healer.linked and currentSettings.damager.linked and not healersOk and not damagerOk
-		or currentSettings.damager.linked and currentSettings.tank.linked and not damagerOk and not tanksOk) then
+		if(currentSettings.damager.enabled) then
+			damagerCountIncorrect = roleCount["DAMAGER"] > currentSettings.damager.maximum or roleCount["DAMAGER"] < currentSettings.damager.minimum
+
+			if(damagerCountIncorrect) then
+				if(not currentSettings.damager.linked) then
+					return false, "incorrectNumberOfRoles"
+
+				else
+					isLinkedDamagerStatusIncorrect = currentSettings.damager.linked and damagerCountIncorrect
+
+				end
+			end
+		end
+
+		if(isLinkedTankStatusIncorrect and isLinkedHealerStatusIncorrect or
+		isLinkedTankStatusIncorrect and isLinkedDamagerStatusIncorrect or
+		isLinkedHealerStatusIncorrect and isLinkedDamagerStatusIncorrect) then
 			return false, "incorrectNumberOfRoles"
 			
+
 		end
 
 		if(currentSettings.difficulty.enabled) then
@@ -489,11 +522,6 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 				end
 
 			end
-		end
-			
-		if(not isActiveQueue and LFGListFrame.SearchPanel.categoryID and activityInfo.categoryID ~= LFGListFrame.SearchPanel.categoryID) then
-			return false, "incorrectCategory"
-
 		end
 		
 		return true, "allGood"

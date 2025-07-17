@@ -236,8 +236,6 @@ local function createResultTooltip(resultID, resultFrame)
 
 		end
 
-		miog.checkEgoTrip(searchResultInfo.leaderName)
-
 		GameTooltip:Show()
 	end
 end
