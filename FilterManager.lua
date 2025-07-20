@@ -177,9 +177,7 @@ local function HasRemainingSlotsForBloodlust(resultID, playerSpaceLeft)
 end
 
 local function checkIfPlayersFitIntoGroup(maxNumPlayers, listingPlayers)
-	local groupMembers = GetNumGroupMembers()
-
-	if((listingPlayers + groupMembers) > maxNumPlayers) then
+	if((listingPlayers + GetNumGroupMembers()) > maxNumPlayers) then
 		return false
 
 	end
@@ -404,7 +402,6 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 
 				else
 					isLinkedTankStatusIncorrect = currentSettings.tank.linked and tankCountIncorrect
-
 				end
 			end
 		end
@@ -442,7 +439,6 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 		isLinkedHealerStatusIncorrect and isLinkedDamagerStatusIncorrect) then
 			return false, "incorrectNumberOfRoles"
 			
-
 		end
 
 		if(currentSettings.difficulty.enabled) then
@@ -532,8 +528,6 @@ end
 
 miog.filter.checkIfSearchResultIsEligible = checkIfSearchResultIsEligible
 
--- fix save function
-
 local function saveToAdvancedFilter()
 	local categoryID = getCurrentCategoryID()
 
@@ -542,11 +536,11 @@ local function saveToAdvancedFilter()
 
 		miogFilters.minimumRating = currentSettings.rating and currentSettings.rating.enabled and currentSettings.rating.minimum or nil
 		miogFilters.hasHealer = currentSettings.healer and currentSettings.healer.enabled
-		and currentSettings.healer.linked == false
+		and not currentSettings.healer.linked
 		and currentSettings.healer.minimum > 0
 
 		miogFilters.hasTank = currentSettings.tank and currentSettings.tank.enabled
-		and currentSettings.tank.linked == false
+		and not currentSettings.tank.linked
 		and currentSettings.tank.minimum > 0
 
 		local difficultyFiltered = currentSettings.difficulty and currentSettings.difficulty.enabled
@@ -556,10 +550,10 @@ local function saveToAdvancedFilter()
 		miogFilters.difficultyMythic = difficultyFiltered and currentSettings.difficulty.id == DifficultyUtil.ID.DungeonMythic
 		miogFilters.difficultyMythicPlus = difficultyFiltered and currentSettings.difficulty.id == DifficultyUtil.ID.DungeonChallenge
 
-		miogFilters.needsTank = currentSettings.tank and currentSettings.tank.enabled and currentSettings.tank.linked == false and currentSettings.tank.maximum < 1
-		miogFilters.needsHealer = currentSettings.healer and currentSettings.healer.enabled and currentSettings.healer.linked == false and currentSettings.healer.maximum < 1
-		miogFilters.needsDamage = currentSettings.damager and currentSettings.damager.enabled and currentSettings.damager.linked == false and currentSettings.damager.maximum < 3
-		miogFilters.needsMyClass = currentSettings.needsMyClass or nil
+		miogFilters.needsTank = currentSettings.tank and currentSettings.tank.enabled and not currentSettings.tank.linked and currentSettings.tank.maximum < 1
+		miogFilters.needsHealer = currentSettings.healer and currentSettings.healer.enabled and not currentSettings.healer.linked and currentSettings.healer.maximum < 1
+		miogFilters.needsDamage = currentSettings.damager and currentSettings.damager.enabled and not currentSettings.damager.linked and currentSettings.damager.maximum < 3
+		miogFilters.needsMyClass = currentSettings.needsMyClass
 
 		miogFilters.activities = {}
 
@@ -979,10 +973,6 @@ local function refreshFilters()
 	currentSettings = MIOG_CharacterSettings.filters[panel][categoryID]
 
 	filterManager.ActivityGrid:MarkDirty()
-
-	MIOG_KARMA = function() filterManager.ActivityGrid:MarkDirty() end
-	MIOG_K = filterManager.ActivityGrid
-
 	filterManager.ActivityBosses:MarkDirty()
 	filterManager:MarkDirty()
 end

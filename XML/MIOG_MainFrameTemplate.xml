@@ -353,7 +353,7 @@
 
                                                 <FontString parentKey="FakeApps" font="GameFontHighlight">
                                                     <Anchors>
-                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPLEFT" />
                                                     </Anchors>
                                                 </FontString>
                                             </Layer>
@@ -362,7 +362,12 @@
                                         <Frames>
                                             <Frame parentKey="QueueScrollBox" inherits="WowScrollBoxList" />
 
-                                            <EventFrame parentKey="QueueScrollBar" inherits="MinimalScrollBar" />
+                                            <EventFrame parentKey="QueueScrollBar" inherits="MinimalScrollBar">
+                                                <Anchors>
+                                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="TOPRIGHT"/>
+                                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="BOTTOMRIGHT" />
+                                                </Anchors>
+                                            </EventFrame>
                                         </Frames>
                                     </Frame>
                                 </Frames>

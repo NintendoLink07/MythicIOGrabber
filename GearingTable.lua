@@ -45,7 +45,7 @@ end
 miog.gearing.getColorForItemlevel = getColorForItemlevel
 
 local function retrieveSeasonID()
-    seasonID = C_MythicPlus.GetCurrentSeason()
+    seasonID = -1 or C_MythicPlus.GetCurrentSeason()
 
     if(seasonID < 1) then
         for k in pairs(miog.NEW_GEARING_DATA) do
@@ -114,7 +114,7 @@ miog.loadGearingTable = function()
 
     local indices = {
         ["delves"] = 1,
-        ["delvesBountiful"] = 1,
+        ["delvesBounty"] = 1,
         ["dungeon"] = 4,
         ["raid"] = 3,
         ["crafting"] = 6,

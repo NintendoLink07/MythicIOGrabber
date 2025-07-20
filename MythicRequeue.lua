@@ -289,8 +289,11 @@ local function events(_, event, ...)
 
         elseif(new ~= "invited") then
             setupApplyPopup()
-            QueueStatusFrame:Update()
 
+            if(not InCombatLockdown()) then
+                QueueStatusFrame:Update()
+
+            end
         end
     end
 end

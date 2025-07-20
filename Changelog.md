@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [3.5.5] - 2025-07-19
+## [3.5.5] - 2025-07-20
+
+### Added
+
+- [UpgradeFinder] Added all item bonuses coming with 11.2.
+
+### Changed
+
+- [QueueManager] Fake group apps' text is now in the topleft corner of the queue panel.
 
 ### Fixed
 
@@ -15,6 +23,14 @@ and this project adheres to [Semantic Versioning].
 
 - [FilterManager] Fixed a specific edge case with the role filters not working.
 
+- [QueueManager] Fake group apps now have the correct frame template.
+
+- [QueueManager] The scrollbar's visibility state / position has been corrected.
+
+- [QueueManager] Updating the queue panel is now only done outside of combat.
+
+- [Gearing] Item levels have been adjusted for season 3.
+
 - Small performance improvements.
 
 
@@ -23,7 +39,7 @@ and this project adheres to [Semantic Versioning].
 
 ### Changed
 
-- [ApplicationViewer] The applicant scrollbox now gets refreshed everytime it gets displayed..
+- [ApplicationViewer] The applicant scrollbox now gets refreshed everytime it gets displayed.
 
 - [SearchPanel] The background images have a slight transparency to increase readability.
 
@@ -3923,7 +3939,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.4a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.5..HEAD
+[3.5.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.5
 [3.5.4a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.4a
 [3.5.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.4
 [3.5.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.3

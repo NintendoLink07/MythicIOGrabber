@@ -598,9 +598,8 @@ local function checkQueues()
 
 		updateAllPVEQueues(dataProvider)
 		updateCurrentListing(dataProvider)
-		updateFakeGroupApplications(dataProvider)
-
 		updateGroupApplications(dataProvider)
+		updateFakeGroupApplications(dataProvider)
 		updatePVPQueues(dataProvider)
 		updateWorldPVPQueues(dataProvider)
 		updatePetBattleQueue(dataProvider)
@@ -672,7 +671,6 @@ end
 miog.loadQueueSystem = function()
 	local scrollbox = miog.MainTab.QueueInformation.Panel.QueueScrollBox
 	local scrollbar = miog.MainTab.QueueInformation.Panel.QueueScrollBar
-	--queueSystem.framePool = CreateFramePool("Button", miog.MainTab.QueueInformation.Panel.ScrollFrame.Container, "MIOG_QueueFrame", resetQueueFrame)
 	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
 
 	local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 3);
@@ -989,7 +987,7 @@ miog.loadQueueSystem = function()
 	local scrollBoxAnchorsWithBar =
 	{
 		CreateAnchor("TOPLEFT", 3, -4),
-		CreateAnchor("BOTTOMRIGHT", -16, 3);
+		CreateAnchor("BOTTOMRIGHT", -20, 3);
 	}
 	local scrollBoxAnchorsWithoutBar =
 	{

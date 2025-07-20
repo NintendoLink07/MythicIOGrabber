@@ -165,7 +165,7 @@ local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray
 
     array[12] = type == "mythicPlus" and 34 or type == "crafting" and 13
 
-    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and 655 or type == "crafting" and 675) - ilvl)
+    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and 655 or type == "crafting" and 681) - ilvl)
 
     if(type == "mythicPlus") then
         addBonusIDsToArray(array, 10390, 11987, bestBonusID)
@@ -733,7 +733,7 @@ local function findApplicableCraftingItems(dataProvider, filterID, itemLevelToBe
         local searchResults = C_CraftingOrders.GetCustomerOptions(searchParams);
 
         for k, v in pairs(searchResults.options) do
-            if(v.iLvlMax == 675) then
+            if(v.iLvlMax == 681) then
                 local item = Item:CreateFromItemID(v.itemID)
 
                 if(invSlotToFilterType[item:GetInventoryType()] == filterID) then
