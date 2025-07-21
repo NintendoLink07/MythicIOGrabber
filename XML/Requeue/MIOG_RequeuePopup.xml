@@ -1,0 +1,61 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_RequeuePopup" inherits="DialogBorderTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="DescriptionText" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="A group you've applied to has been delisted.">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="10" y="-14"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-10" y="-14"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="GroupText" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Your next group is still listed:">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.DescriptionText" relativePoint="BOTTOMLEFT" y="-4"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.DescriptionText" relativePoint="BOTTOMRIGHT" y="-4"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="ActivityText" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.GroupText" relativePoint="BOTTOMLEFT" y="-4"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.GroupText" relativePoint="BOTTOMRIGHT" y="-4"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Button parentKey="DismissButton" inherits="UIPanelButtonTemplate" text="Dismiss">
+                <Size y="24" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="10" y="10"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOM" x="-24"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        StaticPopupSpecial_Hide(self:GetParent())
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="RefreshButton" inherits="UIPanelButtonTemplate" text="Refresh (Required)" hidden="true">
+                <Size y="24" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.DismissButton" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-10" y="10"/>
+                </Anchors>
+            </Button>
+
+            <Button parentKey="ApplyButton" inherits="UIPanelButtonTemplate" text="Apply to next group" hidden="true">
+                <Size y="24" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.DismissButton" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-10" y="10"/>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+</Ui>

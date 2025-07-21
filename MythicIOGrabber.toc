@@ -42,6 +42,7 @@ NewSettings.lua
 CharacterSettings.lua
 StatisticsRecorder.lua
 MythicRequeue.lua
+ReQueue.lua
 
 FuzzyAlgorithm.lua
 
@@ -73,6 +74,8 @@ Mixins\QueueFrameMixin.lua
 ##
 ### XML
 ##
+
+XML\Requeue\MIOG_RequeuePopup.xml
 
 XML\MIOG_FakeDropdownButton.xml
 

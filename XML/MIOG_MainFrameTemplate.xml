@@ -401,13 +401,13 @@
 
                                     <Frame parentKey="VaultProgress2" inherits="MIOG_VaultProgressDungeonTemplate">
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress3" relativePoint="TOPRIGHT" y="6"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress3" relativePoint="TOPRIGHT" y="12"/>
                                         </Anchors>
                                     </Frame>
 
                                     <Frame parentKey="VaultProgress1" inherits="MIOG_VaultProgressRaidTemplate">
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress2" relativePoint="TOPRIGHT" y="6"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress2" relativePoint="TOPRIGHT" y="12"/>
                                         </Anchors>
                                     </Frame>
 
@@ -415,7 +415,7 @@
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
                                         <Size x="280" y="16" />
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" x="2" y="6"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" x="2" y="12"/>
                                         </Anchors>
 
                                         <Layers>

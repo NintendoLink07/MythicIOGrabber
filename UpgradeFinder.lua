@@ -11,6 +11,8 @@ local simpleTypes = {
 	itemContext = 12,
 }
 
+local highestMPlusItemLevel, highestCraftingItemLevel = 0, 0
+
 local itemIDsToLoad = {}
 
 local function getEnumKeyForItemMods(number)
@@ -133,7 +135,7 @@ local function setItemLinkToSpecificItemLevel(link, ilvl, type)
 
     array[12] = type == "mythicPlus" and 34 or type == "crafting" and 13
 
-    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and 655 or type == "crafting" and 675) - ilvl)
+    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and highestMPlusItemLevel or type == "crafting" and highestCraftingItemLevel) - ilvl)
 
     if(type == "mythicPlus") then
         addBonusIDsToArray(array, 10390, 11987, bestBonusID)
@@ -150,6 +152,16 @@ end
 
 miog.setItemLinkToSpecificItemLevel = setItemLinkToSpecificItemLevel
 
+local function retrieveHighestMPlusDropLevel()
+    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.dungeon.highestItemLevel
+
+end
+
+local function retrieveHighestCraftingLevel()
+
+    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.crafting.highestItemLevel
+end
+
 local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray)
     local array
     local linkType, linkOptions, displayText
@@ -165,7 +177,7 @@ local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray
 
     array[12] = type == "mythicPlus" and 34 or type == "crafting" and 13
 
-    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and 655 or type == "crafting" and 681) - ilvl)
+    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and highestMPlusItemLevel or type == "crafting" and highestCraftingItemLevel) - ilvl)
 
     if(type == "mythicPlus") then
         addBonusIDsToArray(array, 10390, 11987, bestBonusID)
@@ -733,7 +745,7 @@ local function findApplicableCraftingItems(dataProvider, filterID, itemLevelToBe
         local searchResults = C_CraftingOrders.GetCustomerOptions(searchParams);
 
         for k, v in pairs(searchResults.options) do
-            if(v.iLvlMax == 681) then
+            if(v.iLvlMax == highestCraftingItemLevel) then
                 local item = Item:CreateFromItemID(v.itemID)
 
                 if(invSlotToFilterType[item:GetInventoryType()] == filterID) then
@@ -862,6 +874,8 @@ miog.loadUpgradeFinder = function()
 
     eventReceiver:RegisterEvent("EJ_LOOT_DATA_RECIEVED")
     eventReceiver:SetScript("OnEvent", ufEvents)
+
+    highestMPlusItemLevel, highestCraftingItemLevel = retrieveHighestMPlusDropLevel(), retrieveHighestCraftingLevel()
 
     return upgradeFinder
 end

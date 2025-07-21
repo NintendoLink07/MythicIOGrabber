@@ -4,12 +4,10 @@ miog.gearing = {}
 
 local currentChildren = {}
 
-local seasonID
-
 local function createTrackString(itemLevel)
     local trackString
 
-	for trackIndex, trackInfo in miog.rpairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
+	for trackIndex, trackInfo in miog.rpairs(miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].tracks) do
         for k, v in miog.rpairs(trackInfo.itemlevels) do
 
             if(v == itemLevel) then
@@ -24,10 +22,9 @@ local function createTrackString(itemLevel)
 end
 
 local function getColorForItemlevel(itemLevel)
-    local gearingData = miog.ITEM_LEVEL_DATA[seasonID]
     local color
     
-	for trackIndex, trackInfo in ipairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
+	for trackIndex, trackInfo in ipairs(miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].tracks) do
         if(itemLevel >= trackInfo.itemlevels[1] and itemLevel <= trackInfo.itemlevels[#trackInfo.itemlevels]) then
             color = miog.ITEM_QUALITY_COLORS[trackIndex - 1].color
             
@@ -45,12 +42,12 @@ end
 miog.gearing.getColorForItemlevel = getColorForItemlevel
 
 local function retrieveSeasonID()
-    seasonID = -1 or C_MythicPlus.GetCurrentSeason()
+    miog.F.SEASON_ID = C_MythicPlus.GetCurrentSeason()
 
-    if(seasonID < 1) then
+    if(miog.F.SEASON_ID < 1) then
         for k in pairs(miog.NEW_GEARING_DATA) do
-            if(k > seasonID) then
-                seasonID = k
+            if(k > miog.F.SEASON_ID) then
+                miog.F.SEASON_ID = k
 
             end
         end
@@ -77,7 +74,7 @@ miog.loadGearingTable = function()
     miog.Gearing.GearingTable:CreateTable(false, headers, MIOG_NewSettings.gearingTable.headers)
 
 
-    for trackIndex, data in pairs(miog.ITEM_LEVEL_DATA[seasonID].tracks) do
+    for trackIndex, data in pairs(miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].tracks) do
         local currentLegendFrame = miog.Gearing.Legend["Track" .. trackIndex]
 
         if(currentLegendFrame) then
@@ -91,7 +88,7 @@ miog.loadGearingTable = function()
         end
     end
 
-    if(not miog.NEW_GEARING_DATA[seasonID].awakenedInfo) then
+    if(not miog.NEW_GEARING_DATA[miog.F.SEASON_ID].awakenedInfo) then
         miog.Gearing.Legend["Track7"]:Hide()
         miog.Gearing.Legend:SetWidth(miog.Gearing.Legend:GetWidth() - miog.Gearing.Legend["Track7"]:GetWidth())
     end
@@ -102,7 +99,7 @@ miog.loadGearingTable = function()
         fullTable[k] = {}
     end
 
-    local seasonalData = miog.ITEM_LEVEL_DATA[seasonID]
+    local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
     local levelToIndex = {}
 
     for index, itemlevel in ipairs(seasonalData.itemLevelList) do

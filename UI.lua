@@ -175,7 +175,7 @@ miog.createFrames = function()
 
 	if(MIOG_NewSettings.reQueue) then
 		miog.loadReQueue()
-
+		miog.loadRequeue()
 	end
 
 	if(not miog.F.LITE_MODE) then

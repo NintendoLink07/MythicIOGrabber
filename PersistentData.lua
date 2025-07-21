@@ -434,6 +434,8 @@ miog.F = {
 	LFG_STATE = "solo",
 
 	CAN_INVITE = false,
+
+	SEASON_ID = -1
 }
 
 miog.BLANK_BACKGROUND_INFO = {
@@ -2063,6 +2065,11 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 
 				usedItemlevels[ilvlData.vaultLevel] = true
 			end
+		end
+
+		if(category == "dungeon" or category == "crafting") then
+			categoryData.highestItemLevel = categoryData[#categoryData].level
+			
 		end
 	end
 
