@@ -6,121 +6,121 @@
         </KeyValues>
 
         <Frames>
-            <Button parentKey="Boss1" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss1" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" />
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss2" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss2" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss1" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss3" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss3" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss2" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss4" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss4" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss3" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss5" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss5" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss4" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss6" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss6" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss5" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss7" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss7" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss6" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss8" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss8" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss7" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss9" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss9" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss8" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss10" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss10" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss9" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss11" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss11" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss10" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss12" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss12" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss11" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss13" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss13" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss12" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss14" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss14" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss13" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss15" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss15" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss14" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss16" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss16" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss15" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss17" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss17" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss16" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss18" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss18" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss17" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss19" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss19" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss18" relativePoint="RIGHT" x="4"/>
                 </Anchors>
             </Button>
 
-            <Button parentKey="Boss20" inherits="MIOG_NewFilterPanelBossFrameTemplate">
+            <Button parentKey="Boss20" inherits="MIOG_FilterManagerBossFrameTemplate">
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Boss19" relativePoint="RIGHT" x="4"/>
                 </Anchors>

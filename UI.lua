@@ -174,7 +174,7 @@ miog.createFrames = function()
 	miog.loadInspectManagement()
 
 	if(MIOG_NewSettings.reQueue) then
-		miog.loadReQueue()
+		--miog.loadReQueue()
 		miog.loadRequeue()
 	end
 

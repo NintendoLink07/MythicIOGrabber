@@ -334,7 +334,7 @@ end
 local function getOptionalPlayerData(libName, playerName, localRealm, unitID)
 	local data = {}
 
-	local playerGear = playerGearData[libName] or miog.openRaidLib.GetUnitGear(unitID)
+	local playerGear = playerGearData[libName]
 
 	if(playerGear) then
 		data.ilvl = playerGear.ilevel or 0

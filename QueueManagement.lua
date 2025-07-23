@@ -143,19 +143,19 @@ local function createQueueFrame(queueInfo)
 end
 
 local function updateFakeGroupApplications(dataProvider)
-	if(MR_GetNumberOfPartyGUIDs and not miog.F.LITE_MODE) then
-		local numOfSavedGUIDs = MR_GetNumberOfPartyGUIDs()
-
-		miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
+	if(not miog.F.LITE_MODE) then
+		local numOfSavedGUIDs = miog.requeue.countPartyGUIDs()
 
 		if(numOfSavedGUIDs> 0) then
+			miog.pveFrame2.TabFramesPanel.MainTab.QueueInformation.Panel.FakeApps:SetText("(+" .. numOfSavedGUIDs .. ")")
+
 			local total, resultTable = C_LFGList.GetFilteredSearchResults()
 			for _, resultID in ipairs(resultTable) do
 			--for d, listEntry in ipairs(miog.SearchPanel:GetSortingData()) do
 				if(C_LFGList.HasSearchResultInfo(resultID)) then
 					local partyGUID = C_LFGList.GetSearchResultInfo(resultID).partyGUID
 
-					if(MR_GetSavedPartyGUIDs()[partyGUID]) then
+					if(miog.requeue.getPartyGUIDData(partyGUID)) then
 						local id, appStatus = C_LFGList.GetApplicationInfo(resultID)
 		
 						if(appStatus ~= "applied") then
@@ -797,19 +797,31 @@ miog.loadQueueSystem = function()
 			frame.Wait:Hide()
 
 		elseif(data.template == "MIOG_QueueApplicationFrameTemplate" or isFakeApp) then
+			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
+
 			if(isFakeApp) then
 				frame:SetAlpha(0.5)
-				macrotext = "/run MIOG_DeletePartyGUID(" .. tostring(C_LFGList.GetSearchResultInfo(data.resultID).partyGUID) .. ")"
-				timeInQueue = GetTime()
+				macrotext = "/run MIOG_PROCESS_FAKE_RESULT_ID(" .. data.resultID .. ")"
+				timeInQueue = searchResultInfo.age
 
+				frame.Age.Ticker = C_Timer.NewTicker(1, function()
+					timeInQueue = timeInQueue + 1
+					frame.Age:SetText(miog.secondsToClock(timeInQueue))
+
+				end)
 			else
 				macrotext = "/run C_LFGList.CancelApplication(" .. data.resultID .. ")"
 
 				local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(data.resultID)
 				timeInQueue = appDuration
+
+				frame.Age.Ticker = C_Timer.NewTicker(1, function()
+					timeInQueue = timeInQueue - 1
+					frame.Age:SetText(miog.secondsToClock(timeInQueue))
+
+				end)
 			end
 
-			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
 			activityName = searchResultInfo.name .. " - " .. (activityInfo.mapName or "")
@@ -836,12 +848,6 @@ miog.loadQueueSystem = function()
 
 			frame:SetScript("OnEnter", function(self)
 				miog.createResultTooltip(data.resultID, self)
-
-			end)
-
-			frame.Age.Ticker = C_Timer.NewTicker(1, function()
-				timeInQueue = timeInQueue - 1
-				frame.Age:SetText(miog.secondsToClock(timeInQueue))
 
 			end)
 
@@ -955,7 +961,6 @@ miog.loadQueueSystem = function()
 			frame.Wait:Show()
 		end
 
-		frame.CancelApplication:RegisterForClicks("LeftButtonDown")
 		frame.CancelApplication:SetAttribute("macrotext1", macrotext)
 
 		

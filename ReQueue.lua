@@ -8,16 +8,25 @@ local isDirty = false
 
 local requeueFrame
 
+miog.requeue = {}
+
 local function removeGUIDFromList(guid)
     partyGUIDList[guid] = nil
 end
 
 local function addDataToList(guid, resultID)
     partyGUIDList[guid] = {resultID = resultID, timestamp = GetTimePreciseSec(), id = id}
-    isDirty = true
 
     id = id + 1
+
+    isDirty = true
 end
+
+local function getPartyGUIDData(guid)
+    return partyGUIDList[guid]
+end
+
+miog.requeue.getPartyGUIDData = getPartyGUIDData
 
 local function getFirstPartyGUID()
     local firstGUID
@@ -34,6 +43,21 @@ local function getFirstPartyGUID()
     return firstGUID
 end
 
+local function getFirstResultID()
+    local firstResultID
+    local lastCounter = math.huge
+
+    for guid, info in pairs(partyGUIDList) do
+        if(info.id < lastCounter) then
+            firstResultID = info.resultID
+
+        end
+
+    end
+
+    return firstResultID
+end
+
 local function countPartyGUIDs()
     local numOfGroups = 0
 
@@ -44,6 +68,8 @@ local function countPartyGUIDs()
 
     return numOfGroups
 end
+
+miog.requeue.countPartyGUIDs = countPartyGUIDs
 
 local function countActualApplications()
 	local numOfActualApps = 0
@@ -59,6 +85,11 @@ local function countActualApplications()
 	end
 
 	return numOfActualApps
+end
+
+local function countApplicationsAndGUIDs()
+    return countActualApplications(), countPartyGUIDs()
+
 end
 
 local function processResultID(resultID, appStatus)
@@ -78,44 +109,75 @@ local function processResultID(resultID, appStatus)
             end
         end
     end
+
+    if(not InCombatLockdown()) then
+        QueueStatusFrame:Update()
+
+    end
+end
+
+MIOG_PROCESS_FAKE_RESULT_ID = processResultID
+
+local function checkForErrors()
+    if(countPartyGUIDs() == 0) then
+        UIErrorsFrame:AddExternalErrorMessage("[MIOG]: No more groups to apply to.");
+        return false
+       
+    elseif(countActualApplications() == 5) then
+        UIErrorsFrame:AddExternalErrorMessage("[MIOG]: Too many active applications.");
+        return false
+
+    end
+
+    return true
+end
+
+local function canSetupPopup()
+    local apps, guids = countApplicationsAndGUIDs()
+
+    return apps < 5 and guids > 0 and true or false
 end
 
 local function setupPopup()
-    if(countPartyGUIDs() > 0 and countActualApplications() < 5) then
-        local info = partyGUIDList[getFirstPartyGUID()]
-        local searchResultInfo = C_LFGList.GetSearchResultInfo(info.resultID)
-        local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+    if(canSetupPopup()) then
+        local resultID = getFirstResultID()
 
-        local activityName = ""
-        
-        if(activityInfo.categoryID) then
-	        local categoryInfo = C_LFGList.GetLfgCategoryInfo(activityInfo.categoryID)
+        if(C_LFGList.HasSearchResultInfo(resultID)) then
+            local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+            local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
-            activityName = categoryInfo.name .. ":"
+            local activityName = ""
+            
+            if(activityInfo.categoryID) then
+                local categoryInfo = C_LFGList.GetLfgCategoryInfo(activityInfo.categoryID)
+
+                activityName = categoryInfo.name .. ":"
+            end
+
+            if(activityInfo.icon) then
+                activityName = activityName .. " |T" .. activityInfo.icon .. ":12:12|t "
+
+            end
+
+            activityName = activityName .. searchResultInfo.name .. " - " .. (activityInfo.mapName or "")
+
+            requeueFrame.ActivityText:SetText(activityName)
+
+            requeueFrame.BacklogText:SetText("Applications in your backlog: " .. countPartyGUIDs())
+
+            if(isDirty) then
+                requeueFrame.ApplyButton:Hide()
+                requeueFrame.RefreshButton:Show()
+
+            else
+                requeueFrame.RefreshButton:Hide()
+                requeueFrame.ApplyButton:Show()
+
+            end
+            
+            requeueFrame:SetSize(LFGListApplicationDialog:GetSize())
+            StaticPopupSpecial_Show(requeueFrame)
         end
-
-        if(activityInfo.icon) then
-            activityName = activityName .. " |T" .. activityInfo.icon .. ":12:12|t "
-
-        end
-
-        activityName = activityName .. searchResultInfo.name .. " - " .. (activityInfo.mapName or "")
-
-        requeueFrame.ActivityText:SetText(activityName)
-
-        if(isDirty) then
-            requeueFrame.ApplyButton:Hide()
-            requeueFrame.RefreshButton:Show()
-
-        else
-            requeueFrame.RefreshButton:Hide()
-            requeueFrame.ApplyButton:Show()
-
-        end
-        
-        requeueFrame:SetSize(LFGListApplicationDialog:GetSize())
-        StaticPopupSpecial_Show(requeueFrame)
-
     end
 end
 
@@ -126,12 +188,16 @@ local function events(_, event, ...)
         processResultID(resultID, appStatus)
         setupPopup()
         
-    elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
-        local resultID = ...
-        local appStatus = "failed"
+    --elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
+        --local resultID = ...
+        --local appStatus = "failed"
 
-        processResultID(resultID, appStatus)
+        --processResultID(resultID, appStatus)
+        --setupPopup()
+
+    elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
         setupPopup()
+
     end
 end
 
@@ -146,6 +212,21 @@ local function loadRequeue()
     eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
     hooksecurefunc("LFGListSearchPanel_DoSearch", function() isDirty = false end)
+
+	mainFrame.ApplyButton:FitToText()
+	mainFrame.ApplyButton:SetScript("OnClick", function()
+	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+
+		local resultID = getFirstResultID()
+
+        if(resultID and checkForErrors()) then
+            C_LFGList.ApplyToGroup(resultID,
+                LFGListApplicationDialog.TankButton:IsShown() and LFGListApplicationDialog.TankButton.CheckButton:GetChecked(),
+                LFGListApplicationDialog.HealerButton:IsShown() and LFGListApplicationDialog.HealerButton.CheckButton:GetChecked(),
+                LFGListApplicationDialog.DamagerButton:IsShown() and LFGListApplicationDialog.DamagerButton.CheckButton:GetChecked()
+            )
+        end
+	end)
 
     requeueFrame = mainFrame
 end

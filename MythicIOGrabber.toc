@@ -93,7 +93,6 @@ XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_MainFrameRoleTemplate.xml
 XML\MIOG_Plugin.xml
 
-XML\MIOG_QueueFrame.xml
 XML\MIOG_EntryCreation.xml
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_OptionsPanel.xml
@@ -119,7 +118,6 @@ XML\GroupManager\MIOG_GroupManagerRaidBossTemplate.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml
-XML\ApplicationViewer\MIOG_ApplicantMemberFrameTemplate.xml
 XML\ApplicationViewer\MIOG_ApplicantMemberFrameTemplateNew.xml
 
 XML\SearchPanel\MIOG_SearchPanel.xml
@@ -157,18 +155,6 @@ XML\NewRaiderIOInfoPanel\MIOG_NewRaiderIOInfoPanelTierTemplate.xml
 
 XML\Lockouts\MIOG_LockoutCheckCharacterTemplate.xml
 XML\Lockouts\MIOG_LockoutCheckInstanceTemplate.xml
-
-XML\NewFilterPanel\MIOG_NewFilterPanel.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelIconSettingTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelTextSettingTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelClassPanelTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelDualSpinnerTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelDualInputBoxTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelDropdownSettingTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelActivityRowTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelBossFrameTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelActivityBossRowTemplate.xml
-XML\NewFilterPanel\MIOG_NewFilterPanelContainerRowTemplate.xml
 
 XML\Statistics\MIOG_ProgressTab.xml
 XML\Statistics\MIOG_ProgressLayoutTemplate.xml
@@ -228,3 +214,4 @@ XML\FilterManager\MIOG_FilterManagerMultiInputsTemplate.xml
 XML\FilterManager\MIOG_FilterManagerSmallTextFilterTemplate.xml
 XML\FilterManager\MIOG_FilterManagerSmallTextAndIconFilterTemplate.xml
 XML\FilterManager\MIOG_FilterManagerActivityBossesTemplate.xml
+XML\FilterManager\MIOG_FilterManagerBossFrameTemplate.xml

@@ -42,6 +42,9 @@
                 <CheckedTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\filterLink.png" />
                 <HighlightTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\filterLinkHover.png" alphaMode="ADD" />
                 
+                <Scripts>
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
             </CheckButton>
 
             <EditBox parentKey="Minimum" letters="2" inherits="NumericInputSpinnerTemplate">

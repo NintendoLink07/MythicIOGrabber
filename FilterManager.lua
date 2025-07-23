@@ -1163,6 +1163,13 @@ local function loadFilterManager()
 			GameTooltip:Show()
 		end)
 
+		spinner.Link:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText("Linking")
+			GameTooltip:AddLine(miog.FILTER_DESCRIPTIONS["linking"], nil, nil, nil, true)
+			GameTooltip:Show()
+		end)
+
 		spinner.CheckButton:SetScript("OnClick", function(self)
 			local inputSettings = retrieveSetting(nameLower)
 

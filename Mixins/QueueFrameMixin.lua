@@ -7,9 +7,17 @@ QueueFrameMixin = {}
 function QueueFrameMixin:OnLoad()
     self.formatter = formatter
 
+	self.CancelApplication:RegisterForClicks("LeftButtonDown")
     self.CancelApplication:SetAttribute("type", "macro")
 end
 
+function QueueFrameMixin:SetTimerType(type)
+    self.timerType = type
+end
+
+function QueueFrameMixin:SetInfo(info)
+
+end
 
 QueueLFGFrameMixin = CreateFromMixins(QueueFrameMixin)
 
@@ -34,3 +42,7 @@ function QueueLFGFrameMixin:RetrieveQueueList()
 
     return dungeonList
 end
+
+QueueFakeApplicationFrameMixin = CreateFromMixins(QueueFrameMixin)
+QueuePVPFrameMixin = CreateFromMixins(QueueFrameMixin)
+QueueListingFrameMixin = CreateFromMixins(QueueFrameMixin)

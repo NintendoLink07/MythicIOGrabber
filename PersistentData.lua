@@ -155,11 +155,12 @@ miog.FILTER_DESCRIPTIONS = {
 	["lustfit"] = "Checks if you / the applicant has a lust/heroism effect.",
 	["decline"] = "Checks if the group has actively declined you before, e.g. clicked the X button on your application.",
 	["difficulty"] = "Set the difficulty of the groups you wanna see.",
-	["tank"] = "Select the number of tanks the groups should have. Clicking the link icon and the link icon of another role filter will check if atleast 1 of them passes (e.g. you wanna have atleast a tank or healer in the group).",
-	["healer"] = "Select the number of healers the groups should have. Clicking the link icon and the link icon of another role filter will check if atleast 1 of them passes (e.g. you wanna have atleast a tank or healer in the group).",
-	["damager"] = "Select the number of damagers the groups should have. Clicking the link icon and the link icon of another role filter will check if atleast 1 of them passes (e.g. you wanna have atleast a tank or healer in the group).",
+	["tank"] = "Changes the minimum and maximum number of tanks a group should have.",
+	["healer"] = "Changes the minimum and maximum number of healers a group should have.",
+	["damager"] = "Changes the minimum and maximum number of damagers a group should have.",
 	["age"] = "Set the minimum and/or maximum amount of minutes the groups have to be listed.",
-	["rating"] = "Set the minimum and/or maximum amount of rating points the groups should have to be listed.",
+	["linking"] = "Enabling 2 or 3 links checks if either of the enabled checks have been passed, e.g. if atleast 1 Tank OR 1 Healer is in the group.",
+	["rating"] = "Sets the minimum and/or maximum amount of rating points the groups should have to be listed.",
 	["activities"] = "Select specific activities (usually connected to the current seasonal dungeons and raids).",
 }
 

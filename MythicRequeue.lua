@@ -259,6 +259,11 @@ local function events(_, event, ...)
         if(C_LFGList.HasSearchResultInfo(resultID) and MIOG_NewSettings.requeueData.guids[C_LFGList.GetSearchResultInfo(resultID).partyGUID]) then
             refreshPartyGUIDs()
 
+        else
+            local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+            addPartyGUID(searchResultInfo.partyGUID, resultID) --adding to GUID list for later checks
+
+            setupApplyPopup()
         end
         
     elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
