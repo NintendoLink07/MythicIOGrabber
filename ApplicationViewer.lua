@@ -109,7 +109,7 @@ local function MakeRunLevelWithIncrement(dungeonScoreStruct)
 	return pluses..HIGHLIGHT_FONT_COLOR:WrapTextInColorCode(dungeonScoreStruct.bestRunLevel);
 end
 
-local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
+local function memberFrame_OnEnter(self, debugMode) --LFGListApplicantMember_OnEnter
 	local applicantID = self.applicantID;
 	local memberIdx = self.memberIdx;
 
@@ -122,11 +122,25 @@ local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
 	if(not activityInfo) then
 		return;
 	end
-	local applicantInfo = C_LFGList.GetApplicantInfo(applicantID);
-	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID = C_LFGList.GetApplicantMemberInfo(applicantID, memberIdx);
-	local bestDungeonScoreForEntry = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, memberIdx, activeEntryInfo.activityIDs[1]);
-	local bestOverallScore = C_LFGList.GetApplicantBestDungeonScore(applicantID, memberIdx);
-	local pvpRatingForEntry = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, memberIdx, activeEntryInfo.activityIDs[1]);
+
+	local applicantInfo
+	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, isLeaver
+	local bestDungeonScoreForEntry, bestOverallScore, pvpRatingForEntry
+
+	if(not debugMode) then
+		applicantInfo = C_LFGList.GetApplicantInfo(applicantID);
+		name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, isLeaver = C_LFGList.GetApplicantMemberInfo(applicantID, memberIdx);
+		bestDungeonScoreForEntry = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, memberIdx, activeEntryInfo.activityIDs[1]);
+		bestOverallScore = C_LFGList.GetApplicantBestDungeonScore(applicantID, memberIdx);
+		pvpRatingForEntry = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, memberIdx, activeEntryInfo.activityIDs[1]);
+
+	else
+		applicantInfo = miog.debug_GetApplicantInfo(applicantID)
+
+		name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damage, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, isLeaver, bestDungeonScoreForEntry, pvpRatingForEntry = miog.debug_GetApplicantMemberInfo(applicantID, memberIdx)
+		bestOverallScore = dungeonScore
+
+	end
 
 	GameTooltip:SetOwner(self, "ANCHOR_NONE");
 	GameTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 105, 0);
@@ -142,7 +156,7 @@ local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
 			end
 		end
 		if(UnitFactionGroup("player") ~= PLAYER_FACTION_GROUP[factionGroup]) then
-			GameTooltip_AddHighlightLine(GameTooltip, UNIT_TYPE_LEVEL_FACTION_TEMPLATE:format(level, classSpecializationName, FACTION_STRINGS[factionGroup]));
+			GameTooltip_AddHighlightLine(GameTooltip, UNIT_TYPE_LEVEL_FACTION_TEMPLATE:format(level, classSpecializationName, PLAYER_FACTION_GROUP[factionGroup]));
 		else
 			GameTooltip_AddHighlightLine(GameTooltip, UNIT_TYPE_LEVEL_TEMPLATE:format(level, classSpecializationName));
 		end
@@ -159,6 +173,34 @@ local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
 	if ( activityInfo.useHonorLevel ) then
 		GameTooltip:AddLine(string.format(LFG_LIST_HONOR_LEVEL_CURRENT_PVP, honorLevel), 1, 1, 1);
 	end
+
+	if isLeaver then
+		local textureSettings = {
+			width = 12,
+			height = 12,
+			anchor = Enum.TooltipTextureAnchor.LeftCenter,
+			margin = { left = 3, right = 5, top = 0, bottom = 0 },
+		};
+		GameTooltip:AddLine(MYTHIC_PLUS_DESERTER);
+		GameTooltip:AddAtlas("groupfinder-icon-leaver", textureSettings);
+	end
+
+	if relationship then
+		local textureSettings = {
+			width = 20,
+			height = 19,
+			anchor = Enum.TooltipTextureAnchor.LeftCenter,
+			margin = { left = -2, right = 2, top = -4, bottom = -3 },
+		};
+		if relationship == "friend" then
+			GameTooltip:AddLine(FRIEND);
+		elseif relationship == "guild" then
+			GameTooltip:AddLine(LFG_LIST_GUILD_MEMBER);
+		end
+		GameTooltip:AddAtlas("groupfinder-icon-friend", textureSettings);
+	end
+
+
 	if ( applicantInfo.comment and applicantInfo.comment ~= "" ) then
 		GameTooltip:AddLine(" ");
 		GameTooltip:AddLine(string.format(LFG_LIST_COMMENT_FORMAT, applicantInfo.comment), LFG_LIST_COMMENT_FONT_COLOR.r, LFG_LIST_COMMENT_FONT_COLOR.g, LFG_LIST_COMMENT_FONT_COLOR.b, true);
@@ -201,40 +243,42 @@ local function memberFrame_OnEnter(self) --LFGListApplicantMember_OnEnter
 	local stats = C_LFGList.GetApplicantMemberStats(applicantID, memberIdx);
 	local lastTitle = nil;
 
-	--Tank proving ground
-	if ( stats[23690] and stats[23690] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	elseif ( stats[23687] and stats[23687] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	elseif ( stats[23684] and stats[23684] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	end
+	if(stats) then
+		--Tank proving ground
+		if ( stats[23690] and stats[23690] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		elseif ( stats[23687] and stats[23687] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		elseif ( stats[23684] and stats[23684] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_TANK_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		end
 
-	--Healer proving ground
-	if ( stats[23691] and stats[23691] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	elseif ( stats[23688] and stats[23688] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	elseif ( stats[23685] and stats[23685] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	end
+		--Healer proving ground
+		if ( stats[23691] and stats[23691] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		elseif ( stats[23688] and stats[23688] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		elseif ( stats[23685] and stats[23685] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_HEALER_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		end
 
-	--Damage proving ground
-	if ( stats[23689] and stats[23689] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	elseif ( stats[23686] and stats[23686] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
-	elseif ( stats[23683] and stats[23683] > 0 ) then
-		LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
-		lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		--Damage proving ground
+		if ( stats[23689] and stats[23689] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_GOLD, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		elseif ( stats[23686] and stats[23686] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_SILVER, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		elseif ( stats[23683] and stats[23683] > 0 ) then
+			LFGListUtil_AppendStatistic(LFG_LIST_PROVING_DAMAGER_BRONZE, nil, LFG_LIST_PROVING_GROUND_TITLE, lastTitle);
+			lastTitle = LFG_LIST_PROVING_GROUND_TITLE;
+		end
 	end
 
 	GameTooltip:Show();
@@ -245,15 +289,15 @@ local function updateApplicantMemberFrame(frame, data)
 	local applicantData = miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(applicantID) or C_LFGList.GetApplicantInfo(applicantID)
 	local activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityIDs[1] or 0
 
-	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID
+	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, isLeaver
 	local dungeonData, pvpData, rioProfile
 
 
 	if(miog.F.IS_IN_DEBUG_MODE) then
-		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
+		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, isLeaver, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
 
 	else
-		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
+		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
 		dungeonData = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, applicantIndex, activityID)
 		pvpData = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, applicantIndex, activityID)
 
@@ -268,22 +312,7 @@ local function updateApplicantMemberFrame(frame, data)
 	applicantMemberFrame.data = data
 	applicantMemberFrame.memberIdx = applicantIndex
 	applicantMemberFrame:SetScript("OnEnter", function(self)
-		if(playerIsIgnored) then
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetText("Player is on your ignore list")
-			GameTooltip:Show()
-
-		else
-			if(not miog.F.IS_IN_DEBUG_MODE) then
-				memberFrame_OnEnter(self)
-
-			else
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText("Raid Shadow Legends")
-				GameTooltip:Show()
-
-			end
-		end
+		memberFrame_OnEnter(self, miog.F.IS_IN_DEBUG_MODE)
 	end)
 
 	local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame
@@ -295,8 +324,23 @@ local function updateApplicantMemberFrame(frame, data)
 
 	applicantMemberFrame.Background:SetColorTexture(r, g, b, 0.5)
 
+	local nameTable = {}
+
+	if(isLeaver) then
+		tinsert(nameTable, "|A:groupfinder-icon-leaver:12:12|a")
+
+	end
+
+	if(relationship) then
+		tinsert(nameTable, "|TInterface\\Addons\\MythicIOGrabber\\res\\infoIcons\\friend.png:14|t")
+
+	end
+
+	tinsert(nameTable, playerName)
+
 	local nameFontString = applicantMemberFrame.Name
-	nameFontString:SetText(playerName)
+
+	nameFontString:SetText(table.concat(nameTable))
 	nameFontString:SetScript("OnMouseDown", function(_, button)
 		if(button == "RightButton") then
 			local copybox = miog.ApplicationViewer.CopyBox
@@ -334,8 +378,6 @@ local function updateApplicantMemberFrame(frame, data)
 		applicantMemberFrame.ItemLevel:SetText(miog.round(itemLevel, 1))
 
 	end
-
-	applicantMemberFrame.Friend:SetShown(relationship and true or false)
 
 	local declineButton = applicantMemberFrame.Decline
 	declineButton:OnLoad()
@@ -401,13 +443,13 @@ local function createDataProviderWithUnsortedData()
 			local allOkay = true
 
 			for applicantIndex = 1, applicantData.numMembers, 1 do
-				local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo
+				local name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, isLeaver, bestDungeonScoreForListing, pvpRatingInfo
 
 				if(miog.F.IS_IN_DEBUG_MODE) then
-					name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
+					name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, isLeaver, bestDungeonScoreForListing, pvpRatingInfo = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
 
 				else
-					name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
+					name, class, _, _, itemLevel, _, _, _, _, assignedRole, _, dungeonScore, _, _, _, specID, isLeaver = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
 
 				end
 
@@ -563,8 +605,9 @@ local function createAVSelfEntry(pvpBracket)
 		[14]  = UnitFactionGroup("player"),
 		[15]  = raceID,
 		[16]  = specID,
-		[17]  = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"},
-		[18]  = {bracket = pvpBracket, rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
+		[17] = random(0, 100) > 50 and true or false,
+		[18]  = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"},
+		[19]  = {bracket = pvpBracket, rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
 	}
 
 	--local startTime = GetTimePreciseSec()
@@ -625,7 +668,10 @@ local function createFullEntries(iterations)
 			end
 
 			local randomRace = random(1, 5)
-			local itemLevel = random(440, 489) + 0.5
+			
+			local _, tempItemLevel, tempPvpItemLevel = GetAverageItemLevel()
+			local itemLevel = random(tempItemLevel - 20, tempItemLevel + 10)
+			local pvpItemLevel = random(tempPvpItemLevel - 20, tempPvpItemLevel + 10)
 
 			miog.DEBUG_APPLICANT_MEMBER_INFO[applicantID][memberIndex] = {
 				[1] = debugProfile[1] .. "-" .. debugProfile[2],
@@ -637,15 +683,16 @@ local function createFullEntries(iterations)
 				[7]  = trueAndFalse[random(1,2)],
 				[8]  = trueAndFalse[random(1,2)],
 				[9]  = trueAndFalse[random(1,2)],
-				[10]  = select(5, GetSpecializationInfoByID(specID)),
-				[11]  = true,
-				[12]  = rioProfile and rioProfile.mythicKeystoneProfile and rioProfile.mythicKeystoneProfile.currentScore or 0,
-				[13]  = itemLevel,
-				[14]  = random(0, 100) > 50 and "Alliance" or "Horde",
-				[15]  = randomRace == 1 and random(1, 11) or randomRace == 2 and 22 or randomRace == 3 and random(24, 37) or randomRace == 4 and 52 or 70,
-				[16]  = specID,
-				[17]  = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"},
-				[18]  = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
+				[10] = select(5, GetSpecializationInfoByID(specID)),
+				[11] = true,
+				[12] = rioProfile and rioProfile.mythicKeystoneProfile and rioProfile.mythicKeystoneProfile.currentScore or 0,
+				[13] = pvpItemLevel,
+				[14] = random(0, 100) > 50 and "Alliance" or "Horde",
+				[15] = randomRace == 1 and random(1, 11) or randomRace == 2 and 22 or randomRace == 3 and random(24, 37) or randomRace == 4 and 52 or 70,
+				[16] = specID,
+				[17] = random(0, 100) > 50 and true or false,
+				[18] = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"},
+				[19] = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)},
 			}
 		end
 
@@ -816,9 +863,9 @@ miog.createApplicationViewer = function()
 	applicationViewer:SetExternalSort(true)
 	applicationViewer:SetSettingsTable(MIOG_NewSettings.sortMethods["LFGListFrame.ApplicationViewer"])
 	applicationViewer:AddMultipleSortingParameters({
-		{name = "role", padding = 156},
+		{name = "role", padding = 186},
 		{name = "primary", padding = 13},
-		{name = "secondary", padding = 21},
+		{name = "secondary", padding = 19},
 		{name = "ilvl", padding = 21},
 	})
 

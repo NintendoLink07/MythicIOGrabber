@@ -11,8 +11,25 @@ function QueueFrameMixin:OnLoad()
     self.CancelApplication:SetAttribute("type", "macro")
 end
 
-function QueueFrameMixin:SetTimerType(type)
+function QueueFrameMixin:SetTimerInfo(type, value)
     self.timerType = type
+
+    value = value or 0
+
+    if(type == "add") then
+        self.Ticker = C_Timer.NewTicker(1, function()
+            value = value + 1
+            self.Age:SetText(formatter:Format(value))
+
+        end)
+        
+    elseif(type == "sub") then
+        self.Ticker = C_Timer.NewTicker(1, function()
+            value = value - 1
+            self.Age:SetText(formatter:Format(value))
+
+        end)
+    end
 end
 
 function QueueFrameMixin:SetInfo(info)

@@ -17,6 +17,8 @@ miog.updateCurrencies = function()
 		local currencyTable = miog.CURRENCY_INFO[currentSeason]
 
 		if(currencyTable) then
+			local numOfCurrencies = #currencyTable
+			
 			for k, v in ipairs(currencyTable) do
 				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
 
@@ -48,7 +50,7 @@ miog.updateCurrencies = function()
 				
 			end
 
-			for i = #currencyTable + 1, 7, 1 do
+			for i = numOfCurrencies + 1, 8, 1 do
 				miog.MainTab.Currency[tostring(i)]:Hide()
 
 			end
@@ -261,11 +263,6 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 
 	if(IsPlayerAtEffectiveMaxLevel()) then
 		local groups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
-		
-		--[[if(#groups ~= #miog.BACKUP_SEASONAL_IDS[3]) then
-			groups = miog.BACKUP_SEASONAL_IDS[3]
-
-		end]]
 
 		for k, v in ipairs(groups) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)

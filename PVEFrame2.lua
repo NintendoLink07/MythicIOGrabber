@@ -1,6 +1,9 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+local formatter = CreateFromMixins(SecondsFormatterMixin)
+formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
+
 local activityIndices = {
 	Enum.WeeklyRewardChestThresholdType.Raid, -- raid
 	Enum.WeeklyRewardChestThresholdType.Activities, -- m+
@@ -76,6 +79,25 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 	end
 end
 
+local function retrieveSpellInfo(flyoutSpellID)
+	local desc = C_Spell.GetSpellDescription(flyoutSpellID)
+	local mapID = miog.TELEPORT_SPELLS_TO_MAP[flyoutSpellID]
+
+	local abbreviatedName
+
+	if(mapID) then
+		local mapInfo = miog.MAP_INFO[mapID]
+		abbreviatedName = mapInfo.abbreviatedName
+
+	else
+		print("MISSING", flyoutSpellID, desc)
+		abbreviatedName = ""
+
+	end
+
+	return desc, abbreviatedName
+end
+
 local function addTeleportButtons()
 	local lastExpansionFrames = {}
 
@@ -93,28 +115,25 @@ local function addTeleportButtons()
 
 			for k = 1, numSlots, 1 do
 				local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(info.id, k)
-				local desc = C_Spell.GetSpellDescription(flyoutSpellID)
-				local tableIndex = #expNameTable + 1
-				local mapID = miog.TELEPORT_SPELLS_TO_MAP[flyoutSpellID]
-				local shortName = mapID and miog.MAP_INFO[mapID].shortName or ""
-
-				expNameTable[tableIndex] = {name = spellName, desc = desc, spellID = flyoutSpellID, type = info.type, known = spellKnown, shortName = shortName}
+				local desc, abbreviatedName = retrieveSpellInfo(flyoutSpellID)
 
 				if(desc == "") then
 					local spell = Spell:CreateFromSpellID(flyoutSpellID)
 					spell:ContinueOnSpellLoad(function()
-						addTeleportButtons()
+						desc, abbreviatedName = retrieveSpellInfo(flyoutSpellID)
+						expNameTable[#expNameTable+1] = {name = spellName, desc = desc, spellID = flyoutSpellID, type = info.type, known = spellKnown, abbreviatedName = abbreviatedName}
 
 					end)
+				else
+					expNameTable[#expNameTable+1] = {name = spellName, desc = desc, spellID = flyoutSpellID, type = info.type, known = spellKnown, abbreviatedName = abbreviatedName}
 
-					return false
 
 				end
 			end
 
 			table.sort(expNameTable, function(k1, k2)
 				if(k1.type == "dungeon") then
-					return k1.shortName < k2.shortName
+					return k1.abbreviatedName < k2.abbreviatedName
 
 				else
 					return k1.spellID < k2.spellID
@@ -150,7 +169,7 @@ local function addTeleportButtons()
 					tpButton:SetAttribute("spell", spellInfo.name)
 					tpButton:RegisterForClicks("LeftButtonDown")
 
-					tpButton.Text:SetText(v.shortName or WrapTextInColorCode("MISSING", "FFFF0000"))
+					tpButton.Text:SetText(v.abbreviatedName or WrapTextInColorCode("MISSING", "FFFF0000"))
 
 				end
 
@@ -477,9 +496,6 @@ local function createPVEFrameReplacement()
 	queueRolePanel.Damager.Checkbox:SetEnabled(damagerAvailable)
 	queueRolePanel.Damager.Icon:SetTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png")
 	queueRolePanel.Damager.Icon:SetDesaturated(not damagerAvailable)
-
-	local formatter = CreateFromMixins(SecondsFormatterMixin)
-	formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
 
 	addTeleportButtons()
 	

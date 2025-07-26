@@ -4,6 +4,7 @@ local selectedInstance, selectedIndex, selectedEncounter, selectedDifficulty
 
 local journalInfo = {}
 local expansionTable = {}
+local currentActivitiesTable = {}
 
 local selectedItemClass, selectedItemSubClass
 local selectedArmor, selectedClass, selectedSpec, selectedSlot
@@ -128,6 +129,10 @@ local function fuzzyCheck(text, data)
 end
 
 local function checkIfItemIsFiltered(item)
+    if(noFilter and selectedArmor == nil) then
+        return true
+    end
+
     local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(item.link)
 
     local isSpecialToken = classID == 5 and subclassID == 2 and selectedItemClass == 15 and selectedItemSubClass == 0
@@ -135,6 +140,7 @@ local function checkIfItemIsFiltered(item)
     local specialItemCorrectSubClass = selectedItemSubClass ~= nil and subclassID == selectedItemSubClass or selectedItemSubClass == nil and true
 
     local isSlotCorrect = item.filterType == C_EncounterJournal.GetSlotFilter()
+
     local isArmorCorrect = selectedArmor == item.armorType
 
     if(isSpecialToken or specialItemCorrectClass and specialItemCorrectSubClass) then
@@ -181,7 +187,7 @@ local function sortByEncounterIndex(k1, k2)
             end
         end
 
-        return k1.encounterIndex > k2.encounterIndex
+        return k1.encounterIndex < k2.encounterIndex
     end
 
     return k1.mapID > k2.mapID
@@ -220,7 +226,7 @@ local function addGroupsToList(list, groups, blockList, isActive)
                 local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
                 activityInfo.isActive = isActive
                 activityInfo.isRaid = not isActive
-                activityInfo.name = activityInfo.mapName
+                activityInfo.name = activityInfo.groupName
                 tinsert(list, activityInfo)
                 blockList[v] = true
             end
@@ -261,18 +267,48 @@ local function addMostCurrentRaidToList(instanceList, groups)
     tinsert(instanceList, miog.requestActivityInfo(highestIDRaid))
 end
 
+local function createListWithCurrentGroupInfos()
+    local seasonalDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.CurrentSeason)
+    local raidGroups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and Enum.LFGListFilter.CurrentExpansion or Enum.LFGListFilter.Recommended)
+
+    local fullList = {}
+
+    if(seasonalDungeons and #seasonalDungeons > 0) then
+        for _, v in ipairs(seasonalDungeons) do
+            tinsert(fullList, {groupID = v, isRaid = false})
+        end
+    end
+
+    if(raidGroups and #raidGroups > 0) then
+        for _, v in ipairs(raidGroups) do
+            tinsert(fullList, {groupID = v, isRaid = true})
+        end
+    end
+
+    local mapIDList = {}
+
+    for k, info in ipairs(fullList) do
+        local groupInfo = miog.requestGroupInfo(info.groupID)
+        local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
+        
+        tinsert(mapIDList, {activityID = groupInfo.highestDifficultyActivityID, mapID = activityInfo.mapID, name = groupInfo.groupName, isRaid = info.isRaid})
+    end
+
+    return mapIDList
+end
+
 local function createJournalInstanceListFromActivityGroups()
     local instanceList = {}
     local groupsDone = {}
 
-    local recommendedDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.Recommended)
+    --local recommendedDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.Recommended)
     local seasonalDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.CurrentSeason)
-    local otherDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.PvE)
-    local expansionDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.CurrentExpansion)
+    --local otherDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.PvE)
+    --local expansionDungeons = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, Enum.LFGListFilter.CurrentExpansion)
 
     local raidGroups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and Enum.LFGListFilter.CurrentExpansion or Enum.LFGListFilter.Recommended)
-    local otherRaidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.PvE)
-    local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
+    --local otherRaidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.PvE)
+    --local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
 
     addGroupsToList(instanceList, seasonalDungeons, groupsDone, true)
     --addGroupsToList(instanceList, recommendedDungeons, groupsDone, false)
@@ -306,33 +342,35 @@ local function loadItems()
 
     for i = 1, EJ_GetNumLoot() do
 		local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
-        itemInfo.index = i
-        itemInfo.difficultyID = difficultyID
-        itemInfo.encounterIndex = miog.ENCOUNTER_INFO[itemInfo.encounterID] and miog.ENCOUNTER_INFO[itemInfo.encounterID].index or 0
+        if(checkIfItemIsFiltered(itemInfo)) then
+            itemInfo.index = i
+            itemInfo.difficultyID = difficultyID
+            itemInfo.encounterIndex = miog.ENCOUNTER_INFO[itemInfo.encounterID] and miog.ENCOUNTER_INFO[itemInfo.encounterID].index or 0
 
-        if(itemInfo.link) then
-            local item = Item:CreateFromItemLink(itemInfo.link)
-            itemInfo.itemlevel = item:GetCurrentItemLevel()
+            if(itemInfo.link) then
+                local item = Item:CreateFromItemLink(itemInfo.link)
+                itemInfo.itemlevel = item:GetCurrentItemLevel()
+            end
+
+            itemInfo.mapID = mapID
+
+            if itemInfo.displayAsPerPlayerLoot then
+                tinsert(lootTable, itemInfo)
+
+            elseif itemInfo.displayAsExtremelyRare then
+                tinsert(lootTable, itemInfo)
+
+            elseif itemInfo.displayAsVeryRare then
+                tinsert(lootTable, itemInfo)
+
+            elseif itemInfo.link then
+                tinsert(lootTable, itemInfo)
+
+            else
+                missingItems[itemInfo.itemID] = true
+
+            end
         end
-
-        itemInfo.mapID = mapID
-
-		if itemInfo.displayAsPerPlayerLoot then
-			tinsert(lootTable, itemInfo)
-
-		elseif itemInfo.displayAsExtremelyRare then
-			tinsert(lootTable, itemInfo)
-
-		elseif itemInfo.displayAsVeryRare then
-			tinsert(lootTable, itemInfo)
-
-        elseif itemInfo.link then
-			tinsert(lootTable, itemInfo)
-
-        else
-            missingItems[itemInfo.itemID] = true
-
-		end
 	end
 
     return lootTable
@@ -367,7 +405,7 @@ local function loadItems()
                     end
 
                 end
-            elseif(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) then
+            elseif(checkIfItemIsFiltered(itemInfo)) then
                 local encounterInfo = miog.ENCOUNTER_INFO[itemInfo.encounterID]
 
                 itemInfo.index = i
@@ -460,64 +498,70 @@ local function loadItemsFromCurrentActivities()
 
     local lootTable = {}
 
-    if(searching and not areItemsStillMissing()) then
-        local results = fuzzyCheck(searchBoxText, filterTable)
+    if(not areItemsStillMissing()) then
+        if(searching) then
+            local results = fuzzyCheck(searchBoxText, filterTable)
 
-        for k, v in ipairs(results) do
-            local itemInfo = filterTable[v[1]]
+            for k, v in ipairs(results) do
+                local itemInfo = filterTable[v[1]]
 
-            if(itemInfo) then
-                if(noFilter and selectedArmor == nil or checkIfItemIsFiltered(itemInfo)) then
-                    --[[local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(itemInfo.encounterID)
+                if(itemInfo) then
+                    if(checkIfItemIsFiltered(itemInfo)) then
+                        --[[local encounterName, _, journalEncounterID, rootSectionID, _, _, dungeonEncounterID = EJ_GetEncounterInfo(itemInfo.encounterID)
 
-                    local encounterInfo = miog.ENCOUNTER_INFO[itemInfo.encounterID]
+                        local encounterInfo = miog.ENCOUNTER_INFO[itemInfo.encounterID]
 
-                    local item = Item:CreateFromItemLink(itemInfo.link)
+                        local item = Item:CreateFromItemLink(itemInfo.link)
 
-                    itemInfo.index = itemInfo.index
-                    itemInfo.itemLevel = item:GetCurrentItemLevel()
-                    itemInfo.difficultyID = itemInfo.difficultyID
-                    itemInfo.sourceName = encounterName
-                    itemInfo.sourceIconType = "portrait"
+                        itemInfo.index = itemInfo.index
+                        itemInfo.itemLevel = item:GetCurrentItemLevel()
+                        itemInfo.difficultyID = itemInfo.difficultyID
+                        itemInfo.sourceName = encounterName
+                        itemInfo.sourceIconType = "portrait"
 
-                    if(encounterInfo) then
-                        itemInfo.encounterIndex = encounterInfo and encounterInfo.index
-                        itemInfo.creatureDisplayInfoID = encounterInfo and encounterInfo.creatureDisplayInfoID
-                    else
-                        itemInfo.encounterIndex = 0
+                        if(encounterInfo) then
+                            itemInfo.encounterIndex = encounterInfo and encounterInfo.index
+                            itemInfo.creatureDisplayInfoID = encounterInfo and encounterInfo.creatureDisplayInfoID
+                        else
+                            itemInfo.encounterIndex = 0
 
-                        local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
-                        itemInfo.creatureDisplayInfoID = sectionInfo.creatureDisplayID
+                            local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
+                            itemInfo.creatureDisplayInfoID = sectionInfo.creatureDisplayID
+
+                        end
+
+                        itemInfo.positions = v[2]
+                        itemInfo.score = v[3]
+
+                        dataProvider:Insert(itemInfo)]]
+
+                        itemInfo.positions = v[2]
+
+                        tinsert(lootTable, itemInfo)
 
                     end
-
-                    itemInfo.positions = v[2]
-                    itemInfo.score = v[3]
-
-                    dataProvider:Insert(itemInfo)]]
-
-                    itemInfo.positions = v[2]
-
-			        tinsert(lootTable, itemInfo)
-
                 end
+
             end
 
+        else
+            for k, v in ipairs(filterTable) do
+                if(checkIfItemIsFiltered(v)) then
+                    tinsert(lootTable, v)
+
+                end
+
+            end
         end
     end
 
     return lootTable
 end
 
-local function resetInstance()
-    selectedInstance = nil
-    EncounterJournal.instanceID = nil;
+local function resetDifficulty()
+    selectedDifficulty = nil
+    miog.Drops.DifficultyDropdown:SetText(miog.Drops.DifficultyDropdown:GetDefaultText())
 
-    miog.Drops.ScrollBox:Flush()
-    miog.Drops.InstanceDropdown:SetText(miog.Drops.InstanceDropdown:GetDefaultText())
-    miog.Drops.BossDropdown:SetText(miog.Drops.BossDropdown:GetDefaultText())
-
-    miog.updateLoot()
 end
 
 local function resetEncounter()
@@ -526,41 +570,50 @@ local function resetEncounter()
 
     miog.Drops.BossDropdown:SetText(miog.Drops.BossDropdown:GetDefaultText())
 
-    miog.updateLoot()
 end
 
-local function resetDifficulty()
-    selectedDifficulty = nil
-    miog.Drops.DifficultyDropdown:SetText(miog.Drops.DifficultyDropdown:GetDefaultText())
+local function resetInstance()
+    selectedInstance = nil
+    EncounterJournal.instanceID = nil;
 
-    miog.updateLoot()
+    miog.Drops.ScrollBox:Flush()
+    miog.Drops.InstanceDropdown:SetText(miog.Drops.InstanceDropdown:GetDefaultText())
+    
+    resetEncounter()
+    resetDifficulty()
+
 end
 
 local function refreshFilters()
+    miog.Drops.SearchBox:ClearAllFilters()
+
     if(selectedInstance) then
         local instanceName = EJ_GetInstanceInfo(selectedInstance)
 
         miog.Drops.SearchBox:ShowFilter("instance", instanceName, function()
             resetInstance()
+            miog.updateLoot()
+
+        end)
+    end
+
+    if(selectedEncounter) then
+        local encounterName = select(1, EJ_GetEncounterInfo(selectedEncounter))
+        miog.Drops.SearchBox:ShowFilter("encounter", encounterName, function()
+            resetEncounter()
+            miog.updateLoot()
+
+        end)
+    end
+    
+    if(selectedDifficulty) then
+        local difficultyName = miog.DIFFICULTY_ID_INFO[selectedDifficulty].name
+        miog.Drops.SearchBox:ShowFilter("difficulty", difficultyName, function()
+            resetDifficulty()
+            miog.updateLoot()
 
         end)
 
-        if(selectedEncounter) then
-            local encounterName = select(1, EJ_GetEncounterInfo(selectedEncounter))
-            miog.Drops.SearchBox:ShowFilter("encounter", encounterName, function()
-                resetEncounter()
-
-            end)
-        end
-        
-        if(selectedDifficulty) then
-            local difficultyName = miog.DIFFICULTY_ID_INFO[selectedDifficulty].name
-            miog.Drops.SearchBox:ShowFilter("difficulty", difficultyName, function()
-                resetDifficulty()
-
-            end)
-
-        end
     end
 end
 
@@ -605,19 +658,58 @@ local function updateLoot()
     table.sort(mainLootTable, sortByEncounterIndex)
 
     if(mainLootTable) then
+        local lastInstance
         local lastEncounter, lastDifficulty
-        local parent
+        local header1, subheader
 
         for i = 1, #mainLootTable do
             local itemInfo = mainLootTable[i]
             
             if(selectedInstance) then
-                if(lastEncounter ~= itemInfo.encounterID or lastDifficulty ~= itemInfo.difficultyID) then
-                    parent = dataProvider:Insert({
+                if(lastEncounter ~= itemInfo.encounterID) then
+                    if(lastEncounter) then
+			            header1:Insert({template = "MIOG_DropsFillerTemplate"})
+
+                    end
+
+                    header1 = dataProvider:Insert({
                         template = "MIOG_DropsSourceTemplate",
                         difficultyID = itemInfo.difficultyID,
                         encounterID = itemInfo.encounterID,
                         encounterIndex = itemInfo.encounterIndex,
+                        mapID = itemInfo.mapID,
+                        type = "encounter",
+                        expandable = true,
+                    })
+
+                    lastDifficulty = nil
+
+                end
+
+                if(lastDifficulty ~= itemInfo.difficultyID) then
+                    header1:Insert({
+                        template = "MIOG_DropsDifficultyTemplate",
+                        difficultyID = itemInfo.difficultyID,
+                        encounterID = itemInfo.encounterID,
+                        encounterIndex = itemInfo.encounterIndex,
+                        mapID = itemInfo.mapID,
+                        source = "difficulty",
+                        expandable = true,
+                    })
+                    
+
+                end
+
+                itemInfo.template = "MIOG_DropsItemTemplate"
+
+                header1:Insert(mainLootTable[i])
+
+            elseif(not searching) then
+                local sameInstance = lastInstance == itemInfo.mapID
+                if(not sameInstance) then
+                    header1 = dataProvider:Insert({
+                        template = "MIOG_DropsSourceTemplate",
+                        difficultyID = itemInfo.difficultyID,
                         mapID = itemInfo.mapID,
                         source = "instance",
                         expandable = true,
@@ -625,9 +717,51 @@ local function updateLoot()
 
                 end
 
+                local differentEncounter = lastEncounter ~= itemInfo.encounterID
+                local differentDifficulty = lastDifficulty ~= itemInfo.difficultyID
+
+                if(differentDifficulty) then
+                    if(differentEncounter) then
+                        if(lastEncounter) then
+                            subheader:Insert({template = "MIOG_DropsFillerTemplate"})
+
+                        end
+
+                        local array = {
+                            template = "MIOG_DropsSourceTemplate",
+                            difficultyID = itemInfo.difficultyID,
+                            encounterID = itemInfo.encounterID,
+                            encounterIndex = itemInfo.encounterIndex,
+                            mapID = itemInfo.mapID,
+                            source = "encounter",
+                            expandable = true,
+                        }
+
+                        subheader = header1:Insert(array)
+                    end
+
+                    subheader:Insert({
+                        template = "MIOG_DropsDifficultyTemplate",
+                        difficultyID = itemInfo.difficultyID,
+                        encounterID = itemInfo.encounterID,
+                        encounterIndex = itemInfo.encounterIndex,
+                        mapID = itemInfo.mapID,
+                        source = "difficulty",
+                        expandable = true,
+                    })
+                    
+
+                end
+
                 itemInfo.template = "MIOG_DropsItemTemplate"
 
-                parent:Insert(mainLootTable[i])
+                (subheader or header1):Insert(mainLootTable[i])
+
+                --[[itemInfo.template = "MIOG_DropsFullItemTemplate"
+                itemInfo.source = "activity"
+                dataProvider:Insert(mainLootTable[i])]]
+
+                lastInstance = itemInfo.mapID
 
             else
                 itemInfo.template = "MIOG_DropsFullItemTemplate"
@@ -662,14 +796,21 @@ local function selectEncounter(encounterID)
 end
 
 local function selectInstance(journalInstanceID)
+    local isDifferentInstance = journalInstanceID ~= selectedInstance
+
     selectedInstance = journalInstanceID
+
+    if(selectedEncounter and isDifferentInstance) then
+        resetEncounter()
+
+    end
 
     updateLoot()
 end
 
 local function resetClassAndSpec()
-    selectedClass = nil
-    selectedSpec = nil
+    selectedClass = 0
+    selectedSpec = 0
     EJ_ResetLootFilter()
 
     miog.Drops.ArmorDropdown:SetText(miog.Drops.ArmorDropdown:GetDefaultText())
@@ -708,6 +849,20 @@ local function createCurrentActivitiesTable()
     return list
 end
 
+local function sortJournalInstances(k1, k2)
+    if(k1.isRaid == k2.isRaid) then
+        if(k1.isRaid) then
+            return k1.index < k2.index
+
+        end
+
+        return k1.name < k2.name
+
+    end
+
+    return k1.isRaid and true or k2.isRaid and false
+end
+
 local function loadInstanceInfo()
     expansionTable = {}
 
@@ -743,7 +898,7 @@ local function loadInstanceInfo()
                     journalInstanceID = journalInstanceID,
                     name = name,
                     isRaid = checkForRaid,
-                    shortName = mapInfo.shortName,
+                    --abbreviatedName = mapInfo.abbreviatedName,
                     mapID = mapID,
                     index = counter,
                 })
@@ -751,23 +906,22 @@ local function loadInstanceInfo()
                 counter = counter + 1
 
                 journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(counter, checkForRaid)
+
             end
         end
 
-        table.sort(journalInfo[tierIndex], function(k1, k2)
-            if(k1.isRaid == k2.isRaid) then
-                if(k1.isRaid) then
-                    return k1.index < k2.index
-
-                end
-
-                return k1.name < k2.name
-
-            end
-
-            return k1.isRaid and true or k2.isRaid and false
-        end)
+        table.sort(journalInfo[tierIndex], sortJournalInstances)
     end
+
+    local mapIDList = createListWithCurrentGroupInfos()
+
+    for k, v in ipairs(mapIDList) do
+        local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v.mapID)
+        tinsert(currentActivitiesTable, {journalInstanceID = journalInstanceID, name = v.name, index = k, isRaid = v.isRaid, mapID = v.mapID})
+        
+    end
+
+    table.sort(currentActivitiesTable, sortJournalInstances)
 
 end
 
@@ -876,9 +1030,6 @@ local function updatePartialItemFrame(frame, data)
 end
 
 local function updateSourceFrame(frame, data, fullFrame)
-    local encounterName, _, journalEncounterID, rootSectionID, _, journalInstanceID, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
-    --local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
-
     frame.Icon:ClearAllPoints()
 
     if(data.expandable) then
@@ -891,20 +1042,33 @@ local function updateSourceFrame(frame, data, fullFrame)
 
     end
 
-    local encData = miog.getEncounterInfo(data.encounterID)
-    local text = miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName
+    if(data.encounterID) then
+        local encounterName, _, journalEncounterID, rootSectionID, _, journalInstanceID, dungeonEncounterID = EJ_GetEncounterInfo(data.encounterID)
+        --local sectionInfo = C_EncounterJournal.GetSectionInfo(rootSectionID);
 
-    if(fullFrame) then
-        local mapData = miog.getJournalInstanceInfo(journalInstanceID)
-        frame.Icon:SetTexture(mapData.icon)
-        text = text .. " - " .. (mapData.shortName or "")
+        
+        local encData = miog.getEncounterInfo(data.encounterID)
+        local text = miog.DIFFICULTY_ID_INFO[data.difficultyID].shortName
 
-    elseif(encData) then
-        SetPortraitTextureFromCreatureDisplayID(frame.Icon, encData.creatureDisplayInfoID)
+        if(fullFrame) then
+            local mapInfo = miog.getJournalInstanceInfo(journalInstanceID)
+            frame.Icon:SetTexture(mapInfo.icon)
+            text = text .. " - " .. (mapInfo.abbreviatedName or "")
+            frame.Name:SetText(WrapTextInColorCode("[" .. text .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
+
+        elseif(encData) then
+            SetPortraitTextureFromCreatureDisplayID(frame.Icon, encData.creatureDisplayInfoID)
+            frame.Name:SetText(encounterName)
+        end
+
+    else
+        local mapInfo = miog.getMapInfo(data.mapID)
+
+        frame.Icon:SetTexture(mapInfo.icon)
+        frame.Name:SetText(mapInfo.name)
+
 
     end
-
-    frame.Name:SetText(WrapTextInColorCode("[" .. text .. "] ", miog.DIFFICULTY_ID_INFO[data.difficultyID].color:GenerateHexColor()) .. encounterName)
 end
 
 local function updateFullItemFrame(frame, data)
@@ -994,12 +1158,10 @@ miog.loadJournal = function()
 
         local currentActivitiesButton = rootDescription:CreateRadio("Current activities", function(index) return selectedIndex == index end, nil, 100)
 
-        local activitiesList = createCurrentActivitiesTable()
-
         currentActivitiesButton:CreateTitle("Raids")
 
         local lastIsRaid = false
-        for k, info in ipairs(activitiesList) do
+        for k, info in ipairs(currentActivitiesTable) do
             if(lastIsRaid and lastIsRaid ~= info.isRaid) then
                 currentActivitiesButton:CreateTitle("Dungeons")
 
@@ -1109,8 +1271,15 @@ miog.loadJournal = function()
 			updatePartialItemFrame(frame, data)
 
 		elseif(data.template == "MIOG_DropsSourceTemplate") then
-			updateSourceFrame(frame, data)
+            updateSourceFrame(frame, data)
             frame.ExpandFrame:SetState(false)
+
+        elseif(data.template == "MIOG_DropsDifficultyTemplate") then
+            local difficulty = miog.DIFFICULTY_ID_INFO[data.difficultyID]
+            local text = difficulty.name
+			frame.Difficulty:SetText(text)
+            frame.Difficulty:SetTextColor(difficulty.color:GetRGBA())
+            frame.Line:SetColorTexture(difficulty.color:GetRGBA())
 
 		end
 	end
@@ -1136,6 +1305,8 @@ miog.loadJournal = function()
 
         end
     end)
+    
+    selectedSlot = C_EncounterJournal.GetSlotFilter()
 
     journal.SlotDropdown:SetDefaultText("Equipment slots")
     journal.SlotDropdown:SetupMenu(function(dropdown, rootDescription)
@@ -1148,7 +1319,6 @@ miog.loadJournal = function()
             updateLoot()
 
         end)
-
 
         local sortedFilters = {}
 
@@ -1199,6 +1369,8 @@ miog.loadJournal = function()
         end, {class = 15, subclass = 0})
     end)
 
+    selectedClass, selectedSpec = EJ_GetLootFilter()
+
     journal.ArmorDropdown:SetDefaultText("Armor types")
     journal.ArmorDropdown:SetupMenu(function(dropdown, rootDescription)
         rootDescription:CreateButton(CLEAR_ALL, function(index)
@@ -1218,9 +1390,11 @@ miog.loadJournal = function()
         for k, v in ipairs(miog.CLASSES) do
 	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(index) return index == selectedClass end, function(name)
                 selectedClass = k
-                selectedSpec = nil
+                selectedSpec = 0
                 EJ_SetLootFilter(selectedClass, selectedSpec)
                 updateLoot()
+
+                dropdown:CloseMenu()
             end, k)
 
             for x, y in ipairs(v.specs) do

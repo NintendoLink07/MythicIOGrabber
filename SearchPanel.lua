@@ -482,6 +482,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 
 		if(searchResultInfo.leaderName) then
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+			
 			local isQuestCategory = activityInfo.categoryID == 1
 			local declineData = searchResultInfo.leaderName and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID]
 			local questTagInfo = searchResultInfo.questID and C_QuestLog.GetQuestTagInfo(searchResultInfo.questID)
@@ -529,6 +530,11 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 			frame.BasicInformation.IconBorder:SetColorTexture(color.r, color.g, color.b, color.a or 1)
 
 			local strings = {}
+
+			if(data.isLeaverGroup) then
+				tinsert(strings, "|A:groupfinder-icon-leaver:12:12|a")
+
+			end
 
 			if(searchResultInfo.isWarMode) then
 				tinsert(strings, "|A:pvptalents-warmode-swords:12:12|a")
@@ -719,12 +725,14 @@ local function updateScrollBoxFrame(frame, data)
 
 		if(isRaid) then
 			for i = 1, searchResultInfo.numMembers, 1 do
-				local role = C_LFGList.GetSearchResultMemberInfo(data.resultID, i)
+				local info = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
 
-				if(role) then
-					roleCount[role] = roleCount[role] + 1
-
+				if(not info.assignedRole) then
+					info.assignedRole = "DAMAGER"
+					
 				end
+
+				roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
 			end
 
 			local mapInfo = miog.getMapInfo(mapID, true)
@@ -773,12 +781,6 @@ local function updateScrollBoxFrame(frame, data)
 			end
 		else
 			local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
-
-			local groupMemberArray = {}
-			for i = 1, searchResultInfo.numMembers, 1 do --max is num of group icons
-				groupMemberArray[i] = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
-
-			end
 			
 			local arrays = {
 				["TANK"] = {},
@@ -792,19 +794,31 @@ local function updateScrollBoxFrame(frame, data)
 				["DAMAGER"] = false,
 			}
 
+			data.isLeaverGroup = false
+
 			for i = 1, groupLimit, 1 do --max is num of group icons
-				local info = groupMemberArray[i]
+				local info = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
 
 				if(info) then
+					if(not info.assignedRole) then
+						info.assignedRole = "DAMAGER"
+
+					end
+
 					tinsert(arrays[info.assignedRole], {
 						leader = info.isLeader,
 						role = info.assignedRole,
 						class = info.classFilename,
-						specID = info.classFilename and info.specName and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[info.specName .. "-" .. info.classFilename]
+						specID = info.classFilename and info.specName and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[info.specName .. "-" .. info.classFilename],
+						isLeaver = info.isLeaver,
 					})
 				
 					roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
 					roleAdded[info.assignedRole] = true
+
+					if(not data.isLeaverGroup) then
+						data.isLeaverGroup = info.isLeaver
+					end
 				else
 					local role = not roleAdded["TANK"] and "TANK" or not roleAdded["HEALER"] and "HEALER" or "DAMAGER"
 					tinsert(arrays[role], {class = "DUMMY", role = role, specID = 20})
@@ -831,6 +845,8 @@ local function updateScrollBoxFrame(frame, data)
 
 					currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID] and miog.SPECIALIZATIONS[specID].squaredIcon or
 					miog.CLASSFILE_TO_ID[memberData.class] and miog.CLASSFILE_TO_INFO[memberData.class].icon)
+
+					currentMemberFrame.LeaverIcon:SetShown(memberData.isLeaver)
 
 					if(memberData.class ~= "DUMMY") then
 						currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(memberData.class):GetRGBA())

@@ -16,18 +16,18 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
         local k = 1
 
         for _, data in ipairs(self.mythicPlusInfo) do
-            if(not done[data.mapID]) then
+            if(not done[data.activityID]) then
                 local currentDungeon = self.MythicPlus["Dungeon" .. k]
-                local mapInfo = miog.getMapInfo(data.mapID, true)
+                local activityInfo = miog.requestActivityInfo(data.activityID)
 
-                currentDungeon.dungeonName = mapInfo.name
+                currentDungeon.dungeonName = activityInfo.groupName
 
                 if(currentDungeon.Name) then
-                    currentDungeon.Name:SetText(mapInfo.shortName)
+                    currentDungeon.Name:SetText(activityInfo.abbreviatedName)
                     
                 end
 
-                currentDungeon.Icon:SetTexture(self.mode == "side" and mapInfo.horizontal or mapInfo.icon)
+                currentDungeon.Icon:SetTexture(self.mode == "side" and activityInfo.horizontal or activityInfo.icon)
                 currentDungeon.Icon:SetDesaturation(0)
                 currentDungeon.Icon:SetScript("OnMouseDown", function()
                     local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
@@ -38,7 +38,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
 
                 end)
 
-                done[data.mapID] = true
+                done[data.activityID] = true
 
                 k = k + 1
             end
@@ -82,7 +82,7 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsF
             end)
         end
 
-        raidHeaderFrame.Name:SetText(mapInfo.shortName .. (isMainsFrame and "[Main]" or ""))
+        raidHeaderFrame.Name:SetText(mapInfo.abbreviatedName .. (isMainsFrame and "[Main]" or ""))
 
         for i = 1, 10, 1 do
             local currentBoss = "Boss" .. i
@@ -225,13 +225,13 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
     local k = 1
 
     for _, data in ipairs(self.mythicPlusInfo) do
-        if(not done[data.mapID]) then
+        if(not done[data.activityID]) then
             local currentDungeon = self.MythicPlus["Dungeon" .. k]
 
-            if(self.mplusData and self.mplusData[data.mapID]) then
-                currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.mapID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.mapID].chests)) or 0, self.mplusData and self.mplusData[data.mapID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+            if(self.mplusData and self.mplusData[data.activityID]) then
+                currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.activityID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.activityID].chests)) or 0, self.mplusData and self.mplusData[data.activityID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
 
-                if(self.mplusData[data.mapID].level == 0) then
+                if(self.mplusData[data.activityID].level == 0) then
                     currentDungeon.Icon:SetDesaturation(0.7)
                 end
             else
@@ -240,7 +240,7 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
 
             end
 
-            done[data.mapID] = true
+            done[data.activityID] = true
             k = k + 1
         end
     end
@@ -418,6 +418,43 @@ function RaiderIOInformationPanelMixin:ApplyFillData(refreshData)
 
     self:ApplyMythicPlusData(refreshData)
     self:ApplyRaidData(refreshData)
+
+    if(self.Comment and self.comment) then
+	    self.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((self.comment and self.comment) or ""))
+    end
+end
+
+function RaiderIOInformationPanelMixin:ApplySpecificFillDataOnly(type, refreshData)
+    self:CalculatePanelHeight()
+
+    if(self.RaceRolesServer) then
+        self.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION or "N/A") .. "-" .. (self.realm or GetRealmName() or "") .. " ")
+        
+        if(self.roles) then
+            if(self.roles.tank) then
+                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.TANK_TEXTURE .. " ")
+
+            end
+
+            if(self.roles.healer) then
+                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.HEALER_TEXTURE .. " ")
+
+            end
+
+            if(self.roles.damager) then
+                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.DPS_TEXTURE .. " ")
+
+            end
+        end
+    end
+
+    if(type == "mplus") then
+        self:ApplyMythicPlusData(refreshData)
+        
+    elseif(type == "raid") then
+        self:ApplyRaidData(refreshData)
+        
+    end
 
     if(self.Comment and self.comment) then
 	    self.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((self.comment and self.comment) or ""))

@@ -1252,8 +1252,8 @@ function ProgressTabMixin:LoadActivities()
 				local mapName1, mapName2
 
 				if(self.id == 1) then
-					mapName1 = miog.retrieveShortNameFromChallengeModeMap(k1)
-					mapName2 = miog.retrieveShortNameFromChallengeModeMap(k2)
+					mapName1 = miog.retrieveAbbreviatedNameFromChallengeModeMap(k1)
+					mapName2 = miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
 
 				elseif(self.id == 2) then
 					mapName1 = miog.MAP_INFO[k1].shortName

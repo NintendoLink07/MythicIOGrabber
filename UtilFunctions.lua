@@ -341,19 +341,34 @@ miog.retrieveMapIDFromGFID = function(groupFinderID)
 end
 
 miog.retrieveMapIDFromChallengeModeMap = function(challengeID)
-	for k, v in pairs(miog.CHALLENGE_MODE_INFO) do
-		if(k == challengeID) then
-			return v.mapID
-		end
-	end
+	local info = miog.CHALLENGE_MODE_INFO[challengeID]
+	
+	return info.mapID
 end
 
-miog.retrieveShortNameFromChallengeModeMap = function(challengeID)
-	for k, v in pairs(miog.CHALLENGE_MODE_INFO) do
-		if(challengeID == k) then
-			return miog.MAP_INFO[v.mapID].shortName
-		end
+miog.retrieveGroupIDFromChallengeModeMap = function(challengeID)
+	local info = miog.CHALLENGE_MODE_INFO[challengeID]
+	
+	return info.groupID
+end
+
+
+miog.retrieveAbbreviatedNameFromChallengeModeMap = function(challengeID)
+	local info = miog.CHALLENGE_MODE_INFO[challengeID]
+
+	local abbreviatedName
+
+	local groupInfo = miog.GROUP_ACTIVITY[info.groupID]
+
+	if(groupInfo) then
+		abbreviatedName = groupInfo.abbreviatedName
+
+	else
+		abbreviatedName = miog.MAP_INFO[info.mapID].abbreviatedName
+		
 	end
+
+	return abbreviatedName
 end
 
 miog.findBattlegroundBackgroundByName = function(mapName)

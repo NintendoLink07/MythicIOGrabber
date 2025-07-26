@@ -1,0 +1,80 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_DropsInstanceTemplate" inherits="BackdropTemplate" virtual="true">
+        <Size y="20" />
+
+        <Frames>
+            <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin" hidden="true">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2" />
+                </Anchors>
+
+                <Scripts>
+                    <OnLoad>
+                        self:OnLoad()
+                        self:SetMaxStates(2)
+                        self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                        self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                        self:SetState(false)
+                    </OnLoad>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+                        local baseFrame = self:GetParent()
+                            
+                        self:AdvanceState()
+
+                        baseFrame.node:SetCollapsed(not baseFrame.node:IsCollapsed())
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="16" y="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="2" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">                
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" maxLines="1">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2" />
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2" />
+                    </Anchors>
+                </FontString>
+            </Layer>    
+        </Layers>
+
+        <Scripts>
+            <OnLoad>
+                self:SetBackdrop( {edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
+                self:SetBackdropBorderColor(PAPER_FRAME_EXPANDED_COLOR:GetRGB())
+            </OnLoad>
+        </Scripts>
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true">
+                    <Size x="12" y="12"/>
+                </Texture>
+            </Layer>
+        </Layers>
+                        
+        <Scripts>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+            <OnMouseDown>
+                if(IsLeftShiftKeyDown()) then
+                    ChatEdit_InsertLink(self.itemLink)
+                end
+            </OnMouseDown>
+        </Scripts>
+    </Frame>
+</Ui>

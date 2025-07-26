@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [3.5.6] - 2025-07-26
+
+### Added
+
+- Currencies for the new season have been added. 
+
+- [Drops] When selecting an instance multiple difficulties will be consolidated into a single expandable entry.
+
+- [SearchPanel] Deserter icons added for the new "isLeaver" flag.
+The icon gets added to the group name of the listing and onto the group's member(spec) icons.
+
+- [ApplicationViewer] Deserter icons have been added for all applicants.
+
+### Changed
+
+- [ApplicationViewer] The friend icon now shows up infront of the playername.
+
+- [Drops] The slots and armor types filter now also work without selecting an instance.
+
+- All functions that request map data have been modified to also take into account group info for mega-dungeons.
+
+- Ecodome Al'dani and Manaforge Omega data has been correctly added.
+
+### Fixed
+
+- [Drops] The correct filter settings for equipment slot and class/spec will be applied inbetween /reloads or reloggs.
+
+- [Drops] All items now get included in the extra checks "armor type" and "tokens / mounts / recipes".
+
+- An error trying to measure the time of the teleport cds has been resolved.
+
+### Known issues
+
+- [Drops] When switching instances the extra items like tokens and recipes might not load correctly.
+
+
+
+
 ## [3.5.5] - 2025-07-20
 
 ### Added
@@ -35,6 +74,7 @@ and this project adheres to [Semantic Versioning].
 
 
 
+
 ## [3.5.4a] - 2025-07-12
 
 ### Changed
@@ -42,6 +82,7 @@ and this project adheres to [Semantic Versioning].
 - [ApplicationViewer] The applicant scrollbox now gets refreshed everytime it gets displayed.
 
 - [SearchPanel] The background images have a slight transparency to increase readability.
+
 
 
 
@@ -83,6 +124,7 @@ and this project adheres to [Semantic Versioning].
 
 
 
+
 ## [3.5.3] - 2025-07-06
 
 ### Added
@@ -106,6 +148,7 @@ and this project adheres to [Semantic Versioning].
 
 
 
+
 ## [3.5.2] - 2025-07-03
 
 ### Changed
@@ -125,6 +168,7 @@ and this project adheres to [Semantic Versioning].
 - Clicking the "Queue for multiple dungeons" button is now correctly closing the dropdown menu.
 
 - Previously capped currencies that have been uncapped later in the season won't display the weekly cap anymore.
+
 
 
 
@@ -155,6 +199,7 @@ and this project adheres to [Semantic Versioning].
 - Many extra checks for lite mode and if RaiderIO is not installed.
 
 - Small performance improvements.
+
 
 
 
@@ -209,6 +254,7 @@ Versions 3.6 and forward will include new features coming with 11.2.
 
 
 
+
 ## [3.4.4] - 2025-05-24
 
 ### Changed
@@ -247,11 +293,13 @@ Improves performance and eliminates incorrect data being shown.*
 
 
 
+
 ## [3.4.3a] - 2025-05-14
 
 ### Fixed
 
 - [GroupManager] Follower dungeon groups won't create an error anymore trying to use their class data.
+
 
 
 
@@ -292,6 +340,7 @@ This is fixed in v3.4.4.
 
 
 
+
 ## [3.4.2] - 2025-04-30
 
 ### Changed
@@ -327,6 +376,7 @@ This reduced the addon's filesize by another 18mb.
 
 
 
+
 ## [3.4.1] - 2025-04-25
 
 ### Fixed
@@ -338,6 +388,7 @@ This reduced the addon's filesize by another 18mb.
 - [SearchPanel] Opening the questing or custom categories won't create an error for specific groups anymore.
 
 - More code changes to split off the custom upscaled images into an own addon to keep the main addons filesize low.
+
 
 
 
@@ -387,6 +438,7 @@ A fix is in the works, probably coming with v3.4.2 or v3.4.3.
 
 
 
+
 ## [3.3.0a] - 2025-04-13
 
 ### Fixed
@@ -394,6 +446,7 @@ A fix is in the works, probably coming with v3.4.2 or v3.4.3.
 - [UpgradeFinder] Clicking on an empty slot won't create an error anymore.
 
 - [UpgradeFinder] Clicking on an offhand slot while you have a mainhand equipped will now show.
+
 
 
 
@@ -438,6 +491,7 @@ This issue is fixed in v3.3.2.
 
 
 
+
 ## [3.2.9] - 2025-03-26
 
 ### Added
@@ -479,6 +533,7 @@ The number font size in the class and the spec frames has been increased.
 
 
 
+
 ## [3.2.8] - 2025-03-19
 
 ### Added
@@ -500,11 +555,13 @@ There you can set different signup text and manually copy them into the box.
 
 
 
+
 ## [3.2.7a] - 2025-03-16
 
 ### Fixed
 
 - Deleted a debug print.
+
 
 
 
@@ -528,6 +585,7 @@ Color-coded with red if nothing is left to earn this week or green if you still 
 - [GroupManager] Showing indepth data will now correctly use the chosen player's realm instead of your own.
 
 - [Progress] The vault status icon now gets when looking at the PVP overview.
+
 
 
 
@@ -569,6 +627,7 @@ Color-coded with red if nothing is left to earn this week or green if you still 
 
 
 
+
 ## [3.2.5] - 2025-03-11
 
 ### Fixed
@@ -589,6 +648,7 @@ This is fixed in v3.2.6.
 
 
 
+
 ## [3.2.4] - 2025-03-07
 
 ### Fixed
@@ -604,6 +664,7 @@ This is fixed in v3.2.6.
 - [SearchPanel] By default all bosses are assumed to be alive (in the past groups seemed to be fully cleared without any encounter defeated info).
 
 - [FilterPanel] Bosses that have been defeated but have also an alternative name (Vexie and the Geargrinders / The Geargrinders) can now be more reliably filtered out.
+
 
 
 
@@ -636,6 +697,7 @@ This will be fixed in v3.2.4.
 
 
 
+
 ## [3.2.2d] - 2025-03-05
 
 ### Fixed
@@ -648,6 +710,7 @@ This will be fixed in v3.2.4.
 
 
 
+
 ## [3.2.2c] - 2025-03-05
 
 ### Fixed
@@ -657,6 +720,7 @@ This will be fixed in v3.2.4.
 - [GroupManager] There shouldn't be character name retrieval problems anymore when you're fresh out of a loading screen and in a group.
 
 - [GroupManager] There shouldn't be a 3 to 4 line long progress indicator anymore.
+
 
 
 
@@ -676,6 +740,7 @@ This will be fixed in v3.2.4.
 
 
 
+
 ## [3.2.2a] - 2025-03-05
 
 ### Fixed
@@ -689,6 +754,7 @@ This will be fixed in v3.2.4.
 - [ApplicationViewer] Factions will now be correctly recognized again.
 
 - [GroupManager] ALL raid manager frames will now be correctly be shown instead of only 4 of every group, lol.
+
 
 
 
@@ -721,6 +787,7 @@ This will be part of a graph in v3.2.3 to track all chars individual progress of
 
 
 
+
 ## [3.2.1] - 2025-02-27
 
 ### Fixed
@@ -731,6 +798,7 @@ This will be part of a graph in v3.2.3 to track all chars individual progress of
 
 
 
+
 ## [3.2.0a] - 2025-02-26
 
 ### Fixed
@@ -738,6 +806,7 @@ This will be part of a graph in v3.2.3 to track all chars individual progress of
 - [SearchPanel] Group listings can now be expanded again.
 
 - [GroupManager] There should be no more error when hovering over Brann in the group manager when you're in a delve.
+
 
 
 
@@ -783,6 +852,7 @@ I have a rough idea how to fix it, this will be fixed in v3.2.2 or v3.2.3.
 
 
 
+
 ## [3.1.4] - 2025-02-10
 
 ### Changed
@@ -801,6 +871,7 @@ I have a rough idea how to fix it, this will be fixed in v3.2.2 or v3.2.3.
 
 
 
+
 ## [3.1.3a] - 2025-02-06
 
 ### Fixed
@@ -812,6 +883,7 @@ I have a rough idea how to fix it, this will be fixed in v3.2.2 or v3.2.3.
 - [GroupManager] Hovering over the indepth window without having selected a player won't cause a LUA error anymore.
 
 - Recognition of player specs in your group should now work way better.
+
 
 
 
@@ -852,6 +924,7 @@ This will be fixed in v3.1.4.
 
 
 
+
 ## [3.1.2] - 2025-02-02
 
 ### Changed
@@ -868,6 +941,7 @@ The search panel should now be lagfree.
 - The queue dropdown and the dropdown list can't be clicked through anymore to avoid signing up for group when you don't hit the queue "button"
 
 - Updated the Open Raid library.
+
 
 
 
@@ -889,6 +963,7 @@ PTR should now work more reliably with this client.
 - Any raider IO data relating to a player's main character now gets correctly parsed and shown.
 
 - Dungeons and bosses that haven't been completed yet by a character will now be desaturated in all raider IO panels.
+
 
 
 
@@ -923,6 +998,7 @@ There should be SIGNIFICANTLY less random framedrops when data of players is bei
 
 
 
+
 ## [3.0.15] - 2025-01-19
 
 ### Changed
@@ -932,6 +1008,7 @@ There should be SIGNIFICANTLY less random framedrops when data of players is bei
 ### Fixed
 
 - Currencies that don't have a maximum quantity (e.g. crests) won't be formatted as if they would have a maximum quantity.
+
 
 
 
@@ -953,6 +1030,7 @@ There should be SIGNIFICANTLY less random framedrops when data of players is bei
 
 
 
+
 ## [3.0.13] - 2025-01-06
 
 ### Fixed
@@ -968,6 +1046,7 @@ There should be SIGNIFICANTLY less random framedrops when data of players is bei
 - [ApplicationViewer] The app viewer won't jump into the foreground anymore if the leader edited the listing / relisted the group.
 
 - Renamed the "Statistics" tab in the mainframe to "Progress" since there's a lot of change incoming over the next two months and this fits more :).
+
 
 
 
@@ -1002,6 +1081,7 @@ Probably only really noticable on slower machines.
 
 
 
+
 ## [3.0.11] - 2024-12-20
 
 ### Fixed
@@ -1019,6 +1099,7 @@ This will be fixed with v3.0.12.
 
 
 
+
 ## [3.0.10] - 2024-12-18
 
 ### Fixed
@@ -1029,6 +1110,7 @@ This will be fixed with v3.0.12.
 
 - Opening up the group finder for the first time in a session might have some serious lag and subsequent openings have a little bit of lag.
 This will be fixed in v3.1.0, haven't investigated what's up with that.
+
 
 
 
@@ -1052,6 +1134,7 @@ This will be fixed in v3.1.0, haven't investigated what's up with that.
 
 
 
+
 ## [3.0.8] - 2024-12-04
 
 ### Added
@@ -1072,6 +1155,7 @@ Will take till the next update for it to be fully resolved (currently rewriting 
 
 
 
+
 ## [3.0.7] - 2024-11-24
 
 ### Changed
@@ -1088,6 +1172,7 @@ Means a less bloated and more reliable addon, 100% coverage of backup files (e.g
 - Increased performance of certain parts of code.
 
 - Updated the open raid library.
+
 
 
 
@@ -1115,6 +1200,7 @@ Blizzard sends search result data usually twice (except for rated BG's), the fir
 
 
 
+
 ## [3.0.5] - 2024-11-13
 
 ### Fixed
@@ -1129,6 +1215,7 @@ Blizzard sends search result data usually twice (except for rated BG's), the fir
 
 
 
+
 ## [3.0.4] - 2024-11-08
 
 ### Fixed
@@ -1137,6 +1224,7 @@ Blizzard sends search result data usually twice (except for rated BG's), the fir
 It functioned somewhat correctly for the current vault period but won't work for future ones correctly.
 
 - [FilterPanel] When converting my rating filters to Blizzard's rating filters it will now check if the rating checkbox is checked or not
+
 
 
 
@@ -1149,6 +1237,7 @@ It functioned somewhat correctly for the current vault period but won't work for
 - [ReQueue] Added a code block that will always delete groups that can't be found anymore if you got the data inbetween you requesting the data and the group disappearing.
 
 - [SearchPanel] Recoded some of the member count algorithm to fail-over to the class icon if for some reason Blizzard doesn't send spec data of the group listing when requesting it.
+
 
 
 
@@ -1186,6 +1275,7 @@ Unfortunately there is no real workaround unless Blizzard removes the security o
 
 
 
+
 ## [3.0.1] - 2024-11-03
 
 ### Changed
@@ -1198,6 +1288,7 @@ Unfortunately there is no real workaround unless Blizzard removes the security o
 
 - [FilterPanel] Lowered the amount of lag the filter panel produces.
 Lags on first open or switching search panel categories and then opening the panel still causes big lags.
+
 
 
 
@@ -1238,11 +1329,13 @@ This will be fixed in 3.0.1.
 
 
 
+
 ## [2.9.6a] - 2024-11-01
 
 ### Fixed
 
 - Enabled checks for a new addon of mine that I forgot to check if the addon is loaded.
+
 
 
 
@@ -1268,6 +1361,7 @@ This will be fixed in 3.0.1.
 
 
 
+
 ## [2.9.5] - 2024-10-27
 
 ### Added
@@ -1284,6 +1378,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 ### Fixed
 
 - [MainFrame] The great vault bars tooltips have been updated/corrected.
+
 
 
 
@@ -1307,6 +1402,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 
 
 
+
 ## [2.9.3] - 2024-10-23
 
 ### Added
@@ -1325,6 +1421,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 
 
 
+
 ## [2.9.2] - 2024-10-23
 
 ### Fixed
@@ -1337,6 +1434,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 
 
 
+
 ## [2.9.1] - 2024-10-22
 
 ### Fixed
@@ -1346,6 +1444,7 @@ This data gets refreshed on every login and on a completion of a weekly reward g
 - [RaidSheet] Dragging a character and releasing it above it's old space will now correctly set it to this space again.
 
 - [GroupManager] Changed the algorithm for detecting the unitID back to my version instead of using Blizzard's, mine is more reliable.
+
 
 
 
@@ -1381,6 +1480,7 @@ You can search for specific guildmates in the topleft corner.
 
 - [Options] The lfg statistics are now alphabetically ordered and have now subtypes (e.g. "Applied" and "Delisted" refer to the SearchPanel while "Keys aborted" refers to M+ keys)
 This will make it way easier to sort and sub-categorize them later on.
+
 
 
 
@@ -1435,6 +1535,7 @@ Though right now RaiderIO seems to have a bug that doesn't correctly transfer an
 
 
 
+
 ## [2.7.0] - 2024-10-01
 
 ### Added
@@ -1481,6 +1582,7 @@ Also squished alot of bugs where the logic was too convoluted to understand wher
 
 
 
+
 ## [2.6.2] - 2024-09-20
 
 ### Added
@@ -1491,11 +1593,13 @@ Also squished alot of bugs where the logic was too convoluted to understand wher
 
 
 
+
 ## [2.6.1] - 2024-09-19
 
 ### Fixed
 
 - Deleted a debug print out.
+
 
 
 
@@ -1517,6 +1621,7 @@ Also squished alot of bugs where the logic was too convoluted to understand wher
 
 
 
+
 ## [2.5.9] - 2024-09-18
 
 ### Added
@@ -1533,6 +1638,7 @@ Gonna investigate if I can check for delve completion and the level of it to dis
 
 
 
+
 ## [2.5.8b] - 2024-09-18
 
 ### Fixed
@@ -1543,6 +1649,7 @@ Gonna investigate if I can check for delve completion and the level of it to dis
 
 
 
+
 ## [2.5.8a] - 2024-09-18
 
 ### Fixed
@@ -1550,6 +1657,7 @@ Gonna investigate if I can check for delve completion and the level of it to dis
 - [SearchPanel] There won't be a check anymore for a mapID in categories that don't have them.
 
 - [SearchPanel] Pressing the signup button accidentaly before selecting a group won't bug out the search panel anymore.
+
 
 
 
@@ -1578,11 +1686,13 @@ Keep in mind: the more the addon has to sort a raid group the more it has to com
 
 
 
+
 ## [2.5.7a] - 2024-09-11
 
 ### Fixed
 
 - Deleted some debug prints.
+
 
 
 
@@ -1592,6 +1702,7 @@ Keep in mind: the more the addon has to sort a raid group the more it has to com
 
 - [GroupManager] Disabled the keylevel and gear info for now, they create 4-5 hard lags after combat.
 Will be fixed by the end of the week, don't have much time right now.
+
 
 
 
@@ -1611,11 +1722,13 @@ Will be fixed by the end of the week, don't have much time right now.
 
 
 
+
 ## [2.5.5] - 2024-09-11
 
 ### Fixed
 
 - [FilterPanel] When no difficulty has been actually selected (new install of the addon and it defaults to normal) it will now check for the base difficulty instead of no difficulty.
+
 
 
 
@@ -1637,6 +1750,7 @@ Will be fixed by the end of the week, don't have much time right now.
 
 
 
+
 ## [2.5.3] - 2024-09-10
 
 ### Changed
@@ -1648,6 +1762,7 @@ Will be fixed by the end of the week, don't have much time right now.
 - [DropChecker] Trying to check loot after selecting a different raid/dungeon in Blizzards Adventure Journal will not result in no loot found anymore.
 
 - [MainFrame] A textline error with the queue dropdown has been resolved.
+
 
 
 
@@ -1674,6 +1789,7 @@ Will be fixed by the end of the week, don't have much time right now.
 - [Queue Dropdown] If you have no heroic dungeons unlocked there won't be a section in the "Specific Dungeons" selection that tells you that you have unlocked them.
 
 - [Queue Dropdown] The button to queue for multiple dungeons should now match the width of the frame.
+
 
 
 
@@ -1706,6 +1822,7 @@ This has been in effect since 2.5.0.
 
 
 
+
 ## [2.5.0] - 2024-09-05
 
 ### Added
@@ -1734,6 +1851,7 @@ This has been in effect since 2.5.0.
 
 
 
+
 ## [2.4.9] - 2024-09-04
 
 ### Changed
@@ -1753,6 +1871,7 @@ Will revisit this in the future.
 
 
 
+
 ## [2.4.8] - 2024-09-02
 
 ### Changed
@@ -1764,6 +1883,7 @@ Will revisit this in the future.
 - There shouldn't be any errors anymore when calling the mainframe.
 
 - Requests for affixes should now check if there actually is any affix data before trying to display them in the mainframe.
+
 
 
 
@@ -1785,6 +1905,7 @@ Will revisit this in the future.
 
 
 
+
 ## [2.4.6] - 2024-08-23
 
 ### Changed
@@ -1794,6 +1915,7 @@ Will revisit this in the future.
 ### Fixed
 
 - [Filter Panel] There shouldn't be any issues when trying to create a group.
+
 
 
 
@@ -1870,11 +1992,13 @@ With Blizzard's DataProviders the fps drops down into the 30s with my 7800X3D, w
 
 
 
+
 ## [2.4.3] - 2024-08-14
 
 ### Fixed
 
 - [Teleports] Various errors have been corrected checking for the tp cooldowns.
+
 
 
 
@@ -1892,6 +2016,7 @@ Old vertical images will be deleted once TWW S1 is active.
 - [DropChecker] Switching to the DropChecker subframe won't trigger an table index error anymore.
 
 - [Raid Statistics] ATDH will now be visible again, accidentally deleted the ID. lol
+
 
 
 
@@ -1924,6 +2049,7 @@ But now items like "**Cla**sp of **W**aning Shadow" will now show up aswell.
 - [DropChecker] Various errors with the filtering and searching of items have been fixed
 
 - [DropChecker] The full width of the item frame will now be used for the name.
+
 
 
 
@@ -2460,6 +2586,7 @@ Also changed the icon in the main tab to the official awakened icon.
 
 
 
+
 ## [2.0.10] - 2024-06-02
 
 ### Fixed
@@ -2856,6 +2983,7 @@ While there is still some stuff to fix (e.g. if you only use the Search Panel fo
 
 
 
+
 ## [1.9.1] - 2024-02-16
 
 ### Fixed
@@ -2863,6 +2991,7 @@ While there is still some stuff to fix (e.g. if you only use the Search Panel fo
 - Corrected the position of the "Friend in group" icon
 
 - The "Cancel Application" button should now correctly be hidden for subsequent searches if the application fails or gets declined
+
 
 
 
@@ -2914,11 +3043,13 @@ This update completely remodels the standard Blizzard frame for everything group
 
 
 
+
 ## [1.8.1] - 2024-02-08
 
 ### Fixed
 
 - [Search Panel] Filtering and sorting should now work again.
+
 
 
 
@@ -2975,6 +3106,7 @@ This will be fixed in 1.8.1.
 
 
 
+
 ## [1.7.5] - 2024-02-05
 
 ### Fixed
@@ -2985,11 +3117,13 @@ This will be fixed in 1.8.1.
 
 
 
+
 ## [1.7.4] - 2024-02-05
 
 ### Fixed
 
 - No more errors when the leader name is not updated yet
+
 
 
 
@@ -3040,6 +3174,7 @@ In all other categories the dropdown is not visible (unless I find some use for 
 
 
 
+
 ## [1.7.2] - 2024-01-31
 
 ### Added
@@ -3066,6 +3201,7 @@ This will be improved during this and next week.
 - When a category has not a single group listed (e.g. Rated BG's, Skirmishes) the throttle frame doesn't disappear (I currently only refresh the frames when atleast 1 result is available)
 
 - When you install the addon for the first time or you delete the settings you have to press the "Search" button twice in each category to actually see correct results (only for the first login)
+
 
 
 
@@ -3098,6 +3234,7 @@ Using a darker green so Monks', Hunters' and Evokers' border doesn't seem to dis
 - Changing the difficulty with the dropdown should now refresh the result list.
 
 - Improved compatibility with PremadeGroupsFilter.
+
 
 
 
@@ -3168,6 +3305,7 @@ Lots of stuff can be improved in regards to the process of applying to groups.
 
 
 
+
 ## [1.6.3] - 2024-01-15
 
 
@@ -3185,11 +3323,13 @@ Lots of stuff can be improved in regards to the process of applying to groups.
 
 
 
+
 ## [1.6.2] - 2024-01-14
 
 ### Fixed
 
 - Manual frame resizes should now be correctly applied when pressing the expand button.
+
 
 
 
@@ -3200,6 +3340,7 @@ Lots of stuff can be improved in regards to the process of applying to groups.
 - Some errors were popping up if this was the first time you installed the addon.
 
 - Favoured applicants panel and background options weren't showing up in the interface options.
+
 
 
 
@@ -3227,6 +3368,7 @@ The manually set height will be the new standard height for the extend button in
 
 
 
+
 ## [1.5.2] - 2024-01-06
 
 ### Changed
@@ -3239,11 +3381,13 @@ The manually set height will be the new standard height for the extend button in
 
 
 
+
 ## [1.5.1] - 2023-12-27
 
 ### Changed
 
 - The new last invites panel can now also be hidden with another click on the "INVITES" button.
+
 
 
 
@@ -3265,6 +3409,7 @@ Preferred applicants in the interface options stay there until they're manually 
 
 
 
+
 ## [1.4.5] - 2023-12-20
 
 ### Changed
@@ -3276,6 +3421,7 @@ Preferred applicants in the interface options stay there until they're manually 
 ### Fixed
 
 - Affixes should now always be correctly requested
+
 
 
 
@@ -3305,6 +3451,7 @@ With multiple applicants applying and going through the same loops hundreds to s
 
 
 
+
 ## [1.4.3] - 2023-12-18
 
 ### Changed
@@ -3314,6 +3461,7 @@ Per 33 applicants from ~0.088s to 0.071s (fastest compute ever even with data be
 Mostly matters when you /reload or join a group that is still listed and looking for members and has already a lot of applicants.
 
 - Improved the raid panel visually (made difficulty borders width / height more consistent).
+
 
 
 
@@ -3330,11 +3478,13 @@ Mostly matters when you /reload or join a group that is still listed and looking
 
 
 
+
 ## [1.4.1] - 2023-12-13
 
 ### Fixed
 
 - An issue where the right click r.io link couldn't be generated has been fixed (if the applicant was from the same server).
+
 
 
 
@@ -3360,6 +3510,7 @@ Obviously if you filter for a healer demon hunter you won't find anything though
 Instead of a spec icon it will show a question mark for those groups.
 Seems to be a Blizzard bug, unless I find a workaround we have to wait for Blizzard to fix it.
 I did report it ingame and on the [official/non-official](https://github.com/Stanzilla/WoWUIBugs/issues/502) github issues page, so now we wait.
+
 
 
 
@@ -3395,6 +3546,7 @@ Since the addon has a lot of information visible even when the applicant frame i
 
 
 
+
 ## [1.2.12] - 2023-11-23
 
 ### Known issues
@@ -3410,6 +3562,7 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 - Windwalker and Mistweaver should now be correctly identified
 
 - Made one more check for specs, even with the current Blizzard bug sometimes hunters would show up as Discipline spec (lol)
+
 
 
 
@@ -3429,6 +3582,7 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 
 
+
 ## [1.2.10] - 2023-11-19
 
 ### Known issues
@@ -3442,6 +3596,7 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 ### Fixed
 
 - There should now only be one interface option panel instead of a new one getting created after every loading screen.
+
 
 
 
@@ -3466,6 +3621,7 @@ I did report it ingame and on the [official/non-official](https://github.com/Sta
 
 
 
+
 ## [1.2.8] - 2023-11-17
 
 ### Known issues
@@ -3478,6 +3634,7 @@ Will figure this out tomorrow evening.
 ### Fixed
 
 - (This drives me crazy) Should be no more errors because of the spec id (I really hope so)
+
 
 
 
@@ -3494,11 +3651,13 @@ Will figure this out tomorrow evening.
 
 
 
+
 ## [1.2.6] - 2023-11-16
 
 ### Fixed
 
 - Fixed spec id problems for real now (if Blizzard somehow didn't send the actual spec id)
+
 
 
 
@@ -3510,11 +3669,13 @@ Will figure this out tomorrow evening.
 
 
 
+
 ## [1.2.4] - 2023-11-11
 
 ### Fixed
 
 - Fixed some layering issues so the comment icon, role icon and pretty much everything else should not disappear if you requeue a bunch of times.
+
 
 
 
@@ -3527,6 +3688,7 @@ Will figure this out tomorrow evening.
 
 
 
+
 ## [1.2.2] - 2023-11-09
 
 ### Fixed
@@ -3535,6 +3697,7 @@ Will figure this out tomorrow evening.
 Otherwise there was a veeeery small chance that it would request them before the main addon was initialized, leading to an error.
 
 - Deleted a debug print that I forgot.
+
 
 
 
@@ -3552,6 +3715,7 @@ Otherwise there was a veeeery small chance that it would request them before the
 - Title bar group ordering should now be correct
 - Fixed "CURRENT_SEASON" bug. First week of a new patch there's is technically no actual season
 - Fixed the addon compartment function, should now open the settings reliably
+
 
 
 
@@ -3592,6 +3756,7 @@ If it not the main char it will show the mains current score and the last season
 
 
 
+
 ## [1.1.7] - 2023-10-28
 
 ### Upcoming
@@ -3623,12 +3788,14 @@ If you experience anything odd at all just open up an issue or /w me ingame.
 
 
 
+
 ## [1.1.5] - 2023-10-24
 
 ### Fixed
 
 - Fixed a problem where the applicant would be declined but still be visible in the application viewer
 - Deleted debug print statements
+
 
 
 
@@ -3642,6 +3809,7 @@ If you experience anything odd at all just open up an issue or /w me ingame.
 
 - Fixed a problem where the invite / decline buttons where no longer visible after a reload
 - Fixed a problem where Ret paladins would bug out the UI
+
 
 
 
@@ -3660,12 +3828,14 @@ Really only relevant when /reloading or entering an instance, depending on the s
 
 
 
+
 ## [1.1.0] - 2023-10-17
 
 ### Fixed
 
 - Minor code changes, more a version push since I forgot that I uploaded a 10.2.0 version 2 weeks ago and nobody got any updates of this addon, LOL
 - Kinda fixed the "keep creation info" function, still experimental though
+
 
 
 
@@ -3679,6 +3849,7 @@ All DF raids and S2/S3 dungeons will have their respective loading screen (cropp
 ### Fixed
 
 - Fixed activity title layer, font should be way brighter now
+
 
 
 
@@ -3712,6 +3883,7 @@ If they're the same difficulty it compares the progress itself.
 
 - Improved the logic and code flow, which leads to increased performance
 Before (more prominent on slower computer) you'd get a longer freeze after a reload when you had a big applicant list, time to compute the list was cut down by approximately 50-55%.
+
 
 
 
@@ -3766,6 +3938,7 @@ Not sure if I got all edge cases (probably not). Just shoot me a message somewhe
 
 - Made the "Show actual specs" and "Order group" options unavailable, since they were resource hogging a lot since Blizzard only renders the groups that are currently visible. So the addon would have to update the specs EACH SCROLL / GROUP UPDATE.
 From my testing: going from 300fps to 180fps when you refresh or scroll. Currently not worth it and definitely not what I intended.
+
 
 
 

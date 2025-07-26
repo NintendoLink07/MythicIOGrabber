@@ -95,7 +95,7 @@
             <Layer level="ARTWORK">
                 <Texture parentKey="Race">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="120"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="155"/>
                     </Anchors>
                     <Size x="15" y="15" />
                 </Texture> 
@@ -136,42 +136,6 @@
                         <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" />
                     </Anchors>
                 </FontString>
-            </Layer>
-
-            <Layer level="ARTWORK">
-                <Texture parentKey="Friend" file="Interface\Addons\MythicIOGrabber\res\infoIcons\friend.png" hidden="true">
-                    <Size x="17" y="17" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" />
-                    </Anchors>
-                    <Scripts>
-
-                        <OnEnter>
-                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                            GameTooltip:SetText("On your friendlist")
-                            GameTooltip:Show()
-                        </OnEnter>
-            
-                        <OnLeave>
-                            GameTooltip:Hide()
-                        </OnLeave>
-                    </Scripts>
-                </Texture>
-                
-                <Texture parentKey="Premade" file="Interface\Addons\MythicIOGrabber\res\infoIcons\link.png" hidden="true">
-                    <Size x="17" y="17" />
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-1" y="-1"/>
-                    </Anchors>
-                    <Scripts>
-                        <OnEnter>
-                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                            GameTooltip:SetText("Premades")
-                            GameTooltip:Show()
-                        </OnEnter>
-                        <OnLeave function="GameTooltip_Hide" />
-                    </Scripts>
-                </Texture>
             </Layer>
         </Layers>
 

@@ -29,7 +29,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0 s">
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" x="5" y="3" />
                     </Anchors>

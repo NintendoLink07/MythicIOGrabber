@@ -683,9 +683,9 @@ miog.loadQueueSystem = function()
 		local activityName, backgroundImage, timeInQueue, timeToMatch, macrotext
 		local isHQ = miog.isMIOGHQLoaded()
 
-		if(frame.Age.Ticker) then
-			frame.Age.Ticker:Cancel()
-			frame.Age.Ticker = nil
+		if(frame.Ticker) then
+			frame.Ticker:Cancel()
+			frame.Ticker = nil
 		end
 
 		frame.Name:SetTextColor(1, 1, 1, 1)
@@ -710,11 +710,7 @@ miog.loadQueueSystem = function()
 			timeToMatch = myWait and myWait > -1 and myWait or averageWait and averageWait > -1 and averageWait or -1
 
 			if(hasData) then
-				frame.Age.Ticker = C_Timer.NewTicker(1, function()
-					timeInQueue = timeInQueue + 1
-					frame.Age:SetText(miog.secondsToClock(timeInQueue))
-
-				end)
+				frame:SetTimerInfo("add", timeInQueue)
 
 				frame.Wait:SetText(timeToMatch ~= -1 and "(" .. (timeToMatch ~= -1 and miog.secondsToClock(timeToMatch)) .. ")" or "")
 				frame.Wait:Show()
@@ -782,13 +778,7 @@ miog.loadQueueSystem = function()
 
 				frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
 
-				timeInQueue = activeEntryInfo.duration
-
-				frame.Age.Ticker = C_Timer.NewTicker(1, function()
-					timeInQueue = timeInQueue - 1
-					frame.Age:SetText(miog.secondsToClock(timeInQueue))
-
-				end)
+				frame:SetTimerInfo("sub", activeEntryInfo.duration)
 
 				activityName = unitID == "player" and ("Your Listing" .. " (" .. numApplicants .. ")") or (unitName or "Unknown") .. "'s Listing"
 				
@@ -804,22 +794,15 @@ miog.loadQueueSystem = function()
 				macrotext = "/run MIOG_PROCESS_FAKE_RESULT_ID(" .. data.resultID .. ")"
 				timeInQueue = searchResultInfo.age
 
-				frame.Age.Ticker = C_Timer.NewTicker(1, function()
-					timeInQueue = timeInQueue + 1
-					frame.Age:SetText(miog.secondsToClock(timeInQueue))
-
-				end)
+				frame:SetTimerInfo("add", timeInQueue)
 			else
 				macrotext = "/run C_LFGList.CancelApplication(" .. data.resultID .. ")"
 
 				local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(data.resultID)
 				timeInQueue = appDuration
+				
+				frame:SetTimerInfo("sub", timeInQueue)
 
-				frame.Age.Ticker = C_Timer.NewTicker(1, function()
-					timeInQueue = timeInQueue - 1
-					frame.Age:SetText(miog.secondsToClock(timeInQueue))
-
-				end)
 			end
 
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
@@ -862,12 +845,10 @@ miog.loadQueueSystem = function()
 				frame.type = "battlefield"
 
 				if ( status and status ~= "none" and status ~= "error" ) then
-					local queuedTime = GetTime() - GetBattlefieldTimeWaited(data.index) / 1000
-					local estimatedTime = GetBattlefieldEstimatedWaitTime(data.index) / 1000
 					--local assignedSpec = C_PvP.GetAssignedSpecForBattlefieldQueue(data.index);
 
 					timeInQueue = GetBattlefieldTimeWaited(data.index) / 1000
-					timeToMatch = estimatedTime
+					timeToMatch = GetBattlefieldEstimatedWaitTime(data.index) / 1000
 
 					local mapIDTable = miog.findBattlegroundMapIDsByName(mapName) or miog.findBrawlMapIDsByName(mapName)
 
@@ -950,19 +931,13 @@ miog.loadQueueSystem = function()
 			activityName = mapName
 
 			frame.index = data.index
-
-			frame.Age.Ticker = C_Timer.NewTicker(1, function()
-				timeInQueue = timeInQueue + 1
-				frame.Age:SetText(miog.secondsToClock(timeInQueue))
-
-			end)
+			frame:SetTimerInfo("add", timeInQueue)
 
 			frame.Wait:SetText(timeToMatch ~= -1 and "(" .. (timeToMatch ~= -1 and miog.secondsToClock(timeToMatch)) .. ")" or "")
 			frame.Wait:Show()
 		end
 
 		frame.CancelApplication:SetAttribute("macrotext1", macrotext)
-
 		
 		if(isHQ) then
 			frame.Background:SetVertTile(false)
@@ -977,7 +952,6 @@ miog.loadQueueSystem = function()
 		end
 
 		frame.Name:SetText(activityName)
-		frame.Age:SetText(miog.secondsToClock(timeInQueue))
 	end
 	
 	local function CustomFactory(factory, data)

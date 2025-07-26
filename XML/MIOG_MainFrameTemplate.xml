@@ -236,6 +236,12 @@
                                             <KeyValue key="layoutIndex" value="6" type="number" />
                                         </KeyValues>
                                     </Frame>
+
+                                    <Frame parentKey="8" inherits="MIOG_CurrencySingleTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="6" type="number" />
+                                        </KeyValues>
+                                    </Frame>
                                 </Frames>
 
                                 <Scripts>

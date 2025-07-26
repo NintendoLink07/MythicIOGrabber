@@ -339,7 +339,7 @@ function ProgressionTabMixin:CreateDebugKeyInfo(fullName, rootDescription)
 
 		local shortName = miog.createSplitName(fullName)
 
-		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. newKeystoneInfo.level .. " " .. miog.MAP_INFO[newKeystoneInfo.mapID].shortName, miog.createCustomColorForRating(newKeystoneInfo.level * 130):GenerateHexColor())
+		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. newKeystoneInfo.level .. " " .. miog.MAP_INFO[newKeystoneInfo.mapID].abbreviatedName, miog.createCustomColorForRating(newKeystoneInfo.level * 130):GenerateHexColor())
 
 		local keystoneButton = rootDescription:CreateRadio(text, function(fullCharacterName) return self.currentUnitName == fullCharacterName end, function(fullCharacterName)
 			self.currentUnitName = fullCharacterName
@@ -372,7 +372,7 @@ function ProgressionTabMixin:CreateDropdownEntry(fullName, rootDescription)
 
 		local shortName = miog.createSplitName(fullName)
 
-		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].shortName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
+		local text = WrapTextInColorCode(shortName, C_ClassColor.GetClassColor(classFile):GenerateHexColor()) .. ": " .. WrapTextInColorCode("+" .. keystoneInfo.level .. " " .. miog.MAP_INFO[keystoneInfo.mapID].abbreviatedName, miog.createCustomColorForRating(keystoneInfo.level * 130):GenerateHexColor())
 
 		local keystoneButton = rootDescription:CreateRadio(text, function(fullCharacterName) return self.currentUnitName == fullCharacterName end, function(fullCharacterName)
 			self.currentUnitName = fullCharacterName
@@ -484,14 +484,21 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
 		mythicPlusActivities = C_ChallengeMode.GetMapTable()
 
         table.sort(mythicPlusActivities, function(k1, k2)
-            return miog.retrieveShortNameFromChallengeModeMap(k1) < miog.retrieveShortNameFromChallengeModeMap(k2)
+            return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
 
         end)
 
         for _, activityEntry in ipairs(mythicPlusActivities) do
             if(self:VisibilitySelected(self.type, activityEntry)) then
-                activityProvider:Insert({mapID = miog.retrieveMapIDFromChallengeModeMap(activityEntry), index = activityEntry});
+				local groupID = miog.retrieveGroupIDFromChallengeModeMap(activityEntry)
+				local mapID
 
+				if(not groupID) then
+					mapID = miog.retrieveMapIDFromChallengeModeMap(activityEntry)
+					
+				end
+
+                activityProvider:Insert({groupID = groupID, mapID = mapID, index = activityEntry});
             end
         end
     end
@@ -575,18 +582,38 @@ function ProgressionTabMixin:PopulateActivities()
                     local mapInfo = miog.MAP_INFO[v.mapID]
 
                     if(mapInfo) then
-                        shortName = mapInfo.shortName
+                        shortName = mapInfo.abbreviatedName
                     end
 
 					value = v.mapID
 
                 elseif(self.type == "mplus") then
-                    local mapInfo = miog.MAP_INFO[miog.retrieveMapIDFromChallengeModeMap(v)]
+					local groupID = miog.retrieveGroupIDFromChallengeModeMap(v)
+					local mapID
 
-                    if(mapInfo) then
-                        shortName = mapInfo.shortName
+					if(not groupID) then
+						mapID = miog.retrieveMapIDFromChallengeModeMap(v)
+						
+                    	local mapInfo = miog.MAP_INFO[mapID]
 
-                    end
+						if(mapInfo) then
+							shortName = mapInfo.abbreviatedName
+
+						end
+					else
+						local groupInfo = miog.GROUP_ACTIVITY[groupID]
+
+						if(groupInfo.abbreviatedName) then
+							shortName = groupInfo.abbreviatedName
+
+						else
+							mapID = miog.retrieveMapIDFromChallengeModeMap(v)
+                    		local mapInfo = miog.GROUP_ACTIVITY[mapID]
+							shortName = mapInfo.abbreviatedName
+
+						end
+						
+					end
 
 					value = v
                 end
@@ -769,7 +796,7 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 				local view = CreateScrollBoxListLinearView();
 				view:SetElementInitializer("MIOG_LockoutCheckInstanceTemplate", function(elementFrame, data)
 					if(not data.isWorldBoss) then
-						elementFrame.Name:SetText(miog.MAP_INFO[data.mapID].shortName or data.name)
+						elementFrame.Name:SetText(miog.MAP_INFO[data.mapID].abbreviatedName or data.name)
 						elementFrame.Icon:SetTexture(data.icon)
 						elementFrame.Difficulty:SetText(WrapTextInColorCode(miog.DIFFICULTY_ID_INFO[data.difficulty].shortName, miog.DIFFICULTY_ID_TO_COLOR[data.difficulty]:GenerateHexColor()))
 						elementFrame.Checkmark:SetShown(data.cleared)
@@ -880,9 +907,25 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
                     frame.Background:SetTexture(bracketInfo.vertical, "MIRROR", "MIRROR")
                 end
 
-            else
+            elseif(self.type == "raid") then
                 local mapInfo = miog.MAP_INFO[data.mapID]
-                shortName = mapInfo.shortName
+                shortName = mapInfo.abbreviatedName
+
+                frame.Background:SetTexture(mapInfo.vertical, "MIRROR", "MIRROR")
+
+			elseif(self.type == "mplus") then
+				local mapInfo
+
+				if(data.groupID) then
+					local groupInfo = miog.GROUP_ACTIVITY[data.groupID]
+					shortName = groupInfo.abbreviatedName
+
+                	mapInfo = miog.MAP_INFO[groupInfo.mapID]
+				else
+                	mapInfo = miog.MAP_INFO[data.mapID]
+					shortName = mapInfo.abbreviatedName
+
+				end
 
                 frame.Background:SetTexture(mapInfo.vertical, "MIRROR", "MIRROR")
 

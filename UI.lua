@@ -12,19 +12,25 @@ local panels
 ]]
 local function setProgressPanelInfo(categoryID)
 	if(miog.ProgressPanel and IsPlayerAtEffectiveMaxLevel()) then
-		miog.ProgressPanel:SetShown(categoryID == 2 or categoryID == 3)
+		local isDungeon = categoryID == 2
+		local isRaid = categoryID == 3
+		local isCorrectCategory = isDungeon or isRaid
 
-		miog.ProgressPanel.MythicPlus:SetShown(categoryID == 2)
-		miog.ProgressPanel.Raids:SetShown(categoryID == 3)
+		miog.ProgressPanel:SetShown(isCorrectCategory)
 
-		miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
+		if(isCorrectCategory) then
+			miog.ProgressPanel.MythicPlus:SetShown(isDungeon)
+			miog.ProgressPanel.Raids:SetShown(isRaid)
 
-		local playerName, realm = miog.createSplitName(UnitFullName("player"))
-		
-		miog.ProgressPanel:Flush()
-		miog.ProgressPanel:SetPlayerData(playerName, realm)
-		miog.ProgressPanel:ApplyFillData()
-		
+			miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
+
+			local playerName, realm = miog.createSplitName(UnitFullName("player"))
+			
+			miog.ProgressPanel:Flush()
+			miog.ProgressPanel:SetPlayerData(playerName, realm)
+			miog.ProgressPanel:ApplySpecificFillDataOnly(isDungeon and "mplus" or "raid")
+
+		end
 	else
 		miog.ProgressPanel:Hide()
 
