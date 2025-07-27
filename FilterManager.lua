@@ -971,10 +971,12 @@ local function refreshFilters()
 	end
 
 	currentSettings = MIOG_CharacterSettings.filters[panel][categoryID]
-
+	
+	filterManager:MarkDirty()
 	filterManager.ActivityGrid:MarkDirty()
 	filterManager.ActivityBosses:MarkDirty()
-	filterManager:MarkDirty()
+
+	saveToAdvancedFilter()
 end
 
 miog.filter.refreshFilters = refreshFilters
@@ -1437,8 +1439,6 @@ local function loadFilterManager()
 			end
 		end)
 	end
-
-	miog.createFrameBorder(filterManager.ProgressPanel, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 
 	miog.ProgressPanel = filterManager.ProgressPanel
 

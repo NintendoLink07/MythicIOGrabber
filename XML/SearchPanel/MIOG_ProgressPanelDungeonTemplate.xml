@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ProgressPanelDungeonTemplate" virtual="true">
-        <Size x="56" y="34" />
+        <Size x="56" y="47" />
         <Layers>
             <Layer level="BORDER">
                 <Texture parentKey="Border" setAllPoints="true" propagateMouseInput="Motion">
@@ -11,7 +11,7 @@
 
             <Layer level="ARTWORK" textureSubLevel="-7">
                 <Texture parentKey="TransparentDark"  propagateMouseInput="Motion">
-                    <Color r="0.1" g="0.1" b="0.1" a="0.35" />
+                    <Color r="0.1" g="0.1" b="0.1" a="0.55" />
 
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>

@@ -11,7 +11,7 @@ local panels
         panel (table/string) - The panel to activate and display.
 ]]
 local function setProgressPanelInfo(categoryID)
-	if(miog.ProgressPanel and IsPlayerAtEffectiveMaxLevel()) then
+	if(IsPlayerAtEffectiveMaxLevel()) then
 		local isDungeon = categoryID == 2
 		local isRaid = categoryID == 3
 		local isCorrectCategory = isDungeon or isRaid
@@ -22,7 +22,7 @@ local function setProgressPanelInfo(categoryID)
 			miog.ProgressPanel.MythicPlus:SetShown(isDungeon)
 			miog.ProgressPanel.Raids:SetShown(isRaid)
 
-			miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
+			--miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
 
 			local playerName, realm = miog.createSplitName(UnitFullName("player"))
 			
@@ -86,7 +86,10 @@ local function setActivePanel(_, panel)
 
 	if(miog.FilterManager) then
 		if((miog.ApplicationViewer and panel == LFGListFrame.ApplicationViewer) or (miog.SearchPanel and panel == LFGListFrame.SearchPanel)) then
-			setProgressPanelInfo(miog.getCurrentCategoryID())
+			if(miog.ProgressPanel) then
+				setProgressPanelInfo(miog.getCurrentCategoryID())
+
+			end
 
 			miog.FilterManager:Show()
 			miog.filter.refreshFilters()

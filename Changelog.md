@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.5.6] - 2025-07-26
+## [3.5.6] - 2025-07-29
 
 ### Added
 
@@ -25,6 +25,8 @@ The icon gets added to the group name of the listing and onto the group's member
 
 - [Drops] The slots and armor types filter now also work without selecting an instance.
 
+- [Drops] More checks have been implemented to determine if the character is currently in an instance.
+
 - All functions that request map data have been modified to also take into account group info for mega-dungeons.
 
 - Ecodome Al'dani and Manaforge Omega data has been correctly added.
@@ -34,6 +36,8 @@ The icon gets added to the group name of the listing and onto the group's member
 - [Drops] The correct filter settings for equipment slot and class/spec will be applied inbetween /reloads or reloggs.
 
 - [Drops] All items now get included in the extra checks "armor type" and "tokens / mounts / recipes".
+
+- [FilterManager] Filters from other characters won't influence newly leveled characters anymore.
 
 - An error trying to measure the time of the teleport cds has been resolved.
 

@@ -1,14 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ProgressPanel" inherits="BackdropTemplate" mixin="RaiderIOInformationPanelMixin" virtual="true">
-        <Size x="252" y="100" />
+    <Frame name="MIOG_ProgressPanel" mixin="RaiderIOInformationPanelMixin" virtual="true">
+        <Size y="100" />
 
         <Frames>
-            <Frame parentKey="MythicPlus" setAllPoints="true">
+            <Frame parentKey="MythicPlus" inherits="StaticGridLayoutFrame" setAllPoints="true">
                 <Frames>
                     <Frame parentKey="Dungeon1" inherits="MIOG_ProgressPanelDungeonTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
                         </Anchors>
                     </Frame>
 
@@ -79,22 +79,5 @@
 
             </Frame>
         </Frames>
-
-        <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="-7">
-                <Texture parentKey="TransparentDark" >
-                    <Color r="0.1" g="0.1" b="0.1" a="0.85" />
-
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-
-            <Layer level="BACKGROUND" textureSubLevel="-8">
-                <Texture parentKey="Background" horizTile="true" vertTile="true" hWrapMode="MIRROR" vWrapMode="MIRROR" setAllPoints="true" />
-            </Layer>
-        </Layers>
     </Frame>
 </Ui>

@@ -1094,7 +1094,7 @@ miog.loadJournal = function()
             local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, mapID, instanceGroupSize, LfgDungeonID = GetInstanceInfo()
             local mapInfo = miog.MAP_INFO[mapID]
 
-            if(mapInfo and mapInfo.journalInstanceID) then
+            if(mapInfo and mapInfo.journalInstanceID and mapInfo.journalInstanceID ~= 0 and instanceType ~= "none") then
                 selectInstance(mapInfo.journalInstanceID)
 
             end
