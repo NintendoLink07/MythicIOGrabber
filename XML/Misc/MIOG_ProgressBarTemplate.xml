@@ -1,0 +1,75 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressBarTemplate" flattenRenderLayers="true" virtual="true">   
+        <Size x="276" y="16" />
+             
+        <Frames>
+            <StatusBar parentKey="ThresholdBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+                <BarTexture parentKey="BarFill" atlas="activities-bar-fill"/>
+
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="1">
+                        <Texture parentKey="BarBackground" atlas="activities-bar-background" setAllPoints="true" />
+                    </Layer>
+                    <Layer level="BORDER">
+                        <Texture parentKey="BarBorder" atlas="activities-bar-border" >
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-4" y="2"/>
+                                <Anchor point="BOTTOMRIGHT" x="4" y="-3"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER" textureSubLevel="1">
+                        <Texture parentKey="BarBorderGlow" atlas="activities-bar-border-glow" alphaMode="ADD" hidden="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.BarBorder"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBorder"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="BarFillGlow" atlas="activities-bar-fill-glow" alphaMode="ADD" hidden="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.BarBackground"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBackground"/>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="End" atlas="activities-bar-end" hidden="true">
+                            <Size x="6" y="22" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="RightText" inherits="GameFontHighlight" justifyH="RIGHT" maxLines="1">
+                            <Anchors>
+                                <Anchor point="RIGHT" x="-5"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="LeftText" inherits="GameFontHighlight" justifyH="LEFT" maxLines="1">
+                            <Anchors>
+                                <Anchor point="LEFT" x="5"/>
+                                <Anchor point="RIGHT" relativeKey="$parent.RightText" relativePoint="LEFT" x="-5"/>
+                            </Anchors>
+                        </FontString>
+
+                        <Texture parentKey="Checkmark" atlas="activities-icon-checkmark" hidden="true">
+                            <Size x="14" y="14" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="TOPRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+        </Frames>
+
+        <Scripts>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

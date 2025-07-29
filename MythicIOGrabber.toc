@@ -46,6 +46,8 @@ ReQueue.lua
 
 FuzzyAlgorithm.lua
 
+Loot.lua
+
 
 
 ##
@@ -182,6 +184,9 @@ XML\Misc\MIOG_VerticalButtonTemplate.xml
 XML\Misc\MIOG_MinimalHorizontalScrollBarTemplate.xml
 XML\Misc\MIOG_IconWithTextTemplate.xml
 XML\Misc\MIOG_SearchBoxFilterTemplate.xml
+XML\Misc\MIOG_ProgressBarTemplate.xml
+
+XML\RenownBars\MIOG_RenownBarTemplate.xml
 
 XML\MIOG_StatisticsPage.xml
 XML\MIOG_StatisticsPageListEntryTemplate.xml

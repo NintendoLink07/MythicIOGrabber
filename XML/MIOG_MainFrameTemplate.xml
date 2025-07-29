@@ -165,7 +165,7 @@
 
             <Frame parentKey="TabFramesPanel">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-3" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-5" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
                 </Anchors>
 
@@ -386,7 +386,13 @@
                                 </Anchors>
 
                                 <Frames>
-                                    <Frame parentKey="Holiday" inherits="HorizontalLayoutFrame">
+                                    <Frame parentKey="RenownBar1" inherits="MIOG_RenownBarTemplate">
+                                        <Anchors>
+                                            <Anchor point="TOPRIGHT"/>
+                                        </Anchors>
+                                    </Frame>
+
+                                    <Frame parentKey="Holiday" inherits="HorizontalLayoutFrame" hidden="true">
                                         <KeyValues>
                                             <KeyValue key="spacing" value="5" />
                                         </KeyValues>
@@ -426,10 +432,17 @@
 
                                         <Layers>
                                             <Layer level="OVERLAY">
+                                                <Texture parentKey="Icon" file="interface/icons/inv_relics_hourglass_02.blp">
+                                                    <Size x="14" y="14" />
+                                                    <Anchors>
+                                                        <Anchor point="RIGHT" x="2"/>
+                                                    </Anchors>
+                                                </Texture>
+
                                                 <Texture parentKey="Affix">
                                                     <Size x="14" y="14" />
                                                     <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent" x="2"/>
+                                                        <Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT" />
                                                     </Anchors>
 
                                                     <Scripts>
@@ -446,17 +459,10 @@
                                                     </Scripts>
                                                 </Texture>
 
-                                                <Texture parentKey="Icon" file="interface/icons/inv_relics_hourglass_02.blp">
-                                                    <Size x="14" y="14" />
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Affix" relativePoint="RIGHT" />
-                                                    </Anchors>
-                                                </Texture>
-
                                                 <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" justifyH="LEFT" text="No keystone found" outline="NORMAL">
                                                     <Anchors>
-                                                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="4"/>
-                                                        <Anchor point="RIGHT" relativeKey="$parent" x="-2"/>
+                                                        <Anchor point="LEFT"  x="2"/>
+                                                        <Anchor point="RIGHT" relativeKey="$parent.Affix" relativePoint="LEFT" x="-2"/>
                                                     </Anchors>
                                                 </FontString>
                                             </Layer>

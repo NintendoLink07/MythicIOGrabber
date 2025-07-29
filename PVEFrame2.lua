@@ -276,7 +276,7 @@ local function createPVEFrameReplacement()
 
 				currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft(), currentFrame.ThresholdBar:GetRight())
 				--currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
-				currentFrame.ThresholdBar.Text:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
+				currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
 
 				local ilvls = currentFrame:GetAllItemlevels()
 
@@ -338,6 +338,34 @@ local function createPVEFrameReplacement()
 					currentFrame.ThresholdBar.End:ClearAllPoints()
 					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 0)
 					currentFrame.ThresholdBar.End:Show()
+				end
+			end
+
+			local renownFactions = {
+				{id = 2685}
+			}
+
+			for k, v in ipairs(renownFactions) do
+				--local factionData = C_Reputation.GetFactionDataByID(v.id)
+				local majorFactionData = C_MajorFactions.GetMajorFactionData(v.id)
+				local currentFrame = miog.MainTab.Information["RenownBar" .. k]
+
+				if(majorFactionData and majorFactionData.isUnlocked) then
+					currentFrame.id = v.id
+					local standing = ""
+
+					if(majorFactionData.renownLevelThreshold) then
+						standing = majorFactionData.renownReputationEarned .. "/" .. majorFactionData.renownLevelThreshold
+					end
+
+					currentFrame.ThresholdBar.LeftText:SetText("(" .. majorFactionData.renownLevel .. ") " .. majorFactionData.name)
+					currentFrame.ThresholdBar.RightText:SetText(standing)
+					currentFrame.ThresholdBar:SetMinMaxValues(0, majorFactionData.renownLevelThreshold)
+					currentFrame.ThresholdBar:SetValue(majorFactionData.renownReputationEarned)
+					
+				else
+					currentFrame:Hide()
+
 				end
 			end
 

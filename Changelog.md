@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning].
 - [Drops] When selecting an instance multiple difficulties will be consolidated into a single expandable entry.
 
 - [SearchPanel] Deserter icons added for the new "isLeaver" flag.
-The icon gets added to the group name of the listing and onto the group's member(spec) icons.
+An icon gets added to the group name of the listing and onto each group member(spec) icon.
 
 - [ApplicationViewer] Deserter icons have been added for all applicants.
 

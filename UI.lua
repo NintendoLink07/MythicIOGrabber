@@ -197,6 +197,8 @@ miog.createFrames = function()
 
 		miog.Drops = miog.loadJournal()
 		miog.UpgradeFinder = miog.loadUpgradeFinder()
+
+		miog.loot.init()
 	end
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
