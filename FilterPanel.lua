@@ -632,7 +632,7 @@ local function checkEligibility(panel, _, resultOrApplicant, borderMode)
 
 			local rating = isPvp and (searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0) or searchResultInfo.leaderOverallDungeonScore or 0
 			
-			if(settings.hideHardDecline and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID].activeDecline) then
+			if(settings.hideHardDecline and LFGListFrame.declines and LFGListFrame.declines[searchResultInfo.partyGUID]) then
 				return false, "hardDeclined"
 				
 			end

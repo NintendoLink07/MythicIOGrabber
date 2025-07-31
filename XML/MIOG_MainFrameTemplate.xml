@@ -359,7 +359,7 @@
 
                                                 <FontString parentKey="FakeApps" font="GameFontHighlight">
                                                     <Anchors>
-                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPLEFT" />
+                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPLEFT" x="3" y="-4"/>
                                                     </Anchors>
                                                 </FontString>
                                             </Layer>
@@ -370,8 +370,8 @@
 
                                             <EventFrame parentKey="QueueScrollBar" inherits="MinimalScrollBar">
                                                 <Anchors>
-                                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="TOPRIGHT"/>
-                                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="BOTTOMRIGHT" />
+                                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="TOPRIGHT" x="2"/>
+                                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="BOTTOMRIGHT" x="2"/>
                                                 </Anchors>
                                             </EventFrame>
                                         </Frames>
@@ -386,7 +386,7 @@
                                 </Anchors>
 
                                 <Frames>
-                                    <Frame parentKey="RenownBar1" inherits="MIOG_RenownBarTemplate">
+                                    <Frame parentKey="RenownBar1" inherits="MIOG_RenownBarTemplate" hidden="true">
                                         <Anchors>
                                             <Anchor point="TOPRIGHT"/>
                                         </Anchors>

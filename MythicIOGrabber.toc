@@ -1,4 +1,4 @@
-## Interface: 110200
+## Interface: 110107, 110200
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO, MythicIO - Resources
@@ -41,7 +41,6 @@ UpgradeFinder.lua
 NewSettings.lua
 CharacterSettings.lua
 StatisticsRecorder.lua
-MythicRequeue.lua
 ReQueue.lua
 
 FuzzyAlgorithm.lua

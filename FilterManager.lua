@@ -333,7 +333,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 	
 		end
 			
-		if(currentSettings.decline and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID].activeDecline) then
+		if(currentSettings.decline and LFGListFrame.declines and LFGListFrame.declines[searchResultInfo.partyGUID]) then
 			return false, "hardDeclined"
 			
 		end

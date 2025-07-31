@@ -115,14 +115,14 @@ local function updateScrollBoxFrameApplicationStatus(resultFrame, resultID, new)
 				resultFrame.StatusFrame:Show()
 				resultFrame.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[appStatus].statusString, miog.APPLICANT_STATUS_INFO[appStatus].color))
 
-				if(appStatus ~= "declined_full" and appStatus ~= "failed" and appStatus ~= "invited" and appStatus ~= "inviteaccepted") then
+				--[[if(appStatus ~= "declined_full" and appStatus ~= "failed" and appStatus ~= "invited" and appStatus ~= "inviteaccepted") then
 					local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 					if(searchResultInfo.leaderName) then
 						MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] = {timestamp = time(), activeDecline = appStatus == "declined"}
 
 					end
-				end
+				end]]
 			end
 		else
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
@@ -484,7 +484,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 			
 			local isQuestCategory = activityInfo.categoryID == 1
-			local declineData = searchResultInfo.leaderName and MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID]
+			local declineData = LFGListFrame.declines and LFGListFrame.declines[searchResultInfo.partyGUID]
 			local questTagInfo = searchResultInfo.questID and C_QuestLog.GetQuestTagInfo(searchResultInfo.questID)
 			local questDesc = questTagInfo and questTagInfo.tagName
 			local difficultyID = activityInfo.difficultyID
@@ -502,14 +502,8 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 				titleZoneColor = miog.CLRSCC.yellow
 
 			elseif(declineData) then
-				if(declineData.timestamp > time() - 900) then
-					titleZoneColor = declineData.activeDecline and miog.CLRSCC.red or miog.CLRSCC.orange
+				titleZoneColor = miog.CLRSCC.red or miog.CLRSCC.orange
 
-				else
-					titleZoneColor = "FFFFFFFF"
-					MIOG_NewSettings.declinedGroups[searchResultInfo.partyGUID] = nil
-
-				end
 			else
 				titleZoneColor = "FFFFFFFF"
 
@@ -1140,7 +1134,12 @@ local function searchPanelEvents(_, event, ...)
 		
 		miog.increaseStatistic(new)
 
-		updateScrollBoxFrameApplicationStatus(findFrame(resultID), resultID, new)
+		local frame = findFrame(resultID)
+
+		if(frame) then
+			updateScrollBoxFrameApplicationStatus(frame, resultID, new)
+
+		end
 
 		if(new == "inviteaccepted") then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)

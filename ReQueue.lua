@@ -28,6 +28,7 @@ end
 
 miog.requeue.getPartyGUIDData = getPartyGUIDData
 
+
 local function getFirstPartyGUID()
     local firstGUID
     local lastCounter = math.huge
@@ -44,6 +45,21 @@ local function getFirstPartyGUID()
 end
 
 local function getFirstResultID()
+    local partyGUID = getFirstPartyGUID()
+
+    for _, v in pairs(LFGListFrame.SearchPanel.results) do
+        if(C_LFGList.HasSearchResultInfo(v)) then
+            local searchResultInfo = C_LFGList.GetSearchResultInfo(v)
+
+            if(partyGUID == searchResultInfo.partyGUID) then
+                return v
+
+            end
+        end
+    end
+end
+
+--[[local function getFirstResultID()
     local firstResultID
     local lastCounter = math.huge
 
@@ -56,7 +72,7 @@ local function getFirstResultID()
     end
 
     return firstResultID
-end
+end]]
 
 local function countPartyGUIDs()
     local numOfGroups = 0
@@ -92,14 +108,14 @@ local function countApplicationsAndGUIDs()
 
 end
 
-local function processResultID(resultID, appStatus)
+local function processResultID(resultID, appStatus, oldStatus)
     if(C_LFGList.HasSearchResultInfo(resultID)) then
         local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
-        if(appStatus == "inviteaccepted" or appStatus == "invitedeclined" or (appStatus == "declined" and not searchResultInfo.isDelisted)) then
+        if(appStatus == "applied" or appStatus == "inviteaccepted" or appStatus == "invitedeclined" or appStatus == "declined_full" or (appStatus == "declined" and not searchResultInfo.isDelisted)) then
             removeGUIDFromList(searchResultInfo.partyGUID)
             
-        elseif(appStatus == "failed") then
+        elseif(appStatus == "failed" and oldStatus == "none") then
             if(not searchResultInfo.isDelisted) then
                 addDataToList(searchResultInfo.partyGUID, resultID)
 
@@ -109,14 +125,7 @@ local function processResultID(resultID, appStatus)
             end
         end
     end
-
-    if(not InCombatLockdown()) then
-        QueueStatusFrame:Update()
-
-    end
 end
-
-MIOG_PROCESS_FAKE_RESULT_ID = processResultID
 
 local function checkForErrors()
     if(countPartyGUIDs() == 0) then
@@ -176,25 +185,32 @@ local function setupPopup()
             end
             
             requeueFrame:SetSize(LFGListApplicationDialog:GetSize())
+
+            requeueFrame.resultID = resultID
+
             StaticPopupSpecial_Show(requeueFrame)
         end
     end
 end
 
+local function processAndSetup(resultID, appStatus, oldStatus)
+    processResultID(resultID, appStatus, oldStatus)
+    setupPopup()
+
+end
+
+MIOG_RQ_PROCESS = processAndSetup
+
 local function events(_, event, ...)
     if(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
-        local resultID, appStatus = ...
+        local resultID, appStatus, oldStatus = ...
 
-        processResultID(resultID, appStatus)
-        setupPopup()
-        
-    --elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
-        --local resultID = ...
-        --local appStatus = "failed"
+        processAndSetup(resultID, appStatus, oldStatus)
 
-        --processResultID(resultID, appStatus)
-        --setupPopup()
+        if(not InCombatLockdown()) then
+            QueueStatusFrame:Update()
 
+        end
     elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
         setupPopup()
 
@@ -214,10 +230,10 @@ local function loadRequeue()
     hooksecurefunc("LFGListSearchPanel_DoSearch", function() isDirty = false end)
 
 	mainFrame.ApplyButton:FitToText()
-	mainFrame.ApplyButton:SetScript("OnClick", function()
+	mainFrame.ApplyButton:SetScript("OnClick", function(self)
 	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 
-		local resultID = getFirstResultID()
+		local resultID = self:GetParent().resultID
 
         if(resultID and checkForErrors()) then
             C_LFGList.ApplyToGroup(resultID,
@@ -226,9 +242,32 @@ local function loadRequeue()
                 LFGListApplicationDialog.DamagerButton:IsShown() and LFGListApplicationDialog.DamagerButton.CheckButton:GetChecked()
             )
         end
+
+        StaticPopupSpecial_Hide(requeueFrame)
 	end)
 
     requeueFrame = mainFrame
+
+    
+	--[[if ( newStatus == "declined" ) then
+		return LFG_LIST_APP_DECLINED_MESSAGE
+
+	elseif ( newStatus == "declined_full" ) then
+		return LFG_LIST_APP_DECLINED_FULL_MESSAGE
+
+	elseif ( newStatus == "declined_delisted" ) then
+		return LFG_LIST_APP_DECLINED_DELISTED_MESSAGE
+
+	elseif ( newStatus == "timedout" ) then
+		return LFG_LIST_APP_TIMED_OUT_MESSAGE
+
+	end
+
+    function ChatFrame_DisplaySystemMessageInPrimary(messageTag)
+        local info = ChatTypeInfo["SYSTEM"];
+        DEFAULT_CHAT_FRAME:AddMessage(messageTag, info.r, info.g, info.b, info.id);
+    end]]
+
 end
 
 miog.loadRequeue = loadRequeue

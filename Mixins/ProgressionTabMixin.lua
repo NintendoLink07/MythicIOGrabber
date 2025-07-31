@@ -1575,33 +1575,35 @@ function ProgressionTabMixin:CheckForAchievements(guid, type, mapID)
 
 	local raidData = charData.raid[mapID][type]
 
-	for _, achievementID in ipairs(currTable) do
-		local id, name, _, _, _, _, _, description = GetAchievementInfo(achievementID)
-		local searchFor = (type == "awakened") and description or name
+	if(currTable) then
+		for _, achievementID in ipairs(currTable) do
+			local id, name, _, _, _, _, _, description = GetAchievementInfo(achievementID)
+			local searchFor = (type == "awakened") and description or name
 
-		local difficulty = string.find(searchFor, "Normal") and 1 
-						or string.find(searchFor, "Heroic") and 2 
-						or string.find(searchFor, "Mythic") and 3
+			local difficulty = string.find(searchFor, "Normal") and 1 
+							or string.find(searchFor, "Heroic") and 2 
+							or string.find(searchFor, "Mythic") and 3
 
-		if difficulty then
-			local difficultyData = raidData[difficulty] or { ingame = true, kills = 0, bosses = {} }
-			raidData[difficulty] = difficultyData
+			if difficulty then
+				local difficultyData = raidData[difficulty] or { ingame = true, kills = 0, bosses = {} }
+				raidData[difficulty] = difficultyData
 
-			local numCriteria = (type == "regular") and 1 or GetAchievementNumCriteria(id)
+				local numCriteria = (type == "regular") and 1 or GetAchievementNumCriteria(id)
 
-			for i = 1, numCriteria do
-				local _, _, completedCriteria, quantity, _, _, _, _, _, criteriaID = GetAchievementCriteriaInfo(id, i, true)
+				for i = 1, numCriteria do
+					local _, _, completedCriteria, quantity, _, _, _, _, _, criteriaID = GetAchievementCriteriaInfo(id, i, true)
 
-				if completedCriteria then
-					difficultyData.kills = difficultyData.kills + 1
+					if completedCriteria then
+						difficultyData.kills = difficultyData.kills + 1
+					end
+
+					table.insert(difficultyData.bosses, {
+						id = id,
+						criteriaID = criteriaID,
+						killed = completedCriteria,
+						quantity = quantity
+					})
 				end
-
-				table.insert(difficultyData.bosses, {
-					id = id,
-					criteriaID = criteriaID,
-					killed = completedCriteria,
-					quantity = quantity
-				})
 			end
 		end
 	end

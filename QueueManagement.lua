@@ -607,7 +607,7 @@ local function checkQueues()
 
 		
 		local scrollbox = miog.MainTab.QueueInformation.Panel.QueueScrollBox
-		scrollbox:SetDataProvider(dataProvider)
+		scrollbox:SetDataProvider(dataProvider, true)
 		
 		miog.MainTab.QueueInformation.Panel.Title:SetShown(dataProvider:GetSize() == 0)
 
@@ -791,7 +791,7 @@ miog.loadQueueSystem = function()
 
 			if(isFakeApp) then
 				frame:SetAlpha(0.5)
-				macrotext = "/run MIOG_PROCESS_FAKE_RESULT_ID(" .. data.resultID .. ")"
+				macrotext = "/run MIOG_RQ_PROCESS(" .. data.resultID .. ", \"declined_full\")"
 				timeInQueue = searchResultInfo.age
 
 				frame:SetTimerInfo("add", timeInQueue)
@@ -966,7 +966,7 @@ miog.loadQueueSystem = function()
 	local scrollBoxAnchorsWithBar =
 	{
 		CreateAnchor("TOPLEFT", 3, -4),
-		CreateAnchor("BOTTOMRIGHT", -20, 3);
+		CreateAnchor("BOTTOMRIGHT", -18, 3);
 	}
 	local scrollBoxAnchorsWithoutBar =
 	{
@@ -976,15 +976,6 @@ miog.loadQueueSystem = function()
 	ScrollUtil.AddManagedScrollBarVisibilityBehavior(scrollbox, scrollbar, scrollBoxAnchorsWithBar, scrollBoxAnchorsWithoutBar)
 
 	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
-
-	--eventReceiver:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-	--eventReceiver:RegisterEvent("LFG_UPDATE")
-	--eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
-	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
-	--eventReceiver:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
-	--eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
-	--eventReceiver:RegisterEvent("LFG_QUEUE_STATUS_UPDATE")
-	--eventReceiver:RegisterEvent("PLAYER_REGEN_DISABLED")
 	
 	hooksecurefunc("JoinArena", function()
 		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA}
