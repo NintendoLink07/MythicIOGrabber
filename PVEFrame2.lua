@@ -334,7 +334,7 @@ local function createPVEFrameReplacement()
 					currentFrame.ThresholdBar.Checkmark:Show()
 					currentFrame.ThresholdBar.End:Hide()
 
-				else
+				elseif(activities[1].progress > 0) then
 					currentFrame.ThresholdBar.End:ClearAllPoints()
 					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 0)
 					currentFrame.ThresholdBar.End:Show()
@@ -353,7 +353,7 @@ local function createPVEFrameReplacement()
 		
 
 		local renownFactions = {
-			{id = 2685}
+			{id = 2736}
 		}
 
 		for k, v in ipairs(renownFactions) do
