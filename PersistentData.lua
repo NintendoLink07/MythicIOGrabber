@@ -526,8 +526,8 @@ for k = 2, 30, 1 do
 end
 
 miog.GROUP_ACTIVITY_ID_INFO = {
-	[280] = {abbreviatedName="STRTS", mapID = "2441", challengeModeID=391},
-	[281] = {abbreviatedName="GMBT", mapID = "2441", challengeModeID=392},
+	[280] = {abbreviatedName="STRTS", mapID = "2441", challengeModeID=391, fileName="tazavesh_streets"},
+	[281] = {abbreviatedName="GMBT", mapID = "2441", challengeModeID=392, fileName="tazavesh_gambit"},
 }
 
 miog.MAP_INFO = {
@@ -1273,11 +1273,43 @@ local function addActivityInfo(activityID)
 	return miog.ACTIVITY_INFO[activityID]
 end
 
+local function getBackgroundImageForIdentifier(mapID, groupID, activityID)
+	local bg
+
+	if(groupID) then
+		bg = miog.GROUP_ACTIVITY[groupID].horizontal
+	end
+
+	if(not bg and activityID) then
+		bg = miog.ACTIVITY_INFO[activityID].horizontal
+	end
+
+	if(not bg and mapID) then
+		bg = miog.MAP_INFO[mapID].horizontal
+
+	end
+
+	return bg
+end
+
+miog.getBackgroundImageForIdentifier = getBackgroundImageForIdentifier
+
 local function addGroupInfo(groupID, categoryID)
 	miog.GROUP_ACTIVITY[groupID] = {activityIDs = {}}
 
 	local groupName = C_LFGList.GetActivityGroupInfo(groupID)
 	miog.GROUP_ACTIVITY[groupID].groupName = groupName
+	
+	local groupActivityInfo = miog.GROUP_ACTIVITY_ID_INFO[groupID]
+
+	if(groupActivityInfo) then
+		miog.GROUP_ACTIVITY[groupID].abbreviatedName = groupActivityInfo.abbreviatedName
+
+		if(miog.isMIOGHQLoaded()) then
+			miog.GROUP_ACTIVITY[groupID].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
+		end
+	end
+
 	local activities = C_LFGList.GetAvailableActivities(categoryID, groupID)
 
 	for k, v in ipairs(activities) do
@@ -1286,6 +1318,13 @@ local function addGroupInfo(groupID, categoryID)
 		if(not miog.ACTIVITY_INFO[v]) then
 			addActivityInfo(v)
 
+		end
+
+		if(groupActivityInfo) then
+			if(miog.isMIOGHQLoaded()) then
+				miog.ACTIVITY_INFO[v].horizontal = MythicIO.GetBackgroundImage(groupActivityInfo.fileName)
+				miog.ACTIVITY_INFO[v].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
+			end
 		end
 	end
 
@@ -1342,6 +1381,8 @@ local function addActivityAndGroupInfo(activityID, groupID, categoryID)
 	if(groupID and not miog.GROUP_ACTIVITY[groupID]) then
 		miog.GROUP_ACTIVITY[groupID] = {activityIDs = {}}
 
+		local groupActivityInfo = miog.GROUP_ACTIVITY_ID_INFO[groupID]
+
 		local activities = C_LFGList.GetAvailableActivities(categoryID, groupID)
 
 		for k, v in ipairs(activities) do
@@ -1350,6 +1391,10 @@ local function addActivityAndGroupInfo(activityID, groupID, categoryID)
 			if(not miog.ACTIVITY_INFO[v]) then
 				addActivityInfo(v)
 
+			end
+
+			if(miog.isMIOGHQLoaded()) then
+				miog.ACTIVITY_INFO[v].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
 			end
 		end
 

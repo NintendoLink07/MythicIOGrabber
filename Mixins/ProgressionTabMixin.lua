@@ -914,20 +914,23 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
                 frame.Background:SetTexture(mapInfo.vertical, "MIRROR", "MIRROR")
 
 			elseif(self.type == "mplus") then
+				local bg
 				local mapInfo
 
 				if(data.groupID) then
 					local groupInfo = miog.GROUP_ACTIVITY[data.groupID]
 					shortName = groupInfo.abbreviatedName
 
-                	mapInfo = miog.MAP_INFO[groupInfo.mapID]
+					bg = miog.getBackgroundImageForIdentifier(groupInfo.mapID, nil, data.groupID)
+
 				else
                 	mapInfo = miog.MAP_INFO[data.mapID]
 					shortName = mapInfo.abbreviatedName
 
+					bg = mapInfo.vertical
 				end
 
-                frame.Background:SetTexture(mapInfo.vertical, "MIRROR", "MIRROR")
+                frame.Background:SetTexture(bg, "MIRROR", "MIRROR")
 
             end
 
