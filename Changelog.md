@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning].
 
 ### Changed
 
+- [SearchPanel] Enabled the "isLeaver" icons.
+
 - Some background code changes for 11.2.
 
 

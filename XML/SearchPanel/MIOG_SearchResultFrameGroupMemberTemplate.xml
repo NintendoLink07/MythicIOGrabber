@@ -16,7 +16,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <Texture parentKey="LeaverIcon" > 
+                <Texture parentKey="LeaverIcon" atlas="groupfinder-icon-leaver"> 
                     <Size x="12" y="12" />
                     <Anchors>
                         <Anchor point="BOTTOM" relativeKey="$parent.BORDER" relativePoint="BOTTOMRIGHT" />
@@ -24,7 +24,6 @@
 
                     <Scripts>
                         <OnEnter>
-                            --atlas="groupfinder-icon-leaver"
                             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		                    GameTooltip:AddLine(MYTHIC_PLUS_DESERTER)
                             GameTooltip:Show()
