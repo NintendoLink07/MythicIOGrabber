@@ -1212,6 +1212,12 @@ miog.createSearchPanel = function()
 	backToGroupButton:Hide()
 	searchPanel.BackToGroupButton = backToGroupButton
 
+	local leaverBadge = LFGListFrame.SearchPanel.LeaverBadge
+	leaverBadge:ClearAllPoints()
+	leaverBadge:SetParent(searchPanel)
+	leaverBadge:Hide()
+	searchPanel.LeaverBadge = leaverBadge
+
 	local scrollBox = LFGListFrame.SearchPanel.ScrollBox
 	scrollBox:ClearAllPoints()
 	scrollBox:SetParent(searchPanel)

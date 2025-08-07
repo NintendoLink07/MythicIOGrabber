@@ -97,7 +97,11 @@ local function retrieveSpellInfo(flyoutSpellID)
 	return desc, abbreviatedName
 end
 
+local tpButtonPool
+
 local function addTeleportButtons()
+	tpButtonPool:ReleaseAll()
+	
 	local lastExpansionFrames = {}
 
 	for index, info in ipairs(miog.TELEPORT_FLYOUT_IDS) do
@@ -143,7 +147,8 @@ local function addTeleportButtons()
 
 			for k, v in ipairs(expNameTable) do
 				local spellInfo = C_Spell.GetSpellInfo(v.spellID)
-				local tpButton = CreateFrame("Button", nil, miog.Teleports, "MIOG_TeleportButtonTemplate")
+				local tpButton = tpButtonPool:Acquire()
+				--local tpButton = CreateFrame("Button", nil, miog.Teleports, "MIOG_TeleportButtonTemplate")
 				tpButton:SetNormalTexture(spellInfo.iconID)
 				tpButton:GetNormalTexture():SetDesaturated(not v.known)
 				tpButton:SetPoint("LEFT", lastExpansionFrames[info.expansion] or logoFrame, "RIGHT", lastExpansionFrames[info.expansion] and k == 1 and 18 or 3, 0)
@@ -181,6 +186,7 @@ local function addTeleportButtons()
 						GameTooltip:AddLine(spell:GetSpellDescription())
 						GameTooltip:Show()
 					end)
+					tpButton:Show()
 				end)
 			end
 		end
@@ -526,6 +532,15 @@ local function createPVEFrameReplacement()
 	queueRolePanel.Damager.Checkbox:SetEnabled(damagerAvailable)
 	queueRolePanel.Damager.Icon:SetTexture("Interface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png")
 	queueRolePanel.Damager.Icon:SetDesaturated(not damagerAvailable)
+
+	tpButtonPool = CreateFramePool("Button", miog.Teleports, "MIOG_TeleportButtonTemplate", function(pool, button)
+		button:Hide()
+		button:ClearAllPoints()
+		button.Text:SetText("")
+		button:ClearNormalTexture()
+		button:ClearHighlightTexture()
+		button:SetScript("OnEnter", nil)
+	end)
 
 	addTeleportButtons()
 	

@@ -14,7 +14,7 @@
         </Layers>
 
         <Frames>
-            <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" setAllPoints="true" />
+            <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" setAllPoints="true" frameStrata="MEDIUM"/>
         </Frames>
 
         <Scripts>

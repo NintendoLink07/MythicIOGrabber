@@ -431,7 +431,7 @@ miog.CURRENCY_INFO = {
 		{id = 3008,}, --valorstones
 		{id = 3269,}, --catalyst
 		{id = 3141,}, --spark
-		{id = 3307, icon = 4181970} --raid buff
+		{id = 3278} --strands
 	}
 }
 

@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [3.5.8] - 2025-08-08
+
+### Changed
+
+- Swapped the raid buff tracker in the currency panel with the counter for ethereal strands.
+
+### Fixed
+
+- [Ports] The teleport buttons now only get added once instead of everytime you open the mainframe.
+
+- [SearchPanel] The leader badge icon will now also be shown on the signup button when you try to sign up to a group that has atleast 1 leaver.
+
+
+
 ## [3.5.7a] - 2025-08-07
 
 ### Changed
