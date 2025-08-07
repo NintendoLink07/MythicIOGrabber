@@ -1,13 +1,9 @@
-## [3.5.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.7) - 2025-08-05
+## [3.5.7a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.7a) - 2025-08-07
 
 ### Changed
 
-- [MainFrame] Changed the renown bar to the new raid renown faction.
-
-- [SearchPanel] Enabled the "isLeaver" icons.
-
-- Some background code changes for 11.2.
+- Raid renown progress bar now also visible even when the faction isn't unlocked yet.
 
 ### Fixed
 
-- When opening the mainframe the ending glow of the progress bars won't stick to the right side of the screen.
+- A couple of errors trying to retrieve background image data have been resolved.

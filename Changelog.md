@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.5.7a] - 2025-08-07
+
+### Changed
+
+- Raid renown progress bar now also visible even when the faction isn't unlocked yet.
+
+### Fixed
+
+- A couple of errors trying to retrieve background image data have been resolved.
+
+
 
 ## [3.5.7] - 2025-08-05
 
@@ -4146,7 +4157,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.7..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.7a..HEAD
+[3.5.7a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.7a
 [3.5.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.7
 [3.5.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.6
 [3.5.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.5

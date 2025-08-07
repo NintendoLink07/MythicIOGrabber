@@ -361,7 +361,7 @@ local function createPVEFrameReplacement()
 			local majorFactionData = C_MajorFactions.GetMajorFactionData(v.id)
 			local currentFrame = miog.MainTab.Information["RenownBar" .. k]
 
-			if(majorFactionData and majorFactionData.isUnlocked) then
+			if(majorFactionData) then -- and majorFactionData.isUnlocked
 				currentFrame.id = v.id
 				local standing = ""
 

@@ -1276,15 +1276,16 @@ end
 local function getBackgroundImageForIdentifier(mapID, groupID, activityID)
 	local bg
 
-	if(groupID) then
+	if(groupID and miog.GROUP_ACTIVITY[groupID]) then
 		bg = miog.GROUP_ACTIVITY[groupID].horizontal
 	end
 
-	if(not bg and activityID) then
+	if(not bg and activityID and miog.ACTIVITY_INFO[activityID]) then
 		bg = miog.ACTIVITY_INFO[activityID].horizontal
+
 	end
 
-	if(not bg and mapID) then
+	if(not bg and mapID and miog.MAP_INFO[mapID]) then
 		bg = miog.MAP_INFO[mapID].horizontal
 
 	end
@@ -1393,8 +1394,10 @@ local function addActivityAndGroupInfo(activityID, groupID, categoryID)
 
 			end
 
-			if(miog.isMIOGHQLoaded()) then
-				miog.ACTIVITY_INFO[v].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
+			if(groupActivityInfo) then
+				if(miog.isMIOGHQLoaded()) then
+					miog.ACTIVITY_INFO[v].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
+				end
 			end
 		end
 
