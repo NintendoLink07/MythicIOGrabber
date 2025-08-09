@@ -197,6 +197,7 @@ function TableMixin:SetCellText(text, row, column)
 
     if(cell) then
         cell.Text:SetText(text)
+
         cell.minimumWidth = getMaximumSize(cell.Checkbox and (cell.Text:GetStringWidth() + cell.Checkbox:GetWidth()) or cell.Text:GetStringWidth(), cell:GetWidth())
         cell:MarkDirty()
 

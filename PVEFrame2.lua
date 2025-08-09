@@ -195,7 +195,25 @@ end
 
 local function createPVEFrameReplacement()
 	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
-	pveFrame2:SetSize(PVEFrame:GetWidth(), PVEFrame:GetHeight())
+
+	if(MIOG_NewSettings.mainFrameSize) then
+		pveFrame2:SetSize(MIOG_NewSettings.mainFrameSize.width, MIOG_NewSettings.mainFrameSize.height)
+
+	else
+		pveFrame2:SetSize(PVEFrame:GetWidth() + 20, PVEFrame:GetHeight())
+
+	end
+
+	if(MIOG_NewSettings.mainFrameScale) then
+		pveFrame2.TitleBar.UISlider.SliderWithSteppers:SetValue(MIOG_NewSettings.mainFrameScale)
+
+	end
+
+	pveFrame2:SetResizeBounds(PVEFrame:GetWidth() + 20, PVEFrame:GetHeight(), PVEFrame:GetWidth() * 2, PVEFrame:GetHeight()* 2)
+
+	if(pveFrame2:GetPoint() == nil) then
+		pveFrame2:SetPoint(PVEFrame:GetPoint())
+	end
 
 	miog.pveFrame2 = pveFrame2
 	miog.MainTab = pveFrame2.TabFramesPanel.MainTab
@@ -203,10 +221,6 @@ local function createPVEFrameReplacement()
 	
 	LFGListFrame.SearchPanel.results = LFGListFrame.SearchPanel.results or {}
 	LFGListFrame.SearchPanel.applications = LFGListFrame.SearchPanel.applications or {}
-
-	if(pveFrame2:GetPoint() == nil) then
-		pveFrame2:SetPoint(PVEFrame:GetPoint())
-	end
 
 	miog.createFrameBorder(pveFrame2, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 

@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" movable="true" hidden="true" virtual="true" registerForDrag="LeftButton" parent="UIParent" toplevel="true">
+    <Frame name="MIOG_MainFrameTemplate" inherits="BackdropTemplate" resizable="true" movable="true" hidden="true" virtual="true" registerForDrag="LeftButton" parent="UIParent" toplevel="true">
         <Frames>
             <Frame parentKey="CategoryHoverFrame" inherits="VerticalLayoutFrame" hidden="true" frameLevel="10000">
                 <KeyValues>
@@ -8,6 +8,25 @@
                     <KeyValue key="spacing" value="1" />
                 </KeyValues>
             </Frame>
+
+            <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH" registerForDrag="LeftButton">
+                <Size x="15" y="15" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Scripts>
+                    <OnLoad>
+                        local mainFrame = self:GetParent()
+                        self:Init(mainFrame, PVEFrame:GetWidth(), PVEFrame:GetHeight(), PVEFrame:GetWidth() * 2, PVEFrame:GetHeight() * 2)
+
+                        self:HookScript("OnMouseUp", function()
+                            MIOG_NewSettings.mainFrameSize = {width = self:GetParent():GetWidth(), height = self:GetParent():GetHeight()}
+                        
+                        end)
+                    </OnLoad>
+                </Scripts>
+            </Button>
 
             <Frame parentKey="TitleBar">
                 <Size y="20" />
@@ -108,27 +127,6 @@
                             <OnEvent method="OnEvent"/>
 						</Scripts>
 					</Button>
-
-                    <Button parentKey="KnownIssuesPanel" inherits="IconButtonTemplate" hidden="true">
-                        <Size x="15" y="15"/>
-						<Anchors>
-							<Anchor point="RIGHT" relativeKey="$parent.BlizzardFrame" relativePoint="LEFT" x="-2"/>
-						</Anchors>
-
-                        <NormalTexture atlas="glueannouncementpopup-icon-info" />
-                        <HighlightTexture atlas="glueannouncementpopup-icon-info" />
-
-                        <Scripts>
-                            <OnEnter>
-                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                                GameTooltip:SetText(self.text)
-                                GameTooltip:Show()
-                            </OnEnter>
-                            <OnLeave>
-		                        GameTooltip:Hide()
-                            </OnLeave>
-                        </Scripts>
-                    </Button>
                 </Frames>
 
                 <Layers>
@@ -160,13 +158,114 @@
                             </Scripts>
                         </FontString>
                     </Layer>
-                </Layers>            
+                </Layers>        
+
+                <Frames>
+                    <Frame parentKey="UISlider" mixin="SettingsAdvancedSliderMixin">
+                        <Size x="110" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.TitleString" relativePoint="RIGHT" x="5" />
+                        </Anchors>
+                        <Scripts>
+                            <!--<OnLoad>
+                                self:Init(self:GetParent():GetParent():GetScale(), 1, 3, 20, formatters)
+                                self.Slider:SetSize(self:GetSize())
+
+                                local function changeValue(self, value, user)
+                                    if(not user) then
+                                        self:GetParent():GetParent():GetParent():SetScale(value)
+                                        self:GetParent():GetParent().Scale:SetText(value)
+                                    end
+                                end
+
+                            </OnLoad>!-->
+                        </Scripts>
+
+                        <Layers>
+                            <Layer>
+                                <FontString parentKey="Text" inherits="GameFontNormal" justifyH="LEFT" hidden="true">
+                                    <Anchors>
+                                        <Anchor point="LEFT" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <Frame parentKey="SliderWithSteppers" inherits="MinimalSliderWithSteppersTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" x="3"/>
+                                    <Anchor point="RIGHT"  x="-3"/>
+                                </Anchors>
+                            </Frame>
+                            <Frame parentKey="NewFeature" inherits="NewFeatureLabelTemplate" frameStrata="HIGH" scale=".8" frameLevel="100">
+                                <Size x="1" y="1"/>
+                                <Anchors>
+                                    <Anchor point="BOTTOM" relativeKey="$parent.SliderWithSteppers" relativePoint="TOP"/>
+                                </Anchors>
+                            </Frame>
+                             <EditBox parentKey="Scale" inherits="InputBoxTemplate" frameStrata="HIGH" autoFocus="false" letters="3">
+                                <Size x="32" y="8" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="27" />
+                                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-23" />
+                                </Anchors>
+                                <Scripts>
+                                    <OnLoad>
+                                        self:SetText(self:GetParent():GetParent():GetScale())
+                                    </OnLoad>
+
+                                    <OnEnterPressed>
+                                        local num = tonumber(self:GetText())
+                                        
+                                        if(num and num >= 1 and 3 >= num) then
+                                            --self:GetParent():GetParent():GetParent():SetScale(num)
+                                            self:GetParent().SliderWithSteppers:SetValue(num)
+                                            self:ClearFocus()
+                                        end
+                                    </OnEnterPressed>
+
+                                    <OnEscapePressed>
+                                        self:ClearFocus()
+                                    </OnEscapePressed>
+                                </Scripts>
+                            </EditBox>
+                        </Frames>
+                        <Scripts>
+                            <OnLoad>
+	                            self.cbrHandles = Settings.CreateCallbackHandleContainer();
+                                self:OnLoad()
+                                self.SliderWithSteppers:Init(self:GetParent():GetParent():GetScale(), 1, 3, 20, formatters)
+
+                                local mainFrame = self:GetParent():GetParent()
+                                local scale = self.Scale
+
+                                self.SliderWithSteppers.Slider:Hide()
+
+                                local function round(number, decimals)
+                                    number = ((number * 10) + (2^52 + 2^51) - (2^52 + 2^51)) / 10
+                                    local power = 10 ^ decimals
+                                    return math.floor(number * power) / power
+                                end
+
+                                local function changeValue(slider, value)
+                                    value = round(value, 2)
+                                    mainFrame:SetScale(value)
+                                    scale:SetText(value)
+
+                                    MIOG_NewSettings.mainFrameScale = value
+                                end
+
+		                        self.cbrHandles:RegisterCallback(self.SliderWithSteppers, MinimalSliderWithSteppersMixin.Event.OnValueChanged, changeValue);
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                </Frames>    
             </Frame>
 
             <Frame parentKey="TabFramesPanel">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-5" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Resize" relativePoint="BOTTOMLEFT" y="1" />
                 </Anchors>
 
                 <Frames>
@@ -179,7 +278,7 @@
 
                                 <Anchors>
                                     <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="3"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="3"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
                                 </Anchors>
                                 
                                 <Frames>
@@ -382,7 +481,7 @@
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT" x="-5" y="4"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT" x="-4" y="5"/>
                                 </Anchors>
 
                                 <Frames>

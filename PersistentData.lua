@@ -1676,256 +1676,6 @@ miog.BASE_ITEM_TRACK_INFO = {
 	[6] = {length = 4},
 }
 
-miog.GEARING_CHART = {
-	[12] = {
-		maxJumps = 0,
-		baseItemLevel = 454,
-		maxItemLevel = 535,
-		dungeon = {
-			info = {
-				[1] = {jumps = 2, name="Normal"},
-				[2] = {jumps = 7, name="Heroic/TW"},
-				[3] = {jumps = 12, name="Mythic"},
-				[4] = {jumps = 13, name="+2"},
-				[5] = {jumps = 14, name="+3"},
-				[6] = {jumps = 14, name="+4"},
-				[7] = {jumps = 15, name="+5"},
-				[8] = {jumps = 15, name="+6"},
-				[9] = {jumps = 16, name="+7"},
-				[10] = {jumps = 16, name="+8"},
-				[11] = {jumps = 17, name="+9"},
-				[12] = {jumps = 17, name="+10"},
-			},
-			itemLevels = {
-
-			},
-			vaultJumpsOffset = 4,
-			vaultLevels = {
-
-			},
-		},
-		raid = {
-			info = {
-				[1] = {jumps = 8, name="LFR"},
-				[2] = {jumps = 12, name="Normal"},
-				[3] = {jumps = 16, name="Heroic"},
-				[4] = {jumps = 20, name="Mythic"},
-			},
-			itemLevels = {
-
-			},
-		},
-		other = {
-			info = {
-				[1] = {jumps = 19, name="Wyrm5"},
-				[2] = {jumps = 22, name="Aspect5"},
-			},
-			itemLevels = {
-
-			},
-		},
-		awakenedInfo = {
-			start = "normal",
-			maxLength = 14,
-		},
-		trackInfo = {
-			[1] = {name = "Explorer", length = 8},
-			[2] = {name = "Adventurer", length = 8},
-			[3] = {name = "Veteran", length = 8},
-			[4] = {name = "Champion", length = 8},
-			[5] = {name = "Hero", length = 6},
-			[6] = {name = "Myth", length = 4},
-		},
-		itemLevelInfo = {
-
-		}
-	},
-
-	
-	[13] = {
-		maxJumps = 0,
-		baseItemLevel = 558,
-		maxItemLevel = 639,
-		dungeon = {
-			info = {
-				[1] = {jumps = -1, name="Normal", ignoreForVault=true},
-				[2] = {jumps = 4, name="Heroic/TW"},
-				[3] = {jumps = 11, vaultOffset = 3, name="Mythic"},
-				[4] = {jumps = 12, vaultOffset = 3, name="+2"},
-				[5] = {jumps = 12, name="+3"},
-				[6] = {jumps = 13, vaultOffset = 3, name="+4"},
-				[7] = {jumps = 14, vaultOffset = 3, name="+5"},
-				[8] = {jumps = 15, vaultOffset = 2, name="+6"},
-				[9] = {jumps = 16, vaultOffset = 2, name="+7"},
-				[10] = {jumps = 16, vaultOffset = 3, name="+8"},
-				[11] = {jumps = 17, vaultOffset = 2, name="+9"},
-				[12] = {jumps = 17, vaultOffset = 3, name="+10"},
-			},
-			itemLevels = {
-
-			},
-			vaultJumpsOffset = 4,
-			vaultLevels = {
-
-			},
-		},
-		raid = {
-			info = {
-				[1] = {jumps = 8, name="LFR"},
-				[2] = {jumps = 12, name="Normal"},
-				[3] = {jumps = 16, name="Heroic"},
-				[4] = {jumps = 20, name="Mythic"},
-			},
-			itemLevels = {
-
-			},
-			veryRare = {
-				info = {
-					[1] = {jumps = 13, name="Rare LFR"},
-					[2] = {jumps = 17, name="Rare Normal"},
-					[3] = {jumps = 21, name="Rare Heroic"},
-					[4] = {jumps = 25, name="Rare Mythic"},
-				},
-				itemLevels = {
-	
-				},
-			}
-		},
-		delves = {
-			info = {
-				[1] = {jumps = 1, vaultOffset = 7, name="L1"},
-				[2] = {jumps = 2, vaultOffset = 6, name="L2"},
-				[3] = {jumps = 4, vaultOffset = 5, name="L3"},
-				[4] = {jumps = 6, vaultOffset = 6, name="L4"},
-				[5] = {jumps = 8, vaultOffset = 6, name="L5"},
-				[6] = {jumps = 10, vaultOffset = 5, name="L6"},
-				[7] = {jumps = 12, vaultOffset = 4, name="L7"},
-				[8] = {jumps = 14, vaultOffset = 4, name="L8"},
-			},
-			itemLevels = {
-
-			},
-			vaultJumpsOffset = 4,
-			vaultLevels = {
-
-			},
-		},
-		other = {
-			info = {
-				[1] = {jumps = 12, name="Spark5"},
-				[2] = {jumps = 19, name="Runed5"},
-				[3] = {jumps = 24, name="Gilded5"},
-			},
-			itemLevels = {
-
-			},
-		},
-		trackStartJumpsOffset = 4,
-		trackInfo = {
-			[1] = {name = "Explorer", length = 8},
-			[2] = {name = "Adventurer", length = 8},
-			[3] = {name = "Veteran", length = 8},
-			[4] = {name = "Champion", length = 8},
-			[5] = {name = "Hero", length = 6},
-			[6] = {name = "Myth", length = 6},
-		},
-		itemLevelInfo = {
-
-		}
-	},
-
-	[14] = {
-		maxJumps = 0,
-		baseItemLevel = 597,
-		maxItemLevel = 684,
-		dungeon = {
-			info = {
-				[1] = {jumps = -1, name="Normal", ignoreForVault=true},
-				[2] = {jumps = 7, name="Heroic/TW"},
-				[3] = {jumps = 12, vaultOffset = 3, name="Mythic"},
-				[4] = {jumps = 13, vaultOffset = 3, name="+2"},
-				[5] = {jumps = 13, vaultOffset = 3, name="+3"},
-				[6] = {jumps = 14, vaultOffset = 3, name="+4"},
-				[7] = {jumps = 15, vaultOffset = 2, name="+5"},
-				[8] = {jumps = 16, vaultOffset = 2, name="+6"},
-				[9] = {jumps = 16, vaultOffset = 3, name="+7"},
-				[10] = {jumps = 17, vaultOffset = 2, name="+8"},
-				[11] = {jumps = 17, vaultOffset = 2, name="+9"},
-				[12] = {jumps = 18, vaultOffset = 2, name="+10"},
-			},
-			itemLevels = {
-
-			},
-			vaultJumpsOffset = 4,
-			vaultLevels = {
-
-			},
-		},
-		raid = {
-			info = {
-				[1] = {jumps = 8, name="LFR"},
-				[2] = {jumps = 12, name="Normal"},
-				[3] = {jumps = 16, name="Heroic"},
-				[4] = {jumps = 20, name="Mythic"},
-			},
-			itemLevels = {
-
-			},
-			veryRare = {
-				info = {
-					[1] = {jumps = 13, name="Rare LFR"},
-					[2] = {jumps = 17, name="Rare Normal"},
-					[3] = {jumps = 21, name="Rare Heroic"},
-					[4] = {jumps = 25, name="Rare Mythic"},
-				},
-				itemLevels = {
-	
-				},
-			}
-		},
-		delves = {
-			info = {
-				[1] = {jumps = 1, vaultOffset = 7, name="L1"},
-				[2] = {jumps = 2, vaultOffset = 6, name="L2"},
-				[3] = {jumps = 4, vaultOffset = 5, name="L3"},
-				[4] = {jumps = 6, vaultOffset = 6, name="L4"},
-				[5] = {jumps = 8, vaultOffset = 6, name="L5"},
-				[6] = {jumps = 10, vaultOffset = 5, name="L6"},
-				[7] = {jumps = 12, vaultOffset = 4, name="L7"},
-			},
-			itemLevels = {
-
-			},
-			vaultJumpsOffset = 4,
-			vaultLevels = {
-
-			},
-		},
-		other = {
-			info = {
-				[1] = {jumps = 12, name="Spark5"},
-				[2] = {jumps = 19, name="Runed5"},
-				[3] = {jumps = 24, name="Gilded5"},
-			},
-			itemLevels = {
-
-			},
-		},
-		trackStartJumpsOffset = 4,
-		trackInfo = {
-			[1] = {name = "Explorer", length = 8},
-			[2] = {name = "Adventurer", length = 8},
-			[3] = {name = "Veteran", length = 8},
-			[4] = {name = "Champion", length = 8},
-			[5] = {name = "Hero", length = 6},
-			[6] = {name = "Myth", length = 6},
-		},
-		itemLevelInfo = {
-
-		}
-	},
-}
-
 local fullStep = 13
 local quarterSteps = {
 	3, 3, 3, 4
@@ -2024,8 +1774,8 @@ miog.ITEM_LEVEL_DATA = {
 		data = {
 			dungeon = {
 				[1] = {steps = -1, name="Normal", ignoreForVault=true},
-				[2] = {steps = 7, vaultOffset = 4, name="Heroic/TW"},
-				[3] = {steps = 12, vaultOffset = 3, name="Mythic"},
+				[2] = {steps = 7, vaultOffset = 4, name="HC/TW"},
+				[3] = {steps = 12, vaultOffset = 3, name="M0"},
 				[4] = {steps = 13, vaultOffset = 3, name="+2"},
 				[5] = {steps = 13, vaultOffset = 3, name="+3"},
 				[6] = {steps = 14, vaultOffset = 3, name="+4"},
@@ -2035,27 +1785,29 @@ miog.ITEM_LEVEL_DATA = {
 				[10] = {steps = 17, vaultOffset = 2, name="+8"},
 				[11] = {steps = 17, vaultOffset = 2, name="+9"},
 				[12] = {steps = 18, vaultOffset = 2, name="+10"},
+				[13] = {steps = 16, vaultOffset = 4, name="TAZA HM"},
+				[14] = {steps = 20, vaultOffset = 0, ignoreForVault="true", name="TAZA DL"},
 			},
 			raid = {
 				{steps = 9, name="LFR 1-3"},
 				{steps = 10, name="LFR 4-6"},
 				{steps = 11, name="LFR 7-8"},
-				{steps = 13, name="Normal 1-3"},
-				{steps = 14, name="Normal 4-6"},
-				{steps = 15, name="Normal 7-8"},
-				{steps = 17, name="Heroic 1-3"},
-				{steps = 18, name="Heroic 4-6"},
-				{steps = 19, name="Heroic 7-8"},
-				{steps = 21, name="Mythic 1-3"},
-				{steps = 22, name="Mythic 4-6"},
-				{steps = 23, name="Mythic 7-8"},
+				{steps = 13, name="N 1-3"},
+				{steps = 14, name="N 4-6"},
+				{steps = 15, name="N 7-8"},
+				{steps = 17, name="HC 1-3"},
+				{steps = 18, name="HC 4-6"},
+				{steps = 19, name="HC 7-8"},
+				{steps = 21, name="M 1-3"},
+				{steps = 22, name="M 4-6"},
+				{steps = 23, name="M 7-8"},
 
 			},
 			raidVeryRare = {
 				[1] = {steps = 13, name="Rare LFR"},
-				[2] = {steps = 17, name="Rare Normal"},
-				[3] = {steps = 21, name="Rare Heroic"},
-				[4] = {steps = 25, name="Rare Mythic"},
+				[2] = {steps = 17, name="Rare N"},
+				[3] = {steps = 21, name="Rare HC"},
+				[4] = {steps = 25, name="Rare M"},
 			},
 			delves = {
 				[1] = {steps = 4, vaultOffset = 4, name="T1"},
@@ -2075,7 +1827,7 @@ miog.ITEM_LEVEL_DATA = {
 				[5] = {steps = 16, name="T8DB+"},
 			},
 			crafting = {
-				{steps = 10, name="EnchWeather5"},
+				{steps = 10, name="Weather5"},
 				{steps = 15, name="Spark5"},
 				{steps = 19, name="Runed5"},
 				{steps = 24, name="Gilded5"},

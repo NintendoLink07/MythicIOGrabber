@@ -58,19 +58,6 @@
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.FooterBar" relativePoint="TOPRIGHT" />
                 </Anchors>
             </Frame>
-
-            <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH" registerForDrag="LeftButton">
-                <Size x="20" y="20" />
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.FooterBar" relativePoint="TOPRIGHT" />
-                </Anchors>
-
-                <Scripts>
-                    <OnDragStart>
-                        self:GetParent():StartSizing()
-                    </OnDragStart>
-                </Scripts>
-            </Button>
         </Frames>
     </Frame>
 </Ui>

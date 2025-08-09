@@ -10,5 +10,16 @@
                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" setAllPoints="true" />
             </Layer>
         </Layers>
+
+        <Scripts>
+            <OnEnter>
+                if(self.Text:IsTruncated()) then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.Text:GetText())
+                    GameTooltip:Show()
+                end
+            </OnEnter>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
     </Frame>
 </Ui>

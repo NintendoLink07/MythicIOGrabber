@@ -1,146 +1,12 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local disabledPopups = {}
 local filterPopupID = nil
-local numOfActiveApps = 0
-local queueIndex = 1
-
-local filterPopup
-local showFilterPopup
-
 local queuedList = {};
-
-local queueSystem = {}
---queueSystem.queueFrames = {}
-queueSystem.currentlyInUse = 0
-
-local queueFrameIndex = 1
-local randomBGFrame, randomEpicBGFrame, skirmish, brawl1, brawl2, specificBox
---local stayActive = false
 
 local formatter = CreateFromMixins(SecondsFormatterMixin)
 formatter:SetStripIntervalWhitespace(true)
 formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
-
-local function setupFilterPopup(resultID, reason, groupName, activityName, leaderName)
-	filterPopupID = resultID
-	filterPopup.Text2:SetText(reason)
-	filterPopup.Text2:SetTextColor(1, 0, 0, 1)
-	filterPopup.Text3:SetText(groupName .. " - " .. activityName)
-	filterPopup.Text4:SetText("Leader: " .. (leaderName or "N/A"))
-	filterPopup:MarkDirty()
-end
-
-local function resetQueueFrame(_, frame)
-	if(not InCombatLockdown()) then
-		frame:Hide()
-		frame.layoutIndex = nil
-
-		local objectType = frame:GetObjectType()
-
-		if(objectType == "Button") then
-			frame:SetScript("OnMouseDown", nil)
-			frame:SetScript("OnEnter", nil)
-			frame.Name:SetText("")
-			frame.Name:SetTextColor(1,1,1,1)
-			frame.Age:SetText("")
-			frame.Background:SetTexture(nil)
-			frame:SetAlpha(1)
-
-			frame.CancelApplication:RegisterForClicks("LeftButtonDown")
-			frame.CancelApplication:SetAttribute("type", nil)
-			frame.CancelApplication:SetAttribute("macrotext1", nil)
-			frame.CancelApplication:Show()
-
-			frame.Wait:SetText("Wait")
-		end
-
-		miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
-
-	else
-		miog.F.UPDATE_AFTER_COMBAT = true
-
-	end
-end
-
-local function createQueueFrame(queueInfo)
-	if(not InCombatLockdown() and true == false) then
-		local queueFrame = queueSystem.queueFrames[queueInfo[18]]
-
-		if(not queueSystem.queueFrames[queueInfo[18]]) then
-			queueFrame = queueSystem.framePool:Acquire()
-			queueFrame.ActiveIDFrame:Hide()
-			queueSystem.queueFrames[queueInfo[18]] = queueFrame
-
-			queueFrameIndex = queueFrameIndex + 1
-			queueFrame.layoutIndex = queueInfo[21] or queueFrameIndex
-		
-		end
-
-		queueFrame:SetWidth(miog.MainTab.QueueInformation.Panel:GetWidth() - 7)
-
-		queueFrame.Name:SetText(queueInfo[11])
-
-		local ageNumber = 0
-
-		if(queueFrame.Age.Ticker) then
-			queueFrame.Age.Ticker:Cancel()
-			queueFrame.Age.Ticker = nil
-		end
-
-		if(queueInfo[17]) then
-			if(queueInfo[17][1] == "queued") then
-				ageNumber = GetTime() - queueInfo[17][2]
-
-				queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
-					ageNumber = ageNumber + 1
-					queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
-
-				end)
-			elseif(queueInfo[17][1] == "duration") then
-				ageNumber = queueInfo[17][2]
-
-				queueFrame.Age.Ticker = C_Timer.NewTicker(1, function()
-					ageNumber = ageNumber - 1
-					queueFrame.Age:SetText(miog.secondsToClock(ageNumber))
-
-				end)
-			
-			end
-		end
-
-		queueFrame.Age:SetText(miog.secondsToClock(ageNumber or 0))
-		queueFrame.Wait:SetText("(" .. (queueInfo[12] ~= -1 and miog.secondsToClock(queueInfo[12] or 0) or "N/A") .. ")")
-
-		if(queueInfo[30]) then
-			local isHQ = miog.isMIOGHQLoaded()
-			
-			if(isHQ) then
-				queueFrame.Background:SetVertTile(false)
-				queueFrame.Background:SetHorizTile(false)
-				queueFrame.Background:SetTexture(queueInfo[30], "CLAMP", "CLAMP")
-				
-			else
-				queueFrame.Background:SetVertTile(true)
-				queueFrame.Background:SetHorizTile(true)
-				queueFrame.Background:SetTexture(queueInfo[30], "MIRROR", "MIRROR")
-
-			end
-
-		end
-
-		queueFrame:Show()
-
-		miog.MainTab.QueueInformation.Panel.ScrollFrame.Container:MarkDirty()
-
-		return queueFrame
-
-	else
-		miog.F.UPDATE_AFTER_COMBAT = true
-	
-	end
-end
 
 local function updateFakeGroupApplications(dataProvider)
 	if(not miog.F.LITE_MODE) then
@@ -354,23 +220,6 @@ local function updateGroupApplications(dataProvider)
 
 					--queueIndex = queueIndex + 1
 				end
-			end
-		end
-	end
-
-	if(MIOG_NewSettings.filterPopup) then
-		filterPopup.Text6:SetText("Remaining applications: " .. (numOfActiveApps - 1))
-
-		if(filterPopupID) then
-			local id, appStatus = C_LFGList.GetApplicationInfo(filterPopupID)
-
-			if(id and appStatus == "applied" and showFilterPopup) then
-				StaticPopupSpecial_Show(filterPopup)
-
-			else
-				filterPopupID = nil
-				StaticPopupSpecial_Hide(filterPopup)
-
 			end
 		end
 	end
@@ -617,47 +466,6 @@ local function checkQueues()
 	end
 end
 
-local function createFilterPopup()
-	filterPopup = CreateFrame("Frame", nil, UIParent, "MIOG_PopupFrame")
-    filterPopup:SetPropagateMouseClicks(false)
-
-	filterPopup.ButtonPanel.Button1:SetText("Dismiss")
-	filterPopup.ButtonPanel.Button1:FitToText()
-	filterPopup.ButtonPanel.Button1:SetScript("OnClick", function()
-	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-
-		if(filterPopupID) then
-			disabledPopups[filterPopupID] = true
-
-		end
-
-		filterPopupID = nil
-
-		StaticPopupSpecial_Hide(filterPopup)
-	end)
-
-	filterPopup.ButtonPanel.Button2:SetText("Cancel")
-	filterPopup.ButtonPanel.Button2:FitToText()
-	filterPopup.ButtonPanel.Button2:SetScript("OnClick", function()
-	    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-		
-		if(filterPopupID) then
-			C_LFGList.CancelApplication(filterPopupID)
-
-		end
-		
-		filterPopupID = nil
-
-		StaticPopupSpecial_Hide(filterPopup)
-	end)
-
-	filterPopup:SetScript("OnShow", function()
-		if(MIOG_NewSettings.flashOnFilterPopup) then
-			FlashClientIcon()
-		end
-	end)
-end
-
 local function queueEvents(_, event, ...)
 	if(event == "PLAYER_REGEN_ENABLED") then
 		if(miog.F.UPDATE_AFTER_COMBAT) then
@@ -820,12 +628,7 @@ miog.loadQueueSystem = function()
 
 				if(reason) then
 					frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
-
-					--[[if(MIOG_NewSettings.filterPopup and not disabledPopups[v] and not searchResultInfo.isDelisted) then
-						setupFilterPopup(v, reason[1], searchResultInfo.name, activityInfo.mapName, searchResultInfo.leaderName)
-
-						showFilterPopup = true
-					end]]
+					
 				end
 			end
 
@@ -1003,6 +806,4 @@ miog.loadQueueSystem = function()
 
 	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 	eventReceiver:SetScript("OnEvent", queueEvents)
-
-	createFilterPopup()
 end

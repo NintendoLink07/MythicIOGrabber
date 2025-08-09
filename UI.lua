@@ -133,10 +133,10 @@ miog.createFrames = function()
 		settingsButton:SetPoint("RIGHT", PVEFrameCloseButton, "LEFT", -2, 0)
 	else
 		miog.createPVEFrameReplacement()
+
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
 		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
-		miog.Plugin:SetPoint("TOPRIGHT", miog.MainTab, "TOPRIGHT", 0, 0)
-		miog.Plugin:SetHeight(miog.pveFrame2:GetHeight() - miog.pveFrame2.TitleBar:GetHeight() - 5 - miog.MainTab.Currency:GetHeight())
+		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.MainTab.Currency, "TOPRIGHT", -2, 5)
 
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
@@ -155,19 +155,6 @@ miog.createFrames = function()
 	
 	end)
 
-	miog.Plugin.Resize:SetScript("OnDragStop", function(self)
-		self:GetParent():StopMovingOrSizing()
-
-		MIOG_NewSettings.manualResize = miog.Plugin:GetHeight()
-
-		miog.Plugin:ClearAllPoints()
-		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
-		miog.Plugin:SetPoint("TOPRIGHT", miog.MainTab, "TOPRIGHT", 0, 0)
-	end)
-
-	miog.Plugin:SetResizeBounds(miog.Plugin:GetWidth(), miog.Plugin:GetHeight(), miog.Plugin:GetWidth(), GetScreenHeight() * 0.67)
-	miog.Plugin:SetHeight(MIOG_NewSettings.manualResize > 0 and MIOG_NewSettings.manualResize or miog.Plugin:GetHeight())
-
 	miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
@@ -182,10 +169,7 @@ miog.createFrames = function()
 	
 	miog.loadInspectManagement()
 
-	if(MIOG_NewSettings.reQueue) then
-		--miog.loadReQueue()
-		miog.loadRequeue()
-	end
+	--miog.loadRequeue()
 
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
