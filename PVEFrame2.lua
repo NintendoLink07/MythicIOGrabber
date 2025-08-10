@@ -193,8 +193,75 @@ local function addTeleportButtons()
 	end
 end
 
+local function anchorNewScrollBar(tab, name)
+	local pveFrame2 = miog.pveFrame2
+
+	if(pveFrame2.CurrentScrollBar) then
+		pveFrame2.CurrentScrollBar:Hide()
+		pveFrame2.CurrentScrollBar:ClearAllPoints()
+		pveFrame2.CurrentScrollBar = nil
+	end
+
+	if(tab == 1) then
+		local panel = miog.getActivePanel()
+
+		if(panel) then
+			if(panel == LFGListFrame.ApplicationViewer) then
+				pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ApplicationViewerScrollBar
+
+			elseif(panel == LFGListFrame.SearchPanel) then
+				pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.SearchPanelScrollBar
+
+			end
+		end
+	else
+		if(tab == 2) then
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.GroupManagerScrollBar
+			
+		elseif(tab == 3) then
+			if(name) then
+				if(name == "mplus") then
+					pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressMPlusScrollBar
+
+				elseif(name == "raid") then
+					pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressRaidScrollBar
+
+				elseif(name == "pvp") then
+					pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressPVPScrollBar
+					
+				end
+
+			end
+
+		elseif(tab == 6) then
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.RaidSheetScrollBar
+
+		elseif(tab == 7) then
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.DropsScrollBar
+
+		elseif(tab == 8) then
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.UpgradesScrollBar
+
+		end
+	end
+
+	if(pveFrame2.CurrentScrollBar) then
+		pveFrame2.CurrentScrollBar:SetPoint("TOPLEFT")
+		pveFrame2.CurrentScrollBar:SetPoint("BOTTOMRIGHT", pveFrame2.ScrollBarArea.Resize, "TOPRIGHT")
+		pveFrame2.CurrentScrollBar:Show()
+	end
+end
+
 local function createPVEFrameReplacement()
-	local pveFrame2 = CreateFrame("Frame", "MythicIOGrabber_PVEFrameReplacement", UIParent, "MIOG_MainFrameTemplate")
+	local frameName = "MythicIOGrabber_PVEFrameReplacement"
+	local pveFrame2 = CreateFrame("Frame", frameName, UIParent, "MIOG_MainFrameTemplate")
+	pveFrame2.anchorNewScrollBar = anchorNewScrollBar
+
+	hooksecurefunc("PanelTemplates_SetTab", function(frame, tab)
+		if(frame:GetDebugName() == frameName) then
+			pveFrame2.anchorNewScrollBar(tab)
+		end
+	end)
 
 	if(MIOG_NewSettings.mainFrameSize) then
 		pveFrame2:SetSize(MIOG_NewSettings.mainFrameSize.width, MIOG_NewSettings.mainFrameSize.height)
@@ -208,6 +275,8 @@ local function createPVEFrameReplacement()
 		pveFrame2.TitleBar.UISlider.SliderWithSteppers:SetValue(MIOG_NewSettings.mainFrameScale)
 
 	end
+
+	
 
 	pveFrame2:SetResizeBounds(PVEFrame:GetWidth() + 20, PVEFrame:GetHeight(), PVEFrame:GetWidth() * 2, PVEFrame:GetHeight()* 2)
 
@@ -350,13 +419,14 @@ local function createPVEFrameReplacement()
 
 				if(all) then
 					currentFrame.ThresholdBar.BarFillGlow:Show()
+					currentFrame.ThresholdBar.BarBackgroundGlow:Show()
 					currentFrame.ThresholdBar.BarBorderGlow:Show()
 					currentFrame.ThresholdBar.Checkmark:Show()
 					currentFrame.ThresholdBar.End:Hide()
 
 				elseif(activities[1].progress > 0) then
 					currentFrame.ThresholdBar.End:ClearAllPoints()
-					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 0)
+					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 1)
 					currentFrame.ThresholdBar.End:Show()
 				end
 			end

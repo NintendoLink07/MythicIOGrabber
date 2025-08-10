@@ -11,39 +11,49 @@
                 </Anchors>
                 <BarTexture parentKey="BarFill" atlas="activities-bar-fill"/>
 
+                Threshold <!--<Size x="663" y="33"/>!-->
+                activities-bar-background 664 35, 0 0
+                activities-bar-background-glow 682 52, 0 -1
+                activities-bar-border 676 47, 0 -2
+                activities-bar-border-glow 676 46, -2 1
+                activities-bar-fill-glow 660 31, 0, 0
+
                 <Layers>
                     <Layer level="BACKGROUND" textureSubLevel="1">
-                        <Texture parentKey="BarBackground" atlas="activities-bar-background" setAllPoints="true" />
-                    </Layer>
-                    <Layer level="BORDER">
-                        <Texture parentKey="BarBorder" atlas="activities-bar-border" >
+                        <Texture parentKey="BarBackground" atlas="activities-bar-background">
+                            <Size x="277" y="16" />
                             <Anchors>
-                                <Anchor point="TOPLEFT" x="-4" y="2"/>
-                                <Anchor point="BOTTOMRIGHT" x="4" y="-3"/>
+								<Anchor point="CENTER" x="0" y="0"/>
                             </Anchors>
                         </Texture>
-                    </Layer>
-                    <Layer level="BORDER" textureSubLevel="1">
-                        <Texture parentKey="BarBorderGlow" atlas="activities-bar-border-glow" alphaMode="ADD" hidden="true">
+
+						<Texture parentKey="BarBackgroundGlow" atlas="activities-bar-background-glow" hidden="true">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.BarBorder"/>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBorder"/>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.BarBackground" x="-5" y="6"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBackground" x="6" y="-6"/>
                             </Anchors>
-                        </Texture>
+						</Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="BarFillGlow" atlas="activities-bar-fill-glow" alphaMode="ADD" hidden="true">
+                        <Texture parentKey="BarFillGlow" atlas="activities-bar-fill-glow" alphaMode="ADD" alpha="0.85" hidden="true">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.BarBackground"/>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BarBackground"/>
+                                <Anchor point="TOPLEFT" relativeKey="$parent"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent"/>
                             </Anchors>
                         </Texture>
 
                         <Texture parentKey="End" atlas="activities-bar-end" hidden="true">
-                            <Size x="6" y="22" />
+                            <Size x="6" y="24" />
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
+                        <Texture parentKey="BarBorder" atlas="activities-bar-border">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="$parent" x="-2" y="2"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="$parent" x="4" y="-3"/>
+                            </Anchors>
+                        </Texture>
+
                         <FontString parentKey="RightText" inherits="GameFontHighlight" justifyH="RIGHT" maxLines="1">
                             <Anchors>
                                 <Anchor point="RIGHT" x="-5"/>
@@ -53,14 +63,21 @@
                         <FontString parentKey="LeftText" inherits="GameFontHighlight" justifyH="LEFT" maxLines="1">
                             <Anchors>
                                 <Anchor point="LEFT" x="5"/>
-                                <Anchor point="RIGHT" relativeKey="$parent.RightText" relativePoint="LEFT" x="-5"/>
                             </Anchors>
                         </FontString>
 
                         <Texture parentKey="Checkmark" atlas="activities-icon-checkmark" hidden="true">
                             <Size x="14" y="14" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="TOPRIGHT" />
+                                <Anchor point="LEFT" relativeKey="$parent.LeftText" relativePoint="TOPRIGHT" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="1" >
+                        <Texture parentKey="BarBorderGlow" atlas="activities-bar-border-glow" alphaMode="ADD" hidden="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" x="-3" y="2"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" x="3" y="-2"/>
                             </Anchors>
                         </Texture>
                     </Layer>

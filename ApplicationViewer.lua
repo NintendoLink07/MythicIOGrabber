@@ -904,7 +904,7 @@ miog.createApplicationViewer = function()
 		return data.template == "MIOG_NewRaiderIOInfoPanel" and 200 or data.template == "BackdropTemplate" and applicantListSpacing or 20
 	end)
 
-	ScrollUtil.InitScrollBoxListWithScrollBar(applicationViewer.ScrollBox2, applicationViewer.ScrollBar, view);
+	ScrollUtil.InitScrollBoxListWithScrollBar(applicationViewer.ScrollBox2, miog.pveFrame2.ScrollBarArea.ApplicationViewerScrollBar, view);
 
 	applicationViewer:SetScrollBox(applicationViewer.ScrollBox2)
 

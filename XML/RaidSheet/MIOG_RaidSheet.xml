@@ -11,10 +11,6 @@
             </EditBox>
 
             <ScrollFrame parentKey="ScrollFrame" inherits="ScrollFrameTemplate" frameStrata="HIGH">
-                <KeyValues>
-                    <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
-                </KeyValues>
-
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-4" y="-2"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-18"/>

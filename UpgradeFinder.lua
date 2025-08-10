@@ -864,7 +864,7 @@ miog.loadUpgradeFinder = function()
 
     view:SetElementFactory(CustomFactory)
     
-    ScrollUtil.InitScrollBoxListWithScrollBar(upgradeFinder.ScrollBox, upgradeFinder.ScrollBar, view)
+    ScrollUtil.InitScrollBoxListWithScrollBar(upgradeFinder.ScrollBox, miog.pveFrame2.ScrollBarArea.UpgradesScrollBar, view)
     
     ProfessionsCustomerOrders_LoadUI();
     --ShowUIPanel(ProfessionsCustomerOrdersFrame);

@@ -1293,7 +1293,7 @@ miog.loadJournal = function()
 	
 	view:SetElementFactory(customFactory)
     
-    ScrollUtil.InitScrollBoxListWithScrollBar(journal.ScrollBox, journal.ScrollBar, view);
+    ScrollUtil.InitScrollBoxListWithScrollBar(journal.ScrollBox, miog.pveFrame2.ScrollBarArea.DropsScrollBar, view);
 
     journal.SearchBox:SetScript("OnTextChanged", function(self, manual)
         SearchBoxTemplate_OnTextChanged(self)

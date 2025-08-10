@@ -31,6 +31,8 @@ local function getCurrentPanel()
 	end
 end
 
+miog.getCurrentPanel = getCurrentPanel
+
 local function getCurrentCategoryID(panel)
 	panel = panel or getCurrentPanel()
 

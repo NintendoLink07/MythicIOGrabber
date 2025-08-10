@@ -82,13 +82,6 @@
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
                 </Anchors>
             </Frame>
-
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox2" relativePoint="TOPRIGHT" x="5"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" x="5" />
-                </Anchors>
-            </EventFrame>
             
             <Button parentKey="SignUpButton" inherits="UIPanelDynamicResizeButtonTemplate" text="Signup">
                 <Size y="20" />

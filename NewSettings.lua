@@ -100,8 +100,7 @@ local defaultSettings = {
     {name = "Lite Mode", variableName = "MIOG_LiteMode", key="liteMode", default=false, type="checkbox", tooltip="Enable or disable the lite mode of this addon (use Blizzards \"Dungeons and Raids\" Frame with this addon's frames layered on top", reload=true},
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions() - 1, type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
-        miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-        miog.FilterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
+        miog.changeBackground(value)
     end},
     {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},
     {name = "Requeue data", variableName = "MIOG_RequeueData", key="requeueData", default = {guids = {}}},

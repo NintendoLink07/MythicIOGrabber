@@ -377,13 +377,6 @@
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
                 </Anchors>
             </Frame>
-
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox2" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox2" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </EventFrame>
             
             <EditBox parentKey="CopyBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="GameFontHighlight">
                 <Size y="20" />   

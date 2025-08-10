@@ -67,6 +67,15 @@
                     </Anchors>
                 </FontString>
             </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Divider10" atlas="spec-columndivider" alpha="0.5">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.10" relativePoint="TOPRIGHT"/>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.10" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
         </Layers>
     </Frame>
 </Ui>

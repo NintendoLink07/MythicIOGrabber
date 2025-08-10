@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.5.9] - 2025-08-11
+
+### Changed
+
+- All scrollbars have been relocated to the right side of the mainframe to simplify the UI design.
+
+
 
 ## [3.5.8] - 2025-08-09
 

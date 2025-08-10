@@ -552,6 +552,9 @@ miog.loadRaidPlanner = function()
 
     miog.RaidSheet:RegisterEvent("INITIAL_CLUBS_LOADED")
     miog.RaidSheet:SetScript("OnEvent", raidSheetEvents)
+    miog.RaidSheet.ScrollFrame.ScrollBar:Hide()
+
+    ScrollUtil.InitScrollFrameWithScrollBar(miog.RaidSheet.ScrollFrame, miog.pveFrame2.ScrollBarArea.RaidSheetScrollBar)
     
     if(#MIOG_NewSettings.raidPlanner.sheets > 0) then
         setupFramePools()

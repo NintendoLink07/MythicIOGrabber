@@ -1315,7 +1315,7 @@ miog.createSearchPanel = function()
 		return height
 	end)
 
-	ScrollUtil.InitScrollBoxListWithScrollBar(searchPanel.ScrollBox2, searchPanel.ScrollBar, view);
+	ScrollUtil.InitScrollBoxListWithScrollBar(searchPanel.ScrollBox2, miog.pveFrame2.ScrollBarArea.SearchPanelScrollBar, view);
 
 	local appDialogParentFrame = CreateFrame("Frame", nil, LFGListApplicationDialog, "MIOG_ApplicationDialogParentTemplate")
 

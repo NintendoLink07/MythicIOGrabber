@@ -37,6 +37,14 @@ local function setProgressPanelInfo(categoryID)
 	end
 end
 
+local activePanel
+
+local function getActivePanel()
+	return activePanel
+end
+
+miog.getActivePanel = getActivePanel
+
 local function setActivePanel(_, panel)
 	for k, v in pairs(panels) do
 		if(v) then
@@ -75,10 +83,6 @@ local function setActivePanel(_, panel)
 			miog.initializeActivityDropdown()
 
 		end
-
-	elseif(panel == "RaiderIOChecker") then
-		miog.RaiderIOChecker:Show()
-
 	else
 		miog.Plugin:Hide()
 
@@ -92,6 +96,7 @@ local function setActivePanel(_, panel)
 			end
 
 			miog.FilterManager:Show()
+
 			miog.filter.refreshFilters()
 		else
 			miog.FilterManager:Hide()
@@ -99,6 +104,10 @@ local function setActivePanel(_, panel)
 
 		end
 	end
+
+	activePanel = panel
+	
+	miog.pveFrame2.anchorNewScrollBar(1)
 end
 
 miog.setActivePanel = setActivePanel
@@ -146,7 +155,7 @@ miog.createFrames = function()
 		PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
 		settingsButton:SetParent(miog.pveFrame2.TitleBar)
-		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
+		settingsButton:SetPoint("TOPRIGHT", miog.pveFrame2.CloseButtonArea, "TOPLEFT", -2, 0)
 
 		miog.pveFrame2.TitleBar.BlizzardFrame:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
 	end
@@ -159,7 +168,6 @@ miog.createFrames = function()
 	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
 	miog.MainFrame = miog.F.LITE_MODE and miog.Plugin or miog.pveFrame2
-	miog.MainFrame.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. ".png")
 
 	miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
@@ -184,6 +192,8 @@ miog.createFrames = function()
 
 		--miog.loot.init()
 	end
+
+	miog.changeBackground()
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		setActivePanel(_, panel)

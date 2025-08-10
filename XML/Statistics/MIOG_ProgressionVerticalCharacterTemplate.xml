@@ -237,9 +237,9 @@
             </StatusBar>
 
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                <Size x="90" y="120" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.PVPStatus" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
                 </Anchors>
             </Frame>
         </Frames>

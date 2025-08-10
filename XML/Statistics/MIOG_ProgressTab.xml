@@ -19,10 +19,14 @@
 
                         <Scripts>
                             <OnClick>
-                                self:GetParent():GetParent().RaidStatistics:Hide()
-                                self:GetParent():GetParent().PVPStatistics:Hide()
-                                self:GetParent():GetParent().MPlusStatistics:Hide()
-                                self:GetParent():GetParent().NewSystem:Show()
+                                local progressTab = self:GetParent():GetParent()
+                                progressTab.RaidStatistics:Hide()
+                                progressTab.PVPStatistics:Hide()
+                                progressTab.MPlusStatistics:Hide()
+                                progressTab.NewSystem:Show()
+
+                                local mainFrame = progressTab:GetParent():GetParent()
+                                mainFrame.anchorNewScrollBar(PanelTemplates_GetSelectedTab(mainFrame))
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -35,10 +39,15 @@
 
                         <Scripts>
                             <OnClick>
-                                self:GetParent():GetParent().RaidStatistics:Hide()
-                                self:GetParent():GetParent().PVPStatistics:Hide()
-                                self:GetParent():GetParent().NewSystem:Hide()
-                                self:GetParent():GetParent().MPlusStatistics:Show()
+                                local progressTab = self:GetParent():GetParent()
+
+                                progressTab.RaidStatistics:Hide()
+                                progressTab.PVPStatistics:Hide()
+                                progressTab.NewSystem:Hide()
+                                progressTab.MPlusStatistics:Show()
+
+                                local mainFrame = progressTab:GetParent():GetParent()
+                                mainFrame.anchorNewScrollBar(PanelTemplates_GetSelectedTab(mainFrame), "mplus")
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -51,10 +60,14 @@
 
                         <Scripts>
                             <OnClick>
-                                self:GetParent():GetParent().MPlusStatistics:Hide()
-                                self:GetParent():GetParent().PVPStatistics:Hide()
-                                self:GetParent():GetParent().NewSystem:Hide()
-                                self:GetParent():GetParent().RaidStatistics:Show()
+                                local progressTab = self:GetParent():GetParent()
+                                progressTab.MPlusStatistics:Hide()
+                                progressTab.PVPStatistics:Hide()
+                                progressTab.NewSystem:Hide()
+                                progressTab.RaidStatistics:Show()
+
+                                local mainFrame = progressTab:GetParent():GetParent()
+                                mainFrame.anchorNewScrollBar(PanelTemplates_GetSelectedTab(mainFrame), "raid")
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -67,10 +80,14 @@
 
                         <Scripts>
                             <OnClick>
-                                self:GetParent():GetParent().RaidStatistics:Hide()
-                                self:GetParent():GetParent().MPlusStatistics:Hide()
-                                self:GetParent():GetParent().NewSystem:Hide()
-                                self:GetParent():GetParent().PVPStatistics:Show()
+                                local progressTab = self:GetParent():GetParent()
+                                progressTab.RaidStatistics:Hide()
+                                progressTab.MPlusStatistics:Hide()
+                                progressTab.NewSystem:Hide()
+                                progressTab.PVPStatistics:Show()
+
+                                local mainFrame = progressTab:GetParent():GetParent()
+                                mainFrame.anchorNewScrollBar(PanelTemplates_GetSelectedTab(mainFrame), "pvp")
                             </OnClick>
                         </Scripts>
                     </Button>

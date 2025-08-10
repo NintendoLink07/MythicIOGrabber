@@ -9,30 +9,38 @@
                 </KeyValues>
             </Frame>
 
-            <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH" registerForDrag="LeftButton">
-                <Size x="15" y="15" />
+            <Frame parentKey="CloseButtonArea">
+                <Size x="24" y="24" />
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
                 </Anchors>
 
-                <Scripts>
-                    <OnLoad>
-                        local mainFrame = self:GetParent()
-                        self:Init(mainFrame, PVEFrame:GetWidth(), PVEFrame:GetHeight(), PVEFrame:GetWidth() * 2, PVEFrame:GetHeight() * 2)
+                <Frames>
+                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" />
+                        </Anchors>
+						<Scripts>
+							<OnClick>
+                                self:GetParent():GetParent():Hide()
+							</OnClick>
+						</Scripts>
+					</Button>
+                </Frames>
 
-                        self:HookScript("OnMouseUp", function()
-                            MIOG_NewSettings.mainFrameSize = {width = self:GetParent():GetWidth(), height = self:GetParent():GetHeight()}
-                        
-                        end)
-                    </OnLoad>
-                </Scripts>
-            </Button>
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="-5">
+                        <Texture parentKey="Background" setAllPoints="true"/>
+                    </Layer>
+                </Layers>
+            </Frame>
 
             <Frame parentKey="TitleBar">
-                <Size y="20" />
+                <Size y="24" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.CloseButtonArea" relativePoint="TOPLEFT" />
                 </Anchors>
 
                 <Frames>
@@ -40,7 +48,7 @@
                         <Size x="56" y="19" />
 
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
+							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
 						</Anchors>
 
                     </Button>
@@ -60,18 +68,6 @@
 							<Anchor point="LEFT" relativeKey="$parent.FindGroupButton" relativePoint="RIGHT" x="2" />
 						</Anchors>
                     </Button>
-
-                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
-                        <Size x="19" y="19"/>
-						<Anchors>
-							<Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1" y="-1"/>
-						</Anchors>
-						<Scripts>
-							<OnClick>
-                                self:GetParent():GetParent():Hide()
-							</OnClick>
-						</Scripts>
-					</Button>
 
                     <Button parentKey="BlizzardFrame" inherits="UIButtonTemplate" mixin="LFDMicroButtonMixin">
                         <KeyValues>
@@ -130,10 +126,15 @@
                 </Frames>
 
                 <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="-5">
+                        <Texture parentKey="Background" setAllPoints="true"/>
+                    </Layer>
+
                     <Layer level="OVERLAY">
                         <FontString parentKey="TitleString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
+                            <Size y="19" />
                             <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                                <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP"/>
                             </Anchors>
                         </FontString>
                         
@@ -262,10 +263,55 @@
                 </Frames>    
             </Frame>
 
+            <Frame parentKey="ScrollBarArea">
+                <Size x="24" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.CloseButtonArea" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="-5">
+                        <Texture parentKey="Background" setAllPoints="true"/>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <EventFrame parentKey="ApplicationViewerScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="SearchPanelScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="GroupManagerScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="ProgressMPlusScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="ProgressRaidScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="ProgressPVPScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="RaidSheetScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="DropsScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="UpgradesScrollBar" inherits="MinimalScrollBar" hidden="true" />
+
+                    <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH" registerForDrag="LeftButton">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                local mainFrame = self:GetParent():GetParent()
+                                self:Init(mainFrame, PVEFrame:GetWidth(), PVEFrame:GetHeight(), PVEFrame:GetWidth() * 2, PVEFrame:GetHeight() * 2)
+
+                                self:HookScript("OnMouseUp", function()
+                                    MIOG_NewSettings.mainFrameSize = {width = mainFrame:GetWidth(), height = mainFrame:GetHeight()}
+                                
+                                end)
+                            </OnLoad>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
             <Frame parentKey="TabFramesPanel">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" x="1" y="-5" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Resize" relativePoint="BOTTOMLEFT" y="1" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBarArea" relativePoint="BOTTOMLEFT" />
                 </Anchors>
 
                 <Frames>
@@ -441,7 +487,7 @@
                                         </Layers>
                                     </Frame>
 
-                                    <Frame parentKey="Panel"  inherits="InsetFrameTemplate3" frameLevel="2">
+                                    <Frame parentKey="Panel"  inherits="InsetFrameTemplate3" frameLevel="5">
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.FakeDropdown" relativePoint="BOTTOMLEFT" y="-4"/>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT" y="2"/>
@@ -524,17 +570,26 @@
 
                                     <StatusBar parentKey="KeystoneStatusBar" frameBuffer="true" >
                                         <BarTexture atlas="ui-castingbar-filling-standard" />
-                                        <Size x="280" y="16" />
+                                        <Size x="276" y="16" />
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" x="2" y="12"/>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" y="12"/>
                                         </Anchors>
 
                                         <Layers>
+                                            <Layer level="BACKGROUND" textureSubLevel="1">
+                                                <Texture parentKey="BarBackground" atlas="activities-bar-background">
+                                                    <Size x="278" y="16" />
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" x="0" y="0"/>
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+
                                             <Layer level="OVERLAY">
                                                 <Texture parentKey="Icon" file="interface/icons/inv_relics_hourglass_02.blp">
                                                     <Size x="14" y="14" />
                                                     <Anchors>
-                                                        <Anchor point="RIGHT" x="2"/>
+                                                        <Anchor point="RIGHT" x="-4"/>
                                                     </Anchors>
                                                 </Texture>
 
@@ -560,10 +615,17 @@
 
                                                 <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" justifyH="LEFT" text="No keystone found" outline="NORMAL">
                                                     <Anchors>
-                                                        <Anchor point="LEFT"  x="2"/>
+                                                        <Anchor point="LEFT"  x="5"/>
                                                         <Anchor point="RIGHT" relativeKey="$parent.Affix" relativePoint="LEFT" x="-2"/>
                                                     </Anchors>
                                                 </FontString>
+
+                                                <Texture parentKey="BarBorder" atlas="activities-bar-border">
+                                                    <Anchors>
+                                                        <Anchor point="TOPLEFT" relativePoint="$parent" x="-2" y="2"/>
+                                                        <Anchor point="BOTTOMRIGHT" relativePoint="$parent" x="4" y="-4"/>
+                                                    </Anchors>
+                                                </Texture>
                                             </Layer>
                                         </Layers>
                                     </StatusBar>
@@ -589,6 +651,12 @@
                     <Frame parentKey="Drops" inherits="MIOG_Drops" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
                 </Frames>
+
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="1">
+                        <Texture parentKey="Background" setAllPoints="true"/>
+                    </Layer>
+                </Layers>
             </Frame>
 
             <Button name="$parentTab1" inherits="MIOG_TabButtonTemplate" id="1" text="Main">
@@ -697,7 +765,7 @@
         </Frames>
 
         <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="1">
+            <Layer level="BACKGROUND" textureSubLevel="-5">
                 <Texture parentKey="Background" setAllPoints="true"/>
             </Layer>
         </Layers>

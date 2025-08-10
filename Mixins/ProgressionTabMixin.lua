@@ -1214,9 +1214,8 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 
 		characterView:SetPadding(1, 1, 1, 1, 4)
 
-		ScrollUtil.InitScrollBoxListWithScrollBar(self.Rows, self.RowsScrollBar, characterView);
-
 		if(self.type == "mplus") then
+			self.RowsScrollBar = miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar
 			self.Info.KeystoneDropdown:SetDefaultText("Keystones")
 			self.Info.KeystoneDropdown:SetupMenu(function(dropdown, rootDescription)
 				local numGroupMembers = GetNumGroupMembers()
@@ -1261,7 +1260,16 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 			self.Info.TimelimitSlider:Hide()
 			self.Info.TimePercentage:Hide()
 
+			if(self.type == "raid") then
+				self.RowsScrollBar = miog.pveFrame2.ScrollBarArea.ProgressRaidScrollBar
+
+			elseif(self.type == "pvp") then
+				self.RowsScrollBar = miog.pveFrame2.ScrollBarArea.ProgressPVPScrollBar
+
+			end
 		end
+
+		ScrollUtil.InitScrollBoxListWithScrollBar(self.Rows, self.RowsScrollBar, characterView);
     end
 end
 

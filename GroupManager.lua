@@ -1379,7 +1379,7 @@ miog.loadGroupManager = function()
 
 	miog.GroupManager.ScrollView = ScrollView
 	
-	ScrollUtil.InitScrollBoxListWithScrollBar(miog.GroupManager.ScrollBox, miog.GroupManager.ScrollBar, ScrollView)
+	ScrollUtil.InitScrollBoxListWithScrollBar(miog.GroupManager.ScrollBox, miog.pveFrame2.ScrollBarArea.GroupManagerScrollBar, ScrollView)
 
 	ScrollView:SetElementInitializer("MIOG_GroupManagerListCharacterTemplate", function(frame, data)
 		updateGroupManagerPlayerFrame(frame, data)

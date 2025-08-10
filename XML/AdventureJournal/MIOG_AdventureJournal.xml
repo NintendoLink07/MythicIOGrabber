@@ -157,20 +157,6 @@
                 </ScrollChild>
             </ScrollFrame>
 
-            <!--<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SettingsBar" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </Frame>
-
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </EventFrame>!-->
-
             <Frame parentKey="ModelScene" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.SettingsBar" relativePoint="BOTTOMLEFT"/>
@@ -267,19 +253,6 @@
                     </ModelScene>
                 </Frames>
             </Frame>
-
-            <!--<Frame parentKey="SpecificScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </Frame>
-            <EventFrame parentKey="SpecificScrollBar" inherits="MinimalScrollBar" frameStrata="HIGH">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SpecificScrollBox" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.SpecificScrollBox" relativePoint="BOTTOMRIGHT" />
-                </Anchors>
-            </EventFrame>-->
         </Frames>
 
         <Layers>

@@ -1114,6 +1114,26 @@ end
 
 miog.printOnce = printOnce
 
+miog.changeBackground = function(index)
+	local titleBarTexHeight = 0.06
+
+	local value = index or MIOG_NewSettings.backgroundOptions
+	
+	miog.MainFrame.CloseButtonArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.CloseButtonArea.Background:SetTexCoord(0.97, 1, 0, titleBarTexHeight)
+	
+	miog.MainFrame.TitleBar.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.TitleBar.Background:SetTexCoord(0, 0.97, 0, titleBarTexHeight)
+	
+	miog.MainFrame.ScrollBarArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.ScrollBarArea.Background:SetTexCoord(0.97, 1, titleBarTexHeight, 1)
+	
+	miog.MainFrame.TabFramesPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.TabFramesPanel.Background:SetTexCoord(0, 0.97, titleBarTexHeight, 1)
+	
+	miog.FilterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
+end
+
 miog.getGroupLeader = function()
 	local numOfMembers = GetNumGroupMembers()
 	miog.F.LFG_STATE = miog.checkLFGState()
