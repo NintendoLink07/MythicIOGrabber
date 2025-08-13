@@ -431,7 +431,7 @@ miog.CURRENCY_INFO = {
 		{id = 3008,}, --valorstones
 		{id = 3269,}, --catalyst
 		{id = 3141,}, --spark
-		{id = 3278} --strands
+		{id = 3278, macro=function() GenericTraitUI_LoadUI() GenericTraitFrame:SetSystemID(29) GenericTraitFrame:SetTreeID(1115) ToggleFrame(GenericTraitFrame) end} --strands
 	}
 }
 
@@ -559,6 +559,7 @@ miog.MAP_INFO = {
 	[1715] = {abbreviatedName = "BBM", icon = "interface/lfgframe/lfgicon-blackrockdepths.blp", fileName = "blackrockdepths", pvp = "true"},
 	[1782] = {abbreviatedName = "SST", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore", pvp = "true"},
 	[1803] = {abbreviatedName = "SSH", icon = "interface/lfgframe/lfgicon-seethingshore.blp", fileName = "seethingshore", pvp = "true"},
+	[1804] = {abbreviatedName = "SG", icon="world/expansion07/doodads/fx/8fx_stromgarge_portal.blp", fileName = "stromgarde", pvp="true"},
 	[2106] = {abbreviatedName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update", toastBG = "PvpBg-WarsongGulch-ToastBG", pvp = "true"},
 	[2107] = {abbreviatedName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update", toastBG = "PvpBg-ArathiBasin-ToastBG", pvp = "true"},
 	[2177] = {abbreviatedName = "AB", icon = "interface/lfgframe/lfgicon-arathibasin.blp", fileName = "arathibasin_update", toastBG = "PvpBg-ArathiBasin-ToastBG", pvp = "true"},
@@ -885,7 +886,20 @@ miog.MAP_INFO = {
 	[2792] = {abbreviatedName = "BRD", fileName = "blackrockdepths"},
 
 	
-	[2810] = {abbreviatedName = "MFO", fileName = "manaforge"},
+	[2810] = {
+		bossIcons = {
+			{icon = "interface/icons/inv_112_achievement_raid_automaton.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_silkworm.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_binder.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_engineer.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_dhcouncil.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_glasselemental.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_salhadaar.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_dimensius.blp"},
+		},
+		abbreviatedName = "MFO",
+		fileName = "manaforge",
+	},
 	[2827] = {abbreviatedName = "HVS", fileName = "horrificvisionstormwind"},
 	[2828] = {abbreviatedName = "HVO", fileName = "horrificvisionorgrimmar"},
 	[2830] = {abbreviatedName = "EDA", fileName = "ecodome"},
@@ -1230,7 +1244,7 @@ end
 local function addGroupDataToMap(groupID, mapID)
 	local groupInfo = miog.GROUP_ACTIVITY[groupID]
 
-	if(groupInfo) then
+	if(groupInfo and miog.MAP_INFO[mapID]) then
 		miog.MAP_INFO[mapID].groupName = groupInfo.groupName
 		--miog.MAP_INFO[mapID].abbreviatedName = groupInfo.abbreviatedName
 		miog.MAP_INFO[mapID].groupFinderActivityGroupID = groupID

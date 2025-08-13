@@ -650,6 +650,18 @@
                     <!--<Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />!-->
                     <Frame parentKey="Drops" inherits="MIOG_Drops" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
+
+                    <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabOverviewTemplate" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="50"/>
+                        </Anchors>
+                        
+                        <Scripts>
+                            <OnLoad>
+                                self:SetSize(PVEFrame:GetSize())
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
                 </Frames>
 
                 <Layers>

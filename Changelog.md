@@ -6,7 +6,15 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.5.9] - 2025-08-11
+## [3.5.9] - 2025-08-13
+
+### Added
+
+- Reshii Wraps UI can now be opened via the currency icon of the ethereal strands.
+
+- Raid boss icons added.
+
+- Stromgarde map data added.
 
 ### Changed
 
@@ -4193,7 +4201,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.7a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.9..HEAD
+[3.5.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.9
+[3.5.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.8
 [3.5.7a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.7a
 [3.5.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.7
 [3.5.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.6

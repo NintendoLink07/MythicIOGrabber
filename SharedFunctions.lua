@@ -48,6 +48,16 @@ miog.updateCurrencies = function()
 				end)
 				currentFrame:Show()
 				
+				if(v.macro) then
+					currentFrame.Icon:SetScript("OnMouseDown", function(self)
+						v.macro()
+					
+					end)
+
+				else
+					currentFrame.Icon:SetScript("OnMouseDown", nil)
+
+				end
 			end
 
 			for i = numOfCurrencies + 1, 8, 1 do
