@@ -146,6 +146,7 @@ miog.createFrames = function()
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
 		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
 		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.MainTab.Currency, "TOPRIGHT", -2, 5)
+		miog.Plugin:SetFrameStrata("HIGH")
 
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
 		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())

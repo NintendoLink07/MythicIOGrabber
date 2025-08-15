@@ -30,8 +30,6 @@ local function updateFakeGroupApplications(dataProvider)
 							--local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 							--local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 					
-							
-
 							dataProvider:Insert({
 								template = "MIOG_QueueFakeApplicationFrameTemplate",
 								resultID = resultID,
@@ -615,7 +613,7 @@ miog.loadQueueSystem = function()
 
 			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
-			activityName = searchResultInfo.name .. " - " .. (activityInfo.mapName or "")
+			activityName = searchResultInfo.name .. " - " .. (WrapTextInColorCode(activityInfo.fullName or "", CreateColor(1, 0.82, 0):GenerateHexColor()))
 			backgroundImage = activityInfo.horizontal
 
 			frame.categoryID = activityInfo.categoryID

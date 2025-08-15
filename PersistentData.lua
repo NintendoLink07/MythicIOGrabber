@@ -1080,12 +1080,13 @@ local function checkSingleMapIDForNewData(mapID, selectInstance)
 
 		if(not bossName) then
 			if(selectInstance) then
-				EJ_SelectInstance(journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID))
+				journalInstanceID = journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID)
+				EJ_SelectInstance(journalInstanceID)
 				miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
 
 			end
 
-			bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex);
+			bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
 		end
 
 		if(miog.MAP_INFO[mapID].numOfBosses == 0) then
@@ -1262,7 +1263,8 @@ local function addActivityInfo(activityID)
 			activityInfo.abbreviatedName = groupActivityInfo.abbreviatedName
 			miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].abbreviatedName = groupActivityInfo.abbreviatedName
 			miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].groupID = activityInfo.groupFinderActivityGroupID
-			
+			miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].activityID = activityID
+
 		else
 			activityInfo.abbreviatedName = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].abbreviatedName
 
@@ -1458,6 +1460,17 @@ local function loadGroupData()
 	end
 end
 
+local function recheckJournalInstanceIDs()
+	for k, v in pairs(miog.MAP_INFO) do
+		if(type(k) == "number") then
+			miog.MAP_INFO[k].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(k)
+
+		end
+	end
+end
+
+miog.recheckJournalInstanceIDs = recheckJournalInstanceIDs
+
 local function loadRawData()
 	local loadHQData = miog.isMIOGHQLoaded()
 
@@ -1487,6 +1500,7 @@ local function loadRawData()
 			mapInfo.expansionLevel = v[12]
 			mapInfo.bosses = {}
 			mapInfo.numOfBosses = 0
+			
 			mapInfo.journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 
 			local background = mapInfo.bgName or mapInfo.fileName
@@ -1509,36 +1523,6 @@ local function loadRawData()
 				mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.iconName or mapInfo.fileName) .. ".blp"
 			end
 		end
-
-		--[[miog.MAP_INFO[v[1] ] = miog.MAP_INFO[v[1] ] or {}
-
-		local mapInfo = miog.MAP_INFO[v[1] ]
-
-		mapInfo.name = v[3]
-		mapInfo.expansionLevel = v[12]
-		mapInfo.bosses = {}
-		mapInfo.numOfBosses = 0
-		mapInfo.journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v[1])
-
-		local background = mapInfo.bgName or mapInfo.fileName
-		
-		if(background) then
-			if(loadHQData) then
-				mapInfo.horizontal = MythicIO.GetBackgroundImage(background)
-				mapInfo.vertical = MythicIO.GetBackgroundImage(background, true)
-				
-			elseif(mapInfo.pvp) then
-				mapInfo.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
-				mapInfo.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
-				
-			else
-				mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-				mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-
-			end
-
-			mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.iconName or mapInfo.fileName) .. ".blp"
-		end]]
 	end
 
 	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
@@ -1572,6 +1556,8 @@ miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
 miog.MAP_INFO[2657].achievementCategory = 15520 --NP
 
 miog.MAP_INFO[2769].achievementCategory = 15520 --LOU
+
+miog.MAP_INFO[2810].achievementCategory = 15520 --MFO
 
 miog.TELEPORT_FLYOUT_IDS = { --https://wago.tools/db2/SpellFlyout
 	[1] = {id = 230, expansion = 3, type="dungeon"},

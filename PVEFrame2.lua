@@ -193,6 +193,8 @@ local function addTeleportButtons()
 	end
 end
 
+miog.addTeleportButtons = addTeleportButtons
+
 local function anchorNewScrollBar(tab, name)
 	local pveFrame2 = miog.pveFrame2
 
@@ -625,8 +627,6 @@ local function createPVEFrameReplacement()
 		button:ClearHighlightTexture()
 		button:SetScript("OnEnter", nil)
 	end)
-
-	addTeleportButtons()
 	
 	miog.pveFrame2.TitleBar.CreateGroupButton.Text:SetText("Create")
 	miog.pveFrame2.TitleBar.CreateGroupButton:SetScript("OnClick", function(selfButton)

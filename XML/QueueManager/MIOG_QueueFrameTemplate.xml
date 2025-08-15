@@ -20,7 +20,7 @@
             </Layer>
 
             <Layer level="ARTWORK">
-                <Texture parentKey="Background" horizTile="true" vertTile="true">
+                <Texture parentKey="Background" horizTile="true" vertTile="true" alpha="0.80">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.BaseBackground" relativePoint="TOPLEFT" x="2" y="-2"/>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BaseBackground" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>

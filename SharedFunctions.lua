@@ -44,6 +44,13 @@ miog.updateCurrencies = function()
 				currentFrame.Icon:SetScript("OnEnter", function(self)
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 					GameTooltip:SetCurrencyByID(v.id)
+
+					if(v.macro) then
+						GameTooltip_AddBlankLineToTooltip(GameTooltip)
+						GameTooltip_AddColoredLine(GameTooltip, "Click to open options.", GREEN_FONT_COLOR)
+
+					end
+
 					GameTooltip:Show()
 				end)
 				currentFrame:Show()
@@ -635,6 +642,17 @@ miog.checkAllSeasonalMapIDs = function()
 	end
 end
 
+miog.retrieveAndSortChallengeModeMapTable = function()
+	local mapTable = C_ChallengeMode.GetMapTable()
+
+	table.sort(mapTable, function(k1, k2)
+		return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
+
+	end)
+
+	return mapTable
+end
+
 local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable, existingProfile)
 	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
 
@@ -666,7 +684,7 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 						--table[dungeonEntry.dungeon.keystone_instance].dungeonScore = miog.calculateMapScore(dungeonEntry.dungeon.keystone_instance, table[dungeonEntry.dungeon.keystone_instance])
 
 					else
-						mplusData[dungeonEntry.dungeon.instance_map_id] = {
+						mplusData[dungeonEntry.dungeon.keystone_instance] = {
 							level = profile.mythicKeystoneProfile.dungeons[dungeonEntry.dungeon.index],
 							chests = profile.mythicKeystoneProfile.dungeonUpgrades[dungeonEntry.dungeon.index]
 						}

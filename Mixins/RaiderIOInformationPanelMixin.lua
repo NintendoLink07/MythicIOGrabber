@@ -5,7 +5,7 @@ RaiderIOInformationPanelMixin = {}
 MIOG_FAILSAFE_SEASON_ID = 13
 
 function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
-    self.mythicPlusInfo = miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus(false, true)
+    self.mythicPlusInfo = miog.retrieveAndSortChallengeModeMapTable()
     self.raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
 
 end
@@ -15,22 +15,40 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
         local done = {}
         local k = 1
 
-        for _, data in ipairs(self.mythicPlusInfo) do
-            if(not done[data.activityID]) then
-                local currentDungeon = self.MythicPlus["Dungeon" .. k]
-                local activityInfo = miog.requestActivityInfo(data.activityID)
+        for _, mapChallengeModeID in ipairs(self.mythicPlusInfo) do
+            local name, id, timeLimit, texture, backgroundTexture, mapID = C_ChallengeMode.GetMapUIInfo(mapChallengeModeID)
 
-                currentDungeon.dungeonName = activityInfo.groupName
+            if(not done[mapChallengeModeID]) then
+                local currentDungeon = self.MythicPlus["Dungeon" .. k]
+                local info = miog.retrieveMapInfoFromChallengeModeMap(mapChallengeModeID)
+                --local activityInfo = miog.requestActivityInfo(data.activityID)
+
+                currentDungeon.dungeonName = name
 
                 if(currentDungeon.Name) then
-                    currentDungeon.Name:SetText(activityInfo.abbreviatedName)
+                    local abbrName
+                    local groupID = miog.retrieveGroupIDFromChallengeModeMap(mapChallengeModeID)
+
+                    if(miog.GROUP_ACTIVITY_ID_INFO[groupID]) then
+                        local groupInfo = miog.requestGroupInfo(groupID)
+
+                        if(groupInfo) then
+                            abbrName = groupInfo.abbreviatedName
+                        end
+
+                    else
+                        abbrName = info.abbreviatedName
+
+                    end
+
+                    currentDungeon.Name:SetText(abbrName)
                     
                 end
 
-                currentDungeon.Icon:SetTexture(self.mode == "side" and activityInfo.horizontal or activityInfo.icon)
+                currentDungeon.Icon:SetTexture(self.mode == "side" and info.horizontal or info.icon)
                 currentDungeon.Icon:SetDesaturation(0)
                 currentDungeon.Icon:SetScript("OnMouseDown", function()
-                    local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
+                    local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
                     local difficulty = 23
 
                     --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
@@ -38,7 +56,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
 
                 end)
 
-                done[data.activityID] = true
+                done[mapChallengeModeID] = true
 
                 k = k + 1
             end
@@ -125,20 +143,25 @@ function RaiderIOInformationPanelMixin:OnLoadRaid()
 
     local firstID
 
-    for k, data in ipairs(self.raidInfo) do
-        local raidFrame = self.Raids["Raid" .. raidCounter]
+    for k = 1, 2, 1 do
+        local data = self.raidInfo[k]
 
-        if(raidFrame) then
-            self:SetupRaidFrame(raidFrame, data.mapID)
+        if(data) then
+    --for k, data in ipairs(self.raidInfo) do
+            local raidFrame = self.Raids["Raid" .. raidCounter]
 
-            raidCounter = raidCounter + 1
+            if(raidFrame) then
+                self:SetupRaidFrame(raidFrame, data.mapID)
 
-            if(k == 1) then
-                firstID = data.mapID
+                raidCounter = raidCounter + 1
 
+                if(k == 1) then
+                    firstID = data.mapID
+
+                end
+
+                self.raidFrames[data.mapID] = raidFrame
             end
-
-            self.raidFrames[data.mapID] = raidFrame
         end
     end
 
@@ -224,14 +247,15 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
     local done = {}
     local k = 1
 
-    for _, data in ipairs(self.mythicPlusInfo) do
-        if(not done[data.activityID]) then
+    for _, mapChallengeModeID in ipairs(self.mythicPlusInfo) do
+        local name, id, timeLimit, texture, backgroundTexture, mapID = C_ChallengeMode.GetMapUIInfo(mapChallengeModeID)
+        if(not done[mapChallengeModeID]) then
             local currentDungeon = self.MythicPlus["Dungeon" .. k]
 
-            if(self.mplusData and self.mplusData[data.mapID]) then
-                currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[data.mapID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[data.mapID].chests)) or 0, self.mplusData and self.mplusData[data.mapID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+            if(self.mplusData and self.mplusData[mapChallengeModeID]) then
+                currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[mapChallengeModeID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[mapChallengeModeID].chests)) or 0, self.mplusData and self.mplusData[mapChallengeModeID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
 
-                if(self.mplusData[data.mapID].level == 0) then
+                if(self.mplusData[mapChallengeModeID].level == 0) then
                     currentDungeon.Icon:SetDesaturation(0.7)
                 end
             else
@@ -240,7 +264,7 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
 
             end
 
-            done[data.activityID] = true
+            done[mapChallengeModeID] = true
             k = k + 1
         end
     end
@@ -303,7 +327,11 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
     if(self.raidData) then
         local raidCounter = 1
 
-	    for k, data in ipairs(self.raidInfo) do
+        for k = 1, 2, 1 do
+            local data = self.raidInfo[k]
+
+
+	    --for k, data in ipairs(self.raidInfo) do
             for nmd = 1, 2, 1 do
                 local raidFrame = nmd == 1 and self.raidFrames[data.mapID] or self.Raids["Raid3"]
 

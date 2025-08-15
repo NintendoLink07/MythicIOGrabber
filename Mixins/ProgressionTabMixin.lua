@@ -506,7 +506,9 @@ function ProgressionTabMixin:GatherActivitiesForDataProvider()
 	if(self.type == "raid" or self.type == "all") then --RAID
 		raidActivities = {}
 
-		for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)) do
+		local groups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
+
+		for k, v in ipairs(groups) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)
 			local activityID = activities[#activities]
 			local name, order = C_LFGList.GetActivityGroupInfo(v)
@@ -612,7 +614,6 @@ function ProgressionTabMixin:PopulateActivities()
 							shortName = mapInfo.abbreviatedName
 
 						end
-						
 					end
 
 					value = v
@@ -1061,10 +1062,11 @@ function ProgressionTabMixin:OnLoad(type, tempSettings)
 						local intimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].intimeInfo
 						local overtimeInfo = MIOG_NewSettings.accountStatistics.characters[data.guid].mplus[challengeMapID].overtimeInfo
 
-						local overtimeHigher = intimeInfo and overtimeInfo and intimeInfo.dungeonScore and overtimeInfo.dungeonScore and overtimeInfo.dungeonScore > intimeInfo.dungeonScore and true or false
+						local overtimeHigher = intimeInfo and overtimeInfo and intimeInfo.dungeonScore and overtimeInfo.dungeonScore and overtimeInfo.dungeonScore > intimeInfo.dungeonScore
+						local hasOnlyOvertime = not intimeInfo and overtimeInfo
 
-						dungeonFrame.Level:SetText(overtimeHigher and overtimeInfo.level or intimeInfo and intimeInfo.level or 0)
-						dungeonFrame.Level:SetTextColor(CreateColorFromHexString(overtimeHigher and overtimeInfo.level and miog.CLRSCC.red or intimeInfo and intimeInfo.level and miog.CLRSCC.green or miog.CLRSCC.gray):GetRGBA())
+						dungeonFrame.Level:SetText((overtimeHigher or hasOnlyOvertime) and overtimeInfo.level or intimeInfo and intimeInfo.level or 0)
+						dungeonFrame.Level:SetTextColor(CreateColorFromHexString((overtimeHigher or hasOnlyOvertime) and overtimeInfo.level and miog.CLRSCC.red or intimeInfo and intimeInfo.level and miog.CLRSCC.green or miog.CLRSCC.gray):GetRGBA())
 						dungeonFrame:SetScript("OnEnter", function(selfFrame)
 							mplusOnEnter(selfFrame, data.guid)
 

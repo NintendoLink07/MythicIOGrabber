@@ -26,23 +26,38 @@ local function mainEvents(_, event, ...)
 
 		miog.loadNewSettings()
 		miog.loadRawData()
-		
 		miog.createFrames()
-		
-		EJ_SetDifficulty(8)
 		
 		if(C_LFGList.HasActiveEntryInfo()) then
 			miog.setActivePanel(nil, LFGListFrame.ApplicationViewer)
 
 		end
 
-		LFGListFrame.ApplicationViewer.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnScroll, function() GameTooltip:Hide() end)
+		--LFGListFrame.ApplicationViewer.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnScroll, function() GameTooltip:Hide() end)
 
 	elseif(event == "PLAYER_ENTERING_WORLD") then
+		miog.addTeleportButtons()
+		--miog.recheckJournalInstanceIDs()
 		miog.checkAllSeasonalMapIDs()
 		
 		if(miog.pveFrame2) then
 			miog.MainFrame.TitleBar.RaiderIOLoaded:SetShown(not C_AddOns.IsAddOnLoaded("RaiderIO"))
+
+		end
+
+		if(MIOG_NewSettings.raidToDungeonGraphics) then
+			if (C_CVar.GetCVar("RAIDsettingsEnabled")) then
+				local _, type = GetInstanceInfo()
+
+				if(type == "party") then
+					if(GetCurrentGraphicsSetting() == 0) then
+						SetCurrentGraphicsSetting(1)
+
+					end
+
+					UIErrorsFrame:AddExternalWarningMessage("[MIOG]: " .. GRAPHICS_SETTING_RAID_NOTICE)
+				end
+			end
 
 		end
 		--[[local isLogin, isReload = ...
