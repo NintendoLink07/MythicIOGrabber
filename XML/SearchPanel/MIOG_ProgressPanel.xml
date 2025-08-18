@@ -1,10 +1,27 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ProgressPanel" mixin="RaiderIOInformationPanelMixin" virtual="true">
-        <Size y="100" />
+        <Size y="115" />
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" font="GameFontHighlight" justifyH="LEFT" text="Progress">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
 
         <Frames>
-            <Frame parentKey="MythicPlus" inherits="StaticGridLayoutFrame" setAllPoints="true">
+            <Frame parentKey="MythicPlus" inherits="StaticGridLayoutFrame">
+                <Size y="100" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
                 <Frames>
                     <Frame parentKey="Dungeon1" inherits="MIOG_ProgressPanelDungeonTemplate">
                         <Anchors>
@@ -56,7 +73,13 @@
                 </Frames>
             </Frame>
 
-            <Frame parentKey="Raids" setAllPoints="true"> 
+            <Frame parentKey="Raids"> 
+                <Size y="100" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
                 <Frames>
                     <Frame parentKey="Raid1" inherits="MIOG_ProgressPanelTierTemplate">
                         <Anchors>

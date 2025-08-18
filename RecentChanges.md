@@ -1,27 +1,13 @@
-## [3.5.10](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.10) - 2025-08-15
+## [3.5.11](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11) - 2025-08-18
 
 ### Added
 
-- An interface option has been added to apply raid graphics automatically upon entering a dungeon.
-
-- Added a tooltip to indicate that you can open the Reshii Wraps UI via the Ethereal Strands icon.
+- When you join a group activity that has a teleport spell associated with it a teleport button will be visible to the right of the last group panel in the mainframe.
 
 ### Changed
 
-- Anything RaiderIO related only checks if there is data from the last 2 raids, since that's the only data RaiderIO provides anyway (to avoid any NP progress showing up).
-
-- Anything RaiderIO related now splits mega dungeons correctly.
-
-- [ActiveQueues] The frame font is now easier to read.
-
-- [ActiveQueues] LFG applications' activity name is now colored so it's easier to read.
+- [GroupManager] The members now get displayed in the same order as Blizzard does.
 
 ### Fixed
 
-- [Progress] Overtime scores now also get shown when you have no intime score.
-
-- [Drops] Waist and leg slots id have been swapped.
-
-- An error occuring when you're in a raid that is not in the current expansion has been resolved.
-
-- An error trying to hide a secure frame while the player is still logging in has been resolved. 
+- [SearchPanel] Raid group listings of the current expansion should now load way faster.

@@ -4,8 +4,10 @@
         <KeyValues>
             <KeyValue key="expand" value="true" type="boolean" />
             <KeyValue key="spacing" value="2" type="number" />
+            <KeyValue key="topPadding" value="2" type="number" />
             <KeyValue key="leftPadding" value="2" type="number" />
             <KeyValue key="rightPadding" value="2" type="number" />
+            <KeyValue key="bottomPadding" value="2" type="number" />
         </KeyValues>
 
         <Layers>

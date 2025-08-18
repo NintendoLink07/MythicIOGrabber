@@ -771,6 +771,23 @@ miog.isMIOGHQLoaded = function()
 	return C_AddOns.IsAddOnLoaded("MythicIO - Resources")
 end
 
+miog.refreshLastGroupTeleport = function(mapID)
+	local mapInfo = miog.MAP_INFO[mapID or MIOG_CharacterSettings.lastGroupMap]
+
+	if(mapInfo and mapInfo.teleport and C_Spell.IsSpellUsable(mapInfo.teleport)) then
+		local spellInfo = C_Spell.GetSpellInfo(mapInfo.teleport)
+		local lastGroupTeleportButton = miog.MainTab.QueueInformation.LastGroup.TeleportButton
+
+		--lastGroupTeleportButton.Text:SetText(mapInfo.abbreviatedName or WrapTextInColorCode("MISSING", "FFFF0000"))
+		lastGroupTeleportButton:SetNormalTexture(spellInfo.iconID)
+		lastGroupTeleportButton:SetHighlightAtlas("communities-create-avatar-border-hover")
+		lastGroupTeleportButton:SetAttribute("type", "spell")
+		lastGroupTeleportButton:SetAttribute("spell", spellInfo.name)
+		lastGroupTeleportButton:RegisterForClicks("LeftButtonDown")
+
+	end
+end
+
 miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeonScore, dungeonData, raidData, pvpData)
 	local primaryIndicator, secondaryIndicator = frameWithDoubleIndicators.Primary, frameWithDoubleIndicators.Secondary
 

@@ -37,6 +37,7 @@ local function mainEvents(_, event, ...)
 
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		miog.addTeleportButtons()
+		miog.refreshLastGroupTeleport()
 		--miog.recheckJournalInstanceIDs()
 		miog.checkAllSeasonalMapIDs()
 		

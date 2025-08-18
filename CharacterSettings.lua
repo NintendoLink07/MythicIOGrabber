@@ -8,5 +8,6 @@ miog.characterSettings = {
     {name = "App dialog box extended", variableName = "MIOG_AppDialogBoxExtented", key="appDialogBoxExtented", default=true},
     {name = "Last used queue", variableName = "MIOG_LastUsedQueue", key="lastUsedQueue", default = {}},
     {name = "Last group", variableName = "MIOG_LastGroup", key="lastGroup", default="No group found"},
+    {name = "Last group map", variableName = "MIOG_LastGroupMap", key="lastGroupMap", default=nil},
     {name = "Filters", variableName = "MIOG_Filters", key="filters", default={["SearchPanel"] = {}, ["ApplicationViewer"] = {}}},
 }

@@ -1,0 +1,79 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+    <Frame name="MIOG_SearchPanelDungeonListingTemplate" inherits="MIOG_SearchPanelGenericResultFrameTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Keyrange" font="GameFontHighlight" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.CategoryInformation.DifficultyZone" relativePoint="RIGHT" x="14" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="MemberPanel" inherits="HorizontalLayoutFrame">
+                <Size y="20"/>
+
+                <KeyValues>
+                    <KeyValue key="fixedWidth" value="144" type="number" />
+                    <KeyValue key="spacing" value="13" type="number" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="1" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="2" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="3" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="4" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="5" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="100">
+                        <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png" hidden="true">
+                            <Size x="14" y="14" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

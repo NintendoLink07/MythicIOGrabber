@@ -355,16 +355,25 @@ local function createDataProviderWithUnsortedData()
 	local actualResults, resultTable = C_LFGList.GetFilteredSearchResults()
 
 	local numOfFiltered = 0
-	equalizeTable = {}
+
+	local isRaid = LFGListFrame.SearchPanel.categoryID == 3
+	local isPvP = LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9
+	local isDungeon = LFGListFrame.SearchPanel.categoryID == 2
+	local isOther = not isRaid and not isPvP and not isDungeon
 
 	for _, resultID in ipairs(resultTable) do
 		if(C_LFGList.HasSearchResultInfo(resultID)) then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 			if(searchResultInfo and not searchResultInfo.hasSelf) then
+				local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+				local mapID = activityInfo.mapID
+
 				local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
 				local status, reason =  miog.filter.checkIfSearchResultIsEligible(resultID)
+
+				local raidData
 				
 				if(appStatus == "applied" or status ~= false) then
 					local primarySortAttribute, secondarySortAttribute
@@ -385,25 +394,13 @@ local function createDataProviderWithUnsortedData()
 						end
 					end
 
-					if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
+					if(isOther) then
 						primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
 						secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
 
-						--[[if(searchResultInfo.leaderOverallDungeonScore and searchResultInfo.leaderOverallDungeonScore > 0) then
-							local string = rawget(searchResultInfo, "name")
-
-							local substring = string:gsub("%D", "")
-							local onlyNumbers = tonumber(substring)
-
-							if(onlyNumbers) then
-								equalizeTable[onlyNumbers] = equalizeTable[onlyNumbers] or {}
-								tinsert(equalizeTable[onlyNumbers], searchResultInfo.leaderOverallDungeonScore)
-							end
-						end]]
-
-					elseif(LFGListFrame.SearchPanel.categoryID == 3) then
+					elseif(isRaid) then
 						if(searchResultInfo.leaderName) then
-							local raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
+							raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
 
 							if(raidData) then
 								primarySortAttribute = raidData.character.ordered[1].weight or 0
@@ -416,7 +413,7 @@ local function createDataProviderWithUnsortedData()
 
 						end
 
-					elseif(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9) then
+					elseif(isPvP) then
 						local pvpDataExists = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo[1]
 
 						if(pvpDataExists) then
@@ -430,16 +427,20 @@ local function createDataProviderWithUnsortedData()
 						end
 
 					end
+					
+					local hasOwnTemplate = miog.MAP_ID_TEMPLATES[mapID]
 
 					local mainFrame = treeDataProvider:Insert(
 						{
-							template = "MIOG_SearchPanelResultFrameTemplate",
+							hasOwnTemplate = hasOwnTemplate,
+							template = hasOwnTemplate or isRaid and "MIOG_SearchPanelGenericRaidListingTemplate" or isDungeon and "MIOG_SearchPanelDungeonListingTemplate" or "MIOG_SearchPanelResultFrameTemplate",
 							name = searchResultInfo.leaderName,
 							primary = primarySortAttribute,
 							appStatus = appStatus,
 							secondary = secondarySortAttribute,
 							index = resultID,
 							resultID = resultID,
+							raidData = raidData,
 							age = searchResultInfo.age,
 						}
 					)
@@ -493,7 +494,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 
 			local difficultyZoneText = difficultyID and difficultyName or questDesc or nil
 
-			local titleZoneColor = nil
+			local titleZoneColor
 
 			if(searchResultInfo.autoAccept) then
 				titleZoneColor = miog.CLRSCC.blue
@@ -502,7 +503,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 				titleZoneColor = miog.CLRSCC.yellow
 
 			elseif(declineData) then
-				titleZoneColor = miog.CLRSCC.red or miog.CLRSCC.orange
+				titleZoneColor = miog.CLRSCC.red
 
 			else
 				titleZoneColor = "FFFFFFFF"
@@ -553,120 +554,63 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 			tinsert(strings, wticc(searchResultInfo.name, titleZoneColor))
 
 			frame.BasicInformation.Title:SetText(table.concat(strings))
-			
-			local playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 
-			miog.setInfoIndicators(frame.BasicInformation, activityInfo.categoryID, searchResultInfo.leaderOverallDungeonScore, searchResultInfo.leaderDungeonScoreInfo[1], miog.getOnlyPlayerRaidData(playerName, realm), searchResultInfo.leaderPvpRatingInfo[1])
-		end
-	end
-end
+			local isRaid = LFGListFrame.SearchPanel.categoryID == 3
+			local isPvP = LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9
 
-local function isDummy(class)
-	return class == "DUMMY"
-end
+			local primaryIndicator = frame.BasicInformation.Primary
+			local secondaryIndicator = frame.BasicInformation.Secondary
 
-local function sortSmallPvpGroup(k1, k2)
-	if(k1 and k2) then
-		if isDummy(k1.class) then
-			return false
+			if(isRaid) then
+				if(data.raidData) then
+					local orderedData1 = data.raidData.character.ordered[1]
+					local orderedData2 = data.raidData.character.ordered[2]
 
-		elseif isDummy(k2.class) then
-			return true
+					if(orderedData1) then
+						primaryIndicator:SetText(wticc(orderedData1.parsedString, orderedData1.current and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated))
 
-		end
+					end
 
-		if k1.role ~= k2.role then
-			return k1.role > k2.role
-		end
-	
-		if k1.spec ~= k2.spec then
-			return k1.spec > k2.spec
+					if(orderedData2) then
+						secondaryIndicator:SetText(wticc(orderedData2.parsedString, orderedData2.current and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
 
-		end
-	
-		return k1.class > k2.class
+					end
+				end
+			elseif(isPvP) then
+					local pvpData = searchResultInfo.leaderPvpRatingInfo[1]
 
-	else
-		return false
+					if(pvpData.tier and pvpData.tier ~= "N/A") then
+						local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
+						primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
+						secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
 
-	end
-end
+					else
+						primaryIndicator:SetText(0)
+						secondaryIndicator:SetText("N/A")
+					
+					end
+			else
+				if(searchResultInfo.leaderOverallDungeonScore > 0) then
+					primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.createCustomColorForRating(searchResultInfo.leaderOverallDungeonScore):GenerateHexColor()))
 
-local function sortSmallGroup(k1, k2)
-	if k1.role ~= k2.role then
-		return k1.role > k2.role
-	end
+					local dungeonData = searchResultInfo.leaderDungeonScoreInfo[1]
+					local highestKeyForDungeon
 
-	if k1.class == "DUMMY" then
-		return false
+					if(dungeonData) then
+						highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
 
-	end
+					else
+						highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
 
-	if k2.class == "DUMMY" then
-		return true
+					end
 
-	end
+					secondaryIndicator:SetText(highestKeyForDungeon)
+					
+				else
+					primaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
 
-	if k1.spec ~= k2.spec then
-		return k1.spec > k2.spec
-
-	end
-
-	return k1.class > k2.class
-end
-
-local function refreshBossTextures1(mapInfo, resultID, bossPanel)
-	local bossData = mapInfo.bosses
-	local bossNum = mapInfo.numOfBosses
-	local frameIndex = 20
-	
-	local encountersDefeated = retrieveEncounterStatus(resultID)
-
-	for i = 1, bossNum, 1 do
-		local bossFrame = bossPanel["Boss" .. frameIndex]
-		local bossInfo = bossData[i]
-
-		local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
-
-		bossFrame.Icon:SetDesaturated(bossDefeated)
-		bossFrame.Border:SetColorTexture(CreateColorFromHexString(bossDefeated and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
-
-		SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
-		bossFrame:Show()
-
-		frameIndex = frameIndex - 1
-	end
-
-	for i = frameIndex, 1, -1 do
-		local bossFrame = bossPanel["Boss" .. i]
-		bossFrame:Hide()
-	end
-end
-
-local function refreshBossTextures2(mapInfo, resultID, bossPanel)
-	local bossData = mapInfo.bosses
-	local bossCounter = 1
-	
-	local encountersDefeated = retrieveEncounterStatus(resultID)
-
-	for i = 20, 1, -1 do
-		local bossFrame = bossPanel["Boss" .. i]
-		local bossInfo = bossData[mapInfo.numOfBosses - bossCounter + 1]
-
-		if(bossInfo) then
-			local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
-
-			bossFrame.Icon:SetDesaturated(bossDefeated)
-			bossFrame.Border:SetColorTexture(CreateColorFromHexString(bossDefeated and miog.CLRSCC.red or miog.CLRSCC.green):GetRGBA())
-
-			SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
-			bossFrame:Show()
-
-			bossCounter = bossCounter + 1
-
-		else
-			bossFrame:Hide()
-
+				end
+			end
 		end
 	end
 end
@@ -705,12 +649,6 @@ local function updateScrollBoxFrame(frame, data)
 		local isDungeon = categoryID == 2
 		--local isPvE = categoryID == 1 or categoryID == 2 or categoryID == 6 or categoryID == 121
 
-		local memberPanel = currentFrame.CategoryInformation.MemberPanel
-		memberPanel:SetShown(not isRaid)
-
-		local bossPanel = currentFrame.CategoryInformation.BossPanel
-		bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
-
 		local roleCount = {
 			["TANK"] = 0,
 			["HEALER"] = 0,
@@ -729,14 +667,18 @@ local function updateScrollBoxFrame(frame, data)
 				roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
 			end
 
+			local bossPanel = currentFrame.BossPanel
+			local newMap = bossPanel.mapID ~= mapID
+			
+			bossPanel.mapID = mapID
+
 			local mapInfo = miog.getMapInfo(mapID, true)
-
+			
 			if(mapInfo) then
-				local newMap = bossPanel.mapID ~= mapID
-				
-				bossPanel.mapID = mapID
-
 				local bossData = mapInfo.bosses
+					
+				local bossIndex = mapInfo.numOfBosses
+				local numOfBosses
 
 				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
 				local encountersDefeated = {}
@@ -748,32 +690,58 @@ local function updateScrollBoxFrame(frame, data)
 					end
 				end
 
-				local bossIndex = mapInfo.numOfBosses - 1 + 1
+				if(data.hasOwnTemplate) then
+					numOfBosses = #bossData
 
-				for i = 20, 1, -1 do
-					local bossFrame = bossPanel["Boss" .. i]
-					local bossInfo = bossData[bossIndex]
+					for i = numOfBosses, 1, -1 do
+						local bossFrame = bossPanel["Boss" .. i]
+						local bossInfo = bossData[bossIndex]
 
-					bossFrame:SetShown(bossInfo)
+						if(bossInfo) then
+							local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
 
-					if(bossInfo) then
-						local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+							bossFrame.Icon:SetDesaturated(bossDefeated)
+							bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
 
-						bossFrame.Icon:SetDesaturated(bossDefeated)
-						bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
-
-						if(newMap) then
-							SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+							bossIndex = bossIndex - 1
 
 						end
+					end
+				else
+					bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
 
-						bossIndex = bossIndex - 1
+					numOfBosses = 20
 
+					for i = numOfBosses, 1, -1 do
+						local bossFrame = bossPanel["Boss" .. i]
+						local bossInfo = bossData[bossIndex]
+
+						bossFrame:SetShown(bossInfo)
+
+						if(bossInfo) then
+							local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+
+							bossFrame.Icon:SetDesaturated(bossDefeated)
+							bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
+
+							if(newMap) then
+								SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+
+							end
+
+							bossIndex = bossIndex - 1
+
+						end
 					end
 				end
-
 			end
+					
 		else
+			local memberPanel = currentFrame.MemberPanel
+			memberPanel:SetShown(true)
+
+			currentFrame.Keyrange:SetShown(isDungeon)
+
 			local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
 			
 			local arrays = {
@@ -871,18 +839,16 @@ local function updateScrollBoxFrame(frame, data)
 					local lower, higher = keylevel, keylevel + 1
 
 					if(lower >= 2) then
-						currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(lower, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[lower]):GenerateHexColor()) .. "-" .. wticc(higher, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[higher]):GenerateHexColor()) .. ")")
+						currentFrame.Keyrange:SetText("(" .. wticc(lower, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[lower]):GenerateHexColor()) .. "-" .. wticc(higher, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[higher]):GenerateHexColor()) .. ")")
 
 					else
-						currentFrame.CategoryInformation.Keyrange:SetText("(" .. wticc(0, miog.createCustomColorForRating(0):GenerateHexColor()) .. ")")
+						currentFrame.Keyrange:SetText("(" .. wticc(0, miog.createCustomColorForRating(0):GenerateHexColor()) .. ")")
 
 					end
 				end
 
 			end
 		end
-
-		currentFrame.CategoryInformation.Keyrange:SetShown(isDungeon)
 
 		currentFrame.BasicInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
 
@@ -1031,7 +997,6 @@ local function fullyUpdateSearchPanel()
 
 		else
 			for i = 1, orderedListLen do
-
 				local state, name = sortBarList[i].state, sortBarList[i].name
 
 				if(state > 0 and k1[name] ~= k2[name]) then
@@ -1062,23 +1027,6 @@ local function fullyUpdateSearchPanel()
 
 	lastNumOfResults = actualResults
 end
-
-local function refreshScrollBox()
-	--local dp = miog.SearchPanel.ScrollBox2:GetDataProvider()
-
-	if(dp) then
-		miog.SearchPanel.ScrollBox2:Flush()
-
-		dp:Sort()
-
-		miog.SearchPanel.ScrollBox2:SetDataProvider(dp, true)
-
-	else
-		fullyUpdateSearchPanel()
-
-	end
-end
-
 
 miog.fullyUpdateSearchPanel = fullyUpdateSearchPanel
 
@@ -1147,20 +1095,20 @@ local function searchPanelEvents(_, event, ...)
 			local lastGroup = activityInfo.fullName
 
 			if(not miog.F.LITE_MODE) then
-				miog.MainTab.QueueInformation.LastGroup.Text:SetText(lastGroup)
+				local lastGroupFrame = miog.MainTab.QueueInformation.LastGroup
 
+				lastGroupFrame.Text:SetText(lastGroup)
+
+				miog.refreshLastGroupTeleport(activityInfo.mapID)
 			end
 
+			MIOG_CharacterSettings.lastGroupMap = activityInfo.mapID
 			MIOG_CharacterSettings.lastGroup = lastGroup
 
 		elseif(new == "applied") then
-			refreshScrollBox()
+			fullyUpdateSearchPanel()
 
 		end
-
-	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS") then
-
-	elseif(event == "LFG_LIST_ENTRY_EXPIRED_TIMEOUT") then
 	end
 end
 
@@ -1246,8 +1194,6 @@ miog.createSearchPanel = function()
 	searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	searchPanel:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
 	searchPanel:RegisterEvent("LFG_LIST_SEARCH_FAILED")
-	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TIMEOUT")
-	searchPanel:RegisterEvent("LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS")
 	searchPanel:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
 	searchPanel:OnLoad(fullyUpdateSearchPanel)
@@ -1267,10 +1213,7 @@ miog.createSearchPanel = function()
 
 		frame.node = node
 
-		if(data.template == "MIOG_SearchPanelResultFrameTemplate") then
-			updateScrollBoxFrame(frame, data)
-
-		else
+		if(data.template == "MIOG_NewRaiderIOInfoPanel") then
 			if(not frame:GetScript("OnShow")) then
 				miog.updateRaiderIOScrollBoxFrameData(frame, data)
 
@@ -1279,6 +1222,10 @@ miog.createSearchPanel = function()
 				
 				end)
 			end
+
+		else
+			updateScrollBoxFrame(frame, data)
+
 		end
 	end
 	
@@ -1293,7 +1240,10 @@ miog.createSearchPanel = function()
 	view:SetFrameFactoryResetter(function(pool, frame, new)
 		local template = pool:GetTemplate()
 
-		if(template == "MIOG_SearchPanelResultFrameTemplate") then
+		if(template == "MIOG_NewRaiderIOInfoPanel") then
+			frame:SetScript("OnShow", nil)
+
+		else
 			if(new) then
 				addOneTimeFrames(frame)
 
@@ -1301,8 +1251,6 @@ miog.createSearchPanel = function()
 				resetScrollBoxFrame(frame)
 
 			end
-		else
-			frame:SetScript("OnShow", nil)
 
 		end
 
@@ -1311,7 +1259,7 @@ miog.createSearchPanel = function()
 
 	view:SetElementExtentCalculator(function(index, node)
 		local data = node:GetData()
-		local height = data.template == "MIOG_SearchPanelResultFrameTemplate" and 40 or 160
+		local height = data.template == "MIOG_NewRaiderIOInfoPanel" and 160 or 40
 		return height
 	end)
 

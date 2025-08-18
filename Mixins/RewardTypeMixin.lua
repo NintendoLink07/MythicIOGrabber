@@ -347,10 +347,6 @@ function RewardTypeMixin:OnEnter(childIndex)
                         lastInstanceID = instanceID;
                     end
                     if name then
-                        --local isIndexEqual = childIndex == index
-
-                        --print(childIndex, index)
-
                         if encounter.bestDifficulty > 0 then
 
                             local completedDifficultyName = DifficultyUtil.GetDifficultyName(encounter.bestDifficulty) or miog.DIFFICULTY_ID_INFO[encounter.bestDifficulty].name

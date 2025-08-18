@@ -475,9 +475,18 @@
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                                         </Anchors>
 
+                                        <Frames>
+                                            <Button parentKey="TeleportButton" inherits="MIOG_TeleportButtonTemplate">
+                                                <Size x="50" y="50" />
+                                                <Anchors>
+                                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="RIGHT" x="3"/>
+                                                </Anchors>
+                                            </Button>
+                                        </Frames>
+
                                         <Layers>
                                             <Layer level="OVERLAY">
-                                                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
+                                                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" outline="NORMAL" text="">
                                                     <Anchors>
                                                         <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="4" y="-4"/>
                                                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="4"/>

@@ -1,0 +1,228 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+    <Frame name="MIOG_SearchPanelGenericResultFrameTemplate" inherits="BackdropTemplate" virtual="true">        
+        <Size y="40" />
+
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-1">
+                <Texture parentKey="Background" horizTile="true" vertTile="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="SystemFont_Shadow_Large" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Button parentKey="CancelApplication" inherits="IconButtonTemplate" hidden="true">
+                <KeyValues>
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
+                    <KeyValue key="iconSize" value="16" type="number" />
+                </KeyValues>
+                
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-2" />
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        if(button == "LeftButton") then
+                            local _, appStatus = C_LFGList.GetApplicationInfo(self:GetParent().resultID)
+
+                            if(appStatus == "applied") then
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                C_LFGList.CancelApplication(self:GetParent().resultID)
+
+                            end
+                        end
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Frame parentKey="BasicInformation">
+                <Size y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-2"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture parentKey="IconBorder">
+                            <Size x="16" y="16" />
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="2" y="-2"/>
+                            </Anchors>
+                        </Texture>
+                        
+                        <Texture parentKey="Divider" atlas="dragonflight-weeklyrewards-divider">
+                            <Size y="5" />
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-2"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Icon" enableMouseClicks="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.IconBorder" relativePoint="TOPLEFT" x="1" y="-1" />
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.IconBorder" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                            </Anchors>
+
+                            <Scripts>
+                                <OnMouseDown>
+                                    if(self.difficultyID and self.instanceID) then
+			                            EncounterJournal_OpenJournal(self.difficultyID, self.instanceID, nil, nil, nil, nil)
+                                    
+                                    end
+                                </OnMouseDown>
+                            </Scripts>
+                        </Texture>
+                    </Layer>
+                    
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Title" font="GameFontHighlight" justifyH="LEFT" outline="NORMAL">
+                            <Size x="120" y="20"/>
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="RoleComposition" font="GameFontHighlight" justifyH="LEFT">
+                            <Size x="55" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="4" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER" text="0">
+                            <Size x="37" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.RoleComposition" relativePoint="RIGHT" x="4" />
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Secondary" font="GameFontHighlight" justifyH="CENTER" text="0">
+                            <Size x="37" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="3"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Age" font="GameFontHighlight" justifyH="LEFT" text="0:00:00">
+                            <Size x="70" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="10"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+            
+            <Frame parentKey="CategoryInformation">
+                <Size y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMLEFT" x="2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.BasicInformation" relativePoint="BOTTOMRIGHT" x="-2"/>
+                </Anchors>
+
+                <Frames>
+                    <Button parentKey="ExpandFrame" inherits="UIButtonTemplate" mixin="MultiStateButtonMixin">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="1" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self:OnLoad()
+                                self:SetMaxStates(2)
+                                self:SetTexturesForBaseState("UI-HUD-ActionBar-PageDownArrow-Up", "UI-HUD-ActionBar-PageDownArrow-Down", "UI-HUD-ActionBar-PageDownArrow-Mouseover", "UI-HUD-ActionBar-PageDownArrow-Disabled")
+                                self:SetTexturesForState1("UI-HUD-ActionBar-PageUpArrow-Up", "UI-HUD-ActionBar-PageUpArrow-Down", "UI-HUD-ActionBar-PageUpArrow-Mouseover", "UI-HUD-ActionBar-PageUpArrow-Disabled")
+                                self:SetState(false)
+                            </OnLoad>
+                            <OnClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                
+                                self:AdvanceState()
+
+                                local node = self:GetParent():GetParent().node
+
+                                node:SetCollapsed(not node:IsCollapsed())
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
+                            <Size x="10" y="10" />
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.ExpandFrame" relativePoint="CENTER" x="7" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="DifficultyZone" font="GameFontHighlight" justifyH="LEFT">
+                            <Size x="104" y="20"/>
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="2" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+
+        <Scripts>
+            <OnMouseDown>
+                if(button == "LeftButton") then
+                    if(self.resultID and C_LFGList.HasSearchResultInfo(self.resultID) and (UnitIsGroupLeader("player") or not IsInGroup() or not IsInRaid())) then
+                        local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(self.resultID)
+                        local searchResultInfo = C_LFGList.GetSearchResultInfo(self.resultID)
+
+                        if (appStatus ~= "none" or pendingStatus or searchResultInfo.isDelisted) then
+                            return false
+                        end
+                    end
+
+                    LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, self.resultID)
+                    LFGListApplicationDialog_Show(LFGListApplicationDialog, self.resultID)
+
+                else
+                    LFGListSearchPanel_SelectResult(LFGListFrame.SearchPanel, self.resultID)
+			        LFGListSearchEntry_CreateContextMenu(self)
+
+                end
+            </OnMouseDown>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

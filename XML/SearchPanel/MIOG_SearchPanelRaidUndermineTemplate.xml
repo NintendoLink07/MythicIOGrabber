@@ -1,0 +1,120 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">    
+    <Frame name="MIOG_SearchPanelRaidUndermineTemplate" inherits="MIOG_SearchPanelGenericResultFrameTemplate" virtual="true">
+        <Frames>
+            <Frame parentKey="BossPanel">
+                <Size y="18" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="4" y="2"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
+                </Anchors>     
+
+                <Frames>
+                    <Frame parentKey="Boss8" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_111_raid_achievement_chromekinggallywix.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="Boss7" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Boss8" relativePoint="LEFT" x="-1"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_111_raid_achievement_mugzeeheadsofsecurity.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="Boss6" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Boss7" relativePoint="LEFT" x="-1"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_111_raid_achievement_onearmedbandit.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="Boss5" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Boss6" relativePoint="LEFT" x="-1"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_111_raid_achievement_sprocketmongerlocknstock.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="Boss4" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Boss5" relativePoint="LEFT" x="-1"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_111_raid_achievement_stixbunkjunker.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="Boss3" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Boss4" relativePoint="LEFT" x="-1"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_111_raid_achievement_rikreverb.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="Boss2" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Boss3" relativePoint="LEFT" x="-1"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_11_arenaboss_colossalclash.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="Boss1" parentArray="bossFrames" inherits="MIOG_SearchResultFrameSquareBossFrameTemplate">
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Boss2" relativePoint="LEFT" x="-1"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad>
+                                self.Icon:SetTexture("interface/icons/inv_111_raid_achievement_vexieandthegeargrinders.blp")
+
+                            </OnLoad>
+                        </Scripts>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

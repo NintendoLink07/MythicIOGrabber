@@ -86,6 +86,7 @@ local function retrieveSpellInfo(flyoutSpellID)
 	local abbreviatedName
 
 	if(mapID) then
+		miog.MAP_INFO[mapID].teleport = flyoutSpellID
 		local mapInfo = miog.MAP_INFO[mapID]
 		abbreviatedName = mapInfo.abbreviatedName
 
@@ -148,7 +149,6 @@ local function addTeleportButtons()
 			for k, v in ipairs(expNameTable) do
 				local spellInfo = C_Spell.GetSpellInfo(v.spellID)
 				local tpButton = tpButtonPool:Acquire()
-				--local tpButton = CreateFrame("Button", nil, miog.Teleports, "MIOG_TeleportButtonTemplate")
 				tpButton:SetNormalTexture(spellInfo.iconID)
 				tpButton:GetNormalTexture():SetDesaturated(not v.known)
 				tpButton:SetPoint("LEFT", lastExpansionFrames[info.expansion] or logoFrame, "RIGHT", lastExpansionFrames[info.expansion] and k == 1 and 18 or 3, 0)

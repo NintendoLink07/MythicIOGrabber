@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.5.10
+## Version: 3.5.11
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -125,12 +125,22 @@ XML\ApplicationViewer\MIOG_ApplicantMemberFrameTemplateNew.xml
 XML\SearchPanel\MIOG_SearchPanel.xml
 XML\SearchPanel\MIOG_SearchResultFrameGroupMemberTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameSmallGroupMemberTemplate.xml
-XML\SearchPanel\MIOG_SearchResultFrameBossFrameTemplate.xml
+XML\SearchPanel\MIOG_SearchResultFrameRoundBossFrameTemplate.xml
 XML\SearchPanel\MIOG_SearchResultFrameBossPanelTemplate.xml
 XML\SearchPanel\MIOG_SearchPanelResultFrameTemplate.xml
+
+XML\SearchPanel\MIOG_SearchPanelGenericResultFrameTemplate.xml
+XML\SearchPanel\MIOG_SearchPanelDungeonListingTemplate.xml
+XML\SearchPanel\MIOG_SearchPanelGenericRaidListingTemplate.xml
+XML\SearchPanel\MIOG_SearchResultFrameSquareBossFrameTemplate.xml
+XML\SearchPanel\MIOG_SearchPanelRaidNerubarTemplate.xml
+XML\SearchPanel\MIOG_SearchPanelRaidUndermineTemplate.xml
+XML\SearchPanel\MIOG_SearchPanelRaidManaforgeTemplate.xml
+
 XML\SearchPanel\MIOG_ProgressPanel.xml
 XML\SearchPanel\MIOG_ProgressPanelDungeonTemplate.xml
 XML\SearchPanel\MIOG_ProgressPanelTierTemplate.xml
+
 XML\SearchPanel\MIOG_ApplicationDialogTextboxTemplate.xml
 XML\SearchPanel\MIOG_ApplicationDialogTextboxInputTemplate.xml
 XML\SearchPanel\MIOG_ApplicationDialogParentTemplate.xml

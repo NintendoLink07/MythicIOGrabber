@@ -999,17 +999,6 @@ local function updateGroupData(type, overwrite)
 		lastCall.numMembers = GetNumGroupMembers()
 
 		groupData = {}
-		
-		local subgroupSpotsTaken = {
-			[1] = 0,
-			[2] = 0,
-			[3] = 0,
-			[4] = 0,
-			[5] = 0,
-			[6] = 0,
-			[7] = 0,
-			[8] = 0,
-		}
 
 		local numOfMembers = GetNumGroupMembers()
 		local isInRaid = IsInRaid()
@@ -1085,7 +1074,7 @@ local function updateGroupData(type, overwrite)
 			local data = getOptionalPlayerData(fullPlayerName, shortName, playerRealm, "player")
 
 
-			data.index = nil
+			data.index = 1
 			data.level = UnitLevel("player")
 			data.subgroup = 1
 			data.unitID = "player"
@@ -1109,9 +1098,10 @@ local function updateGroupData(type, overwrite)
 				dataProvider:Insert(data)
 
 				local playerFrame = createCharacterFrame(data)
-				
-				subgroupSpotsTaken[data.subgroup] = subgroupSpotsTaken[data.subgroup] + 1
-				bindFrameToSubgroupSpot(playerFrame, data.subgroup, subgroupSpotsTaken[data.subgroup])
+
+				local subgroupSpot = data.index - (data.subgroup - 1) * 5
+			
+				bindFrameToSubgroupSpot(playerFrame, data.subgroup, subgroupSpot)
 
 			end
 

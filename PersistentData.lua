@@ -918,6 +918,13 @@ miog.LFG_ID_INFO = {
 	[2723] = { abbreviatedName = "LFTS1", icon = "interface/lfgframe/lfgicon-khazalgar.blp", fileName = "khazalgar"},
 }
 
+miog.MAP_ID_TEMPLATES = {
+	[2657] = "MIOG_SearchPanelRaidNerubarTemplate",
+	[2769] = "MIOG_SearchPanelRaidUndermineTemplate",
+	[2810] = "MIOG_SearchPanelRaidManaforgeTemplate",
+	
+}
+
 for k, v in pairs(miog.LFG_ID_INFO) do
 	v.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/" .. v.fileName .. ".png"
 end
