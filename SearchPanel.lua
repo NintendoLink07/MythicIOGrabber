@@ -367,11 +367,20 @@ local function createDataProviderWithUnsortedData()
 
 			if(searchResultInfo and not searchResultInfo.hasSelf) then
 				local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+
+				if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
+					isRaid = activityInfo.categoryID == 3
+					isPvP = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
+					isDungeon = activityInfo.categoryID == 2
+					isOther = not isRaid and not isPvP and not isDungeon
+					
+				end
+
 				local mapID = activityInfo.mapID
 
 				local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
-				local status, reason =  miog.filter.checkIfSearchResultIsEligible(resultID)
+				local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
 
 				local raidData
 				
@@ -394,7 +403,7 @@ local function createDataProviderWithUnsortedData()
 						end
 					end
 
-					if(isOther) then
+					if(isDungeon or isOther) then
 						primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
 						secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
 
@@ -405,6 +414,11 @@ local function createDataProviderWithUnsortedData()
 							if(raidData) then
 								primarySortAttribute = raidData.character.ordered[1].weight or 0
 								secondarySortAttribute = raidData.character.ordered[2].weight or 0
+
+							else
+								primarySortAttribute = 0
+								secondarySortAttribute = 0
+
 							end
 
 						else

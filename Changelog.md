@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.5.11a] - 2025-08-19
+
+### Changed
+
+- [MainFrame] The last group teleport is now only visible when the spell can be cast.
+
+- [MainFrame] The last group teleport now has a tooltip indicating where the teleport is going to teleport you.
+
+### Fixed
+
+- [SearchPanel] Sorting by M+ score and keylevel now works again.
+
+- [SearchPanel] Templates for the correct categories will now be retrieved before showing the listing frames.
+
+
+
 ## [3.5.11] - 2025-08-18
 
 ### Added
@@ -4249,6 +4265,9 @@ Basically just the rating for the bracket and the tier they're currently in
 
 <!-- Versions -->
 [unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.9..HEAD
+[3.5.11a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11a
+[3.5.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11
+[3.5.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.10
 [3.5.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.9
 [3.5.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.8
 [3.5.7a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.7a

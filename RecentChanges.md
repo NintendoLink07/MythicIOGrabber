@@ -1,13 +1,11 @@
-## [3.5.11](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11) - 2025-08-18
+## [3.5.11a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11a) - 2025-08-19
 
-### Added
+- [MainFrame] The last group teleport is now only visible when the spell can be cast.
 
-- When you join a group activity that has a teleport spell associated with it a teleport button will be visible to the right of the last group panel in the mainframe.
-
-### Changed
-
-- [GroupManager] The members now get displayed in the same order as Blizzard does.
+- [MainFrame] The last group teleport now has a tooltip indicating where the teleport is to.
 
 ### Fixed
 
-- [SearchPanel] Raid group listings of the current expansion should now load way faster.
+- [SearchPanel] Sorting by M+ score and keylevel now works again.
+
+- [SearchPanel] Templates for the correct categories will now be retrieved before showing the listing frames.

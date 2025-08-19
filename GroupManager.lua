@@ -1099,7 +1099,7 @@ local function updateGroupData(type, overwrite)
 
 				local playerFrame = createCharacterFrame(data)
 
-				local subgroupSpot = data.index - (data.subgroup - 1) * 5
+				local subgroupSpot = ((data.index - 1) % 5) + 1
 			
 				bindFrameToSubgroupSpot(playerFrame, data.subgroup, subgroupSpot)
 
