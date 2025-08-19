@@ -12,9 +12,86 @@
                     </Anchors>
                 </Texture>
             </Layer>
+               
+            <Layer level="OVERLAY">
+                <FontString parentKey="Keyrange" font="GameFontHighlight" justifyH="LEFT" hidden="true">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.CategoryInformation.DifficultyZone" relativePoint="RIGHT" x="14" />
+                    </Anchors>
+                </FontString>
+            </Layer>
         </Layers>
 
         <Frames>
+            <Frame parentKey="MemberPanel" hidden="true" inherits="HorizontalLayoutFrame">
+                <Size y="20"/>
+
+                <KeyValues>
+                    <KeyValue key="fixedWidth" value="144" type="number" />
+                    <KeyValue key="spacing" value="13" type="number" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="1" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="2" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="3" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="4" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="5" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="100">
+                        <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png" hidden="true">
+                            <Size x="14" y="14" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            
+            <Frame parentKey="BossPanel" inherits="MIOG_SearchResultFrameBossPanelTemplate" hidden="true">
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="4" y="2"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
+                </Anchors>
+            </Frame>
             <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
                 <Layers>
                     <Layer level="BACKGROUND">
@@ -196,86 +273,8 @@
                                 <Anchor point="LEFT" relativeKey="$parent.ExpandFrame" relativePoint="RIGHT" x="2" />
                             </Anchors>
                         </FontString>
-
-                        <FontString parentKey="Keyrange" font="GameFontHighlight" justifyH="LEFT" hidden="true">
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.DifficultyZone" relativePoint="RIGHT" x="14" />
-                            </Anchors>
-                        </FontString>
                     </Layer>
                 </Layers>
-
-                <Frames>
-                    <Frame parentKey="MemberPanel" hidden="true" inherits="HorizontalLayoutFrame">
-                        <Size y="20"/>
-
-                        <KeyValues>
-                            <KeyValue key="fixedWidth" value="144" type="number" />
-                            <KeyValue key="spacing" value="13" type="number" />
-                        </KeyValues>
-
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
-                        </Anchors>
-
-                        <Frames>
-                            <Frame parentKey="1" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="layoutIndex" value="1" type="number" />
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentKey="2" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="layoutIndex" value="2" type="number" />
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentKey="3" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="layoutIndex" value="3" type="number" />
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentKey="4" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="layoutIndex" value="4" type="number" />
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentKey="5" parentArray="memberFrames" inherits="MIOG_GroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="layoutIndex" value="5" type="number" />
-                                </KeyValues>
-                            </Frame>
-                        </Frames>
-
-                        <Layers>
-                            <Layer level="ARTWORK" textureSubLevel="100">
-                                <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png" hidden="true">
-                                    <Size x="14" y="14" />
-                                </Texture>
-                            </Layer>
-                        </Layers>
-                    </Frame>
-                    
-                    <Frame parentKey="BossPanel" inherits="MIOG_SearchResultFrameBossPanelTemplate" hidden="true">
-                        <Anchors>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="4" y="2"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-4" y="2"/>
-                        </Anchors>
-                    </Frame>
-                </Frames>
             </Frame>
         </Frames>
 

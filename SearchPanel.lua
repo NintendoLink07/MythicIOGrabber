@@ -356,10 +356,16 @@ local function createDataProviderWithUnsortedData()
 
 	local numOfFiltered = 0
 
+	--[[
 	local isRaid = LFGListFrame.SearchPanel.categoryID == 3
 	local isPvP = LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9
 	local isDungeon = LFGListFrame.SearchPanel.categoryID == 2
 	local isOther = not isRaid and not isPvP and not isDungeon
+	]]
+	local isRaid
+	local isPvP
+	local isDungeon
+	local isOther
 
 	for _, resultID in ipairs(resultTable) do
 		if(C_LFGList.HasSearchResultInfo(resultID)) then
@@ -368,13 +374,13 @@ local function createDataProviderWithUnsortedData()
 			if(searchResultInfo and not searchResultInfo.hasSelf) then
 				local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
-				if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
+				--if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
 					isRaid = activityInfo.categoryID == 3
 					isPvP = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
 					isDungeon = activityInfo.categoryID == 2
 					isOther = not isRaid and not isPvP and not isDungeon
 					
-				end
+				--end
 
 				local mapID = activityInfo.mapID
 
@@ -752,6 +758,7 @@ local function updateScrollBoxFrame(frame, data)
 					
 		else
 			local memberPanel = currentFrame.MemberPanel
+
 			memberPanel:SetShown(true)
 
 			currentFrame.Keyrange:SetShown(isDungeon)
