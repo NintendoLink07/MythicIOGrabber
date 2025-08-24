@@ -69,7 +69,11 @@ Mixins\ItemUpgradeFinderMixin.lua
 Mixins\SearchBoxFiltersMixin.lua
 Mixins\SortBarMixin.lua
 Mixins\QueueFrameMixin.lua
+
 Mixins\ProgressMixin.lua
+Mixins\ProgressCellMixin.lua
+Mixins\ProgressHeaderMixin.lua
+Mixins\TableBuilderSkinMixin.lua
 
 
 
@@ -106,7 +110,6 @@ XML\QueueManager\MIOG_QueueListingFrameTemplate.xml
 XML\QueueManager\MIOG_QueueApplicationFrameTemplate.xml
 XML\QueueManager\MIOG_QueueFakeApplicationFrameTemplate.xml
 XML\QueueManager\MIOG_QueueFramePVPTemplate.xml
-
 
 XML\GroupManager\MIOG_GroupManager.xml
 XML\GroupManager\MIOG_GroupManagerRaidFrameCharacterTemplate.xml
@@ -183,6 +186,14 @@ XML\Statistics\MIOG_ProgressFullCharacterIconTemplate.xml
 XML\Statistics\MIOG_ProgressionVerticalCharacterTemplate.xml
 
 XML\Progress\MIOG_ProgressTabOverviewTemplate.xml
+XML\Progress\MIOG_CharacterOverviewTemplate.xml
+XML\Progress\MIOG_ProgressOverviewCellTemplate.xml
+XML\Progress\MIOG_ProgressOverviewHeaderTemplate.xml
+XML\Progress\MIOG_ProgressSelectionButtonTemplate.xml
+XML\Progress\MIOG_ProgressMythicPlusCellTemplate.xml
+XML\Progress\MIOG_ProgressMythicPlusHeaderTemplate.xml
+XML\Progress\MIOG_ProgressMythicPlusCharacterCellTemplate.xml
+XML\Progress\MIOG_ProgressEmptyHeaderTemplate.xml
 
 XML\Misc\MIOG_MultiStateButtonTemplate.xml
 XML\Misc\MIOG_SortButtonTemplate.xml

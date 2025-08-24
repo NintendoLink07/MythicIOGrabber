@@ -792,6 +792,7 @@ miog.refreshLastGroupTeleport = function(mapID)
 			GameTooltip:AddLine(desc)
 			GameTooltip:Show()
 		end)
+		lastGroupTeleportButton:Show()
 	else
 		lastGroupTeleportButton:Hide()
 

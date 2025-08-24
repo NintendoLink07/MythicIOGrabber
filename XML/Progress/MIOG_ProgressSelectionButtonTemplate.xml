@@ -1,0 +1,66 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_ProgressSelectionButtonTemplate" virtual="true">
+        <Size y="20" />
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Texture" setAllPoints="true" />
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="10" y="1"/>
+                        <Anchor point="BOTTOMRIGHT" y="1"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnClick>
+                self.Texture:SetAtlas("Options_List_Active")
+                
+                local parent = self:GetParent():GetParent()
+                local oldButton = self:GetParent().selectedButton
+
+                if(oldButton ~= self) then 
+                    oldButton.Texture:SetTexture(nil)
+                    oldButton.isSelected = false
+                    parent[oldButton:GetName()]:Hide()
+
+                    self:GetParent().selectedButton = self
+                    self.isSelected = true
+
+                    parent[self:GetName()]:Show()
+                end
+            </OnClick>
+
+            <OnEnter>
+                if(not self.isSelected) then
+                    self.Texture:SetAtlas("Options_List_Hover")
+
+                end
+            </OnEnter>
+
+            <OnLeave>
+                if(not self.isSelected) then
+                    self.Texture:SetTexture(nil)
+
+                end
+
+            </OnLeave>
+
+            <OnLoad>
+                self.Label:SetText(self:GetText())
+
+                if(self:GetText() == "Overview") then
+                    self:GetParent().selectedButton = self
+                    self.isSelected = true
+                    self.Texture:SetAtlas("Options_List_Active")
+
+                end
+            </OnLoad>
+        </Scripts>
+    </Button>
+</Ui>

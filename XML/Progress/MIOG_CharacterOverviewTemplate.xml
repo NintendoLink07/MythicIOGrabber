@@ -1,0 +1,97 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_CharacterOverviewTemplate" mixin="ProgressCellMixin" virtual="true">
+        <Size x="76" y="240" />
+
+        <Layers>
+			<Layer level="BORDER">
+				<Texture parentKey="GuildBannerBackground" atlas="guildfinder-card-guildbanner-background" hidden="true">
+					<Size y="192"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-8" y="5"/>
+						<Anchor point="TOPRIGHT" x="8" y="5"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+            
+			<Layer level="BORDER" textureSubLevel="-2">
+				<Texture parentKey="GuildBannerShadow" atlas="guildfinder-card-guildbanner-shadow" hidden="true">
+					<Size y="192"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="2">
+				<Texture parentKey="GuildBannerBorder" atlas="guildfinder-card-guildbanner-border" hidden="true">
+					<Size y="192"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+            
+            <Layer level="ARTWORK">
+                <Texture parentKey="VaultStatus" hidden="true">
+                    <Size x="48" y="44" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.GuildBannerBackground" relativePoint="BOTTOM" y="24"/>
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            if(self.tooltipText) then
+                                GameTooltip:SetOwner(self)
+                                GameTooltip:SetText(self.tooltipText)
+                                GameTooltip:Show()
+
+                            end
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-8"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    
+        <Frames>
+            <Frame parentKey="Class" inherits="MIOG_ProgressFullCharacterIconTemplate" hidden="true">
+                <Size x="36" y="36" />
+
+                <Anchors>
+                    <Anchor point="TOP" relativeKey="$parent.Name" relativePoint="BOTTOM" y="-6"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Spec" inherits="MIOG_ProgressFullCharacterIconTemplate" hidden="true">
+                <Size x="36" y="36" />
+
+                <Anchors>
+                    <Anchor point="TOP" relativeKey="$parent.Class" relativePoint="BOTTOM" y="-6"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="MythicPlusScore" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.Spec" relativePoint="BOTTOM" y="-2"/>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    
+    </Frame>
+</Ui>

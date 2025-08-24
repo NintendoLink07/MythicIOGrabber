@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressMythicPlusCharacterCellTemplate" mixin="ProgressMythicPlusCharacterCellMixin" virtual="true">
+        <Size x="40" y="20"/>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" y="-4"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Score" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" y="4"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>
