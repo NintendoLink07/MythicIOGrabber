@@ -69,7 +69,25 @@ function ProgressMixin:RequestAccountCharacter()
 	end
 end
 
-function ProgressMixin:CheckLockoutExpiration()
+function ProgressMixin:Setup()
+	if(self.characterSettings) then
+		self:RequestAccountCharacter()
+		RequestRaidInfo()
+
+	end
+end
+
+function ProgressMixin:ConnectSetting(settingsTable)
+	self.settings = settingsTable
+	self.characterSettings = settingsTable.characters
+	self:Setup()
+end
+
+
+
+ProgressOverviewMixin = CreateFromMixins(ProgressMixin)
+
+function ProgressOverviewMixin:CheckLockoutExpiration()
     for index, data in pairs(self.characterSettings[playerGUID].lockouts) do
 		if(data.resetDate <= time()) then
 			self.characterSettings[playerGUID].lockouts[index] = nil
@@ -78,7 +96,7 @@ function ProgressMixin:CheckLockoutExpiration()
     end
 end
 
-function ProgressMixin:RefreshLockouts()
+function ProgressOverviewMixin:RefreshLockouts()
     if(self.characterSettings and self.characterSettings[playerGUID]) then
 		self.characterSettings[playerGUID].lockouts = self.characterSettings[playerGUID].lockouts or {}
 
@@ -134,7 +152,7 @@ function ProgressMixin:RefreshLockouts()
 	end
 end
 
-function ProgressMixin:LoadAllActivities()
+function ProgressOverviewMixin:LoadAllActivities()
 	self.mythicPlusActivities = C_ChallengeMode.GetMapTable()
 
         table.sort(self.mythicPlusActivities, function(k1, k2)
@@ -169,7 +187,7 @@ function ProgressMixin:LoadAllActivities()
 	end)
 end
 
-function ProgressMixin:OnLoad()
+function ProgressOverviewMixin:OnLoad()
 	hooksecurefunc("RequestRaidInfo", function()
 		self:RefreshLockouts()
 			
@@ -204,7 +222,7 @@ function ProgressMixin:OnLoad()
 		return k1.order < k2.order
 	end)
 
-	self.Overview.ScrollBox:SetHorizontal(true)
+	self.ScrollBox:SetHorizontal(true)
 
 	local horizontalView = CreateScrollBoxListLinearView();
 	horizontalView:SetHorizontal(true)
@@ -224,10 +242,10 @@ function ProgressMixin:OnLoad()
 		
 	end)
 
-	horizontalView:SetPadding(1, 1, 1, 1, 3);
-	horizontalView:SetElementExtent(76)
+	horizontalView:SetPadding(1, 1, 1, 1, 2);
+	horizontalView:SetElementExtent(64)
 
-	ScrollUtil.InitScrollBoxListWithScrollBar(self.Overview.ScrollBox, self.Overview.ScrollBar, horizontalView)
+	ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, horizontalView)
 
 	self.tableBuilder = CreateTableBuilder(nil, TableBuilderMixin);
 	self.tableBuilder:Init()
@@ -238,7 +256,7 @@ function ProgressMixin:OnLoad()
 	local function ElementDataTranslator(elementData)
 		return elementData;
 	end;
-	ScrollUtil.RegisterTableBuilder(self.Overview.ScrollBox, self.tableBuilder, ElementDataTranslator);
+	ScrollUtil.RegisterTableBuilder(self.ScrollBox, self.tableBuilder, ElementDataTranslator);
 
 	self.tableBuilder:Reset();
 	--self.tableBuilder:SetColumnHeaderOverlap(2);
@@ -252,14 +270,6 @@ function ProgressMixin:OnLoad()
 
 end
 
-function ProgressMixin:Setup()
-	if(self.characterSettings) then
-		self:RequestAccountCharacter()
-		RequestRaidInfo()
-
-	end
-end
-
 local function sortCharacters(k1, k2)
 	if(k1.mythicPlus.score and k2.mythicPlus.score) then
 		return k1.mythicPlus.score > k2.mythicPlus.score
@@ -269,7 +279,7 @@ local function sortCharacters(k1, k2)
 	return k1.name > k2.name
 end
 
-function ProgressMixin:OnShow()
+function ProgressOverviewMixin:OnShow()
 	local provider = CreateDataProvider()
 	provider:SetSortComparator(sortCharacters)
 
@@ -280,23 +290,80 @@ function ProgressMixin:OnShow()
 
 	self.tableBuilder:Reset();
 
-	self.Overview.ScrollBox:SetDataProvider(provider);
+	self.ScrollBox:SetDataProvider(provider);
 	--self.OverviewTable:SetDataProvider(provider)
-	--self.Overview.ScrollBox:SetDataProvider(provider)
+	--self.ScrollBox:SetDataProvider(provider)
 	self.tableBuilder:Arrange();
 
 end
 
-function ProgressMixin:ConnectSetting(settingsTable)
-	self:SetSize(self:GetParent():GetSize())
+ProgressActivityMixin = CreateFromMixins(ProgressMixin)
 
-	self.settings = settingsTable
-	self.characterSettings = settingsTable.characters
-	self:Setup()
+function ProgressActivityMixin:GetNumberOfVisibleActivities()
+	local counter = 0
+
+	for _, v in pairs(self.activities) do
+		if(self.settings.activities[v].visible) then
+			counter = counter + 1
+
+		end
+	end
+
+	return counter
+end
+
+function ProgressActivityMixin:SortActivities()
+	table.sort(self.activities, function(k1, k2)
+		return k1 > k2
+
+	end)
+end
+
+function ProgressActivityMixin:SetupVisibilityMenu()
+
+end
+
+function ProgressActivityMixin:OnLoad()
+	self.activities = C_ChallengeMode.GetMapTable()
+	self.BackgroundTextures = {}
+	self.BorderTextures = {}
+	self.Columns = {}
+
+	self:SortActivities()
+
+	local view = CreateScrollBoxListLinearView();
+	view:SetElementInitializer("BackdropTemplate", function(frame, data)
+		-- dummy
+		
+	end)
+
+	view:SetPadding(1, 1, 1, 1, 8);
+	view:SetElementExtent(36)
+
+	self.ScrollBox:Init(view)
+	--ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar, view)
+
+	self.tableBuilder = CreateTableBuilder(nil, TableBuilderSkinMixin);
+	--self.tableBuilder:Init()
+
+	--self.tableBuilder:SetColumnHeaderOverlap(2);
+	self.tableBuilder:SetHeaderContainer(self.HeaderContainer);
+	self.tableBuilder:SetTableMargins(5, 5);
+	local function ElementDataProvider(elementData)
+		return elementData;
+	end;
+	self.tableBuilder:SetDataProvider(ElementDataProvider);
+	local function ElementDataTranslator(elementData)
+		return elementData;
+	end;
+	ScrollUtil.RegisterTableBuilder(self.ScrollBox, self.tableBuilder, ElementDataTranslator);
+
+	self:RefreshActivities()
 end
 
 
-ProgressDungeonMixin = CreateFromMixins(ProgressMixin)
+
+ProgressDungeonMixin = CreateFromMixins(ProgressActivityMixin)
 
 function ProgressDungeonMixin:UpdateSingleCharacterMythicPlusProgress(guid)
 	if(self.activities) then
@@ -340,17 +407,58 @@ function ProgressDungeonMixin:UpdateSingleCharacterMythicPlusProgress(guid)
 	end
 end
 
-function ProgressDungeonMixin:GetNumberOfVisibleActivities()
-	local counter = 0
+function ProgressDungeonMixin:GetAbbreviatedName(challengeModeMapID)
+	local groupID = miog.retrieveGroupIDFromChallengeModeMap(challengeModeMapID)
+	local abbreviatedName
 
-	for _, v in pairs(self.activities) do
-		if(self.settings.activities[v].visible) then
-			counter = counter + 1
+	local groupInfo = miog.GROUP_ACTIVITY[groupID]
+
+	if(groupInfo) then
+		abbreviatedName = groupInfo.abbreviatedName
+
+	end
+
+	if(not abbreviatedName) then
+		local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeModeMapID)
+		
+		local mapInfo = miog.MAP_INFO[mapID]
+
+		if(mapInfo) then
+			abbreviatedName = mapInfo.abbreviatedName
 
 		end
 	end
 
-	return counter
+	return abbreviatedName
+end
+
+function ProgressDungeonMixin:GetBackgroundImage(challengeModeMapID)
+	local groupID = miog.retrieveGroupIDFromChallengeModeMap(challengeModeMapID)
+	local bg
+
+	local groupInfo = miog.GROUP_ACTIVITY[groupID]
+
+	if(groupInfo) then
+		bg = groupInfo.vertical
+
+	end
+
+	if(not bg) then
+		local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeModeMapID)
+		
+		local mapInfo = miog.MAP_INFO[mapID]
+
+		if(mapInfo) then
+			bg = mapInfo.vertical
+
+		end
+	end
+
+	return bg
+end
+
+function ProgressDungeonMixin:GetNameAndBackground(challengeModeMapID)
+	return self:GetBackgroundImage(challengeModeMapID), self:GetAbbreviatedName(challengeModeMapID)
 end
 
 function ProgressDungeonMixin:RefreshActivities()
@@ -358,7 +466,7 @@ function ProgressDungeonMixin:RefreshActivities()
 		self.tableBuilder:Reset()
 
 		local column = self.tableBuilder:AddColumn()
-		local header = column:ConstructHeader("Frame", "MIOG_ProgressMythicPlusHeaderTemplate")
+		local header = column:ConstructHeader("Frame", "MIOG_ProgressActivityHeaderTemplate")
 		column:SetFixedConstraints(90)
 		column:ConstructCells("Frame", "MIOG_ProgressMythicPlusCharacterCellTemplate")
 
@@ -370,25 +478,10 @@ function ProgressDungeonMixin:RefreshActivities()
 
 		for k, v in ipairs(self.activities) do
 			if(self.settings.activities[v].visible) then
-				local bg
-				local mapInfo
-				local groupID = miog.retrieveGroupIDFromChallengeModeMap(v)
-
-				if(groupID) then
-					local groupInfo = miog.GROUP_ACTIVITY[groupID]
-
-					bg = miog.getBackgroundImageForIdentifier(groupInfo.mapID, nil, groupID)
-
-				else
-					local mapID = miog.retrieveMapIDFromChallengeModeMap(v)
-					mapInfo = miog.MAP_INFO[mapID]
-
-					bg = mapInfo.vertical
-				end
+				local bg, abbreviatedName = self:GetNameAndBackground(v)
 
 				column = self.tableBuilder:AddColumn()
-				column:ConstructHeader("Frame", "MIOG_ProgressMythicPlusHeaderTemplate", miog.retrieveAbbreviatedNameFromChallengeModeMap(v))
-
+				column:ConstructHeader("Frame", "MIOG_ProgressActivityHeaderTemplate", miog.retrieveAbbreviatedNameFromChallengeModeMap(v))
 
 				tinsert(self.Columns, column)
 
@@ -439,49 +532,35 @@ function ProgressDungeonMixin:RefreshActivities()
 	end
 end
 
+function ProgressDungeonMixin:SortActivities()
+	table.sort(self.activities, function(k1, k2)
+		return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
+
+	end)
+end
+
+function ProgressDungeonMixin:SetupVisibilityMenu(rootDescription)
+	for k, v in ipairs(self.activities) do
+		self.settings.activities[v] = self.settings.activities[v] or {visible = true}
+		
+		local bg, abbreviatedName = self:GetNameAndBackground(v)
+
+		rootDescription:CreateCheckbox(abbreviatedName,
+			function(challengeMapID)
+				return self.settings.activities[challengeMapID].visible
+			end,
+			function(challengeMapID)
+				self.settings.activities[challengeMapID].visible = not self.settings.activities[challengeMapID].visible
+				
+				self:RefreshActivities()
+		end, v)
+	end
+end
+
 function ProgressDungeonMixin:OnShow()
 	self:GetParent().Menu.VisibilityDropdown:SetDefaultText("Change activity visibility")
 	self:GetParent().Menu.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
-		for k, v in ipairs(self.activities) do
-			self.settings.activities[v] = self.settings.activities[v] or {visible = true}
-			local shortName
-
-			local groupID = miog.retrieveGroupIDFromChallengeModeMap(v)
-			local mapID
-
-			if(not groupID) then
-				mapID = miog.retrieveMapIDFromChallengeModeMap(v)
-				
-				local mapInfo = miog.MAP_INFO[mapID]
-
-				if(mapInfo) then
-					shortName = mapInfo.abbreviatedName
-
-				end
-			else
-				local groupInfo = miog.GROUP_ACTIVITY[groupID]
-
-				if(groupInfo.abbreviatedName) then
-					shortName = groupInfo.abbreviatedName
-
-				else
-					mapID = miog.retrieveMapIDFromChallengeModeMap(v)
-					local mapInfo = miog.GROUP_ACTIVITY[mapID]
-					shortName = mapInfo.abbreviatedName
-
-				end
-			end
-
-			rootDescription:CreateCheckbox(shortName,
-				function(challengeMapID)
-					return self.settings.activities[challengeMapID].visible
-				end,
-				function(challengeMapID)
-					self.settings.activities[challengeMapID].visible = not self.settings.activities[challengeMapID].visible
-					
-					self:RefreshActivities()
-			end, v)
-		end
+		self:SetupVisibilityMenu(rootDescription)
 	end)
 
 	--self.tableBuilder:Reset();
@@ -490,62 +569,14 @@ function ProgressDungeonMixin:OnShow()
 	local provider = CreateDataProvider()
 	provider:SetSortComparator(sortCharacters)
 
-	for guid in pairs(self.characterSettings) do
+	for guid, v in pairs(self.characterSettings) do
 		self:UpdateSingleCharacterMythicPlusProgress(guid)
 
-	end
-
-	for guid, v in pairs(self.characterSettings) do
 		v.guid = guid
 		provider:Insert(v)
-
 	end
-
-	--self.OverviewTable:SetDataProvider(provider)
-	--self.tableBuilder:SetDataProvider(provider);
 
 	self:RefreshActivities()
 
 	self.ScrollBox:SetDataProvider(provider)
-end
-
-function ProgressDungeonMixin:OnLoad()
-	self.activities = C_ChallengeMode.GetMapTable()
-	self.BackgroundTextures = {}
-	self.BorderTextures = {}
-	self.Columns = {}
-
-	table.sort(self.activities, function(k1, k2)
-		return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
-
-	end)
-
-	local view = CreateScrollBoxListLinearView();
-	view:SetElementInitializer("BackdropTemplate", function(frame, data)
-		-- dummy
-		
-	end)
-
-	view:SetPadding(1, 1, 1, 1, 8);
-	view:SetElementExtent(36)
-
-	self.ScrollBox:Init(view)
-	--ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar, view)
-
-	self.tableBuilder = CreateTableBuilder(nil, TableBuilderSkinMixin);
-	--self.tableBuilder:Init()
-
-	--self.tableBuilder:SetColumnHeaderOverlap(2);
-	self.tableBuilder:SetHeaderContainer(self.HeaderContainer);
-	self.tableBuilder:SetTableMargins(5, 5);
-	local function ElementDataProvider(elementData)
-		return elementData;
-	end;
-	self.tableBuilder:SetDataProvider(ElementDataProvider);
-	local function ElementDataTranslator(elementData)
-		return elementData;
-	end;
-	ScrollUtil.RegisterTableBuilder(self.ScrollBox, self.tableBuilder, ElementDataTranslator);
-
-	self:RefreshActivities()
 end

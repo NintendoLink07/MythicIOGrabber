@@ -191,7 +191,7 @@ XML\Progress\MIOG_ProgressOverviewCellTemplate.xml
 XML\Progress\MIOG_ProgressOverviewHeaderTemplate.xml
 XML\Progress\MIOG_ProgressSelectionButtonTemplate.xml
 XML\Progress\MIOG_ProgressMythicPlusCellTemplate.xml
-XML\Progress\MIOG_ProgressMythicPlusHeaderTemplate.xml
+XML\Progress\MIOG_ProgressActivityHeaderTemplate.xml
 XML\Progress\MIOG_ProgressMythicPlusCharacterCellTemplate.xml
 XML\Progress\MIOG_ProgressEmptyHeaderTemplate.xml
 

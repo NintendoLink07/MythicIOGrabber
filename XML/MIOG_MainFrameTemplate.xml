@@ -662,13 +662,9 @@
 
                     <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabOverviewTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="50"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="150"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="650"/>
                         </Anchors>
-                        
-                        <Scripts>
-                            <OnLoad>
-                            </OnLoad>
-                        </Scripts>
                     </Frame>
                 </Frames>
 

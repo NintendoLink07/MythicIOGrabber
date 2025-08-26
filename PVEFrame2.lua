@@ -679,8 +679,7 @@ local function createPVEFrameReplacement()
 		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 	end
 
-	pveFrame2.TabFramesPanel.NewProgress:OnLoad()
-	pveFrame2.TabFramesPanel.NewProgress:ConnectSetting(MIOG_NewSettings.progressData)
+	pveFrame2.TabFramesPanel.NewProgress.Overview:ConnectSetting(MIOG_NewSettings.progressData)
 	pveFrame2.TabFramesPanel.NewProgress.MythicPlus:ConnectSetting(MIOG_NewSettings.progressData)
 
 	miog.pveFrame2.TitleBar.MoreButton.Text:SetText("More")
