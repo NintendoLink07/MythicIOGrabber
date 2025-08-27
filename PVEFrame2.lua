@@ -254,6 +254,20 @@ local function anchorNewScrollBar(tab, name)
 	end
 end
 
+local function toggleGroupManagerRaidFrame()
+	HideUIPanel(FriendsFrame)
+
+	if(miog.pveFrame2:IsVisible()) then
+		HideUIPanel(miog.pveFrame2)
+
+	else
+		ShowUIPanel(miog.pveFrame2)
+		PanelTemplates_SetTab(miog.pveFrame2, 2)
+		miog.GroupManager.StatusBar.DetailsButton:Click()
+		
+	end
+end
+
 local function createPVEFrameReplacement()
 	local frameName = "MythicIOGrabber_PVEFrameReplacement"
 	local pveFrame2 = CreateFrame("Frame", frameName, UIParent, "MIOG_MainFrameTemplate")
@@ -570,6 +584,18 @@ local function createPVEFrameReplacement()
 			end
 		end
 		GameTooltip:Show()
+	end)
+
+	hooksecurefunc("ToggleFriendsFrame", function(id)
+		if(id == 3) then
+			toggleGroupManagerRaidFrame()
+
+		end
+	end)
+
+	hooksecurefunc("ToggleRaidFrame", function()
+		toggleGroupManagerRaidFrame()
+
 	end)
 
 	hooksecurefunc("PVEFrame_ToggleFrame", function()

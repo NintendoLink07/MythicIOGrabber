@@ -332,89 +332,89 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
 
 
 	    --for k, data in ipairs(self.raidInfo) do
-            for nmd = 1, 2, 1 do
-                local raidFrame = nmd == 1 and self.raidFrames[data.mapID] or self.Raids["Raid3"]
+            if(data) then
+                for nmd = 1, 2, 1 do
+                    local raidFrame = nmd == 1 and self.raidFrames[data.mapID] or self.Raids["Raid3"]
 
-                if(raidFrame) then
-                    local raidHeaderFrame = raidFrame.Header
-                    local normalOrMainData = nmd == 1 and self.raidData.character or self.raidData.main
+                    if(raidFrame) then
+                        local raidHeaderFrame = raidFrame.Header
+                        local normalOrMainData = nmd == 1 and self.raidData.character or self.raidData.main
 
-                    if(normalOrMainData.raids[data.mapID]) then
-                        local bossesDone = {}
-    
-                        for i = 1, 2, 1 do
-                            local currentTable = i == 1 and normalOrMainData.raids[data.mapID].awakened or normalOrMainData.raids[data.mapID].regular
-    
-                            if(currentTable) then
-                                for a = 3, 1, -1 do
-                                    if(currentTable.difficulties[a]) then
-                                        for z = 1, 10, 1 do
-                                            if(currentTable.difficulties[a].bosses[z] and not bossesDone[z]) then
-                                                local currentBoss = "Boss" .. z
-    
-                                                if(currentTable.difficulties[a].bosses[z].killed) then
-                                                    if(raidFrame.Bosses[currentBoss].Border) then
-                                                        raidFrame.Bosses[currentBoss].Border:SetColorTexture(miog.DIFFICULTY[a].miogColors:GetRGBA());
-    
+                        if(normalOrMainData.raids[data.mapID]) then
+                            local bossesDone = {}
+        
+                            for i = 1, 2, 1 do
+                                local currentTable = i == 1 and normalOrMainData.raids[data.mapID].awakened or normalOrMainData.raids[data.mapID].regular
+        
+                                if(currentTable) then
+                                    for a = 3, 1, -1 do
+                                        if(currentTable.difficulties[a]) then
+                                            for z = 1, 10, 1 do
+                                                if(currentTable.difficulties[a].bosses[z] and not bossesDone[z]) then
+                                                    local currentBoss = "Boss" .. z
+        
+                                                    if(currentTable.difficulties[a].bosses[z].killed) then
+                                                        if(raidFrame.Bosses[currentBoss].Border) then
+                                                            raidFrame.Bosses[currentBoss].Border:SetColorTexture(miog.DIFFICULTY[a].miogColors:GetRGBA());
+        
+                                                        end
+        
+                                                        raidFrame.Bosses[currentBoss].Icon:SetDesaturated(false)
+                                                        bossesDone[z] = true
+                                        
                                                     end
-    
-                                                    raidFrame.Bosses[currentBoss].Icon:SetDesaturated(false)
-                                                    bossesDone[z] = true
-                                    
                                                 end
                                             end
-                                        end
-    
-                                        if(nmd == 1 and raidMapIDSet[data.mapID] ~= true or nmd == 2 and mainRaidMapIDSet[data.mapID] ~= true) then
-                                            if(normalOrMainData.raids[data.mapID].isAwakened) then
-                                                raidHeaderFrame.Name:SetText(normalOrMainData.raids[data.mapID].shortName)
-                                            end
-    
-                                            raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
-    
-                                            if(currentTable.difficulties[a-1]) then
-                                                raidHeaderFrame.Progress2:SetText(WrapTextInColorCode(currentTable.difficulties[a-1].parsedString, miog.DIFFICULTY[a-1].color))
-    
-                                            end
-    
-                                            local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
+        
+                                            if(nmd == 1 and raidMapIDSet[data.mapID] ~= true or nmd == 2 and mainRaidMapIDSet[data.mapID] ~= true) then
+                                                if(normalOrMainData.raids[data.mapID].isAwakened) then
+                                                    raidHeaderFrame.Name:SetText(normalOrMainData.raids[data.mapID].shortName)
+                                                end
+        
+                                                raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
+        
+                                                if(currentTable.difficulties[a-1]) then
+                                                    raidHeaderFrame.Progress2:SetText(WrapTextInColorCode(currentTable.difficulties[a-1].parsedString, miog.DIFFICULTY[a-1].color))
+        
+                                                end
+        
+                                                local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
 
-                                            if(texture) then
-                                                texture:SetScript("OnMouseDown", function()
-                                                    local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
-                                                    local difficulty = a == 1 and 14 or a == 2 and 15 or 16
-                                                    --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-                                                    EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
-                            
-                                                end)
+                                                if(texture) then
+                                                    texture:SetScript("OnMouseDown", function()
+                                                        local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
+                                                        local difficulty = a == 1 and 14 or a == 2 and 15 or 16
+                                                        --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
+                                                        EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+                                
+                                                    end)
+                                                end
+        
+                                                if(nmd == 1) then
+                                                    raidMapIDSet[data.mapID] = true
+        
+                                                elseif(nmd == 2) then
+                                                    mainRaidMapIDSet[data.mapID] = true
+        
+                                                end
+        
+                                                raidCounter = raidCounter + 1
+        
+        
                                             end
-    
-                                            if(nmd == 1) then
-                                                raidMapIDSet[data.mapID] = true
-    
-                                            elseif(nmd == 2) then
-                                                mainRaidMapIDSet[data.mapID] = true
-    
-                                            end
-    
-                                            raidCounter = raidCounter + 1
-    
-    
                                         end
                                     end
-                                end
-                            else
-                                for z = 1, 10, 1 do
-                                    local currentBoss = "Boss" .. z
-                                    raidFrame.Bosses[currentBoss].Icon:SetDesaturated(true)
-    
+                                else
+                                    for z = 1, 10, 1 do
+                                        local currentBoss = "Boss" .. z
+                                        raidFrame.Bosses[currentBoss].Icon:SetDesaturated(true)
+        
+                                    end
                                 end
                             end
                         end
                     end
                 end
-
-                
             end
         end
 	end

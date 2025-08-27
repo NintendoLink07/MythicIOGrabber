@@ -323,6 +323,77 @@ function ProgressActivityMixin:SetupVisibilityMenu()
 
 end
 
+function ProgressActivityMixin:RefreshActivities()
+	if(self.settings) then
+		self.tableBuilder:Reset()
+
+		local column = self.tableBuilder:AddColumn()
+		column:ConstructHeader("Frame", "MIOG_ProgressActivityHeaderTemplate")
+		column:SetFixedConstraints(90)
+		column:ConstructCells("Frame", self.characterTemplate)
+
+		tinsert(self.Columns, column)
+
+		local availableWidth = self.ScrollBox:GetWidth() - column.headerFrame:GetWidth() - 50
+
+		local numOfActivities = self:GetNumberOfVisibleActivities()
+
+		for k, v in ipairs(self.activities) do
+			if(self.settings.activities[v].visible) then
+				local bg, abbreviatedName = self:GetNameAndBackground(v)
+
+				column = self.tableBuilder:AddColumn()
+				column:ConstructHeader("Frame", "MIOG_ProgressActivityHeaderTemplate", abbreviatedName)
+
+				tinsert(self.Columns, column)
+
+				self.BackgroundTextures[v] = self.BackgroundTextures[v] or self:CreateTexture(nil, "BACKGROUND", nil, 0)
+				self.BorderTextures[v] = self.BorderTextures[v] or self:CreateTexture(nil, "BACKGROUND", nil, -1)
+
+				local borderTexture = self.BorderTextures[v]
+				borderTexture:SetPoint("TOPLEFT", column.headerFrame, "TOPLEFT")
+				borderTexture:SetPoint("BOTTOM", self, "BOTTOM")
+				borderTexture:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+				borderTexture:Show()
+
+				local backgroundTexture = self.BackgroundTextures[v]
+				backgroundTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
+				backgroundTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
+				backgroundTexture:SetVertTile(true)
+				backgroundTexture:SetHorizTile(true)
+				backgroundTexture:Show()
+
+				self.BackgroundTextures[v]:SetTexture(bg, "MIRROR", "MIRROR")
+				self.BorderTextures[v]:SetWidth(column.headerFrame:GetWidth())
+
+				if(numOfActivities > 0) then
+					local width = availableWidth / numOfActivities
+					column:SetFixedConstraints(width, 3)
+					self.BorderTextures[v]:SetWidth(width)
+
+				else
+					self.BorderTextures[v]:SetWidth(column.headerFrame:GetWidth())
+
+				end
+				column:ConstructCells("Frame", self.cellTemplate, v)
+
+			else
+				local borderTexture = self.BorderTextures[v]
+				local backgroundTexture = self.BackgroundTextures[v]
+
+				if(borderTexture and backgroundTexture) then
+					borderTexture:Hide()
+					backgroundTexture:Hide()
+
+				end
+			end
+		end
+
+		self.tableBuilder:Arrange()
+		self.tableBuilder:EnableRowDividers()
+	end
+end
+
 function ProgressActivityMixin:OnLoad()
 	self.activities = C_ChallengeMode.GetMapTable()
 	self.BackgroundTextures = {}
@@ -461,77 +532,6 @@ function ProgressDungeonMixin:GetNameAndBackground(challengeModeMapID)
 	return self:GetBackgroundImage(challengeModeMapID), self:GetAbbreviatedName(challengeModeMapID)
 end
 
-function ProgressDungeonMixin:RefreshActivities()
-	if(self.settings) then
-		self.tableBuilder:Reset()
-
-		local column = self.tableBuilder:AddColumn()
-		local header = column:ConstructHeader("Frame", "MIOG_ProgressActivityHeaderTemplate")
-		column:SetFixedConstraints(90)
-		column:ConstructCells("Frame", "MIOG_ProgressMythicPlusCharacterCellTemplate")
-
-		tinsert(self.Columns, column)
-
-		local availableWidth = self.ScrollBox:GetWidth() - column.headerFrame:GetWidth() - 50
-
-		local numOfActivities = self:GetNumberOfVisibleActivities()
-
-		for k, v in ipairs(self.activities) do
-			if(self.settings.activities[v].visible) then
-				local bg, abbreviatedName = self:GetNameAndBackground(v)
-
-				column = self.tableBuilder:AddColumn()
-				column:ConstructHeader("Frame", "MIOG_ProgressActivityHeaderTemplate", miog.retrieveAbbreviatedNameFromChallengeModeMap(v))
-
-				tinsert(self.Columns, column)
-
-				self.BackgroundTextures[v] = self.BackgroundTextures[v] or self:CreateTexture(nil, "BACKGROUND", nil, 0)
-				self.BorderTextures[v] = self.BorderTextures[v] or self:CreateTexture(nil, "BACKGROUND", nil, -1)
-
-				local borderTexture = self.BorderTextures[v]
-				borderTexture:SetPoint("TOPLEFT", column.headerFrame, "TOPLEFT")
-				borderTexture:SetPoint("BOTTOM", self, "BOTTOM")
-				borderTexture:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-				borderTexture:Show()
-
-				local backgroundTexture = self.BackgroundTextures[v]
-				backgroundTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
-				backgroundTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
-				backgroundTexture:SetVertTile(true)
-				backgroundTexture:SetHorizTile(true)
-				backgroundTexture:Show()
-
-				self.BackgroundTextures[v]:SetTexture(bg, "MIRROR", "MIRROR")
-				self.BorderTextures[v]:SetWidth(column.headerFrame:GetWidth())
-
-				if(numOfActivities > 0) then
-					local width = availableWidth / numOfActivities
-					column:SetFixedConstraints(width, 3)
-					self.BorderTextures[v]:SetWidth(width)
-
-				else
-					self.BorderTextures[v]:SetWidth(column.headerFrame:GetWidth())
-
-				end
-				column:ConstructCells("Frame", "MIOG_ProgressMythicPlusCellTemplate", v)
-
-			else
-				local borderTexture = self.BorderTextures[v]
-				local backgroundTexture = self.BackgroundTextures[v]
-
-				if(borderTexture and backgroundTexture) then
-					borderTexture:Hide()
-					backgroundTexture:Hide()
-
-				end
-			end
-		end
-
-		self.tableBuilder:Arrange()
-		self.tableBuilder:EnableRowDividers()
-	end
-end
-
 function ProgressDungeonMixin:SortActivities()
 	table.sort(self.activities, function(k1, k2)
 		return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
@@ -561,9 +561,9 @@ function ProgressDungeonMixin:OnShow()
 	self:GetParent().Menu.VisibilityDropdown:SetDefaultText("Change activity visibility")
 	self:GetParent().Menu.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
 		self:SetupVisibilityMenu(rootDescription)
+
 	end)
 
-	--self.tableBuilder:Reset();
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar)
 
 	local provider = CreateDataProvider()
@@ -576,7 +576,43 @@ function ProgressDungeonMixin:OnShow()
 		provider:Insert(v)
 	end
 
-	self:RefreshActivities()
+	self.characterTemplate = "MIOG_ProgressMythicPlusCharacterCellTemplate"
+	self.cellTemplate = "MIOG_ProgressMythicPlusCellTemplate"
 
 	self.ScrollBox:SetDataProvider(provider)
+
+	self:RefreshActivities()
+end
+
+
+
+
+
+ProgressRaidMixin = CreateFromMixins(ProgressActivityMixin)
+
+function ProgressRaidMixin:OnShow()
+	self:GetParent().Menu.VisibilityDropdown:SetDefaultText("Change activity visibility")
+	self:GetParent().Menu.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
+		self:SetupVisibilityMenu(rootDescription)
+
+	end)
+
+	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar)
+
+	local provider = CreateDataProvider()
+	provider:SetSortComparator(sortCharacters)
+
+	for guid, v in pairs(self.characterSettings) do
+		self:UpdateSingleCharacterRaidProgress(guid)
+
+		v.guid = guid
+		provider:Insert(v)
+	end
+
+	self.characterTemplate = "MIOG_ProgressRaidCharacterCellTemplate"
+	self.cellTemplate = "MIOG_ProgressRaidCellTemplate"
+
+	self.ScrollBox:SetDataProvider(provider)
+
+	self:RefreshActivities()
 end
