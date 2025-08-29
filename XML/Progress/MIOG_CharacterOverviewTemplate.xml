@@ -90,6 +90,27 @@
                         <Anchor point="LEFT" />
                     </Anchors>
                 </FontString>
+
+                <FontString parentKey="Normal" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.Spec" relativePoint="BOTTOM" y="-2"/>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Heroic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.Spec" relativePoint="BOTTOM" y="-2"/>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Mythic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.Spec" relativePoint="BOTTOM" y="-2"/>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </FontString>
             </Layer>
         </Layers>
     

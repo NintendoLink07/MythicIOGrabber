@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressPVPCellTemplate" mixin="ProgressPVPCellMixin" virtual="true">
+        <Size x="40" y="20"/>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Rating" font="GameFontHighlight" outline="NORMAL" justifyH="CENTER" text="Rating">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="5" />
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="SeasonBest" font="GameFontHighlight" outline="NORMAL" justifyH="CENTER" text="SeasonBest">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" y="-8" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

@@ -707,6 +707,8 @@ local function createPVEFrameReplacement()
 
 	pveFrame2.TabFramesPanel.NewProgress.Overview:ConnectSetting(MIOG_NewSettings.progressData)
 	pveFrame2.TabFramesPanel.NewProgress.MythicPlus:ConnectSetting(MIOG_NewSettings.progressData)
+	pveFrame2.TabFramesPanel.NewProgress.Raid:ConnectSetting(MIOG_NewSettings.progressData)
+	pveFrame2.TabFramesPanel.NewProgress.PVP:ConnectSetting(MIOG_NewSettings.progressData)
 
 	miog.pveFrame2.TitleBar.MoreButton.Text:SetText("More")
 end

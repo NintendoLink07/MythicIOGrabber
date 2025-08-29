@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name="MIOG_ProgressSelectionButtonTemplate" virtual="true">
+    <Button name="MIOG_ProgressSelectionButtonTemplate" mixin="ProgressSelectionButtonMixin" virtual="true">
         <Size y="20" />
 
         <Layers>
@@ -18,23 +18,7 @@
         </Layers>
 
         <Scripts>
-            <OnClick>
-                self.Texture:SetAtlas("Options_List_Active")
-                
-                local parent = self:GetParent():GetParent()
-                local oldButton = self:GetParent().selectedButton
-
-                if(oldButton ~= self) then 
-                    oldButton.Texture:SetTexture(nil)
-                    oldButton.isSelected = false
-                    parent[oldButton:GetName()]:Hide()
-
-                    self:GetParent().selectedButton = self
-                    self.isSelected = true
-
-                    parent[self:GetName()]:Show()
-                end
-            </OnClick>
+            <OnClick method="OnClick" />
 
             <OnEnter>
                 if(not self.isSelected) then
@@ -51,16 +35,7 @@
 
             </OnLeave>
 
-            <OnLoad>
-                self.Label:SetText(self:GetText())
-
-                if(self:GetText() == "Overview") then
-                    self:GetParent().selectedButton = self
-                    self.isSelected = true
-                    self.Texture:SetAtlas("Options_List_Active")
-
-                end
-            </OnLoad>
+            <OnLoad method="OnLoad" />
         </Scripts>
     </Button>
 </Ui>

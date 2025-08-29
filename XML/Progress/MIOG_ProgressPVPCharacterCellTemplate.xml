@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ProgressRaidCharacterCellTemplate" mixin="ProgressRaidCharacterCellMixin" virtual="true">
+    <Frame name="MIOG_ProgressPVPCharacterCellTemplate" mixin="ProgressPVPCharacterCellMixin" virtual="true">
         <Size x="40" y="20"/>
         <Layers>
             <Layer level="OVERLAY">

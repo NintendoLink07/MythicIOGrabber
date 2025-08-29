@@ -1552,13 +1552,13 @@ end
 miog.loadRawData = loadRawData
 
 miog.MAP_INFO[2522].achievementCategory = 15469 --VOTI
-miog.MAP_INFO[2522].achievementsAwakened = {19564, 19565, 19566}
+--miog.MAP_INFO[2522].achievementsAwakened = {19564, 19565, 19566}
 
 miog.MAP_INFO[2549].achievementCategory = 15469 --ATDH
-miog.MAP_INFO[2549].achievementsAwakened = {19570, 19571, 19572}
+--miog.MAP_INFO[2549].achievementsAwakened = {19570, 19571, 19572}
 
 miog.MAP_INFO[2569].achievementCategory = 15469 --ATSC
-miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
+--miog.MAP_INFO[2569].achievementsAwakened = {19567, 19568, 19569}
 
 miog.MAP_INFO[2657].achievementCategory = 15520 --NP
 

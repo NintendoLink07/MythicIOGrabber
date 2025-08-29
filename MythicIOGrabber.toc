@@ -196,6 +196,8 @@ XML\Progress\MIOG_ProgressMythicPlusCharacterCellTemplate.xml
 XML\Progress\MIOG_ProgressEmptyHeaderTemplate.xml
 XML\Progress\MIOG_ProgressRaidCellTemplate.xml
 XML\Progress\MIOG_ProgressRaidCharacterCellTemplate.xml
+XML\Progress\MIOG_ProgressPVPCellTemplate.xml
+XML\Progress\MIOG_ProgressPVPCharacterCellTemplate.xml
 
 XML\Misc\MIOG_MultiStateButtonTemplate.xml
 XML\Misc\MIOG_SortButtonTemplate.xml

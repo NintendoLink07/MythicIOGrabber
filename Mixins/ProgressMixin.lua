@@ -39,7 +39,7 @@ function ProgressMixin:RequestAccountCharacter()
 	local playerSettings = self.characterSettings[playerGUID]
 
 	if(not playerSettings) then
-		playerSettings = {name = name, realmName = realmName, classFile = englishClass, specID = specID, itemLevel = itemLevel,}
+		self.characterSettings[playerGUID] = {name = name, realmName = realmName, classFile = englishClass, specID = specID, itemLevel = itemLevel,}
 
 	else
 		playerSettings.name = name
@@ -58,7 +58,7 @@ function ProgressMixin:RequestAccountCharacter()
 		local charSettings = self.characterSettings[guid]
 
 		if(not charSettings) then
-			charSettings = {name = name, realmName = realmName, classFile = englishClass}
+			self.characterSettings[guid] = {name = name, realmName = realmName, classFile = englishClass}
 
 		else
 			charSettings.name = name
@@ -152,17 +152,11 @@ function ProgressOverviewMixin:RefreshLockouts()
 	end
 end
 
-function ProgressOverviewMixin:LoadAllActivities()
+function ProgressOverviewMixin:LoadActivities()
 	self.mythicPlusActivities = C_ChallengeMode.GetMapTable()
 
-        table.sort(self.mythicPlusActivities, function(k1, k2)
-            return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
-
-        end)
-
-	self.raidActivities = {}
-
 	local groups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
+	local raidActivities = {}
 
 	for k, v in ipairs(groups) do
 		local activities = C_LFGList.GetAvailableActivities(3, v)
@@ -174,10 +168,10 @@ function ProgressOverviewMixin:LoadAllActivities()
 		miog.checkSingleMapIDForNewData(mapID, true)
 		miog.checkForMapAchievements(mapID)
 
-		tinsert(self.raidActivities, {name = name, order = order, activityID = activityID, mapID = mapID})
+		tinsert(raidActivities, {name = name, order = order, activityID = activityID, mapID = mapID})
 	end
 
-	table.sort(self.raidActivities, function(k1, k2)
+	table.sort(raidActivities, function(k1, k2)
 		if(k1.order == k2.order) then
 			return k1.activityID > k2.activityID
 
@@ -185,9 +179,13 @@ function ProgressOverviewMixin:LoadAllActivities()
 
 		return k1.order < k2.order
 	end)
+
+	self.raidActivities = raidActivities
 end
 
 function ProgressOverviewMixin:OnLoad()
+	self:LoadActivities()
+
 	hooksecurefunc("RequestRaidInfo", function()
 		self:RefreshLockouts()
 			
@@ -195,32 +193,14 @@ function ProgressOverviewMixin:OnLoad()
 
     RequestRaidInfo()
 
-	self.mythicPlusActivities = C_ChallengeMode.GetMapTable()
-	self.raidActivities = {}
+	for i = 1, 3, 1 do
+        local raidProgressFrame = i == 1 and self.Info.Normal or i == 2 and self.Info.Heroic or i == 3 and self.Info.Mythic
+        raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
 
-	local groups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
-
-	for k, v in ipairs(groups) do
-		local activities = C_LFGList.GetAvailableActivities(3, v)
-		local activityID = activities[#activities]
-		local name, order = C_LFGList.GetActivityGroupInfo(v)
-		local activityInfo = miog.requestActivityInfo(activityID)
-		local mapID = activityInfo.mapID
-
-		miog.checkSingleMapIDForNewData(mapID, true)
-		miog.checkForMapAchievements(mapID)
-
-		tinsert(self.raidActivities, {name = name, order = order, activityID = activityID, mapID = mapID})
 	end
 
-	table.sort(self.raidActivities, function(k1, k2)
-		if(k1.order == k2.order) then
-			return k1.activityID > k2.activityID
-
-		end
-
-		return k1.order < k2.order
-	end)
+    self.Info.MythicPlus:SetTextColor(miog.DIFFICULTY[4].miogColors:GetRGBA())
+        
 
 	self.ScrollBox:SetHorizontal(true)
 
@@ -270,10 +250,16 @@ function ProgressOverviewMixin:OnLoad()
 
 end
 
-local function sortCharacters(k1, k2)
-	if(k1.mythicPlus.score and k2.mythicPlus.score) then
-		return k1.mythicPlus.score > k2.mythicPlus.score
+local function sortOverviewCharacters(k1, k2)
+	if(k1.itemLevel and k2.itemLevel) then
+		return k1.itemLevel < k2.itemLevel
 		
+	elseif(k1.itemLevel) then
+		return true
+
+	elseif(k2.itemLevel) then
+		return false
+	
 	end
 
 	return k1.name > k2.name
@@ -281,10 +267,13 @@ end
 
 function ProgressOverviewMixin:OnShow()
 	local provider = CreateDataProvider()
-	provider:SetSortComparator(sortCharacters)
+	provider:SetSortComparator(sortOverviewCharacters)
 
 	for k, v in pairs(self.characterSettings) do
-		provider:Insert(v)
+		local providerSettings = v
+		providerSettings.guid = k
+		providerSettings.currentRaidMapID = self.raidActivities[1].mapID
+		provider:Insert(providerSettings)
 
 	end
 
@@ -310,6 +299,18 @@ function ProgressActivityMixin:GetNumberOfVisibleActivities()
 	end
 
 	return counter
+end
+
+function ProgressActivityMixin:GetBackgroundImage(id)
+
+end
+
+function ProgressActivityMixin:GetAbbreviatedName(id)
+
+end
+
+function ProgressActivityMixin:GetNameAndBackground(id)
+	return self:GetBackgroundImage(id), self:GetAbbreviatedName(id)
 end
 
 function ProgressActivityMixin:SortActivities()
@@ -394,13 +395,14 @@ function ProgressActivityMixin:RefreshActivities()
 	end
 end
 
+function ProgressActivityMixin:LoadActivities()
+	self:SortActivities()
+end
+
 function ProgressActivityMixin:OnLoad()
-	self.activities = C_ChallengeMode.GetMapTable()
 	self.BackgroundTextures = {}
 	self.BorderTextures = {}
 	self.Columns = {}
-
-	self:SortActivities()
 
 	local view = CreateScrollBoxListLinearView();
 	view:SetElementInitializer("BackdropTemplate", function(frame, data)
@@ -429,6 +431,7 @@ function ProgressActivityMixin:OnLoad()
 	end;
 	ScrollUtil.RegisterTableBuilder(self.ScrollBox, self.tableBuilder, ElementDataTranslator);
 
+	self:LoadActivities()
 	self:RefreshActivities()
 end
 
@@ -528,10 +531,6 @@ function ProgressDungeonMixin:GetBackgroundImage(challengeModeMapID)
 	return bg
 end
 
-function ProgressDungeonMixin:GetNameAndBackground(challengeModeMapID)
-	return self:GetBackgroundImage(challengeModeMapID), self:GetAbbreviatedName(challengeModeMapID)
-end
-
 function ProgressDungeonMixin:SortActivities()
 	table.sort(self.activities, function(k1, k2)
 		return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
@@ -557,6 +556,33 @@ function ProgressDungeonMixin:SetupVisibilityMenu(rootDescription)
 	end
 end
 
+function ProgressDungeonMixin:LoadActivities()
+	self.activities = C_ChallengeMode.GetMapTable()
+
+	self:SortActivities()
+end
+
+local function sortMythicPlusCharacters(k1, k2)
+	if(k1.guid == playerGUID) then
+		return true
+
+	elseif(k2.guid == playerGUID) then
+		return false
+
+	elseif(k1.mythicPlus.score and k2.mythicPlus.score) then
+		return k1.mythicPlus.score > k2.mythicPlus.score
+		
+	elseif(k1.mythicPlus.score) then
+		return true
+
+	elseif(k2.mythicPlus.score) then
+		return false
+	
+	end
+
+	return k1.name > k2.name
+end
+
 function ProgressDungeonMixin:OnShow()
 	self:GetParent().Menu.VisibilityDropdown:SetDefaultText("Change activity visibility")
 	self:GetParent().Menu.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
@@ -567,7 +593,7 @@ function ProgressDungeonMixin:OnShow()
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar)
 
 	local provider = CreateDataProvider()
-	provider:SetSortComparator(sortCharacters)
+	provider:SetSortComparator(sortMythicPlusCharacters)
 
 	for guid, v in pairs(self.characterSettings) do
 		self:UpdateSingleCharacterMythicPlusProgress(guid)
@@ -590,6 +616,234 @@ end
 
 ProgressRaidMixin = CreateFromMixins(ProgressActivityMixin)
 
+function ProgressRaidMixin:GetAbbreviatedName(mapID)
+	local mapInfo = miog.MAP_INFO[mapID]
+
+	if(mapInfo) then
+		return mapInfo.abbreviatedName
+
+	end
+end
+
+function ProgressRaidMixin:GetBackgroundImage(mapID)
+	local mapInfo = miog.MAP_INFO[mapID]
+
+	if(mapInfo) then
+		return mapInfo.vertical
+
+	end
+end
+
+function ProgressRaidMixin:CalculateProgressWeight(raidData)
+	local progressWeight = 0
+
+	for k, v in ipairs(self.activities) do
+		if(raidData.instances[v]) then
+			for difficultyIndex, table in pairs(raidData.instances[v]) do
+				progressWeight = progressWeight + miog.calculateWeightedScore(difficultyIndex, table.kills, #table.bosses, true, 1)
+
+
+			end
+		else
+			progressWeight = progressWeight + 0
+
+		end
+	end
+
+	raidData.progressWeight = progressWeight
+end
+
+function ProgressRaidMixin:CheckForAchievements(mapID)
+	if not miog.MAP_INFO[mapID].achievementTable then
+		miog.checkForMapAchievements(mapID)
+		
+	end
+
+	local mapDifficultyData = {}
+
+	for _, achievementID in ipairs(miog.MAP_INFO[mapID].achievementTable) do
+		local id, name, _, _, _, _, _, description = GetAchievementInfo(achievementID)
+		local difficulty = string.find(name, "Normal") and 1
+						or string.find(name, "Heroic") and 2
+						or string.find(name, "Mythic") and 3
+
+		if(difficulty) then
+			mapDifficultyData[difficulty] = mapDifficultyData[difficulty] or {validatedIngame = true, kills = 0, bosses = {}}
+
+			local string, type, completedCriteria, quantity, _, _, _, _, _, criteriaID = GetAchievementCriteriaInfo(id, 1, true)
+
+			if(completedCriteria) then
+				mapDifficultyData[difficulty].kills = mapDifficultyData[difficulty].kills + 1
+				
+				table.insert(mapDifficultyData[difficulty].bosses, {
+					id = id,
+					criteriaID = criteriaID,
+					killed = completedCriteria,
+					quantity = quantity
+				})
+
+			end
+		end	
+	end
+
+	return mapDifficultyData
+end
+
+function ProgressRaidMixin:UpdateSingleCharacterRaidProgress(guid)
+	if(self.activities) then
+		local charData = self.characterSettings[guid]
+		local raidData = {instances = {}}
+
+		local activityTable = self.activities
+	
+		if guid == playerGUID then
+			for _, mapID in ipairs(activityTable) do
+				raidData.instances[mapID] = self:CheckForAchievements(mapID)
+
+			end
+		else
+			local raiderIORaidData = miog.getNewRaidSortData(charData.name, charData.realm)
+			local progressWeight = charData.progressWeight or 0
+	
+			if raiderIORaidData and raiderIORaidData.character then
+				for _, mapID in ipairs(activityTable) do
+					-- Only create table if it doesn't exist
+					if not raidData.instances[mapID] then
+						local instanceData = {}
+						local mapInfo = miog.MAP_INFO[mapID]
+						local characterRaid = raiderIORaidData.character.raids[mapID]
+	
+						if characterRaid then
+							-- Calculate progress weight from difficulties
+							for _, difficultyData in pairs(characterRaid.regular.difficulties) do
+								progressWeight = progressWeight + difficultyData.weight
+							end
+	
+							-- Process bosses and achievements
+							for bossIndex, bossData in pairs(mapInfo.bosses) do
+								for _, achievementID in ipairs(bossData.achievements) do
+									local id, name, _, _, _, _, _, _, _, _, _, _, _, _, _ = GetAchievementInfo(achievementID)
+									local difficulty = string.find(name, "Normal") and 1
+													or string.find(name, "Heroic") and 2
+													or string.find(name, "Mythic") and 3
+	
+									if difficulty and characterRaid.regular.difficulties[difficulty] then
+										local raiderIODifficultyData = characterRaid.regular.difficulties[difficulty]
+	
+										instanceData[difficulty] = {
+											validatedIngame = false,
+											kills = raiderIODifficultyData.kills,
+											bosses = raiderIODifficultyData.bosses
+										}
+	
+										local _, _, _, _, _, _, _, _, _, criteriaID, _ = GetAchievementCriteriaInfo(id, 1, true)
+	
+										instanceData[difficulty].bosses[bossIndex] = {
+											id = id,
+											criteriaID = criteriaID,
+											killed = raiderIODifficultyData.bosses[bossIndex].killed,
+											quantity = raiderIODifficultyData.bosses[bossIndex].count
+										}
+									end
+								end
+							end
+						end
+						
+						raidData.instances[mapID] = instanceData
+					end
+				end
+			end
+	
+			charData.progressWeight = progressWeight
+		end
+	
+		self:CalculateProgressWeight(raidData)
+
+		charData.raids = raidData
+	end
+end
+
+function ProgressRaidMixin:SortActivities()
+	table.sort(self.activities, function(k1, k2)
+		if(k1.order == k2.order) then
+			return k1.activityID > k2.activityID
+
+		end
+
+		return k1.order < k2.order
+	end)
+end
+
+function ProgressRaidMixin:LoadActivities()
+	local groups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
+	local raidTable = {}
+
+	for k, v in ipairs(groups) do
+		local activities = C_LFGList.GetAvailableActivities(3, v)
+		local activityID = activities[#activities]
+		local name, order = C_LFGList.GetActivityGroupInfo(v)
+		local activityInfo = miog.requestActivityInfo(activityID)
+		local mapID = activityInfo.mapID
+
+		miog.checkSingleMapIDForNewData(mapID, true)
+		miog.checkForMapAchievements(mapID)
+
+		tinsert(raidTable, {name = name, order = order, activityID = activityID, mapID = mapID})
+	end
+
+	self.activities = raidTable
+
+	self:SortActivities()
+
+	local raidActivities = {}
+
+	for k, v in ipairs(self.activities) do
+		tinsert(raidActivities, v.mapID)
+
+	end
+
+	self.activities = raidActivities
+end
+
+function ProgressRaidMixin:SetupVisibilityMenu(rootDescription)
+	for k, mapID in ipairs(self.activities) do
+		self.settings.activities[mapID] = self.settings.activities[mapID] or {visible = true}
+		
+		local bg, abbreviatedName = self:GetNameAndBackground(mapID)
+
+		rootDescription:CreateCheckbox(abbreviatedName,
+			function(passedMapID)
+				return self.settings.activities[passedMapID].visible
+			end,
+			function(passedMapID)
+				self.settings.activities[passedMapID].visible = not self.settings.activities[passedMapID].visible
+				
+				self:RefreshActivities()
+		end, mapID)
+	end
+end
+
+local function sortRaidCharacters(k1, k2)
+	if(k1.guid == playerGUID) then
+		return true
+		
+	elseif(k2.guid == playerGUID) then
+		return false
+		
+	elseif(k1.raids.progressWeight and k2.raids.progressWeight) then
+		return k1.raids.progressWeight > k2.raids.progressWeight
+		
+	elseif(k1.raids.progressWeight) then
+		return true
+
+	elseif(k2.raids.progressWeight) then
+		return false
+	
+	end
+
+	return k1.name > k2.name
+end
+
 function ProgressRaidMixin:OnShow()
 	self:GetParent().Menu.VisibilityDropdown:SetDefaultText("Change activity visibility")
 	self:GetParent().Menu.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
@@ -600,7 +854,7 @@ function ProgressRaidMixin:OnShow()
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar)
 
 	local provider = CreateDataProvider()
-	provider:SetSortComparator(sortCharacters)
+	provider:SetSortComparator(sortRaidCharacters)
 
 	for guid, v in pairs(self.characterSettings) do
 		self:UpdateSingleCharacterRaidProgress(guid)
@@ -615,4 +869,183 @@ function ProgressRaidMixin:OnShow()
 	self.ScrollBox:SetDataProvider(provider)
 
 	self:RefreshActivities()
+end
+
+
+
+
+ProgressPVPMixin = CreateFromMixins(ProgressActivityMixin)
+
+function ProgressPVPMixin:GetAbbreviatedName(id)
+	local bracketInfo = miog.PVP_BRACKET_IDS_TO_INFO[id]
+    
+	if(bracketInfo) then
+		return bracketInfo.shortName
+	end
+end
+
+function ProgressPVPMixin:GetBackgroundImage(id)
+	local bracketInfo = miog.PVP_BRACKET_IDS_TO_INFO[id]
+
+	if(bracketInfo) then
+		return bracketInfo.vertical
+	end
+end
+
+function ProgressPVPMixin:UpdateSingleCharacterPVPProgress(guid)
+    local charData = self.characterSettings[guid]
+	local pvpData = {}
+
+    if(guid == playerGUID) then
+		local highestRating = 0
+
+		pvpData.brackets = {}
+
+		for index, id in ipairs(pvpActivities) do
+		--for i = 1, 5, 1 do
+			-- 1 == 2v2, 2 == 3v3, 3 == 5v5, 4 == 10v10, Solo Arena == 7, Solo BG == 9
+
+			local rating, seasonBest, weeklyBest, seasonPlayed, seasonWon, weeklyPlayed, weeklyWon, lastWeeksBest, hasWon, pvpTier, ranking, roundsSeasonPlayed, roundsSeasonWon, roundsWeeklyPlayed, roundsWeeklyWon = GetPersonalRatedInfo(id);
+
+			pvpData.brackets[id] = {rating = rating, seasonBest = seasonBest}
+
+			highestRating = rating > highestRating and rating or highestRating
+
+		end
+
+		local tierID, nextTierID = C_PvP.GetSeasonBestInfo();
+
+		pvpData.tierInfo = {tierID, nextTierID}
+		pvpData.rating = highestRating
+		charData.pvp = pvpData
+
+		self.settings.honor = {
+			current = UnitHonor("player"),
+			maximum = UnitHonorMax("player"),
+			level = UnitHonorLevel("player")
+		}
+
+
+	elseif(not self.characterSettings[guid].pvp) then
+		pvpData.brackets = pvpData.brackets or {}
+		pvpData.tierInfo = pvpData.tierInfo or {}
+		pvpData.rating = pvpData.rating or 0
+
+		charData.pvp = pvpData
+		
+	end
+end
+
+function ProgressPVPMixin:SetupVisibilityMenu(rootDescription)
+	for k, id in ipairs(self.activities) do
+		self.settings.activities[id] = self.settings.activities[id] or {visible = true}
+		
+		local bg, abbreviatedName = self:GetNameAndBackground(id)
+
+		rootDescription:CreateCheckbox(abbreviatedName,
+			function(passedID)
+				return self.settings.activities[passedID].visible
+			end,
+			function(passedID)
+				self.settings.activities[passedID].visible = not self.settings.activities[passedID].visible
+				
+				self:RefreshActivities()
+		end, id)
+	end
+end
+
+function ProgressPVPMixin:LoadActivities()
+	self.activities = pvpActivities
+	
+end
+
+local function sortPVPCharacters(k1, k2)
+	if(k1.guid == playerGUID) then
+		return true
+		
+	elseif(k2.guid == playerGUID) then
+		return false
+
+	elseif(k1.pvp.rating and k2.pvp.rating) then
+		return k1.pvp.rating < k2.pvp.rating
+		
+	elseif(k1.pvp.rating) then
+		return true
+
+	elseif(k2.pvp.rating) then
+		return false
+	
+	end
+
+	return k1.name > k2.name
+end
+
+function ProgressPVPMixin:OnShow()
+	self:GetParent().Menu.VisibilityDropdown:SetDefaultText("Change activity visibility")
+	self:GetParent().Menu.VisibilityDropdown:SetupMenu(function(dropdown, rootDescription)
+		self:SetupVisibilityMenu(rootDescription)
+
+	end)
+
+	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar)
+
+	local provider = CreateDataProvider()
+	provider:SetSortComparator(sortPVPCharacters)
+
+	for guid, v in pairs(self.characterSettings) do
+		self:UpdateSingleCharacterPVPProgress(guid)
+
+		v.guid = guid
+		provider:Insert(v)
+	end
+
+	self.characterTemplate = "MIOG_ProgressPVPCharacterCellTemplate"
+	self.cellTemplate = "MIOG_ProgressPVPCellTemplate"
+
+	self.ScrollBox:SetDataProvider(provider)
+
+	self:RefreshActivities()
+end
+
+
+
+
+ProgressSelectionButtonMixin = {}
+
+function ProgressSelectionButtonMixin:OnClick()
+	self.Texture:SetAtlas("Options_List_Active")
+
+	local tabParent = self:GetParent():GetParent()
+	local oldButton = self:GetParent().selectedButton
+
+	if(oldButton ~= self) then
+		oldButton.Texture:SetTexture(nil)
+		oldButton.isSelected = false
+		tabParent[oldButton:GetName()]:Hide()
+
+		if(self.isOverviewButton) then
+			self:GetParent().VisibilityDropdown:Hide()
+			
+		else
+			self:GetParent().VisibilityDropdown:Show()
+
+		end
+
+		self:GetParent().selectedButton = self
+		self.isSelected = true
+
+		tabParent[self:GetName()]:Show()
+	end
+end
+
+function ProgressSelectionButtonMixin:OnLoad()
+	self.Label:SetText(self:GetText())
+
+	if(self:GetText() == "Overview") then
+		self:GetParent().selectedButton = self
+		self.isSelected = true
+		self.Texture:SetAtlas("Options_List_Active")
+
+		self.isOverviewButton = true
+	end
 end

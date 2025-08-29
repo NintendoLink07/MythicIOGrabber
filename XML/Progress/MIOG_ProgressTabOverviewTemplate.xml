@@ -23,8 +23,23 @@
                             <Anchor point="TOPRIGHT" relativeKey="$parent.OverviewButton" relativePoint="BOTTOMRIGHT" y="-3"/>
                         </Anchors>
                     </Button> 
+
+                    <Button parentKey="RaidButton" name="Raid" inherits="MIOG_ProgressSelectionButtonTemplate" text="Raid">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusButton" relativePoint="BOTTOMLEFT" y="-3"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MythicPlusButton" relativePoint="BOTTOMRIGHT" y="-3"/>
+                        </Anchors>
+                    </Button> 
+
+                    <Button parentKey="PVPButton" name="PVP" inherits="MIOG_ProgressSelectionButtonTemplate" text="PVP">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.RaidButton" relativePoint="BOTTOMLEFT" y="-3"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.RaidButton" relativePoint="BOTTOMRIGHT" y="-3"/>
+                        </Anchors>
+                    </Button> 
                     
-                    <DropdownButton parentKey="VisibilityDropdown" inherits="WowStyle1DropdownTemplate">
+                    
+                    <DropdownButton parentKey="VisibilityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
                         <Size y="25" />
 
                         <Anchors>
@@ -58,9 +73,27 @@
                                     </Anchors>
                                 </FontString>
 
-                                <FontString parentKey="MythicPlus" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic+ score: ">
+                                <FontString parentKey="MythicPlus" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic+: ">
                                     <Anchors>
                                         <Anchor point="TOPRIGHT" relativeKey="$parent.ItemLevel" relativePoint="BOTTOMRIGHT" y="-2"/>
+                                    </Anchors>
+                                </FontString>
+
+                                <FontString parentKey="Normal" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Normal: ">
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT" relativeKey="$parent.MythicPlus" relativePoint="BOTTOMRIGHT" y="-2"/>
+                                    </Anchors>
+                                </FontString>
+
+                                <FontString parentKey="Heroic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Heroic: ">
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT" relativeKey="$parent.Normal" relativePoint="BOTTOMRIGHT" y="-2"/>
+                                    </Anchors>
+                                </FontString>
+
+                                <FontString parentKey="Mythic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic: ">
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT" relativeKey="$parent.Heroic" relativePoint="BOTTOMRIGHT" y="-2"/>
                                     </Anchors>
                                 </FontString>
                             </Layer>
@@ -94,6 +127,66 @@
             </Frame>
 
             <Frame parentKey="MythicPlus" mixin="ProgressDungeonMixin" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+                
+                <Frames>
+                    <Frame parentKey="HeaderContainer">
+                        <Size y="135"/>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT"/>
+                            <Anchor point="TOPRIGHT"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.HeaderContainer" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+                
+                <Scripts>
+                    <OnShow method="OnShow" />
+                    <OnLoad method="OnLoad" />
+                </Scripts>
+            </Frame>
+            
+            <Frame parentKey="Raid" mixin="ProgressRaidMixin" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+                
+                <Frames>
+                    <Frame parentKey="HeaderContainer">
+                        <Size y="135"/>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT"/>
+                            <Anchor point="TOPRIGHT"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.HeaderContainer" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+                
+                <Scripts>
+                    <OnShow method="OnShow" />
+                    <OnLoad method="OnLoad" />
+                </Scripts>
+            </Frame>
+            
+            <Frame parentKey="PVP" mixin="ProgressPVPMixin" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" />
                     <Anchor point="BOTTOMRIGHT"/>

@@ -30,6 +30,17 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+
+			<Layer level="BORDER" textureSubLevel="3">
+				<Texture parentKey="GuildBannerBorderGlow" atlas="guildfinder-card-guildbanner-border" hidden="true">
+                    <Color r="0.85" g="0.62" b="0.09" a="1" />
+					<Size y="192"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
+					</Anchors>
+				</Texture>
+			</Layer>
             
             <Layer level="ARTWORK">
                 <Texture parentKey="VaultStatus">
@@ -91,6 +102,24 @@
                 <FontString parentKey="MythicPlusScore" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
                         <Anchor point="TOP" relativeKey="$parent.ItemLevel" relativePoint="BOTTOM" y="-2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Normal" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.MythicPlusScore" relativePoint="BOTTOM" y="-2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Heroic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.Normal" relativePoint="BOTTOM" y="-2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Mythic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.Heroic" relativePoint="BOTTOM" y="-2"/>
                     </Anchors>
                 </FontString>
             </Layer>
