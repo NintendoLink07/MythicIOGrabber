@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ProgressTabOverviewTemplate" virtual="true">
+    <Frame name="MIOG_ProgressTabTemplate" mixin="ProgressMixin" virtual="true">
         <Frames>
             <Frame parentKey="Menu">
                 <Size x="76" y="120"/>
@@ -29,7 +29,7 @@
                             <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusButton" relativePoint="BOTTOMLEFT" y="-3"/>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.MythicPlusButton" relativePoint="BOTTOMRIGHT" y="-3"/>
                         </Anchors>
-                    </Button> 
+                    </Button>
 
                     <Button parentKey="PVPButton" name="PVP" inherits="MIOG_ProgressSelectionButtonTemplate" text="PVP">
                         <Anchors>
@@ -37,16 +37,43 @@
                             <Anchor point="TOPRIGHT" relativeKey="$parent.RaidButton" relativePoint="BOTTOMRIGHT" y="-3"/>
                         </Anchors>
                     </Button> 
-                    
-                    
-                    <DropdownButton parentKey="VisibilityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
+
+                    <Frame parentKey="OverviewElements" hidden="true">
                         <Size y="25" />
 
                         <Anchors>
                             <Anchor point="BOTTOMLEFT"/>
                             <Anchor point="BOTTOMRIGHT"/>
                         </Anchors>
-                    </DropdownButton>
+                
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="HonorLevel" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Itemlevel: ">
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT"/>
+                                    </Anchors>
+                                </FontString>
+
+                                <FontString parentKey="HonorProgress" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Itemlevel: ">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativeKey="$parent.HonorLevel" relativePoint="BOTTOMLEFT" y="-3"/>
+                                        <Anchor point="TOPRIGHT" relativeKey="$parent.HonorLevel" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Frames>
+                            <DropdownButton parentKey="VisibilityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
+                                <Size y="25" />
+
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.HonorProgress" relativePoint="BOTTOMLEFT" y="-3"/>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.HonorProgress" relativePoint="BOTTOMRIGHT" y="-3"/>
+                                </Anchors>
+                            </DropdownButton>
+                        </Frames>
+                    </Frame>
                 </Frames>
             </Frame>
 
@@ -121,8 +148,8 @@
                 </Frames>
 
                 <Scripts>
-                    <OnShow method="OnShow" />
                     <OnLoad method="OnLoad" />
+                    <OnShow method="OnShow" />
                 </Scripts>
             </Frame>
 
@@ -216,5 +243,9 @@
                 </Scripts>
             </Frame>
         </Frames>
+
+        <Scripts>
+            <OnShow method="OnShow" />
+        </Scripts>
     </Frame>
 </Ui>

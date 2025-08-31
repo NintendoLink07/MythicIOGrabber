@@ -652,7 +652,8 @@
                     </Frame>
                     
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupManager" hidden="true" setAllPoints="true" />
-                    <Frame parentKey="Progress" inherits="MIOG_ProgressTab" hidden="true" setAllPoints="true" />
+                    <!--<Frame parentKey="Progress" inherits="MIOG_ProgressTab" hidden="true" setAllPoints="true" />!-->
+                    <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabTemplate" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
@@ -660,12 +661,6 @@
                     <Frame parentKey="Drops" inherits="MIOG_Drops" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
 
-                    <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabOverviewTemplate">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="300"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="800"/>
-                        </Anchors>
-                    </Frame>
                 </Frames>
 
                 <Layers>
@@ -706,7 +701,7 @@
                 
                 <Scripts>
                     <OnLoad>
-                        self.frameName = "Progress"
+                        self.frameName = "NewProgress"
                     </OnLoad>
                 </Scripts>
             </Button>

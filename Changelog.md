@@ -6,9 +6,42 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+
+## [3.6.0] - 2025-08-31
+
+### Changed
+
+- Recoded most of the [Progress] tab to use more modern Blizzard code and simplified it's logic.
+Some features the keystone score dropdown calculator have not yet been ported over.
+This will happen with the next version v3.6.1.
+
+### Fixed
+
+- Multiple fixes for RaiderIO related issues.
+
+### Known issues
+
+- [Progress] When opening up the tab for the first time there is a bit of lag.
+This will be fixed with v3.6.1.
+
+- [Progress] When opening up the tab for the first time only your current character will be shown.
+Switch between tabs to update the tab correctly.
+This will be fixed with v3.6.1.
+
+- [SearchPanel] When opening up the raid category for the first time in a session there will be small lag spikes for approximately 2 seconds.
+This will be fixed with v3.6.1.
+
+
+
+
 ## [3.5.11a] - 2025-08-19
 
 ### Changed
+
+- Recoded most of the [Progress] tab to use more modern Blizzard code.
+Some features the keystone score dropdown calculator have not yet been ported over.
+This will happen with the next version
 
 - [MainFrame] The last group teleport is now only visible when the spell can be cast.
 
@@ -19,7 +52,6 @@ and this project adheres to [Semantic Versioning].
 - [SearchPanel] Sorting by M+ score and keylevel now works again.
 
 - [SearchPanel] Templates for the correct categories will now be retrieved before showing the listing frames.
-
 
 
 
@@ -4265,7 +4297,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.5.9..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.0..HEAD
+[3.6.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.0
 [3.5.11a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11a
 [3.5.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11
 [3.5.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.10

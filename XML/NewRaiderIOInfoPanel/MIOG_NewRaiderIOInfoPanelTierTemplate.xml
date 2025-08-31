@@ -13,8 +13,8 @@
             <Frame parentKey="Bosses" inherits="MIOG_NewRaiderIOInfoPanelTierHeaderTemplate">
                 <Size y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" x="-1"/>
                 </Anchors>
 
                 <Frames>

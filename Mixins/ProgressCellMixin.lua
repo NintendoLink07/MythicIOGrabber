@@ -1,8 +1,8 @@
 local addonName, miog = ...
 
-ProgressCellMixin = CreateFromMixins(TableBuilderCellMixin)
+ProgressOverviewFullMixin = CreateFromMixins(TableBuilderCellMixin)
 
-function ProgressCellMixin:Populate(data)
+function ProgressOverviewFullMixin:Populate(data, index, ...)
     local classID = miog.CLASSFILE_TO_ID[data.fileName]
     local color = C_ClassColor.GetClassColor(data.fileName)
 
@@ -29,13 +29,15 @@ function ProgressCellMixin:Populate(data)
         local numBosses = #mapInfo.bosses
 
         for i = 1, 3, 1 do
-            local raidProgressFrame = i == 1 and self.Normal or i == 2 and self.Heroic or i == 3 and self.Mythic        
+            local raidProgressFrame = i == 1 and self.Normal or i == 2 and self.Heroic or i == 3 and self.Mythic
             raidProgressFrame:SetText((data.raids.instances[mapID] and data.raids.instances[mapID][i] and data.raids.instances[mapID][i].kills or 0) .. "/" .. numBosses)
             raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
 
         end
     end
 end
+
+
 
 
 

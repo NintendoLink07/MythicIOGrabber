@@ -66,7 +66,7 @@
         </Layers>
     
         <Frames>
-            <Frame parentKey="Class" inherits="MIOG_ProgressFullCharacterIconTemplate">
+            <Frame parentKey="Class" inherits="MIOG_ProgressCharacterIconTemplate">
                 <Size x="36" y="36" />
 
                 <Anchors>
@@ -74,7 +74,7 @@
                 </Anchors>
             </Frame>
 
-            <Frame parentKey="Spec" inherits="MIOG_ProgressFullCharacterIconTemplate">
+            <Frame parentKey="Spec" inherits="MIOG_ProgressCharacterIconTemplate">
                 <Size x="36" y="36" />
 
                 <Anchors>

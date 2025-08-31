@@ -6,13 +6,13 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="TOPLEFT" y="-4"/>
+                        <Anchor point="LEFT" y="8"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Score" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" y="4"/>
+                        <Anchor point="LEFT" y="-7"/>
                     </Anchors>
                 </FontString>
             </Layer>

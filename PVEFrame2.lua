@@ -586,7 +586,7 @@ local function createPVEFrameReplacement()
 		GameTooltip:Show()
 	end)
 
-	hooksecurefunc("ToggleFriendsFrame", function(id)
+	--[[hooksecurefunc("ToggleFriendsFrame", function(id)
 		if(id == 3) then
 			toggleGroupManagerRaidFrame()
 
@@ -596,7 +596,7 @@ local function createPVEFrameReplacement()
 	hooksecurefunc("ToggleRaidFrame", function()
 		toggleGroupManagerRaidFrame()
 
-	end)
+	end)]]
 
 	hooksecurefunc("PVEFrame_ToggleFrame", function()
 		HideUIPanel(PVEFrame)
@@ -610,7 +610,7 @@ local function createPVEFrameReplacement()
 		end
 	end)
 
-	miog.Progress = pveFrame2.TabFramesPanel.Progress
+	--[[miog.Progress = pveFrame2.TabFramesPanel.Progress
 	miog.Progress.NewSystem:OnLoad("all", MIOG_NewSettings)
 
     miog.MPlusStatistics = miog.Progress.MPlusStatistics
@@ -620,7 +620,7 @@ local function createPVEFrameReplacement()
 	miog.RaidStatistics:OnLoad("raid", MIOG_NewSettings)
 
 	miog.PVPStatistics = miog.Progress.PVPStatistics
-	miog.PVPStatistics:OnLoad("pvp", MIOG_NewSettings)
+	miog.PVPStatistics:OnLoad("pvp", MIOG_NewSettings)]]
 
 	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
 	local leaderChecked, tankChecked, healerChecked, damagerChecked = LFDQueueFrame_GetRoles()
@@ -705,6 +705,7 @@ local function createPVEFrameReplacement()
 		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 	end
 
+	pveFrame2.TabFramesPanel.NewProgress:SetupInitialCharacterData(MIOG_NewSettings.progressData)
 	pveFrame2.TabFramesPanel.NewProgress.Overview:ConnectSetting(MIOG_NewSettings.progressData)
 	pveFrame2.TabFramesPanel.NewProgress.MythicPlus:ConnectSetting(MIOG_NewSettings.progressData)
 	pveFrame2.TabFramesPanel.NewProgress.Raid:ConnectSetting(MIOG_NewSettings.progressData)
