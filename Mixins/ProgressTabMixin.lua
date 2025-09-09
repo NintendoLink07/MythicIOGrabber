@@ -810,12 +810,9 @@ function ProgressTabMixin:OnLoad(id)
 
 			self.Graph:AddDataset({id= "mplus", name = data.name, class = data.classFile, values = mplusData})]]
 
-			print("CHAR VIEW")
 			for _, v in ipairs(self.raidActivityTable) do
 				miog.checkSingleMapIDForNewData(v, true)
 				local numBosses = #miog.MAP_INFO[v].bosses
-
-				print("MAP ID", v)
 
 				for i = 1, 3, 1 do
 					local raidProgressFrame = frame["RaidProgress" .. i]

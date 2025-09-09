@@ -1,25 +1,19 @@
-## [3.6.0](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.0) - 2025-08-31
+## [3.6.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.1) - 2025-09-09
 
 ### Changed
 
-- Recoded most of the [Progress] tab to use more modern Blizzard code and simplified it's logic.
-Some features the keystone score dropdown calculator have not yet been ported over.
-This will happen with the next version v3.6.1.
+- [Gearing] The gearing table is now scales with the window size.
+
+- [Gearing] Disabled headers now gather in order on the right side of the table.
+
+- [Teleports] The teleports tab has been recoded.
 
 ### Fixed
 
-- Multiple fixes for RaiderIO related issues.
+- The progress bars now correctly indicate when you have unlocked all of your great vault for the week.
 
-- Small performance gains for everything related to RaiderIO.
+- [SearchPanel] More infrequent refreshing of the raid category, fixes larger lags depending on # of group members in listings.
 
-### Known issues
+- [FilterManager] Activity filters are now hidden in the "Raids - Legacy" category.
 
-- [Progress] When opening up the tab for the first time there is a bit of lag.
-This will be fixed with v3.6.1.
-
-- [Progress] When opening up the tab for the first time only your current character will be shown.
-Switch between tabs to update the tab correctly.
-This will be fixed with v3.6.1.
-
-- [SearchPanel] When opening up the raid category for the first time in a session there will be small lag spikes for approximately 2 seconds.
-This will be fixed with v3.6.1.
+- Various bugfixes.

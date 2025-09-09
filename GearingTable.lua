@@ -1,6 +1,31 @@
 local addonName, miog = ...
 
+local gearingTab
+
 miog.gearing = {}
+
+local headers = {
+    {name = "ILvl"},
+    {name = "Track"},
+    {name = "Delves", checkbox = true},
+    {name = "Vault", id = "Delves", checkbox = true},
+    {name = "Raid", checkbox = true},
+    {name = "Dungeon", checkbox = true},
+    {name = "Vault", id = "Dungeon",  checkbox = true},
+    {name = "Other", checkbox = true},
+}
+local indices = {
+    ["delves"] = 1,
+    ["delvesBounty"] = 1,
+    ["dungeon"] = 4,
+    ["raid"] = 3,
+    ["crafting"] = 6,
+}
+
+local vaultIndices = {
+    ["delves"] = 2,
+    ["dungeon"] = 5,
+}
 
 local currentChildren = {}
 
@@ -54,25 +79,25 @@ local function retrieveSeasonID()
     end
 end
 
-miog.loadGearingTable = function()
-    miog.Gearing = miog.pveFrame2.TabFramesPanel.GearingTable
+local function setupGearingTable()
+    local levelToIndex = {}
+    local fullTable = {}
 
-    miog.Gearing.GearingTable:OnLoad(nil, nil, 2, 2)
-    
-    retrieveSeasonID()
-    
-    local headers = {
-        {name = "ILvl"},
-        {name = "Track"},
-        {name = "Delves", checkbox = true},
-        {name = "Vault", id = "Delves", checkbox = true},
-        {name = "Raid", checkbox = true},
-        {name = "Dungeon", checkbox = true},
-        {name = "Vault", id = "Dungeon",  checkbox = true},
-        {name = "Other", checkbox = true},
-    }
-    miog.Gearing.GearingTable:CreateTable(false, headers, MIOG_NewSettings.gearingTable.headers)
+    for k in ipairs(headers) do
+        fullTable[k] = {}
+    end
 
+    local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
+
+    for index, itemlevel in ipairs(seasonalData.itemLevelList) do
+        tinsert(fullTable[1], WrapTextInColorCode(itemlevel, getColorForItemlevel(itemlevel)))
+        tinsert(fullTable[2], createTrackString(itemlevel))
+
+        fullTable[1].maxIndex = index
+        fullTable[2].maxIndex = index
+
+        levelToIndex[itemlevel] = index
+    end
 
     for trackIndex, data in pairs(miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].tracks) do
         local currentLegendFrame = miog.Gearing.Legend["Track" .. trackIndex]
@@ -88,39 +113,9 @@ miog.loadGearingTable = function()
         end
     end
 
-    if(not miog.NEW_GEARING_DATA[miog.F.SEASON_ID].awakenedInfo) then
-        miog.Gearing.Legend["Track7"]:Hide()
-        miog.Gearing.Legend:SetWidth(miog.Gearing.Legend:GetWidth() - miog.Gearing.Legend["Track7"]:GetWidth())
-    end
+    gearingTab.tableBuilder:Reset()
 
-    local fullTable = {}
-
-    for k in ipairs(headers) do
-        fullTable[k] = {}
-    end
-
-    local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
-    local levelToIndex = {}
-
-    for index, itemlevel in ipairs(seasonalData.itemLevelList) do
-        tinsert(fullTable[1], WrapTextInColorCode(itemlevel, getColorForItemlevel(itemlevel)))
-        tinsert(fullTable[2], createTrackString(itemlevel))
-
-        levelToIndex[itemlevel] = index
-    end
-
-    local indices = {
-        ["delves"] = 1,
-        ["delvesBounty"] = 1,
-        ["dungeon"] = 4,
-        ["raid"] = 3,
-        ["crafting"] = 6,
-    }
-
-    local vaultIndices = {
-        ["delves"] = 2,
-        ["dungeon"] = 5,
-    }
+    local dataProvider = CreateDataProvider()
 
     for category, categoryData in pairs(seasonalData.data) do
         for index, data in ipairs(categoryData) do
@@ -130,6 +125,8 @@ miog.loadGearingTable = function()
                 local existingText = fullTable[categoryIndex][tableIndex]
                 fullTable[categoryIndex][tableIndex] = WrapTextInColorCode(existingText and (existingText .. " / " .. data.name) or data.name, getColorForItemlevel(data.level))
 
+                fullTable[categoryIndex].maxIndex = fullTable[categoryIndex].maxIndex and fullTable[categoryIndex].maxIndex > tableIndex and fullTable[categoryIndex].maxIndex or tableIndex
+
             end
 
             if(vaultIndices[category] and not data.ignoreForVault) then
@@ -138,12 +135,145 @@ miog.loadGearingTable = function()
                 local existingText = fullTable[categoryIndex][tableIndex]
                 fullTable[categoryIndex][tableIndex] = WrapTextInColorCode(existingText and (existingText .. " / " .. data.name) or data.name, getColorForItemlevel(data.vaultLevel))
 
+                fullTable[categoryIndex].maxIndex = fullTable[categoryIndex].maxIndex and fullTable[categoryIndex].maxIndex > tableIndex and fullTable[categoryIndex].maxIndex or tableIndex
+
             end
         end
     end
 
-    for k, v in ipairs(fullTable) do
-        miog.Gearing.GearingTable:AddTextToColumn(v, k)
+    local rows = {}
+    local columns = {}
+    local calcWidth = gearingTab:GetWidth() - 60
+
+    local firstIndex = 1
+    local newHeaderArray = {}
+
+    for i, v in ipairs(headers) do
+        if(MIOG_NewSettings.gearingTable[v.name .. (v.id or "")] == false) then
+            v.index = i
+            tinsert(newHeaderArray, #newHeaderArray + 1, v)
+
+        else
+            v.index = i
+            tinsert(newHeaderArray, firstIndex, v)
+
+            firstIndex = firstIndex + 1
+        end
+    end
+
+    for _, v in ipairs(newHeaderArray) do
+        local dataIndex = v.index
+        local column = gearingTab.tableBuilder:AddColumn()
+        columns[_] = column
+        column:ConstructHeader("Frame", v.checkbox and "MIOG_GearingTableCheckboxHeaderTemplate" or "MIOG_GearingTableHeaderTemplate", v.name)
+
+        local header = column.headerFrame
+
+        if(v.checkbox) then
+            header.Checkbox:SetScript("OnClick", function(selfButton, button)
+                MIOG_NewSettings.gearingTable[v.name .. (v.id or "")] = selfButton:GetChecked()
+            
+                setupGearingTable()
+            end)
+
+            header.Checkbox:SetChecked(MIOG_NewSettings.gearingTable[v.name .. (v.id or "")])
+
+        end
+
+        if(MIOG_NewSettings.gearingTable[v.name .. (v.id or "")] ~= false) then
+            column:ConstructCells("Frame", "MIOG_GearingTableCellTemplate", dataIndex)
+            local fixedWidth = 0
+            local width = 0
+
+            for k = 1, fullTable[dataIndex].maxIndex, 1 do
+                rows[k] = rows[k] or {}
+
+                if(fullTable[dataIndex][k]) then
+                    local text = fullTable[dataIndex][k]
+                    rows[k][dataIndex] = text
+
+                    gearingTab.TestFontString:SetText(text)
+
+                    width = gearingTab.TestFontString:GetStringWidth()
+
+                    fixedWidth = width > fixedWidth and width or fixedWidth
+                end
+            end
+
+            column.actualWidth = fixedWidth
+            calcWidth = calcWidth - fixedWidth
+
+        else
+            column:ConstructCells("Frame", "BackdropTemplate", dataIndex)
+            column.actualWidth = header.Text:GetStringWidth()
+            calcWidth = calcWidth - column.actualWidth
+
+        end
+    end
+
+    local addWidth = 0
+
+    if(calcWidth > 0) then
+        addWidth = calcWidth / #headers
 
     end
+
+    for _, v in ipairs(columns) do
+        v:SetFixedConstraints(v.actualWidth + addWidth + 4, 2)
+    end
+    
+    gearingTab.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
+
+    for k, v in pairs(rows) do
+        dataProvider:Insert(v)
+
+    end
+
+    gearingTab.tableBuilder:Arrange()
+
+    gearingTab.ScrollBox:SetDataProvider(dataProvider)
+end
+
+miog.loadGearingTable = function()
+    miog.Gearing = miog.pveFrame2.TabFramesPanel.GearingTable
+
+    gearingTab = miog.Gearing
+
+    local view = CreateScrollBoxListLinearView()
+	view:SetElementInitializer("BackdropTemplate", function(frame, data)
+
+	end)
+	view:SetPadding(1, 1, 1, 1, 0)
+
+    gearingTab.view = view
+
+	ScrollUtil.InitScrollBoxListWithScrollBar(gearingTab.ScrollBox, gearingTab.ScrollBar, view)
+
+	local tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
+	tableBuilder:SetHeaderContainer(gearingTab.HeaderContainer)
+	tableBuilder:SetTableMargins(3, 3)
+
+	local function ElementDataProvider(elementData, ...)
+		return elementData
+
+	end
+
+	tableBuilder:SetDataProvider(ElementDataProvider)
+    
+	local function ElementDataTranslator(elementData, ...)
+		return elementData
+
+	end
+	
+	ScrollUtil.RegisterTableBuilder(gearingTab.ScrollBox, tableBuilder, ElementDataTranslator)
+
+    miog.Gearing.tableBuilder = tableBuilder
+
+    miog.Gearing:SetScript("OnSizeChanged", function()
+        setupGearingTable()
+    end)
+
+    retrieveSeasonID()
+
+    setupGearingTable()
 end

@@ -7,7 +7,6 @@
         </Anchors>
 
         <Frames>
-            
             <Frame parentKey="Status" frameStrata="DIALOG" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-1" y="-25" />

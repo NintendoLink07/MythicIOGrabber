@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_TableCellWithCheckboxTemplate" inherits="ResizeLayoutFrame" virtual="true">
+    <Frame name="MIOG_GearingTableCheckboxHeaderTemplate" mixin="GearingTableHeaderMixin" virtual="true">
         <Frames>
-            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate">
+            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate" checked="true">
                 <Size x="14" y="14" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT"/>
@@ -11,16 +11,10 @@
         </Frames>
 
         <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="Background" setAllPoints="true" />
-            </Layer>
-
             <Layer level="OVERLAY">
                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Checkbox" relativePoint="TOPRIGHT"/>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.Checkbox" relativePoint="BOTTOMRIGHT"/>
-                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT"/>
                     </Anchors>
                 </FontString>
             </Layer>

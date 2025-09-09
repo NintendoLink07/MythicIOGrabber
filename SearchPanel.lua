@@ -350,18 +350,113 @@ function standardDeviation( t )
   return result
 end
 
+local function getSortCriteriaForSearchResult(resultID)
+	local table
+	local isRaid, isPvP, isDungeon, isOther
+
+	if(C_LFGList.HasSearchResultInfo(resultID)) then
+		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+		if(searchResultInfo and not searchResultInfo.hasSelf) then
+			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+
+			--if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
+				isRaid = activityInfo.categoryID == 3
+				isPvP = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
+				isDungeon = activityInfo.categoryID == 2
+				isOther = not isRaid and not isPvP and not isDungeon
+				
+			--end
+
+			local mapID = activityInfo.mapID
+
+			local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+
+			local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
+
+			local raidData
+			
+			if(appStatus == "applied" or status ~= false) then
+				local primarySortAttribute, secondarySortAttribute
+
+				local nameTable
+
+				if(searchResultInfo.leaderName) then
+					nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+
+				end
+
+				if(nameTable and not nameTable[2]) then
+					nameTable[2] = GetNormalizedRealmName()
+
+					if(nameTable[2]) then
+						searchResultInfo.leaderName = nameTable[1] .. "-" .. nameTable[2]
+
+					end
+				end
+
+				if(isDungeon or isOther) then
+					primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
+					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
+
+				elseif(isRaid) then
+					if(searchResultInfo.leaderName) then
+						raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
+
+						if(raidData) then
+							primarySortAttribute = raidData.character.ordered[1].weight or 0
+							secondarySortAttribute = raidData.character.ordered[2].weight or 0
+
+						else
+							primarySortAttribute = 0
+							secondarySortAttribute = 0
+
+						end
+
+					else
+						primarySortAttribute = 0
+						secondarySortAttribute = 0
+
+					end
+
+				elseif(isPvP) then
+					local pvpDataExists = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo[1]
+
+					if(pvpDataExists) then
+						primarySortAttribute = searchResultInfo.leaderPvpRatingInfo[1].rating
+						secondarySortAttribute = searchResultInfo.leaderPvpRatingInfo[1].tier
+						
+					else
+						primarySortAttribute = 0
+						secondarySortAttribute = 0
+
+					end
+
+				end
+
+				table ={
+					name = searchResultInfo.leaderName,
+					primary = primarySortAttribute,
+					appStatus = appStatus,
+					secondary = secondarySortAttribute,
+					index = resultID,
+					resultID = resultID,
+					age = searchResultInfo.age,
+				}
+			end
+		end
+	end
+
+	return table
+end
+
+
 local function createDataProviderWithUnsortedData()
 	local treeDataProvider = CreateTreeDataProvider()
 	local actualResults, resultTable = C_LFGList.GetFilteredSearchResults()
 
 	local numOfFiltered = 0
 
-	--[[
-	local isRaid = LFGListFrame.SearchPanel.categoryID == 3
-	local isPvP = LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9
-	local isDungeon = LFGListFrame.SearchPanel.categoryID == 2
-	local isOther = not isRaid and not isPvP and not isDungeon
-	]]
 	local isRaid
 	local isPvP
 	local isDungeon
@@ -667,7 +762,6 @@ local function updateScrollBoxFrame(frame, data)
 		local categoryID = activityInfo.categoryID
 		local isRaid = categoryID == 3
 		local isDungeon = categoryID == 2
-		--local isPvE = categoryID == 1 or categoryID == 2 or categoryID == 6 or categoryID == 121
 
 		local roleCount = {
 			["TANK"] = 0,
@@ -687,14 +781,14 @@ local function updateScrollBoxFrame(frame, data)
 				roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
 			end
 
-			local bossPanel = currentFrame.BossPanel
-			local newMap = bossPanel.mapID ~= mapID
-			
-			bossPanel.mapID = mapID
-
 			local mapInfo = miog.getMapInfo(mapID, true)
 			
 			if(mapInfo) then
+				local bossPanel = currentFrame.BossPanel
+				local newMap = bossPanel.mapID ~= mapID
+				
+				bossPanel.mapID = mapID
+
 				local bossData = mapInfo.bosses
 					
 				local bossIndex = mapInfo.numOfBosses
@@ -907,60 +1001,6 @@ local function showStatusOverlay(status)
 	miog.SearchPanel.Status.FontString:Show()
 end
 
-local function getSortCriteriaForSearchResult(resultID)
-	local table
-
-	if(C_LFGList.HasSearchResultInfo(resultID)) then
-		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-
-		if(searchResultInfo) then
-			local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
-			local primarySortAttribute, secondarySortAttribute
-
-			if(LFGListFrame.SearchPanel.categoryID ~= 3 and LFGListFrame.SearchPanel.categoryID ~= 4 and LFGListFrame.SearchPanel.categoryID ~= 7 and LFGListFrame.SearchPanel.categoryID ~= 8 and LFGListFrame.SearchPanel.categoryID ~= 9) then
-				primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
-				secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
-
-			elseif(LFGListFrame.SearchPanel.categoryID == 3) then
-				if(searchResultInfo.leaderName) then
-					local nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
-
-					if(nameTable and not nameTable[2]) then
-						nameTable[2] = GetNormalizedRealmName()
-
-					end
-
-					local raidData = miog.getNewRaidSortData(nameTable[1], nameTable[2])
-
-					primarySortAttribute = raidData.character.ordered[1].weight or 0
-					secondarySortAttribute = raidData.character.ordered[2].weight or 0
-
-				else
-					primarySortAttribute = 0
-					secondarySortAttribute = 0
-
-				end
-
-			elseif(LFGListFrame.SearchPanel.categoryID == 4 or LFGListFrame.SearchPanel.categoryID == 7 or LFGListFrame.SearchPanel.categoryID == 8 or LFGListFrame.SearchPanel.categoryID == 9) then
-				primarySortAttribute = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0
-				secondarySortAttribute = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo.rating or 0
-
-			end
-
-			table = {
-				primary = primarySortAttribute,
-				appStatus = appStatus,
-				secondary = secondarySortAttribute,
-				index = resultID,
-				resultID = resultID,
-				age = searchResultInfo.age,
-			}
-		end
-	end
-
-	return table
-end
-
 local function fullyUpdateSearchPanel()
 	miog.SearchPanel.Status:Hide()
 
@@ -971,41 +1011,6 @@ local function fullyUpdateSearchPanel()
 	local orderedListLen = #sortBarList
 
 	treeDataProvider:SetAllCollapsed(true)
-	--[[treeDataProvider:SetSortComparator(function(n1, n2)
-		local resultID1 = n1.data.resultID
-		local resultID2 = n2.data.resultID
-
-		local k1 = getSortCriteriaForSearchResult(resultID1)
-		local k2 = getSortCriteriaForSearchResult(resultID2)
-
-		if(k1.appStatus == "applied" and k2.appStatus ~= "applied") then
-			return true
-
-		elseif(k2.appStatus == "applied" and k1.appStatus ~= "applied") then
-			return false
-
-		else
-			for i = 1, orderedListLen do
-
-				local state, name = sortBarList[i].state, sortBarList[i].name
-
-				if(state > 0 and k1[name] ~= k2[name]) then
-					if(state == 1) then
-						return k1[name] > k2[name]
-		
-					else
-						return k1[name] < k2[name]
-		
-					end
-
-				elseif(i == orderedListLen) then
-					return k1.index > k2.index
-
-				end
-			end
-		end
-	end)]]
-
 	treeDataProvider:SetSortComparator(function(n1, n2)
 		local k1 = n1.data
 		local k2 = n2.data
@@ -1051,12 +1056,12 @@ end
 
 miog.fullyUpdateSearchPanel = fullyUpdateSearchPanel
 
-local currentlySearching = false
+local updateScheduled = false
 local currentTimer
 
 local function searchPanelEvents(_, event, ...)
 	if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
-		if(currentlySearching) then
+		if(not updateScheduled) then
 			miog.SearchPanel.ScrollBox2:RemoveDataProvider()
 
 			miog.SearchPanel.totalResults = LFGListFrame.SearchPanel.totalResults
@@ -1066,14 +1071,16 @@ local function searchPanelEvents(_, event, ...)
 
 			currentTimer = C_Timer.NewTimer(0.65, function()
 				fullyUpdateSearchPanel()
+				updateScheduled = false
+
 			end)
+
+			updateScheduled = true
 
 		elseif(lastNumOfResults == 0) then
 			currentTimer:Cancel()
 			fullyUpdateSearchPanel()
 		end
-
-		currentlySearching = false
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then --update to title, ilvl, group members, etc
 		if(C_LFGList.HasSearchResultInfo(...)) then
@@ -1368,8 +1375,4 @@ end)
 
 hooksecurefunc("LFGListSearchPanel_SelectResult", function(searchPanel, resultID)
 	selectResultFrame(resultID)
-end)
-
-hooksecurefunc("LFGListSearchPanel_DoSearch", function()
-	currentlySearching = true
 end)

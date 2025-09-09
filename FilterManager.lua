@@ -791,10 +791,11 @@ local function refreshFilters()
 	local isLFG = panel == "SearchPanel"
 	local isArenaPvp = categoryID == 4 or categoryID == 7
 	local isDungeon = categoryID == 2
-	local isRaid = categoryID == 3
+	local isMainRaid = categoryID == 3
+	local isLegacyRaid = categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended
 	local isDelve = categoryID == 121
-	local isPvE =  isDungeon or isRaid or isDelve
-	local isLFGRaid = isLFG and isRaid
+	local isPvE =  isDungeon or isMainRaid or isDelve
+	local isLFGRaid = isLFG and isMainRaid and not isLegacyRaid
 	local isRatingCategory = isDungeon or isArenaPvp
 	local isActivityCategory = isLFG and isPvE or isArenaPvp
 
@@ -808,7 +809,7 @@ local function refreshFilters()
 	filterManager.Age:SetShown(isLFG)
 	filterManager.Rating:SetShown(isLFG and isRatingCategory)
 	filterManager.Difficulty:SetShown(isLFG and isPvE)
-	filterManager.Activities:SetShown(isActivityCategory)
+	filterManager.Activities:SetShown(isActivityCategory and not isLegacyRaid)
 	filterManager.ActivityGrid:SetShown(filterManager.Activities:IsShown())
 	filterManager.ActivityBosses:SetShown(isLFGRaid)
 
@@ -844,7 +845,7 @@ local function refreshFilters()
 			end
 		end
 
-		if(isRaid) then
+		if(isMainRaid and not isLegacyRaid) then
 			local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
 			if(worldBossActivity and #worldBossActivity > 0) then
@@ -902,7 +903,7 @@ local function refreshFilters()
 			end
 		end
 
-		if(isRaid) then
+		if(isMainRaid and not isLegacyRaid) then
 			for raidIndex, data in ipairs(allGroups) do
 				local bossParent = filterManager.ActivityBosses["Bosses" .. raidIndex]
 
@@ -926,7 +927,12 @@ local function refreshFilters()
 						
 						if(bossTable[i]) then
 							bossFrame.name = bossTable[i].name
-							SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossTable[i].creatureDisplayInfoID)
+
+							--PRESET FOR CURRENT RAIDS IN FILTERS
+
+							--SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossTable[i].creatureDisplayInfoID)
+
+							bossFrame.Icon:SetTexture(bossTable[i].icon)
 
 							local setting = retrieveSetting("activityBosses", data.filterID)
 
@@ -979,6 +985,7 @@ local function refreshFilters()
 	filterManager.ActivityBosses:MarkDirty()
 
 	saveToAdvancedFilter()
+
 end
 
 miog.filter.refreshFilters = refreshFilters

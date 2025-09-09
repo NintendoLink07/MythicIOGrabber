@@ -1,13 +1,18 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_TableCellTemplate" inherits="ResizeLayoutFrame" virtual="true">
+    <Frame name="MIOG_GearingTableCellTemplate" mixin="GearingTableCellMixin" virtual="true">
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background" setAllPoints="true" />
+                <Texture parentKey="Background" atlas="VAS-inputBox" setAllPoints="true" />
+
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" setAllPoints="true" />
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
             </Layer>
         </Layers>
 
@@ -18,7 +23,9 @@
                     GameTooltip:SetText(self.Text:GetText())
                     GameTooltip:Show()
                 end
+
             </OnEnter>
+
             <OnLeave function="GameTooltip_Hide" />
         </Scripts>
     </Frame>

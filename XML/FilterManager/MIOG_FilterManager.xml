@@ -597,7 +597,24 @@
                     </Frame>
                 </Frames>
             </Frame>
-            
+        </Frames>
+
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Spacer" atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                    <Size x="200" y="2" />
+
+                    <KeyValues>
+                        <KeyValue key="expand" value="true" type="boolean" />
+                        <KeyValue key="layoutIndex" value="18" type="number" />
+                        <KeyValue key="topPadding" value="5" type="number" />
+                        <KeyValue key="bottomPadding" value="4" type="number" />
+                    </KeyValues>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Frames>    
             <Frame parentKey="ProgressPanel" inherits="MIOG_ProgressPanel" hidden="true">
                 <KeyValues>
                     <KeyValue key="expand" value="true" type="boolean" />

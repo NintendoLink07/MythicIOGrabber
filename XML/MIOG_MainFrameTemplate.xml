@@ -283,6 +283,7 @@
                     <EventFrame parentKey="ProgressMPlusScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="ProgressRaidScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="ProgressPVPScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="TeleportsScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="RaidSheetScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="DropsScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="UpgradesScrollBar" inherits="MinimalScrollBar" hidden="true" />

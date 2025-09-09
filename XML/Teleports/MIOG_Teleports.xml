@@ -2,80 +2,20 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_Teleports" inherits="BackdropTemplate" virtual="true" toplevel="true">
         <Frames>
-            <Frame parentKey="3" inherits="MIOG_TeleportLogoTemplate">
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList" >
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="4" y="-4"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
             </Frame>
 
-            <Frame parentKey="4" inherits="MIOG_TeleportLogoTemplate">
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Size x="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.3" relativePoint="BOTTOMLEFT" y="-4"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
-            </Frame>
-
-            <Frame parentKey="5" inherits="MIOG_TeleportLogoTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.4" relativePoint="BOTTOMLEFT" y="-4"/>
-                </Anchors>
-            </Frame>
-
-            <Frame parentKey="6" inherits="MIOG_TeleportLogoTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.5" relativePoint="BOTTOMLEFT" y="-4"/>
-                </Anchors>
-            </Frame>
-
-            <Frame parentKey="7" inherits="MIOG_TeleportLogoTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.6" relativePoint="BOTTOMLEFT" y="-4"/>
-                </Anchors>
-            </Frame>
-
-            <Frame parentKey="8" inherits="MIOG_TeleportLogoTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.7" relativePoint="BOTTOMLEFT" y="-4"/>
-                </Anchors>
-            </Frame>
-
-            <Frame parentKey="9" inherits="MIOG_TeleportLogoTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.8" relativePoint="BOTTOMLEFT" y="-4"/>
-                </Anchors>
-            </Frame>
-
-            <Frame parentKey="10" inherits="MIOG_TeleportLogoTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.9" relativePoint="BOTTOMLEFT" y="-4"/>
-                </Anchors>
-            </Frame>
-
-            <Frame parentKey="Dungeons">
-
-            </Frame>
-
-            <Frame parentKey="Raids">
-
-            </Frame>
+            </EventFrame>
         </Frames>
-
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString parentKey="Remaining" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" text="0" outline="NORMAL" >
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-4" y="-4"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="Divider10" atlas="spec-columndivider" alpha="0.5">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.10" relativePoint="TOPRIGHT"/>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.10" relativePoint="BOTTOMLEFT"/>
-                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
     </Frame>
 </Ui>

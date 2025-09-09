@@ -15,12 +15,6 @@
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
                     </Anchors>
                 </Texture>
-
-				<MaskTexture parentKey="BorderMask" file="Interface/CHARACTERFRAME/TempPortraitAlphaMask" vWrapMode="CLAMPTOBLACKADDITIVE" hWrapMode="CLAMPTOBLACKADDITIVE" setAllPoints="true">
-					<MaskedTextures>
-						<MaskedTexture childKey="Border"/>
-					</MaskedTextures>
-				</MaskTexture>
             </Layer>
         </Layers>
 

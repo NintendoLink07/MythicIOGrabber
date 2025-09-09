@@ -219,7 +219,7 @@ function ProgressActivityMixin:OnLoad()
 	self.Columns = {}
 
 	local view = CreateScrollBoxListLinearView()
-	view:SetElementInitializer("BackdropTemplate", function(frame, data)
+	view:SetElementInitializer("MIOG_ProgressLineTemplate", function(frame, data)
 
 	end)
 

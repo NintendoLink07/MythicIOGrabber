@@ -879,6 +879,10 @@ miog.MAP_INFO = {
 	[2815] = {abbreviatedName = "ES9", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "excavationsite9",},
 	[2826] = {abbreviatedName = "SS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sidestreetsluice",},
 	[2831] = {abbreviatedName = "UDC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "underpinsdemolitioncompetition",},
+
+	--interface/delves/112
+	[2803] = {abbreviatedName = "AA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "archivalassault",},
+	[2951] = {abbreviatedName = "VRS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "voidrazorsanctuary",},
 	
 	[2773] = {abbreviatedName = "OF", fileName = "waterworks"},
 	[2774] = {abbreviatedName = "WORLD", fileName = "khazalgar",},
@@ -905,7 +909,6 @@ miog.MAP_INFO = {
 	[2830] = {abbreviatedName = "EDA", fileName = "ecodome"},
 	[2849] = {abbreviatedName = "DD", fileName = "dastardlydome"},
 	[2872] = {abbreviatedName = "UM", fileName = "undermine"},
-	[2951] = {abbreviatedName = "DD", fileName = "voidrazorsanctuary"},
 }
 
 miog.LFG_ID_INFO = {
@@ -1547,6 +1550,8 @@ local function loadRawData()
 	
 	--loadActivitiesData()
 	loadGroupData()
+
+	MIOG_DATABASE = miog
 end
 
 miog.loadRawData = loadRawData
@@ -2738,6 +2743,20 @@ miog.ACTIVITY_BACKGROUNDS = {
 	[111] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
 	[121] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/delves.png", --DELVES
+}
+
+miog.EXPANSIONS = {
+	[0] = {name = "Classic", background = "vanilla-bg-1", logo = GetExpansionDisplayInfo(0).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/0.png"},
+	[1] = {name = "The Burning Crusade", background = "tbc-bg-1", logo = GetExpansionDisplayInfo(1).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/1.png"},
+	[2] = {name = "Wrath of the Lich King", background = "wotlk-bg-1", logo = GetExpansionDisplayInfo(2).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/2.png"},
+	[3] = {name = "Cataclysm", background = "cata-bg-1", logo = GetExpansionDisplayInfo(3).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/3.png"},
+	[4] = {name = "Mists of Pandaria", background = "mop-bg-1", logo = GetExpansionDisplayInfo(4).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/4.png"},
+	[5] = {name = "Warlords of Draenor", background = "wod-bg-1", logo = GetExpansionDisplayInfo(5).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/5.png"},
+	[6] = {name = "Legion", background = "legion-bg-1", logo = GetExpansionDisplayInfo(6).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/6.png"},
+	[7] = {name = "Battle for Azeroth", background = "bfa-bg-1", logo = GetExpansionDisplayInfo(7).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/7.png"},
+	[8] = {name = "Shadowlands", background = "sl-bg-1", logo = GetExpansionDisplayInfo(8).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/8.png"},
+	[9] = {name = "Dragonflight", background = "df-bg-1", logo = GetExpansionDisplayInfo(9).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/9.png"},
+	[10] = {name = "The War Within", background = "tww-bg-1", logo = GetExpansionDisplayInfo(10).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/10.png"},
 }
 
 miog.EXPANSION_INFO = {

@@ -2,7 +2,30 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_GearingTable" inherits="BackdropTemplate" virtual="true">
         <Frames>
-            <Frame parentKey="GearingTable" inherits="StaticGridLayoutFrame" mixin="TableMixin" setAllPoints="true" />
+            <Frame parentKey="HeaderContainer">
+                <Size y="20"/>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList" >
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.HeaderContainer" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Size x="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+            </EventFrame>
 
             <Frame parentKey="Legend" frameStrata="HIGH">
                 <Size x="180" y="25" />
@@ -47,15 +70,19 @@
                                 <Anchor point="LEFT" relativeKey="$parent.Track5" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
-
-                        <Texture parentKey="Track7" inherits="MIOG_GearingTableLegendTextureTemplate">
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Track6" relativePoint="RIGHT" x="5"/>
-                            </Anchors>
-                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>
         </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="TestFontString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" hidden="true">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

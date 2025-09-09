@@ -36,7 +36,6 @@ local function mainEvents(_, event, ...)
 		--LFGListFrame.ApplicationViewer.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnScroll, function() GameTooltip:Hide() end)
 
 	elseif(event == "PLAYER_ENTERING_WORLD") then
-		miog.addTeleportButtons()
 		miog.refreshLastGroupTeleport()
 		--miog.recheckJournalInstanceIDs()
 		miog.checkAllSeasonalMapIDs()

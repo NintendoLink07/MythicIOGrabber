@@ -48,6 +48,26 @@
                                 <OnLeave function="GameTooltip_Hide" />
                             </Scripts>
                         </FontString>
+
+                        <FontString parentKey="LeaverText" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.Results" relativePoint="LEFT" x="-6" />
+                            </Anchors>
+
+                            <Scripts>
+                                <OnShow>
+                                    if(C_InstanceLeaver.IsPlayerLeaver()) then
+                                        self:Show()
+                                        self:SetText("|A:groupfinder-icon-leaver:12:12|a Leaver")
+
+                                    else
+                                        self:Hide()
+
+                                    end
+
+                                </OnShow>
+                            </Scripts>
+                        </FontString>
                     </Layer>
                 </Layers>
             </Frame>

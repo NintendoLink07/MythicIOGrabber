@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.6.1] - 2025-09-09
+
+### Changed
+
+- [Gearing] The gearing table is now scales with the window size.
+
+- [Gearing] Disabled headers now gather in order on the right side of the table.
+
+- [Teleports] The teleports tab has been recoded.
+
+### Fixed
+
+- The progress bars now correctly indicate when you have unlocked all of your great vault for the week.
+
+- [SearchPanel] More infrequent refreshing of the raid category, fixes larger lags depending on # of group members in listings.
+
+- [FilterManager] Activity filters are now hidden in the "Raids - Legacy" category.
+
+- Various bugfixes.
+
+
+
+
+
 ## [3.6.0] - 2025-08-31
 
 ### Changed
@@ -4297,7 +4321,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.0..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.1..HEAD
+[3.6.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.1
 [3.6.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.0
 [3.5.11a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11a
 [3.5.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.5.11
