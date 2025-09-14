@@ -118,18 +118,21 @@ local function pvpOnEnter(selfFrame, tierTable)
 		end
 	end
 
-    local nextTierName = nextTierInfo and nextTierInfo.pvpTierEnum and PVPUtil.GetTierName(nextTierInfo.pvpTierEnum);
-	if nextTierName then
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
-		GameTooltip:AddLine(TOOLTIP_PVP_NEXT_RANK:format(nextTierName));
-		local tierDescription = PVPUtil.GetTierDescription(nextTierInfo.pvpTierEnum);
-		if tierDescription then
-			GameTooltip_AddNormalLine(GameTooltip, tierDescription);
-		end
-		local activityItemLevel, weeklyItemLevel = C_PvP.GetRewardItemLevelsByTierEnum(nextTierInfo.pvpTierEnum);
-		if activityItemLevel > 0 then
-			GameTooltip_AddBlankLineToTooltip(GameTooltip);
-			GameTooltip_AddColoredLine(GameTooltip, PVP_GEAR_REWARD_BY_NEXT_RANK:format(weeklyItemLevel), NORMAL_FONT_COLOR);
+	if(nextTierInfo) then
+		local nextTierName = nextTierInfo.pvpTierEnum and PVPUtil.GetTierName(nextTierInfo.pvpTierEnum);
+
+		if(nextTierName) then
+			GameTooltip_AddBlankLineToTooltip(GameTooltip)
+			GameTooltip:AddLine(TOOLTIP_PVP_NEXT_RANK:format(nextTierName));
+			local tierDescription = PVPUtil.GetTierDescription(nextTierInfo.pvpTierEnum);
+			if tierDescription then
+				GameTooltip_AddNormalLine(GameTooltip, tierDescription);
+			end
+			local activityItemLevel, weeklyItemLevel = C_PvP.GetRewardItemLevelsByTierEnum(nextTierInfo.pvpTierEnum);
+			if activityItemLevel > 0 then
+				GameTooltip_AddBlankLineToTooltip(GameTooltip);
+				GameTooltip_AddColoredLine(GameTooltip, PVP_GEAR_REWARD_BY_NEXT_RANK:format(weeklyItemLevel), NORMAL_FONT_COLOR);
+			end
 		end
 	end
 

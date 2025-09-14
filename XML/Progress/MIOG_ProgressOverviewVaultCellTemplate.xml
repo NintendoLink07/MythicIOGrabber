@@ -1,0 +1,19 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressOverviewVaultCellTemplate" inherits="MIOG_ProgressOverviewColorCellTemplate" mixin="RewardTypeMixin" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="Checkmark" atlas="activities-icon-checkmark" hidden="true">
+                    <Size x="10" y="10" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter method="OnEnter" />
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

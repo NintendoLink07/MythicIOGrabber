@@ -179,7 +179,7 @@ local function updateGroupApplications(dataProvider)
 	--showFilterPopup = false
 
 	local applications = C_LFGList.GetApplications()
-	if(#applications > 0) then
+	if(applications and #applications > 0) then
 		for _, v in ipairs(applications) do
 			local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(v)
 

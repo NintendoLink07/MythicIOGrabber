@@ -1,11 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ProgressOverviewFullTemplate" mixin="ProgressOverviewFullMixin" virtual="true">  
-        <Size x="64" />      
+    <Frame name="MIOG_ProgressOverviewFullTemplate" mixin="ProgressOverviewFullMixin" virtual="true">        
         <Layers>
 			<Layer level="BORDER">
 				<Texture parentKey="GuildBannerBackground" atlas="guildfinder-card-guildbanner-background">
-					<Size y="192"/>
+					<Size y="160"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" x="-8" y="12"/>
 						<Anchor point="TOPRIGHT" x="8" y="12"/>
@@ -15,18 +14,16 @@
             
 			<Layer level="BORDER" textureSubLevel="-2">
 				<Texture parentKey="GuildBannerShadow" atlas="guildfinder-card-guildbanner-shadow">
-					<Size y="192"/>
 					<Anchors>
-						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="TOPLEFT" relativeKey="$parent.GuildBannerBackground"/>
 						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
 					</Anchors>
 				</Texture>
 			</Layer>
 			<Layer level="BORDER" textureSubLevel="2">
 				<Texture parentKey="GuildBannerBorder" atlas="guildfinder-card-guildbanner-border">
-					<Size y="192"/>
 					<Anchors>
-						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="TOPLEFT" relativeKey="$parent.GuildBannerBackground"/>
 						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
 					</Anchors>
 				</Texture>
@@ -35,39 +32,17 @@
 			<Layer level="BORDER" textureSubLevel="3">
 				<Texture parentKey="GuildBannerBorderGlow" atlas="guildfinder-card-guildbanner-border" hidden="true">
                     <Color r="0.85" g="0.62" b="0.09" a="1" />
-					<Size y="192"/>
 					<Anchors>
-						<Anchor point="BOTTOMLEFT" relativeKey="$parent.GuildBannerBackground"/>
+						<Anchor point="TOPLEFT" relativeKey="$parent.GuildBannerBackground"/>
 						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GuildBannerBackground"/>
 					</Anchors>
 				</Texture>
 			</Layer>
-            
-            <Layer level="ARTWORK">
-                <Texture parentKey="VaultStatus">
-                    <Size x="48" y="44" />
-                    <Anchors>
-                        <Anchor point="CENTER" relativeKey="$parent.GuildBannerBackground" relativePoint="BOTTOM" y="24"/>
-                    </Anchors>
-
-                    <Scripts>
-                        <OnEnter>
-                            if(self.tooltipText) then
-                                GameTooltip:SetOwner(self)
-                                GameTooltip:SetText(self.tooltipText)
-                                GameTooltip:Show()
-
-                            end
-                        </OnEnter>
-                        <OnLeave function="GameTooltip_Hide" />
-                    </Scripts>
-                </Texture>
-            </Layer>
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-8"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-4"/>
                         <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2" />
                     </Anchors>
                 </FontString>
@@ -84,46 +59,110 @@
             </Frame>
 
             <Frame parentKey="Spec" inherits="MIOG_ProgressCharacterIconTemplate">
-                <Size x="32" y="32" />
+                <Size x="24" y="24" />
 
                 <Anchors>
                     <Anchor point="TOP" relativeKey="$parent.Class" relativePoint="BOTTOM" y="-4"/>
                 </Anchors>
             </Frame>
+
+            <Frame parentKey="Identifiers" inherits="VerticalLayoutFrame">
+                <KeyValues>
+                    <Keyvalue key="fixedWidth" value="64" type="number" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOP" relativeKey="$parent.GuildBannerBorder" relativePoint="BOTTOM" x="-1" y="6"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="ItemLevel" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="1" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                        </KeyValues>
+                    </Frame>
+                    
+                    <Frame parentKey="MythicPlusScore" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="10" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="ResilientLevel" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="11" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Normal" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="20" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                        </KeyValues>
+                    </Frame>
+                    
+                    <Frame parentKey="Heroic" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="21" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Mythic" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="22" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="GreatVault" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="30" type="number" />
+                            <Keyvalue key="visual" value="dark" type="string" />
+                        </KeyValues>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Icon">
+                                    <Size x="20" y="20" />
+
+                                    <Anchors>
+                                        <Anchor point="CENTER"/>
+                                    </Anchors>
+
+                                    <Scripts>
+                                        <OnLeave function="GameTooltip_Hide" />
+                                    </Scripts>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    
+                    <Frame parentKey="GreatVaultRaids" inherits="MIOG_ProgressOverviewVaultCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="31" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                        </KeyValues>
+                    </Frame>
+                    
+                    <Frame parentKey="GreatVaultDungeons" inherits="MIOG_ProgressOverviewVaultCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="32" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                        </KeyValues>
+                    </Frame>
+                    
+                    <Frame parentKey="GreatVaultWorld" inherits="MIOG_ProgressOverviewVaultCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="33" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
         </Frames>
-
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.GuildBannerBorder" relativePoint="BOTTOM" x="-1" y="6"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="MythicPlusScore" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.ItemLevel" relativePoint="BOTTOM" y="-2"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Normal" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.MythicPlusScore" relativePoint="BOTTOM" y="-2"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Heroic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.Normal" relativePoint="BOTTOM" y="-2"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Mythic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.Heroic" relativePoint="BOTTOM" y="-2"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
     </Frame>
 </Ui>

@@ -263,11 +263,98 @@
                 </Frames>    
             </Frame>
 
+            <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="spacing" value="11" type="number"/>
+			        <KeyValue key="align" value="bottom" type="string"/>
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="-5">
+                        <Texture parentKey="Background" setAllPoints="true"/>
+                    </Layer>
+                </Layers>
+                
+                <Frames>
+                    <Frame parentKey="Border" inherits="ContainerFrameCurrencyBorderTemplate">
+                        <KeyValues>
+                            <KeyValue key="leftEdge" value="common-coinbox-left" type="string"/>
+                            <KeyValue key="rightEdge" value="common-coinbox-right" type="string"/>
+                            <KeyValue key="centerEdge" value="_common-coinbox-center" type="string"/>
+                        </KeyValues>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="1"/>
+                            <Anchor point="BOTTOMRIGHT" x="1"/>
+                        </Anchors>
+                    </Frame>
+                    
+                    <Frame parentKey="1" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="2" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="3" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="4" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="5" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="6" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="6" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="7" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="6" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="8" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="6" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+
+                <Scripts>
+                    <OnShow>
+                        self:MarkDirty()
+                    </OnShow>
+                </Scripts>
+            </Frame>
+
             <Frame parentKey="ScrollBarArea">
                 <Size x="24" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.CloseButtonArea" relativePoint="BOTTOMRIGHT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT"/>
                 </Anchors>
 
                 <Layers>
@@ -291,7 +378,7 @@
                     <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH" registerForDrag="LeftButton">
                         <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="2"/>
                         </Anchors>
 
                         <Scripts>
@@ -312,97 +399,19 @@
             <Frame parentKey="TabFramesPanel">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBarArea" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBarArea" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
 
                 <Frames>
                     <Frame parentKey="MainTab" setAllPoints="true">
                         <Frames>
-                            <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
-                                <KeyValues>
-                                    <KeyValue key="spacing" value="12" type="number"/>
-                                </KeyValues>
-
-                                <Anchors>
-                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="2" y="3"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
-                                </Anchors>
-                                
-                                <Frames>
-                                    <Frame parentKey="Border" inherits="ContainerFrameCurrencyBorderTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="leftEdge" value="common-coinbox-left" type="string"/>
-                                            <KeyValue key="rightEdge" value="common-coinbox-right" type="string"/>
-                                            <KeyValue key="centerEdge" value="_common-coinbox-center" type="string"/>
-                                        </KeyValues>
-                                        <Anchors>
-                                            <Anchor point="TOPLEFT" />
-                                            <Anchor point="BOTTOMRIGHT" />
-                                        </Anchors>
-                                    </Frame>
-                                    
-                                    <Frame parentKey="1" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="1" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-
-                                    <Frame parentKey="2" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="2" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-
-                                    <Frame parentKey="3" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="3" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-
-                                    <Frame parentKey="4" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="4" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-
-                                    <Frame parentKey="5" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="5" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-
-                                    <Frame parentKey="6" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="6" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-
-                                    <Frame parentKey="7" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="6" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-
-                                    <Frame parentKey="8" inherits="MIOG_CurrencySingleTemplate">
-                                        <KeyValues>
-                                            <KeyValue key="layoutIndex" value="6" type="number" />
-                                        </KeyValues>
-                                    </Frame>
-                                </Frames>
-
-                                <Scripts>
-                                    <OnShow>
-                                        self:MarkDirty()
-                                    </OnShow>
-                                </Scripts>
-                            </Frame>
 
                             <Frame parentKey="QueueInformation">
                                 <Size x="190" />
                                 
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Currency" relativePoint="TOPLEFT" y="5"/>
+                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" y="3"/>
                                 </Anchors>
 
                                 <Frames>
@@ -537,11 +546,11 @@
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT" x="-4" y="5"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
                                 </Anchors>
 
                                 <Frames>
-                                    <Frame parentKey="RenownBar1" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                    <Frame parentKey="AbandonFrame" inherits="MIOG_AbandonFrame">
                                         <Anchors>
                                             <Anchor point="TOPRIGHT"/>
                                         </Anchors>
@@ -640,6 +649,12 @@
                                         </Layers>
                                     </StatusBar>
 
+                                    <Frame parentKey="RenownBar1" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                        <Anchors>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.KeystoneStatusBar" relativePoint="TOPRIGHT" y="12"/>
+                                        </Anchors>
+                                    </Frame>
+
                                     <Frame parentKey="HolidayScrollBox" inherits="WowScrollBoxList">
                                         <Size x="256" />
                                         <Anchors>
@@ -653,12 +668,10 @@
                     </Frame>
                     
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupManager" hidden="true" setAllPoints="true" />
-                    <!--<Frame parentKey="Progress" inherits="MIOG_ProgressTab" hidden="true" setAllPoints="true" />!-->
                     <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabTemplate" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
-                    <!--<Frame parentKey="Lockouts" inherits="MIOG_LockoutCheck" hidden="true" setAllPoints="true" />!-->
                     <Frame parentKey="Drops" inherits="MIOG_Drops" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
 

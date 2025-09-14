@@ -135,20 +135,6 @@ local function anchorNewScrollBar(tab, name)
 	end
 end
 
-local function toggleGroupManagerRaidFrame()
-	HideUIPanel(FriendsFrame)
-
-	if(miog.pveFrame2:IsVisible()) then
-		HideUIPanel(miog.pveFrame2)
-
-	else
-		ShowUIPanel(miog.pveFrame2)
-		PanelTemplates_SetTab(miog.pveFrame2, 2)
-		miog.GroupManager.StatusBar.DetailsButton:Click()
-		
-	end
-end
-
 local function createPVEFrameReplacement()
 	local frameName = "MythicIOGrabber_PVEFrameReplacement"
 	local pveFrame2 = CreateFrame("Frame", frameName, UIParent, "MIOG_MainFrameTemplate")
@@ -194,6 +180,10 @@ local function createPVEFrameReplacement()
 	pveFrame2:HookScript("OnShow", function(selfPVEFrame)
 		C_MythicPlus.RequestMapInfo()
 		C_MythicPlus.RequestCurrentAffixes()
+
+		local inRun = C_PartyInfo.ChallengeModeRestrictionsActive() or true
+		local abandonFrame = selfPVEFrame.TabFramesPanel.MainTab.Information.AbandonFrame
+		--abandonFrame:SetShown(inRun)
 
 		if(not setup) then
 			miog.updateCurrencies()
@@ -466,18 +456,6 @@ local function createPVEFrameReplacement()
 		GameTooltip:Show()
 	end)
 
-	--[[hooksecurefunc("ToggleFriendsFrame", function(id)
-		if(id == 3) then
-			toggleGroupManagerRaidFrame()
-
-		end
-	end)
-
-	hooksecurefunc("ToggleRaidFrame", function()
-		toggleGroupManagerRaidFrame()
-
-	end)]]
-
 	hooksecurefunc("PVEFrame_ToggleFrame", function()
 		HideUIPanel(PVEFrame)
 
@@ -489,18 +467,6 @@ local function createPVEFrameReplacement()
 			
 		end
 	end)
-
-	--[[miog.Progress = pveFrame2.TabFramesPanel.Progress
-	miog.Progress.NewSystem:OnLoad("all", MIOG_NewSettings)
-
-    miog.MPlusStatistics = miog.Progress.MPlusStatistics
-	miog.MPlusStatistics:OnLoad("mplus", MIOG_NewSettings)
-
-	miog.RaidStatistics = miog.Progress.RaidStatistics
-	miog.RaidStatistics:OnLoad("raid", MIOG_NewSettings)
-
-	miog.PVPStatistics = miog.Progress.PVPStatistics
-	miog.PVPStatistics:OnLoad("pvp", MIOG_NewSettings)]]
 
 	local queueRolePanel = miog.MainTab.QueueInformation.RolePanel
 	local leaderChecked, tankChecked, healerChecked, damagerChecked = LFDQueueFrame_GetRoles()
@@ -539,7 +505,10 @@ local function createPVEFrameReplacement()
 			rootDescription:SetTag("MIOG_FINDGROUP")
 		end)
 
-		currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
+		if(currentMenu) then
+			currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
+
+		end
 	end)
 
 	miog.MainTab.QueueInformation.FakeDropdown:SetupMenu(miog.setupQueueDropdown)
@@ -554,27 +523,17 @@ local function createPVEFrameReplacement()
 			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
 
 			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-				createCategoryButtons(categoryID, "search", rootDescription, canUse)
+				createCategoryButtons(categoryID, "search", rootDescription)
 
 			end
 			rootDescription:SetTag("MIOG_FINDGROUP")
 		end)
 
-		currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
-	end)
+		if(currentMenu) then
+			currentMenu:SetPoint("TOPLEFT", selfButton, "BOTTOMLEFT")
 
-	local function setCustomActivePanel(name)
-		miog.setActivePanel(nil, name)
-
-		PanelTemplates_SetTab(miog.pveFrame2, 1)
-
-		if(miog.pveFrame2.selectedTabFrame) then
-			miog.pveFrame2.selectedTabFrame:Hide()
 		end
-
-		miog.pveFrame2.TabFramesPanel.MainTab:Show()
-		miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
-	end
+	end)
 
 	pveFrame2.TabFramesPanel.NewProgress:SetupInitialCharacterData(MIOG_NewSettings.progressData)
 	pveFrame2.TabFramesPanel.NewProgress.Overview:ConnectSetting(MIOG_NewSettings.progressData)

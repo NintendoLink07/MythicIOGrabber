@@ -2,6 +2,7 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_CurrencySingleTemplate" inherits="ResizeLayoutFrame" virtual="true">
         <KeyValues>
+            <KeyValue key="fixedHeight" value="16" type="number" />
             <KeyValue key="leftPadding" value="4" type="number" />
         </KeyValues>
 

@@ -1,37 +1,12 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ProgressOverviewCellTemplate" virtual="true">
-        <Size x="64" y="64"/>
-
+    <Frame name="MIOG_ProgressOverviewCellTemplate" mixin="ProgressOverviewCellMixin" virtual="true">
+        <Size x="35" y="35" />
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.GuildBannerBorder" relativePoint="BOTTOM" x="-1" y="6"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="MythicPlusScore" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.ItemLevel" relativePoint="BOTTOM" y="-2"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Normal" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.MythicPlusScore" relativePoint="BOTTOM" y="-2"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Heroic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.Normal" relativePoint="BOTTOM" y="-2"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Mythic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
-                    <Anchors>
-                        <Anchor point="TOP" relativeKey="$parent.Heroic" relativePoint="BOTTOM" y="-2"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>

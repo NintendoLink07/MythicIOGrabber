@@ -357,26 +357,29 @@ local function setupFramePools()
 
     if(IsInGuild() and guildMembers > 0) then
         local guildClubId = C_Club.GetGuildClubId()
-        local clubMembers = C_Club.GetClubMembers(guildClubId)
-
-        local orderedGuildList = {}
         
-        for k, v in ipairs(clubMembers) do
-            orderedGuildList[k] = C_Club.GetMemberInfo(guildClubId, v)
-        end
+        if(guildClubId) then
+            local clubMembers = C_Club.GetClubMembers(guildClubId)
 
-        table.sort(orderedGuildList, orderClubMembers)
+            local orderedGuildList = {}
+            
+            for k, v in ipairs(clubMembers) do
+                orderedGuildList[k] = C_Club.GetMemberInfo(guildClubId, v)
+            end
 
-        for k, v in ipairs(orderedGuildList) do
-            local elementFrame = createElementFrame(v.classID)
-            elementFrame:SetMemberInfo(v)
-            elementFrame.saveID = v.name
-            elementFrame.originalIndex = k
-            elementFrame.layoutIndex = k
+            table.sort(orderedGuildList, orderClubMembers)
 
-            elementFrame.align = "left"
+            for k, v in ipairs(orderedGuildList) do
+                local elementFrame = createElementFrame(v.classID)
+                elementFrame:SetMemberInfo(v)
+                elementFrame.saveID = v.name
+                elementFrame.originalIndex = k
+                elementFrame.layoutIndex = k
 
-            elementFrame.Name:SetText(miog.createSplitName(v.name))
+                elementFrame.align = "left"
+
+                elementFrame.Name:SetText(miog.createSplitName(v.name))
+            end
         end
     else
         for classIndex, classInfo in ipairs(miog.CLASSES) do
@@ -485,7 +488,7 @@ miog.loadRaidPlanner = function()
     miog.RaidSheet.Damager.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
     miog.RaidSheet.Occupied.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/guildmate.png")
     
-    miog.RaidSheet.SearchBox:SetScript("OnTextChanged", function(self)
+    miog.RaidSheet.SearchBox:SetScript("OnTextChanged", function(self, key)
         SearchBoxTemplate_OnTextChanged(self)
 
         if(key == "ESCAPE" or key == "ENTER") then

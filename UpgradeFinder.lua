@@ -531,7 +531,7 @@ local function findMainHandItemLevel()
     end
 end
 
-local function addSinglePVEItemID(itemID)
+--[[local function addSinglePVEItemID(itemID)
     local ejInfo = C_EncounterJournal.GetLootInfo(itemID)
     local info = itemIDsToLoad[itemID]
  
@@ -582,7 +582,7 @@ local function addSinglePVEItemID(itemID)
             })
         end
     end
-end
+end]]
 
 local function checkSinglePVEItem(itemID)
     local frame = miog.UpgradeFinder.ScrollBox:FindFrameByPredicate(function(localFrame, data)
@@ -611,7 +611,7 @@ local function findApplicablePVEItems(dataProvider, instanceList, item, filterID
     end
 
     for _, v in ipairs(instanceList) do
-        EncounterJournal.instanceID = instanceID;
+        EncounterJournal.instanceID = v.journalInstanceID;
         EncounterJournal.encounterID = nil;
 
         EJ_SelectInstance(v.journalInstanceID)
@@ -826,7 +826,7 @@ miog.updateItemList = function(filterID, item)
         --local item = Item:CreateFromEquipmentSlot(newInvSlotID)
         --local newIlvl = item:GetCurrentItemLevel()
 
-        size = findItems(newFilterID, item, invSlotID)
+        size = findItems(newFilterID, item)
         
     end
 
@@ -837,17 +837,17 @@ miog.updateItemList = function(filterID, item)
 end
 
 local function ufEvents(_, event, itemID)
-    if(itemID) then
+    --[[if(itemID) then
         if(checkSinglePVEItem(itemID)) then
             addSinglePVEItemID(itemID)
 
         end
-    else
+    else]]
         if(lastFilter and lastItem) then
             miog.updateItemList(lastFilter, lastItem)
 
         end
-    end
+    --end
 end
 
 miog.loadUpgradeFinder = function()

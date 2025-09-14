@@ -224,8 +224,23 @@ local function createResultTooltip(resultID, resultFrame)
 			end
 		end
 
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(C_LFGList.GetActivityFullName(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode))
+		local nameTable
+
+		if(searchResultInfo.leaderName) then
+			nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+
+			if(nameTable and not nameTable[2]) then
+				nameTable[2] = GetNormalizedRealmName()
+
+			end
+
+			if(nameTable[2]) then
+				local countryFlag, language = miog.getRealmData(nameTable[2], miog.F.CURRENT_REGION)
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
+			end
+		end
+		--GameTooltip:AddLine(C_LFGList.GetActivityFullName(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode))
 
 		local success, reasonID = miog.filter.checkIfSearchResultIsEligible(resultID)
 		local reason = miog.INELIGIBILITY_REASONS[reasonID]
@@ -287,67 +302,6 @@ function NearestValue(number)
 
 
     return index, closest
-end
-
-local equalizeTable = {}
-
-function median( t )
-  local temp={}
-
-  -- deep copy table so that when we sort it, the original is unchanged
-  -- also weed out any non numbers
-  for k,v in pairs(t) do
-    if type(v) == 'number' then
-      table.insert( temp, v )
-    end
-  end
-
-  table.sort( temp )
-
-  -- If we have an even number of table elements or odd.
-  if math.fmod(#temp,2) == 0 then
-    -- return mean value of middle two elements
-    return ( temp[#temp/2] + temp[(#temp/2)+1] ) / 2
-  else
-    -- return middle element
-    return temp[math.ceil(#temp/2)]
-  end
-end
-
-function mean( t )
-  local sum = 0
-  local count= 0
-
-  for k,v in pairs(t) do
-    if type(v) == 'number' then
-      sum = sum + v
-      count = count + 1
-    end
-  end
-
-  return (sum / count)
-end
-
-function standardDeviation( t )
-  local m
-  local vm
-  local sum = 0
-  local count = 0
-  local result
-
-  m = mean( t )
-
-  for k,v in pairs(t) do
-    if type(v) == 'number' then
-      vm = v - m
-      sum = sum + (vm * vm)
-      count = count + 1
-    end
-  end
-
-  result = math.sqrt(sum / (count-1))
-
-  return result
 end
 
 local function getSortCriteriaForSearchResult(resultID)
@@ -1002,6 +956,7 @@ local function showStatusOverlay(status)
 end
 
 local function fullyUpdateSearchPanel()
+	miog.SearchPanel.ScrollBox2:Flush()
 	miog.SearchPanel.Status:Hide()
 
 	local treeDataProvider, numOfFiltered, actualResults  = createDataProviderWithUnsortedData()
@@ -1062,8 +1017,6 @@ local currentTimer
 local function searchPanelEvents(_, event, ...)
 	if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
 		if(not updateScheduled) then
-			miog.SearchPanel.ScrollBox2:RemoveDataProvider()
-
 			miog.SearchPanel.totalResults = LFGListFrame.SearchPanel.totalResults
 			miog.SearchPanel.results = LFGListFrame.SearchPanel.results
 
@@ -1350,7 +1303,7 @@ miog.createSearchPanel = function()
 	end)
 	ScrollUtil.InitScrollBoxListWithScrollBar(appDialogParentFrame.Textbox.ScrollBox, appDialogParentFrame.Textbox.ScrollBar, textboxView);
 
-	repopulateAppDialogBox(true)
+	repopulateAppDialogBox()
 
 	appDialogParentFrame.AddInputBoxButton:SetParent(appDialogParentFrame.Textbox)
 	appDialogParentFrame.AddInputBoxButton:SetScript("OnClick", function(self, button)

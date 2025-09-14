@@ -308,11 +308,11 @@ local function updateApplicantMemberFrame(frame, data)
 
 	local applicantMemberFrame = frame
 
-	applicantMemberFrame.applicantID = applicantID
 	applicantMemberFrame.data = data
 	applicantMemberFrame.memberIdx = applicantIndex
 	applicantMemberFrame:SetScript("OnEnter", function(self)
-		memberFrame_OnEnter(self, miog.F.IS_IN_DEBUG_MODE)
+		self:GetParent().applicantID = applicantID
+		LFGListApplicantMember_OnEnter(self)
 	end)
 
 	local applicantMemberStatusFrame = applicantMemberFrame.StatusFrame

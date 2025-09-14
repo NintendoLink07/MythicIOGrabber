@@ -1,44 +1,61 @@
 local addonName, miog = ...
 
-ProgressOverviewFullMixin = CreateFromMixins(TableBuilderCellMixin)
+ProgressOverviewCellMixin = CreateFromMixins(TableBuilderCellMixin)
 
-function ProgressOverviewFullMixin:Populate(data, index, ...)
-    local classID = miog.CLASSFILE_TO_ID[data.fileName]
-    local color = C_ClassColor.GetClassColor(data.fileName)
+function ProgressOverviewCellMixin:Populate(dataTable, index)
+    local data = dataTable[index]
 
-    self.Class.Icon:SetTexture(miog.CLASSES[classID].icon)
-    self.Spec.Icon:SetTexture(data.specID and miog.SPECIALIZATIONS[data.specID].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
-    self.Name:SetText(data.name)
+    self.Text:SetText("YE")
 
-    self.GuildBannerBackground:SetVertexColor(color:GetRGB())
-    self.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
-    self.GuildBannerBorderGlow:SetShown(data.guid == UnitGUID("player"))
+    if(data) then
+        if(index == 2) then
+            --self.Text:SetText(data or 0)
 
-    self.ItemLevel:SetText(data.itemLevel or 0)
+        elseif(index == 3) then
 
-    if(data.mythicPlus) then
-        self.MythicPlusScore:SetText(data.mythicPlus.score)
-        self.MythicPlusScore:SetTextColor(miog.createCustomColorForRating(data.mythicPlus.score):GetRGBA())
-        
-    end
+            --self.Text:SetText(data.score)
+            --self.Text:SetTextColor(miog.createCustomColorForRating(data.score):GetRGBA())
+                
+        elseif(index == 4) then
+            --[[
+            local mapID = data.currentRaidMapID
 
-    if(data.raids) then
-        local mapID = data.currentRaidMapID
+            local mapInfo = miog.getMapInfo(mapID, true)
+            local numBosses = #mapInfo.bosses
 
-        local mapInfo = miog.getMapInfo(mapID, true)
-        local numBosses = #mapInfo.bosses
+            for i = 1, 3, 1 do
+                local raidProgressFrame = i == 1 and self.Normal or i == 2 and self.Heroic or i == 3 and self.Mythic
+                raidProgressFrame:SetText((data.raids.instances[mapID] and data.raids.instances[mapID][i] and data.raids.instances[mapID][i].kills or 0) .. "/" .. numBosses)
+                raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
 
-        for i = 1, 3, 1 do
-            local raidProgressFrame = i == 1 and self.Normal or i == 2 and self.Heroic or i == 3 and self.Mythic
-            raidProgressFrame:SetText((data.raids.instances[mapID] and data.raids.instances[mapID][i] and data.raids.instances[mapID][i].kills or 0) .. "/" .. numBosses)
-            raidProgressFrame:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
+            end]]
+        else
 
         end
     end
 end
 
+ProgressOverviewFullMixin = CreateFromMixins(TableBuilderCellMixin)
 
+function ProgressOverviewFullMixin:Init(id)
+    self.id = id
+end
 
+function ProgressOverviewFullMixin:Populate(data, index)
+    if(self.id == index) then
+        local classID = miog.CLASSFILE_TO_ID[data.fileName]
+        local color = C_ClassColor.GetClassColor(data.fileName)
+
+        self.Class.Icon:SetTexture(miog.CLASSES[classID].icon)
+        self.Spec.Icon:SetTexture(data.specID and miog.SPECIALIZATIONS[data.specID].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
+        self.Name:SetText(data.name)
+
+        self.GuildBannerBackground:SetVertexColor(color:GetRGB())
+        self.GuildBannerBorder:SetVertexColor(color.r * 0.65, color.g * 0.65, color.b * 0.65)
+        self.GuildBannerBorderGlow:SetShown(data.guid == UnitGUID("player"))
+    end
+
+end
 
 
 ProgressMythicPlusCellMixin = CreateFromMixins(TableBuilderCellMixin)
@@ -148,12 +165,12 @@ function ProgressMythicPlusCharacterCellMixin:Populate(data)
     self.Name:SetTextColor(C_ClassColor.GetClassColor(data.fileName):GetRGBA())
     
     if(data.guid == UnitGUID("player")) then
-        self.Score:SetFont(self.file, self.height + 3, self.flags)
         self.Name:SetFont(self.file, self.height + 3, self.flags)
+        self.Score:SetFont(self.file, self.height + 1, self.flags)
 
     else
-        self.Score:SetFont(self.file, self.height, self.flags)
         self.Name:SetFont(self.file, self.height, self.flags)
+        self.Score:SetFont(self.file, self.height, self.flags)
 
     end
 
@@ -196,22 +213,53 @@ function ProgressRaidCellMixin:Populate(data)
     self.data = data
 
     if(id) then
-        local numOfBosses = #miog.MAP_INFO[id].bosses
+        local mapInfo = miog.MAP_INFO[id]
+        local numOfBosses = miog.MAP_INFO[id].numOfBosses
         local raidData = data.raids.instances[id]
 
         if(raidData) then
             for a = 1, 3, 1 do
                 local current = a == 1 and self.Normal or a == 2 and self.Heroic or a == 3 and self.Mythic
+                local hasRaidData = raidData[a] ~= nil
 
-                local text = (raidData[a] and raidData[a].kills or 0) .. "/" .. numOfBosses
-                current:SetText(WrapTextInColorCode(text, raidData[a] and miog.DIFFICULTY[a].color or miog.CLRSCC.gray))
+                if(hasRaidData) then
+                    local text = (raidData[a].kills) .. "/" .. numOfBosses
+                    current:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].color))
+
+                else
+                    local text = "0/" .. numOfBosses
+                    current:SetText(WrapTextInColorCode(text, miog.CLRSCC.gray))
+                    
+
+                end
 
                 current:SetScript("OnEnter", function(selfFrame)
-                    --raidOnEnter(selfFrame, data.guid, id, a, "regular")
-                end)
+                    if(hasRaidData) then
+                        GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
+                        GameTooltip_AddHighlightLine(GameTooltip, mapInfo.name)
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
-                current:SetScript("OnLeave", function()
-                    GameTooltip:Hide()
+                        for k, v in ipairs(raidData[a].bosses) do
+                            local name = GetAchievementCriteriaInfoByID(v.id, v.criteriaID, true)
+
+                            if(not name) then
+                                name = mapInfo.bosses[k].name
+
+                            end
+
+                            GameTooltip:AddDoubleLine(v.quantity or 0, name)
+
+                        end
+                        
+                        if(not raidData[a].validatedIngame) then
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
+                            GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
+
+                        end
+
+                        GameTooltip:Show()
+                    end
                 end)
             end
 

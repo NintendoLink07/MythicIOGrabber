@@ -2,8 +2,11 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ProgressTabTemplate" mixin="ProgressMixin" virtual="true">
         <Frames>
-            <Frame parentKey="Menu">
-                <Size x="76" y="120"/>
+            <Frame parentKey="Menu" inherits="VerticalLayoutFrame">
+                <KeyValues>
+                    <Keyvalue key="fixedWidth" value="84" type="number" />
+                    <Keyvalue key="fixedHeight" value="103" type="number" />
+                </KeyValues>
 
                 <Anchors>
                     <Anchor point="TOPLEFT"/>
@@ -11,140 +14,179 @@
 
                 <Frames>
                     <Button parentKey="OverviewButton" name="Overview" inherits="MIOG_ProgressSelectionButtonTemplate" text="Overview">
-                        <Anchors>
-                            <Anchor point="TOPLEFT"/>
-                            <Anchor point="TOPRIGHT"/>
-                        </Anchors>
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
                     </Button>
 
                     <Button parentKey="MythicPlusButton" name="MythicPlus" inherits="MIOG_ProgressSelectionButtonTemplate" text="Mythic+">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.OverviewButton" relativePoint="BOTTOMLEFT" y="-3"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.OverviewButton" relativePoint="BOTTOMRIGHT" y="-3"/>
-                        </Anchors>
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
                     </Button> 
 
                     <Button parentKey="RaidButton" name="Raid" inherits="MIOG_ProgressSelectionButtonTemplate" text="Raid">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.MythicPlusButton" relativePoint="BOTTOMLEFT" y="-3"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.MythicPlusButton" relativePoint="BOTTOMRIGHT" y="-3"/>
-                        </Anchors>
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
                     </Button>
 
                     <Button parentKey="PVPButton" name="PVP" inherits="MIOG_ProgressSelectionButtonTemplate" text="PVP">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.RaidButton" relativePoint="BOTTOMLEFT" y="-3"/>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent.RaidButton" relativePoint="BOTTOMRIGHT" y="-3"/>
-                        </Anchors>
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
                     </Button> 
-
-                    <Frame parentKey="OverviewElements" hidden="true">
+                    
+                    <DropdownButton parentKey="VisibilityDropdown" inherits="WowStyle1DropdownTemplate">
                         <Size y="25" />
 
-                        <Anchors>
-                            <Anchor point="BOTTOMLEFT"/>
-                            <Anchor point="BOTTOMRIGHT"/>
-                        </Anchors>
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="5" type="number" />
+                            <Keyvalue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </DropdownButton>
+                </Frames>
+            </Frame>
+            
+            <Frame parentKey="Info" inherits="VerticalLayoutFrame">
+                <KeyValues>
+                    <Keyvalue key="fixedWidth" value="84" type="number" />
+                    <Keyvalue key="rightPadding" value="1" type="number" />
+                </KeyValues>
                 
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <FontString parentKey="HonorLevel" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Itemlevel: ">
-                                    <Anchors>
-                                        <Anchor point="TOPRIGHT"/>
-                                    </Anchors>
-                                </FontString>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Menu" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Menu" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
 
-                                <FontString parentKey="HonorProgress" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Itemlevel: ">
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT" relativeKey="$parent.HonorLevel" relativePoint="BOTTOMLEFT" y="-3"/>
-                                        <Anchor point="TOPRIGHT" relativeKey="$parent.HonorLevel" relativePoint="BOTTOMRIGHT" y="-3"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
+                <Frames>
+                    <Frame parentKey="HonorLevel" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="1" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
 
-                        <Frames>
-                            <DropdownButton parentKey="VisibilityDropdown" inherits="WowStyle1DropdownTemplate" hidden="true">
-                                <Size y="25" />
+                    <Frame parentKey="HonorProgress" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="2" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
 
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.HonorProgress" relativePoint="BOTTOMLEFT" y="-3"/>
-                                    <Anchor point="TOPRIGHT" relativeKey="$parent.HonorProgress" relativePoint="BOTTOMRIGHT" y="-3"/>
-                                </Anchors>
-                            </DropdownButton>
-                        </Frames>
+                    <Frame parentKey="ItemLevel" name="Itemlevel" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="3" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="MythicPlusRating" name="Mythic+" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="10" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="ResilientLevel" name="Resilient" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="11" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Normal" name="Normal" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="20" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Heroic" name="Heroic" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="21" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Mythic" name="Mythic" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="22" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+                    
+                    <Frame parentKey="GreatVault" name="Great Vault" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="30" type="number" />
+                            <Keyvalue key="visual" value="dark" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+                    
+                    <Frame parentKey="GreatVaultRaids" name="Raids" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="31" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="GreatVaultDungeons" name="Dungeons" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="32" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="GreatVaultWorld" name="World" inherits="MIOG_ProgressOverviewColorCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="33" type="number" />
+                            <Keyvalue key="visual" value="semi" type="string" />
+                            <Keyvalue key="align" value="right" type="string" />
+                        </KeyValues>
                     </Frame>
                 </Frames>
             </Frame>
 
             <Frame parentKey="Overview" mixin="ProgressOverviewMixin">
                 <Anchors>
-                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Menu" relativePoint="TOPRIGHT"/>
                     <Anchor point="BOTTOMRIGHT"/>
                 </Anchors>
 
                 <Frames>
-                    <Frame parentKey="Info">
-                        <Size x="76" />
-
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.$parent.Menu" relativePoint="BOTTOMLEFT" />
-                            <Anchor point="BOTTOMLEFT"/>
-                        </Anchors>
-
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Itemlevel: ">
-                                    <Anchors>
-                                        <Anchor point="TOPRIGHT" y="-55"/>
-                                    </Anchors>
-                                </FontString>
-
-                                <FontString parentKey="MythicPlus" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic+: ">
-                                    <Anchors>
-                                        <Anchor point="TOPRIGHT" relativeKey="$parent.ItemLevel" relativePoint="BOTTOMRIGHT" y="-2"/>
-                                    </Anchors>
-                                </FontString>
-
-                                <FontString parentKey="Normal" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Normal: ">
-                                    <Anchors>
-                                        <Anchor point="TOPRIGHT" relativeKey="$parent.MythicPlus" relativePoint="BOTTOMRIGHT" y="-2"/>
-                                    </Anchors>
-                                </FontString>
-
-                                <FontString parentKey="Heroic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Heroic: ">
-                                    <Anchors>
-                                        <Anchor point="TOPRIGHT" relativeKey="$parent.Normal" relativePoint="BOTTOMRIGHT" y="-2"/>
-                                    </Anchors>
-                                </FontString>
-
-                                <FontString parentKey="Mythic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic: ">
-                                    <Anchors>
-                                        <Anchor point="TOPRIGHT" relativeKey="$parent.Heroic" relativePoint="BOTTOMRIGHT" y="-2"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                    </Frame>
-
-                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.$parent.Menu" relativePoint="TOPRIGHT" />
-                            <Anchor point="BOTTOMRIGHT" y="20"/>
-                        </Anchors>
-                    </Frame>
-
                     <EventFrame parentKey="ScrollBar" inherits="MIOG_MinimalHorizontalScrollBarTemplate">
                         <Size y="16" />
-                        <KeyValues>
+
+                        <KeyValues> 
                             <KeyValue key="minThumbExtent" value="10" type="number"/>
                         </KeyValues>
+
                         <Anchors>
                             <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
 
                     </EventFrame>
+
+                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <!--<Anchor point="TOPLEFT" relativeKey="$parent.HeaderContainer" relativePoint="BOTTOMLEFT"/>-->
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBar" relativePoint="TOPRIGHT"/>
+                        </Anchors>
+                    </Frame>
+
                 </Frames>
 
                 <Scripts>
@@ -238,14 +280,16 @@
                 </Frames>
                 
                 <Scripts>
-                    <OnShow method="OnShow" />
                     <OnLoad method="OnLoad" />
+                    <OnShow method="OnShow" />
                 </Scripts>
             </Frame>
         </Frames>
 
         <Scripts>
+            <OnLoad method="OnLoad" />
             <OnShow method="OnShow" />
+            <OnEvent method="OnEvent" />
         </Scripts>
     </Frame>
 </Ui>

@@ -7,7 +7,7 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOP" y="5"/>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOP" y="4"/>
                     </Anchors>
                 </FontString>
             </Layer>

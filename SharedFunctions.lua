@@ -22,8 +22,8 @@ miog.updateCurrencies = function()
 			for k, v in ipairs(currencyTable) do
 				local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(v.id)
 
-				local currentFrame = miog.MainTab.Currency[tostring(k)]
-				local text = currencyInfo.quantity
+				local currentFrame = miog.pveFrame2.Currency[tostring(k)]
+				local text = tostring(currencyInfo.quantity)
 
 				if(currencyInfo.totalEarned > 0) then
 					if(currencyInfo.maxQuantity > 0) then
@@ -68,7 +68,7 @@ miog.updateCurrencies = function()
 			end
 
 			for i = numOfCurrencies + 1, 8, 1 do
-				miog.MainTab.Currency[tostring(i)]:Hide()
+				miog.pveFrame2.Currency[tostring(i)]:Hide()
 
 			end
 		else
@@ -180,6 +180,20 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 	end
 end
 
+local weightTable = {
+	[1] = 2,
+	[2] = 28,
+	[3] = 392,
+}
+
+local function calculateRaidWeight(difficulty, kills, bossCount, isCurrentSeason)
+	local factor = isCurrentSeason and 8 / bossCount or 8 / bossCount / 10
+
+	return weightTable[difficulty] * kills * factor
+end
+
+miog.calculateRaidWeight = calculateRaidWeight
+
 local function calculateWeightedScore(difficulty, kills, bossCount, isCurrentSeason)
 	if kills == 0 then return 0 end
 
@@ -188,21 +202,6 @@ local function calculateWeightedScore(difficulty, kills, bossCount, isCurrentSea
 end
 
 miog.calculateWeightedScore = calculateWeightedScore
-
-local function standardSortFunction(k1, k2)
-    for k, v in ipairs(self.sortingParameters) do
-        if(v.state > 0 and k1[v.name] ~= k2[v.name]) then
-            if(v.state == 1) then
-                return k1[v.name] < k2[v.name]
-
-            else
-                return k1[v.name] > k2[v.name]
-            end
-        end
-    end
-end
-
-miog.standardSortFunction = standardSortFunction
 
 miog.retrieveCurrentSeasonDungeonActivityGroups = function()
 	return C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
@@ -313,68 +312,6 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 	return raidActivities
 end
 
-local function revisedRaidSortData(playerName, realm, region, existingProfile)
-	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
-
-	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
-	local raidData
-
-	if(profile and profile.raidProfile) then
-		raidData = {
-			character = { ordered = {}, progressWeight = 0 },
-			main = { ordered = {}, progressWeight = 0 }
-		}
-
-		local profileProgress = profile.raidProfile.raidProgress
-
-		for k, v in ipairs(raidInfo) do
-			for i = 1, #profileProgress, 1 do
-				local d = profileProgress[i]
-				local mapID = tonumber(string.sub(d.raid.mapId, -4)) or d.raid.mapId
-
-
-				local currentTable = d.isMainProgress and raidData.main or raidData.character
-				local isAwakened = (mapID ~= d.raid.mapId) and d.current
-
-				local raidEntry = currentTable.raids[mapID]
-				if(not raidEntry) then
-					raidEntry = {
-						regular = { difficulties = {}},
-						awakened = { difficulties = {}},
-						bossCount = d.raid.bossCount,
-						isAwakened = isAwakened,
-						shortName = d.raid.shortName
-					}
-					currentTable.raids[mapID] = raidEntry
-				end
-
-				local modeTable = isAwakened and raidEntry.awakened or raidEntry.regular
-
-				local progress = d.progress
-				for j = 1, #progress, 1 do
-					local y = progress[j]
-					local difficulty = y.difficulty
-					local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
-
-					local difficultyEntry = {
-						difficulty = difficulty,
-						current = d.current,
-						mapID = mapID,
-						weight = weight,
-						parsedString = y.kills .. "/" .. d.raid.bossCount,
-					}
-
-					modeTable.difficulties[difficulty] = difficultyEntry
-					currentTable.progressWeight = currentTable.progressWeight + weight
-					currentTable.ordered[#currentTable.ordered + 1] = difficultyEntry
-				end
-			end
-		end
-	end
-
-	return raidData
-end
-
 local function sortFunction(a, b)
 	if(a.current == b.current) then
 		return a.weight > b.weight
@@ -479,7 +416,7 @@ local function getOnlyPlayerRaidData(playerName, realm, region, existingProfile)
 				for j = 1, #progress, 1 do
 					local y = progress[j]
 					local difficulty = y.difficulty
-					local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+					local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current)
 
 					local difficultyEntry = {
 						difficulty = difficulty,
@@ -558,7 +495,7 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 			for j = 1, #progress, 1 do
 				local y = progress[j]
 				local difficulty = y.difficulty
-				local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+				local weight = calculateWeightedScore(difficulty, y.kills, d.raid.bossCount, d.current)
 
 				local difficultyEntry = {
 					difficulty = difficulty,
@@ -630,14 +567,14 @@ miog.checkAllSeasonalMapIDs = function()
     local mythicPlusInfo = miog.retrieveCurrentSeasonDungeonActivityIDs(false, true)
 
 	for k, v in ipairs(mythicPlusInfo) do
-		miog.checkForMapAchievements(v.mapID)
+		--miog.checkForMapAchievements(v.mapID)
 
 	end
     
     local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
 
 	for k, v in ipairs(raidInfo) do
-		miog.checkForMapAchievements(v.mapID)
+		--miog.checkForMapAchievements(v.mapID)
 
 	end
 end
@@ -792,6 +729,9 @@ miog.refreshLastGroupTeleport = function(mapID)
 			GameTooltip:AddLine(desc)
 			GameTooltip:Show()
 		end)
+		
+        local spellCooldownInfo = C_Spell.GetSpellCooldown(mapInfo.teleport)
+        lastGroupTeleportButton.Cooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.modRate)
 		lastGroupTeleportButton:Show()
 	else
 		lastGroupTeleportButton:Hide()
@@ -909,7 +849,7 @@ local function getRaidSortData(playerName)
 								progress = y.kills,
 								bossCount = d.raid.bossCount,
 								parsedString = y.kills .. "/" .. d.raid.bossCount,
-								weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+								weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current)
 							}
 							
 						end
@@ -944,7 +884,7 @@ local function getRaidSortData(playerName)
 								progress = y.kills,
 								bossCount = d.raid.bossCount,
 								parsedString = y.kills .. "/" .. d.raid.bossCount,
-								weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+								weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current)
 							}
 						end
 					end
@@ -972,7 +912,7 @@ local function getRaidSortData(playerName)
 							progress = y.kills,
 							bossCount = d.raid.bossCount,
 							parsedString = y.kills .. "/" .. d.raid.bossCount,
-							weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current, d.raid.ordinal)
+							weight = calculateWeightedScore(y.difficulty, y.kills, d.raid.bossCount, d.current)
 						}
 					end
 				end
@@ -1171,21 +1111,26 @@ end
 miog.printOnce = printOnce
 
 miog.changeBackground = function(index)
-	local titleBarTexHeight = 0.06
+	local titleBarTexHeight = 0.0625
+	local scrollbarWidth = 1 - 0.03125
+	local currencyHeight = 1 - 0.03125
 
 	local value = index or MIOG_NewSettings.backgroundOptions
 	
 	miog.MainFrame.CloseButtonArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-	miog.MainFrame.CloseButtonArea.Background:SetTexCoord(0.97, 1, 0, titleBarTexHeight)
+	miog.MainFrame.CloseButtonArea.Background:SetTexCoord(scrollbarWidth, 1, 0, titleBarTexHeight)
 	
 	miog.MainFrame.TitleBar.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-	miog.MainFrame.TitleBar.Background:SetTexCoord(0, 0.97, 0, titleBarTexHeight)
+	miog.MainFrame.TitleBar.Background:SetTexCoord(0, scrollbarWidth, 0, titleBarTexHeight)
 	
 	miog.MainFrame.ScrollBarArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-	miog.MainFrame.ScrollBarArea.Background:SetTexCoord(0.97, 1, titleBarTexHeight, 1)
+	miog.MainFrame.ScrollBarArea.Background:SetTexCoord(scrollbarWidth, 1, titleBarTexHeight, currencyHeight)
 	
 	miog.MainFrame.TabFramesPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-	miog.MainFrame.TabFramesPanel.Background:SetTexCoord(0, 0.97, titleBarTexHeight, 1)
+	miog.MainFrame.TabFramesPanel.Background:SetTexCoord(0, scrollbarWidth, titleBarTexHeight, currencyHeight)
+	
+	miog.MainFrame.Currency.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.Currency.Background:SetTexCoord(0, 1, currencyHeight, 1)
 	
 	miog.FilterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
 end
@@ -1277,71 +1222,74 @@ end
 
 local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
-	local activityInfo = miog.requestActivityInfo(entryInfo.activityIDs[1])
-	miog.ApplicationViewer.InfoPanel.Background:SetTexture(activityInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
-	miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
-	miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
+	if(entryInfo) then
+		local activityInfo = miog.requestActivityInfo(entryInfo.activityIDs[1])
+		miog.ApplicationViewer.InfoPanel.Background:SetTexture(activityInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
-	miog.ApplicationViewer.CreationSettings.PrivateGroupButton:SetChecked(entryInfo.privateGroup)
+		miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
+		miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
 
-	if(entryInfo.playstyle) then
-		local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..entryInfo.playstyle]) or
-		(activityInfo.isMythicActivity and miog.PLAYSTYLE_STRINGS["mZero"..entryInfo.playstyle]) or
-		(activityInfo.isCurrentRaidActivity and miog.PLAYSTYLE_STRINGS["raid"..entryInfo.playstyle]) or
-		((activityInfo.isRatedPvpActivity or activityInfo.isPvpActivity) and miog.PLAYSTYLE_STRINGS["pvp"..entryInfo.playstyle])
+		miog.ApplicationViewer.CreationSettings.PrivateGroupButton:SetChecked(entryInfo.privateGroup)
 
-		miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = playStyleString
+		if(entryInfo.playstyle) then
+			local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..entryInfo.playstyle]) or
+			(activityInfo.isMythicActivity and miog.PLAYSTYLE_STRINGS["mZero"..entryInfo.playstyle]) or
+			(activityInfo.isCurrentRaidActivity and miog.PLAYSTYLE_STRINGS["raid"..entryInfo.playstyle]) or
+			((activityInfo.isRatedPvpActivity or activityInfo.isPvpActivity) and miog.PLAYSTYLE_STRINGS["pvp"..entryInfo.playstyle])
 
-	else
-		miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = ""
+			miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = playStyleString
 
-	end
+		else
+			miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = ""
 
-	if(entryInfo.requiredDungeonScore and activityInfo.categoryID == 2 or entryInfo.requiredPvpRating and activityInfo.categoryID == (4 or 7 or 8 or 9)) then
-		miog.ApplicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating
-		miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating)
+		end
 
-		miog.ApplicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.requiredDungeonScore and "/infoIcons/skull.png" or entryInfo.requiredPvpRating and "/infoIcons/spear.png"))
+		if(entryInfo.requiredDungeonScore and activityInfo.categoryID == 2 or entryInfo.requiredPvpRating and activityInfo.categoryID == (4 or 7 or 8 or 9)) then
+			miog.ApplicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating
+			miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating)
 
-	else
-		miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText("----")
-		miog.ApplicationViewer.CreationSettings.Rating.tooltipText = ""
+			miog.ApplicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.requiredDungeonScore and "/infoIcons/skull.png" or entryInfo.requiredPvpRating and "/infoIcons/spear.png"))
 
-	end
+		else
+			miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText("----")
+			miog.ApplicationViewer.CreationSettings.Rating.tooltipText = ""
 
-	if(entryInfo.requiredItemLevel > 0) then
-		miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText(entryInfo.requiredItemLevel)
-		miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. entryInfo.requiredItemLevel
+		end
 
-	else
-		miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText("---")
-		miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = ""
+		if(entryInfo.requiredItemLevel > 0) then
+			miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText(entryInfo.requiredItemLevel)
+			miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. entryInfo.requiredItemLevel
 
-	end
+		else
+			miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText("---")
+			miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = ""
 
-	miog.ApplicationViewer.CreationSettings.VoiceChatButton:SetChecked(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked())
+		end
 
-	desaturateTexture(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked(), miog.ApplicationViewer.CreationSettings.VoiceChatButton:GetNormalTexture())
-	desaturateTexture(entryInfo.privateGroup, miog.ApplicationViewer.CreationSettings.PrivateGroupButton:GetNormalTexture())
-	desaturateTexture(entryInfo.autoAccept, miog.ApplicationViewer.CreationSettings.AutoAcceptButton:GetNormalTexture())
+		miog.ApplicationViewer.CreationSettings.VoiceChatButton:SetChecked(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked())
 
-	if(entryInfo.isCrossFactionListing == true) then
-		miog.ApplicationViewer.TitleBar.Faction:SetTexture(2437241)
+		desaturateTexture(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked(), miog.ApplicationViewer.CreationSettings.VoiceChatButton:GetNormalTexture())
+		desaturateTexture(entryInfo.privateGroup, miog.ApplicationViewer.CreationSettings.PrivateGroupButton:GetNormalTexture())
+		desaturateTexture(entryInfo.autoAccept, miog.ApplicationViewer.CreationSettings.AutoAcceptButton:GetNormalTexture())
 
-	else
-		local playerFaction = UnitFactionGroup("player")
-		miog.ApplicationViewer.TitleBar.Faction:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
+		if(entryInfo.isCrossFactionListing == true) then
+			miog.ApplicationViewer.TitleBar.Faction:SetTexture(2437241)
 
-	end
+		else
+			local playerFaction = UnitFactionGroup("player")
+			miog.ApplicationViewer.TitleBar.Faction:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
 
-	if(entryInfo.comment ~= "") then
-		miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("Description: " .. entryInfo.comment)
-		miog.ApplicationViewer.InfoPanel.Description.Container:SetHeight(miog.ApplicationViewer.InfoPanel.Description.Container.FontString:GetStringHeight())
+		end
 
-	else
-		miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("")
+		if(entryInfo.comment ~= "") then
+			miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("Description: " .. entryInfo.comment)
+			miog.ApplicationViewer.InfoPanel.Description.Container:SetHeight(miog.ApplicationViewer.InfoPanel.Description.Container.FontString:GetStringHeight())
 
+		else
+			miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("")
+
+		end
 	end
 end
 

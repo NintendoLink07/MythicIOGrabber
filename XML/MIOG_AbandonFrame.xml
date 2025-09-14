@@ -1,0 +1,97 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_AbandonFrame" inherits="SimplePanelTemplate" mixin="AbandonMixin" hidden="true" virtual="true">
+        <Size x="200" y="96" />
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="VOTE_TO_ABANDON_PROMPT">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-2"/>
+                        <Anchor point="BOTTOM" relativeKey="$parent.Inset" relativePoint="TOP"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Status" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" y="-3"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" y="3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="VoteIcons">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" x="4"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Inset" relativePoint="TOPLEFT" x="-4"/>
+                </Anchors>
+                
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Player" atlas="UI-LFG-RoleIcon-Generic-Disabled">
+                            <Size x="32" y="32" />
+                            <Anchors>
+                                <Anchor point="LEFT" x="4"/>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture parentKey="Party4" atlas="UI-LFG-RoleIcon-Generic-Disabled">
+                            <Size x="32" y="32" />
+                            <Anchors>
+                                <Anchor point="RIGHT" x="-4"/>
+                            </Anchors>
+                        </Texture>
+                        
+                        <Texture parentKey="Party3" atlas="UI-LFG-RoleIcon-Generic-Disabled">
+                            <Size x="32" y="32" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.Party4" relativePoint="LEFT" x="-2"/>
+                            </Anchors>
+                        </Texture>
+                        
+                        <Texture parentKey="Party2" atlas="UI-LFG-RoleIcon-Generic-Disabled">
+                            <Size x="32" y="32" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.Party3" relativePoint="LEFT" x="-2"/>
+                            </Anchors>
+                        </Texture>
+                        
+                        <Texture parentKey="Party1" atlas="UI-LFG-RoleIcon-Generic-Disabled">
+                            <Size x="32" y="32" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.Party2" relativePoint="LEFT" x="-2"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Button parentKey="StartVote" inherits="UIPanelButtonTemplate" text="VOTE_TO_ABANDON">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" y="-1"/>
+                </Anchors>
+            </Button>
+
+            <Button parentKey="VoteYes" inherits="UIPanelButtonTemplate" text="YES" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="BOTTOMLEFT" y="-1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOM" x="-1" y="-1"/>
+                </Anchors>
+            </Button>
+
+            <Button parentKey="VoteNo" inherits="UIPanelButtonTemplate" text="NO" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="BOTTOM" x="1" y="-1"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" y="-1"/>
+                </Anchors>
+            </Button>
+        </Frames>
+
+        <Scripts>
+            <OnShow method="OnShow" />
+
+        </Scripts>
+    </Frame>
+</Ui>

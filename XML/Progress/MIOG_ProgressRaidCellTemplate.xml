@@ -8,6 +8,10 @@
                     <Anchors>
                         <Anchor point="CENTER"/>
                     </Anchors>
+                    
+                    <Scripts>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
                 </FontString>
 
                 <FontString parentKey="Normal" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
@@ -15,6 +19,10 @@
                         <Anchor point="LEFT"/>
                         <Anchor point="RIGHT" relativeKey="$parent.Heroic" relativePoint="LEFT"/>
                     </Anchors>
+                    
+                    <Scripts>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
                 </FontString>
 
                 <FontString parentKey="Mythic" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
@@ -22,6 +30,10 @@
                         <Anchor point="RIGHT"/>
                         <Anchor point="LEFT" relativeKey="$parent.Heroic" relativePoint="RIGHT"/>
                     </Anchors>
+                    
+                    <Scripts>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
                 </FontString>
             </Layer>
         </Layers>

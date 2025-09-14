@@ -3,15 +3,19 @@
     <Button name="MIOG_ProgressSelectionButtonTemplate" mixin="ProgressSelectionButtonMixin" virtual="true">
         <Size y="20" />
 
+        <KeyValues>
+            <Keyvalue key="expand" value="true" type="boolean" />
+        </KeyValues>
+
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Texture" setAllPoints="true" />
             </Layer>
             <Layer level="ARTWORK">
-                <FontString parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+                <FontString parentKey="Label" inherits="GameFontNormal" justifyH="RIGHT">
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="10" y="1"/>
-                        <Anchor point="BOTTOMRIGHT" y="1"/>
+                        <Anchor point="TOPLEFT" x="7" y="1"/>
+                        <Anchor point="BOTTOMRIGHT" x="-3" y="1"/>
                     </Anchors>
                 </FontString>
             </Layer>

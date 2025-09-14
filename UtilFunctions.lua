@@ -227,6 +227,17 @@ miog.simpleSplit = function(tempString, delimiter)
 
 end
 
+miog.shortenNumber = function(n)
+    if n >= 10^6 then
+        return string.format("%.1fm", n / 10^6)
+    elseif n >= 10^3 then
+        return string.format("%.1fk", n / 10^3)
+    else
+        return tostring(n)
+    end
+end
+
+
 miog.round = function(number, decimals)
 	local dot = string.find(number, "%.")
 

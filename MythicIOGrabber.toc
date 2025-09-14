@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.6.1
+## Version: 3.6.2
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -64,7 +64,6 @@ Mixins\RewardTypeMixin.lua
 Mixins\FakeDropdownMixin.lua
 Mixins\RaiderIOInformationPanelMixin.lua
 Mixins\GraphMixin.lua
-Mixins\ProgressionTabMixin.lua
 Mixins\ItemUpgradeFinderMixin.lua
 Mixins\SearchBoxFiltersMixin.lua
 Mixins\SortBarMixin.lua
@@ -73,10 +72,10 @@ Mixins\QueueFrameMixin.lua
 Mixins\ProgressMixin.lua
 Mixins\ProgressCellMixin.lua
 Mixins\ProgressHeaderMixin.lua
-Mixins\TableBuilderSkinMixin.lua
 Mixins\GearingTableCellMixin.lua
 Mixins\TeleportLogoMixin.lua
 Mixins\TeleportButtonMixin.lua
+Mixins\AbandonMixin.lua
 
 
 
@@ -87,6 +86,7 @@ Mixins\TeleportButtonMixin.lua
 XML\Requeue\MIOG_RequeuePopup.xml
 
 XML\MIOG_FakeDropdownButton.xml
+XML\MIOG_AbandonFrame.xml
 
 XML\VaultProgress\MIOG_VaultProgressTemplate.xml
 XML\VaultProgress\MIOG_VaultProgressRaidTemplate.xml
@@ -207,6 +207,8 @@ XML\Progress\MIOG_ProgressPVPCellTemplate.xml
 XML\Progress\MIOG_ProgressPVPCharacterCellTemplate.xml
 XML\Progress\MIOG_ProgressOverviewFullTemplate.xml
 XML\Progress\MIOG_ProgressLineTemplate.xml
+XML\Progress\MIOG_ProgressOverviewColorCellTemplate.xml
+XML\Progress\MIOG_ProgressOverviewVaultCellTemplate.xml
 
 XML\Misc\MIOG_MultiStateButtonTemplate.xml
 XML\Misc\MIOG_SortButtonTemplate.xml
