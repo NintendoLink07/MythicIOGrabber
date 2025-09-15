@@ -530,14 +530,16 @@ function ProgressOverviewMixin:OnLoad()
 							GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
 							for k, v in ipairs(playerInstanceData[i].bosses) do
-								local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, v.criteriaID, true)
+								if(v.id) then
+									local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
 
-								if(not name) then
-									name = mapInfo.bosses[k].name .. " kills"
+									if(not name) then
+										name = mapInfo.bosses[k].name .. " kills"
 
+									end
+
+									GameTooltip:AddDoubleLine(v.count or v.quantity or 0, name)
 								end
-
-								GameTooltip:AddDoubleLine(v.quantity or 0, name)
 
 							end
 							
@@ -919,25 +921,28 @@ end
 function ProgressRaidMixin:CheckForAchievements(mapID)
 	local mapDifficultyData = {}
 
-	for difficultyIndex, achievementID in ipairs(miog.MAP_INFO[mapID].achievementIDs) do
-		local numCriteria = GetAchievementNumCriteria(achievementID)
+	for index, achievementID in ipairs(miog.MAP_INFO[mapID].achievementIDs) do
+		local difficultyIndex = ((index - 1) % 4)
 
-		mapDifficultyData[difficultyIndex] = {validatedIngame = true, kills = 0, bosses = {}}
+		if(difficultyIndex > 0) then
+			--local numCriteria = GetAchievementNumCriteria(achievementID)
 
-		for criteriaIndex = 1, numCriteria do
-			local criteriaString, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfo(achievementID, criteriaIndex, true)
+			mapDifficultyData[difficultyIndex] = mapDifficultyData[difficultyIndex] or {validatedIngame = true, kills = 0, bosses = {}}
 
-			if(completed) then
-				mapDifficultyData[difficultyIndex].kills = mapDifficultyData[difficultyIndex].kills + 1
+			--for criteriaIndex = 1, numCriteria do
+				local criteriaString, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfo(achievementID, 1, true)
 
-			end
+				if(completed) then
+					mapDifficultyData[difficultyIndex].kills = mapDifficultyData[difficultyIndex].kills + 1
 
-			table.insert(mapDifficultyData[difficultyIndex].bosses, {
-				id = achievementID,
-				criteriaID = criteriaID,
-				killed = completed,
-				quantity = quantity
-			})
+				end
+
+				table.insert(mapDifficultyData[difficultyIndex].bosses, {
+					id = achievementID,
+					killed = completed,
+					count = quantity
+				})
+			--end
 		end
 	end
 
@@ -956,7 +961,9 @@ function ProgressRaidMixin:UpdateSingleCharacterRaidProgress(guid)
 				raidData.instances[mapID] = self:CheckForAchievements(mapID)
 
 			end
-		else
+
+			charData.raids = raidData
+		elseif(not charData.raids) then
 			local raiderIORaidData = miog.getNewRaidSortData(charData.name, charData.realm)
 
 			if raiderIORaidData and raiderIORaidData.character then
@@ -967,26 +974,33 @@ function ProgressRaidMixin:UpdateSingleCharacterRaidProgress(guid)
 						local characterRaid = raiderIORaidData.character.raids[mapID]
 
 						if characterRaid then
-							for difficultyIndex, achievementID in ipairs(mapInfo.achievementIDs) do
-								local raiderIODifficultyData = characterRaid.regular.difficulties[difficultyIndex]
+							local bossCounter = 0
 
-								if(raiderIODifficultyData) then
-									local numCriteria = GetAchievementNumCriteria(achievementID);
+							for index, achievementID in ipairs(mapInfo.achievementIDs) do
+								local difficultyIndex = ((index - 1) % 4)
+								
+								if(difficultyIndex == 0) then
+									bossCounter = bossCounter + 1
+								end
 
-									instanceData[difficultyIndex] = {
-										validatedIngame = false,
-										kills = raiderIODifficultyData.kills,
-										bosses = raiderIODifficultyData.bosses
-									}
+								if(difficultyIndex > 0) then
+									local raiderIODifficultyData = characterRaid.regular.difficulties[difficultyIndex]
 
-									for i = 1, numCriteria do
-										local _, _, _, _, _, _, _, _, _, criteriaID, _, _, _ = GetAchievementCriteriaInfo(achievementID, i, true)
+									if(raiderIODifficultyData) then
+										instanceData[difficultyIndex] = instanceData[difficultyIndex] or {
+											validatedIngame = false,
+											kills = raiderIODifficultyData.kills,
+											bosses = {}
+										}
+										
+										local _, _, _, _, _, _, _, _, _, criteriaID, _ = GetAchievementCriteriaInfo(achievementID, 1, true)
 
-										instanceData[difficultyIndex].bosses[i] = {
+										local bossData = raiderIODifficultyData.bosses[bossCounter]
+
+										instanceData[difficultyIndex].bosses[bossCounter] = {
 											id = achievementID,
-											criteriaID = criteriaID,
-											killed = raiderIODifficultyData.bosses[i].killed,
-											quantity = raiderIODifficultyData.bosses[i].count
+											killed = bossData.killed,
+											count = bossData.count
 										}
 
 									end
@@ -998,11 +1012,11 @@ function ProgressRaidMixin:UpdateSingleCharacterRaidProgress(guid)
 					end
 				end
 			end
+
+			charData.raids = raidData
 		end
 
 		raidData.progressWeight = self:CalculateProgressWeight(raidData)
-
-		charData.raids = raidData
 	end
 end
 

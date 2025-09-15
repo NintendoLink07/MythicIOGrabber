@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning].
 
 
 
+
+## [3.6.2a] - 2025-09-15
+
+### Fixed
+
+- [Progress] Characters won't only check for the character with the most raid progress.
+
+- [Progress] Data from RaiderIO will now only be retrieved when there isn't any data yet.
+Afterwards it will only refresh upon login in with the specific character.
+
+
+
+
 ## [3.6.2] - 2025-09-14
 
 ### Added
@@ -4344,7 +4357,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2a..HEAD
+[3.6.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2a
 [3.6.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2
 [3.6.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.1
 [3.6.0]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.0

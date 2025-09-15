@@ -240,15 +240,16 @@ function ProgressRaidCellMixin:Populate(data)
                         GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
                         for k, v in ipairs(raidData[a].bosses) do
-                            local name = GetAchievementCriteriaInfoByID(v.id, v.criteriaID, true)
+                            if(v.id) then
+                                local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
 
-                            if(not name) then
-                                name = mapInfo.bosses[k].name
+                                if(not name) then
+                                    name = mapInfo.bosses[k].name .. " kills"
 
+                                end
+
+                                GameTooltip:AddDoubleLine(v.count or v.quantity or 0, name)
                             end
-
-                            GameTooltip:AddDoubleLine(v.quantity or 0, name)
-
                         end
                         
                         if(not raidData[a].validatedIngame) then

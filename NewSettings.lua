@@ -127,6 +127,7 @@ local defaultSettings = {
     {name = "Raid planner settings", variableName = "MIOG_RaidPlannerSettings", key="raidPlanner", default={sheets = {[1] = {name = "RaidSheet1", slots = {}}}}},
     {name = "Statistics for account characters", variableName = "MIOG_AccountStatistics", key="accountStatistics", default={characters = {}, lfgStatistics = {}}, type="custom"},
     {name = "MainFrame scale", variableName = "MIOG_MainFrameScale", key="mainFrameScale", default=1},
+    {name = "Settings to reset after updating the addon", variableName = "MIOG_UpdateResetSettings", key="updateResetSettings", default={}},
 }
 
 local category = Settings.RegisterVerticalLayoutCategory(addonName)
