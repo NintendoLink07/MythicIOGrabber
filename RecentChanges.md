@@ -1,8 +1,7 @@
-## [3.6.2a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2a) - 2025-09-15
+## [3.6.2b](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2b) - 2025-09-16
 
 ### Fixed
 
-- [Progress] Characters won't only check for the character with the most raid progress.
+- [SearchPanel] An error has been resolved where the search panel couldn't retrieve search results.
 
-- [Progress] Data from RaiderIO will now only be retrieved when there isn't any data yet.
-Afterwards it will only refresh upon login in with the specific character.
+- Removed some debug prints.

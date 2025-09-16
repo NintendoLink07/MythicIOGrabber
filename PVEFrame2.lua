@@ -181,7 +181,7 @@ local function createPVEFrameReplacement()
 		C_MythicPlus.RequestMapInfo()
 		C_MythicPlus.RequestCurrentAffixes()
 
-		local inRun = C_PartyInfo.ChallengeModeRestrictionsActive() or true
+		local inRun = C_PartyInfo.ChallengeModeRestrictionsActive()
 		local abandonFrame = selfPVEFrame.TabFramesPanel.MainTab.Information.AbandonFrame
 		--abandonFrame:SetShown(inRun)
 

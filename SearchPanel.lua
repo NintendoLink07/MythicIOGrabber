@@ -1033,6 +1033,7 @@ local function searchPanelEvents(_, event, ...)
 		elseif(lastNumOfResults == 0) then
 			currentTimer:Cancel()
 			fullyUpdateSearchPanel()
+			updateScheduled = false
 		end
 
 	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then --update to title, ilvl, group members, etc
@@ -1057,6 +1058,7 @@ local function searchPanelEvents(_, event, ...)
 		end
 	elseif(event == "LFG_LIST_SEARCH_FAILED") then
 		showStatusOverlay(...)
+		updateScheduled = false
 
 	elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
 		local resultID, new = ...

@@ -120,15 +120,6 @@ local function mainEvents(_, event, ...)
 	elseif(event == "CHALLENGE_MODE_COMPLETED") then
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
 
-	elseif(event == "INSTANCE_ABANDON_VOTE_STARTED") then
-		print("VOTE START", ...)
-
-	elseif(event == "INSTANCE_ABANDON_VOTE_UPDATED") then
-		print("VOTE UPDATE", ...)
-
-	elseif(event == "INSTANCE_ABANDON_VOTE_FINISHED") then
-		print("VOTE DONE", ...)
-
 	end
 end
 
@@ -312,10 +303,6 @@ eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")
 eventReceiver:RegisterEvent("CHALLENGE_MODE_COMPLETED")
 
 eventReceiver:RegisterEvent("WEEKLY_REWARDS_UPDATE")
-
-eventReceiver:RegisterEvent("INSTANCE_ABANDON_VOTE_STARTED")
-eventReceiver:RegisterEvent("INSTANCE_ABANDON_VOTE_UPDATED")
-eventReceiver:RegisterEvent("INSTANCE_ABANDON_VOTE_FINISHED")
 
 
 

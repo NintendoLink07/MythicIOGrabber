@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.6.2b] - 2025-09-16
+
+### Fixed
+
+- [SearchPanel] An error has been resolved where the search panel couldn't retrieve search results.
+
+- Removed some debug prints.
+
+
+
 
 ## [3.6.2a] - 2025-09-15
 
@@ -4357,7 +4367,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2b..HEAD
+[3.6.2b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2b
 [3.6.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2a
 [3.6.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2
 [3.6.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.1

@@ -72,6 +72,12 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="BOTTOMLEFT" y="-1"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" y="-1"/>
                 </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        C_PartyInfo.StartInstanceAbandonVote()
+                    </OnClick>
+                </Scripts>
             </Button>
 
             <Button parentKey="VoteYes" inherits="UIPanelButtonTemplate" text="YES" hidden="true">
@@ -79,6 +85,12 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="BOTTOMLEFT" y="-1"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOM" x="-1" y="-1"/>
                 </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        C_PartyInfo.SetInstanceAbandonVoteResponse(true)
+                    </OnClick>
+                </Scripts>
             </Button>
 
             <Button parentKey="VoteNo" inherits="UIPanelButtonTemplate" text="NO" hidden="true">
@@ -86,6 +98,12 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.Inset" relativePoint="BOTTOM" x="1" y="-1"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.Inset" relativePoint="BOTTOMRIGHT" y="-1"/>
                 </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        C_PartyInfo.SetInstanceAbandonVoteResponse(false)
+                    </OnClick>
+                </Scripts>
             </Button>
         </Frames>
 
