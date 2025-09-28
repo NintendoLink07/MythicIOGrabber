@@ -94,7 +94,7 @@ local function createGearingDataTable()
     local enabledIndex = 1
 
     for headerIndex, headerData in ipairs(headersNew) do
-        local enabled = MIOG_NewSettings.gearingTable[headerData.id]
+        local enabled = MIOG_NewSettings.gearingTable[headerData.id] ~= false
         headerData.enabled = enabled
 
         if(enabled ~= false) then
