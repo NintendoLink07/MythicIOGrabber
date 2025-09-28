@@ -259,9 +259,9 @@ miog.loadGearingTable = function()
     local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
 
     gearingTab:SetScript("OnSizeChanged", function(self)
-        self.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
+        --self.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
 
-        createGearingDataTable()
+        --createGearingDataTable()
     end)
 
     createGearingDataTable()
