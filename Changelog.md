@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.6.2c] - 2025-09-28
+
+### Changed
+
+- [Gearing] Table cell design updated.
+
+### Fixed
+
+- Small bugfixes, removing redundant function calls.
+
+
+
 
 ## [3.6.2b] - 2025-09-16
 
@@ -4367,7 +4379,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2b..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2c..HEAD
+[3.6.2c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2c
 [3.6.2b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2b
 [3.6.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2a
 [3.6.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2

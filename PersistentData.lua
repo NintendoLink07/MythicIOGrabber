@@ -1836,7 +1836,7 @@ miog.ITEM_LEVEL_DATA = {
 				[4] = {steps = 15, name="T7B"},
 				[5] = {steps = 16, name="T8B+"},
 			},
-			crafting = {
+			other = {
 				{steps = 10, name="EnchWeather5"},
 				{steps = 15, name="Spark5"},
 				{steps = 19, name="Runed5"},
@@ -1865,7 +1865,7 @@ miog.ITEM_LEVEL_DATA = {
 
 		data = {
 			dungeon = {
-				[1] = {steps = -1, name="Normal", ignoreForVault=true},
+				[1] = {steps = -1, name="Normal"},
 				[2] = {steps = 7, vaultOffset = 4, name="HC/TW"},
 				[3] = {steps = 12, vaultOffset = 3, name="M0"},
 				[4] = {steps = 13, vaultOffset = 3, name="+2"},
@@ -1878,28 +1878,26 @@ miog.ITEM_LEVEL_DATA = {
 				[11] = {steps = 17, vaultOffset = 2, name="+9"},
 				[12] = {steps = 18, vaultOffset = 2, name="+10"},
 				[13] = {steps = 16, vaultOffset = 4, name="TAZA HM"},
-				[14] = {steps = 20, vaultOffset = 0, ignoreForVault="true", name="TAZA DL"},
+				[14] = {steps = 20, name="TAZA DL"},
 			},
 			raid = {
-				{steps = 9, name="LFR 1-3"},
+				{steps = 8, name="LFR 1"},
+				{steps = 9, name="LFR 2-3"},
 				{steps = 10, name="LFR 4-6"},
 				{steps = 11, name="LFR 7-8"},
-				{steps = 13, name="N 1-3"},
+				{steps = 12, name="N 1"},
+				{steps = 13, name="N 2-3"},
 				{steps = 14, name="N 4-6"},
 				{steps = 15, name="N 7-8"},
-				{steps = 17, name="HC 1-3"},
+				{steps = 16, name="HC 1"},
+				{steps = 17, name="HC 2-3"},
 				{steps = 18, name="HC 4-6"},
 				{steps = 19, name="HC 7-8"},
-				{steps = 21, name="M 1-3"},
+				{steps = 20, name="M 1"},
+				{steps = 21, name="M 2-3"},
 				{steps = 22, name="M 4-6"},
 				{steps = 23, name="M 7-8"},
 
-			},
-			raidVeryRare = {
-				[1] = {steps = 13, name="Rare LFR"},
-				[2] = {steps = 17, name="Rare N"},
-				[3] = {steps = 21, name="Rare HC"},
-				[4] = {steps = 25, name="Rare M"},
 			},
 			delves = {
 				[1] = {steps = 4, vaultOffset = 4, name="T1"},
@@ -1910,15 +1908,13 @@ miog.ITEM_LEVEL_DATA = {
 				[6] = {steps = 9, vaultOffset = 5, name="T6"},
 				[7] = {steps = 12, vaultOffset = 4, name="T7"},
 				[8] = {steps = 13, vaultOffset = 3, name="T8+"},
+				[9] = {steps = 9, name="T4DB"},
+				[10] = {steps = 11, name="T5DB"},
+				[11] = {steps = 13, name="T6DB"},
+				[12] = {steps = 15, name="T7DB"},
+				[13] = {steps = 16, name="T8DB+"},
 			},
-			delvesBounty = {
-				[1] = {steps = 9, name="T4DB"},
-				[2] = {steps = 11, name="T5DB"},
-				[3] = {steps = 13, name="T6DB"},
-				[4] = {steps = 15, name="T7DB"},
-				[5] = {steps = 16, name="T8DB+"},
-			},
-			crafting = {
+			other = {
 				{steps = 10, name="Weather5"},
 				{steps = 15, name="Spark5"},
 				{steps = 19, name="Runed5"},
@@ -2051,9 +2047,12 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 			end
 		end
 
-		if(category == "dungeon" or category == "crafting") then
-			categoryData.highestItemLevel = categoryData[#categoryData].level
+		if(category == "dungeon") then
+			local tempCatData = categoryData[#categoryData]
+			categoryData.highestItemLevel = tempCatData.vaultLevel or tempCatData.level
 			
+		elseif(category == "other") then
+			categoryData.highestItemLevel = categoryData[#categoryData].level
 		end
 	end
 

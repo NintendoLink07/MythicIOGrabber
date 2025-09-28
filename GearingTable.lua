@@ -4,30 +4,28 @@ local gearingTab
 
 miog.gearing = {}
 
-local headers = {
-    {name = "ILvl"},
-    {name = "Track"},
-    {name = "Delves", checkbox = true},
-    {name = "Vault", id = "Delves", checkbox = true},
-    {name = "Raid", checkbox = true},
-    {name = "Dungeon", checkbox = true},
-    {name = "Vault", id = "Dungeon",  checkbox = true},
-    {name = "Other", checkbox = true},
+local headersNew = {
+    [1] = {id = "ilvl", name = "ILvl"},
+    [2] = {id = "track", name = "Track"},
+    [3] = {id = "delves", hasCheckbox = true, name = "Delves"},
+    [4] = {id = "delvesVault", hasCheckbox = true, name = "Dlv Vault"},
+    [5] = {id = "raid", hasCheckbox = true, name = "Raid"},
+    [6] = {id = "dungeon", hasCheckbox = true, name = "Dungeon"},
+    [7] = {id = "dungeonVault", hasCheckbox = true, name = "Dun Vault"},
+    [8] = {id = "other", hasCheckbox = true, name = "Other"},
 }
+
 local indices = {
-    ["delves"] = 1,
-    ["delvesBounty"] = 1,
-    ["dungeon"] = 4,
-    ["raid"] = 3,
-    ["crafting"] = 6,
+    ["delves"] = 3,
+    ["dungeon"] = 6,
+    ["raid"] = 5,
+    ["other"] = 8,
 }
 
 local vaultIndices = {
-    ["delves"] = 2,
-    ["dungeon"] = 5,
+    ["delves"] = 4,
+    ["dungeon"] = 7,
 }
-
-local currentChildren = {}
 
 local function createTrackString(itemLevel)
     local trackString
@@ -79,179 +77,167 @@ local function retrieveSeasonID()
     end
 end
 
-local function setupGearingTable()
-    local levelToIndex = {}
-    local fullTable = {}
+local function calculateStringWidth(string)
+    gearingTab.TestFontString:SetText(string)
 
-    for k in ipairs(headers) do
-        fullTable[k] = {}
-    end
+    return gearingTab.TestFontString:GetStringWidth()
+end
 
-    local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
-
-    for index, itemlevel in ipairs(seasonalData.itemLevelList) do
-        tinsert(fullTable[1], WrapTextInColorCode(itemlevel, getColorForItemlevel(itemlevel)))
-        tinsert(fullTable[2], createTrackString(itemlevel))
-
-        fullTable[1].maxIndex = index
-        fullTable[2].maxIndex = index
-
-        levelToIndex[itemlevel] = index
-    end
-
-    for trackIndex, data in pairs(miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].tracks) do
-        local currentLegendFrame = miog.Gearing.Legend["Track" .. trackIndex]
-
-        if(currentLegendFrame) then
-            currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GetRGBA())
-            currentLegendFrame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(data.name)
-                GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.minLevel .. " - " .. data.maxLevel)
-                GameTooltip:Show()
-            end)
-        end
-    end
-
+local function createGearingDataTable()
     gearingTab.tableBuilder:Reset()
 
     local dataProvider = CreateDataProvider()
+    local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
 
-    for category, categoryData in pairs(seasonalData.data) do
-        for index, data in ipairs(categoryData) do
-            if(indices[category]) then
-                local categoryIndex = indices[category] + 2
-                local tableIndex = levelToIndex[data.level]
-                local existingText = fullTable[categoryIndex][tableIndex]
-                fullTable[categoryIndex][tableIndex] = WrapTextInColorCode(existingText and (existingText .. " / " .. data.name) or data.name, getColorForItemlevel(data.level))
+    local revisedHeaderOrder = {}
+    local revisedIndices = {}
+    local enabledIndex = 1
 
-                fullTable[categoryIndex].maxIndex = fullTable[categoryIndex].maxIndex and fullTable[categoryIndex].maxIndex > tableIndex and fullTable[categoryIndex].maxIndex or tableIndex
+    for headerIndex, headerData in ipairs(headersNew) do
+        local enabled = MIOG_NewSettings.gearingTable[headerData.id]
+        headerData.enabled = enabled
 
-            end
+        if(enabled ~= false) then
+            tinsert(revisedHeaderOrder, enabledIndex, {index = headerIndex, enabled = enabled})
 
-            if(vaultIndices[category] and not data.ignoreForVault) then
-                local categoryIndex = vaultIndices[category] + 2
-                local tableIndex = levelToIndex[data.vaultLevel]
-                local existingText = fullTable[categoryIndex][tableIndex]
-                fullTable[categoryIndex][tableIndex] = WrapTextInColorCode(existingText and (existingText .. " / " .. data.name) or data.name, getColorForItemlevel(data.vaultLevel))
-
-                fullTable[categoryIndex].maxIndex = fullTable[categoryIndex].maxIndex and fullTable[categoryIndex].maxIndex > tableIndex and fullTable[categoryIndex].maxIndex or tableIndex
-
-            end
-        end
-    end
-
-    local rows = {}
-    local columns = {}
-    local calcWidth = gearingTab:GetWidth() - 60
-
-    local firstIndex = 1
-    local newHeaderArray = {}
-
-    for i, v in ipairs(headers) do
-        if(MIOG_NewSettings.gearingTable[v.name .. (v.id or "")] == false) then
-            v.index = i
-            tinsert(newHeaderArray, #newHeaderArray + 1, v)
+            enabledIndex = enabledIndex + 1
 
         else
-            v.index = i
-            tinsert(newHeaderArray, firstIndex, v)
+            tinsert(revisedHeaderOrder, #revisedHeaderOrder + 1, {index = headerIndex, enabled = enabled})
 
-            firstIndex = firstIndex + 1
         end
+
     end
 
-    for _, v in ipairs(newHeaderArray) do
-        local dataIndex = v.index
+    for index, headerInfo in ipairs(revisedHeaderOrder) do
+        local headerData = headersNew[headerInfo.index]
+
+        revisedIndices[headerData.id] = index
+
         local column = gearingTab.tableBuilder:AddColumn()
-        columns[_] = column
-        column:ConstructHeader("Frame", v.checkbox and "MIOG_GearingTableCheckboxHeaderTemplate" or "MIOG_GearingTableHeaderTemplate", v.name)
 
-        local header = column.headerFrame
+        column:ConstructHeader("Frame", "MIOG_GearingTableColorHeaderTemplate", headerData.name, headerData.hasCheckbox, MIOG_NewSettings.gearingTable, headerData.id, function() createGearingDataTable() end)
+        column:ConstructCells("Frame", "MIOG_GearingTableColorCellTemplate")
 
-        if(v.checkbox) then
-            header.Checkbox:SetScript("OnClick", function(selfButton, button)
-                MIOG_NewSettings.gearingTable[v.name .. (v.id or "")] = selfButton:GetChecked()
-            
-                setupGearingTable()
-            end)
+        local stringWidth = calculateStringWidth(headerData.name)
 
-            header.Checkbox:SetChecked(MIOG_NewSettings.gearingTable[v.name .. (v.id or "")])
+        headerData.width = headerData.hasCheckbox and stringWidth + 12 or stringWidth
+        headerData.tableColumn = column
+        column:SetFixedConstraints(headerData.width + 4, 1)
+    end
+
+    local dataProviderTable = {}
+    local translator = {}
+    local stringWidth
+    local itemLevelColors = {}
+
+    for rowIndex, itemLevel in ipairs(seasonalData.itemLevelList) do
+        dataProviderTable[rowIndex] = {}
+        translator[itemLevel] = rowIndex
+
+        local itemLevelString = WrapTextInColorCode(itemLevel, getColorForItemlevel(itemLevel))
+        dataProviderTable[rowIndex][1] = itemLevelString
+        stringWidth = calculateStringWidth(itemLevelString)
+        headersNew[1].width = stringWidth > headersNew[1].width and stringWidth or headersNew[1].width
+
+        local trackString = createTrackString(itemLevel)
+        dataProviderTable[rowIndex][2] = trackString
+        stringWidth = calculateStringWidth(trackString)
+        headersNew[2].width = stringWidth > headersNew[2].width and stringWidth or headersNew[2].width
+        
+        itemLevelColors[itemLevel] = getColorForItemlevel(itemLevel)
+    end
+
+    for id, data in pairs(seasonalData.data) do
+        local formerBaseIndex = indices[id]
+        local formerVaultIndex = vaultIndices[id]
+
+        local baseHeaderData = headersNew[formerBaseIndex]
+        local vaultHeaderData = headersNew[formerVaultIndex]
+
+        local baseTableIndex = revisedIndices[baseHeaderData.id]
+        local vaultTableIndex
+
+        if(id == "delves" or id == "dungeon") then
+            vaultTableIndex = revisedIndices[vaultHeaderData.id]
 
         end
 
-        if(MIOG_NewSettings.gearingTable[v.name .. (v.id or "")] ~= false) then
-            column:ConstructCells("Frame", "MIOG_GearingTableCellTemplate", dataIndex)
-            local fixedWidth = 0
-            local width = 0
+        for _, entryData in ipairs(data) do
+            local rowCellData
+            local baseItemLevel, vaultItemLevel = entryData.level, entryData.vaultLevel
+            local currentName = entryData.name
 
-            for k = 1, fullTable[dataIndex].maxIndex, 1 do
-                rows[k] = rows[k] or {}
+            if(baseHeaderData.enabled) then
+                rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
+                
+                if(not rowCellData) then
+                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[baseItemLevel])
 
-                if(fullTable[dataIndex][k]) then
-                    local text = fullTable[dataIndex][k]
-                    rows[k][dataIndex] = text
+                else
+                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[baseItemLevel])
 
-                    gearingTab.TestFontString:SetText(text)
-
-                    width = gearingTab.TestFontString:GetStringWidth()
-
-                    fixedWidth = width > fixedWidth and width or fixedWidth
                 end
+                
+                rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
+
+                stringWidth = calculateStringWidth(rowCellData)
+                headersNew[formerBaseIndex].width = stringWidth > headersNew[formerBaseIndex].width and stringWidth or headersNew[formerBaseIndex].width
             end
+                
+            if(entryData.vaultOffset and vaultHeaderData.enabled and vaultTableIndex) then
+                rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
+            
+                if(not rowCellData) then
+                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[vaultItemLevel])
 
-            column.actualWidth = fixedWidth
-            calcWidth = calcWidth - fixedWidth
+                else
+                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[vaultItemLevel])
 
-        else
-            column:ConstructCells("Frame", "BackdropTemplate", dataIndex)
-            column.actualWidth = header.Text:GetStringWidth()
-            calcWidth = calcWidth - column.actualWidth
+                end
+                
+                rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
 
+                stringWidth = calculateStringWidth(rowCellData)
+
+                headersNew[formerVaultIndex].width = stringWidth > headersNew[formerVaultIndex].width and stringWidth or headersNew[formerVaultIndex].width
+            end
         end
     end
 
-    local addWidth = 0
-
-    if(calcWidth > 0) then
-        addWidth = calcWidth / #headers
+    for _, headerData in ipairs(headersNew) do
+        headerData.tableColumn:SetFixedConstraints(headerData.width + 6, 1)
 
     end
 
-    for _, v in ipairs(columns) do
-        v:SetFixedConstraints(v.actualWidth + addWidth + 4, 2)
-    end
-    
-    gearingTab.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
-
-    for k, v in pairs(rows) do
-        dataProvider:Insert(v)
+    for k, v in ipairs(dataProviderTable) do
+        dataProvider:Insert({text = v, rowIndex = k})
 
     end
 
     gearingTab.tableBuilder:Arrange()
-
     gearingTab.ScrollBox:SetDataProvider(dataProvider)
 end
 
 miog.loadGearingTable = function()
+    retrieveSeasonID()
+
     miog.Gearing = miog.pveFrame2.TabFramesPanel.GearingTable
 
     gearingTab = miog.Gearing
 
     local view = CreateScrollBoxListLinearView()
 	view:SetElementInitializer("BackdropTemplate", function(frame, data)
-
+        --line template
 	end)
-	view:SetPadding(1, 1, 1, 1, 0)
-
-    gearingTab.view = view
+	view:SetPadding(0, 0, 0, 0, 0)
+    view:SetElementExtent(15)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(gearingTab.ScrollBox, gearingTab.ScrollBar, view)
 
 	local tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
 	tableBuilder:SetHeaderContainer(gearingTab.HeaderContainer)
-	tableBuilder:SetTableMargins(3, 3)
+    tableBuilder:SetTableMargins(1, 1)
 
 	local function ElementDataProvider(elementData, ...)
 		return elementData
@@ -267,13 +253,30 @@ miog.loadGearingTable = function()
 	
 	ScrollUtil.RegisterTableBuilder(gearingTab.ScrollBox, tableBuilder, ElementDataTranslator)
 
-    miog.Gearing.tableBuilder = tableBuilder
+    gearingTab.tableBuilder = tableBuilder
+    gearingTab.view = view
 
-    miog.Gearing:SetScript("OnSizeChanged", function()
-        setupGearingTable()
+    local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
+
+    gearingTab:SetScript("OnSizeChanged", function(self)
+        self.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
+
+        createGearingDataTable()
     end)
 
-    retrieveSeasonID()
+    createGearingDataTable()
 
-    setupGearingTable()
+    for trackIndex, data in pairs(seasonalData.tracks) do
+        local currentLegendFrame = gearingTab.Legend["Track" .. trackIndex]
+
+        if(currentLegendFrame) then
+            currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GetRGBA())
+            currentLegendFrame:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(data.name)
+                GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.minLevel .. " - " .. data.maxLevel)
+                GameTooltip:Show()
+            end)
+        end
+    end
 end

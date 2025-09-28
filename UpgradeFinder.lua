@@ -133,14 +133,14 @@ local function setItemLinkToSpecificItemLevel(link, ilvl, type)
     local linkType, linkOptions, displayText = LinkUtil.ExtractLink(link)
     local array = {strsplit(":", linkOptions)}
 
-    array[12] = type == "mythicPlus" and 34 or type == "crafting" and 13
+    array[12] = type == "mythicPlus" and 34 or type == "other" and 13
 
-    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and highestMPlusItemLevel or type == "crafting" and highestCraftingItemLevel) - ilvl)
+    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and highestMPlusItemLevel or type == "other" and highestCraftingItemLevel) - ilvl)
 
     if(type == "mythicPlus") then
         addBonusIDsToArray(array, 10390, 11987, bestBonusID)
 
-    elseif(type == "crafting") then
+    elseif(type == "other") then
         addBonusIDsToArray(array, 21612, 10240, bestBonusID)
         
     end
@@ -158,8 +158,8 @@ local function retrieveHighestMPlusDropLevel()
 end
 
 local function retrieveHighestCraftingLevel()
+    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.other.highestItemLevel
 
-    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.crafting.highestItemLevel
 end
 
 local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray)
@@ -175,14 +175,14 @@ local function setItemLinkArrayToSpecificItemLevel(link, ilvl, type, linkIsArray
 
     end
 
-    array[12] = type == "mythicPlus" and 34 or type == "crafting" and 13
+    array[12] = type == "mythicPlus" and 34 or type == "other" and 13
 
-    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and highestMPlusItemLevel or type == "crafting" and highestCraftingItemLevel) - ilvl)
+    local bestBonusID = findCorrectBonusID((type == "mythicPlus" and highestMPlusItemLevel or type == "other" and highestCraftingItemLevel) - ilvl)
 
     if(type == "mythicPlus") then
         addBonusIDsToArray(array, 10390, 11987, bestBonusID)
 
-    elseif(type == "crafting") then
+    elseif(type == "other") then
         addBonusIDsToArray(array, 21612, 10240, bestBonusID)
         
 
@@ -749,7 +749,7 @@ local function findApplicableCraftingItems(dataProvider, filterID, itemLevelToBe
                 local item = Item:CreateFromItemID(v.itemID)
 
                 if(invSlotToFilterType[item:GetInventoryType()] == filterID) then
-                    local newLink = removeAndSetItemLinkItemLevels(item:GetItemLink(), "crafting")
+                    local newLink = removeAndSetItemLinkItemLevels(item:GetItemLink(), "other")
                     local statTable = C_Item.GetItemStats(newLink)
                             
                     if(statTable[mainStat] or hasNoMainStatOnIt(statTable)) then
