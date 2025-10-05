@@ -641,8 +641,6 @@ local function countPlayersWithData()
 	return playersWithSpecData, inspectableMembers
 end
 
-miog.countPlayersWithData = countPlayersWithData
-
 local function updateInspectionText()
 	local name
 
@@ -694,9 +692,7 @@ local function clearCharacter(fullName)
 	end
 
 	removePlayerFromInspectList(fullName)
-	updateInspectionText()
-
-	miog.inspectNextCharacter()
+	--updateInspectionText()
 end
 
 local function checkTimeouts(fullName)
@@ -709,7 +705,7 @@ local function startNotify(fullName)
 			if(not playerSpecs[fullName] and canInspectPlayer(fullName) and checkTimeouts(fullName)) then
 				playerInInspection = fullName
 
-				NotifyInspect(groupData[playerInInspection].unitID)
+				--NotifyInspect(groupData[playerInInspection].unitID)
 
 				pityTimers[fullName] = C_Timer.NewTimer(5, function()
 					timeouts[fullName] = timeouts[fullName] and timeouts[fullName] + 1 or 1
@@ -1054,7 +1050,7 @@ local classId = singleUnitInfo.classId
 local className = singleUnitInfo.className
 local unitName = singleUnitInfo.name
 local fullName = singleUnitInfo.nameFull
-]]
+
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 	if(singleUnitInfo) then
 		if(singleUnitInfo.nameFull == shortName) then
@@ -1063,7 +1059,7 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 
 		if(groupData[singleUnitInfo.nameFull]) then
 			if(singleUnitInfo.specId and singleUnitInfo.specId > 0) then
-				checkPlayerInspectionStatus(singleUnitInfo.nameFull, singleUnitInfo.specId, 2)
+				--checkPlayerInspectionStatus(singleUnitInfo.nameFull, singleUnitInfo.specId, 2)
 
 			end
 		end
@@ -1076,15 +1072,15 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneInfo)
 	if(mapName) then
 		local fullName = miog.createFullNameFrom("unitName", unitName)
 
-		playerKeystones[fullName] = keystoneInfo
+		--playerKeystones[fullName] = keystoneInfo
 
-		updateSingleCharacterKeystoneData(fullName)
+		--updateSingleCharacterKeystoneData(fullName)
 
 	end
 end
 
 miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
-	--[[local itemLevelNumber = unitGear.ilevel
+	--[ [local itemLevelNumber = unitGear.ilevel
 	local durabilityNumber = unitGear.durability
 	--hasWeaponEnchant is 1 have enchant or 0 is don't
 	local hasWeaponEnchantNumber = unitGear.weaponEnchant
@@ -1095,17 +1091,21 @@ miog.OnGearUpdate = function(unitId, unitGear, allUnitsGear)
 	end
 
 	for index, slotIdWithEmptyGemSocket in ipairs (noGemsTable) do
-	end]]
+	end] ]
 
 	local name = miog.createFullNameFrom("unitID", unitId)
 
 	if(name) then
 		playerGearData[name] = unitGear
 
-		updateSingleCharacterItemData(name)
+		--updateSingleCharacterItemData(name)
 
 	end
-end
+end]]
+
+	--miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
+	--miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
+	--miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
 
 local function updateRaidLibData()
 	local isInRaid, isInGroup = IsInRaid(), IsInGroup()
@@ -1125,7 +1125,6 @@ local function updateRaidLibData()
 end
 
 miog.loadInspectManagement = function()
-	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
    
 	local inspectManager = CreateFrame("Frame", nil)
 	inspectManager:Hide()
@@ -1138,7 +1137,7 @@ miog.loadInspectManagement = function()
 	inspectManager:RegisterEvent("INSPECT_READY")
 	inspectManager:RegisterEvent("GROUP_ROSTER_UPDATE")
 	inspectManager:RegisterEvent("PLAYER_REGEN_ENABLED")
-	inspectManager:SetScript("OnEvent", groupManagerEvents)
+	--inspectManager:SetScript("OnEvent", groupManagerEvents)
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	
@@ -1147,28 +1146,25 @@ miog.loadInspectManagement = function()
 end
 
 local function updateAllData()
-	updateRaidLibData()
-	updateGroupData(6, true)
+	--updateRaidLibData()
+	--updateGroupData(6, true)
 end
 
 miog.loadGroupManager = function()
     miog.GroupManager = miog.pveFrame2.TabFramesPanel.GroupManager
 	miog.GroupManager:SetScrollBox(miog.GroupManager.ScrollBox)
 
-	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
-	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
-
     framePool = CreateFramePool("Button", nil, "MIOG_GroupManagerRaidFrameCharacterTemplate", function(_, frame) frame:Hide() clearFrameFromSpace(frame) end)
 
 	miog.GroupManager:SetScript("OnShow", function()
-		updateAllData()
+		--updateAllData()
 	end)
 
 	miog.GroupManager.StatusBar.Refresh:SetScript("OnClick", function()
-		updateAllData()
+		--updateAllData()
 
 		if(playerInInspection) then
-			clearCharacter(playerInInspection)
+			--clearCharacter(playerInInspection)
 
 		end
 	end)
@@ -1187,10 +1183,10 @@ miog.loadGroupManager = function()
 		{name = "keylevel", tooltipTitle = WEEKLY_REWARDS_MYTHIC_KEYSTONE, padding = 41},
 	})
 
-	miog.GroupManager:RegisterEvent("READY_CHECK")
-	miog.GroupManager:RegisterEvent("READY_CHECK_CONFIRM")
-	miog.GroupManager:RegisterEvent("READY_CHECK_FINISHED")
-	miog.GroupManager:SetScript("OnEvent", groupManagerEvents)
+	--miog.GroupManager:RegisterEvent("READY_CHECK")
+	--miog.GroupManager:RegisterEvent("READY_CHECK_CONFIRM")
+	--miog.GroupManager:RegisterEvent("READY_CHECK_FINISHED")
+	--miog.GroupManager:SetScript("OnEvent", groupManagerEvents)
 
 	local ScrollView = CreateScrollBoxListLinearView(0, 0, 0, 0, 2)
 
@@ -1214,8 +1210,3 @@ miog.loadGroupManager = function()
     miog.GroupManager.Groups.Damager.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
 	miog.GroupManager.Indepth:OnLoad("side")
 end
-
-hooksecurefunc("NotifyInspect", function()
-	lastNotifyTime = GetTimePreciseSec()
-	updateInspectionText()
-end)

@@ -1099,6 +1099,12 @@ end
 
 miog.createShortNameFrom = createShortNameFrom
 
+local function findScrollBoxFrame(scrollBox, checkFunc)
+	local frame = scrollBox:FindFrameByPredicate(checkFunc())
+
+	return frame
+end
+
 local function printOnce(string)
 	if(miog.ONCE) then
 		miog.ONCE = false

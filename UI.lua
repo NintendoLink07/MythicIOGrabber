@@ -176,7 +176,7 @@ miog.createFrames = function()
 	miog.ClassPanel = miog.createClassPanel()
 	miog.FilterManager = miog.loadFilterManager()
 	
-	miog.loadInspectManagement()
+	--miog.loadInspectManagement()
 
 	--miog.loadRequeue()
 
@@ -186,6 +186,7 @@ miog.createFrames = function()
 		miog.loadTeleports()
 		miog.loadGearingTable()
 		miog.loadGroupManager()
+		miog.loadGroupOrganizer()
 		miog.loadRaidPlanner()
 		miog.loadActivityChecker()
 

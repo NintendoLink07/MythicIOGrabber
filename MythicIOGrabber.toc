@@ -46,6 +46,7 @@ ReQueue.lua
 
 FuzzyAlgorithm.lua
 
+GroupOrganizer.lua
 Loot.lua
 
 
@@ -77,11 +78,15 @@ Mixins\TeleportLogoMixin.lua
 Mixins\TeleportButtonMixin.lua
 Mixins\AbandonMixin.lua
 
+Mixins\GroupOrganizerCellMixin.lua
+
 
 
 ##
 ### XML
 ##
+
+XML\TableBuilderElements\MIOG_TableBuilderColorCellTemplate.xml
 
 XML\Requeue\MIOG_RequeuePopup.xml
 
@@ -123,6 +128,12 @@ XML\GroupManager\MIOG_GroupManagerDungeonTemplate.xml
 XML\GroupManager\MIOG_GroupManagerTierTemplate.xml
 XML\GroupManager\MIOG_GroupManagerTierTemplateNew.xml
 XML\GroupManager\MIOG_GroupManagerRaidBossTemplate.xml
+
+XML\GroupOrganizer\MIOG_GroupOrganizer.xml
+XML\GroupOrganizer\MIOG_GroupOrganizerTextCellTemplate.xml
+XML\GroupOrganizer\MIOG_GroupOrganizerIconCellTemplate.xml
+XML\GroupOrganizer\MIOG_GroupOrganizerHeaderTemplate.xml
+XML\GroupOrganizer\MIOG_GroupOrganizerLineTemplate.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml

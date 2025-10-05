@@ -58,8 +58,6 @@ local function updateGroupClassData()
         local roleCountTank, roleCountHealer, roleCountDamager = roleCount["TANK"], roleCount["HEALER"], roleCount["DAMAGER"]
         local roleCountString = roleCountTank .. "/" .. roleCountHealer .. "/" .. roleCountDamager
 
-
-
 		miog.ClassPanel.GroupComp:SetText(roleCountString)
         miog.ClassPanel.GroupComp.tanks = roleCountTank
         miog.ClassPanel.GroupComp.healers = roleCountHealer
@@ -176,15 +174,17 @@ miog.createClassPanel = function()
 
     classPanel.Status:SetText("[1/1/" .. GetNumGroupMembers() .. "]")
     classPanel.Status:SetScript("OnEnter", function(self)
-        local specs, members = miog.countPlayersWithData()
-
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(specs .. " players with spec data.")
-        GameTooltip:AddLine(members .. " group members that are inspectable (not offline or some weird faction interaction).")
+
+        if(self.data) then
+            GameTooltip:SetText(self.data.specs .. " players with spec data.")
+            GameTooltip:AddLine(self.data.members .. " group members that are inspectable (not offline or some weird interaction).")
+
+        end
+        
         GameTooltip:AddLine(GetNumGroupMembers() .. " total group members.")
 
         if(self.inspectList) then
-
             local headerMissing = true
 
             for k, v in pairs(self.inspectList) do

@@ -1,0 +1,37 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupOrganizer" virtual="true">
+        <Frames>
+            <Frame parentKey="HeaderContainer">
+                <Size y="20"/>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.HeaderContainer" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Size x="10" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </EventFrame>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png" hidden="true">
+                    <Size x="14" y="14" />
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

@@ -118,15 +118,19 @@ function ProgressMixin:RefreshGreatVaultProgress()
 		end
 	end
 
+	local resetTime = time() + C_DateAndTime.GetSecondsUntilWeeklyReset()
+
 	self.settings.greatVault = {
-		resetTime = time() + C_DateAndTime.GetSecondsUntilWeeklyReset(),
+		resetTime = resetTime,
 	}
 
 	self.characterSettings[playerGUID].greatVault = {
 		hasRewardOnReset = hasRewardOnReset,
+		resetTime = resetTime,
 		canClaimRewards = C_WeeklyRewards.CanClaimRewards(),
 		hasGeneratedRewards = C_WeeklyRewards.HasGeneratedRewards(), --need to test function
 		hasAvailableRewards = C_WeeklyRewards.HasAvailableRewards(),
+		rewardsFromLastWeek = C_WeeklyRewards.AreRewardsForCurrentRewardPeriod(),
 		activities = greatVaultData
 	}
 end
@@ -572,10 +576,24 @@ function ProgressOverviewMixin:OnLoad()
 				frame.VaultStatus:SetAtlas("mythicplus-dragonflight-greatvault-incomplete")
 
 
+		canClaimRewards = C_WeeklyRewards.CanClaimRewards(),
+		hasGeneratedRewards = C_WeeklyRewards.HasGeneratedRewards(), --need to test function
+		hasAvailableRewards = C_WeeklyRewards.HasAvailableRewards(),
+
 				gficon-chest-evergreen-greatvault-collect
 				]]
 
-			if(data.greatVault.hasRewardOnReset and self.settings.greatVault.resetTime < time()) then
+			if(data.greatVault.hasGeneratedRewards) then
+				frame.Identifiers.GreatVault.Icon:SetAtlas("gficon-chest-evergreen-greatvault-collect")
+
+				frame.Identifiers.GreatVault.Icon:SetScript("OnEnter", function(selfIcon)
+					GameTooltip:SetOwner(selfIcon, "ANCHOR_RIGHT")
+					GameTooltip:SetText(WEEKLY_REWARDS_RETURN_TO_CLAIM)
+					GameTooltip:Show()
+				end)
+
+				frame.Identifiers.GreatVault.Icon:Show()
+			elseif(data.greatVault.hasAvailableRewards or data.greatVault.hasRewardOnReset and data.greatVault.resetTime and data.greatVault.resetTime < time()) then
 				frame.Identifiers.GreatVault.Icon:SetAtlas("gficon-chest-evergreen-greatvault-collect")
 
 				frame.Identifiers.GreatVault.Icon:SetScript("OnEnter", function(selfIcon)
@@ -583,8 +601,8 @@ function ProgressOverviewMixin:OnLoad()
 					GameTooltip:SetText(MYTHIC_PLUS_COLLECT_GREAT_VAULT)
 					GameTooltip:Show()
 				end)
-				frame.Identifiers.GreatVault.Icon:Show()
 
+				frame.Identifiers.GreatVault.Icon:Show()
 			else
 				frame.Identifiers.GreatVault.Icon:Hide()
 

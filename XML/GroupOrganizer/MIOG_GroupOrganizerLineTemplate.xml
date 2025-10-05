@@ -1,0 +1,140 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_GroupOrganizerLineTemplate" registerForClicks="RightButtonUp, LeftButtonUp" inherits="UIButtonTemplate" virtual="true">
+        <Scripts>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetUnit(self.data.unitID)
+
+                if(self.data.unitID) then
+                    if(self.data.index) then
+                        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(self.data.index) --ONLY WORKS WHEN IN GROUP
+
+                        if(rank == 2 ) then
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine("Rank: " .. RAID_LEADER)
+
+                        elseif(rank == 1 ) then
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine("Rank: " .. RAID_ASSISTANT)
+
+                        else
+                            if(role ~= nil) then
+                                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+                                if (role == "MAINTANK" ) then
+                                    GameTooltip:AddLine("Raid role: " .. MAIN_TANK);
+                                elseif (role == "MAINASSIST" ) then
+                                    GameTooltip:AddLine("Raid role: " .. MAIN_ASSIST);
+                                end
+                            end
+                        end
+                    end
+
+                    if(self.data.keystone) then
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine("Keystone: +" .. self.data.keylevel .. " " .. self.data.keyname)
+
+                    end
+
+                    if(self.data.progressTooltipData) then
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(self.data.progressTooltipData)
+
+                    end
+
+                    if(self.data.hasWeaponEnchant) then
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(WrapTextInColorCode("Weapon enchanted", "FF00FF00"))
+
+                    elseif(self.data.hasWeaponEnchant == false) then
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(WrapTextInColorCode("Weapon not enchanted", "FFFF0000"))
+
+                    end
+
+                    if(self.data.missingGems) then
+                        if(#self.data.missingGems > 0) then
+                            local missingGems = ""
+
+                            for k, v in ipairs(self.data.missingGems) do
+                                missingGems = missingGems .. v .. " "
+
+                            end 
+                            
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine(WrapTextInColorCode("Unsocketed slots: " .. missingGems, "FFFF0000"))
+                        else
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine(WrapTextInColorCode("All sockets filled", "FF00FF00"))
+
+                        end
+                    end
+
+                    if(self.data.missingEnchants) then
+                        if(#self.data.missingEnchants > 0) then
+                            local missingEnchants = ""
+
+                            for k, v in ipairs(self.data.missingEnchants) do
+                                missingEnchants = missingEnchants .. v .. " "
+
+                            end
+                            
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine(WrapTextInColorCode("Unenchanted slots: " .. missingEnchants, "FFFF0000"))
+                        else
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine(WrapTextInColorCode("Fully enchanted", "FF00FF00"))
+
+                        end
+
+                    --[[else
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(WrapTextInColorCode("No data available (yet) for this player.", "FFFF0000"))
+                        GameTooltip:AddLine(WrapTextInColorCode("This player may not have Details or MythicIOGrabber installed.", "FFFF0000"))
+                        ]]--
+
+                    end
+
+                    local fullName = self.data.fullName
+	
+                    if(fullName == "Rhany-Ravencrest" or fullName == "Gerhanya-Ravencrest" or fullName == "Latimeria-Ravencrest") then
+                        GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
+
+                    end
+
+                    GameTooltip:Show()
+                end
+            </OnEnter>
+            <OnLoad>
+                self:SetNormalAtlas("communitiesfinder-card")
+                self:SetHighlightAtlas("communitiesfinder-card")
+            </OnLoad>
+            <OnClick>
+                if(button == "RightButton") then
+			        local type = IsInRaid() and "raid" or (IsInGroup() and "party" or nil)
+                    
+                    local contextData
+
+                    if(type == "raid") then
+                        if self.id and self.name then
+                            contextData =
+                            {
+                                unit = self.unit,
+                                name = self.name;
+                            };
+                        end
+                    elseif(type == "party") then
+                        contextData =
+                        {
+                            unit = self.unit,
+                        };
+                    end
+
+                    UnitPopup_OpenMenu("MIOG_" .. strupper(type), contextData);
+                end
+            </OnClick>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Button>
+</Ui>

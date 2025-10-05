@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.6.3] - 2025-10-05
+
+### Changed
+
+- [Progress] The great vault icon now also shows when rewards have already been generated for a character but haven't been claimed yet.
+
+
+
+
 ## [3.6.2c] - 2025-09-28
 
 ### Changed
