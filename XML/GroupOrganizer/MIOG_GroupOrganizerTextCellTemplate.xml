@@ -2,6 +2,10 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_GroupOrganizerTextCellTemplate" mixin="GroupOrganizerStandardMixin" virtual="true">
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="BackgroundColor" setAllPoints="true" />
+            </Layer>
+            
             <Layer level="OVERLAY">
                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>

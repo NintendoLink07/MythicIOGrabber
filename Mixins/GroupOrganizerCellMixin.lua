@@ -2,102 +2,21 @@ local addonName, miog = ...
 
 GroupOrganizerStandardMixin = {}
 
-function GroupOrganizerStandardMixin:Init()
-end
-
-function GroupOrganizerStandardMixin:Populate(data, columnIndex)
-    --self.Text:SetText(data[columnIndex])
-
-end
-
-
-
-
-GroupOrganizerNameMixin = {}
-
-function GroupOrganizerNameMixin:Init()
-end
-
-function GroupOrganizerNameMixin:Populate(data, columnIndex)
-    self.Text:SetText(data.fileName and WrapTextInColorCode(data.name, C_ClassColor.GetClassColor(data.fileName):GenerateHexColor()) or data.name)
-
-end
-
-
-
-
-GroupOrganizerClassMixin = {}
-
-function GroupOrganizerClassMixin:Init()
-end
-
-function GroupOrganizerClassMixin:Populate(data, columnIndex)
-	self.Icon:SetTexture(miog.SPECIALIZATIONS[data.specID].class.icon)
-
-end
-
-
-
-
-GroupOrganizerSpecializationMixin = {}
-
-function GroupOrganizerSpecializationMixin:Init()
-end
-
-function GroupOrganizerSpecializationMixin:Populate(data, columnIndex)
-	self.Icon:SetTexture(miog.SPECIALIZATIONS[data.specID].squaredIcon)
-
-end
-
-
-
-
-GroupOrganizerLevelMixin = {}
-
-function GroupOrganizerLevelMixin:Init()
-end
-
-function GroupOrganizerLevelMixin:Populate(data, columnIndex)
-	self.Text:SetText(data.level)
-
-end
-
-
-
-
-GroupOrganizerRoleMixin = {}
-
-function GroupOrganizerRoleMixin:Init()
-end
-
-function GroupOrganizerRoleMixin:Populate(data, columnIndex)
-	self.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/" .. (data.combatRole and data.combatRole .. "Icon.png" or "unknown.png"))
-
-end
-
-
-
-
-GroupOrganizerIndexMixin = {}
-
-function GroupOrganizerIndexMixin:Init()
-end
-
-function GroupOrganizerIndexMixin:Populate(data, columnIndex)
-	self.Text:SetText(data.index)
-
-end
-
-
-
-
-GroupOrganizerStandardMixin = {}
-
 function GroupOrganizerStandardMixin:Init(key)
     self.key = key
 end
 
 function GroupOrganizerStandardMixin:Populate(data, columnIndex)
+    local orderID = data.index % 2
+
+    if(orderID == 0) then
+        self.BackgroundColor:SetColorTexture(0.75, 0.75, 0.75, 0.1)
+
+    else
+        self.BackgroundColor:SetColorTexture(0.5, 0.5, 0.5, 0.1)
+
+    end
+
 	if(self.key == "name") then
         self.Text:SetText(data.fileName and WrapTextInColorCode(data.name, C_ClassColor.GetClassColor(data.fileName):GenerateHexColor()) or data.name)
 
@@ -124,13 +43,14 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
         self.Text:SetText(data.progress or "-")
 
     elseif(self.key == "keylevel") then
-        self.Text:SetText(data.keystoneShortName and ("+" .. data.keylevel .. " " .. data.keystoneShortName) or "-")
+        self.Text:SetText(data.keystoneAbbreviatedName and ("+" .. data.keylevel .. " " .. data.keystoneAbbreviatedName) or "-")
 
     elseif(self.key == "combatRole") then
 	    self.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/" .. (data.combatRole and data.combatRole .. "Icon.png" or "unknown.png"))
 
     elseif(self.key == "index") then
-	    self.Text:SetText(data.subgroup .. " (" .. data.index .. ")")
+	    self.Text:SetText(data.subgroup .. "-" .. data.index)
+
 
     end
 
@@ -144,6 +64,9 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
         end
     end
 end
+
+
+
 
 GroupOrganizerHeaderMixin = {}
 

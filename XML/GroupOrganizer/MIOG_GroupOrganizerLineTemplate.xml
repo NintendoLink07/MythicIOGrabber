@@ -107,8 +107,8 @@
                 end
             </OnEnter>
             <OnLoad>
-                self:SetNormalAtlas("communitiesfinder-card")
-                self:SetHighlightAtlas("communitiesfinder-card")
+                --self:SetNormalAtlas("communitiesfinder-card")
+                --self:SetHighlightAtlas("communitiesfinder-card")
             </OnLoad>
             <OnClick>
                 if(button == "RightButton") then

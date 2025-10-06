@@ -26,6 +26,8 @@ local inspectionPlayerName
 local retryList = {}
 local resumeTime = 0
 
+local groupUpdateQueued = false
+
 local throttleSetting = miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 
 local function canInspectPlayer(fullName)
@@ -71,9 +73,11 @@ local function updateInspectionText()
 	local name
 
 	if(inspectionPlayerName) then
-        if(inspectionQueue[inspectionPlayerName] and inspectionQueue[inspectionPlayerName].fileName) then
-            local color = C_ClassColor.GetClassColor(inspectionQueue[inspectionPlayerName].fileName)
-            name = color and WrapTextInColorCode(inspectionQueue[inspectionPlayerName].name, color:GenerateHexColor()) or inspectionQueue[inspectionPlayerName].name
+        local queueData = inspectionQueue[inspectionPlayerName]
+
+        if(queueData and queueData.fileName) then
+            local color = C_ClassColor.GetClassColor(queueData.fileName)
+            name = color and WrapTextInColorCode(queueData.name, color:GenerateHexColor()) or queueData.name
 
         else
             name = inspectionPlayerName
@@ -87,10 +91,12 @@ local function updateInspectionText()
 
 	local specs, members = countPlayersWithData()
 
-	local numGroupMembers = GetNumGroupMembers()
+    local concatTable = {
+        "[", specs, "/", members, "/", GetNumGroupMembers(), "]"
+    }
 
 	miog.ClassPanel.InspectionName:SetText(name)
-    miog.ClassPanel.Status:SetText("[" .. specs .. "/" .. members .. "/" .. numGroupMembers .. "]")
+    miog.ClassPanel.Status:SetText(table.concat(concatTable))
 	miog.ClassPanel.Status.inspectList = inspectionQueue
 
     miog.ClassPanel.Status.data = {specs = specs, members = members}
@@ -178,45 +184,8 @@ local function setDataProviderSort(originColumnHeader, key)
     dataProvider:SetSortComparator(sortComparatorFunction)
 end
 
-local function createColumn(name, cellTemplate, key, useForSort, iconColumn)
-    local tableBuilder = groupManager.tableBuilder
-    local column = tableBuilder:AddColumn()
-    local header = column:ConstructHeader("Button", "MIOG_GroupOrganizerHeaderTemplate", name, key, useForSort and setDataProviderSort)
-    column:ConstructCells("Frame", cellTemplate, key)
-
-    if(fixed) then
-        local width
-        
-        if(column.headerFrame.Text) then
-            width = column.headerFrame.Text:GetStringWidth() + 20
-
-        end
-
-        column:SetFixedConstraints(width or 48, 1)
-
-    elseif(key == "name") then
-        column:SetFixedConstraints(88, 1)
-        
-    else
-	    column:SetPadding(1);
-    end
-end
-
-local function updateElementExtent()
-    local indiHeight = groupManager.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 18 or 6)
-    groupManager.view:SetElementExtent(indiHeight)
-
-end
-
 local function saveOptionalPlayerData(data, fullName, playerName, realm)
-    if(not playerName or not realm) then
-        playerName, realm = miog.createSplitName(fullName)
-    end
-
     local playerGear = savedGearData[fullName]
-
-    print(fullName)
-    DevTools_Dump(playerGear)
 
     if(playerGear) then
         data.itemLevel = playerGear.ilevel or 0
@@ -231,28 +200,30 @@ local function saveOptionalPlayerData(data, fullName, playerName, realm)
     local keystoneData = savedKeystoneData[fullName]
 
     if(keystoneData and miog.CHALLENGE_MODE_INFO[keystoneData.challengeMapID]) then
+        --local mapName = C_ChallengeMode.GetMapUIInfo(keystoneData.challengeMapID)
         local challengeModeMapID = keystoneData.challengeMapID
 
-        local mapName = C_ChallengeMode.GetMapUIInfo(challengeModeMapID)
-        data.keystoneShortName = miog.MAP_INFO[miog.CHALLENGE_MODE_INFO[challengeModeMapID].mapID].shortName
+        data.keystoneAbbreviatedName = miog.MAP_INFO[miog.CHALLENGE_MODE_INFO[challengeModeMapID].mapID].abbreviatedName
         data.keylevel = keystoneData.level
-        data.keystoneFullName = mapName
 
     else
         data.keystoneShortName = ""
         data.keylevel = 0
-        data.keystoneFullName = ""
 
     end
 
-    savedRaidData[fullName] = savedRaidData[fullName] or miog.getRaidProgressDataOnly(playerName, realm)
+    local raiderIORaidData = miog.getRaidProgressDataOnly(playerName, realm)
 
     if(savedRaidData[fullName]) then
+        data.progress = savedRaidData[fullName].progress
+        data.progressWeight = savedRaidData[fullName].progressWeight
+        
+    elseif(raiderIORaidData) then
         data.progress = ""
 
         local raidTable = {}
 
-        for _, v in ipairs(savedRaidData[fullName].character.ordered) do
+        for _, v in ipairs(raiderIORaidData.character.ordered) do
             if(v.difficulty > 0) then
                 raidTable[v.mapID] = raidTable[v.mapID] or {}
 
@@ -266,8 +237,9 @@ local function saveOptionalPlayerData(data, fullName, playerName, realm)
 
         end
 
-        data.progressWeight = savedRaidData[fullName].character.progressWeight or 0
+        data.progressWeight = raiderIORaidData.character.progressWeight or 0
 
+        savedRaidData[fullName] = {progress = data.progress, progressWeight = data.progressWeight}
     else
         data.progressWeight = 0
         data.progress = "-"
@@ -280,27 +252,41 @@ local function saveOptionalPlayerData(data, fullName, playerName, realm)
     return data
 end
 
-local function updateGroup()
+local function createColumn(name, cellTemplate, key, useForSort, iconColumn)
     local tableBuilder = groupManager.tableBuilder
-    tableBuilder:Reset()
-    updateElementExtent()
+    local column = tableBuilder:AddColumn()
+    column:ConstructHeader("Button", "MIOG_GroupOrganizerHeaderTemplate", name, key, useForSort and setDataProviderSort)
+    column:ConstructCells("Frame", cellTemplate, key)
 
+    if(key == "name") then
+        column:SetFixedConstraints(88, 1)
+        
+    elseif(iconColumn) then
+        column:SetFixedConstraints(40, 1)
+        
+    elseif(key == "progress") then
+        column:SetFillConstraints(1.3, 1)
+
+    elseif(key == "keylevel") then
+        column:SetFillConstraints(1.1, 1)
+        
+    else
+        column:SetFillConstraints(1, 1)
+
+    end
+end
+
+local function updateElementExtent()
+    local indiHeight = groupManager.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 12 or 6)
+    groupManager.view:SetElementExtent(indiHeight)
+
+end
+
+local function updateGroup()
     playersInGroup = {}
 
     local dataProvider = CreateDataProvider()
     dataProvider:SetSortComparator(sortComparatorFunction)
-
-    createColumn("Name", "MIOG_GroupOrganizerTextCellTemplate", "name", true)
-    createColumn("Role", "MIOG_GroupOrganizerIconCellTemplate", "combatRole", true, true)
-    createColumn("Class", "MIOG_GroupOrganizerIconCellTemplate", "class", false, true)
-    createColumn("Spec", "MIOG_GroupOrganizerIconCellTemplate", "specID", true, true)
-    createColumn("Level", "MIOG_GroupOrganizerTextCellTemplate", "level", true)
-    createColumn("I-Lvl", "MIOG_GroupOrganizerTextCellTemplate", "itemLevel", true)
-    createColumn("Repair", "MIOG_GroupOrganizerTextCellTemplate", "durability", true)
-    createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true)
-    createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progressWeight", true)
-    createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true)
-    createColumn("Group", "MIOG_GroupOrganizerTextCellTemplate", "index", true)
 
     local numOfMembers = GetNumGroupMembers()
     local isInRaid = IsInRaid()
@@ -333,12 +319,12 @@ local function updateGroup()
                 local playerSpec = savedPlayerSpecs[fullName] or 0
                 
                 if(fullName ~= fullPlayerName) then
-                    if(not savedPlayerSpecs[fullName] and online) then
+                    if(online and not savedPlayerSpecs[fullName]) then
                         inspectionQueue[fullName] = unitID
 
                     end
 
-                else
+                elseif(not savedPlayerSpecs[fullPlayerName]) then
                     savedPlayerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
 
                 end
@@ -363,7 +349,7 @@ local function updateGroup()
                     role = role,
                 }
 
-                data = saveOptionalPlayerData(data, fullName)
+                data = saveOptionalPlayerData(data, fullName, playerName, realm)
 	            
                 dataProvider:Insert(data)
             end
@@ -389,14 +375,23 @@ local function updateGroup()
 
         }
         
-        saveOptionalPlayerData(data, fullPlayerName)
+        saveOptionalPlayerData(data, fullPlayerName, shortPlayerName, playerRealm)
         
         dataProvider:Insert(data)
     end
 
-    groupManager.tableBuilder:Arrange()
-
     groupManager.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+end
+
+local function queueGroupUpdate()
+    if(not groupUpdateQueued) then
+        groupUpdateQueued = true
+
+        C_Timer.After(2, function()
+            updateGroup()
+            groupUpdateQueued = false
+        end)
+    end
 end
 
 local function queueHasEntries()
@@ -499,7 +494,7 @@ end
 
 local function checkCoroutine(origin)
     local status = inspectRoutine and coroutine.status(inspectRoutine)
-    print(origin, "CHECK STATUS", status)
+    print(origin, "CHECK STATUS", status, notifyBlocked, queueHasEntries())
 
     if(not notifyBlocked and queueHasEntries()) then
         if(status == nil or status == "dead") then
@@ -531,7 +526,7 @@ local function saveSpecIDManually(playerName, specID)
         savedPlayerSpecs[playerName] = specID
 
         checkCoroutine(9)
-        updateGroup()
+        queueGroupUpdate()
         updateInspectionText()
     end
 end
@@ -577,15 +572,22 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneInfo)
 
         end
 
-        updateGroup()
+        queueGroupUpdate()
 
 		--updateSingleCharacterKeystoneData(fullName)
 
 	end
 end
 
-local function isUnitID()
+local function isUnitID(str)
+    str = string.lower(str)
 
+    if(string.find(str, "player") or string.find(str, "party") or string.find(str, "raid") or string.find(str, "target")) then
+        return true
+
+    end
+
+    return false
 end
 
 miog.OnGearUpdate = function(unit, unitGear, allUnitsGear)
@@ -603,12 +605,9 @@ miog.OnGearUpdate = function(unit, unitGear, allUnitsGear)
 	end]]
 
     local name
+    local isUnit = isUnitID(unit)
 
-    --
-    --proper unit check
-    --
-
-    if(UnitIsPlayer(unit)) then
+    if(isUnit) then
         name = miog.createFullNameFrom("unitID", unit)
 
     else
@@ -616,13 +615,13 @@ miog.OnGearUpdate = function(unit, unitGear, allUnitsGear)
 
     end
 
-    print("UNIT ID", unit, name, UnitIsPlayer(unit))
+    print("UNIT ID", unit, name, isUnit)
 
 	if(name) then
         print("SAVE GEAR", name)
 		savedGearData[name] = unitGear
 
-        updateGroup()
+        queueGroupUpdate()
 
 		--updateSingleCharacterItemData(name)
 
@@ -631,7 +630,7 @@ end
 
 local function groupManagerEvents(_, event, ...)
     if(event == "PLAYER_ENTERING_WORLD") then
-		updateGroup()
+		queueGroupUpdate()
         checkCoroutine(2)
 
     --[[elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
@@ -663,7 +662,7 @@ local function groupManagerEvents(_, event, ...)
             end
 
             checkCoroutine(3)
-            updateGroup()
+            queueGroupUpdate()
             updateInspectionText()
         end
 
@@ -681,7 +680,9 @@ local function groupManagerEvents(_, event, ...)
 	elseif(event == "GROUP_ROSTER_UPDATE") then
         if(numOfGroupMembers ~= GetNumGroupMembers()) then
             groupMoreThanFivePlayers = GetNumGroupMembers() > 5
-            updateGroup()
+            updateElementExtent()
+
+            queueGroupUpdate()
             checkCoroutine(6)
 
         end
@@ -735,6 +736,19 @@ local function groupManagerEvents(_, event, ...)
 	end
 end
 
+--
+--
+--
+--  drag behaviour:
+--  drag frame per onmousedown
+--  if allowed start drag
+--  when over free slot, drop in
+--  else reset to former slot
+--  when over taken slot, swap both characters
+--  refresh tank/healer/dps list
+--  
+--
+
 miog.loadGroupOrganizer = function()
     groupMoreThanFivePlayers = GetNumGroupMembers() > 5
     -- miog.GroupOrganizer = miog.pveFrame2.TabFramesPanel.GroupManager
@@ -754,7 +768,7 @@ miog.loadGroupOrganizer = function()
         frame.name = data.fullName
         frame.unit = data.unitID
     end)
-    view:SetPadding(0, 0, 0, 0, 3)
+    view:SetPadding(0, 0, 0, 0, 0)
     groupManager.view = view
     updateElementExtent()
 
@@ -778,11 +792,25 @@ miog.loadGroupOrganizer = function()
     end
 
     ScrollUtil.RegisterTableBuilder(groupManager.ScrollBox, tableBuilder, ElementDataTranslator)
+    
+
+    --local tableBuilder = groupManager.tableBuilder
+    tableBuilder:Reset()
+    createColumn("Name", "MIOG_GroupOrganizerTextCellTemplate", "name", true)
+    createColumn("Role", "MIOG_GroupOrganizerIconCellTemplate", "combatRole", true, true)
+    createColumn("Class", "MIOG_GroupOrganizerIconCellTemplate", "class", false, true)
+    createColumn("Spec", "MIOG_GroupOrganizerIconCellTemplate", "specID", true, true)
+    createColumn("Level", "MIOG_GroupOrganizerTextCellTemplate", "level", true)
+    createColumn("I-Lvl", "MIOG_GroupOrganizerTextCellTemplate", "itemLevel", true)
+    createColumn("Repair", "MIOG_GroupOrganizerTextCellTemplate", "durability", true)
+    createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true)
+    createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progress", true)
+    createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true)
+    createColumn("Group", "MIOG_GroupOrganizerTextCellTemplate", "index", true)
+    tableBuilder:Arrange()
 
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	shortPlayerName, playerRealm = miog.createSplitName(fullPlayerName)
-
-    --updateGroup()
 
 	groupManager:RegisterEvent("PLAYER_ENTERING_WORLD")
 	groupManager:RegisterEvent("INSPECT_READY")

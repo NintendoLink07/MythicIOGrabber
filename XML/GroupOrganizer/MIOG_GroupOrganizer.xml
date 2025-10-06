@@ -2,12 +2,21 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_GroupOrganizer" virtual="true">
         <Frames>
-            <Frame parentKey="HeaderContainer">
+            <Frame parentKey="Settings">
                 <Size y="20"/>
 
                 <Anchors>
                     <Anchor point="TOPLEFT"/>
                     <Anchor point="TOPRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="HeaderContainer">
+                <Size y="20"/>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Settings" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Settings" relativePoint="BOTTOMRIGHT" />
                 </Anchors>
             </Frame>
 
