@@ -129,7 +129,7 @@ end
 local sortComparatorFunction
 
 local function setDataProviderSort(originColumnHeader, key)
-    local dataProvider = groupManager.ScrollBox:GetDataProvider()
+    local dataProvider = groupManager.ListView.ScrollBox:GetDataProvider()
 
     if(currentSortHeader) then
         if(currentSortHeader.headerName == originColumnHeader.headerName) then
@@ -277,7 +277,7 @@ local function createColumn(name, cellTemplate, key, useForSort, iconColumn)
 end
 
 local function updateElementExtent()
-    local indiHeight = groupManager.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 12 or 6)
+    local indiHeight = groupManager.ListView.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 12 or 6)
     groupManager.view:SetElementExtent(indiHeight)
 
 end
@@ -292,66 +292,95 @@ local function updateGroup()
     local isInRaid = IsInRaid()
     local offset = 0
 
+    local subgroups = {
+        [1] = {},
+        [2] = {},
+        [3] = {},
+        [4] = {},
+        [5] = {},
+        [6] = {},
+        [7] = {},
+        [8] = {},
+    }
+
     if(numOfMembers > 0) then
-        for groupIndex = 1, numOfMembers, 1 do
-            local name, rank, subgroup, level, localizedClassName, fileName, _, online, _, role, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+        for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
+            if(groupIndex <= numOfMembers) then
+                local name, rank, subgroup, level, localizedClassName, fileName, _, online, _, role, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
-            if(name) then
-                local unitID
-                local playerName, realm = miog.createSplitName(name)
-                local fullName = miog.createFullNameFrom("unitName", name)
+                if(name) then
+                    local unitID
+                    local playerName, realm, wasFullName = miog.createSplitName(name)
 
-                if(isInRaid) then
-                    unitID = "raid" .. groupIndex
+                    local fullName
 
-                elseif(fullPlayerName ~= fullName) then
-                    unitID = "party" .. groupIndex - offset
+                    if(wasFullName) then
+                        fullName = name
 
-                else
-                    unitID = "player"
-
-                    offset = offset + 1
-
-                end
-
-                playersInGroup[fullName] = true
-
-                local playerSpec = savedPlayerSpecs[fullName] or 0
-                
-                if(fullName ~= fullPlayerName) then
-                    if(online and not savedPlayerSpecs[fullName]) then
-                        inspectionQueue[fullName] = unitID
+                    else
+                        fullName = miog.createFullNameFrom("unitName", name)
 
                     end
 
-                elseif(not savedPlayerSpecs[fullPlayerName]) then
-                    savedPlayerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
+                    if(isInRaid) then
+                        unitID = "raid" .. groupIndex
 
+                    elseif(fullPlayerName ~= fullName) then
+                        unitID = "party" .. groupIndex - offset
+
+                    else
+                        unitID = "player"
+
+                        offset = offset + 1
+
+                    end
+
+                    playersInGroup[fullName] = true
+
+                    local playerSpec = savedPlayerSpecs[fullName] or 0
+                    
+                    if(fullName ~= fullPlayerName) then
+                        if(online and not savedPlayerSpecs[fullName]) then
+                            inspectionQueue[fullName] = unitID
+
+                        end
+
+                    elseif(not savedPlayerSpecs[fullPlayerName]) then
+                        savedPlayerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
+
+                    end
+
+
+                    local data = {
+                        index = groupIndex,
+                        subgroup = subgroup,
+                        unitID = unitID,
+                        online = online,
+                        
+                        fullName = fullName,
+                        name = playerName,
+                        realm = realm,
+                        level = level,
+                        
+                        fileName = fileName,
+                        className = localizedClassName,
+                        specID = playerSpec,
+                        combatRole = combatRole or GetSpecializationRoleByID(playerSpec),
+
+                        rank = rank,
+                        role = role,
+                    }
+
+                    local subgroupFrameIndex = #subgroups[subgroup] + 1
+                    groupManager.RaidView:SetMemberValues(subgroup, subgroupFrameIndex, playerName, fileName)
+
+                    data = saveOptionalPlayerData(data, fullName, playerName, realm)
+                    
+                    dataProvider:Insert(data)
                 end
+            else
+                groupManager.RaidView:ClearMemberValues(groupIndex)
 
-                local data = {
-                    index = groupIndex,
-                    subgroup = subgroup,
-                    unitID = unitID,
-                    online = online,
-                    
-                    fullName = fullName,
-                    name = playerName,
-                    realm = realm,
-                    level = level,
-                    
-                    fileName = fileName,
-                    className = localizedClassName,
-                    specID = playerSpec,
-                    combatRole = combatRole or GetSpecializationRoleByID(playerSpec),
-
-                    rank = rank,
-                    role = role,
-                }
-
-                data = saveOptionalPlayerData(data, fullName, playerName, realm)
-	            
-                dataProvider:Insert(data)
             end
         end
     else
@@ -380,7 +409,7 @@ local function updateGroup()
         dataProvider:Insert(data)
     end
 
-    groupManager.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+    groupManager.ListView.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 end
 
 local function queueGroupUpdate()
@@ -642,28 +671,30 @@ local function groupManagerEvents(_, event, ...)
 		end]]
 
 	elseif(event == "INSPECT_READY") then
-		local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(...)
-		local fullName = miog.createFullNameFrom("unitName", name .. "-" .. realmName)
+        if(...) then
+            local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(...)
+            local fullName = miog.createFullNameFrom("unitName", name .. "-" .. realmName)
 
-        --local specializationIndex = C_SpecializationInfo.GetSpecialization(true)
-        --local specID = C_SpecializationInfo.GetSpecializationInfo(specializationIndex, true)
-        local inspectID = GetInspectSpecialization(inspectionQueue[fullName])
+            --local specializationIndex = C_SpecializationInfo.GetSpecialization(true)
+            --local specID = C_SpecializationInfo.GetSpecializationInfo(specializationIndex, true)
+            local inspectID = GetInspectSpecialization(inspectionQueue[fullName])
 
-        print(fullName, inspectID)
+            print(fullName, inspectID)
 
-        checkIfPlayerIsInInspection(fullName)
+            checkIfPlayerIsInInspection(fullName)
 
-        if(playersInGroup[fullName]) then
-            if(inspectID) then
-                if(inspectID > 0) then
-                    savedPlayerSpecs[fullName] = inspectID
+            if(playersInGroup[fullName]) then
+                if(inspectID) then
+                    if(inspectID > 0) then
+                        savedPlayerSpecs[fullName] = inspectID
 
+                    end
                 end
-            end
 
-            checkCoroutine(3)
-            queueGroupUpdate()
-            updateInspectionText()
+                checkCoroutine(3)
+                queueGroupUpdate()
+                updateInspectionText()
+            end
         end
 
 		--checkPlayerInspectionStatus(fullName, nil, 1)
@@ -746,16 +777,21 @@ end
 --  else reset to former slot
 --  when over taken slot, swap both characters
 --  refresh tank/healer/dps list
---  
+--
+--
 --
 
 miog.loadGroupOrganizer = function()
+	fullPlayerName = miog.createFullNameFrom("unitID", "player")
+	shortPlayerName, playerRealm = miog.createSplitName(fullPlayerName)
+
     groupMoreThanFivePlayers = GetNumGroupMembers() > 5
     -- miog.GroupOrganizer = miog.pveFrame2.TabFramesPanel.GroupManager
     miog.GroupOrganizer = CreateFrame("Frame", nil, miog.GroupManager, "MIOG_GroupOrganizer")
     groupManager = miog.GroupOrganizer
     groupManager:SetSize(miog.GroupManager:GetSize())
     groupManager:SetPoint("TOPLEFT", miog.GroupManager, "TOPRIGHT")
+    groupManager.Settings.Refresh:SetScript("OnClick", updateGroup)
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
 	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
@@ -772,11 +808,11 @@ miog.loadGroupOrganizer = function()
     groupManager.view = view
     updateElementExtent()
 
-    ScrollUtil.InitScrollBoxListWithScrollBar(groupManager.ScrollBox, groupManager.ScrollBar, view)
+    ScrollUtil.InitScrollBoxListWithScrollBar(groupManager.ListView.ScrollBox, miog.pveFrame2.ScrollBarArea.GroupManagerScrollBar, view)
 
     local tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
     groupManager.tableBuilder = tableBuilder
-    tableBuilder:SetHeaderContainer(groupManager.HeaderContainer)
+    tableBuilder:SetHeaderContainer(groupManager.ListView.HeaderContainer)
     tableBuilder:SetTableMargins(1, 1)
 
     local function ElementDataProvider(elementData, ...)
@@ -791,9 +827,8 @@ miog.loadGroupOrganizer = function()
 
     end
 
-    ScrollUtil.RegisterTableBuilder(groupManager.ScrollBox, tableBuilder, ElementDataTranslator)
+    ScrollUtil.RegisterTableBuilder(groupManager.ListView.ScrollBox, tableBuilder, ElementDataTranslator)
     
-
     --local tableBuilder = groupManager.tableBuilder
     tableBuilder:Reset()
     createColumn("Name", "MIOG_GroupOrganizerTextCellTemplate", "name", true)
@@ -808,9 +843,6 @@ miog.loadGroupOrganizer = function()
     createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true)
     createColumn("Group", "MIOG_GroupOrganizerTextCellTemplate", "index", true)
     tableBuilder:Arrange()
-
-	fullPlayerName = miog.createFullNameFrom("unitID", "player")
-	shortPlayerName, playerRealm = miog.createSplitName(fullPlayerName)
 
 	groupManager:RegisterEvent("PLAYER_ENTERING_WORLD")
 	groupManager:RegisterEvent("INSPECT_READY")

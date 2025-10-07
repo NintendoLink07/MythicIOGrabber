@@ -1,0 +1,45 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" movable="true" inherits="UIButtonTemplate" mixin="RaidViewButtonMixin" virtual="true">
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="BackgroundColor" setAllPoints="true" />
+            </Layer>
+            
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnLoad>
+                self.Text:SetText(self:GetParentKey())
+
+            </OnLoad>
+
+            <OnMouseDown>
+                print("START", self:GetParentKey())
+                self:StartMoving()
+
+            </OnMouseDown>
+
+            <OnMouseUp>
+                print("STOP", self:GetParentKey())
+                self:ExecuteCallback()
+                self:StopMovingOrSizing()
+
+            </OnMouseUp>
+
+            <OnDragStart>
+            </OnDragStart>
+            
+            <OnDragStop>
+
+            </OnDragStop>
+        </Scripts>
+    </Button>
+</Ui>

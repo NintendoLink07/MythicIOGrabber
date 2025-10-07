@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.6.2c
+## Version: 3.6.4
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -79,6 +79,7 @@ Mixins\TeleportButtonMixin.lua
 Mixins\AbandonMixin.lua
 
 Mixins\GroupOrganizerCellMixin.lua
+Mixins\RaidViewMixin.lua
 
 
 
@@ -134,6 +135,9 @@ XML\GroupOrganizer\MIOG_GroupOrganizerTextCellTemplate.xml
 XML\GroupOrganizer\MIOG_GroupOrganizerIconCellTemplate.xml
 XML\GroupOrganizer\MIOG_GroupOrganizerHeaderTemplate.xml
 XML\GroupOrganizer\MIOG_GroupOrganizerLineTemplate.xml
+XML\GroupOrganizer\MIOG_GroupOrganizerRaidViewMemberFrameTemplate.xml
+XML\GroupOrganizer\MIOG_GroupOrganizerRaidViewGroupTemplate.xml
+XML\GroupOrganizer\MIOG_GroupOrganizerSpaceTemplate.xml
 
 XML\ApplicationViewer\MIOG_ApplicationViewer.xml
 XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml

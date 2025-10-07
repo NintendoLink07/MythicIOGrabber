@@ -1,0 +1,45 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupOrganizerRaidViewGroupTemplate" inherits="VerticalLayoutFrame" virtual="true">
+        <KeyValues>
+            <KeyValue key="fixedWidth" value="120" type="number" />
+        </KeyValues>
+
+        <Frames>
+            <Frame parentKey="Space1" inherits="MIOG_GroupOrganizerSpaceTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="1" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>
+            
+            <Frame parentKey="Space2" inherits="MIOG_GroupOrganizerSpaceTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="2" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>
+            
+            <Frame parentKey="Space3" inherits="MIOG_GroupOrganizerSpaceTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="3" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>
+            
+            <Frame parentKey="Space4" inherits="MIOG_GroupOrganizerSpaceTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="4" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>
+            
+            <Frame parentKey="Space5" inherits="MIOG_GroupOrganizerSpaceTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="5" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

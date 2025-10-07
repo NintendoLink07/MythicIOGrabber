@@ -9,30 +9,148 @@
                     <Anchor point="TOPLEFT"/>
                     <Anchor point="TOPRIGHT"/>
                 </Anchors>
+
+                <Frames>
+                    <Button parentKey="Refresh" inherits="BigRedRefreshButtonTemplate">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" x="4"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText("Refresh player data.")
+                                GameTooltip:Show()
+                            </OnEnter>
+
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="ListViewButton" inherits="UIPanelButtonTemplate" text="List">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Refresh" relativePoint="RIGHT" x="4"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().RaidView:Hide()
+                                self:GetParent():GetParent().ListView:Show()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="RaidViewButton" inherits="UIPanelButtonTemplate" text="Raid">
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.ListViewButton" relativePoint="RIGHT" x="4"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent().ListView:Hide()
+                                self:GetParent():GetParent().RaidView:Show()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
             </Frame>
 
-            <Frame parentKey="HeaderContainer">
-                <Size y="20"/>
-
+            <Frame parentKey="RaidView" mixin="RaidViewMixin" hidden="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Settings" relativePoint="BOTTOMLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Settings" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Group1" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" />
+                            <Anchor point="BOTTOMLEFT" relativePoint="LEFT"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Group2" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="TOPRIGHT" x="5"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMRIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Group3" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group2" relativePoint="TOPRIGHT" x="5"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group2" relativePoint="BOTTOMRIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Group4" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group3" relativePoint="TOPRIGHT" x="5"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group3" relativePoint="BOTTOMRIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Group5" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMLEFT" y="-5"/>
+                            <Anchor point="BOTTOMLEFT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Group6" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group5" relativePoint="TOPRIGHT" x="5"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group5" relativePoint="BOTTOMRIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Group7" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group6" relativePoint="TOPRIGHT" x="5"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group6" relativePoint="BOTTOMRIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Group8" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Group7" relativePoint="TOPRIGHT" x="5"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group7" relativePoint="BOTTOMRIGHT" x="5"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+
+                <Scripts>
+                    <OnLoad method="OnLoad" />
+                </Scripts>
             </Frame>
 
-            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+            <Frame parentKey="ListView">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.HeaderContainer" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Settings" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
+
+                <Frames>
+                    <Frame parentKey="HeaderContainer">
+                        <Size y="20"/>
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" />
+                            <Anchor point="TOPRIGHT" />
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.HeaderContainer" relativePoint="BOTTOMLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
             </Frame>
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Size x="10" />
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
-            </EventFrame>
+
+            
         </Frames>
 
         <Layers>

@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.6.3] - 2025-10-05
+## [3.7] - 2025-10-09
 
 ### Changed
 
+- [GroupManager] Recoded / redesigned the group manager.
+
 - [Progress] The great vault icon now also shows when rewards have already been generated for a character but haven't been claimed yet.
+
+### Fixed
+
+- Many performance fixes, larger lags when joining groups (especially > 15 man) should be much less frequent.
 
 
 

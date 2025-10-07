@@ -1045,6 +1045,10 @@ local function createFullNameFrom(type, value)
 	local name
 
 	if(not realm) then
+		if(type == "unitName" and string.find(value, "-")) then
+			return value
+		end
+
 		return
 	end
 
@@ -1186,13 +1190,15 @@ end
 
 miog.createSplitName = function(name)
 	local nameTable = miog.simpleSplit(name, "-")
+	local wasFullName = true
 
 	if(not nameTable[2]) then
 		nameTable[2] = GetNormalizedRealmName()
+		wasFullName = false
 
 	end
 
-	return nameTable[1], nameTable[2]
+	return nameTable[1], nameTable[2], wasFullName
 end
 
 miog.getActiveSortMethods = function(panel)
