@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning].
 
 ### Fixed
 
+- [SearchPanel] Hovering over a group listing won't cause an error anymore.
+
 - Many performance fixes, larger lags when joining groups (especially > 15 man) should be much less frequent.
 
 

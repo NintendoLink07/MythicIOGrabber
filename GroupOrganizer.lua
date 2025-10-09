@@ -13,6 +13,7 @@ local savedGearData = {}
 local savedRaidData = {}
 local savedMythicPlusData = {}
 
+local inspectionTextData
 
 local inspectionQueue = {}
 local playersInGroup = {}
@@ -69,6 +70,13 @@ local function countPlayersWithData()
 	return playersWithSpecData, inspectableMembers
 end
 
+local function getInspectionTextData()
+    return inspectionTextData
+
+end
+
+miog.getInspectionTextData = getInspectionTextData
+
 local function updateInspectionText()
 	local name
 
@@ -95,11 +103,15 @@ local function updateInspectionText()
         "[", specs, "/", members, "/", GetNumGroupMembers(), "]"
     }
 
+    inspectionTextData = {
+        specs = specs,
+        members = members,
+        numGroupMembers = GetNumGroupMembers(),
+        queue = inspectionQueue,
+    }
+
 	miog.ClassPanel.InspectionName:SetText(name)
     miog.ClassPanel.Status:SetText(table.concat(concatTable))
-	miog.ClassPanel.Status.inspectList = inspectionQueue
-
-    miog.ClassPanel.Status.data = {specs = specs, members = members}
 	miog.ClassPanel.LoadingSpinner:SetShown(inspectionPlayerName ~= nil)
 end
 
@@ -259,19 +271,19 @@ local function createColumn(name, cellTemplate, key, useForSort, iconColumn)
     column:ConstructCells("Frame", cellTemplate, key)
 
     if(key == "name") then
-        column:SetFixedConstraints(88, 1)
-        
-    elseif(iconColumn) then
-        column:SetFixedConstraints(40, 1)
+        column:SetFillConstraints(2.1, 1)
         
     elseif(key == "progress") then
         column:SetFillConstraints(1.3, 1)
 
     elseif(key == "keylevel") then
-        column:SetFillConstraints(1.1, 1)
+        column:SetFillConstraints(1.5, 1)
+        
+    elseif(key == "index") then
+        column:SetFillConstraints(0.6, 1)
         
     else
-        column:SetFillConstraints(1, 1)
+        column:SetFillConstraints(0.9, 1)
 
     end
 end
@@ -292,7 +304,7 @@ local function updateGroup()
     local isInRaid = IsInRaid()
     local offset = 0
 
-    local subgroups = {
+    local subgroupSpotsTaken = {
         [1] = {},
         [2] = {},
         [3] = {},
@@ -303,12 +315,14 @@ local function updateGroup()
         [8] = {},
     }
 
+    groupManager.RaidView:ClearAllMemberValues()
+
     if(numOfMembers > 0) then
         for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
             if(groupIndex <= numOfMembers) then
                 local name, rank, subgroup, level, localizedClassName, fileName, _, online, _, role, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
-                if(name) then
+                if(name and fileName) then
                     local unitID
                     local playerName, realm, wasFullName = miog.createSplitName(name)
 
@@ -350,10 +364,12 @@ local function updateGroup()
 
                     end
 
+                    tinsert(subgroupSpotsTaken[subgroup], groupIndex)
 
                     local data = {
                         index = groupIndex,
                         subgroup = subgroup,
+                        subgroupSpot = #subgroupSpotsTaken[subgroup],
                         unitID = unitID,
                         online = online,
                         
@@ -371,23 +387,22 @@ local function updateGroup()
                         role = role,
                     }
 
-                    local subgroupFrameIndex = #subgroups[subgroup] + 1
-                    groupManager.RaidView:SetMemberValues(subgroup, subgroupFrameIndex, playerName, fileName)
+                    groupManager.RaidView:SetMemberValues(data)
 
                     data = saveOptionalPlayerData(data, fullName, playerName, realm)
                     
                     dataProvider:Insert(data)
                 end
-            else
-                groupManager.RaidView:ClearMemberValues(groupIndex)
-
             end
         end
     else
+        tinsert(subgroupSpotsTaken[1], 1)
+
         local localizedClassName, fileName, id = UnitClass("player")
         local data = {
             index = 1,
             subgroup = 1,
+            subgroupSpot = #subgroupSpotsTaken[1],
             unitID = "player",
             online = true,
 
@@ -403,6 +418,8 @@ local function updateGroup()
             combatRole = GetSpecializationRoleByID(GetSpecializationInfo(GetSpecialization())),
 
         }
+
+        groupManager.RaidView:SetMemberValues(data)
         
         saveOptionalPlayerData(data, fullPlayerName, shortPlayerName, playerRealm)
         
@@ -449,6 +466,8 @@ local function clearPlayer(name, stopInspection)
                 pityTimer:Cancel()
 
             end
+
+            updateInspectionText()
         end
     end
 end
@@ -782,6 +801,8 @@ end
 --
 
 miog.loadGroupOrganizer = function()
+    updateInspectionText()
+
 	fullPlayerName = miog.createFullNameFrom("unitID", "player")
 	shortPlayerName, playerRealm = miog.createSplitName(fullPlayerName)
 
@@ -841,7 +862,7 @@ miog.loadGroupOrganizer = function()
     createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true)
     createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progress", true)
     createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true)
-    createColumn("Group", "MIOG_GroupOrganizerTextCellTemplate", "index", true)
+    createColumn("#", "MIOG_GroupOrganizerTextCellTemplate", "index", true)
     tableBuilder:Arrange()
 
 	groupManager:RegisterEvent("PLAYER_ENTERING_WORLD")

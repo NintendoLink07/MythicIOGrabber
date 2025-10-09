@@ -5,38 +5,49 @@
             <KeyValue key="fixedWidth" value="120" type="number" />
         </KeyValues>
 
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" font="GameFontHighlight" text="Group">
+                    <KeyValues>
+                        <KeyValue key="layoutIndex" value="1" type="number" />
+                        <KeyValue key="expand" value="true" type="boolean" />
+                    </KeyValues>
+                </FontString>
+            </Layer>
+        </Layers>
+
         <Frames>
             <Frame parentKey="Space1" inherits="MIOG_GroupOrganizerSpaceTemplate">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="1" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>
-            
-            <Frame parentKey="Space2" inherits="MIOG_GroupOrganizerSpaceTemplate">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="2" type="number" />
                     <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
             </Frame>
             
-            <Frame parentKey="Space3" inherits="MIOG_GroupOrganizerSpaceTemplate">
+            <Frame parentKey="Space2" inherits="MIOG_GroupOrganizerSpaceTemplate">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="3" type="number" />
                     <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
             </Frame>
             
-            <Frame parentKey="Space4" inherits="MIOG_GroupOrganizerSpaceTemplate">
+            <Frame parentKey="Space3" inherits="MIOG_GroupOrganizerSpaceTemplate">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="4" type="number" />
                     <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
             </Frame>
             
-            <Frame parentKey="Space5" inherits="MIOG_GroupOrganizerSpaceTemplate">
+            <Frame parentKey="Space4" inherits="MIOG_GroupOrganizerSpaceTemplate">
                 <KeyValues>
                     <KeyValue key="layoutIndex" value="5" type="number" />
+                    <KeyValue key="expand" value="true" type="boolean" />
+                </KeyValues>
+            </Frame>
+            
+            <Frame parentKey="Space5" inherits="MIOG_GroupOrganizerSpaceTemplate">
+                <KeyValues>
+                    <KeyValue key="layoutIndex" value="6" type="number" />
                     <KeyValue key="expand" value="true" type="boolean" />
                 </KeyValues>
             </Frame>

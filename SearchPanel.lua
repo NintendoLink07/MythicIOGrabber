@@ -164,7 +164,7 @@ local function createResultTooltip(resultID, resultFrame)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 		GameTooltip:SetOwner(resultFrame, "ANCHOR_RIGHT", 0, 0)
-		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID, searchResultInfo.autoAccept and LFG_LIST_UTIL_ALLOW_AUTO_ACCEPT_LINE)
+		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID)
 
 		if(MIOG_NewSettings.enableResultFrameClassSpecTooltip) then
 			GameTooltip:AddLine(" ")

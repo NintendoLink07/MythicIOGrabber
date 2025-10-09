@@ -29,7 +29,7 @@ miog.updateCurrencies = function()
 					if(currencyInfo.maxQuantity > 0) then
 						local leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
 				
-						text = text .. " (" .. (leftToEarn > 0 and WrapTextInColorCode(leftToEarn, miog.CLRSCC.green) or WrapTextInColorCode(leftToEarn, miog.CLRSCC.red)) .. ")"
+						text = text .. "(" .. (leftToEarn > 0 and WrapTextInColorCode(leftToEarn, miog.CLRSCC.green) or WrapTextInColorCode(leftToEarn, miog.CLRSCC.red)) .. ")"
 
 					end
 

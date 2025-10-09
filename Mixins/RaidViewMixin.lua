@@ -3,6 +3,8 @@ RaidViewMixin = {}
 local groupFrames = {
 }
 
+local groupIndexToSubgroupSpot = {}
+
 local function isMouseOverAnyGroupFrame(frame)
     for k, v in ipairs(groupFrames) do
         if(MouseIsOver(v) and v ~= frame) then
@@ -80,38 +82,43 @@ function RaidViewMixin:OnLoad()
     end
 end
 
-function RaidViewMixin:FindFrameViaIndex(index) --doesnt really work xd
-    local subgroup = ceil(index / 5)
-    local spot = index - (5 * (subgroup - 1))
+function RaidViewMixin:FindFrameViaIndex(index)
+    local memberFrame = groupIndexToSubgroupSpot[index]
 
-    print("CLEAN", subgroup, spot)
-
-    return groupFrames[subgroup][spot], subgroup, spot
+    return memberFrame
 end
 
-function RaidViewMixin:SetMemberValues(subgroup, subgroupFrameIndex, name, fileName)
-	--local subgroupSpot = ((memberIndex - 1) % 5) + 1
-    --local memberFrame = groupFrames[subgroup][subgroupSpot]
-    local memberFrame = groupFrames[subgroup][subgroupFrameIndex]
-    print(name, subgroup, subgroupFrameIndex)
-    memberFrame:SetID(subgroupFrameIndex)
-    memberFrame.subgroup = subgroup
+function RaidViewMixin:SetMemberValues(data)
+    local memberFrame = groupFrames[data.subgroup][data.subgroupSpot]
+    memberFrame.subgroup = data.subgroup
+    memberFrame:SetID(data.index)
+    groupIndexToSubgroupSpot[data.index] = {subgroup = data.subgroup, data.subgroupSpot}
 
-    local classColor  = C_ClassColor.GetClassColor(fileName)
+    local classColor  = C_ClassColor.GetClassColor(data.fileName)
 
-    memberFrame.Text:SetText(name)
+    memberFrame.Text:SetText(data.name)
     memberFrame.Text:SetTextColor(classColor:GetRGBA())
 
     memberFrame:Show()
 end
 
-
-function RaidViewMixin:ClearMemberValues(memberIndex)
-    local memberFrame = self:FindFrameViaIndex(memberIndex)
+function RaidViewMixin:ClearMemberValues(subgroup, index)
+    local memberFrame = groupFrames[subgroup][index]
     memberFrame:Hide()
 
     memberFrame.Text:SetText("")
 
+    local groupIndex = (subgroup - 1) * 5 + index
+    groupIndexToSubgroupSpot[groupIndex] = nil
+end
+
+function RaidViewMixin:ClearAllMemberValues()
+    for subgroup = 1, 8 do
+        for index = 1, 5 do
+            self:ClearMemberValues(subgroup, index)
+
+        end
+    end
 end
 
 

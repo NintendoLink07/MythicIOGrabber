@@ -176,30 +176,32 @@ miog.createClassPanel = function()
     classPanel.Status:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-        if(self.data) then
-            GameTooltip:SetText(self.data.specs .. " players with spec data.")
-            GameTooltip:AddLine(self.data.members .. " group members that are inspectable (not offline or some weird interaction).")
+        local data = miog.getInspectionTextData()
 
-        end
-        
-        GameTooltip:AddLine(GetNumGroupMembers() .. " total group members.")
+        if(data) then
+            GameTooltip:SetText(data.specs .. " players with spec data.")
+            GameTooltip:AddLine(data.members .. " group members that are inspectable (not offline or some weird interaction).")
 
-        if(self.inspectList) then
-            local headerMissing = true
+            GameTooltip:AddLine(data.numGroupMembers .. " total group members.")
 
-            for k, v in pairs(self.inspectList) do
-                if(headerMissing) then
-                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                    GameTooltip:AddLine("Players to be inspected:")
+            if(data.queue) then
+                local headerMissing = true
 
-                    headerMissing = false
+                for k, v in pairs(data.queue) do
+                    if(headerMissing) then
+                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine("Players to be inspected:")
+
+                        headerMissing = false
+                    end
+
+                    GameTooltip:AddLine(k)
+
                 end
 
-                GameTooltip:AddLine(k)
-
             end
-
         end
+        
         GameTooltip:Show()
     end)
 
