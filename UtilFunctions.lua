@@ -92,7 +92,7 @@ end
     - `r, g, b, a`: Red, Green, Blue, Alpha values for the border color
 --]]
 miog.createFrameBorder = function(frame, thickness, r, g, b, a)
-	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=1, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
+	frame:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=0, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = thickness} )
 	frame:SetBackdropColor(0, 0, 0, 0) -- main area color
 	frame:SetBackdropBorderColor(r or random(0, 1), g or random(0, 1), b or random(0, 1), a or 1) -- border color
 

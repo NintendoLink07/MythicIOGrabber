@@ -2,55 +2,69 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_GroupOrganizerRaidViewGroupTemplate" inherits="VerticalLayoutFrame" virtual="true">
         <KeyValues>
-            <KeyValue key="fixedWidth" value="120" type="number" />
+            <KeyValue key="fixedWidth" value="138" type="number" />
+            <KeyValue key="topPadding" value="20" type="number" />
         </KeyValues>
 
-        <Layers>
+        <Layers>  
             <Layer level="OVERLAY">
                 <FontString parentKey="Title" font="GameFontHighlight" text="Group">
-                    <KeyValues>
-                        <KeyValue key="layoutIndex" value="1" type="number" />
-                        <KeyValue key="expand" value="true" type="boolean" />
-                    </KeyValues>
+                    <Size y="20" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                        <Anchor point="TOPRIGHT"/>
+                    </Anchors>
                 </FontString>
             </Layer>
-        </Layers>
 
-        <Frames>
-            <Frame parentKey="Space1" inherits="MIOG_GroupOrganizerSpaceTemplate">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="2" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>
-            
-            <Frame parentKey="Space2" inherits="MIOG_GroupOrganizerSpaceTemplate">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="3" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>
-            
-            <Frame parentKey="Space3" inherits="MIOG_GroupOrganizerSpaceTemplate">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="4" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>
-            
-            <Frame parentKey="Space4" inherits="MIOG_GroupOrganizerSpaceTemplate">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="5" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>
-            
-            <Frame parentKey="Space5" inherits="MIOG_GroupOrganizerSpaceTemplate">
-                <KeyValues>
-                    <KeyValue key="layoutIndex" value="6" type="number" />
-                    <KeyValue key="expand" value="true" type="boolean" />
-                </KeyValues>
-            </Frame>
-        </Frames>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="HeaderColor">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Title"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Title"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Space1Color">
+                    <Size y="30" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Space2Color">
+                    <Size y="30" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space1Color" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space1Color" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Space3Color">
+                    <Size y="30" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space2Color" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space2Color" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Space4Color">
+                    <Size y="30" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space3Color" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space3Color" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture parentKey="Space5Color">
+                    <Size y="30" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space4Color" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space4Color" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>

@@ -20,14 +20,14 @@
             </Layer>
         </Layers>
 
-        --UI-CharacterCreate-LargeButton-Yellow-Highlight   yellow round x+3-3 y+1-1
-        --communities-create-button-highlight               blue rounded x+5-5 y+1-1
-        --communitiesfinder_card_highlight                  blue
+        --UI-CharacterCreate-LargeButton-Yellow-Highlight   yellow round x+3-3 y+1-1 lowres
+        --communities-create-button-highlight               blue rounded x+5-5 y+1-1 middleres
+        --communitiesfinder_card_highlight                  blue rounded x-3+3 y-2+1 hires
         --groupfinder-highlightbar-green
-        --BattleBar-SwapPetFrame-Highlight                  yellow
-        --auctionhouse-nav-button-highlight
-        --auctionhouse-nav-button-secondary-highlight
-        --search-highlight
+        --BattleBar-SwapPetFrame-Highlight                  yellow middleres
+        --auctionhouse-nav-button-highlight                 blue middleres
+        --auctionhouse-nav-button-secondary-highlight       blue middleres
+        --search-highlight                                  blue hires
         
         <HighlightTexture atlas="communitiesfinder_card_highlight" />
     </Button>

@@ -667,7 +667,7 @@
                         </Frames>
                     </Frame>
                     
-                    <Frame parentKey="GroupManager" inherits="MIOG_GroupManager" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="GroupManager" inherits="MIOG_GroupOrganizer" hidden="true" setAllPoints="true" />
                     <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabTemplate" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />

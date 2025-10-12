@@ -100,7 +100,7 @@ local defaultSettings = {
     {name = "Lite Mode", variableName = "MIOG_LiteMode", key="liteMode", default=false, type="checkbox", tooltip="Enable or disable the lite mode of this addon (use Blizzards \"Dungeons and Raids\" Frame with this addon's frames layered on top", reload=true},
     {name = "Background options", variableName = "MIOG_BackgroundOptions", key="backgroundOptions", default=GetNumExpansions() - 1, type="dropdown", tooltip="Change the default background of the MIOG frames",
     customCallback=function(setting, value)
-        miog.changeBackground(value)
+        miog.changeTheme(value)
     end},
     {name = "Progress data", variableName = "MIOG_ProgressData", key="progressData", default={characters = {}, activities = {}}},
     {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},

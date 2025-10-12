@@ -185,7 +185,7 @@ miog.createFrames = function()
 		--miog.loadCalendarSystem()
 		miog.loadTeleports()
 		miog.loadGearingTable()
-		miog.loadGroupManager()
+		--miog.loadGroupManager()
 		miog.loadGroupOrganizer()
 		miog.loadRaidPlanner()
 		miog.loadActivityChecker()
@@ -196,7 +196,7 @@ miog.createFrames = function()
 		--miog.loot.init()
 	end
 
-	miog.changeBackground()
+	miog.changeTheme()
 
 	hooksecurefunc("LFGListFrame_SetActivePanel", function(_, panel)
 		setActivePanel(_, panel)

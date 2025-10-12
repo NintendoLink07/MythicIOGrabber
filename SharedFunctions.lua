@@ -1040,6 +1040,70 @@ miog.hideSidePanel = function(self)
 	MIOG_NewSettings.activeSidePanel = "none"
 end
 
+local function isUnitID(str)
+    str = string.lower(str)
+
+    if(string.find(str, "raid") or string.find(str, "party") or string.find(str, "player") or string.find(str, "target")) then
+        return true
+
+    end
+
+    return false
+end
+
+local function createFullNameValuesFrom(type, value)
+	if(not type) then
+		type = isUnitID(value) and "unitID" or "unitName"
+
+	end
+
+	local localRealm = GetNormalizedRealmName()
+
+	local fullName, shortName, realm
+
+	if(type == "unitName") then
+		if(string.find(value, "-")) then
+			fullName = value
+
+			local nameTable = miog.simpleSplit(fullName, "-")
+			shortName = nameTable[1]
+			realm = nameTable[2]
+
+		else
+			shortName = value
+			realm = localRealm
+			fullName = value .. "-" .. localRealm
+
+		end
+
+	else
+		if(value ~= "player") then
+			local nameNoMod, realmNoMod = UnitNameUnmodified(value)
+
+			shortName = nameNoMod
+
+			if(realmNoMod) then
+				realm = realmNoMod
+				fullName = nameNoMod .. "-" .. realmNoMod
+
+			else
+				realm = localRealm
+				fullName = nameNoMod .. "-" .. localRealm
+
+			end
+		else
+			shortName = UnitName("player")
+			realm = localRealm
+			fullName = shortName .. "-" .. localRealm
+
+		end
+	end
+
+	return fullName, shortName, realm
+end
+
+miog.createFullNameValuesFrom = createFullNameValuesFrom
+
 local function createFullNameFrom(type, value)
 	local realm = GetNormalizedRealmName()
 	local name
@@ -1078,6 +1142,8 @@ local function createFullNameFrom(type, value)
 
 		end
 	end
+
+	print("CREATE NAME", type, value, realm)
 
 	return name
 end
@@ -1120,7 +1186,7 @@ end
 
 miog.printOnce = printOnce
 
-miog.changeBackground = function(index)
+miog.changeTheme = function(index)
 	local titleBarTexHeight = 0.0625
 	local scrollbarWidth = 1 - 0.03125
 	local currencyHeight = 1 - 0.03125
@@ -1143,6 +1209,8 @@ miog.changeBackground = function(index)
 	miog.MainFrame.Currency.Background:SetTexCoord(0, 1, currencyHeight, 1)
 	
 	miog.FilterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
+
+	miog.C.CURRENT_THEME = miog.COLOR_THEMES.standard
 end
 
 miog.getGroupLeader = function()

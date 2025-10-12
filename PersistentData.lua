@@ -8,7 +8,102 @@ for _, colorElement in pairs(miog.ITEM_QUALITY_COLORS) do
 	colorElement.desaturatedHex = CreateColor(unpack(colorElement.desaturatedRGB)):GenerateHexColor()
 end
 
-local testString = ""
+miog.COLOR_THEMES = { -- index == expansionIndex
+	[10] = {
+		{r = 0.08235294117647059, g = 0.06666666666666667, b = 0.058823529411764705},
+		{r = 0.12941176470588237, g = 0.07058823529411765, b = 0.054901960784313725},
+		{r = 0.10588235294117647, g = 0.09019607843137255, b = 0.08235294117647059},
+		{r = 0.21568627450980393, g = 0.1450980392156863, b = 0.10196078431372549},
+		{r = 0.3254901960784314, g = 0.19607843137254902, b = 0.10980392156862745},
+	},
+	[9] = {
+		{r = 0.050980392156862744, g = 0.058823529411764705, b = 0.07450980392156863},
+		{r = 0.09411764705882353, g = 0.11764705882352941, b = 0.13725490196078433},
+		{r = 0.2, g = 0.24313725490196078, b = 0.2823529411764706},
+		{r = 0.2549019607843137, g = 0.2627450980392157, b = 0.25882352941176473},
+		{r = 0.4392156862745098, g = 0.43529411764705883, b = 0.4392156862745098},
+	},
+	[8] = {
+		{r = 0.011764705882352941, g = 0.023529411764705882, b = 0.047058823529411764},
+		{r = 0.06274509803921569, g = 0.058823529411764705, b = 0.07450980392156863},
+		{r = 0.12549019607843137, g = 0.12941176470588237, b = 0.16862745098039217},
+		{r = 0.027450980392156862, g = 0.18823529411764706, b = 0.35294117647058826},
+		{r = 0.2196078431372549, g = 0.33725490196078434, b = 0.3254901960784314},
+	},
+	[7] = {
+		{r = 0.050980392156862744, g = 0.043137254901960784, b = 0.03529411764705882},
+		{r = 0.11372549019607843, g = 0.09019607843137255, b = 0.0784313725490196},
+		{r = 0.13333333333333333, g = 0.09019607843137255, b = 0.06666666666666667},
+		{r = 0.14901960784313725, g = 0.12156862745098039, b = 0.10980392156862745},
+		{r = 0.24705882352941178, g = 0.13725490196078433, b = 0.09411764705882353},
+	},
+	[6] = {
+		{r = 0, g = 0.00392156862745098, b = 0},
+		{r = 0.0392156862745098, g = 0.06666666666666667, b = 0.0196078431372549},
+		{r = 0.0784313725490196, g = 0.14901960784313725, b = 0.047058823529411764},
+		{r = 0.047058823529411764, g = 0.20392156862745098, b = 0.058823529411764705},
+		{r = 0.1843137254901961, g = 0.6705882352941176, b = 0.24705882352941178},
+	},
+	[5] = {
+		{r = 0.023529411764705882, g = 0.0196078431372549, b = 0.10588235294117647},
+		{r = 0.12411764705882353, g = 0.11627450980392157, b = 0.15333333333333333},
+		{r = 0.16725490196078433, g = 0.114313725490196, b = 0.14803921568627451},
+		{r = 0.23921568627450981, g = 0.11372549019607843, b = 0.16470588235294117},
+		{r = 0.30882352941176473, g = 0.15019607843137255, b = 0.15803921568627451},
+	},
+	[4] = {
+		{r = 0.04529411764705882, g = 0.07666666666666667, b = 0.068823529411764705},
+		{r = 0.08666666666666667, g = 0.1750980392156863, b = 0.08274509803921569},
+		{r = 0.01019607843137255, g = 0.22156862745098039, b = 0.11196078431372549},
+		{r = 0.14627450980392157, g = 0.3033333333333333, b = 0.14411764705882353},
+		{r = 0.21176470588235294, g = 0.38411764705882354, b = 0.21176470588235294},
+	},
+	[3] = {
+		{r = 0.00392156862745098, g = 0.00784313725490196, b = 0.047058823529411764},
+		{r = 0.0784313725490196, g = 0.011764705882352941, b = 0.011764705882352941},
+		{r = 0.1411764705882353, g = 0.011764705882352941, b = 0.011764705882352941},
+		{r = 0.3333333333333333, g = 0.03529411764705882, b = 0.01568627450980392},
+		{r = 0.5882352941176471, g = 0.1568627450980392, b = 0.058823529411764705},
+	},
+	[2] = {
+		{r = 0, g = 0.027450980392156862, b = 0.07058823529411765},
+		{r = 0.03137254901960784, g = 0.07450980392156863, b = 0.1411764705882353},
+		{r = 0.0784313725490196, g = 0.23921568627450981, b = 0.3411764705882353},
+		{r = 0.1450980392156863, g = 0.30980392156862746, b = 0.3254901960784314},
+		{r = 0.11372549019607843, g = 0.4117647058823529, b = 0.4745098039215686},
+	},
+	[1] = {
+		{r = 0.027450980392156862, g = 0.047058823529411764, b = 0.03137254901960784},
+		{r = 0.06666666666666667, g = 0.03137254901960784, b = 0.07450980392156863},
+		{r = 0.06274509803921569, g = 0.16862745098039217, b = 0.011764705882352941},
+		{r = 0.23921568627450981, g = 0.26666666666666666, b = 0.050980392156862744},
+		{r = 0.5098039215686274, g = 0.40784313725490196, b = 0.03529411764705882},
+	},
+	[0] = {
+		{r = 0.03529411764705882, g = 0.023529411764705882, b = 0.00392156862745098},
+		{r = 0.058823529411764705, g = 0.011764705882352941, b = 0.00392156862745098},
+		{r = 0.16156862745098039, g = 0.09666666666666667, b = 0.04568627450980392},
+		{r = 0.268627450980392, g = 0.21372549019607843, b = 0.13137254901960784},
+		{r = 0.5215686274509804, g = 0.3215686274509804, b = 0.0784313725490196},
+	},
+	standard = {
+		{r = 0.3, g = 0.3, b = 0.3},
+		{r = 0.5, g = 0.5, b = 0.5},
+		{r = 0.7, g = 0.7, b = 0.7},
+		{r = 0.85, g = 0.85, b = 0.85},
+		{r = 1, g = 1, b = 1},
+	}
+}
+
+for k, v in pairs(miog.COLOR_THEMES) do
+	for i = 1, 5 do
+		local add = i * 0.05
+		v[i].r = v[i].r + add
+		v[i].g = v[i].g + add
+		v[i].b = v[i].b + add
+		
+	end
+end
 
 miog.STRING_REPLACEMENTS = {
 	["NORMALRAIDPROGRESSFULL"] = "Normal: %s",
@@ -2619,19 +2714,19 @@ miog.roleRemainingKeyLookup = {
 }
 
 miog.CLASSES = {
-	[1] = 	{name = "WARRIOR", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior_round.png", specs = {71, 72, 73}},
-	[2] = 	{name = "PALADIN", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin_round.png", specs = {65, 66, 70}},
-	[3] = 	{name = "HUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter_round.png", specs = {253, 254, 255}},
-	[4] = 	{name = "ROGUE", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue_round.png", specs = {259, 260, 261}},
-	[5] = 	{name = "PRIEST", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest_round.png", specs = {256, 257, 258}},
+	[1] = 	{name = "WARRIOR", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warrior_round.png", specs = {71, 72, 73}, raidBuff = 6673},
+	[2] = 	{name = "PALADIN", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/paladin_round.png", specs = {65, 66, 70}, raidBuff = 0},
+	[3] = 	{name = "HUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/hunter_round.png", specs = {253, 254, 255}, raidBuff = 257284},
+	[4] = 	{name = "ROGUE", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/rogue_round.png", specs = {259, 260, 261}, raidBuff = 0},
+	[5] = 	{name = "PRIEST", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/priest_round.png", specs = {256, 257, 258}, raidBuff = 21562},
 	[6] = 	{name = "DEATHKNIGHT", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight_round.png", specs = {250, 251, 252}},
-	[7] = 	{name = "SHAMAN", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman_round.png", specs = {262, 263, 264}},
-	[8] = 	{name = "MAGE", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage_round.png", specs = {62, 63, 64}},
+	[7] = 	{name = "SHAMAN", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/shaman_round.png", specs = {262, 263, 264}, raidBuff = 462854},
+	[8] = 	{name = "MAGE", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/mage_round.png", specs = {62, 63, 64}, raidBuff = 1459},
 	[9] =	{name = "WARLOCK", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock_round.png", specs = {265, 266, 267}},
-	[10] = 	{name = "MONK", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk_round.png", specs = {268, 270, 269}},
-	[11] =	{name = "DRUID", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid_round.png", specs = {102, 103, 104, 105}},
-	[12] = 	{name = "DEMONHUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter_round.png", specs = {577, 581}},
-	[13] = 	{name = "EVOKER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker_round.png", specs = {1467, 1468, 1473}},
+	[10] = 	{name = "MONK", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk_round.png", specs = {268, 270, 269}, raidBuff = 8647},
+	[11] =	{name = "DRUID", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid_round.png", specs = {102, 103, 104, 105}, raidBuff = 1126},
+	[12] = 	{name = "DEMONHUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter_round.png", specs = {577, 581}, raidBuff = 255260},
+	[13] = 	{name = "EVOKER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker_round.png", specs = {1467, 1468, 1473}, raidBuff = 364342},
 	[20] = 	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/empty.png", specs = {}},
 	[21] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/empty.png", specs = {}},
 	[22] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/empty.png", specs = {}},

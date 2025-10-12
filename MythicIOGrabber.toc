@@ -80,6 +80,7 @@ Mixins\AbandonMixin.lua
 
 Mixins\GroupOrganizerCellMixin.lua
 Mixins\RaidViewMixin.lua
+Mixins\ColorChangerMixin.lua
 
 
 
@@ -88,6 +89,7 @@ Mixins\RaidViewMixin.lua
 ##
 
 XML\TableBuilderElements\MIOG_TableBuilderColorCellTemplate.xml
+XML\Misc\MIOG_UnitTemplate.xml
 
 XML\Requeue\MIOG_RequeuePopup.xml
 

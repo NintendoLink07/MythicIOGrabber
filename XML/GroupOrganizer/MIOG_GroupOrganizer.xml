@@ -3,10 +3,10 @@
     <Frame name="MIOG_GroupOrganizer" virtual="true">
         <Frames>
             <Frame parentKey="Settings">
-                <Size y="20"/>
+                <Size y="28"/>
 
                 <Anchors>
-                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="TOPLEFT" x="1"/>
                     <Anchor point="TOPRIGHT"/>
                 </Anchors>
 
@@ -118,9 +118,51 @@
                             <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group7" relativePoint="BOTTOMRIGHT" x="5"/>
                         </Anchors>
                     </Frame>
+                    
+                    <Button parentKey="Member1" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member2" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member3" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member4" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member5" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member6" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member7" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member8" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member9" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member10" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member11" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member12" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member13" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member14" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member15" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member16" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member17" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member18" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member19" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member20" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member21" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member22" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member23" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member24" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member25" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member26" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member27" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member28" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member29" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member30" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member31" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member32" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member33" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member34" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member35" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member36" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member37" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member38" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member39" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
+                    <Button parentKey="Member40" inherits="MIOG_GroupOrganizerRaidViewMemberFrameTemplate" />
                 </Frames>
 
                 <Scripts>
+                    <OnShow method="OnShow" />
                     <OnLoad method="OnLoad" />
                 </Scripts>
             </Frame>

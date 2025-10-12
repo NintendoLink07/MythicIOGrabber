@@ -1,123 +1,200 @@
+local addonName, miog = ...
+
 RaidViewMixin = {}
 
-local groupFrames = {
-}
+local usedFramesCounter = 0
 
-local groupIndexToSubgroupSpot = {}
-
-local function isMouseOverAnyGroupFrame(frame)
-    for k, v in ipairs(groupFrames) do
-        if(MouseIsOver(v) and v ~= frame) then
-            return v
-        end
-    end
+function RaidViewMixin:GetNumOfSpotsTaken(groupIndex)
+    return #self["Group" .. groupIndex]:GetLayoutChildren()
 end
 
-local function isMouseOverAnyEmptySpace(frame)
-    for k, v in ipairs(spaceFrames) do
-        if(MouseIsOver(v)) then
-            return v
-        end
-    end
+function RaidViewMixin:GetChildrenOfGroup(groupIndex)
+    return self["Group" .. groupIndex]:GetLayoutChildren()
 end
 
-function RaidViewMixin:GetMemberData(memberFrame)
-    local data = {}
-
-    data.text = memberFrame.Text:GetText()
-
-    return data
-end
-
-function RaidViewMixin:SetMemberData(memberFrame, data)
-    memberFrame.Text:SetText(data.text)
-
-end
-
-function RaidViewMixin:SwapMemberData(member1, member2)
-    local data1 = self:GetMemberData(member1)
-    local data2 = self:GetMemberData(member2)
-
-    self:SetMemberData(member2, data1)
-    self:SetMemberData(member1, data2)
-end
-
-function RaidViewMixin:SwapMemberPositions(member1, member2)
-    if(member1.subgroup ~= member2.subgroup) then
-        local index1, index2 = member1:GetID(), member2:GetID()
-
-        print("SWAP", index1, index2)
-        SwapRaidSubgroup(index1, index2);
-    end
-end
-
-
-function RaidViewMixin:OnLoad()
+function RaidViewMixin:IsFrameOverGroup()
     for i = 1, 8 do
         local group = self["Group" .. i]
-        groupFrames[i] = {}
+
+        if(group and MouseIsOver(group)) then
+            return group
+
+        end
+    end
+end
+
+function RaidViewMixin:IsFrameOverAnyOtherFrame(frame)
+    for i = 1, 8 do
+        local children = self:GetChildrenOfGroup(i)
 
         for memberIndex = 1, 5 do
-            local space = group["Space" .. memberIndex]
-            local member = space.MemberFrame
-            tinsert(groupFrames[i], member)
+            local memberFrame = children[memberIndex]
 
-            if(member) then
-                member:SetCallback(function(selfFrame)
-		            if(IsInRaid() and UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
-                        local mouseoverFrame = isMouseOverAnyGroupFrame(selfFrame)
+            if(memberFrame and MouseIsOver(memberFrame) and memberFrame ~= frame) then
+                return memberFrame
 
-                        if(mouseoverFrame) then
-                            print(mouseoverFrame.Text:GetText())
-                            self:SwapMemberPositions(member, mouseoverFrame)
-
-                        else
-
-
-                        end
-                    end
-                end)
             end
         end
     end
 end
 
-function RaidViewMixin:FindFrameViaIndex(index)
-    local memberFrame = groupIndexToSubgroupSpot[index]
+local function canMoveFrames()
+    if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) then
+        return true
 
-    return memberFrame
+    end
+end
+
+function RaidViewMixin:SwapFrames(frame1, frame2)
+    local f1Parent, f1Index = frame1:GetParent(), frame1.layoutIndex
+    local f2Parent, f2Index = frame2:GetParent(), frame2.layoutIndex
+
+    frame1:SetParent(f2Parent)
+    frame1:SetLayoutIndex(f2Index)
+
+    frame2:SetParent(f1Parent)
+    frame2:SetLayoutIndex(f1Index)
+
+    SwapRaidSubgroup(frame1.raidIndex, frame2.raidIndex)
+
+    local p1, p2 = frame1:GetParent(), frame2:GetParent()
+    
+    p1:MarkDirty()
+
+    if(p1 ~= p2) then
+        p2:MarkDirty()
+
+    end
+end
+
+function RaidViewMixin:BindFrameToSubgroup(frame, subgroup)
+    local numOfTakenSpots = self:GetNumOfSpotsTaken(subgroup)
+
+    if(numOfTakenSpots < 5) then
+        self:SetUnderlyingColor(frame, true)
+
+        local newGroup = self["Group" .. subgroup]
+        local newIndex = self:GetNumOfSpotsTaken(subgroup) + 1
+
+        frame:SetParent(newGroup)
+        frame:SetLayoutIndex(newIndex)
+
+        self:SetUnderlyingColor(frame, false)
+
+        newGroup:MarkDirty()
+        
+        SetRaidSubgroup(frame.raidIndex, subgroup)
+
+    end
+end
+
+function RaidViewMixin:MoveFrame(frame)
+    if(canMoveFrames() and frame.raidIndex) then
+        local mouseoverFrame = self:IsFrameOverAnyOtherFrame(frame)
+
+        if(mouseoverFrame) then
+            self:SwapFrames(frame, mouseoverFrame)
+
+        else
+            local groupFrame = self:IsFrameOverGroup(frame)
+
+            if(groupFrame and frame:GetParent() ~= groupFrame) then
+                self:BindFrameToSubgroup(frame, groupFrame.index)
+                
+            elseif(frame.raidIndex) then
+                frame:GetParent():MarkDirty()
+
+            end
+        end
+    end
+end
+
+function RaidViewMixin:PrepareForNewData()
+    for i = 1, 40 do
+        local memberFrame = self["Member" .. i]
+
+        if(memberFrame) then
+            memberFrame:ClearData()
+            memberFrame.layoutIndex = nil
+
+            memberFrame:SetCallback(nil)
+            memberFrame:Hide()
+
+        end
+    end
+
+    usedFramesCounter = 0
+
+    for i = 1, 8 do
+        local group = self["Group" .. i]
+
+        group.Space1Color:Show()
+        group.Space2Color:Show()
+        group.Space3Color:Show()
+        group.Space4Color:Show()
+        group.Space5Color:Show()
+
+        group:MarkDirty()
+
+    end
+end
+
+function RaidViewMixin:OnLoad()
+    for i = 1, 8 do
+        local group = self["Group" .. i]
+        group.index = i
+        group.Title:SetText("Group " .. i)
+
+    end
+end
+
+function RaidViewMixin:OnShow()
+    if(not self.hasTheme) then
+        local theme = miog.C.CURRENT_THEME
+
+        for i = 1, 8 do
+            local group = self["Group" .. i]
+
+            group.HeaderColor:SetColorTexture(theme[4].r, theme[4].g, theme[4].b, 0.25)
+
+            group.Space1Color:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.1)
+            group.Space2Color:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.1)
+            group.Space3Color:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.1)
+            group.Space4Color:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.1)
+            group.Space5Color:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.1)
+
+        end
+
+        self.hasTheme = true
+    end
+end
+
+function RaidViewMixin:SetUnderlyingColor(frame, state)
+    local index = frame.layoutIndex
+    local space = frame:GetParent()["Space" .. index .. "Color"]
+
+    space:SetShown(state)
 end
 
 function RaidViewMixin:SetMemberValues(data)
-    local memberFrame = groupFrames[data.subgroup][data.subgroupSpot]
-    memberFrame.subgroup = data.subgroup
-    memberFrame:SetID(data.index)
-    groupIndexToSubgroupSpot[data.index] = {subgroup = data.subgroup, data.subgroupSpot}
+    local index = usedFramesCounter + 1
 
-    local classColor  = C_ClassColor.GetClassColor(data.fileName)
+    local memberFrame = self["Member" .. index]
 
-    memberFrame.Text:SetText(data.name)
-    memberFrame.Text:SetTextColor(classColor:GetRGBA())
+    if(memberFrame) then
+        local group = self["Group" .. data.subgroup]
+        usedFramesCounter = usedFramesCounter + 1
 
-    memberFrame:Show()
-end
+        memberFrame:SetData(data)
+        memberFrame:SetCallback(function(paraFrame) self:MoveFrame(paraFrame) end)
 
-function RaidViewMixin:ClearMemberValues(subgroup, index)
-    local memberFrame = groupFrames[subgroup][index]
-    memberFrame:Hide()
+        memberFrame:SetLayoutIndex(self:GetNumOfSpotsTaken(data.subgroup) + 1)
+        memberFrame:SetParent(group)
+        self:SetUnderlyingColor(memberFrame, false)
+        memberFrame:Show()
 
-    memberFrame.Text:SetText("")
-
-    local groupIndex = (subgroup - 1) * 5 + index
-    groupIndexToSubgroupSpot[groupIndex] = nil
-end
-
-function RaidViewMixin:ClearAllMemberValues()
-    for subgroup = 1, 8 do
-        for index = 1, 5 do
-            self:ClearMemberValues(subgroup, index)
-
-        end
+        memberFrame:GetParent():MarkDirty()
+        
     end
 end
 
@@ -125,10 +202,101 @@ end
 
 RaidViewButtonMixin = {}
 
-function RaidViewButtonMixin:SetCallback(func)
-    self.callback = func
+function RaidViewButtonMixin:SetData(data)
+    local classColor  = C_ClassColor.GetClassColor(data.fileName)
+
+    self.Spec:SetTexture(miog.SPECIALIZATIONS[data.specID].squaredIcon)
+
+    self.Text:SetText(data.name)
+
+    if(data.online) then
+        self.Text:SetTextColor(classColor:GetRGBA())
+
+    else
+        self.Text:SetTextColor(1, 0, 0, 1)
+
+    end
+
+    if(data.rank == 2) then
+        self.Role:SetTexture("interface/groupframe/ui-group-leadericon.blp")
+
+    elseif(data.rank == 1) then
+        self.Role:SetTexture("interface/groupframe/ui-group-assistanticon.blp")
+
+    end
+
+    if(data.role == "MAINTANK") then
+        self.Rank:SetTexture("interface/groupframe/ui-group-maintankicon.blp")
+
+    elseif(data.role == "MAINASSIST") then
+        self.Rank:SetTexture("interface/groupframe/ui-group-mainassisticon.blp")
+        
+    end
+
+    self.data = data
+    self.raidIndex = data.index
 end
 
-function RaidViewButtonMixin:ExecuteCallback()
+function RaidViewButtonMixin:ClearData()
+    self.Text:SetText("")
+    self.Text:SetTextColor(1, 1, 1, 1)
+    self.Spec:SetTexture(nil)
+    self.Rank:SetTexture(nil)
+    self.Role:SetTexture(nil)
+
+    self.data = nil
+    self.raidIndex = nil
+end
+
+function RaidViewButtonMixin:AttemptToMove()
+	if(canMoveFrames() and self.raidIndex) then
+        self:StartMoving()
+
+    end
+end
+
+function RaidViewButtonMixin:StopMoving()
     self.callback(self)
+
+    self:StopMovingOrSizing()
+
+end
+
+function RaidViewButtonMixin:RefreshColor()
+    local isOdd = self.layoutIndex % 2 == 1
+
+    local theme = miog.C.CURRENT_THEME
+
+    if(isOdd) then
+        self.BackgroundColor:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.2)
+
+    else
+        self.BackgroundColor:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.2)
+
+    end
+
+    if(self.data.online) then
+        if(UnitIsAFK(self.data.unitID)) then
+            self.Status:SetTexture("interface/friendsframe/statusicon-away.blp")
+
+        elseif(UnitIsDND(self.data.unitID)) then
+            self.Status:SetTexture("interface/friendsframe/statusicon-dnd.blp")
+
+        else
+            self.Status:SetTexture("interface/friendsframe/statusicon-online.blp")
+
+        end
+    else
+        self.Status:SetTexture("interface/friendsframe/statusicon-offline.blp")
+
+    end
+end
+
+function RaidViewButtonMixin:SetLayoutIndex(layoutIndex)
+    self.layoutIndex = layoutIndex
+    self:RefreshColor()
+end
+
+function RaidViewButtonMixin:SetCallback(func)
+    self.callback = func
 end

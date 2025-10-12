@@ -102,6 +102,8 @@ local function updateGroupClassData()
 	end
 end
 
+miog.updateGroupClassData = updateGroupClassData
+
 local function classPanelEvents(_, event, ...)
     if(event == "PLAYER_ENTERING_WORLD") then
         updateGroupClassData()

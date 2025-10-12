@@ -25,10 +25,7 @@
         </Layers>
         
         <Scripts>
-            <OnLoad>
-                self.BackgroundColor:SetColorTexture(1, 1, 1, 0.1)
-               
-            </OnLoad>
+            <OnShow method="OnShow" />
             <OnLeave function="GameTooltip_Hide" />
         </Scripts>
     </Button>

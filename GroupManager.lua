@@ -413,64 +413,6 @@ local function isFrameOverAnySpace(frame)
     return false
 end
 
-local openBlizzardRaidFrame = CreateFromMixins(UnitPopupButtonBaseMixin);
-
-openBlizzardRaidFrame.OnClick = function()
-	ToggleFriendsFrame(3)
-end
-openBlizzardRaidFrame.GetText = function()
-	return "Open Blizzard's raid frame"
-end
-
-local customPartyPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
-UnitPopupManager:RegisterMenu("MIOG_PARTY", customPartyPopupMenu);
-function customPartyPopupMenu:GetEntries()
-	return {
-		UnitPopupRaidTargetButtonMixin,
-		--UnitPopupSetFocusButtonMixin,
-		UnitPopupAddFriendButtonMixin,
-		UnitPopupAddFriendMenuButtonMixin,
-		UnitPopupInteractSubsectionTitle,
-		UnitPopupRafSummonButtonMixin,
-		UnitPopupRafGrantLevelButtonMixin,
-		UnitPopupMenuFriendlyPlayerInteract, -- Submenu
-		UnitPopupOtherSubsectionTitle,
-		UnitPopupVoiceChatButtonMixin, 
-		UnitPopupMovePlayerFrameButtonMixin,
-		UnitPopupMoveTargetFrameButtonMixin,
-		UnitPopupEnterEditModeMixin,
-		UnitPopupReportInWorldButtonMixin,
-	}
-end
-
-local customRaidPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
-UnitPopupManager:RegisterMenu("MIOG_RAID", customRaidPopupMenu);
-function customRaidPopupMenu:GetEntries()
-	return {
-		--UnitPopupSetFocusButtonMixin,
-		UnitPopupInteractSubsectionTitle,
-		UnitPopupSetRaidLeaderButtonMixin,
-		UnitPopupSetRaidAssistButtonMixin,
-		--UnitPopupSetRaidMainTankButtonMixin,
-		--UnitPopupSetRaidMainAssistButtonMixin,
-
-		UnitPopupSetRaidDemoteButtonMixin,
-		UnitPopupLootPromoteButtonMixin,
-		UnitPopupOtherSubsectionTitle,
-		UnitPopupVoiceChatButtonMixin, 
-		UnitPopupMovePlayerFrameButtonMixin,
-		UnitPopupMoveTargetFrameButtonMixin,
-		UnitPopupEnterEditModeMixin,
-		UnitPopupReportGroupMemberButtonMixin,
-		--UnitPopupCopyCharacterNameButtonMixin,
-		UnitPopupPvpReportAfkButtonMixin,
-		UnitPopupVoteToKickButtonMixin,
-		UnitPopupSetRaidRemoveButtonMixin,
-		UnitPopupSubsectionSeperatorMixin,
-		openBlizzardRaidFrame,
-	}
-end
-
 local function createCharacterFrame(data)
 	local frame = framePool:Acquire()
 	frame.id = data.index
