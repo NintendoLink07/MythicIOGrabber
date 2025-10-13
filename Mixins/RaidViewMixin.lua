@@ -1,5 +1,7 @@
 local addonName, miog = ...
 
+local subgroupBugFixed = false
+
 RaidViewMixin = {}
 
 local usedFramesCounter = 0
@@ -39,7 +41,7 @@ function RaidViewMixin:IsFrameOverAnyOtherFrame(frame)
 end
 
 local function canMoveFrames()
-    if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) then
+    if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and subgroupBugFixed) then
         return true
 
     end
@@ -71,19 +73,16 @@ function RaidViewMixin:BindFrameToSubgroup(frame, subgroup)
     local numOfTakenSpots = self:GetNumOfSpotsTaken(subgroup)
 
     if(numOfTakenSpots < 5) then
-        self:SetUnderlyingColor(frame, true)
-
         local newGroup = self["Group" .. subgroup]
         local newIndex = self:GetNumOfSpotsTaken(subgroup) + 1
 
         frame:SetParent(newGroup)
         frame:SetLayoutIndex(newIndex)
 
-        self:SetUnderlyingColor(frame, false)
-
         newGroup:MarkDirty()
         
         SetRaidSubgroup(frame.raidIndex, subgroup)
+
 
     end
 end
@@ -114,29 +113,16 @@ function RaidViewMixin:PrepareForNewData()
         local memberFrame = self["Member" .. i]
 
         if(memberFrame) then
+            memberFrame:Hide()
             memberFrame:ClearData()
             memberFrame.layoutIndex = nil
-
+            memberFrame:SetParent(nil)
             memberFrame:SetCallback(nil)
-            memberFrame:Hide()
 
         end
     end
 
     usedFramesCounter = 0
-
-    for i = 1, 8 do
-        local group = self["Group" .. i]
-
-        group.Space1Color:Show()
-        group.Space2Color:Show()
-        group.Space3Color:Show()
-        group.Space4Color:Show()
-        group.Space5Color:Show()
-
-        group:MarkDirty()
-
-    end
 end
 
 function RaidViewMixin:OnLoad()
@@ -148,6 +134,10 @@ function RaidViewMixin:OnLoad()
     end
 end
 
+function RaidViewMixin:SetMemberValues()
+
+end
+
 function RaidViewMixin:OnShow()
     if(not self.hasTheme) then
         local theme = miog.C.CURRENT_THEME
@@ -156,12 +146,12 @@ function RaidViewMixin:OnShow()
             local group = self["Group" .. i]
 
             group.HeaderColor:SetColorTexture(theme[4].r, theme[4].g, theme[4].b, 0.25)
-
             group.Space1Color:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.1)
             group.Space2Color:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.1)
             group.Space3Color:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.1)
             group.Space4Color:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.1)
             group.Space5Color:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.1)
+            group:MarkDirty()
 
         end
 
@@ -176,6 +166,17 @@ function RaidViewMixin:SetUnderlyingColor(frame, state)
     space:SetShown(state)
 end
 
+function RaidViewMixin:SetRefreshMethod(func, ...)
+    self.refreshMethod = func
+    self.refreshParameters = {...}
+
+end
+    
+function RaidViewMixin:RefreshGroupManager()
+    self.refreshMethod(unpack(self.refreshParameters))
+    
+end
+
 function RaidViewMixin:SetMemberValues(data)
     local index = usedFramesCounter + 1
 
@@ -186,11 +187,15 @@ function RaidViewMixin:SetMemberValues(data)
         usedFramesCounter = usedFramesCounter + 1
 
         memberFrame:SetData(data)
-        memberFrame:SetCallback(function(paraFrame) self:MoveFrame(paraFrame) end)
+        memberFrame:SetCallback(
+        function(paraFrame)
+            self:MoveFrame(paraFrame)
+            --self:RefreshGroupManager()
+        end)
 
         memberFrame:SetLayoutIndex(self:GetNumOfSpotsTaken(data.subgroup) + 1)
         memberFrame:SetParent(group)
-        self:SetUnderlyingColor(memberFrame, false)
+        --self:SetUnderlyingColor(memberFrame, false)
         memberFrame:Show()
 
         memberFrame:GetParent():MarkDirty()
@@ -234,6 +239,7 @@ function RaidViewButtonMixin:SetData(data)
     end
 
     self.data = data
+
     self.raidIndex = data.index
 end
 
@@ -263,7 +269,7 @@ function RaidViewButtonMixin:StopMoving()
 end
 
 function RaidViewButtonMixin:RefreshColor()
-    local isOdd = self.layoutIndex % 2 == 1
+    --[[local isOdd = self.layoutIndex % 2 == 1
 
     local theme = miog.C.CURRENT_THEME
 
@@ -273,7 +279,11 @@ function RaidViewButtonMixin:RefreshColor()
     else
         self.BackgroundColor:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.2)
 
-    end
+    end]]
+
+    local classColor  = C_ClassColor.GetClassColor(self.data.fileName)
+    local r, g, b = classColor:GetRGBA()
+    self.BackgroundColor:SetColorTexture(r, g, b, 0.65)
 
     if(self.data.online) then
         if(UnitIsAFK(self.data.unitID)) then

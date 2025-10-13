@@ -1,35 +1,27 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_GroupOrganizerRaidViewGroupTemplate" inherits="VerticalLayoutFrame" virtual="true">
+    <Frame name="MIOG_GroupOrganizerRaidViewGroupTemplate" inherits="BackdropTemplate, VerticalLayoutFrame" virtual="true">
         <KeyValues>
-            <KeyValue key="fixedWidth" value="138" type="number" />
+            <KeyValue key="fixedWidth" value="136" type="number" />
+            <KeyValue key="fixedHeight" value="170" type="number" />
             <KeyValue key="topPadding" value="20" type="number" />
         </KeyValues>
 
-        <Layers>  
-            <Layer level="OVERLAY">
-                <FontString parentKey="Title" font="GameFontHighlight" text="Group">
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="HeaderColor">
                     <Size y="20" />
                     <Anchors>
                         <Anchor point="TOPLEFT"/>
                         <Anchor point="TOPRIGHT"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-
-            <Layer level="BACKGROUND">
-                <Texture parentKey="HeaderColor">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Title"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Title"/>
                     </Anchors>
                 </Texture>
 
                 <Texture parentKey="Space1Color">
                     <Size y="30" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.HeaderColor" relativePoint="BOTTOMLEFT"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.HeaderColor" relativePoint="BOTTOMRIGHT"/>
                     </Anchors>
                 </Texture>
 
@@ -65,6 +57,28 @@
                     </Anchors>
                 </Texture>
             </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" font="GameFontHighlight" text="Group">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.HeaderColor"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
         </Layers>
+        
+        <Scripts>
+            <OnLoad>
+                self:SetBackdrop({
+                    bgFile="Interface\\ChatFrame\\ChatFrameBackground",
+                    tileSize=1,
+                    tile=true,
+                    edgeFile="Interface\\ChatFrame\\ChatFrameBackground",
+                    edgeSize = 1,
+                })
+                self:SetBackdropColor(0, 0, 0, 0)
+                self:SetBackdropBorderColor(0, 0, 0, 1)
+            </OnLoad>
+        </Scripts>
     </Frame>
 </Ui>

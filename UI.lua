@@ -22,8 +22,6 @@ local function setProgressPanelInfo(categoryID)
 			miog.ProgressPanel.MythicPlus:SetShown(isDungeon)
 			miog.ProgressPanel.Raids:SetShown(isRaid)
 
-			--miog.ProgressPanel.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[categoryID])
-
 			local playerName, realm = miog.createSplitName(UnitFullName("player"))
 			
 			miog.ProgressPanel:Flush()
@@ -156,7 +154,7 @@ miog.createFrames = function()
 		PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
 		settingsButton:SetParent(miog.pveFrame2.TitleBar)
-		settingsButton:SetPoint("TOPRIGHT", miog.pveFrame2.CloseButtonArea, "TOPLEFT", -2, 0)
+		settingsButton:SetPoint("RIGHT", miog.pveFrame2.CloseButtonArea, "LEFT", -2, 0)
 
 		miog.pveFrame2.TitleBar.BlizzardFrame:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
 	end

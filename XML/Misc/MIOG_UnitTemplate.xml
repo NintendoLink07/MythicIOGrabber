@@ -132,8 +132,6 @@
                         name = self.data.fullName;
                     };
 
-                    print("TYPE", type)
-
                     UnitPopup_OpenMenu("MIOG_" .. strupper(type), contextData);
                 end
             </OnClick>

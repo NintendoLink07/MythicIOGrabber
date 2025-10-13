@@ -68,7 +68,7 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
 	    self.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/" .. (data.combatRole and data.combatRole .. "Icon.png" or "unknown.png"))
 
     elseif(self.key == "index") then
-	    self.Text:SetText(data.subgroup .. "-" .. data.index)
+	    self.Text:SetText(data.subgroup)
 
     end
 

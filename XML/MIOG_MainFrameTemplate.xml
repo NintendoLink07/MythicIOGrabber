@@ -19,7 +19,7 @@
                     <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
                         <Size x="20" y="20" />
                         <Anchors>
-                            <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" />
+                            <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
                         </Anchors>
 						<Scripts>
 							<OnClick>
@@ -48,7 +48,7 @@
                         <Size x="56" y="19" />
 
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+							<Anchor point="LEFT"/>
 						</Anchors>
 
                     </Button>
@@ -134,7 +134,7 @@
                         <FontString parentKey="TitleString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="Mythic IO Grabber">
                             <Size y="19" />
                             <Anchors>
-                                <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP"/>
+                                <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER"/>
                             </Anchors>
                         </FontString>
                         
@@ -360,6 +360,12 @@
                 <Layers>
                     <Layer level="BACKGROUND" textureSubLevel="-5">
                         <Texture parentKey="Background" setAllPoints="true"/>
+                    </Layer>
+           
+                    <Layer level="BACKGROUND" textureSubLevel="-4">
+                        <Texture parentKey="TransparentDark" setAllPoints="true">
+                            <Color r="0.3" g="0.3" b="0.3" a="0.1" />
+                        </Texture>
                     </Layer>
                 </Layers>
 
@@ -754,17 +760,6 @@
                 </Scripts>
             </Button>
 
-            <!--<Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Lockouts">
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
-                </Anchors>
-                <Scripts>
-                    <OnLoad>
-                        self.frameName = "Lockouts"
-                    </OnLoad>
-                </Scripts>
-            </Button>!-->
-
             <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Drops">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
@@ -789,12 +784,6 @@
             </Button>
         </Frames>
 
-        <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="-5">
-                <Texture parentKey="Background" setAllPoints="true"/>
-            </Layer>
-        </Layers>
-
         <Scripts>
             <OnDragStart>
                 self:StartMoving()
@@ -816,7 +805,7 @@
 
                 for index = 1, self.numTabs, 1 do
                     tab = self.Tabs and self.Tabs[index] or _G[self:GetName().."Tab"..index];
-                    tab:SetWidth(65)
+                    tab:SetWidth(70)
                 end
             </OnShow>
 

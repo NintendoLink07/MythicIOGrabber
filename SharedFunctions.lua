@@ -1080,16 +1080,19 @@ local function createFullNameValuesFrom(type, value)
 		if(value ~= "player") then
 			local nameNoMod, realmNoMod = UnitNameUnmodified(value)
 
-			shortName = nameNoMod
+			if(nameNoMod) then
 
-			if(realmNoMod) then
-				realm = realmNoMod
-				fullName = nameNoMod .. "-" .. realmNoMod
+				shortName = nameNoMod
 
-			else
-				realm = localRealm
-				fullName = nameNoMod .. "-" .. localRealm
+				if(realmNoMod) then
+					realm = realmNoMod
+					fullName = nameNoMod .. "-" .. realmNoMod
 
+				else
+					realm = localRealm
+					fullName = nameNoMod .. "-" .. localRealm
+
+				end
 			end
 		else
 			shortName = UnitName("player")
@@ -1143,8 +1146,6 @@ local function createFullNameFrom(type, value)
 		end
 	end
 
-	print("CREATE NAME", type, value, realm)
-
 	return name
 end
 
@@ -1187,7 +1188,7 @@ end
 miog.printOnce = printOnce
 
 miog.changeTheme = function(index)
-	local titleBarTexHeight = 0.0625
+	local titleBarTexHeight = 0.049
 	local scrollbarWidth = 1 - 0.03125
 	local currencyHeight = 1 - 0.03125
 

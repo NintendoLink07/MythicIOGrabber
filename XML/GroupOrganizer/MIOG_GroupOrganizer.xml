@@ -66,56 +66,48 @@
                     <Frame parentKey="Group1" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" />
-                            <Anchor point="BOTTOMLEFT" relativePoint="LEFT"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Group2" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="TOPRIGHT" x="5"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMRIGHT" x="5"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Group3" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Group2" relativePoint="TOPRIGHT" x="5"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group2" relativePoint="BOTTOMRIGHT" x="5"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Group4" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Group3" relativePoint="TOPRIGHT" x="5"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group3" relativePoint="BOTTOMRIGHT" x="5"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Group5" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Group1" relativePoint="BOTTOMLEFT" y="-5"/>
-                            <Anchor point="BOTTOMLEFT" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="LEFT"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Group6" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Group5" relativePoint="TOPRIGHT" x="5"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group5" relativePoint="BOTTOMRIGHT" x="5"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Group7" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Group6" relativePoint="TOPRIGHT" x="5"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group6" relativePoint="BOTTOMRIGHT" x="5"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="Group8" inherits="MIOG_GroupOrganizerRaidViewGroupTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Group7" relativePoint="TOPRIGHT" x="5"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.Group7" relativePoint="BOTTOMRIGHT" x="5"/>
                         </Anchors>
                     </Frame>
                     
