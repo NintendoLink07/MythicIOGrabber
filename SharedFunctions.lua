@@ -1057,9 +1057,9 @@ local function createFullNameValuesFrom(type, value)
 
 	end
 
-	local localRealm = GetNormalizedRealmName()
-
 	local fullName, shortName, realm
+
+	local localRealm = GetNormalizedRealmName() or ""
 
 	if(type == "unitName") then
 		if(string.find(value, "-")) then

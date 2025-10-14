@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.7.1] - 2025-10-15
+
+### Fixed
+
+- [GroupManager] Character frames in the raid view can now be moved around.
+
+- [GroupManager] The character name color is now set to white so it's easier to read.
+
+- [GroupManager] A more accurate "is player inspectable" function has been implemented.
+
+- [GroupManager] An error has been resolved not updating the player count data when there is no change of the # of player characters in your group.
+
+- An error trying to fetch the realm name while in a loading screen has been resolved.
+
+
+
 ## [3.7] - 2025-10-13
 
 ### Changed

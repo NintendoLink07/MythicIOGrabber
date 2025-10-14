@@ -1,6 +1,6 @@
 local addonName, miog = ...
 
-local subgroupBugFixed = false
+local subgroupBugFixed = true
 
 RaidViewMixin = {}
 
@@ -87,27 +87,6 @@ function RaidViewMixin:BindFrameToSubgroup(frame, subgroup)
     end
 end
 
-function RaidViewMixin:MoveFrame(frame)
-    if(canMoveFrames() and frame.raidIndex) then
-        local mouseoverFrame = self:IsFrameOverAnyOtherFrame(frame)
-
-        if(mouseoverFrame) then
-            self:SwapFrames(frame, mouseoverFrame)
-
-        else
-            local groupFrame = self:IsFrameOverGroup(frame)
-
-            if(groupFrame and frame:GetParent() ~= groupFrame) then
-                self:BindFrameToSubgroup(frame, groupFrame.index)
-                
-            elseif(frame.raidIndex) then
-                frame:GetParent():MarkDirty()
-
-            end
-        end
-    end
-end
-
 function RaidViewMixin:PrepareForNewData()
     for i = 1, 40 do
         local memberFrame = self["Member" .. i]
@@ -159,13 +138,6 @@ function RaidViewMixin:OnShow()
     end
 end
 
-function RaidViewMixin:SetUnderlyingColor(frame, state)
-    local index = frame.layoutIndex
-    local space = frame:GetParent()["Space" .. index .. "Color"]
-
-    space:SetShown(state)
-end
-
 function RaidViewMixin:SetRefreshMethod(func, ...)
     self.refreshMethod = func
     self.refreshParameters = {...}
@@ -177,7 +149,7 @@ function RaidViewMixin:RefreshGroupManager()
     
 end
 
-function RaidViewMixin:SetMemberValues(data)
+function RaidViewMixin:SetMemberValues(data, func)
     local index = usedFramesCounter + 1
 
     local memberFrame = self["Member" .. index]
@@ -187,15 +159,10 @@ function RaidViewMixin:SetMemberValues(data)
         usedFramesCounter = usedFramesCounter + 1
 
         memberFrame:SetData(data)
-        memberFrame:SetCallback(
-        function(paraFrame)
-            self:MoveFrame(paraFrame)
-            --self:RefreshGroupManager()
-        end)
+        memberFrame:SetCallback(func)
 
         memberFrame:SetLayoutIndex(self:GetNumOfSpotsTaken(data.subgroup) + 1)
         memberFrame:SetParent(group)
-        --self:SetUnderlyingColor(memberFrame, false)
         memberFrame:Show()
 
         memberFrame:GetParent():MarkDirty()
@@ -208,14 +175,12 @@ end
 RaidViewButtonMixin = {}
 
 function RaidViewButtonMixin:SetData(data)
-    local classColor  = C_ClassColor.GetClassColor(data.fileName)
-
     self.Spec:SetTexture(miog.SPECIALIZATIONS[data.specID].squaredIcon)
 
     self.Text:SetText(data.name)
 
     if(data.online) then
-        self.Text:SetTextColor(classColor:GetRGBA())
+        self.Text:SetTextColor(1, 1, 1, 1)
 
     else
         self.Text:SetTextColor(1, 0, 0, 1)

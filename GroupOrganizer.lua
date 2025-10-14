@@ -1,6 +1,8 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
+miog.groupManager = {}
+
 local currentSortHeader
 
 local fullPlayerName, shortPlayerName, playerRealm
@@ -21,7 +23,6 @@ local playersInGroup = {}
 local groupManager
 local inspectRoutine
 local pityTimer
-local nextInspectionTimer
 
 local notifyBlocked = false
 local inspectionPlayerData = {}
@@ -51,22 +52,24 @@ local function canInspectPlayer(fullName)
 	end
 
 	if(UnitIsPlayer(data.unitID) and CanInspect(data.unitID) and (data.online ~= false or UnitIsConnected(data.unitID)) and isPlayerRetryBlocked(fullName)) then
+        print("CAN INSPECT", fullName)
 		return true
 
+    else
+        print("CANT INSPECT", fullName, UnitIsPlayer(data.unitID), CanInspect(data.unitID), (data.online ~= false or UnitIsConnected(data.unitID)), isPlayerRetryBlocked(fullName))
 	end
 end
 
 local function countPlayersWithData()
-	local specCount = {}
 	local playersWithSpecData, inspectableMembers = 0, 0
 
+    print("BEFORE")
 	for fullName in pairs(playersInGroup) do
+        print(fullName)
 		local playerSpec = savedPlayerSpecs[fullName]
 		local hasPlayerSpec = playerSpec and playerSpec ~= 0
 
 		if(hasPlayerSpec) then
-			specCount[playerSpec] = specCount[playerSpec] and specCount[playerSpec] + 1 or 1
-
 			playersWithSpecData = playersWithSpecData + 1
 			inspectableMembers = inspectableMembers + 1
 
@@ -75,8 +78,6 @@ local function countPlayersWithData()
 			
 		end
 	end
-
-	--updateSpecPanels(specCount)
 
 	return playersWithSpecData, inspectableMembers
 end
@@ -105,6 +106,8 @@ local function updateGroupInfoText()
     local concatTable = {
         "[", specs, "/", members, "/", GetNumGroupMembers(), "]"
     }
+
+    print(specs, members)
 
     inspectionTextData = {
         specs = specs,
@@ -276,37 +279,47 @@ local function saveOptionalPlayerData(data, fullName, playerName, realm)
     return data
 end
 
-local function createColumn(name, cellTemplate, key, useForSort)
+local function createColumn(name, cellTemplate, key, useForSort, fill)
     local tableBuilder = groupManager.tableBuilder
     local column = tableBuilder:AddColumn()
     column:ConstructHeader("Button", "MIOG_GroupOrganizerHeaderTemplate", name, key, useForSort and setDataProviderSort)
     column:ConstructCells("Frame", cellTemplate, key)
-
-    if(key == "name") then
-        column:SetFillConstraints(2.1, 1)
-        
-    elseif(key == "progress") then
-        column:SetFillConstraints(1.3, 1)
-
-    elseif(key == "keylevel") then
-        column:SetFillConstraints(1.5, 1)
-        
-    elseif(key == "index") then
-        column:SetFillConstraints(0.6, 1)
-        
-    elseif(name == "") then
-        column:SetFillConstraints(0.4, 1)
-
-    else
-        column:SetFillConstraints(0.8, 1)
-
-    end
+    column:SetFillConstraints(fill or 0.7, 1)
 end
 
 local function updateElementExtent()
     local indiHeight = groupManager.ListView.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 12 or 6)
     groupManager.view:SetElementExtent(indiHeight)
 
+end
+
+local function canMoveFrames()
+    if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) then
+        return true
+
+    end
+end
+
+local function moveRaidViewFrame(frame)
+    if(canMoveFrames() and frame.raidIndex) then
+        local mouseoverFrame = groupManager.RaidView:IsFrameOverAnyOtherFrame(frame)
+
+        if(mouseoverFrame) then
+            groupManager.RaidView:SwapFrames(frame, mouseoverFrame)
+
+        else
+            local groupFrame = groupManager.RaidView:IsFrameOverGroup(frame)
+
+            if(groupFrame and frame:GetParent() ~= groupFrame) then
+                groupManager.RaidView:BindFrameToSubgroup(frame, groupFrame.index)
+                miog.groupManager.innerUpdate()
+                
+            elseif(frame.raidIndex) then
+                frame:GetParent():MarkDirty()
+
+            end
+        end
+    end
 end
 
 local function innerUpdate()
@@ -331,65 +344,67 @@ local function innerUpdate()
                     
                     local fullName, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
 
-                    if(isInRaid) then
-                        unitID = "raid" .. groupIndex
+                    if(fullName) then
+                        if(isInRaid) then
+                            unitID = "raid" .. groupIndex
 
-                    elseif(fullPlayerName ~= fullName) then
-                        unitID = "party" .. groupIndex - offset
+                        elseif(fullPlayerName ~= fullName) then
+                            unitID = "party" .. groupIndex - offset
 
-                    else
-                        unitID = "player"
+                        else
+                            unitID = "player"
 
-                        offset = offset + 1
-
-                    end
-
-                    playersInGroup[fullName] = true
-                    
-                    if(fullName ~= fullPlayerName) then
-                        if(online and not isPlayerRetryBlocked(fullName)) then
-                            if(not savedPlayerSpecs[fullName]) then
-                                inspectionQueue[fullName] = {unitID = unitID, fileName = fileName, name = name, online = online}
-
-                            else
-                                inspectionQueue[fullName] = nil
-
-                            end
+                            offset = offset + 1
 
                         end
 
-                    elseif(not savedPlayerSpecs[fullPlayerName]) then
-                        savedPlayerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
+                        playersInGroup[fullName] = true
+                        
+                        if(fullName ~= fullPlayerName) then
+                            if(canInspectPlayer(fullName) and not isPlayerRetryBlocked(fullName)) then
+                                if(not savedPlayerSpecs[fullName]) then
+                                    inspectionQueue[fullName] = {unitID = unitID, fileName = fileName, name = name, online = online}
 
+                                else
+                                    inspectionQueue[fullName] = nil
+
+                                end
+
+                            end
+
+                        elseif(not savedPlayerSpecs[fullPlayerName]) then
+                            savedPlayerSpecs[fullPlayerName] = GetSpecializationInfo(GetSpecialization())
+
+                        end
+
+                        local playerSpec = savedPlayerSpecs[fullName] or 0
+
+                        local data = {
+                            index = groupIndex,
+                            subgroup = subgroup,
+                            unitID = unitID,
+                            online = online,
+                            
+                            fullName = fullName,
+                            name = playerName,
+                            realm = realm,
+                            level = level,
+                            
+                            fileName = fileName,
+                            className = localizedClassName,
+                            specID = playerSpec,
+                            combatRole = combatRole or GetSpecializationRoleByID(playerSpec),
+
+                            rank = rank,
+                            role = role,
+                        }
+
+                        groupManager.RaidView:SetMemberValues(data, moveRaidViewFrame)
+
+                        data = saveOptionalPlayerData(data, fullName, playerName, realm)
+                        
+                        dataProvider:Insert(data)
                     end
-
-                    local playerSpec = savedPlayerSpecs[fullName] or 0
-
-                    local data = {
-                        index = groupIndex,
-                        subgroup = subgroup,
-                        unitID = unitID,
-                        online = online,
-                        
-                        fullName = fullName,
-                        name = playerName,
-                        realm = realm,
-                        level = level,
-                        
-                        fileName = fileName,
-                        className = localizedClassName,
-                        specID = playerSpec,
-                        combatRole = combatRole or GetSpecializationRoleByID(playerSpec),
-
-                        rank = rank,
-                        role = role,
-                    }
-
-                    groupManager.RaidView:SetMemberValues(data)
-
-                    data = saveOptionalPlayerData(data, fullName, playerName, realm)
-                    
-                    dataProvider:Insert(data)
                 end
             end
         end
@@ -423,6 +438,8 @@ local function innerUpdate()
 
     groupManager.ListView.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 end
+
+miog.groupManager.innerUpdate = innerUpdate
 
 local function queueHasEntries()
     local hasEntries = false
@@ -537,7 +554,7 @@ end
 
 local function checkCoroutine(origin)
     local status = inspectRoutine and coroutine.status(inspectRoutine)
-    --print(origin, "CHECK STATUS", status, notifyBlocked, queueHasEntries())
+    print(origin, "CHECK STATUS", status, notifyBlocked, queueHasEntries())
 
     if(not notifyBlocked and queueHasEntries()) then
         if(status == nil or status == "dead") then
@@ -561,6 +578,8 @@ local function queueGroupUpdate(instant, origin)
         updateTimer = C_Timer.NewTimer(instant and 0.1 or 1.25, function()
             --print("-------------------", "EXECUTE QUEUE")
             innerUpdate()
+            updateGroupInfoText()
+
             groupUpdateQueued = false
 
             checkCoroutine(origin)
@@ -694,7 +713,6 @@ local function groupManagerEvents(_, event, ...)
                     end
 
                     queueGroupUpdate(false, "INSPECT DONE")
-                    updateGroupInfoText()
                 end
             end
         end
@@ -716,7 +734,6 @@ local function groupManagerEvents(_, event, ...)
         end
 
 		queueGroupUpdate(false, "ROSTER")
-        updateGroupInfoText()
 
         numOfGroupMembers = GetNumGroupMembers()
 
@@ -853,7 +870,6 @@ miog.loadGroupOrganizer = function()
         retryList = {}
         groupUpdateQueued = false
         queueGroupUpdate(true, "REFRESH")
-        updateGroupInfoText()
     end)
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
@@ -893,20 +909,19 @@ miog.loadGroupOrganizer = function()
 
     ScrollUtil.RegisterTableBuilder(groupManager.ListView.ScrollBox, tableBuilder, ElementDataTranslator)
     
-    --local tableBuilder = groupManager.tableBuilder
     tableBuilder:Reset()
-    createColumn("", "MIOG_GroupOrganizerIconCellTemplate", "online", false)
-    createColumn("Name", "MIOG_GroupOrganizerTextCellTemplate", "name", true)
-    createColumn("Role", "MIOG_GroupOrganizerIconCellTemplate", "combatRole", true, true)
-    createColumn("Class", "MIOG_GroupOrganizerIconCellTemplate", "class", false, true)
-    createColumn("Spec", "MIOG_GroupOrganizerIconCellTemplate", "specID", true, true)
-    createColumn("Level", "MIOG_GroupOrganizerTextCellTemplate", "level", true)
-    createColumn("I-Lvl", "MIOG_GroupOrganizerTextCellTemplate", "itemLevel", true)
-    createColumn("Repair", "MIOG_GroupOrganizerTextCellTemplate", "durability", true)
-    createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true)
-    createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progress", true)
-    createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true)
-    createColumn("#", "MIOG_GroupOrganizerTextCellTemplate", "index", true)
+    createColumn("", "MIOG_GroupOrganizerIconCellTemplate", "online", false, 0.3)
+    createColumn("Name", "MIOG_GroupOrganizerTextCellTemplate", "name", true, 2.1)
+    createColumn("Role", "MIOG_GroupOrganizerIconCellTemplate", "combatRole", true, 0.8)
+    createColumn("Class", "MIOG_GroupOrganizerIconCellTemplate", "class", false, 0.8)
+    createColumn("Spec", "MIOG_GroupOrganizerIconCellTemplate", "specID", true, 0.85)
+    createColumn("Level", "MIOG_GroupOrganizerTextCellTemplate", "level", true, 0.9)
+    createColumn("I-Lvl", "MIOG_GroupOrganizerTextCellTemplate", "itemLevel", true, 0.8)
+    createColumn("Repair", "MIOG_GroupOrganizerTextCellTemplate", "durability", true, 1)
+    createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true, 0.8)
+    createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progress", true, 1.15)
+    createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true, 1.35)
+    createColumn("#", "MIOG_GroupOrganizerTextCellTemplate", "index", true, 0.35)
     tableBuilder:Arrange()
 
 	groupManager:RegisterEvent("PLAYER_ENTERING_WORLD")
