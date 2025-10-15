@@ -7,7 +7,7 @@ function GroupOrganizerStandardMixin:Init(key)
 end
 
 function GroupOrganizerStandardMixin:Populate(data, columnIndex)
-    local isOdd = data.index % 2 == 1
+    --[[local isOdd = data.index % 2 == 1
 
     local theme = miog.C.CURRENT_THEME
 
@@ -17,7 +17,7 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     else
         self.BackgroundColor:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.1)
 
-    end
+    end]]
 
     if(self.key == "online") then
         if(data.online) then
@@ -37,7 +37,7 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
         end
 
 	elseif(self.key == "name") then
-        self.Text:SetText(data.fileName and WrapTextInColorCode(data.name, C_ClassColor.GetClassColor(data.fileName):GenerateHexColor()) or data.name)
+        self.Text:SetText(data.name)
 
     elseif(self.key == "class") then
         local classIndex = miog.CLASSFILE_TO_ID[data.fileName]

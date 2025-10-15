@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning].
 ### Fixed
 
 - [GroupManager] Character frames in the raid view can now be moved around.
+    A very slight delay (usually 0.3s but up to 1.5s) with locked frames will occur until the swap is made on Blizzard's side.
+    Maybe I'll figure out a better solution.
+    If the locked frames for some reason don't unlock you can press the "Refresh" button to manually unlock them (hasn't happen to me during testing).
 
 - [GroupManager] The character name color is now set to white so it's easier to read.
 

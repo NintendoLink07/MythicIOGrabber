@@ -182,7 +182,7 @@ miog.createClassPanel = function()
 
         if(data) then
             GameTooltip:SetText(data.specs .. " players with spec data.")
-            GameTooltip:AddLine(data.members .. " group members that are inspectable (not offline or some weird interaction).")
+            GameTooltip:AddLine(data.members .. " group members that are inspectable.")
 
             GameTooltip:AddLine(data.numGroupMembers .. " total group members.")
 

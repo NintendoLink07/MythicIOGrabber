@@ -1,10 +1,19 @@
 local addonName, miog = ...
 
-local subgroupBugFixed = true
+local interactionState = true
 
 RaidViewMixin = {}
 
-local usedFramesCounter = 0
+local groupsTaken = {
+    [1] = 0,
+    [2] = 0,
+    [3] = 0,
+    [4] = 0,
+    [5] = 0,
+    [6] = 0,
+    [7] = 0,
+    [8] = 0,
+}
 
 function RaidViewMixin:GetNumOfSpotsTaken(groupIndex)
     return #self["Group" .. groupIndex]:GetLayoutChildren()
@@ -41,23 +50,27 @@ function RaidViewMixin:IsFrameOverAnyOtherFrame(frame)
 end
 
 local function canMoveFrames()
-    if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and subgroupBugFixed) then
+    if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) then
         return true
 
     end
 end
 
 function RaidViewMixin:SwapFrames(frame1, frame2)
-    local f1Parent, f1Index = frame1:GetParent(), frame1.layoutIndex
-    local f2Parent, f2Index = frame2:GetParent(), frame2.layoutIndex
+    self:SetInteractionState(false)
+
+    local f1Parent, f1Index, f1RaidIndex = frame1:GetParent(), frame1.layoutIndex, frame1.raidIndex
+    local f2Parent, f2Index, f2RaidIndex = frame2:GetParent(), frame2.layoutIndex, frame2.raidIndex
 
     frame1:SetParent(f2Parent)
     frame1:SetLayoutIndex(f2Index)
+    frame1.raidIndex = f2RaidIndex
 
     frame2:SetParent(f1Parent)
     frame2:SetLayoutIndex(f1Index)
+    frame2.raidIndex = f1RaidIndex
 
-    SwapRaidSubgroup(frame1.raidIndex, frame2.raidIndex)
+    SwapRaidSubgroup(f1RaidIndex, f2RaidIndex)
 
     local p1, p2 = frame1:GetParent(), frame2:GetParent()
     
@@ -73,6 +86,8 @@ function RaidViewMixin:BindFrameToSubgroup(frame, subgroup)
     local numOfTakenSpots = self:GetNumOfSpotsTaken(subgroup)
 
     if(numOfTakenSpots < 5) then
+        self:SetInteractionState(false)
+
         local newGroup = self["Group" .. subgroup]
         local newIndex = self:GetNumOfSpotsTaken(subgroup) + 1
 
@@ -83,7 +98,38 @@ function RaidViewMixin:BindFrameToSubgroup(frame, subgroup)
         
         SetRaidSubgroup(frame.raidIndex, subgroup)
 
+    end
+end
 
+function RaidViewMixin:MoveFrame(frame)
+    if(canMoveFrames() and frame.raidIndex) then
+        local mouseoverFrame = self:IsFrameOverAnyOtherFrame(frame)
+
+        if(not mouseoverFrame) then
+            
+            
+        end
+
+        if(mouseoverFrame) then
+            if(mouseoverFrame.data.subgroup ~= frame.data.subgroup) then
+                self:SwapFrames(frame, mouseoverFrame)
+                return
+
+            end
+        else
+            local groupFrame = self:IsFrameOverGroup(frame)
+
+            if(groupFrame and frame:GetParent() ~= groupFrame) then
+                self:BindFrameToSubgroup(frame, groupFrame.index)
+                return
+
+            end
+        end
+
+        if(frame.raidIndex) then
+            frame:GetParent():MarkDirty()
+
+        end
     end
 end
 
@@ -96,12 +142,66 @@ function RaidViewMixin:PrepareForNewData()
             memberFrame:ClearData()
             memberFrame.layoutIndex = nil
             memberFrame:SetParent(nil)
-            memberFrame:SetCallback(nil)
 
         end
     end
 
-    usedFramesCounter = 0
+    groupsTaken = {
+        [1] = 0,
+        [2] = 0,
+        [3] = 0,
+        [4] = 0,
+        [5] = 0,
+        [6] = 0,
+        [7] = 0,
+        [8] = 0,
+    }
+end
+
+function RaidViewMixin:GetInteractionState()
+    return interactionState
+end
+
+function RaidViewMixin:SetInteractionState(state)
+    interactionState = state
+    self.Blocker:SetShown(not state)
+end
+
+function RaidViewMixin:Unlock()
+    self:SetInteractionState(true)
+end
+
+function RaidViewMixin:RefreshMemberData(fullData)
+    self:PrepareForNewData()
+
+    for k, v in ipairs(fullData) do
+        groupsTaken[v.subgroup] = groupsTaken[v.subgroup] + 1
+        local group = self["Group" .. v.subgroup]
+
+        local memberFrame = self["Member" .. k]
+
+        --local oldIndex = memberFrame.raidIndex
+
+        --local newIndex = v.index
+
+        memberFrame:SetData(v)
+        memberFrame:Show()
+        memberFrame:SetScript("OnMouseUp", function(selfFrame)
+            if(canMoveFrames()) then
+                self:MoveFrame(selfFrame)
+                selfFrame:StopMoving()
+
+            end
+        end)
+
+        --print(v.name, oldIndex, newIndex)
+        --if(oldIndex ~= newIndex) then
+        --end
+
+        memberFrame:SetLayoutIndex(groupsTaken[v.subgroup])
+        memberFrame:SetParent(group)
+        memberFrame:GetParent():MarkDirty()
+    end
 end
 
 function RaidViewMixin:OnLoad()
@@ -111,10 +211,14 @@ function RaidViewMixin:OnLoad()
         group.Title:SetText("Group " .. i)
 
     end
-end
 
-function RaidViewMixin:SetMemberValues()
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")
+	self:SetScript("OnEvent", function(_, event, ...)
+        if(event == "GROUP_ROSTER_UPDATE") then
+            self:SetInteractionState(true)
 
+        end
+    end)
 end
 
 function RaidViewMixin:OnShow()
@@ -138,37 +242,9 @@ function RaidViewMixin:OnShow()
     end
 end
 
-function RaidViewMixin:SetRefreshMethod(func, ...)
-    self.refreshMethod = func
-    self.refreshParameters = {...}
 
-end
-    
-function RaidViewMixin:RefreshGroupManager()
-    self.refreshMethod(unpack(self.refreshParameters))
-    
-end
 
-function RaidViewMixin:SetMemberValues(data, func)
-    local index = usedFramesCounter + 1
 
-    local memberFrame = self["Member" .. index]
-
-    if(memberFrame) then
-        local group = self["Group" .. data.subgroup]
-        usedFramesCounter = usedFramesCounter + 1
-
-        memberFrame:SetData(data)
-        memberFrame:SetCallback(func)
-
-        memberFrame:SetLayoutIndex(self:GetNumOfSpotsTaken(data.subgroup) + 1)
-        memberFrame:SetParent(group)
-        memberFrame:Show()
-
-        memberFrame:GetParent():MarkDirty()
-        
-    end
-end
 
 
 
@@ -220,14 +296,14 @@ function RaidViewButtonMixin:ClearData()
 end
 
 function RaidViewButtonMixin:AttemptToMove()
-	if(canMoveFrames() and self.raidIndex) then
+	if(canMoveFrames() and self.raidIndex and RaidViewMixin:GetInteractionState() == true) then
         self:StartMoving()
 
     end
 end
 
 function RaidViewButtonMixin:StopMoving()
-    self.callback(self)
+    --self.callback(self)
 
     self:StopMovingOrSizing()
 

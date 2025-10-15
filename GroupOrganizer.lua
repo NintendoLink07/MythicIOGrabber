@@ -3,6 +3,7 @@ local wticc = WrapTextInColorCode
 
 miog.groupManager = {}
 
+local mainDataProvider = CreateDataProvider()
 local currentSortHeader
 
 local fullPlayerName, shortPlayerName, playerRealm
@@ -52,20 +53,16 @@ local function canInspectPlayer(fullName)
 	end
 
 	if(UnitIsPlayer(data.unitID) and CanInspect(data.unitID) and (data.online ~= false or UnitIsConnected(data.unitID)) and isPlayerRetryBlocked(fullName)) then
-        print("CAN INSPECT", fullName)
 		return true
 
     else
-        print("CANT INSPECT", fullName, UnitIsPlayer(data.unitID), CanInspect(data.unitID), (data.online ~= false or UnitIsConnected(data.unitID)), isPlayerRetryBlocked(fullName))
 	end
 end
 
 local function countPlayersWithData()
 	local playersWithSpecData, inspectableMembers = 0, 0
 
-    print("BEFORE")
 	for fullName in pairs(playersInGroup) do
-        print(fullName)
 		local playerSpec = savedPlayerSpecs[fullName]
 		local hasPlayerSpec = playerSpec and playerSpec ~= 0
 
@@ -106,8 +103,6 @@ local function updateGroupInfoText()
     local concatTable = {
         "[", specs, "/", members, "/", GetNumGroupMembers(), "]"
     }
-
-    print(specs, members)
 
     inspectionTextData = {
         specs = specs,
@@ -293,46 +288,13 @@ local function updateElementExtent()
 
 end
 
-local function canMoveFrames()
-    if(IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) then
-        return true
-
-    end
-end
-
-local function moveRaidViewFrame(frame)
-    if(canMoveFrames() and frame.raidIndex) then
-        local mouseoverFrame = groupManager.RaidView:IsFrameOverAnyOtherFrame(frame)
-
-        if(mouseoverFrame) then
-            groupManager.RaidView:SwapFrames(frame, mouseoverFrame)
-
-        else
-            local groupFrame = groupManager.RaidView:IsFrameOverGroup(frame)
-
-            if(groupFrame and frame:GetParent() ~= groupFrame) then
-                groupManager.RaidView:BindFrameToSubgroup(frame, groupFrame.index)
-                miog.groupManager.innerUpdate()
-                
-            elseif(frame.raidIndex) then
-                frame:GetParent():MarkDirty()
-
-            end
-        end
-    end
-end
-
-local function innerUpdate()
+local function gatherData()
+    mainDataProvider = CreateDataProvider()
     playersInGroup = {}
-
-    local dataProvider = CreateDataProvider()
-    dataProvider:SetSortComparator(sortComparatorFunction)
 
     local numOfMembers = GetNumGroupMembers()
     local isInRaid = IsInRaid()
     local offset = 0
-
-    groupManager.RaidView:PrepareForNewData()
 
     if(numOfMembers > 0) then
         for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
@@ -399,11 +361,11 @@ local function innerUpdate()
                             role = role,
                         }
 
-                        groupManager.RaidView:SetMemberValues(data, moveRaidViewFrame)
+                        --groupManager.RaidView:SetMemberValues(data)
 
                         data = saveOptionalPlayerData(data, fullName, playerName, realm)
                         
-                        dataProvider:Insert(data)
+                        mainDataProvider:Insert(data)
                     end
                 end
             end
@@ -429,17 +391,15 @@ local function innerUpdate()
 
         }
 
-        groupManager.RaidView:SetMemberValues(data)
+        --groupManager.RaidView:SetMemberValues(data)
         
         saveOptionalPlayerData(data, fullPlayerName, shortPlayerName, playerRealm)
         
-        dataProvider:Insert(data)
+        mainDataProvider:Insert(data)
     end
 
-    groupManager.ListView.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+    groupManager.RaidView:RefreshMemberData(mainDataProvider.collection)
 end
-
-miog.groupManager.innerUpdate = innerUpdate
 
 local function queueHasEntries()
     local hasEntries = false
@@ -554,7 +514,7 @@ end
 
 local function checkCoroutine(origin)
     local status = inspectRoutine and coroutine.status(inspectRoutine)
-    print(origin, "CHECK STATUS", status, notifyBlocked, queueHasEntries())
+    --print(origin, "CHECK STATUS", status, notifyBlocked, queueHasEntries())
 
     if(not notifyBlocked and queueHasEntries()) then
         if(status == nil or status == "dead") then
@@ -568,6 +528,8 @@ local function checkCoroutine(origin)
 end
 
 local function queueGroupUpdate(instant, origin)
+    gatherData()
+
     if(groupUpdateQueued) then
         return
 
@@ -577,7 +539,8 @@ local function queueGroupUpdate(instant, origin)
 
         updateTimer = C_Timer.NewTimer(instant and 0.1 or 1.25, function()
             --print("-------------------", "EXECUTE QUEUE")
-            innerUpdate()
+            mainDataProvider:SetSortComparator(sortComparatorFunction)
+            groupManager.ListView.ScrollBox:SetDataProvider(mainDataProvider, ScrollBoxConstants.RetainScrollPosition)
             updateGroupInfoText()
 
             groupUpdateQueued = false
@@ -646,7 +609,14 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneInfo)
         local fullName = miog.createFullNameValuesFrom("unitName", unitName)
 
         if(fullName) then
+            local keystoneData = savedKeystoneData[fullName]
+
+            if(keystoneData and keystoneData.challengeMapID == keystoneInfo.challengeMapID and keystoneData.level == keystoneInfo.level) then
+                return
+            end
+
 		    savedKeystoneData[fullName] = keystoneInfo
+
             queueGroupUpdate(false, "KEYSTONE")
 
         end
@@ -673,6 +643,12 @@ miog.OnGearUpdate = function(unit, unitGear, allUnitsGear)
     local fullName = miog.createFullNameValuesFrom(nil, unit)
 
 	if(fullName) then
+        local gearData = savedGearData[fullName]
+
+        if(gearData and gearData.ilevel == gearData.ilevel and gearData.durability == gearData.durability) then
+            return
+        end
+
 		savedGearData[fullName] = unitGear
         queueGroupUpdate(false, "GEAR")
 
@@ -870,6 +846,8 @@ miog.loadGroupOrganizer = function()
         retryList = {}
         groupUpdateQueued = false
         queueGroupUpdate(true, "REFRESH")
+
+        groupManager.RaidView:Unlock()
     end)
 
 	miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
@@ -882,6 +860,10 @@ miog.loadGroupOrganizer = function()
         frame.id = data.index
         frame.name = data.fullName
         frame.unit = data.unitID
+
+        local classColor  = C_ClassColor.GetClassColor(data.fileName)
+        local r, g, b = classColor:GetRGBA()
+        --frame.BackgroundColor:SetColorTexture(r, g, b, 0.65)
     end)
 
     view:SetPadding(0, 0, 0, 0, 0)
@@ -911,7 +893,7 @@ miog.loadGroupOrganizer = function()
     
     tableBuilder:Reset()
     createColumn("", "MIOG_GroupOrganizerIconCellTemplate", "online", false, 0.3)
-    createColumn("Name", "MIOG_GroupOrganizerTextCellTemplate", "name", true, 2.1)
+    createColumn("Name", "MIOG_GroupOrganizerTextCellTemplate", "name", true, 1.8)
     createColumn("Role", "MIOG_GroupOrganizerIconCellTemplate", "combatRole", true, 0.8)
     createColumn("Class", "MIOG_GroupOrganizerIconCellTemplate", "class", false, 0.8)
     createColumn("Spec", "MIOG_GroupOrganizerIconCellTemplate", "specID", true, 0.85)
@@ -920,8 +902,8 @@ miog.loadGroupOrganizer = function()
     createColumn("Repair", "MIOG_GroupOrganizerTextCellTemplate", "durability", true, 1)
     createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true, 0.8)
     createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progress", true, 1.15)
-    createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true, 1.35)
-    createColumn("#", "MIOG_GroupOrganizerTextCellTemplate", "index", true, 0.35)
+    ---createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true, 1.35)
+    --createColumn("#", "MIOG_GroupOrganizerTextCellTemplate", "index", true, 0.35)
     tableBuilder:Arrange()
 
 	groupManager:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -932,7 +914,6 @@ miog.loadGroupOrganizer = function()
 	groupManager:RegisterEvent("PLAYER_FLAGS_CHANGED")
 
 	groupManager:SetScript("OnEvent", groupManagerEvents)
-    groupManager.RaidView:SetRefreshMethod(queueGroupUpdate, true, "RAIDVIEW")
 
 end
 

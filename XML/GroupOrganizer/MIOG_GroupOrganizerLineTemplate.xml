@@ -4,9 +4,26 @@
         <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/misc/highlight1.png" setAllPoints="true" />
 
         <NormalTexture setAllPoints="true" />
+        
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="BackgroundColor" setAllPoints="true" />
+            </Layer>
+        </Layers>
 
         <Scripts>
             <OnShow method="OnShow" />
+            <OnLoad>
+                self:SetBackdrop({
+                    bgFile="Interface\\ChatFrame\\ChatFrameBackground",
+                    tileSize=0,
+                    tile=false,
+                    edgeFile="Interface\\ChatFrame\\ChatFrameBackground",
+                    edgeSize = 1,
+                })
+                self:SetBackdropColor(0, 0, 0, 0)
+                self:SetBackdropBorderColor(0, 0, 0, 1)
+            </OnLoad>
         </Scripts>
     </Button>
 </Ui>
