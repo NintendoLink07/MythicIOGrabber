@@ -1,29 +1,18 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name="MIOG_GroupOrganizerLineTemplate" registerForClicks="RightButtonUp" inherits="UIButtonTemplate, BackdropTemplate, MIOG_UnitTemplate" mixin="ColorChangerMixin" virtual="true">
+    <Button name="MIOG_GroupOrganizerLineTemplate" registerForClicks="RightButtonUp" inherits="UIButtonTemplate, MIOG_UnitTemplate" mixin="ColorChangerMixin" virtual="true">
         <HighlightTexture file="Interface/Addons/MythicIOGrabber/res/misc/highlight1.png" setAllPoints="true" />
 
         <NormalTexture setAllPoints="true" />
         
         <Layers>
-            <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND" textureSubLevel="-3">
                 <Texture parentKey="BackgroundColor" setAllPoints="true" />
             </Layer>
         </Layers>
 
         <Scripts>
             <OnShow method="OnShow" />
-            <OnLoad>
-                self:SetBackdrop({
-                    bgFile="Interface\\ChatFrame\\ChatFrameBackground",
-                    tileSize=0,
-                    tile=false,
-                    edgeFile="Interface\\ChatFrame\\ChatFrameBackground",
-                    edgeSize = 1,
-                })
-                self:SetBackdropColor(0, 0, 0, 0)
-                self:SetBackdropBorderColor(0, 0, 0, 1)
-            </OnLoad>
         </Scripts>
     </Button>
 </Ui>

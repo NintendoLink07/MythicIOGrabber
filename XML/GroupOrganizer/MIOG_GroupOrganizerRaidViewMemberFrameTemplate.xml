@@ -7,6 +7,10 @@
 
         <KeyValues>
             <KeyValue key="expand" value="true" type="boolean" />
+			<KeyValue key="leftPadding" value="1" type="number"/>
+			<KeyValue key="rightPadding" value="1" type="number"/>
+			<KeyValue key="topPadding" value="1" type="number"/>
+			<KeyValue key="bottomPadding" value="1" type="number"/>
         </KeyValues>
 
         <Layers>

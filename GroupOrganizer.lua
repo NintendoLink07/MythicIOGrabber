@@ -35,8 +35,18 @@ local updateTimer
 
 local throttleSetting = miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 
+local function isNotifyBlocked()
+    if(notifyBlocked) then
+        return true
+
+    else
+        return false
+
+    end
+end
+
 local function isPlayerRetryBlocked(fullName)
-    if(retryList[fullName] and retryList[fullName] < 5) then
+    if(retryList[fullName] and retryList[fullName] > 4) then
         return true
 
     end
@@ -45,17 +55,16 @@ local function isPlayerRetryBlocked(fullName)
 end
 
 local function canInspectPlayer(fullName)
-	local data = inspectionQueue[fullName]
+	local data = playersInGroup[fullName]
 
 	if(not data) then
 		return false
 
 	end
 
-	if(UnitIsPlayer(data.unitID) and CanInspect(data.unitID) and (data.online ~= false or UnitIsConnected(data.unitID)) and isPlayerRetryBlocked(fullName)) then
+	if(UnitIsPlayer(data.unitID) and CanInspect(data.unitID) and (data.online ~= false or UnitIsConnected(data.unitID)) and not isPlayerRetryBlocked(fullName)) then
 		return true
 
-    else
 	end
 end
 
@@ -109,6 +118,7 @@ local function updateGroupInfoText()
         members = members,
         numGroupMembers = GetNumGroupMembers(),
         queue = inspectionQueue,
+        retry = retryList,
     }
 
 	miog.ClassPanel.InspectionName:SetText(name or "")
@@ -320,7 +330,7 @@ local function gatherData()
 
                         end
 
-                        playersInGroup[fullName] = true
+                        playersInGroup[fullName] = {unitID = unitID, fileName = fileName, name = name, online = online}
                         
                         if(fullName ~= fullPlayerName) then
                             if(canInspectPlayer(fullName) and not isPlayerRetryBlocked(fullName)) then
@@ -418,117 +428,91 @@ local function clearPlayer(name, stopInspection)
         inspectionQueue[name] = nil
 
         if(stopInspection) then
-            --print("2", "CLEAR", name, stopInspection)
+            print("2", "CLEAR", name, stopInspection)
 
-            ClearInspectPlayer()
-
-            if(pityTimer) then
-                pityTimer:Cancel()
-
-            end
-            inspectionPlayerData = {}
-            notifyBlocked = false
-
-            updateGroupInfoText()
+            ClearInspectPlayer(true)
+            updateGroupInfoText() --delete current player name
         end
     end
 end
 
-local function startNotify(name, unitID)
-    if(notifyBlocked or isPlayerRetryBlocked(name)) then
-        clearPlayer(name)
-        --print("ABORT BLOCK", notifyBlocked, retryList[name])
-        return false
-    end
-
-    if(not playersInGroup[name] and not inspectionQueue[name]) then
-        --print("ABORT N/A", playersInGroup[name], inspectionQueue[name])
-        clearPlayer(name)
-        return false
-    end
-
-    --print("1", "NEXT PLAYER", name)
-    NotifyInspect(unitID)
-    updateGroupInfoText()
-    inspectionPlayerData = {name = name, unitID = unitID, fileName = inspectionQueue[name] and inspectionQueue[name].fileName}
-
+local function startPityTimer(name)
     pityTimer = C_Timer.NewTimer(throttleSetting * 4, function()
         clearPlayer(name, true)
         retryList[name] = retryList[name] and retryList[name] + 1 or 1
-        --print("PITY PLAYER", name)
+        print("PITY PLAYER", name)
         miog.checkCoroutine("PITY")
     end)
+end
+
+local function startNotify(name, unitID)
+    if(isNotifyBlocked() or isPlayerRetryBlocked(name) or not playersInGroup[name] and not inspectionQueue[name]) then
+        clearPlayer(name)
+        return false
+    end
+
+    print("1", "NEXT PLAYER", name)
+    NotifyInspect(unitID, true)
+    inspectionPlayerData = {name = name, unitID = unitID, fileName = inspectionQueue[name] and inspectionQueue[name].fileName}
+    updateGroupInfoText() --update current player name
+
+    startPityTimer()
 
     return true
 end
 
-local function startCoroutine()
-    local status = inspectRoutine and coroutine.status(inspectRoutine)
-    --print("---", "START STATUS", status)
-
-    if(status == nil or status == "dead") then
-        inspectRoutine = coroutine.create(function()
-            --print("---", "START COROUTINE NEW - INSPECT FUNCTION")
-            for name, data in pairs(inspectionQueue) do
-                local canStartNotify = resumeTime <= GetTimePreciseSec()
-
-                --print("---", "CAN START", canStartNotify)
-
-                if(canStartNotify) then
-                    local notifySuccess = startNotify(name, data.unitID)
-
-                    if(notifySuccess) then
-                        coroutine.yield()
-
-                    end
-                else
-                    local timerStart = resumeTime - GetTimePreciseSec()
-
-                    C_Timer.NewTimer(timerStart > 0 and timerStart or throttleSetting, function()
-                        startNotify(name, data.unitID)
-                    
-                    end)
-
-                    coroutine.yield()
-                end
-            end
-
-            if(queueHasEntries()) then
-                
-
-            end
-        end)
-
-        coroutine.resume(inspectRoutine)
-    end
-end
-
-local function resumeCoroutine()
-    local status = inspectRoutine and coroutine.status(inspectRoutine)
-    --print("---", "RESUME STATUS", status)
-
-    if(status == "suspended") then
-        coroutine.resume(inspectRoutine)
-    end
-end
-
 local function checkCoroutine(origin)
     local status = inspectRoutine and coroutine.status(inspectRoutine)
-    --print(origin, "CHECK STATUS", status, notifyBlocked, queueHasEntries())
+    print(origin, "CHECK STATUS", status, queueHasEntries())
 
-    if(not notifyBlocked and queueHasEntries()) then
+    if(queueHasEntries()) then
+            --print("---", "START STATUS", status)
         if(status == nil or status == "dead") then
-            startCoroutine()
-            
+            inspectRoutine = coroutine.create(function()
+                print("---", "START COROUTINE NEW - INSPECT FUNCTION")
+                for name, data in pairs(inspectionQueue) do
+                    local canStartNotify = resumeTime <= GetTimePreciseSec() and not isNotifyBlocked()
+
+                    print("---", "CAN START", canStartNotify, name)
+
+                    if(canStartNotify) then
+                        local notifySuccess = startNotify(name, data.unitID)
+
+                        if(notifySuccess) then
+                            coroutine.yield()
+
+                        end
+                    else
+                        local timerStart = resumeTime - GetTimePreciseSec()
+                        print("--- NOTIFY TIMER START", timerStart > 0 and timerStart or throttleSetting)
+                        C_Timer.NewTimer(timerStart > 0 and timerStart or throttleSetting, function()
+                            startNotify(name, data.unitID)
+                        
+                        end)
+
+                        coroutine.yield()
+                    end
+                end
+            end)
         elseif(status == "suspended") then
-            resumeCoroutine()
+            coroutine.resume(inspectRoutine)
+
+        end
+            
+        if(queueHasEntries()) then
+            C_Timer.NewTimer(5, function()
+                checkCoroutine("SELF")
+            end)
 
         end
     end
 end
 
+miog.checkCoroutine = checkCoroutine
+
 local function queueGroupUpdate(instant, origin)
     gatherData()
+    updateGroupInfoText()
 
     if(groupUpdateQueued) then
         return
@@ -541,7 +525,6 @@ local function queueGroupUpdate(instant, origin)
             --print("-------------------", "EXECUTE QUEUE")
             mainDataProvider:SetSortComparator(sortComparatorFunction)
             groupManager.ListView.ScrollBox:SetDataProvider(mainDataProvider, ScrollBoxConstants.RetainScrollPosition)
-            updateGroupInfoText()
 
             groupUpdateQueued = false
 
@@ -551,7 +534,7 @@ local function queueGroupUpdate(instant, origin)
     end
 end
 
-miog.checkCoroutine = checkCoroutine
+miog.queueGroupUpdate = queueGroupUpdate
 
 local function checkIfPlayerIsInInspection(playerName)
     if(inspectionQueue[playerName] and inspectionPlayerData.name == playerName) then
@@ -671,7 +654,7 @@ local function groupManagerEvents(_, event, ...)
 	elseif(event == "INSPECT_READY") then
         if(...) then
             local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(...)
-            local fullName = miog.createFullNameValuesFrom("unitName", name .. "-" .. realmName)
+            local fullName = miog.createFullNameValuesFrom("unitName", name .. (realmName and "-" .. realmName or ""))
 
             if(fullName) then
                 if(playersInGroup[fullName]) then
@@ -684,9 +667,9 @@ local function groupManagerEvents(_, event, ...)
 
                             end
                         end
-
-                        clearPlayer(fullName, true)
                     end
+
+                    clearPlayer(fullName, true)
 
                     queueGroupUpdate(false, "INSPECT DONE")
                 end
@@ -844,6 +827,12 @@ miog.loadGroupOrganizer = function()
         end
 
         retryList = {}
+        
+        if(inspectionPlayerData.name) then
+            clearPlayer(inspectionPlayerData.name, true)
+
+        end
+
         groupUpdateQueued = false
         queueGroupUpdate(true, "REFRESH")
 
@@ -860,10 +849,6 @@ miog.loadGroupOrganizer = function()
         frame.id = data.index
         frame.name = data.fullName
         frame.unit = data.unitID
-
-        local classColor  = C_ClassColor.GetClassColor(data.fileName)
-        local r, g, b = classColor:GetRGBA()
-        --frame.BackgroundColor:SetColorTexture(r, g, b, 0.65)
     end)
 
     view:SetPadding(0, 0, 0, 0, 0)
@@ -875,7 +860,6 @@ miog.loadGroupOrganizer = function()
     local tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
     groupManager.tableBuilder = tableBuilder
     tableBuilder:SetHeaderContainer(groupManager.ListView.HeaderContainer)
-    tableBuilder:SetTableMargins(1, 1)
 
     local function ElementDataProvider(elementData, ...)
         return elementData
@@ -902,8 +886,8 @@ miog.loadGroupOrganizer = function()
     createColumn("Repair", "MIOG_GroupOrganizerTextCellTemplate", "durability", true, 1)
     createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true, 0.8)
     createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progress", true, 1.15)
-    ---createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true, 1.35)
-    --createColumn("#", "MIOG_GroupOrganizerTextCellTemplate", "index", true, 0.35)
+    createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true, 1.35)
+    createColumn("#", "MIOG_GroupOrganizerTextCellTemplate", "index", true, 0.35)
     tableBuilder:Arrange()
 
 	groupManager:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -917,7 +901,23 @@ miog.loadGroupOrganizer = function()
 
 end
 
-hooksecurefunc("NotifyInspect", function(unitID)
-	resumeTime = GetTimePreciseSec() + throttleSetting
+hooksecurefunc("NotifyInspect", function(unitID, own)
+    print("BLOCKED", own)
+
     notifyBlocked = true
+    resumeTime = GetTimePreciseSec() + throttleSetting
+
+end)
+
+hooksecurefunc("ClearInspectPlayer", function(own)
+    print("FREED", own)
+    notifyBlocked = false
+
+    if(own) then
+        if(pityTimer) then
+            pityTimer:Cancel()
+            inspectionPlayerData = {}
+
+        end
+    end
 end)

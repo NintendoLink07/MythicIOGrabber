@@ -3,7 +3,7 @@
     <Frame name="MIOG_GroupOrganizerRaidViewGroupTemplate" inherits="BackdropTemplate, VerticalLayoutFrame" frameStrata="MEDIUM" virtual="true">
         <KeyValues>
             <KeyValue key="fixedWidth" value="136" type="number" />
-            <KeyValue key="fixedHeight" value="170" type="number" />
+            <KeyValue key="fixedHeight" value="180" type="number" />
             <KeyValue key="topPadding" value="20" type="number" />
         </KeyValues>
 
@@ -20,40 +20,40 @@
                 <Texture parentKey="Space1Color">
                     <Size y="30" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.HeaderColor" relativePoint="BOTTOMLEFT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.HeaderColor" relativePoint="BOTTOMRIGHT"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.HeaderColor" relativePoint="BOTTOMLEFT" y="-1"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.HeaderColor" relativePoint="BOTTOMRIGHT" y="-1"/>
                     </Anchors>
                 </Texture>
 
                 <Texture parentKey="Space2Color">
                     <Size y="30" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Space1Color" relativePoint="BOTTOMLEFT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space1Color" relativePoint="BOTTOMRIGHT"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space1Color" relativePoint="BOTTOMLEFT" y="-2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space1Color" relativePoint="BOTTOMRIGHT" y="-2"/>
                     </Anchors>
                 </Texture>
 
                 <Texture parentKey="Space3Color">
                     <Size y="30" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Space2Color" relativePoint="BOTTOMLEFT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space2Color" relativePoint="BOTTOMRIGHT"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space2Color" relativePoint="BOTTOMLEFT" y="-2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space2Color" relativePoint="BOTTOMRIGHT" y="-2"/>
                     </Anchors>
                 </Texture>
 
                 <Texture parentKey="Space4Color">
                     <Size y="30" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Space3Color" relativePoint="BOTTOMLEFT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space3Color" relativePoint="BOTTOMRIGHT"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space3Color" relativePoint="BOTTOMLEFT" y="-2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space3Color" relativePoint="BOTTOMRIGHT" y="-2"/>
                     </Anchors>
                 </Texture>
 
                 <Texture parentKey="Space5Color">
                     <Size y="30" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Space4Color" relativePoint="BOTTOMLEFT"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space4Color" relativePoint="BOTTOMRIGHT"/>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Space4Color" relativePoint="BOTTOMLEFT" y="-2"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Space4Color" relativePoint="BOTTOMRIGHT" y="-2"/>
                     </Anchors>
                 </Texture>
             </Layer>

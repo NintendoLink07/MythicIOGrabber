@@ -324,9 +324,11 @@ function RaidViewButtonMixin:RefreshColor()
 
     local classColor  = C_ClassColor.GetClassColor(self.data.fileName)
     local r, g, b = classColor:GetRGBA()
-    self.BackgroundColor:SetColorTexture(r, g, b, 0.65)
 
     if(self.data.online) then
+        self.BackgroundColor:SetColorTexture(r, g, b, 0.8)
+        self:SetBackdropBorderColor(r-0.5, g-0.5, b-0.5, 0.8)
+
         if(UnitIsAFK(self.data.unitID)) then
             self.Status:SetTexture("interface/friendsframe/statusicon-away.blp")
 
@@ -338,6 +340,8 @@ function RaidViewButtonMixin:RefreshColor()
 
         end
     else
+        self.BackgroundColor:SetColorTexture(r, g, b, 0.3)
+        self:SetBackdropBorderColor(0.8, 0.05, 0.05, 1)
         self.Status:SetTexture("interface/friendsframe/statusicon-offline.blp")
 
     end

@@ -202,6 +202,26 @@ miog.createClassPanel = function()
                 end
 
             end
+            
+            if(data.retry) then
+                local headerMissing = true
+
+                for k, v in pairs(data.retry) do
+                    local actuallyBlocked = v > 4
+
+                    if(actuallyBlocked) then
+                        if(headerMissing) then
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                            GameTooltip:AddLine("Players blocked from inspection:")
+
+                            headerMissing = false
+                        end
+                        
+                        GameTooltip:AddLine(k)
+                        
+                    end
+                end
+            end
         end
         
         GameTooltip:Show()

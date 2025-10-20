@@ -7,7 +7,7 @@ function GroupOrganizerStandardMixin:Init(key)
 end
 
 function GroupOrganizerStandardMixin:Populate(data, columnIndex)
-    --[[local isOdd = data.index % 2 == 1
+    local isOdd = data.index % 2 == 1
 
     local theme = miog.C.CURRENT_THEME
 
@@ -17,7 +17,7 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     else
         self.BackgroundColor:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.1)
 
-    end]]
+    end
 
     if(self.key == "online") then
         if(data.online) then
