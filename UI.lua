@@ -154,7 +154,7 @@ miog.createFrames = function()
 		PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
 		settingsButton:SetParent(miog.pveFrame2.TitleBar)
-		settingsButton:SetPoint("RIGHT", miog.pveFrame2.CloseButtonArea, "LEFT", -2, 0)
+		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
 
 		miog.pveFrame2.TitleBar.BlizzardFrame:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
 	end

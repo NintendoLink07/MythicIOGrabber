@@ -2931,6 +2931,7 @@ miog.EXPANSIONS = {
 	[8] = {name = "Shadowlands", background = "sl-bg-1", logo = GetExpansionDisplayInfo(8).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/8.png"},
 	[9] = {name = "Dragonflight", background = "df-bg-1", logo = GetExpansionDisplayInfo(9).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/9.png"},
 	[10] = {name = "The War Within", background = "tww-bg-1", logo = GetExpansionDisplayInfo(10).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/10.png"},
+	[11] = {name = "Midnight", background = "mn-bg-1", logo = GetExpansionDisplayInfo(11).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/11.png"},
 }
 
 miog.EXPANSION_INFO = {
@@ -2945,6 +2946,7 @@ miog.EXPANSION_INFO = {
 	[8] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
 	[9] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
 	[10] = {"The War Within", "tww-bg-1", GetExpansionDisplayInfo(10).logo},
+	[11] = {"Midnight", "mn-bg-1", GetExpansionDisplayInfo(10).logo},
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms

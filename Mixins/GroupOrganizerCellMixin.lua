@@ -6,6 +6,11 @@ function GroupOrganizerStandardMixin:Init(key)
     self.key = key
 end
 
+function GroupOrganizerStandardMixin:SetSpecialization(specID)
+	self.Icon:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
+
+end
+
 function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     local isOdd = data.index % 2 == 1
 
@@ -44,7 +49,7 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
 	    self.Icon:SetTexture(miog.CLASSES[classIndex].icon)
     
     elseif(self.key == "specID") then
-	    self.Icon:SetTexture(miog.SPECIALIZATIONS[data.specID].squaredIcon)
+        self:SetSpecialization(data.specID)
 
     elseif(self.key == "level") then
 	    self.Text:SetText(data.level)

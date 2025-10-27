@@ -24,6 +24,17 @@ local function mainEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
         miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()
 
+		local id = select(3, BNGetInfo())
+
+		if(id) then
+			local bnetInfo = C_BattleNet.GetAccountInfoByID(id)
+
+			if(bnetInfo.battleTag == "Rhany#21903") then
+				miog.F.IS_IN_DEBUG_MODE = true
+
+			end
+		end
+
 		miog.loadNewSettings()
 		miog.loadRawData()
 		miog.createFrames()

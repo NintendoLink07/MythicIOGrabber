@@ -1188,23 +1188,25 @@ end
 miog.printOnce = printOnce
 
 miog.changeTheme = function(index)
-	local titleBarTexHeight = 0.049
+	local titleBarTexHeight = 0.0465
+	local titleBarSeparatorHeight = 0.02
+	local mainFrameStart = titleBarTexHeight + titleBarSeparatorHeight
 	local scrollbarWidth = 1 - 0.03125
 	local currencyHeight = 1 - 0.03125
 
 	local value = index or MIOG_NewSettings.backgroundOptions
 	
-	miog.MainFrame.CloseButtonArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-	miog.MainFrame.CloseButtonArea.Background:SetTexCoord(scrollbarWidth, 1, 0, titleBarTexHeight)
-	
 	miog.MainFrame.TitleBar.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
 	miog.MainFrame.TitleBar.Background:SetTexCoord(0, scrollbarWidth, 0, titleBarTexHeight)
 	
+	miog.MainFrame.TitleBarSeparator.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.TitleBarSeparator.Background:SetTexCoord(0, scrollbarWidth, titleBarTexHeight, mainFrameStart)
+	
 	miog.MainFrame.ScrollBarArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-	miog.MainFrame.ScrollBarArea.Background:SetTexCoord(scrollbarWidth, 1, titleBarTexHeight, currencyHeight)
+	miog.MainFrame.ScrollBarArea.Background:SetTexCoord(scrollbarWidth, 1, mainFrameStart, currencyHeight)
 	
 	miog.MainFrame.TabFramesPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
-	miog.MainFrame.TabFramesPanel.Background:SetTexCoord(0, scrollbarWidth, titleBarTexHeight, currencyHeight)
+	miog.MainFrame.TabFramesPanel.Background:SetTexCoord(0, scrollbarWidth, mainFrameStart, currencyHeight)
 	
 	miog.MainFrame.Currency.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
 	miog.MainFrame.Currency.Background:SetTexCoord(0, 1, currencyHeight, 1)

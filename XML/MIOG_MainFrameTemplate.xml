@@ -9,38 +9,11 @@
                 </KeyValues>
             </Frame>
 
-            <Frame parentKey="CloseButtonArea">
-                <Size x="24" y="24" />
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
-                </Anchors>
-
-                <Frames>
-                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
-                        <Size x="20" y="20" />
-                        <Anchors>
-                            <Anchor point="CENTER" relativeKey="$parent" relativePoint="CENTER" />
-                        </Anchors>
-						<Scripts>
-							<OnClick>
-                                self:GetParent():GetParent():Hide()
-							</OnClick>
-						</Scripts>
-					</Button>
-                </Frames>
-
-                <Layers>
-                    <Layer level="BACKGROUND" textureSubLevel="-5">
-                        <Texture parentKey="Background" setAllPoints="true"/>
-                    </Layer>
-                </Layers>
-            </Frame>
-
             <Frame parentKey="TitleBar">
-                <Size y="24" />
+                <Size y="21" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.CloseButtonArea" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" />
                 </Anchors>
 
                 <Frames>
@@ -121,6 +94,18 @@
                             </OnLoad>
                             <OnShow function="MicroButton_KioskModeDisable" inherit="append"/>
                             <OnEvent method="OnEvent"/>
+						</Scripts>
+					</Button>
+                    
+                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+                        <Size x="20" y="20" />
+                        <Anchors>
+                            <Anchor point="RIGHT" x="-3" />
+                        </Anchors>
+						<Scripts>
+							<OnClick>
+                                self:GetParent():GetParent():Hide()
+							</OnClick>
 						</Scripts>
 					</Button>
                 </Frames>
@@ -263,6 +248,21 @@
                 </Frames>    
             </Frame>
 
+            <Frame parentKey="TitleBarSeparator">
+                <Size y="3" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+                
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="-5">
+                        <Texture parentKey="Background" setAllPoints="true"/>
+                    </Layer>
+                </Layers>
+            </Frame>
+
             <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
                 <KeyValues>
                     <KeyValue key="spacing" value="11" type="number"/>
@@ -353,7 +353,7 @@
             <Frame parentKey="ScrollBarArea">
                 <Size x="24" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.CloseButtonArea" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBarSeparator" relativePoint="BOTTOMRIGHT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Currency" relativePoint="TOPRIGHT"/>
                 </Anchors>
 
@@ -404,7 +404,7 @@
 
             <Frame parentKey="TabFramesPanel">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBarSeparator" relativePoint="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBarArea" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
 

@@ -31,8 +31,11 @@ end
     Prints a debug message with a custom prefix
     - `string`: Message to print (defaults to "No message attached")
 --]]
-miog.printDebug = function(string)
-	print("[MIOG]: " .. (string or "No message attached"))
+miog.printDebug = function(...)
+	if(miog.F.IS_IN_DEBUG_MODE and ...) then
+		print("[MIOG]: ", ...)
+
+	end
 end
 
 --[[

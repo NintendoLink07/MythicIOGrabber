@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.7.1] - 2025-10-20
+## [3.7.1] - 2025-10-27
+
+### Added
+
+- A "Midnight" background option has been added to the background options in the settings panel.
+
+### Changed
+
+- The inspection algorithm now also works perfectly when no other party member has MIOG or Details installed.
 
 ### Fixed
 
@@ -23,6 +31,8 @@ and this project adheres to [Semantic Versioning].
 - [GroupManager] A more accurate "is player inspectable" function has been implemented.
 
 - [GroupManager] An error has been resolved not updating the player count data when there is no change of the # of player characters in your group.
+
+- Various fixes to improve "loading" times and general performance in groups.
 
 - An error trying to fetch the realm name while in a loading screen has been resolved.
 

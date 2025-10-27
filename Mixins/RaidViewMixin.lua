@@ -180,10 +180,6 @@ function RaidViewMixin:RefreshMemberData(fullData)
 
         local memberFrame = self["Member" .. k]
 
-        --local oldIndex = memberFrame.raidIndex
-
-        --local newIndex = v.index
-
         memberFrame:SetData(v)
         memberFrame:Show()
         memberFrame:SetScript("OnMouseUp", function(selfFrame)
@@ -193,10 +189,6 @@ function RaidViewMixin:RefreshMemberData(fullData)
 
             end
         end)
-
-        --print(v.name, oldIndex, newIndex)
-        --if(oldIndex ~= newIndex) then
-        --end
 
         memberFrame:SetLayoutIndex(groupsTaken[v.subgroup])
         memberFrame:SetParent(group)
@@ -219,6 +211,21 @@ function RaidViewMixin:OnLoad()
 
         end
     end)
+end
+
+function RaidViewMixin:FindMemberFrame(fullName)
+    for i = 1, 8 do
+        local children = self:GetChildrenOfGroup(i)
+
+        for memberIndex = 1, 5 do
+            local memberFrame = children[memberIndex]
+
+            if(memberFrame and memberFrame.data.fullName == fullName) then
+                return memberFrame
+
+            end
+        end
+    end
 end
 
 function RaidViewMixin:OnShow()
@@ -250,8 +257,13 @@ end
 
 RaidViewButtonMixin = {}
 
+function RaidViewButtonMixin:SetSpecialization(specID)
+    self.Spec:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
+
+end
+
 function RaidViewButtonMixin:SetData(data)
-    self.Spec:SetTexture(miog.SPECIALIZATIONS[data.specID].squaredIcon)
+    self:SetSpecialization(data.specID)
 
     self.Text:SetText(data.name)
 
