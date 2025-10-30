@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ClassPanel" inherits="BackdropTemplate" virtual="true" frameStrata="HIGH">
+    <Frame name="MIOG_ClassPanel" inherits="BackdropTemplate" virtual="true" frameStrata="HIGH" hidden="true">
         <Size y="32" />
 
         <Frames>
@@ -14,8 +14,8 @@
                 </Anchors>
             </Frame>
                         
-            <Frame parentKey="LoadingSpinner" inherits="LoadingSpinnerTemplate" hidden="true">
-                <Size x="27" y="27" />
+            <Frame parentKey="LoadingSpinner" inherits="LoadingSpinnerTemplate">
+                <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Container" relativePoint="BOTTOMLEFT"/>
                 </Anchors>
@@ -36,7 +36,7 @@
                     </Scripts>
                 </FontString>
 
-                <FontString parentKey="InspectionName" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                <FontString parentKey="InspectionName" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="NAH DO">
                     <Anchors>
                         <Anchor point="BOTTOM" relativeKey="$parent.Status" relativePoint="TOP" y="2"/>
                     </Anchors>

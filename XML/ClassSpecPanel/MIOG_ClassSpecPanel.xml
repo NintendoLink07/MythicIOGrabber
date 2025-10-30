@@ -1,0 +1,152 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ClassSpecPanel" virtual="true">
+        <Size y="40" />
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="TankIcon">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT"/>
+                    </Anchors>
+                </Texture>
+
+                <FontString parentKey="TankString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.TankIcon" relativePoint="RIGHT"/>
+                    </Anchors>
+                </FontString>
+
+                <Texture parentKey="HealerIcon">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.TankString" relativePoint="RIGHT" x="20"/>
+                    </Anchors>
+                </Texture>
+
+                <FontString parentKey="HealerString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.HealerIcon" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                </FontString>
+
+                <Texture parentKey="DamagerIcon">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.HealerString" relativePoint="RIGHT" x="20"/>
+                    </Anchors>
+                </Texture>
+
+                <FontString parentKey="DamagerString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.DamagerIcon" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="InspectionDataString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="[30|30|30]">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.DamagerString" relativePoint="RIGHT" x="24"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>            
+            <Frame parentKey="EVOKER" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="DEMONHUNTER" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.EVOKER" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="DRUID" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.DEMONHUNTER" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="MONK" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.DRUID" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="WARLOCK" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.MONK" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="MAGE" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.WARLOCK" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="SHAMAN" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.MAGE" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="DEATHKNIGHT" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.SHAMAN" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="PRIEST" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.DEATHKNIGHT" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="ROGUE" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.PRIEST" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="HUNTER" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.ROGUE" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="PALADIN" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.HUNTER" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="WARRIOR" inherits="MIOG_ClassSpecPanelClassTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.PALADIN" relativePoint="LEFT" x="-1"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="LoadingSpinner" inherits="LoadingSpinnerTemplate">
+                <Size x="28" y="28" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" x="-6"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="InspectCharacterName" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="NAH DOG BIG DOG">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.LoadingSpinner" relativePoint="RIGHT" x="-2"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>
