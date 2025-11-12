@@ -171,7 +171,6 @@ miog.createFrames = function()
 	miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
 	miog.EntryCreation = miog.createEntryCreation()
-	miog.ClassPanel = miog.createClassPanel()
 	miog.FilterManager = miog.loadFilterManager()
 	
 	--miog.loadInspectManagement()

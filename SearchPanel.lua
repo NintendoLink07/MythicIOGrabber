@@ -3,10 +3,6 @@ local wticc = WrapTextInColorCode
 
 local lastNumOfResults = 999
 
-local formatter = CreateFromMixins(SecondsFormatterMixin)
-formatter:SetStripIntervalWhitespace(true)
-formatter:Init(0, SecondsFormatter.Abbreviation.None)
-
 local currentlySelectedID
 
 local function findFrame(resultID)

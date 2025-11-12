@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning].
 
 - [GroupManager] The character name color is now set to white so it's easier to read.
 
-- [GroupManager] A more accurate "is player inspectable" function has been implemented.
+- [GroupManager] Player spec inspection has been rewritten and it's performance and reliability has been improved.
 
 - [GroupManager] An error has been resolved not updating the player count data when there is no change of the # of player characters in your group.
 

@@ -54,6 +54,16 @@
                         </Scripts>
                     </Button>
                 </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="NextRefreshString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="RIGHT"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </Frame>
 
             <Frame parentKey="RaidView" mixin="RaidViewMixin" hidden="true">

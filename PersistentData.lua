@@ -1200,9 +1200,6 @@ local function checkForMapAchievements(mapID)
 			for i = 1, numCriteria do
 				local criteriaString, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfo(v, i, true)
 
-				--print(mapID, k, criteriaString, criteriaType, completed)
-
-				--mapInfo
 			end
 		end
 	else
@@ -1215,7 +1212,6 @@ local function checkForMapAchievements(mapID)
 			for i = 1, numAchievements do
 				local id, name = GetAchievementInfo(achievementCategory, i)
 
-				--print(mapInfo.name, name)
 
 				--[[if miog.fzy.has_match(mapInfo.name, name) then
 					achievementTable[#achievementTable + 1] = id

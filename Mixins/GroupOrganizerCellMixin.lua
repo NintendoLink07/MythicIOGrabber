@@ -11,6 +11,39 @@ function GroupOrganizerStandardMixin:SetSpecialization(specID)
 
 end
 
+function GroupOrganizerStandardMixin:SetOnlineStatus(isOnline, isAfk, isDnd)
+    if(isOnline) then
+        if(isAfk) then
+            self.Icon:SetTexture("interface/friendsframe/statusicon-away.blp")
+
+        elseif(isDnd) then
+            self.Icon:SetTexture("interface/friendsframe/statusicon-dnd.blp")
+
+        else
+            self.Icon:SetTexture("interface/friendsframe/statusicon-online.blp")
+
+        end
+    else
+        self.Icon:SetTexture("interface/friendsframe/statusicon-offline.blp")
+
+    end
+end
+
+function GroupOrganizerStandardMixin:SetItemLevel(itemLevel)
+    self.Text:SetText(itemLevel or "-")
+
+end
+
+function GroupOrganizerStandardMixin:SetDurability(durability)
+    self.Text:SetText(durability and durability .. "%" or "-")
+
+end
+
+function GroupOrganizerStandardMixin:SetKeystone(data)
+    self.Text:SetText(data.keystoneAbbreviatedName and ("+" .. data.keylevel .. " " .. data.keystoneAbbreviatedName) or "-")
+
+end
+
 function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     local isOdd = data.index % 2 == 1
 
@@ -25,21 +58,9 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     end
 
     if(self.key == "online") then
-        if(data.online) then
-            if(UnitIsAFK(data.unitID)) then
-                self.Icon:SetTexture("interface/friendsframe/statusicon-away.blp")
-
-            elseif(UnitIsDND(data.unitID)) then
-                self.Icon:SetTexture("interface/friendsframe/statusicon-dnd.blp")
-
-            else
-                self.Icon:SetTexture("interface/friendsframe/statusicon-online.blp")
-
-            end
-        else
-            self.Icon:SetTexture("interface/friendsframe/statusicon-offline.blp")
-
-        end
+        local isAfk = UnitIsAFK(data.unitID)
+        local isDnd = UnitIsDND(data.unitID)
+        self:SetOnlineStatus(data.online, isAfk, isDnd)
 
 	elseif(self.key == "name") then
         self.Text:SetText(data.name)
@@ -55,10 +76,10 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
 	    self.Text:SetText(data.level)
 
     elseif(self.key == "itemLevel") then
-        self.Text:SetText(data.itemLevel or "-")
+        self:SetItemLevel(data.itemLevel)
 
     elseif(self.key == "durability") then
-        self.Text:SetText(data.durability and data.durability .. "%" or "-")
+        self:SetDurability(data.durability)
 
     elseif(self.key == "score") then
         self.Text:SetText(data.score or "-")
@@ -67,7 +88,7 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
         self.Text:SetText(data.progress or "-")
 
     elseif(self.key == "keylevel") then
-        self.Text:SetText(data.keystoneAbbreviatedName and ("+" .. data.keylevel .. " " .. data.keystoneAbbreviatedName) or "-")
+        self:SetKeystone(data)
 
     elseif(self.key == "combatRole") then
 	    self.Icon:SetTexture(miog.C.STANDARD_FILE_PATH .. "/infoIcons/" .. (data.combatRole and data.combatRole .. "Icon.png" or "unknown.png"))
