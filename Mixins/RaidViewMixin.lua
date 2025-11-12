@@ -175,24 +175,26 @@ function RaidViewMixin:RefreshMemberData(fullData)
     self:PrepareForNewData()
 
     for k, v in ipairs(fullData) do
-        groupsTaken[v.subgroup] = groupsTaken[v.subgroup] + 1
-        local group = self["Group" .. v.subgroup]
+        if(v.subgroup) then
+            groupsTaken[v.subgroup] = groupsTaken[v.subgroup] + 1
+            local group = self["Group" .. v.subgroup]
 
-        local memberFrame = self["Member" .. k]
+            local memberFrame = self["Member" .. k]
 
-        memberFrame:SetData(v)
-        memberFrame:Show()
-        memberFrame:SetScript("OnMouseUp", function(selfFrame)
-            if(canMoveFrames()) then
-                self:MoveFrame(selfFrame)
-                selfFrame:StopMoving()
+            memberFrame:SetData(v)
+            memberFrame:Show()
+            memberFrame:SetScript("OnMouseUp", function(selfFrame)
+                if(canMoveFrames()) then
+                    self:MoveFrame(selfFrame)
+                    selfFrame:StopMoving()
 
-            end
-        end)
+                end
+            end)
 
-        memberFrame:SetLayoutIndex(groupsTaken[v.subgroup])
-        memberFrame:SetParent(group)
-        memberFrame:GetParent():MarkDirty()
+            memberFrame:SetLayoutIndex(groupsTaken[v.subgroup])
+            memberFrame:SetParent(group)
+            memberFrame:GetParent():MarkDirty()
+        end
     end
 end
 
@@ -315,36 +317,22 @@ function RaidViewButtonMixin:AttemptToMove()
 end
 
 function RaidViewButtonMixin:StopMoving()
-    --self.callback(self)
-
     self:StopMovingOrSizing()
 
 end
 
-function RaidViewButtonMixin:RefreshColor()
-    --[[local isOdd = self.layoutIndex % 2 == 1
-
-    local theme = miog.C.CURRENT_THEME
-
-    if(isOdd) then
-        self.BackgroundColor:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.2)
-
-    else
-        self.BackgroundColor:SetColorTexture(theme[3].r, theme[3].g, theme[3].b, 0.2)
-
-    end]]
-
+function RaidViewButtonMixin:SetOnlineStatus(isOnline, isAfk, isDnd)
     local classColor  = C_ClassColor.GetClassColor(self.data.fileName)
     local r, g, b = classColor:GetRGBA()
 
-    if(self.data.online) then
+    if(isOnline) then
         self.BackgroundColor:SetColorTexture(r, g, b, 0.8)
         self:SetBackdropBorderColor(r-0.5, g-0.5, b-0.5, 0.8)
 
-        if(UnitIsAFK(self.data.unitID)) then
+        if(isAfk) then
             self.Status:SetTexture("interface/friendsframe/statusicon-away.blp")
 
-        elseif(UnitIsDND(self.data.unitID)) then
+        elseif(isDnd) then
             self.Status:SetTexture("interface/friendsframe/statusicon-dnd.blp")
 
         else
@@ -359,9 +347,17 @@ function RaidViewButtonMixin:RefreshColor()
     end
 end
 
+function RaidViewButtonMixin:UpdateOnlineStatus()
+    local isOnline = self.data.online
+    local isAfk = UnitIsAFK(self.data.unitID)
+    local isDnd = UnitIsDND(self.data.unitID)
+
+    self:SetOnlineStatus(isOnline, isAfk, isDnd)
+end
+
 function RaidViewButtonMixin:SetLayoutIndex(layoutIndex)
     self.layoutIndex = layoutIndex
-    self:RefreshColor()
+    self:UpdateOnlineStatus()
 end
 
 function RaidViewButtonMixin:SetCallback(func)

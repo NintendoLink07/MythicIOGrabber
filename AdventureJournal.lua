@@ -1144,7 +1144,11 @@ miog.loadJournal = function()
                     local leftTexture = button:AttachTexture();
                     leftTexture:SetSize(16, 16);
                     leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-                    leftTexture:SetTexture(miog.MAP_INFO[info.mapID].icon);
+
+                    if(miog.MAP_INFO[info.mapID]) then
+                        leftTexture:SetTexture(miog.MAP_INFO[info.mapID].icon);
+
+                    end
         
                     button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
         

@@ -1,12 +1,7 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
 
-local filterPopupID = nil
 local queuedList = {};
-
-local formatter = CreateFromMixins(SecondsFormatterMixin)
-formatter:SetStripIntervalWhitespace(true)
-formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
 
 local function updateFakeGroupApplications(dataProvider)
 	if(not miog.F.LITE_MODE) then
@@ -778,29 +773,41 @@ miog.loadQueueSystem = function()
 
 	local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_QueueEventReceiver")
 	
-	hooksecurefunc("JoinArena", function()
-		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA}
-	end)
+	if(JoinArena) then
+		hooksecurefunc("JoinArena", function()
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA}
+		end)
+	end
 
-	hooksecurefunc("JoinRatedSoloShuffle", function()
-		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_SOLO_SHUFFLE}
-	end)
+	if(JoinBattlefield) then
+		hooksecurefunc("JoinRatedSoloShuffle", function()
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_SOLO_SHUFFLE}
+		end)
+	end
 
-	hooksecurefunc("JoinRatedBattlefield", function()
-		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BATTLEGROUND}
-	end)
+	if(JoinRatedBattlefield) then
+		hooksecurefunc("JoinRatedBattlefield", function()
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BATTLEGROUND}
+		end)
+	end
 
-	hooksecurefunc(C_PvP, "JoinRatedBGBlitz", function()
-		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BG_BLITZ}
-	end)
+	if(C_PvP.JoinRatedBGBlitz) then
+		hooksecurefunc(C_PvP, "JoinRatedBGBlitz", function()
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=PVP_RATED_BG_BLITZ}
+		end)
+	end
 
-	hooksecurefunc("JoinBattlefield", function()
-		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=BATTLEGROUND}
-	end)
+	if(JoinBattlefield) then
+		hooksecurefunc("JoinBattlefield", function()
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=BATTLEGROUND}
+		end)
+	end
 
-	hooksecurefunc("JoinSkirmish", function()
-		MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA_CASUAL}
-	end)
+	if(JoinSkirmish) then
+		hooksecurefunc("JoinSkirmish", function()
+			MIOG_CharacterSettings.lastUsedQueue = {type = "pvp", subtype="faulty", alias=ARENA_CASUAL}
+		end)
+	end
 
 	eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 	eventReceiver:SetScript("OnEvent", queueEvents)

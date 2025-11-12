@@ -153,12 +153,12 @@ end
 miog.setItemLinkToSpecificItemLevel = setItemLinkToSpecificItemLevel
 
 local function retrieveHighestMPlusDropLevel()
-    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.dungeon.highestItemLevel
+    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID] and miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.dungeon.highestItemLevel
 
 end
 
 local function retrieveHighestCraftingLevel()
-    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.other.highestItemLevel
+    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID] and miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.other.highestItemLevel
 
 end
 

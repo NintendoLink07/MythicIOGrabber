@@ -3,10 +3,6 @@ local wticc = WrapTextInColorCode
 
 miog.groupManager = {}
 
-local formatter = CreateFromMixins(SecondsFormatterMixin)
-formatter:SetStripIntervalWhitespace(true)
-formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
-
 local groupPlayerList = {}
 
 local mainDataProvider = CreateDataProvider()
@@ -21,73 +17,70 @@ local inspectableMembers = 0
 
 local groupMoreThanFivePlayers = false
 
-local savedPlayerSpecs = {}
-local savedKeystoneData = {}
-local savedGearData = {}
-local savedRaidData = {}
-local savedMythicPlusData = {}
+local savedPlayerSpecs
+local savedKeystoneData
+local savedGearData
+local savedRaidData
+local savedMythicPlusData
 local classCount, roleCount
 
 local inspectRoutine
-local orderedInspectionQueue = {}
+local inspectionQueue
+local orderedInspectionQueue
 
 local groupManager
 
-local inspectionPlayerData = {}
-local retryList = {}
+local notifyBlocked = false
+local inspectionPlayerData
+local retryList
 local resumeTime = 0
 
 local groupUpdateQueued
 local updateTimer
-local startScheduled = false
 
-local throttleSetting = miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE
+local pityTimer
+local pityTimerRunning
+
+local analyzeTimer
+local analyzeTimerRunning
+
+local throttleSetting = miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
 local doubleThrottle = throttleSetting * 2
 
 local classSpecPanel
 
-local abortTimer
+local function updateElementExtent()
+    groupManager.view:SetElementExtent(groupManager.ListView.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 12 or 6))
 
-local function removeSpecID(fullName)
-    savedPlayerSpecs[fullName] = nil
+end
 
-    if(groupPlayerList[fullName]) then
-        groupPlayerList[fullName].specID = nil
+local function findFrames(fullName)
+    local listViewFrame = groupManager.ListView.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+        return data.fullName == fullName
 
+    end)
+
+    local raidViewFrame = groupManager.RaidView:FindMemberFrame(fullName)
+
+    return listViewFrame, raidViewFrame
+end
+
+local function updateSpecificFrameData(fullName, type, data)
+    local listViewFrame, raidViewFrame = findFrames(fullName)
+
+    if(listViewFrame and raidViewFrame) then
+        if(type == "spec") then
+            for k, v in pairs(listViewFrame.cells) do
+                if(v.key == "specID") then
+                    v:SetSpecialization(data)
+
+                end
+            end
+
+            raidViewFrame:SetSpecialization(data)
+
+        end
     end
-end
-
-local function addPlayerToInspectionQueue(fullName, unitID)
-    if(not savedPlayerSpecs[fullName]) then
-        tinsert(orderedInspectionQueue, 1, {fullName = fullName, unitID = unitID})
-
-    end
-end
-
-local function needsToBeInspected(fullName)
-    return savedPlayerSpecs[fullName] == nil
-
-end
-
-local function getCurrentlyInspectedPlayer()
-    return inspectionPlayerData and inspectionPlayerData.name
-end
-
-local function deletePlayerFromFullInspection(fullName)
-    print("DELETE PLAYER", fullName)
-
-    if(fullName == getCurrentlyInspectedPlayer()) then
-        inspectionPlayerData = {}
-        classSpecPanel.InspectCharacterName:SetText("")
-        classSpecPanel.LoadingSpinner:SetShown(false)
-        ClearInspectPlayer()
-
-    end
-end
-
-local function updateMemberString()
-    classSpecPanel.InspectionString:SetText(inspectedMembers .. " | " .. inspectableMembers .. " | " .. numOfGroupMembers)
-
 end
 
 local function isPlayerRetryBlocked(fullName)
@@ -116,224 +109,35 @@ local function canInspectPlayerInGroup(fullName)
 
 end
 
-
-local function countPlayerSpecs()
-    inspectedMembers = 0
-    inspectableMembers = 0
-
-    if(numOfGroupMembers > 0) then
-        for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
-        local name = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
-
-            if(name) then
-                local fullName = miog.createFullNameValuesFrom("unitName", name)
-
-                if(savedPlayerSpecs[fullName]) then
-                    inspectedMembers = inspectedMembers + 1
-                    inspectableMembers = inspectableMembers + 1
-
-                elseif(canInspectPlayerInGroup(fullName)) then
-                    inspectableMembers = inspectableMembers + 1
-
-                    if(fullName == fullPlayerName) then
-                        inspectedMembers = inspectedMembers + 1
-
-                    end
-                end
-            end
-        end
-    end
-
-    updateMemberString()
-
-end
-
-local function tryToResumeCoroutine()
-    if(getCurrentlyInspectedPlayer() == nil) then
-        coroutine.resume(inspectRoutine)
-
-    end
-end
-
-local function addPlayerToRetryList(fullName)
-    retryList[fullName] = retryList[fullName] and retryList[fullName] + 1 or 1
-
-end
-
-local function stopAbortTimer()
-    if(abortTimer and not abortTimer:IsCancelled()) then
-        abortTimer:Cancel()
-
-    end
-
-end
-
-local function startAbortTimer(playerToBeAborted, unitID)
-    stopAbortTimer()
-
-    abortTimer = C_Timer.NewTimer(doubleThrottle, function()
-        print("ABOOOOOOOOOOOOOORT", playerToBeAborted, savedPlayerSpecs[playerToBeAborted])
-
-        if(playerToBeAborted) then
-            addPlayerToRetryList(playerToBeAborted)
-            deletePlayerFromFullInspection(playerToBeAborted)
-
-            if(retryList[playerToBeAborted] and retryList[playerToBeAborted] < 5) then
-                if(groupPlayerList[playerToBeAborted]) then
-                    addPlayerToInspectionQueue(playerToBeAborted, unitID)
-
-                end
-            else
-                countPlayerSpecs()
-
-            end
-
-            tryToResumeCoroutine()
-        end
-    end)
-end
-
-local function startInspection(unitID, fullName)
-    startScheduled = false
-    print("START INSPECTION?", fullName)
-    NotifyInspect(unitID)
-    startAbortTimer(fullName, unitID)
-    
-    if(groupPlayerList[fullName]) then
-        local fileName = groupPlayerList[fullName].fileName
-
-        inspectionPlayerData = {name = fullName, unitID = unitID, fileName = fileName}
-
-        local coloredString
-
-        if(fileName) then
-            local color = C_ClassColor.GetClassColor(fileName)
-            coloredString = WrapTextInColorCode(fullName, color:GenerateHexColor())
-
-        end
-
-        classSpecPanel.InspectCharacterName:SetText(coloredString or fullName)
-        classSpecPanel.LoadingSpinner:SetShown(fullName)
-
-    end
-end
-
-local function inspectionLoop()
-    while true do
-        if #orderedInspectionQueue > 0 then
-            local nextPlayerInfo = tremove(orderedInspectionQueue)
-
-            if(nextPlayerInfo) then
-                local fullName = nextPlayerInfo.fullName
-                local unitID = nextPlayerInfo.unitID
-
-                if(needsToBeInspected(fullName)) then
-                    print("HAS TO", fullName, resumeTime < GetTimePreciseSec())
-
-                    if(not startScheduled) then
-                        startScheduled = true
-                    
-                        local nextStart = resumeTime - GetTimePreciseSec()
-                        print("NEXT START IN", nextStart)
-
-                        if(nextStart > 0) then
-                            nextUpPlayerData = nextPlayerInfo
-
-                            C_Timer.After(nextStart, function()
-                                startInspection(unitID, fullName)
-
-                            end)
-                            
-                        else
-                            startInspection(unitID, fullName)
-
-                        end
-                    else
-                        addPlayerToInspectionQueue(fullName, unitID)
-
-                    end
-
-                    print("YIELD")
-                    coroutine.yield()
-                    print("RESUME")
-
-                else
-                    deletePlayerFromFullInspection(fullName)
-
-                end
-            end
-        else
-            coroutine.yield()
-
-        end
-    end
-end
-
-local function orderedAnalyze()
-    local status = inspectRoutine and coroutine.status(inspectRoutine) -- Use localized status
-
-    print("ORDERED ANALYZE", status)
-
-    if(status == nil or status == "dead") then
-        inspectRoutine = coroutine.create(inspectionLoop)
-        tryToResumeCoroutine()
-
-    end
-end
-
-local function updateElementExtent()
-    groupManager.view:SetElementExtent(groupManager.ListView.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 12 or 6))
-
-end
-
-local function findFrames(fullName)
-    local listViewFrame = groupManager.ListView.ScrollBox:FindFrameByPredicate(function(localFrame, data)
-        return data.fullName == fullName
-
-    end)
-
-    local raidViewFrame = groupManager.RaidView:FindMemberFrame(fullName)
-
-    return listViewFrame, raidViewFrame
-end
-
-local function updateSpecificFrameData(fullName, key, data)
-    local listViewFrame, raidViewFrame = findFrames(fullName)
-
-    if(listViewFrame and raidViewFrame) then
-        if(key == "specID") then
-            for k, v in pairs(listViewFrame.cells) do
-                if(v.key == key) then
-                    v:SetSpecialization(data)
-
-                end
-            end
-
-            raidViewFrame:SetSpecialization(data)
-
-        elseif(key == "online") then
-            local isOnline = UnitIsConnected(data)
-            local isAfk = UnitIsAFK(data)
-            local isDnd = UnitIsDND(data)
-
-            for k, v in pairs(listViewFrame.cells) do
-                if(v.key == key) then
-                    v:SetOnlineStatus(isOnline, isAfk, isDnd)
-
-                end
-            end
-
-            raidViewFrame:SetOnlineStatus(isOnline, isAfk, isDnd)
-
-        end
-    end
-end
-
 local function canInspectUnit(unitID)
 	if(UnitIsPlayer(unitID) and CanInspect(unitID) and UnitIsConnected(unitID)) then
 		return true
 
 	end
+end
+
+local function updateCurrentlyInspectedCharacter()
+    local name
+
+    if(inspectionPlayerData.fileName) then
+        local color = C_ClassColor.GetClassColor(inspectionPlayerData.fileName)
+        name = color and WrapTextInColorCode(inspectionPlayerData.name, color:GenerateHexColor()) or inspectionPlayerData.name
+
+    else
+        name = inspectionPlayerData.name
+
+    end
+
+	classSpecPanel.InspectCharacterName:SetText(name or "")
+	classSpecPanel.LoadingSpinner:SetShown(inspectionPlayerData.name)
+end
+
+local function resetPityTimer()
+    if(pityTimer and pityTimerRunning) then
+        pityTimer:Cancel()
+        pityTimerRunning = false
+
+    end
 end
 
 local function checkNumberOfGroupMembers()
@@ -349,6 +153,11 @@ local function checkNumberOfGroupMembers()
     end
 
     return hasChanged
+end
+
+local function updateInspectionString()
+    classSpecPanel.InspectionString:SetText(inspectedMembers .. " | " .. inspectableMembers .. " | " .. numOfGroupMembers)
+
 end
 
 local function updateClassPanel()
@@ -373,73 +182,22 @@ local function updateClassPanel()
             currentClassFrame.Icon:SetAlpha(0.85)
             currentClassFrame:SetBackdropBorderColor(r, g, b, 0.85)
             currentClassFrame.FontString:SetText(numOfClasses)
+
+            classFrameIndex = classFrameIndex + 1
             
         else
             currentClassFrame:SetSize(18, 18)
-            currentClassFrame.layoutIndex = classFrameIndex + 30
+            currentClassFrame.layoutIndex = classFrameIndex + 20
             currentClassFrame.Icon:SetDesaturated(true)
             currentClassFrame.Icon:SetAlpha(0.4)
             currentClassFrame:SetBackdropBorderColor(r, g, b, 0.4)
             currentClassFrame.FontString:SetText("")
 
         end
-
-        classFrameIndex = classFrameIndex + 1
     end
 
     classSpecPanel.Classes:MarkDirty()
 
-end
-
-local function resetClassAndRoleCount()
-    for class in pairs(classCount) do
-        classCount[class] = 0
-    end
-    
-    for role in pairs(roleCount) do
-        roleCount[role] = 0
-    end
-end
-
-local function countPlayerClassRoleSpec()
-    inspectedMembers = 0
-    inspectableMembers = 0
-    resetClassAndRoleCount()
-
-    if(numOfGroupMembers > 0) then
-        for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
-        local name, rank, subgroup, level, localizedClassName, fileName, _, online, _, role, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
-
-            if(name) then
-                local fullName = miog.createFullNameValuesFrom("unitName", name)
-
-                if(savedPlayerSpecs[fullName]) then
-                    inspectedMembers = inspectedMembers + 1
-                    inspectableMembers = inspectableMembers + 1
-
-                elseif(canInspectPlayerInGroup(fullName)) then
-                    inspectableMembers = inspectableMembers + 1
-
-                    if(fullName == fullPlayerName) then
-                        inspectedMembers = inspectedMembers + 1
-
-                    end
-                end
-                
-                if(classCount[fileName]) then
-                    classCount[fileName] = classCount[fileName] + 1
-
-                end
-
-                if(roleCount[combatRole]) then
-                    roleCount[combatRole] = roleCount[combatRole] + 1
-
-                end
-            end
-        end
-    end
-
-    updateMemberString()
 end
 
 local function refreshGroupCycle()
@@ -448,20 +206,32 @@ local function refreshGroupCycle()
         
     end
 
+    if(analyzeTimer and analyzeTimerRunning) then
+        analyzeTimer:Cancel()
+        analyzeTimerRunning = false
+
+    end
+
+    resetPityTimer()
+
+    ClearInspectPlayer()
+
     groupUpdateQueued = false
 
-    table.wipe(orderedInspectionQueue)
-    table.wipe(retryList)
-    table.wipe(groupPlayerList)
+    orderedInspectionQueue = {}
+    inspectionQueue = {}
+    inspectionPlayerData = {}
+    retryList = {}
+    groupPlayerList = {}
 
-    deletePlayerFromFullInspection(getCurrentlyInspectedPlayer())
-
-    countPlayerClassRoleSpec()
+    inspectableMembers = 0
+    inspectedMembers = 0
 
     checkNumberOfGroupMembers()
+    updateInspectionString()
 end
 
-local function createClassAndRoleCount()
+local function resetClassAndRoleCount()
     classCount = {
         ["WARRIOR"] = 0,
         ["PALADIN"] = 0,
@@ -490,13 +260,13 @@ end
 local function resetOnGroupChange()
     refreshGroupCycle()
 
-    table.wipe(savedPlayerSpecs)
-    table.wipe(savedGearData)
-    table.wipe(savedKeystoneData)
-    table.wipe(savedRaidData)
-    table.wipe(savedMythicPlusData)
+    savedPlayerSpecs = {}
+    savedGearData = {}
+    savedKeystoneData = {}
+    savedRaidData = {}
+    savedMythicPlusData = {}
 
-    
+    resetClassAndRoleCount()
 end
 
 local sortComparatorFunction
@@ -657,165 +427,122 @@ local function createColumn(name, cellTemplate, key, useForSort, fill)
     column:SetFillConstraints(fill or 0.7, 1)
 end
 
-local function checkOnlineStatus(unitID)
-    return UnitIsConnected(unitID)
-end
+local function queueHasEntries()
+    local hasEntries = false
 
-local function hasTableEntry(fullName)
-    local playerData = groupPlayerList[fullName]
+    for k, v in pairs(inspectionQueue) do
+        if(canInspectPlayerInGroup(k)) then
+            hasEntries = true
+            break
 
-    if not playerData then
-        playerData = {}
-        groupPlayerList[fullName] = playerData
+        end
     end
 
-    return playerData
+    return hasEntries
 end
 
-local function refreshDataOfAllPlayers()
-    inspectedMembers = 0
-    inspectableMembers = 0
+local function isNotifyBlocked()
+    if(resumeTime > GetTimePreciseSec()) then
+        return true
 
-    local offset = 0
+    else
+        return false
 
-    for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
-        local name, rank, subgroup, level, localizedClassName, fileName, _, online, _, role, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+    end
+end
 
-        if(name and fileName) then
-            local unitID
+local function internalCoroutineResume()
+    coroutine.resume(inspectRoutine)
 
-            local fullName, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
+end
 
-            if(fullName) then
-                if(isInRaid) then
-                    unitID = "raid" .. groupIndex
+local function analyzeCoroutine(origin)
+    local status = inspectRoutine and coroutine.status(inspectRoutine)
+    local hasEntries, isBlocked = queueHasEntries(), isNotifyBlocked()
+    
+    miog.printDebug(origin, hasEntries, isBlocked, notifyBlocked, resumeTime > GetTimePreciseSec(), resumeTime, GetTimePreciseSec())
 
-                elseif(fullPlayerName ~= fullName) then
-                    unitID = "party" .. groupIndex - offset
+    if(hasEntries) then
+        if(isBlocked) then
+            if(analyzeTimerRunning) then
+                return
 
-                else
-                    unitID = "player"
+            elseif(not pityTimerRunning) then
+                analyzeTimerRunning = true
+                local nextStart = resumeTime - GetTimePreciseSec()
 
-                    offset = offset + 1
+                analyzeTimer = C_Timer.NewTimer(nextStart > 0 and nextStart + 0.3 or throttleSetting, function()
+                    analyzeTimerRunning = false
+                    analyzeCoroutine("SELF")
 
-                end
+                end)
 
-                local playerData = hasTableEntry(fullName)
-
-                playerData.index = groupIndex
-                playerData.subgroup = subgroup
-                playerData.unitID = unitID
-                playerData.online = checkOnlineStatus(unitID) or online
-                    
-                playerData.fullName = fullName
-                playerData.name = playerName
-                playerData.realm = realm
-                playerData.level = level
-                    
-                playerData.fileName = fileName
-                playerData.className = localizedClassName
-
-                playerData.rank = rank
-                playerData.role = role
-
-                local playerSpec = savedPlayerSpecs[fullName] or 0
-
-                groupPlayerList[fullName].specID = playerSpec
-                groupPlayerList[fullName].combatRole = combatRole or GetSpecializationRoleByID(playerSpec)
-
-                if(classCount[fileName]) then
-                    classCount[fileName] = classCount[fileName] + 1
-
-                end
-
-                if(roleCount[combatRole]) then
-                    roleCount[combatRole] = roleCount[combatRole] + 1
-
-                end
-
-                refreshOptionalPlayerData(fullName, playerName, realm)
             end
+        else
+            if(status == nil or status == "dead") then
+                inspectRoutine = coroutine.create(function()
+                    for fullName in pairs(inspectionQueue) do
+                        if(not isNotifyBlocked() and groupPlayerList[fullName] and canInspectPlayerInGroup(fullName)) then
+                            NotifyInspect(groupPlayerList[fullName].unitID, true)
+
+                            coroutine.yield()
+
+                        end
+                    end
+                end)
+
+                internalCoroutineResume()
+
+            elseif(status == "suspended") then
+                internalCoroutineResume()
+
+            end
+        end
+
+    end
+end
+
+local function orderedAnalyze()
+    if(resumeTime < GetTimePreciseSec()) then
+        local status = inspectRoutine and coroutine.status(inspectRoutine)
+        
+        if(status == nil or status == "dead") then
+            inspectRoutine = coroutine.create(function()
+                local nextPlayerInfo = tremove(orderedInspectionQueue)
+
+                if(nextPlayerInfo) then
+                    print(nextPlayerInfo.name, nextPlayerInfo.unitID)
+
+                    coroutine.yield()
+                end
+            end)
+
+            coroutine.resume(inspectRoutine)
         end
     end
 end
 
-local function refreshPlayerCharacterData()
-    local localizedClassName, fileName = UnitClass("player")
-    local specID, _, _, _, combatRole = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
-
-    savedPlayerSpecs[fullPlayerName] = specID
-    
-    local playerData = hasTableEntry(fullPlayerName)
-
-    playerData.index = 1
-    playerData.subgroup = 1
-    playerData.unitID = "player"
-    playerData.online = true
-        
-    playerData.fullName = fullPlayerName
-    playerData.name = shortPlayerName
-    playerData.realm = playerRealm
-    playerData.level = UnitLevel(playerData.unitID)
-        
-    playerData.fileName = fileName
-    playerData.className = localizedClassName
-    
-    playerData.specID = specID
-    playerData.combatRole = combatRole
-
-    if(classCount[fileName]) then
-        classCount[fileName] = classCount[fileName] + 1
-
-    end
-
-    if(roleCount[combatRole]) then
-        roleCount[combatRole] = roleCount[combatRole] + 1
-
-    end
-
-    inspectedMembers = inspectedMembers + 1
-    inspectableMembers = inspectableMembers + 1
-
-    refreshOptionalPlayerData(fullPlayerName, shortPlayerName, playerRealm)
-
-    updateMemberString()
-end
-
-local function updateNecessaryPlayers()
-    if(numOfGroupMembers > 0) then
-        refreshDataOfAllPlayers()
-        countPlayerClassRoleSpec()
-
-    else
-        resetClassAndRoleCount()
-        refreshPlayerCharacterData()
-        
-    end
-
-    updateClassPanel()
-end
-
 local function startUpdate()
-    miog.printDebug("START UPDATE NOW")
-
-    updateNecessaryPlayers()
-
     mainDataProvider = CreateDataProvider()
-    mainDataProvider:SetSortComparator(sortComparatorFunction)
 
     for k, v in pairs(groupPlayerList) do
         mainDataProvider:Insert(v)
 
     end
 
+    updateClassPanel()
+
     groupManager.RaidView:RefreshMemberData(mainDataProvider.collection)
+
+    mainDataProvider:SetSortComparator(sortComparatorFunction)
     groupManager.ListView.ScrollBox:SetDataProvider(mainDataProvider, ScrollBoxConstants.RetainScrollPosition)
 
     groupUpdateQueued = false
 end
 
 local function queueGroupUpdate(instant, origin)
-    miog.printDebug("QUEUE UPDATE", origin)
+    --analyzeCoroutine(origin)
+    orderedAnalyze()
 
     if(groupUpdateQueued and not instant) then
         return
@@ -823,31 +550,22 @@ local function queueGroupUpdate(instant, origin)
     else
         groupUpdateQueued = true
 
-        if(updateTimer) then
-            updateTimer:Cancel()
-
-        end
-
         if(instant) then
             startUpdate()
 
         else
-            updateTimer = C_Timer.NewTimer(throttleSetting, startUpdate)
-
-            local time = GetTime() + throttleSetting
-
-            C_Timer.NewTicker(0.5, function(self)
-                if(GetTime() > time) then
-                    groupManager.Settings.NextRefreshString:SetText("")
-                    self:Cancel()
-
-                else
-                    groupManager.Settings.NextRefreshString:SetText("Next refresh in " .. formatter:Format(time - GetTime()))
-
-                end
+            updateTimer = C_Timer.NewTimer(throttleSetting, function()
+                startUpdate()
 
             end)
         end
+    end
+end
+
+local function clearPlayerFromInspectionIfCurrent(playerName)
+    if(inspectionQueue[playerName] and inspectionPlayerData.name == playerName) then
+        ClearInspectPlayer()
+        
     end
 end
 
@@ -872,6 +590,7 @@ local className = singleUnitInfo.className
 local unitName = singleUnitInfo.name
 local fullName = singleUnitInfo.nameFull
 ]]
+
 miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 	if(singleUnitInfo) then
         local playerName = singleUnitInfo.nameFull
@@ -883,11 +602,11 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 
 		if(groupPlayerList[playerName]) then
 			if(specID and specID > 0 and (not savedPlayerSpecs[playerName] or savedPlayerSpecs[playerName] ~= specID)) then
+                clearPlayerFromInspectionIfCurrent(playerName)
+
                 saveSpecID(playerName, specID)
 
-                updateSpecificFrameData(playerName, "specID", specID)
-                countPlayerSpecs()
-                tryToResumeCoroutine()
+                updateSpecificFrameData(playerName, "spec", specID)
 			end
 		end
 	end
@@ -947,50 +666,74 @@ miog.OnGearUpdate = function(unit, unitGear, allUnitsGear)
 	end
 end
 
-local function customEvents(event, ...)
-    print(event, ...)
+local function checkAndCountPlayerStatus(fullName)
+    if(savedPlayerSpecs[fullName]) then
+        inspectedMembers = inspectedMembers + 1
+        inspectableMembers = inspectableMembers + 1
 
-    if(event == "PLAYER_LEFT_GROUP") then
-        local fullName = ...
-        
-        if(fullName) then
-            savedPlayerSpecs[fullName] = nil
-            retryList[fullName] = nil
-            groupPlayerList[fullName] = nil
+    elseif(canInspectPlayerInGroup(fullName)) then
+        inspectableMembers = inspectableMembers + 1
 
-            deletePlayerFromFullInspection(fullName)
+        if(fullName ~= fullPlayerName) then
+            inspectionQueue[fullName] = true
+            
+        else
+            savedPlayerSpecs[fullPlayerName] = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
+            inspectedMembers = inspectedMembers + 1
+
         end
-    elseif(event == "PLAYER_JOINED_GROUP") then
-        local groupIndex, unitID, fullName, playerName, realm = ...
-
-        if(fullName and not savedPlayerSpecs[fullName] and canInspectUnit(unitID)) then
-            if(fullName ~= fullPlayerName) then
-                addPlayerToInspectionQueue(fullName, unitID)
-                
-            else
-                savedPlayerSpecs[fullPlayerName] = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
-
-            end
-        end
-
     end
 end
 
-local function checkIfPlayersJoinedOrLeft()
-    print("CHECK FOR JOIN/LEFT")
+local function countAllPlayersWithSpec()
+    inspectedMembers = 0
+    inspectableMembers = 0
 
-    local currentMembers = {}
+    if(numOfGroupMembers > 0) then
+        for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
+            local name = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
+
+            if(name) then
+                local fullName = miog.createFullNameValuesFrom("unitName", name)
+
+                if(savedPlayerSpecs[fullName]) then
+                    inspectedMembers = inspectedMembers + 1
+                    inspectableMembers = inspectableMembers + 1
+
+                elseif(canInspectPlayerInGroup(fullName)) then
+                    inspectableMembers = inspectableMembers + 1
+
+                    if(fullName == fullPlayerName) then
+                        inspectedMembers = inspectedMembers + 1
+
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function checkOnlineStatus(unitID)
+    return UnitIsConnected(unitID)
+end
+
+local function refreshDataOfAllPlayers()
+    inspectedMembers = 0
+    inspectableMembers = 0
+
+    resetClassAndRoleCount()
+
     local offset = 0
 
     for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
-        local name = GetRaidRosterInfo(groupIndex)
+        local name, rank, subgroup, level, localizedClassName, fileName, _, online, _, role, _, combatRole = GetRaidRosterInfo(groupIndex) --ONLY WORKS WHEN IN GROUP
 
-        if(name) then
+        if(name and fileName) then
+            local unitID
+
             local fullName, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
 
             if(fullName) then
-                local unitID
-
                 if(isInRaid) then
                     unitID = "raid" .. groupIndex
 
@@ -1004,22 +747,207 @@ local function checkIfPlayersJoinedOrLeft()
 
                 end
 
-                currentMembers[fullName] = true
+                groupPlayerList[fullName] = {
+                    index = groupIndex,
+                    subgroup = subgroup,
+                    unitID = unitID,
+                    online = checkOnlineStatus(unitID) or online,
+                    
+                    fullName = fullName,
+                    name = playerName,
+                    realm = realm,
+                    level = level,
+                    
+                    fileName = fileName,
+                    className = localizedClassName,
 
-                if(not groupPlayerList[fullName]) then
-                    customEvents("PLAYER_JOINED_GROUP", groupIndex, unitID, fullName, playerName, realm)
+                    rank = rank,
+                    role = role,
+                }
+
+                checkAndCountPlayerStatus(fullName)
+
+                local playerSpec = savedPlayerSpecs[fullName] or 0
+
+                groupPlayerList[fullName].specID = playerSpec
+                groupPlayerList[fullName].combatRole = combatRole or GetSpecializationRoleByID(playerSpec)
+
+                if(classCount[fileName]) then
+                    classCount[fileName] = classCount[fileName] + 1
 
                 end
+
+                if(roleCount[combatRole]) then
+                    roleCount[combatRole] = roleCount[combatRole] + 1
+
+                end
+
+                refreshOptionalPlayerData(fullName, playerName, realm)
             end
         end
     end
+end
 
-    for playerName in pairs(groupPlayerList) do
-        if(not currentMembers[playerName]) then
-            customEvents("PLAYER_LEFT_GROUP", playerName)
+local function refreshPlayerCharacterData()
+    local localizedClassName, fileName = UnitClass("player")
+    local specID, _, _, _, combatRole = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
+
+    savedPlayerSpecs[fullPlayerName] = specID
+
+    local data = {
+        index = 1,
+        subgroup = 1,
+        unitID = "player",
+        online = true,
+
+        fullName = fullPlayerName,
+        name = shortPlayerName,
+        realm = playerRealm,
+        level = UnitLevel("player"),
+
+        fileName = fileName,
+        className = localizedClassName,
+
+        specID = specID,
+        combatRole = combatRole,
+
+    }
+
+    groupPlayerList[fullPlayerName] = data
+
+    checkAndCountPlayerStatus(fullPlayerName)
+
+    if(classCount[fileName]) then
+        classCount[fileName] = classCount[fileName] + 1
+
+    end
+
+    if(roleCount[combatRole]) then
+        roleCount[combatRole] = roleCount[combatRole] + 1
+
+    end
+
+    refreshOptionalPlayerData(fullPlayerName, shortPlayerName, playerRealm)
+end
+
+local function removeSpecID(fullName)
+    savedPlayerSpecs[fullName] = nil
+
+    if(groupPlayerList[fullName]) then
+        groupPlayerList[fullName].specID = nil
+
+    end
+end
+
+local function clearPlayerFromInspectionQueue(fullName)
+    for i = 1, #orderedInspectionQueue do
+        if(orderedInspectionQueue[i].fullName == fullName) then
+            orderedInspectionQueue[i] = nil
 
         end
     end
+end
+
+local function customEvents(event, ...)
+    print(event, ...)
+
+    if(event == "PLAYER_LEFT_GROUP") then
+        local fullName = ...
+        
+        if(fullName) then
+            savedPlayerSpecs[fullName] = nil
+            retryList[fullName] = nil
+            inspectionQueue[fullName] = nil
+            groupPlayerList[fullName] = nil
+
+            clearPlayerFromInspectionQueue(fullName)
+        end
+    elseif(event == "PLAYER_JOINED_GROUP") then
+        local groupIndex, unitID, fullName, playerName, realm = ...
+
+        if(fullName and not savedPlayerSpecs[fullName] and canInspectUnit(unitID)) then
+            if(fullName ~= fullPlayerName) then
+                inspectionQueue[fullName] = true
+                tinsert(orderedInspectionQueue, {fullName = fullName})
+                
+            else
+                savedPlayerSpecs[fullPlayerName] = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
+
+            end
+        end
+
+    end
+end
+
+-- needs to be called right after GROUP_ROSTER_UPDATE fires
+local function handleGroupRosterUpdate(updateInstantly, origin)
+    local numOfPlayersChanged = checkNumberOfGroupMembers()
+
+    if(numOfPlayersChanged) then
+        local currentMembers = {}
+        local offset = 0
+
+        for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
+            local name = GetRaidRosterInfo(groupIndex)
+
+            if(name) then
+                local fullName, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
+
+                if(fullName) then
+                    local unitID
+
+                    if(isInRaid) then
+                        unitID = "raid" .. groupIndex
+
+                    elseif(fullPlayerName ~= fullName) then
+                        unitID = "party" .. groupIndex - offset
+
+                    else
+                        unitID = "player"
+
+                        offset = offset + 1
+
+                    end
+
+                    currentMembers[fullName] = true
+
+                    if(not groupPlayerList[fullName]) then
+                        customEvents("PLAYER_JOINED_GROUP", groupIndex, unitID, fullName, playerName, realm)
+
+                    end
+                end
+            end
+        end
+
+        for playerName in pairs(groupPlayerList) do
+            if(not currentMembers[playerName]) then
+                customEvents("PLAYER_LEFT_GROUP", playerName)
+
+            end
+        end
+
+        countAllPlayersWithSpec()
+    elseif(numOfGroupMembers > 0) then
+        refreshDataOfAllPlayers()
+
+    else
+        resetClassAndRoleCount()
+        refreshPlayerCharacterData()
+        countAllPlayersWithSpec()
+        
+    end
+
+    updateInspectionString()
+    queueGroupUpdate(updateInstantly, origin)
+end
+
+local function isPlayerCurrentlyInInspection(fullName)
+    if(inspectionPlayerData.name == fullName) then
+        return true
+
+    end
+
+    return false
 end
 
 local function groupManagerEvents(_, event, ...)
@@ -1027,13 +955,7 @@ local function groupManagerEvents(_, event, ...)
         local isLogin, isReload = ...
         
         isInRaid = IsInRaid()
-        checkIfPlayersJoinedOrLeft()
-        queueGroupUpdate(isReload, origin)
-
-        if(isLogin or isReload) then
-            orderedAnalyze()
-
-        end
+        handleGroupRosterUpdate(true, event)
 
 	elseif(event == "INSPECT_READY") then
         local guid = ...
@@ -1042,40 +964,45 @@ local function groupManagerEvents(_, event, ...)
             local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(guid)
 
             if(name) then
-                local fullName = miog.createFullNameValuesFrom("unitName", name .. (realmName and realmName ~= "" and ("-" .. realmName) or ""))
+                local fullName = miog.createFullNameValuesFrom("unitName", name .. (realmName and "-" .. realmName or ""))
 
                 if(fullName) then
                     if(groupPlayerList[fullName]) then
                         local inspectID = GetInspectSpecialization(groupPlayerList[fullName].unitID)
-                        ClearInspectPlayer()
 
                         if(inspectID) then
                             if(inspectID > 0) then
                                 saveSpecID(fullName, inspectID)
-                                updateSpecificFrameData(fullName, "specID", inspectID)
+                                updateSpecificFrameData(fullName, "spec", inspectID)
 
                             end
                         end
+                        
+                        if(isPlayerCurrentlyInInspection(fullName)) then
+                            ClearInspectPlayer()
+                            coroutine.resume(inspectRoutine)
+                            
+                        end
 
-                        print("INSPECT DONE", fullName)
-                        deletePlayerFromFullInspection(fullName)
-                        countPlayerSpecs()
-                        tryToResumeCoroutine()
+                        --clearPlayerFromInspectionIfCurrent(fullName)
+
+                        --analyzeCoroutine("INSPECT DONE")
+
+                    else
+                        ClearInspectPlayer()
 
                     end
+                else
+                    ClearInspectPlayer()
+
                 end
             end
         end
 
-	elseif(event == "GROUP_JOINED") then
+	elseif(event == "GROUP_JOINED" or event == "GROUP_LEFT") then
         isInRaid = IsInRaid()
         resetOnGroupChange()
-        checkIfPlayersJoinedOrLeft()
-        
-    elseif(event == "GROUP_LEFT") then
-        isInRaid = IsInRaid()
-        resetOnGroupChange()
-        queueGroupUpdate(true, origin)
+        handleGroupRosterUpdate(true, event)
 
 	elseif(event == "PLAYER_SPECIALIZATION_CHANGED") then
         local unitID = ...
@@ -1083,24 +1010,17 @@ local function groupManagerEvents(_, event, ...)
         if(unitID) then
             local fullName = miog.createFullNameValuesFrom("unitID", unitID)
             removeSpecID(fullName)
-            addPlayerToInspectionQueue(fullName, unitID)
+
+            clearPlayerFromInspectionQueue(fullName)
+
         end
 
         --analyzeCoroutine("SPEC CHANGE")
 
 	elseif(event == "GROUP_ROSTER_UPDATE") then
         isInRaid = IsInRaid()
-        
-        local numOfPlayersChanged = checkNumberOfGroupMembers()
+        handleGroupRosterUpdate(false, event)
 
-        if(numOfPlayersChanged) then
-            checkIfPlayersJoinedOrLeft()
-
-        end
-            
-        queueGroupUpdate(false, origin)
-        
-    elseif(event == "PLAYER_REGEN_ENABLED") then
 	--[[elseif(event == "PLAYER_REGEN_ENABLED") then
 		if(miog.F.UPDATE_AFTER_COMBAT) then
 			miog.F.UPDATE_AFTER_COMBAT = false
@@ -1145,12 +1065,8 @@ local function groupManagerEvents(_, event, ...)
 		miog.GroupManager.StatusBar.ReadyBox:SetColorTexture(unpack(allReady and {0, 1, 0, 1} or {1, 0, 0, 1}))]]
 
 	elseif(event == "PLAYER_FLAGS_CHANGED") then
-        local unitID = ...
-
-        if(unitID) then
-            local fullName = miog.createFullNameValuesFrom("unitID", ...)
-            updateSpecificFrameData(fullName, "online", unitID)
-        end
+        handleGroupRosterUpdate(false, "FLAGS")
+        
 	end
 end
 
@@ -1245,48 +1161,20 @@ local function loadClassSpecPanel()
         GameTooltip:AddLine("Inspected members: " .. inspectedMembers)
         GameTooltip:AddLine("Inspectable members: " .. inspectableMembers)
         GameTooltip:AddLine("Total members: " .. numOfGroupMembers)
-
-        if(#orderedInspectionQueue > 0) then
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-            GameTooltip:AddLine("To be inspected:")
-
-            for k, v in ipairs(orderedInspectionQueue) do
-                GameTooltip:AddLine(v.fullName .. (retryList[v.fullName] and (", retry #" .. retryList[v.fullName]) or ""))
-
-            end
-        end
-
-        local retriesAdded = false
-
-        for k, v in pairs(retryList) do
-            if(v > 4) then
-                if(not retriesAdded) then
-                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                    GameTooltip:AddLine("Blocked from inspection (too many timeouts):")
-                    retriesAdded = true
-
-                end
-
-                GameTooltip:AddLine(k)
-            end
-        end
-
         GameTooltip:Show()
     end)
-    
-    createClassAndRoleCount()
 end
 
 miog.loadGroupOrganizer = function()
     fullPlayerName, shortPlayerName, playerRealm = miog.createFullNameValuesFrom("unitID", "player")
 
+    groupMoreThanFivePlayers = GetNumGroupMembers() > 5
     miog.GroupOrganizer = miog.pveFrame2.TabFramesPanel.GroupManager
     groupManager = miog.GroupOrganizer
     groupManager.Settings.Refresh:SetScript("OnClick", function()
-        isInRaid = IsInRaid()
         refreshGroupCycle()
-        checkIfPlayersJoinedOrLeft()
-        queueGroupUpdate(true, "REFRESH")
+
+        handleGroupRosterUpdate(true, "REFRESH")
 
         groupManager.RaidView:Unlock()
     end)
@@ -1341,12 +1229,60 @@ miog.loadGroupOrganizer = function()
     resetOnGroupChange()
 
 	--miog.openRaidLib.RegisterCallback(miog, "UnitInfoUpdate", "OnUnitUpdate")
-	--miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
-	--miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
+	miog.openRaidLib.RegisterCallback(miog, "KeystoneUpdate", "OnKeystoneUpdate")
+	miog.openRaidLib.RegisterCallback(miog, "GearUpdate", "OnGearUpdate")
 
-    hooksecurefunc("NotifyInspect", function()
+    hooksecurefunc("NotifyInspect", function(unitID, own)
+        notifyBlocked = true
         resumeTime = GetTimePreciseSec() + throttleSetting
+        miog.printDebug("NOTIFY NOW", own)
 
+        local fullName = miog.createFullNameValuesFrom("unitID", unitID)
+
+        if(groupPlayerList[fullName]) then
+            inspectionPlayerData = {name = fullName, unitID = unitID, fileName = groupPlayerList[fullName] and groupPlayerList[fullName].fileName}
+            updateCurrentlyInspectedCharacter()
+
+        end
+
+        resetPityTimer()
+
+        pityTimerRunning = true
+
+        pityTimer = C_Timer.NewTimer(doubleThrottle, function()
+            pityTimerRunning = false
+
+            local inspectionName = inspectionPlayerData.name
+
+            if(inspectionName) then
+                miog.printDebug("PITY PLAYER", inspectionName)
+                retryList[inspectionName] = retryList[inspectionName] and retryList[inspectionName] + 1 or 1
+                ClearInspectPlayer()
+            end
+
+            --analyzeCoroutine("PITY")
+        end)
+    end)
+
+    hooksecurefunc("ClearInspectPlayer", function()
+        local name = inspectionPlayerData.name
+
+        if(name) then
+            miog.printDebug("CLEAR CURRENT INSPECTION", name)
+
+            clearPlayerFromInspectionQueue(name)
+            inspectionQueue[name] = nil
+            inspectionPlayerData = {}
+
+            resetPityTimer()
+
+            updateCurrentlyInspectedCharacter()
+        end
+
+        notifyBlocked = false
+
+        countAllPlayersWithSpec()
+        updateInspectionString()
     end)
 
 	groupManager:RegisterEvent("PLAYER_ENTERING_WORLD")

@@ -4912,7 +4912,7 @@ miog.REALMS_TO_LANGUAGE = {
 }
 
 miog.getRealmData = function(realmName, region)
-	local actualRegion = strupper(region or miog.F.CURRENT_REGION)
+	local actualRegion = strupper(region or miog.F.CURRENT_REGION or "EU")
 	local fullName = actualRegion .. "-" .. realmName
 	local realmData = miog.REALMS_TO_LANGUAGE[fullName]
 	

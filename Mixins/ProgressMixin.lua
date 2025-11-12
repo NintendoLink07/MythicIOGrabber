@@ -538,6 +538,11 @@ function ProgressOverviewMixin:OnLoad()
 									local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
 
 									if(not name) then
+										if(not mapInfo.bosses[k]) then
+											mapInfo = miog.getMapInfo(mapID, true)
+
+										end
+
 										name = mapInfo.bosses[k].name .. " kills"
 
 									end

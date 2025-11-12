@@ -384,19 +384,24 @@ end
 miog.retrieveAbbreviatedNameFromChallengeModeMap = function(challengeID)
 	local info = miog.CHALLENGE_MODE_INFO[challengeID]
 
-	local abbreviatedName
+	if(info) then
+		local abbreviatedName
 
-	local groupInfo = miog.GROUP_ACTIVITY[info.groupID]
+		local groupInfo = miog.GROUP_ACTIVITY[info.groupID]
 
-	if(groupInfo) then
-		abbreviatedName = groupInfo.abbreviatedName
+		if(groupInfo) then
+			abbreviatedName = groupInfo.abbreviatedName
+
+		else
+			abbreviatedName = miog.MAP_INFO[info.mapID].abbreviatedName
+			
+		end
+
+		return abbreviatedName
 
 	else
-		abbreviatedName = miog.MAP_INFO[info.mapID].abbreviatedName
-		
+		return ""
 	end
-
-	return abbreviatedName
 end
 
 miog.retrieveGroupInfoFromChallengeModeMap = function(challengeID)

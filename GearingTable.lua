@@ -89,134 +89,136 @@ local function createGearingDataTable()
     local dataProvider = CreateDataProvider()
     local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
 
-    local revisedHeaderOrder = {}
-    local revisedIndices = {}
-    local enabledIndex = 1
+    if(seasonalData) then
+        local revisedHeaderOrder = {}
+        local revisedIndices = {}
+        local enabledIndex = 1
 
-    for headerIndex, headerData in ipairs(headersNew) do
-        local enabled = MIOG_NewSettings.gearingTable[headerData.id] ~= false
-        headerData.enabled = enabled
+        for headerIndex, headerData in ipairs(headersNew) do
+            local enabled = MIOG_NewSettings.gearingTable[headerData.id] ~= false
+            headerData.enabled = enabled
 
-        if(enabled ~= false) then
-            tinsert(revisedHeaderOrder, enabledIndex, {index = headerIndex, enabled = enabled})
+            if(enabled ~= false) then
+                tinsert(revisedHeaderOrder, enabledIndex, {index = headerIndex, enabled = enabled})
 
-            enabledIndex = enabledIndex + 1
+                enabledIndex = enabledIndex + 1
 
-        else
-            tinsert(revisedHeaderOrder, #revisedHeaderOrder + 1, {index = headerIndex, enabled = enabled})
+            else
+                tinsert(revisedHeaderOrder, #revisedHeaderOrder + 1, {index = headerIndex, enabled = enabled})
 
-        end
-
-    end
-
-    for index, headerInfo in ipairs(revisedHeaderOrder) do
-        local headerData = headersNew[headerInfo.index]
-
-        revisedIndices[headerData.id] = index
-
-        local column = gearingTab.tableBuilder:AddColumn()
-
-        column:ConstructHeader("Frame", "MIOG_GearingTableColorHeaderTemplate", headerData.name, headerData.hasCheckbox, MIOG_NewSettings.gearingTable, headerData.id, function() createGearingDataTable() end)
-        column:ConstructCells("Frame", "MIOG_GearingTableColorCellTemplate")
-
-        local stringWidth = calculateStringWidth(headerData.name)
-
-        headerData.width = headerData.hasCheckbox and stringWidth + 12 or stringWidth
-        headerData.tableColumn = column
-        column:SetFixedConstraints(headerData.width + 4, 1)
-    end
-
-    local dataProviderTable = {}
-    local translator = {}
-    local stringWidth
-    local itemLevelColors = {}
-
-    for rowIndex, itemLevel in ipairs(seasonalData.itemLevelList) do
-        dataProviderTable[rowIndex] = {}
-        translator[itemLevel] = rowIndex
-
-        local itemLevelString = WrapTextInColorCode(itemLevel, getColorForItemlevel(itemLevel))
-        dataProviderTable[rowIndex][1] = itemLevelString
-        stringWidth = calculateStringWidth(itemLevelString)
-        headersNew[1].width = stringWidth > headersNew[1].width and stringWidth or headersNew[1].width
-
-        local trackString = createTrackString(itemLevel)
-        dataProviderTable[rowIndex][2] = trackString
-        stringWidth = calculateStringWidth(trackString)
-        headersNew[2].width = stringWidth > headersNew[2].width and stringWidth or headersNew[2].width
-        
-        itemLevelColors[itemLevel] = getColorForItemlevel(itemLevel)
-    end
-
-    for id, data in pairs(seasonalData.data) do
-        local formerBaseIndex = indices[id]
-        local formerVaultIndex = vaultIndices[id]
-
-        local baseHeaderData = headersNew[formerBaseIndex]
-        local vaultHeaderData = headersNew[formerVaultIndex]
-
-        local baseTableIndex = revisedIndices[baseHeaderData.id]
-        local vaultTableIndex
-
-        if(id == "delves" or id == "dungeon") then
-            vaultTableIndex = revisedIndices[vaultHeaderData.id]
-
-        end
-
-        for _, entryData in ipairs(data) do
-            local rowCellData
-            local baseItemLevel, vaultItemLevel = entryData.level, entryData.vaultLevel
-            local currentName = entryData.name
-
-            if(baseHeaderData.enabled) then
-                rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
-                
-                if(not rowCellData) then
-                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[baseItemLevel])
-
-                else
-                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[baseItemLevel])
-
-                end
-                
-                rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
-
-                stringWidth = calculateStringWidth(rowCellData)
-                headersNew[formerBaseIndex].width = stringWidth > headersNew[formerBaseIndex].width and stringWidth or headersNew[formerBaseIndex].width
             end
-                
-            if(entryData.vaultOffset and vaultHeaderData.enabled and vaultTableIndex) then
-                rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
+
+        end
+
+        for index, headerInfo in ipairs(revisedHeaderOrder) do
+            local headerData = headersNew[headerInfo.index]
+
+            revisedIndices[headerData.id] = index
+
+            local column = gearingTab.tableBuilder:AddColumn()
+
+            column:ConstructHeader("Frame", "MIOG_GearingTableColorHeaderTemplate", headerData.name, headerData.hasCheckbox, MIOG_NewSettings.gearingTable, headerData.id, function() createGearingDataTable() end)
+            column:ConstructCells("Frame", "MIOG_GearingTableColorCellTemplate")
+
+            local stringWidth = calculateStringWidth(headerData.name)
+
+            headerData.width = headerData.hasCheckbox and stringWidth + 12 or stringWidth
+            headerData.tableColumn = column
+            column:SetFixedConstraints(headerData.width + 4, 1)
+        end
+
+        local dataProviderTable = {}
+        local translator = {}
+        local stringWidth
+        local itemLevelColors = {}
+
+        for rowIndex, itemLevel in ipairs(seasonalData.itemLevelList) do
+            dataProviderTable[rowIndex] = {}
+            translator[itemLevel] = rowIndex
+
+            local itemLevelString = WrapTextInColorCode(itemLevel, getColorForItemlevel(itemLevel))
+            dataProviderTable[rowIndex][1] = itemLevelString
+            stringWidth = calculateStringWidth(itemLevelString)
+            headersNew[1].width = stringWidth > headersNew[1].width and stringWidth or headersNew[1].width
+
+            local trackString = createTrackString(itemLevel)
+            dataProviderTable[rowIndex][2] = trackString
+            stringWidth = calculateStringWidth(trackString)
+            headersNew[2].width = stringWidth > headersNew[2].width and stringWidth or headersNew[2].width
             
-                if(not rowCellData) then
-                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[vaultItemLevel])
+            itemLevelColors[itemLevel] = getColorForItemlevel(itemLevel)
+        end
 
-                else
-                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[vaultItemLevel])
+        for id, data in pairs(seasonalData.data) do
+            local formerBaseIndex = indices[id]
+            local formerVaultIndex = vaultIndices[id]
 
+            local baseHeaderData = headersNew[formerBaseIndex]
+            local vaultHeaderData = headersNew[formerVaultIndex]
+
+            local baseTableIndex = revisedIndices[baseHeaderData.id]
+            local vaultTableIndex
+
+            if(id == "delves" or id == "dungeon") then
+                vaultTableIndex = revisedIndices[vaultHeaderData.id]
+
+            end
+
+            for _, entryData in ipairs(data) do
+                local rowCellData
+                local baseItemLevel, vaultItemLevel = entryData.level, entryData.vaultLevel
+                local currentName = entryData.name
+
+                if(baseHeaderData.enabled) then
+                    rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
+                    
+                    if(not rowCellData) then
+                        dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[baseItemLevel])
+
+                    else
+                        dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[baseItemLevel])
+
+                    end
+                    
+                    rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
+
+                    stringWidth = calculateStringWidth(rowCellData)
+                    headersNew[formerBaseIndex].width = stringWidth > headersNew[formerBaseIndex].width and stringWidth or headersNew[formerBaseIndex].width
                 end
+                    
+                if(entryData.vaultOffset and vaultHeaderData.enabled and vaultTableIndex) then
+                    rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
                 
-                rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
+                    if(not rowCellData) then
+                        dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[vaultItemLevel])
 
-                stringWidth = calculateStringWidth(rowCellData)
+                    else
+                        dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[vaultItemLevel])
 
-                headersNew[formerVaultIndex].width = stringWidth > headersNew[formerVaultIndex].width and stringWidth or headersNew[formerVaultIndex].width
+                    end
+                    
+                    rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
+
+                    stringWidth = calculateStringWidth(rowCellData)
+
+                    headersNew[formerVaultIndex].width = stringWidth > headersNew[formerVaultIndex].width and stringWidth or headersNew[formerVaultIndex].width
+                end
             end
         end
+
+        for _, headerData in ipairs(headersNew) do
+            headerData.tableColumn:SetFixedConstraints(headerData.width + 6, 1)
+
+        end
+
+        for k, v in ipairs(dataProviderTable) do
+            dataProvider:Insert({text = v, rowIndex = k})
+
+        end
+
+        gearingTab.tableBuilder:Arrange()
+        gearingTab.ScrollBox:SetDataProvider(dataProvider)
     end
-
-    for _, headerData in ipairs(headersNew) do
-        headerData.tableColumn:SetFixedConstraints(headerData.width + 6, 1)
-
-    end
-
-    for k, v in ipairs(dataProviderTable) do
-        dataProvider:Insert({text = v, rowIndex = k})
-
-    end
-
-    gearingTab.tableBuilder:Arrange()
-    gearingTab.ScrollBox:SetDataProvider(dataProvider)
 end
 
 miog.loadGearingTable = function()
@@ -258,25 +260,27 @@ miog.loadGearingTable = function()
 
     local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
 
-    gearingTab:SetScript("OnSizeChanged", function(self)
-        --self.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
+    if(seasonalData) then
+        gearingTab:SetScript("OnSizeChanged", function(self)
+            --self.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
 
-        --createGearingDataTable()
-    end)
+            --createGearingDataTable()
+        end)
 
-    createGearingDataTable()
+        createGearingDataTable()
 
-    for trackIndex, data in pairs(seasonalData.tracks) do
-        local currentLegendFrame = gearingTab.Legend["Track" .. trackIndex]
+        for trackIndex, data in pairs(seasonalData.tracks) do
+            local currentLegendFrame = gearingTab.Legend["Track" .. trackIndex]
 
-        if(currentLegendFrame) then
-            currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GetRGBA())
-            currentLegendFrame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(data.name)
-                GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.minLevel .. " - " .. data.maxLevel)
-                GameTooltip:Show()
-            end)
+            if(currentLegendFrame) then
+                currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GetRGBA())
+                currentLegendFrame:SetScript("OnEnter", function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(data.name)
+                    GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.minLevel .. " - " .. data.maxLevel)
+                    GameTooltip:Show()
+                end)
+            end
         end
     end
 end

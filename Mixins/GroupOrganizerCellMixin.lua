@@ -11,6 +11,24 @@ function GroupOrganizerStandardMixin:SetSpecialization(specID)
 
 end
 
+function GroupOrganizerStandardMixin:SetOnlineStatus(isOnline, isAfk, isDnd)
+    if(isOnline) then
+        if(isAfk) then
+            self.Icon:SetTexture("interface/friendsframe/statusicon-away.blp")
+
+        elseif(isDnd) then
+            self.Icon:SetTexture("interface/friendsframe/statusicon-dnd.blp")
+
+        else
+            self.Icon:SetTexture("interface/friendsframe/statusicon-online.blp")
+
+        end
+    else
+        self.Icon:SetTexture("interface/friendsframe/statusicon-offline.blp")
+
+    end
+end
+
 function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     local isOdd = data.index % 2 == 1
 
@@ -25,21 +43,9 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     end
 
     if(self.key == "online") then
-        if(data.online) then
-            if(UnitIsAFK(data.unitID)) then
-                self.Icon:SetTexture("interface/friendsframe/statusicon-away.blp")
-
-            elseif(UnitIsDND(data.unitID)) then
-                self.Icon:SetTexture("interface/friendsframe/statusicon-dnd.blp")
-
-            else
-                self.Icon:SetTexture("interface/friendsframe/statusicon-online.blp")
-
-            end
-        else
-            self.Icon:SetTexture("interface/friendsframe/statusicon-offline.blp")
-
-        end
+        local isAfk = UnitIsAFK(data.unitID)
+        local isDnd = UnitIsDND(data.unitID)
+        self:SetOnlineStatus(data.online, isAfk, isDnd)
 
 	elseif(self.key == "name") then
         self.Text:SetText(data.name)

@@ -29,7 +29,6 @@ SearchPanel.lua
 EntryCreation.lua
 Calendar.lua
 SharedFunctions.lua
-ClassPanel.lua
 FilterManager.lua
 
 GearingTable.lua
@@ -167,12 +166,6 @@ XML\SearchPanel\MIOG_ProgressPanelTierTemplate.xml
 XML\SearchPanel\MIOG_ApplicationDialogTextboxTemplate.xml
 XML\SearchPanel\MIOG_ApplicationDialogTextboxInputTemplate.xml
 XML\SearchPanel\MIOG_ApplicationDialogParentTemplate.xml
-
-XML\ClassPanel\MIOG_ClassPanel.xml
-XML\ClassPanel\MIOG_ClassPanelClassFrameTemplate.xml
-XML\ClassPanel\MIOG_ClassPanelSpecFrameTemplate.xml
-XML\ClassPanel\MIOG_ClassPanelMinimalFrameTemplate.xml
-XML\ClassPanel\MIOG_ClassPanelMinimalFrameWithInnerCircleTemplate.xml
 
 XML\ClassSpecPanel\MIOG_ClassSpecPanel.xml
 XML\ClassSpecPanel\MIOG_ClassSpecPanelClassTemplate.xml
