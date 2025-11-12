@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [4.0.0a] - 2025-11-12
+
+### Fixed
+
+- Multiple beta / midnight related issues have been resolved.
+
+
+
+
 ## [3.7.1] - 2025-10-27
 
 ### Added
@@ -35,6 +44,7 @@ and this project adheres to [Semantic Versioning].
 - Various fixes to improve "loading" times and general performance in groups.
 
 - An error trying to fetch the realm name while in a loading screen has been resolved.
+
 
 
 
@@ -4440,7 +4450,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2c..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/4.0.0a..HEAD
+[4.0.0a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/4.0.0a
 [3.6.2c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2c
 [3.6.2b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2b
 [3.6.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2a
