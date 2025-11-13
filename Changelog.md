@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.7.1] - 2025-10-27
+## [3.7.1] - 2025-11-14
 
 ### Added
 
@@ -17,12 +17,18 @@ and this project adheres to [Semantic Versioning].
 
 - The inspection algorithm now also works perfectly when no other party member has MIOG or Details installed.
 
+- [ClassPanel] The class panel at the top of the addon frame has been updated:
+    - A smooth progress bar has been added that shows when the next full group update is coming in (to reduce lag even further).
+    - Hovering over a class icon reveals the number of specs in your group.
+
+- [GroupManager] Standard sort algorithm is now by group index.
+
 ### Fixed
 
 - [GroupManager] Character frames in the raid view can now be moved around.
-    A very slight delay (usually 0.3s but up to 1.5s) with locked frames will occur until the swap is made on Blizzard's side.
-    Maybe I'll figure out a better solution.
-    If the locked frames for some reason don't unlock you can press the "Refresh" button to manually unlock them (hasn't happen to me during testing).
+    A very slight delay (usually 0.3s but up to 2s) with locked frames will occur until the swap is made on Blizzard's side.
+    If the locked frames for some reason don't unlock you can press the "Refresh" button to manually unlock them.
+    In version 3.8 a more sophisticated method of moving players around is getting implemented.
 
 - [GroupManager] Players now will be retried for inspection if they're under 5 retries.
 
@@ -31,6 +37,8 @@ and this project adheres to [Semantic Versioning].
 - [GroupManager] Player spec inspection has been rewritten and it's performance and reliability has been improved.
 
 - [GroupManager] An error has been resolved not updating the player count data when there is no change of the # of player characters in your group.
+
+- [Progress] The amount of completed great vault activities won't exceed the highest threshold anymore.
 
 - Various fixes to improve "loading" times and general performance in groups.
 
@@ -4440,7 +4448,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.6.2c..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.7.1..HEAD
+[3.7.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7.1
+[3.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7
 [3.6.2c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2c
 [3.6.2b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2b
 [3.6.2a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2a

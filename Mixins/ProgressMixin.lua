@@ -617,15 +617,15 @@ function ProgressOverviewMixin:OnLoad()
 			local dungeonProgress, dungeonThreshold = data.greatVault.activities[1][3].progress, data.greatVault.activities[1][3].threshold
 			local worldProgress, worldThreshold = data.greatVault.activities[6][3].progress, data.greatVault.activities[6][3].threshold
 
-			frame.Identifiers.GreatVaultRaids.Text:SetText(raidProgress .. "/" .. raidThreshold)
+			frame.Identifiers.GreatVaultRaids.Text:SetText((raidProgress > raidThreshold and raidThreshold or raidProgress) .. "/" .. raidThreshold)
 			frame.Identifiers.GreatVaultRaids.Text:SetTextColor(miog.createCustomColorForRating(4000 * raidProgress / raidThreshold):GetRGBA())
 			frame.Identifiers.GreatVaultRaids.Checkmark:SetShown(raidProgress >= raidThreshold)
 
-			frame.Identifiers.GreatVaultDungeons.Text:SetText(dungeonProgress .. "/" .. dungeonThreshold)
+			frame.Identifiers.GreatVaultDungeons.Text:SetText((dungeonProgress > dungeonThreshold and dungeonThreshold or dungeonProgress) .. "/" .. dungeonThreshold)
 			frame.Identifiers.GreatVaultDungeons.Text:SetTextColor(miog.createCustomColorForRating(4000 * dungeonProgress / dungeonThreshold):GetRGBA())
 			frame.Identifiers.GreatVaultDungeons.Checkmark:SetShown(dungeonProgress >= dungeonThreshold)
 
-			frame.Identifiers.GreatVaultWorld.Text:SetText(worldProgress .. "/" .. worldThreshold)
+			frame.Identifiers.GreatVaultWorld.Text:SetText((worldProgress > worldThreshold and worldThreshold or worldProgress) .. "/" .. worldThreshold)
 			frame.Identifiers.GreatVaultWorld.Text:SetTextColor(miog.createCustomColorForRating(4000 * worldProgress / worldThreshold):GetRGBA())
 			frame.Identifiers.GreatVaultWorld.Checkmark:SetShown(worldProgress >= worldThreshold)
 

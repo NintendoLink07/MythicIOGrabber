@@ -1,14 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ClassSpecPanelSpecTemplate" inherits="BackdropTemplate" virtual="true">
-        <Size x="26" y="26" />
+    <Frame name="MIOG_ClassSpecPanelSpecTemplate" inherits="BackdropTemplate" virtual="true" topLevel="true">
+        <Size x="22" y="22" />
 
         <KeyValues>
 			<KeyValue key="align" value="bottom" type="string"/>"
         </KeyValues>
 
         <Layers>
-            <Layer level="BACKGROUND">
+            <Layer level="ARTWORK" textureSubLevel="-1">
                 <Texture parentKey="Icon">
                     <Anchors>
                         <Anchor point="TOPLEFT"/>
@@ -17,7 +17,7 @@
                 </Texture>
             </Layer>
 
-            <Layer level="ARTWORK">
+            <Layer level="ARTWORK" textureSubLevel="1">
                 <Texture>
                     <Color r="0.3" g="0.3" b="0.3" a="0.4" />
                     <Anchors>
@@ -38,7 +38,6 @@
 
         <Scripts>
             <OnLoad>
-                local classColor = C_ClassColor.GetClassColor(self:GetParentKey())
                 local thickness = 2
 
                 self:SetBackdrop({
@@ -46,7 +45,6 @@
                     edgeSize=thickness}
                 )
                 self:SetBackdropColor(0, 0, 0, 0)
-                self:SetBackdropBorderColor(classColor:GetRGBA())
 
                 self.Icon:SetPoint("TOPLEFT", thickness, -thickness)
                 self.Icon:SetPoint("BOTTOMRIGHT", -thickness, thickness)

@@ -36,6 +36,44 @@
             </Layer>
         </Layers>
 
+        <Frames>
+            <Frame parentKey="Specializations" inherits="VerticalLayoutFrame" hidden="true">
+                <KeyValues>
+                    <KeyValue key="spacing" value="1" type="number"/>"
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOP" relativeKey="$parent" relativePoint="BOTTOM" y="-1"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Spec1" inherits="MIOG_ClassSpecPanelSpecTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Spec2" inherits="MIOG_ClassSpecPanelSpecTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Spec3" inherits="MIOG_ClassSpecPanelSpecTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Spec4" inherits="MIOG_ClassSpecPanelSpecTemplate" hidden="true">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+
         <Scripts>
             <OnLoad>
                 local classColor = C_ClassColor.GetClassColor(self:GetParentKey())
@@ -51,6 +89,10 @@
                 self.Icon:SetPoint("TOPLEFT", thickness, -thickness)
                 self.Icon:SetPoint("BOTTOMRIGHT", -thickness, thickness)
             </OnLoad>
+
+            <OnLeave>
+                self.Specializations:Hide()
+            </OnLeave>
         </Scripts>
     </Frame>
 </Ui>

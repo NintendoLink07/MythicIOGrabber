@@ -97,7 +97,7 @@
 						</Scripts>
 					</Button>
                     
-                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+                    <Button parentKey="CloseButton" inherits="UIPanelCloseButton" frameLevel="4">
                         <Size x="20" y="20" />
                         <Anchors>
                             <Anchor point="RIGHT" x="-3" />
@@ -147,7 +147,7 @@
                 </Layers>        
 
                 <Frames>
-                    <Frame parentKey="UISlider" mixin="SettingsAdvancedSliderMixin">
+                    <Frame parentKey="UISlider" mixin="SettingsAdvancedSliderMixin" frameStrata="MEDIUM">
                         <Size x="110" y="8" />
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.TitleString" relativePoint="RIGHT" x="5" />
@@ -189,7 +189,7 @@
                                     <Anchor point="BOTTOM" relativeKey="$parent.SliderWithSteppers" relativePoint="TOP"/>
                                 </Anchors>
                             </Frame>
-                             <EditBox parentKey="Scale" inherits="InputBoxTemplate" frameStrata="HIGH" autoFocus="false" letters="3">
+                             <EditBox parentKey="Scale" inherits="InputBoxTemplate" autoFocus="false" letters="3" frameStrata="MEDIUM">
                                 <Size x="32" y="8" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="27" />

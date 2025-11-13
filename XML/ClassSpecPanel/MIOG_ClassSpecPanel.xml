@@ -7,7 +7,7 @@
                 <Texture parentKey="TankIcon">
                     <Size x="16" y="16"/>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT"/>
+                        <Anchor point="BOTTOMLEFT" y="3"/>
                     </Anchors>
                 </Texture>
 
@@ -20,7 +20,7 @@
                 <Texture parentKey="HealerIcon">
                     <Size x="16" y="16"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.TankString" relativePoint="RIGHT" x="20"/>
+                        <Anchor point="LEFT" relativeKey="$parent.TankString" relativePoint="RIGHT" x="16"/>
                     </Anchors>
                 </Texture>
 
@@ -33,7 +33,7 @@
                 <Texture parentKey="DamagerIcon">
                     <Size x="16" y="16"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.HealerString" relativePoint="RIGHT" x="20"/>
+                        <Anchor point="LEFT" relativeKey="$parent.HealerString" relativePoint="RIGHT" x="16"/>
                     </Anchors>
                 </Texture>
 
@@ -46,7 +46,7 @@
                 <Texture parentKey="InspectionIcon" atlas="communities-icon-searchmagnifyingglass">
                     <Size x="14" y="14"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.DamagerString" relativePoint="RIGHT" x="20"/>
+                        <Anchor point="LEFT" relativeKey="$parent.DamagerString" relativePoint="RIGHT" x="15"/>
                     </Anchors>
                     <TexCoords left="1" right="0" top="0" bottom="1" />
                 </Texture>
@@ -156,6 +156,17 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent" x="-6"/>
                 </Anchors>
             </Frame>
+            
+			<StatusBar parentKey="ProgressBar" mixin="SmoothStatusBarMixin" hidden="true">
+                <BarTexture atlas="activities-bar-fill"/>
+                activities-bar-fill
+                _honorsystem-bar-fill
+                <Size y="4" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Classes" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+            </StatusBar>
         </Frames>
 
         <Layers>

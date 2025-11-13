@@ -1,5 +1,9 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
+local throttleSetting = miog.C.BLIZZARD_INSPECT_THROTTLE_SAVE
+local doubleThrottle = throttleSetting * 2
+local progressBarTick = throttleSetting / 5
+local INVERSE_DURATION = 1 / throttleSetting
 
 miog.groupManager = {}
 
@@ -19,14 +23,12 @@ local numOfGroupMembers = 99
 local inspectedMembers = 0
 local inspectableMembers = 0
 
-local groupMoreThanFivePlayers = false
-
 local savedPlayerSpecs = {}
 local savedKeystoneData = {}
 local savedGearData = {}
 local savedRaidData = {}
 local savedMythicPlusData = {}
-local classCount, roleCount
+local classCount, roleCount, specCount
 
 local inspectRoutine
 local orderedInspectionQueue = {}
@@ -41,38 +43,31 @@ local groupUpdateQueued
 local updateTimer
 local startScheduled = false
 
-local throttleSetting = miog.C.BLIZZARD_INSPECT_THROTTLE_ULTRA_SAVE
-local doubleThrottle = throttleSetting * 2
-
 local classSpecPanel
-
-local abortTimer
 
 local addedSinceLastRefresh = {}
 
-local function removeSpecID(fullName)
-    savedPlayerSpecs[fullName] = nil
+local abortTimer
+local abortTimerPlayerName
+local abortTimerUnitID
 
-    if(groupPlayerList[fullName]) then
-        groupPlayerList[fullName].specID = nil
+local inspectionLoopTimerUnitID
+local inspectionLoopTimerFullName
 
-    end
-end
-
-local function addPlayerToInspectionQueue(fullName, unitID)
-    if(not savedPlayerSpecs[fullName]) then
-        tinsert(orderedInspectionQueue, 1, {fullName = fullName, unitID = unitID})
-
-    end
-end
-
-local function needsToBeInspected(fullName)
-    return savedPlayerSpecs[fullName] == nil
+local function addPlayerToRetryList(fullName)
+    retryList[fullName] = retryList[fullName] and retryList[fullName] + 1 or 1
 
 end
 
 local function getCurrentlyInspectedPlayer()
     return inspectionPlayerData and inspectionPlayerData.name
+end
+
+local function tryToResumeCoroutine()
+    if(getCurrentlyInspectedPlayer() == nil) then
+        coroutine.resume(inspectRoutine)
+
+    end
 end
 
 local function deletePlayerFromFullInspection(fullName)
@@ -83,6 +78,18 @@ local function deletePlayerFromFullInspection(fullName)
         ClearInspectPlayer()
 
     end
+end
+
+local function addPlayerToInspectionQueue(fullName, unitID)
+    if(not savedPlayerSpecs[fullName]) then
+        tinsert(orderedInspectionQueue, {fullName = fullName, unitID = unitID})
+
+    end
+end
+
+local function needsToBeInspected(fullName)
+    return savedPlayerSpecs[fullName] == nil
+
 end
 
 local function updateMemberString()
@@ -116,10 +123,17 @@ local function canInspectPlayerInGroup(fullName)
 
 end
 
+local function resetSpecCount()
+    for spec in pairs(specCount) do
+        specCount[spec] = 0
+    end
+
+end
 
 local function countPlayerSpecs()
     inspectedMembers = 0
     inspectableMembers = 0
+    resetSpecCount()
 
     if(numOfGroupMembers > 0) then
         for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
@@ -131,6 +145,8 @@ local function countPlayerSpecs()
                 if(savedPlayerSpecs[fullName]) then
                     inspectedMembers = inspectedMembers + 1
                     inspectableMembers = inspectableMembers + 1
+
+                    specCount[savedPlayerSpecs[fullName]] = specCount[savedPlayerSpecs[fullName]] + 1
 
                 elseif(canInspectPlayerInGroup(fullName)) then
                     inspectableMembers = inspectableMembers + 1
@@ -145,19 +161,23 @@ local function countPlayerSpecs()
     end
 
     updateMemberString()
-
 end
 
-local function tryToResumeCoroutine()
-    if(getCurrentlyInspectedPlayer() == nil) then
-        coroutine.resume(inspectRoutine)
+local function abortTimerCallback()
+    if(abortTimerPlayerName) then
+        addPlayerToRetryList(abortTimerPlayerName)
+        deletePlayerFromFullInspection(abortTimerPlayerName)
 
+        if(retryList[abortTimerPlayerName] and retryList[abortTimerPlayerName] < 5) then
+            if(groupPlayerList[abortTimerPlayerName]) then
+                addPlayerToInspectionQueue(abortTimerPlayerName, abortTimerUnitID)
+            end
+        else
+            countPlayerSpecs()
+                               
+        end
+        tryToResumeCoroutine()
     end
-end
-
-local function addPlayerToRetryList(fullName)
-    retryList[fullName] = retryList[fullName] and retryList[fullName] + 1 or 1
-
 end
 
 local function stopAbortTimer()
@@ -171,24 +191,10 @@ end
 local function startAbortTimer(playerToBeAborted, unitID)
     stopAbortTimer()
 
-    abortTimer = C_Timer.NewTimer(doubleThrottle, function()
-        if(playerToBeAborted) then
-            addPlayerToRetryList(playerToBeAborted)
-            deletePlayerFromFullInspection(playerToBeAborted)
-
-            if(retryList[playerToBeAborted] and retryList[playerToBeAborted] < 5) then
-                if(groupPlayerList[playerToBeAborted]) then
-                    addPlayerToInspectionQueue(playerToBeAborted, unitID)
-
-                end
-            else
-                countPlayerSpecs()
-
-            end
-
-            tryToResumeCoroutine()
-        end
-    end)
+    abortTimerPlayerName = playerToBeAborted
+    abortTimerUnitID = unitID
+    
+    abortTimer = C_Timer.NewTimer(doubleThrottle, abortTimerCallback)
 end
 
 local function startInspection(unitID, fullName)
@@ -214,6 +220,37 @@ local function startInspection(unitID, fullName)
     end
 end
 
+local function inspectionLoopCallback()
+    if(inspectionLoopTimerUnitID and inspectionLoopTimerFullName) then
+        startInspection(inspectionLoopTimerUnitID, inspectionLoopTimerFullName)
+        startScheduled = false
+    end
+end
+
+local progressBarEndTime = 0
+local function progressBarUpdate(self)
+    local currentTime = GetTime()
+    local timeRemaining = progressBarEndTime - currentTime
+    
+    if (timeRemaining <= -progressBarTick) then
+        groupManager.Settings.NextRefreshString:SetText("")
+        classSpecPanel.ProgressBar:Hide()
+        self:Cancel()
+    else
+        local ratioComplete = 1 - (timeRemaining * INVERSE_DURATION)
+        classSpecPanel.ProgressBar:SetSmoothedValue(ratioComplete)
+    end
+end
+
+local function removeSpecID(fullName)
+    savedPlayerSpecs[fullName] = nil
+
+    if(groupPlayerList[fullName]) then
+        groupPlayerList[fullName].specID = nil
+
+    end
+end
+
 local function inspectionLoop()
     while true do
         if #orderedInspectionQueue > 0 then
@@ -230,11 +267,10 @@ local function inspectionLoop()
                         if(nextStart > 0) then
                             startScheduled = true
 
-                            C_Timer.After(nextStart, function()
-                                startInspection(unitID, fullName)
-                                startScheduled = false
-
-                            end)
+                            inspectionLoopTimerUnitID = unitID
+                            inspectionLoopTimerFullName = fullName
+                            
+                            C_Timer.After(nextStart, inspectionLoopCallback)
                             
                         else
                             startInspection(unitID, fullName)
@@ -260,18 +296,13 @@ local function inspectionLoop()
 end
 
 local function orderedAnalyze()
-    local status = inspectRoutine and coroutine.status(inspectRoutine) -- Use localized status
+    local status = inspectRoutine and coroutine.status(inspectRoutine)
 
     if(status == nil or status == "dead") then
         inspectRoutine = coroutine.create(inspectionLoop)
         tryToResumeCoroutine()
 
     end
-end
-
-local function updateElementExtent()
-    groupManager.view:SetElementExtent(groupManager.ListView.ScrollBox:GetHeight() / (groupMoreThanFivePlayers and 12 or 6))
-
 end
 
 local function findFrames(fullName)
@@ -359,8 +390,7 @@ local function checkNumberOfGroupMembers()
     if(numOfGroupMembers ~= GetNumGroupMembers()) then
         numOfGroupMembers = GetNumGroupMembers()
 
-        groupMoreThanFivePlayers = numOfGroupMembers > 5
-        updateElementExtent()
+        groupManager.view:SetElementExtent(numOfGroupMembers > 5 and 30 or 60)
         hasChanged = true
 
     end
@@ -392,7 +422,6 @@ local function updateClassPanel()
             currentClassFrame.FontString:SetText(numOfClasses)
 
             classFrameIndex = classFrameIndex + 1
-            
         else
             currentClassFrame:SetSize(18, 18)
             currentClassFrame.layoutIndex = classFrameIndex + 20
@@ -401,14 +430,14 @@ local function updateClassPanel()
             currentClassFrame:SetBackdropBorderColor(r, g, b, 0.4)
             currentClassFrame.FontString:SetText("")
 
+            currentClassFrame.Specializations:Hide()
         end
     end
 
     classSpecPanel.Classes:MarkDirty()
-
 end
 
-local function resetClassAndRoleCount()
+local function resetClassRoleSpecCount()
     for class in pairs(classCount) do
         classCount[class] = 0
     end
@@ -416,12 +445,14 @@ local function resetClassAndRoleCount()
     for role in pairs(roleCount) do
         roleCount[role] = 0
     end
+
+    resetSpecCount()
 end
 
 local function countPlayerClassRoleSpec()
     inspectedMembers = 0
     inspectableMembers = 0
-    resetClassAndRoleCount()
+    resetClassRoleSpecCount()
 
     if(numOfGroupMembers > 0) then
         for groupIndex = 1, MAX_RAID_MEMBERS, 1 do
@@ -433,6 +464,8 @@ local function countPlayerClassRoleSpec()
                 if(savedPlayerSpecs[fullName]) then
                     inspectedMembers = inspectedMembers + 1
                     inspectableMembers = inspectableMembers + 1
+
+                    specCount[savedPlayerSpecs[fullName]] = specCount[savedPlayerSpecs[fullName]] + 1
 
                 elseif(canInspectPlayerInGroup(fullName)) then
                     inspectableMembers = inspectableMembers + 1
@@ -479,7 +512,7 @@ local function refreshGroupCycle()
     checkNumberOfGroupMembers()
 end
 
-local function createClassAndRoleCount()
+local function createClassRoleSpecCount()
     classCount = {
         ["WARRIOR"] = 0,
         ["PALADIN"] = 0,
@@ -503,6 +536,59 @@ local function createClassAndRoleCount()
         ["NONE"] = 0,
     }
 
+    specCount = {
+        [62] = 0,
+        [63] = 0,
+        [64] = 0,
+        
+        [65] = 0,
+        [66] = 0,
+        [70] = 0,
+        
+        [71] = 0,
+        [72] = 0,
+        [73] = 0,
+        
+        [102] = 0,
+        [103] = 0,
+        [104] = 0,
+        [105] = 0,
+
+        [250] = 0,
+        [251] = 0,
+        [252] = 0,
+
+        [253] = 0,
+        [254] = 0,
+        [255] = 0,
+
+        [256] = 0,
+        [257] = 0,
+        [258] = 0,
+
+        [259] = 0,
+        [260] = 0,
+        [261] = 0,
+
+        [262] = 0,
+        [263] = 0,
+        [264] = 0,
+
+        [265] = 0,
+        [266] = 0,
+        [267] = 0,
+
+        [268] = 0,
+        [269] = 0,
+        [270] = 0,
+
+        [577] = 0,
+        [581] = 0,
+
+        [1467] = 0,
+        [1468] = 0,
+        [1473] = 0,
+    }
 end
 
 local function resetOnGroupChange()
@@ -632,7 +718,6 @@ local function refreshRaidData(fullName, playerName, realm)
             playerData.progressWeight = savedRaidData[fullName].progressWeight
             
         elseif(raiderIORaidData) then
-            -- 1. Initialize a new table to store string fragments
             local progressTable = {}
 
             local raidTable = {}
@@ -646,12 +731,10 @@ local function refreshRaidData(fullName, playerName, realm)
                 end
             end
 
-            -- 2. Loop and store fragments in the table
             for k, v in pairs(raidTable) do
                 tinsert(progressTable, table.concat(v))
             end
 
-            -- 3. Concatenate the table into a single string *once*
             playerData.progress = table.concat(progressTable, "\r\n") 
             
             playerData.progressWeight = raiderIORaidData.character.progressWeight or 0
@@ -802,6 +885,8 @@ local function refreshPlayerCharacterData()
 
     end
 
+    specCount[playerSpec] = specCount[playerSpec] + 1
+
     inspectedMembers = inspectedMembers + 1
     inspectableMembers = inspectableMembers + 1
 
@@ -816,7 +901,7 @@ local function updateNecessaryPlayers()
         countPlayerClassRoleSpec()
 
     else
-        resetClassAndRoleCount()
+        resetClassRoleSpecCount()
         refreshPlayerCharacterData()
         
     end
@@ -855,21 +940,14 @@ local function queueGroupUpdate(instant, origin)
             startUpdate()
 
         else
-            updateTimer = C_Timer.NewTimer(throttleSetting, startUpdate)
+            updateTimer = C_Timer.NewTimer(throttleSetting + progressBarTick, startUpdate)
 
-            local time = GetTime() + throttleSetting
+            progressBarEndTime = GetTime() + throttleSetting
 
-            C_Timer.NewTicker(0.5, function(self)
-                if(GetTime() > time) then
-                    groupManager.Settings.NextRefreshString:SetText("")
-                    self:Cancel()
+            classSpecPanel.ProgressBar:ResetSmoothedValue(0)
+            classSpecPanel.ProgressBar:Show()
 
-                else
-                    groupManager.Settings.NextRefreshString:SetText("Next refresh in " .. formatter:Format(time - GetTime()))
-
-                end
-
-            end)
+            C_Timer.NewTicker(progressBarTick, progressBarUpdate)
         end
     end
 end
@@ -878,6 +956,7 @@ local function saveSpecID(playerName, specID)
     savedPlayerSpecs[playerName] = specID
     groupPlayerList[playerName].specID = specID
 
+    countPlayerSpecs()
 end
 
 --[[
@@ -907,9 +986,7 @@ miog.OnUnitUpdate = function(singleUnitId, singleUnitInfo, allUnitsInfo)
 		if(groupPlayerList[playerName]) then
 			if(specID and specID > 0 and (not savedPlayerSpecs[playerName] or savedPlayerSpecs[playerName] ~= specID)) then
                 saveSpecID(playerName, specID)
-
                 updateSpecificFrameData(playerName, "specID", specID)
-                countPlayerSpecs()
                 tryToResumeCoroutine()
 			end
 		end
@@ -934,7 +1011,7 @@ miog.OnKeystoneUpdate = function(unitName, keystoneInfo, allKeystoneInfo)
 		    savedKeystoneData[fullName] = keystoneInfo
             refreshKeystoneData(fullName)
 
-            updateSpecificFrameData(fullName, "keylevel", savedKeystoneData[fullName])
+            updateSpecificFrameData(fullName, "keylevel", keystoneInfo)
 
         end
 
@@ -1114,7 +1191,6 @@ local function groupManagerEvents(_, event, ...)
                         end
 
                         deletePlayerFromFullInspection(fullName)
-                        countPlayerSpecs()
                         tryToResumeCoroutine()
 
                     end
@@ -1280,8 +1356,8 @@ end
 
 local function loadClassSpecPanel()
     classSpecPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.F.LITE_MODE and PVEFrame or miog.pveFrame2, "MIOG_ClassSpecPanel")
-    classSpecPanel:SetPoint("BOTTOMRIGHT", classSpecPanel:GetParent(), "TOPRIGHT", 0, 1)
-    classSpecPanel:SetPoint("BOTTOMLEFT", classSpecPanel:GetParent(), "TOPLEFT", 0, 1)
+    classSpecPanel:SetPoint("BOTTOMRIGHT", classSpecPanel:GetParent(), "TOPRIGHT")
+    classSpecPanel:SetPoint("BOTTOMLEFT", classSpecPanel:GetParent(), "TOPLEFT")
 
     classSpecPanel.TankIcon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/tankIcon.png")
     classSpecPanel.HealerIcon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png")
@@ -1293,6 +1369,35 @@ local function loadClassSpecPanel()
         if(currentClassFrame) then
             currentClassFrame.Icon:SetTexture(classEntry.icon)
         end
+                
+        local classColor = C_ClassColor.GetClassColor(classEntry.name)
+
+        for specIndex in ipairs(classEntry.specs) do
+            local specFrame = currentClassFrame.Specializations["Spec" .. specIndex]
+            specFrame:SetBackdropBorderColor(classColor:GetRGBA())
+
+        end
+        
+        currentClassFrame:SetScript("OnEnter", function(self)
+            local specGroup = self.Specializations
+
+            for specIndex, specID in ipairs(classEntry.specs) do
+                local specFrame = specGroup["Spec" .. specIndex]
+
+                if(specCount[specID] > 0) then
+                    specFrame:Show()
+                    specFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID].squaredIcon)
+                    specFrame.FontString:SetText(specCount[specID])
+
+                else
+                    specFrame:Hide()
+
+                end
+            end
+
+            specGroup:MarkDirty()
+            specGroup:Show()
+        end)
     end
 
     classSpecPanel.InspectionString:SetScript("OnEnter", function(self)
@@ -1329,8 +1434,10 @@ local function loadClassSpecPanel()
 
         GameTooltip:Show()
     end)
+            
+    classSpecPanel.ProgressBar:SetMinMaxSmoothedValue(0, 1)
     
-    createClassAndRoleCount()
+    createClassRoleSpecCount()
 end
 
 miog.loadGroupOrganizer = function()
