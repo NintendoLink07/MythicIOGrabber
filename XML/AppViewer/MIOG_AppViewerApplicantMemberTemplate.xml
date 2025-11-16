@@ -1,0 +1,149 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_AppViewerApplicantMemberTemplate" mixin="ApplicantMemberMixin" virtual="true">
+        <Size y="24" />
+
+        <Frames>
+            <Frame parentKey="StatusFrame" setAllPoints="true" framestrata="FULLSCREEN" hidden="true">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.85" />
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="CENTER"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Button parentKey="Decline" inherits="UIButtonTemplate" hidden="true">
+                <Size x="16" y="16" />
+
+                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" />!-->
+                <NormalTexture atlas="UI-LFG-DeclineMark" />
+
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+			            C_LFGList.DeclineApplicant(self.applicantID)
+
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="Invite" inherits="UIButtonTemplate" hidden="true">
+                <Size x="16" y="16" />
+
+                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" />!-->
+                <NormalTexture atlas="UI-LFG-ReadyMark" />
+                
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.Decline" relativePoint="LEFT"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+			            C_LFGList.InviteApplicant(self.applicantID)
+
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+        </Frames>
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture setAllPoints="true">
+                    <Color r="0.1" g="0.1" b="0.1" a="0.3" />
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <Texture parentKey="Expand" atlas="campaign_headericon_closed">
+                    <Anchors>
+                        <Anchor point="LEFT" x="1"/>
+                    </Anchors>
+                    <Size  x="18" y="18" />
+                </Texture>
+
+                <Texture parentKey="Role">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                    <Size  x="18" y="18" />
+                </Texture>
+
+                <Texture parentKey="Class">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                    <Size  x="16" y="16" />
+                </Texture> 
+
+                <Texture parentKey="Spec">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Class" relativePoint="RIGHT" x="3"/>
+                    </Anchors>
+                    <Size  x="16" y="16" />
+                </Texture> 
+
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="106" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="4"/>
+                    </Anchors>
+                </FontString>
+            
+                <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
+                    <Size x="10" y="10" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" y="4"/>
+                    </Anchors>
+                </Texture>
+
+                <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER">
+                    <Size x="36" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="6"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Secondary" font="GameFontHighlight" justifyH="CENTER">
+                    <Size x="36" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="6"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER">
+                    <Size x="40" y="20" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="6"/>
+                    </Anchors>
+                </FontString>
+
+                <Texture parentKey="Race">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="4"/>
+                    </Anchors>
+                    <Size x="16" y="16" />
+                </Texture> 
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnEnter method="OnEnter" />
+            <OnLoad method="OnLoad" />
+            <OnMouseDown method="OnMouseDown" />
+        </Scripts>
+    </Frame>
+</Ui>

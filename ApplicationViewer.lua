@@ -98,7 +98,6 @@ local function updateApplicantMemberFrame(frame, data)
 	local name, class, localizedClass, level, itemLevel, honorLevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, factionGroup, raceID, specID, isLeaver
 	local dungeonData, pvpData, rioProfile
 
-
 	if(miog.F.IS_IN_DEBUG_MODE) then
 		name, class, _, _, itemLevel, _, tank, healer, damager, assignedRole, relationship, dungeonScore, _, _, raceID, specID, isLeaver, dungeonData, pvpData = miog.debug_GetApplicantMemberInfo(applicantID, applicantIndex)
 
@@ -143,6 +142,8 @@ local function updateApplicantMemberFrame(frame, data)
 	end
 
 	tinsert(nameTable, playerName)
+
+	nameFontString:SetText(table.concat(nameTable))
 
 	local nameFontString = applicantMemberFrame.Name
 
@@ -469,6 +470,17 @@ local function createFullEntries(iterations)
 
 			if(rioProfile and rioProfile.mythicKeystoneProfile) then
 				highestKey = rioProfile.mythicKeystoneProfile.maxDungeonLevel
+
+				local tier
+
+				for _,v in ipairs(miog.DEBUG_TIER_TABLE) do
+					if(rating >= v[1]) then
+						tier = v[2]
+					end
+				end
+
+				dungeonData = {finishedSuccess = true, bestRunLevel = highestKey or 0, mapName = "Big Dick Land"}
+				pvpData = {bracket = "", rating = rating, activityName = "XD", tier = miog.debugGetTestTier(rating)}
 			end
 
 			local randomRace = random(1, 5)
@@ -569,7 +581,7 @@ local function applicationViewerEvents(_, event, ...)
 				frame.Decline:SetShown(canInvite)
 
 			end
-		end		
+		end
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then --ALL THE APPLICANTS
 		local newEntry, withData = ...
 

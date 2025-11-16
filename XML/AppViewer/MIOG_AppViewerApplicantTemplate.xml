@@ -1,0 +1,78 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_AppViewerApplicantTemplate" mixin="ApplicantMixin" virtual="true">
+        <Size y="24" />
+
+        <Frames>
+            <Frame parentKey="StatusFrame" setAllPoints="true" framestrata="FULLSCREEN" hidden="true">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.85" />
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="CENTER"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+             <Button parentKey="Decline" inherits="UIButtonTemplate">
+                <Size x="16" y="16" />
+
+                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" />!-->
+                <NormalTexture atlas="UI-LFG-DeclineMark" />
+
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+			            C_LFGList.DeclineApplicant(self.applicantID)
+
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="Invite" inherits="UIButtonTemplate">
+                <Size x="16" y="16" />
+
+                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" />!-->
+                <NormalTexture atlas="UI-LFG-ReadyMark" />
+                
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.Decline" relativePoint="LEFT"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+			            C_LFGList.InviteApplicant(self.applicantID)
+
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture setAllPoints="true">
+                    <Color r="0.1" g="0.1" b="0.1" a="0.3" />
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Players" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                    <Anchors>
+                        <Anchor point="LEFT" x="1"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

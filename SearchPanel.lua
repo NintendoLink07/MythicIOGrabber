@@ -324,7 +324,7 @@ local function getSortCriteriaForSearchResult(resultID)
 
 			local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
 
-			local raidData
+			local playerDifficultyData
 			
 			if(appStatus == "applied" or status ~= false) then
 				local primarySortAttribute, secondarySortAttribute
@@ -351,11 +351,12 @@ local function getSortCriteriaForSearchResult(resultID)
 
 				elseif(isRaid) then
 					if(searchResultInfo.leaderName) then
-						raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
+							primarySortAttribute = playerDifficultyData[1] and playerDifficultyData[1].weight or 0
+							secondarySortAttribute = playerDifficultyData[2] and playerDifficultyData[2].weight or 0
 
-						if(raidData) then
-							primarySortAttribute = raidData.character.ordered[1].weight or 0
-							secondarySortAttribute = raidData.character.ordered[2].weight or 0
+						if(playerDifficultyData) then
+							primarySortAttribute = playerDifficultyData[1].weight or 0
+							secondarySortAttribute = playerDifficultyData[2].weight or 0
 
 						else
 							primarySortAttribute = 0
@@ -433,7 +434,7 @@ local function createDataProviderWithUnsortedData()
 
 				local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
 
-				local raidData
+				local playerDifficultyData
 				
 				if(appStatus == "applied" or status ~= false) then
 					local primarySortAttribute, secondarySortAttribute
@@ -460,17 +461,8 @@ local function createDataProviderWithUnsortedData()
 
 					elseif(isRaid) then
 						if(searchResultInfo.leaderName) then
-							raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
-
-							if(raidData) then
-								primarySortAttribute = raidData.character.ordered[1].weight or 0
-								secondarySortAttribute = raidData.character.ordered[2].weight or 0
-
-							else
-								primarySortAttribute = 0
-								secondarySortAttribute = 0
-
-							end
+							playerDifficultyData = miog.getRaidProgress(nameTable[1], nameTable[2])
+							primarySortAttribute, secondarySortAttribute = miog.getWeightFromRaidProgress(playerDifficultyData)
 
 						else
 							primarySortAttribute = 0
@@ -503,9 +495,9 @@ local function createDataProviderWithUnsortedData()
 							primary = primarySortAttribute,
 							appStatus = appStatus,
 							secondary = secondarySortAttribute,
+							raidData = playerDifficultyData,
 							index = resultID,
 							resultID = resultID,
-							raidData = raidData,
 							age = searchResultInfo.age,
 						}
 					)
@@ -628,16 +620,16 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 
 			if(isRaid) then
 				if(data.raidData) then
-					local orderedData1 = data.raidData.character.ordered[1]
-					local orderedData2 = data.raidData.character.ordered[2]
+					local orderedData1 = data.raidData[1]
+					local orderedData2 = data.raidData[2]
 
 					if(orderedData1) then
-						primaryIndicator:SetText(wticc(orderedData1.parsedString, orderedData1.current and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated))
+						primaryIndicator:SetText(wticc(miog.getParsedProgressString(orderedData1.kills, orderedData1.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated))
 
 					end
 
 					if(orderedData2) then
-						secondaryIndicator:SetText(wticc(orderedData2.parsedString, orderedData2.current and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
+						secondaryIndicator:SetText(wticc(miog.getParsedProgressString(orderedData2.kills, orderedData2.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
 
 					end
 				end

@@ -143,7 +143,7 @@ miog.createFrames = function()
 
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
 		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
-		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.pveFrame2.Currency, "TOPRIGHT", -2, 5)
+		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.pveFrame2.Currency, "TOPRIGHT", -20, 5)
 		miog.Plugin:SetFrameStrata("HIGH")
 
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -168,6 +168,7 @@ miog.createFrames = function()
 
 	miog.MainFrame = miog.F.LITE_MODE and miog.Plugin or miog.pveFrame2
 
+	
 	miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
 	miog.EntryCreation = miog.createEntryCreation()
@@ -180,8 +181,12 @@ miog.createFrames = function()
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
 		--miog.loadCalendarSystem()
+		local s1 = GetTimePreciseSec()
 		miog.loadTeleports()
+		local e1 = GetTimePreciseSec()
+		local s2 = GetTimePreciseSec()
 		miog.loadGearingTable()
+		local e2 = GetTimePreciseSec()
 		--miog.loadGroupManager()
 		miog.loadGroupOrganizer()
 		miog.loadRaidPlanner()
@@ -191,7 +196,9 @@ miog.createFrames = function()
 		miog.UpgradeFinder = miog.loadUpgradeFinder()
 
 		--miog.loot.init()
+		print(e1-s1, e2-s2)
 	end
+
 
 	miog.changeTheme()
 

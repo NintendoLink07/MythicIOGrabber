@@ -1,0 +1,88 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_AppViewer" mixin="AppViewer" virtual="true">
+        <Frames>
+            <Frame parentKey="SortButtons" mixin="SimplifiedSortingMixin">
+                <Size y="24" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Button parentKey="Index" name="applicantID" parentArray="sortButtons" inherits="MIOG_MinimalCheckButtonWithTextTemplate" mixin="SimplifiedSortingButtonMixin" text="Index">
+                        <Size x="80" y="22" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" x="2"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad method="OnLoad" />
+                        </Scripts>
+                    </Button>
+                    
+                    <Button parentKey="ItemLevel" name="itemLevel" parentArray="sortButtons" inherits="MIOG_MinimalCheckButtonWithTextTemplate" mixin="SimplifiedSortingButtonMixin" text="I-Lvl">
+                        <Size x="80" y="22" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Index" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad method="OnLoad" />
+                        </Scripts>
+                    </Button>
+                </Frames>
+
+                <Scripts>
+                    <OnLoad method="OnLoad" />
+                </Scripts>
+            </Frame>
+
+            <Frame parentKey="ActivityBar" inherits="InsetFrameTemplate3">
+                <Size y="96" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" />
+                    <Anchor point="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.BorderTopLeft" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Title" font="GameFontHighlightMedium" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-4"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Description" font="GameFontHighlightSmall" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" y="-4"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtons" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ActivityBar" relativePoint="TOPRIGHT"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+        
+
+        <Scripts>
+            <OnLoad method="OnLoad" />
+            <OnShow method="OnShow" />
+        </Scripts>
+    </Frame>
+</Ui>

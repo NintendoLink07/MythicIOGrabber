@@ -24,6 +24,10 @@ PVEFrame2.lua
 ActivityChecker.lua
 QueueManagement.lua
 
+ModuleMixins\AppViewer\AppViewer.lua
+ModuleMixins\AppViewer\ApplicantMemberMixin.lua
+ModuleMixins\AppViewer\ApplicantMixin.lua
+
 ApplicationViewer.lua
 SearchPanel.lua
 EntryCreation.lua
@@ -81,11 +85,21 @@ Mixins\GroupOrganizerCellMixin.lua
 Mixins\RaidViewMixin.lua
 Mixins\ColorChangerMixin.lua
 
+Mixins\TreeListViewMultiSpacingMixin.lua
+Mixins\SimplifiedSortingMixin.lua
+Mixins\SimplifiedSortingButtonMixin.lua
+
 
 
 ##
 ### XML
 ##
+
+XML\AppViewer\MIOG_AppViewer.xml
+XML\AppViewer\MIOG_AppViewerApplicantMemberTemplate.xml
+XML\AppViewer\MIOG_AppViewerApplicantTemplate.xml
+XML\Misc\MIOG_SimplifiedTextCellTemplate.xml
+XML\Misc\MIOG_SimplifiedHeaderTemplate.xml
 
 XML\TableBuilderElements\MIOG_TableBuilderColorCellTemplate.xml
 XML\Misc\MIOG_UnitTemplate.xml

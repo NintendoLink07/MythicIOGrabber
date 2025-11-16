@@ -1,15 +1,10 @@
 local addonName, miog = ...
+local dataProvider = CreateDataProvider()
 
 local function retrieveAbbreviatedName(flyoutSpellID)
-	local mapID = miog.TELEPORT_SPELLS_TO_MAP[flyoutSpellID]
-	local abbreviatedName
+	local abbreviatedName = miog.TELEPORT_SPELLS_TO_MAP_DATA[flyoutSpellID] and miog.TELEPORT_SPELLS_TO_MAP_DATA[flyoutSpellID].abbreviatedName
 
-	if(mapID) then
-		miog.MAP_INFO[mapID].teleport = flyoutSpellID
-		local mapInfo = miog.MAP_INFO[mapID]
-		abbreviatedName = mapInfo.abbreviatedName
-
-	else
+	if(not abbreviatedName) then
 		abbreviatedName = ""
 
 	end
@@ -35,8 +30,8 @@ end
 local function refreshTeleports()
     local teleports = miog.Teleports
     teleports.tableBuilder:Reset()
-
-    local dataProvider = CreateDataProvider()
+	teleports.ScrollBox:Flush()
+	
 	local columns = {}
 	local dataTable = {}
 
@@ -51,7 +46,6 @@ local function refreshTeleports()
 		if(not existingDataTable) then
 			dataTable[tableIndex] = {}
 
-			
 			tinsert(dataTable[tableIndex], {type = "icon", icon = miog.EXPANSIONS[info.expansion].icon})
 
 			existingDataTable = dataTable[tableIndex]
@@ -96,7 +90,6 @@ local function refreshTeleports()
 			tinsert(existingDataTable, v)
 
 		end
-
     end
 
 	for _, v in ipairs(dataTable) do
@@ -105,7 +98,6 @@ local function refreshTeleports()
 	end
 
     teleports.tableBuilder:Arrange()
-    teleports.ScrollBox:SetDataProvider(dataProvider)
 end
 
 miog.loadTeleports = function()
@@ -142,4 +134,7 @@ miog.loadTeleports = function()
     teleports.tableBuilder = tableBuilder
 
     refreshTeleports()
+
+    teleports.ScrollBox:SetDataProvider(dataProvider)
+
 end

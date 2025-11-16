@@ -110,6 +110,307 @@ miog.resetNewRaiderIOInfoPanel = function(panel)
 	end
 end
 
+miog.transformRaidData = function(originalData)
+	local RAID_DEFINITIONS = {}
+	local PLAYER_PROGRESS_BY_RAID = {}
+	local MAIN_DATA = {
+		progress = {},
+		hasRenderableData = originalData.hasRenderableData or false
+	}
+	
+	local InputValue = originalData
+
+	-- 1. Process raidProgress to fill RAID_DEFINITIONS and PLAYER_PROGRESS_BY_RAID
+	for _, raidInstance in pairs(InputValue.raidProgress) do
+		local raidDef = raidInstance.raid
+		local shortName = raidDef.shortName or raidDef.dungeon.shortName
+		
+		-- A. Fill RAID_DEFINITIONS (Static Data)
+		if not RAID_DEFINITIONS[shortName] then
+			RAID_DEFINITIONS[shortName] = {
+				name = raidDef.name,
+				shortName = shortName,
+				id = raidDef.id,
+				mapId = raidDef.mapId,
+				bossCount = raidDef.bossCount,
+				lfd_activity_ids = raidDef.dungeon.lfd_activity_ids,
+			}
+		end
+		
+		-- B. Fill PLAYER_PROGRESS_BY_RAID (Dynamic Progress)
+		PLAYER_PROGRESS_BY_RAID[shortName] = PLAYER_PROGRESS_BY_RAID[shortName] or {}
+		
+		for _, progressEntry in pairs(raidInstance.progress) do
+			local difficulty = progressEntry.difficulty
+			
+			-- Extract boss kills from the inner 'progress' array
+			local boss_kills = {}
+			for i = 1, #progressEntry.progress do
+				-- Use the 'count' which represents total kills for that boss/index
+				boss_kills[i] = progressEntry.progress[i].count 
+			end
+
+			PLAYER_PROGRESS_BY_RAID[shortName][difficulty] = {
+				cleared = progressEntry.cleared,
+				current = raidInstance.current,
+				kills = progressEntry.kills,
+				boss_kills = boss_kills,
+			}
+		end
+	end
+
+	-- 2. Process 'progress' to fill MAIN_DATA.progress (Summary Data)
+	for _, summaryEntry in pairs(InputValue.progress) do
+		-- Retrieve the shortName from the full 'raid' table reference
+		-- We assume the 'raid' field here still contains the full nested raid info 
+		local raidShortName = summaryEntry.raid.shortName
+		
+		table.insert(MAIN_DATA.progress, {
+			raidKey = raidShortName,
+			difficulty = summaryEntry.difficulty,
+			progressCount = summaryEntry.progressCount,
+			-- Add tier/obsolete status if needed, potentially from a lookup
+		})
+	end
+
+	-- Optional: You could also process 'sortedProgress' and 'previousProgress' here 
+	-- and store simplified versions if they contain unique, necessary data.
+	
+	return RAID_DEFINITIONS, PLAYER_PROGRESS_BY_RAID, MAIN_DATA
+end
+
+
+local function calculateWeightedScore(difficulty, kills, bossCount, isCurrentSeason)
+	if kills == 0 then return 0 end
+
+	local seasonFactor = isCurrentSeason and 100 or 1 -- Increase impact of current season
+	return ((difficulty * 5) * 30 + (kills / bossCount * 20)) * seasonFactor
+end
+
+miog.getParsedProgressString = function(kills, bossCount)
+	return kills .. "/" .. bossCount
+end
+
+miog.calculateWeightedScore = calculateWeightedScore
+
+miog.getRaidProgress = function(playerName, realm, region)
+    local profile = miog.getRaiderIOProfile(playerName, realm, region)
+    if not (profile and profile.raidProfile) then return end
+
+    local WeightedDifficulties = {}
+    local InputValue = profile.raidProfile
+    
+    -- 1. Go through the array of raids (InputValue.raidProgress)
+    for _, raidInstance in pairs(InputValue.raidProgress) do
+		if(not raidInstance.isMainProgress) then
+			local raidName = raidInstance.raid.name
+			local raidShortName = raidInstance.raid.shortName
+			local bossCount = raidInstance.raid.bossCount
+			
+			-- 2. Go through each difficulty (raidInstance.progress)
+			-- This table is numerically indexed ([1], [2], etc.) for each difficulty level
+			for _, progressEntry in pairs(raidInstance.progress) do
+				local difficulty = progressEntry.difficulty
+				local tier = progressEntry.tier
+				local kills = progressEntry.kills -- Total boss kills for this difficulty
+				
+				-- Filter out entries that might be empty or incomplete if necessary
+				-- (Based on your request, we only filter out if the tier or kills data is missing)
+				if tier ~= nil and kills ~= nil then
+					
+					-- 3. Get the sorting weight of each difficulty
+					local weight = calculateWeightedScore(difficulty, kills, bossCount, raidInstance.current)
+					
+					-- Store the results in a list
+					table.insert(WeightedDifficulties, {
+						raidName = raidName,
+						shortName = raidShortName,
+						difficulty = difficulty,
+						tier = tier,
+						kills = kills,
+						bossCount = bossCount,
+						weight = weight,
+						isCurrent = raidInstance.current,
+					})
+				end
+			end
+		end
+    end
+    
+    -- Optional: Sort the final list by weight from highest to lowest
+    table.sort(WeightedDifficulties, function(a, b)
+        return a.weight > b.weight
+    end)
+    
+    return WeightedDifficulties
+end
+
+miog.getAliasesFromRaidProgress = function(playerDifficultyData)
+	local primary2
+	local secondary2
+
+	if(playerDifficultyData) then
+		if(playerDifficultyData[1]) then
+			primary2 = miog.getParsedProgressString(playerDifficultyData[1].kills, playerDifficultyData[1].bossCount)
+
+		else
+			primary2 = "0/0"
+
+		end
+		
+		if(playerDifficultyData[2]) then
+			secondary2 = miog.getParsedProgressString(playerDifficultyData[2].kills, playerDifficultyData[2].bossCount)
+
+		else
+			secondary2 = "0/0"
+
+		end
+	else
+		primary2 = "0/0"
+		secondary2 = "0/0"
+
+	end
+
+	return primary2, secondary2
+end
+
+miog.getWeightFromRaidProgress = function(playerDifficultyData)
+	local primary
+	local secondary
+
+	if(playerDifficultyData) then
+		if(playerDifficultyData[1]) then
+			primary = playerDifficultyData[1].weight or 0
+
+		else
+			primary = 0
+
+		end
+		
+		if(playerDifficultyData[2]) then
+			secondary = playerDifficultyData[2].weight or 0
+
+		else
+			secondary = 0
+
+		end
+	else
+		primary = 0
+
+		secondary = 0
+
+	end
+
+	return primary, secondary
+end
+
+miog.getWeightAndAliasesFromRaidProgress = function(playerDifficultyData)
+	local primary, primary2
+	local secondary, secondary2
+
+	if(playerDifficultyData) then
+		if(playerDifficultyData[1]) then
+			primary = playerDifficultyData[1].weight or 0
+			primary2 = miog.getParsedProgressString(playerDifficultyData[1].kills, playerDifficultyData[1].bossCount)
+
+		else
+			primary = 0
+			primary2 = 0
+
+		end
+		
+		if(playerDifficultyData[2]) then
+			secondary = playerDifficultyData[2].weight or 0
+			secondary2 = miog.getParsedProgressString(playerDifficultyData[2].kills, playerDifficultyData[2].bossCount)
+
+		else
+			secondary = 0
+			secondary2 = 0
+
+		end
+	else
+		primary = 0
+		primary2 = 0
+
+		secondary = 0
+		secondary2 = 0
+
+	end
+
+	return primary, secondary, primary2, secondary2
+end
+
+miog.getWeightedAndSortedProgress = function(originalData)
+    local FinalProgressList = {}
+    local InputValue = originalData
+
+    -- Step 1: Create a temporary dictionary for raid definitions for easy lookup
+    local RaidDefinitions = {}
+    for _, raidInstance in pairs(InputValue.raidProgress) do
+        local raidDef = raidInstance.raid
+        local shortName = raidDef.shortName or raidDef.dungeon.shortName
+        
+        if not RaidDefinitions[shortName] then
+            RaidDefinitions[shortName] = {
+                name = raidDef.name,
+                shortName = shortName,
+            }
+        end
+    end
+    
+    -- Step 2: Iterate through 'sortedProgress' and filter based on data richness
+    for i, sortedEntry in ipairs(InputValue.sortedProgress) do
+        local progressEntry = sortedEntry.progress
+        
+        -- Filter 1: Check if the entry is a simplified/previous version
+        -- We require the entry NOT to be marked as 'isProgressPrev' 
+        -- AND require it to have the detailed 'killsPerBoss' field.
+        local hasKillsPerBoss = progressEntry.killsPerBoss ~= nil
+        
+        if hasKillsPerBoss then
+            local progressCount = progressEntry.progressCount or 0
+            
+            -- Continue with data extraction and weighting logic:
+            local raidShortName = progressEntry.raid.shortName 
+            local difficulty = progressEntry.difficulty
+            
+            -- Determine Rarity/Recency Weight based on Tier and Obsolete status
+            local TIER_WEIGHT = sortedEntry.tier or 0
+            
+            if sortedEntry.obsolete == true then
+                TIER_WEIGHT = TIER_WEIGHT * 0.1 
+            else
+                TIER_WEIGHT = TIER_WEIGHT * 100 
+            end
+
+            -- Determine Progress Weight (using your formula)
+            local PROGRESS_WEIGHT = (difficulty * 1000) + progressCount
+            
+            -- Final Weight is used for sorting the player against other players
+            local FINAL_WEIGHT = TIER_WEIGHT + PROGRESS_WEIGHT
+            
+            -- Construct the final clean object for the list
+            table.insert(FinalProgressList, {
+                raidKey = raidShortName,
+                raidName = RaidDefinitions[raidShortName] and RaidDefinitions[raidShortName].name or "Unknown Raid",
+                difficulty = difficulty,
+                progressCount = progressCount,
+                isObsolete = sortedEntry.obsolete,
+                isCurrent = (sortedEntry.obsolete == false and sortedEntry.isProgress == true),
+                FINAL_WEIGHT = FINAL_WEIGHT,
+            })
+        end
+        -- If the 'if' condition is false, the loop simply moves to the next iteration (Lua 5.1 equivalent of continue).
+    end
+
+    -- Step 3: Sort the list from newest/highest weight to oldest/lowest weight
+    table.sort(FinalProgressList, function(a, b)
+        return a.FINAL_WEIGHT > b.FINAL_WEIGHT
+    end)
+    
+    return FinalProgressList
+end
+
 miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
 	local self = LFGListFrame.EntryCreation
@@ -143,7 +444,7 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 		requiredPvpRating = pvpRating,
 	};
 
-	if ( LFGListEntryCreation_IsEditMode(self) ) then
+	if (LFGListEntryCreation_IsEditMode(self)) then
 		-- Pull these values from the active entry.
 		createData.isAutoAccept = activeEntryInfo.autoAccept;
 		createData.questID = activeEntryInfo.questID;
@@ -193,15 +494,6 @@ local function calculateRaidWeight(difficulty, kills, bossCount, isCurrentSeason
 end
 
 miog.calculateRaidWeight = calculateRaidWeight
-
-local function calculateWeightedScore(difficulty, kills, bossCount, isCurrentSeason)
-	if kills == 0 then return 0 end
-
-	local seasonFactor = isCurrentSeason and 100 or 1 -- Increase impact of current season
-	return ((difficulty * 5) * 30 + (kills / bossCount * 20)) * seasonFactor
-end
-
-miog.calculateWeightedScore = calculateWeightedScore
 
 miog.retrieveCurrentSeasonDungeonActivityGroups = function()
 	return C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
@@ -1015,7 +1307,7 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 
 	elseif(data.applicantID) then
 		playerName, realm = data.name, data.realm
-		comment = (miog.F.IS_IN_DEBUG_MODE and miog.debug_GetApplicantInfo(data.applicantID) or C_LFGList.GetApplicantInfo(data.applicantID)).comment
+		comment = data.debug and "YAYAYAYA" or C_LFGList.GetApplicantInfo(data.applicantID).comment
 		activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityIDs[1] or 0
 
 	end
@@ -1026,8 +1318,11 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 	frame:ApplyFillData(true)
 
 	local activityInfo = miog.requestActivityInfo(activityID)
-	frame.Background:SetTexture(activityInfo.horizontal, "CLAMP", "MIRROR")
-	frame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
+
+	if(activityInfo) then
+		frame.Background:SetTexture(activityInfo.horizontal, "CLAMP", "MIRROR")
+		frame.Background:SetVertexColor(0.75, 0.75, 0.75, 0.4)
+	end
 end
 
 miog.hideSidePanel = function(self)

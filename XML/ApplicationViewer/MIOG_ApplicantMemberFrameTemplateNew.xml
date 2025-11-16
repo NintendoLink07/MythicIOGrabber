@@ -47,6 +47,7 @@
             <Button parentKey="Decline" inherits="IconButtonTemplate" hidden="true">
                 <KeyValues>
                     <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" type="string" />
+                    <KeyValue key="icon" value="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" type="string" />
                     <KeyValue key="iconSize" value="16" type="number" />
                 </KeyValues>
                 <Size x="16" y="16" />
@@ -105,6 +106,13 @@
                         <Anchor point="LEFT" relativeKey="$parent.Race" relativePoint="RIGHT"/>
                     </Anchors>
                     <Size  x="15" y="15" />
+                </Texture> 
+
+                <Texture parentKey="Race">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="155"/>
+                    </Anchors>
+                    <Size x="15" y="15" />
                 </Texture> 
 
                 <Texture parentKey="Role">
