@@ -1,5 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
+local treeDataProvider
 
 local lastNumOfResults = 999
 
@@ -403,8 +404,9 @@ end
 
 
 local function createDataProviderWithUnsortedData()
-	local treeDataProvider = CreateTreeDataProvider()
 	local actualResults, resultTable = C_LFGList.GetFilteredSearchResults()
+
+	treeDataProvider:Flush()
 
 	local numOfFiltered = 0
 
@@ -514,7 +516,7 @@ local function createDataProviderWithUnsortedData()
 		end
 	end
 
-	return treeDataProvider, numOfFiltered, actualResults
+	return numOfFiltered, actualResults
 end
 
 local function addOneTimeFrames(frame)
@@ -947,45 +949,16 @@ local function fullyUpdateSearchPanel()
 	miog.SearchPanel.ScrollBox2:Flush()
 	miog.SearchPanel.Status:Hide()
 
-	local treeDataProvider, numOfFiltered, actualResults  = createDataProviderWithUnsortedData()
+	local numOfFiltered, actualResults  = createDataProviderWithUnsortedData()
 
-	local sortBarList = miog.SearchPanel:GetOrderedParameters()
+	--local sortBarList = miog.SearchPanel:GetOrderedParameters()
 
-	local orderedListLen = #sortBarList
+	--local orderedListLen = #sortBarList
 
+	--treeDataProvider:SetAllCollapsed(true)
+
+	
 	treeDataProvider:SetAllCollapsed(true)
-	treeDataProvider:SetSortComparator(function(n1, n2)
-		local k1 = n1.data
-		local k2 = n2.data
-
-		if(k1.appStatus == "applied" and k2.appStatus ~= "applied") then
-			return true
-
-		elseif(k2.appStatus == "applied" and k1.appStatus ~= "applied") then
-			return false
-
-		else
-			for i = 1, orderedListLen do
-				local state, name = sortBarList[i].state, sortBarList[i].name
-
-				if(state > 0 and k1[name] ~= k2[name]) then
-					if(state == 1) then
-						return k1[name] > k2[name]
-		
-					else
-						return k1[name] < k2[name]
-		
-					end
-
-				elseif(i == orderedListLen) then
-					return k1.index > k2.index
-
-				end
-			end
-		end
-	end)
-
-	miog.SearchPanel.ScrollBox2:SetDataProvider(treeDataProvider, true)
 
 	miog.updateFooterBarResults(numOfFiltered, actualResults, actualResults >= 100)
 		
@@ -993,6 +966,8 @@ local function fullyUpdateSearchPanel()
 		showStatusOverlay()
 
 	end
+
+	miog.SearchPanel.ScrollBox2:SetDataProvider(treeDataProvider)
 
 	lastNumOfResults = actualResults
 end
@@ -1302,6 +1277,10 @@ miog.createSearchPanel = function()
 		provider:Insert({index = provider:GetSize() + 1, text = ""})
 		
 	end)
+
+    treeDataProvider = CreateTreeDataProvider()
+	
+	searchPanel.ScrollBox2:SetDataProvider(treeDataProvider, ScrollBoxConstants.RetainScrollPosition)
 
 	return searchPanel
 end

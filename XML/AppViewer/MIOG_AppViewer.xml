@@ -10,12 +10,12 @@
                     <Anchor point="TOPRIGHT" />
                 </Anchors>
 
-                <Frames>
-                    <Button parentKey="Index" name="applicantID" parentArray="sortButtons" inherits="MIOG_MinimalCheckButtonWithTextTemplate" mixin="SimplifiedSortingButtonMixin" text="Index">
+                <Frames>                    
+                    <Button parentKey="Role" name="role" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="Role">
                         <Size x="80" y="22" />
 
                         <Anchors>
-                            <Anchor point="LEFT" x="2"/>
+                            <Anchor point="LEFT"/>
                         </Anchors>
 
                         <Scripts>
@@ -23,11 +23,35 @@
                         </Scripts>
                     </Button>
                     
-                    <Button parentKey="ItemLevel" name="itemLevel" parentArray="sortButtons" inherits="MIOG_MinimalCheckButtonWithTextTemplate" mixin="SimplifiedSortingButtonMixin" text="I-Lvl">
+                    <Button parentKey="Primary" name="primary" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="Primary">
                         <Size x="80" y="22" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Index" relativePoint="RIGHT" x="2"/>
+                            <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="6"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad method="OnLoad" />
+                        </Scripts>
+                    </Button>
+                    
+                    <Button parentKey="Secondary" name="secondary" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="Secondary">
+                        <Size x="80" y="22" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="6"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnLoad method="OnLoad" />
+                        </Scripts>
+                    </Button>
+                    
+                    <Button parentKey="ItemLevel" name="itemLevel" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="I-Lvl">
+                        <Size x="80" y="22" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="6"/>
                         </Anchors>
 
                         <Scripts>
@@ -48,7 +72,28 @@
                     <Anchor point="BOTTOMRIGHT" />
                 </Anchors>
 
+                <Frames>
+                    <Button parentKey="RefreshButton" inherits="RefreshButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="iconAtlas" value="UI-RefreshButton" type="string"/>
+                        </KeyValues>
+                        
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="2" y="2"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+
                 <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.BorderTopLeft" relativePoint="TOPLEFT" x="2" y="-2"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BorderBottomRight" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
                     <Layer level="OVERLAY">
                         <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
@@ -56,7 +101,7 @@
                             </Anchors>
                         </FontString>
 
-                        <FontString parentKey="Title" font="GameFontHighlightMedium" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true">
+                        <FontString parentKey="Title" font="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-4"/>
                             </Anchors>
@@ -65,6 +110,12 @@
                         <FontString parentKey="Description" font="GameFontHighlightSmall" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" y="-4"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="QueueTime" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.RefreshButton" relativePoint="LEFT"/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -79,7 +130,6 @@
             </Frame>
         </Frames>
         
-
         <Scripts>
             <OnLoad method="OnLoad" />
             <OnShow method="OnShow" />

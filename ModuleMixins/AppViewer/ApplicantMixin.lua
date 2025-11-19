@@ -43,12 +43,10 @@ function ApplicantMixin:SetData(data)
     local names = data.names
     
     if(names) then
-        self.Players:SetText(IMPORTANT_PEOPLE_IN_GROUP)
-
         for k, v in ipairs(names) do
-            local lastString = self.Players:GetText() .. (k == 1 and " " or ", ")
+            local string = k == 1 and "" or self.Players:GetText() .. ", "
             local color = C_ClassColor.GetClassColor(v.class)
-            self.Players:SetText(lastString .. WrapTextInColorCode(v.name, color:GenerateHexColor()))
+            self.Players:SetText(string .. WrapTextInColorCode(v.name, color:GenerateHexColor()))
 
         end
     end

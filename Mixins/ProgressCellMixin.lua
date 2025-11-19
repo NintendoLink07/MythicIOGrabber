@@ -334,8 +334,6 @@ end
 function ProgressPVPCellMixin:Populate(data)
     local id = self.id
 
-    MIOG_TEST = data
-
     if(data.pvp.brackets[id]) then
         self.Rating:SetText(data.pvp.brackets[id].rating .. " YE")
         self.SeasonBest:SetText(data.pvp.brackets[id].seasonBest)

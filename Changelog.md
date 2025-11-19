@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.8] - 2025-11-23
+
+### Changed
+
+- [ApplicationViewer] The application viewer has been recoded and redesigned.
+    - Performance has been improved dramatically.
+    - Group applications have now a "header entry" and below this every member is listed.
+    - A new sorting system has been implemented which will find it's way into every aspect of the addon where sorting is used / will be used. --design to do
+    - Multiple hover effect have been added to have a more robust feedback. --design to do
+
+### Fixed
+
+- [SearchPanel] The performance of refreshing the search panel in any way has been improved. -- still to do but I know what to do, frfr
+
+- Every aspect that queries RaiderIO data has been speed up by atleast 8x.
+
+
+
 
 ## [3.7.1] - 2025-11-14
 
@@ -4448,7 +4466,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.7.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.8..HEAD
+[3.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.8
 [3.7.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7.1
 [3.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7
 [3.6.2c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.6.2c

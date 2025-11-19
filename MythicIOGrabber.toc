@@ -1,10 +1,10 @@
-## Interface: 110205
+## Interface: 110207
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.7.1
+## Version: 3.8
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -52,8 +52,6 @@ FuzzyAlgorithm.lua
 GroupOrganizer.lua
 Loot.lua
 
-
-
 ##
 ### MIXINS
 ##
@@ -86,8 +84,8 @@ Mixins\RaidViewMixin.lua
 Mixins\ColorChangerMixin.lua
 
 Mixins\TreeListViewMultiSpacingMixin.lua
-Mixins\SimplifiedSortingMixin.lua
 Mixins\SimplifiedSortingButtonMixin.lua
+Mixins\SimplifiedSortingMixin.lua
 
 
 

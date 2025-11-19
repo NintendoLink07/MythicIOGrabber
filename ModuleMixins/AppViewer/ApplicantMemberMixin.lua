@@ -4,15 +4,14 @@ local wticc = WrapTextInColorCode
 ApplicantMemberMixin = {}
 
 function ApplicantMemberMixin:SetCollapsed(bool)
-    self.node:SetCollapsed(bool)
-	self.Expand:SetAtlas(self.node:IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
+	self:GetElementData():SetCollapsed(bool)
+	self.Expand:SetAtlas(self:GetElementData():IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
 
 end
 
 function ApplicantMemberMixin:OnMouseDown(button, ...)
-    MIOG_T = self
-	self.node:ToggleCollapsed()
-	self.Expand:SetAtlas(self.node:IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
+	self:GetElementData():ToggleCollapsed()
+	self.Expand:SetAtlas(self:GetElementData():IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
 end
 
 function ApplicantMemberMixin:OnLoad()
@@ -89,12 +88,10 @@ function ApplicantMemberMixin:SetInternalData(name, level, class, specID, commen
     self.Secondary:SetText(secondary2 or secondary)
 
     self:SetItemLevel(itemLevel)
-
-    self:SetInviteDeclineStatus()
 end
 
-function ApplicantMemberMixin:SetInviteDeclineStatus()
-    local visible = not self.data.multi
+function ApplicantMemberMixin:SetInviteDeclineStatus(multi)
+    local visible = not multi
 
     self.Invite:SetShown(visible)
     self.Decline:SetShown(visible)
@@ -107,16 +104,14 @@ function ApplicantMemberMixin:SetData(data)
     
     local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(applicantID, applicantIndex)
 
-
-    self.data = data
     self.applicantID = applicantID
 
     self:SetInternalData(name, level, class, specID, comment, raceID, assignedRole, data.primary, data.secondary, data.primary2, data.secondary2, data.itemLevel, relationship, isLeaver)
+    self:SetInviteDeclineStatus(data.multi)
 end
 
 function ApplicantMemberMixin:SetDebugData(data)
-    self.data = data
-
     self:SetInternalData(data.name, data.level, data.fileName, data.specID, data.comment, data.raceID, data.assignedRole, data.primary, data.secondary, data.primary2, data.secondary2, data.itemLevel, true, true)
+    self:SetInviteDeclineStatus(data.multi)
 
 end
