@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_AppViewerApplicantMemberTemplate" mixin="ApplicantMemberMixin" virtual="true">
+    <Frame name="MIOG_AppViewerApplicantMemberTemplate" mixin="ApplicantMemberMixin" inherits="BackdropTemplate" virtual="true">
         <Size y="24" />
 
         <Frames>
@@ -62,38 +62,38 @@
 
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture setAllPoints="true">
+                <Texture parentKey="Background" setAllPoints="true">
                     <Color r="0.1" g="0.1" b="0.1" a="0.3" />
                 </Texture>
             </Layer>
 
             <Layer level="OVERLAY">
                 <Texture parentKey="Expand" atlas="campaign_headericon_closed">
+                    <Size x="18" y="18" />
                     <Anchors>
                         <Anchor point="LEFT" x="1"/>
                     </Anchors>
-                    <Size  x="18" y="18" />
                 </Texture>
 
                 <Texture parentKey="Role">
+                    <Size x="18" y="18" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="2"/>
                     </Anchors>
-                    <Size  x="18" y="18" />
                 </Texture>
 
                 <Texture parentKey="Class">
+                    <Size x="16" y="16" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="2"/>
                     </Anchors>
-                    <Size  x="16" y="16" />
                 </Texture> 
 
                 <Texture parentKey="Spec">
+                    <Size x="16" y="16" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Class" relativePoint="RIGHT" x="3"/>
                     </Anchors>
-                    <Size  x="16" y="16" />
                 </Texture> 
 
                 <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
@@ -111,23 +111,23 @@
                 </Texture>
 
                 <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER">
-                    <Size x="36" y="20" />
+                    <Size x="40" y="20" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="6"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="1"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Secondary" font="GameFontHighlight" justifyH="CENTER">
-                    <Size x="36" y="20" />
+                    <Size x="40" y="20" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="6"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="1"/>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER">
-                    <Size x="40" y="20" />
+                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="LEFT">
+                    <Size x="45" y="20" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="6"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="1"/>
                     </Anchors>
                 </FontString>
 

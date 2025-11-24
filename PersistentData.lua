@@ -677,7 +677,7 @@ miog.MAP_INFO = {
 	[230] = {abbreviatedName = "BRD", fileName = "blackrockdepths"},
 	[229] = {abbreviatedName = "BRS", fileName = "blackrockspire"},
 	[429] = {abbreviatedName = "DM", fileName = "diremaul"},
-	[329] = {abbreviatedName = "SH", iconName = "oldstratholme", bgName = "stratholme"},
+	[329] = {abbreviatedName = "SH", iconName = "oldstratholme", fileName = "stratholme"},
 	[1007] = {abbreviatedName = "SCHOLO", fileName = "scholomance"},
 	[33] = {abbreviatedName = "SFK", fileName = "shadowfangkeep"},
 
@@ -709,7 +709,7 @@ miog.MAP_INFO = {
 	[534] = {abbreviatedName = "BMH", fileName = "hyjalpast"},
 	[565] = {abbreviatedName = "GL", fileName = "gruulslair"},
 	[544] = {abbreviatedName = "ML", fileName = "hellfireraid"},
-	[548] = {abbreviatedName = "SSC", iconName = "serpentshrinecavern", bgName = "coilfang"},
+	[548] = {abbreviatedName = "SSC", iconName = "serpentshrinecavern", fileName = "coilfang"},
 	[532] = {abbreviatedName = "KARA", fileName = "karazhan"},
 	[564] = {abbreviatedName = "BT", fileName = "blacktemple"},
 	[550] = {abbreviatedName = "TK", fileName = "tempestkeep"},
@@ -810,7 +810,7 @@ miog.MAP_INFO = {
 	[1530] = {abbreviatedName = "NH", fileName = "thenighthold"},
 	[1648] = {abbreviatedName = "TOV", fileName = "trialofvalor"},
 	--[1651] = {abbreviatedName = "", icon = ""},
-	[1676] = {abbreviatedName = "TOS", iconName = "tombofsargerasdeceiversfall", bgName = "tombofsargeras"},
+	[1676] = {abbreviatedName = "TOS", iconName = "tombofsargerasdeceiversfall", fileName = "tombofsargeras"},
 	[1712] = {abbreviatedName = "ATBT", fileName = "antorus"},
 
 	-- BATTLE FOR AZEROTH
@@ -845,12 +845,12 @@ miog.MAP_INFO = {
 	[2441] = {abbreviatedName = "TAZA", fileName = "tazaveshtheveiledmarket"},
 	[2450] = {abbreviatedName = "SOD", fileName = "sanctumofdomination"},
 	[2481] = {abbreviatedName = "SFO", fileName = "sepulcherofthefirstones"},
-	[2559] = {abbreviatedName = "WORLD", iconName = "shadowlands", bgName = "shadowlandscontinent",},
+	[2559] = {abbreviatedName = "WORLD", iconName = "shadowlands", fileName = "shadowlandscontinent",},
 
 	--DRAGONFLIGHT
 	[2451] = {abbreviatedName = "ULOT", fileName = "uldaman-legacyoftyr"},
-	[2515] = {abbreviatedName = "AV", iconName = "arcanevaults", bgName = "azurevaults"},
-	[2516] = {abbreviatedName = "NO", iconName = "centaurplains", bgName = "nokhudoffensive"},
+	[2515] = {abbreviatedName = "AV", iconName = "arcanevaults", fileName = "azurevaults"},
+	[2516] = {abbreviatedName = "NO", iconName = "centaurplains", fileName = "nokhudoffensive"},
 	[2519] = {abbreviatedName = "NELT", fileName = "neltharus"},
 	[2520] = {abbreviatedName = "BH", fileName = "brackenhidehollow"},
 	[2521] = {abbreviatedName = "RLP", fileName = "lifepools"},
@@ -909,7 +909,7 @@ miog.MAP_INFO = {
 	},
 
 	-- THE WAR WITHIN
-	[2601] = {abbreviatedName = "KA", fileName = "khazalgar"},
+	[2601] = {abbreviatedName = "KA", fileName = "khazalgar", filePath="interface/encounterjournal/ui-ej-lorebg-khazalgar.blp"},
 	[2648] = {abbreviatedName = "ROOK", fileName = "therookery"},
 	[2649] = {abbreviatedName = "PSF", fileName = "prioryofthesacredflames"},
 	[2651] = {abbreviatedName = "DFC", fileName = "darkflamecleft"},
@@ -931,7 +931,7 @@ miog.MAP_INFO = {
 		},
 		abbreviatedName = "NP",
 		iconName = "nerubarpalance",
-		bgName = "nerubarpalace",
+		fileName = "nerubarpalace",
 		achievementIDs = {
 			40267,
 			40268,
@@ -980,8 +980,7 @@ miog.MAP_INFO = {
 			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/gallywix.png"},
 		},
 		abbreviatedName = "LOU",
-		iconName = "casino",
-		bgName = "casino",
+		fileName = "casino",
 		achievementIDs = {
 			41299,
 			41300,
@@ -1782,7 +1781,7 @@ local function loadRawData()
 			
 			mapInfo.journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 
-			local background = mapInfo.bgName or mapInfo.fileName
+			local background = mapInfo.fileName
 		
 			if(background) then
 				if(loadHQData) then
@@ -1793,6 +1792,10 @@ local function loadRawData()
 					mapInfo.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
 					mapInfo.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
 					
+				elseif(mapInfo.filePath) then
+					mapInfo.horizontal = mapInfo.filePath
+					mapInfo.vertical = mapInfo.filePath
+
 				else
 					mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
 					mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"

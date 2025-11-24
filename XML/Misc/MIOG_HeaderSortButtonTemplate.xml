@@ -1,0 +1,31 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Button name="MIOG_HeaderSortButtonTemplate" mixin="SortButtonMixin" inherits="MIOG_TableHeaderTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="SortArrow" atlas="auctionhouse-ui-sortarrow" hidden="true">
+                    <Size x="8" y="8" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        --UI-CharacterCreate-LargeButton-Yellow-Highlight   yellow round x+3-3 y+1-1 lowres
+        --communities-create-button-highlight               blue rounded x+5-5 y+1-1 middleres
+        --communitiesfinder_card_highlight                  blue rounded x-3+3 y-2+1 hires
+        --groupfinder-highlightbar-green
+        --BattleBar-SwapPetFrame-Highlight                  yellow middleres
+        --auctionhouse-nav-button-highlight                 blue middleres
+        --auctionhouse-nav-button-secondary-highlight       blue middleres
+        --search-highlight                                  blue topbottom
+        
+        <HighlightTexture atlas="UI-CharacterCreate-LargeButton-Yellow-Highlight" />
+
+        <Scripts>
+            <OnClick method="OnClick" />
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Button>
+</Ui>

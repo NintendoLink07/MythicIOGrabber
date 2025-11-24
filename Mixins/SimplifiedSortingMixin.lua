@@ -1,14 +1,30 @@
 SimplifiedSortingMixin = CreateFromMixins(CallbackRegistryMixin)
 
+local numOfActiveButtons = 0
+
 function SimplifiedSortingMixin:OnLoad()
 	CallbackRegistryMixin.OnLoad(self)
     self.states = {activeButtons = {}, buttons = {}}
+        
+    local firstHeader = self.sortButtons[1]
 
-    for k, v in ipairs(self.sortButtons) do
-        self.states.buttons[v:GetName()] = {}
-	    v:RegisterCallback("OnSortingButtonClick", self.Sort, self)
+    if(firstHeader) then
+        local firstEmpty = CreateFrame("Frame", nil, self, "MIOG_TableHeaderTemplate")
+        firstEmpty:SetHeight(firstHeader:GetHeight())
+        firstEmpty:SetPoint("LEFT", self, "LEFT")
+        firstEmpty:SetPoint("RIGHT", firstHeader, "LEFT")
+
+        for k, v in ipairs(self.sortButtons) do
+            v:RegisterCallback("OnSortingButtonClick", self.SortClick, self)
+
+            local hasMoreButtons = #self.sortButtons > k
+            
+            local frame = CreateFrame("Frame", nil, self, "MIOG_TableHeaderTemplate")
+            frame:SetHeight(v:GetHeight())
+            frame:SetPoint("LEFT", v, "RIGHT")
+            frame:SetPoint("RIGHT", hasMoreButtons and self.sortButtons[k+1] or self, hasMoreButtons and "LEFT" or "RIGHT")
+        end
     end
-
 end
 
 function SimplifiedSortingMixin:Reset()
@@ -16,91 +32,93 @@ function SimplifiedSortingMixin:Reset()
     self:OnLoad()
 end
 
-function SimplifiedSortingMixin:StandardSortFunction(k1, k2)
-    
+function SimplifiedSortingMixin:SetSortButtonTexts(...)
+    local texts = {...}
 
-    --[[for i = 1, orderedListLen do
-        local state, name = sortBarList[i].state, sortBarList[i].name
+    for k, v in ipairs(self.sortButtons) do
+        local currentText = texts[k]
 
-        if(state > 0 and k1[name] ~= k2[name]) then
-            if(state == 1) then
-                return k1[name] > k2[name]
-
-            else
-                return k1[name] < k2[name]
-
-            end
-
-        elseif(i == orderedListLen) then
-            return k1.index > k2.index
+        if(currentText == nil) then
+            v:SetText("")
+            v:Disable()
+            
+        else
+            v:SetText(currentText)
+            v:Enable()
 
         end
-    end]]
+
+    end
 end
 
-function SimplifiedSortingMixin:SetAndExecuteComparator()
+local function normalComparator(k1, k2, buttons, fallbackParameter)
+    for i = 1, numOfActiveButtons do
+        local button = buttons[i]
+        local sortID = button.id
+        local state = button.state
+
+        -- Check the current sort field
+        if (k1[sortID] ~= k2[sortID]) then
+            -- Early return on the first difference found (fastest path)
+            if (state == 1) then -- State 1: Ascending
+                return k1[sortID] < k2[sortID]
+            else -- State 2: Descending
+                return k1[sortID] > k2[sortID]
+            end
+        end
+        
+        -- If k1[sortID] == k2[sortID], the loop continues to the next sort field.
+    end
+    
+    -- Fallback Sort (Executed ONLY if ALL active sort fields were equal)
+    -- This guarantees a deterministic sort based on the required fallback parameter.
+
+    if (numOfActiveButtons > 0) then
+        -- Use the state of the *last* active button for the fallback direction,
+        -- assuming this is the intended behavior for consistency.
+        local lastState = buttons[numOfActiveButtons].state
+
+        if (lastState == 1) then -- State 1: Ascending
+            return k1[fallbackParameter] < k2[fallbackParameter]
+        else -- State 2: Descending
+            return k1[fallbackParameter] > k2[fallbackParameter]
+        end
+    end
+    
+    -- If no buttons were active, or if the fallback fields are also equal, 
+    -- we return false (indicating k1 is not less than k2, implying they are equal for sorting purposes).
+    return false
+end
+
+local function nodeComparator(node1, node2, buttons, fallbackParameter)
+    local k1 = node1.data
+    local k2 = node2.data
+
+    return normalComparator(k1, k2, buttons, fallbackParameter)
+end
+
+function SimplifiedSortingMixin:SetComparator()
     local fallbackParameter = self.fallbackParameter
 
     if(self.dataProvider) then
+        local buttons = {}
+
         if(self.dataProvider.node) then
+            for i = 1, numOfActiveButtons do
+                local activeButton = self.states.activeButtons[i]
+
+                buttons[i] = {id = activeButton.id, state = activeButton.state}
+
+            end
+
             self.dataProvider:SetSortComparator(function(node1, node2)
-                local k1 = node1.data
-                local k2 = node2.data
+                return nodeComparator(node1, node2, buttons, fallbackParameter)
 
-                local numOfActiveButtons = #self.states.activeButtons
-
-                for i = 1, numOfActiveButtons do
-                    local button = self.states.activeButtons[i]
-                    local sortID = button:GetID()
-                    local _, state = button:GetStatus()
-
-                    if(k1[sortID] ~= k2[sortID]) then
-                        if(state == 1) then
-                            return k1[sortID] < k2[sortID]
-
-                        else
-                            return k1[sortID] > k2[sortID]
-
-                        end
-                    elseif(i == numOfActiveButtons) then --can lead to errors if no fallback array value is available
-                        if(state == 1) then
-                            return k1[fallbackParameter] < k2[fallbackParameter]
-
-                        else
-                            return k1[fallbackParameter] > k2[fallbackParameter]
-
-                        end
-                    end
-                end
             end, true)
         else
             self.dataProvider:SetSortComparator(function(k1, k2)
-                local numOfActiveButtons = #self.states.activeButtons
+                return normalComparator(k1, k2, buttons, fallbackParameter)
 
-                for i = 1, numOfActiveButtons do
-                    local button = self.states.activeButtons[i]
-                    local sortID = button:GetID()
-                    local _, state = button:GetStatus()
-
-                    if(k1[sortID] ~= k2[sortID]) then
-                        if(state == 1) then
-                            return k1[sortID] < k2[sortID]
-
-                        else
-                            return k1[sortID] > k2[sortID]
-
-                        end
-
-                    elseif(i == numOfActiveButtons) then --can lead to errors if no fallback array value is available
-                        if(state == 1) then
-                            return k1[fallbackParameter] < k2[fallbackParameter]
-
-                        else
-                            return k1[fallbackParameter] > k2[fallbackParameter]
-
-                        end
-                    end
-                end
             end)
         end
     end
@@ -115,33 +133,57 @@ function SimplifiedSortingMixin:RegisterDataProvider(dataProvider, fallbackParam
     self.dataProvider = dataProvider
     self.fallbackParameter = fallbackParameter
 
-    self:SetAndExecuteComparator()
+    if(not self.dataProvider.node) then
+        self:SetComparator()
+
+    end
 end
 
-function SimplifiedSortingMixin:Sort(...)
+function SimplifiedSortingMixin:Sort()
+    if(self.dataProvider) then
+        numOfActiveButtons = #self.states.activeButtons
+
+        if(self.dataProvider.node) then
+            self:SetComparator()
+            self.dataProvider:Invalidate()
+
+        else
+            self.dataProvider:Sort()
+
+        end
+    end
+end
+
+function SimplifiedSortingMixin:SortClick(...)
     local button = ...
 
-    local active = button:GetStatus()
+    local active, state = button:GetStatus()
 
     if(self.dataProvider) then
         local id = button:GetID()
 
 		if(id) then
-			if(active) then
-				tinsert(self.states.activeButtons, button)
-			    self.states.buttons[id] = {order = #self.states.activeButtons + 1}
+			if(active and state == 1) then
+				tinsert(self.states.activeButtons, {button = button, id = id, state = state})
 
-			else
-				for index, activeButton in ipairs(self.states.activeButtons) do
-					if(activeButton:GetID() == id) then
-						self.states.activeButtons[index] = nil
+            elseif(active and state == 2) then
+                for k, v in ipairs(self.states.activeButtons) do
+                    if(v.id == id) then
+                        self.states.activeButtons[k].state = state
 
-					end
-				end
+                    end
+                end
+
+            elseif(not active) then
+                for k, v in ipairs(self.states.activeButtons) do
+                    if(v.id == id) then
+                        tremove(self.states.activeButtons, k)
+
+                    end
+                end
 			end
 		end
 
-        self:SetAndExecuteComparator()
-        self.dataProvider:Invalidate()
+        self:Sort()
     end
 end

@@ -21,9 +21,9 @@
                 <Layers>
                     <Layer level="BACKGROUND" textureSubLevel="1">
                         <Texture parentKey="BarBackground" atlas="activities-bar-background">
-                            <Size x="277" y="16" />
                             <Anchors>
-								<Anchor point="CENTER" x="0" y="0"/>
+                                <Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" x="1"/>
                             </Anchors>
                         </Texture>
 
@@ -73,6 +73,7 @@
                             </Anchors>
                         </Texture>
                     </Layer>
+
                     <Layer level="OVERLAY" textureSubLevel="1" >
                         <Texture parentKey="BarBorderGlow" atlas="activities-bar-border-glow" alphaMode="ADD" hidden="true">
                             <Anchors>

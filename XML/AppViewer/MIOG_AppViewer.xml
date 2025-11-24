@@ -11,11 +11,11 @@
                 </Anchors>
 
                 <Frames>                    
-                    <Button parentKey="Role" name="role" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="Role">
-                        <Size x="80" y="22" />
+                    <Button parentKey="Role" name="role" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#1">
+                        <Size y="22" />
 
                         <Anchors>
-                            <Anchor point="LEFT"/>
+                            <Anchor point="LEFT" x="11"/>
                         </Anchors>
 
                         <Scripts>
@@ -23,11 +23,11 @@
                         </Scripts>
                     </Button>
                     
-                    <Button parentKey="Primary" name="primary" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="Primary">
-                        <Size x="80" y="22" />
+                    <Button parentKey="Primary" name="primary" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#2">
+                        <Size y="22" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="6"/>
+                            <Anchor point="LEFT" x="189"/>
                         </Anchors>
 
                         <Scripts>
@@ -35,11 +35,11 @@
                         </Scripts>
                     </Button>
                     
-                    <Button parentKey="Secondary" name="secondary" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="Secondary">
-                        <Size x="80" y="22" />
+                    <Button parentKey="Secondary" name="secondary" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#3">
+                        <Size y="22" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="6"/>
+                            <Anchor point="LEFT" x="231"/>
                         </Anchors>
 
                         <Scripts>
@@ -47,11 +47,11 @@
                         </Scripts>
                     </Button>
                     
-                    <Button parentKey="ItemLevel" name="itemLevel" parentArray="sortButtons" inherits="MIOG_SimplifiedHeaderTemplate" text="I-Lvl">
-                        <Size x="80" y="22" />
+                    <Button parentKey="ItemLevel" name="itemLevel" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#4">
+                        <Size y="22" />
 
                         <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="6"/>
+                            <Anchor point="LEFT" x="270"/>
                         </Anchors>
 
                         <Scripts>
@@ -65,28 +65,94 @@
                 </Scripts>
             </Frame>
 
-            <Frame parentKey="ActivityBar" inherits="InsetFrameTemplate3">
-                <Size y="96" />
+            <Frame parentKey="ButtonBar">
+                <Size y="24" />
+
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" />
                     <Anchor point="BOTTOMRIGHT" />
                 </Anchors>
 
                 <Frames>
+                    <Button parentKey="Back" inherits="UIPanelButtonTemplate" text="BACK">
+                        <Size x="60" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" x="2"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+                                LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.CategorySelection);
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Edit" inherits="UIPanelButtonTemplate" text="EDIT">
+                        <Size x="60" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Back" relativePoint="RIGHT" x="2"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+                                LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
+                                LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation)
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Delist" inherits="UIPanelButtonTemplate" text="GROUP_FINDER_DELIST">
+                        <Size x="80" y="20" />
+
+                        <Anchors>
+                            <Anchor point="RIGHT" x="-2"/>
+                        </Anchors> 
+
+                        <Scripts>
+                            <OnClick>
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                C_LFGList.RemoveListing()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="ActivityBar" inherits="InsetFrameTemplate3">
+                <Size y="96" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ButtonBar" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonBar" relativePoint="TOPRIGHT"/>
+                </Anchors>
+
+                <Frames>
                     <Button parentKey="RefreshButton" inherits="RefreshButtonTemplate">
+                        <Size x="32" y="32" />
                         <KeyValues>
                             <KeyValue key="iconAtlas" value="UI-RefreshButton" type="string"/>
                         </KeyValues>
                         
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="2" y="2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.BorderTopRight" relativePoint="TOPRIGHT" x="2" y="1"/>
                         </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                local appViewer = self:GetParent():GetParent()
+                                
+                                appViewer:RefreshApplicantList()
+                            </OnClick>
+                        </Scripts>
                     </Button>
                 </Frames>
 
                 <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture parentKey="Background">
+                    <Layer level="BACKGROUND" textureSubLevel="-1">
+                        <Texture parentKey="Background" vertTile="true" horizTile="true">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.BorderTopLeft" relativePoint="TOPLEFT" x="2" y="-2"/>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BorderBottomRight" relativePoint="BOTTOMRIGHT" x="-2" y="2"/>
@@ -99,12 +165,40 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.BorderTopLeft" relativePoint="BOTTOMRIGHT"/>
                             </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    local activeEntry = C_LFGList.GetActiveEntryInfo()
+
+                                    if(activeEntry and activeEntry.privateGroup) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                        GameTooltip:SetText("This group is private")
+                                        GameTooltip:Show()
+
+                                    end
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                            </Scripts>
                         </FontString>
 
                         <FontString parentKey="Title" font="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-4"/>
                             </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    local activeEntry = C_LFGList.GetActiveEntryInfo()
+
+                                    if(activeEntry and activeEntry.privateGroup) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                        GameTooltip:SetText("This group is private")
+                                        GameTooltip:Show()
+
+                                    end
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                            </Scripts>
                         </FontString>
 
                         <FontString parentKey="Description" font="GameFontHighlightSmall" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
@@ -118,6 +212,79 @@
                                 <Anchor point="RIGHT" relativeKey="$parent.RefreshButton" relativePoint="LEFT"/>
                             </Anchors>
                         </FontString>
+
+                        <FontString parentKey="Primary" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent.RefreshButton" relativePoint="BOTTOMRIGHT" x="-8"/>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="Secondary" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent.Primary" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </FontString>
+
+                        <Texture parentKey="VoiceChat" atlas="voicechat-icon-mic">
+                            <Size x="20" y="20" />
+
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BorderBottomRight" relativePoint="CENTER" x="-2" y="4"/>
+                            </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+                                    if(self:IsDesaturated()) then
+                                        GameTooltip:SetText("Voice chat disabled")
+
+                                    else
+                                        GameTooltip:SetText("Voice chat enabled")
+
+                                    end
+
+                                    GameTooltip:Show()
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                                <OnLoad>
+                                    self:SetDesaturated()
+
+                                </OnLoad>
+                            </Scripts>
+                        </Texture>
+                        
+                        <Texture parentKey="Faction">
+                            <Size x="20" y="20" />
+
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent.VoiceChat" relativePoint="LEFT"/>
+                            </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    local activeEntry = C_LFGList.GetActiveEntryInfo()
+
+                                    if(activeEntry) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+                                        if(activeEntry.isCrossFactionListing) then
+                                            GameTooltip:SetText("Cross faction is enabled")
+
+                                        elseif(activeEntry.isCrossFactionListing == false) then
+                                            GameTooltip:SetText("Cross faction is disabled")
+
+                                        elseif(activeEntry.isCrossFactionListing == nil) then
+                                            GameTooltip:SetText("Cross faction is not available")
+
+                                        end
+
+                                        GameTooltip:Show()
+                                    end
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                            </Scripts>
+                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>
@@ -129,7 +296,15 @@
                 </Anchors>
             </Frame>
         </Frames>
-        
+
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="TransparentDark" setAllPoints="true">
+                    <Color r="0.3" g="0.3" b="0.3" a="0.2" />
+                </Texture>
+            </Layer>
+        </Layers>
+
         <Scripts>
             <OnLoad method="OnLoad" />
             <OnShow method="OnShow" />

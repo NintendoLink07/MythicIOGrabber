@@ -304,6 +304,48 @@ miog.getWeightFromRaidProgress = function(playerDifficultyData)
 	return primary, secondary
 end
 
+miog.getWeightAliasesKillsAndBossCountFromRaidProgress = function(playerDifficultyData)
+	local primary, primary2, primary3
+	local secondary, secondary2, secondary3
+
+	if(playerDifficultyData) then
+		if(playerDifficultyData[1]) then
+			primary = playerDifficultyData[1].weight or 0
+			primary2 = miog.getParsedProgressString(playerDifficultyData[1].kills, playerDifficultyData[1].bossCount)
+			primary3 = {kills = playerDifficultyData[1].kills, bossCount = playerDifficultyData[1].bossCount}
+
+		else
+			primary = 0
+			primary2 = 0
+			primary3 = {kills = 0, bossCount = 0}
+
+		end
+		
+		if(playerDifficultyData[2]) then
+			secondary = playerDifficultyData[2].weight or 0
+			secondary2 = miog.getParsedProgressString(playerDifficultyData[2].kills, playerDifficultyData[2].bossCount)
+			secondary3 = {kills = playerDifficultyData[2].kills, bossCount = playerDifficultyData[2].bossCount}
+
+		else
+			secondary = 0
+			secondary2 = 0
+			secondary3 = {kills = 0, bossCount = 0}
+
+		end
+	else
+		primary = 0
+		primary2 = 0
+		primary3 = {kills = 0, bossCount = 0}
+
+		secondary = 0
+		secondary2 = 0
+		secondary3 = {kills = 0, bossCount = 0}
+
+	end
+
+	return primary, secondary, primary2, secondary2, primary3, secondary3
+end
+
 miog.getWeightAndAliasesFromRaidProgress = function(playerDifficultyData)
 	local primary, primary2
 	local secondary, secondary2
@@ -1306,8 +1348,9 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 		activityID = searchResultInfo.activityIDs[1]
 
 	elseif(data.applicantID) then
+		local applicantData = C_LFGList.GetApplicantInfo(data.applicantID)
 		playerName, realm = data.name, data.realm
-		comment = data.debug and "YAYAYAYA" or C_LFGList.GetApplicantInfo(data.applicantID).comment
+		comment = applicantData and applicantData.comment or ""
 		activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityIDs[1] or 0
 
 	end
@@ -1347,6 +1390,11 @@ local function isUnitID(str)
 end
 
 local function createFullNameValuesFrom(type, value)
+	if(not value) then
+		return
+		
+	end
+
 	if(not type) then
 		type = isUnitID(value) and "unitID" or "unitName"
 

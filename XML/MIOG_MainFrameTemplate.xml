@@ -411,7 +411,6 @@
                 <Frames>
                     <Frame parentKey="MainTab" setAllPoints="true">
                         <Frames>
-
                             <Frame parentKey="QueueInformation">
                                 <Size x="190" />
                                 
@@ -552,7 +551,7 @@
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
                                 </Anchors>
 
                                 <Frames>
@@ -577,7 +576,7 @@
 
                                     <Frame parentKey="VaultProgress3" inherits="MIOG_VaultProgressWorldTemplate">
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT"/>
+                                            <Anchor point="BOTTOMRIGHT" x="-3"/>
                                         </Anchors>
                                     </Frame>
 
@@ -603,7 +602,7 @@
                                         <Layers>
                                             <Layer level="BACKGROUND" textureSubLevel="1">
                                                 <Texture parentKey="BarBackground" atlas="activities-bar-background">
-                                                    <Size x="278" y="16" />
+                                                    <Size x="277" y="16" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" x="0" y="0"/>
                                                     </Anchors>
@@ -670,17 +669,14 @@
                                     </Frame>
                                 </Frames>
                             </Frame>
+                            
+                            <Frame parentKey="AppViewer" inherits="MIOG_AppViewer" frameStrata="HIGH">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Information"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Information"/>
+                                </Anchors>
+                            </Frame>
                         </Frames>
-                    </Frame>
-
-                    <Frame parentKey="AppViewer" inherits="MIOG_AppViewer">
-                        <Size x="370" />
-
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPLEFT" x="-4"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="-4"/>
-                        </Anchors>
-
                     </Frame>
                     
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupOrganizer" hidden="true" setAllPoints="true" />
