@@ -25,7 +25,6 @@
             <Button parentKey="Decline" inherits="UIButtonTemplate" hidden="true">
                 <Size x="16" y="16" />
 
-                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" />!-->
                 <NormalTexture atlas="UI-LFG-DeclineMark" />
 
                 <Anchors>
@@ -43,7 +42,6 @@
             <Button parentKey="Invite" inherits="UIButtonTemplate" hidden="true">
                 <Size x="16" y="16" />
 
-                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" />!-->
                 <NormalTexture atlas="UI-LFG-ReadyMark" />
                 
                 <Anchors>
@@ -142,6 +140,7 @@
 
         <Scripts>
             <OnEnter method="OnEnter" />
+            <OnLeave function="GameTooltip_Hide" />
             <OnLoad method="OnLoad" />
             <OnMouseDown method="OnMouseDown" />
         </Scripts>

@@ -1,6 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
-local treeDataProvider
+local treeDataProvider = CreateTreeDataProvider()
 
 local lastNumOfResults = 999
 
@@ -938,25 +938,51 @@ local function showStatusOverlay(status)
 		end)
 	else
 		miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
-		miog.SearchPanel.ScrollBox2:Flush()
+		treeDataProvider:Flush()
 		miog.Plugin.FooterBar.Results:SetText("0(0)")
 	end
 	
 	miog.SearchPanel.Status.FontString:Show()
 end
 
+local function nodeComparator(n1, n2, orderedListLen, sortBarList)
+	local k1 = n1.data
+	local k2 = n2.data
+
+	if(k1.appStatus == "applied" and k2.appStatus ~= "applied") then
+		return true
+
+	elseif(k2.appStatus == "applied" and k1.appStatus ~= "applied") then
+		return false
+
+	else
+		for i = 1, orderedListLen do
+			local state, name = sortBarList[i].state, sortBarList[i].name
+
+			if(state > 0 and k1[name] ~= k2[name]) then
+				if(state == 1) then
+					return k1[name] > k2[name]
+	
+				else
+					return k1[name] < k2[name]
+	
+				end
+
+			elseif(i == orderedListLen) then
+				return k1.index > k2.index
+
+			end
+		end
+	end
+end
+
 local function fullyUpdateSearchPanel()
-	miog.SearchPanel.ScrollBox2:Flush()
 	miog.SearchPanel.Status:Hide()
 
 	local numOfFiltered, actualResults  = createDataProviderWithUnsortedData()
 
-	--local sortBarList = miog.SearchPanel:GetOrderedParameters()
-
-	--local orderedListLen = #sortBarList
-
-	--treeDataProvider:SetAllCollapsed(true)
-
+	local sortBarList = miog.SearchPanel:GetOrderedParameters()
+	local orderedListLen = #sortBarList
 	
 	treeDataProvider:SetAllCollapsed(true)
 
@@ -967,7 +993,11 @@ local function fullyUpdateSearchPanel()
 
 	end
 
-	miog.SearchPanel.ScrollBox2:SetDataProvider(treeDataProvider)
+	treeDataProvider:SetSortComparator(function(node1, node2)
+        return nodeComparator(node1, node2, orderedListLen, sortBarList)
+
+	end)
+    treeDataProvider:Invalidate()
 
 	lastNumOfResults = actualResults
 end
@@ -1278,8 +1308,6 @@ miog.createSearchPanel = function()
 		
 	end)
 
-    treeDataProvider = CreateTreeDataProvider()
-	
 	searchPanel.ScrollBox2:SetDataProvider(treeDataProvider, ScrollBoxConstants.RetainScrollPosition)
 
 	return searchPanel

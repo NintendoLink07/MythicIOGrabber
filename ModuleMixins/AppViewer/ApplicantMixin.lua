@@ -71,35 +71,14 @@ function ApplicantMixin:SetData(data)
 
     local coloredPrimary, coloredSecondary
 
-    if(not data.primaryAlias) then
+    if(data.categoryID ~= 3) then
         coloredPrimary = wticc(tostring(data.primary), miog.createCustomColorForRating(data.primary):GenerateHexColor())
         coloredSecondary = wticc(tostring(data.secondary), miog.createCustomColorForRating(data.secondary):GenerateHexColor())
-
+        
     else
-        if(data.raidData) then
-            local orderedData1 = data.raidData[1]
-            local orderedData2 = data.raidData[2]
+        coloredPrimary = "DIV"
+        coloredSecondary = "DIV"
 
-            if(orderedData1) then
-                coloredPrimary = wticc(data.primaryAlias, orderedData1.isCurrent and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated)
-
-            else
-			    coloredPrimary = wticc("0/0", miog.DIFFICULTY[-1].color)
-
-            end
-
-            if(orderedData2) then
-                coloredSecondary = wticc(data.secondaryAlias, orderedData1.isCurrent and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated)
-
-            else
-			    coloredSecondary = wticc("0/0", miog.DIFFICULTY[-1].color)
-
-            end
-        else
-			coloredPrimary = wticc("0/0", miog.DIFFICULTY[-1].color)
-			coloredSecondary = wticc("0/0", miog.DIFFICULTY[-1].color)
-
-        end
     end
 
     self.Primary:SetText(coloredPrimary)

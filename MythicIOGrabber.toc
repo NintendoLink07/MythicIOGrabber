@@ -88,6 +88,8 @@ Mixins\SortButtonMixin.lua
 Mixins\SimplifiedSortingMixin.lua
 Mixins\TableHeaderButtonMixin.lua
 
+Mixins\AnchorSystemMixin.lua
+
 
 
 ##

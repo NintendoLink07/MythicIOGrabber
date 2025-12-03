@@ -5,25 +5,10 @@ local numOfActiveButtons = 0
 function SimplifiedSortingMixin:OnLoad()
 	CallbackRegistryMixin.OnLoad(self)
     self.states = {activeButtons = {}, buttons = {}}
-        
-    local firstHeader = self.sortButtons[1]
 
-    if(firstHeader) then
-        local firstEmpty = CreateFrame("Frame", nil, self, "MIOG_TableHeaderTemplate")
-        firstEmpty:SetHeight(firstHeader:GetHeight())
-        firstEmpty:SetPoint("LEFT", self, "LEFT")
-        firstEmpty:SetPoint("RIGHT", firstHeader, "LEFT")
+    for k, v in ipairs(self.sortButtons) do
+        v:RegisterCallback("OnSortingButtonClick", self.SortClick, self)
 
-        for k, v in ipairs(self.sortButtons) do
-            v:RegisterCallback("OnSortingButtonClick", self.SortClick, self)
-
-            local hasMoreButtons = #self.sortButtons > k
-            
-            local frame = CreateFrame("Frame", nil, self, "MIOG_TableHeaderTemplate")
-            frame:SetHeight(v:GetHeight())
-            frame:SetPoint("LEFT", v, "RIGHT")
-            frame:SetPoint("RIGHT", hasMoreButtons and self.sortButtons[k+1] or self, hasMoreButtons and "LEFT" or "RIGHT")
-        end
     end
 end
 
@@ -61,7 +46,7 @@ local function normalComparator(k1, k2, buttons, fallbackParameter)
         if (k1[sortID] ~= k2[sortID]) then
             -- Early return on the first difference found (fastest path)
             if (state == 1) then -- State 1: Ascending
-                return k1[sortID] < k2[sortID]
+                return k1[sortID] < k2[sortID] 
             else -- State 2: Descending
                 return k1[sortID] > k2[sortID]
             end

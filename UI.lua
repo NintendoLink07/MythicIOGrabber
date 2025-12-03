@@ -53,12 +53,12 @@ local function setActivePanel(_, panel)
 
 	if(panel == LFGListFrame.ApplicationViewer) then
 		if(UnitIsGroupLeader("player")) then
-			miog.ApplicationViewer.ButtonBar.Delist:Show()
-			miog.ApplicationViewer.ButtonBar.Edit:Show()
+			miog.ApplicationViewer.ActivityBar.Delist:Show()
+			miog.ApplicationViewer.ActivityBar.Edit:Show()
 
 		else
-			miog.ApplicationViewer.ButtonBar.Delist:Hide()
-			miog.ApplicationViewer.ButtonBar.Edit:Hide()
+			miog.ApplicationViewer.ActivityBar.Delist:Hide()
+			miog.ApplicationViewer.ActivityBar.Edit:Hide()
 			
 		end
 
@@ -179,12 +179,8 @@ miog.createFrames = function()
 	if(not miog.F.LITE_MODE) then
 		miog.loadQueueSystem()
 		--miog.loadCalendarSystem()
-		local s1 = GetTimePreciseSec()
 		miog.loadTeleports()
-		local e1 = GetTimePreciseSec()
-		local s2 = GetTimePreciseSec()
 		miog.loadGearingTable()
-		local e2 = GetTimePreciseSec()
 		--miog.loadGroupManager()
 		miog.loadGroupOrganizer()
 		miog.loadRaidPlanner()
@@ -194,7 +190,6 @@ miog.createFrames = function()
 		miog.UpgradeFinder = miog.loadUpgradeFinder()
 
 		--miog.loot.init()
-		print(e1-s1, e2-s2)
 	end
 
 

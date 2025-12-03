@@ -4,11 +4,15 @@
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="SortArrow" atlas="auctionhouse-ui-sortarrow" hidden="true">
-                    <Size x="8" y="8" />
+                    <Size x="12" y="12" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Text" relativePoint="RIGHT"/>
                     </Anchors>
                 </Texture>
+            </Layer>
+
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" setAllPoints="true" hidden="true"/>
             </Layer>
         </Layers>
 

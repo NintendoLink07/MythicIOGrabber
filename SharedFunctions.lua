@@ -382,6 +382,48 @@ miog.getWeightAndAliasesFromRaidProgress = function(playerDifficultyData)
 	return primary, secondary, primary2, secondary2
 end
 
+miog.getWeightAliasesAndDifficultyFromRaidProgress = function(playerDifficultyData)
+	local primary, primary2, primary3
+	local secondary, secondary2, secondary3
+
+	if(playerDifficultyData) then
+		if(playerDifficultyData[1]) then
+			primary = playerDifficultyData[1].weight or 0
+			primary2 = miog.getParsedProgressString(playerDifficultyData[1].kills, playerDifficultyData[1].bossCount)
+			primary3 = playerDifficultyData[1].difficulty
+
+		else
+			primary = 0
+			primary2 = 0
+			primary3 = 0
+
+		end
+		
+		if(playerDifficultyData[2]) then
+			secondary = playerDifficultyData[2].weight or 0
+			secondary2 = miog.getParsedProgressString(playerDifficultyData[2].kills, playerDifficultyData[2].bossCount)
+			secondary3 = playerDifficultyData[2].difficulty
+
+		else
+			secondary = 0
+			secondary2 = 0
+			secondary3 = 0
+
+		end
+	else
+		primary = 0
+		primary2 = 0
+		primary3 = 0
+
+		secondary = 0
+		secondary2 = 0
+		secondary3 = 0
+
+	end
+
+	return primary, secondary, primary2, secondary2, primary3, secondary3
+end
+
 miog.getWeightedAndSortedProgress = function(originalData)
     local FinalProgressList = {}
     local InputValue = originalData
@@ -453,6 +495,36 @@ miog.getWeightedAndSortedProgress = function(originalData)
     return FinalProgressList
 end
 
+miog.getColoredAliasFromRaidProgress = function(playerDifficultyData)
+	local diff1, diff2
+
+	if(playerDifficultyData) then
+		local diffData1, diffData2 = playerDifficultyData[1], playerDifficultyData[2]
+
+		if(diffData1) then
+			diff1 = wticc(miog.getParsedProgressString(diffData1.kills, diffData1.bossCount), diffData1.isCurrent and miog.DIFFICULTY[diffData1.difficulty].color or miog.DIFFICULTY[diffData1.difficulty].desaturated)
+
+		else
+			diff1 = wticc("0/0", miog.CLRSCC.red)
+
+		end
+
+		if(diffData2) then
+			diff2 = wticc(miog.getParsedProgressString(diffData2.kills, diffData2.bossCount), diffData2.isCurrent and miog.DIFFICULTY[diffData2.difficulty].color or miog.DIFFICULTY[diffData2.difficulty].desaturated)
+
+		else
+			diff2 = wticc("0/0", miog.CLRSCC.red)
+
+		end
+	else
+		diff1 = wticc("0/0", miog.CLRSCC.red)
+		diff2 = wticc("0/0", miog.CLRSCC.red)
+
+	end
+
+	return diff1, diff2
+end
+
 miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntryCreation_ListGroupInternal
 	local frame = miog.EntryCreation
 	local self = LFGListFrame.EntryCreation
@@ -486,7 +558,7 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 		requiredPvpRating = pvpRating,
 	};
 
-	if (LFGListEntryCreation_IsEditMode(self)) then
+	if(LFGListEntryCreation_IsEditMode(self)) then
 		-- Pull these values from the active entry.
 		createData.isAutoAccept = activeEntryInfo.autoAccept;
 		createData.questID = activeEntryInfo.questID;
@@ -509,6 +581,8 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 			LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
 			
 		end
+        
+        LFGListEntryCreation_SetEditMode(self, false)
 	else
 		if(C_LFGList.HasActiveEntryInfo()) then
 			C_LFGList.UpdateListing(createData)

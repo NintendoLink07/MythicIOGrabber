@@ -33,11 +33,16 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 		local allDataAvailable = true
 
+		local overallPrimary, overallSecondary, overallRole, overallItemLevel = 0, 0, 0, 0
+
+		local isRaid = categoryID == 3
+		local raidTable = {}
+
 		for k = 1, applicantData.numMembers do
 			local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(applicantID, k)
 
 			if(name) then
-				local primary, secondary, primaryAlias, secondaryAlias
+				local primary, secondary
 				local fullName, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
 				local raidData
 
@@ -49,7 +54,9 @@ function AppViewer:AddApplicant(applicantID, activityID)
 					
 				elseif(categoryID == 3) then
 					raidData = miog.getRaidProgress(playerName, realm)
-					primary, secondary, primaryAlias, secondaryAlias = miog.getWeightAndAliasesFromRaidProgress(raidData)
+					primary, secondary = miog.getWeightFromRaidProgress(raidData)
+
+					raidTable[k] = raidData
 				
 				elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 					local pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activityID)
@@ -63,7 +70,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 				end
 
-				local roleValue = assignedRole == "TANK" and 0 or assignedRole == "HEALER" and 1 or 2
+				local roleValue = assignedRole == "TANK" and 1 or assignedRole == "HEALER" and 20 or 400
 
 				groupData[k] = {
 					template = "MIOG_AppViewerApplicantMemberTemplate",
@@ -80,14 +87,17 @@ function AppViewer:AddApplicant(applicantID, activityID)
 					primary = primary,
 					secondary = secondary,
 
-					primaryAlias = primaryAlias,
-					secondaryAlias = secondaryAlias,
-
 					raidData = raidData,
 					itemLevel = itemLevel,
 
 					role = roleValue,
 				}
+
+				overallRole = overallRole + roleValue
+				overallPrimary = overallPrimary + primary
+				overallSecondary = overallSecondary + secondary
+				overallItemLevel = overallItemLevel + itemLevel
+
 			else
 				allDataAvailable = false
 
@@ -96,20 +106,23 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 		if(allDataAvailable) then
 			if(multipleMembers) then
+				local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / 4, overallSecondary / 4, overallRole / 4, overallItemLevel / 4
+
 				parent = treeDataProvider:Insert({
 					template = "MIOG_AppViewerApplicantTemplate",
 					applicantID = applicantID,
+					numOfMembers = applicantData.numMembers,
 
 					categoryID = categoryID,
-					primary = primary,
-					secondary = secondary,
 
-					primaryAlias = primaryAlias,
-					secondaryAlias = secondaryAlias,
+					primary = averagePrimary,
+					secondary = averageSecondary,
+					
+					raidData = raidTable,
 
-					itemLevel = itemLevel,
+					itemLevel = averageItemLevel,
 
-					role = roleValue,
+					role = averageRole,
 				})
 
 			else
@@ -164,11 +177,11 @@ function AppViewer:RetrieveAndSetEntryInfo()
 		self.ActivityBar.Description:SetText(activeEntry.comment)
 		self.ActivityBar.Background:SetTexture(customInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[customInfo.categoryID], "MIRROR", "MIRROR")
 		
-		if(activityInfo.categoryID == 2 and activeEntry.requiredDungeonScore) then
+		if(activityInfo.categoryID == 2) then
 			self.ActivityBar.Primary:SetText(activityInfo.requiredDungeonScore)
 			self.SortButtons:SetSortButtonTexts("Role", "Rating", "Key", "I-Lvl")
 
-		elseif(activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9 and activeEntry.requiredPvpRating) then
+		elseif(activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9) then
 			self.ActivityBar.Primary:SetText(activityInfo.requiredPvpRating)
 			self.SortButtons:SetSortButtonTexts("Role", "Rating", "Tier", "I-Lvl")
 
@@ -281,17 +294,16 @@ function AppViewer:OnEvent(event, ...)
 			end
 		end
 	elseif(event == "PARTY_LEADER_CHANGED") then
-		local canInvite = miog.checkIfCanInvite()
+		local visible = C_PartyInfo.CanInvite()
 
-		if(treeDataProvider and treeDataProvider:GetSize(true) > 0) then
-			for _, frame in self.ScrollBox:EnumerateFrames() do
-				if(frame.Invite) then
-					frame.Invite:SetShown(canInvite)
-					frame.Decline:SetShown(canInvite)
+		for _, frame in self.ScrollBox:EnumerateFrames() do
 
-				end
-			end
+			frame.Invite:SetShown(visible)
+			frame.Decline:SetShown(visible)
 		end
+
+		self.ActivityBar.Delist:SetShown(visible)
+		self.ActivityBar.Edit:SetShown(visible)
     end
 end
 

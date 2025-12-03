@@ -2,21 +2,28 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_AppViewer" mixin="AppViewer" virtual="true">
         <Frames>
-            <Frame parentKey="SortButtons" mixin="SimplifiedSortingMixin">
+			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate" useParentLevel="true"/>
+
+            <Frame parentKey="SortButtons" mixin="SimplifiedSortingMixin, AnchorSystemMixin">
                 <Size y="24" />
+                        
+                <KeyValues>
+                    <KeyValue key="spacing" value="3" type="number" />
+                </KeyValues>
 
                 <Anchors>
-                    <Anchor point="TOPLEFT" />
-                    <Anchor point="TOPRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Border.Bg" relativePoint="TOPLEFT" x="3"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Border.Bg" relativePoint="TOPRIGHT" x="-3"/>
                 </Anchors>
 
-                <Frames>                    
+                <Frames>
                     <Button parentKey="Role" name="role" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#1">
                         <Size y="22" />
-
-                        <Anchors>
-                            <Anchor point="LEFT" x="11"/>
-                        </Anchors>
+                        
+                        <KeyValues>
+                            <KeyValue key="widthUnits" value="4" type="number" />
+                            <KeyValue key="widthPerc" value="50" type="number" />
+                        </KeyValues>
 
                         <Scripts>
                             <OnLoad method="OnLoad" />
@@ -25,10 +32,11 @@
                     
                     <Button parentKey="Primary" name="primary" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#2">
                         <Size y="22" />
-
-                        <Anchors>
-                            <Anchor point="LEFT" x="189"/>
-                        </Anchors>
+                        
+                        <KeyValues>
+                            <KeyValue key="widthUnits" value="1" type="number" />
+                            <KeyValue key="widthPerc" value="12.5" type="number" />
+                        </KeyValues>
 
                         <Scripts>
                             <OnLoad method="OnLoad" />
@@ -37,10 +45,11 @@
                     
                     <Button parentKey="Secondary" name="secondary" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#3">
                         <Size y="22" />
-
-                        <Anchors>
-                            <Anchor point="LEFT" x="231"/>
-                        </Anchors>
+                        
+                        <KeyValues>
+                            <KeyValue key="widthUnits" value="1" type="number" />
+                            <KeyValue key="widthPerc" value="12.5" type="number" />
+                        </KeyValues>
 
                         <Scripts>
                             <OnLoad method="OnLoad" />
@@ -49,10 +58,11 @@
                     
                     <Button parentKey="ItemLevel" name="itemLevel" parentArray="sortButtons" inherits="MIOG_HeaderSortButtonTemplate" justifyH="LEFT" text="#4">
                         <Size y="22" />
-
-                        <Anchors>
-                            <Anchor point="LEFT" x="270"/>
-                        </Anchors>
+                        
+                        <KeyValues>
+                            <KeyValue key="widthUnits" value="2" type="number" />
+                            <KeyValue key="widthPerc" value="25" type="number" />
+                        </KeyValues>
 
                         <Scripts>
                             <OnLoad method="OnLoad" />
@@ -61,16 +71,19 @@
                 </Frames>
 
                 <Scripts>
-                    <OnLoad method="OnLoad" />
+                    <OnLoad>
+                        SimplifiedSortingMixin.OnLoad(self)
+                        AnchorSystemMixin.OnLoad(self)
+                    </OnLoad>
                 </Scripts>
             </Frame>
 
-            <Frame parentKey="ButtonBar">
-                <Size y="24" />
+            <Frame parentKey="ActivityBar" inherits="InsetFrameTemplate3">
+                <Size y="112" />
 
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" />
-                    <Anchor point="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.Border.Bg" relativePoint="BOTTOMLEFT" x="3"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border.Bg" relativePoint="BOTTOMRIGHT" x="-3"/>
                 </Anchors>
 
                 <Frames>
@@ -78,7 +91,7 @@
                         <Size x="60" y="20" />
 
                         <Anchors>
-                            <Anchor point="LEFT" x="2"/>
+                            <Anchor point="BOTTOMLEFT" x="2" y="2"/>
                         </Anchors>
 
                         <Scripts>
@@ -109,7 +122,7 @@
                         <Size x="80" y="20" />
 
                         <Anchors>
-                            <Anchor point="RIGHT" x="-2"/>
+                            <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
                         </Anchors> 
 
                         <Scripts>
@@ -119,17 +132,7 @@
                             </OnClick>
                         </Scripts>
                     </Button>
-                </Frames>
-            </Frame>
 
-            <Frame parentKey="ActivityBar" inherits="InsetFrameTemplate3">
-                <Size y="96" />
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ButtonBar" relativePoint="TOPLEFT"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonBar" relativePoint="TOPRIGHT"/>
-                </Anchors>
-
-                <Frames>
                     <Button parentKey="RefreshButton" inherits="RefreshButtonTemplate">
                         <Size x="32" y="32" />
                         <KeyValues>
@@ -151,7 +154,7 @@
                 </Frames>
 
                 <Layers>
-                    <Layer level="BACKGROUND" textureSubLevel="-1">
+                    <Layer level="BACKGROUND" textureSubLevel="-7">
                         <Texture parentKey="Background" vertTile="true" horizTile="true">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.BorderTopLeft" relativePoint="TOPLEFT" x="2" y="-2"/>
@@ -229,7 +232,7 @@
                             <Size x="20" y="20" />
 
                             <Anchors>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.BorderBottomRight" relativePoint="CENTER" x="-2" y="4"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Delist" relativePoint="TOPRIGHT" x="-2" y="4"/>
                             </Anchors>
 
                             <Scripts>
@@ -296,14 +299,6 @@
                 </Anchors>
             </Frame>
         </Frames>
-
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="TransparentDark" setAllPoints="true">
-                    <Color r="0.3" g="0.3" b="0.3" a="0.2" />
-                </Texture>
-            </Layer>
-        </Layers>
 
         <Scripts>
             <OnLoad method="OnLoad" />

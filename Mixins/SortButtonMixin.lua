@@ -7,7 +7,25 @@ function MultiStateButtonsMixin:OnLoad()
 end
 
 function MultiStateButtonsMixin:Update()
+    if(self.textures) then
+        if(self.textures.type == "atlas") then
+            self.Background:SetAtlas(self.textures[self.state + 1])
 
+        elseif(self.textures.type == "texture") then
+            self.Background:SetTexture(self.textures[self.state + 1])
+
+        end
+    end
+
+    if(self.highlights) then
+        if(self.highlights.type == "atlas") then
+            self:SetHighlightAtlas(self.highlights[self.state + 1])
+
+        else
+            self:SetHighlightTexture(self.highlights[self.state + 1])
+
+        end
+    end
 end
 
 function MultiStateButtonsMixin:AdvanceState()
@@ -15,7 +33,6 @@ function MultiStateButtonsMixin:AdvanceState()
     self.active = self.state > 0
 
     self:Update()
-
 end
 
 function MultiStateButtonsMixin:OnClick()
@@ -23,6 +40,42 @@ function MultiStateButtonsMixin:OnClick()
 
 end
 
+function MultiStateButtonsMixin:SetTextures(inactive, active1, active2)
+    self.textures = {type="texture", inactive, active1 or inactive, active2 or active1 or inactive}
+    self.BackgroundColor:Hide()
+    self.Background:Show()
+    self:Update()
+
+end
+
+function MultiStateButtonsMixin:SetAtlases(inactive, active1, active2)
+    self.textures = {type = "atlas", inactive, active1 or inactive, active2 or active1 or inactive}
+    self.BackgroundColor:Hide()
+    self.Background:Show()
+    self:Update()
+end
+
+function MultiStateButtonsMixin:SetHighlightAtlases(inactive, active1, active2)
+    self.highlights = {type = "atlas", inactive, active1 or inactive, active2 or active1 or inactive}
+    self:Update()
+end
+
+function MultiStateButtonsMixin:SetHighlightTextures(inactive, active1, active2)
+    self.highlights = {type = "texture", inactive, active1 or inactive, active2 or active1 or inactive}
+    self:Update()
+end
+
+function MultiStateButtonsMixin:DisableTextures()
+    self.textures = nil
+    self.BackgroundColor:Show()
+    self.Background:Hide()
+
+end
+
+function MultiStateButtonsMixin:DisableHighlights()
+    self.highlights = nil
+
+end
 
 
 SortButtonMixin = CreateFromMixins(MultiStateButtonsMixin, CallbackRegistryMixin)
@@ -34,7 +87,6 @@ SortButtonMixin:GenerateCallbackEvents(
 
 function SortButtonMixin:SetText(text)
     self.Text:SetText(text)
-    self:SetWidth(self.Text:GetStringWidth() + self.SortArrow:GetWidth() + 6)
 
 end
 
@@ -48,6 +100,9 @@ function SortButtonMixin:OnLoad()
         self:TriggerEvent("OnSortingButtonClick", self)
     
     end)
+    
+    self:SetAtlases("StoryHeader-BG")
+    self:SetHighlightAtlases("CampaignHeader_SelectedGlow")
 end
 
 function SortButtonMixin:GetStatus()
@@ -61,6 +116,8 @@ function SortButtonMixin:GetID()
 end
 
 function SortButtonMixin:Update()
+    MultiStateButtonsMixin.Update(self)
+
     if(self.active) then
         self.SortArrow:SetShown(true)
 

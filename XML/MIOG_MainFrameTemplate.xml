@@ -92,7 +92,6 @@
                                     return canUse and factionGroup ~= "Neutral" and not Kiosk.IsEnabled();
                                 end
                             </OnLoad>
-                            <OnShow function="MicroButton_KioskModeDisable" inherit="append"/>
                             <OnEvent method="OnEvent"/>
 						</Scripts>
 					</Button>

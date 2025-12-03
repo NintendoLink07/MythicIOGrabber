@@ -3,7 +3,7 @@
     <Frame name="MIOG_TableHeaderTemplate" mixin="TableHeaderButtonMixin" virtual="true">
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="BackgroundColor" setAllPoints="true" />
+                <Texture parentKey="BackgroundColor" setAllPoints="true"/>
             </Layer>
 
             <Layer level="OVERLAY">
