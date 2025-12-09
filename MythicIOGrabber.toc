@@ -52,6 +52,8 @@ FuzzyAlgorithm.lua
 GroupOrganizer.lua
 Loot.lua
 
+## FrameTester.lua
+
 ##
 ### MIXINS
 ##
@@ -87,6 +89,8 @@ Mixins\TreeListViewMultiSpacingMixin.lua
 Mixins\SortButtonMixin.lua
 Mixins\SimplifiedSortingMixin.lua
 Mixins\TableHeaderButtonMixin.lua
+Mixins\TextCellMixin.lua
+Mixins\TextureCellMixin.lua
 
 Mixins\AnchorSystemMixin.lua
 

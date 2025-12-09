@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_AppViewerApplicantTemplate" mixin="ApplicantMemberMixin" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_AppViewerApplicantTemplate" mixin="ApplicantMixin" inherits="BackdropTemplate" virtual="true">
         <Size y="24" />
 
         <Frames>
@@ -25,7 +25,6 @@
             <Button parentKey="Decline" inherits="UIButtonTemplate" hidden="true">
                 <Size x="16" y="16" />
 
-                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\xSmallIcon.png" />!-->
                 <NormalTexture atlas="UI-LFG-DeclineMark" />
 
                 <Anchors>
@@ -43,7 +42,6 @@
             <Button parentKey="Invite" inherits="UIButtonTemplate" hidden="true">
                 <Size x="16" y="16" />
 
-                <!--<NormalTexture file="Interface\Addons\MythicIOGrabber\res\infoIcons\checkmarkSmallIcon.png" />!-->
                 <NormalTexture atlas="UI-LFG-ReadyMark" />
                 
                 <Anchors>
@@ -68,45 +66,17 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <Texture parentKey="Expand" atlas="campaign_headericon_closed">
-                    <Size x="18" y="18" />
+                <FontString parentKey="Players" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Anchors>
-                        <Anchor point="LEFT" x="1"/>
-                    </Anchors>
-                </Texture>
-
-                <Texture parentKey="Role">
-                    <Size x="18" y="18" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="2"/>
-                    </Anchors>
-                </Texture>
-
-                <Texture parentKey="Class">
-                    <Size x="16" y="16" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="2"/>
-                    </Anchors>
-                </Texture> 
-
-                <Texture parentKey="Spec">
-                    <Size x="16" y="16" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Class" relativePoint="RIGHT" x="3"/>
-                    </Anchors>
-                </Texture> 
-
-                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="106" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="4"/>
+                        <Anchor point="LEFT" relativeKey="$parent" x="2"/>
+                        <Anchor point="RIGHT" relativeKey="$parent" x="-2"/>
                     </Anchors>
                 </FontString>
             
-                <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
+                <!--<Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
                     <Size x="10" y="10" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" y="4"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Players" relativePoint="LEFT" y="4"/>
                     </Anchors>
                 </Texture>
 
@@ -129,21 +99,12 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="1"/>
                     </Anchors>
-                </FontString>
-
-                <Texture parentKey="Race">
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="4"/>
-                    </Anchors>
-                    <Size x="16" y="16" />
-                </Texture> 
+                </FontString>!-->
             </Layer>
         </Layers>
 
         <Scripts>
-            <OnEnter method="OnEnter" />
             <OnLoad method="OnLoad" />
-            <OnMouseDown method="OnMouseDown" />
         </Scripts>
     </Frame>
 </Ui>

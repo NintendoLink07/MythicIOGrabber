@@ -9,13 +9,24 @@ function ApplicantMemberMixin:SetCollapsed(bool)
 
 end
 
-function ApplicantMemberMixin:OnMouseDown(button, ...)
-	self:GetElementData():ToggleCollapsed()
-	self.Expand:SetAtlas(self:GetElementData():IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
-end
-
 function ApplicantMemberMixin:OnLoad()
 
+end
+
+function ApplicantMemberMixin:OnMouseDown(button)
+    if(button == "RightButton") then
+        if(self.applicantID) then
+            if(C_LFGList.GetApplicantInfo(self.applicantID)) then
+                self:GetParent().applicantID = self.applicantID
+                LFGListApplicantMember_OnMouseDown(self)
+
+            end
+        end
+    else
+        self:GetElementData():ToggleCollapsed()
+        self.Expand:SetAtlas(self:GetElementData():IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
+
+    end
 end
 
 function ApplicantMemberMixin:OnEnter()
@@ -106,7 +117,6 @@ function ApplicantMemberMixin:SetData(data)
     
     local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(self.applicantID, self.memberIdx)
 
-
     local fullName, playerName = miog.createFullNameValuesFrom("unitName", name)
 
     local nameTable = {}
@@ -131,7 +141,7 @@ function ApplicantMemberMixin:SetData(data)
     self.Spec:SetTexture(miog.SPECIALIZATIONS[data.specID or 0].squaredIcon)
     self.Comment:SetShown(comment and comment ~= "")
     self.Comment:SetPoint("LEFT", self.Name, "LEFT", self.Name:GetStringWidth(), 4)
-	self.Race:SetAtlas(miog.RACES[raceID])
+	--self.Race:SetAtlas(miog.RACES[raceID])
 	self.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (assignedRole or "DAMAGER") .. "Icon.png")
 
     local coloredPrimary, coloredSecondary
@@ -150,5 +160,5 @@ function ApplicantMemberMixin:SetData(data)
 
     self:SetItemLevel(itemLevel)
 
-    self:SetInviteDeclineStatus(data.multi)
+    --self:SetInviteDeclineStatus(data.numMembers)
 end

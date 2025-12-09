@@ -22,13 +22,13 @@
                 </Layers>
             </Frame>
 
-            <Button parentKey="Decline" inherits="UIButtonTemplate" hidden="true">
+            <Button parentKey="Decline" inherits="UIButtonTemplate">
                 <Size x="16" y="16" />
 
                 <NormalTexture atlas="UI-LFG-DeclineMark" />
 
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2"/>
                 </Anchors>
 
                 <Scripts>
@@ -39,7 +39,7 @@
                 </Scripts>
             </Button>
 
-            <Button parentKey="Invite" inherits="UIButtonTemplate" hidden="true">
+            <Button parentKey="Invite" inherits="UIButtonTemplate">
                 <Size x="16" y="16" />
 
                 <NormalTexture atlas="UI-LFG-ReadyMark" />
@@ -76,7 +76,7 @@
                 <Texture parentKey="Role">
                     <Size x="18" y="18" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="2"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT"/>
                     </Anchors>
                 </Texture>
 
@@ -90,14 +90,21 @@
                 <Texture parentKey="Spec">
                     <Size x="16" y="16" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Class" relativePoint="RIGHT" x="3"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Class" relativePoint="RIGHT" x="2"/>
                     </Anchors>
-                </Texture> 
+                </Texture>
+
+                <!--<Texture parentKey="Race">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                    <Size x="16" y="16" />
+                </Texture> !-->
 
                 <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="106" />
+                    <Size x="89" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="4"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="3"/>
                     </Anchors>
                 </FontString>
             
@@ -122,19 +129,12 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="LEFT">
-                    <Size x="45" y="20" />
+                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER">
+                    <Size x="40" y="20" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="1"/>
                     </Anchors>
                 </FontString>
-
-                <Texture parentKey="Race">
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.ItemLevel" relativePoint="RIGHT" x="4"/>
-                    </Anchors>
-                    <Size x="16" y="16" />
-                </Texture> 
             </Layer>
         </Layers>
 

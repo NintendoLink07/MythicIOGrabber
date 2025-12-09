@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
-## [3.8] - 2025-11-23
+## [3.8] - 2025-12-10
 
 ### Changed
 
@@ -4466,7 +4466,7 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.8..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.7.1..HEAD
 [3.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.8
 [3.7.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7.1
 [3.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7

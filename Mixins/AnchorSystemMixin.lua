@@ -1,92 +1,16 @@
 AnchorSystemMixin = {}
 
-local function findNextNumber(baseNumber, array)
-    local closest, index = math.huge, -1
-
-    for _, otherNumber in pairs(array) do
-        if math.abs(baseNumber - otherNumber) < math.abs(baseNumber - closest) then
-            closest = otherNumber
-            index = _
-        end
-    end
-
-    return closest, index - 1
-end
-
-
-function AnchorSystemMixin:AddMiddlePoints()
- -- always add points to the middle and go out from there
- -- set ids accordingly
-end
-
-function AnchorSystemMixin:CreateLeftPoint()
-    local frame3 = CreateFrame("Frame", nil, self)
-    frame3:SetHeight(1)
-    frame3:SetPoint("TOPLEFT")
-
-    tinsert(self.anchorPoints, {point = {frame3:GetPoint(1)}, depth = 0})
-end
-
-function AnchorSystemMixin:CreateRightPoint()
-    local frame3 = CreateFrame("Frame", nil, self)
-    frame3:SetHeight(1)
-    frame3:SetPoint("TOPRIGHT")
-
-    tinsert(self.anchorPoints, {point = {frame3:GetPoint(1)}, depth = 0})
-        
-end
-
-function AnchorSystemMixin:CreateMiddlePoint()
-    local frame3 = CreateFrame("Frame", nil, self)
-    frame3:SetHeight(1)
-    frame3:SetPoint("TOP")
-
-    tinsert(self.anchorPoints, {point = {frame3:GetPoint(1)}, depth = 0})
-
-end
-
-function AnchorSystemMixin:CreateAnchorPoints(depth, maxDepth, nextParent)
-    local frame1 = CreateFrame("Frame", nil, self)
-    frame1:SetHeight(1)
-    frame1:SetPoint("TOPLEFT", nextParent or self, "TOPLEFT")
-    frame1:SetPoint("TOPRIGHT", nextParent or self, "TOP")
-
-    local frame2 = CreateFrame("Frame", nil, self)
-    frame2:SetHeight(1)
-    frame2:SetPoint("TOPLEFT", nextParent or self, "TOP")
-    frame2:SetPoint("TOPRIGHT", nextParent or self, "TOPRIGHT")
-
-    if(depth < maxDepth) then
-        self:CreateAnchorFrames(depth + 1, maxDepth, frame1)
-
-        if(not nextParent) then
-            self:CreateMiddlePoint()
-
-        end
-
-        self:CreateAnchorFrames(depth + 1, maxDepth, frame2)
-
-    else
-        tinsert(self.anchorPoints, {point = {frame1:GetPoint(1)}, depth = depth})
-
-        if(not nextParent) then
-            self:CreateMiddlePoint()
-            
-        end
-
-        tinsert(self.anchorPoints, {point = {frame2:GetPoint(2)}, depth = depth})
-
-    end
-
-end
+local framePool = CreateFramePool("Frame")
 
 function AnchorSystemMixin:CreateAnchorFrames(depth, maxDepth, nextParent)
-    local frame1 = CreateFrame("Frame", nil, self)
+    local frame1 = framePool:Acquire()
+    frame1:SetParent(self)
     frame1:SetHeight(1)
     frame1:SetPoint("TOPLEFT", nextParent or self, "TOPLEFT")
     frame1:SetPoint("TOPRIGHT", nextParent or self, "TOP")
 
-    local frame2 = CreateFrame("Frame", nil, self)
+    local frame2 = framePool:Acquire()
+    frame2:SetParent(self)
     frame2:SetHeight(1)
     frame2:SetPoint("TOPLEFT", nextParent or self, "TOP")
     frame2:SetPoint("TOPRIGHT", nextParent or self, "TOPRIGHT")
@@ -102,20 +26,20 @@ function AnchorSystemMixin:CreateAnchorFrames(depth, maxDepth, nextParent)
     end
 end
 
-function AnchorSystemMixin:OnLoad()
-    self.padding = 2
+function AnchorSystemMixin:Reload()
+    framePool:ReleaseAll()
+
     self.anchorFrames = {}
     self.anchorPoints = {}
 
     local children = {self:GetChildren()}
-    local widthUnits = #children
 
-    --[[local widthUnits = 0
+    local widthUnits = 0
 
     for k, v in ipairs(children) do
         widthUnits = widthUnits + v.widthUnits
 
-    end]]
+    end
 
     if(widthUnits > 0) then
         local divisors = {4, 8, 16, 32, 64, 128}
@@ -179,7 +103,7 @@ function AnchorSystemMixin:OnLoad()
             end]]
         else
             for _, Divisor in ipairs(divisors) do
-                if(Divisor>=widthUnits) then
+                --[[if(Divisor>=widthUnits) then
                     local maxDepth = log(Divisor) / log(2)
 
                     self:CreateAnchorFrames(1, maxDepth - 1)
@@ -198,10 +122,40 @@ function AnchorSystemMixin:OnLoad()
                     end
 
                     break
-                else
+                end]]
 
+                if(Divisor>=widthUnits) then
+                    local maxDepth = log(Divisor) / log(2)
+
+                    self:CreateAnchorFrames(1, maxDepth)
+
+                    local index = 0
+
+                    for i = 1, #children do
+                        local child = children[i]
+
+                        index = index + 1
+                        local anchorFrameDataLeft = self.anchorFrames[index]
+
+                        index = index + child.widthUnits - 1
+                        local anchorFrameDataRight = self.anchorFrames[index]
+
+                        child:ClearAllPoints()
+                        child:SetPoint("TOPLEFT", anchorFrameDataLeft.frame, "TOPLEFT", self.padding / 2, 0)
+                        child:SetPoint("TOPRIGHT", anchorFrameDataRight.frame, "TOPRIGHT", -self.padding / 2, 0)
+                        child:Show()
+
+                    end
+
+                    break
                 end
             end
         end
     end
+end
+
+function AnchorSystemMixin:OnLoad()
+    self.padding = 1
+
+    self:Reload()
 end

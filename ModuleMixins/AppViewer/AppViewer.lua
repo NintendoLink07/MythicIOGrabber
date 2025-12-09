@@ -5,8 +5,6 @@ local queueTimer
 
 local categoryID
 
-local pendingList = {}
-
 AppViewer = CreateFromMixins(CallbackRegistryMixin)
 
 function AppViewer:FindApplicantFrame(applicantID)
@@ -22,6 +20,19 @@ function AppViewer:FindApplicantFrame(applicantID)
 	return frame
 end
 
+function AppViewer:RemoveApplicantFrame(applicantID)
+	local index, node = treeDataProvider:FindByPredicate(function(node)
+		local data = node:GetData()
+
+		if(data) then
+			return data.applicantID == applicantID
+
+		end
+	end, true)
+
+	treeDataProvider:Remove(node)
+end
+
 function AppViewer:AddApplicant(applicantID, activityID)
 	local applicantData = C_LFGList.GetApplicantInfo(applicantID)
 
@@ -30,6 +41,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 		local parent
 		local multipleMembers = applicantData.numMembers > 1
+		local numMembers = applicantData.numMembers
 
 		local allDataAvailable = true
 
@@ -38,7 +50,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 		local isRaid = categoryID == 3
 		local raidTable = {}
 
-		for k = 1, applicantData.numMembers do
+		for k = 1, numMembers do
 			local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(applicantID, k)
 
 			if(name) then
@@ -76,6 +88,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 					template = "MIOG_AppViewerApplicantMemberTemplate",
 					applicantID = applicantID,
 					applicantIndex = k,
+					numMembers = numMembers,
 
 					class = class,
 					specID = specID,
@@ -106,12 +119,11 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 		if(allDataAvailable) then
 			if(multipleMembers) then
-				local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / 4, overallSecondary / 4, overallRole / 4, overallItemLevel / 4
+				local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / numMembers, overallSecondary / numMembers, overallRole / numMembers, overallItemLevel / numMembers
 
 				parent = treeDataProvider:Insert({
 					template = "MIOG_AppViewerApplicantTemplate",
 					applicantID = applicantID,
-					numOfMembers = applicantData.numMembers,
 
 					categoryID = categoryID,
 
@@ -140,9 +152,6 @@ function AppViewer:AddApplicant(applicantID, activityID)
 	end
 end
 
--- full update, updates take too long
--- partial update, partial data
-
 function AppViewer:RefreshApplicantList()
 	C_LFGList.RefreshApplicants()
 
@@ -155,7 +164,6 @@ function AppViewer:RefreshApplicantList()
 		for _, applicantID in ipairs(applicantList) do
 			self:AddApplicant(applicantID, activeEntry.activityIDs[1])
 			
-			pendingList[applicantID] = false
 		end
 
     	self.SortButtons:Sort()
@@ -179,11 +187,11 @@ function AppViewer:RetrieveAndSetEntryInfo()
 		
 		if(activityInfo.categoryID == 2) then
 			self.ActivityBar.Primary:SetText(activityInfo.requiredDungeonScore)
-			self.SortButtons:SetSortButtonTexts("Role", "Rating", "Key", "I-Lvl")
+			self.SortButtons:SetSortButtonTexts("Role", "Rtng", "Key", "I-Lvl")
 
 		elseif(activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9) then
 			self.ActivityBar.Primary:SetText(activityInfo.requiredPvpRating)
-			self.SortButtons:SetSortButtonTexts("Role", "Rating", "Tier", "I-Lvl")
+			self.SortButtons:SetSortButtonTexts("Role", "Rtng", "Tier", "I-Lvl")
 
 		elseif(activityInfo.categoryID == 3) then --todo
 			self.ActivityBar.Primary:SetText("---")
@@ -216,8 +224,34 @@ function AppViewer:RetrieveAndSetEntryInfo()
 	end
 end
 
+function AppViewer:Refresh()
+	local activeEntry = C_LFGList.GetActiveEntryInfo()
+	local applicantList = C_LFGList.GetApplicants()
+
+	if(applicantList and #applicantList > 0) then
+		for _, applicantID in ipairs(applicantList) do
+			local applicantExists = treeDataProvider:ContainsByPredicate(function(node)
+				local data = node:GetData()
+
+				if(data) then
+					return data.applicantID == applicantID
+
+				end
+			end, true)
+
+			if(not applicantExists) then
+				self:AddApplicant(applicantID, activeEntry.activityIDs[1])
+
+			end
+		end
+	end
+end
+
 function AppViewer:OnEvent(event, ...)
-    if(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then
+	if(event == "PLAYER_ENTERING_WORLD") then
+		self:RefreshApplicantList()
+
+	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then
 		local justCreated = ...
 
 		if(justCreated == nil) then
@@ -228,11 +262,10 @@ function AppViewer:OnEvent(event, ...)
 		else
 			if(justCreated) then
 				treeDataProvider:Flush()
-				pendingList = {}
 				MIOG_NewSettings.queueUpTime = GetTimePreciseSec()
 				
 			else
-				MIOG_NewSettings.queueUpTime = MIOG_NewSettings.queueUpTime > 0 and MIOG_NewSettings.queueUpTime or GetTimePreciseSec()	
+				MIOG_NewSettings.queueUpTime = MIOG_NewSettings.queueUpTime > 0 and MIOG_NewSettings.queueUpTime or GetTimePreciseSec()
 
 			end
 
@@ -245,49 +278,55 @@ function AppViewer:OnEvent(event, ...)
 		end
 
 		self:RetrieveAndSetEntryInfo()
+
     elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then
 		local newEntry, withData = ...
 
 		if(withData) then
-			local activeEntry = C_LFGList.GetActiveEntryInfo()
+			self:Refresh()
 
-			for applicantID, needsToBeAdded in pairs(pendingList) do
-				if(needsToBeAdded) then
-					self:AddApplicant(applicantID, activeEntry.activityIDs[1])
-					pendingList[applicantID] = false
-
-				end
-			end
 		end
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then
 		local applicantID = ...
 		local applicantData = C_LFGList.GetApplicantInfo(applicantID)
+		local canInvite = C_PartyInfo.CanInvite()
+		local frame = self:FindApplicantFrame(applicantID)
 
-		if(applicantData) then
-			local appStatus = applicantData.applicationStatus
-
-			if(applicantData.isNew and appStatus == "applied" and pendingList[applicantID] == nil) then
-				pendingList[applicantID] = true
+		if(not applicantData or applicantData.applicationStatus == "declined") then
+			if(canInvite) then
+				frame:RefreshStatus("declined")
 
 			else
-				local frame = self:FindApplicantFrame(applicantID)
+				self:RemoveApplicantFrame(applicantID)
 
-				if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "invited" or appStatus == "inviteaccepted") then
+			end
+		else
+			local appStatus = applicantData.applicationStatus
 
+			if(appStatus ~= "applied") then
+				if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted") then
+					if(canInvite) then
+						if(frame) then
+							frame:RefreshStatus(appStatus)
+
+						end
+					else
+						self:RemoveApplicantFrame(applicantID)
+
+					end
+				elseif(appStatus == "invited") then
 					if(frame) then
 						frame:RefreshStatus(appStatus)
 
 					end
-
 				elseif(appStatus == "declined") then
-					if(C_PartyInfo.CanInvite()) then
-						frame:RefreshStatus(appStatus)
+					if(canInvite) then
+						if(frame) then
+							frame:RefreshStatus(appStatus)
 
+						end
 					else
-						self.ScrollBox:RemoveByPredicate(function(selfFrame, data)
-							return data.applicantID == applicantID
-						
-						end)
+						self:RemoveApplicantFrame(applicantID)
 
 					end
 				end
@@ -302,8 +341,8 @@ function AppViewer:OnEvent(event, ...)
 			frame.Decline:SetShown(visible)
 		end
 
-		self.ActivityBar.Delist:SetShown(visible)
-		self.ActivityBar.Edit:SetShown(visible)
+		self.ActivityBar.Delist:SetEnabled(visible)
+		self.ActivityBar.Edit:SetEnabled(visible)
     end
 end
 
@@ -318,8 +357,9 @@ end
 
 function AppViewer:OnLoad()
 	CallbackRegistryMixin.OnLoad(self)
-    local view = Mixin(CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 8), TreeListViewMultiSpacingMixin)
-	view:SetDepthSpacing()
+    --local view = Mixin(CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6), TreeListViewMultiSpacingMixin)
+    local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6)
+	--view:SetDepthSpacing()
     self.view = view
 
 	local function Initializer(frame, node)
@@ -330,6 +370,9 @@ function AppViewer:OnLoad()
 
 		elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
 			miog.updateRaiderIOScrollBoxFrameData(frame, data)
+
+		else
+			frame:SetData(data)
 
 		end
 	end
@@ -342,12 +385,65 @@ function AppViewer:OnLoad()
 		factory(template, Initializer)
 	end
 	
+	view:SetElementExtent(22)
 	view:SetElementFactory(CustomFactory)
 	self.ScrollBox:Init(view)
+
+	--[[local tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
+    tableBuilder:SetHeaderContainer(self.SortHeader)
+
+    local function ElementDataProvider(elementData, ...)
+        return elementData
+
+    end
+
+    tableBuilder:SetDataProvider(ElementDataProvider)
+
+    local function ElementDataTranslator(elementData, ...)
+        return elementData
+
+    end
+
+    ScrollUtil.RegisterTableBuilder(self.ScrollBox, tableBuilder, ElementDataTranslator)
+    
+    tableBuilder:Reset()
+
+    local column0 = tableBuilder:AddColumn()
+    column0:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "", "", 1)
+    column0:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
+
+    local column1 = tableBuilder:AddColumn()
+    column1:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "Role", "role", 2)
+    column1:ConstructCells("Frame", "MIOG_AppViewerTextureCellTemplate", "role")
+
+    local column2 = tableBuilder:AddColumn()
+    column2:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "", "", 3)
+    column2:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
+
+    local column3 = tableBuilder:AddColumn()
+    column3:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "#1", "rating", 3)
+    column3:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
+
+    local column4 = tableBuilder:AddColumn()
+    column4:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "#2", "primary", 3)
+    column4:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
+
+    local column5 = tableBuilder:AddColumn()
+    column5:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "I-Lvl", "secondary", 3)
+    column5:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
+	
+    local column6 = tableBuilder:AddColumn()
+    column6:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "", "", 1)
+    column6:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
+
+    tableBuilder:Arrange()
+
+	self.SortHeader:Reload()]]
 
 	self.ScrollBox:SetDataProvider(treeDataProvider)
 	self.SortButtons:RegisterDataProvider(treeDataProvider, "applicantID")
 
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
 	self:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
 	self:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")

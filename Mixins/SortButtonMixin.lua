@@ -100,9 +100,11 @@ function SortButtonMixin:OnLoad()
         self:TriggerEvent("OnSortingButtonClick", self)
     
     end)
+
+    self.BackgroundColor:Hide()
     
-    self:SetAtlases("StoryHeader-BG")
-    self:SetHighlightAtlases("CampaignHeader_SelectedGlow")
+    --self:SetAtlases("GarrLanding-TopTabUnselected", "GarrLanding-TopTabSelected")
+    --self:SetHighlightAtlases("GarrLanding-TopTabHighlight")
 end
 
 function SortButtonMixin:GetStatus()

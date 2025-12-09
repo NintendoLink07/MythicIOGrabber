@@ -24,8 +24,16 @@
         --auctionhouse-nav-button-highlight                 blue middleres
         --auctionhouse-nav-button-secondary-highlight       blue middleres
         --search-highlight                                  blue topbottom
-        
-        <HighlightTexture atlas="UI-CharacterCreate-LargeButton-Yellow-Highlight" />
+
+        --self:SetAtlases("StoryHeader-BG")
+        --self:SetHighlightAtlases("CampaignHeader_SelectedGlow")
+
+        <HighlightTexture atlas="CampaignHeader_SelectedGlow">
+            <Anchors>
+                <Anchor point="TOPLEFT" y="-2"/>
+                <Anchor point="BOTTOMRIGHT"/>
+            </Anchors>
+        </HighlightTexture>
 
         <Scripts>
             <OnClick method="OnClick" />

@@ -25,7 +25,7 @@ function ApplicantMixin:Reset()
 
 end
 
-function ApplicantMixin:SetStatus(status)
+function ApplicantMixin:RefreshStatus(status)
     self.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[status].statusString, miog.APPLICANT_STATUS_INFO[status].color))
     self.StatusFrame:Show()
 
@@ -51,21 +51,24 @@ end
 function ApplicantMixin:SetData(data)
     self:Reset()
     self.applicantID = data.applicantID
-    
-    local names = data.names
-    
-    if(names) then
-        for k, v in ipairs(names) do
-            local string = k == 1 and "" or self.Players:GetText() .. ", "
 
-            if(v.class) then
-                local color = C_ClassColor.GetClassColor(v.class)
-                self.Players:SetText(string .. WrapTextInColorCode(v.name, color:GenerateHexColor()))
+    local applicantData = C_LFGList.GetApplicantInfo(self.applicantID)
 
-            else
-                self.Players:SetText(string .. v.name)
+    self.Players:SetText("(" .. applicantData.numMembers .. ") ")
 
-            end
+    for i = 1, applicantData.numMembers do
+        local name, class = C_LFGList.GetApplicantMemberInfo(self.applicantID, i)
+		local _, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
+
+        local string = i == 1 and self.Players:GetText() or self.Players:GetText() .. ", "
+
+        if(class) then
+            local color = C_ClassColor.GetClassColor(class)
+            self.Players:SetText(string .. WrapTextInColorCode(playerName or name, color:GenerateHexColor()))
+
+        else
+            self.Players:SetText(string .. playerName or name)
+
         end
     end
 
@@ -81,7 +84,7 @@ function ApplicantMixin:SetData(data)
 
     end
 
-    self.Primary:SetText(coloredPrimary)
-    self.Secondary:SetText(coloredSecondary)
-    self:SetItemLevel(data.itemLevel)
+    --self.Primary:SetText(coloredPrimary)
+    --self.Secondary:SetText(coloredSecondary)
+    --self:SetItemLevel(data.itemLevel)
 end

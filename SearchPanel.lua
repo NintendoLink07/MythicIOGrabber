@@ -634,20 +634,25 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 						secondaryIndicator:SetText(wticc(miog.getParsedProgressString(orderedData2.kills, orderedData2.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
 
 					end
+
+				else
+					primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
+					secondaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
+
 				end
 			elseif(isPvP) then
-					local pvpData = searchResultInfo.leaderPvpRatingInfo[1]
+				local pvpData = searchResultInfo.leaderPvpRatingInfo[1]
 
-					if(pvpData.tier and pvpData.tier ~= "N/A") then
-						local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
-						primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
-						secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+				if(pvpData.tier and pvpData.tier ~= "N/A") then
+					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
+					primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
+					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
 
-					else
-						primaryIndicator:SetText(0)
-						secondaryIndicator:SetText("N/A")
-					
-					end
+				else
+					primaryIndicator:SetText(0)
+					secondaryIndicator:SetText("N/A")
+				
+				end
 			else
 				if(searchResultInfo.leaderOverallDungeonScore > 0) then
 					primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.createCustomColorForRating(searchResultInfo.leaderOverallDungeonScore):GenerateHexColor()))
@@ -659,7 +664,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 						highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
 
 					else
-						highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
+						highestKeyForDungeon = wticc("0", miog.DIFFICULTY[-1].color)
 
 					end
 
@@ -667,6 +672,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 					
 				else
 					primaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
+					secondaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
 
 				end
 			end

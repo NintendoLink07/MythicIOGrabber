@@ -53,12 +53,12 @@ local function setActivePanel(_, panel)
 
 	if(panel == LFGListFrame.ApplicationViewer) then
 		if(UnitIsGroupLeader("player")) then
-			miog.ApplicationViewer.ActivityBar.Delist:Show()
-			miog.ApplicationViewer.ActivityBar.Edit:Show()
+			miog.ApplicationViewer.ActivityBar.Delist:SetEnabled(true)
+			miog.ApplicationViewer.ActivityBar.Edit:SetEnabled(true)
 
 		else
-			miog.ApplicationViewer.ActivityBar.Delist:Hide()
-			miog.ApplicationViewer.ActivityBar.Edit:Hide()
+			miog.ApplicationViewer.ActivityBar.Delist:SetEnabled(false)
+			miog.ApplicationViewer.ActivityBar.Edit:SetEnabled(false)
 			
 		end
 
