@@ -25,12 +25,33 @@ function ApplicantMixin:Reset()
 
 end
 
-function ApplicantMixin:RefreshStatus(status)
-    self.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[status].statusString, miog.APPLICANT_STATUS_INFO[status].color))
-    self.StatusFrame:Show()
+function ApplicantMixin:RefreshStatus(appStatus)
+    if(not appStatus) then
+		local applicantData = C_LFGList.GetApplicantInfo(self.applicantID)
+        
+        if(applicantData) then
+            appStatus = applicantData.applicationStatus
 
-    if(status == "timedout" or status == "cancelled" or status == "failed" or status == "invitedeclined") then
-        self:DisableLFGInteractions()
+        end
+    end
+
+    local disableInteractions = appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted" or appStatus == "declined" or appStatus == "declined_full" or appStatus == "declined_delisted"
+
+    if(disableInteractions or appStatus == "invited") then
+        if(disableInteractions) then
+            self:DisableLFGInteractions()
+
+        end
+
+        self.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[appStatus].statusString, miog.APPLICANT_STATUS_INFO[appStatus].color))
+        self.StatusFrame:Show()
+
+    elseif(appStatus == "unknown") then
+        self.StatusFrame.FontString:SetText("UNKNOWN")
+        self.StatusFrame:Show()
+        
+    else
+	    self.StatusFrame:Hide()
 
     end
 end

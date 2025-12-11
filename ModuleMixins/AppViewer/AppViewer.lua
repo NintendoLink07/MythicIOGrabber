@@ -162,6 +162,11 @@ function AppViewer:RefreshApplicantList()
 
 	if(applicantList and #applicantList > 0) then
 		for _, applicantID in ipairs(applicantList) do
+			local applicantData = C_LFGList.GetApplicantInfo(applicantID)
+
+			DevTools_Dump(applicantData)
+			print("--------------------------------")
+
 			self:AddApplicant(applicantID, activeEntry.activityIDs[1])
 			
 		end
@@ -289,56 +294,52 @@ function AppViewer:OnEvent(event, ...)
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then
 		local applicantID = ...
 		local applicantData = C_LFGList.GetApplicantInfo(applicantID)
-		local canInvite = C_PartyInfo.CanInvite()
+		local canInvite = true or LFGListUtil_IsEntryEmpowered()
 		local frame = self:FindApplicantFrame(applicantID)
 
-		if(not applicantData or applicantData.applicationStatus == "declined") then
-			if(canInvite) then
-				frame:RefreshStatus("declined")
+		print("APPLICANT UPDATED", applicantID, frame)
 
+		if(frame) then
+			if(not applicantData) then
+				print("REMOVE 1")
+
+				if(canInvite) then
+					frame:RefreshStatus("unknown")
+
+				else
+					self:RemoveApplicantFrame(applicantID)
+
+				end
 			else
-				self:RemoveApplicantFrame(applicantID)
+				local appStatus = applicantData.pendingApplicationStatus or applicantData.applicationStatus
 
-			end
-		else
-			local appStatus = applicantData.applicationStatus
+				print("HERE", appStatus, canInvite, frame)
+				DevTools_Dump(applicantData)
 
-			if(appStatus ~= "applied") then
-				if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted") then
-					if(canInvite) then
-						if(frame) then
+				if(appStatus ~= "applied") then
+					if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted" or appStatus == "declined" or appStatus == "declined_full" or appStatus == "declined_delisted") then
+						if(canInvite) then
 							frame:RefreshStatus(appStatus)
 
-						end
-					else
-						self:RemoveApplicantFrame(applicantID)
+						else
+							print("REMOVE 2")
+							self:RemoveApplicantFrame(applicantID)
 
-					end
-				elseif(appStatus == "invited") then
-					if(frame) then
+						end
+					elseif(appStatus == "invited") then
 						frame:RefreshStatus(appStatus)
-
-					end
-				elseif(appStatus == "declined") then
-					if(canInvite) then
-						if(frame) then
-							frame:RefreshStatus(appStatus)
-
-						end
-					else
-						self:RemoveApplicantFrame(applicantID)
 
 					end
 				end
 			end
 		end
 	elseif(event == "PARTY_LEADER_CHANGED") then
-		local visible = C_PartyInfo.CanInvite()
+		local visible = LFGListUtil_IsEntryEmpowered()
 
 		for _, frame in self.ScrollBox:EnumerateFrames() do
-
 			frame.Invite:SetShown(visible)
 			frame.Decline:SetShown(visible)
+
 		end
 
 		self.ActivityBar.Delist:SetEnabled(visible)
@@ -358,8 +359,8 @@ end
 function AppViewer:OnLoad()
 	CallbackRegistryMixin.OnLoad(self)
     --local view = Mixin(CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6), TreeListViewMultiSpacingMixin)
-    local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6)
 	--view:SetDepthSpacing()
+    local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6)
     self.view = view
 
 	local function Initializer(frame, node)
@@ -384,8 +385,7 @@ function AppViewer:OnLoad()
 
 		factory(template, Initializer)
 	end
-	
-	view:SetElementExtent(22)
+
 	view:SetElementFactory(CustomFactory)
 	self.ScrollBox:Init(view)
 
@@ -445,8 +445,8 @@ function AppViewer:OnLoad()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-	self:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
 	self:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
+	self:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
 	self:RegisterEvent("PARTY_LEADER_CHANGED")
 	self:SetScript("OnEvent", self.OnEvent)
 

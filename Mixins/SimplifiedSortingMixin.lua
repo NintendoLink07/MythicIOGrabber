@@ -51,6 +51,13 @@ function SimplifiedSortingMixin:SetSortButtonTexts(...)
     end
 end
 
+
+
+-- sort on insert //bad behavior when leader
+-- sorts with no comparator on insert // for some reason
+
+
+
 local function normalComparator(k1, k2, buttons, fallbackParameter)
     for i = 1, numOfActiveButtons do
         local button = buttons[i]
@@ -73,21 +80,8 @@ local function normalComparator(k1, k2, buttons, fallbackParameter)
     -- Fallback Sort (Executed ONLY if ALL active sort fields were equal)
     -- This guarantees a deterministic sort based on the required fallback parameter.
 
-    if (numOfActiveButtons > 0) then
-        -- Use the state of the *last* active button for the fallback direction,
-        -- assuming this is the intended behavior for consistency.
-        local lastState = buttons[numOfActiveButtons].state
+    return k1[fallbackParameter] < k2[fallbackParameter]
 
-        if (lastState == 1) then -- State 1: Ascending
-            return k1[fallbackParameter] > k2[fallbackParameter]
-        else -- State 2: Descending
-            return k1[fallbackParameter] < k2[fallbackParameter]
-        end
-    end
-    
-    -- If no buttons were active, or if the fallback fields are also equal, 
-    -- we return false (indicating k1 is not less than k2, implying they are equal for sorting purposes).
-    return false
 end
 
 local function nodeComparator(node1, node2, buttons, fallbackParameter)

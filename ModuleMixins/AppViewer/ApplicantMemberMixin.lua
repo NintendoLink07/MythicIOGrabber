@@ -39,20 +39,24 @@ function ApplicantMemberMixin:OnEnter()
     end
 end
 
-function ApplicantMemberMixin:RefreshStatus(status)
-    if(not status) then
+function ApplicantMemberMixin:RefreshStatus(appStatus)
+    if(not appStatus) then
 		local applicantData = C_LFGList.GetApplicantInfo(self.applicantID)
         
         if(applicantData) then
-            status = applicantData.applicationStatus
+            appStatus = applicantData.applicationStatus
 
         end
     end
 
-    if(status == "timedout" or status == "cancelled" or status == "failed" or status == "invitedeclined" or status == "invited" or status == "inviteaccepted") then
-        self.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[status].statusString, miog.APPLICANT_STATUS_INFO[status].color))
+    if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted" or appStatus == "declined" or appStatus == "declined_full" or appStatus == "declined_delisted" or appStatus == "invited") then
+        self.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[appStatus].statusString, miog.APPLICANT_STATUS_INFO[appStatus].color))
         self.StatusFrame:Show()
 
+    elseif(appStatus == "unknown") then
+        self.StatusFrame.FontString:SetText("UNKNOWN")
+        self.StatusFrame:Show()
+        
     else
 	    self.StatusFrame:Hide()
 
@@ -79,6 +83,7 @@ function ApplicantMemberMixin:SetClass(fileName)
 	    self:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=0, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
         self:SetBackdropColor(0, 0, 0, 0)
         self:SetBackdropBorderColor(classColor:GetRGBA())
+
     else
         self.Class:SetTexture(miog.CLASSES[100].icon)
 
@@ -101,10 +106,10 @@ function ApplicantMemberMixin:SetItemLevel(itemLevel)
 end
 
 function ApplicantMemberMixin:SetInviteDeclineStatus()
-    local visible = C_PartyInfo.CanInvite()
+	local showLFGInteractions = LFGListUtil_IsEntryEmpowered()
 
-    self.Invite:SetShown(visible)
-    self.Decline:SetShown(visible)
+    self.Invite:SetShown(showLFGInteractions)
+    self.Decline:SetShown(showLFGInteractions)
 end
 
 function ApplicantMemberMixin:SetData(data)
@@ -160,5 +165,5 @@ function ApplicantMemberMixin:SetData(data)
 
     self:SetItemLevel(itemLevel)
 
-    --self:SetInviteDeclineStatus(data.numMembers)
+    self:SetInviteDeclineStatus()
 end

@@ -22,7 +22,7 @@
                 </Layers>
             </Frame>
 
-            <Button parentKey="Decline" inherits="UIButtonTemplate">
+            <Button parentKey="Decline" inherits="UIButtonTemplate" hidden="true">
                 <Size x="16" y="16" />
 
                 <NormalTexture atlas="UI-LFG-DeclineMark" />
@@ -33,13 +33,13 @@
 
                 <Scripts>
                     <OnClick>
-			            C_LFGList.DeclineApplicant(self.applicantID)
+			            C_LFGList.DeclineApplicant(self:GetParent().applicantID)
 
                     </OnClick>
                 </Scripts>
             </Button>
 
-            <Button parentKey="Invite" inherits="UIButtonTemplate">
+            <Button parentKey="Invite" inherits="UIButtonTemplate" hidden="true">
                 <Size x="16" y="16" />
 
                 <NormalTexture atlas="UI-LFG-ReadyMark" />
@@ -50,7 +50,7 @@
 
                 <Scripts>
                     <OnClick>
-			            C_LFGList.InviteApplicant(self.applicantID)
+			            C_LFGList.InviteApplicant(self:GetParent().applicantID)
 
                     </OnClick>
                 </Scripts>

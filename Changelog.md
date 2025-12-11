@@ -13,12 +13,14 @@ and this project adheres to [Semantic Versioning].
 - [ApplicationViewer] The application viewer has been recoded and redesigned.
     - Performance has been improved dramatically.
     - Group applications have now a "header entry" and below this every member is listed.
-    - A new sorting system has been implemented which will find it's way into every aspect of the addon where sorting is used / will be used. --design to do
-    - Multiple hover effect have been added to have a more robust feedback. --design to do
+    - A new sorting system has been implemented which will find it's way into every aspect of the addon where sorting is used / will be used.
+    - Multiple hover effect have been added to have a more robust feedback.
 
 ### Fixed
 
-- [SearchPanel] The performance of refreshing the search panel in any way has been improved. -- still to do but I know what to do, frfr
+- [SearchPanel] The performance of refreshing the search panel in any way has been improved.
+
+- [Mainframe] The scale textbox isn't immune to mouse clicks anymore.
 
 - Every aspect that queries RaiderIO data has been speed up by atleast 8x.
 
