@@ -164,9 +164,6 @@ function AppViewer:RefreshApplicantList()
 		for _, applicantID in ipairs(applicantList) do
 			local applicantData = C_LFGList.GetApplicantInfo(applicantID)
 
-			DevTools_Dump(applicantData)
-			print("--------------------------------")
-
 			self:AddApplicant(applicantID, activeEntry.activityIDs[1])
 			
 		end
@@ -294,15 +291,11 @@ function AppViewer:OnEvent(event, ...)
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then
 		local applicantID = ...
 		local applicantData = C_LFGList.GetApplicantInfo(applicantID)
-		local canInvite = true or LFGListUtil_IsEntryEmpowered()
+		local canInvite = LFGListUtil_IsEntryEmpowered()
 		local frame = self:FindApplicantFrame(applicantID)
-
-		print("APPLICANT UPDATED", applicantID, frame)
 
 		if(frame) then
 			if(not applicantData) then
-				print("REMOVE 1")
-
 				if(canInvite) then
 					frame:RefreshStatus("unknown")
 
@@ -313,16 +306,12 @@ function AppViewer:OnEvent(event, ...)
 			else
 				local appStatus = applicantData.pendingApplicationStatus or applicantData.applicationStatus
 
-				print("HERE", appStatus, canInvite, frame)
-				DevTools_Dump(applicantData)
-
 				if(appStatus ~= "applied") then
 					if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted" or appStatus == "declined" or appStatus == "declined_full" or appStatus == "declined_delisted") then
 						if(canInvite) then
 							frame:RefreshStatus(appStatus)
 
 						else
-							print("REMOVE 2")
 							self:RemoveApplicantFrame(applicantID)
 
 						end

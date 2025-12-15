@@ -810,7 +810,7 @@
 
                 for index = 1, self.numTabs, 1 do
                     tab = self.Tabs and self.Tabs[index] or _G[self:GetName().."Tab"..index];
-                    tab:SetWidth(70)
+                    tab:SetWidth(67)
                 end
             </OnShow>
 

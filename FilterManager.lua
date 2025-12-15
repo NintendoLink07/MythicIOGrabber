@@ -830,19 +830,14 @@ local function refreshFilters()
 		filterManager.Activities.CheckButton:SetChecked(activitiesSetting == nil and false or activitiesSetting)
 
 		local allGroups = {}
-		local seasonGroups = C_LFGList.GetAvailableActivityGroups(categoryID, Enum.LFGListFilter.CurrentSeason)
-		local otherGroups = C_LFGList.GetAvailableActivityGroups(categoryID, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason))
+		local seasonGroups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.CurrentExpansion)
 
 		table.sort(seasonGroups, sortActivityGroup)
-		table.sort(otherGroups, sortActivityGroup)
 
-		for i = 1, 2, 1 do
-			local currentGroups = i == 1 and seasonGroups or otherGroups
 
-			for k, groupID in ipairs(currentGroups) do
-				tinsert(allGroups, {filterID = groupID, isPvE = true})
+		for k, groupID in ipairs(seasonGroups) do
+			tinsert(allGroups, {filterID = groupID, isPvE = true})
 
-			end
 		end
 
 		if(isMainRaid and not isLegacyRaid) then
@@ -889,6 +884,8 @@ local function refreshFilters()
 					
 					activityFilter.type = groupData.isPvE and "pve" or groupData.isPvp and "pvp" or groupData.isWorld and "world"
 					activityFilter.filterID = groupData.filterID
+
+					print(info.abbreviatedName or info.shortName)
 
 					activityFilter.Text:SetText(info.abbreviatedName or info.shortName)
 					

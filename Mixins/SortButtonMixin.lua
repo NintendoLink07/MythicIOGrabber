@@ -28,6 +28,14 @@ function MultiStateButtonsMixin:Update()
     end
 end
 
+function MultiStateButtonsMixin:Reset()
+    self.state = 0
+    self.active = false
+
+    self:Update()
+
+end
+
 function MultiStateButtonsMixin:AdvanceState()
     self.state = self.state < 2 and self.state + 1 or 0
     self.active = self.state > 0
@@ -35,9 +43,14 @@ function MultiStateButtonsMixin:AdvanceState()
     self:Update()
 end
 
-function MultiStateButtonsMixin:OnClick()
-    self:AdvanceState()
+function MultiStateButtonsMixin:OnClick(button)
+    if(button == "LeftButton") then
+        self:AdvanceState()
 
+    elseif(button == "RightButton") then
+        self:Reset()
+
+    end
 end
 
 function MultiStateButtonsMixin:SetTextures(inactive, active1, active2)

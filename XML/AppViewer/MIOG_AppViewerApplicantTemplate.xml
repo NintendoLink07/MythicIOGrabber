@@ -60,7 +60,7 @@
 
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background" setAllPoints="true">
+                <Texture parentKey="Background" setAllPoints="true" atlas="auctionhouse-background-buy-noncommodities-header">
                     <Color r="0.1" g="0.1" b="0.1" a="0.3" />
                 </Texture>
             </Layer>
