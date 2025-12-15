@@ -92,7 +92,6 @@
                                     return canUse and factionGroup ~= "Neutral" and not Kiosk.IsEnabled();
                                 end
                             </OnLoad>
-                            <OnShow function="MicroButton_KioskModeDisable" inherit="append"/>
                             <OnEvent method="OnEvent"/>
 						</Scripts>
 					</Button>
@@ -189,7 +188,7 @@
                                     <Anchor point="BOTTOM" relativeKey="$parent.SliderWithSteppers" relativePoint="TOP"/>
                                 </Anchors>
                             </Frame>
-                             <EditBox parentKey="Scale" inherits="InputBoxTemplate" autoFocus="false" letters="3" frameStrata="MEDIUM">
+                             <EditBox parentKey="Scale" inherits="InputBoxTemplate" autoFocus="false" letters="3" frameStrata="HIGH">
                                 <Size x="32" y="8" />
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="27" />
@@ -390,7 +389,7 @@
                         <Scripts>
                             <OnLoad>
                                 local mainFrame = self:GetParent():GetParent()
-                                self:Init(mainFrame, PVEFrame:GetWidth(), PVEFrame:GetHeight(), PVEFrame:GetWidth() * 2, PVEFrame:GetHeight() * 2)
+                                self:Init(mainFrame, PVEFrame:GetWidth(), PVEFrame:GetHeight(), PVEFrame:GetWidth(), PVEFrame:GetHeight() * 2)
 
                                 self:HookScript("OnMouseUp", function()
                                     MIOG_NewSettings.mainFrameSize = {width = mainFrame:GetWidth(), height = mainFrame:GetHeight()}
@@ -411,7 +410,6 @@
                 <Frames>
                     <Frame parentKey="MainTab" setAllPoints="true">
                         <Frames>
-
                             <Frame parentKey="QueueInformation">
                                 <Size x="190" />
                                 
@@ -552,7 +550,7 @@
                             <Frame parentKey="Information" inherits="BackdropTemplate">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
                                 </Anchors>
 
                                 <Frames>
@@ -577,7 +575,7 @@
 
                                     <Frame parentKey="VaultProgress3" inherits="MIOG_VaultProgressWorldTemplate">
                                         <Anchors>
-                                            <Anchor point="BOTTOMRIGHT"/>
+                                            <Anchor point="BOTTOMRIGHT" x="-3"/>
                                         </Anchors>
                                     </Frame>
 
@@ -603,7 +601,7 @@
                                         <Layers>
                                             <Layer level="BACKGROUND" textureSubLevel="1">
                                                 <Texture parentKey="BarBackground" atlas="activities-bar-background">
-                                                    <Size x="278" y="16" />
+                                                    <Size x="277" y="16" />
                                                     <Anchors>
                                                         <Anchor point="CENTER" x="0" y="0"/>
                                                     </Anchors>
@@ -669,6 +667,13 @@
                                         </Anchors>
                                     </Frame>
                                 </Frames>
+                            </Frame>
+                            
+                            <Frame parentKey="AppViewer" inherits="MIOG_AppViewer" frameStrata="HIGH">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Information"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Information"/>
+                                </Anchors>
                             </Frame>
                         </Frames>
                     </Frame>
@@ -805,7 +810,7 @@
 
                 for index = 1, self.numTabs, 1 do
                     tab = self.Tabs and self.Tabs[index] or _G[self:GetName().."Tab"..index];
-                    tab:SetWidth(70)
+                    tab:SetWidth(67)
                 end
             </OnShow>
 

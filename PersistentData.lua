@@ -677,7 +677,7 @@ miog.MAP_INFO = {
 	[230] = {abbreviatedName = "BRD", fileName = "blackrockdepths"},
 	[229] = {abbreviatedName = "BRS", fileName = "blackrockspire"},
 	[429] = {abbreviatedName = "DM", fileName = "diremaul"},
-	[329] = {abbreviatedName = "SH", iconName = "oldstratholme", bgName = "stratholme"},
+	[329] = {abbreviatedName = "SH", iconName = "oldstratholme", fileName = "stratholme"},
 	[1007] = {abbreviatedName = "SCHOLO", fileName = "scholomance"},
 	[33] = {abbreviatedName = "SFK", fileName = "shadowfangkeep"},
 
@@ -709,7 +709,7 @@ miog.MAP_INFO = {
 	[534] = {abbreviatedName = "BMH", fileName = "hyjalpast"},
 	[565] = {abbreviatedName = "GL", fileName = "gruulslair"},
 	[544] = {abbreviatedName = "ML", fileName = "hellfireraid"},
-	[548] = {abbreviatedName = "SSC", iconName = "serpentshrinecavern", bgName = "coilfang"},
+	[548] = {abbreviatedName = "SSC", iconName = "serpentshrinecavern", fileName = "coilfang"},
 	[532] = {abbreviatedName = "KARA", fileName = "karazhan"},
 	[564] = {abbreviatedName = "BT", fileName = "blacktemple"},
 	[550] = {abbreviatedName = "TK", fileName = "tempestkeep"},
@@ -810,7 +810,7 @@ miog.MAP_INFO = {
 	[1530] = {abbreviatedName = "NH", fileName = "thenighthold"},
 	[1648] = {abbreviatedName = "TOV", fileName = "trialofvalor"},
 	--[1651] = {abbreviatedName = "", icon = ""},
-	[1676] = {abbreviatedName = "TOS", iconName = "tombofsargerasdeceiversfall", bgName = "tombofsargeras"},
+	[1676] = {abbreviatedName = "TOS", iconName = "tombofsargerasdeceiversfall", fileName = "tombofsargeras"},
 	[1712] = {abbreviatedName = "ATBT", fileName = "antorus"},
 
 	-- BATTLE FOR AZEROTH
@@ -845,12 +845,12 @@ miog.MAP_INFO = {
 	[2441] = {abbreviatedName = "TAZA", fileName = "tazaveshtheveiledmarket"},
 	[2450] = {abbreviatedName = "SOD", fileName = "sanctumofdomination"},
 	[2481] = {abbreviatedName = "SFO", fileName = "sepulcherofthefirstones"},
-	[2559] = {abbreviatedName = "WORLD", iconName = "shadowlands", bgName = "shadowlandscontinent",},
+	[2559] = {abbreviatedName = "WORLD", iconName = "shadowlands", fileName = "shadowlandscontinent",},
 
 	--DRAGONFLIGHT
 	[2451] = {abbreviatedName = "ULOT", fileName = "uldaman-legacyoftyr"},
-	[2515] = {abbreviatedName = "AV", iconName = "arcanevaults", bgName = "azurevaults"},
-	[2516] = {abbreviatedName = "NO", iconName = "centaurplains", bgName = "nokhudoffensive"},
+	[2515] = {abbreviatedName = "AV", iconName = "arcanevaults", fileName = "azurevaults"},
+	[2516] = {abbreviatedName = "NO", iconName = "centaurplains", fileName = "nokhudoffensive"},
 	[2519] = {abbreviatedName = "NELT", fileName = "neltharus"},
 	[2520] = {abbreviatedName = "BH", fileName = "brackenhidehollow"},
 	[2521] = {abbreviatedName = "RLP", fileName = "lifepools"},
@@ -909,7 +909,7 @@ miog.MAP_INFO = {
 	},
 
 	-- THE WAR WITHIN
-	[2601] = {abbreviatedName = "KA", fileName = "khazalgar"},
+	[2601] = {abbreviatedName = "KA", fileName = "khazalgar", filePath="interface/encounterjournal/ui-ej-lorebg-khazalgar.blp"},
 	[2648] = {abbreviatedName = "ROOK", fileName = "therookery"},
 	[2649] = {abbreviatedName = "PSF", fileName = "prioryofthesacredflames"},
 	[2651] = {abbreviatedName = "DFC", fileName = "darkflamecleft"},
@@ -931,7 +931,7 @@ miog.MAP_INFO = {
 		},
 		abbreviatedName = "NP",
 		iconName = "nerubarpalance",
-		bgName = "nerubarpalace",
+		fileName = "nerubarpalace",
 		achievementIDs = {
 			40267,
 			40268,
@@ -980,8 +980,7 @@ miog.MAP_INFO = {
 			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/gallywix.png"},
 		},
 		abbreviatedName = "LOU",
-		iconName = "casino",
-		bgName = "casino",
+		fileName = "casino",
 		achievementIDs = {
 			41299,
 			41300,
@@ -1669,6 +1668,87 @@ end
 
 miog.recheckJournalInstanceIDs = recheckJournalInstanceIDs
 
+miog.TELEPORT_SPELLS_TO_MAP_DATA = {
+	[445424] = {mapID = 670},
+	[410080] = {mapID = 657},
+	[424142] = {mapID = 643},
+
+	[131225] = {mapID = 962},
+	[131222] = {mapID = 1008},
+	[131231] = {mapID = 1001},
+	[131229] = {mapID = 1004},
+	[131232] = {mapID = 1007},
+	[131206] = {mapID = 959},
+	[131228] = {mapID = 1011},
+	[131205] = {mapID = 961},
+	[131204] = {mapID = 960},
+
+	[159897] = {mapID = 1182},
+	[159895] = {mapID = 1175},
+	[159900] = {mapID = 1208},
+	[159901] = {mapID = 1279},
+	[159896] = {mapID = 1195},
+	[159899] = {mapID = 1176},
+	[159898] = {mapID = 1209},
+	[159902] = {mapID = 1358},
+
+	[424153] = {mapID = 1501},
+	[393766] = {mapID = 1571},
+	[424163] = {mapID = 1466},
+	[393764] = {mapID = 1477},
+	[373262] = {mapID = 1651},
+	[410078] = {mapID = 1458},
+
+	[424187] = {mapID = 1763},
+	[410071] = {mapID = 1754},
+	[373274] = {mapID = 2097},
+	[464256] = {mapID = 1822},
+	[445418] = {mapID = 1822},
+	[467555] = {mapID = 1594},
+	[467553] = {mapID = 1594},
+	[410074] = {mapID = 1841},
+	[424167] = {mapID = 1862},
+
+	[354468] = {mapID = 2291},
+	[354465] = {mapID = 2287},
+	[354464] = {mapID = 2290},
+	[354463] = {mapID = 2289},
+	[354469] = {mapID = 2284},
+	[354466] = {mapID = 2285},
+	[367416] = {mapID = 2441},
+	[354462] = {mapID = 2286},
+	[354467] = {mapID = 2293},
+	[373190] = {mapID = 2296},
+	[373191] = {mapID = 2450},
+	[373192] = {mapID = 2481},
+
+	[393273] = {mapID = 2526},
+	[393267] = {mapID = 2520},
+	[424197] = {mapID = 2579},
+	[393283] = {mapID = 2527},
+	[393276] = {mapID = 2519},
+	[393256] = {mapID = 2521},
+	[393279] = {mapID = 2515},
+	[393262] = {mapID = 2516},
+	[393222] = {mapID = 2451},
+	[432257] = {mapID = 2569},
+	[432258] = {mapID = 2549},
+	[432254] = {mapID = 2522},
+
+	[445417] = {mapID = 2660},
+	[445440] = {mapID = 2661},
+	[445416] = {mapID = 2669},
+	[445441] = {mapID = 2651},
+	[1216786] = {mapID = 2773},
+	[445444] = {mapID = 2649},
+	[445414] = {mapID = 2662},
+	[445443] = {mapID = 2648},
+	[445269] = {mapID = 2652},
+	[1226482] = {mapID = 2769},
+	[1237215] = {mapID = 2830},
+	[1239155] = {mapID = 2810},
+}
+
 local function loadRawData()
 	local loadHQData = miog.isMIOGHQLoaded()
 
@@ -1701,7 +1781,7 @@ local function loadRawData()
 			
 			mapInfo.journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 
-			local background = mapInfo.bgName or mapInfo.fileName
+			local background = mapInfo.fileName
 		
 			if(background) then
 				if(loadHQData) then
@@ -1712,6 +1792,10 @@ local function loadRawData()
 					mapInfo.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
 					mapInfo.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
 					
+				elseif(mapInfo.filePath) then
+					mapInfo.horizontal = mapInfo.filePath
+					mapInfo.vertical = mapInfo.filePath
+
 				else
 					mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
 					mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
@@ -1720,6 +1804,13 @@ local function loadRawData()
 
 				mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.iconName or mapInfo.fileName) .. ".blp"
 			end
+		end
+	end
+
+	for k, v in pairs(miog.TELEPORT_SPELLS_TO_MAP_DATA) do
+		if(miog.MAP_INFO[v.mapID]) then
+			v.abbreviatedName = miog.MAP_INFO[v.mapID].abbreviatedName
+
 		end
 	end
 
@@ -1757,87 +1848,6 @@ miog.TELEPORT_FLYOUT_IDS = { --https://wago.tools/db2/SpellFlyout
 
 	[10] = {id = 232, expansion = 10, type="dungeon"},
 	[11] = {id = 242, expansion = 10, type="raid"},
-}
-
-miog.TELEPORT_SPELLS_TO_MAP = {
-	[445424] = 670,
-	[410080] = 657,
-	[424142] = 643,
-
-	[131225] = 962,
-	[131222] = 1008,
-	[131231] = 1001,
-	[131229] = 1004,
-	[131232] = 1007,
-	[131206] = 959,
-	[131228] = 1011,
-	[131205] = 961,
-	[131204] = 960,
-
-	[159897] = 1182,
-	[159895] = 1175,
-	[159900] = 1208,
-	[159901] = 1279,
-	[159896] = 1195,
-	[159899] = 1176,
-	[159898] = 1209,
-	[159902] = 1358,
-
-	[424153] = 1501,
-	[393766] = 1571,
-	[424163] = 1466,
-	[393764] = 1477,
-	[373262] = 1651,
-	[410078] = 1458,
-
-	[424187] = 1763,
-	[410071] = 1754,
-	[373274] = 2097,
-	[464256] = 1822,
-	[445418] = 1822,
-	[467555] = 1594,
-	[467553] = 1594,
-	[410074] = 1841,
-	[424167] = 1862,
-
-	[354468] = 2291,
-	[354465] = 2287,
-	[354464] = 2290,
-	[354463] = 2289,
-	[354469] = 2284,
-	[354466] = 2285,
-	[367416] = 2441,
-	[354462] = 2286,
-	[354467] = 2293,
-	[373190] = 2296,
-	[373191] = 2450,
-	[373192] = 2481,
-
-	[393273] = 2526,
-	[393267] = 2520,
-	[424197] = 2579,
-	[393283] = 2527,
-	[393276] = 2519,
-	[393256] = 2521,
-	[393279] = 2515,
-	[393262] = 2516,
-	[393222] = 2451,
-	[432257] = 2569,
-	[432258] = 2549,
-	[432254] = 2522,
-
-	[445417] = 2660,
-	[445440] = 2661,
-	[445416] = 2669,
-	[445441] = 2651,
-	[1216786] = 2773,
-	[445444] = 2649,
-	[445414] = 2662,
-	[445443] = 2648,
-	[445269] = 2652,
-	[1226482] = 2769,
-	[1237215] = 2830,
-	[1239155] = 2810,
 }
 
 miog.WEIGHTS_TABLE = {

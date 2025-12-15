@@ -1,5 +1,6 @@
 local addonName, miog = ...
 local wticc = WrapTextInColorCode
+local treeDataProvider = CreateTreeDataProvider()
 
 local lastNumOfResults = 999
 
@@ -324,7 +325,7 @@ local function getSortCriteriaForSearchResult(resultID)
 
 			local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
 
-			local raidData
+			local playerDifficultyData
 			
 			if(appStatus == "applied" or status ~= false) then
 				local primarySortAttribute, secondarySortAttribute
@@ -351,11 +352,12 @@ local function getSortCriteriaForSearchResult(resultID)
 
 				elseif(isRaid) then
 					if(searchResultInfo.leaderName) then
-						raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
+							primarySortAttribute = playerDifficultyData[1] and playerDifficultyData[1].weight or 0
+							secondarySortAttribute = playerDifficultyData[2] and playerDifficultyData[2].weight or 0
 
-						if(raidData) then
-							primarySortAttribute = raidData.character.ordered[1].weight or 0
-							secondarySortAttribute = raidData.character.ordered[2].weight or 0
+						if(playerDifficultyData) then
+							primarySortAttribute = playerDifficultyData[1].weight or 0
+							secondarySortAttribute = playerDifficultyData[2].weight or 0
 
 						else
 							primarySortAttribute = 0
@@ -402,8 +404,9 @@ end
 
 
 local function createDataProviderWithUnsortedData()
-	local treeDataProvider = CreateTreeDataProvider()
 	local actualResults, resultTable = C_LFGList.GetFilteredSearchResults()
+
+	treeDataProvider:Flush()
 
 	local numOfFiltered = 0
 
@@ -433,7 +436,7 @@ local function createDataProviderWithUnsortedData()
 
 				local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
 
-				local raidData
+				local playerDifficultyData
 				
 				if(appStatus == "applied" or status ~= false) then
 					local primarySortAttribute, secondarySortAttribute
@@ -460,17 +463,8 @@ local function createDataProviderWithUnsortedData()
 
 					elseif(isRaid) then
 						if(searchResultInfo.leaderName) then
-							raidData = miog.getOnlyPlayerRaidData(nameTable[1], nameTable[2])
-
-							if(raidData) then
-								primarySortAttribute = raidData.character.ordered[1].weight or 0
-								secondarySortAttribute = raidData.character.ordered[2].weight or 0
-
-							else
-								primarySortAttribute = 0
-								secondarySortAttribute = 0
-
-							end
+							playerDifficultyData = miog.getRaidProgress(nameTable[1], nameTable[2])
+							primarySortAttribute, secondarySortAttribute = miog.getWeightFromRaidProgress(playerDifficultyData)
 
 						else
 							primarySortAttribute = 0
@@ -503,9 +497,9 @@ local function createDataProviderWithUnsortedData()
 							primary = primarySortAttribute,
 							appStatus = appStatus,
 							secondary = secondarySortAttribute,
+							raidData = playerDifficultyData,
 							index = resultID,
 							resultID = resultID,
-							raidData = raidData,
 							age = searchResultInfo.age,
 						}
 					)
@@ -522,7 +516,7 @@ local function createDataProviderWithUnsortedData()
 		end
 	end
 
-	return treeDataProvider, numOfFiltered, actualResults
+	return numOfFiltered, actualResults
 end
 
 local function addOneTimeFrames(frame)
@@ -628,32 +622,37 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 
 			if(isRaid) then
 				if(data.raidData) then
-					local orderedData1 = data.raidData.character.ordered[1]
-					local orderedData2 = data.raidData.character.ordered[2]
+					local orderedData1 = data.raidData[1]
+					local orderedData2 = data.raidData[2]
 
 					if(orderedData1) then
-						primaryIndicator:SetText(wticc(orderedData1.parsedString, orderedData1.current and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated))
+						primaryIndicator:SetText(wticc(miog.getParsedProgressString(orderedData1.kills, orderedData1.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated))
 
 					end
 
 					if(orderedData2) then
-						secondaryIndicator:SetText(wticc(orderedData2.parsedString, orderedData2.current and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
+						secondaryIndicator:SetText(wticc(miog.getParsedProgressString(orderedData2.kills, orderedData2.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
 
 					end
+
+				else
+					primaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
+					secondaryIndicator:SetText(wticc("0/0", miog.DIFFICULTY[-1].color))
+
 				end
 			elseif(isPvP) then
-					local pvpData = searchResultInfo.leaderPvpRatingInfo[1]
+				local pvpData = searchResultInfo.leaderPvpRatingInfo[1]
 
-					if(pvpData.tier and pvpData.tier ~= "N/A") then
-						local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
-						primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
-						secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
+				if(pvpData.tier and pvpData.tier ~= "N/A") then
+					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
+					primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
+					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
 
-					else
-						primaryIndicator:SetText(0)
-						secondaryIndicator:SetText("N/A")
-					
-					end
+				else
+					primaryIndicator:SetText(0)
+					secondaryIndicator:SetText("N/A")
+				
+				end
 			else
 				if(searchResultInfo.leaderOverallDungeonScore > 0) then
 					primaryIndicator:SetText(wticc(tostring(searchResultInfo.leaderOverallDungeonScore), miog.createCustomColorForRating(searchResultInfo.leaderOverallDungeonScore):GenerateHexColor()))
@@ -665,7 +664,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 						highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
 
 					else
-						highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
+						highestKeyForDungeon = wticc("0", miog.DIFFICULTY[-1].color)
 
 					end
 
@@ -673,6 +672,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 					
 				else
 					primaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
+					secondaryIndicator:SetText(wticc("0", miog.DIFFICULTY[-1].color))
 
 				end
 			end
@@ -944,56 +944,53 @@ local function showStatusOverlay(status)
 		end)
 	else
 		miog.SearchPanel.Status.FontString:SetText(LFGListFrame.SearchPanel.searchFailed and LFG_LIST_SEARCH_FAILED or LFG_LIST_NO_RESULTS_FOUND)
-		miog.SearchPanel.ScrollBox2:Flush()
+		treeDataProvider:Flush()
 		miog.Plugin.FooterBar.Results:SetText("0(0)")
 	end
 	
 	miog.SearchPanel.Status.FontString:Show()
 end
 
-local function fullyUpdateSearchPanel()
-	miog.SearchPanel.ScrollBox2:Flush()
-	miog.SearchPanel.Status:Hide()
+local function nodeComparator(n1, n2, orderedListLen, sortBarList)
+	local k1 = n1.data
+	local k2 = n2.data
 
-	local treeDataProvider, numOfFiltered, actualResults  = createDataProviderWithUnsortedData()
+	if(k1.appStatus == "applied" and k2.appStatus ~= "applied") then
+		return true
 
-	local sortBarList = miog.SearchPanel:GetOrderedParameters()
+	elseif(k2.appStatus == "applied" and k1.appStatus ~= "applied") then
+		return false
 
-	local orderedListLen = #sortBarList
+	else
+		for i = 1, orderedListLen do
+			local state, name = sortBarList[i].state, sortBarList[i].name
 
-	treeDataProvider:SetAllCollapsed(true)
-	treeDataProvider:SetSortComparator(function(n1, n2)
-		local k1 = n1.data
-		local k2 = n2.data
-
-		if(k1.appStatus == "applied" and k2.appStatus ~= "applied") then
-			return true
-
-		elseif(k2.appStatus == "applied" and k1.appStatus ~= "applied") then
-			return false
-
-		else
-			for i = 1, orderedListLen do
-				local state, name = sortBarList[i].state, sortBarList[i].name
-
-				if(state > 0 and k1[name] ~= k2[name]) then
-					if(state == 1) then
-						return k1[name] > k2[name]
-		
-					else
-						return k1[name] < k2[name]
-		
-					end
-
-				elseif(i == orderedListLen) then
-					return k1.index > k2.index
-
+			if(state > 0 and k1[name] ~= k2[name]) then
+				if(state == 1) then
+					return k1[name] > k2[name]
+	
+				else
+					return k1[name] < k2[name]
+	
 				end
+
+			elseif(i == orderedListLen) then
+				return k1.index > k2.index
+
 			end
 		end
-	end)
+	end
+end
 
-	miog.SearchPanel.ScrollBox2:SetDataProvider(treeDataProvider, true)
+local function fullyUpdateSearchPanel()
+	miog.SearchPanel.Status:Hide()
+
+	local numOfFiltered, actualResults  = createDataProviderWithUnsortedData()
+
+	local sortBarList = miog.SearchPanel:GetOrderedParameters()
+	local orderedListLen = #sortBarList
+	
+	treeDataProvider:SetAllCollapsed(true)
 
 	miog.updateFooterBarResults(numOfFiltered, actualResults, actualResults >= 100)
 		
@@ -1001,6 +998,12 @@ local function fullyUpdateSearchPanel()
 		showStatusOverlay()
 
 	end
+
+	treeDataProvider:SetSortComparator(function(node1, node2)
+        return nodeComparator(node1, node2, orderedListLen, sortBarList)
+
+	end)
+    treeDataProvider:Invalidate()
 
 	lastNumOfResults = actualResults
 end
@@ -1310,6 +1313,8 @@ miog.createSearchPanel = function()
 		provider:Insert({index = provider:GetSize() + 1, text = ""})
 		
 	end)
+
+	searchPanel.ScrollBox2:SetDataProvider(treeDataProvider, ScrollBoxConstants.RetainScrollPosition)
 
 	return searchPanel
 end

@@ -1,10 +1,10 @@
-## Interface: 110205
+## Interface: 110207
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.7.1
+## Version: 3.8
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -23,6 +23,10 @@ UI.lua
 PVEFrame2.lua
 ActivityChecker.lua
 QueueManagement.lua
+
+ModuleMixins\AppViewer\AppViewer.lua
+ModuleMixins\AppViewer\ApplicantMemberMixin.lua
+ModuleMixins\AppViewer\ApplicantMixin.lua
 
 ApplicationViewer.lua
 SearchPanel.lua
@@ -48,7 +52,7 @@ FuzzyAlgorithm.lua
 GroupOrganizer.lua
 Loot.lua
 
-
+## FrameTester.lua
 
 ##
 ### MIXINS
@@ -81,11 +85,27 @@ Mixins\GroupOrganizerCellMixin.lua
 Mixins\RaidViewMixin.lua
 Mixins\ColorChangerMixin.lua
 
+Mixins\TreeListViewMultiSpacingMixin.lua
+Mixins\SortButtonMixin.lua
+Mixins\SimplifiedSortingMixin.lua
+Mixins\TableHeaderButtonMixin.lua
+Mixins\TextCellMixin.lua
+Mixins\TextureCellMixin.lua
+
+Mixins\AnchorSystemMixin.lua
+
 
 
 ##
 ### XML
 ##
+
+XML\AppViewer\MIOG_AppViewer.xml
+XML\AppViewer\MIOG_AppViewerApplicantMemberTemplate.xml
+XML\AppViewer\MIOG_AppViewerApplicantTemplate.xml
+XML\Misc\MIOG_TableHeaderTemplate.xml
+XML\Misc\MIOG_SimplifiedTextCellTemplate.xml
+XML\Misc\MIOG_HeaderSortButtonTemplate.xml
 
 XML\TableBuilderElements\MIOG_TableBuilderColorCellTemplate.xml
 XML\Misc\MIOG_UnitTemplate.xml

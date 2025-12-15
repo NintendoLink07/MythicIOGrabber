@@ -68,7 +68,10 @@
             </Button>
 
             <Frame parentKey="SortButtonRow" inherits="BackdropTemplate, HorizontalLayoutFrame">
-                <Size y="20" />
+                <KeyValues>
+                    <KeyValue key="minimumHeight" value="20" type="number" />
+                </KeyValues>
+                
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-25"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-25" />

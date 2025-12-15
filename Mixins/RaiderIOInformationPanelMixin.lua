@@ -272,7 +272,7 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
 	if(self.mplusData) then
         if(self.PreviousData) then
             if(self.mplusData.previousScore.score > 0) then
-                self.PreviousData:SetText("Best m+ rating (S" .. self.mplusData.previousScore.season .. "): " .. WrapTextInColorCode(self.mplusData.previousScore.score, miog.createCustomColorForRating(self.mplusData.previousScore.score):GenerateHexColor()))
+                self.PreviousData:SetText("Best m+ rating (S" .. self.mplusData.previousScore.season + 1 .. "): " .. WrapTextInColorCode(self.mplusData.previousScore.score, miog.createCustomColorForRating(self.mplusData.previousScore.score):GenerateHexColor()))
 
             else
                 self.PreviousData:SetText("No previous m+ rating")

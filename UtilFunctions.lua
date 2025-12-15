@@ -485,31 +485,19 @@ end
 
 miog.checkIfCanInvite = function()
 	if(C_PartyInfo.CanInvite()) then
-		miog.ApplicationViewer.Delist:Show()
-		miog.ApplicationViewer.Edit:Show()
+		--miog.ApplicationViewer.Delist:Show()
+		--miog.ApplicationViewer.Edit:Show()
 
 		return true
 
 	else
-		miog.ApplicationViewer.Delist:Hide()
-		miog.ApplicationViewer.Edit:Hide()
+		--miog.ApplicationViewer.Delist:Hide()
+		--miog.ApplicationViewer.Edit:Hide()
 
 		return false
 
 	end
 
-end
-
-miog.changeDrawLayer = function(regionType, oldDrawLayer, newDrawLayer, ...)
-	for index = 1, select('#', ...) do
-		local region = select(index, ...)
-
-		if region:IsObjectType(regionType) and region:GetDrawLayer() == oldDrawLayer then
-			region:SetDrawLayer(newDrawLayer)
-
-		end
-
-	end
 end
 
 miog.createCustomColorForRating = function(score)
@@ -524,6 +512,33 @@ miog.createCustomColorForRating = function(score)
 		end
 
 		return CreateColor(0.9, 0.8, 0.5)
+	else
+		return CreateColorFromHexString(miog.CLRSCC.red)
+
+	end
+end
+
+miog.createCustomColorForItemLevel = function(ilvl, lowerIlvl, higherIlvl)
+	if(ilvl >= lowerIlvl) then
+		lowerIlvl = lowerIlvl or 0
+		higherIlvl = higherIlvl or 1000
+
+		local range = higherIlvl - lowerIlvl
+		local inner = ilvl - lowerIlvl
+
+		local scaledIlvl = inner / range * miog.COLOR_BREAKPOINTS[#miog.COLOR_BREAKPOINTS].breakpoint
+
+		for k, v in ipairs(miog.COLOR_BREAKPOINTS) do
+			if(scaledIlvl < v.breakpoint) then
+				local percentage = (v.breakpoint - scaledIlvl) / 700
+
+				return CreateColor(v.r + (miog.COLOR_BREAKPOINTS[k - 1].r - v.r) * percentage, v.g + (miog.COLOR_BREAKPOINTS[k - 1].g - v.g) * percentage, v.b + (miog.COLOR_BREAKPOINTS[k - 1].b - v.b) * percentage)
+
+			end
+		end
+
+		return CreateColor(0.9, 0.8, 0.5)
+		
 	else
 		return CreateColorFromHexString(miog.CLRSCC.red)
 

@@ -249,7 +249,7 @@ local function createPVEFrameReplacement()
 
 				--currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
 
-				currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft(), currentFrame.ThresholdBar:GetRight())
+				currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft() or 0, currentFrame.ThresholdBar:GetRight() or 100)
 				--currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
 				currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
 

@@ -51,43 +51,41 @@ local function setActivePanel(_, panel)
 		end
 	end
 
-	miog.Plugin:Show()
-
-	if(miog.F.LITE_MODE and panel ~= LFGListFrame.CategorySelection) then
-		panel:Hide()
-
-	end
-
-	if(miog.ApplicationViewer and panel == LFGListFrame.ApplicationViewer) then
+	if(panel == LFGListFrame.ApplicationViewer) then
 		if(UnitIsGroupLeader("player")) then
-			miog.ApplicationViewer.Delist:Show()
-			miog.ApplicationViewer.Edit:Show()
+			miog.ApplicationViewer.ActivityBar.Delist:SetEnabled(true)
+			miog.ApplicationViewer.ActivityBar.Edit:SetEnabled(true)
 
 		else
-			miog.ApplicationViewer.Delist:Hide()
-			miog.ApplicationViewer.Edit:Hide()
+			miog.ApplicationViewer.ActivityBar.Delist:SetEnabled(false)
+			miog.ApplicationViewer.ActivityBar.Edit:SetEnabled(false)
 			
 		end
 
 		miog.ApplicationViewer:Show()
+		miog.Plugin:Hide()
+	else
+		miog.Plugin:Show()
 
-	elseif(panel == LFGListFrame.SearchPanel) then
-		miog.SearchPanel:Show()
+		if(panel == LFGListFrame.SearchPanel) then
+			miog.SearchPanel:Show()
 
-	elseif(panel == LFGListFrame.EntryCreation) then
-		miog.EntryCreation:Show()
+		elseif(panel == LFGListFrame.EntryCreation) then
+			miog.EntryCreation:Show()
 
-		if(miog.F.LITE_MODE) then
-			miog.initializeActivityDropdown()
+			if(miog.F.LITE_MODE) then
+				miog.initializeActivityDropdown()
+
+			end
+		else
+			miog.Plugin:Hide()
 
 		end
-	else
-		miog.Plugin:Hide()
 
 	end
 
 	if(miog.FilterManager) then
-		if((miog.ApplicationViewer and panel == LFGListFrame.ApplicationViewer) or (miog.SearchPanel and panel == LFGListFrame.SearchPanel)) then
+		if(panel == LFGListFrame.ApplicationViewer or panel == LFGListFrame.SearchPanel) then
 			if(miog.ProgressPanel) then
 				setProgressPanelInfo(miog.getCurrentCategoryID())
 
@@ -143,7 +141,7 @@ miog.createFrames = function()
 
 		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
 		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
-		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.pveFrame2.Currency, "TOPRIGHT", -2, 5)
+		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.pveFrame2.Currency, "TOPRIGHT", -20, 5)
 		miog.Plugin:SetFrameStrata("HIGH")
 
 		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
@@ -168,7 +166,8 @@ miog.createFrames = function()
 
 	miog.MainFrame = miog.F.LITE_MODE and miog.Plugin or miog.pveFrame2
 
-	miog.ApplicationViewer = miog.createApplicationViewer()
+	
+	--miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
 	miog.EntryCreation = miog.createEntryCreation()
 	miog.FilterManager = miog.loadFilterManager()
@@ -192,6 +191,7 @@ miog.createFrames = function()
 
 		--miog.loot.init()
 	end
+
 
 	miog.changeTheme()
 

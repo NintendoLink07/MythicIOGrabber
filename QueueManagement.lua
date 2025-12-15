@@ -581,7 +581,7 @@ miog.loadQueueSystem = function()
 
 				frame:SetTimerInfo("sub", activeEntryInfo.duration)
 
-				activityName = unitID == "player" and ("Your Listing" .. " (" .. numApplicants .. ")") or (unitName or "Unknown") .. "'s Listing"
+				activityName = unitID == "player" and "Your Listing" or (unitName or "Unknown") .. "'s Listing (" .. numApplicants .. ")"
 				
 			end
 
