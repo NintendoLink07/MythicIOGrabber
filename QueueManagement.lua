@@ -3,6 +3,17 @@ local wticc = WrapTextInColorCode
 
 local queuedList = {};
 
+local function updateReQueueApplications()
+	local dataProvider = CreateDataProvider()
+
+	if(MIOG_ReQueue) then
+		if(MIOG_ReQueue:HasGUID()) then
+			
+
+		end
+	end
+end
+
 local function updateFakeGroupApplications(dataProvider)
 	if(not miog.F.LITE_MODE) then
 		local numOfSavedGUIDs = miog.requeue.countPartyGUIDs()

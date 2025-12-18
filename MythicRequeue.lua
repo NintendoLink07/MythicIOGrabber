@@ -53,7 +53,7 @@ local function refreshPartyGUIDs()
 				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
 				if(appStatus ~= "applied" and pendingStatus ~= "applied") then
-                    if(not MIOG_NewSettings.clearFakeApps or miog.filter.checkIfSearchResultIsEligible(resultID, true)) then
+                    if(not MIOG_NewSettings.clearFakeApps or miog.filter.checkIfSearchResultIsEligible(searchResultInfo.searchResultID, true)) then
                         newPartyGUIDs[partyGUID] = {resultID = v, timestamp = MIOG_NewSettings.requeueData.guids[partyGUID] and MIOG_NewSettings.requeueData.guids[partyGUID].timestamp or GetTimePreciseSec()}
                         
                     end
@@ -69,14 +69,16 @@ local function getNumberOfActualApplications()
 	local numOfActualApps = 0
 	local applications = C_LFGList.GetApplications()
 
-	for _, v in ipairs(applications) do
-		local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
+    if(applications and #applications > 0) then
+        for _, v in ipairs(applications) do
+            local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(v)
 
-		if(appStatus == "applied" or pendingStatus == "applied") then
-			numOfActualApps = numOfActualApps + 1
+            if(appStatus == "applied" or pendingStatus == "applied") then
+                numOfActualApps = numOfActualApps + 1
 
-		end
-	end
+            end
+        end
+    end
 
 	return numOfActualApps
 end
@@ -130,7 +132,7 @@ local function setupApplyPopup(text1, text2, text3, text4, text5, text6)
 		applyPopup.Text3:SetText(text3 or "")
 		applyPopup.Text4:SetText(text4 or "")
 		applyPopup.Text5:SetText(text5 or "Apply to next group?")
-		applyPopup.Text6:SetText(text6 or "Applications in backlog: " .. numOfPartyGUIDs)
+		applyPopup.Text6:SetText(text6 or ("Applications in backlog: " .. numOfPartyGUIDs))
 		applyPopup:MarkDirty()
 
 		if(refreshNeeded) then
@@ -145,14 +147,6 @@ local function setupApplyPopup(text1, text2, text3, text4, text5, text6)
 		
 		StaticPopupSpecial_Show(applyPopup)
 	end
-end
-
-local function getCategoryIDOfFirstResult()
-    local _, info = searchForFirstResultID()
-
-    local activityInfo = miog.requestActivityInfo(info.activityID)
-
-    return activityInfo and activityInfo.categoryID
 end
 
 local function checkForErrors()

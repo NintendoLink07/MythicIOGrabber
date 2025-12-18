@@ -90,7 +90,7 @@ function ProgressMythicPlusCellMixin:OnEnter(challengeMapID, guid)
 			if(not color) then
 				color = HIGHLIGHT_FONT_COLOR;
 			end
-			GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_TOTAL_SCORE:format(color:WrapTextInColorCode(overallScore)), GREEN_FONT_COLOR);
+			GameTooltip_AddNormalLine(GameTooltip, DUNGEON_SCORE_TOTAL_SCORE:format(color:WrapTextInColorCode(tostring(overallScore))), GREEN_FONT_COLOR);
 		end
 
 		local info = overtimeHigher and overtimeInfo or intimeInfo
@@ -220,48 +220,51 @@ function ProgressRaidCellMixin:Populate(data)
         if(raidData) then
             for a = 1, 3, 1 do
                 local current = a == 1 and self.Normal or a == 2 and self.Heroic or a == 3 and self.Mythic
-                local hasRaidData = raidData[a] ~= nil
 
-                if(hasRaidData) then
-                    local text = (raidData[a].kills) .. "/" .. numOfBosses
-                    current:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].color))
+                if(current) then
+                    local hasRaidData = raidData[a] ~= nil
 
-                else
-                    local text = "0/" .. numOfBosses
-                    current:SetText(WrapTextInColorCode(text, miog.CLRSCC.gray))
-                    
-
-                end
-
-                current:SetScript("OnEnter", function(selfFrame)
                     if(hasRaidData) then
-                        GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
-                        GameTooltip_AddHighlightLine(GameTooltip, mapInfo.name)
-                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        local text = (raidData[a].kills) .. "/" .. numOfBosses
+                        current:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].color))
 
-                        for k, v in ipairs(raidData[a].bosses) do
-                            if(v.id) then
-                                local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
-
-                                if(not name) then
-                                    name = mapInfo.bosses[k].name .. " kills"
-
-                                end
-
-                                GameTooltip:AddDoubleLine(v.count or v.quantity or 0, name)
-                            end
-                        end
+                    else
+                        local text = "0/" .. numOfBosses
+                        current:SetText(WrapTextInColorCode(text, miog.CLRSCC.gray))
                         
-                        if(not raidData[a].validatedIngame) then
-                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                            GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
-                            GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
 
-                        end
-
-                        GameTooltip:Show()
                     end
-                end)
+
+                    current:SetScript("OnEnter", function(selfFrame)
+                        if(hasRaidData) then
+                            GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
+                            GameTooltip_AddHighlightLine(GameTooltip, mapInfo.name)
+                            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+
+                            for k, v in ipairs(raidData[a].bosses) do
+                                if(v.id) then
+                                    local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
+
+                                    if(not name) then
+                                        name = mapInfo.bosses[k].name .. " kills"
+
+                                    end
+
+                                    GameTooltip:AddDoubleLine(v.count or v.quantity or 0, name)
+                                end
+                            end
+                            
+                            if(not raidData[a].validatedIngame) then
+                                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                                GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
+                                GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
+
+                            end
+
+                            GameTooltip:Show()
+                        end
+                    end)
+                end
             end
 
             return

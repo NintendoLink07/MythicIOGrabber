@@ -1,79 +1,39 @@
-local addonName, miog = ...
+local _, miog = ...
 local wticc = WrapTextInColorCode
 
-ApplicantMemberMixin = {}
+ApplicantSingleMemberMixin = CreateFromMixins(ApplicantMixin)
 
-function ApplicantMemberMixin:SetCollapsed(bool)
-	self:GetElementData():SetCollapsed(bool)
+function ApplicantSingleMemberMixin:RefreshExpandIcon()
 	self.Expand:SetAtlas(self:GetElementData():IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
 
 end
 
-function ApplicantMemberMixin:OnLoad()
+function ApplicantSingleMemberMixin:SetCollapsed(bool)
+	self:GetElementData():SetCollapsed(bool)
+    self:RefreshExpandIcon()
 
 end
 
-function ApplicantMemberMixin:OnMouseDown(button)
+function ApplicantSingleMemberMixin:OnMouseDown(button)
     if(button == "RightButton") then
-        if(self.applicantID) then
-            if(C_LFGList.GetApplicantInfo(self.applicantID)) then
-                self:GetParent().applicantID = self.applicantID
-                LFGListApplicantMember_OnMouseDown(self)
+        self:OnMouseDown_RightButton()
 
-            end
-        end
-    else
+    elseif(button == "LeftButton") then
         self:GetElementData():ToggleCollapsed()
-        self.Expand:SetAtlas(self:GetElementData():IsCollapsed() and "campaign_headericon_closed" or "campaign_headericon_open");
+        self:RefreshExpandIcon()
 
     end
 end
 
-function ApplicantMemberMixin:OnEnter()
-    if(self.applicantID) then
-        if(C_LFGList.GetApplicantInfo(self.applicantID)) then
-            self:GetParent().applicantID = self.applicantID
-            LFGListApplicantMember_OnEnter(self)
-
-        end
-    end
+function ApplicantSingleMemberMixin:ResetWithExpandIcon()
+    self:Reset()
+    self:RefreshExpandIcon()
 end
 
-function ApplicantMemberMixin:RefreshStatus(appStatus)
-    if(not appStatus) then
-		local applicantData = C_LFGList.GetApplicantInfo(self.applicantID)
-        
-        if(applicantData) then
-            appStatus = applicantData.applicationStatus
-
-        end
-    end
-
-    if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted" or appStatus == "declined" or appStatus == "declined_full" or appStatus == "declined_delisted" or appStatus == "invited") then
-        self.StatusFrame.FontString:SetText(wticc(miog.APPLICANT_STATUS_INFO[appStatus].statusString, miog.APPLICANT_STATUS_INFO[appStatus].color))
-        self.StatusFrame:Show()
-
-    elseif(appStatus == "unknown") then
-        self.StatusFrame.FontString:SetText("UNKNOWN")
-        self.StatusFrame:Show()
-        
-    else
-	    self.StatusFrame:Hide()
-
-    end
-end
-
-function ApplicantMemberMixin:Reset()
-    self:RefreshStatus()
-	self.Expand:SetAtlas(self:GetElementData():IsCollapsed() ~= false and "campaign_headericon_closed" or "campaign_headericon_open");
-
-end
-
-function ApplicantMemberMixin:SetClass(fileName)
+function ApplicantSingleMemberMixin:SetClass(fileName)
     if(fileName) then
         local classID = miog.CLASSFILE_TO_ID[fileName]
         local classColor = C_ClassColor.GetClassColor(fileName)
-
         local r, g, b, a = classColor:GetRGBA()
 
         self.Class:SetTexture(miog.CLASSES[classID].icon)
@@ -82,7 +42,7 @@ function ApplicantMemberMixin:SetClass(fileName)
 
 	    self:SetBackdrop( { bgFile="Interface\\ChatFrame\\ChatFrameBackground", tileSize=0, tile=false, edgeFile="Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1} )
         self:SetBackdropColor(0, 0, 0, 0)
-        self:SetBackdropBorderColor(classColor:GetRGBA())
+        self:SetBackdropBorderColor(r, g, b, a)
 
     else
         self.Class:SetTexture(miog.CLASSES[100].icon)
@@ -90,7 +50,7 @@ function ApplicantMemberMixin:SetClass(fileName)
     end
 end
 
-function ApplicantMemberMixin:SetItemLevel(itemLevel)
+function ApplicantSingleMemberMixin:SetItemLevel(itemLevel)
     if(itemLevel) then
         local reqIlvl = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredItemLevel or 0
 
@@ -105,20 +65,11 @@ function ApplicantMemberMixin:SetItemLevel(itemLevel)
     end
 end
 
-function ApplicantMemberMixin:SetInviteDeclineStatus()
-	local showLFGInteractions = LFGListUtil_IsEntryEmpowered()
+function ApplicantSingleMemberMixin:SetData(data)
+	self:ResetWithExpandIcon()
 
-    self.Invite:SetShown(showLFGInteractions)
-    self.Decline:SetShown(showLFGInteractions)
-end
-
-function ApplicantMemberMixin:SetData(data)
     self.applicantID = data.applicantID
     self.memberIdx = data.applicantIndex
-
-	self:Reset()
-
-    local comment = data.comment
     
     local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(self.applicantID, self.memberIdx)
 
@@ -141,9 +92,10 @@ function ApplicantMemberMixin:SetData(data)
     name = table.concat(nameTable)
 
     self.Name:SetText(data.playerName or playerName or name)
-    --self.Level:SetText(level)
     self:SetClass(data.class)
     self.Spec:SetTexture(miog.SPECIALIZATIONS[data.specID or 0].squaredIcon)
+
+    local comment = data.comment
     self.Comment:SetShown(comment and comment ~= "")
     self.Comment:SetPoint("LEFT", self.Name, "LEFT", self.Name:GetStringWidth(), 4)
 	--self.Race:SetAtlas(miog.RACES[raceID])
@@ -164,6 +116,4 @@ function ApplicantMemberMixin:SetData(data)
     self.Secondary:SetText(coloredSecondary)
 
     self:SetItemLevel(itemLevel)
-
-    self:SetInviteDeclineStatus()
 end

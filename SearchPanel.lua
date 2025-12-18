@@ -9,6 +9,7 @@ local currentlySelectedID
 local function findFrame(resultID)
 	local frame = miog.SearchPanel.ScrollBox2:FindFrameByPredicate(function(localFrame, node)
 		return node.data.resultID == resultID
+		
 	end)
 
 	return frame

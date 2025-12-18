@@ -52,7 +52,7 @@ end
 
 function RaidSheetElementMixin:UpdateSpecFrames()
     self.specIDs = {}
-    self.numOfSpecs = GetNumSpecializationsForClassID(self.classID)
+    self.numOfSpecs = C_SpecializationInfo.GetNumSpecializationsForClassID(self.classID)
 
     for i = 1, self.numOfSpecs, 1 do
         local id, name, description, icon, role, isRecommended, isAllowed = GetSpecializationInfoForClassID(self.classID, i)

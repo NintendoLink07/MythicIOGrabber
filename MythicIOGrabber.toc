@@ -1,10 +1,10 @@
-## Interface: 110207
+## Interface: 110207, 120000
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.8
+## Version: 3.8.1
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -24,10 +24,6 @@ PVEFrame2.lua
 ActivityChecker.lua
 QueueManagement.lua
 
-ModuleMixins\AppViewer\AppViewer.lua
-ModuleMixins\AppViewer\ApplicantMemberMixin.lua
-ModuleMixins\AppViewer\ApplicantMixin.lua
-
 ApplicationViewer.lua
 SearchPanel.lua
 EntryCreation.lua
@@ -45,7 +41,7 @@ Teleports.lua
 NewSettings.lua
 CharacterSettings.lua
 StatisticsRecorder.lua
-ReQueue.lua
+## ReQueue.lua
 
 FuzzyAlgorithm.lua
 
@@ -57,6 +53,14 @@ Loot.lua
 ##
 ### MIXINS
 ##
+
+ModuleMixins\AppViewer\AppViewer.lua
+ModuleMixins\AppViewer\ApplicantMultiMemberMixin.lua
+ModuleMixins\AppViewer\ApplicantSingleMemberMixin.lua
+ModuleMixins\AppViewer\ApplicantMixin.lua
+
+ModuleMixins\ReQueueMixin.lua
+ModuleMixins\QueueManagerMixin.lua
 
 Mixins\SortingMixin.lua
 Mixins\MultiStateButtonMixin.lua
@@ -110,7 +114,7 @@ XML\Misc\MIOG_HeaderSortButtonTemplate.xml
 XML\TableBuilderElements\MIOG_TableBuilderColorCellTemplate.xml
 XML\Misc\MIOG_UnitTemplate.xml
 
-XML\Requeue\MIOG_RequeuePopup.xml
+XML\Requeue\MIOG_ReQueue.xml
 
 XML\MIOG_FakeDropdownButton.xml
 XML\MIOG_AbandonFrame.xml

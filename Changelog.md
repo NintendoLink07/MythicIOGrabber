@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [3.8.1] - 2025-12-21
+
+### Changed
+
+- The [ReQueue] feature has been enabled again and is now a standard part of the addon.
+
+### Fixed
+
+- [ApplicationViewer] Fixed multiple errors regarding duplicated code between single and multi and improved performance.
+
+
+
 ## [3.8] - 2025-12-15
 
 ### Changed

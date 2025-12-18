@@ -143,8 +143,6 @@ local function updateApplicantMemberFrame(frame, data)
 
 	tinsert(nameTable, playerName)
 
-	nameFontString:SetText(table.concat(nameTable))
-
 	local nameFontString = applicantMemberFrame.Name
 
 	nameFontString:SetText(table.concat(nameTable))
@@ -376,7 +374,7 @@ local function createAVSelfEntry(pvpBracket)
 
 	local className, classFile = UnitClass("player")
 	local specID = GetSpecializationInfo(GetSpecialization())
-	local role = GetSpecializationRoleByID(specID)
+	local role = GetSpecializationRoleByID(specID or 0)
 
 	local highestKey
 
@@ -403,7 +401,7 @@ local function createAVSelfEntry(pvpBracket)
 		[7]  = role == "TANK",
 		[8]  = role == "HEALER",
 		[9]  = role == "DAMAGER",
-		[10]  = select(5, GetSpecializationInfoByID(specID)),
+		[10]  = select(5, GetSpecializationInfoByID(specID or 0)),
 		[11]  = true,
 		[12]  = C_ChallengeMode.GetOverallDungeonScore(),
 		[13]  = pvpItemLevel,
@@ -467,6 +465,7 @@ local function createFullEntries(iterations)
 			local specID = miog.CLASSES[classID].specs[random(1, #miog.DEBUG_SPEC_TABLE[classID])]
 
 			local highestKey
+			local dungeonData, pvpData
 
 			if(rioProfile and rioProfile.mythicKeystoneProfile) then
 				highestKey = rioProfile.mythicKeystoneProfile.maxDungeonLevel

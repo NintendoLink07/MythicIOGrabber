@@ -24,6 +24,7 @@ end
 
 local function getPartyGUIDData(guid)
     return partyGUIDList[guid]
+    
 end
 
 miog.requeue.getPartyGUIDData = getPartyGUIDData

@@ -855,6 +855,7 @@ local function refreshPlayerCharacterData()
 
     local localizedClassName, fileName = UnitClass("player")
     local _, _, _, _, combatRole = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
+    combatRole = combatRole or "DAMAGER"
     
     local playerData = hasTableEntry(fullPlayerName)
     local playerSpec = savedPlayerSpecs[fullPlayerName] or 0
@@ -873,7 +874,7 @@ local function refreshPlayerCharacterData()
     playerData.className = localizedClassName
     
     playerData.specID = playerSpec
-    playerData.combatRole = combatRole
+    playerData.combatRole = combatRole or "DAMAGER"
 
     if(classCount[fileName]) then
         classCount[fileName] = classCount[fileName] + 1
