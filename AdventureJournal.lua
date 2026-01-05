@@ -426,7 +426,7 @@ local function loadItems()
     end]]
 end
 
-function concatenateTables(t1, t2)
+local function concatenateTables(t1, t2)
     local t2Size = #t2
 
     for i = 1 , t2Size do

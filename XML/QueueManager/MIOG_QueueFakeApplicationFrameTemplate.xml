@@ -1,8 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name="MIOG_QueueFakeApplicationFrameTemplate" inherits="MIOG_QueueFrameTemplate" mixin="QueueFakeApplicationFrameMixin" virtual="true">
-        <Size y="45" />
-
+    <Button name="MIOG_QueueFakeApplicationFrameTemplate" inherits="MIOG_QueueManagerBaseFrameTemplate" mixin="QueueFakeApplicationFrameMixin" virtual="true">
         <Scripts>
 			<OnClick>
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)

@@ -475,7 +475,7 @@ local function queueEvents(_, event, ...)
 		if(miog.F.UPDATE_AFTER_COMBAT) then
 			miog.F.UPDATE_AFTER_COMBAT = false
 
-			checkQueues()
+			--checkQueues()
 		end
 	end
 end
@@ -483,9 +483,9 @@ end
 miog.loadQueueSystem = function()
 	local scrollbox = miog.MainTab.QueueInformation.Panel.QueueScrollBox
 	local scrollbar = miog.MainTab.QueueInformation.Panel.QueueScrollBar
-	hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
+	--hooksecurefunc(QueueStatusFrame, "Update", checkQueues)
 
-	local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 3);
+	--local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 3);
 
 	local function Initializer(frame, data)
 		frame.isMultiDungeon = data.isMultiDungeon
@@ -515,7 +515,7 @@ miog.loadQueueSystem = function()
 
 			local isFollowerDungeon = queueID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(queueID)
 
-			macrotext = "/run LeaveSingleLFG(" .. categoryID .. "," .. queueID .. ")"
+			macrotext = "/run LeaveSingleLFG(" .. data.categoryID .. "," .. data.queueID .. ")"
 
 			activityName = data.isMultiDungeon and MULTIPLE_DUNGEONS or name
 			timeInQueue = queuedTime and GetTime() - queuedTime or 0

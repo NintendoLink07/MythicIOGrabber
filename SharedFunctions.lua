@@ -1635,10 +1635,10 @@ end
 
 miog.getGroupLeader = function()
 	local numOfMembers = GetNumGroupMembers()
-	miog.F.LFG_STATE = miog.checkLFGState()
+	local prefix = UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "solo"
 
 	for groupIndex = 1, numOfMembers, 1 do
-		local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and miog.F.LFG_STATE..groupIndex) or "player"
+		local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and prefix .. groupIndex) or "player"
 
 		if(UnitIsGroupLeader(unitID)) then
 			return UnitName(unitID), (UnitGUID(unitID) == UnitGUID("player") and "player" or unitID)

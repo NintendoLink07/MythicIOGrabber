@@ -1,4 +1,5 @@
 local addonName, miog = ...
+_G.MythicIOGrabber = miog
 
 miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
@@ -8,6 +9,7 @@ miog.referencePVPButtons = {}
 
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
+
 
 local miogPlayers = {}
 
@@ -315,8 +317,25 @@ eventReceiver:RegisterEvent("CHALLENGE_MODE_COMPLETED")
 
 eventReceiver:RegisterEvent("WEEKLY_REWARDS_UPDATE")
 
-
-
-
-
 eventReceiver:SetScript("OnEvent", mainEvents)
+
+function miog:GetGroupLeader()
+	local numOfMembers = GetNumGroupMembers()
+	local prefix = UnitInRaid("player") and "raid" or UnitInParty("player") and "party" or "solo"
+
+	for groupIndex = 1, numOfMembers, 1 do
+		local unitID = ((IsInRaid() or (IsInGroup() and (numOfMembers ~= 1 and groupIndex ~= numOfMembers))) and prefix .. groupIndex) or "player"
+
+		if(UnitIsGroupLeader(unitID)) then
+			return UnitName(unitID), (UnitGUID(unitID) == UnitGUID("player") and "player" or unitID)
+
+		end
+	end
+end
+
+function miog:GetImageForMapID(mapID)
+	if(mapID) then
+		return self.MAP_INFO[mapID] and self.MAP_INFO[mapID].horizontal
+
+	end
+end

@@ -304,7 +304,9 @@
         "EJ_ITEM_CATEGORY_EXTREMELY_RARE",
         "EJ_ITEM_CATEGORY_VERY_RARE",
         "MONTHLY_ACTIVITIES_DAYS",
-        "Wrap"
+        "Wrap",
+        "C_GameEnvironmentManager",
+        "LFGEnabledList"
     ],
     "Lua.type.weakUnionCheck": true
 }

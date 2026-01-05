@@ -510,39 +510,11 @@
                                         </Layers>
                                     </Frame>
 
-                                    <Frame parentKey="Panel"  inherits="InsetFrameTemplate3" frameLevel="5">
+                                    <Frame parentKey="Panel" inherits="MIOG_QueueManager">
                                         <Anchors>
                                             <Anchor point="TOPLEFT" relativeKey="$parent.FakeDropdown" relativePoint="BOTTOMLEFT" y="-4"/>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.LastGroup" relativePoint="TOPRIGHT" y="2"/>
                                         </Anchors>
-
-                                        <Layers>
-                                            <Layer level="OVERLAY">
-                                                <FontString parentKey="Title" font="GameFontHighlight" text="Your active queues will be displayed here">
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" />
-                                                        <Anchor point="RIGHT" />
-                                                    </Anchors>
-                                                </FontString>
-
-                                                <FontString parentKey="FakeApps" font="GameFontHighlight">
-                                                    <Anchors>
-                                                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPLEFT" x="3" y="-4"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                        
-                                        <Frames>
-                                            <Frame parentKey="QueueScrollBox" inherits="WowScrollBoxList" />
-
-                                            <EventFrame parentKey="QueueScrollBar" inherits="MinimalScrollBar">
-                                                <Anchors>
-                                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="TOPRIGHT" x="2"/>
-                                                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.QueueScrollBox" relativePoint="BOTTOMRIGHT" x="2"/>
-                                                </Anchors>
-                                            </EventFrame>
-                                        </Frames>
                                     </Frame>
                                 </Frames>
                             </Frame>

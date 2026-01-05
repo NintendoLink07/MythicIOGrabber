@@ -738,12 +738,12 @@ end
 local function sortActivityGroup(k1, k2)
 	local ga1, ga2 = miog.requestGroupInfo(k1), miog.requestGroupInfo(k2)
 
-	if(ga1 and ga2) then
+	if(ga1 and ga1.abbreviatedName and ga2 and ga2.abbreviatedName) then
 		--local fn1, fn2 = miog.requestActivityInfo(ga1.activityID).fullName, miog.requestActivityInfo(ga2.activityID).fullName
 
 		return ga1.abbreviatedName < ga2.abbreviatedName
 
-	elseif(ga1) then
+	elseif(ga1 and ga1.abbreviatedName) then
 		return true
 
 	else
@@ -884,8 +884,6 @@ local function refreshFilters()
 					
 					activityFilter.type = groupData.isPvE and "pve" or groupData.isPvp and "pvp" or groupData.isWorld and "world"
 					activityFilter.filterID = groupData.filterID
-
-					print(info.abbreviatedName or info.shortName)
 
 					activityFilter.Text:SetText(info.abbreviatedName or info.shortName)
 					

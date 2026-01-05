@@ -177,7 +177,7 @@ miog.createFrames = function()
 	--miog.loadRequeue()
 
 	if(not miog.F.LITE_MODE) then
-		miog.loadQueueSystem()
+		--miog.loadQueueSystem()
 		--miog.loadCalendarSystem()
 		miog.loadTeleports()
 		miog.loadGearingTable()

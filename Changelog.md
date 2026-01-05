@@ -7,15 +7,19 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.8.1] - 2025-12-21
+## [3.8.1] - 2026-01-12
 
 ### Changed
+
+- The [ActiveQueues] panel in the mainframe has been rewritten to be more performant.
 
 - The [ReQueue] feature has been enabled again and is now a standard part of the addon.
 
 ### Fixed
 
 - [ApplicationViewer] Fixed multiple errors regarding duplicated code between single and multi and improved performance.
+
+- [FilterManager] If there is no second group to be sorted the FilterManager will now work as intended.
 
 
 

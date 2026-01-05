@@ -55,12 +55,14 @@ Loot.lua
 ##
 
 ModuleMixins\AppViewer\AppViewer.lua
-ModuleMixins\AppViewer\ApplicantMultiMemberMixin.lua
-ModuleMixins\AppViewer\ApplicantSingleMemberMixin.lua
 ModuleMixins\AppViewer\ApplicantMixin.lua
+ModuleMixins\AppViewer\ApplicantSingleMemberMixin.lua
+ModuleMixins\AppViewer\ApplicantMultiMemberMixin.lua
 
 ModuleMixins\ReQueueMixin.lua
-ModuleMixins\QueueManagerMixin.lua
+ModuleMixins\QueueManager\QueueManagerMixin.lua
+ModuleMixins\QueueManager\QueueManagerFrameMixin.lua
+
 
 Mixins\SortingMixin.lua
 Mixins\MultiStateButtonMixin.lua
@@ -75,7 +77,6 @@ Mixins\GraphMixin.lua
 Mixins\ItemUpgradeFinderMixin.lua
 Mixins\SearchBoxFiltersMixin.lua
 Mixins\SortBarMixin.lua
-Mixins\QueueFrameMixin.lua
 
 Mixins\ProgressMixin.lua
 Mixins\ProgressCellMixin.lua
@@ -125,6 +126,8 @@ XML\VaultProgress\MIOG_VaultProgressDungeonTemplate.xml
 XML\VaultProgress\MIOG_VaultProgressWorldTemplate.xml
 XML\VaultProgress\MIOG_VaultProgressRewardTemplate.xml
 
+XML\QueueManager\MIOG_QueueManager.xml
+
 
 XML\Holidays\MIOG_HolidayFrameTemplate.xml
 
@@ -138,12 +141,12 @@ XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_PopupFrame.xml
 
-XML\QueueManager\MIOG_QueueFrameTemplate.xml
-XML\QueueManager\MIOG_QueueLFGFrameTemplate.xml
-XML\QueueManager\MIOG_QueueListingFrameTemplate.xml
-XML\QueueManager\MIOG_QueueApplicationFrameTemplate.xml
+XML\QueueManager\MIOG_QueueManagerBaseFrameTemplate.xml
+XML\QueueManager\MIOG_QueueManagerLFGFrameTemplate.xml
+XML\QueueManager\MIOG_QueueManagerListingFrameTemplate.xml
+XML\QueueManager\MIOG_QueueManagerApplicationFrameTemplate.xml
 XML\QueueManager\MIOG_QueueFakeApplicationFrameTemplate.xml
-XML\QueueManager\MIOG_QueueFramePVPTemplate.xml
+XML\QueueManager\MIOG_QueueManagerFramePVPTemplate.xml
 
 XML\GroupManager\MIOG_GroupManager.xml
 XML\GroupManager\MIOG_GroupManagerRaidFrameCharacterTemplate.xml

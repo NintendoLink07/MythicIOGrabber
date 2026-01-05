@@ -1,8 +1,5 @@
 TeleportButtonMixin = {}
 
-local formatter = CreateFromMixins(SecondsFormatterMixin)
-formatter:Init(3600, SecondsFormatter.Abbreviation.OneLetter)
-
 function TeleportButtonMixin:Init()
     self:SetAttribute("type", "spell")
     self:RegisterForClicks("LeftButtonDown")
