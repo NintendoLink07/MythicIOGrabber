@@ -1,38 +1,30 @@
-tag a0a3717bbaa84aa98db66243d9c66593ede93508 v11.2.0.171
+tag 1c7d2337189db29a4254914fa4501ec1ed8a93f8 v12.0.0.174
 Author:	Tercio Jose <terciob19@hotmail.com>
-Date:	Sat Sep 6 22:23:34 2025 -0300
+Date:	Tue Jan 20 11:13:04 2026 -0300
 
-commit b36c7d0d0d1321280ff9dae0ea873af7883709c1
+commit a81d74e3f2c12f56dd8be4295d22a2145c6d9b61
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sat Sep 6 22:23:20 2025 -0300
+Date:   Tue Jan 20 11:12:32 2026 -0300
 
-    MOP crowd control spells.
+    Shutdown comms while in combat; Shutdown parts of the Lib that aren't safe yet.
 
-commit a12619998064bdf76e0a4357d7b296360b1e0577
+commit 26e8113f2215ae42b14ac6d2c5b14d859ec51185
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sun Aug 17 12:05:56 2025 -0300
+Date:   Tue Oct 21 13:55:46 2025 -0300
 
-    Bump Version
+    Add Midnight things to maintain
 
-commit 330d600e431bf7c35eb1247645256faa0f974ef2
-Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sun Aug 17 12:05:39 2025 -0300
-
-    Fix Metamorphosis for Havoc.
-
-commit c3a10c5ceb2aecfd4b6897fb48d793f1ac11a287
+commit b929fd5a1899acee54035c4d333f0dae684adfa6
 Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
-Date:   Sun Aug 17 12:07:57 2025 +0100
-
-    Update LibOpenRaid.lua
-    
-    bump version for mage addition
-
-commit 83c4217116af2e229c0f08e688cd8e2cc609a17a
-Author: asakawa <54901700+asaka-wa@users.noreply.github.com>
-Date:   Sun Aug 17 12:07:12 2025 +0100
+Date:   Thu Sep 18 12:13:54 2025 +0100
 
     Update ThingsToMantain_WarWithin.lua
     
-    Add Gravity Lapse - Mage
+    Updated Breath of Sindragosa spellID and CD
+
+commit 4f58647ff4795e757ade593dfafc2cae20d655a1
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Mon Sep 8 23:11:14 2025 -0300
+
+    MOP cc updates; RETAIL potions updates.
 

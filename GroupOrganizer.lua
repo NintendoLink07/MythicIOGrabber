@@ -403,9 +403,8 @@ local function updateClassPanel()
 	classSpecPanel.HealerString:SetText(roleCount["HEALER"])
 	classSpecPanel.DamagerString:SetText(roleCount["DAMAGER"])
 
-    local classFrameIndex = 1
 
-    for _, classEntry in ipairs(miog.CLASSES) do
+    for classIndex, classEntry in ipairs(miog.CLASSES) do
         local name = classEntry.name
 
         local numOfClasses = classCount[name]
@@ -415,16 +414,15 @@ local function updateClassPanel()
 
         if(numOfClasses > 0) then
             currentClassFrame:SetSize(26, 26)
-            currentClassFrame.layoutIndex = classFrameIndex
+            currentClassFrame.layoutIndex = -classIndex
             currentClassFrame.Icon:SetDesaturated(false)
             currentClassFrame.Icon:SetAlpha(0.85)
             currentClassFrame:SetBackdropBorderColor(r, g, b, 0.85)
             currentClassFrame.FontString:SetText(numOfClasses)
 
-            classFrameIndex = classFrameIndex + 1
         else
             currentClassFrame:SetSize(18, 18)
-            currentClassFrame.layoutIndex = classFrameIndex + 20
+            currentClassFrame.layoutIndex = classIndex
             currentClassFrame.Icon:SetDesaturated(true)
             currentClassFrame.Icon:SetAlpha(0.4)
             currentClassFrame:SetBackdropBorderColor(r, g, b, 0.4)

@@ -7,19 +7,30 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.8.1] - 2026-01-12
+## [3.9] - 2026-01-21
 
 ### Changed
 
 - The [ActiveQueues] panel in the mainframe has been rewritten to be more performant.
 
-- The [ReQueue] feature has been enabled again and is now a standard part of the addon.
-
 ### Fixed
 
 - [ApplicationViewer] Fixed multiple errors regarding duplicated code between single and multi and improved performance.
 
-- [FilterManager] If there is no second group to be sorted the FilterManager will now work as intended.
+- [FilterManager] If there is only a single group for sorting the [FilterManager] will now work as intended.
+
+- Many layoutIndex order issues have been resolved.
+
+### Known issues
+
+- [Drops] Selecting a Midnight raid or dungeon will not unload the icon and name of the previous shown raid/dungeon boss.
+Selecting an encounter fixes this problem for now.
+
+- [Drops] Some loot isn't showing up correctly, e.g. decor and some dungeon loot.
+
+- Many changes have happened in Midnight.
+While most have already been fixed before the patch hitting live there might still be some changes that have gone unnoticed.
+
 
 
 
@@ -4503,7 +4514,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.8..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9..HEAD
+[3.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9
 [3.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.8
 [3.7.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7.1
 [3.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.7

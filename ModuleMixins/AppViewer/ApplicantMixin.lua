@@ -32,6 +32,9 @@ function ApplicantMixin:OnEnter()
 end
 
 function ApplicantMixin:EnableLFGInteractions()
+    self.Invite:Show()
+    self.Decline:Show()
+
     self.Invite:Enable()
     self.Decline:Enable()
 

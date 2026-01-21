@@ -5,9 +5,18 @@ local wticc = WrapTextInColorCode
 local selectedExpansion, defaultGroup, defaultActivity = nil, nil, nil
 
 local playstyles = {
+	Enum.LFGEntryPlaystyle.None,
 	Enum.LFGEntryPlaystyle.Standard,
 	Enum.LFGEntryPlaystyle.Casual,
 	Enum.LFGEntryPlaystyle.Hardcore
+}
+
+local generalPlaystyles = {
+	Enum.LFGEntryGeneralPlaystyle.Learning,
+	Enum.LFGEntryGeneralPlaystyle.FunRelaxed,
+	Enum.LFGEntryGeneralPlaystyle.FunSerious,
+	Enum.LFGEntryGeneralPlaystyle.Expert,
+
 }
 
 local function setUpRatingLevels(entryCreation)
@@ -92,8 +101,8 @@ local function setUpPlaystyleDropDown()
 		if(LFGListFrame.EntryCreation.selectedActivity) then
 			local activityInfo = miog.requestActivityInfo(LFGListFrame.EntryCreation.selectedActivity)
 		
-			for k, playstyleInfo in ipairs(playstyles) do
-				local activityButton = rootDescription:CreateRadio(C_LFGList.GetPlaystyleString(playstyleInfo, activityInfo), function(playstyle) return playstyle == LFGListFrame.EntryCreation.selectedPlaystyle end, function(playstyle)
+			for k, playstyleInfo in ipairs(generalPlaystyles) do
+				local activityButton = rootDescription:CreateRadio(C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.None, playstyleInfo, activityInfo), function(playstyle) return playstyle == LFGListFrame.EntryCreation.selectedPlaystyle end, function(playstyle)
 					LFGListEntryCreation_OnPlayStyleSelectedInternal(LFGListFrame.EntryCreation, playstyle)
 		
 				end, playstyleInfo)

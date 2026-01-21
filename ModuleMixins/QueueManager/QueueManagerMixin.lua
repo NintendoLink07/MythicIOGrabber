@@ -235,7 +235,7 @@ function QueueManagerMixin:OnLoad()
 
 				frame:SetTimerInfo("sub", activeEntryInfo.duration)
 
-				activityName = unitID == "player" and "Your Listing" or (unitName or "Unknown") .. "'s Listing (" .. numApplicants .. ")"
+				activityName = (unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numApplicants .. ")"
 				
 			end
 

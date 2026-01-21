@@ -1141,14 +1141,22 @@ miog.loadJournal = function()
                 end, info)
         
                 instanceButton:AddInitializer(function(button, description, menu)
-                    local leftTexture = button:AttachTexture();
-                    leftTexture:SetSize(16, 16);
-                    leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-                    leftTexture:SetTexture(miog.MAP_INFO[info.mapID].icon);
-        
-                    button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-        
-                    return button.fontString:GetUnboundedStringWidth() + 18 + 5
+                    if(info.mapID and not miog.MAP_INFO[info.mapID]) then
+                        print("NOTHING FOR", info.mapID)
+
+                    end
+
+                    if(info.mapID and miog.MAP_INFO[info.mapID] and miog.MAP_INFO[info.mapID].icon) then
+                        local leftTexture = button:AttachTexture();
+                        leftTexture:SetSize(16, 16);
+                        leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+                        leftTexture:SetTexture(miog.MAP_INFO[info.mapID].icon);
+            
+                        button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+            
+                        return button.fontString:GetUnboundedStringWidth() + 18 + 5
+
+                    end
                 end)
 
                 lastIsRaid = info.isRaid

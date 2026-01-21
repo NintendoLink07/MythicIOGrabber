@@ -95,16 +95,6 @@ miog.COLOR_THEMES = { -- index == expansionIndex
 	}
 }
 
-for k, v in pairs(miog.COLOR_THEMES) do
-	for i = 1, 5 do
-		local add = i * 0.05
-		v[i].r = v[i].r + add
-		v[i].g = v[i].g + add
-		v[i].b = v[i].b + add
-		
-	end
-end
-
 miog.STRING_REPLACEMENTS = {
 	["NORMALRAIDPROGRESSFULL"] = "Normal: %s",
 	["HEROICRAIDPROGRESSFULL"] = "Heroic: %s",
@@ -129,37 +119,6 @@ miog.STRING_REPLACEMENTS = {
 	["ILVLSHORT"] = "I-Lvl: %d",
 }
 
-local function addStringReplacementAlternatives()
-	miog.STRING_REPLACEMENTS["RAIDPROGRESS1FULL"] = miog.STRING_REPLACEMENTS["NORMALRAIDPROGRESSFULL"]
-	miog.STRING_REPLACEMENTS["RAIDPROGRESS2FULL"] = miog.STRING_REPLACEMENTS["HEROICRAIDPROGRESSFULL"]
-	miog.STRING_REPLACEMENTS["RAIDPROGRESS3FULL"] = miog.STRING_REPLACEMENTS["MYTHICRAIDPROGRESSFULL"]
-	
-	miog.STRING_REPLACEMENTS["RAIDPROGRESS1SHORT"] = miog.STRING_REPLACEMENTS["NORMALRAIDPROGRESSSHORT"]
-	miog.STRING_REPLACEMENTS["RAIDPROGRESS2SHORT"] = miog.STRING_REPLACEMENTS["HEROICRAIDPROGRESSSHORT"]
-	miog.STRING_REPLACEMENTS["RAIDPROGRESS3SHORT"] = miog.STRING_REPLACEMENTS["MYTHICRAIDPROGRESSSHORT"]
-
-	miog.STRING_REPLACEMENTS["PVPRATING1FULL"] = miog.STRING_REPLACEMENTS["PVPRATING2V2FULL"]
-	miog.STRING_REPLACEMENTS["PVPRATING1SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING2V2SHORT"]
-
-	miog.STRING_REPLACEMENTS["PVPRATING2FULL"] = miog.STRING_REPLACEMENTS["PVPRATING3V3FULL"]
-	miog.STRING_REPLACEMENTS["PVPRATING2SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING3V3SHORT"]
-
-	miog.STRING_REPLACEMENTS["PVPRATING3FULL"] = miog.STRING_REPLACEMENTS["PVPRATING5V5FULL"]
-	miog.STRING_REPLACEMENTS["PVPRATING3SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING5V5SHORT"]
-
-	miog.STRING_REPLACEMENTS["PVPRATING4FULL"] = miog.STRING_REPLACEMENTS["PVPRATING10V10FULL"]
-	miog.STRING_REPLACEMENTS["PVPRATING4SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING10V10SHORT"]
-
-	miog.STRING_REPLACEMENTS["PVPRATING7FULL"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOFULL"]
-	miog.STRING_REPLACEMENTS["PVPRATING7SHORT"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOSHORT"]
-
-	miog.STRING_REPLACEMENTS["PVPRATING9FULL"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGFULL"]
-	miog.STRING_REPLACEMENTS["PVPRATING9SHORT"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGSHORT"]
-
-end
-
-addStringReplacementAlternatives()
-
 miog.CLRSCC = { -- from clrs.cc
 	["navy"] = "FF001F3F",
 	["blue"] = "FF0074D9",
@@ -180,11 +139,6 @@ miog.CLRSCC = { -- from clrs.cc
 	["white"] = "FFFFFFFF",
 	colors = {},
 }
-
-for k, v in pairs(miog.CLRSCC) do
-	miog.CLRSCC.colors[k] = CreateColorFromHexString(v)
-
-end
 
 miog.SLOT_ID_INFO = {
 	[0] = {slotName = "AMMOSLOT", localizedName = nil},
@@ -226,6 +180,52 @@ miog.AJ_CLRSCC = {
 	[9] = miog.CLRSCC.orange,
 	[10] = miog.CLRSCC.green,
 }
+
+do
+	for k, v in pairs(miog.COLOR_THEMES) do
+		for i = 1, 5 do
+			local add = i * 0.05
+			v[i].r = v[i].r + add
+			v[i].g = v[i].g + add
+			v[i].b = v[i].b + add
+			
+		end
+	end
+
+	for k, v in pairs(miog.CLRSCC) do
+		if(type(v) == "string") then
+			miog.CLRSCC.colors[k] = CreateColorFromHexString(v)
+
+		end
+	end
+
+	miog.STRING_REPLACEMENTS["RAIDPROGRESS1FULL"] = miog.STRING_REPLACEMENTS["NORMALRAIDPROGRESSFULL"]
+	miog.STRING_REPLACEMENTS["RAIDPROGRESS2FULL"] = miog.STRING_REPLACEMENTS["HEROICRAIDPROGRESSFULL"]
+	miog.STRING_REPLACEMENTS["RAIDPROGRESS3FULL"] = miog.STRING_REPLACEMENTS["MYTHICRAIDPROGRESSFULL"]
+	
+	miog.STRING_REPLACEMENTS["RAIDPROGRESS1SHORT"] = miog.STRING_REPLACEMENTS["NORMALRAIDPROGRESSSHORT"]
+	miog.STRING_REPLACEMENTS["RAIDPROGRESS2SHORT"] = miog.STRING_REPLACEMENTS["HEROICRAIDPROGRESSSHORT"]
+	miog.STRING_REPLACEMENTS["RAIDPROGRESS3SHORT"] = miog.STRING_REPLACEMENTS["MYTHICRAIDPROGRESSSHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING1FULL"] = miog.STRING_REPLACEMENTS["PVPRATING2V2FULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING1SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING2V2SHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING2FULL"] = miog.STRING_REPLACEMENTS["PVPRATING3V3FULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING2SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING3V3SHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING3FULL"] = miog.STRING_REPLACEMENTS["PVPRATING5V5FULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING3SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING5V5SHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING4FULL"] = miog.STRING_REPLACEMENTS["PVPRATING10V10FULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING4SHORT"] = miog.STRING_REPLACEMENTS["PVPRATING10V10SHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING7FULL"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOFULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING7SHORT"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOSHORT"]
+
+	miog.STRING_REPLACEMENTS["PVPRATING9FULL"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGFULL"]
+	miog.STRING_REPLACEMENTS["PVPRATING9SHORT"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGSHORT"]
+
+end
 
 miog.APPLICANT_STATUS_INFO = {
 	["applied"] = {statusString = "APPLIED", color = "FF3D9970"},
@@ -1105,6 +1105,20 @@ miog.MAP_INFO = {
 	[2830] = {abbreviatedName = "EDA", fileName = "ecodome"},
 	[2849] = {abbreviatedName = "DD", fileName = "dastardlydome"},
 	[2872] = {abbreviatedName = "UM", fileName = "undermine"},
+
+	[2805] = {abbreviatedName = "WS", fileName = "windrunnerspire"},
+	[2811] = {abbreviatedName = "MT", fileName = "magistersterrace"},
+	[2813] = {abbreviatedName = "MR", fileName = "murderrow"},
+	[2825] = {abbreviatedName = "DON", fileName = "denofnalorakk"},
+	[2859] = {abbreviatedName = "BV", fileName = "theblindingvale"},
+	[2874] = {abbreviatedName = "MC", fileName = "maisaracaverns"},
+	[2915] = {abbreviatedName = "NPX", fileName = "nexuspointxenas"},
+	[2923] = {abbreviatedName = "VA", fileName = "voidscararena"},
+
+	[2912] = {abbreviatedName = "VS", fileName = "voidspire"},
+	[2913] = {abbreviatedName = "MQD", fileName = "marchonqueldanas"},
+	[2930] = {abbreviatedName = "MN", fileName = "midnight"},
+	[2939] = {abbreviatedName = "DR", fileName = "dreamrift"},
 }
 
 miog.LFG_ID_INFO = {
@@ -1132,6 +1146,29 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 }
 
 miog.ACTIVITY_INFO = {}
+
+
+function miog:retrieveSpecificObject(type, value, preferredObject)
+	if(type == "map") then
+		if(miog.MAP_INFO[value]) then
+			return miog.MAP_INFO[value][preferredObject]
+
+		end
+
+	elseif(type == "activity") then
+		if(miog.ACTIVITY_INFO[value]) then
+			return miog.ACTIVITY_INFO[value][preferredObject]
+
+		end
+
+	elseif(type == "activityGroup") then
+		if(miog.GROUP_ACTIVITY[value]) then
+			return miog.GROUP_ACTIVITY[value][preferredObject]
+
+		end
+
+	end
+end
 
 miog.SEASONAL_CHALLENGE_MODES = {
 	[12] = {399, 400, 401, 402, 403, 404, 405, 406},
@@ -1235,6 +1272,7 @@ local function checkJournalInstanceIDForNewData(journalInstanceID)
     local _, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID);
 
 	miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
+	miog.MAP_INFO[mapID].bosses = miog.MAP_INFO[mapID].bosses or {}
 
 	local counter = 1
 
@@ -1388,6 +1426,44 @@ miog.CUSTOM_CATEGORY_ORDER = {
 	[8] = 8,
 	[9] = 6,
 }
+
+local database = {
+	pointers = {
+		map = {},
+		activity = {},
+		groups = {},
+		categories = {}
+	}
+}
+
+do
+	for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
+		local groupTable = C_LFGList.GetAvailableActivityGroups(categoryID)
+
+		for _, groupID in ipairs(groupTable) do
+			local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
+			database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = C_LFGList.GetAvailableActivities(categoryID, groupID)}
+
+			for _, activityID in ipairs(database.pointers.groups[groupID].activities) do
+				database.pointers.activity[activityID] = C_LFGList.GetActivityInfoTable(activityID)
+
+				local mapID = database.pointers.activity[activityID].mapID
+
+				if(mapID > 1) then
+					database.pointers.map[mapID] = database.pointers.activity[activityID]
+
+					database.pointers.activity[activityID].abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
+					database.pointers.activity[activityID].icon = miog.MAP_INFO[mapID].icon
+					database.pointers.activity[activityID].fileName = miog.MAP_INFO[mapID].fileName
+					database.pointers.activity[activityID].toastBG = miog.MAP_INFO[mapID].toastBG
+					database.pointers.activity[activityID].pvp = miog.MAP_INFO[mapID].pvp
+				end
+			end
+		end
+	end
+end
+
+miog.database = database
 
 miog.BACKUP_SEASONAL_IDS = {
 	[2] = {

@@ -331,13 +331,13 @@
 
                     <Frame parentKey="7" inherits="MIOG_CurrencySingleTemplate">
                         <KeyValues>
-                            <KeyValue key="layoutIndex" value="6" type="number" />
+                            <KeyValue key="layoutIndex" value="7" type="number" />
                         </KeyValues>
                     </Frame>
 
                     <Frame parentKey="8" inherits="MIOG_CurrencySingleTemplate">
                         <KeyValues>
-                            <KeyValue key="layoutIndex" value="6" type="number" />
+                            <KeyValue key="layoutIndex" value="8" type="number" />
                         </KeyValues>
                     </Frame>
                 </Frames>
