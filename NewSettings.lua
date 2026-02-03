@@ -155,15 +155,15 @@ local function createDefaultSettings(overwriteSettings)
                 local GetOptions
 
                 if(v.key == "backgroundOptions") then
-                    if(globalSettings.backgroundOptions > #miog.EXPANSION_INFO) then
+                    if(globalSettings.backgroundOptions > #miog.TIER_INFO) then
                         globalSettings.backgroundOptions = v.default
                         
                     end
 
                     GetOptions = function()
                         local container = Settings.CreateControlTextContainer();
-                        for i = 0, #miog.EXPANSION_INFO, 1 do
-                            container:Add(i, miog.EXPANSION_INFO[i][1])
+                        for i = 0, #miog.TIER_INFO, 1 do
+                            container:Add(i, miog.TIER_INFO[i][1])
                             
                         end
                         return container:GetData();

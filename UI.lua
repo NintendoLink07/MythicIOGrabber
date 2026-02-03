@@ -113,11 +113,9 @@ miog.setActivePanel = setActivePanel
     Description: Initializes and configures the addon UI elements and panels.
 ]]
 miog.createFrames = function()
-	-- Preload the encounter journal so any function in the addon doesn't have to always check if the journal is loaded
-	EncounterJournal_LoadUI()
 
 	-- OnOpen usually generates an error and doesn't really do anything important, so mask it with a dummy function
-	C_EncounterJournal.OnOpen = miog.dummyFunction
+	--C_EncounterJournal.OnOpen = miog.dummyFunction
 
 	local settingsButton = CreateFrame("Button", nil, nil, "UIButtonTemplate")
 	settingsButton:SetSize(19, 19)

@@ -310,7 +310,7 @@ local function getSortCriteriaForSearchResult(resultID)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 		if(searchResultInfo and not searchResultInfo.hasSelf) then
-			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 
 			--if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
 				isRaid = activityInfo.categoryID == 3
@@ -421,7 +421,7 @@ local function createDataProviderWithUnsortedData()
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
 			if(searchResultInfo and not searchResultInfo.hasSelf) then
-				local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+				local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 
 				--if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
 					isRaid = activityInfo.categoryID == 3
@@ -542,7 +542,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 
 		if(searchResultInfo.leaderName) then
-			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 			
 			local isQuestCategory = activityInfo.categoryID == 1
 			local declineData = LFGListFrame.declines and LFGListFrame.declines[searchResultInfo.partyGUID]
@@ -693,10 +693,10 @@ end
 local function updateScrollBoxFrame(frame, data)
 	if(C_LFGList.HasSearchResultInfo(data.resultID)) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
-		local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
-		local mapID = activityInfo.mapID
+		local activityID = searchResultInfo.activityIDs[1]
+		local activityInfo = miog:GetActivityInfo(activityID)
 		local currentFrame = frame
-		local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+		--local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 		currentFrame.resultID = data.resultID
 		
 		currentFrame.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
@@ -732,75 +732,69 @@ local function updateScrollBoxFrame(frame, data)
 				roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
 			end
 
-			local mapInfo = miog.getMapInfo(mapID, true)
+			local bossPanel = currentFrame.BossPanel
+			local newActivity = bossPanel.activityID ~= activityID
 			
-			if(mapInfo) then
-				local bossPanel = currentFrame.BossPanel
-				local newMap = bossPanel.mapID ~= mapID
-				
-				bossPanel.mapID = mapID
+			bossPanel.activityID = activityID
 
-				local bossData = mapInfo.bosses
-					
-				local bossIndex = mapInfo.numOfBosses
-				local numOfBosses
+			local bossData = activityInfo.bosses
+			local bossIndex = activityInfo.numOfBosses
+			local numOfBosses
 
-				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
-				local encountersDefeated = {}
+			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
+			local encountersDefeated = {}
 
-				if(encounterInfo) then
-					for _, v in ipairs(encounterInfo) do
-						encountersDefeated[v] = true
+			if(encounterInfo) then
+				for _, v in ipairs(encounterInfo) do
+					encountersDefeated[v] = true
 
-					end
-				end
-
-				if(data.hasOwnTemplate) then
-					numOfBosses = #bossData
-
-					for i = numOfBosses, 1, -1 do
-						local bossFrame = bossPanel["Boss" .. i]
-						local bossInfo = bossData[bossIndex]
-
-						if(bossInfo) then
-							local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
-
-							bossFrame.Icon:SetDesaturated(bossDefeated)
-							bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
-
-							bossIndex = bossIndex - 1
-
-						end
-					end
-				else
-					bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
-
-					numOfBosses = 20
-
-					for i = numOfBosses, 1, -1 do
-						local bossFrame = bossPanel["Boss" .. i]
-						local bossInfo = bossData[bossIndex]
-
-						bossFrame:SetShown(bossInfo)
-
-						if(bossInfo) then
-							local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
-
-							bossFrame.Icon:SetDesaturated(bossDefeated)
-							bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
-
-							if(newMap) then
-								SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
-
-							end
-
-							bossIndex = bossIndex - 1
-
-						end
-					end
 				end
 			end
-					
+
+			if(data.hasOwnTemplate) then
+				numOfBosses = #bossData
+
+				for i = numOfBosses, 1, -1 do
+					local bossFrame = bossPanel["Boss" .. i]
+					local bossInfo = bossData[bossIndex]
+
+					if(bossInfo) then
+						local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+
+						bossFrame.Icon:SetDesaturated(bossDefeated)
+						bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
+
+						bossIndex = bossIndex - 1
+
+					end
+				end
+			else
+				bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
+
+				numOfBosses = 20
+
+				for i = numOfBosses, 1, -1 do
+					local bossFrame = bossPanel["Boss" .. i]
+					local bossInfo = bossData[bossIndex]
+
+					bossFrame:SetShown(bossInfo)
+
+					if(bossInfo) then
+						local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+
+						bossFrame.Icon:SetDesaturated(bossDefeated)
+						bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
+
+						if(newActivity) then
+							SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+
+						end
+
+						bossIndex = bossIndex - 1
+
+					end
+				end
+			end		
 		else
 			local memberPanel = currentFrame.MemberPanel
 
@@ -1074,7 +1068,7 @@ local function searchPanelEvents(_, event, ...)
 
 		if(new == "inviteaccepted") then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 			local lastGroup = activityInfo.fullName
 
 			if(not miog.F.LITE_MODE) then

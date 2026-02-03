@@ -526,7 +526,13 @@ miog.CURRENCY_INFO = {
 		{id = 3008,}, --valorstones
 		{id = 3269,}, --catalyst
 		{id = 3141,}, --spark
-		{id = 3278, macro=function() GenericTraitUI_LoadUI() GenericTraitFrame:SetSystemID(29) GenericTraitFrame:SetTreeID(1115) ToggleFrame(GenericTraitFrame) end} --strands
+		{id = 3278, macro=function() 
+			GenericTraitUI_LoadUI()
+			GenericTraitFrame:SetConfigIDBySystemID(29)
+			--GenericTraitFrame:SetSystemID(29)
+			GenericTraitFrame:SetTreeID(1115)
+			ToggleFrame(GenericTraitFrame)
+		end} --strands
 	}
 }
 
@@ -1109,16 +1115,16 @@ miog.MAP_INFO = {
 	[2805] = {abbreviatedName = "WS", fileName = "windrunnerspire"},
 	[2811] = {abbreviatedName = "MT", fileName = "magistersterrace"},
 	[2813] = {abbreviatedName = "MR", fileName = "murderrow"},
-	[2825] = {abbreviatedName = "DON", fileName = "denofnalorakk"},
-	[2859] = {abbreviatedName = "BV", fileName = "theblindingvale"},
-	[2874] = {abbreviatedName = "MC", fileName = "maisaracaverns"},
+	[2825] = {abbreviatedName = "DON", fileName = "proveyourworth"},
+	[2859] = {abbreviatedName = "BV", fileName = "lightbloom"},
+	[2874] = {abbreviatedName = "MC", fileName = "maisarahills"},
 	[2915] = {abbreviatedName = "NPX", fileName = "nexuspointxenas"},
-	[2923] = {abbreviatedName = "VA", fileName = "voidscararena"},
+	[2923] = {abbreviatedName = "VA", fileName = "domanaararena"},
 
 	[2912] = {abbreviatedName = "VS", fileName = "voidspire"},
-	[2913] = {abbreviatedName = "MQD", fileName = "marchonqueldanas"},
+	[2913] = {abbreviatedName = "MQD", fileName = "darkwell"},
 	[2930] = {abbreviatedName = "MN", fileName = "midnight"},
-	[2939] = {abbreviatedName = "DR", fileName = "dreamrift"},
+	[2939] = {abbreviatedName = "DR", fileName = "riftofaln"},
 }
 
 miog.LFG_ID_INFO = {
@@ -1432,38 +1438,344 @@ local database = {
 		map = {},
 		activity = {},
 		groups = {},
+		journal = {},
 		categories = {}
 	}
 }
 
-do
-	for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-		local groupTable = C_LFGList.GetAvailableActivityGroups(categoryID)
 
-		for _, groupID in ipairs(groupTable) do
-			local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
-			database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = C_LFGList.GetAvailableActivities(categoryID, groupID)}
 
-			for _, activityID in ipairs(database.pointers.groups[groupID].activities) do
-				database.pointers.activity[activityID] = C_LFGList.GetActivityInfoTable(activityID)
 
-				local mapID = database.pointers.activity[activityID].mapID
+--- used usually during prepatch
+local manualData = {
+	activity = {
+		--MIDNIGHT
+			--Dungeons
+				--The Blinding Vale
+				1699, --N
+				1700, --H
+				1701, --M
 
-				if(mapID > 1) then
-					database.pointers.map[mapID] = database.pointers.activity[activityID]
+				--Voidscar Arena
+				1754, --N
+				1755, --H
+				1756, --M
 
-					database.pointers.activity[activityID].abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
-					database.pointers.activity[activityID].icon = miog.MAP_INFO[mapID].icon
-					database.pointers.activity[activityID].fileName = miog.MAP_INFO[mapID].fileName
-					database.pointers.activity[activityID].toastBG = miog.MAP_INFO[mapID].toastBG
-					database.pointers.activity[activityID].pvp = miog.MAP_INFO[mapID].pvp
-				end
+				--Den of Nalorakk
+				1721, --N
+				1722, --H
+				1723, --M
+
+				--Murder Row
+				1749, --N
+				1750, --H
+				1751, --M
+
+				--Nexus-Point Xenas
+				1765, --N
+				1766, --H
+				1767, --M
+				1768, --M+
+
+				--Maisara Caverns
+				1761, --N
+				1762, --H
+				1763, --M
+				1764, --M+
+
+				--Windrunner Spire
+				1539, --N
+				1540, --H
+				1541, --M
+				1542, --M+
+
+				--Magisters' Terrace
+				1757, --N
+				1758, --H
+				1759, --M
+				1760, --M+
+
+			--M+
+				--Seat of the Triumvirate
+				1622, --M
+				1644, --M+
+
+				--Pit of Saron
+				1769, --M
+				1770, --M+
+
+			--Raids
+				--The Voidspire
+				1772, --N
+				1773, --H
+				1774, --M
+
+				--March on Quel'Danas
+				1775, --N
+				1776, --H
+				1777, --M
+
+				--The Dreamrift
+				1778, --N
+				1779, --H
+				1780, --M
+
+	}
+}
+
+miog.manualData = manualData
+
+function miog:LoadJournalInstanceBossData(journalInstanceID)
+	local journalDB = database.pointers.journal[journalInstanceID]
+	local bossDB = {}
+	local bossIndex = 1
+
+	while bossName do
+		local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature of encounter (boss)
+		
+		bossDB[bossIndex] = {
+			name = bossName,
+			altName = name2,
+			journalEncounterID = journalEncounterID,
+			journalInstanceID = journalInstanceID,
+			dungeonEncounterID = dungeonEncounterID,
+			mapID = journalDB.mapID,
+			orderIndex = id,
+			achievements = {},
+			id = id,
+			creatureDisplayInfoID = displayInfo,
+			icon = iconImage
+		}
+
+		miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = bossDB[bossIndex]}
+
+		bossIndex = bossIndex + 1;
+		bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+	end
+
+	if(#bossDB > 0) then
+		journalDB.bosses = bossDB
+
+	end
+end
+
+function miog:GetJournalInstanceBossData(journalInstanceID)
+	return database.pointers.journal[journalInstanceID].bosses or miog:LoadJournalInstanceBossData(journalInstanceID)
+
+end
+
+function miog:GetJournalInstanceIDFromMap(mapID)
+	return C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+end
+
+function miog:CreateJournalDB()
+	local startTier = 1;
+
+	for tier = startTier, EJ_GetNumTiers() - 1 do
+		EJ_SelectTier(tier)
+		
+		for shouldBeRaid = 0, 1 do
+			local isRaid = shouldBeRaid == 1
+
+			local index = 1
+			local instanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+
+			while instanceName do
+				database.pointers.journal[instanceID] = {
+					buttonImage1 = buttonImage1,
+					buttonImage2 = buttonImage2,
+					bgImage = bgImage,
+					loreImage = loreImage,
+					instanceName = instanceName,
+					tier = tier,
+					isRaid = isRaid,
+					mapID = mapID
+				}
+
+				miog:LoadJournalInstanceBossData(instanceID)
+
+				index = index + 1
+				instanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
 			end
 		end
 	end
 end
 
+function miog:IntegrateJournalDataIntoMap(mapID)
+	local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+	if(journalInstanceID) then
+		local journalDB = database.pointers.journal[journalInstanceID]
+		local mapDB = database.pointers.map[mapID]
+
+		if(journalDB and mapDB) then
+			mapDB.journalInstanceID = journalInstanceID
+			mapDB.buttonImage1 = journalDB.buttonImage1
+			mapDB.buttonImage2 = journalDB.buttonImage2
+			mapDB.bgImage = journalDB.bgImage
+			mapDB.loreImage = journalDB.loreImage
+			mapDB.instanceName = journalDB.instanceName
+			mapDB.tier = journalDB.tier
+			mapDB.isRaid = journalDB.isRaid
+			mapDB.bosses = journalDB.bosses
+		end
+	end
+end
+
+function miog:IntegrateJournalDataIntoActivity(activityID)
+	local activityDB = database.pointers.activity[activityID]
+	local mapID = activityDB.mapID
+
+	local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+	if(journalInstanceID) then
+		local journalDB = database.pointers.journal[journalInstanceID]
+
+		if(journalDB) then
+			activityDB.journalInstanceID = journalInstanceID
+			activityDB.buttonImage1 = journalDB.buttonImage1
+			activityDB.buttonImage2 = journalDB.buttonImage2
+			activityDB.bgImage = journalDB.bgImage
+			activityDB.loreImage = journalDB.loreImage
+			activityDB.instanceName = journalDB.instanceName
+			activityDB.tier = journalDB.tier
+			activityDB.isRaid = journalDB.isRaid
+			activityDB.bosses = journalDB.bosses
+		end
+	end
+end
+
+function miog:IntegrateActivityDataIntoMap(activityID)
+	local activityDB = database.pointers.activity[activityID]
+
+	if(activityDB and activityDB.mapID) then
+		local mapDB = database.pointers.map[activityDB.mapID]
+
+		tinsert(mapDB.activities, activityDB)
+		mapDB.categoryID = activityDB.categoryID
+
+	end
+end
+
+function miog:CopyMapDataIntoActivity(activityID)
+	local activityDB = database.pointers.activity[activityID]
+	local mapID = activityDB.mapID
+	local mapDB = database.pointers.map[mapID]
+
+	activityDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
+	activityDB.icon = miog.MAP_INFO[mapID].icon
+	activityDB.fileName = miog.MAP_INFO[mapID].fileName
+	activityDB.toastBG = miog.MAP_INFO[mapID].toastBG
+	activityDB.pvp = miog.MAP_INFO[mapID].pvp
+	activityDB.journalInstanceID = mapDB.journalInstanceID
+
+	activityDB.horizontal = mapDB.horizontal
+	activityDB.vertical = mapDB.vertical
+
+end
+
+function miog:CreateMapPointer(mapID)
+	database.pointers.map[mapID] = database.pointers.map[mapID] or miog.MAP_INFO[mapID] or {}
+	local mapDB = database.pointers.map[mapID]
+
+	mapDB.activities = {}
+
+	local background = mapDB.fileName
+
+	if(background) then
+		if(loadHQData) then
+			mapDB.horizontal = MythicIO.GetBackgroundImage(background)
+			mapDB.vertical = MythicIO.GetBackgroundImage(background, true)
+			
+		elseif(mapDB.pvp) then
+			mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
+			mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
+			
+		elseif(mapDB.filePath) then
+			mapDB.horizontal = mapDB.filePath
+			mapDB.vertical = mapDB.filePath
+
+		else
+			mapDB.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
+			mapDB.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
+
+		end
+
+		mapDB.icon = "interface/lfgframe/lfgicon-" .. (mapDB.iconName or mapDB.fileName) .. ".blp"
+	end
+end
+
+function miog:LoadActivityData(activityID)
+	if(activityID) then
+		if(activityID > 0) then
+			local activityInfoTable = C_LFGList.GetActivityInfoTable(activityID)
+			database.pointers.activity[activityID] = activityInfoTable
+
+			local mapID = database.pointers.activity[activityID].mapID
+
+			if(mapID > 1) then
+				miog:CreateMapPointer(mapID)
+				miog:IntegrateJournalDataIntoMap(mapID)
+				miog:IntegrateActivityDataIntoMap(activityID)
+				miog:IntegrateJournalDataIntoActivity(activityID)
+
+				miog:CopyMapDataIntoActivity(activityID)
+
+			end
+		end
+
+		return database.pointers.activity[activityID]
+	end
+end
+
+do
+	-- Preload the encounter journal so any function in the addon doesn't have to always check if the journal is loaded
+	EncounterJournal_LoadUI()
+	miog:CreateJournalDB()
+
+	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
+		local groupTable = C_LFGList.GetAvailableActivityGroups(categoryID)
+
+		for _, groupID in pairs(groupTable) do
+			local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
+			local activities = C_LFGList.GetAvailableActivities(_, groupID)
+
+			database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = activities}
+			
+			for _, activityID in pairs(activities) do
+				miog:LoadActivityData(activityID)
+
+			end
+		end
+	end
+
+	for _, activityID in pairs(manualData.activity) do
+		local activityInfo = miog:LoadActivityData(activityID)
+		local groupName, groupOrder = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
+
+		database.pointers.groups[activityInfo.groupFinderActivityGroupID] = database.pointers.groups[activityInfo.groupFinderActivityGroupID] or {name = groupName, groupOrder = groupOrder, categoryID = activityInfo.categoryID, activities = {}}
+
+		tinsert(database.pointers.groups[activityInfo.groupFinderActivityGroupID].activities, activityID)
+	end
+end
+
 miog.database = database
+
+function miog:GetMapInfo(mapID)
+	return database.pointers.map[mapID]
+
+end
+
+function miog:GetActivityInfo(activityID)
+	return database.pointers.activity[activityID] or miog:LoadActivityData(activityID)
+
+end
+
+function miog:GetGroupInfo(groupID)
+	return database.pointers.groups[groupID]
+
+end
 
 miog.BACKUP_SEASONAL_IDS = {
 	[2] = {
@@ -1839,7 +2151,7 @@ local function loadRawData()
 
 	end
 
-	for k, v in pairs(miog.RAW["Map"]) do
+	--[[for k, v in pairs(miog.RAW["Map"]) do
 		local mapID = v[1]
 		local mapInfo = miog.MAP_INFO[mapID]
 
@@ -1881,7 +2193,7 @@ local function loadRawData()
 				mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.iconName or mapInfo.fileName) .. ".blp"
 			end
 		end
-	end
+	end]]
 
 	for k, v in pairs(miog.TELEPORT_SPELLS_TO_MAP_DATA) do
 		if(miog.MAP_INFO[v.mapID]) then
@@ -2099,6 +2411,90 @@ miog.ITEM_LEVEL_DATA = {
 			},
 		},
 	},
+	[16] = {
+		referenceMinLevel = 207,
+		referenceMinLevelStepIndex = 4,
+		referenceMaxLevel = 289,
+		firstTrackStartLevel = 220,
+
+		itemLevelList = {},
+
+		tracks = {
+			{name = "Adventurer", length = 6},
+			{name = "Veteran", length = 6},
+			{name = "Champion", length = 6},
+			{name = "Hero", length = 6},
+			{name = "Myth", length = 6},
+
+		},
+
+		data = {
+			dungeon = {
+				{steps = 2, name="Normal"},
+				{steps = 5, vaultOffset = 4, name="HC"},
+				{steps = 7, vaultOffset = 4, name="HC Season"},
+				{steps = 10, vaultOffset = 3, name="Mythic"},
+				{steps = 12, vaultOffset = 3, name="M Season"},
+				{steps = 13, vaultOffset = 3, name="+2"},
+				{steps = 13, vaultOffset = 3, name="+3"},
+				{steps = 14, vaultOffset = 3, name="+4"},
+				{steps = 15, vaultOffset = 2, name="+5"},
+				{steps = 16, vaultOffset = 2, name="+6"},
+				{steps = 16, vaultOffset = 3, name="+7"},
+				{steps = 17, vaultOffset = 2, name="+8"},
+				{steps = 17, vaultOffset = 2, name="+9"},
+				{steps = 18, vaultOffset = 2, name="+10"},
+			},
+			raid = {
+				{steps = 8, name="LFR*", tooltip="Voidspire 1st boss"},
+				{steps = 9, name="LFR*", tooltip="Voidspire 2nd & 3rd boss + Dreamrift"},
+				{steps = 10, name="LFR*", tooltip="Voidspire 4th & 5th boss + March on Quel'Danas 1st boss"},
+				{steps = 11, name="LFR*", tooltip="Voidspire 6th boss + March on Quel'Danas 2nd boss"},
+				{steps = 12, name="N*", tooltip="Voidspire 1st boss"},
+				{steps = 13, name="N*", tooltip="Voidspire 2nd & 3rd boss + Dreamrift"},
+				{steps = 14, name="N*", tooltip="Voidspire 4th & 5th boss + March on Quel'Danas 1st boss"},
+				{steps = 15, name="N*", tooltip="Voidspire 6th boss + March on Quel'Danas 2nd boss"},
+				{steps = 16, name="HC*", tooltip="Voidspire 1st boss"},
+				{steps = 17, name="HC*", tooltip="Voidspire 2nd & 3rd boss + Dreamrift"},
+				{steps = 18, name="HC*", tooltip="Voidspire 4th & 5th boss + March on Quel'Danas 1st boss"},
+				{steps = 19, name="HC*", tooltip="Voidspire 6th boss + March on Quel'Danas 2nd boss"},
+				{steps = 20, name="M*", tooltip="Voidspire 1st boss"},
+				{steps = 21, name="M*", tooltip="Voidspire 2nd & 3rd boss + Dreamrift"},
+				{steps = 22, name="M*", tooltip="Voidspire 4th & 5th boss + March on Quel'Danas 1st boss"},
+				{steps = 23, name="M*", tooltip="Voidspire 6th boss + March on Quel'Danas 2nd boss"},
+
+			},
+			
+			delves = {
+				[1] = {steps = 4, vaultOffset = 4, name="T1"},
+				[2] = {steps = 5, vaultOffset = 4, name="T2"},
+				[3] = {steps = 6, vaultOffset = 4, name="T3"},
+				[4] = {steps = 7, vaultOffset = 4, name="T4"},
+				[5] = {steps = 8, vaultOffset = 4, name="T5"},
+				[6] = {steps = 9, vaultOffset = 5, name="T6"},
+				[7] = {steps = 12, vaultOffset = 3, name="T7"},
+				[8] = {steps = 13, vaultOffset = 3, name="T8+"},
+				[9] = {steps = 9, name="T4DB"},
+				[10] = {steps = 11, name="T5DB"},
+				[11] = {steps = 12, name="T6DB"},
+				[12] = {steps = 13, name="T7DB"},
+				[13] = {steps = 16, name="T8DB+"},
+			},
+			prey = {
+				{steps = 4, name="Normal"},
+				{steps = 8, name="Hard"},
+				{steps = 12, name="NM?"},
+			},
+			other = {
+				{steps = 10, name="Weather5"},
+				{steps = 11, name="Pinnacle"},
+				{steps = 14, name="Worldboss"},
+				{steps = 15, name="Spark5"},
+				{steps = 19, name="Runed5"},
+				{steps = 24, name="Gilded5"},
+			},
+		},
+	},
 }
 
 local function getItemLevelForStepCount(steps, offset)
@@ -2185,15 +2581,17 @@ end
 
 for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 	for trackIndex, data in ipairs(seasonalData.tracks) do
+		local minLevel = (seasonalData.firstTrackStartLevel or seasonalData.referenceMinLevel) + (trackIndex - 1) * getItemLevelForStepCount(4, seasonalData.referenceMinLevelStepIndex)
+
 		data.itemlevels = {}
 
-		data.minLevel = seasonalData.referenceMinLevel + (trackIndex - 1) * getItemLevelForStepCount(4, seasonalData.referenceMinLevelStepIndex)
+		data.minLevel = minLevel
 		local level = getItemLevelForStepCount((data.revisedLength or data.length) - 1, seasonalData.referenceMinLevelStepIndex)
-		data.maxLevel = data.minLevel + level
+		data.maxLevel = minLevel + level
 
 		for i = 1, data.revisedLength or data.length, 1 do
 			local innerLevel = getItemLevelForStepCount(i - 1, seasonalData.referenceMinLevelStepIndex)
-			data.itemlevels[i] = data.minLevel + innerLevel
+			data.itemlevels[i] = minLevel + innerLevel
 
 		end
 	end
@@ -2456,6 +2854,139 @@ miog.NEW_GEARING_DATA = {
 					[2] = {jumps = 11, name="T5B"},
 					[3] = {jumps = 13, name="T6B"},
 					[4] = {jumps = 15, name="T7B"},
+					[5] = {jumps = 16, name="T8B+"},
+				},
+				usedItemlevels = {
+	
+				},
+			},
+			vault = {
+				usedItemlevels = {
+	
+				},
+				offset = 4,
+
+			},
+		},
+
+		other = {
+			info = {
+				--{jumps = 6, name="EnchWeather1"},
+				--{jumps = 7, name="EnchWeather2"},
+				--{jumps = 8, name="EnchWeather3"},
+				--{jumps = 9, name="EnchWeather4"},
+				{jumps = 10, name="EnchWeather5"},
+				--{jumps = 11, name="Spark1"},
+				--{jumps = 12, name="Spark2"},
+				--{jumps = 13, name="Spark3"},
+				--{jumps = 14, name="Spark4"},
+				{jumps = 15, name="Spark5"},
+				--{jumps = 15, name="Runed1"},
+				--{jumps = 16, name="Runed2"},
+				--{jumps = 17, name="Runed3"},
+				--{jumps = 18, name="Runed4"},
+				{jumps = 19, name="Runed5"},
+				--{jumps = 20, name="Gilded1"},
+				--{jumps = 21, name="Gilded2"},
+				--{jumps = 22, name="Gilded3"},
+				--{jumps = 23, name="Gilded4"},
+				{jumps = 24, name="Gilded5"},
+			},
+			usedItemlevels = {
+
+			},
+		},
+	},
+	[16] = {
+		baseItemlevel = 207,
+		baseJumpIndex = 1,
+		maxItemlevel = 289,
+
+		tracks = {
+			[1] = {name = "Unranked", length = 4},
+			[2] = {name = "Adventurer", length = 6}, --220
+			[3] = {name = "Veteran", length = 6},
+			[4] = {name = "Champion", length = 6},
+			[5] = {name = "Hero", length = 6},
+			[6] = {name = "Myth", length = 6},
+
+		},
+
+		allItemlevels = {},
+		usedItemlevels = {},
+
+		dungeon = {
+			info = {
+				[1] = {jumps = 2, name="Normal", ignoreForVault=true},
+				[2] = {jumps = 5, name="Heroic"},
+				[3] = {jumps = 7, name="Heroic Season"},
+				[4] = {jumps = 10, vaultOffset = 3, name="Mythic"},
+				[5] = {jumps = 12, vaultOffset = 3, name="Mythic Season"},
+				[6] = {jumps = 13, vaultOffset = 3, name="+2"},
+				[7] = {jumps = 13, vaultOffset = 3, name="+3"},
+				[8] = {jumps = 14, vaultOffset = 3, name="+4"},
+				[9] = {jumps = 15, vaultOffset = 2, name="+5"},
+				[10] = {jumps = 16, vaultOffset = 2, name="+6"},
+				[11] = {jumps = 16, vaultOffset = 3, name="+7"},
+				[12] = {jumps = 17, vaultOffset = 2, name="+8"},
+				[13] = {jumps = 17, vaultOffset = 2, name="+9"},
+				[14] = {jumps = 18, vaultOffset = 2, name="+10"},
+			},
+			usedItemlevels = {
+
+			},
+			vault = {
+				usedItemlevels = {
+	
+				},
+				offset = 4,
+
+			},
+		},
+		
+		raid = {
+			info = {
+				[1] = {jumps = 8, name="LFR"},
+				[2] = {jumps = 12, name="Normal"},
+				[3] = {jumps = 16, name="Heroic"},
+				[4] = {jumps = 20, name="Mythic"},
+			},
+			usedItemlevels = {
+
+			},
+			--[[veryRare = {
+				info = {
+					[1] = {jumps = 13, name="Rare LFR"},
+					[2] = {jumps = 17, name="Rare Normal"},
+					[3] = {jumps = 21, name="Rare Heroic"},
+					[4] = {jumps = 25, name="Rare Mythic"},
+				},
+				usedItemlevels = {
+	
+				},
+			}]]
+		},
+
+		delves = {
+			info = {
+				[1] = {jumps = 4, vaultOffset = 4, name="T1"},
+				[2] = {jumps = 5, vaultOffset = 4, name="T2"},
+				[3] = {jumps = 6, vaultOffset = 4, name="T3"},
+				[4] = {jumps = 7, vaultOffset = 4, name="T4"},
+				[5] = {jumps = 8, vaultOffset = 4, name="T5"},
+				[6] = {jumps = 9, vaultOffset = 5, name="T6"},
+				[7] = {jumps = 12, vaultOffset = 3, name="T7"},
+				[8] = {jumps = 13, vaultOffset = 3, name="T8+"},
+			},
+			usedItemlevels = {
+
+			},
+			bountiful = {
+				info = {
+					[1] = {jumps = 9, name="T4B"},
+					[2] = {jumps = 11, name="T5B"},
+					[3] = {jumps = 12, name="T6B"},
+					[4] = {jumps = 13, name="T7B"},
 					[5] = {jumps = 16, name="T8B+"},
 				},
 				usedItemlevels = {
@@ -3016,19 +3547,19 @@ miog.EXPANSIONS = {
 	[11] = {name = "Midnight", background = "mn-bg-1", logo = GetExpansionDisplayInfo(11).logo, icon = miog.C.STANDARD_FILE_PATH .. "/expansionIcons/11.png"},
 }
 
-miog.EXPANSION_INFO = {
-	[0] = {"Classic", "vanilla-bg-1", GetExpansionDisplayInfo(0).logo},
-	[1] = {"The Burning Crusade", "tbc-bg-1", GetExpansionDisplayInfo(1).logo},
-	[2] = {"Wrath of the Lich King", "wotlk-bg-1", GetExpansionDisplayInfo(2).logo},
-	[3] = {"Cataclysm", "cata-bg-1", GetExpansionDisplayInfo(3).logo},
-	[4] = {"Mists of Pandaria", "mop-bg-1", GetExpansionDisplayInfo(4).logo},
-	[5] = {"Warlords of Draenor", "wod-bg-1", GetExpansionDisplayInfo(5).logo},
-	[6] = {"Legion", "legion-bg-1", GetExpansionDisplayInfo(6).logo},
-	[7] = {"Battle for Azeroth", "bfa-bg-1", GetExpansionDisplayInfo(7).logo},
-	[8] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
-	[9] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
-	[10] = {"The War Within", "tww-bg-1", GetExpansionDisplayInfo(10).logo},
-	[11] = {"Midnight", "mn-bg-1", GetExpansionDisplayInfo(10).logo},
+miog.TIER_INFO = {
+	[1] = {"Classic", "vanilla-bg-1", GetExpansionDisplayInfo(0).logo},
+	[2] = {"The Burning Crusade", "tbc-bg-1", GetExpansionDisplayInfo(1).logo},
+	[3] = {"Wrath of the Lich King", "wotlk-bg-1", GetExpansionDisplayInfo(2).logo},
+	[4] = {"Cataclysm", "cata-bg-1", GetExpansionDisplayInfo(3).logo},
+	[5] = {"Mists of Pandaria", "mop-bg-1", GetExpansionDisplayInfo(4).logo},
+	[6] = {"Warlords of Draenor", "wod-bg-1", GetExpansionDisplayInfo(5).logo},
+	[7] = {"Legion", "legion-bg-1", GetExpansionDisplayInfo(6).logo},
+	[8] = {"Battle for Azeroth", "bfa-bg-1", GetExpansionDisplayInfo(7).logo},
+	[9] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
+	[10] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
+	[11] = {"The War Within", "tww-bg-1", GetExpansionDisplayInfo(10).logo},
+	[12] = {"Midnight", "mn-bg-1", GetExpansionDisplayInfo(10).logo},
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms

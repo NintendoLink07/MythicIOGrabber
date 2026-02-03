@@ -1613,22 +1613,22 @@ miog.changeTheme = function(index)
 
 	local value = index or MIOG_NewSettings.backgroundOptions
 	
-	miog.MainFrame.TitleBar.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.TitleBar.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[value][2] .. ".png")
 	miog.MainFrame.TitleBar.Background:SetTexCoord(0, scrollbarWidth, 0, titleBarTexHeight)
 	
-	miog.MainFrame.TitleBarSeparator.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.TitleBarSeparator.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[value][2] .. ".png")
 	miog.MainFrame.TitleBarSeparator.Background:SetTexCoord(0, scrollbarWidth, titleBarTexHeight, mainFrameStart)
 	
-	miog.MainFrame.ScrollBarArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.ScrollBarArea.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[value][2] .. ".png")
 	miog.MainFrame.ScrollBarArea.Background:SetTexCoord(scrollbarWidth, 1, mainFrameStart, currencyHeight)
 	
-	miog.MainFrame.TabFramesPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.TabFramesPanel.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[value][2] .. ".png")
 	miog.MainFrame.TabFramesPanel.Background:SetTexCoord(0, scrollbarWidth, mainFrameStart, currencyHeight)
 	
-	miog.MainFrame.Currency.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. ".png")
+	miog.MainFrame.Currency.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[value][2] .. ".png")
 	miog.MainFrame.Currency.Background:SetTexCoord(0, 1, currencyHeight, 1)
 	
-	miog.FilterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[value][2] .. "_small.png")
+	miog.FilterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[value][2] .. "_small.png")
 
 	miog.C.CURRENT_THEME = miog.COLOR_THEMES.standard
 end

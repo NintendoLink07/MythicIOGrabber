@@ -233,7 +233,7 @@ function QueueManagerPVPFrameMixin:OnEnter()
     end
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(mapName, 1, 1, 1, true)
+    GameTooltip:SetText(mapName, 1, 1, 1, 1, true)
 
     if(role and role ~= "") then
         GameTooltip:AddLine(LFG_TOOLTIP_ROLES .. " " .. string.lower(role):gsub("^%l", string.upper))

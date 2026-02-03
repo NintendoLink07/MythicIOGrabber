@@ -7,19 +7,21 @@ miog.gearing = {}
 local headersNew = {
     [1] = {id = "ilvl", name = "ILvl"},
     [2] = {id = "track", name = "Track"},
-    [3] = {id = "delves", hasCheckbox = true, name = "Delves"},
-    [4] = {id = "delvesVault", hasCheckbox = true, name = "Dlv Vault"},
-    [5] = {id = "raid", hasCheckbox = true, name = "Raid"},
-    [6] = {id = "dungeon", hasCheckbox = true, name = "Dungeon"},
-    [7] = {id = "dungeonVault", hasCheckbox = true, name = "Dun Vault"},
-    [8] = {id = "other", hasCheckbox = true, name = "Other"},
+    [3] = {id = "delves", hasSetting = true, name = "Delves"},
+    [4] = {id = "delvesVault", hasSetting = true, name = "Dlv Vault"},
+    [5] = {id = "raid", hasSetting = true, name = "Raid"},
+    [6] = {id = "dungeon", hasSetting = true, name = "Dungeon"},
+    [7] = {id = "dungeonVault", hasSetting = true, name = "Dun Vault"},
+    [8] = {id = "prey", hasSetting = true, name = "Prey"},
+    [9] = {id = "other", hasSetting = true, name = "Other"},
 }
 
 local indices = {
     ["delves"] = 3,
     ["dungeon"] = 6,
     ["raid"] = 5,
-    ["other"] = 8,
+    ["prey"] = 8,
+    ["other"] = 9,
 }
 
 local vaultIndices = {
@@ -32,9 +34,8 @@ local function createTrackString(itemLevel)
 
 	for trackIndex, trackInfo in miog.rpairs(miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].tracks) do
         for k, v in miog.rpairs(trackInfo.itemlevels) do
-
             if(v == itemLevel) then
-                local tempString = WrapTextInColorCode(k .. "/" .. trackInfo.length, miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GenerateHexColor())
+                local tempString = WrapTextInColorCode(k .. "/" .. trackInfo.length, miog.ITEM_QUALITY_COLORS[trackIndex].color:GenerateHexColor())
                 trackString = trackString and trackString .. " " .. tempString or tempString
 
             end
@@ -49,7 +50,7 @@ local function getColorForItemlevel(itemLevel)
     
 	for trackIndex, trackInfo in ipairs(miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].tracks) do
         if(itemLevel >= trackInfo.itemlevels[1] and itemLevel <= trackInfo.itemlevels[#trackInfo.itemlevels]) then
-            color = miog.ITEM_QUALITY_COLORS[trackIndex - 1].color
+            color = miog.ITEM_QUALITY_COLORS[trackIndex].color
             
         end
     end
@@ -65,7 +66,7 @@ end
 miog.gearing.getColorForItemlevel = getColorForItemlevel
 
 local function retrieveSeasonID()
-    miog.F.SEASON_ID = C_MythicPlus.GetCurrentSeason()
+    miog.F.SEASON_ID = 16 or C_MythicPlus.GetCurrentSeason()
 
     if(miog.F.SEASON_ID < 1) then
         for k in pairs(miog.NEW_GEARING_DATA) do
@@ -116,12 +117,12 @@ local function createGearingDataTable()
 
         local column = gearingTab.tableBuilder:AddColumn()
 
-        column:ConstructHeader("Frame", "MIOG_GearingTableColorHeaderTemplate", headerData.name, headerData.hasCheckbox, MIOG_NewSettings.gearingTable, headerData.id, function() createGearingDataTable() end)
+        column:ConstructHeader("Frame", "MIOG_GearingTableColorHeaderTemplate", headerData.name, headerData.hasSetting, MIOG_NewSettings.gearingTable, headerData.id, function() createGearingDataTable() end)
         column:ConstructCells("Frame", "MIOG_GearingTableColorCellTemplate")
 
         local stringWidth = calculateStringWidth(headerData.name)
 
-        headerData.width = headerData.hasCheckbox and stringWidth + 12 or stringWidth
+        headerData.width = stringWidth + 2
         headerData.tableColumn = column
         column:SetFixedConstraints(headerData.width + 4, 1)
     end
@@ -136,12 +137,12 @@ local function createGearingDataTable()
         translator[itemLevel] = rowIndex
 
         local itemLevelString = WrapTextInColorCode(itemLevel, getColorForItemlevel(itemLevel))
-        dataProviderTable[rowIndex][1] = itemLevelString
+        dataProviderTable[rowIndex][1] = {text = itemLevelString}
         stringWidth = calculateStringWidth(itemLevelString)
         headersNew[1].width = stringWidth > headersNew[1].width and stringWidth or headersNew[1].width
 
         local trackString = createTrackString(itemLevel)
-        dataProviderTable[rowIndex][2] = trackString
+        dataProviderTable[rowIndex][2] = {text = trackString}
         stringWidth = calculateStringWidth(trackString)
         headersNew[2].width = stringWidth > headersNew[2].width and stringWidth or headersNew[2].width
         
@@ -172,16 +173,18 @@ local function createGearingDataTable()
                 rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
                 
                 if(not rowCellData) then
-                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[baseItemLevel])
+                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = {text = WrapTextInColorCode(currentName, itemLevelColors[baseItemLevel]), tooltip = entryData.tooltip}
 
                 else
-                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[baseItemLevel])
+                    dataProviderTable[translator[baseItemLevel]][baseTableIndex] = {text = WrapTextInColorCode(rowCellData.text .. "/" .. currentName, itemLevelColors[baseItemLevel]), tooltip = entryData.tooltip}
 
                 end
                 
                 rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
 
-                stringWidth = calculateStringWidth(rowCellData)
+                print(rowCellData.text)
+
+                stringWidth = calculateStringWidth(rowCellData.text)
                 headersNew[formerBaseIndex].width = stringWidth > headersNew[formerBaseIndex].width and stringWidth or headersNew[formerBaseIndex].width
             end
                 
@@ -189,16 +192,16 @@ local function createGearingDataTable()
                 rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
             
                 if(not rowCellData) then
-                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(currentName, itemLevelColors[vaultItemLevel])
+                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = {text = WrapTextInColorCode(currentName, itemLevelColors[vaultItemLevel]), tooltip = entryData.tooltip}
 
                 else
-                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = WrapTextInColorCode(rowCellData .. "/" .. currentName, itemLevelColors[vaultItemLevel])
+                    dataProviderTable[translator[vaultItemLevel]][vaultTableIndex] = {text = WrapTextInColorCode(rowCellData.text .. "/" .. currentName, itemLevelColors[vaultItemLevel]), tooltip = entryData.tooltip}
 
                 end
                 
                 rowCellData = dataProviderTable[translator[vaultItemLevel]][vaultTableIndex]
 
-                stringWidth = calculateStringWidth(rowCellData)
+                stringWidth = calculateStringWidth(rowCellData.text)
 
                 headersNew[formerVaultIndex].width = stringWidth > headersNew[formerVaultIndex].width and stringWidth or headersNew[formerVaultIndex].width
             end
@@ -211,7 +214,7 @@ local function createGearingDataTable()
     end
 
     for k, v in ipairs(dataProviderTable) do
-        dataProvider:Insert({text = v, rowIndex = k})
+        dataProvider:Insert({array = v, rowIndex = k})
 
     end
 

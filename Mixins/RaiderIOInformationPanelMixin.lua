@@ -71,6 +71,7 @@ end
 function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsFrame) --mapID
     local raidHeaderFrame = raidFrame.Header
 
+    --local mapDB = miog:GetMapInfo(mapID)
     local mapInfo = miog.getMapInfo(mapID, true)
 
     if(mapInfo) then
@@ -151,6 +152,7 @@ function RaiderIOInformationPanelMixin:OnLoadRaid()
             local raidFrame = self.Raids["Raid" .. raidCounter]
 
             if(raidFrame) then
+
                 self:SetupRaidFrame(raidFrame, data.mapID)
 
                 raidCounter = raidCounter + 1

@@ -16,9 +16,21 @@ function GearingTableCellMixin:Init()
 end
 
 function GearingTableCellMixin:Populate(data, columnIndex)
-    self:ColorCell(data.rowIndex, columnIndex)
-    self.Text:SetText(data.text[columnIndex] or "")
+    local arrayData = data.array and data.array[columnIndex]
 
+    self:ColorCell(data.rowIndex, columnIndex)
+    self.Text:SetText(arrayData and arrayData.text or "")
+
+    if(arrayData and arrayData.tooltip) then
+        self:SetScript("OnEnter", function(selfFrame)
+            GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT")
+            GameTooltip:SetText(arrayData.tooltip)
+            GameTooltip:Show()
+        end)
+    else
+        self:SetScript("OnEnter", nil)
+
+    end
 end
 
 
@@ -29,27 +41,40 @@ end
 GearingTableHeaderMixin = {}
 
 function GearingTableHeaderMixin:Init(...)
-    local title, hasCheckbox, settingTable, id, callback = ...
+    local title, hasSetting, settingTable, id, callback = ...
 
     self.Text:SetText(title)
-    self.Text:ClearAllPoints()
     
-    if(hasCheckbox) then
-        self.Text:SetPoint("CENTER", 7, 0)
+    local initIsChecked = settingTable[id]
+
+    if(initIsChecked == false) then
+        self.BackgroundColor:SetColorTexture(0.4, 0.4, 0.4, 0.3)
 
     else
-        self.Text:SetPoint("CENTER")
+        self.BackgroundColor:SetColorTexture(1, 1, 1, 0.3)
 
     end
 
-    self.Checkbox:SetShown(hasCheckbox)
+    if(hasSetting) then
+        self:SetScript("OnMouseDown", function()
+            local isChecked = settingTable[id]
 
-    if(hasCheckbox) then
-        self.Checkbox:SetChecked(settingTable[id] == nil and true or settingTable[id])
-        self.Checkbox:SetScript("OnClick", function(selfButton)
-            settingTable[id] = selfButton:GetChecked()
+            if(not isChecked) then
+                self.BackgroundColor:SetColorTexture(1, 1, 1, 0.3)
+                isChecked = true
+
+            else
+                self.BackgroundColor:SetColorTexture(0.7, 0.7, 0.7, 0.3)
+                isChecked = false
+
+            end
+
+            settingTable[id] = isChecked
             callback()
         
         end)
+    else
+        self:SetScript("OnMouseDown", nil)
+
     end
 end

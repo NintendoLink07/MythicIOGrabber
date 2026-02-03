@@ -340,6 +340,8 @@ local function loadItems()
     local _, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo()
     miog.checkSingleMapIDForNewData(mapID)
 
+    miog:IntegrateJournalDataIntoMap(mapID)
+
     for i = 1, EJ_GetNumLoot() do
 		local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
         if(checkIfItemIsFiltered(itemInfo)) then
@@ -890,7 +892,6 @@ local function loadInstanceInfo()
             local counter = 1
 
             local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(counter, checkForRaid)
-            local mapInfo = miog.getMapInfo(mapID)
 
             while(journalInstanceID) do
                 tinsert(journalInfo[tierIndex], {
@@ -1062,10 +1063,10 @@ local function updateSourceFrame(frame, data, fullFrame)
         end
 
     else
-        local mapInfo = miog.getMapInfo(data.mapID)
+        local mapInfo = miog:GetMapInfo(data.mapID)
 
-        frame.Icon:SetTexture(mapInfo.icon)
-        frame.Name:SetText(mapInfo.name)
+        frame.Icon:SetTexture(mapInfo.buttonImage2)
+        frame.Name:SetText(mapInfo.instanceName)
 
 
     end

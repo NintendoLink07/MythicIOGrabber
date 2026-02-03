@@ -11,7 +11,6 @@
             <Layer level="BACKGROUND">
                 <Texture parentKey="BackgroundColor" setAllPoints="true">
                     <Color r="1" g="1" b="1" a="0.3" />
-
                 </Texture>
             </Layer>
 
@@ -23,16 +22,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        
-        <Frames>
-            <CheckButton parentKey="Checkbox" inherits="MIOG_MinimalCheckButtonTemplate" checked="true">
-                <Size x="14" y="14" />
-                <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent.Text" relativePoint="LEFT" x="-1"/>
-                </Anchors>
-            </CheckButton>
-        </Frames>
-
 
         <Scripts>
             <OnLeave function="GameTooltip_Hide" />

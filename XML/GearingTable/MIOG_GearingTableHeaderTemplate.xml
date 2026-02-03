@@ -5,7 +5,7 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE">
                     <Anchors>
-                        <Anchor point="CENTER"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Checkbox" relativePoint="RIGHT"/>
                     </Anchors>
                 </FontString>
             </Layer>

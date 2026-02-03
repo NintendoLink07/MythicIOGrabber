@@ -41,7 +41,7 @@ local function getCurrentCategoryID(panel)
 		LFGListFrame.CategorySelection.selectedCategory
 
 	elseif(panel == "ApplicationViewer") then
-		return C_LFGList.HasActiveEntryInfo() and miog.requestActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
+		return C_LFGList.HasActiveEntryInfo() and miog:GetActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
 		LFGListFrame.CategorySelection.selectedCategory
 
 	end
@@ -283,12 +283,12 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 		}
 
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-		local categoryID = miog.requestActivityInfo(searchResultInfo.activityIDs[1]).categoryID or getCurrentCategoryID("SearchPanel")
+		local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
+		local categoryID = activityInfo.categoryID or getCurrentCategoryID("SearchPanel")
 		local isArenaPvp = categoryID == 4 or categoryID == 7
 		local isDungeon = categoryID == 2
 		local isRaid = categoryID == 3
 		local isDelve = categoryID == 121
-		local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
 
 		for i = 1, searchResultInfo.numMembers, 1 do
 			local info = C_LFGList.GetSearchResultPlayerInfo(resultID, i);
@@ -844,7 +844,7 @@ local function refreshFilters()
 			local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
 			if(worldBossActivity and #worldBossActivity > 0) then
-				local activityInfo = miog.requestActivityInfo(worldBossActivity[1])
+				local activityInfo = miog:GetActivityInfo(worldBossActivity[1])
 				
 				tinsert(allGroups, {filterID = activityInfo.mapID, isWorld = true})
 
@@ -872,13 +872,13 @@ local function refreshFilters()
 					local info
 
 					if(groupData.isPvE) then
-						info = miog.requestGroupInfo(groupData.filterID)
+						info = miog:GetGroupInfo(groupData.filterID)
 
 					elseif(groupData.isPvp) then
-						info = miog.requestActivityInfo(groupData.filterID)
+						info = miog:GetActivityInfo(groupData.filterID)
 						
 					elseif(groupData.isWorld) then
-						info = miog.getMapInfo(groupData.filterID)
+						info = miog:GetMapInfo(groupData.filterID)
 
 					end
 					
@@ -908,10 +908,10 @@ local function refreshFilters()
 					local info
 					
 					if(data.isPvE) then
-						info = miog.requestGroupInfo(data.filterID)
+						info = miog:GetGroupInfo(data.filterID)
 
 					elseif(data.isWorld) then
-						info = miog.getMapInfo(data.filterID)
+						info = miog:GetMapInfo(data.filterID)
 
 					end
 
@@ -1004,7 +1004,7 @@ local function retrieveDelveTiers()
 	local normalDelveActivities = C_LFGList.GetAvailableActivities(121, 341)
 
 	for k, v in ipairs(normalDelveActivities) do
-		local activityInfo = miog.requestActivityInfo(v)
+		local activityInfo = miog:GetActivityInfo(v)
 		tinsert(miog.DELVE_TIERS, activityInfo.shortName)
 
 	end
@@ -1012,7 +1012,7 @@ local function retrieveDelveTiers()
 	local highDelveActivities = C_LFGList.GetAvailableActivities(121, 334)
 
 	for k, v in miog.rpairs(highDelveActivities) do
-		local activityInfo = miog.requestActivityInfo(v)
+		local activityInfo = miog:GetActivityInfo(v)
 		tinsert(miog.DELVE_TIERS, activityInfo.shortName)
 
 	end
@@ -1025,7 +1025,7 @@ local function loadFilterManager()
 	filterManager:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
 
 	miog.createFrameBorder(filterManager, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	filterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSION_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
+	filterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
 	
 	filterManager:Show()
 	
