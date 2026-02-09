@@ -8,10 +8,10 @@ local headersNew = {
     [1] = {id = "ilvl", name = "ILvl"},
     [2] = {id = "track", name = "Track"},
     [3] = {id = "delves", hasSetting = true, name = "Delves"},
-    [4] = {id = "delvesVault", hasSetting = true, name = "Dlv Vault"},
+    [4] = {id = "delvesVault", hasSetting = true, name = "Delves-V"},
     [5] = {id = "raid", hasSetting = true, name = "Raid"},
     [6] = {id = "dungeon", hasSetting = true, name = "Dungeon"},
-    [7] = {id = "dungeonVault", hasSetting = true, name = "Dun Vault"},
+    [7] = {id = "dungeonVault", hasSetting = true, name = "Dungeon-V"},
     [8] = {id = "prey", hasSetting = true, name = "Prey"},
     [9] = {id = "other", hasSetting = true, name = "Other"},
 }
@@ -222,6 +222,93 @@ local function createGearingDataTable()
     gearingTab.ScrollBox:SetDataProvider(dataProvider)
 end
 
+local function createBasicTable()
+    local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
+
+    local revisedHeaderOrder = {}
+    local enabledIndex = 1
+
+    for headerIndex, headerData in ipairs(headersNew) do
+        local enabled = MIOG_NewSettings.gearingTable[headerData.id] ~= false
+        headerData.enabled = enabled
+
+        if(enabled ~= false) then
+            tinsert(revisedHeaderOrder, enabledIndex, {index = headerIndex, enabled = enabled})
+
+            enabledIndex = enabledIndex + 1
+
+        else
+            tinsert(revisedHeaderOrder, #revisedHeaderOrder + 1, {index = headerIndex, enabled = enabled})
+
+        end
+
+    end
+
+    for index, headerInfo in ipairs(revisedHeaderOrder) do
+        local headerData = headersNew[headerInfo.index]
+
+        local column = gearingTab.tableBuilder:AddColumn()
+        column:ConstructHeader("Button", "MIOG_GearingTableSmartHeaderTemplate", headerData.name, true)
+        column:ConstructCells("Frame", "MIOG_GearingTableSmartCellTemplate")
+
+        if(index == 1) then
+            column:SetFixedConstraints(30, 1)
+
+        elseif(index == 2) then
+            column:SetFixedConstraints(55, 1)
+          
+        elseif(headerData.id == "raid") then
+            column:SetFixedConstraints(45, 1)
+
+        else
+            column:SetFillConstraints(1, 1)
+        end
+    end
+
+    local dataProvider = CreateDataProvider()
+    local backupColor = miog.ITEM_QUALITY_COLORS[0].color
+    
+    for rowIndex, itemLevel in ipairs(seasonalData.itemLevelList) do
+        local firstTrack
+        local secondTrack
+
+        if(seasonalData.trackItemLevelList[itemLevel]) then
+            firstTrack = seasonalData.trackItemLevelList[itemLevel][1]
+            secondTrack = seasonalData.trackItemLevelList[itemLevel][2]
+
+        end
+
+        local hasFirstTrack = firstTrack ~= nil
+        local hasSecondTrack = secondTrack ~= nil
+
+        local firstColor = hasFirstTrack and miog.ITEM_QUALITY_COLORS[firstTrack.trackIndex].color
+        local secondColor = hasSecondTrack and miog.ITEM_QUALITY_COLORS[secondTrack.trackIndex].color
+
+        local mainColor = secondColor or firstColor or backupColor
+
+        local firstString = hasFirstTrack and WrapTextInColor(firstTrack.index .. "/" .. firstTrack.length, firstColor) or ""
+        local secondString = hasSecondTrack and WrapTextInColor(secondTrack.index .. "/" .. secondTrack.length, secondColor) or ""
+
+        dataProvider:Insert({
+            {rowIndex},
+            {WrapTextInColor(itemLevel, mainColor)},
+            {firstString .. " " .. secondString},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["delves"] or "", mainColor), seasonalData.tooltipList[itemLevel]["delves"]},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["vault-delves"] or "", mainColor), seasonalData.tooltipList[itemLevel]["vault-delves"]},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["raid"] or "", mainColor), seasonalData.tooltipList[itemLevel]["raid"]},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["dungeon"] or "", mainColor), seasonalData.tooltipList[itemLevel]["dungeon"]},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["vault-dungeon"] or "", mainColor), seasonalData.tooltipList[itemLevel]["vault-dungeon"]},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["prey"] or "", mainColor), seasonalData.tooltipList[itemLevel]["prey"]},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["other"] or "", mainColor), seasonalData.tooltipList[itemLevel]["other"]},
+        })
+
+    end
+
+    gearingTab.tableBuilder:Arrange()
+    gearingTab.ScrollBox:SetDataProvider(dataProvider)
+
+end
+
 miog.loadGearingTable = function()
     retrieveSeasonID()
 
@@ -236,7 +323,7 @@ miog.loadGearingTable = function()
 	view:SetPadding(0, 0, 0, 0, 0)
     view:SetElementExtent(15)
 
-	ScrollUtil.InitScrollBoxListWithScrollBar(gearingTab.ScrollBox, gearingTab.ScrollBar, view)
+	ScrollUtil.InitScrollBoxListWithScrollBar(gearingTab.ScrollBox, miog.pveFrame2.ScrollBarArea.GearingScrollBar, view);
 
 	local tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
 	tableBuilder:SetHeaderContainer(gearingTab.HeaderContainer)
@@ -261,25 +348,20 @@ miog.loadGearingTable = function()
 
     local seasonalData = miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID]
 
-    gearingTab:SetScript("OnSizeChanged", function(self)
-        --self.view:SetElementExtent((gearingTab:GetHeight() - 50) / #seasonalData.itemLevelList)
-
-        --createGearingDataTable()
-    end)
-
-    createGearingDataTable()
+    createBasicTable()
 
     for trackIndex, data in pairs(seasonalData.tracks) do
         local currentLegendFrame = gearingTab.Legend["Track" .. trackIndex]
 
         if(currentLegendFrame) then
-            currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex - 1].color:GetRGBA())
+            currentLegendFrame:SetColorTexture(miog.ITEM_QUALITY_COLORS[trackIndex].color:GetRGBA())
             currentLegendFrame:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 GameTooltip:SetText(data.name)
                 GameTooltip:AddLine(LFG_LIST_ITEM_LEVEL_INSTR_SHORT .. ": " .. data.minLevel .. " - " .. data.maxLevel)
                 GameTooltip:Show()
             end)
+            currentLegendFrame:Show()
         end
     end
 end

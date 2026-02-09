@@ -18,15 +18,6 @@
                 </Anchors>
             </Frame>
 
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Size x="16" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT"/>
-                </Anchors>
-
-            </EventFrame>
-
             <Frame parentKey="Legend" frameStrata="HIGH">
                 <Size x="180" y="25" />
                 <Anchors>
@@ -35,37 +26,37 @@
 
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="Track1" inherits="MIOG_GearingTableLegendTextureTemplate">
+                        <Texture parentKey="Track1" inherits="MIOG_GearingTableLegendTextureTemplate" hidden="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track2" inherits="MIOG_GearingTableLegendTextureTemplate">
+                        <Texture parentKey="Track2" inherits="MIOG_GearingTableLegendTextureTemplate" hidden="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track1" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track3" inherits="MIOG_GearingTableLegendTextureTemplate">
+                        <Texture parentKey="Track3" inherits="MIOG_GearingTableLegendTextureTemplate" hidden="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track2" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track4" inherits="MIOG_GearingTableLegendTextureTemplate">
+                        <Texture parentKey="Track4" inherits="MIOG_GearingTableLegendTextureTemplate" hidden="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track3" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track5" inherits="MIOG_GearingTableLegendTextureTemplate">
+                        <Texture parentKey="Track5" inherits="MIOG_GearingTableLegendTextureTemplate" hidden="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track4" relativePoint="RIGHT" x="5"/>
                             </Anchors>
                         </Texture>
 
-                        <Texture parentKey="Track6" inherits="MIOG_GearingTableLegendTextureTemplate">
+                        <Texture parentKey="Track6" inherits="MIOG_GearingTableLegendTextureTemplate" hidden="true">
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Track5" relativePoint="RIGHT" x="5"/>
                             </Anchors>
@@ -74,15 +65,5 @@
                 </Layers>
             </Frame>
         </Frames>
-
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString parentKey="TestFontString" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" hidden="true">
-                    <Anchors>
-                        <Anchor point="CENTER"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
     </Frame>
 </Ui>

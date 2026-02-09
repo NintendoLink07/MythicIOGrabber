@@ -1530,6 +1530,8 @@ function miog:LoadJournalInstanceBossData(journalInstanceID)
 	local bossDB = {}
 	local bossIndex = 1
 
+	local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+
 	while bossName do
 		local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature of encounter (boss)
 		
@@ -1557,6 +1559,8 @@ function miog:LoadJournalInstanceBossData(journalInstanceID)
 		journalDB.bosses = bossDB
 
 	end
+
+	return journalDB
 end
 
 function miog:GetJournalInstanceBossData(journalInstanceID)
@@ -1729,6 +1733,18 @@ function miog:LoadActivityData(activityID)
 	end
 end
 
+function miog:LoadMapData(mapID)
+	if(mapID) then
+		if(mapID > 1) then
+			miog:CreateMapPointer(mapID)
+			miog:IntegrateJournalDataIntoMap(mapID)
+
+		end
+
+		return database.pointers.map[mapID]
+	end
+end
+
 do
 	-- Preload the encounter journal so any function in the addon doesn't have to always check if the journal is loaded
 	EncounterJournal_LoadUI()
@@ -1763,7 +1779,7 @@ end
 miog.database = database
 
 function miog:GetMapInfo(mapID)
-	return database.pointers.map[mapID]
+	return database.pointers.map[mapID] or miog:LoadMapData(mapID)
 
 end
 
@@ -1775,6 +1791,25 @@ end
 function miog:GetGroupInfo(groupID)
 	return database.pointers.groups[groupID]
 
+end
+
+function miog:GetJournalDataForMapID(mapID)
+	if(mapID) then
+		if(not database.pointers.map[mapID]) then
+			miog:GetMapInfo(mapID)
+
+		end
+
+		local journalInstanceID = database.pointers.map[mapID].journalInstanceID
+		local journalDB = database.pointers.journal[journalInstanceID]
+
+		if(not journalDB.bosses) then
+			journalDB = miog:LoadJournalInstanceBossData(journalInstanceID)
+
+		end
+
+		return journalDB
+	end
 end
 
 miog.BACKUP_SEASONAL_IDS = {
@@ -2270,6 +2305,9 @@ miog.ITEM_LEVEL_DATA = {
 		revisedMaxLevel = 684,
 
 		itemLevelList = {},
+		logicList = {},
+		trackItemLevelList = {},
+		tooltipList = {},
 
 		tracks = {
 			[1] = {name = "Explorer", length = 8},
@@ -2341,6 +2379,9 @@ miog.ITEM_LEVEL_DATA = {
 		referenceMaxLevel = 723,
 
 		itemLevelList = {},
+		logicList = {},
+		trackItemLevelList = {},
+		tooltipList = {},
 
 		tracks = {
 			[1] = {name = "Explorer", length = 8},
@@ -2418,6 +2459,9 @@ miog.ITEM_LEVEL_DATA = {
 		firstTrackStartLevel = 220,
 
 		itemLevelList = {},
+		logicList = {},
+		trackItemLevelList = {},
+		tooltipList = {},
 
 		tracks = {
 			{name = "Adventurer", length = 6},
@@ -2580,19 +2624,33 @@ local function getItemLevelIncreaseViaSteps(steps, argIndex)
 end
 
 for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
+	local trackItemLevelList = seasonalData.trackItemLevelList
+
 	for trackIndex, data in ipairs(seasonalData.tracks) do
+		local length = data.revisedLength or data.length
 		local minLevel = (seasonalData.firstTrackStartLevel or seasonalData.referenceMinLevel) + (trackIndex - 1) * getItemLevelForStepCount(4, seasonalData.referenceMinLevelStepIndex)
+		local level = getItemLevelForStepCount(length - 1, seasonalData.referenceMinLevelStepIndex)
 
 		data.itemlevels = {}
-
 		data.minLevel = minLevel
-		local level = getItemLevelForStepCount((data.revisedLength or data.length) - 1, seasonalData.referenceMinLevelStepIndex)
 		data.maxLevel = minLevel + level
 
-		for i = 1, data.revisedLength or data.length, 1 do
+		for i = 1, length, 1 do
 			local innerLevel = getItemLevelForStepCount(i - 1, seasonalData.referenceMinLevelStepIndex)
-			data.itemlevels[i] = minLevel + innerLevel
 
+			local separateLevel = minLevel + innerLevel
+			data.itemlevels[i] = separateLevel
+
+			if(trackItemLevelList[separateLevel] == nil) then
+				local currentTrackEntry = {}
+				currentTrackEntry[1] = {trackIndex = trackIndex, index = i, length = length}
+
+				trackItemLevelList[separateLevel] = currentTrackEntry
+				
+			else
+				trackItemLevelList[separateLevel][2] = {trackIndex = trackIndex, index = i, length = length}
+
+			end
 		end
 	end
 
@@ -2610,6 +2668,17 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 
 			usedItemlevels[ilvlData.level] = true
 
+			--- integrate some reference method
+
+			if(not seasonalData.logicList[ilvlData.level]) then
+				seasonalData.logicList[ilvlData.level] = {}
+				seasonalData.tooltipList[ilvlData.level] = {}
+
+			end
+
+			seasonalData.logicList[ilvlData.level][category] = ilvlData.name
+			seasonalData.tooltipList[ilvlData.level][category] = ilvlData.tooltip
+
 			if(ilvlData.vaultOffset) then
 				ilvlData.vaultLevel = seasonalData.referenceMinLevel + getItemLevelForStepCount(ilvlData.vaultOffset + ilvlData.steps, seasonalData.referenceMinLevelStepIndex)
 
@@ -2619,6 +2688,15 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 				end
 
 				usedItemlevels[ilvlData.vaultLevel] = true
+
+				if(not seasonalData.logicList[ilvlData.vaultLevel]) then
+					seasonalData.logicList[ilvlData.vaultLevel] = {}
+					seasonalData.tooltipList[ilvlData.vaultLevel] = {}
+
+				end
+
+				seasonalData.logicList[ilvlData.vaultLevel]["vault-" .. category] = ilvlData.name
+				seasonalData.tooltipList[ilvlData.vaultLevel]["vault-" .. category] = ilvlData.tooltip
 			end
 		end
 
@@ -3548,18 +3626,18 @@ miog.EXPANSIONS = {
 }
 
 miog.TIER_INFO = {
-	[1] = {"Classic", "vanilla-bg-1", GetExpansionDisplayInfo(0).logo},
-	[2] = {"The Burning Crusade", "tbc-bg-1", GetExpansionDisplayInfo(1).logo},
-	[3] = {"Wrath of the Lich King", "wotlk-bg-1", GetExpansionDisplayInfo(2).logo},
-	[4] = {"Cataclysm", "cata-bg-1", GetExpansionDisplayInfo(3).logo},
-	[5] = {"Mists of Pandaria", "mop-bg-1", GetExpansionDisplayInfo(4).logo},
-	[6] = {"Warlords of Draenor", "wod-bg-1", GetExpansionDisplayInfo(5).logo},
-	[7] = {"Legion", "legion-bg-1", GetExpansionDisplayInfo(6).logo},
-	[8] = {"Battle for Azeroth", "bfa-bg-1", GetExpansionDisplayInfo(7).logo},
-	[9] = {"Shadowlands", "sl-bg-1", GetExpansionDisplayInfo(8).logo},
-	[10] = {"Dragonflight", "df-bg-1", GetExpansionDisplayInfo(9).logo},
-	[11] = {"The War Within", "tww-bg-1", GetExpansionDisplayInfo(10).logo},
-	[12] = {"Midnight", "mn-bg-1", GetExpansionDisplayInfo(10).logo},
+	[1] = miog.EXPANSIONS[0],
+	[2] = miog.EXPANSIONS[1],
+	[3] = miog.EXPANSIONS[2],
+	[4] = miog.EXPANSIONS[3],
+	[5] = miog.EXPANSIONS[4],
+	[6] = miog.EXPANSIONS[5],
+	[7] = miog.EXPANSIONS[6],
+	[8] = miog.EXPANSIONS[7],
+	[9] = miog.EXPANSIONS[8],
+	[10] = miog.EXPANSIONS[9],
+	[11] = miog.EXPANSIONS[10],
+	[12] = miog.EXPANSIONS[11],
 }
 
 miog.REALM_LOCAL_NAMES = { --Raider IO addon, db_realms

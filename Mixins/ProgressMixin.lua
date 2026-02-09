@@ -516,8 +516,8 @@ function ProgressOverviewMixin:OnLoad()
 		local mapID = self.currentRaidMapID
 
 		if(data.raids and mapID) then
-			local mapInfo = miog.getMapInfo(mapID, true)
-			local numBosses = #mapInfo.bosses
+			local journalInfo = miog:GetJournalDataForMapID(mapID)
+			local numBosses = #journalInfo.bosses
 			local playerInstanceData = data.raids.instances[mapID]
 
 			for i = 1, 3, 1 do
@@ -530,7 +530,7 @@ function ProgressOverviewMixin:OnLoad()
 					if(playerInstanceData and playerInstanceData[i]) then
 						raidProgressFrame:SetScript("OnEnter", function(selfFrame)
 							GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
-							GameTooltip_AddHighlightLine(GameTooltip, mapInfo.name)
+							GameTooltip_AddHighlightLine(GameTooltip, journalInfo.instanceName)
 							GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
 							for k, v in ipairs(playerInstanceData[i].bosses) do
@@ -538,12 +538,12 @@ function ProgressOverviewMixin:OnLoad()
 									local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
 
 									if(not name) then
-										if(not mapInfo.bosses[k]) then
-											mapInfo = miog.getMapInfo(mapID, true)
+										if(not journalInfo.bosses[k]) then
+											journalInfo = miog:GetJournalDataForMapID(mapID)
 
 										end
 
-										name = mapInfo.bosses[k].name .. " kills"
+										name = journalInfo.bosses[k].name .. " kills"
 
 									end
 
@@ -944,28 +944,30 @@ end
 function ProgressRaidMixin:CheckForAchievements(mapID)
 	local mapDifficultyData = {}
 
-	for index, achievementID in ipairs(miog.MAP_INFO[mapID].achievementIDs) do
-		local difficultyIndex = ((index - 1) % 4)
+	if(miog.MAP_INFO[mapID].achievementIDs) then
+		for index, achievementID in ipairs(miog.MAP_INFO[mapID].achievementIDs) do
+			local difficultyIndex = ((index - 1) % 4)
 
-		if(difficultyIndex > 0) then
-			--local numCriteria = GetAchievementNumCriteria(achievementID)
+			if(difficultyIndex > 0) then
+				--local numCriteria = GetAchievementNumCriteria(achievementID)
 
-			mapDifficultyData[difficultyIndex] = mapDifficultyData[difficultyIndex] or {validatedIngame = true, kills = 0, bosses = {}}
+				mapDifficultyData[difficultyIndex] = mapDifficultyData[difficultyIndex] or {validatedIngame = true, kills = 0, bosses = {}}
 
-			--for criteriaIndex = 1, numCriteria do
-				local criteriaString, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfo(achievementID, 1, true)
+				--for criteriaIndex = 1, numCriteria do
+					local criteriaString, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfo(achievementID, 1, true)
 
-				if(completed) then
-					mapDifficultyData[difficultyIndex].kills = mapDifficultyData[difficultyIndex].kills + 1
+					if(completed) then
+						mapDifficultyData[difficultyIndex].kills = mapDifficultyData[difficultyIndex].kills + 1
 
-				end
+					end
 
-				table.insert(mapDifficultyData[difficultyIndex].bosses, {
-					id = achievementID,
-					killed = completed,
-					count = quantity
-				})
-			--end
+					table.insert(mapDifficultyData[difficultyIndex].bosses, {
+						id = achievementID,
+						killed = completed,
+						count = quantity
+					})
+				--end
+			end
 		end
 	end
 
@@ -1107,6 +1109,7 @@ function ProgressRaidMixin:UpdateAllCharactersVisibleData()
 	for guid, v in pairs(self.characterSettings) do
 		v.guid = guid
 		provider:Insert(v)
+
 	end
 
 	self.ScrollBox:SetDataProvider(provider)

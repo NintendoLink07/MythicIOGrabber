@@ -246,7 +246,7 @@ local function addExpansionHeadersToDropdown(rootDescription)
 		--for k, v in ipairs(expansionTable) do
 			local expansionInfo = GetExpansionDisplayInfo(i-1)
 
-			local expansionButton = rootDescription:CreateRadio(miog.TIER_INFO[i][1], function(index) return index == selectedExpansion end, function(index)
+			local expansionButton = rootDescription:CreateRadio(miog.EXPANSIONS[i].name, function(index) return index == selectedExpansion end, function(index)
 			end, i)
 	
 			expansionButton:AddInitializer(function(button, description, menu)
@@ -395,7 +395,7 @@ local function gatherAllActivities(dropdown, rootDescription)
 			return k1.name < k2.name
 		end)
 		
-		rootDescription:CreateTitle(miog.TIER_INFO[GetNumExpansions()][1] .. " Dungeons")
+		rootDescription:CreateTitle(miog.EXPANSIONS[GetNumExpansions()].name .. " Dungeons")
 		addActivityListToDropdown(currentExpansionDungeons, rootDescription)
 		rootDescription:CreateDivider();
 

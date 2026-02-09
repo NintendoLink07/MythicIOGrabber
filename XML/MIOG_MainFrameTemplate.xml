@@ -375,6 +375,7 @@
                     <EventFrame parentKey="ProgressMPlusScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="ProgressRaidScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="ProgressPVPScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="GearingScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="TeleportsScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="RaidSheetScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="DropsScrollBar" inherits="MinimalScrollBar" hidden="true" />
@@ -775,6 +776,8 @@
                 PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());
+                
+	            PanelTemplates_SetTabEnabled(self, 7, false);
             </OnLoad>
 
             <OnShow>

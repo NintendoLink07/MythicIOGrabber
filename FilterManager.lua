@@ -1025,7 +1025,7 @@ local function loadFilterManager()
 	filterManager:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
 
 	miog.createFrameBorder(filterManager, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	filterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.TIER_INFO[MIOG_NewSettings.backgroundOptions][2] .. "_small.png")
+	filterManager.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/" .. miog.EXPANSIONS[MIOG_NewSettings.backgroundOptions].logo .. "_small.png")
 	
 	filterManager:Show()
 	

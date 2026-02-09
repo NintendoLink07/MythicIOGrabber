@@ -116,6 +116,12 @@ local function anchorNewScrollBar(tab, name)
 
 			end
 
+		elseif(tab == 4) then
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.TeleportsScrollBar
+
+		elseif(tab == 5) then
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.GearingScrollBar
+
 		elseif(tab == 6) then
 			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.RaidSheetScrollBar
 

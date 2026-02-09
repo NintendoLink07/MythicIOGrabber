@@ -74,7 +74,7 @@ function QueueManagerLFGFrameMixin:OnEnter()
     local activityName = activityName == self.isMultiDungeon and MULTIPLE_DUNGEONS or name
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(self.isMultiDungeon and MULTIPLE_DUNGEONS or activityName, 1, 1, 1, true)
+    GameTooltip:SetText(self.isMultiDungeon and MULTIPLE_DUNGEONS or activityName, 1, 1, 1, 1, true)
 
     if(altName and name ~= altName) then
         GameTooltip:AddLine(altName)

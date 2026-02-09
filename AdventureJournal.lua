@@ -222,8 +222,8 @@ local function addGroupsToList(list, groups, blockList, isActive)
     if(groups and #groups > 0) then
         for _, v in ipairs(groups) do
             if(not blockList[v]) then
-                local groupInfo = miog.requestGroupInfo(v)
-                local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
+                local groupInfo = miog:GetGroupInfo(v)
+                local activityInfo = miog:GetActivityInfo(groupInfo.activities[1])
                 activityInfo.isActive = isActive
                 activityInfo.isRaid = not isActive
                 activityInfo.name = activityInfo.groupName

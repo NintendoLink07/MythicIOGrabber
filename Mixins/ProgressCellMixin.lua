@@ -213,8 +213,8 @@ function ProgressRaidCellMixin:Populate(data)
     self.data = data
 
     if(id) then
-        local mapInfo = miog.MAP_INFO[id]
-        local numOfBosses = miog.MAP_INFO[id].numOfBosses
+        local journalInfo = miog:GetJournalDataForMapID(id)
+        local numBosses = #journalInfo.bosses
         local raidData = data.raids.instances[id]
 
         if(raidData) then
@@ -225,11 +225,11 @@ function ProgressRaidCellMixin:Populate(data)
                     local hasRaidData = raidData[a] ~= nil
 
                     if(hasRaidData) then
-                        local text = (raidData[a].kills) .. "/" .. numOfBosses
+                        local text = (raidData[a].kills) .. "/" .. numBosses
                         current:SetText(WrapTextInColorCode(text, miog.DIFFICULTY[a].color))
 
                     else
-                        local text = "0/" .. numOfBosses
+                        local text = "0/" .. numBosses
                         current:SetText(WrapTextInColorCode(text, miog.CLRSCC.gray))
                         
 
@@ -238,7 +238,7 @@ function ProgressRaidCellMixin:Populate(data)
                     current:SetScript("OnEnter", function(selfFrame)
                         if(hasRaidData) then
                             GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
-                            GameTooltip_AddHighlightLine(GameTooltip, mapInfo.name)
+                            GameTooltip_AddHighlightLine(GameTooltip, journalInfo.instanceName)
                             GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
                             for k, v in ipairs(raidData[a].bosses) do
@@ -246,7 +246,7 @@ function ProgressRaidCellMixin:Populate(data)
                                     local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
 
                                     if(not name) then
-                                        name = mapInfo.bosses[k].name .. " kills"
+                                        name = journalInfo.bosses[k].name .. " kills"
 
                                     end
 

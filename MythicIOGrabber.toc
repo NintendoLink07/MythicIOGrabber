@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9
+## Version: 3.9.1
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -299,3 +299,13 @@ XML\FilterManager\MIOG_FilterManagerSmallTextFilterTemplate.xml
 XML\FilterManager\MIOG_FilterManagerSmallTextAndIconFilterTemplate.xml
 XML\FilterManager\MIOG_FilterManagerActivityBossesTemplate.xml
 XML\FilterManager\MIOG_FilterManagerBossFrameTemplate.xml
+
+Mixins\ColorCellMixin.lua
+XML\Misc\MIOG_ColorCellTemplate.xml
+
+
+XML\GearingTable\GearingTableSmartHeaderMixin.lua
+XML\GearingTable\MIOG_GearingTableSmartHeaderTemplate.xml
+XML\GearingTable\GearingTableSmartCellMixin.lua
+XML\GearingTable\MIOG_GearingTableSmartCellTemplate.xml
+XML\GearingTable\MIOG_GearingTableLineTemplate.xml

@@ -101,7 +101,7 @@ local function updateRandomDungeons(blizzDesc)
 				info.text = isHolidayDungeon and "(Event) " .. name or name
 
 				info.checked = mode == "queued"
-				info.icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.TIER_INFO[miog.LFG_DUNGEONS_INFO[id].expansionLevel][3] or nil
+				info.icon = miog.LFG_ID_INFO[id] and miog.LFG_ID_INFO[id].icon or fileID or miog.LFG_DUNGEONS_INFO[id] and miog.LFG_DUNGEONS_INFO[id].expansionLevel and miog.EXPANSIONS[miog.LFG_DUNGEONS_INFO[id].expansionLevel].logo or nil
 				info.parentIndex = subtypeID
 				info.index = -1
 				info.type2 = "random"
@@ -448,7 +448,7 @@ local function refreshDungeonList()
 					typeID = typeID,
 					subtypeID = subtypeID,
 					dungeonID = dungeonID,
-					icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or fileID or miog.TIER_INFO[expLevel][3] or nil,
+					icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or fileID or miog.EXPANSIONS[expLevel].logo or nil,
 					expansionLevel = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel or miog.LFG_DUNGEONS_INFO[dungeonID] and miog.LFG_DUNGEONS_INFO[dungeonID].expansionLevel or expLevel,
 				})
 			end
@@ -463,7 +463,7 @@ local function refreshDungeonList()
 			icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon
 			or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon
 			or fileID
-			or miog.TIER_INFO[expLevel][3]
+			or miog.EXPANSIONS[expLevel].logo
 			or nil,
 			expansionLevel = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel or miog.LFG_DUNGEONS_INFO[dungeonID] and miog.LFG_DUNGEONS_INFO[dungeonID].expansionLevel or expLevel,
 		})
@@ -539,7 +539,7 @@ local function setupQueueDropdown(rootDescription)
 					if(isSpecific) then
 						if(dungeonInfo.typeID ~= 6) then
 							if(lastExpansion ~= dungeonInfo.expansionLevel) then
-								local title = activityButton:CreateTitle(miog.TIER_INFO[dungeonInfo.expansionLevel][1])
+								local title = activityButton:CreateTitle(miog.EXPANSIONS[dungeonInfo.expansionLevel][1])
 								
 							end
 
@@ -568,7 +568,7 @@ local function setupQueueDropdown(rootDescription)
 						lastRaidName = dungeonInfo.name2
 					else
 						if(not isEvent and lastExpansion ~= dungeonInfo.expansionLevel) then
-							local title = activityButton:CreateTitle(miog.TIER_INFO[dungeonInfo.expansionLevel][1])
+							local title = activityButton:CreateTitle(miog.EXPANSIONS[dungeonInfo.expansionLevel].name)
 							
 						end
 
