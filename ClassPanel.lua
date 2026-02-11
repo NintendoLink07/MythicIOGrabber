@@ -77,7 +77,7 @@ local function updateGroupClassData()
 
         local height = miog.ClassPanel.Container:GetHeight()
 
-        for classID, classEntry in ipairs(miog.CLASSES) do
+        for classID, classEntry in ipairs(miog.OFFICIAL_CLASSES) do
             local numOfClasses = classCount[classID]
             local currentClassFrame = miog.ClassPanel.Container.classFrames[classID]
             currentClassFrame.layoutIndex = classID
@@ -129,7 +129,7 @@ miog.createClassPanel = function()
     PixelUtil.SetHeight(container, container:GetParent():GetHeight() - 5)
     container.classFrames = {}
 
-    for classID, classEntry in ipairs(miog.CLASSES) do
+    for classID, classEntry in ipairs(miog.OFFICIAL_CLASSES) do
         local classColor = C_ClassColor.GetClassColor(classEntry.name)
 
         classColors[classID] = classColor

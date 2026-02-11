@@ -67,7 +67,7 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
 
     elseif(self.key == "class") then
         local classIndex = miog.CLASSFILE_TO_ID[data.fileName]
-	    self.Icon:SetTexture(miog.CLASSES[classIndex].icon)
+	    self.Icon:SetTexture(miog.OFFICIAL_CLASSES[classIndex].icon)
     
     elseif(self.key == "specID") then
         self:SetSpecialization(data.specID)

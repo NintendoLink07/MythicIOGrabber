@@ -6,7 +6,7 @@ function ProgressHeaderMixin:Init(name, fileName, specID, guid)
     local classID = miog.CLASSFILE_TO_ID[fileName]
     local color = C_ClassColor.GetClassColor(fileName)
 
-    self.Class.Icon:SetTexture(miog.CLASSES[classID].icon)
+    self.Class.Icon:SetTexture(miog.OFFICIAL_CLASSES[classID].icon)
     self.Spec.Icon:SetTexture(specID and miog.SPECIALIZATIONS[specID].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
     self.Name:SetText(name)
 

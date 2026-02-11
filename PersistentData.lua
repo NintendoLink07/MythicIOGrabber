@@ -1573,6 +1573,25 @@ function miog:GetJournalInstanceIDFromMap(mapID)
 
 end
 
+function miog:RetrieveJournalInstanceInfo(journalInstanceID)
+	local instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceInfo(journalInstanceID)
+
+	database.pointers.journal[journalInstanceID] = {
+		buttonImage1 = buttonImage1,
+		buttonImage2 = buttonImage2,
+		bgImage = bgImage,
+		loreImage = loreImage,
+		instanceName = instanceName,
+		tier = tier,
+		isRaid = isRaid,
+		mapID = mapID
+	}
+
+	miog:LoadJournalInstanceBossData(journalInstanceID)
+
+	return database.pointers.journal[journalInstanceID]
+end
+
 function miog:CreateJournalDB()
 	local startTier = 1;
 
@@ -1710,6 +1729,17 @@ function miog:CreateMapPointer(mapID)
 	end
 end
 
+function miog:IntegrateActivityDataIntoParentGroup(activityIndex, activityID)
+	local activityDB = database.pointers.activity[activityID]
+
+	local groupDB = database.pointers.groups[activityDB.groupFinderActivityGroupID]
+
+	if(groupDB) then
+		groupDB.activityDBs[activityIndex] = activityDB
+
+	end
+end
+
 function miog:LoadActivityData(activityID)
 	if(activityID) then
 		if(activityID > 0) then
@@ -1745,6 +1775,23 @@ function miog:LoadMapData(mapID)
 	end
 end
 
+function miog:LoadGroupData(groupID)
+	if(groupID) then
+		local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
+		local activities = C_LFGList.GetAvailableActivities(_, groupID)
+
+		database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = activities, activityDBs = {}}
+		
+		for activityIndex, activityID in pairs(activities) do
+			miog:LoadActivityData(activityID)
+			miog:IntegrateActivityDataIntoParentGroup(activityIndex, activityID)
+
+		end
+
+		return database.pointers.groups[groupID]
+	end
+end
+
 do
 	-- Preload the encounter journal so any function in the addon doesn't have to always check if the journal is loaded
 	EncounterJournal_LoadUI()
@@ -1754,29 +1801,28 @@ do
 		local groupTable = C_LFGList.GetAvailableActivityGroups(categoryID)
 
 		for _, groupID in pairs(groupTable) do
-			local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
-			local activities = C_LFGList.GetAvailableActivities(_, groupID)
-
-			database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = activities}
-			
-			for _, activityID in pairs(activities) do
-				miog:LoadActivityData(activityID)
-
-			end
+			miog:LoadGroupData(groupID)
 		end
 	end
 
 	for _, activityID in pairs(manualData.activity) do
-		local activityInfo = miog:LoadActivityData(activityID)
+		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+
 		local groupName, groupOrder = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 
-		database.pointers.groups[activityInfo.groupFinderActivityGroupID] = database.pointers.groups[activityInfo.groupFinderActivityGroupID] or {name = groupName, groupOrder = groupOrder, categoryID = activityInfo.categoryID, activities = {}}
-
+		database.pointers.groups[activityInfo.groupFinderActivityGroupID] = database.pointers.groups[activityInfo.groupFinderActivityGroupID] or {name = groupName, groupOrder = groupOrder, categoryID = activityInfo.categoryID, activities = {}, activityDBs = {}}
 		tinsert(database.pointers.groups[activityInfo.groupFinderActivityGroupID].activities, activityID)
+
+		miog:LoadActivityData(activityID)
+
 	end
 end
 
 miog.database = database
+
+function miog:HasMapInfo(mapID)
+	return database.pointers.map[mapID] ~= nil
+end
 
 function miog:GetMapInfo(mapID)
 	return database.pointers.map[mapID] or miog:LoadMapData(mapID)
@@ -1789,26 +1835,88 @@ function miog:GetActivityInfo(activityID)
 end
 
 function miog:GetGroupInfo(groupID)
-	return database.pointers.groups[groupID]
+	return database.pointers.groups[groupID] or miog:LoadGroupData(groupID)
 
+end
+
+function miog:HasJournalInfo(journalInstanceID)
+	return database.pointers.journal[journalInstanceID] ~= nil
+end
+
+function miog:GetJournalInstanceInfo(journalInstanceID)
+	return database.pointers.journal[journalInstanceID] or miog:RetrieveJournalInstanceInfo(journalInstanceID)
+
+end
+
+function miog:GetJournalInstanceIDFromMapID(mapID)
+	local journalInstanceID
+
+	if(not database.pointers.map[mapID]) then
+		journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+	else
+		if(not database.pointers.map[mapID].journalInstanceID) then
+			journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+		else
+			journalInstanceID = database.pointers.map[mapID] and database.pointers.map[mapID].journalInstanceID
+
+		end
+	end
+
+	return journalInstanceID
+
+end
+
+function miog:GetJournalInstanceIDFromActivityID(activityID)
+	local journalInstanceID
+
+	if(not database.pointers.activity[activityID]) then
+		
+
+	else
+		if(not database.pointers.activity[mapID].journalInstanceID) then
+
+		else
+			journalInstanceID = database.pointers.activity[mapID] and database.pointers.activity[mapID].journalInstanceID
+
+		end
+	end
+
+	return journalInstanceID
 end
 
 function miog:GetJournalDataForMapID(mapID)
 	if(mapID) then
-		if(not database.pointers.map[mapID]) then
+		if(not miog:HasMapInfo(mapID)) then
 			miog:GetMapInfo(mapID)
 
 		end
 
-		local journalInstanceID = database.pointers.map[mapID].journalInstanceID
-		local journalDB = database.pointers.journal[journalInstanceID]
+		local journalInstanceID = miog:GetJournalInstanceIDFromMapID(mapID)
 
-		if(not journalDB.bosses) then
-			journalDB = miog:LoadJournalInstanceBossData(journalInstanceID)
+		if(journalInstanceID) then
+			local journalDB = miog:GetJournalInstanceInfo(journalInstanceID)
+
+			return journalDB
+		end
+	end
+end
+
+function miog:GetJournalDataForActivityID(activityID)
+	if(activityID) then
+		if(not miog:HasActivityInfo(activityID)) then
+			miog:GetActivityInfo(activityID)
 
 		end
 
-		return journalDB
+		local journalInstanceID = miog:GetJournalInstanceIDFromActivityID(activityID)
+
+		if(journalInstanceID) then
+			local journalDB = miog:GetJournalInstanceInfo(journalInstanceID)
+
+			return journalDB
+		end
 	end
 end
 
@@ -2475,8 +2583,8 @@ miog.ITEM_LEVEL_DATA = {
 		data = {
 			dungeon = {
 				{steps = 2, name="Normal"},
-				{steps = 5, vaultOffset = 4, name="HC"},
-				{steps = 7, vaultOffset = 4, name="HC Season"},
+				{steps = 5, vaultOffset = 6, name="HC"},
+				{steps = 7, name="HC Season"},
 				{steps = 10, vaultOffset = 3, name="Mythic"},
 				{steps = 12, vaultOffset = 3, name="M Season"},
 				{steps = 13, vaultOffset = 3, name="+2"},
@@ -2530,12 +2638,9 @@ miog.ITEM_LEVEL_DATA = {
 				{steps = 12, name="NM?"},
 			},
 			other = {
-				{steps = 10, name="Weather5"},
+				{steps = 9, name="World Vault"},
 				{steps = 11, name="Pinnacle"},
 				{steps = 14, name="Worldboss"},
-				{steps = 15, name="Spark5"},
-				{steps = 19, name="Runed5"},
-				{steps = 24, name="Gilded5"},
 			},
 		},
 	},
@@ -3416,8 +3521,9 @@ miog.CLASSES = {
 	[9] =	{name = "WARLOCK", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/warlock_round.png", specs = {265, 266, 267}},
 	[10] = 	{name = "MONK", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/monk_round.png", specs = {268, 270, 269}, raidBuff = 8647},
 	[11] =	{name = "DRUID", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/druid_round.png", specs = {102, 103, 104, 105}, raidBuff = 1126},
-	[12] = 	{name = "DEMONHUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter_round.png", specs = {577, 581}, raidBuff = 255260},
+	[12] = 	{name = "DEMONHUNTER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter_round.png", specs = {577, 581, 1480}, raidBuff = 255260},
 	[13] = 	{name = "EVOKER", icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker_round.png", specs = {1467, 1468, 1473}, raidBuff = 364342},
+	[14] =	{name = "ADVENTURER", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/unknown.png", specs = {}},
 	[20] = 	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/empty.png", specs = {}},
 	[21] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/empty.png", specs = {}},
 	[22] =	{name = "DUMMY", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", roundIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/empty.png", specs = {}},
@@ -3432,7 +3538,7 @@ end
 
 miog.OFFICIAL_CLASSES = {}
 
-for i = 1, #miog.CLASSES, 1 do
+for i = 1, 13, 1 do
 	miog.OFFICIAL_CLASSES[i] = miog.CLASSES[i]
 end
 
@@ -3490,6 +3596,7 @@ miog.SPECIALIZATIONS = {
 
 	[577] = {name = "Havoc", class = miog.CLASSES[12], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/havoc.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/havoc_squared.png", stat = "ITEM_MOD_AGILITY_SHORT"},
 	[581] = {name = "Vengeance", class = miog.CLASSES[12], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/vengeance.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/vengeance_squared.png", stat = "ITEM_MOD_AGILITY_SHORT"},
+	[1480] = {name = "Devourer", class = miog.CLASSES[12], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/devourer.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/devourer_squared.png", stat = "ITEM_MOD_INTELLECT_SHORT"},
 
 	[1467] = {name = "Devastation", class = miog.CLASSES[13], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/devastation.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/devastation_squared.png", stat = "ITEM_MOD_INTELLECT_SHORT"},
 	[1468] = {name = "Preservation", class = miog.CLASSES[13], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/preservation.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/preservation_squared.png", stat = "ITEM_MOD_INTELLECT_SHORT"},
@@ -3510,19 +3617,23 @@ miog.SPECIALIZATIONS = {
 	[1455] = {name = "Death Knight Initial", class = miog.CLASSES[6], icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/deathKnight.png"},
 	[1456] = {name = "Demon Hunter Initial", class = miog.CLASSES[12], icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/demonHunter.png"},
 	[1465] = {name = "Evoker Initial", class = miog.CLASSES[13], icon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/classIcons/evoker.png"},
+
+	[1478] = {name = "Adventurer", class = miog.CLASSES[14], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/unknown.png"},
 }
 
 miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID = {}
 
 for k, v in pairs(miog.SPECIALIZATIONS) do
 	if(k > 25) then
-		local _, localizedName, _, _, _, fileName = GetSpecializationInfoByID(k)
+		local _, localizedName, _, icon, _, fileName = GetSpecializationInfoByID(k)
 
-		if(localizedName == "") then
-			localizedName = "Initial"
+		if(fileName) then
+			if(localizedName == "") then
+				localizedName = "Initial"
+			end
+
+			miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k
 		end
-
-		miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[localizedName .. "-" .. fileName] = k
 	end
 end
 

@@ -462,7 +462,7 @@ local function createFullEntries(iterations)
 			local classID = random(1, 13)
 			local classInfo = C_CreatureInfo.GetClassInfo(classID) or {"WARLOCK", "Warlock"}
 
-			local specID = miog.CLASSES[classID].specs[random(1, #miog.DEBUG_SPEC_TABLE[classID])]
+			local specID = miog.OFFICIAL_CLASSES[classID].specs[random(1, #miog.DEBUG_SPEC_TABLE[classID])]
 
 			local highestKey
 			local dungeonData, pvpData

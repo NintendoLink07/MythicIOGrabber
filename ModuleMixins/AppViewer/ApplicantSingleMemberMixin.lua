@@ -36,7 +36,7 @@ function ApplicantSingleMemberMixin:SetClass(fileName)
         local classColor = C_ClassColor.GetClassColor(fileName)
         local r, g, b, a = classColor:GetRGBA()
 
-        self.Class:SetTexture(miog.CLASSES[classID].icon)
+        self.Class:SetTexture(miog.OFFICIAL_CLASSES[classID].icon)
 
         self.Background:SetColorTexture(r, g, b, 0.4)
 
@@ -45,7 +45,7 @@ function ApplicantSingleMemberMixin:SetClass(fileName)
         self:SetBackdropBorderColor(r, g, b, a)
 
     else
-        self.Class:SetTexture(miog.CLASSES[100].icon)
+        self.Class:SetTexture(miog.OFFICIAL_CLASSES[100].icon)
 
     end
 end

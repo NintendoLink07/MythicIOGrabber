@@ -404,7 +404,7 @@ local function updateClassPanel()
 	classSpecPanel.DamagerString:SetText(roleCount["DAMAGER"])
 
 
-    for classIndex, classEntry in ipairs(miog.CLASSES) do
+    for classIndex, classEntry in ipairs(miog.OFFICIAL_CLASSES) do
         local name = classEntry.name
 
         local numOfClasses = classCount[name]
@@ -582,10 +582,28 @@ local function createClassRoleSpecCount()
 
         [577] = 0,
         [581] = 0,
+        [1480] = 0,
 
         [1467] = 0,
         [1468] = 0,
         [1473] = 0,
+
+        --- Initials
+        
+        [1444] = 0,
+        [1446] = 0,
+        [1447] = 0,
+        [1448] = 0,
+        [1449] = 0,
+        [1450] = 0,
+        [1451] = 0,
+        [1452] = 0,
+        [1453] = 0,
+        [1454] = 0,
+        [1455] = 0,
+        [1456] = 0,
+        [1465] = 0,
+        [1478] = 0,
     }
 end
 
@@ -1362,7 +1380,7 @@ local function loadClassSpecPanel()
     classSpecPanel.HealerIcon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/healerIcon.png")
     classSpecPanel.DamagerIcon:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/damagerIcon.png")
 
-     for _, classEntry in ipairs(miog.CLASSES) do
+     for _, classEntry in ipairs(miog.OFFICIAL_CLASSES) do
         local currentClassFrame = classSpecPanel.Classes[classEntry.name]
 
         if(currentClassFrame) then

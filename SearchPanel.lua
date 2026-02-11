@@ -734,6 +734,8 @@ local function updateScrollBoxFrame(frame, data)
 
 			local bossPanel = currentFrame.BossPanel
 			local newActivity = bossPanel.activityID ~= activityID
+
+			local mapID = activityInfo.mapID
 			
 			bossPanel.activityID = activityID
 

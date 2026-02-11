@@ -1396,7 +1396,7 @@ miog.loadJournal = function()
 
         end)
 
-        for k, v in ipairs(miog.CLASSES) do
+        for k, v in ipairs(miog.OFFICIAL_CLASSES) do
 	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(index) return index == selectedClass end, function(name)
                 selectedClass = k
                 selectedSpec = 0

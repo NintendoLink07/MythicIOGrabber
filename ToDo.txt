@@ -1,15 +1,15 @@
 Good
 - Main
-- Progress
 
 Okay
 - Group
 - Raid sheet
+- Gearing // enable&disable columns
 
 WIP
-- Gearing
 
 Needs overhaul
+- Progress // submenus only
 - Drops
 - Ports
 

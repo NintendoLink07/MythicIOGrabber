@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.2] - 2026-02-11
+
+### Added
+
+- Devourer has been added.
+
+### Changed
+
+- [Gearing] Updated gearing data.
+
+### Fixed
+
+- [Progress] Coloring of the itemlevel has been adjusted to current itemlevels.
+
+- [Progress] Activity backgrounds should be visible again.
+
+- More backend changes for v4.0.
+
+### Known issues
+
+- [Progress] There are currently no raids shown, because the season hasn't started yet.
+This will automatically be "fixed" when Midnight officially launches.
+
+
+
 
 ## [3.9.1] - 2026-02-09
 

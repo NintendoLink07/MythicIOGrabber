@@ -41,9 +41,9 @@
 
             <Layer level="OVERLAY">
                 <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Size x="76" y="20"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" y="-4"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-2" />
+                        <Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" y="-4"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -68,7 +68,7 @@
 
             <Frame parentKey="Identifiers" inherits="VerticalLayoutFrame">
                 <KeyValues>
-                    <Keyvalue key="fixedWidth" value="64" type="number" />
+                    <Keyvalue key="fixedWidth" value="96" type="number" />
                 </KeyValues>
 
                 <Anchors>

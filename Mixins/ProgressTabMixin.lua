@@ -797,7 +797,7 @@ function ProgressTabMixin:OnLoad(id)
 			local classID = miog.CLASSFILE_TO_ID[data.classFile]
 			local color = C_ClassColor.GetClassColor(data.classFile)
 
-			frame.Class.Icon:SetTexture(miog.CLASSES[classID].icon)
+			frame.Class.Icon:SetTexture(miog.OFFICIAL_CLASSES[classID].icon)
 			frame.Spec.Icon:SetTexture(data.spec and miog.SPECIALIZATIONS[data.spec].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
 			frame.Name:SetText(data.name)
 

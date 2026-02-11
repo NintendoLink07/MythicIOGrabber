@@ -226,6 +226,14 @@
                             <KeyValue key="expand" value="true" type="boolean" />
                             <KeyValue key="layoutIndex" value="12" type="number" />
                         </KeyValues>
+
+                        <Frames>
+                            <Frame parentKey="Spec3" inherits="MIOG_FilterManagerSingleIconTemplate">
+                                <KeyValues>
+                                    <KeyValue key="layoutIndex" value="4" type="number" />
+                                </KeyValues>
+                            </Frame>
+                        </Frames>
                     </Frame>
 
                     <Frame parentKey="Class13" inherits="MIOG_FilterManagerSingleClassTemplate">

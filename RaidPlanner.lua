@@ -382,7 +382,7 @@ local function setupFramePools()
             end
         end
     else
-        for classIndex, classInfo in ipairs(miog.CLASSES) do
+        for classIndex, classInfo in ipairs(miog.OFFICIAL_CLASSES) do
             local localizedName = GetClassInfo(classIndex)
 
             for specIndex, specID in ipairs(classInfo.specs) do

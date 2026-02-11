@@ -485,7 +485,7 @@ function ProgressOverviewMixin:OnLoad()
 		local classID = miog.CLASSFILE_TO_ID[data.fileName]
 		local color = C_ClassColor.GetClassColor(data.fileName)
 
-		frame.Class.Icon:SetTexture(miog.CLASSES[classID].icon)
+		frame.Class.Icon:SetTexture(miog.OFFICIAL_CLASSES[classID].icon)
 		frame.Spec.Icon:SetTexture(data.specID and miog.SPECIALIZATIONS[data.specID].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
 		frame.Name:SetText(data.name)
 
@@ -494,7 +494,7 @@ function ProgressOverviewMixin:OnLoad()
 		frame.GuildBannerBorderGlow:SetShown(data.guid == UnitGUID("player"))
 		
 		frame.Identifiers.ItemLevel.Text:SetText(data.itemLevel or 0)
-		frame.Identifiers.ItemLevel.Text:SetTextColor(miog.createCustomColorForRating(data.itemLevel and data.itemLevel > 0 and 4000 - (725 - data.itemLevel) ^ 2 or 1):GetRGBA())
+		frame.Identifiers.ItemLevel.Text:SetTextColor(miog.createCustomColorForRating(data.itemLevel and data.itemLevel > 0 and 4000 - (170 - data.itemLevel) ^ 2 or 1):GetRGBA())
 
 		if(data.mythicPlus) then
 			frame.Identifiers.MythicPlusScore.Text:SetText(data.mythicPlus.score)
@@ -649,7 +649,7 @@ function ProgressOverviewMixin:OnLoad()
 	
 	view:SetElementInitializer("MIOG_ProgressOverviewFullTemplate", initializeFrames)
 	view:SetPadding(1, 1, 1, 1, 1)
-	view:SetElementExtent(64)
+	view:SetElementExtent(96)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view)
 end
@@ -772,7 +772,7 @@ function ProgressDungeonMixin:GetBackgroundImage(challengeModeMapID)
 	local groupID = miog.retrieveGroupIDFromChallengeModeMap(challengeModeMapID)
 	local bg
 
-	local groupInfo = miog.GROUP_ACTIVITY[groupID]
+	local groupInfo = miog:GetGroupInfo(groupID)
 
 	if(groupInfo) then
 		bg = groupInfo.vertical
@@ -782,7 +782,7 @@ function ProgressDungeonMixin:GetBackgroundImage(challengeModeMapID)
 	if(not bg) then
 		local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeModeMapID)
 
-		local mapInfo = miog.MAP_INFO[mapID]
+		local mapInfo = miog:GetMapInfo(mapID)
 
 		if(mapInfo) then
 			bg = mapInfo.vertical

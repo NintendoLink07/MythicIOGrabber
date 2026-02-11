@@ -182,8 +182,6 @@ local function createGearingDataTable()
                 
                 rowCellData = dataProviderTable[translator[baseItemLevel]][baseTableIndex]
 
-                print(rowCellData.text)
-
                 stringWidth = calculateStringWidth(rowCellData.text)
                 headersNew[formerBaseIndex].width = stringWidth > headersNew[formerBaseIndex].width and stringWidth or headersNew[formerBaseIndex].width
             end
@@ -251,18 +249,6 @@ local function createBasicTable()
         column:ConstructHeader("Button", "MIOG_GearingTableSmartHeaderTemplate", headerData.name, true)
         column:ConstructCells("Frame", "MIOG_GearingTableSmartCellTemplate")
 
-        if(index == 1) then
-            column:SetFixedConstraints(30, 1)
-
-        elseif(index == 2) then
-            column:SetFixedConstraints(55, 1)
-          
-        elseif(headerData.id == "raid") then
-            column:SetFixedConstraints(45, 1)
-
-        else
-            column:SetFillConstraints(1, 1)
-        end
     end
 
     local dataProvider = CreateDataProvider()
@@ -299,6 +285,7 @@ local function createBasicTable()
             {WrapTextInColor(seasonalData.logicList[itemLevel]["dungeon"] or "", mainColor), seasonalData.tooltipList[itemLevel]["dungeon"]},
             {WrapTextInColor(seasonalData.logicList[itemLevel]["vault-dungeon"] or "", mainColor), seasonalData.tooltipList[itemLevel]["vault-dungeon"]},
             {WrapTextInColor(seasonalData.logicList[itemLevel]["prey"] or "", mainColor), seasonalData.tooltipList[itemLevel]["prey"]},
+            {WrapTextInColor(seasonalData.logicList[itemLevel]["pvp"] or "", mainColor), seasonalData.tooltipList[itemLevel]["pvp"]},
             {WrapTextInColor(seasonalData.logicList[itemLevel]["other"] or "", mainColor), seasonalData.tooltipList[itemLevel]["other"]},
         })
 

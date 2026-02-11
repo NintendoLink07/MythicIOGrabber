@@ -46,7 +46,7 @@ function ProgressOverviewFullMixin:Populate(data, index)
         local classID = miog.CLASSFILE_TO_ID[data.fileName]
         local color = C_ClassColor.GetClassColor(data.fileName)
 
-        self.Class.Icon:SetTexture(miog.CLASSES[classID].icon)
+        self.Class.Icon:SetTexture(miog.OFFICIAL_CLASSES[classID].icon)
         self.Spec.Icon:SetTexture(data.specID and miog.SPECIALIZATIONS[data.specID].squaredIcon or miog.SPECIALIZATIONS[0].squaredIcon)
         self.Name:SetText(data.name)
 

@@ -756,7 +756,7 @@ local function refreshFilters()
 	local filterManager = miog.FilterManager
 	local panel, categoryID = getCurrentPanelAndCategoryID()
 
-	for classIndex, classInfo in ipairs(miog.CLASSES) do
+	for classIndex, classInfo in ipairs(miog.OFFICIAL_CLASSES) do
 		local singleClassFilter = filterManager.ClassFilters["Class" .. classIndex]
 		local r, g, b = GetClassColor(classInfo.name)
 
@@ -905,59 +905,64 @@ local function refreshFilters()
 				if(bossParent) then
 					local groupSetting = retrieveSetting("activities", data.filterID)
 					bossParent:SetShown(groupSetting ~= false and true or false)
-					local info
+
+					local bossTable
 					
 					if(data.isPvE) then
-						info = miog:GetGroupInfo(data.filterID)
+						local info = miog:GetGroupInfo(data.filterID)
+						bossTable = info.activityDBs[1].bosses
+
+						DevTools_Dump(info.activityDBs)
 
 					elseif(data.isWorld) then
-						info = miog:GetMapInfo(data.filterID)
+						local info = miog:GetMapInfo(data.filterID)
+						bossTable = info.bosses
 
 					end
 
-					local bossTable = info.bosses
+					if(bossTable) then
+						for i = 1, 20, 1 do
+							local bossFrame = bossParent["Boss" .. i]
+							
+							if(bossTable[i]) then
+								bossFrame.name = bossTable[i].name
 
-					for i = 1, 20, 1 do
-						local bossFrame = bossParent["Boss" .. i]
-						
-						if(bossTable[i]) then
-							bossFrame.name = bossTable[i].name
+								--PRESET FOR CURRENT RAIDS IN FILTERS
 
-							--PRESET FOR CURRENT RAIDS IN FILTERS
+								--SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossTable[i].creatureDisplayInfoID)
 
-							--SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossTable[i].creatureDisplayInfoID)
+								bossFrame.Icon:SetTexture(bossTable[i].icon)
 
-							bossFrame.Icon:SetTexture(bossTable[i].icon)
+								local setting = retrieveSetting("activityBosses", data.filterID)
 
-							local setting = retrieveSetting("activityBosses", data.filterID)
+								bossFrame:SetScript("OnClick", function(self, button)
+									local currentState = retrieveSetting("activityBosses", data.filterID)
 
-							bossFrame:SetScript("OnClick", function(self, button)
-								local currentState = retrieveSetting("activityBosses", data.filterID)
+									if(button == "LeftButton") then
+										if(currentState) then
+											if(currentState[i]) then
+												changeSetting(currentState[i] == 3 and 1 or currentState[i] + 1, "activityBosses", data.filterID, i)
 
-								if(button == "LeftButton") then
-									if(currentState) then
-										if(currentState[i]) then
-											changeSetting(currentState[i] == 3 and 1 or currentState[i] + 1, "activityBosses", data.filterID, i)
+											else
+												changeSetting(2, "activityBosses", data.filterID, i)
 
-										else
-											changeSetting(2, "activityBosses", data.filterID, i)
-
+											end
 										end
+
+									else
+										changeSetting(1, "activityBosses", data.filterID, i)
+
 									end
+								end)
 
-								else
-									changeSetting(1, "activityBosses", data.filterID, i)
+								bossFrame:SetState(setting and (setting[i] == nil and false or setting[i]) or 1)
 
-								end
-							end)
+								bossFrame:Show()
 
-							bossFrame:SetState(setting and (setting[i] == nil and false or setting[i]) or 1)
+							else
+								bossFrame:Hide()
 
-							bossFrame:Show()
-
-						else
-							bossFrame:Hide()
-
+							end
 						end
 					end
 				end
@@ -1046,7 +1051,7 @@ local function loadFilterManager()
 		end
 	end
 
-	for classIndex, classInfo in ipairs(miog.CLASSES) do
+	for classIndex, classInfo in ipairs(miog.OFFICIAL_CLASSES) do
 		local r, g, b = GetClassColor(classInfo.name)
 
 		local singleClassFilter = filterManager.ClassFilters["Class" .. classIndex]
