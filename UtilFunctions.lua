@@ -367,7 +367,7 @@ miog.retrieveMapInfoFromChallengeModeMap = function(challengeID)
 	local info = miog.CHALLENGE_MODE_INFO[challengeID]
 	
 	if(info.mapID) then
-		return miog.getMapInfo(info.mapID)
+		return miog:GetMapInfo(info.mapID)
 
 	end
 end

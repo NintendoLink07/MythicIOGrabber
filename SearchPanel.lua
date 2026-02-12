@@ -734,69 +734,70 @@ local function updateScrollBoxFrame(frame, data)
 
 			local bossPanel = currentFrame.BossPanel
 			local newActivity = bossPanel.activityID ~= activityID
-
-			local mapID = activityInfo.mapID
 			
 			bossPanel.activityID = activityID
 
 			local bossData = activityInfo.bosses
-			local bossIndex = activityInfo.numOfBosses
-			local numOfBosses
 
-			local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
-			local encountersDefeated = {}
+			if(bossData) then
+				local bossIndex = activityInfo.numOfBosses
+				local numOfBosses
 
-			if(encounterInfo) then
-				for _, v in ipairs(encounterInfo) do
-					encountersDefeated[v] = true
+				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
+				local encountersDefeated = {}
 
-				end
-			end
-
-			if(data.hasOwnTemplate) then
-				numOfBosses = #bossData
-
-				for i = numOfBosses, 1, -1 do
-					local bossFrame = bossPanel["Boss" .. i]
-					local bossInfo = bossData[bossIndex]
-
-					if(bossInfo) then
-						local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
-
-						bossFrame.Icon:SetDesaturated(bossDefeated)
-						bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
-
-						bossIndex = bossIndex - 1
+				if(encounterInfo) then
+					for _, v in ipairs(encounterInfo) do
+						encountersDefeated[v] = true
 
 					end
 				end
-			else
-				bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
 
-				numOfBosses = 20
+				if(data.hasOwnTemplate) then
+					numOfBosses = #bossData
 
-				for i = numOfBosses, 1, -1 do
-					local bossFrame = bossPanel["Boss" .. i]
-					local bossInfo = bossData[bossIndex]
+					for i = numOfBosses, 1, -1 do
+						local bossFrame = bossPanel["Boss" .. i]
+						local bossInfo = bossData[bossIndex]
 
-					bossFrame:SetShown(bossInfo)
+						if(bossInfo) then
+							local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
 
-					if(bossInfo) then
-						local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+							bossFrame.Icon:SetDesaturated(bossDefeated)
+							bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
 
-						bossFrame.Icon:SetDesaturated(bossDefeated)
-						bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
-
-						if(newActivity) then
-							SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+							bossIndex = bossIndex - 1
 
 						end
+					end
+				else
+					bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
 
-						bossIndex = bossIndex - 1
+					numOfBosses = 20
 
+					for i = numOfBosses, 1, -1 do
+						local bossFrame = bossPanel["Boss" .. i]
+						local bossInfo = bossData[bossIndex]
+
+						bossFrame:SetShown(bossInfo)
+
+						if(bossInfo) then
+							local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+
+							bossFrame.Icon:SetDesaturated(bossDefeated)
+							bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
+
+							if(newActivity) then
+								SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+
+							end
+
+							bossIndex = bossIndex - 1
+
+						end
 					end
 				end
-			end		
+			end
 		else
 			local memberPanel = currentFrame.MemberPanel
 

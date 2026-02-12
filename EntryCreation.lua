@@ -242,12 +242,64 @@ end
 
 local function addExpansionHeadersToDropdown(rootDescription)
 	if(LFGListFrame.CategorySelection.selectedCategory == 2 or LFGListFrame.CategorySelection.selectedCategory == 3 and LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
-		for i = 1, EJ_GetNumTiers() - 1, 1 do
-		--for k, v in ipairs(expansionTable) do
-			local expansionInfo = GetExpansionDisplayInfo(i-1)
+		local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, Enum.LFGListFilter.PvE)
+		local expansionGroupList = {}
 
-			local expansionButton = rootDescription:CreateRadio(miog.EXPANSIONS[i].name, function(index) return index == selectedExpansion end, function(index)
-			end, i)
+		local expansionButtonList = {}
+
+		local currentTier = EJ_GetNumTiers() - 1
+
+		local hasOneOfCurrentTier = false
+	
+		for _, y in ipairs(allExpansionsGroups) do
+			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, y)
+			local activityID = activities[#activities]
+			local activityInfo = miog:GetActivityInfo(activityID)
+
+			if(activityInfo.tier == currentTier) then
+				hasOneOfCurrentTier = true
+
+			end
+
+			tinsert(expansionGroupList, {name = miog:GetActivityGroupName(activityID), activityID = activityID, groupID = y, tier = activityInfo.tier, icon = activityInfo.icon})
+
+		end
+		
+		local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, 0, 6)
+
+		for _, activityID in ipairs(activities) do
+			local activityInfo = miog:GetActivityInfo(activityID)
+
+			if(activityInfo.tier == i) then
+				tinsert(expansionGroupList, {name = activityInfo.instanceName, activityID = activityID, groupID = 0})
+
+			end
+		end
+
+		if(not hasOneOfCurrentTier) then
+			local groupsDone = {}
+
+			for _, activityID in ipairs(miog.manualData.activity) do
+				local activityInfo = miog:GetActivityInfo(activityID)
+				
+				if(not groupsDone[activityInfo.groupFinderActivityGroupID]) then
+					if(activityInfo.tier == currentTier and activityInfo.isRaid ~= true) then
+						tinsert(expansionGroupList, {name = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID), activityID = activityID, groupID = activityInfo.groupFinderActivityGroupID, tier = activityInfo.tier, icon = activityInfo.icon})
+
+					end
+
+					groupsDone[activityInfo.groupFinderActivityGroupID] = true
+				end
+			end
+		end
+
+		table.sort(expansionGroupList, function(k1, k2)
+			return k1.name < k2.name
+		end)
+
+		for i = 1, EJ_GetNumTiers() - 1, 1 do
+			local expansionInfo = GetExpansionDisplayInfo(i-1)
+			local expansionButton = rootDescription:CreateRadio(miog.TIER_INFO[i].name, function(index) return index == selectedExpansion end, function(index) end, i)
 	
 			expansionButton:AddInitializer(function(button, description, menu)
 				local leftTexture = button:AttachTexture();
@@ -260,85 +312,43 @@ local function addExpansionHeadersToDropdown(rootDescription)
 				return button.fontString:GetUnboundedStringWidth() + 18 + 5
 			end)
 
-			local expansionGroupList = {}
-			local allExpansionsGroups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, Enum.LFGListFilter.PvE)
+			tinsert(expansionButtonList, expansionButton)
+		end
 
-			local hasOneOfCurrentTier = false
-	
-			for _, y in ipairs(allExpansionsGroups) do
-				local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, y)
-				local activityID = activities[#activities]
-				local activityInfo = miog:GetActivityInfo(activityID)
+		local currGroup, currActivity, currExp
 
-				if(activityInfo.tier == i) then
-					hasOneOfCurrentTier = true
-					tinsert(expansionGroupList, {name = C_LFGList.GetActivityGroupInfo(y), activityID = activityID, groupID = y})
+		for k, v in ipairs(expansionGroupList) do
+			local activityButton = expansionButtonList[v.tier]:CreateRadio(v.name, function(data) return (data.groupID > 0 and data.groupID == LFGListFrame.EntryCreation.selectedGroup or data.activityID == LFGListFrame.EntryCreation.selectedActivity) and selectedExpansion == i end, function(data)
+				selectedExpansion = i
 
-				end
-			end
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, LFGListFrame.CategorySelection.selectedCategory, v.groupID, v.activityID)
 
-			if(not hasOneOfCurrentTier) then
-				local groupsDone = {}
+			end, v)
 
-				for _, activityID in ipairs(miog.manualData.activity) do
-					local activityInfo = miog:GetActivityInfo(activityID)
-					
-					if(not groupsDone[activityInfo.groupFinderActivityGroupID]) then
-						if(activityInfo.tier == i and activityInfo.isRaid ~= true) then
-							tinsert(expansionGroupList, {name = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID), activityID = activityID, groupID = activityInfo.groupFinderActivityGroupID})
+			activityButton:AddInitializer(function(button, description, menu)
+				local leftTexture = button:AttachTexture();
+				leftTexture:SetSize(16, 16);
+				leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+				leftTexture:SetTexture(v.icon);
 
-						end
+				button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
 
-						groupsDone[activityInfo.groupFinderActivityGroupID] = true
-					end
-				end
-			end
-
-			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, 0, 6)
-
-			for _, activityID in ipairs(activities) do
-				local activityInfo = miog:GetActivityInfo(activityID)
-
-				if(activityInfo.tier == i) then
-					tinsert(expansionGroupList, {name = activityInfo.instanceName, activityID = activityID, groupID = 0})
-
-				end
-			end
-	
-			table.sort(expansionGroupList, function(k1, k2)
-				return k1.name < k2.name
+				return button.fontString:GetUnboundedStringWidth() + 18 + 5
 			end)
 
-			for k, v in ipairs(expansionGroupList) do
-				local activityButton = expansionButton:CreateRadio(v.name, function(data) return (data.groupID > 0 and data.groupID == LFGListFrame.EntryCreation.selectedGroup or data.activityID == LFGListFrame.EntryCreation.selectedActivity) and selectedExpansion == i end, function(data)
-					selectedExpansion = i
-
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, LFGListFrame.CategorySelection.selectedCategory, v.groupID, v.activityID)
-
-				end, v)
-
-				local activityInfo = miog:GetActivityInfo(v.activityID)
-
-				if(activityInfo) then
-					activityButton:AddInitializer(function(button, description, menu)
-						local leftTexture = button:AttachTexture();
-						leftTexture:SetSize(16, 16);
-						leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-						leftTexture:SetTexture(activityInfo.icon);
-
-						button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-						return button.fontString:GetUnboundedStringWidth() + 18 + 5
-					end)
-				end
-
-				if(not selectedExpansion and not defaultGroup and not defaultActivity and k == 1) then
-					defaultGroup = v.groupID
-					defaultActivity = v.activityID
-					selectedExpansion = i
-					
-				end
+			if(k == 1) then
+				currGroup = v.groupID
+				currActivity = v.activityID
+				currExp = v.tier
+				
 			end
+		end
+
+		if(not selectedExpansion and not defaultGroup and not defaultActivity) then
+			defaultGroup = currGroup
+			defaultActivity = currActivity
+			selectedExpansion = currExp
+			
 		end
 	end
 end
@@ -395,7 +405,7 @@ local function gatherAllActivities(dropdown, rootDescription)
 			return k1.name < k2.name
 		end)
 		
-		rootDescription:CreateTitle(miog.EXPANSIONS[GetNumExpansions()].name .. " Dungeons")
+		rootDescription:CreateTitle(miog.TIER_INFO[EJ_GetNumTiers() - 1].name .. " Dungeons")
 		addActivityListToDropdown(currentExpansionDungeons, rootDescription)
 		rootDescription:CreateDivider();
 
@@ -649,10 +659,7 @@ miog.createEntryCreation = function()
 	entryCreation.DifficultyDropDown:SetDefaultText("Select a difficulty")
 	entryCreation.PlaystyleDropDown:SetDefaultText("Select a playstyle")
 
-    entryCreation.ActivityDropDown:SetupMenu(function(dropdown, rootDescription)
-		gatherAllActivities(dropdown, rootDescription)
-
-	end)
+    entryCreation.ActivityDropDown:SetupMenu(gatherAllActivities)
 
 	local nameField = LFGListFrame.EntryCreation.Name
 	nameField:ClearAllPoints()

@@ -20,7 +20,7 @@ function ProgressOverviewCellMixin:Populate(dataTable, index)
             --[[
             local mapID = data.currentRaidMapID
 
-            local mapInfo = miog.getMapInfo(mapID, true)
+            local mapInfo = miog:GetMapInfo(mapID, true)
             local numBosses = #mapInfo.bosses
 
             for i = 1, 3, 1 do

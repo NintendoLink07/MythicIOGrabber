@@ -912,8 +912,6 @@ local function refreshFilters()
 						local info = miog:GetGroupInfo(data.filterID)
 						bossTable = info.activityDBs[1].bosses
 
-						DevTools_Dump(info.activityDBs)
-
 					elseif(data.isWorld) then
 						local info = miog:GetMapInfo(data.filterID)
 						bossTable = info.bosses
@@ -1419,7 +1417,7 @@ local function loadFilterManager()
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
 			if(self:GetParent().type == "world") then
-				GameTooltip:SetText(miog.getMapInfo(filterID).name)
+				GameTooltip:SetText(miog:GetMapInfo(filterID).name)
 
 			elseif(self:GetParent().type == "pvp") then
 				GameTooltip:SetText(C_LFGList.GetActivityFullName(filterID) or "")

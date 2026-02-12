@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.9.2] - 2026-02-11
+## [3.9.2] - 2026-02-12
 
 ### Added
 
@@ -23,12 +23,21 @@ and this project adheres to [Semantic Versioning].
 
 - [Progress] Activity backgrounds should be visible again.
 
+- [SearchPanel] Boss data will now be correctly loaded.
+
+- [FilterManager] Boss filters will now only be shown if there are any current raids.
+
+- [GroupCreator] Fixed some performance regressions introduced with v3.9 / Midnight.
+
 - More backend changes for v4.0.
 
 ### Known issues
 
 - [Progress] There are currently no raids shown, because the season hasn't started yet.
 This will automatically be "fixed" when Midnight officially launches.
+
+- [GroupCreator] Lag is present when opening the "Dungeons" submenu.
+This will be fixed in v4.0.
 
 
 
@@ -4570,7 +4579,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.1..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.2..HEAD
+[3.9.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.2
 [3.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.1
 [3.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9
 [3.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.8

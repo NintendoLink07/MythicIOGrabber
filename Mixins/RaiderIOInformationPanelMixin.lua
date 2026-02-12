@@ -4,6 +4,10 @@ RaiderIOInformationPanelMixin = {}
 
 MIOG_FAILSAFE_SEASON_ID = 13
 
+function RaiderIOInformationPanelMixin:HasRaidInfo()
+    return self.raidInfo and #self.raidInfo > 0
+end
+
 function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
     self.mythicPlusInfo = miog.retrieveAndSortChallengeModeMapTable()
     self.raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
@@ -71,11 +75,10 @@ end
 function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsFrame) --mapID
     local raidHeaderFrame = raidFrame.Header
 
-    --local mapDB = miog:GetMapInfo(mapID)
-    local mapInfo = miog.getMapInfo(mapID, true)
+    local mapInfo = miog:GetMapInfo(mapID)
 
     if(mapInfo) then
-        local numBosses = #mapInfo.bosses
+        local numBosses = mapInfo.numOfBosses
 
         if(raidHeaderFrame.Progress1) then
             raidHeaderFrame.Progress1:SetText(WrapTextInColorCode("0/"..numBosses, miog.CLRSCC.red))
@@ -148,11 +151,9 @@ function RaiderIOInformationPanelMixin:OnLoadRaid()
         local data = self.raidInfo[k]
 
         if(data) then
-    --for k, data in ipairs(self.raidInfo) do
             local raidFrame = self.Raids["Raid" .. raidCounter]
 
             if(raidFrame) then
-
                 self:SetupRaidFrame(raidFrame, data.mapID)
 
                 raidCounter = raidCounter + 1

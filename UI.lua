@@ -13,7 +13,7 @@ local panels
 local function setProgressPanelInfo(categoryID)
 	if(IsPlayerAtEffectiveMaxLevel()) then
 		local isDungeon = categoryID == 2
-		local isRaid = categoryID == 3
+		local isRaid = categoryID == 3 and miog.ProgressPanel:HasRaidInfo()
 		local isCorrectCategory = isDungeon or isRaid
 
 		miog.ProgressPanel:SetShown(isCorrectCategory)
@@ -72,11 +72,7 @@ local function setActivePanel(_, panel)
 
 		elseif(panel == LFGListFrame.EntryCreation) then
 			miog.EntryCreation:Show()
-
-			if(miog.F.LITE_MODE) then
-				miog.initializeActivityDropdown()
-
-			end
+			
 		else
 			miog.Plugin:Hide()
 
