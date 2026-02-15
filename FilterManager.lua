@@ -496,15 +496,18 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 
 				local bossTable = currentSettings.activityBosses[activityInfo.groupFinderActivityGroupID]
 
+				local bossData = miog:GetJournalInstanceBossDataFromActivity(searchResultInfo.activityIDs[1])
+
 				if(bossTable) then
 					for index, state in pairs(bossTable) do
-						local bossInfo = activityInfo.bosses[index]
+						local bossInfo = bossData[index]
 
 						if(state > 1 and bossInfo) then
-							local bossIsDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName] or false
 							-- 1 either defeated or alive
 							-- 2 alive
 							-- 3 defeated
+
+							local bossIsDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName] or false
 
 							if(bossIsDefeated and state == 2 or not bossIsDefeated and state == 3) then
 								return false, "bossSelectionMismatch"
@@ -736,11 +739,9 @@ local function refreshSpinnerFilters()
 end
 
 local function sortActivityGroup(k1, k2)
-	local ga1, ga2 = miog.requestGroupInfo(k1), miog.requestGroupInfo(k2)
+	local ga1, ga2 = miog:GetGroupInfo(k1), miog:GetGroupInfo(k2)
 
 	if(ga1 and ga1.abbreviatedName and ga2 and ga2.abbreviatedName) then
-		--local fn1, fn2 = miog.requestActivityInfo(ga1.activityID).fullName, miog.requestActivityInfo(ga2.activityID).fullName
-
 		return ga1.abbreviatedName < ga2.abbreviatedName
 
 	elseif(ga1 and ga1.abbreviatedName) then
@@ -911,10 +912,12 @@ local function refreshFilters()
 					if(data.isPvE) then
 						local info = miog:GetGroupInfo(data.filterID)
 						bossTable = info.activityDBs[1].bosses
+						bossIcons = info.bossIcons or {}
 
 					elseif(data.isWorld) then
 						local info = miog:GetMapInfo(data.filterID)
 						bossTable = info.bosses
+						bossIcons = info.bossIcons or {}
 
 					end
 
@@ -929,7 +932,7 @@ local function refreshFilters()
 
 								--SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossTable[i].creatureDisplayInfoID)
 
-								bossFrame.Icon:SetTexture(bossTable[i].icon)
+								bossFrame.Icon:SetTexture(bossIcons[i] and bossIcons[i].icon or bossTable[i].icon)
 
 								local setting = retrieveSetting("activityBosses", data.filterID)
 
@@ -962,6 +965,10 @@ local function refreshFilters()
 
 							end
 						end
+
+					else
+						bossParent:Hide()
+
 					end
 				end
 			end
@@ -970,6 +977,8 @@ local function refreshFilters()
 				filterManager.ActivityBosses["Bosses" .. i]:Hide()
 
 			end
+			
+			filterManager.ActivityBosses:MarkDirty()
 		end
 	else
 		refreshInputFilters("Rating")
@@ -1416,13 +1425,16 @@ local function loadFilterManager()
 
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-			if(self:GetParent().type == "world") then
-				GameTooltip:SetText(miog:GetMapInfo(filterID).name)
+			local type = self:GetParent().type
 
-			elseif(self:GetParent().type == "pvp") then
+			if(type == "world") then
+				local mapInfo = miog:GetMapInfo(filterID)
+				GameTooltip:SetText(mapInfo.activities[1].fullName)
+
+			elseif(type == "pvp") then
 				GameTooltip:SetText(C_LFGList.GetActivityFullName(filterID) or "")
 
-			elseif(self:GetParent().type == "pve") then
+			elseif(type == "pve") then
 				GameTooltip:SetText(C_LFGList.GetActivityGroupInfo(filterID) or "")
 
 			end
@@ -1438,7 +1450,22 @@ local function loadFilterManager()
 			
 				if(getCurrentCategoryID() == 3) then
 					local bossParent = filterManager.ActivityBosses["Bosses" .. i]
-					bossParent:SetShown(self:GetChecked())
+
+					local type = self:GetParent().type
+
+					local bossTable
+					
+					if(type == "pve") then
+						local info = miog:GetGroupInfo(filterID)
+						bossTable = info.activityDBs[1].bosses
+
+					elseif(type == "world") then
+						local info = miog:GetMapInfo(filterID)
+						bossTable = info.bosses
+
+					end
+
+					bossParent:SetShown(self:GetChecked() and bossTable and #bossTable > 0)
 
 					filterManager.ActivityBosses:MarkDirty()
 				end

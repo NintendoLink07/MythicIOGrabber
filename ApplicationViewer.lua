@@ -218,7 +218,7 @@ local function updateApplicantMemberFrame(frame, data)
 	end
 	
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
-	local categoryID = activeEntry and miog.requestActivityInfo(activeEntry.activityIDs[1]).categoryID
+	local categoryID = activeEntry and miog:GetActivityInfo(activeEntry.activityIDs[1]).categoryID
 
 	miog.setInfoIndicators(applicantMemberFrame, categoryID, dungeonScore, dungeonData, miog.getNewRaidSortData(playerName, realm), pvpData)
 end
@@ -238,7 +238,7 @@ local function createDataProviderWithUnsortedData()
 	local currentApplicants = getApplicants()
 
 	if(activeEntry) then
-		local categoryID = miog.requestActivityInfo(activeEntry.activityIDs[1]).categoryID
+		local categoryID = miog:GetActivityInfo(activeEntry.activityIDs[1]).categoryID
 
 		for _, applicantID in pairs(currentApplicants) do
 			local applicantData = getApplicantInfo(applicantID)

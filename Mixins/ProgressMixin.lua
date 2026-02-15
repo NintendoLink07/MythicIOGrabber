@@ -396,7 +396,7 @@ function ProgressOverviewMixin:LoadActivities()
 			local activities = C_LFGList.GetAvailableActivities(3, v)
 			local activityID = activities[#activities]
 			local name, order = C_LFGList.GetActivityGroupInfo(v)
-			local activityInfo = miog.requestActivityInfo(activityID)
+			local activityInfo = miog:GetActivityInfo(activityID)
 			local mapID = activityInfo.mapID
 
 			miog.checkSingleMapIDForNewData(mapID, true)
@@ -1056,7 +1056,7 @@ function ProgressRaidMixin:LoadActivities()
 			local activities = C_LFGList.GetAvailableActivities(3, v)
 			local activityID = activities[#activities]
 			local name, order = C_LFGList.GetActivityGroupInfo(v)
-			local activityInfo = miog.requestActivityInfo(activityID)
+			local activityInfo = miog:GetActivityInfo(activityID)
 			local mapID = activityInfo.mapID
 
 			miog.checkSingleMapIDForNewData(mapID, true)

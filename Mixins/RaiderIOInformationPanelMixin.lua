@@ -25,7 +25,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
             if(not done[mapChallengeModeID]) then
                 local currentDungeon = self.MythicPlus["Dungeon" .. k]
                 local info = miog.retrieveMapInfoFromChallengeModeMap(mapChallengeModeID)
-                --local activityInfo = miog.requestActivityInfo(data.activityID)
+                --local activityInfo = miog:GetActivityInfo(data.activityID)
 
                 currentDungeon.dungeonName = name
 
@@ -34,7 +34,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
                     local groupID = miog.retrieveGroupIDFromChallengeModeMap(mapChallengeModeID)
 
                     if(miog.GROUP_ACTIVITY_ID_INFO[groupID]) then
-                        local groupInfo = miog.requestGroupInfo(groupID)
+                        local groupInfo = miog:GetGroupInfo(groupID)
 
                         if(groupInfo) then
                             abbrName = groupInfo.abbreviatedName

@@ -33,7 +33,7 @@ local function updateFakeGroupApplications(dataProvider)
 						if(appStatus ~= "applied") then
 							--local identifier = "FAKE_APPLICATION_FOR_RESULT_" .. resultID
 							--local searchResultInfo = C_LFGList.GetSearchResultInfo(id);
-							--local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+							--local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 							--local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 					
 							dataProvider:Insert({
@@ -194,7 +194,7 @@ local function updateGroupApplications(dataProvider)
 
 				if(appStatus == "applied") then
 					--local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
-					--local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+					--local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 					--local groupInfo = C_LFGList.GetActivityGroupInfo(activityInfo.groupFinderActivityGroupID)
 			
 					--[[local frameData = {
@@ -580,7 +580,7 @@ miog.loadQueueSystem = function()
 		elseif(data.template == "MIOG_QueueListingFrameTemplate") then
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 			local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
-			local activityInfo = miog.requestActivityInfo(activeEntryInfo.activityIDs[1])
+			local activityInfo = miog:GetActivityInfo(activeEntryInfo.activityIDs[1])
 
 			if(activityInfo) then
 				local unitName, unitID = miog.getGroupLeader()
@@ -617,7 +617,7 @@ miog.loadQueueSystem = function()
 
 			end
 
-			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 
 			activityName = searchResultInfo.name .. " - " .. (WrapTextInColorCode(activityInfo.fullName or "", CreateColor(1, 0.82, 0):GenerateHexColor()))
 			backgroundImage = activityInfo.horizontal

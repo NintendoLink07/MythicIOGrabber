@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9.2
+## Version: 3.9.3
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -30,6 +30,7 @@ EntryCreation.lua
 Calendar.lua
 SharedFunctions.lua
 FilterManager.lua
+GroupOrganizer.lua
 
 GearingTable.lua
 AdventureJournal.lua
@@ -45,14 +46,13 @@ StatisticsRecorder.lua
 
 FuzzyAlgorithm.lua
 
-GroupOrganizer.lua
-Loot.lua
-
 ## FrameTester.lua
 
 ##
 ### MIXINS
 ##
+
+ModuleMixins\Loot\LootMixin.lua
 
 ModuleMixins\AppViewer\AppViewer.lua
 ModuleMixins\AppViewer\ApplicantMixin.lua
@@ -104,6 +104,8 @@ Mixins\AnchorSystemMixin.lua
 ##
 ### XML
 ##
+
+XML\Loot\MIOG_Loot.xml
 
 XML\AppViewer\MIOG_AppViewer.xml
 XML\AppViewer\MIOG_AppViewerApplicantMemberTemplate.xml

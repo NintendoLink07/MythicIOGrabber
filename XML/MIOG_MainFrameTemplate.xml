@@ -659,6 +659,13 @@
                     <Frame parentKey="Drops" inherits="MIOG_Drops" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
 
+                    <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true">
+                        <Size x="400" y="300" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Drops" relativePoint="TOPRIGHT" x="40"/>
+                        </Anchors>
+                    </Frame>
                 </Frames>
 
                 <Layers>

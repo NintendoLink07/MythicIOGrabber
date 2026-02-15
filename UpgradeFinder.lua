@@ -462,7 +462,7 @@ local function findAllRelevantMapIDs()
     
     if(dungeonGroup and #dungeonGroup > 0) then
         for _, v in ipairs(dungeonGroup) do
-            local groupInfo = miog.requestGroupInfo(v)
+            local groupInfo = miog:GetGroupInfo(v)
             listWithMapIDs[#listWithMapIDs + 1] = {mapID = groupInfo.mapID, active = true}
             seasonalDungeonsDone[v] = true
         end
@@ -471,7 +471,7 @@ local function findAllRelevantMapIDs()
     if(expansionGroups and #expansionGroups > 0) then
         for _, v in ipairs(expansionGroups) do
             if(not seasonalDungeonsDone[v]) then
-                local groupInfo = miog.requestGroupInfo(v)
+                local groupInfo = miog:GetGroupInfo(v)
                 listWithMapIDs[#listWithMapIDs + 1] = {mapID = groupInfo.mapID, active = false}
                 
             end
@@ -480,7 +480,7 @@ local function findAllRelevantMapIDs()
 
     if(seasonGroups and #seasonGroups > 0) then
         for _, v in ipairs(seasonGroups) do
-            local groupInfo = miog.requestGroupInfo(v)
+            local groupInfo = miog:GetGroupInfo(v)
             listWithMapIDs[#listWithMapIDs + 1] = {mapID = groupInfo.mapID, active = true}
 
         end
@@ -488,7 +488,7 @@ local function findAllRelevantMapIDs()
 
     if(worldBossActivity and #worldBossActivity > 0) then
         for _, v in ipairs(worldBossActivity) do
-            local activityInfo = miog.requestActivityInfo(v)
+            local activityInfo = miog:GetActivityInfo(v)
             listWithMapIDs[#listWithMapIDs + 1] = {mapID = activityInfo.mapID, active = false}
             
         end

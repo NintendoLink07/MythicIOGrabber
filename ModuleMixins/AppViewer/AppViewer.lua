@@ -178,7 +178,7 @@ function AppViewer:RetrieveAndSetEntryInfo()
 	if(activeEntry) then
 		local activityInfo = C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1])
 		categoryID = activityInfo.categoryID
-		local customInfo = miog.requestActivityInfo(activeEntry.activityIDs[1])
+		local customInfo = miog:GetActivityInfo(activeEntry.activityIDs[1])
 
 		local pretext = activeEntry.privateGroup and "!" or ""
 

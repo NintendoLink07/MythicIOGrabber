@@ -629,6 +629,50 @@ end
 miog.GROUP_ACTIVITY_ID_INFO = {
 	[280] = {abbreviatedName="STRTS", mapID = "2441", challengeModeID=391, fileName="tazavesh_streets"},
 	[281] = {abbreviatedName="GMBT", mapID = "2441", challengeModeID=392, fileName="tazavesh_gambit"},
+
+	[378] = {abbreviatedName="MFO", mapID = "2810",
+		bossIcons = {
+			{icon = "interface/icons/inv_112_achievement_raid_automaton.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_silkworm.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_binder.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_engineer.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_dhcouncil.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_glasselemental.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_salhadaar.blp"},
+			{icon = "interface/icons/inv_112_achievement_raid_dimensius.blp"},
+		},
+	},	
+	
+	[362] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ulgrax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/bloodboundhorror.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/sikran.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/rashanan.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/ovinax.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/kyveza.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/silkencourt.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/np/queenansurek.png"},
+		},
+		abbreviatedName = "NP",
+		mapID = 2657,
+		
+	},
+
+	[377] = {
+		bossIcons = {
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/vexie.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/carnage.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/rik.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/lockenstock.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/stix.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/bandit.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/mugzee.png"},
+			{icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/lou/gallywix.png"},
+		},
+		abbreviatedName = "LOU",
+		mapID = 2769,
+	},
 }
 
 miog.MAP_INFO = {
@@ -1526,6 +1570,10 @@ local manualData = {
 miog.manualData = manualData
 miog.database = database
 
+function miog:GetJournalDB()
+	return miog.database.pointers.journal
+end
+
 function miog:RetrieveJournalInstanceBossData(journalInstanceID)
 	local journalDB = database.pointers.journal[journalInstanceID]
 	local bossDB = {}
@@ -1564,7 +1612,17 @@ function miog:RetrieveJournalInstanceBossData(journalInstanceID)
 
 	end
 
-	return journalDB
+	return journalDB.bosses
+end
+
+function miog:GetJournalInstanceBossDataFromActivity(activityID)
+	local activityDB = database.pointers.activity[activityID]
+	local journalInstanceID = activityDB.journalInstanceID
+
+	if(journalInstanceID) then
+		return database.pointers.journal[journalInstanceID].bosses or miog:RetrieveJournalInstanceBossData(journalInstanceID)
+
+	end
 end
 
 function miog:GetJournalInstanceBossData(journalInstanceID)
@@ -1577,21 +1635,34 @@ function miog:GetJournalInstanceIDFromMap(mapID)
 
 end
 
-function miog:RetrieveJournalInstanceInfo(journalInstanceID)
-	local instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceInfo(journalInstanceID)
-
+function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier)
 	database.pointers.journal[journalInstanceID] = {
-		buttonImage1 = buttonImage1,
-		buttonImage2 = buttonImage2,
-		bgImage = bgImage,
-		loreImage = loreImage,
 		instanceName = instanceName,
-		tier = tier,
+		bgImage = bgImage,
+		journalInstanceID = journalInstanceID,
+		buttonImage1 = buttonImage1,
+		loreImage = loreImage,
+		buttonImage2 = buttonImage2,
+		mapID = mapID,
 		isRaid = isRaid,
-		mapID = mapID
+		tier = tier,
 	}
 
 	miog:RetrieveJournalInstanceBossData(journalInstanceID)
+end
+
+function miog:RetrieveJournalInstanceInfoFromIndex(index, isRaid)
+	local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+
+	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid)
+
+	return database.pointers.journal[journalInstanceID]
+end
+
+function miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
+	local instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceInfo(journalInstanceID)
+
+	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid)
 
 	return database.pointers.journal[journalInstanceID]
 end
@@ -1606,24 +1677,13 @@ function miog:CreateJournalDB()
 			local isRaid = shouldBeRaid == 1
 
 			local index = 1
-			local instanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
+			local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
 
 			while instanceName do
-				database.pointers.journal[instanceID] = {
-					buttonImage1 = buttonImage1,
-					buttonImage2 = buttonImage2,
-					bgImage = bgImage,
-					loreImage = loreImage,
-					instanceName = instanceName,
-					tier = tier,
-					isRaid = isRaid,
-					mapID = mapID
-				}
-
-				miog:RetrieveJournalInstanceBossData(instanceID)
+				miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier)
 
 				index = index + 1
-				instanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+				journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
 			end
 		end
 	end
@@ -1689,21 +1749,23 @@ end
 
 function miog:IntegrateMapDataIntoJournal(mapID)
 	local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-	local journalDB = database.pointers.journal[journalInstanceID]
 
-	if(journalDB) then
-		--local mapID = journalDB.mapID
-		local mapDB = database.pointers.map[mapID]
+	if(journalInstanceID) then
+		local journalDB = database.pointers.journal[journalInstanceID] or miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
 
-		journalDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
-		journalDB.icon = miog.MAP_INFO[mapID].icon
-		journalDB.fileName = miog.MAP_INFO[mapID].fileName
-		journalDB.toastBG = miog.MAP_INFO[mapID].toastBG
-		journalDB.pvp = miog.MAP_INFO[mapID].pvp
-		journalDB.journalInstanceID = mapDB.journalInstanceID
+		if(journalDB) then
+			local mapDB = database.pointers.map[mapID]
 
-		journalDB.horizontal = mapDB.horizontal
-		journalDB.vertical = mapDB.vertical
+			journalDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
+			journalDB.icon = miog.MAP_INFO[mapID].icon
+			journalDB.fileName = miog.MAP_INFO[mapID].fileName
+			journalDB.toastBG = miog.MAP_INFO[mapID].toastBG
+			journalDB.pvp = miog.MAP_INFO[mapID].pvp
+			journalDB.journalInstanceID = mapDB.journalInstanceID
+
+			journalDB.horizontal = mapDB.horizontal
+			journalDB.vertical = mapDB.vertical
+		end
 	end
 end
 
@@ -1794,7 +1856,6 @@ function miog:IntegrateParentGroupDataIntoChildActivity(activityID)
 		activityDB.groupName = C_LFGList.GetActivityGroupInfo(activityDB.groupFinderActivityGroupID)
 
 	end
-
 end
 
 function miog:LoadActivityData(activityID)
@@ -1814,7 +1875,6 @@ function miog:LoadActivityData(activityID)
 				miog:IntegrateMapDataIntoActivity(activityID)
 				miog:IntegrateMapDataIntoActivityGroup(activityID)
 				miog:IntegrateParentGroupDataIntoChildActivity(activityID)
-
 			end
 		end
 
@@ -1841,11 +1901,17 @@ function miog:LoadGroupData(groupID)
 
 		database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = activities, activityDBs = {}}
 		
+		local groupDB = database.pointers.groups[groupID]
+
 		for activityIndex, activityID in pairs(activities) do
 			miog:LoadActivityData(activityID)
 			miog:IntegrateActivityDataIntoParentGroup(activityIndex, activityID)
 
 		end
+
+		groupDB.bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons
+		groupDB.highestDifficultyActivityID = database.pointers.groups[groupID].activities[#database.pointers.groups[groupID].activities]
+
 
 		return database.pointers.groups[groupID]
 	end
@@ -1871,6 +1937,7 @@ do
 
 		database.pointers.groups[activityInfo.groupFinderActivityGroupID] = database.pointers.groups[activityInfo.groupFinderActivityGroupID] or {name = groupName, groupOrder = groupOrder, categoryID = activityInfo.categoryID, activities = {}, activityDBs = {}}
 		tinsert(database.pointers.groups[activityInfo.groupFinderActivityGroupID].activities, activityID)
+
 
 		miog:LoadActivityData(activityID)
 
@@ -1916,7 +1983,7 @@ function miog:HasJournalInstanceInfo(journalInstanceID)
 end
 
 function miog:GetJournalInstanceInfo(journalInstanceID)
-	return database.pointers.journal[journalInstanceID] or miog:RetrieveJournalInstanceInfo(journalInstanceID)
+	return database.pointers.journal[journalInstanceID] or miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
 
 end
 
@@ -2431,7 +2498,7 @@ local function loadRawData()
 	end
 	
 	--loadActivitiesData()
-	loadGroupData()
+	--loadGroupData()
 end
 
 miog.loadRawData = loadRawData

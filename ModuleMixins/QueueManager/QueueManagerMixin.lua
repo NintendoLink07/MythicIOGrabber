@@ -223,7 +223,7 @@ function QueueManagerMixin:OnLoad()
 		elseif(data.template == "MIOG_QueueManagerListingFrameTemplate") then
 			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 			local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
-			local activityInfo = miog.requestActivityInfo(activeEntryInfo.activityIDs[1])
+			local activityInfo = miog:GetActivityInfo(activeEntryInfo.activityIDs[1])
 
 			if(activityInfo) then
 				local unitName, unitID = miog:GetGroupLeader()
@@ -261,7 +261,7 @@ function QueueManagerMixin:OnLoad()
 
 			end
 
-			local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 
 			activityName = searchResultInfo.name .. " - " .. (WrapTextInColorCode(activityInfo.fullName or "", CreateColor(1, 0.82, 0):GenerateHexColor()))
 			backgroundImage = activityInfo.horizontal

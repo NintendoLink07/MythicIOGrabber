@@ -625,7 +625,7 @@ miog.retrieveCurrentSeasonDungeonActivityIDs = function(justIDs, sort)
 	for k, v in ipairs(C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))) do
         local activities = C_LFGList.GetAvailableActivities(GROUP_FINDER_CATEGORY_ID_DUNGEONS, v)
         local activityID = activities[#activities]
-		local activityInfo = miog.requestActivityInfo(activityID)
+		local activityInfo = miog:GetActivityInfo(activityID)
 
         tinsert(mythicPlusActivities, justIDs and activityID or {name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, mapID = activityInfo.mapID})
     end
@@ -661,7 +661,7 @@ miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
 
 			local activityID = activities[#activities]
 
-			local activityInfo = miog.requestActivityInfo(activityID)
+			local activityInfo = miog:GetActivityInfo(activityID)
 
 			tinsert(mythicPlusActivities, justIDs and activityID or {abbreviatedName = activityInfo.abbreviatedName, activityID = activityID, mapID = activityInfo.mapID})
 		end
@@ -692,7 +692,7 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 			local activities = C_LFGList.GetAvailableActivities(3, v)
 			local activityID = activities[#activities]
 			local name, order = C_LFGList.GetActivityGroupInfo(v)
-			local activityInfo = miog.requestActivityInfo(activityID)
+			local activityInfo = miog:GetActivityInfo(activityID)
 
 			tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
 		end
@@ -1414,7 +1414,7 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 
 		if(searchResultInfo.leaderName) then
-			--local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+			--local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 			playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 		end
 		
@@ -1434,7 +1434,7 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 	frame:SetOptionalData(comment, realm)
 	frame:ApplyFillData(true)
 
-	local activityInfo = miog.requestActivityInfo(activityID)
+	local activityInfo = miog:GetActivityInfo(activityID)
 
 	if(activityInfo) then
 		frame.Background:SetTexture(activityInfo.horizontal, "CLAMP", "MIRROR")
@@ -1669,7 +1669,7 @@ end)
 miog.getCurrentCategoryID = function()
 	local currentPanel = LFGListFrame.activePanel:GetDebugName()
 	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
-	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and miog.requestActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
+	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and miog:GetActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
 	LFGListFrame.CategorySelection.selectedCategory
 
 
@@ -1725,7 +1725,7 @@ local function insertLFGInfo(activityID)
 	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
 
 	if(entryInfo) then
-		local activityInfo = miog.requestActivityInfo(entryInfo.activityIDs[1])
+		local activityInfo = miog:GetActivityInfo(entryInfo.activityIDs[1])
 		miog.ApplicationViewer.InfoPanel.Background:SetTexture(activityInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
 
 		miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)

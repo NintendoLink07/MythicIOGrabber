@@ -15,3 +15,4 @@ Needs overhaul
 
 No idea
 - Upgrades
+- FilterManager

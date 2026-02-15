@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.3] - 2026-02-15
+
+### Fixed
+
+- [FilterManager] Boss filtering should now work again.
+
+- [FilterManager] Boss icons are now visible again.
+
+- [FilterManager] The filter manager will not widen anymore when enabling/disabling a world boss activity.
+
+- [FilterManager] Hovering over a world activity (e.g. "KA" for Khaz Algar) will not result in an error anymore.
+
+### Known issues
+
+- [GroupCreator] While creating a group playstyles can't be selected.
+
+
+
+
 ## [3.9.2] - 2026-02-12
 
 ### Added
@@ -4579,7 +4598,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.3..HEAD
+[3.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.3
 [3.9.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.2
 [3.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.1
 [3.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9

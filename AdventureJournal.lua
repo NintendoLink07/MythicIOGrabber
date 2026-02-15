@@ -255,8 +255,8 @@ local function addMostCurrentRaidToList(instanceList, groups)
 
     if(groups and #groups > 0) then
         for _, v in ipairs(groups) do
-            local groupInfo = miog.requestGroupInfo(v)
-            local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
+            local groupInfo = miog:GetGroupInfo(v)
+            local activityInfo = miog:GetActivityInfo(groupInfo.highestDifficultyActivityID)
             activityInfo.isRaid = true
             activityInfo.name = activityInfo.mapName
 
@@ -264,7 +264,7 @@ local function addMostCurrentRaidToList(instanceList, groups)
         end
     end
 
-    tinsert(instanceList, miog.requestActivityInfo(highestIDRaid))
+    tinsert(instanceList, miog:GetActivityInfo(highestIDRaid))
 end
 
 local function createListWithCurrentGroupInfos()
@@ -288,10 +288,10 @@ local function createListWithCurrentGroupInfos()
     local mapIDList = {}
 
     for k, info in ipairs(fullList) do
-        local groupInfo = miog.requestGroupInfo(info.groupID)
-        local activityInfo = miog.requestActivityInfo(groupInfo.highestDifficultyActivityID)
+        local groupInfo = miog:GetGroupInfo(info.groupID)
+        local activityInfo = miog:GetActivityInfo(groupInfo.highestDifficultyActivityID)
         
-        tinsert(mapIDList, {activityID = groupInfo.highestDifficultyActivityID, mapID = activityInfo.mapID, name = groupInfo.groupName, isRaid = info.isRaid})
+        tinsert(mapIDList, {activityID = groupInfo.highestDifficultyActivityID, mapID = activityInfo.mapID, instanceName = groupInfo.instanceName, isRaid = info.isRaid})
     end
 
     return mapIDList
@@ -858,7 +858,7 @@ local function sortJournalInstances(k1, k2)
 
         end
 
-        return k1.name < k2.name
+        return k1.instanceName < k2.instanceName
 
     end
 
@@ -891,13 +891,13 @@ local function loadInstanceInfo()
 
             local counter = 1
 
-            local journalInstanceID, name, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(counter, checkForRaid)
+            local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID = EJ_GetInstanceByIndex(counter, checkForRaid)
 
             while(journalInstanceID) do
                 tinsert(journalInfo[tierIndex], {
                     tier = tierIndex,
                     journalInstanceID = journalInstanceID,
-                    name = name,
+                    instanceName = instanceName,
                     isRaid = checkForRaid,
                     --abbreviatedName = mapInfo.abbreviatedName,
                     mapID = mapID,
@@ -918,7 +918,7 @@ local function loadInstanceInfo()
 
     for k, v in ipairs(mapIDList) do
         local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(v.mapID)
-        tinsert(currentActivitiesTable, {journalInstanceID = journalInstanceID, name = v.name, index = k, isRaid = v.isRaid, mapID = v.mapID})
+        tinsert(currentActivitiesTable, {journalInstanceID = journalInstanceID, instanceName = v.instanceName or "", index = k, isRaid = v.isRaid, mapID = v.mapID})
         
     end
 

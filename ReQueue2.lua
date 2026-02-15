@@ -154,7 +154,7 @@ local function setupPopup()
 
         if(C_LFGList.HasSearchResultInfo(resultID)) then
             local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-            local activityInfo = miog.requestActivityInfo(searchResultInfo.activityIDs[1])
+            local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 
             local activityName = ""
             

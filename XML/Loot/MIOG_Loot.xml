@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_Loot" mixin="LootMixin" virtual="true">
+        <Frames>
+            <!-- 5 px taller than dropdowns -->
+            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="GameFontHighlight">
+                <Size y="30" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="8"/>
+                    <Anchor point="TOPRIGHT" x="-5"/>
+                </Anchors>
+            </EditBox> 
+            
+            <DropdownButton parentKey="InstanceDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="200" y="25"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-4"/>
+                </Anchors>
+            </DropdownButton>
+        </Frames>
+
+        <Scripts>
+            <OnLoad method="OnLoad" />
+        </Scripts>
+    </Frame>
+</Ui>
