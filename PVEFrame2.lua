@@ -126,7 +126,7 @@ local function anchorNewScrollBar(tab, name)
 			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.RaidSheetScrollBar
 
 		elseif(tab == 7) then
-			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.DropsScrollBar
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.LootScrollBar
 
 		elseif(tab == 8) then
 			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.UpgradesScrollBar

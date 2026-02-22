@@ -3,24 +3,83 @@
     <Frame name="MIOG_Loot" mixin="LootMixin" virtual="true">
         <Frames>
             <!-- 5 px taller than dropdowns -->
-            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" autoFocus="false" font="GameFontHighlight">
+            <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" mixin="LootSearchBarMixin" autoFocus="false" font="GameFontHighlight">
                 <Size y="30" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" x="8"/>
                     <Anchor point="TOPRIGHT" x="-5"/>
                 </Anchors>
+
+                <Scripts>
+                    <OnLoad method="OnLoad" />
+                </Scripts>
             </EditBox> 
             
             <DropdownButton parentKey="InstanceDropdown" inherits="WowStyle1DropdownTemplate">
-                <Size x="200" y="25"/>
+                <Size y="25"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-4"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMLEFT" x="-5"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOM" x="-2"/>
                 </Anchors>
             </DropdownButton>
+            
+            <CheckButton parentKey="OnlyItemsButton" inherits="MIOG_MinimalCheckButtonTemplate">
+                <Size x="25" y="25" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                        GameTooltip:SetText("Only show items")
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
+            </CheckButton>
+            
+            <DropdownButton parentKey="BossDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SearchBox" relativePoint="BOTTOM" x="2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.OnlyItemsButton" relativePoint="TOPLEFT"/>
+                </Anchors>
+            </DropdownButton>
+            
+            <DropdownButton parentKey="ClassArmorDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="140" y="25"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InstanceDropdown" relativePoint="BOTTOMLEFT" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+            
+            <DropdownButton parentKey="DifficultyDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="130" y="25"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.OnlyItemsButton" relativePoint="BOTTOMRIGHT" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+            
+            <DropdownButton parentKey="SlotDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.ClassArmorDropdown" relativePoint="RIGHT" x="2"/>
+                    <Anchor point="RIGHT" relativeKey="$parent.DifficultyDropdown" relativePoint="LEFT" x="-2"/>
+                </Anchors>
+            </DropdownButton>
+
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassArmorDropdown" relativePoint="BOTTOMLEFT" y="-4"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
         </Frames>
 
         <Scripts>
+            <OnShow method="OnShow" />
             <OnLoad method="OnLoad" />
         </Scripts>
     </Frame>

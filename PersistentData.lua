@@ -675,6 +675,255 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 	},
 }
 
+-- wagotools groupfinderactivity csv, sort by group id and create dataset with mapID, groupID and activityID
+miog.GROUP_INFO = {
+	[1] = {groupName = "Siege of Orgrimmar", orderIndex = 1},
+	[2] = {groupName = "Eastern Kingdoms", 	orderIndex = 0},
+	[3] = {groupName = "Kalimdor", orderIndex = 0},
+	[5] = {groupName = "Deadmines", orderIndex = 0},
+	[6] = {groupName = "Bloodmaul Slag Mines", orderIndex = 0},
+	[7] = {groupName = "Iron Docks", orderIndex = 0},
+	[8] = {groupName = "Auchindoun", orderIndex = 0},
+	[9] = {groupName = "Skyreach", orderIndex = 11},
+	[10] = {groupName = "Grimrail Depot", orderIndex = 1},
+	[11] = {groupName = "The Everbloom", orderIndex = 0},
+	[12] = {groupName = "Shadowmoon Burial Grounds", orderIndex = 10},
+	[13] = {groupName = "Upper Blackrock Spire", orderIndex = 0},
+	[14] = {groupName = "Highmaul", orderIndex = 0},
+	[15] = {groupName = "Blackrock Foundry", orderIndex = 0},
+	[16] = {groupName = "Naxxramas", orderIndex = 0},
+	[17] = {groupName = "Icecrown Citadel", orderIndex = 0},
+	[18] = {groupName = "Scholomance", orderIndex = 0},
+	[19] = {groupName = "Shadowfang Keep", orderIndex = 0},
+	[20] = {groupName = "Hellfire Ramparts", orderIndex = 0},
+	[21] = {groupName = "Blood Furnace", orderIndex = 0},
+	[22] = {groupName = "Shattered Halls", orderIndex = 0},
+	[23] = {groupName = "Slave Pens", orderIndex = 0},
+	[24] = {groupName = "Underbog", orderIndex = 0},
+	[25] = {groupName = "The Steamvault", orderIndex = 0},
+	[26] = {groupName = "Mana-Tombs", orderIndex = 0},
+	[27] = {groupName = "Auchenai Crypts", orderIndex = 0},
+	[28] = {groupName = "Sethekk Halls", orderIndex = 0},
+	[29] = {groupName = "Shadow Labyrinth", orderIndex = 0},
+	[30] = {groupName = "Scarlet Halls", orderIndex = 0},
+	[31] = {groupName = "Scarlet Monastery", orderIndex = 0},
+	[32] = {groupName = "The Escape from Durnholde", orderIndex = 0},
+	[33] = {groupName = "Opening of the Dark Portal", orderIndex = 0},
+	[34] = {groupName = "The Mechanar", orderIndex = 0},
+	[35] = {groupName = "The Botanica", orderIndex = 0},
+	[36] = {groupName = "The Arcatraz", orderIndex = 0},
+	[37] = {groupName = "Magisters' Terrace", orderIndex = 0},
+	[38] = {groupName = "Utgarde Keep", orderIndex = 0},
+	[39] = {groupName = "Utgarde Pinnacle", orderIndex = 0},
+	[40] = {groupName = "Azjol-Nerub", orderIndex = 0},
+	[41] = {groupName = "The Oculus", orderIndex = 0},
+	[42] = {groupName = "Halls of Lightning", orderIndex = 0},
+	[43] = {groupName = "Halls of Stone", orderIndex = 0},
+	[44] = {groupName = "The Culling of Stratholme", orderIndex = 0},
+	[45] = {groupName = "Drak'Tharon Keep", orderIndex = 0},
+	[46] = {groupName = "Gundrak", orderIndex = 0},
+	[47] = {groupName = "Ahn'kahet: The Old Kingdom", orderIndex = 0},
+	[48] = {groupName = "Violet Hold", orderIndex = 0},
+	[49] = {groupName = "The Nexus", orderIndex = 0},
+	[50] = {groupName = "Trial of the Champion", orderIndex = 0},
+	[51] = {groupName = "The Forge of Souls", orderIndex = 0},
+	[52] = {groupName = "Pit of Saron", orderIndex = 11},
+	[53] = {groupName = "Halls of Reflection", orderIndex = 0},
+	[54] = {groupName = "Throne of the Tides", orderIndex = 0},
+	[55] = {groupName = "Blackrock Caverns", orderIndex = 0},
+	[56] = {groupName = "Grim Batol", orderIndex = 0},
+	[57] = {groupName = "Halls of Origination", orderIndex = 0},
+	[58] = {groupName = "The Stonecore", orderIndex = 0},
+	[59] = {groupName = "The Vortex Pinnacle", orderIndex = 0},
+	[60] = {groupName = "Lost City of the Tol'vir", orderIndex = 0},
+	[61] = {groupName = "Temple of the Jade Serpent", orderIndex = 10},
+	[62] = {groupName = "Stormstout Brewery", orderIndex = 0},
+	[63] = {groupName = "Shado-Pan Monastery", orderIndex = 0},
+	[64] = {groupName = "Mogu'shan Palace", orderIndex = 0},
+	[65] = {groupName = "Siege of Niuzao Temple", orderIndex = 0},
+	[66] = {groupName = "Gate of the Setting Sun", orderIndex = 0},
+	[67] = {groupName = "The Everbloom", orderIndex = 0},
+	[68] = {groupName = "Draenor", orderIndex = 0},
+	[69] = {groupName = "Outland", orderIndex = 0},
+	[70] = {groupName = "Northrend", orderIndex = 0},
+	[71] = {groupName = "Pandaria", orderIndex = 0},
+	[73] = {groupName = "Trial of the Crusader", orderIndex = 0},
+	[74] = {groupName = "The Ruby Sanctum", orderIndex = 0},
+	[75] = {groupName = "Blackwing Descent", orderIndex = 0},
+	[76] = {groupName = "The Bastion of Twilight", orderIndex = 0},
+	[77] = {groupName = "Throne of the Four Winds", orderIndex = 0},
+	[78] = {groupName = "Firelands", orderIndex = 0},
+	[79] = {groupName = "Dragon Soul", orderIndex = 0},
+	[80] = {groupName = "Mogu'shan Vaults", orderIndex = 5},
+	[81] = {groupName = "Heart of Fear", orderIndex = 4},
+	[82] = {groupName = "Terrace of Endless Spring", orderIndex = 3},
+	[83] = {groupName = "Throne of Thunder", orderIndex = 2},
+	[84] = {groupName = "Random Pandaria Dungeon", orderIndex = 0},
+	[86] = {groupName = "Theramore's Fall", orderIndex = 0},
+	[102] = {groupName = "A Brewing Storm", orderIndex = 0},
+	[103] = {groupName = "Battle on the High Seas", orderIndex = 0},
+	[104] = {groupName = "Blood in the Snow", orderIndex = 0},
+	[105] = {groupName = "Crypt of Forgotten Kings", orderIndex = 0},
+	[106] = {groupName = "Dark Heart of Pandaria", orderIndex = 0},
+	[107] = {groupName = "Random Pandaria Scenario", orderIndex = 0},
+	[108] = {groupName = "The Secrets of Ragefire", orderIndex = 0},
+	[109] = {groupName = "Random Draenor Dungeon", orderIndex = 0},
+	[110] = {groupName = "Hellfire Citadel", orderIndex = 0},
+	[111] = {groupName = "Random Legion Dungeon", orderIndex = 0},
+	[112] = {groupName = "Eye of Azshara", orderIndex = 9},
+	[113] = {groupName = "Darkheart Thicket", orderIndex = 12},
+	[114] = {groupName = "Halls of Valor", orderIndex = 10},
+	[115] = {groupName = "Neltharion's Lair", orderIndex = 10},
+	[116] = {groupName = "Assault on Violet Hold", orderIndex = 40},
+	[117] = {groupName = "Vault of the Wardens", orderIndex = 13},
+	[118] = {groupName = "Black Rook Hold", orderIndex = 17},
+	[119] = {groupName = "Maw of Souls", orderIndex = 40},
+	[120] = {groupName = "Court of Stars", orderIndex = 10},
+	[121] = {groupName = "The Arcway", orderIndex = 40},
+	[122] = {groupName = "Emerald Nightmare", orderIndex = 40},
+	[123] = {groupName = "The Nighthold", orderIndex = 3},
+	[124] = {groupName = "Broken Isles", orderIndex = 0},
+	[125] = {groupName = "Return to Karazhan", orderIndex = 41},
+	[126] = {groupName = "Trial of Valor", orderIndex = 2},
+	[127] = {groupName = "Lower Karazhan", orderIndex = 5},
+	[128] = {groupName = "Upper Karazhan", orderIndex = 6},
+	[129] = {groupName = "Cathedral of Eternal Night", orderIndex = 41},
+	[130] = {groupName = "Dreadscar Rift", orderIndex = 0},
+	[131] = {groupName = "Tomb of Sargeras", orderIndex = 4},
+	[132] = {groupName = "Antorus, the Burning Throne", orderIndex = 5},
+	[133] = {groupName = "Seat of the Triumvirate", orderIndex = 11},
+	[134] = {groupName = "Argus", orderIndex = 0},
+	[135] = {groupName = "Uldir", orderIndex = 0},
+	[136] = {groupName = "Random Battle for Azeroth Dungeon", orderIndex = 0},
+	[137] = {groupName = "Atal'Dazar", orderIndex = 30},
+	[138] = {groupName = "The Underrot", orderIndex = 10},
+	[139] = {groupName = "Temple of Sethraliss", orderIndex = 30},
+	[140] = {groupName = "THE MOTHERLODE!!", orderIndex = 30},
+	[141] = {groupName = "Kings' Rest", orderIndex = 30},
+	[142] = {groupName = "Freehold", orderIndex = 10},
+	[143] = {groupName = "Shrine of the Storm", orderIndex = 30},
+	[144] = {groupName = "Tol Dagor", orderIndex = 30},
+	[145] = {groupName = "Waycrest Manor", orderIndex = 30},
+	[146] = {groupName = "Siege of Boralus", orderIndex = 30},
+	[247] = {groupName = "Kul Tiras", orderIndex = 0},
+	[248] = {groupName = "Zandalar", orderIndex = 0},
+	[249] = {groupName = "Island Expeditions", orderIndex = 0},
+	[251] = {groupName = "Battle of Dazar'alor", orderIndex = 0},
+	[252] = {groupName = "Crucible of Storms", orderIndex = 0},
+	[253] = {groupName = "Operation: Mechagon", orderIndex = 30},
+	[254] = {groupName = "The Eternal Palace", orderIndex = 0},
+	[255] = {groupName = "Battle for Stromgarde", orderIndex = 0},
+	[256] = {groupName = "Operation: Mechagon - Junkyard", orderIndex = 30},
+	[257] = {groupName = "Operation: Mechagon - Workshop", orderIndex = 30},
+	[258] = {groupName = "Ny'alotha, the Waking City", orderIndex = 0},
+	[259] = {groupName = "Plaguefall", orderIndex = 20},
+	[260] = {groupName = "De Other Side", orderIndex = 20},
+	[261] = {groupName = "Halls of Atonement", orderIndex = 20},
+	[262] = {groupName = "Mists of Tirna Scithe", orderIndex = 20},
+	[263] = {groupName = "Sanguine Depths", orderIndex = 20},
+	[264] = {groupName = "Spires of Ascension", orderIndex = 20},
+	[265] = {groupName = "The Necrotic Wake", orderIndex = 20},
+	[266] = {groupName = "Theater of Pain", orderIndex = 20},
+	[267] = {groupName = "Castle Nathria", orderIndex = 0},
+	[269] = {groupName = "World Bosses", orderIndex = 0},
+	[270] = {groupName = "Shadowlands", orderIndex = 0},
+	[271] = {groupName = "Sanctum of Domination", orderIndex = 0},
+	[272] = {groupName = "Tazavesh, the Veiled Market", orderIndex = 20},
+	[273] = {groupName = "Twisting Corridors", orderIndex = 0},
+	[274] = {groupName = "Skoldus Hall", orderIndex = 1},
+	[275] = {groupName = "Upper Reaches", orderIndex = 1},
+	[276] = {groupName = "Soulforges", orderIndex = 0},
+	[277] = {groupName = "Mort'regar", orderIndex = 0},
+	[278] = {groupName = "Fracture Chambers", orderIndex = 0},
+	[279] = {groupName = "Coldheart Interstitia", orderIndex = 0},
+	[280] = {groupName = "Tazavesh: Streets of Wonder", orderIndex = 20},
+	[281] = {groupName = "Tazavesh: So'leah's Gambit", orderIndex = 20},
+	[282] = {groupName = "Sepulcher of the First Ones", orderIndex = 0},
+	[283] = {groupName = "The Jailer's Gauntlet", orderIndex = 0},
+	[284] = {groupName = "Dragon Isles", orderIndex = 0},
+	[302] = {groupName = "Algeth'ar Academy", orderIndex = 11},
+	[303] = {groupName = "Brackenhide Hollow", orderIndex = 10},
+	[304] = {groupName = "Halls of Infusion", orderIndex = 10},
+	[305] = {groupName = "Neltharus", orderIndex = 10},
+	[306] = {groupName = "Ruby Life Pools", orderIndex = 10},
+	[307] = {groupName = "The Azure Vault", orderIndex = 10},
+	[308] = {groupName = "The Nokhud Offensive", orderIndex = 10},
+	[309] = {groupName = "Uldaman: Legacy of Tyr", orderIndex = 10},
+	[310] = {groupName = "Vault of the Incarnates", orderIndex = 0},
+	[313] = {groupName = "Aberrus, the Shadowed Crucible", orderIndex = 0},
+	[315] = {groupName = "Dawn of the Infinite", orderIndex = 20},
+	[316] = {groupName = "Galakrond's Fall - Dawn of the Infinite", orderIndex = 20},
+	[317] = {groupName = "Murozond's Rise - Dawn of the Infinite", orderIndex = 20},
+	[318] = {groupName = "Galakrond's Fall - Dawn of the Infinite", orderIndex = 20},
+	[319] = {groupName = "Amirdrassil, the Dream's Hope", orderIndex = 0},
+	[322] = {groupName = "Darkflame Cleft", orderIndex = 10},
+	[323] = {groupName = "Ara-Kara, City of Echoes", orderIndex = 10},
+	[324] = {groupName = "Priory of the Sacred Flame", orderIndex = 10},
+	[325] = {groupName = "The Rookery", orderIndex = 10},
+	[326] = {groupName = "The Dawnbreaker", orderIndex = 10},
+	[327] = {groupName = "Cinderbrew Meadery", orderIndex = 10},
+	[328] = {groupName = "The Stonevault", orderIndex = 10},
+	[329] = {groupName = "City of Threads", orderIndex = 10},
+	[331] = {groupName = "Fungal Folly", orderIndex = 0},
+	[332] = {groupName = "Kriegval's Rest", orderIndex = 0},
+	[333] = {groupName = "Earthcrawl Mines", orderIndex = 0},
+	[334] = {groupName = "Zekvir's Lair", orderIndex = 13},
+	[335] = {groupName = "The Waterworks", orderIndex = 0},
+	[336] = {groupName = "The Dread Pit", orderIndex = 0},
+	[337] = {groupName = "Nightfall Sanctum", orderIndex = 0},
+	[338] = {groupName = "Mycomancer Cavern", orderIndex = 0},
+	[339] = {groupName = "The Sinkhole", orderIndex = 0},
+	[340] = {groupName = "Skittering Breach", orderIndex = 0},
+	[341] = {groupName = "The Underkeep", orderIndex = 0},
+	[342] = {groupName = "Tak-Rethan Abyss", orderIndex = 0},
+	[343] = {groupName = "The Spiral Weave", orderIndex = 0},
+	[344] = {groupName = "Greenstone Village", orderIndex = 0},
+	[346] = {groupName = "Unga Ingoo", orderIndex = 0},
+	[347] = {groupName = "Arena of Annihilation", orderIndex = 0},
+	[348] = {groupName = "Brewmoon Festival", orderIndex = 0},
+	[351] = {groupName = "Assault on Zan'vess", orderIndex = 0},
+	[352] = {groupName = "Dagger in the Dark", orderIndex = 0},
+	[353] = {groupName = "A Little Patience", orderIndex = 0},
+	[354] = {groupName = "Domination Point", orderIndex = 0},
+	[355] = {groupName = "Lion's Landing", orderIndex = 0},
+	[362] = {groupName = "Nerub-ar Palace", orderIndex = 0},
+	[363] = {groupName = "Khaz Algar", orderIndex = 0},
+	[370] = {groupName = "Windrunner Spire", orderIndex = 10},
+	[371] = {groupName = "Operation: Floodgate", orderIndex = 10},
+	[372] = {groupName = "Blackrock Depths", orderIndex = 0},
+	[373] = {groupName = "Excavation Site 9", orderIndex = 0},
+	[374] = {groupName = "Sidestreet Sluice", orderIndex = 0},
+	[375] = {groupName = "Underpin's Demolition Competition", orderIndex = 0},
+	[377] = {groupName = "Liberation of Undermine", orderIndex = 0},
+	[378] = {groupName = "Manaforge Omega", orderIndex = 0},
+	[381] = {groupName = "Eco-Dome Al'dani", orderIndex = 10},
+	[382] = {groupName = "The Blinding Vale", orderIndex = 10},
+	[392] = {groupName = "Den of Nalorakk", orderIndex = 10},
+	[394] = {groupName = "Archival Assault", orderIndex = 0},
+	[395] = {groupName = "Voidrazor Sanctuary", orderIndex = 0},
+	[396] = {groupName = "Murder Row", orderIndex = 0},
+	[397] = {groupName = "Midnight", orderIndex = 0},
+	[398] = {groupName = "Voidscar Arena", orderIndex = 10},
+	[399] = {groupName = "Magisters' Terrace", orderIndex = 10},
+	[400] = {groupName = "Maisara Caverns", orderIndex = 10},
+	[401] = {groupName = "Nexus-Point Xenas", orderIndex = 10},
+	[402] = {groupName = "Voidspire", orderIndex = 0},
+	[403] = {groupName = "March on Quel'Danas", orderIndex = 0},
+	[404] = {groupName = "The Dreamrift", orderIndex = 0},
+	[405] = {groupName = "Collegiate Calamity", orderIndex = 0},
+	[406] = {groupName = "Parhelion Plaza", orderIndex = 0},
+	[407] = {groupName = "Sunkiller Sanctum", orderIndex = 0},
+	[408] = {groupName = "Torment's Rise", orderIndex = 0},
+	[409] = {groupName = "Shadowguard Point", orderIndex = 0},
+	[410] = {groupName = "The Grudge Pit", orderIndex = 0},
+	[411] = {groupName = "Atal'Aman", orderIndex = 0},
+	[412] = {groupName = "The Gulf of Memory", orderIndex = 0},
+	[413] = {groupName = "The Shadow Enclave", orderIndex = 0},
+	[414] = {groupName = "Twilight Crypts", orderIndex = 0},
+	[415] = {groupName = "The Darkway", orderIndex = 0},
+
+}
+
 miog.MAP_INFO = {
 	[30] = {abbreviatedName = "AV", icon = "interface/lfgframe/lfgicon-battleground.blp", fileName = "pvpbattleground", toastBG = "PvpBg-AlteracValley-ToastBG", pvp = "true"},
 	[489] = {abbreviatedName = "WSG", icon = "interface/lfgframe/lfgicon-warsonggulch.blp", fileName = "warsonggulch_update", toastBG = "PvpBg-WarsongGulch-ToastBG", pvp = "true"},
@@ -856,10 +1105,10 @@ miog.MAP_INFO = {
 	[1753] = {abbreviatedName = "SEAT", fileName = "seatofthetriumvirate"},
 	[1651] = {abbreviatedName = "RTK", fileName = "returntokarazhan"},
 	[1677] = {abbreviatedName = "COEN", fileName = "cathedralofeternalnight"},
+
 	[1520] = {abbreviatedName = "EN", fileName = "theemeraldnightmare-riftofaln"},
 	[1530] = {abbreviatedName = "NH", fileName = "thenighthold"},
 	[1648] = {abbreviatedName = "TOV", fileName = "trialofvalor"},
-	--[1651] = {abbreviatedName = "", icon = ""},
 	[1676] = {abbreviatedName = "TOS", iconName = "tombofsargerasdeceiversfall", fileName = "tombofsargeras"},
 	[1712] = {abbreviatedName = "ATBT", fileName = "antorus"},
 
@@ -911,7 +1160,7 @@ miog.MAP_INFO = {
 
 	
 	[2444] = {
-		abbreviatedName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dragonislescontinent.png", fileName = "dragonislescontinent",
+		abbreviatedName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dragonislescontinent.png", type="exp", fileName = "dragonislescontinent",
 	},
 	[2549] = {
 		bossIcons = {
@@ -959,7 +1208,7 @@ miog.MAP_INFO = {
 	},
 
 	-- THE WAR WITHIN
-	[2601] = {abbreviatedName = "KA", fileName = "khazalgar", filePath="interface/encounterjournal/ui-ej-lorebg-khazalgar.blp"},
+	[2601] = {abbreviatedName = "KA", iconName = "khazalgar", filePath="interface/encounterjournal/ui-ej-lorebg-khazalgar.blp"},
 	[2648] = {abbreviatedName = "ROOK", fileName = "therookery"},
 	[2649] = {abbreviatedName = "PSF", fileName = "prioryofthesacredflames"},
 	[2651] = {abbreviatedName = "DFC", fileName = "darkflamecleft"},
@@ -1099,6 +1348,7 @@ miog.MAP_INFO = {
 	[2773] = {abbreviatedName = "OF", fileName = "waterworks"},
 	[2774] = {abbreviatedName = "WORLD", fileName = "khazalgar",},
 	[2776] = {abbreviatedName = "CODEX", fileName = "kalimdor",},
+
 	[2792] = {abbreviatedName = "BRD", fileName = "blackrockdepths"},
 
 	
@@ -1483,6 +1733,7 @@ local database = {
 		activity = {},
 		groups = {},
 		journal = {},
+		encounters = {},
 		categories = {}
 	}
 }
@@ -1570,21 +1821,58 @@ local manualData = {
 miog.manualData = manualData
 miog.database = database
 
-function miog:GetJournalDB()
-	return miog.database.pointers.journal
+function miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
+	local instanceID = journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+	if(instanceID) then
+		local journalDB = database.pointers.journal[instanceID] or miog:RetrieveJournalInstanceInfoFromJournalInstanceID(instanceID)
+
+		if(journalDB) then
+			local map = mapID or journalDB.mapID
+			local mapDB = database.pointers.map[map]
+			
+			if(mapDB) then
+				journalDB.abbreviatedName = miog.MAP_INFO[map].abbreviatedName
+				journalDB.horizontal = mapDB.horizontal
+				journalDB.vertical = mapDB.vertical
+
+				--journalDB.icon = miog.MAP_INFO[map].icon
+				--journalDB.fileName = miog.MAP_INFO[map].fileName
+				--journalDB.toastBG = miog.MAP_INFO[map].toastBG
+				--journalDB.pvp = miog.MAP_INFO[map].pvp
+			end
+		end
+	end
 end
 
-function miog:RetrieveJournalInstanceBossData(journalInstanceID)
+function miog:UpdateJournalDB()
+	local journalDB = database.pointers.journal
+
+	for index, journalInstanceInfo in pairs(journalDB) do
+		if(not journalInstanceInfo.icon and journalInstanceInfo.mapID) then
+			miog:IntegrateMapDataIntoJournal(journalInstanceInfo.journalInstanceID, journalInstanceInfo.mapID)
+
+		end
+	end
+end
+
+function miog:SaveJournalEncounterData(journalEncounterID)
+
+end
+
+function miog:SaveJournalInstanceBossData(journalInstanceID)
 	local journalDB = database.pointers.journal[journalInstanceID]
+	local encounterDB = database.pointers.encounters
+
 	local bossDB = {}
 	local bossIndex = 1
 
-	local bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
 
 	while bossName do
 		local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature of encounter (boss)
 		
-		bossDB[bossIndex] = {
+		local db = {
 			name = bossName,
 			altName = name2,
 			journalEncounterID = journalEncounterID,
@@ -1595,10 +1883,15 @@ function miog:RetrieveJournalInstanceBossData(journalInstanceID)
 			achievements = {},
 			id = id,
 			creatureDisplayInfoID = displayInfo,
-			icon = iconImage
+			icon = iconImage,
+			index = bossIndex,
 		}
 
-		miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = bossDB[bossIndex]}
+		bossDB[bossIndex] = db
+		journalDB.encounters[journalEncounterID] = db
+		encounterDB[journalEncounterID] = db
+
+		--miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = db}
 
 		bossIndex = bossIndex + 1;
 		bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
@@ -1610,9 +1903,36 @@ function miog:RetrieveJournalInstanceBossData(journalInstanceID)
 		journalDB.bosses = bossDB
 		journalDB.numOfBosses = numOfBosses
 
+	else
+		journalDB.numOfBosses = numOfBosses
+
+	end
+end
+
+function miog:RetrieveJournalInstanceBossData(journalInstanceID)
+	miog:SaveJournalInstanceBossData(journalInstanceID)
+
+	return database.pointers.journal[journalInstanceID].bosses
+end
+
+function miog:RetrieveJournalInstanceEncounterData(journalInstanceID)
+	miog:SaveJournalInstanceBossData(journalInstanceID)
+
+	return database.pointers.journal[journalInstanceID].encounters
+end
+
+function miog:RetrieveJournalEncounterData(journalEncounterID)
+
+end
+
+function miog:GetNumOfBosses(journalInstanceID)
+	if(database.pointers.journal[journalInstanceID].numOfBosses == 0) then
+		miog:RetrieveJournalInstanceBossData(journalInstanceID)
+		
 	end
 
-	return journalDB.bosses
+	return database.pointers.journal[journalInstanceID].numOfBosses or 0
+
 end
 
 function miog:GetJournalInstanceBossDataFromActivity(activityID)
@@ -1630,12 +1950,90 @@ function miog:GetJournalInstanceBossData(journalInstanceID)
 
 end
 
+function miog:GetEncounterDataFromJournalInstance(journalInstanceID)
+	return database.pointers.journal[journalInstanceID].encounters or miog:RetrieveJournalInstanceEncounterData(journalInstanceID)
+
+end
+
 function miog:GetJournalInstanceIDFromMap(mapID)
 	return C_EncounterJournal.GetInstanceForGameMap(mapID)
 
 end
 
-function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier)
+-- change to group id instead of map
+function miog:CreateMapPointer(mapID)
+	if(mapID) then
+		if(not database.pointers.map[mapID]) then
+			database.pointers.map[mapID] = database.pointers.map[mapID] or miog.MAP_INFO[mapID] or {}
+			local mapDB = database.pointers.map[mapID]
+
+			mapDB.activities = {}
+
+			local background = mapDB.fileName
+
+			if(background) then
+				if(loadHQData) then
+					mapDB.horizontal = MythicIO.GetBackgroundImage(background)
+					mapDB.vertical = MythicIO.GetBackgroundImage(background, true)
+					
+				elseif(mapDB.pvp) then
+					mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
+					mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
+					
+				elseif(mapDB.filePath) then
+					mapDB.horizontal = mapDB.filePath
+					mapDB.vertical = mapDB.filePath
+
+				else
+					mapDB.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
+					mapDB.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
+
+
+				end
+
+				mapDB.icon = "interface/lfgframe/lfgicon-" .. (mapDB.iconName or mapDB.fileName) .. ".blp"
+
+			end
+		end
+	end
+end
+
+-- change to array insert
+function miog:IntegrateJournalDataIntoMap(mapID, journalInstanceID)
+	local instanceID = journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+	if(instanceID) then
+		local journalDB = database.pointers.journal[instanceID]
+		local mapDB = database.pointers.map[mapID]
+
+		if(journalDB and mapDB) then
+			mapDB.journalInstanceID = instanceID
+			mapDB.buttonImage1 = journalDB.buttonImage1
+			mapDB.buttonImage2 = journalDB.buttonImage2
+			mapDB.bgImage = journalDB.bgImage
+			mapDB.loreImage = journalDB.loreImage
+			mapDB.instanceName = journalDB.instanceName
+			mapDB.tier = journalDB.tier
+			mapDB.isRaid = journalDB.isRaid
+			mapDB.bosses = journalDB.bosses
+			mapDB.numOfBosses = journalDB.numOfBosses
+		end
+	end
+end
+
+function miog:LoadMapData(mapID)
+	if(mapID) then
+		if(mapID > 1) then
+			miog:CreateMapPointer(mapID)
+
+		end
+
+		return database.pointers.map[mapID]
+	end
+end
+
+function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, debug)
+
 	database.pointers.journal[journalInstanceID] = {
 		instanceName = instanceName,
 		bgImage = bgImage,
@@ -1643,18 +2041,23 @@ function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, descripti
 		buttonImage1 = buttonImage1,
 		loreImage = loreImage,
 		buttonImage2 = buttonImage2,
+		icon = buttonImage2,
 		mapID = mapID,
 		isRaid = isRaid,
 		tier = tier,
+		encounters = {}
 	}
 
 	miog:RetrieveJournalInstanceBossData(journalInstanceID)
+	
+	--miog:IntegrateJournalDataIntoMap(mapID, journalInstanceID)
+	--miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
 end
 
 function miog:RetrieveJournalInstanceInfoFromIndex(index, isRaid)
 	local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
 
-	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid)
+	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, 2)
 
 	return database.pointers.journal[journalInstanceID]
 end
@@ -1662,7 +2065,7 @@ end
 function miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
 	local instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceInfo(journalInstanceID)
 
-	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid)
+	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, 3)
 
 	return database.pointers.journal[journalInstanceID]
 end
@@ -1680,7 +2083,8 @@ function miog:CreateJournalDB()
 			local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
 
 			while instanceName do
-				miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier)
+				miog:LoadMapData(mapID)
+				miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, 1)
 
 				index = index + 1
 				journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
@@ -1689,26 +2093,18 @@ function miog:CreateJournalDB()
 	end
 end
 
-function miog:IntegrateJournalDataIntoMap(mapID)
-	local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+function miog:LoadJournalDBIfNeeded()
+	if(not next(miog.database.pointers.journal)) then
+		EncounterJournal_LoadUI()
+		miog:CreateJournalDB()
 
-	if(journalInstanceID) then
-		local journalDB = database.pointers.journal[journalInstanceID]
-		local mapDB = database.pointers.map[mapID]
-
-		if(journalDB and mapDB) then
-			mapDB.journalInstanceID = journalInstanceID
-			mapDB.buttonImage1 = journalDB.buttonImage1
-			mapDB.buttonImage2 = journalDB.buttonImage2
-			mapDB.bgImage = journalDB.bgImage
-			mapDB.loreImage = journalDB.loreImage
-			mapDB.instanceName = journalDB.instanceName
-			mapDB.tier = journalDB.tier
-			mapDB.isRaid = journalDB.isRaid
-			mapDB.bosses = journalDB.bosses
-			mapDB.numOfBosses = journalDB.numOfBosses
-		end
 	end
+end
+
+function miog:GetJournalDB()
+	miog:LoadJournalDBIfNeeded()
+
+	return miog.database.pointers.journal
 end
 
 function miog:IntegrateJournalDataIntoActivity(activityID)
@@ -1747,28 +2143,6 @@ function miog:IntegrateActivityDataIntoMap(activityID)
 	end
 end
 
-function miog:IntegrateMapDataIntoJournal(mapID)
-	local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-
-	if(journalInstanceID) then
-		local journalDB = database.pointers.journal[journalInstanceID] or miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
-
-		if(journalDB) then
-			local mapDB = database.pointers.map[mapID]
-
-			journalDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
-			journalDB.icon = miog.MAP_INFO[mapID].icon
-			journalDB.fileName = miog.MAP_INFO[mapID].fileName
-			journalDB.toastBG = miog.MAP_INFO[mapID].toastBG
-			journalDB.pvp = miog.MAP_INFO[mapID].pvp
-			journalDB.journalInstanceID = mapDB.journalInstanceID
-
-			journalDB.horizontal = mapDB.horizontal
-			journalDB.vertical = mapDB.vertical
-		end
-	end
-end
-
 function miog:IntegrateMapDataIntoActivity(activityID)
 	local activityDB = database.pointers.activity[activityID]
 	local mapID = activityDB.mapID
@@ -1784,37 +2158,6 @@ function miog:IntegrateMapDataIntoActivity(activityID)
 	activityDB.horizontal = mapDB.horizontal
 	activityDB.vertical = mapDB.vertical
 
-end
-
-function miog:CreateMapPointer(mapID)
-	database.pointers.map[mapID] = database.pointers.map[mapID] or miog.MAP_INFO[mapID] or {}
-	local mapDB = database.pointers.map[mapID]
-
-	mapDB.activities = {}
-
-	local background = mapDB.fileName
-
-	if(background) then
-		if(loadHQData) then
-			mapDB.horizontal = MythicIO.GetBackgroundImage(background)
-			mapDB.vertical = MythicIO.GetBackgroundImage(background, true)
-			
-		elseif(mapDB.pvp) then
-			mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
-			mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
-			
-		elseif(mapDB.filePath) then
-			mapDB.horizontal = mapDB.filePath
-			mapDB.vertical = mapDB.filePath
-
-		else
-			mapDB.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-			mapDB.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-
-		end
-
-		mapDB.icon = "interface/lfgframe/lfgicon-" .. (mapDB.iconName or mapDB.fileName) .. ".blp"
-	end
 end
 
 function miog:IntegrateActivityDataIntoParentGroup(activityIndex, activityID)
@@ -1861,42 +2204,31 @@ end
 function miog:LoadActivityData(activityID)
 	if(activityID) then
 		if(activityID > 0) then
-			local activityInfoTable = C_LFGList.GetActivityInfoTable(activityID)
-			database.pointers.activity[activityID] = activityInfoTable
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+			database.pointers.activity[activityID] = activityInfo
 
 			local mapID = database.pointers.activity[activityID].mapID
 
-			if(mapID > 1) then
-				miog:CreateMapPointer(mapID)
-				miog:IntegrateJournalDataIntoMap(mapID)
+			if(miog:LoadMapData(mapID)) then
 				miog:IntegrateActivityDataIntoMap(activityID)
-				miog:IntegrateJournalDataIntoActivity(activityID)
-				miog:IntegrateMapDataIntoJournal(mapID)
+
 				miog:IntegrateMapDataIntoActivity(activityID)
 				miog:IntegrateMapDataIntoActivityGroup(activityID)
+
 				miog:IntegrateParentGroupDataIntoChildActivity(activityID)
 			end
+
+			miog:IntegrateJournalDataIntoActivity(activityID)
 		end
 
 		return database.pointers.activity[activityID]
 	end
 end
 
-function miog:LoadMapData(mapID)
-	if(mapID) then
-		if(mapID > 1) then
-			miog:CreateMapPointer(mapID)
-			miog:IntegrateJournalDataIntoMap(mapID)
-
-		end
-
-		return database.pointers.map[mapID]
-	end
-end
-
 function miog:LoadGroupData(groupID)
 	if(groupID) then
 		local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
+
 		local activities = C_LFGList.GetAvailableActivities(_, groupID)
 
 		database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = activities, activityDBs = {}}
@@ -1912,23 +2244,59 @@ function miog:LoadGroupData(groupID)
 		groupDB.bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons
 		groupDB.highestDifficultyActivityID = database.pointers.groups[groupID].activities[#database.pointers.groups[groupID].activities]
 
-
 		return database.pointers.groups[groupID]
+	end
+end
+
+function miog:CreateGroupFromActivityID(activityID)
+	if(activityID) then
+		if(activityID > 0) then
+			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
+			database.pointers.activity[activityID] = activityInfo
+
+			local mapID = database.pointers.activity[activityID].mapID
+			
+			if(miog:LoadMapData(mapID)) then
+				miog:IntegrateActivityDataIntoMap(activityID)
+				
+				miog:IntegrateMapDataIntoActivity(activityID)
+				miog:IntegrateMapDataIntoActivityGroup(activityID)
+			end
+
+			miog:IntegrateJournalDataIntoActivity(activityID)
+
+			local groupID = activityInfo.groupFinderActivityGroupID
+
+			if(groupID > 0) then
+				database.pointers.groups[groupID] = database.pointers.groups[groupID] or {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = {}, activityDBs = {}}
+
+				local groupDB = database.pointers.groups[groupID]
+				miog:IntegrateActivityDataIntoParentGroup(#groupDB.activityDBs + 1, activityID)
+				miog:IntegrateParentGroupDataIntoChildActivity(activityID)
+
+				tinsert(groupDB.activities, activityID)
+
+				groupDB.bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons
+				groupDB.highestDifficultyActivityID = database.pointers.groups[groupID].activities[#database.pointers.groups[groupID].activities]
+			end
+
+		end
+
+		return database.pointers.activity[activityID]
 	end
 end
 
 do
 	-- Preload the encounter journal so any function in the addon doesn't have to always check if the journal is loaded
-	EncounterJournal_LoadUI()
-	miog:CreateJournalDB()
+	miog:LoadJournalDBIfNeeded()
 
-	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
+	--[[for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
 		local groupTable = C_LFGList.GetAvailableActivityGroups(categoryID)
 
 		for _, groupID in pairs(groupTable) do
 			miog:LoadGroupData(groupID)
 		end
-	end
+	end]]
 
 	for _, activityID in pairs(manualData.activity) do
 		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
@@ -1938,10 +2306,18 @@ do
 		database.pointers.groups[activityInfo.groupFinderActivityGroupID] = database.pointers.groups[activityInfo.groupFinderActivityGroupID] or {name = groupName, groupOrder = groupOrder, categoryID = activityInfo.categoryID, activities = {}, activityDBs = {}}
 		tinsert(database.pointers.groups[activityInfo.groupFinderActivityGroupID].activities, activityID)
 
-
 		miog:LoadActivityData(activityID)
 
 	end
+
+	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
+		for _, activityID in ipairs(C_LFGList.GetAvailableActivities(categoryID)) do
+			miog:CreateGroupFromActivityID(activityID)
+
+		end
+	end
+
+	miog:UpdateJournalDB()
 end
 
 function miog:HasMapInfo(mapID)
@@ -1983,11 +2359,15 @@ function miog:HasJournalInstanceInfo(journalInstanceID)
 end
 
 function miog:GetJournalInstanceInfo(journalInstanceID)
+	miog:LoadJournalDBIfNeeded()
+
 	return database.pointers.journal[journalInstanceID] or miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
 
 end
 
 function miog:GetJournalInstanceIDFromMapID(mapID)
+	miog:LoadJournalDBIfNeeded()
+
 	local journalInstanceID
 
 	if(not database.pointers.map[mapID]) then
@@ -2008,6 +2388,8 @@ function miog:GetJournalInstanceIDFromMapID(mapID)
 end
 
 function miog:GetJournalInstanceIDFromActivityID(activityID)
+	miog:LoadJournalDBIfNeeded()
+
 	local journalInstanceID
 
 	if(not database.pointers.activity[activityID]) then
@@ -2026,6 +2408,8 @@ function miog:GetJournalInstanceIDFromActivityID(activityID)
 end
 
 function miog:GetJournalDataForMapID(mapID)
+	miog:LoadJournalDBIfNeeded()
+
 	if(mapID) then
 		if(not miog:HasMapInfo(mapID)) then
 			miog:GetMapInfo(mapID)
@@ -2043,6 +2427,8 @@ function miog:GetJournalDataForMapID(mapID)
 end
 
 function miog:GetJournalDataForActivityID(activityID)
+	miog:LoadJournalDBIfNeeded()
+
 	if(activityID) then
 		if(not miog:HasActivityInfo(activityID)) then
 			miog:GetActivityInfo(activityID)
@@ -3679,6 +4065,20 @@ miog.OFFICIAL_CLASSES = {}
 
 for i = 1, 13, 1 do
 	miog.OFFICIAL_CLASSES[i] = miog.CLASSES[i]
+end
+
+miog.ENUM_TABLE = {}
+
+do
+	for k, v in pairs(Enum) do
+		miog.ENUM_TABLE[k] = {}
+
+		for x, y in pairs(v) do
+			miog.ENUM_TABLE[k][y] = x
+
+		end
+
+	end
 end
 
 miog.SPECIALIZATIONS = {

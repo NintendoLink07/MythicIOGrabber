@@ -1,7 +1,7 @@
 ## Interface: 120000
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
-## OptionalDeps: RaiderIO, MythicIO - Resources
+## OptionalDeps: RaiderIO, MythicIO - Resources, 
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
 ## Version: 3.9.3
@@ -33,7 +33,7 @@ FilterManager.lua
 GroupOrganizer.lua
 
 GearingTable.lua
-AdventureJournal.lua
+## AdventureJournal.lua
 GroupManager.lua
 RaidPlanner.lua
 UpgradeFinder.lua
@@ -53,6 +53,11 @@ FuzzyAlgorithm.lua
 ##
 
 ModuleMixins\Loot\LootMixin.lua
+ModuleMixins\Loot\LootLineMixin.lua
+ModuleMixins\Loot\LootInstanceMixin.lua
+ModuleMixins\Loot\LootItemMixin.lua
+ModuleMixins\Loot\LootBossMixin.lua
+ModuleMixins\Loot\LootSearchBarMixin.lua
 
 ModuleMixins\AppViewer\AppViewer.lua
 ModuleMixins\AppViewer\ApplicantMixin.lua
@@ -106,6 +111,10 @@ Mixins\AnchorSystemMixin.lua
 ##
 
 XML\Loot\MIOG_Loot.xml
+XML\Loot\MIOG_LootLineTemplate.xml
+XML\Loot\MIOG_LootItemTemplate.xml
+XML\Loot\MIOG_LootInstanceTemplate.xml
+XML\Loot\MIOG_LootBossTemplate.xml
 
 XML\AppViewer\MIOG_AppViewer.xml
 XML\AppViewer\MIOG_AppViewerApplicantMemberTemplate.xml

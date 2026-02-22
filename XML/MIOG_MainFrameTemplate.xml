@@ -378,7 +378,7 @@
                     <EventFrame parentKey="GearingScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="TeleportsScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="RaidSheetScrollBar" inherits="MinimalScrollBar" hidden="true" />
-                    <EventFrame parentKey="DropsScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="LootScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="UpgradesScrollBar" inherits="MinimalScrollBar" hidden="true" />
 
                     <Button parentKey="Resize" inherits="PanelResizeButtonTemplate" topLevel="true" frameStrata="HIGH" registerForDrag="LeftButton">
@@ -656,16 +656,8 @@
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
-                    <Frame parentKey="Drops" inherits="MIOG_Drops" hidden="true" setAllPoints="true" />
+                    <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
-
-                    <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true">
-                        <Size x="400" y="300" />
-
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Drops" relativePoint="TOPRIGHT" x="40"/>
-                        </Anchors>
-                    </Frame>
                 </Frames>
 
                 <Layers>
@@ -745,13 +737,13 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Drops">
+            <Button name="$parentTab7" inherits="MIOG_TabButtonTemplate" id="7" text="Loot">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
                     <OnLoad>
-                        self.frameName = "Drops"
+                        self.frameName = "Loot"
                     </OnLoad>
                 </Scripts>
             </Button>
@@ -784,7 +776,7 @@
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());
                 
-	            PanelTemplates_SetTabEnabled(self, 7, false);
+	            --PanelTemplates_SetTabEnabled(self, 7, false);
             </OnLoad>
 
             <OnShow>

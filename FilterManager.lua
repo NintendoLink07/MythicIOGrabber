@@ -498,7 +498,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 
 				local bossData = miog:GetJournalInstanceBossDataFromActivity(searchResultInfo.activityIDs[1])
 
-				if(bossTable) then
+				if(bossTable and bossData) then
 					for index, state in pairs(bossTable) do
 						local bossInfo = bossData[index]
 

@@ -16,3 +16,14 @@ Needs overhaul
 No idea
 - Upgrades
 - FilterManager
+
+
+
+
+
+--- Journal DB / Map
+info mismatch ??!
+
+2 paths ->
+        activityInfo -> mapID -> journalInstanceID
+        journalIndex -> mapID

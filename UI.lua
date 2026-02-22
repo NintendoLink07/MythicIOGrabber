@@ -180,7 +180,7 @@ miog.createFrames = function()
 		miog.loadRaidPlanner()
 		miog.loadActivityChecker()
 
-		miog.Drops = miog.loadJournal()
+		--miog.Drops = miog.loadJournal()
 		miog.UpgradeFinder = miog.loadUpgradeFinder()
 
 		--miog.loot.init()
