@@ -1,7 +1,18 @@
 LootLineMixin = {}
 
 function LootLineMixin:RefreshExpandIcon(bool)
-	self.Expand:SetAtlas((bool or self:GetElementData():IsCollapsed()) == false and "campaign_headericon_open" or "campaign_headericon_closed");
+    local state = self:GetElementData():IsCollapsed()
+
+    if(state == true) then
+	    self.Expand:SetAtlas("campaign_headericon_closed");
+        
+    elseif(state == false) then
+	    self.Expand:SetAtlas("campaign_headericon_open");
+
+    else
+	    self.Expand:SetAtlas("campaign_headericon_open");
+
+    end
 
 end
 

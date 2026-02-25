@@ -90,8 +90,67 @@ local function getItemClassSubClassName(itemID, classID, subclassID)
     end
 end
 
+function replace_char3(pos, str, r)
+    return table.concat{str:sub(1,pos-1), r, str:sub(pos+1)}
+end
+
+function replace_char2(pos, str, r)
+    return ("%s%s%s"):format(str:sub(1,pos-1), r, str:sub(pos+1))
+end
+
+function replace_char1(pos, str, r)
+    return str:sub(1, pos-1) .. r .. str:sub(pos+1)
+end
+
+function LootItemMixin:CalculateConfidence(value, origLen, places)
+    if(value and origLen) then
+        return string.format("%." .. (places or 0) .. "f %%", (value / origLen) * 100)
+
+    end
+end
+
+function LootItemMixin:ColorFilterMatches()
+    if(self.data.filterMatches) then
+        if(self.data.filterMatches[1]) then
+            local matchIndices = self.data.filterMatches[1][2]
+
+            if(matchIndices) then
+                local text = self.Name:GetText()
+                local origLen = strlen(text)
+                local offset = self.data.abbreviatedName and strlen(self.data.abbreviatedName) + 3 or 0
+
+                for k, v in ipairs(matchIndices) do
+                    if(k == 1) then
+                        offset = offset + 0
+
+                    else
+                        offset = offset + 12
+
+                    end
+
+                    local char = strsub(text, v+offset, v+offset)
+
+                    --print(k, v+offset, char, text)
+
+                    text = replace_char2(v+offset, text, WrapTextInColorCode(char, miog.CLRSCC.green))
+                    
+                    
+                end
+
+                self.Name:SetText(text .. " - " .. self:CalculateConfidence(self.data.filterMatches[1][3], origLen, 2))
+            end
+
+            --[[for k, v in pairs(self.data.filterMatches[1][2]) do
+                string.gsub(text, )
+                
+            end]]
+        end
+    end
+end
+
 function LootItemMixin:SetData(data)
-    self.Name:SetText(WrapTextInColorCode(data.name, data.itemQuality))
+    --WrapTextInColorCode(data.name, data.itemQuality)
+    self.Name:SetText((data.abbreviatedName and "[" .. data.abbreviatedName .. "]" .. " " or "") .. (data.filterMatches and data.name or WrapTextInColorCode(data.name, data.itemQuality)))
     self.Name:SetPoint("LEFT", self.Itemlevel, "RIGHT", 3, 0)
 
     self.Icon:SetTexture(data.icon)
@@ -111,11 +170,14 @@ function LootItemMixin:SetData(data)
             self.Type:SetText(type)
 
         else
-            local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(data.link)
+            local name, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(data.link)
 
-            local altName = (classID~= 4 or subclassID ~= 0) and C_Item.GetItemSubClassInfo(classID, subclassID)
+            local subclassName = C_Item.GetItemSubClassInfo(classID, subclassID)
 
-            self.Type:SetText(data.slot .. (altName and " - " .. altName or ""))
+            local altName = classID == 4 and subclassID ~= 0 and subclassName
+            local altSlot = classID == 2 and subclassName
+
+            self.Type:SetText((altSlot or data.slot) .. (altName and " - " .. altName or ""))
 
         end
     end
@@ -124,12 +186,20 @@ function LootItemMixin:SetData(data)
 
     self.data = data
 
+    self:ColorFilterMatches()
     self:SetExpandState(false)
 end
 
 function LootItemMixin:OnEnter()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:SetHyperlink(self.data.link)
+
+    if(self.data.bossName) then
+        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(string.format(BOSS_INFO_STRING, self.data.bossName))
+
+    end
+
     GameTooltip:Show()
 
 end

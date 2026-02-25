@@ -776,7 +776,7 @@
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());
                 
-	            --PanelTemplates_SetTabEnabled(self, 7, false);
+	            PanelTemplates_SetTabEnabled(self, 8, false);
             </OnLoad>
 
             <OnShow>

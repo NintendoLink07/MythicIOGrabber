@@ -2,41 +2,26 @@ local addonName, miog = ...
 
 LootMixin = {}
 
+local currentlySearching
+
 local instanceDB
 local bossDropdownList = {}
 
+local allRaidsJournalInstanceIDList, allDungeonsJournalInstanceIDList = {}, {}
+local defaultList = {}
+
 local lootQueue = {}
 local multiQueue = false
-local numberOfBossesShown = 0
 local showOnlyItems = false
 
 local dataProvider
+local numBossesShown = 0
 
 local selectedTier, selectedJournalInstance, selectedDifficulty
-local selectedSlot, selectedItemClass, selectedItemSubClass, selectedArmorType
-local selectedClass, selectedSpec
+local selectedItemClass, selectedItemSubClass, selectedArmorType
 local specialSelection
 
 local selectedEncounter
-
-local EJ_DIFFICULTIES = {
-	DifficultyUtil.ID.DungeonNormal,
-	DifficultyUtil.ID.DungeonHeroic,
-	DifficultyUtil.ID.DungeonMythic,
-	DifficultyUtil.ID.DungeonChallenge,
-	DifficultyUtil.ID.DungeonTimewalker,
-	DifficultyUtil.ID.RaidLFR,
-	DifficultyUtil.ID.Raid10Normal,
-	DifficultyUtil.ID.Raid10Heroic,
-	DifficultyUtil.ID.Raid25Normal,
-	DifficultyUtil.ID.Raid25Heroic,
-	DifficultyUtil.ID.PrimaryRaidLFR,
-	DifficultyUtil.ID.PrimaryRaidNormal,
-	DifficultyUtil.ID.PrimaryRaidHeroic,
-	DifficultyUtil.ID.PrimaryRaidMythic,
-	DifficultyUtil.ID.RaidTimewalker,
-	DifficultyUtil.ID.Raid40,
-};
 
 local armorTypeInfo = {
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Cloth)},
@@ -44,13 +29,6 @@ local armorTypeInfo = {
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Mail)},
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Plate)},
 }
-
-function LootMixin:CalculateWaitTime()
-    local numOfInstances = #lootQueue
-
-    return 0.25 + numOfInstances * 0.06 + numberOfBossesShown * 0.03
-
-end
 
 function LootMixin:GetSelectedEncounter()
     return selectedEncounter
@@ -63,7 +41,7 @@ function LootMixin:SetSelectedEncounter(encounterID)
 
     else
         selectedEncounter = nil
-        self:RequestLoot()
+        self:RequestLoot(1)
 
     end
 end
@@ -79,26 +57,40 @@ function SortBossEntries(key1, key2)
 end
 
 function SortItemEntries(key1, key2)
-    return key1.data.itemlevel > key2.data.itemlevel
+    if(key1.data.itemlevel == key2.data.itemlevel) then
+        return key1.data.filterType < key2.data.filterType
+        
+    else
+        return key1.data.itemlevel > key2.data.itemlevel
+
+    end
+end
+
+function SortItemEntriesWithSearch(key1, key2)
+    return key1.data.filterMatches[1][3] > key2.data.filterMatches[1][3]
 
 end
 
 function LootMixin:RefreshDifficulties()
     self.DifficultyDropdown:SetupMenu(function(dropdown, rootDescription)
-        rootDescription:CreateButton(CLEAR_ALL, function()
-            selectedDifficulty = nil
+        if(selectedJournalInstance or specialSelection) then
+            rootDescription:CreateButton(CLEAR_ALL, function()
+                selectedDifficulty = nil
 
-        end)
+            end)
 
-        rootDescription:CreateSpacer()
+            rootDescription:CreateSpacer()
 
-        for i, difficultyID in ipairs(EJ_DIFFICULTIES) do
-            if EJ_IsValidInstanceDifficulty(difficultyID) then
-                local difficultyButton = rootDescription:CreateRadio(miog.DIFFICULTY_ID_INFO[difficultyID].name, function(id) return id == selectedDifficulty end, function(id)
-                    EJ_SetDifficulty(id)
-                    self:UpdateAfterCompletion()
+            for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
+                if EJ_IsValidInstanceDifficulty(difficultyID) then
+                    local difficultyButton = rootDescription:CreateRadio(miog.DIFFICULTY_ID_INFO[difficultyID].name, function(id) return id == EJ_GetDifficulty() end, function(id)
+                        EJ_SetDifficulty(id)
+                        selectedDifficulty = difficultyID
 
-                end, difficultyID)
+                        self:UpdateAfterCompletion()
+
+                    end, difficultyID)
+                end
             end
         end
     end)
@@ -108,16 +100,29 @@ function LootMixin:CheckItemFiltering(itemInfo)
     local hasSpecialItemClass = selectedItemClass or selectedItemSubClass
 
     if(hasSpecialItemClass) then
-        local name, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(itemInfo.link)
+        local _, _, _, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(itemInfo.link)
 
-        local itemClassIDsOk = classID == selectedItemClass and (not selectedItemSubClass or selectedItemSubClass == subclassID)
+        if(not (classID == selectedItemClass and (not selectedItemSubClass or selectedItemSubClass == subclassID))) then
+            return false
 
-        return itemClassIDsOk
+        end
     end
 
-    if(selectedArmorType) then
-        return selectedArmorType == itemInfo.armorType
-        
+    if(selectedArmorType and not selectedArmorType == itemInfo.armorType) then
+        return false
+
+    end
+
+    if(currentlySearching) then
+        local filterMatches = miog.fzy.filter(searchText, {itemInfo.name})
+
+        if(#filterMatches > 0) then
+            itemInfo.filterMatches = filterMatches
+
+        else
+            return false
+
+        end
     end
 
     return true
@@ -135,41 +140,132 @@ function LootMixin:RefreshEncounters(journalInstanceID)
 
     tinsert(bossDropdownList, {type = "title"})
 
-    for k, v in ipairs(bossData) do
-        tinsert(bossDropdownList, v)
+    if(bossData) then
+        for k, v in ipairs(bossData) do
+            tinsert(bossDropdownList, v)
 
+        end
     end
 end
 
+function LootMixin:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
+    local isMissingData = false
+    local hasNoInstanceSelected = not selectedJournalInstance
+    local needsInstanceAbbreviation = hasNoEncounterSelected and multiQueue or hasNoInstanceSelected
 
-local function addBoss(parent, bossData, encounterID, instanceHasMoreThan1Boss)
-    local bossInfo = bossData[encounterID]
-    if not bossInfo then return nil end
+    for i = 1, numLoot do
+        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
 
-    bossInfo.template = "MIOG_LootBossTemplate"
-    local boss = parent:Insert(bossInfo)
-    boss:SetSortComparator(SortItemEntries)
-    boss:SetCollapsed(instanceHasMoreThan1Boss, true, false)
-    
-    return boss
+        if not isMissingData and itemInfo and itemInfo.name then
+            local encounterID = itemInfo.encounterID
+            
+            local hasNoEncounterSelected = not selectedEncounter
+            local isSelectedEncounter = hasNoEncounterSelected or selectedEncounter == encounterID
+            
+            if isSelectedEncounter and self:CheckItemFiltering(itemInfo) then
+                itemInfo.template = "MIOG_LootItemTemplate"
+                itemInfo.typeWithSource = showOnlyItems
+                itemInfo.bossName = encounterData[encounterID] and (encounterData[encounterID].name or encounterData[encounterID].altName)
+
+                if(needsInstanceAbbreviation) then
+                    itemInfo.abbreviatedName = encounterData[encounterID].abbreviatedInstanceName
+
+                end
+                    
+                itemInfo.itemlevel = C_Item.GetDetailedItemLevelInfo(itemInfo.link)
+
+                dataProvider:Insert(itemInfo)
+            end
+        else
+            isMissingData = true
+
+        end
+    end
+
+    return isMissingData
 end
 
-local function addInstance(journalInstanceID)
-    local journalInfo = miog:GetJournalInstanceInfo(journalInstanceID)
-    journalInfo.template = "MIOG_LootInstanceTemplate"
+function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, journalInstanceID)
+    local noEncounterSelected = not selectedEncounter
 
-    return dataProvider:Insert(journalInfo)
+    local instanceNodes, bossNodes = {}, {}
+    instanceNode, bossNode = nil, nil
 
+    local parentNode
+
+    if(not multiQueue) then
+        parentNode = dataProvider
+        parentNode:SetSortComparator(SortBossEntries)
+        
+    end
+
+    local isMissingData = false
+
+    for i = 1, numLoot do
+        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
+
+        if not isMissingData and itemInfo and itemInfo.name then
+            if(self:CheckItemFiltering(itemInfo)) then
+                local encounterID = itemInfo.encounterID
+
+                if(noEncounterSelected or selectedEncounter == encounterID) then
+                    itemInfo.itemlevel = C_Item.GetDetailedItemLevelInfo(itemInfo.link)
+                    itemInfo.template = "MIOG_LootItemTemplate"
+
+                    if(multiQueue) then
+                        if(not instanceNodes[journalInstanceID]) then
+                            local journalInfo = miog:GetJournalInstanceInfo(journalInstanceID)
+                            journalInfo.template = "MIOG_LootInstanceTemplate"
+
+                            dataProvider:SetSortComparator(SortInstanceEntries)
+
+                            instanceNode = dataProvider:Insert(journalInfo)
+                            instanceNode:SetSortComparator(SortBossEntries)
+                            instanceNodes[journalInstanceID] = instanceNode
+
+                            parentNode = instanceNode
+
+                        else
+                            parentNode = instanceNodes[journalInstanceID]
+
+                        end
+                    end
+
+                    if(not bossNodes[encounterID]) then
+                        local bossInfo = encounterData and encounterData[encounterID] or miog:GetEncounterData(encounterID)
+
+                        bossInfo.template = "MIOG_LootBossTemplate"
+
+                        bossNode = parentNode:Insert(bossInfo)
+                        bossNode:SetSortComparator(SortItemEntries)
+
+                        bossNodes[encounterID] = bossNode
+                        
+                        numBossesShown = numBossesShown + 1
+                    end
+
+                    bossNodes[encounterID]:Insert(itemInfo)
+                end
+            end
+        else
+            isMissingData = true
+
+        end
+    end
+
+    return isMissingData
 end
 
+function LootMixin:GetHighestDifficulty(isRaid)
+    if(isRaid) then
+        return 16
 
---[[
+    else
+        return 8
 
-decouple ifs in journal selection, integrate into requestloot
+    end
 
---]]
-
-
+end
 
 function LootMixin:SelectJournalInstance(journalInstanceID)
     local id = journalInstanceID or selectedJournalInstance
@@ -177,79 +273,29 @@ function LootMixin:SelectJournalInstance(journalInstanceID)
     
     if(id) then
         EJ_SelectInstance(id)
+
+        if(not selectedDifficulty) then
+            local highestID = miog:GetHighestDifficultyForInstance()
+
+            if(EJ_GetDifficulty() ~= highestID) then
+                EJ_SetDifficulty(highestID)
+
+            end
+        end
+
+        local isMissingData = false
         local numLoot = EJ_GetNumLoot()
 
-        local parent, bossData, instanceHasMoreThan1Boss
-        local isMissingData = false
-
         if(numLoot > 0) then
-            if(not multiQueue) then
-                parent = dataProvider
-
-            end
-
             self:RefreshEncounters(id)
+            local encounterData = miog:GetEncounterDataFromJournalInstance(id)
 
             if(showEverything) then
-                bossData = miog:GetEncounterDataFromJournalInstance(id)
-                instanceHasMoreThan1Boss = miog:GetNumOfBosses(id) > 1
+                isMissingData = self:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, id)
+                
+            else
+                isMissingData = self:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
 
-            end
-
-            local instances = {}
-            local bosses = {}
-
-            for i = 1, numLoot do
-                local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
-
-                if itemInfo and itemInfo.name then
-                    local encounterID = itemInfo.encounterID
-                    
-                    -- Combined filtering and boss check logic
-                    local isSelectedEncounter = not selectedEncounter or selectedEncounter == encounterID
-                    
-                    if isSelectedEncounter and self:CheckItemFiltering(itemInfo) then
-                        local parentNode
-
-                        if(showEverything) then
-                            local instanceNode = instances[journalInstanceID]
-
-                            if(not instanceNode) then
-                                instanceNode = addInstance(journalInstanceID)
-                                instances[journalInstanceID] = instanceNode
-                                parent = instanceNode
-                                parent:SetSortComparator(SortBossEntries)
-                            end
-
-                            parentNode = bosses[encounterID]
-                            
-                            -- Lazy-load the boss node only when an item passes filters
-                            if not parentNode then
-                                parentNode = addBoss(parent, bossData, itemInfo.encounterID, instanceHasMoreThan1Boss)
-                                bosses[encounterID] = parentNode
-
-                                if parentNode then
-                                    numberOfBossesShown = numberOfBossesShown + 1
-                                end
-                            end
-
-                        else
-                            parentNode = dataProvider
-
-                        end
-
-                        itemInfo.template = "MIOG_LootItemTemplate"
-                        
-                        -- Optimization: Only create the item object if you truly need the level
-                        local item = Item:CreateFromItemLink(itemInfo.link)
-                        itemInfo.itemlevel = item:GetCurrentItemLevel()
-
-                        parentNode:Insert(itemInfo)
-                    end
-                else
-                    isMissingData = true
-
-                end
             end
         end
 
@@ -257,208 +303,265 @@ function LootMixin:SelectJournalInstance(journalInstanceID)
     end
 end
 
-function LootMixin:RequestLoot()
+function LootMixin:RequestLoot(origin)
     dataProvider:Flush()
+    dataProvider:SetAllCollapsed(true);
+
     bossDropdownList = {}
+    numBossesShown = 0
 
     multiQueue = #lootQueue > 1
-    numberOfBossesShown = 0
     showOnlyItems = self.OnlyItemsButton:GetChecked()
 
-    local isMissingData
+    local isMissingData = false
+    searchText = self.SearchBox:GetText()
+    currentlySearching = searchText ~= ""
 
     if(showOnlyItems) then
-        dataProvider:SetSortComparator(SortItemEntries)
+        if(currentlySearching) then
+            dataProvider:SetSortComparator(SortItemEntriesWithSearch)
 
-    elseif(multiQueue) then
-        dataProvider:SetSortComparator(SortInstanceEntries)
+        else
+            dataProvider:SetSortComparator(SortItemEntries)
 
+        end
     end
 
     if(#lootQueue > 0) then
         for k, v in ipairs(lootQueue) do
-            isMissingData = self:SelectJournalInstance(v) or false
+            local isDataMissingFromInstance = self:SelectJournalInstance(v)
 
+            if(isDataMissingFromInstance) then
+                isMissingData = true
+
+            end
         end
 
-        self:RefreshDifficulties()
-
         if(not isMissingData) then
-            if(numberOfBossesShown == 1) then
-                dataProvider:SetAllCollapsed(false)
+            local hasMultipleInstances = dataProvider.node:GetSize(true) > 1
+            local hasMultipleBosses = numBossesShown > 1
+
+            if(multiQueue) then
+                if(hasMultipleInstances) then
+                    dataProvider.node:SetCollapsed(hasMultipleInstances, hasMultipleBosses, true)
+                    
+                end
 
             else
-                dataProvider:SetAllCollapsed(true)
+                dataProvider:SetAllCollapsed(hasMultipleBosses)
+                self:RefreshDifficulties()
 
             end
 
+            dataProvider:Invalidate()
+            
             self.ScrollBox:SetDataProvider(dataProvider)
 
         end
     end
 end
 
-function LootMixin:SetupInstanceMenu(dropdown, rootDescription)
-    local expansionButtons = {}
-    local allRaidsTierButtons, allDungeonsTierButtons = {}, {}
+function LootMixin:ResetInstance()
+    lootQueue = defaultList
 
-    for k, v in ipairs(miog.TIER_INFO) do
-        local expansionButton = rootDescription:CreateRadio(v.name, function(index) return index == selectedTier end, nil, k)
-
-        expansionButton:AddInitializer(function(button, description, menu)
-            local leftTexture = button:AttachTexture();
-            leftTexture:SetSize(16, 16);
-            leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-            leftTexture:SetTexture(v.icon);
-
-            button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-            return button.fontString:GetUnboundedStringWidth() + 18 + 5
-        end)
-
-        expansionButtons[k] = expansionButton
-
-        allRaidsTierButtons[k] = expansionButtons[k]:CreateRadio(ALL .. " " .. RAIDS, function(index) return index == selectedTier and specialSelection == RAIDS end, function(index)
-            lootQueue = allRaidsTierButtons[k].QueueList
-
-            selectedJournalInstance = nil
-            selectedTier = index
-            specialSelection = RAIDS
-
-            self:RequestLoot()
-            
-        end, k)
-        allRaidsTierButtons[k].QueueList = {}
-
-        allDungeonsTierButtons[k] = expansionButtons[k]:CreateRadio(ALL .. " " .. DUNGEONS, function(index) return index == selectedTier and specialSelection == DUNGEONS end, function(index)
-            lootQueue = allDungeonsTierButtons[k].QueueList
-
-            selectedJournalInstance = nil
-            selectedTier = index
-            specialSelection = DUNGEONS
-
-            self:RequestLoot()
-
-        end, k)
-        allDungeonsTierButtons[k].QueueList = {}
-    end
-
-    local finalInstanceList = {}
-
-     for i = 1, 4000, 1 do
-        local instanceInfo = instanceDB[i]
-
-        if(instanceInfo and instanceInfo.tier) then
-            tinsert(finalInstanceList, instanceInfo)
-
-        end
-    end
-
-    table.sort(finalInstanceList, function(k1, k2)
-        if(k1.isRaid == k2.isRaid) then
-            if(k1.isRaid) then
-                return k1.journalInstanceID < k2.journalInstanceID
-
-            else
-                return k1.instanceName < k2.instanceName
-
-            end
-        end
-
-        return k1.isRaid and true or k2.isRaid and false
-    end)
-
-    local raidTitles, dungeonTitles = {}, {}
-
-    local first = false
-
-    for k, v in ipairs(finalInstanceList) do
-        if(v and v.tier) then
-            local hasNoRaidTitle = v.isRaid and not raidTitles[v.tier]
-            local hasNoDungeonTitle = not v.isRaid and not dungeonTitles[v.tier]
-
-            if(hasNoRaidTitle) then
-                raidTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(RAIDS)
-
-            elseif(hasNoDungeonTitle) then
-                dungeonTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(DUNGEONS)
-                
-            end
-            
-            if(v.isRaid) then
-                tinsert(allRaidsTierButtons[v.tier].QueueList, v.journalInstanceID)
-                
-            else
-                tinsert(allDungeonsTierButtons[v.tier].QueueList, v.journalInstanceID)
-
-            end
-            
-            local instanceButton = expansionButtons[v.tier]:CreateRadio(v.instanceName, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
-                lootQueue = {journalInstanceID}
-
-                selectedJournalInstance = journalInstanceID
-                selectedTier = v.tier
-                specialSelection = nil
-
-                self.SearchBox:CreateFilter("instance", v.instanceName, function() end)
-
-                self:RequestLoot()
-
-            end, v.journalInstanceID)
-
-            instanceButton:AddInitializer(function(button, description, menu)
-                local leftTexture = button:AttachTexture();
-                leftTexture:SetSize(16, 16);
-                leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-                leftTexture:SetTexture(v.icon);
-
-                if(not first and not v.icon) then
-                    first = true
-                    
-                end
-
-                button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-                return button.fontString:GetUnboundedStringWidth() + 18 + 5
-            end)
-        end
-    end
-
-    if(#lootQueue == 0) then
-        lootQueue = miog:table_merge(allDungeonsTierButtons[#allDungeonsTierButtons].QueueList, allRaidsTierButtons[#allRaidsTierButtons].QueueList)
-        
-        self:RequestLoot()
-    end
+    selectedJournalInstance = nil
+    selectedTier = nil
+    specialSelection = nil
+    
+    self:RequestLoot(2)
 end
 
-function LootMixin:OnShow()
-    instanceDB = miog:GetJournalDB()
+function LootMixin:LoadAllInstanceFromTypeAndTier(type, tier)
+    lootQueue = (type == RAIDS and allRaidsJournalInstanceIDList or allDungeonsJournalInstanceIDList)[tier]
 
+    selectedJournalInstance = nil
+    selectedTier = tier
+    specialSelection = type
+
+    self.SearchBox:CreateFilter("instance", EJ_GetTierInfo(tier) .. " - " .. type, function() self:ResetInstance() self.InstanceDropdown:SignalUpdate() end)
+
+    self:RequestLoot(3)
+
+end
+
+local function setSpecialButtonTooltip(tooltip, elementDescription, name)
+    local elementText = MenuUtil.GetElementText(elementDescription)
+
+    GameTooltip_SetTitle(tooltip, name .. " - " .. elementText);
+    GameTooltip_AddErrorLine(tooltip, "This will load " .. elementText .. " from \"" .. name .. "\".");
+    GameTooltip_AddErrorLine(tooltip, "Loading might take some time.");
+end
+
+function LootMixin:SetupInstanceMenu()
     self.InstanceDropdown:SetupMenu(function(dropdown, rootDescription)
-        self:SetupInstanceMenu(dropdown, rootDescription)
+        if(instanceDB) then
+            local expansionButtons = {}
+
+            for k, v in ipairs(miog.TIER_INFO) do
+                local expansionButton = rootDescription:CreateRadio(v.name, function(index) return index == selectedTier end, nil, k)
+
+                expansionButton:AddInitializer(function(button, description, menu)
+                    local leftTexture = button:AttachTexture();
+                    leftTexture:SetSize(16, 16);
+                    leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+                    leftTexture:SetTexture(v.icon);
+
+                    button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+                    return button.fontString:GetUnboundedStringWidth() + 18 + 5
+                end)
+
+                expansionButtons[k] = expansionButton
+
+                local raidButton = expansionButtons[k]:CreateRadio(ALL .. " " .. RAIDS, function(index) return index == selectedTier and specialSelection == RAIDS end, function(index)
+                    self:LoadAllInstanceFromTypeAndTier(RAIDS, index)
+                    
+                end, k)
+
+                raidButton:SetTooltip(function(tooltip, elementDescription)
+                    setSpecialButtonTooltip(tooltip, elementDescription, v.name)
+
+                end);
+
+                allRaidsJournalInstanceIDList[k] = {}
+
+                local dungeonButton = expansionButtons[k]:CreateRadio(ALL .. " " .. DUNGEONS, function(index) return index == selectedTier and specialSelection == DUNGEONS end, function(index)
+                    self:LoadAllInstanceFromTypeAndTier(DUNGEONS, index)
+
+                end, k)
+
+                dungeonButton:SetTooltip(function(tooltip, elementDescription)
+                    setSpecialButtonTooltip(tooltip, elementDescription, v.name)
+                    
+                end);
+
+                allDungeonsJournalInstanceIDList[k] = {}
+            end
+
+            local finalInstanceList = {}
+
+            for i = 1, 4000, 1 do
+                local instanceInfo = instanceDB[i]
+
+                if(instanceInfo and instanceInfo.tier) then
+                    tinsert(finalInstanceList, instanceInfo)
+
+                end
+            end
+
+            table.sort(finalInstanceList, function(k1, k2)
+                if(k1.isRaid == k2.isRaid) then
+                    if(k1.isRaid) then
+                        return k1.journalInstanceID < k2.journalInstanceID
+
+                    else
+                        return k1.instanceName < k2.instanceName
+
+                    end
+                end
+
+                return k1.isRaid and true or k2.isRaid and false
+            end)
+
+            local raidTitles, dungeonTitles = {}, {}
+
+            local first = false
+
+            for k, v in ipairs(finalInstanceList) do
+                if(v and v.tier) then
+                    local hasNoRaidTitle = v.isRaid and not raidTitles[v.tier]
+                    local hasNoDungeonTitle = not v.isRaid and not dungeonTitles[v.tier]
+
+                    if(hasNoRaidTitle) then
+                        raidTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(RAIDS)
+
+                    elseif(hasNoDungeonTitle) then
+                        dungeonTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(DUNGEONS)
+                        
+                    end
+                    
+                    if(v.isRaid) then
+                        tinsert(allRaidsJournalInstanceIDList[v.tier], v.journalInstanceID)
+                        
+                    else
+                        tinsert(allDungeonsJournalInstanceIDList[v.tier], v.journalInstanceID)
+
+                    end
+                    
+                    local instanceButton = expansionButtons[v.tier]:CreateRadio(v.instanceName, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
+                        lootQueue = {journalInstanceID}
+
+                        selectedJournalInstance = journalInstanceID
+                        selectedTier = v.tier
+                        specialSelection = nil
+
+                        self.SearchBox:CreateFilter("instance", v.instanceName, function() self:ResetInstance() self.InstanceDropdown:SignalUpdate() end)
+
+                        self:RequestLoot(4)
+
+                    end, v.journalInstanceID)
+
+                    instanceButton:AddInitializer(function(button, description, menu)
+                        local leftTexture = button:AttachTexture();
+                        leftTexture:SetSize(16, 16);
+                        leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+                        leftTexture:SetTexture(v.icon);
+
+                        if(not first and not v.icon) then
+                            first = true
+                            
+                        end
+
+                        button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+                        return button.fontString:GetUnboundedStringWidth() + 18 + 5
+                    end)
+                end
+            end
+
+            defaultList = miog:table_merge({}, allDungeonsJournalInstanceIDList[#allDungeonsJournalInstanceIDList], allRaidsJournalInstanceIDList[#allRaidsJournalInstanceIDList])
+
+            if(#lootQueue == 0) then
+                self:ResetInstance()
+
+            end
+        end
     end)
 end
 
 local lastInfo = 0
 
+function LootMixin:CalculateWaitTime()
+    local numOfInstances = #lootQueue
+
+    return 0.25 + numOfInstances * 0.12
+
+end
+
 function LootMixin:UpdateAfterCompletion()
     lastInfo = GetTimePreciseSec()
 
     if(not updateTimer or updateTimer:IsCancelled()) then
-        updateTimer = C_Timer.NewTicker(0.25, function()
-            if(GetTimePreciseSec() - lastInfo > self:CalculateWaitTime()) then
-                print("HERE", GetTimePreciseSec(), lastInfo, GetTimePreciseSec() - lastInfo)
-                updateTimer:Cancel()
+        local waitTime = self:CalculateWaitTime()
+        local finishedAt = GetTimePreciseSec() + waitTime
+        self.ProgressBar:SetMinMaxSmoothedValue(0, waitTime)
 
-                self:RequestLoot()
+        updateTimer = C_Timer.NewTicker(0.25, function()
+            current = finishedAt - GetTimePreciseSec()
+            self.ProgressBar:SetSmoothedValue(waitTime - current)
+
+            if(GetTimePreciseSec() - lastInfo > waitTime) then
+                updateTimer:Cancel()
+                self.ProgressBar:ResetSmoothedValue(0)
+
+                self:RequestLoot(5)
+
             end
         end)
     end
 end
 
 function LootMixin:OnEvent(event, ...)
-    print("EVENT", event)
-
     if(event == "EJ_LOOT_DATA_RECIEVED") then
         self:UpdateAfterCompletion()
 
@@ -471,13 +574,9 @@ function LootMixin:RefreshClassesAndArmor()
             selectedArmorType = nil
             EJ_ResetLootFilter()
 
-            self:RequestLoot()
-
         end)
 
         rootDescription:CreateSpacer()
-
-        --local classID, specID = EJ_GetLootFilter()
 
         local ownClassName, fileName, ownClassID = UnitClass("PLAYER")
         local classColor = C_ClassColor.GetClassColor(fileName)
@@ -488,9 +587,8 @@ function LootMixin:RefreshClassesAndArmor()
         for specIndex = 1, specCount, 1 do
             local specId, name, description, icon, role, primaryStat, pointsSpent, background, previewPointsSpent, isUnlocked = C_SpecializationInfo.GetSpecializationInfo(specIndex)
 
-	        rootDescription:CreateRadio(name, function(getID) return getID == selectedSpec end, function(getID)
+	        rootDescription:CreateRadio(name, function(getID) return getID == select(2, EJ_GetLootFilter()) end, function(getID)
                 EJ_SetLootFilter(ownClassID, getID)
-                self:RequestLoot()
                 
             end, specId)
         end
@@ -501,25 +599,23 @@ function LootMixin:RefreshClassesAndArmor()
 
         classButton:CreateButton(CLEAR_ALL, function()
             EJ_ResetLootFilter()
-            self:RequestLoot()
 
         end)
             
         classButton:CreateSpacer()
 
         for k, v in ipairs(miog.OFFICIAL_CLASSES) do
-	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(id) return id == selectedClass end, function(id)
+	        local classMenu = classButton:CreateRadio(GetClassInfo(k), function(id) return id == EJ_GetLootFilter() end, function(id)
                 EJ_SetLootFilter(id, 0)
-                self:RequestLoot()
 
+                
             end, k)
 
             for x, y in ipairs(v.specs) do
                 local id, specName, description, icon, role, classFile, className = GetSpecializationInfoByID(y)
 
-                classMenu:CreateRadio(specName, function(getID) return getID == selectedSpec end, function(getID)
+                classMenu:CreateRadio(specName, function(getID) return getID == select(2, EJ_GetLootFilter()) end, function(getID)
                     EJ_SetLootFilter(k, getID)
-                    self:RequestLoot()
                     
                 end, id)
             end
@@ -529,7 +625,7 @@ function LootMixin:RefreshClassesAndArmor()
 
         armorButton:CreateButton(CLEAR_ALL, function(index)
             selectedArmorType = nil
-            self:RequestLoot()
+            self:RequestLoot(6)
 
         end)
             
@@ -538,7 +634,7 @@ function LootMixin:RefreshClassesAndArmor()
         for k, v in ipairs(armorTypeInfo) do
 	        armorButton:CreateRadio(v.name, function(name) return name == selectedArmorType end, function(name)
                 selectedArmorType = v.name
-                self:RequestLoot()
+                self:RequestLoot(7)
 
             end, v.name)
 
@@ -553,7 +649,7 @@ function LootMixin:RefreshSlots()
             selectedItemSubClass = nil
             C_EncounterJournal.ResetSlotFilter()
 
-            self:RequestLoot()
+            self:RequestLoot(8)
 
         end)
             
@@ -566,49 +662,86 @@ function LootMixin:RefreshSlots()
         end
 
         for i = 0, #sortedFilters - 1, 1 do
-            rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(index) return index == C_EncounterJournal.GetSlotFilter() end, function(index)
-                selectedItemClass = nil
-                selectedItemSubClass = nil
-                C_EncounterJournal.SetSlotFilter(index)
+            local mainSlots = rootDescription:CreateRadio(miog.SLOT_FILTER_TO_NAME[i], function(data) return data.slot == C_EncounterJournal.GetSlotFilter() end, function(data)
+                selectedItemClass = data.class
+                selectedItemSubClass = data.subclass
+                C_EncounterJournal.SetSlotFilter(data.slot)
 
-                self:RequestLoot()
-            end, i)
+                dropdown:CloseMenu()
+
+                self:RequestLoot(9)
+            end, {slot = i, class = nil, subclass = nil})
+
+            if(i == 10) then
+                for k, v in pairs(Enum.ItemWeaponSubclass) do
+                    mainSlots:CreateRadio(C_Item.GetItemSubClassInfo(2, v), function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+                        selectedItemClass = data.class
+                        selectedItemSubClass = data.subclass
+                        C_EncounterJournal.SetSlotFilter(data.slot)
+
+                        self:RequestLoot(10)
+
+                    end, {slot = i, class = 2, subclass = v})
+                end
+
+            elseif(i == 14) then
+                mainSlots:CreateRadio(MOUNTS, function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+                    selectedItemClass = data.class
+                    selectedItemSubClass = data.subclass
+                    C_EncounterJournal.SetSlotFilter(data.slot)
+
+                    self:RequestLoot(11)
+
+                end, {slot = 14, class = 15, subclass = 5})
+
+                local recipeButton = mainSlots:CreateRadio(PROFESSIONS_RECIPES_TAB, function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+                    selectedItemClass = data.class
+                    selectedItemSubClass = data.subclass
+                    C_EncounterJournal.SetSlotFilter(data.slot)
+                    
+                    dropdown:CloseMenu()
+
+                    self:RequestLoot(12)
+
+                end, {slot = 14, class = 9, subclass = nil})
+
+                for k, v in pairs(Enum.ItemRecipeSubclass) do
+                    recipeButton:CreateRadio(C_Item.GetItemSubClassInfo(9, v), function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+                        selectedItemClass = data.class
+                        selectedItemSubClass = data.subclass
+                        C_EncounterJournal.SetSlotFilter(data.slot)
+
+                        self:RequestLoot(13)
+
+                    end, {slot = 14, class = 9, subclass = v})
+
+                end
+
+                mainSlots:CreateRadio(TOKENS, function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
+                    selectedItemClass = data.class
+                    selectedItemSubClass = data.subclass
+                    C_EncounterJournal.SetSlotFilter(data.slot)
+
+                    self:RequestLoot(14)
+
+                end, {slot = 14, class = 15, subclass = 0})
+            end
         end
 
-        rootDescription:CreateRadio("Mounts", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
-            selectedItemClass = data.class
-            selectedItemSubClass = data.subclass
-            C_EncounterJournal.SetSlotFilter(14)
-
-            self:RequestLoot()
-
-        end, {class = 15, subclass = 5})
-
-        rootDescription:CreateRadio("Recipes", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
-            selectedItemClass = data.class
-            selectedItemSubClass = data.subclass
-            C_EncounterJournal.SetSlotFilter(14)
-
-            self:RequestLoot()
-
-        end, {class = 9, subclass = nil})
-
-        rootDescription:CreateRadio("Tokens", function(data) return selectedItemClass == data.class and selectedItemSubClass == data.subclass end, function(data)
-            selectedItemClass = data.class
-            selectedItemSubClass = data.subclass
-            C_EncounterJournal.SetSlotFilter(14)
-
-            self:RequestLoot()
-
-        end, {class = 15, subclass = 0})
+       
     end)
+end
+
+function LootMixin:ResetEncounter()
+    self:SetSelectedEncounter()
+
 end
 
 function LootMixin:SetupEncounterMenu()
     self.BossDropdown:SetupMenu(function(dropdown, rootDescription)
         if(bossDropdownList and #bossDropdownList > 0) then
             rootDescription:CreateButton(CLEAR_ALL, function()
-                self:SetSelectedEncounter()
+                self:ResetEncounter()
 
             end)
             
@@ -631,10 +764,14 @@ function LootMixin:SetupEncounterMenu()
                         nextTitle = false
                     end
 
-                    local encounterButton = rootDescription:CreateRadio(v.name or v.altName, function(data) return data.journalEncounterID == self:GetSelectedEncounter() end, function(data)
-                        self:SetSelectedEncounter(data.journalEncounterID)
+                    local name = v.name or v.altName
 
-                        self:RequestLoot()
+                    local encounterButton = rootDescription:CreateRadio(name, function(data) return data.journalEncounterID == self:GetSelectedEncounter() end, function(data)
+                        self:SetSelectedEncounter(data.journalEncounterID)
+                        self.SearchBox:CreateFilter("encounter", name, function() self:ResetEncounter() self.BossDropdown:SignalUpdate() end)
+
+                        self:RequestLoot(15)
+
 
                     end, v)
                 end
@@ -643,17 +780,38 @@ function LootMixin:SetupEncounterMenu()
     end)
 end
 
+function LootMixin:OnShow()
+    instanceDB = miog:GetJournalDB()
+
+    self:SetupInstanceMenu()
+end
+
 function LootMixin:OnLoad()
 	self.InstanceDropdown:SetDefaultText("---Instances---")
 	self.BossDropdown:SetDefaultText("---Bosses---")
 	self.ClassArmorDropdown:SetDefaultText("---Class---")
 	self.SlotDropdown:SetDefaultText("---Slot---")
 	self.DifficultyDropdown:SetDefaultText("---Difficulty---")
+    self.ProgressBar:SetMinMaxSmoothedValue(0, 1)
+    self.ProgressBar:ResetSmoothedValue(0)
 
     dataProvider = CreateTreeDataProvider()
     self:RefreshSlots()
     self:RefreshClassesAndArmor()
     self:SetupEncounterMenu()
+    self:SetupInstanceMenu()
+
+	self.SearchBox.Instructions:SetText("Enter atleast 3 characters to search");
+    self.SearchBox:SetScript("OnTextChanged", function(selfFrame, manual)
+        SearchBoxTemplate_OnTextChanged(selfFrame)
+
+        local length = strlen(selfFrame:GetText())
+
+        if(length > 2 or length == 0) then
+            self:RequestLoot(16)
+
+        end
+    end)
 
     local view = CreateScrollBoxListTreeListView(12, 0, 0, 0, 0, 6)
     self.view = view
@@ -683,30 +841,26 @@ function LootMixin:OnLoad()
     end)
 
     self.SearchBox:SetCallback(function()
-        self:RequestLoot()
     end)
 
     self.OnlyItemsButton:SetScript("PostClick", function(selfFrame)
-        selfFrame:GetParent():RequestLoot()
+        selfFrame:GetParent():RequestLoot(18)
     
     end)
 
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, self:GetParent():GetParent().ScrollBarArea.LootScrollBar)
 
     hooksecurefunc("EJ_SetLootFilter", function(classID, specID)
-        selectedClass = classID
-        selectedSpec = specID
-
+        self.DifficultyDropdown:SignalUpdate()
+        self:RequestLoot(19)
     end)
 
     hooksecurefunc("EJ_ResetLootFilter", function()
-        selectedClass = nil
-        selectedSpec = nil
-
+        self.DifficultyDropdown:SignalUpdate()
+        self:RequestLoot(20)
     end)
 
     hooksecurefunc("EJ_SetDifficulty", function(difficultyID)
-        selectedDifficulty = difficultyID
-
+        self.DifficultyDropdown:SignalUpdate()
     end)
 end

@@ -7,13 +7,13 @@
             <Layer>
                 <FontString parentKey="Itemlevel" font="GameFontHighlight" justifyH="LEFT">
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="2"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="Type" font="GameFontHighlight" justifyH="LEFT">
                     <Anchors>
-                        <Anchor point="RIGHT" x="-3"/>
+                        <Anchor point="RIGHT" x="-2"/>
                     </Anchors>
                 </FontString>
             </Layer>

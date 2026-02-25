@@ -424,7 +424,7 @@ local function professionsFrameOnShow()
 end
 
 local function requestAllLootForMapID(info)
-    local mapInfo = miog.MAP_INFO[info.mapID]
+    local mapInfo = miog:GetMapInfo(info.mapID)
     local journalInstanceID = mapInfo.journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(info.mapID) or EJ_GetInstanceForMap(info.mapID) or nil
 
     if(journalInstanceID and journalInstanceID > 0 and C_EncounterJournal.InstanceHasLoot(journalInstanceID)) then
@@ -495,14 +495,15 @@ local function findAllRelevantMapIDs()
     end
 
     for k, info in ipairs(listWithMapIDs) do
-        local tbl = requestAllLootForMapID(info)
+        if(info.mapID) then
+            local tbl = requestAllLootForMapID(info)
 
-        if(tbl) then
-            tbl.active = info.active
-            tinsert(instanceList, tbl)
-            
+            if(tbl) then
+                tbl.active = info.active
+                tinsert(instanceList, tbl)
+                
+            end
         end
-
     end
 
     return instanceList

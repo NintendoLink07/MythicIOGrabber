@@ -2,9 +2,8 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_Loot" mixin="LootMixin" virtual="true">
         <Frames>
-            <!-- 5 px taller than dropdowns -->
             <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" mixin="LootSearchBarMixin" autoFocus="false" font="GameFontHighlight">
-                <Size y="30" />
+                <Size y="25" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" x="8"/>
@@ -69,11 +68,23 @@
                     <Anchor point="RIGHT" relativeKey="$parent.DifficultyDropdown" relativePoint="LEFT" x="-2"/>
                 </Anchors>
             </DropdownButton>
+            
+			<StatusBar parentKey="ProgressBar" mixin="SmoothStatusBarMixin">
+                <BarTexture atlas="activities-bar-fill"/>
+                activities-bar-fill
+                _honorsystem-bar-fill
+                <Size y="4" />
+				<Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassArmorDropdown" relativePoint="BOTTOMLEFT" y="-4"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropdown" relativePoint="BOTTOMRIGHT" y="-4"/>
+				</Anchors>
+            </StatusBar>
 
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ClassArmorDropdown" relativePoint="BOTTOMLEFT" y="-4"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ProgressBar" relativePoint="BOTTOMLEFT" y="-4"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ProgressBar" relativePoint="BOTTOMRIGHT" y="-4"/>
+                    <Anchor point="BOTTOM" relativeKey="$parent" relativePoint="BOTTOM" />
                 </Anchors>
             </Frame>
         </Frames>

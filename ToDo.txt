@@ -7,23 +7,12 @@ Okay
 - Gearing // enable&disable columns
 
 WIP
+- Drops
 
 Needs overhaul
 - Progress // submenus only
-- Drops
 - Ports
 
 No idea
 - Upgrades
 - FilterManager
-
-
-
-
-
---- Journal DB / Map
-info mismatch ??!
-
-2 paths ->
-        activityInfo -> mapID -> journalInstanceID
-        journalIndex -> mapID

@@ -19,7 +19,7 @@
                 <Texture parentKey="Icon">
                     <Size x="20" y="20" />
                     <Anchors>
-                        <Anchor point="LEFT" x="2"/>
+                        <Anchor point="LEFT" x="1"/>
                     </Anchors>
                 </Texture>
             </Layer>

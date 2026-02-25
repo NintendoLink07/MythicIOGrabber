@@ -4,8 +4,8 @@ function LootSearchBarMixin:OnLoad()
     local filterArea = CreateFrame("Frame", "FilterArea", self, "HorizontalLayoutFrame")
     filterArea.childLayoutDirection = "rightToLeft"
     filterArea.align = "center"
-    filterArea:SetPoint("TOPLEFT", self.Left, "TOPLEFT", 4, -2)
-    filterArea:SetPoint("BOTTOMRIGHT", self.Right, "BOTTOMRIGHT", -4, 0)
+    filterArea:SetPoint("TOPLEFT", self.Left, "TOPLEFT", 4, -3)
+    filterArea:SetPoint("BOTTOMRIGHT", self.Right, "BOTTOMRIGHT", 0, -1)
 
     self.ActiveFilters = {}
 
@@ -18,18 +18,24 @@ function LootSearchBarMixin:SetCallback(func)
 
 end
 
+function LootSearchBarMixin:ClearFilterWidgetByID(id)
+    if(self.ActiveFilters[id]) then
+        self:ClearFilterWidget(self.ActiveFilters[id])
+        self.ActiveFilters[id] = nil
+
+    end
+end
+
 function LootSearchBarMixin:ClearFilterWidget(widget)
     self.FilterPool:Release(widget)
     self.FilterArea:MarkDirty()
+
 end
 
 function LootSearchBarMixin:CreateFilter(id, name, localCallback)
     local filter = self.FilterPool:Acquire()
 
-    if(self.ActiveFilters[id]) then
-        self:ClearFilterWidget(self.ActiveFilters[id])
-
-    end
+    self:ClearFilterWidgetByID(id)
 
     filter.Name:SetText(name)
     filter.id = id
@@ -37,7 +43,7 @@ function LootSearchBarMixin:CreateFilter(id, name, localCallback)
     filter.layoutIndex = self.FilterPool:GetNumActive() + 1
     filter:SetWidth(filter.Name:GetStringWidth() + 48)
     filter.Cancel:SetScript("OnClick", function(localSelf)
-        self:ClearFilterWidget(localSelf:GetParent())
+        self:ClearFilterWidgetByID(localSelf:GetParent().id)
 
         if(localCallback) then
             localCallback()
@@ -52,7 +58,6 @@ function LootSearchBarMixin:CreateFilter(id, name, localCallback)
     filter:Show()
 
     self.ActiveFilters[id] = filter
-
     self.FilterArea:MarkDirty()
 end
 

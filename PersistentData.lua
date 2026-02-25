@@ -334,6 +334,27 @@ miog.DIFFICULTY_ID_TO_SHORT_NAME = {
 	[DifficultyUtil.ID.RaidStory] = "ST",
 }
 
+miog.EJ_DIFFICULTIES = {
+	DifficultyUtil.ID.DungeonNormal,
+	DifficultyUtil.ID.DungeonHeroic,
+	DifficultyUtil.ID.DungeonMythic,
+	DifficultyUtil.ID.DungeonChallenge,
+	DifficultyUtil.ID.DungeonTimewalker,
+	DifficultyUtil.ID.RaidLFR,
+	DifficultyUtil.ID.Raid10Normal,
+	DifficultyUtil.ID.Raid10Heroic,
+	DifficultyUtil.ID.Raid25Normal,
+	DifficultyUtil.ID.Raid25Heroic,
+	DifficultyUtil.ID.PrimaryRaidLFR,
+	DifficultyUtil.ID.PrimaryRaidNormal,
+	DifficultyUtil.ID.PrimaryRaidHeroic,
+	DifficultyUtil.ID.PrimaryRaidMythic,
+	DifficultyUtil.ID.RaidTimewalker,
+	DifficultyUtil.ID.Raid40,
+	DifficultyUtil.ID.RaidStory,
+};
+
+
 miog.DIFFICULTY_ID_INFO = {}
 
 miog.DIFFICULTY = {
@@ -1144,7 +1165,7 @@ miog.MAP_INFO = {
 	[2441] = {abbreviatedName = "TAZA", fileName = "tazaveshtheveiledmarket"},
 	[2450] = {abbreviatedName = "SOD", fileName = "sanctumofdomination"},
 	[2481] = {abbreviatedName = "SFO", fileName = "sepulcherofthefirstones"},
-	[2559] = {abbreviatedName = "WORLD", iconName = "shadowlands", fileName = "shadowlandscontinent",},
+	[2559] = {abbreviatedName = "WRLD", iconName = "shadowlands", fileName = "shadowlandscontinent",},
 
 	--DRAGONFLIGHT
 	[2451] = {abbreviatedName = "ULOT", fileName = "uldaman-legacyoftyr"},
@@ -1155,12 +1176,12 @@ miog.MAP_INFO = {
 	[2521] = {abbreviatedName = "RLP", fileName = "lifepools"},
 	[2526] = {abbreviatedName = "AA", fileName = "theacademy"},
 	[2527] = {abbreviatedName = "HOI", fileName = "hallsofinfusion"},
-	[2574] = {abbreviatedName = "WORLD", fileName = "dragonislescontinent",},
+	[2574] = {abbreviatedName = "WRLD", fileName = "dragonislescontinent",},
 	[2579] = {abbreviatedName = "DOTI", fileName = "dawnoftheinfinite"},
 
 	
 	[2444] = {
-		abbreviatedName = "WORLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dragonislescontinent.png", type="exp", fileName = "dragonislescontinent",
+		abbreviatedName = "WRLD", icon = miog.C.STANDARD_FILE_PATH .. "/bossIcons/dragonislescontinent.png", type="exp", fileName = "dragonislescontinent",
 	},
 	[2549] = {
 		bossIcons = {
@@ -1346,7 +1367,7 @@ miog.MAP_INFO = {
 	[2951] = {abbreviatedName = "VRS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "voidrazorsanctuary",},
 	
 	[2773] = {abbreviatedName = "OF", fileName = "waterworks"},
-	[2774] = {abbreviatedName = "WORLD", fileName = "khazalgar",},
+	[2774] = {abbreviatedName = "WRLD", fileName = "khazalgar",},
 	[2776] = {abbreviatedName = "CODEX", fileName = "kalimdor",},
 
 	[2792] = {abbreviatedName = "BRD", fileName = "blackrockdepths"},
@@ -1856,55 +1877,121 @@ function miog:UpdateJournalDB()
 	end
 end
 
-function miog:SaveJournalEncounterData(journalEncounterID)
+function miog:ConvertInstanceEncounterDataToBossData(journalInstanceID)
+	local journalDB = database.pointers.journal[journalInstanceID]
 
+	local bossDB = {}
+
+	for k, v in pairs(journalDB.encounters) do
+		tinsert(bossDB, v)
+
+	end
+
+	table.sort(bossDB, function(k1, k2)
+		return k1.dungeonEncounterID < k2.dungeonEncounterID
+
+	end)
+
+	for k, v in ipairs(bossDB) do
+		v.index = k
+
+	end
+
+	journalDB.bosses = bossDB
+end
+
+function miog:SaveJournalEncounterDataWithPreData(journalEncounterID, bossName, journalInstanceID, dungeonEncounterID, mapID, bossIndex)
+	if(bossName) then
+		local journalDB = database.pointers.journal[journalInstanceID]
+
+		local id, altName, _, creatureDisplayInfoID, icon, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature of encounter (boss)
+
+		local db = {
+			name = bossName,
+			altName = altName,
+			journalEncounterID = journalEncounterID,
+			journalInstanceID = journalInstanceID,
+			dungeonEncounterID = dungeonEncounterID,
+			abbreviatedInstanceName = journalDB.abbreviatedName,
+			mapID = mapID,
+			achievements = {},
+			id = id,
+			creatureDisplayInfoID = creatureDisplayInfoID,
+			icon = icon,
+			index = bossIndex,
+		}
+		
+		database.pointers.encounters[journalEncounterID] = db
+
+		if(not journalDB.encounters) then
+			journalDB.encounters = {}
+
+		end
+
+		journalDB.encounters[journalEncounterID] = db
+
+		if(bossIndex) then
+			journalDB.bosses[bossIndex] = db
+
+		else
+			miog:ConvertInstanceEncounterDataToBossData(journalInstanceID)
+
+		end
+	end
+end
+
+function miog:GetHighestDifficultyForInstance(journalInstanceID)
+    if(journalInstanceID) then
+        EJ_SelectInstance(journalInstanceID)
+
+    end
+
+    for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
+        if EJ_IsValidInstanceDifficulty(difficultyID) then
+            if(difficultyID == 1 or difficultyID == 2 or difficultyID == 23 or difficultyID == 8) then
+                return 8
+
+            elseif(difficultyID == 14 or difficultyID == 15 or difficultyID == 16 or difficultyID == 17) then
+                return 16
+
+            end
+        end
+    end
+end
+
+function miog:SaveJournalEncounterData(journalEncounterID)
+	local bossName, _, _, _, _, journalInstanceID, dungeonEncounterID, mapID = EJ_GetEncounterInfo(journalEncounterID)
+
+	miog:SaveJournalEncounterDataWithPreData(journalEncounterID, bossName, journalInstanceID, dungeonEncounterID, mapID)
 end
 
 function miog:SaveJournalInstanceBossData(journalInstanceID)
 	local journalDB = database.pointers.journal[journalInstanceID]
-	local encounterDB = database.pointers.encounters
 
-	local bossDB = {}
-	local bossIndex = 1
+	local bossIndex = 14
+	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
 
-	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+	if(not bossName) then
+		EJ_SelectInstance(journalInstanceID)
+		bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
 
-	while bossName do
-		local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature of encounter (boss)
-		
-		local db = {
-			name = bossName,
-			altName = name2,
-			journalEncounterID = journalEncounterID,
-			journalInstanceID = journalInstanceID,
-			dungeonEncounterID = dungeonEncounterID,
-			mapID = journalDB.mapID,
-			orderIndex = id,
-			achievements = {},
-			id = id,
-			creatureDisplayInfoID = displayInfo,
-			icon = iconImage,
-			index = bossIndex,
-		}
-
-		bossDB[bossIndex] = db
-		journalDB.encounters[journalEncounterID] = db
-		encounterDB[journalEncounterID] = db
-
-		--miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = db}
-
-		bossIndex = bossIndex + 1;
-		bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
 	end
 
-	local numOfBosses = #bossDB
+	if(bossName) then
+		journalDB.bosses = {}
 
-	if(numOfBosses > 0) then
-		journalDB.bosses = bossDB
-		journalDB.numOfBosses = numOfBosses
+	end
 
-	else
-		journalDB.numOfBosses = numOfBosses
+	while bossName do
+		miog:SaveJournalEncounterDataWithPreData(journalEncounterID, bossName, journalInstanceID, dungeonEncounterID, mapID, bossIndex)
+
+		bossIndex = bossIndex + 1;
+
+		bossName, _, journalEncounterID, _, _, _, _, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+	end
+
+	if(journalDB.bosses) then
+		journalDB.numOfBosses = #journalDB.bosses
 
 	end
 end
@@ -1922,6 +2009,9 @@ function miog:RetrieveJournalInstanceEncounterData(journalInstanceID)
 end
 
 function miog:RetrieveJournalEncounterData(journalEncounterID)
+	miog:SaveJournalEncounterData(journalEncounterID)
+
+	return database.pointers.encounters[journalEncounterID]
 
 end
 
@@ -1955,12 +2045,16 @@ function miog:GetEncounterDataFromJournalInstance(journalInstanceID)
 
 end
 
+function miog:GetEncounterData(journalEncounterID)
+	return database.pointers.encounters[journalEncounterID] or miog:RetrieveJournalEncounterData(journalEncounterID)
+
+end
+
 function miog:GetJournalInstanceIDFromMap(mapID)
 	return C_EncounterJournal.GetInstanceForGameMap(mapID)
 
 end
 
--- change to group id instead of map
 function miog:CreateMapPointer(mapID)
 	if(mapID) then
 		if(not database.pointers.map[mapID]) then
@@ -2033,7 +2127,6 @@ function miog:LoadMapData(mapID)
 end
 
 function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, debug)
-
 	database.pointers.journal[journalInstanceID] = {
 		instanceName = instanceName,
 		bgImage = bgImage,
@@ -2045,17 +2138,16 @@ function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, descripti
 		mapID = mapID,
 		isRaid = isRaid,
 		tier = tier,
-		encounters = {}
 	}
 
+	miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
 	miog:RetrieveJournalInstanceBossData(journalInstanceID)
 	
 	--miog:IntegrateJournalDataIntoMap(mapID, journalInstanceID)
-	--miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
 end
 
 function miog:RetrieveJournalInstanceInfoFromIndex(index, isRaid)
-	local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+	local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, _ = EJ_GetInstanceByIndex(index, isRaid)
 
 	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, 2)
 
