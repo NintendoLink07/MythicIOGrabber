@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.5a] - 2026-02-27
+
+### Fixed
+
+- Map errors for the new maps have been fixed.
+
+
+
+
 ## [3.9.5] - 2026-02-26
 
 ### Added
@@ -4645,7 +4654,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.5..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.5a..HEAD
+[3.9.5a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5a
 [3.9.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5
 [3.9.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.4
 [3.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.3

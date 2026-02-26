@@ -2309,16 +2309,17 @@ function miog:IntegrateMapDataIntoActivity(activityID)
 	local mapID = activityDB.mapID
 	local mapDB = database.pointers.map[mapID]
 
-	activityDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
-	activityDB.icon = miog.MAP_INFO[mapID].icon
-	activityDB.fileName = miog.MAP_INFO[mapID].fileName
-	activityDB.toastBG = miog.MAP_INFO[mapID].toastBG
-	activityDB.pvp = miog.MAP_INFO[mapID].pvp
-	activityDB.journalInstanceID = mapDB.journalInstanceID
+	if(miog.MAP_INFO[mapID]) then
+		activityDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
+		activityDB.icon = miog.MAP_INFO[mapID].icon
+		activityDB.fileName = miog.MAP_INFO[mapID].fileName
+		activityDB.toastBG = miog.MAP_INFO[mapID].toastBG
+		activityDB.pvp = miog.MAP_INFO[mapID].pvp
+	end
 
+	activityDB.journalInstanceID = mapDB.journalInstanceID
 	activityDB.horizontal = mapDB.horizontal
 	activityDB.vertical = mapDB.vertical
-
 end
 
 function miog:IntegrateActivityDataIntoParentGroup(activityIndex, activityID)
@@ -2340,13 +2341,16 @@ function miog:IntegrateMapDataIntoActivityGroup(activityID)
 		local mapID = activityDB.mapID
 		local mapDB = database.pointers.map[mapID]
 
-		groupDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
-		groupDB.icon = miog.MAP_INFO[mapID].icon
-		groupDB.fileName = miog.MAP_INFO[mapID].fileName
-		groupDB.toastBG = miog.MAP_INFO[mapID].toastBG
-		groupDB.pvp = miog.MAP_INFO[mapID].pvp
-		groupDB.journalInstanceID = mapDB.journalInstanceID
+		if(miog.MAP_INFO[mapID]) then
+			groupDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
+			groupDB.icon = miog.MAP_INFO[mapID].icon
+			groupDB.fileName = miog.MAP_INFO[mapID].fileName
+			groupDB.toastBG = miog.MAP_INFO[mapID].toastBG
+			groupDB.pvp = miog.MAP_INFO[mapID].pvp
 
+		end
+
+		groupDB.journalInstanceID = mapDB.journalInstanceID
 		groupDB.horizontal = mapDB.horizontal
 		groupDB.vertical = mapDB.vertical
 	end
