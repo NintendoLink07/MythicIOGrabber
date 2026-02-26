@@ -705,7 +705,7 @@ function ProgressDungeonMixin:UpdateSingleCharacterMythicPlusProgress(guid)
 			local externalData, intimeInfo, overtimeInfo = miog.getMPlusSortData(charData.name, charData.realm, nil, true)
 
 			if(externalData) then
-				if(not dungeonData.score or externalData.score.score > dungeonData.score) then
+				if(not dungeonData.score or (externalData.score and externalData.score.score > dungeonData.score)) then
 					dungeonData.score = externalData.score.score
 					dungeonData.validatedIngame = false
 

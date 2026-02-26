@@ -1752,15 +1752,13 @@ local database = {
 	pointers = {
 		map = {},
 		activity = {},
+		unlistedActivities = {},
 		groups = {},
 		journal = {},
 		encounters = {},
 		categories = {}
 	}
 }
-
-
-
 
 --- used usually during prepatch
 local manualData = {
@@ -1814,11 +1812,19 @@ local manualData = {
 			--M+
 				--Seat of the Triumvirate
 				1622, --M
-				1644, --M+
+				486, --M+
 
 				--Pit of Saron
 				1769, --M
 				1770, --M+
+
+				--Algeth'ar Academy
+				1159, --M
+				1160, --M+
+
+				--Skyreach
+				404, --M
+				182, --M+
 
 			--Raids
 				--The Voidspire
@@ -1841,6 +1847,10 @@ local manualData = {
 
 miog.manualData = manualData
 miog.database = database
+
+function miog:GetUnlistedActivities()
+	return miog.database.pointers.unlistedActivities
+end
 
 function miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
 	local instanceID = journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID)
@@ -1938,6 +1948,18 @@ function miog:SaveJournalEncounterDataWithPreData(journalEncounterID, bossName, 
 
 		end
 	end
+end
+
+function miog:GetHighestDifficultyForInstanceType(isRaid)
+    for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
+		if(not isRaid and (difficultyID == 1 or difficultyID == 2 or difficultyID == 23 or difficultyID == 8)) then
+			return 8
+
+		elseif(isRaid and (difficultyID == 14 or difficultyID == 15 or difficultyID == 16 or difficultyID == 17)) then
+			return 16
+
+		end
+    end
 end
 
 function miog:GetHighestDifficultyForInstance(journalInstanceID)
@@ -2126,6 +2148,11 @@ function miog:LoadMapData(mapID)
 	end
 end
 
+function miog:GetMapInfo(mapID)
+	return database.pointers.map[mapID] or miog:LoadMapData(mapID)
+
+end
+
 function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, debug)
 	database.pointers.journal[journalInstanceID] = {
 		instanceName = instanceName,
@@ -2174,12 +2201,15 @@ function miog:CreateJournalDB()
 			local index = 1
 			local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
 
-			while instanceName do
-				miog:LoadMapData(mapID)
-				miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, 1)
+			if(not database.pointers.journal[journalInstanceID]) then
+				while instanceName do
+					miog:LoadMapData(mapID)
+					miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, 1)
 
-				index = index + 1
-				journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+					index = index + 1
+					journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+
+				end
 			end
 		end
 	end
@@ -2188,9 +2218,10 @@ end
 function miog:LoadJournalDBIfNeeded()
 	if(not next(miog.database.pointers.journal)) then
 		EncounterJournal_LoadUI()
-		miog:CreateJournalDB()
 
 	end
+
+	miog:CreateJournalDB()
 end
 
 function miog:GetJournalDB()
@@ -2199,11 +2230,49 @@ function miog:GetJournalDB()
 	return miog.database.pointers.journal
 end
 
+function miog:GetActivityDB()
+	return miog.database.pointers.activity
+
+end
+
+function miog:IntegrateJournalDataIntoActivityGroup(activityID)
+	local activityDB = database.pointers.activity[activityID]
+	local groupDB = database.pointers.groups[activityDB.groupFinderActivityGroupID]
+
+	local journalInstanceID = activityDB.journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(activityDB.mapID)
+
+	if(journalInstanceID) then
+		local journalDB = database.pointers.journal[journalInstanceID]
+
+		if(journalDB) then
+			groupDB.journalInstanceID = journalInstanceID
+			groupDB.buttonImage1 = journalDB.buttonImage1
+			groupDB.buttonImage2 = journalDB.buttonImage2
+			groupDB.bgImage = journalDB.bgImage
+			groupDB.loreImage = journalDB.loreImage
+			groupDB.instanceName = journalDB.instanceName
+			groupDB.tier = journalDB.tier
+			groupDB.isRaid = journalDB.isRaid
+			groupDB.bosses = journalDB.bosses
+			groupDB.numOfBosses = journalDB.numOfBosses
+		end
+	end
+end
+
 function miog:IntegrateJournalDataIntoActivity(activityID)
 	local activityDB = database.pointers.activity[activityID]
 	local mapID = activityDB.mapID
 
 	local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+
+	if(not journalInstanceID) then
+		local mapInfo = miog:GetMapInfo(mapID)
+		
+		if(mapInfo) then
+			journalInstanceID = mapInfo.journalInstanceID
+
+		end
+	end
 
 	if(journalInstanceID) then
 		local journalDB = database.pointers.journal[journalInstanceID]
@@ -2298,6 +2367,7 @@ function miog:LoadActivityData(activityID)
 		if(activityID > 0) then
 			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 			database.pointers.activity[activityID] = activityInfo
+			database.pointers.activity[activityID].activityID = activityID
 
 			local mapID = database.pointers.activity[activityID].mapID
 
@@ -2340,6 +2410,20 @@ function miog:LoadGroupData(groupID)
 	end
 end
 
+function miog:GetActivityInfo(activityID)
+	return database.pointers.activity[activityID] or miog:LoadActivityData(activityID)
+
+end
+
+function miog:IsDifficultyIDHighestForType(type, activityID)
+	if(activityID) then
+		local highestID = miog:GetHighestDifficultyForInstanceType(type)
+		local d1 = miog:GetActivityInfo(activityID).redirectedDifficultyID
+
+		return d1 == highestID
+	end
+end
+
 function miog:CreateGroupFromActivityID(activityID)
 	if(activityID) then
 		if(activityID > 0) then
@@ -2353,6 +2437,7 @@ function miog:CreateGroupFromActivityID(activityID)
 				
 				miog:IntegrateMapDataIntoActivity(activityID)
 				miog:IntegrateMapDataIntoActivityGroup(activityID)
+
 			end
 
 			miog:IntegrateJournalDataIntoActivity(activityID)
@@ -2360,16 +2445,18 @@ function miog:CreateGroupFromActivityID(activityID)
 			local groupID = activityInfo.groupFinderActivityGroupID
 
 			if(groupID > 0) then
+				local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
 				database.pointers.groups[groupID] = database.pointers.groups[groupID] or {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = {}, activityDBs = {}}
 
 				local groupDB = database.pointers.groups[groupID]
 				miog:IntegrateActivityDataIntoParentGroup(#groupDB.activityDBs + 1, activityID)
+				miog:IntegrateJournalDataIntoActivityGroup(activityID)
 				miog:IntegrateParentGroupDataIntoChildActivity(activityID)
 
 				tinsert(groupDB.activities, activityID)
 
 				groupDB.bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons
-				groupDB.highestDifficultyActivityID = database.pointers.groups[groupID].activities[#database.pointers.groups[groupID].activities]
+				groupDB.highestDifficultyActivityID = miog:IsDifficultyIDHighestForType(activityInfo.isRaid, groupDB.highestDifficultyActivityID) and groupDB.highestDifficultyActivityID or activityID
 			end
 
 		end
@@ -2400,6 +2487,7 @@ do
 
 		miog:LoadActivityData(activityID)
 
+		tinsert(database.pointers.unlistedActivities, database.pointers.activity[activityID])
 	end
 
 	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
@@ -2416,18 +2504,8 @@ function miog:HasMapInfo(mapID)
 	return database.pointers.map[mapID] ~= nil
 end
 
-function miog:GetMapInfo(mapID)
-	return database.pointers.map[mapID] or miog:LoadMapData(mapID)
-
-end
-
 function miog:HasActivityInfo(activityID)
 	return database.pointers.activity[activityID] ~= nil
-
-end
-
-function miog:GetActivityInfo(activityID)
-	return database.pointers.activity[activityID] or miog:LoadActivityData(activityID)
 
 end
 

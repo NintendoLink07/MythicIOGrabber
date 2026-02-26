@@ -209,27 +209,31 @@ local function createPVEFrameReplacement()
 		local isMaxLevel = IsPlayerAtEffectiveMaxLevel()
 
 		if(isMaxLevel) then
-			miog.MainTab.Information.KeystoneStatusBar:SetMinMaxValues(0, 100)
-			miog.MainTab.Information.KeystoneStatusBar:SetValue(100)
+			miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetMinMaxValues(0, 100)
+
 			local regularActivityID, _, regularLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(); --Prioritize regular keystones
 			local activityInfo
 
 			if(regularActivityID) then
 				activityInfo = miog:GetActivityInfo(regularActivityID)
-				miog.MainTab.Information.KeystoneStatusBar.Text:SetText("+" .. regularLevel .. " " .. activityInfo.mapName)
-				miog.MainTab.Information.KeystoneStatusBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[regularLevel + 3] * 8):GetRGBA())
+				miog.MainTab.Information.KeystoneStatusBar.ThresholdBar.LeftText:SetText("+" .. regularLevel .. " " .. activityInfo.mapName)
+				miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[regularLevel + 3] * 8):GetRGBA())
+				miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetValue(100)
+
 			else
 				local timewalkingActivityID, _, timewalkingLevel = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel(true)  -- Check for a timewalking keystone.
 
 				if(timewalkingActivityID) then
 					activityInfo = miog:GetActivityInfo(timewalkingActivityID)
-					miog.MainTab.Information.KeystoneStatusBar.Text:SetText("+" .. timewalkingLevel .. " " .. activityInfo.mapName)
-					miog.MainTab.Information.KeystoneStatusBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[timewalkingLevel] * 8):GetRGBA())
+					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar.LeftText:SetText("+" .. timewalkingLevel .. " " .. activityInfo.mapName)
+					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[timewalkingLevel] * 8):GetRGBA())
+					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetValue(100)
 					
 				else
-					miog.MainTab.Information.KeystoneStatusBar.Text:SetText("No keystone found")
-					miog.MainTab.Information.KeystoneStatusBar:SetStatusBarColor(0, 0, 0, 1)
-				
+					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar.LeftText:SetText("No keystone found")
+					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetStatusBarColor(0, 0, 0, 1)
+					
+					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetValue(0)
 				end
 			end
 
@@ -237,12 +241,9 @@ local function createPVEFrameReplacement()
 				local activities = C_WeeklyRewards.GetActivities(v)
 
 				local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
-				--local currentFrame = k == 1 and miog.MainTab.Information.MPlusStatus or k == 2 and miog.MainTab.Information.RaidStatus or miog.MainTab.Information.WorldStatus
 				currentFrame:SetInfo(activities)
 
 				local farthestActivity = currentFrame:GetFarthestActivity(true)
-				--currentFrame:SetMinMaxValues(0, farthestActivity.threshold)
-				--currentFrame:SetValue(farthestActivity.progress)
 
 				local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
 
@@ -250,13 +251,8 @@ local function createPVEFrameReplacement()
 				local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
 				dimColor[4] = 0.1
 					
-				--currentFrame:SetStatusBarColor(CreateColorFromHexString(currentColor):GetRGBA())
-				--miog.createFrameWithBackgroundAndBorder(currentFrame, 1, unpack(dimColor))
-
-				--currentFrame.Text:SetTextColor(CreateColorFromHexString(numOfCompletedActivities == 0 and currentColor or "FFFFFFFF"):GetRGBA())
 
 				currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft() or 0, currentFrame.ThresholdBar:GetRight() or 100)
-				--currentFrame.GlowBarBlue:SetPoint("LEFT", currentFrame["Progress1"], "CENTER", 1, 1)
 				currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
 
 				local ilvls = currentFrame:GetAllItemlevels()
@@ -335,16 +331,18 @@ local function createPVEFrameReplacement()
 		
 
 		local renownFactions = {
-			{id = 2736}
+			{id = 2696},
+			{id = 2699},
+			{id = 2704},
+			{id = 2710},
 		}
 
 		for k, v in ipairs(renownFactions) do
-			--local factionData = C_Reputation.GetFactionDataByID(v.id)
 			local majorFactionData = C_MajorFactions.GetMajorFactionData(v.id)
-			local currentFrame = miog.MainTab.Information["RenownBar" .. k]
+			local currentFrame = miog.MainTab.Information.Renown["Bar" .. k]
 
 			if(majorFactionData) then -- and majorFactionData.isUnlocked
-				currentFrame.id = v.id
+				currentFrame.factionID = v.id
 				local standing = ""
 
 				if(majorFactionData.renownLevelThreshold) then
@@ -361,6 +359,8 @@ local function createPVEFrameReplacement()
 				currentFrame:Hide()
 
 			end
+
+			miog.MainTab.Information.Renown:MarkDirty()
 		end
 	end)
 

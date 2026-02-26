@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.5] - 2026-02-26
+
+### Added
+
+- Renown progress bars for Midnight have been added.
+
+- Renown progress bars will now take you to the new Renown panel in the Adventure Journal.
+
+### Fixed
+
+- [Progress] Fixed an error when a RaiderIO m+ score isn't available.
+
+### Known issues
+
+- There are some raids missing when trying to create a group, notably most of the Legion raids.
+This is a problem on Blizzards end.
+I will add those manually in over the next two weeks, but that's not a high priority atm.
+
+- There is currently an issue with RaiderIO, since they updated their addon last night.
+This will be fixed when RaiderIO has pushed an update.
+Issue has been opened on Github: [Click here](https://github.com/RaiderIO/raiderio-addon/issues/352)
+
+
+
 ## [3.9.4] - 2026-02-25
 
 ### Added
@@ -23,7 +47,7 @@ and this project adheres to [Semantic Versioning].
 
 ### Known issues
 
--  [UpgradeFinder] Currently not working, disabled until next patch.
+- [UpgradeFinder] Currently not working, disabled until next patch.
 
 - [Loot] M+ itemlevels are currently only visible for +2's. This will be changed when the [UpgradeFinder] has been reenabled, since they share the method of calculating the itemlevel.
 
@@ -4621,7 +4645,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.5..HEAD
+[3.9.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5
+[3.9.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.4
 [3.9.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.3
 [3.9.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.2
 [3.9.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.1

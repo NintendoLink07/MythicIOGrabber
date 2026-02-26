@@ -34,6 +34,7 @@
                             </Anchors>
 						</Texture>
                     </Layer>
+
                     <Layer level="ARTWORK">
                         <Texture parentKey="BarFillGlow" atlas="activities-bar-fill-glow" alphaMode="ADD" alpha="0.85" hidden="true">
                             <Anchors>
@@ -46,6 +47,7 @@
                             <Size x="6" y="24" />
                         </Texture>
                     </Layer>
+                    
                     <Layer level="OVERLAY">
                         <Texture parentKey="BarBorder" atlas="activities-bar-border">
                             <Anchors>

@@ -564,28 +564,18 @@
                                         </Anchors>
                                     </Frame>
 
-                                    <StatusBar parentKey="KeystoneStatusBar" frameBuffer="true" >
-                                        <BarTexture atlas="ui-castingbar-filling-standard" />
-                                        <Size x="276" y="16" />
+                                    <Frame parentKey="KeystoneStatusBar" inherits="MIOG_ProgressBarTemplate">
+                                        <!--<BarTexture atlas="ui-castingbar-filling-standard" />!-->
                                         <Anchors>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" y="12"/>
                                         </Anchors>
 
                                         <Layers>
-                                            <Layer level="BACKGROUND" textureSubLevel="1">
-                                                <Texture parentKey="BarBackground" atlas="activities-bar-background">
-                                                    <Size x="277" y="16" />
-                                                    <Anchors>
-                                                        <Anchor point="CENTER" x="0" y="0"/>
-                                                    </Anchors>
-                                                </Texture>
-                                            </Layer>
-
                                             <Layer level="OVERLAY">
                                                 <Texture parentKey="Icon" file="interface/icons/inv_relics_hourglass_02.blp">
                                                     <Size x="14" y="14" />
                                                     <Anchors>
-                                                        <Anchor point="RIGHT" x="-4"/>
+                                                        <Anchor point="RIGHT" relativeKey="$parent.ThresholdBar.RightText"/>
                                                     </Anchors>
                                                 </Texture>
 
@@ -608,28 +598,51 @@
                                                         <OnLeave function="GameTooltip_Hide" />
                                                     </Scripts>
                                                 </Texture>
-
-                                                <FontString parentKey="Text" setAllPoints="true" font="GameFontHighlight" justifyH="LEFT" text="No keystone found" outline="NORMAL">
-                                                    <Anchors>
-                                                        <Anchor point="LEFT"  x="5"/>
-                                                        <Anchor point="RIGHT" relativeKey="$parent.Affix" relativePoint="LEFT" x="-2"/>
-                                                    </Anchors>
-                                                </FontString>
-
-                                                <Texture parentKey="BarBorder" atlas="activities-bar-border">
-                                                    <Anchors>
-                                                        <Anchor point="TOPLEFT" relativePoint="$parent" x="-2" y="2"/>
-                                                        <Anchor point="BOTTOMRIGHT" relativePoint="$parent" x="4" y="-4"/>
-                                                    </Anchors>
-                                                </Texture>
                                             </Layer>
                                         </Layers>
-                                    </StatusBar>
 
-                                    <Frame parentKey="RenownBar1" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                        <Scripts>
+                                            <OnLoad>
+                                                self.Icon:SetParent(self.ThresholdBar)
+                                                self.Affix:SetParent(self.ThresholdBar)
+                                            </OnLoad>
+                                        </Scripts>
+                                    </Frame>
+
+                                    <Frame parentKey="Renown" inherits="VerticalLayoutFrame">
                                         <Anchors>
                                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent.KeystoneStatusBar" relativePoint="TOPRIGHT" y="12"/>
                                         </Anchors>
+
+                                        <KeyValues>
+                                            <KeyValue key="spacing" value="12" type="number" />
+                                        </KeyValues>
+
+                                        <Frames> 
+                                            <Button parentKey="Bar1" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                                <KeyValues>
+                                                    <KeyValue key="layoutIndex" value="1" type="number" />
+                                                </KeyValues>
+                                            </Button>
+
+                                            <Button parentKey="Bar2" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                                <KeyValues>
+                                                    <KeyValue key="layoutIndex" value="2" type="number" />
+                                                </KeyValues>
+                                            </Button>
+
+                                            <Button parentKey="Bar3" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                                <KeyValues>
+                                                    <KeyValue key="layoutIndex" value="3" type="number" />
+                                                </KeyValues>
+                                            </Button>
+
+                                            <Button parentKey="Bar4" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                                <KeyValues>
+                                                    <KeyValue key="layoutIndex" value="4" type="number" />
+                                                </KeyValues>
+                                            </Button>
+                                        </Frames>
                                     </Frame>
 
                                     <Frame parentKey="HolidayScrollBox" inherits="WowScrollBoxList">

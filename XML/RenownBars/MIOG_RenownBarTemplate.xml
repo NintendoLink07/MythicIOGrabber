@@ -1,23 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_RenownBarTemplate" inherits="MIOG_ProgressBarTemplate" virtual="true">
+    <Button name="MIOG_RenownBarTemplate" inherits="MIOG_ProgressBarTemplate" mixin="ReputationDetailViewRenownButtonMixin" virtual="true">
         <Scripts>
-            <OnMouseDown>
-                if MajorFactionRenownFrame and MajorFactionRenownFrame:IsShown() then
-                    HideUIPanel(MajorFactionRenownFrame);
-                    EventRegistry:TriggerEvent("MajorFactionRenownMixin.MajorFactionRenownRequest", self.id);
-                    ShowUIPanel(MajorFactionRenownFrame);
-                else
-                    EventRegistry:TriggerEvent("MajorFactionRenownMixin.MajorFactionRenownRequest", self.id);
-                    ToggleMajorFactionRenown();
-                end
-            </OnMouseDown>
             <OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                RenownRewardUtil.AddMajorFactionToTooltip(GameTooltip, self.id)
+                RenownRewardUtil.AddMajorFactionToTooltip(GameTooltip, self.factionID)
 	            GameTooltip_AddColoredLine(GameTooltip, MAJOR_FACTION_BUTTON_TOOLTIP_VIEW_RENOWN, GREEN_FONT_COLOR);
                 GameTooltip:Show()
             </OnEnter>
+            <OnClick method="OnClick" />
         </Scripts>
-    </Frame>
+    </Button>
 </Ui>

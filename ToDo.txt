@@ -8,6 +8,7 @@ Okay
 
 WIP
 - Drops
+    - M+ itemlevels
 
 Needs overhaul
 - Progress // submenus only
@@ -16,3 +17,5 @@ Needs overhaul
 No idea
 - Upgrades
 - FilterManager
+- Entry creation
+    - Add unlisted activity id's
