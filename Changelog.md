@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.5b] - 2026-02-27
+
+### Fixed
+
+- An error occuring when trying to check if there is an active queue when infight has been resolved
+
+
+
+
 ## [3.9.5a] - 2026-02-27
 
 ### Fixed
@@ -4654,7 +4663,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.5a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.5b..HEAD
+[3.9.5b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5b
 [3.9.5a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5a
 [3.9.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5
 [3.9.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.4

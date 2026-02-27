@@ -128,18 +128,20 @@ function QueueManagerMixin:UpdatePlunderstormQueue()
 end
 
 function QueueManagerMixin:CheckQueues()
-    self.dataProvider:Flush()
+	if(not InCombatLockdown()) then
+		self.dataProvider:Flush()
 
-    self:UpdateFakeApplications()
-    self:UpdatePVEQueues()
-	self:UpdateListing()
-	self:UpdateGroupApplications()
-	self:UpdatePVPQueues()
-	self:UpdateWorldPVPQueues()
-	self:UpdatePetBattleQueue()
-	self:UpdatePlunderstormQueue()
+		self:UpdateFakeApplications()
+		self:UpdatePVEQueues()
+		self:UpdateListing()
+		self:UpdateGroupApplications()
+		self:UpdatePVPQueues()
+		self:UpdateWorldPVPQueues()
+		self:UpdatePetBattleQueue()
+		self:UpdatePlunderstormQueue()
 
-	self.Title:SetShown(self.dataProvider:GetSize() < 1)
+		self.Title:SetShown(self.dataProvider:GetSize() < 1)
+	end
 end
 
 function QueueManagerMixin:OnEvent(event, ...)
