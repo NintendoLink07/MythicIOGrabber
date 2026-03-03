@@ -33,7 +33,7 @@ miog.updateCurrencies = function()
 
 					end
 
-				else
+				elseif(currencyInfo.maxQuantity > 0) then
 					text = text .. "/" .. currencyInfo.maxQuantity
 
 				end
@@ -67,7 +67,7 @@ miog.updateCurrencies = function()
 				end
 			end
 
-			for i = numOfCurrencies + 1, 8, 1 do
+			for i = numOfCurrencies + 1, 10, 1 do
 				miog.pveFrame2.Currency[tostring(i)]:Hide()
 
 			end

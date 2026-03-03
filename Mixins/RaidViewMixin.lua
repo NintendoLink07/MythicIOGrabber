@@ -329,10 +329,10 @@ function RaidViewButtonMixin:SetOnlineStatus(isOnline, isAfk, isDnd)
         self.BackgroundColor:SetColorTexture(r, g, b, 0.8)
         self:SetBackdropBorderColor(r-0.5, g-0.5, b-0.5, 0.8)
 
-        if(isAfk) then
+        if(UnitIsAFK(self.data.unitID)) then
             self.Status:SetTexture("interface/friendsframe/statusicon-away.blp")
 
-        elseif(isDnd) then
+        elseif(UnitIsDND(self.data.unitID)) then
             self.Status:SetTexture("interface/friendsframe/statusicon-dnd.blp")
 
         else
@@ -349,10 +349,8 @@ end
 
 function RaidViewButtonMixin:UpdateOnlineStatus()
     local isOnline = self.data.online
-    local isAfk = UnitIsAFK(self.data.unitID)
-    local isDnd = UnitIsDND(self.data.unitID)
 
-    self:SetOnlineStatus(isOnline, isAfk, isDnd)
+    self:SetOnlineStatus(isOnline)
 end
 
 function RaidViewButtonMixin:SetLayoutIndex(layoutIndex)

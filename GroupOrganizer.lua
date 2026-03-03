@@ -338,12 +338,10 @@ local function updateSpecificFrameData(fullName, key, data)
 
         elseif(key == "online") then
             local isOnline = UnitIsConnected(data)
-            local isAfk = UnitIsAFK(data)
-            local isDnd = UnitIsDND(data)
 
             for k, v in pairs(listViewFrame.cells) do
                 if(v.key == key) then
-                    v:SetOnlineStatus(isOnline, isAfk, isDnd)
+                    v:SetOnlineStatus(isOnline, data)
 
                 end
             end

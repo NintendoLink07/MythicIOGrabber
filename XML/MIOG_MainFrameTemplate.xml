@@ -340,6 +340,18 @@
                             <KeyValue key="layoutIndex" value="8" type="number" />
                         </KeyValues>
                     </Frame>
+
+                    <Frame parentKey="9" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="9" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="10" inherits="MIOG_CurrencySingleTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="10" type="number" />
+                        </KeyValues>
+                    </Frame>
                 </Frames>
 
                 <Scripts>
@@ -520,55 +532,59 @@
                                 </Frames>
                             </Frame>
 
-                            <Frame parentKey="Information" inherits="BackdropTemplate">
+                            <Frame parentKey="AbandonFrame" inherits="MIOG_AbandonFrame" hidden="true">
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3"/>
+                                    <Anchor point="TOPRIGHT"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Holiday" inherits="HorizontalLayoutFrame" hidden="true">
+                                <KeyValues>
+                                    <KeyValue key="spacing" value="5" />
+                                </KeyValues>
+
+                                <Size y="40" />
+
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" y="-3"/>
+                                    <Anchor point="TOPRIGHT" y="-3"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Information" inherits="VerticalLayoutFrame">
+                                <Anchors>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3" x="-3"/>
                                 </Anchors>
 
+                                <KeyValues>
+                                    <KeyValue key="spacing" value="12" type="number" />
+			                        <KeyValue key="childLayoutDirection" value="bottomToTop" type="string"/>
+                                </KeyValues>
+
                                 <Frames>
-                                    <Frame parentKey="AbandonFrame" inherits="MIOG_AbandonFrame">
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT"/>
-                                        </Anchors>
-                                    </Frame>
-
-                                    <Frame parentKey="Holiday" inherits="HorizontalLayoutFrame" hidden="true">
-                                        <KeyValues>
-                                            <KeyValue key="spacing" value="5" />
-                                        </KeyValues>
-
-                                        <Size y="40" />
-
-                                        <Anchors>
-                                            <Anchor point="TOPLEFT" y="-3"/>
-                                            <Anchor point="TOPRIGHT" y="-3"/>
-                                        </Anchors>
-                                    </Frame>
-
                                     <Frame parentKey="VaultProgress3" inherits="MIOG_VaultProgressWorldTemplate">
-                                        <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" x="-3"/>
-                                        </Anchors>
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="1" type="number" />
+                                        </KeyValues>
                                     </Frame>
 
                                     <Frame parentKey="VaultProgress2" inherits="MIOG_VaultProgressDungeonTemplate">
-                                        <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress3" relativePoint="TOPRIGHT" y="12"/>
-                                        </Anchors>
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="2" type="number" />
+                                        </KeyValues>
                                     </Frame>
 
                                     <Frame parentKey="VaultProgress1" inherits="MIOG_VaultProgressRaidTemplate">
-                                        <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress2" relativePoint="TOPRIGHT" y="12"/>
-                                        </Anchors>
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="3" type="number" />
+                                        </KeyValues>
                                     </Frame>
 
                                     <Frame parentKey="KeystoneStatusBar" inherits="MIOG_ProgressBarTemplate">
                                         <!--<BarTexture atlas="ui-castingbar-filling-standard" />!-->
-                                        <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.VaultProgress1" relativePoint="TOPRIGHT" y="12"/>
-                                        </Anchors>
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="11" type="number" />
+                                        </KeyValues>
 
                                         <Layers>
                                             <Layer level="OVERLAY">
@@ -609,55 +625,35 @@
                                         </Scripts>
                                     </Frame>
 
-                                    <Frame parentKey="Renown" inherits="VerticalLayoutFrame">
-                                        <Anchors>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.KeystoneStatusBar" relativePoint="TOPRIGHT" y="12"/>
-                                        </Anchors>
-
+                                    <Button parentKey="RenownBar1" inherits="MIOG_RenownBarTemplate" hidden="true">
                                         <KeyValues>
-                                            <KeyValue key="spacing" value="12" type="number" />
+                                            <KeyValue key="layoutIndex" value="21" type="number" />
                                         </KeyValues>
+                                    </Button>
 
-                                        <Frames> 
-                                            <Button parentKey="Bar1" inherits="MIOG_RenownBarTemplate" hidden="true">
-                                                <KeyValues>
-                                                    <KeyValue key="layoutIndex" value="1" type="number" />
-                                                </KeyValues>
-                                            </Button>
+                                    <Button parentKey="RenownBar2" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="22" type="number" />
+                                        </KeyValues>
+                                    </Button>
 
-                                            <Button parentKey="Bar2" inherits="MIOG_RenownBarTemplate" hidden="true">
-                                                <KeyValues>
-                                                    <KeyValue key="layoutIndex" value="2" type="number" />
-                                                </KeyValues>
-                                            </Button>
+                                    <Button parentKey="RenownBar3" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="23" type="number" />
+                                        </KeyValues>
+                                    </Button>
 
-                                            <Button parentKey="Bar3" inherits="MIOG_RenownBarTemplate" hidden="true">
-                                                <KeyValues>
-                                                    <KeyValue key="layoutIndex" value="3" type="number" />
-                                                </KeyValues>
-                                            </Button>
-
-                                            <Button parentKey="Bar4" inherits="MIOG_RenownBarTemplate" hidden="true">
-                                                <KeyValues>
-                                                    <KeyValue key="layoutIndex" value="4" type="number" />
-                                                </KeyValues>
-                                            </Button>
-                                        </Frames>
-                                    </Frame>
-
-                                    <Frame parentKey="HolidayScrollBox" inherits="WowScrollBoxList">
-                                        <Size x="256" />
-                                        <Anchors>
-                                            <Anchor point="TOPRIGHT" x="-2" y="-3"/>
-                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.KeystoneStatusBar" relativePoint="TOPRIGHT" />
-                                        </Anchors>
-                                    </Frame>
+                                    <Button parentKey="RenownBar4" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="24" type="number" />
+                                        </KeyValues>
+                                    </Button>
                                 </Frames>
                             </Frame>
                             
                             <Frame parentKey="AppViewer" inherits="MIOG_AppViewer" frameStrata="HIGH">
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.Information"/>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
                                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Information"/>
                                 </Anchors>
                             </Frame>
@@ -785,11 +781,11 @@
 
             <OnLoad>
                 PanelTemplates_SetNumTabs(self, 8)
-                PanelTemplates_SetTab(self, 1)
                 self.selectedTabFrame = self.TabFramesPanel.MainTab
                 tinsert(UISpecialFrames, self:GetName());
                 
 	            PanelTemplates_SetTabEnabled(self, 8, false);
+                PanelTemplates_SetTab(self, 1)
             </OnLoad>
 
             <OnShow>

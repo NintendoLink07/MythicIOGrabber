@@ -53,8 +53,6 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 
 				miog.initializeActivityDropdown(filters)
 			end
-		
-			PanelTemplates_SetTab(miog.pveFrame2, 1)
 	
 			if(miog.pveFrame2.selectedTabFrame) then
 				miog.pveFrame2.selectedTabFrame:Hide()
@@ -188,8 +186,6 @@ local function createPVEFrameReplacement()
 		C_MythicPlus.RequestCurrentAffixes()
 
 		local inRun = C_PartyInfo.ChallengeModeRestrictionsActive()
-		local abandonFrame = selfPVEFrame.TabFramesPanel.MainTab.Information.AbandonFrame
-		--abandonFrame:SetShown(inRun)
 
 		if(not setup) then
 			miog.updateCurrencies()
@@ -216,7 +212,7 @@ local function createPVEFrameReplacement()
 
 			if(regularActivityID) then
 				activityInfo = miog:GetActivityInfo(regularActivityID)
-				miog.MainTab.Information.KeystoneStatusBar.ThresholdBar.LeftText:SetText("+" .. regularLevel .. " " .. activityInfo.mapName)
+				miog.MainTab.Information.KeystoneStatusBar.ThresholdBar.LeftText:SetText("+" .. regularLevel .. " " .. (activityInfo.instanceName or ""))
 				miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[regularLevel + 3] * 8):GetRGBA())
 				miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetValue(100)
 
@@ -225,7 +221,7 @@ local function createPVEFrameReplacement()
 
 				if(timewalkingActivityID) then
 					activityInfo = miog:GetActivityInfo(timewalkingActivityID)
-					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar.LeftText:SetText("+" .. timewalkingLevel .. " " .. activityInfo.mapName)
+					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar.LeftText:SetText("+" .. timewalkingLevel .. " " .. (activityInfo.instanceName or ""))
 					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetStatusBarColor(miog.createCustomColorForRating(miog.KEYSTONE_LEVEL_BASE_VALUES[timewalkingLevel] * 8):GetRGBA())
 					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetValue(100)
 					
@@ -236,7 +232,7 @@ local function createPVEFrameReplacement()
 					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetValue(0)
 				end
 			end
-
+ 
 			for k, v in ipairs(activityIndices) do
 				local activities = C_WeeklyRewards.GetActivities(v)
 
@@ -317,8 +313,9 @@ local function createPVEFrameReplacement()
 					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 1)
 					currentFrame.ThresholdBar.End:Show()
 				end
-			end
 
+				currentFrame:Show()
+			end
 		else
 			for k, v in ipairs(activityIndices) do
 				local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
@@ -339,7 +336,7 @@ local function createPVEFrameReplacement()
 
 		for k, v in ipairs(renownFactions) do
 			local majorFactionData = C_MajorFactions.GetMajorFactionData(v.id)
-			local currentFrame = miog.MainTab.Information.Renown["Bar" .. k]
+			local currentFrame = miog.MainTab.Information["RenownBar" .. k]
 
 			if(majorFactionData) then -- and majorFactionData.isUnlocked
 				currentFrame.factionID = v.id
@@ -359,9 +356,9 @@ local function createPVEFrameReplacement()
 				currentFrame:Hide()
 
 			end
-
-			miog.MainTab.Information.Renown:MarkDirty()
 		end
+
+		miog.MainTab.Information:MarkDirty()
 	end)
 
 	miog.MainTab.QueueInformation.Requeue:SetScript("OnClick", function()

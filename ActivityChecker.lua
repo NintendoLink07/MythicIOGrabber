@@ -440,18 +440,18 @@ local function refreshDungeonList()
 
 		local entryType = (typeID == 1 and subtypeID == 3) and indices["RAIDFINDER"] or (isHolidayDungeon or isTimewalkingDungeon) and indices["EVENT"] or isFollowerDungeon and indices["FOLLOWER"] or subtypeID == 1 and indices["NORMAL"] or subtypeID == 2 and indices["HEROIC"]
 
+
 		if(entryType == indices["NORMAL"] or entryType == indices["HEROIC"]) then
-			if(not checkIfIDIsAlreadyAdded(indicesList[indices["SPECIFIC"]], name)) then
-				tinsert(indicesList[indices["SPECIFIC"]], {
-					name = name,
-					name2 = name2,
-					typeID = typeID,
-					subtypeID = subtypeID,
-					dungeonID = dungeonID,
-					icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or fileID or miog.EXPANSIONS[expLevel].logo or nil,
-					expansionLevel = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel or miog.LFG_DUNGEONS_INFO[dungeonID] and miog.LFG_DUNGEONS_INFO[dungeonID].expansionLevel or expLevel,
-				})
-			end
+			tinsert(indicesList[indices["SPECIFIC"]], {
+				name = name,
+				name2 = name2,
+				typeID = typeID,
+				subtypeID = subtypeID,
+				dungeonID = dungeonID,
+				difficultyID = difficultyID,
+				icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon or fileID or miog.EXPANSIONS[expLevel].logo or nil,
+				expansionLevel = miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].expansionLevel or miog.LFG_DUNGEONS_INFO[dungeonID] and miog.LFG_DUNGEONS_INFO[dungeonID].expansionLevel or expLevel,
+			})
 		end
 
 		tinsert(indicesList[entryType], {
@@ -460,6 +460,7 @@ local function refreshDungeonList()
 			typeID = typeID,
 			subtypeID = subtypeID,
 			dungeonID = dungeonID,
+			difficultyID = difficultyID,
 			icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon
 			or miog.MAP_INFO[mapID] and miog.MAP_INFO[mapID].icon
 			or fileID
@@ -478,8 +479,13 @@ local function refreshDungeonList()
 			if(k1.expansionLevel == k2.expansionLevel) then
 				if(k1.typeID == k2.typeID) then
 					if(not isLFR) then
-						return k1.name < k2.name
+						if(k1.subtypeID == k2.subtypeID) then
+							return k1.name < k2.name
 
+						else
+							return k1.subtypeID < k2.subtypeID
+
+						end
 					else
 						if(k1.name2 == k2.name2) then
 							return k1.dungeonID < k2.dungeonID
@@ -525,7 +531,8 @@ local function setupQueueDropdown(rootDescription)
 				end, k)
 			end
 
-			local lastRaidName, lastExpansion
+			local lastRaidName, lastExpansion, lastSpecificDifficulty
+
 			activityButton:SetEnabled(isPetBattle and (not C_LobbyMatchmakerInfo.IsInQueue() and C_PetJournal.IsFindBattleEnabled() and C_PetJournal.IsJournalUnlocked())
 				or isPvp and (C_PvP.CanPlayerUseRatedPVPUI() or C_LFGInfo.CanPlayerUsePremadeGroup()) and true or isSpecific and #indicesList[2] > 0 and true or #v > 0)
 
@@ -538,18 +545,25 @@ local function setupQueueDropdown(rootDescription)
 				for listIndex, dungeonInfo in ipairs(v) do
 					if(isSpecific) then
 						if(dungeonInfo.typeID ~= 6) then
-							if(lastExpansion ~= dungeonInfo.expansionLevel) then
-								local title = activityButton:CreateTitle(miog.EXPANSIONS[dungeonInfo.expansionLevel][1])
-								
+							if(lastExpansion and lastExpansion ~= dungeonInfo.expansionLevel) then
+								local title = activityButton:CreateTitle(miog.EXPANSIONS[dungeonInfo.expansionLevel].name)
+
+							end
+							
+							if(lastSpecificDifficulty ~= dungeonInfo.difficultyID) then
+								local title = activityButton:CreateTitle(DifficultyUtil.GetDifficultyName(dungeonInfo.difficultyID))
+
 							end
 
-							queueButton = activityButton:CreateCheckbox(dungeonInfo.name .. " " .. (dungeonInfo.subtypeID == 1 and PLAYER_DIFFICULTY1 or dungeonInfo.subtypeID == 2 and PLAYER_DIFFICULTY2 or ""), function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end, function(dungeonID)
+							lastExpansion = dungeonInfo.expansionLevel
+							lastSpecificDifficulty = dungeonInfo.difficultyID
+
+							queueButton = activityButton:CreateCheckbox(dungeonInfo.name, function(dungeonID) return selectedDungeonsList[dungeonID] ~= nil end, function(dungeonID)
 								selectedDungeonsList[dungeonID] = not selectedDungeonsList[dungeonID] and dungeonID or nil
 
 								LFGEnabledList[dungeonID] = selectedDungeonsList[dungeonID]
 							end, dungeonInfo.dungeonID)
 
-							lastExpansion = dungeonInfo.expansionLevel
 						end
 					elseif(isRaidFinder) then
 						if(lastRaidName ~= dungeonInfo.name2) then

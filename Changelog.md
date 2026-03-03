@@ -7,11 +7,36 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.6] - 2026-03-03
+
+### Added
+
+- Heroic dungeons can now be selected when queued for specific dungeons.
+
+- Voidlight Marl has been added to the currency panel.
+
+### Changed
+
+- All progress bars in the main frame will now correctly anchor themselves where they should be when either no renown, no keystone or no vault progress is available
+
+### Fixed
+
+- [GroupCreator] Performance issues have been resolved.
+
+- [Loot] Some performance issues have been resolved. There is still major lag when trying to load the current seasons loot (all raids + all dungeons).
+
+- More background changes to simplify the group creation and loot requests.
+
+- "Current season" issues have been resolved.
+
+
+
+
 ## [3.9.5b] - 2026-02-27
 
 ### Fixed
 
-- An error occuring when trying to check if there is an active queue when infight has been resolved
+- An error occuring when trying to check if there is an active queue when infight has been resolved.
 
 
 
@@ -4663,7 +4688,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.5b..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.6..HEAD
+[3.9.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6
 [3.9.5b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5b
 [3.9.5a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5a
 [3.9.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5

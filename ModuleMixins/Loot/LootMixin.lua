@@ -438,6 +438,8 @@ function LootMixin:SetupInstanceMenu()
                 allDungeonsJournalInstanceIDList[k] = {}
             end
 
+            local expansionButton = rootDescription:CreateRadio("Current season", function(index) return index == selectedTier end, nil, 20)
+
             local finalInstanceList = {}
 
             for i = 1, 4000, 1 do
@@ -464,8 +466,6 @@ function LootMixin:SetupInstanceMenu()
             end)
 
             local raidTitles, dungeonTitles = {}, {}
-
-            local first = false
 
             for k, v in ipairs(finalInstanceList) do
                 if(v and v.tier) then
@@ -506,11 +506,6 @@ function LootMixin:SetupInstanceMenu()
                         leftTexture:SetSize(16, 16);
                         leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
                         leftTexture:SetTexture(v.icon);
-
-                        if(not first and not v.icon) then
-                            first = true
-                            
-                        end
 
                         button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
 

@@ -650,23 +650,6 @@ function LFGListEntryCreation_UpdateAuthenticatedState(self)
 	LFGListFrame.EntryCreation.VoiceChat.EditBox:SetEnabled(isAuthenticated)
 end
 
-function AddSeasonalInstances(categoryID, rootDescription)
-	local seasonalInstances = C_LFGList.GetAvailableActivityGroups(categoryID, Enum.LFGListFilter.CurrentSeason)
-
-	for k, v in ipairs(seasonalInstances) do
-		local activities = C_LFGList.GetAvailableActivities(categoryID, v)
-		local activityID = activities[#activities]
-
-		rootDescription:CreateRadio(C_LFGList.GetActivityGroupInfo(v), function(data) return selectedGroup == data.groupID end, function(data)
-			selectedGroup = data.groupID
-			LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, categoryID, data.groupID, data.activityID)
-
-		end, {activityID = activityID, groupID = v})
-
-		addedInstances[v] = true
-	end
-end
-
 local function addIconInitializer(button, icon)
 	if(icon) then
 		button:AddInitializer(function(selfButton)
@@ -682,128 +665,238 @@ local function addIconInitializer(button, icon)
 	end
 end
 
-local function setupActivities(dropdown, rootDescription)
+local function addActivities(rootDescription, activityData, addDivider)
 	local categoryID = LFGListFrame.CategorySelection.selectedCategory
 
-	if(categoryID == 1 or categoryID == 6) then
-		local groups = C_LFGList.GetAvailableActivityGroups(categoryID, LFGListFrame.CategorySelection.selectedFilters)
+	if(categoryID and activityData) then
+		if(addDivider) then
+			rootDescription:CreateDivider();
 
-		for k, v in ipairs(groups) do
+		end
+
+		if(activityData.title) then
+			rootDescription:CreateTitle(activityData.title)
+
+		end
+
+		for _, activityID in ipairs(activityData.activities) do
+
+			local activityInfo = miog:GetActivityInfo(activityID)
+
+			local activityButton = rootDescription:CreateRadio(activityInfo.fullName, function(data) return LFGListFrame.EntryCreation.selectedActivity == data.activityID end, function(data)
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, categoryID, data.groupID, data.activityID)
+
+			end, {activityID = activityID, groupID = v})
+
+			if(activityData.icons) then
+				addIconInitializer(activityButton, activityInfo.icon)
+
+			end
+		end
+	end
+end
+
+local function addGroups(rootDescription, groupsData, addDivider)
+	local categoryID = LFGListFrame.CategorySelection.selectedCategory
+
+	if(categoryID and groupsData) then
+		if(addDivider) then
+			rootDescription:CreateDivider();
+
+		end
+
+		if(groupsData.title) then
+			rootDescription:CreateTitle(groupsData.title)
+
+		end
+
+		for k, v in ipairs(groupsData.groups) do
+			local groupInfo = miog:GetGroupInfo(v)
+			local groupButton = rootDescription:CreateRadio(C_LFGList.GetActivityGroupInfo(v), function(data) return LFGListFrame.EntryCreation.selectedGroup == data.groupID end, function(data)
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, categoryID, data.groupID, data.activityID)
+
+			end, {activityID = activityID, groupID = v})
+
+			if(groupsData.icons) then
+				addIconInitializer(groupButton, groupInfo.icon)
+
+			end
+		end
+	end
+end
+
+local function addGroupsAndActivities(rootDescription, groupsData, addDivider)
+	local categoryID = LFGListFrame.CategorySelection.selectedCategory
+
+	if(categoryID and groupsData) then
+		if(addDivider) then
+			rootDescription:CreateDivider();
+
+		end
+
+		if(groupsData.title) then
+			rootDescription:CreateTitle(groupsData.title)
+
+		end
+
+		for k, v in ipairs(groupsData.groups) do
 			local activities = C_LFGList.GetAvailableActivities(categoryID, v)
 
 			local groupButton = rootDescription:CreateButton(C_LFGList.GetActivityGroupInfo(v))
 
-			for x, activityID in ipairs(activities) do
+			for _, activityID in ipairs(activities) do
 				local activityInfo = miog:GetActivityInfo(activityID)
 
-				local activityButton = groupButton:CreateRadio(activityInfo.fullName, function(data) return LFGListFrame.EntryCreation.selectedGroup == data.groupID end, function(data)
+				local activityButton = groupButton:CreateRadio(activityInfo.fullName, function(data) return LFGListFrame.EntryCreation.selectedActivity == data.activityID end, function(data)
 					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, categoryID, data.groupID, data.activityID)
 
 				end, {activityID = activityID, groupID = v})
 
-				addIconInitializer(activityButton, activityInfo.icon)
+				if(groupsData.icons) then
+					addIconInitializer(activityButton, activityInfo.icon)
+
+				end
 			end
 		end
-	elseif(categoryID == 2) then
-		local seasonGroups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, Enum.LFGListFilter.CurrentSeason)
-		
-		for k, v in ipairs(seasonGroups) do
-			local groupInfo = miog:GetGroupInfo(v)
-			local activityID = groupInfo.highestDifficultyActivityID
-
-			local activityButton = rootDescription:CreateRadio(C_LFGList.GetActivityGroupInfo(v), function(data) return LFGListFrame.EntryCreation.selectedGroup == data.groupID end, function(data)
-				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, categoryID, data.groupID, data.activityID)
-
-			end, {activityID = activityID, groupID = v})
-		end
-
-		--[[table.sort(mythicPlusTable, function(k1, k2)
-			return k1.name < k2.name
-		end)
-		
-		rootDescription:CreateTitle("Seasonal Mythic+ Dungeons")
-		addActivityListToDropdown(mythicPlusTable, rootDescription)
-		rootDescription:CreateDivider();
-
-		local currentExpansionGroups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE))
-
-		for k, v in ipairs(currentExpansionGroups) do
-			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, v)
-			local activityID = activities[#activities]
-
-			tinsert(currentExpansionDungeons, {index = k, name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, groupID = v})
-		end
-
-		table.sort(currentExpansionDungeons, function(k1, k2)
-			return k1.name < k2.name
-		end)
-		
-		rootDescription:CreateTitle(miog.TIER_INFO[EJ_GetNumTiers() - 1].name .. " Dungeons")
-		addActivityListToDropdown(currentExpansionDungeons, rootDescription)
-		rootDescription:CreateDivider();
-
-		addExpansionHeadersToDropdown(rootDescription)]]
-
-	elseif(LFGListFrame.CategorySelection.selectedCategory == 3) then
-		local raidList = {}
-
-		if(LFGListFrame.CategorySelection.selectedFilters ~= Enum.LFGListFilter.NotRecommended) then
-			local groups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters);
-
-			for k, v in ipairs(groups) do
-				local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, v)
-				local activityID = activities[#activities]
-
-				tinsert(raidList, {index = k, name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, groupID = v})
-			end
-
-			local worldBossActivity = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, 0, 5)
-
-			for k, activityID in ipairs(worldBossActivity) do
-				local activityInfo = miog:GetActivityInfo(activityID)
-
-				tinsert(raidList, {index = k, name = activityInfo.shortName, activityID = activityID, groupID = 0})
-			end
-			
-			addActivityListToDropdown(raidList, rootDescription)
-
-		elseif(LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
-			addExpansionHeadersToDropdown(rootDescription)
-			
-		end
-	elseif(LFGListFrame.CategorySelection.selectedCategory == 121) then
-		local delvesTable = {}
-
-		local groups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters);
-		
-		for k, v in ipairs(groups) do
-			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, v)
-			local activityID = activities[#activities]
-
-			tinsert(delvesTable, {index = k, name = C_LFGList.GetActivityGroupInfo(v), activityID = activityID, groupID = v})
-		end
-
-		addActivityListToDropdown(delvesTable, rootDescription)
-
-	elseif(LFGListFrame.CategorySelection.selectedCategory == 4 or LFGListFrame.CategorySelection.selectedCategory == 7 or LFGListFrame.CategorySelection.selectedCategory == 8 or LFGListFrame.CategorySelection.selectedCategory == 9) then
-		local pvpTable = {}
-
-		local pvpActivities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, 0, LFGListFrame.CategorySelection.selectedFilters);
-
-		for k, activityID in ipairs(pvpActivities) do
-			local activityInfo = miog:GetActivityInfo(activityID)
-
-			tinsert(pvpTable, {index = k, name = activityInfo.mapName, activityID = activityID, groupID = 0})
-		end
-
-		addActivityListToDropdown(pvpTable, rootDescription)
-
 	end
+end
 
-	local activityButton = rootDescription:CreateRadio("More...", function() end, function()
-		LFGListEntryCreationActivityFinder_Show(LFGListFrame.EntryCreation.ActivityFinder, LFGListFrame.CategorySelection.selectedCategory, nil, LFGListFrame.CategorySelection.selectedFilters)
+local function setupActivities(dropdown, rootDescription)
+	local categoryID = LFGListFrame.CategorySelection.selectedCategory
 
-	end)
+	if(categoryID) then
+		local categoryName = C_LFGList.GetLfgCategoryInfo(categoryID).name
+
+		local groups1, groups2, groups3, ga1, ga2, ga3, activities1, activities2, activities3
+
+		if(categoryID == 1 or categoryID == 6) then
+			ga1 = {
+				groups = C_LFGList.GetAvailableActivityGroups(categoryID, LFGListFrame.CategorySelection.selectedFilters),
+				title = categoryName
+			}
+
+		elseif(categoryID == 2) then
+			groups1 = {
+				groups = C_LFGList.GetAvailableActivityGroups(categoryID, Enum.LFGListFilter.CurrentSeason),
+				title = "Seasonal Mythic+ Dungeons",
+				icons = true
+			}
+
+			groups2 = {
+				groups = C_LFGList.GetAvailableActivityGroups(categoryID, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE)),
+				title = miog.TIER_INFO[EJ_GetNumTiers() - 1].name .. " Dungeons",
+				icons = true
+			}
+
+		elseif(categoryID == 3) then
+			if(LFGListFrame.CategorySelection.selectedFilters ~= Enum.LFGListFilter.NotRecommended) then
+				groups1 = {
+					groups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters),
+					icons = true
+				}
+
+				activities1 = {
+					activities = C_LFGList.GetAvailableActivities(categoryID, 0, 5),
+					icons = true
+				}
+			end
+		elseif(categoryID == 121) then
+			groups1 = {
+				groups =  C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters),
+				icons = true
+			}
+
+		elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
+			activities1 = {
+				activities = C_LFGList.GetAvailableActivities(categoryID, 0, LFGListFrame.CategorySelection.selectedFilters),
+			}
+
+		end
+
+		addGroups(rootDescription, groups1)
+		addGroups(rootDescription, groups2, true)
+		addGroups(rootDescription, groups3, true)
+
+		addGroupsAndActivities(rootDescription, ga1)
+		addGroupsAndActivities(rootDescription, ga2, true)
+		addGroupsAndActivities(rootDescription, ga3, true)
+
+		addActivities(rootDescription, activities1)
+		addActivities(rootDescription, activities2, true)
+		addActivities(rootDescription, activities3, true)
+
+		if(categoryID == 2 or categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended) then
+			if(categoryID == 2) then
+				rootDescription:CreateSpacer()
+
+			end
+
+			local expansionButtons = {}
+
+			for i = 1, GetNumExpansions(), 1 do
+				local expansionInfo = GetExpansionDisplayInfo(i-1)
+				expansionButtons[i] = rootDescription:CreateRadio(miog.TIER_INFO[i].name, function(index) return index == selectedExpansion end, function(index) end, i)
+				expansionButtons[i]:AddInitializer(function(button, description, menu)
+					local leftTexture = button:AttachTexture();
+					leftTexture:SetSize(16, 16);
+					leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+					leftTexture:SetTexture(expansionInfo.logo);
+
+					button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+					return button.fontString:GetUnboundedStringWidth() + 18 + 5
+				end)
+			end
+
+			local allExpansionActivities = C_LFGList.GetAvailableActivities(categoryID, nil, Enum.LFGListFilter.PvE)
+			local addedActivities = {}
+
+			for _, activityID in ipairs(allExpansionActivities) do
+				local activityInfo = miog:GetActivityInfo(activityID)
+				local groupID = activityInfo.groupFinderActivityGroupID
+				local name
+
+				if(groupID ~= 0) then
+					local groupInfo = miog:GetGroupInfo(groupID)
+					activityID = groupInfo.highestDifficultyActivityID or activityID
+					name = C_LFGList.GetActivityGroupInfo(groupID)
+
+				else
+					groupID = nil
+					name = activityInfo.instanceName
+
+				end
+
+				if(not addedActivities[activityID]) then
+					if(activityInfo.tier) then
+						local activityButton = expansionButtons[activityInfo.tier]:CreateRadio(name, function(data) return not selectedGroup and selectedActivity == data.activityID end, function(data)
+							selectedActivity = data.activityID
+							LFGListEntryCreation_Select(LFGListFrame.EntryCreation, isRaid and Enum.LFGListFilter.NotRecommended or LFGListFrame.EntryCreation.selectedFilters, currentCategory, data.groupID, data.activityID)
+
+						end, {activityID = activityID, groupID = groupID})
+
+						activityButton:AddInitializer(function(button, description, menu)
+							local leftTexture = button:AttachTexture();
+							leftTexture:SetSize(16, 16);
+							leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+							leftTexture:SetTexture(activityInfo.icon);
+
+							button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+							return button.fontString:GetUnboundedStringWidth() + 18 + 5
+						end)
+
+						addedActivities[activityID] = true
+					end
+				end
+			end
+		end
+
+		local activityButton = rootDescription:CreateRadio("More...", function() end, function()
+			LFGListEntryCreationActivityFinder_Show(LFGListFrame.EntryCreation.ActivityFinder, LFGListFrame.CategorySelection.selectedCategory, nil, LFGListFrame.CategorySelection.selectedFilters)
+
+		end)
+	end
 end
 
 miog.createEntryCreation = function()
@@ -817,12 +910,12 @@ miog.createEntryCreation = function()
 	entryCreation.DifficultyDropDown:SetDefaultText("Select a difficulty")
 	entryCreation.PlaystyleDropDown:SetDefaultText("Select a playstyle")
 
-    entryCreation.ActivityDropDown:SetupMenu(gatherAllActivities)
+    --entryCreation.ActivityDropDown:SetupMenu(gatherAllActivities)
 
 	local selectedGroup, selectedActivity
 
-	--entryCreation.ActivityDropDown:SetupMenu(function(dropdown, rootDescription)
-		--setupActivities(dropdown, rootDescription)
+	entryCreation.ActivityDropDown:SetupMenu(function(dropdown, rootDescription)
+		setupActivities(dropdown, rootDescription)
 		--[[local currentCategory = LFGListFrame.CategorySelection.selectedCategory
 
 		if(currentCategory) then
@@ -960,7 +1053,7 @@ miog.createEntryCreation = function()
 				end
 			end
 		end]]
-	--end)
+	end)
 
 	local nameField = LFGListFrame.EntryCreation.Name
 	nameField:ClearAllPoints()
