@@ -117,7 +117,7 @@ function LootItemMixin:ColorFilterMatches()
             if(matchIndices) then
                 local text = self.Name:GetText()
                 local origLen = strlen(text)
-                local offset = self.data.abbreviatedName and strlen(self.data.abbreviatedName) + 3 or 0
+                local offset = self.data.needsAbbreviation and strlen(self.data.abbreviatedName) + 3 or 0
 
                 for k, v in ipairs(matchIndices) do
                     if(k == 1) then
@@ -130,27 +130,19 @@ function LootItemMixin:ColorFilterMatches()
 
                     local char = strsub(text, v+offset, v+offset)
 
-                    --print(k, v+offset, char, text)
-
                     text = replace_char2(v+offset, text, WrapTextInColorCode(char, miog.CLRSCC.green))
-                    
                     
                 end
 
                 self.Name:SetText(text .. " - " .. self:CalculateConfidence(self.data.filterMatches[1][3], origLen, 2))
             end
-
-            --[[for k, v in pairs(self.data.filterMatches[1][2]) do
-                string.gsub(text, )
-                
-            end]]
         end
     end
 end
 
 function LootItemMixin:SetData(data)
     --WrapTextInColorCode(data.name, data.itemQuality)
-    self.Name:SetText((data.abbreviatedName and "[" .. data.abbreviatedName .. "]" .. " " or "") .. (data.filterMatches and data.name or WrapTextInColorCode(data.name, data.itemQuality)))
+    self.Name:SetText((data.needsAbbreviation and "[" .. data.abbreviatedName .. "]" .. " " or "") .. (data.filterMatches and data.name or WrapTextInColorCode(data.name, data.itemQuality)))
     self.Name:SetPoint("LEFT", self.Itemlevel, "RIGHT", 3, 0)
 
     self.Icon:SetTexture(data.icon)

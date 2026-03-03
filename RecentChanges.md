@@ -1,21 +1,11 @@
-## [3.9.6](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6) - 2026-03-03
-
-### Added
-
-- Heroic dungeons can now be selected when queued for specific dungeons.
-
-- Voidlight Marl has been added to the currency panel.
-
-### Changed
-
-- All progress bars in the main frame will now correctly anchor themselves where they should be when either no renown, no keystone or no vault progress is available
+## [3.9.6a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6a) - 2026-03-03
 
 ### Fixed
 
-- [GroupCreator] Performance issues have been resolved.
+- [Progress] PVP category images will now be displayed correctly.
 
-- [Loot] Some performance issues have been resolved. There is still major lag when trying to load the current seasons loot (all raids + all dungeons).
+- [Loot] More performance improvements.
 
-- More background changes to simplify the group creation and loot requests.
+- An error has been resolved trying to gather data from a fresh start (no cache).
 
-- "Current season" issues have been resolved.
+- Images for Season 1 Dungeons & Raids have been implemented.

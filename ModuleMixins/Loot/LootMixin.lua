@@ -73,7 +73,7 @@ end
 
 function LootMixin:RefreshDifficulties()
     self.DifficultyDropdown:SetupMenu(function(dropdown, rootDescription)
-        if(selectedJournalInstance or specialSelection) then
+        if(selectedJournalInstance or selectedEncounter and not specialSelection) then
             rootDescription:CreateButton(CLEAR_ALL, function()
                 selectedDifficulty = nil
 
@@ -128,62 +128,45 @@ function LootMixin:CheckItemFiltering(itemInfo)
     return true
 end
 
-function LootMixin:RefreshEncounters(journalInstanceID)
-    local bossData = miog:GetJournalInstanceBossData(journalInstanceID)
-
-    local hasData = #bossDropdownList > 0
-
-    if(hasData) then
-        tinsert(bossDropdownList, {type = "spacer"})
-
-    end
-
-    tinsert(bossDropdownList, {type = "title"})
-
-    if(bossData) then
-        for k, v in ipairs(bossData) do
-            tinsert(bossDropdownList, v)
-
-        end
-    end
-end
-
 function LootMixin:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
     local isMissingData = false
     local hasNoInstanceSelected = not selectedJournalInstance
     local needsInstanceAbbreviation = hasNoEncounterSelected and multiQueue or hasNoInstanceSelected
+    local hasNoEncounterSelected = not selectedEncounter
+
+    local GetLoot = C_EncounterJournal.GetLootInfoByIndex
+    local GetItemLevel = C_Item.GetDetailedItemLevelInfo
 
     for i = 1, numLoot do
-        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
+        local itemInfo = GetLoot(i)
 
-        if not isMissingData and itemInfo and itemInfo.name then
-            local encounterID = itemInfo.encounterID
-            
-            local hasNoEncounterSelected = not selectedEncounter
-            local isSelectedEncounter = hasNoEncounterSelected or selectedEncounter == encounterID
-            
-            if isSelectedEncounter and self:CheckItemFiltering(itemInfo) then
-                itemInfo.template = "MIOG_LootItemTemplate"
-                itemInfo.typeWithSource = showOnlyItems
-                itemInfo.bossName = encounterData[encounterID] and (encounterData[encounterID].name or encounterData[encounterID].altName)
+        if(not isMissingData) then
+            if(itemInfo and itemInfo.name) then
+                local encounterID = itemInfo.encounterID
 
-                if(needsInstanceAbbreviation) then
-                    itemInfo.abbreviatedName = encounterData[encounterID].abbreviatedInstanceName
+                if((hasNoEncounterSelected or selectedEncounter == encounterID) and self:CheckItemFiltering(itemInfo)) then
+                    itemInfo.template = "MIOG_LootItemTemplate"
 
-                end
+                    local bossInfo = encounterData and encounterData[encounterID] or miog:GetEncounterData(encounterID)
+                    itemInfo.bossName = bossInfo.name or bossInfo.altName
+                    itemInfo.needsAbbreviation = needsInstanceAbbreviation
+                    itemInfo.abbreviatedName = bossInfo.abbreviatedInstanceName
                     
-                itemInfo.itemlevel = C_Item.GetDetailedItemLevelInfo(itemInfo.link)
+                    itemInfo.itemlevel = GetItemLevel(itemInfo.link)
 
-                dataProvider:Insert(itemInfo)
+                    dataProvider:Insert(itemInfo)
+                end
+            else
+                isMissingData = true
+
             end
-        else
-            isMissingData = true
-
         end
     end
 
     return isMissingData
 end
+
+local once = false
 
 function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, journalInstanceID)
     local noEncounterSelected = not selectedEncounter
@@ -199,17 +182,21 @@ function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterDa
         
     end
 
+    local GetLoot = C_EncounterJournal.GetLootInfoByIndex
+    local GetItemLevel = C_Item.GetDetailedItemLevelInfo
+
     local isMissingData = false
 
     for i = 1, numLoot do
-        local itemInfo = C_EncounterJournal.GetLootInfoByIndex(i)
+        local itemInfo = GetLoot(i)
 
         if not isMissingData and itemInfo and itemInfo.name then
             if(self:CheckItemFiltering(itemInfo)) then
                 local encounterID = itemInfo.encounterID
 
                 if(noEncounterSelected or selectedEncounter == encounterID) then
-                    itemInfo.itemlevel = C_Item.GetDetailedItemLevelInfo(itemInfo.link)
+                    itemInfo.itemlevel = GetItemLevel(itemInfo.link)
+                    
                     itemInfo.template = "MIOG_LootItemTemplate"
 
                     if(multiQueue) then
@@ -221,6 +208,7 @@ function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterDa
 
                             instanceNode = dataProvider:Insert(journalInfo)
                             instanceNode:SetSortComparator(SortBossEntries)
+                            instanceNode:SetCollapsed(true, true)
                             instanceNodes[journalInstanceID] = instanceNode
 
                             parentNode = instanceNode
@@ -238,6 +226,7 @@ function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterDa
 
                         bossNode = parentNode:Insert(bossInfo)
                         bossNode:SetSortComparator(SortItemEntries)
+                        bossNode:SetCollapsed(true, true)
 
                         bossNodes[encounterID] = bossNode
                         
@@ -287,7 +276,6 @@ function LootMixin:SelectJournalInstance(journalInstanceID)
         local numLoot = EJ_GetNumLoot()
 
         if(numLoot > 0) then
-            self:RefreshEncounters(id)
             local encounterData = miog:GetEncounterDataFromJournalInstance(id)
 
             if(showEverything) then
@@ -335,11 +323,29 @@ function LootMixin:RequestLoot(origin)
                 isMissingData = true
 
             end
+
+            local encounterData = miog:GetEncounterDataFromJournalInstance(v)
+
+            if(k > 1) then
+                tinsert(bossDropdownList, {type = "spacer"})
+
+            end
+            
+            if(encounterData) then
+                tinsert(bossDropdownList, {type = "title"})
+
+                for x, y in pairs(encounterData) do
+                    tinsert(bossDropdownList, y)
+
+                end
+            end
         end
 
         if(not isMissingData) then
             local hasMultipleInstances = dataProvider.node:GetSize(true) > 1
             local hasMultipleBosses = numBossesShown > 1
+
+            self:RefreshDifficulties()
 
             if(multiQueue) then
                 if(hasMultipleInstances) then
@@ -349,7 +355,6 @@ function LootMixin:RequestLoot(origin)
 
             else
                 dataProvider:SetAllCollapsed(hasMultipleBosses)
-                self:RefreshDifficulties()
 
             end
 
@@ -363,10 +368,10 @@ end
 
 function LootMixin:ResetInstance()
     lootQueue = defaultList
+    specialSelection = ALL
 
     selectedJournalInstance = nil
     selectedTier = nil
-    specialSelection = nil
     
     self:RequestLoot(2)
 end
@@ -438,7 +443,7 @@ function LootMixin:SetupInstanceMenu()
                 allDungeonsJournalInstanceIDList[k] = {}
             end
 
-            local expansionButton = rootDescription:CreateRadio("Current season", function(index) return index == selectedTier end, nil, 20)
+            --local expansionButton = rootDescription:CreateRadio("Current season", function(index) return index == selectedTier end, nil, 20)
 
             local finalInstanceList = {}
 
@@ -555,6 +560,8 @@ function LootMixin:UpdateAfterCompletion()
         end)
     end
 end
+
+local c = 0
 
 function LootMixin:OnEvent(event, ...)
     if(event == "EJ_LOOT_DATA_RECIEVED") then

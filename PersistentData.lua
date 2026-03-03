@@ -1776,12 +1776,12 @@ miog.CHALLENGE_MODE_INFO = {}
 miog.checkSingleMapIDForNewData = checkSingleMapIDForNewData
 
 miog.PVP_BRACKET_INFO = {
-	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = "tolvirarena", pathName = "Interface/GLUES/LOADINGSCREENS/LoadScreenTolvirArena.blp"}, --Solo Arena
-	{id = 9, alias = PVP_RATED_BG_BLITZ, shortName = "Solo BG", fileName = "twinpeaksbg", pathName = "Interface/GLUES/LOADINGSCREENS/LoadScreenTwinPeaksBG.blp"}, --Solo BG
-	{id = 1, alias = ARENA_2V2, shortName = ARENA_2V2, fileName = "enigmaarena", pathName = "Interface/GLUES/LOADINGSCREENS/Expansion08/Main/LoadScreen_EnigmaArena.blp"}, --2v2
-	{id = 2, alias = ARENA_3V3, shortName = ARENA_3V3, fileName = "blackrookholdarena", pathName = "Interface/GLUES/LOADINGSCREENS/LoadingScreen_BlackrookHoldArena_wide.blp"}, --3v3
-	--{id = 3, alias = ARENA_5V5, shortName = ARENA_5V5, fileName = "maldraxxuscoliseum", pathName = "Interface/GLUES/LOADINGSCREENS/Expansion08/Main/LoadScreen_MaldraxxusColiseum.blp"}, --5v5
-	{id = 4, alias = BATTLEGROUND_10V10, shortName = BATTLEGROUND_10V10, fileName = "earthenbattleground", pathName = "Interface/GLUES/LOADINGSCREENS/Expansion10/Main/Loadscreen_EarthenBattleground.blp"}, --10v10
+	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = "tolvirarena"}, --Solo Arena
+	{id = 9, alias = PVP_RATED_BG_BLITZ, shortName = "Solo BG", fileName = "twinpeaksbg"}, --Solo BG
+	{id = 1, alias = ARENA_2V2, shortName = ARENA_2V2, fileName = "enigmaarena"}, --2v2
+	{id = 2, alias = ARENA_3V3, shortName = ARENA_3V3, fileName = "blackrookholdarena"}, --3v3
+	--{id = 3, alias = ARENA_5V5, shortName = ARENA_5V5, fileName = "maldraxxuscoliseum"}, --5v5
+	{id = 4, alias = BATTLEGROUND_10V10, shortName = BATTLEGROUND_10V10, fileName = "earthenbattleground"}, --10v10
 
 }
 
@@ -2005,35 +2005,24 @@ function miog:SaveJournalEncounterDataWithPreData(journalEncounterID, bossName, 
 	end
 end
 
-function miog:GetHighestDifficultyForInstanceType(isRaid)
-    for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
-		if(not isRaid and (difficultyID == 1 or difficultyID == 2 or difficultyID == 23 or difficultyID == 8)) then
-			return 8
-
-		elseif(isRaid and (difficultyID == 14 or difficultyID == 15 or difficultyID == 16 or difficultyID == 17)) then
-			return 16
-
-		end
-    end
-end
-
 function miog:GetHighestDifficultyForInstance(journalInstanceID)
     if(journalInstanceID) then
         EJ_SelectInstance(journalInstanceID)
 
     end
 
-    for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
-        if EJ_IsValidInstanceDifficulty(difficultyID) then
-            if(difficultyID == 1 or difficultyID == 2 or difficultyID == 23 or difficultyID == 8) then
-                return 8
+	local highestDiff
 
-            elseif(difficultyID == 14 or difficultyID == 15 or difficultyID == 16 or difficultyID == 17) then
-                return 16
+	for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
+		if EJ_IsValidInstanceDifficulty(difficultyID) then
+			if(not highestDiff or miog.DIFFICULTY_ORDER[difficultyID] > highestDiff) then
+				highestDiff = difficultyID
 
-            end
-        end
-    end
+			end
+		end
+	end
+
+	return highestDiff
 end
 
 function miog:SaveJournalEncounterData(journalEncounterID)
@@ -2148,8 +2137,8 @@ function miog:CreateMapPointer(mapID)
 					mapDB.vertical = MythicIO.GetBackgroundImage(background, true)
 					
 				elseif(mapDB.pvp) then
-					mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
-					mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
+					mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvp/horizontal/" .. background .. ".png"
+					mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvp/vertical/" .. background .. ".png"
 					
 				elseif(mapDB.filePath) then
 					mapDB.horizontal = mapDB.filePath
@@ -2244,30 +2233,35 @@ function miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID
 	return database.pointers.journal[journalInstanceID]
 end
 
+function miog:PrintDB()
+	MIOG_PRINTS = database
+end
+
 function miog:CreateJournalDB()
 	local startTier = 1;
 
-	
 	--EJ_GetNumTiers() retrieves "Current season" aswell (+1)
-	for tier = startTier, GetNumExpansions() do
-		EJ_SelectTier(tier)
-		
-		for shouldBeRaid = 0, 1 do
-			local isRaid = shouldBeRaid == 1
+	if(EJ_GetNumTiers() > 0) then
+		for tier = startTier, GetNumExpansions() do
+			EJ_SelectTier(tier)
+			
+			for shouldBeRaid = 0, 1 do
+				local isRaid = shouldBeRaid == 1
 
-			local index = 1
-			local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
+				local index = 1
+				local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
 
-			if(not database.pointers.journal[journalInstanceID]) then
-				while instanceName do
-					--EJ_SelectInstance(journalInstanceID)
+				if(not database.pointers.journal[journalInstanceID]) then
+					while instanceName do
+						--EJ_SelectInstance(journalInstanceID)
 
-					miog:LoadMapData(mapID)
-					miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, 1)
+						miog:LoadMapData(mapID)
+						miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, 1)
 
-					index = index + 1
-					journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+						index = index + 1
+						journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
 
+					end
 				end
 			end
 		end
@@ -2275,10 +2269,7 @@ function miog:CreateJournalDB()
 end
 
 function miog:LoadJournalDBIfNeeded()
-	if(not next(miog.database.pointers.journal)) then
-		EncounterJournal_LoadUI()
-
-	end
+	EncounterJournal_LoadUI()
 
 	miog:CreateJournalDB()
 end
@@ -3090,57 +3081,12 @@ local function loadRawData()
 	for k, v in pairs(miog.PVP_BRACKET_INFO) do
 		if(loadHQData) then
 			v.vertical = MythicIO.GetBackgroundImage(v.fileName, true)
-			
-		else
-			v.vertical = v.pathName
-			
-		end
-
-	end
-
-	--[[for k, v in pairs(miog.RAW["Map"]) do
-		local mapID = v[1]
-		local mapInfo = miog.MAP_INFO[mapID]
-
-		if(not mapInfo) then
-			miog.MAP_INFO[mapID] = {}
-			mapInfo = miog.MAP_INFO[mapID]
-
-		end
-
-		if(not mapInfo.name) then
-			mapInfo.name = v[3]
-			mapInfo.expansionLevel = v[12]
-			mapInfo.bosses = {}
-			mapInfo.numOfBosses = 0
-			
-			mapInfo.journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-
-			local background = mapInfo.fileName
 		
-			if(background) then
-				if(loadHQData) then
-					mapInfo.horizontal = MythicIO.GetBackgroundImage(background)
-					mapInfo.vertical = MythicIO.GetBackgroundImage(background, true)
-					
-				elseif(mapInfo.pvp) then
-					mapInfo.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
-					mapInfo.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvpbackgrounds/" .. background .. ".png"
-					
-				elseif(mapInfo.filePath) then
-					mapInfo.horizontal = mapInfo.filePath
-					mapInfo.vertical = mapInfo.filePath
+		else
+			v.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/pvp/vertical/" .. v.fileName .. ".png"
 
-				else
-					mapInfo.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-					mapInfo.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-
-				end
-
-				mapInfo.icon = "interface/lfgframe/lfgicon-" .. (mapInfo.iconName or mapInfo.fileName) .. ".blp"
-			end
 		end
-	end]]
+	end
 
 	for k, v in pairs(miog.TELEPORT_SPELLS_TO_MAP_DATA) do
 		if(miog.MAP_INFO[v.mapID]) then
@@ -3161,9 +3107,6 @@ local function loadRawData()
 			expansionLevel = v[5],
 		}
 	end
-	
-	--loadActivitiesData()
-	--loadGroupData()
 end
 
 miog.loadRawData = loadRawData

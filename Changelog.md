@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.6a] - 2026-03-03
+
+### Fixed
+
+- [Progress] PVP category images will now be displayed correctly.
+
+- [Loot] More performance improvements.
+
+- An error has been resolved trying to gather data from a fresh start (no cache).
+
+- Images for Season 1 Dungeons & Raids have been implemented.
+
+
+
+
 ## [3.9.6] - 2026-03-03
 
 ### Added
@@ -4688,7 +4703,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.6..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.6a..HEAD
+[3.9.6a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6a
 [3.9.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6
 [3.9.5b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5b
 [3.9.5a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5a
