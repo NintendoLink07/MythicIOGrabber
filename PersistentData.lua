@@ -1292,7 +1292,7 @@ miog.MAP_INFO = {
 	},
 
 	-- THE WAR WITHIN
-	[2601] = {abbreviatedName = "KA", iconName = "khazalgar", filePath="interface/encounterjournal/ui-ej-lorebg-khazalgar.blp"},
+	[2601] = {abbreviatedName = "KA", iconName = "khazalgar"},
 	[2648] = {abbreviatedName = "ROOK", fileName = "therookery"},
 	[2649] = {abbreviatedName = "PSF", fileName = "prioryofthesacredflames"},
 	[2651] = {abbreviatedName = "DFC", fileName = "darkflamecleft"},
@@ -2132,36 +2132,44 @@ end
 function miog:CreateMapPointer(mapID)
 	if(mapID) then
 		if(not database.pointers.map[mapID]) then
-			database.pointers.map[mapID] = database.pointers.map[mapID] or miog.MAP_INFO[mapID] or {}
+			database.pointers.map[mapID] = {activities = {}}
 			local mapDB = database.pointers.map[mapID]
 
-			mapDB.activities = {}
+			if(miog.MAP_INFO[mapID]) then
+				local mapInfo = miog.MAP_INFO[mapID]
 
-			local background = mapDB.fileName
+				mapDB.iconName = mapInfo.iconName
+				mapDB.fileName = mapInfo.fileName
 
-			if(background) then
-				if(loadHQData) then
-					mapDB.horizontal = MythicIO.GetBackgroundImage(background)
-					mapDB.vertical = MythicIO.GetBackgroundImage(background, true)
-					
-				elseif(mapDB.pvp) then
-					mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvp/horizontal/" .. background .. ".png"
-					mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvp/vertical/" .. background .. ".png"
-					
-				elseif(mapDB.filePath) then
-					mapDB.horizontal = mapDB.filePath
-					mapDB.vertical = mapDB.filePath
+				mapDB.abbreviatedName = mapInfo.abbreviatedName
+				mapDB.icon = mapInfo.icon
 
-				else
-					mapDB.horizontal = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-					mapDB.vertical = "interface/lfgframe/ui-lfg-background-" .. background .. ".blp"
-
-
-				end
-
-				mapDB.icon = "interface/lfgframe/lfgicon-" .. (mapDB.iconName or mapDB.fileName) .. ".blp"
-
+				mapDB.toastBG = mapInfo.toastBG
+				mapDB.pvp = mapInfo.pvp
+				
 			end
+
+			if(mapDB.fileName or mapDB.iconName) then
+				if(mapDB.fileName) then
+					if(loadHQData) then
+						mapDB.horizontal = MythicIO.GetBackgroundImage(mapDB.fileName)
+						mapDB.vertical = MythicIO.GetBackgroundImage(mapDB.fileName, true)
+
+					elseif(mapDB.pvp) then
+						mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvp/horizontal/" .. mapDB.fileName .. ".png"
+						mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvp/vertical/" .. mapDB.fileName .. ".png"
+						
+					else
+						mapDB.horizontal = "interface/lfgframe/ui-lfg-background-" .. mapDB.fileName .. ".blp"
+						mapDB.vertical = "interface/lfgframe/ui-lfg-background-" .. mapDB.fileName .. ".blp"
+
+					end
+				end
+				
+				mapDB.icon = "interface/lfgframe/lfgicon-" .. (mapDB.iconName or mapDB.fileName) .. ".blp"
+			end
+
+
 		end
 	end
 end
@@ -2205,6 +2213,22 @@ function miog:GetMapInfo(mapID)
 
 end
 
+--[[function miog:CheckActivityForCompletition(activityID)
+	local db = database.pointers.activity[activityID]
+
+	if(db) then
+		if(not db.journalInstanceID) then
+			return false, "journal"
+
+		end
+		
+	else
+		return false, "db"
+
+	end
+
+end]]
+
 function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, debug)
 	database.pointers.journal[journalInstanceID] = {
 		instanceName = instanceName,
@@ -2241,14 +2265,9 @@ function miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID
 	return database.pointers.journal[journalInstanceID]
 end
 
-function miog:PrintDB()
-	MIOG_PRINTS = database
-end
-
 function miog:CreateJournalDB()
 	local startTier = 1;
 
-	--EJ_GetNumTiers() retrieves "Current season" aswell (+1)
 	if(EJ_GetNumTiers() > 0) then
 		for tier = startTier, GetNumExpansions() do
 			EJ_SelectTier(tier)
@@ -2261,7 +2280,6 @@ function miog:CreateJournalDB()
 
 				if(not database.pointers.journal[journalInstanceID]) then
 					while instanceName do
-						--EJ_SelectInstance(journalInstanceID)
 
 						miog:LoadMapData(mapID)
 						miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, 1)
@@ -2328,7 +2346,7 @@ function miog:IntegrateJournalDataIntoActivity(activityID)
 
 	if(mapID) then
 		local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-		
+
 		if(journalInstanceID) then
 			local journalDB = database.pointers.journal[journalInstanceID]
 
@@ -2362,41 +2380,35 @@ end
 
 function miog:IntegrateMapDataIntoActivity(activityID)
 	local activityDB = database.pointers.activity[activityID]
-	local mapID = activityDB.mapID
-	local mapDB = database.pointers.map[mapID]
+	local mapDB = database.pointers.map[activityDB.mapID]
 
-	if(miog.MAP_INFO[mapID]) then
-		activityDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
-		activityDB.icon = miog.MAP_INFO[mapID].icon
-		activityDB.fileName = miog.MAP_INFO[mapID].fileName
-		activityDB.toastBG = miog.MAP_INFO[mapID].toastBG
-		activityDB.pvp = miog.MAP_INFO[mapID].pvp
+	if(mapDB) then
+		activityDB.abbreviatedName = mapDB.abbreviatedName
+		activityDB.icon = mapDB.icon
+		activityDB.fileName =mapDB.fileName
+		activityDB.toastBG = mapDB.toastBG
+		activityDB.pvp = mapDB.pvp
+		activityDB.horizontal = mapDB.horizontal
+		activityDB.vertical = mapDB.vertical
+
 	end
-
-	activityDB.journalInstanceID = mapDB.journalInstanceID
-	activityDB.horizontal = mapDB.horizontal
-	activityDB.vertical = mapDB.vertical
 end
 
 function miog:IntegrateMapDataIntoGroup(groupID, mapID)
 	local groupDB = database.pointers.groups[groupID]
 
 	if(groupDB) then
-		if(miog.MAP_INFO[mapID]) then
-			groupDB.abbreviatedName = miog.MAP_INFO[mapID].abbreviatedName
-			groupDB.icon = miog.MAP_INFO[mapID].icon
-			groupDB.fileName = miog.MAP_INFO[mapID].fileName
-			groupDB.toastBG = miog.MAP_INFO[mapID].toastBG
-			groupDB.pvp = miog.MAP_INFO[mapID].pvp
-
-		end
-
 		local mapDB = database.pointers.map[mapID]
 
 		if(mapDB) then
-			groupDB.journalInstanceID = mapDB.journalInstanceID
+			groupDB.abbreviatedName = mapDB.abbreviatedName
+			groupDB.icon = mapDB.icon
+			groupDB.fileName = mapDB.fileName
+			groupDB.toastBG = mapDB.toastBG
+			groupDB.pvp = mapDB.pvp
 			groupDB.horizontal = mapDB.horizontal
 			groupDB.vertical = mapDB.vertical
+
 		end
 	end
 end
@@ -2425,31 +2437,6 @@ function miog:IntegrateParentGroupDataIntoChildActivity(activityID)
 
 		return activityDB.groupName
 
-	end
-end
-
-function miog:LoadActivityData(activityID)
-	if(activityID) then
-		if(activityID > 0) then
-			local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-			database.pointers.activity[activityID] = activityInfo
-			database.pointers.activity[activityID].activityID = activityID
-
-			local mapID = database.pointers.activity[activityID].mapID
-
-			if(miog:LoadMapData(mapID)) then
-				miog:IntegrateActivityDataIntoMap(activityID)
-
-				miog:IntegrateMapDataIntoActivity(activityID)
-				miog:IntegrateMapDataIntoActivityParentGroup(activityID)
-
-				miog:IntegrateParentGroupDataIntoChildActivity(activityID)
-			end
-
-			miog:IntegrateJournalDataIntoActivity(activityID)
-		end
-
-		return database.pointers.activity[activityID]
 	end
 end
 

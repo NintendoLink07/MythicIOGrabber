@@ -269,6 +269,7 @@ function ProgressActivityMixin:RefreshActivities()
 					self.BorderTextures[v]:SetWidth(column.headerFrame:GetWidth())
 
 				end
+
 				column:ConstructCells("Frame", self.cellTemplate, v)
 
 			else
@@ -333,17 +334,23 @@ end
 ProgressOverviewMixin = CreateFromMixins(ProgressActivityMixin)
 
 function ProgressOverviewMixin:CheckLockoutExpiration()
-    for index, data in pairs(self.characterSettings[playerGUID].lockouts) do
-		if(data.resetDate <= time()) then
-			self.characterSettings[playerGUID].lockouts[index] = nil
+    if(self.characterSettings) then
+		for guid, playerData in pairs(self.characterSettings) do
+			if(playerData.lockouts) then
+				for index, data in pairs(playerData.lockouts) do
+					if(data.resetDate <= time()) then
+						data = nil
 
+					end
+				end
+			end
 		end
-    end
+	end
 end
 
 function ProgressOverviewMixin:RefreshLockouts()
     if(self.characterSettings and self.characterSettings[playerGUID]) then
-		self.characterSettings[playerGUID].lockouts = self.characterSettings[playerGUID].lockouts or {}
+		self.characterSettings[playerGUID].lockouts = {}
 
 		for index = 1, GetNumSavedInstances(), 1 do
 			local name, lockoutId, reset, difficultyId, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled, instanceId = GetSavedInstanceInfo(index)
@@ -509,7 +516,7 @@ function ProgressOverviewMixin:OnLoad()
 		frame.GuildBannerBorderGlow:SetShown(data.guid == UnitGUID("player"))
 		
 		frame.Identifiers.ItemLevel.Text:SetText(data.itemLevel or 0)
-		frame.Identifiers.ItemLevel.Text:SetTextColor(miog.createCustomColorForRating(data.itemLevel and data.itemLevel > 0 and 4000 - (170 - data.itemLevel) ^ 2 or 1):GetRGBA())
+		frame.Identifiers.ItemLevel.Text:SetTextColor(miog.createCustomColorForRating(data.itemLevel and data.itemLevel > 0 and 4000 - (282 - data.itemLevel) ^ 2 or 1):GetRGBA())
 
 		if(data.mythicPlus) then
 			frame.Identifiers.MythicPlusScore.Text:SetText(data.mythicPlus.score)
@@ -644,7 +651,7 @@ function ProgressOverviewMixin:OnLoad()
 			frame.Identifiers.GreatVaultWorld.Text:SetTextColor(miog.createCustomColorForRating(4000 * worldProgress / worldThreshold):GetRGBA())
 			frame.Identifiers.GreatVaultWorld.Checkmark:SetShown(worldProgress >= worldThreshold)
 
-			frame.Identifiers.GreatVaultRaids:SetInfo(data.greatVault.activities[3])
+			frame.Identifiers.GreatVaultRaids:SetInfo(data.greatVault.activities[3]) 
 			frame.Identifiers.GreatVaultDungeons:SetInfo(data.greatVault.activities[1])
 			frame.Identifiers.GreatVaultWorld:SetInfo(data.greatVault.activities[6])
 		else
@@ -659,6 +666,73 @@ function ProgressOverviewMixin:OnLoad()
 
 			frame.Identifiers.GreatVault.Icon:Hide()
 
+		end
+
+		if(not data.lockouts or #data.lockouts == 0) then
+			frame.Identifiers.Lockouts.Text:SetText("")
+			frame.Identifiers.Lockouts:SetScript("OnEnter", nil)
+			
+		else
+
+			frame.Identifiers.Lockouts.Text:SetText("!")
+
+			frame.Identifiers.Lockouts:SetScript("OnEnter", function(selfFrame)
+				GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT")
+				GameTooltip:SetText("Lockouts:")
+
+				for k, v in ipairs(data.lockouts) do
+					GameTooltip:AddLine(v.name .. " - " .. string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[v.difficulty].name))
+
+				end
+				
+				GameTooltip:Show()
+			end)
+
+			--[[local elementData = data.lockouts[1]
+			local mapInfo = miog.GetMapInfo(elementData.mapID)
+
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText(mapInfo.name or mapInfo.instanceName)
+			GameTooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, miog.DIFFICULTY_ID_INFO[elementData.difficulty].name))
+			GameTooltip:AddLine(string.format(elementData.extended and RAID_INSTANCE_EXPIRES_EXTENDED or RAID_INSTANCE_EXPIRES, formatter:Format(elementData.resetDate - time()) .. " (" .. date("%x %X", elementData.resetDate) .. ")"))
+
+			local setAliveEncounters, setDefeatedEncounters = false, false
+
+			for i = 1, elementData.numEncounters, 1 do
+				local isKilled = elementData.bosses[i].isKilled
+				local bossName = elementData.bosses[i].bossName
+
+				if(not isKilled) then
+					if(not setAliveEncounters) then
+						GameTooltip_AddBlankLineToTooltip(GameTooltip)
+						GameTooltip:AddLine("Encounters available: ")
+						setAliveEncounters = true
+						
+					end
+
+					GameTooltip:AddLine(WrapTextInColorCode(isKilled and "Defeated " or "Alive ", isKilled and miog.CLRSCC.red or miog.CLRSCC.green) ..  bossName)
+
+				end
+			end
+
+			for i = 1, elementData.numEncounters, 1 do
+				local isKilled = elementData.bosses[i].isKilled
+				local bossName = elementData.bosses[i].bossName
+				--local bossName, fileDataID, isKilled, unknown4 = GetSavedInstanceEncounterInfo(index, i)
+
+				if(isKilled) then
+					if(not setDefeatedEncounters) then
+						GameTooltip_AddBlankLineToTooltip(GameTooltip)
+						GameTooltip:AddLine("Encounters defeated: ")
+						setDefeatedEncounters = true
+						
+					end
+
+					GameTooltip:AddLine(WrapTextInColorCode(isKilled and "Defeated " or "Alive ", isKilled and miog.CLRSCC.red or miog.CLRSCC.green) ..  bossName)
+				end
+			end
+
+			GameTooltip:Show()]]
 		end
 	end
 	
@@ -676,6 +750,8 @@ function ProgressOverviewMixin:OnShow()
 	if(initialRefreshDone) then
 		self:RefreshActivities()
 	end
+	
+	self:CheckLockoutExpiration()
 
 	self:SwitchScrollBars(miog.pveFrame2.ScrollBarArea.ProgressOverviewScrollBar)
 	ScrollUtil.InitScrollBar(self.ScrollBox, self.ScrollBar)

@@ -22,6 +22,17 @@ function ApplicantMixin:HasApplicantIDInfo()
     return false
 end
 
+function ApplicantMixin:OnMouseDown(button)
+    if(button == "RightButton") then
+        self:OnMouseDown_RightButton()
+
+    elseif(button == "LeftButton") then
+        self:GetElementData():ToggleCollapsed()
+        self:RefreshExpandIcon()
+
+    end
+end
+
 function ApplicantMixin:OnMouseDown_RightButton()
     if(self:HasApplicantIDInfo()) then
         LFGListApplicantMember_OnMouseDown(self)
@@ -46,6 +57,9 @@ function ApplicantMixin:EnableLFGInteractions()
 end
 
 function ApplicantMixin:DisableLFGInteractions()
+    self.Invite:Hide()
+    self.Decline:Hide()
+
     self.Invite:Disable()
     self.Decline:Disable()
 
@@ -57,6 +71,16 @@ function ApplicantMixin:RefreshInviteDeclineVisiblity()
     if(showLFGInteractions) then
         self:EnableLFGInteractions()
         
+    else
+        self:DisableLFGInteractions()
+
+    end
+end
+
+function ApplicantMixin:SetInviteDeclineVisible(bool)
+    if(bool) then
+        self:EnableLFGInteractions()
+
     else
         self:DisableLFGInteractions()
 

@@ -3,23 +3,6 @@ local wticc = WrapTextInColorCode
 
 ApplicantSingleMemberMixin = CreateFromMixins(ApplicantMixin)
 
-function ApplicantSingleMemberMixin:SetCollapsed(bool)
-	self:GetElementData():SetCollapsed(bool)
-    self:RefreshExpandIcon()
-
-end
-
-function ApplicantSingleMemberMixin:OnMouseDown(button)
-    if(button == "RightButton") then
-        self:OnMouseDown_RightButton()
-
-    elseif(button == "LeftButton") then
-        self:GetElementData():ToggleCollapsed()
-        self:RefreshExpandIcon()
-
-    end
-end
-
 function ApplicantSingleMemberMixin:SetClass(fileName)
     if(fileName) then
         local classID = miog.CLASSFILE_TO_ID[fileName]
@@ -106,4 +89,6 @@ function ApplicantSingleMemberMixin:SetData(data)
     self.Secondary:SetText(coloredSecondary)
 
     self:SetItemLevel(itemLevel)
+
+    self:SetInviteDeclineVisible(data.numMembers == 1)
 end

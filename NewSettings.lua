@@ -134,7 +134,6 @@ local category = Settings.RegisterVerticalLayoutCategory(addonName)
 
 local function OnSettingChanged(setting, value)
 	-- This callback will be invoked whenever a setting is modified.
-	--print("[MIOG] Setting changed:", setting:GetVariable(), value)
 end
 
 local function setSettingValue(value)

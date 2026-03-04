@@ -7,6 +7,59 @@ local categoryID
 
 AppViewer = CreateFromMixins(CallbackRegistryMixin)
 
+function AppViewer:CreateDebugApplicants(numApplicants)
+	local groupData = {}
+
+	local applicantID = random(1, 100)
+
+	for i = 1, numApplicants, 1 do
+		groupData[i] = {
+			template = "MIOG_AppViewerApplicantSingleMemberTemplate",
+			applicantID = applicantID,
+			applicantIndex = i,
+			numMembers = numApplicants,
+
+			class = miog.CLASSES[i].name,
+			specID = miog.CLASSES[i].specs[1],
+
+			playerName = "Player" .. i,
+			realm = "Realm" .. i,
+
+			categoryID = categoryID,
+			primary = random(0, 4000),
+			secondary = random(0, 25),
+
+			raidData = nil,
+			itemLevel = random(210, 240),
+
+			role = 2,
+		}
+	end
+
+	if(numApplicants > 1) then
+		parent = treeDataProvider:Insert({
+			template = "MIOG_AppViewerApplicantMultiMemberTemplate",
+			applicantID = applicantID,
+			categoryID = categoryID,
+			itemLevel = averageItemLevel,
+			numMembers = numApplicants,
+			players = groupData
+		})
+		parent:SetCollapsed(true, true, false)
+
+	else
+		parent = treeDataProvider
+
+	end
+
+	for k = 1, numApplicants do
+		local singleMember = parent:Insert(groupData[k])
+		singleMember:SetCollapsed(true, true, false)
+		singleMember:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = applicantID, name = groupData[k].playerName, realm = groupData[k].realm})
+
+	end
+end
+
 function AppViewer:FindApplicantFrame(applicantID)
 	local frame = self.ScrollBox:FindFrameByPredicate(function(localFrame, node)
 		local data = node:GetData()
@@ -136,6 +189,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 					role = averageRole,
 				})
+				parent:SetCollapsed(true, true, false)
 
 			else
 				parent = treeDataProvider
@@ -144,7 +198,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 			for k = 1, applicantData.numMembers do
 				local singleMember = parent:Insert(groupData[k])
-				singleMember:SetCollapsed(true, true, true)
+				singleMember:SetCollapsed(true, true, false)
 				singleMember:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = applicantID, name = groupData[k].playerName, realm = groupData[k].realm})
 
 			end
@@ -156,6 +210,7 @@ function AppViewer:RefreshApplicantList()
 	C_LFGList.RefreshApplicants()
 
     treeDataProvider:Flush()
+	treeDataProvider:SetAllCollapsed(true)
 
     local applicantList = C_LFGList.GetApplicants()
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
@@ -170,13 +225,15 @@ function AppViewer:RefreshApplicantList()
 
     	self.SortButtons:Sort()
 	end
+
+	self:CreateDebugApplicants(3)
 end
 
 function AppViewer:RetrieveAndSetEntryInfo()
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
 
 	if(activeEntry) then
-		local activityInfo = miog:GetActivityInfo(activeEntry.activityIDs[1]) 
+		local activityInfo = miog:GetActivityInfo(activeEntry.activityIDs[1])
 		categoryID = activityInfo.categoryID
 
 		local pretext = activeEntry.privateGroup and "!" or ""
@@ -348,7 +405,7 @@ function AppViewer:OnLoad()
 	CallbackRegistryMixin.OnLoad(self)
     --local view = Mixin(CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6), TreeListViewMultiSpacingMixin)
 	--view:SetDepthSpacing()
-    local view = CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6)
+    local view = CreateScrollBoxListTreeListView(3, 0, 0, 0, 0, 6)
     self.view = view
 
 	local function Initializer(frame, node)
@@ -361,7 +418,6 @@ function AppViewer:OnLoad()
 			miog.updateRaiderIOScrollBoxFrameData(frame, data)
 
 		else
-			print(data.template)
 			frame:SetData(data)
 
 		end

@@ -682,7 +682,7 @@ miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
 	return mythicPlusActivities
 end
 
-miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
+miog.retrieveCurrentRaidActivityIDs = function(sort)
 	local raidActivities = {}
 
 	if(IsPlayerAtEffectiveMaxLevel()) then
@@ -698,22 +698,14 @@ miog.retrieveCurrentRaidActivityIDs = function(justIDs, sort)
 		end
 
 		if(sort and #raidActivities > 1) then
-			if(justIDs) then
-				table.sort(raidActivities, function(k1, k2)
-					return k1 > k2
-				end)
-				
-			else
-				table.sort(raidActivities, function(k1, k2)
-					if(k1.order == k2.order) then
-						return k1.activityID > k2.activityID
+			table.sort(raidActivities, function(k1, k2)
+				if(k1.order == k2.order) then
+					return k1.activityID > k2.activityID
 
-					end
+				end
 
-					return k1.order < k2.order
-				end)
-
-			end
+				return k1.order < k2.order
+			end)
 		end
 	end
 
@@ -732,7 +724,7 @@ end
 local append = table.insert -- Localizing function for speed
 
 local function getRaidProgressDataOnly(playerName, realm, region, existingProfile)
-    local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+    local raidInfo = miog.retrieveCurrentRaidActivityIDs(true)
     if not raidInfo then return end
 
     local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
@@ -789,7 +781,7 @@ miog.getRaidProgressDataOnly = getRaidProgressDataOnly
 
 local function getOnlyPlayerRaidData(playerName, realm, region, existingProfile)
 	local raidData
-	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+	local raidInfo = miog.retrieveCurrentRaidActivityIDs(true)
 
 	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
 
@@ -867,7 +859,7 @@ miog.getOnlyPlayerRaidData = getOnlyPlayerRaidData
 
 local function getNewRaidSortData(playerName, realm, region, existingProfile)
 	local raidData
-	local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+	local raidInfo = miog.retrieveCurrentRaidActivityIDs(true)
 
 	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
 
@@ -979,23 +971,12 @@ miog.checkAllSeasonalMapIDs = function()
 
 	end
     
-    local raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+    local raidInfo = miog.retrieveCurrentRaidActivityIDs(true)
 
 	for k, v in ipairs(raidInfo) do
 		--miog.checkForMapAchievements(v.mapID)
 
 	end
-end
-
-miog.retrieveAndSortChallengeModeMapTable = function()
-	local mapTable = C_ChallengeMode.GetMapTable()
-
-	table.sort(mapTable, function(k1, k2)
-		return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
-
-	end)
-
-	return mapTable
 end
 
 local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable, existingProfile)
@@ -1586,23 +1567,6 @@ local function createShortNameFrom(type, value)
 end
 
 miog.createShortNameFrom = createShortNameFrom
-
-local function findScrollBoxFrame(scrollBox, checkFunc)
-	local frame = scrollBox:FindFrameByPredicate(checkFunc())
-
-	return frame
-end
-
-local function printOnce(string)
-	if(miog.ONCE) then
-		miog.ONCE = false
-
-		print(string)
-
-	end
-end
-
-miog.printOnce = printOnce
 
 miog.changeTheme = function(index)
 	local titleBarTexHeight = 0.0465

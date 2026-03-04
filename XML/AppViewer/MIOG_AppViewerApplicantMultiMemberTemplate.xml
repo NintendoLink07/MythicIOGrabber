@@ -28,13 +28,12 @@
                 <NormalTexture atlas="UI-LFG-DeclineMark" />
 
                 <Anchors>
-                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2"/>
+                    <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-2"/>i
                 </Anchors>
 
                 <Scripts>
                     <OnClick>
 			            C_LFGList.DeclineApplicant(self:GetParent().applicantID)
-
                     </OnClick>
                 </Scripts>
             </Button>
@@ -51,7 +50,6 @@
                 <Scripts>
                     <OnClick>
 			            C_LFGList.InviteApplicant(self:GetParent().applicantID)
-
                     </OnClick>
                 </Scripts>
             </Button>
@@ -60,9 +58,7 @@
 
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Background" setAllPoints="true">
-                    <Color r="0.1" g="0.1" b="0.1" a="0.3" />
-                </Texture>
+                <Texture inherits="UI-PaperOverlay-AbilityTextBG" parentKey="Background" setAllPoints="true" />
             </Layer>
 
             <Layer level="OVERLAY">
@@ -74,9 +70,9 @@
                 </Texture>
                
                 <FontString parentKey="Players" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                    <Size x="89" />
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="3"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT"/>
+                        <Anchor point="RIGHT" relativeKey="$parent.Invite" relativePoint="LEFT"/>
                     </Anchors>
                 </FontString>
             </Layer>

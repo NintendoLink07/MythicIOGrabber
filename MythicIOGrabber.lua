@@ -10,18 +10,6 @@ miog.referencePVPButtons = {}
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
 
-
-local miogPlayers = {}
-
-local function printMIOGPlayers(...)
-	local prefix, text, channel, sender = ...
-
-	if(prefix == "MIOG_DEBUG" and not miogPlayers[sender] and not sender == UnitFullName("player")) then
-		print("Found a MIOG player: " .. sender)
-		miogPlayers[sender] = true
-	end
-end
-
 local function mainEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
         miog.F.CURRENT_DATE = C_DateAndTime.GetCurrentCalendarTime()

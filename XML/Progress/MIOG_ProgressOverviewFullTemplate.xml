@@ -161,6 +161,17 @@
                             <Keyvalue key="visual" value="semi" type="string" />
                         </KeyValues>
                     </Frame>
+                    
+                    <Frame parentKey="Lockouts" inherits="MIOG_ProgressOverviewVaultCellTemplate">
+                        <KeyValues>
+                            <Keyvalue key="layoutIndex" value="40" type="number" />
+                            <Keyvalue key="visual" value="light" type="string" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+                    </Frame>
                 </Frames>
             </Frame>
         </Frames>

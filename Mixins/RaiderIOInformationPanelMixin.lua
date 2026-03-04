@@ -8,9 +8,20 @@ function RaiderIOInformationPanelMixin:HasRaidInfo()
     return self.raidInfo and #self.raidInfo > 0
 end
 
+function RaiderIOInformationPanelMixin:GetAndSortMythicPlus()
+	local mapTable = C_ChallengeMode.GetMapTable()
+
+	table.sort(mapTable, function(k1, k2)
+		return miog.retrieveAbbreviatedNameFromChallengeModeMap(k1) < miog.retrieveAbbreviatedNameFromChallengeModeMap(k2)
+
+	end)
+
+	return mapTable
+end
+
 function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
-    self.mythicPlusInfo = miog.retrieveAndSortChallengeModeMapTable()
-    self.raidInfo = miog.retrieveCurrentRaidActivityIDs(false, true)
+    self.mythicPlusInfo = self:GetAndSortMythicPlus()
+    self.raidInfo = miog.retrieveCurrentRaidActivityIDs(true)
 
 end
 
@@ -24,8 +35,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
 
             if(not done[mapChallengeModeID]) then
                 local currentDungeon = self.MythicPlus["Dungeon" .. k]
-                local info = miog.retrieveMapInfoFromChallengeModeMap(mapChallengeModeID)
-                --local activityInfo = miog:GetActivityInfo(data.activityID)
+                local info = miog:GetMapInfo(mapID)
 
                 currentDungeon.dungeonName = name
 
@@ -38,6 +48,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
 
                         if(groupInfo) then
                             abbrName = groupInfo.abbreviatedName
+
                         end
 
                     else
@@ -430,7 +441,7 @@ function RaiderIOInformationPanelMixin:ApplyFillData(refreshData)
         local realm = self.realm or GetRealmName() or ""
         local countryFlag, language = miog.getRealmData(realm, miog.F.CURRENT_REGION)
 
-        self.RaceRolesServer:SetText("|T" .. countryFlag .. ":12:12|t" .. " " .. string.upper(miog.F.CURRENT_REGION or "") .. "-" .. realm .. "(" .. language .. ")")
+        self.RaceRolesServer:SetText((countryFlag and ("|T" .. countryFlag .. ":12:12|t" .. " ") or "") .. string.upper(miog.F.CURRENT_REGION or "") .. "-" .. realm .. "(" .. language .. ")")
         
         if(self.roles) then
             if(self.roles.tank) then
