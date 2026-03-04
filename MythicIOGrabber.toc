@@ -4,9 +4,9 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources, 
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9.6a
+## Version: 3.9.6b
 ## SavedVariables: MIOG_NewSettings
-## SavedVariablesPerCharacter: MIOG_CharacterSettings, MIOG_PRINTS
+## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
 
 ## X-Curse-Project-ID: 916354
@@ -14,14 +14,14 @@
 ## X-Website: https://github.com/NintendoLink07/MythicIOGrabber
 
 Libs\libs.xml
-## Precompiled.lua
 RawBlizzardData.lua
 
 MythicIOGrabber.lua
+PVEFrame2.lua
+
 UtilFunctions.lua
 PersistentData.lua
 UI.lua
-PVEFrame2.lua
 ActivityChecker.lua
 QueueManagement.lua
 
@@ -118,8 +118,11 @@ XML\Loot\MIOG_LootInstanceTemplate.xml
 XML\Loot\MIOG_LootBossTemplate.xml
 
 XML\AppViewer\MIOG_AppViewer.xml
-XML\AppViewer\MIOG_AppViewerApplicantMemberTemplate.xml
+XML\AppViewer\MIOG_AppViewerApplicantSingleMemberTemplate.xml
 XML\AppViewer\MIOG_AppViewerApplicantTemplate.xml
+XML\AppViewer\MIOG_AppViewerApplicantMultiMemberTemplate.xml
+
+
 XML\Misc\MIOG_TableHeaderTemplate.xml
 XML\Misc\MIOG_SimplifiedTextCellTemplate.xml
 XML\Misc\MIOG_HeaderSortButtonTemplate.xml

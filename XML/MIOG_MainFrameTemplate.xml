@@ -384,9 +384,25 @@
                     <EventFrame parentKey="ApplicationViewerScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="SearchPanelScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="GroupManagerScrollBar" inherits="MinimalScrollBar" hidden="true" />
-                    <EventFrame parentKey="ProgressMPlusScrollBar" inherits="MinimalScrollBar" hidden="true" />
-                    <EventFrame parentKey="ProgressRaidScrollBar" inherits="MinimalScrollBar" hidden="true" />
-                    <EventFrame parentKey="ProgressPVPScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="ProgressOverviewScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="ProgressMPlusScrollBar" inherits="MinimalScrollBar" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ProgressOverviewScrollBar" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ProgressOverviewScrollBar" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </EventFrame>
+                    <EventFrame parentKey="ProgressRaidScrollBar" inherits="MinimalScrollBar" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ProgressOverviewScrollBar" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ProgressOverviewScrollBar" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </EventFrame>
+                    <EventFrame parentKey="ProgressPVPScrollBar" inherits="MinimalScrollBar" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ProgressOverviewScrollBar" relativePoint="TOPLEFT"/>
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ProgressOverviewScrollBar" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                    </EventFrame>
                     <EventFrame parentKey="GearingScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="TeleportsScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="RaidSheetScrollBar" inherits="MinimalScrollBar" hidden="true" />

@@ -165,7 +165,7 @@ local function createResultTooltip(resultID, resultFrame)
 		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID)
 
 		if(MIOG_NewSettings.enableResultFrameClassSpecTooltip) then
-			GameTooltip:AddLine(" ")
+			GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
 			local orderedList = {}
 			local specList = {}
@@ -234,19 +234,26 @@ local function createResultTooltip(resultID, resultFrame)
 
 			if(nameTable[2]) then
 				local countryFlag, language = miog.getRealmData(nameTable[2], miog.F.CURRENT_REGION)
-				GameTooltip:AddLine(" ")
+				GameTooltip_AddBlankLineToTooltip(GameTooltip)
 				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
 			end
 		end
 		--GameTooltip:AddLine(C_LFGList.GetActivityFullName(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode))
 
 		local success, reasonID = miog.filter.checkIfSearchResultIsEligible(resultID)
-		local reason = miog.INELIGIBILITY_REASONS[reasonID]
 
-		if(not success and reason) then
-			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(WrapTextInColorCode(reason[1], miog.CLRSCC.red))
+		if(not success) then
+			local reason = miog.INELIGIBILITY_REASONS[reasonID]
 
+			if(reason) then
+				GameTooltip_AddBlankLineToTooltip(GameTooltip)
+				GameTooltip:AddLine(WrapTextInColorCode(reason[1], miog.CLRSCC.red))
+
+			else
+				GameTooltip_AddBlankLineToTooltip(GameTooltip)
+				GameTooltip:AddLine("Untracked ID", reasonID)
+
+			end
 		end
 
 		GameTooltip:Show()

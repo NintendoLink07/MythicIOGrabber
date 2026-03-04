@@ -74,7 +74,7 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 	end
 end
 
-local function anchorNewScrollBar(tab, name)
+local function anchorNewScrollBar(tab)
 	local pveFrame2 = miog.pveFrame2
 
 	if(pveFrame2.CurrentScrollBar) then
@@ -100,19 +100,7 @@ local function anchorNewScrollBar(tab, name)
 			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.GroupManagerScrollBar
 			
 		elseif(tab == 3) then
-			if(name) then
-				if(name == "mplus") then
-					pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressMPlusScrollBar
-
-				elseif(name == "raid") then
-					pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressRaidScrollBar
-
-				elseif(name == "pvp") then
-					pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressPVPScrollBar
-					
-				end
-
-			end
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressOverviewScrollBar
 
 		elseif(tab == 4) then
 			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.TeleportsScrollBar

@@ -11,7 +11,7 @@ function ApplicantMultiMemberMixin:OnMouseDown(button)
 end
 
 function ApplicantMultiMemberMixin:SetData(data)
-    self:Reset()
+	self:ResetWithExpandIcon()
     self.applicantID = data.applicantID
 
     local applicantData = C_LFGList.GetApplicantInfo(self.applicantID)

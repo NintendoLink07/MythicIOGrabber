@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.6b] - 2026-03-04
+
+### Fixed
+
+- [AppViewer] An applicant with multiple members should now not result in 20 million errors anymore.
+
+- [GroupCreator] An issue with difficulty ordering has been resolved.
+Now the highest difficulty will be selected by default.
+
+### Known issues
+
+- [GroupCreator] When trying to create a group for an old expansion, the expansion headers won't have any groups listed.
+This can be fixed with a /reload for now.
+
+
+
 
 ## [3.9.6a] - 2026-03-03
 
@@ -4703,7 +4719,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.6a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.6b..HEAD
+[3.9.6b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6b
 [3.9.6a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6a
 [3.9.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6
 [3.9.5b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.5b

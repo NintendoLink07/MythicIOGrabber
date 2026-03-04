@@ -1,11 +1,13 @@
-## [3.9.6a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6a) - 2026-03-03
+## [3.9.6b](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6b) - 2026-03-04
 
 ### Fixed
 
-- [Progress] PVP category images will now be displayed correctly.
+- [AppViewer] An applicant with multiple members should now not result in 20 million errors anymore.
 
-- [Loot] More performance improvements.
+- [GroupCreator] An issue with difficulty ordering has been resolved.
+Now the highest difficulty will be selected by default.
 
-- An error has been resolved trying to gather data from a fresh start (no cache).
+### Known issues
 
-- Images for Season 1 Dungeons & Raids have been implemented.
+- [GroupCreator] When trying to create a group for an old expansion, the expansion headers won't have any groups listed.
+This can be fixed with a /reload for now.

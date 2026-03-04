@@ -3,11 +3,6 @@ local wticc = WrapTextInColorCode
 
 ApplicantSingleMemberMixin = CreateFromMixins(ApplicantMixin)
 
-function ApplicantSingleMemberMixin:RefreshExpandIcon()
-	self.Expand:SetAtlas(self:GetElementData():IsCollapsed() == false and "campaign_headericon_open" or "campaign_headericon_closed");
-
-end
-
 function ApplicantSingleMemberMixin:SetCollapsed(bool)
 	self:GetElementData():SetCollapsed(bool)
     self:RefreshExpandIcon()
@@ -23,11 +18,6 @@ function ApplicantSingleMemberMixin:OnMouseDown(button)
         self:RefreshExpandIcon()
 
     end
-end
-
-function ApplicantSingleMemberMixin:ResetWithExpandIcon()
-    self:Reset()
-    self:RefreshExpandIcon()
 end
 
 function ApplicantSingleMemberMixin:SetClass(fileName)

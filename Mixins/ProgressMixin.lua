@@ -4,6 +4,8 @@ local playerGUID = UnitGUID("player")
 local fullPlayerName = UnitFullName("player")
 local initialRefreshDone = false
 
+local currentScrollBar
+
 local pvpActivities = {
 	1,
 	2,
@@ -171,6 +173,18 @@ end
 
 ProgressActivityMixin = CreateFromMixins(ProgressSettingsConnectMixin)
 
+
+function ProgressActivityMixin:SwitchScrollBars(newScrollBar)
+	if(currentScrollBar) then
+		currentScrollBar:Hide()
+
+	end
+
+	newScrollBar:Show()
+	currentScrollBar = newScrollBar
+
+end
+
 function ProgressActivityMixin:GetNumberOfVisibleActivities()
 	local counter = 0
 
@@ -295,7 +309,7 @@ function ProgressActivityMixin:OnLoad()
 	view:SetPadding(1, 1, 1, 1, 8)
 	view:SetElementExtent(36)
 
-	self.ScrollBox:Init(view)
+	--self.ScrollBox:Init(view)
 
 	self.tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
 	self.tableBuilder:SetHeaderContainer(self.HeaderContainer)
@@ -307,6 +321,7 @@ function ProgressActivityMixin:OnLoad()
 	local function ElementDataTranslator(elementData)
 		return elementData
 	end
+
 	ScrollUtil.RegisterTableBuilder(self.ScrollBox, self.tableBuilder, ElementDataTranslator)
 end
 
@@ -650,8 +665,9 @@ function ProgressOverviewMixin:OnLoad()
 	view:SetElementInitializer("MIOG_ProgressOverviewFullTemplate", initializeFrames)
 	view:SetPadding(1, 1, 1, 1, 1)
 	view:SetElementExtent(96)
-
-	ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view)
+ 
+	self.ScrollBox:Init(view)
+	--ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view)
 end
 
 function ProgressOverviewMixin:OnShow()
@@ -660,6 +676,9 @@ function ProgressOverviewMixin:OnShow()
 	if(initialRefreshDone) then
 		self:RefreshActivities()
 	end
+
+	self:SwitchScrollBars(miog.pveFrame2.ScrollBarArea.ProgressOverviewScrollBar)
+	ScrollUtil.InitScrollBar(self.ScrollBox, self.ScrollBar)
 end
 
 
@@ -887,6 +906,7 @@ function ProgressDungeonMixin:OnShow()
 	end)
 
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar)
+	self:SwitchScrollBars(miog.pveFrame2.ScrollBarArea.ProgressMPlusScrollBar)
 
 	self:RefreshActivities()
 end
@@ -1144,6 +1164,7 @@ function ProgressRaidMixin:OnShow()
 	end)
 
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressRaidScrollBar)
+	self:SwitchScrollBars(miog.pveFrame2.ScrollBarArea.ProgressRaidScrollBar)
 
 	self:RefreshActivities()
 end
@@ -1298,6 +1319,7 @@ function ProgressPVPMixin:OnShow()
 	end)
 
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ProgressPVPScrollBar)
+	self:SwitchScrollBars(miog.pveFrame2.ScrollBarArea.ProgressPVPScrollBar)
 
 	self:RefreshActivities()
 end

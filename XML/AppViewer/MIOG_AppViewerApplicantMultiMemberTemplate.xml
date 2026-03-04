@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_AppViewerApplicantMemberTemplate" mixin="ApplicantSingleMemberMixin" inherits="BackdropTemplate" virtual="true">
+    <Frame name="MIOG_AppViewerApplicantMultiMemberTemplate" mixin="ApplicantMultiMemberMixin" inherits="BackdropTemplate" virtual="true">
         <Size y="24" />
 
         <Frames>
@@ -72,67 +72,11 @@
                         <Anchor point="LEFT" x="1"/>
                     </Anchors>
                 </Texture>
-
-                <Texture parentKey="Role">
-                    <Size x="18" y="18" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT"/>
-                    </Anchors>
-                </Texture>
-
-                <Texture parentKey="Class">
-                    <Size x="16" y="16" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Role" relativePoint="RIGHT" x="2"/>
-                    </Anchors>
-                </Texture> 
-
-                <Texture parentKey="Spec">
-                    <Size x="16" y="16" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Class" relativePoint="RIGHT" x="2"/>
-                    </Anchors>
-                </Texture>
-
-                <!--<Texture parentKey="Race">
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="2"/>
-                    </Anchors>
-                    <Size x="16" y="16" />
-                </Texture> !-->
-
-                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+               
+                <FontString parentKey="Players" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size x="89" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Spec" relativePoint="RIGHT" x="3"/>
-                    </Anchors>
-                </FontString>
-            
-                <Texture parentKey="Comment" file="Interface\minimap\tracking\mailbox.blp" hidden="true">
-                    <Size x="10" y="10" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" y="4"/>
-                    </Anchors>
-                </Texture>
-
-                <FontString parentKey="Primary" font="GameFontHighlight" justifyH="CENTER">
-                    <Size x="40" y="20" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="1"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="Secondary" font="GameFontHighlight" justifyH="CENTER">
-                    <Size x="40" y="20" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Primary" relativePoint="RIGHT" x="1"/>
-                    </Anchors>
-                </FontString>
-
-                <FontString parentKey="ItemLevel" font="GameFontHighlight" justifyH="CENTER">
-                    <Size x="40" y="20" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Secondary" relativePoint="RIGHT" x="1"/>
                     </Anchors>
                 </FontString>
             </Layer>

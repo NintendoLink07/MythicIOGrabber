@@ -176,7 +176,6 @@
                             <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
                             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                         </Anchors>
-
                     </EventFrame>
 
                     <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">

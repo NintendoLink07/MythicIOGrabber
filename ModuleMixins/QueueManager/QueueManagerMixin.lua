@@ -278,8 +278,12 @@ function QueueManagerMixin:OnLoad()
 
 				if(reason) then
 					frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
-					
+
 				end
+
+			else
+				frame.Name:SetTextColor(1, 1, 1, 1)
+
 			end
 
 			frame:SetScript("OnEnter", function(self)

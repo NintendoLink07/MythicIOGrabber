@@ -954,18 +954,17 @@ function ProgressTabMixin:RequestAccountCharacters()
 	accountCharacters = {}
 
 	local charList = {}
-	local info
 
 	local playerGUID = UnitGUID("player")
-	local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(playerGUID)
+	local _, englishClass, _, _, _, name, realmName = GetPlayerInfoByGUID(playerGUID)
 	local specID = GetSpecializationInfo(GetSpecialization())
 	table.insert(accountCharacters, {guid = playerGUID, name = name, realm = realmName, classFile = englishClass, spec = specID})
 
-	for currencyID, currencyInfo in pairs(miog.RAW["Currency"]) do
+	for currencyID in pairs(miog.RAW["Currency"]) do
 		local accountCurrencyData = C_CurrencyInfo.FetchCurrencyDataFromAccountCharacters(currencyID)
 
 		if(accountCurrencyData) then
-			for k, v in pairs(accountCurrencyData) do
+			for _, v in pairs(accountCurrencyData) do
 				charList[v.characterGUID] = true
 
 			end
@@ -973,30 +972,15 @@ function ProgressTabMixin:RequestAccountCharacters()
 
 	end
 
-	--[[for i = 1, 5000, 1 do
-		info = C_CurrencyInfo.GetCurrencyListInfo(i)
-
-		if(info) then
-			local accountCurrencyData = C_CurrencyInfo.FetchCurrencyDataFromAccountCharacters(info.currencyID)
-
-			if(accountCurrencyData) then
-				for k, v in pairs(accountCurrencyData) do
-					charList[v.characterGUID] = true
-
-				end
-			end
-		end
-	end]]
-
-	for k, v in pairs(charList) do
-		localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(k)
+	for k in pairs(charList) do
+		_, englishClass, _, _, _, name, realmName = GetPlayerInfoByGUID(k)
 
 		table.insert(accountCharacters, {guid = k, name = name, realm = realmName, classFile = englishClass})
 	end
 end
 
 function HasRewardsComingReset()
-	for i, activityInfo in ipairs(C_WeeklyRewards.GetActivities()) do
+	for _, activityInfo in ipairs(C_WeeklyRewards.GetActivities()) do
 		if(activityInfo.progress >= activityInfo.threshold) then
 			return true
 		end

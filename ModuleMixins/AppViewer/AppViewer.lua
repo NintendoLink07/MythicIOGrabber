@@ -85,7 +85,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 				local roleValue = assignedRole == "TANK" and 1 or assignedRole == "HEALER" and 20 or 400
 
 				groupData[k] = {
-					template = "MIOG_AppViewerApplicantMemberTemplate",
+					template = "MIOG_AppViewerApplicantSingleMemberTemplate",
 					applicantID = applicantID,
 					applicantIndex = k,
 					numMembers = numMembers,
@@ -122,7 +122,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 				local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / numMembers, overallSecondary / numMembers, overallRole / numMembers, overallItemLevel / numMembers
 
 				parent = treeDataProvider:Insert({
-					template = "MIOG_AppViewerApplicantTemplate",
+					template = "MIOG_AppViewerApplicantMultiMemberTemplate",
 					applicantID = applicantID,
 
 					categoryID = categoryID,
@@ -176,16 +176,15 @@ function AppViewer:RetrieveAndSetEntryInfo()
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
 
 	if(activeEntry) then
-		local activityInfo = C_LFGList.GetActivityInfoTable(activeEntry.activityIDs[1])
+		local activityInfo = miog:GetActivityInfo(activeEntry.activityIDs[1]) 
 		categoryID = activityInfo.categoryID
-		local customInfo = miog:GetActivityInfo(activeEntry.activityIDs[1])
 
 		local pretext = activeEntry.privateGroup and "!" or ""
 
 		self.ActivityBar.Name:SetText(pretext .. activeEntry.name)
-		self.ActivityBar.Title:SetText(pretext .. (activityInfo.difficultyID and miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] and customInfo.groupName .. " - " .. miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] or activityInfo.fullName))
+		self.ActivityBar.Title:SetText(pretext .. (activityInfo.difficultyID and miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] and activityInfo.fullName .. " - " .. miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] or activityInfo.fullName))
 		self.ActivityBar.Description:SetText(activeEntry.comment)
-		self.ActivityBar.Background:SetTexture(customInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[customInfo.categoryID], "MIRROR", "MIRROR")
+		self.ActivityBar.Background:SetTexture(activityInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID], "MIRROR", "MIRROR")
 		
 		if(activityInfo.categoryID == 2) then
 			self.ActivityBar.Primary:SetText(activityInfo.requiredDungeonScore)
@@ -355,13 +354,14 @@ function AppViewer:OnLoad()
 	local function Initializer(frame, node)
 		local data = node:GetData()
 
-		if(data.template == "MIOG_AppViewerApplicantMemberTemplate") then
+		if(data.template == "MIOG_AppViewerApplicantSingleMemberTemplate") then
 			frame:SetData(data)
 
 		elseif(data.template == "MIOG_NewRaiderIOInfoPanel") then
 			miog.updateRaiderIOScrollBoxFrameData(frame, data)
 
 		else
+			print(data.template)
 			frame:SetData(data)
 
 		end

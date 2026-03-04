@@ -335,12 +335,16 @@ miog.DIFFICULTY_ID_TO_SHORT_NAME = {
 }
 
 miog.BETTER_DIFFICULTY_ORDER = {
+	[0] = 0,
+
+	--DUNGEONS
 	[24] = 10,
 	[1] = 11,
 	[2] = 12,
 	[23] = 13,
 	[8] = 14,
 
+	--OLD RAIDS
 	[7] = 23,
 	[9] = 24,
 	[3] = 25,
@@ -348,12 +352,16 @@ miog.BETTER_DIFFICULTY_ORDER = {
 	[5] = 27,
 	[6] = 28,
 
+	--NEW RAIDS
 	[220] = 30,
 	[17] = 31,
 	[14] = 32,
 	[33] = 34,
 	[15] = 35,
 	[16] = 36,
+
+	--DELVE
+	[208] = 40
 }
 
 miog.DIFFICULTY_ORDER = {
@@ -2318,31 +2326,24 @@ function miog:IntegrateJournalDataIntoActivity(activityID)
 	local activityDB = database.pointers.activity[activityID]
 	local mapID = activityDB.mapID
 
-	local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-
-	if(not journalInstanceID) then
-		local mapInfo = miog:GetMapInfo(mapID)
+	if(mapID) then
+		local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
 		
-		if(mapInfo) then
-			journalInstanceID = mapInfo.journalInstanceID
+		if(journalInstanceID) then
+			local journalDB = database.pointers.journal[journalInstanceID]
 
-		end
-	end
-
-	if(journalInstanceID) then
-		local journalDB = database.pointers.journal[journalInstanceID]
-
-		if(journalDB) then
-			activityDB.journalInstanceID = journalInstanceID
-			activityDB.buttonImage1 = journalDB.buttonImage1
-			activityDB.buttonImage2 = journalDB.buttonImage2
-			activityDB.bgImage = journalDB.bgImage
-			activityDB.loreImage = journalDB.loreImage
-			activityDB.instanceName = journalDB.instanceName
-			activityDB.tier = journalDB.tier
-			activityDB.isRaid = journalDB.isRaid
-			activityDB.bosses = journalDB.bosses
-			activityDB.numOfBosses = journalDB.numOfBosses
+			if(journalDB) then
+				activityDB.journalInstanceID = journalInstanceID
+				activityDB.buttonImage1 = journalDB.buttonImage1
+				activityDB.buttonImage2 = journalDB.buttonImage2
+				activityDB.bgImage = journalDB.bgImage
+				activityDB.loreImage = journalDB.loreImage
+				activityDB.instanceName = journalDB.instanceName
+				activityDB.tier = journalDB.tier
+				activityDB.isRaid = journalDB.isRaid
+				activityDB.bosses = journalDB.bosses
+				activityDB.numOfBosses = journalDB.numOfBosses
+			end
 		end
 	end
 end
@@ -2452,15 +2453,6 @@ function miog:LoadActivityData(activityID)
 	end
 end
 
-function miog:CompareDifficultiesOfGroup(groupID, diffID)
-	local groupDB = database.pointers.groups[groupID]
-	
-	if(groupDB) then
-		
-
-	end
-end
-
 function miog:DetermineHighestDifficultyActivityIDForGroup(groupID)
 	local groupDB = database.pointers.groups[groupID]
 
@@ -2469,12 +2461,11 @@ function miog:DetermineHighestDifficultyActivityIDForGroup(groupID)
 			local activityInfo = database.pointers.activity[v]
 
 			if(activityInfo) then
-				local d1 = activityInfo.redirectedDifficultyID
+				local orderIndex = miog.BETTER_DIFFICULTY_ORDER[activityInfo.redirectedDifficultyID]
 
-				if(not groupDB.highestDifficultyActivityID or miog.BETTER_DIFFICULTY_ORDER[d1] > groupDB.highestDifficultyActivityID) then
+				if(not groupDB.highestDifficultyActivityID or miog.BETTER_DIFFICULTY_ORDER[activityInfo.redirectedDifficultyID] > groupDB.highestDifficultyActivityIDOrderIndex) then
+					groupDB.highestDifficultyActivityIDOrderIndex = orderIndex
 					groupDB.highestDifficultyActivityID = v
-
-					return
 
 				end
 			end

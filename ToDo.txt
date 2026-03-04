@@ -5,6 +5,8 @@ Okay
 - Group
 - Raid sheet
 - Gearing // enable&disable columns
+- SearchPanel
+    - Short names
 
 WIP
 - Drops
@@ -18,4 +20,4 @@ No idea
 - Upgrades
 - FilterManager
 - Entry creation
-    - Add unlisted activity id's
+    - Difficulty dropdown logic

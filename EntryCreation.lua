@@ -120,16 +120,19 @@ local function setUpDifficultyDropDown()
 		local unsortedActivities = C_LFGList.GetAvailableActivities(LFGListFrame.EntryCreation.selectedCategory, LFGListFrame.EntryCreation.selectedGroup);
 		local activities = {}
 
-		unsortedActivities = unsortedActivities and #unsortedActivities > 0 and unsortedActivities or miog:GetGroupInfo(LFGListFrame.EntryCreation.selectedGroup).activities
+		local numActivities = #unsortedActivities
+
+		if(#unsortedActivities == 0) then
+			unsortedActivities = miog:GetGroupInfo(LFGListFrame.EntryCreation.selectedGroup).activities
+			
+			numActivities = #unsortedActivities
+		end
 
 		if(LFGListFrame.EntryCreation.selectedCategory == 2 or LFGListFrame.EntryCreation.selectedCategory == 3) then
-			local numOfActivities = #unsortedActivities
-
 			for k, v in ipairs(unsortedActivities) do
-				activities[k] = unsortedActivities[numOfActivities - k + 1]
+				activities[k] = unsortedActivities[numActivities - k + 1]
 
 			end
-
 		else
 			activities = unsortedActivities
 
@@ -138,16 +141,14 @@ local function setUpDifficultyDropDown()
 		for k, v in ipairs(activities) do
 			local activityInfo = miog:GetActivityInfo(v)
 
-			if(activityInfo.abbreviatedName) then
-				local activityButton = rootDescription:CreateRadio(activityInfo.shortName, function(data) return data.activityID == LFGListFrame.EntryCreation.selectedActivity end, function(data)
-					LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, LFGListFrame.CategorySelection.selectedCategory, activityInfo.groupFinderActivityGroupID, v)
+			rootDescription:CreateRadio(activityInfo.shortName, function(data) return data.activityID == LFGListFrame.EntryCreation.selectedActivity end, function(data)
+				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, LFGListFrame.CategorySelection.selectedCategory, activityInfo.groupFinderActivityGroupID, v)
 
-				end, {activityID = v, groupID = activityInfo.groupFinderActivityGroupID})
-			end
+			end, {activityID = v, groupID = activityInfo.groupFinderActivityGroupID})
 		end
 
 		if(miog.EntryCreation.ActivityDropDown:IsShown() == false) then
-			local activityButton = rootDescription:CreateRadio("More...", nil, function()
+			rootDescription:CreateRadio("More...", nil, function()
 				LFGListEntryCreationActivityFinder_Show(LFGListFrame.EntryCreation.ActivityFinder, LFGListFrame.CategorySelection.selectedCategory, nil, LFGListFrame.EntryCreation.selectedFilters)
 				
 			end)
@@ -712,10 +713,11 @@ local function addGroups(rootDescription, groupsData, addDivider)
 
 		for k, v in ipairs(groupsData.groups) do
 			local groupInfo = miog:GetGroupInfo(v)
+			
 			local groupButton = rootDescription:CreateRadio(C_LFGList.GetActivityGroupInfo(v), function(data) return LFGListFrame.EntryCreation.selectedGroup == data.groupID end, function(data)
 				LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, categoryID, data.groupID, data.activityID)
 
-			end, {activityID = activityID, groupID = v})
+			end, {activityID = groupInfo.highestDifficultyActivityID, groupID = v})
 
 			if(groupsData.icons) then
 				addIconInitializer(groupButton, groupInfo.icon)
@@ -784,7 +786,7 @@ local function setupActivities(dropdown, rootDescription)
 
 			groups2 = {
 				groups = C_LFGList.GetAvailableActivityGroups(categoryID, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE)),
-				title = miog.TIER_INFO[EJ_GetNumTiers() - 1].name .. " Dungeons",
+				title = miog.TIER_INFO[GetNumExpansions()].name .. " Dungeons",
 				icons = true
 			}
 

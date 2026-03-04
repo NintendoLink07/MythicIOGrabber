@@ -7,6 +7,11 @@ function ApplicantMixin:OnLoad()
 
 end
 
+function ApplicantMixin:RefreshExpandIcon()
+	self.Expand:SetAtlas(self:GetElementData():IsCollapsed() == false and "campaign_headericon_open" or "campaign_headericon_closed");
+
+end
+
 function ApplicantMixin:HasApplicantIDInfo()
     if(self.applicantID and C_LFGList.GetApplicantInfo(self.applicantID)) then
         self:GetParent().applicantID = self.applicantID
@@ -62,6 +67,11 @@ function ApplicantMixin:Reset()
 	self.StatusFrame:Hide()
     self:RefreshInviteDeclineVisiblity()
 
+end
+
+function ApplicantMixin:ResetWithExpandIcon()
+    self:Reset()
+    self:RefreshExpandIcon()
 end
 
 function ApplicantMixin:RefreshStatus(appStatus)

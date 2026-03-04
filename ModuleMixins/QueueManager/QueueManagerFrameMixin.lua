@@ -40,6 +40,7 @@ end
 
 function QueueManagerFrameMixin:SetWaitInfo(timeToMatch)
     self.Wait:SetText(timeToMatch ~= -1 and "(" .. (timeToMatch ~= -1 and formatter:Format(timeToMatch)) .. ")" or "")
+    
 end
 
 
