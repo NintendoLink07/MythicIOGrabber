@@ -185,6 +185,7 @@
                             <OnClick>
                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                                 C_LFGList.RemoveListing()
+                                LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)
                             </OnClick>
                         </Scripts>
                     </Button>

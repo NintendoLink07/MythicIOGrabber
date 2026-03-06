@@ -2,12 +2,28 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_Loot" mixin="LootMixin" virtual="true">
         <Frames>
+            <CheckButton parentKey="SaveQueue" inherits="MIOG_MinimalCheckButtonTemplate" checked="true">
+                <Size x="25" y="25" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                        GameTooltip:SetText("Set current instance list as default")
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave function="GameTooltip_Hide" />
+                </Scripts>
+            </CheckButton>
+
             <EditBox parentKey="SearchBox" inherits="SearchBoxTemplate" mixin="LootSearchBarMixin" autoFocus="false" font="GameFontHighlight">
                 <Size y="25" />
 
                 <Anchors>
                     <Anchor point="TOPLEFT" x="8"/>
-                    <Anchor point="TOPRIGHT" x="-5"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SaveQueue" relativePoint="TOPLEFT" x="-5"/>
                 </Anchors>
 
                 <Scripts>
@@ -26,13 +42,13 @@
             <CheckButton parentKey="OnlyItemsButton" inherits="MIOG_MinimalCheckButtonTemplate">
                 <Size x="25" y="25" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.SearchBox" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.SaveQueue" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
 
                 <Scripts>
                     <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetText("Only show items")
+                        GameTooltip:SetText("Show items only")
                         GameTooltip:Show()
                     </OnEnter>
                     <OnLeave function="GameTooltip_Hide" />

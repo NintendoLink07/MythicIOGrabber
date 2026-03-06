@@ -226,7 +226,7 @@ function AppViewer:RefreshApplicantList()
     	self.SortButtons:Sort()
 	end
 
-	self:CreateDebugApplicants(3)
+	--self:CreateDebugApplicants(3)
 end
 
 function AppViewer:RetrieveAndSetEntryInfo()

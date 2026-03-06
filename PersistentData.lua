@@ -345,20 +345,20 @@ miog.BETTER_DIFFICULTY_ORDER = {
 	[8] = 14,
 
 	--OLD RAIDS
-	[7] = 23,
-	[9] = 24,
-	[3] = 25,
-	[4] = 26,
-	[5] = 27,
-	[6] = 28,
+	[7] = 20,
+	[9] = 21,
+	[3] = 22,
+	[4] = 23,
+	[5] = 24,
+	[6] = 25,
 
 	--NEW RAIDS
 	[220] = 30,
 	[17] = 31,
-	[14] = 32,
-	[33] = 34,
-	[15] = 35,
-	[16] = 36,
+	[33] = 32,
+	[14] = 33,
+	[15] = 34,
+	[16] = 35,
 
 	--DELVE
 	[208] = 40
@@ -382,7 +382,7 @@ miog.DIFFICULTY_ORDER = {
 	[24] = 6,
 	[33] = 7,
 	[220] = 9,
-};
+}
 
 miog.EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.DungeonNormal,
@@ -402,7 +402,7 @@ miog.EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.RaidTimewalker,
 	DifficultyUtil.ID.Raid40,
 	DifficultyUtil.ID.RaidStory,
-};
+}
 
 
 miog.DIFFICULTY_ID_INFO = {}
@@ -2042,7 +2042,7 @@ end
 function miog:SaveJournalInstanceBossData(journalInstanceID)
 	local journalDB = database.pointers.journal[journalInstanceID]
 
-	local bossIndex = 14
+	local bossIndex = 1
 	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
 
 	if(not bossName) then
@@ -2061,7 +2061,8 @@ function miog:SaveJournalInstanceBossData(journalInstanceID)
 
 		bossIndex = bossIndex + 1;
 
-		bossName, _, journalEncounterID, _, _, _, _, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+		bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+
 	end
 
 	if(journalDB.bosses) then
@@ -2510,7 +2511,7 @@ function miog:CreateGroupWithActivities(groupID)
 end
 
 function miog:CreateGroupAndSiblingActivitiesFromActivity(activityID)
-	local activityInfo = miog:GetActivityInfo(activityID)
+	local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
 	local groupID = activityInfo.groupFinderActivityGroupID
 
 	miog:CreateGroupWithActivities(groupID)
@@ -2568,7 +2569,7 @@ do
 	miog:LoadJournalDBIfNeeded()
 
 	for _, activityID in pairs(manualData.activity) do
-		miog:CreateGroupAndSiblingActivitiesFromActivity(activityID)
+		miog:CreateGroupAndSiblingActivitiesFromActivity(activityID, true)
 
 		tinsert(database.pointers.unlistedActivities, database.pointers.activity[activityID])
 	end

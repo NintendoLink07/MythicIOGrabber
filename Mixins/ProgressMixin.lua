@@ -498,8 +498,6 @@ function ProgressOverviewMixin:OnLoad()
 
 	end)
 
-    RequestRaidInfo()
-
 	local view = CreateScrollBoxListLinearView()
 	view:SetHorizontal(true)
 
@@ -746,6 +744,8 @@ end
 
 function ProgressOverviewMixin:OnShow()
 	self:GetParent().Menu.VisibilityDropdown:Hide()
+
+    RequestRaidInfo()
 
 	if(initialRefreshDone) then
 		self:RefreshActivities()

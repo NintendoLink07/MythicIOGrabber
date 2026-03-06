@@ -1,15 +1,25 @@
-## [3.9.7](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.7) - 2026-03-04
+## [3.9.8](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.8) - 2026-03-06
 
 ### Added
 
-- [Progress] A simple lockout check (hover) has been added to the bottom of the [Progress] overview frame.
-This has been capturing data for quite a while (and due to some error gathered data everytime the frame was open).
-Log into a character to refresh all data.
+- [Loot] Added a checkbox to set the current instance list as the default list to load.
 
-A more robust lockout display comes with the changes to the [Progress] tab in v4.0.
+### Changed
+
+- [Loot] The baseline instance list is no longer all of Midnight.
+
+- [Loot] When an expansion-raid category is selected only the instances with the correct difficulty will show up.
+
+- [Loot] Filter design and behaviour has been improved.
 
 ### Fixed
 
-- [AppViewer] An error regarding hovering over a multi member applicant has been resolved.
+- [Loot] Selecting a difficulty and then switching to a raid that does not support that difficulty will now reset the difficulty.
 
-- [AppViewer] Multi member applicants are now displayed correctly.
+- [Loot] Bosses should now always be selectable via the dropdown.
+
+- [Loot] When removing an instance filter the boss filter will now also disappear.
+
+- [GroupCreator] Delisting a group while editing won't break the next group creation anymore.
+
+- [GroupCreator] Choosing an activity in the "Custom" category won't hide the main dropdown anymore.

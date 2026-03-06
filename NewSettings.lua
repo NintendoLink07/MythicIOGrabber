@@ -136,7 +136,13 @@ local function OnSettingChanged(setting, value)
 	-- This callback will be invoked whenever a setting is modified.
 end
 
-local function setSettingValue(value)
+function miog:SetMainSetting(key, value)
+    MIOG_NewSettings[key] = value
+
+end
+
+function miog:GetMainSetting(key)
+    return MIOG_NewSettings[key]
 
 end
 

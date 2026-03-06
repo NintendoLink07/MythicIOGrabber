@@ -16,6 +16,7 @@ local showOnlyItems = false
 
 local dataProvider
 local numBossesShown = 0
+local categoryID = 0
 
 local selectedTier, selectedJournalInstance, selectedDifficulty
 local selectedItemClass, selectedItemSubClass, selectedArmorType
@@ -29,10 +30,6 @@ local armorTypeInfo = {
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Mail)},
     {name = C_Item.GetItemSubClassInfo(4, Enum.ItemArmorSubclass.Plate)},
 }
-
-function LootMixin:GetSelectedEncounter()
-    return selectedEncounter
-end
 
 function LootMixin:SetSelectedEncounter(encounterID)
     if(encounterID) then
@@ -69,31 +66,6 @@ end
 function SortItemEntriesWithSearch(key1, key2)
     return key1.data.filterMatches[1][3] > key2.data.filterMatches[1][3]
 
-end
-
-function LootMixin:RefreshDifficulties()
-    self.DifficultyDropdown:SetupMenu(function(dropdown, rootDescription)
-        if(selectedJournalInstance or selectedEncounter and not specialSelection) then
-            rootDescription:CreateButton(CLEAR_ALL, function()
-                selectedDifficulty = nil
-
-            end)
-
-            rootDescription:CreateSpacer()
-
-            for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
-                if EJ_IsValidInstanceDifficulty(difficultyID) then
-                    local difficultyButton = rootDescription:CreateRadio(miog.DIFFICULTY_ID_INFO[difficultyID].name, function(id) return id == EJ_GetDifficulty() end, function(id)
-                        EJ_SetDifficulty(id)
-                        selectedDifficulty = difficultyID
-
-                        self:UpdateAfterCompletion()
-
-                    end, difficultyID)
-                end
-            end
-        end
-    end)
 end
 
 function LootMixin:CheckItemFiltering(itemInfo)
@@ -165,8 +137,6 @@ function LootMixin:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterDat
 
     return isMissingData
 end
-
-local once = false
 
 function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, journalInstanceID)
     local noEncounterSelected = not selectedEncounter
@@ -245,53 +215,31 @@ function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterDa
     return isMissingData
 end
 
-function LootMixin:GetHighestDifficulty(isRaid)
-    if(isRaid) then
-        return 16
+function LootMixin:CompareLootQueues()
+    local savedLootQueue = miog:GetMainSetting("defaultLootQueue")
 
-    else
-        return 8
-
-    end
-
-end
-
-function LootMixin:SelectJournalInstance(journalInstanceID)
-    local id = journalInstanceID or selectedJournalInstance
-    local showEverything = not showOnlyItems
-    
-    if(id) then
-        EJ_SelectInstance(id)
-
-        if(not selectedDifficulty) then
-            local highestID = miog:GetHighestDifficultyForInstance()
-
-            if(EJ_GetDifficulty() ~= highestID) then
-                EJ_SetDifficulty(highestID)
+    if(savedLootQueue and #lootQueue == #savedLootQueue) then
+        for k, v in ipairs(savedLootQueue) do
+            if(lootQueue[k] ~= v) then
+                return false
 
             end
         end
 
-        local isMissingData = false
-        local numLoot = EJ_GetNumLoot()
-
-        if(numLoot > 0) then
-            local encounterData = miog:GetEncounterDataFromJournalInstance(id)
-
-            if(showEverything) then
-                isMissingData = self:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, id)
-                
-            else
-                isMissingData = self:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
-
-            end
-        end
-
-        return isMissingData
+        return true
     end
+
 end
 
 function LootMixin:RequestLoot(origin)
+    if(self:CompareLootQueues()) then
+        self.SaveQueue:SetChecked(true)
+
+    else
+        self.SaveQueue:SetChecked(false)
+
+    end
+
     dataProvider:Flush()
     dataProvider:SetAllCollapsed(true);
 
@@ -315,37 +263,123 @@ function LootMixin:RequestLoot(origin)
         end
     end
 
+    local difficultiesAdded = {}
+    local hasNoDifficulty = selectedDifficulty == nil
+
     if(#lootQueue > 0) then
-        for k, v in ipairs(lootQueue) do
-            local isDataMissingFromInstance = self:SelectJournalInstance(v)
+        local hasAtleastOneValidInstance = false
 
-            if(isDataMissingFromInstance) then
-                isMissingData = true
+        if(selectedDifficulty) then
+            for k, id in ipairs(lootQueue) do
+                EJ_SelectInstance(id)
 
+                if(EJ_IsValidInstanceDifficulty(selectedDifficulty)) then
+                    hasAtleastOneValidInstance = true
+
+                end
             end
 
-            local encounterData = miog:GetEncounterDataFromJournalInstance(v)
-
-            if(k > 1) then
-                tinsert(bossDropdownList, {type = "spacer"})
+            if(not hasAtleastOneValidInstance) then
+                selectedDifficulty = nil
 
             end
+        end
+
+        for k, id in ipairs(lootQueue) do
+            local showEverything = not showOnlyItems
+            isMissingData = false
             
-            if(encounterData) then
-                tinsert(bossDropdownList, {type = "title"})
+            if(id) then
+                EJ_SelectInstance(id)
 
-                for x, y in pairs(encounterData) do
-                    tinsert(bossDropdownList, y)
+                for i, difficultyID in ipairs(miog.EJ_DIFFICULTIES) do
+                    if(EJ_IsValidInstanceDifficulty(difficultyID) and not difficultiesAdded[difficultyID]) then
+                        difficultiesAdded[difficultyID] = difficultiesAdded[difficultyID] and difficultiesAdded[difficultyID] + 1 or 1
 
+                    end
+                end
+
+                local encounterData = miog:GetEncounterDataFromJournalInstance(id)
+
+                if(k > 1) then
+                    tinsert(bossDropdownList, {type = "spacer"})
+
+                end
+                
+                if(encounterData) then
+                    tinsert(bossDropdownList, {type = "title"})
+
+                    for x, y in pairs(encounterData) do
+                        tinsert(bossDropdownList, y)
+
+                    end
+                end
+
+                if(hasNoDifficulty or EJ_IsValidInstanceDifficulty(selectedDifficulty)) then
+                    if(hasNoDifficulty) then
+                        local difficultyID = miog:GetHighestDifficultyForInstance()
+
+                        if(EJ_GetDifficulty() ~= difficultyID) then
+                            EJ_SetDifficulty(difficultyID)
+
+                        end
+                    end
+
+                    
+
+                    local numLoot = EJ_GetNumLoot()
+
+                    if(numLoot > 0) then
+                        if(showEverything) then
+                            isMissingData = self:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, id)
+                            
+                        else
+                            isMissingData = self:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
+
+                        end
+                    end
                 end
             end
         end
 
+        local orderedDifficultyTable = {}
+
+        for k, v in pairs(difficultiesAdded) do
+            tinsert(orderedDifficultyTable, k)
+
+        end
+
+        table.sort(orderedDifficultyTable, function(k1, k2)
+            return miog.BETTER_DIFFICULTY_ORDER[k1] < miog.BETTER_DIFFICULTY_ORDER[k2]
+        
+        end)
+
+        self.DifficultyDropdown:SetupMenu(function(dropdown, rootDescription)
+            if(selectedJournalInstance or specialSelection or selectedEncounter) then
+                rootDescription:CreateButton(CLEAR_ALL, function()
+                    selectedDifficulty = nil
+
+                    self:UpdateAfterCompletion()
+
+                end)
+
+                rootDescription:CreateSpacer()
+
+                for index, difficultyID in ipairs(orderedDifficultyTable) do
+                    local difficultyButton = rootDescription:CreateRadio(miog.DIFFICULTY_ID_INFO[difficultyID].name, function(id) return id == selectedDifficulty end, function(id)
+                        EJ_SetDifficulty(id)
+                        selectedDifficulty = id
+
+                        self:UpdateAfterCompletion()
+
+                    end, difficultyID)
+                end
+            end
+        end)
+
         if(not isMissingData) then
             local hasMultipleInstances = dataProvider.node:GetSize(true) > 1
             local hasMultipleBosses = numBossesShown > 1
-
-            self:RefreshDifficulties()
 
             if(multiQueue) then
                 if(hasMultipleInstances) then
@@ -366,27 +400,50 @@ function LootMixin:RequestLoot(origin)
     end
 end
 
-function LootMixin:ResetInstance()
-    lootQueue = defaultList
-    specialSelection = ALL
+function LootMixin:SetCategory(id)
+    if(categoryID and categoryID ~= id) then
+        selectedDifficulty = nil
 
-    selectedJournalInstance = nil
-    selectedTier = nil
-    
-    self:RequestLoot(2)
+    end
+
+    categoryID = id
 end
 
-function LootMixin:LoadAllInstanceFromTypeAndTier(type, tier)
-    lootQueue = (type == RAIDS and allRaidsJournalInstanceIDList or allDungeonsJournalInstanceIDList)[tier]
-
-    selectedJournalInstance = nil
+function LootMixin:LoadJournalInstance(journalInstanceID, tier, nameOrType)
     selectedTier = tier
-    specialSelection = type
 
-    self.SearchBox:CreateFilter("instance", EJ_GetTierInfo(tier) .. " - " .. type, function() self:ResetInstance() self.InstanceDropdown:SignalUpdate() end)
+    if(journalInstanceID) then
+        selectedJournalInstance = journalInstanceID
+        specialSelection = nil
+        lootQueue = {journalInstanceID}
 
-    self:RequestLoot(3)
+        local journalInfo = miog:GetJournalInstanceInfo(journalInstanceID)
+        self:SetCategory(journalInfo.isRaid and 3 or 2)
 
+        self.SearchBox:CreateFilter("instance", nameOrType, 1, function() self:LoadJournalInstance() self.InstanceDropdown:SignalUpdate() end)
+
+    elseif(nameOrType) then
+        selectedJournalInstance = nil
+        specialSelection = nameOrType
+
+        if(nameOrType ~= ALL) then
+            local isRaid = nameOrType == RAIDS
+            self:SetCategory(isRaid and 3 or 2)
+
+            lootQueue = (isRaid and allRaidsJournalInstanceIDList or allDungeonsJournalInstanceIDList)[tier]
+
+            self.SearchBox:CreateFilter("instance", EJ_GetTierInfo(tier) .. " - " .. nameOrType, 1, function() self:LoadJournalInstance() self.InstanceDropdown:SignalUpdate() end)
+        end
+
+    else
+        selectedJournalInstance = nil
+        specialSelection = nil
+
+        lootQueue = miog:GetMainSetting("defaultLootQueue") or defaultList
+
+    end
+
+    self:RequestLoot(4)
 end
 
 local function setSpecialButtonTooltip(tooltip, elementDescription, name)
@@ -419,7 +476,7 @@ function LootMixin:SetupInstanceMenu()
                 expansionButtons[k] = expansionButton
 
                 local raidButton = expansionButtons[k]:CreateRadio(ALL .. " " .. RAIDS, function(index) return index == selectedTier and specialSelection == RAIDS end, function(index)
-                    self:LoadAllInstanceFromTypeAndTier(RAIDS, index)
+                    self:LoadJournalInstance(nil, index, RAIDS)
                     
                 end, k)
 
@@ -431,7 +488,7 @@ function LootMixin:SetupInstanceMenu()
                 allRaidsJournalInstanceIDList[k] = {}
 
                 local dungeonButton = expansionButtons[k]:CreateRadio(ALL .. " " .. DUNGEONS, function(index) return index == selectedTier and specialSelection == DUNGEONS end, function(index)
-                    self:LoadAllInstanceFromTypeAndTier(DUNGEONS, index)
+                    self:LoadJournalInstance(nil, index, DUNGEONS)
 
                 end, k)
 
@@ -443,8 +500,31 @@ function LootMixin:SetupInstanceMenu()
                 allDungeonsJournalInstanceIDList[k] = {}
             end
 
-            --local expansionButton = rootDescription:CreateRadio("Current season", function(index) return index == selectedTier end, nil, 20)
+            local currentSeason = rootDescription:CreateRadio("Current season N/A", function(index) return index == selectedTier end, nil, 20)
 
+            local dungeonsGroups = C_LFGList.GetAvailableActivityGroups(2, Enum.LFGListFilter.CurrentSeason)
+            local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentSeason)
+
+            for i = 1, 2, 1 do
+                local isDungeon = i == 1
+                local groups = isDungeon and dungeonsGroups or raidGroups
+
+                if(#groups > 0) then
+                    currentSeason:CreateTitle(isDungeon and DUNGEONS or RAIDS)
+
+                    for k, v in ipairs(groups) do
+                        local groupInfo = miog:GetGroupInfo(v)
+
+                        if(groupInfo and groupInfo.journalInstanceID) then
+                            local instanceButton = currentSeason:CreateRadio(groupInfo.name, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
+                                self:LoadJournalInstance(journalInstanceID, groupInfo.tier, groupInfo.name)
+
+                            end, groupInfo.journalInstanceID)
+                        end
+                    end
+                end
+            end
+           
             local finalInstanceList = {}
 
             for i = 1, 4000, 1 do
@@ -494,15 +574,7 @@ function LootMixin:SetupInstanceMenu()
                     end
                     
                     local instanceButton = expansionButtons[v.tier]:CreateRadio(v.instanceName, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
-                        lootQueue = {journalInstanceID}
-
-                        selectedJournalInstance = journalInstanceID
-                        selectedTier = v.tier
-                        specialSelection = nil
-
-                        self.SearchBox:CreateFilter("instance", v.instanceName, function() self:ResetInstance() self.InstanceDropdown:SignalUpdate() end)
-
-                        self:RequestLoot(4)
+                        self:LoadJournalInstance(journalInstanceID, v.tier, v.instanceName)
 
                     end, v.journalInstanceID)
 
@@ -519,10 +591,10 @@ function LootMixin:SetupInstanceMenu()
                 end
             end
 
-            defaultList = miog:table_merge({}, allDungeonsJournalInstanceIDList[#allDungeonsJournalInstanceIDList], allRaidsJournalInstanceIDList[#allRaidsJournalInstanceIDList])
+            --defaultList = miog:table_merge({}, allDungeonsJournalInstanceIDList[#allDungeonsJournalInstanceIDList], allRaidsJournalInstanceIDList[#allRaidsJournalInstanceIDList])
 
             if(#lootQueue == 0) then
-                self:ResetInstance()
+                self:LoadJournalInstance()
 
             end
         end
@@ -768,12 +840,11 @@ function LootMixin:SetupEncounterMenu()
 
                     local name = v.name or v.altName
 
-                    local encounterButton = rootDescription:CreateRadio(name, function(data) return data.journalEncounterID == self:GetSelectedEncounter() end, function(data)
+                    local encounterButton = rootDescription:CreateRadio(name, function(data) return data.journalEncounterID == selectedEncounter end, function(data)
                         self:SetSelectedEncounter(data.journalEncounterID)
-                        self.SearchBox:CreateFilter("encounter", name, function() self:ResetEncounter() self.BossDropdown:SignalUpdate() end)
+                        self.SearchBox:CreateFilter("encounter", name, 2, function() self:ResetEncounter() self.BossDropdown:SignalUpdate() end)
 
                         self:RequestLoot(15)
-
 
                     end, v)
                 end
@@ -803,6 +874,18 @@ function LootMixin:OnLoad()
     self:SetupEncounterMenu()
     self:SetupInstanceMenu()
 
+    self.SaveQueue:SetScript("OnClick", function(selfFrame)
+        local checked = selfFrame:GetChecked()
+
+        if(checked) then
+            miog:SetMainSetting("defaultLootQueue", lootQueue)
+
+        else
+            miog:SetMainSetting("defaultLootQueue", nil)
+
+        end
+    
+    end)
 	self.SearchBox.Instructions:SetText("Enter atleast 3 characters to search");
     self.SearchBox:SetScript("OnTextChanged", function(selfFrame, manual)
         SearchBoxTemplate_OnTextChanged(selfFrame)

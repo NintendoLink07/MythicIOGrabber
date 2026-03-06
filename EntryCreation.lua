@@ -4,15 +4,6 @@ local wticc = WrapTextInColorCode
 
 local selectedExpansion, defaultGroup, defaultActivity = nil, nil, nil
 
-local addedInstances = {}
-
-local playstyles = {
-	Enum.LFGEntryPlaystyle.None,
-	Enum.LFGEntryPlaystyle.Standard,
-	Enum.LFGEntryPlaystyle.Casual,
-	Enum.LFGEntryPlaystyle.Hardcore
-}
-
 local generalPlaystyles = {
 	Enum.LFGEntryGeneralPlaystyle.Learning,
 	Enum.LFGEntryGeneralPlaystyle.FunRelaxed,
@@ -20,6 +11,8 @@ local generalPlaystyles = {
 	Enum.LFGEntryGeneralPlaystyle.Expert,
 
 }
+
+local selectedPlaystyle
 
 local function setUpRatingLevels(entryCreation)
 	local score = C_ChallengeMode.GetOverallDungeonScore()
@@ -96,23 +89,6 @@ local function setUpItemLevels(entryCreation)
 	
 		end
 	end)
-end
-
-local function setUpPlaystyleDropDown()
-	miog.EntryCreation.PlaystyleDropDown:SetupMenu(function(dropdown, rootDescription)
-		if(LFGListFrame.EntryCreation.selectedActivity) then
-			local activityInfo = miog:GetActivityInfo(LFGListFrame.EntryCreation.selectedActivity)
-		
-			for k, playstyleInfo in ipairs(generalPlaystyles) do
-				local activityButton = rootDescription:CreateRadio(C_LFGList.GetPlaystyleString(Enum.LFGEntryPlaystyle.None, playstyleInfo, activityInfo), function(playstyle) return playstyle == LFGListFrame.EntryCreation.selectedPlaystyle end, function(playstyle)
-					LFGListEntryCreation_OnPlayStyleSelectedInternal(LFGListFrame.EntryCreation, playstyle)
-		
-				end, playstyleInfo)
-			end
-		end
-	end)
-	
-	LFGListEntryCreation_OnPlayStyleSelectedInternal(LFGListFrame.EntryCreation, playstyles[1])
 end
 
 local function setUpDifficultyDropDown()
@@ -206,11 +182,11 @@ function LFGListEntryCreation_SetTitleFromActivityInfo(self)
 		return;
 	end
 	local activityID = activeEntryInfo and activeEntryInfo.activityIDs[1] or (self.selectedActivity or 0);
-	local activityInfo = miog:GetActivityInfo(activityID)
-	if((activityInfo and activityInfo.isMythicPlusActivity) or not C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity)) then
+	local activityInfo =  C_LFGList.GetActivityInfoTable(activityID);
 		--Is protected, first showed up in 11.0.2
-		--C_LFGList.SetEntryTitle(self.selectedActivity, self.selectedGroup, self.selectedPlaystyle);
-	end
+	--if((activityInfo and activityInfo.isMythicPlusActivity) or IsActivityLockedForCustomText(self.selectedCategory, self.selectedActivity)) then
+	--	C_LFGList.SetEntryTitle(self.selectedActivity, self.selectedGroup, self.selectedPlaystyle, self.generalPlaystyle);
+	--end
 end
 
 local function addActivityListToDropdown(list, rootDescription)
@@ -483,18 +459,13 @@ local function updateEntryCreation()
 	local groupName = C_LFGList.GetActivityGroupInfo(LFGListFrame.EntryCreation.selectedGroup);
 	
 	setUpDifficultyDropDown()
-	
-	entryCreation.ActivityDropDown:SetShown((groupName or activityInfo.shortName) and not categoryInfo.autoChooseActivity);
-	entryCreation.DifficultyDropDown:SetShown(activityInfo and not categoryInfo.autoChooseActivity and LFGListFrame.EntryCreation.selectedGroup and LFGListFrame.EntryCreation.selectedGroup > 0);
+
+	entryCreation.ActivityDropDown:SetShown(groupName or activityInfo.shortName);
+	entryCreation.DifficultyDropDown:SetShown(activityInfo and LFGListFrame.EntryCreation.selectedGroup and LFGListFrame.EntryCreation.selectedGroup > 0);
 
 	local shouldShowPlayStyleDropdown = (categoryInfo.showPlaystyleDropdown) and activityInfo and (activityInfo.isMythicPlusActivity or activityInfo.isRatedPvpActivity or activityInfo.isCurrentRaidActivity or activityInfo.isMythicActivity);
 	local shouldShowCrossFactionToggle = (categoryInfo.allowCrossFaction);
 	local shouldDisableCrossFactionToggle = (categoryInfo.allowCrossFaction) and not (activityInfo.allowCrossFaction);
-
-	if(shouldShowPlayStyleDropdown) then
-		setUpPlaystyleDropDown()
-
-	end
 
 	entryCreation.PlaystyleDropDown:SetShown(shouldShowPlayStyleDropdown);
 
@@ -563,7 +534,7 @@ local function selectKeystoneOrFirst()
 		local entryInfo = C_LFGList.GetActiveEntryInfo()
 		local activityInfo = miog:GetActivityInfo(entryInfo.activityIDs[1])
 
-		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, activityInfo.categoryID, activityInfo.groupFinderActivityGroupID, entryInfo.activityIDs[1])
+		--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.EntryCreation.selectedFilters, activityInfo.categoryID, activityInfo.groupFinderActivityGroupID, entryInfo.activityIDs[1])
 		return
 	end
 
@@ -643,7 +614,7 @@ function LFGListEntryCreation_UpdateValidState(self)
 end
 
 function LFGListEntryCreation_UpdateAuthenticatedState(self)
-	local isAuthenticated = C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedActivity);
+	local isAuthenticated = C_LFGList.IsPlayerAuthenticatedForLFG(self.selectedCategory, self.selectedActivity);
 	LFGListFrame.EntryCreation.Description.EditBox:SetEnabled(isAuthenticated);
 	local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
 	local isQuestListing = activeEntryInfo and activeEntryInfo.questID or nil;
@@ -771,9 +742,14 @@ local function setupActivities(dropdown, rootDescription)
 
 		local groups1, groups2, groups3, ga1, ga2, ga3, activities1, activities2, activities3
 
-		if(categoryID == 1 or categoryID == 6) then
+		if(categoryID == 1) then
 			ga1 = {
 				groups = C_LFGList.GetAvailableActivityGroups(categoryID, LFGListFrame.CategorySelection.selectedFilters),
+				title = categoryName
+			}
+		elseif(categoryID == 6) then
+			activities1 = {
+				activities = C_LFGList.GetAvailableActivities(categoryID, 0, 1),
 				title = categoryName
 			}
 
@@ -835,7 +811,7 @@ local function setupActivities(dropdown, rootDescription)
 
 			local expansionButtons = {}
 
-			for i = 1, GetNumExpansions(), 1 do
+			for i = 1, GetNumExpansions() - 1, 1 do
 				local expansionInfo = GetExpansionDisplayInfo(i-1)
 				expansionButtons[i] = rootDescription:CreateRadio(miog.TIER_INFO[i].name, function(index) return index == selectedExpansion end, function(index) end, i)
 				expansionButtons[i]:AddInitializer(function(button, description, menu)
@@ -870,7 +846,7 @@ local function setupActivities(dropdown, rootDescription)
 				end
 
 				if(not addedActivities[activityID]) then
-					if(activityInfo.tier) then
+					if(activityInfo.tier and expansionButtons[activityInfo.tier]) then
 						local activityButton = expansionButtons[activityInfo.tier]:CreateRadio(name, function(data) return not selectedGroup and selectedActivity == data.activityID end, function(data)
 							selectedActivity = data.activityID
 							LFGListEntryCreation_Select(LFGListFrame.EntryCreation, isRaid and Enum.LFGListFilter.NotRecommended or LFGListFrame.EntryCreation.selectedFilters, currentCategory, data.groupID, data.activityID)
@@ -901,6 +877,19 @@ local function setupActivities(dropdown, rootDescription)
 	end
 end
 
+local function GetGeneralPlaystyleString(enumValue)
+	if enumValue == Enum.LFGEntryGeneralPlaystyle.Learning then
+		return GROUP_FINDER_GENERAL_PLAYSTYLE1;
+	elseif enumValue == Enum.LFGEntryGeneralPlaystyle.FunRelaxed then
+		return GROUP_FINDER_GENERAL_PLAYSTYLE2;
+	elseif enumValue == Enum.LFGEntryGeneralPlaystyle.FunSerious then
+		return GROUP_FINDER_GENERAL_PLAYSTYLE3;
+	elseif enumValue == Enum.LFGEntryGeneralPlaystyle.Expert then
+		return GROUP_FINDER_GENERAL_PLAYSTYLE4;
+	end
+	return "";
+end
+
 miog.createEntryCreation = function()
 	local entryCreation = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.Plugin.InsertFrame, "MIOG_EntryCreation") ---@class Frame
 	entryCreation:GetParent().EntryCreation = entryCreation
@@ -911,6 +900,24 @@ miog.createEntryCreation = function()
 	entryCreation.ActivityDropDown:SetDefaultText("Select an activity")
 	entryCreation.DifficultyDropDown:SetDefaultText("Select a difficulty")
 	entryCreation.PlaystyleDropDown:SetDefaultText("Select a playstyle")
+
+	entryCreation.PlaystyleDropDown:SetupMenu(function(dropdown, rootDescription)
+		if(LFGListFrame.EntryCreation.selectedActivity) then
+			local function IsSelected(generalPlaystyle)
+				return selectedPlaystyle == generalPlaystyle;
+			end
+			
+			local function SetSelected(generalPlaystyle)
+				selectedPlaystyle = generalPlaystyle
+				LFGListEntryCreation_OnPlayStyleSelectedInternal(LFGListFrame.EntryCreation, generalPlaystyle);
+			end
+
+			rootDescription:CreateRadio(GetGeneralPlaystyleString(Enum.LFGEntryGeneralPlaystyle.Learning), IsSelected, SetSelected, Enum.LFGEntryGeneralPlaystyle.Learning);
+			rootDescription:CreateRadio(GetGeneralPlaystyleString(Enum.LFGEntryGeneralPlaystyle.FunRelaxed), IsSelected, SetSelected, Enum.LFGEntryGeneralPlaystyle.FunRelaxed);
+			rootDescription:CreateRadio(GetGeneralPlaystyleString(Enum.LFGEntryGeneralPlaystyle.FunSerious), IsSelected, SetSelected, Enum.LFGEntryGeneralPlaystyle.FunSerious);
+			rootDescription:CreateRadio(GetGeneralPlaystyleString(Enum.LFGEntryGeneralPlaystyle.Expert), IsSelected, SetSelected, Enum.LFGEntryGeneralPlaystyle.Expert);
+		end
+	end)
 
     --entryCreation.ActivityDropDown:SetupMenu(gatherAllActivities)
 

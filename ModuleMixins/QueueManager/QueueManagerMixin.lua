@@ -230,7 +230,7 @@ function QueueManagerMixin:OnLoad()
 			if(activityInfo) then
 				local unitName, unitID = miog:GetGroupLeader()
 
-				macrotext = "/run C_LFGList.RemoveListing()"
+				macrotext = "/run C_LFGList.RemoveListing() LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)"
 				backgroundImage = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
 
 				frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
