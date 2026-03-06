@@ -168,19 +168,6 @@ for i = 0, #miog.SLOT_ID_INFO, 1 do
 
 end
 
-miog.AJ_CLRSCC = {
-	[1] = miog.CLRSCC.blue,
-	[2] = miog.CLRSCC.purple,
-	[3] = miog.CLRSCC.yellow,
-	[4] = miog.CLRSCC.aqua,
-	[5] = miog.CLRSCC.lime,
-	[6] = miog.CLRSCC.red,
-	[7] = miog.CLRSCC.teal,
-	[8] = miog.CLRSCC.fuchsia,
-	[9] = miog.CLRSCC.orange,
-	[10] = miog.CLRSCC.green,
-}
-
 do
 	for k, v in pairs(miog.COLOR_THEMES) do
 		for i = 1, 5 do
@@ -302,7 +289,6 @@ miog.DIFFICULTY_ID_TO_COLOR = {
 	[DifficultyUtil.ID.Raid25Heroic] = miog.ITEM_QUALITY_COLORS[3].color,
 	[DifficultyUtil.ID.RaidLFR] = miog.ITEM_QUALITY_COLORS[1].color,
 	[DifficultyUtil.ID.DungeonChallenge] = miog.ITEM_QUALITY_COLORS[4].color,
-	--[DifficultyUtil.ID.Raid40] = miog.ITEM_QUALITY_COLORS[0].color,
 	[DifficultyUtil.ID.Raid40] = miog.ITEM_QUALITY_COLORS[2].color,
 	[DifficultyUtil.ID.PrimaryRaidNormal] = miog.ITEM_QUALITY_COLORS[2].color,
 	[DifficultyUtil.ID.PrimaryRaidHeroic] = miog.ITEM_QUALITY_COLORS[3].color,
@@ -517,53 +503,9 @@ miog.C = {
 	HEALER_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/healerIcon.png:16:16|t",
 	DPS_TEXTURE = "|TInterface/Addons/MythicIOGrabber/res/infoIcons/damagerIcon.png:16:16|t",
 	STAR_TEXTURE = "⋆",
-	
-	SEASON_AVAILABLE = {
-		[12] = {
-			sinceEpoch = 1713942000,
-			awakened = {
-				vaultDate1 = 1713942000,
-				aberrusDate1 = 1713942000 + 604800 * 1,
-				amirdrassilDate1 = 1713942000 + 604800 * 2,
-				vaultDate2 = 1713942000 + 604800 * 3,
-				aberrusDate2 = 1713942000 + 604800 * 4,
-				amirdrassilDate2 = 1713942000 + 604800 * 5,
-				fullRelease = 1713942000 + 604800 * 6,
-			}
-		},
-		[14] = { --patchweek
-			year = 2025,
-			month = 3,
-			day = 3,
-		}
-	},
-
-	REGION_DATE_DIFFERENCE = {
-		[1] = -86400,
-		[2] = 0,
-		[3] = 0,
-		[4] = 0,
-		[5] = 0,
-		[72] = 0,
-	},
 }
 
 miog.C.BACKUP_SEASON_ID = 16
-
-miog.MPLUS_SEASONS = {
-	-- Dragonflight
-	[9] = "S1",
-	[10] = "S2",
-	[11] = "S3",
-	[12] = "S4",
-
-	-- The War Within
-	[13] = "S1",
-	[14] = "S2",
-	[15] = "S3",
-
-	[99] = "DUMMY SEASON"
-}
 
 miog.CURRENCY_INFO = {
 	[12] = {
@@ -620,55 +562,13 @@ miog.CURRENCY_INFO = {
 	}
 }
 
-
 --CHANGING VARIABLES
 miog.F = {
 	IS_IN_DEBUG_MODE = false,
 
 	CURRENT_REGION = miog.C.REGIONS[GetCurrentRegion()],
 
-	LFG_STATE = "solo",
-
-	CAN_INVITE = false,
-
 	SEASON_ID = -1
-}
-
-miog.BLANK_BACKGROUND_INFO = {
-	bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-	tileSize = 20,
-	tile = false,
-	edgeSize = 1
-}
-
-miog.DIFFICULTY_NAMES_TO_ID = {
-	--category id to further divide
-
-	[1] = { --QUESTING
-
-	},
-	[2] = { --DUNGEON
-		["Normal"] = {1, 1, 5,},
-		["Heroic"] = {2, 1, 5},
-		["Timewalking"] = {24, 1, 5},
-		["Mythic"] = {23, 1, 5},
-		["Mythic+"] = {8, 1, 5},
-		["Event"] = {19, 1, 5},
-	},
-	[3] = { --RAID
-		["World Bosses"] = {172, 0, 40},
-		["10 Player"] = {3, 2, 10},
-		["10 Player Heroic"] = {5, 2, 10},
-		["25 Player"] = {4, 2, 10},
-		["25 Player Heroic"] = {6, 2, 10},
-		["40 Player"] = {9, 2, 10},
-		["Looking For Raid"] = {17, 2, 10},
-		["Timewalking"] = {33, 2, 10},
-		["Event"] = {18, 2, 40},
-		["Normal"] = {14, 2, 30},
-		["Heroic"] = {15, 2, 30},
-		["Mythic"] = {16, 2, 20},
-	},
 }
 
 miog.KEYSTONE_LEVEL_BASE_VALUES = {
@@ -1505,6 +1405,91 @@ miog.MAP_INFO = {
 	[2939] = {abbreviatedName = "DR", fileName = "riftofaln"},
 }
 
+miog.CHALLENGE_MODE_INFO = {
+	[2] = {name = "Temple of the Jade Serpent", mapID = 960},
+	[56] = {name = "Stormstout Brewery", mapID = 961},
+	[57] = {name = "Gate of the Setting Sun", mapID = 962},
+	[58] = {name = "Shado-Pan Monastery", mapID = 959},
+	[59] = {name = "Siege of Niuzao Temple", mapID = 1011},
+	[60] = {name = "Mogu'shan Palace", mapID = 994},
+	[76] = {name = "Scholomance", mapID = 1007},
+	[77] = {name = "Scarlet Halls", mapID = 1001},
+	[78] = {name = "Scarlet Monastery", mapID = 1004},
+	[161] = {name = "Skyreach", mapID = 1209},
+	[163] = {name = "Bloodmaul Slag Mines", mapID = 1175},
+	[164] = {name = "Auchindoun", mapID = 1182},
+	[165] = {name = "Shadowmoon Burial Grounds", mapID = 1176},
+	[166] = {name = "Grimrail Depot", mapID = 1208},
+	[167] = {name = "Upper Blackrock Spire", mapID = 1358},
+	[168] = {name = "The Everbloom", mapID = 1279},
+	[169] = {name = "Iron Docks", mapID = 1195},
+	[197] = {name = "Eye of Azshara", mapID = 1456},
+	[198] = {name = "Darkheart Thicket", mapID = 1466},
+	[199] = {name = "Black Rook Hold", mapID = 1501},
+	[200] = {name = "Halls of Valor", mapID = 1477},
+	[206] = {name = "Neltharion's Lair", mapID = 1458},
+	[207] = {name = "Vault of the Wardens", mapID = 1493},
+	[208] = {name = "Maw of Souls", mapID = 1492},
+	[209] = {name = "The Arcway", mapID = 1516},
+	[210] = {name = "Court of Stars", mapID = 1571},
+	[227] = {name = "Return to Karazhan: Lower", mapID = 1651},
+	[233] = {name = "Cathedral of Eternal Night", mapID = 1677},
+	[234] = {name = "Return to Karazhan: Upper", mapID = 1651},
+	[239] = {name = "Seat of the Triumvirate", mapID = 1753},
+	[244] = {name = "Atal'Dazar", mapID = 1763},
+	[245] = {name = "Freehold", mapID = 1754},
+	[246] = {name = "Tol Dagor", mapID = 1771},
+	[247] = {name = "The MOTHERLODE!!", mapID = 1594},
+	[248] = {name = "Waycrest Manor", mapID = 1862},
+	[249] = {name = "Kings' Rest", mapID = 1762},
+	[250] = {name = "Temple of Sethraliss", mapID = 1877},
+	[251] = {name = "The Underrot", mapID = 1841},
+	[252] = {name = "Shrine of the Storm", mapID = 1864},
+	[353] = {name = "Siege of Boralus", mapID = 1822},
+	[369] = {name = "Operation: Mechagon - Junkyard", mapID = 2097, abbreviatedName = "JUNK"},
+	[370] = {name = "Operation: Mechagon - Workshop", mapID = 2097, abbreviatedName = "SHOP"},
+	[375] = {name = "Mists of Tirna Scithe", mapID = 2290},
+	[376] = {name = "The Necrotic Wake", mapID = 2286},
+	[377] = {name = "De Other Side", mapID = 2291},
+	[378] = {name = "Halls of Atonement", mapID = 2287},
+	[379] = {name = "Plaguefall", mapID = 2289},
+	[380] = {name = "Sanguine Depths", mapID = 2284},
+	[381] = {name = "Spires of Ascension", mapID = 2285},
+	[382] = {name = "Theater of Pain", mapID = 2293},
+	[391] = {name = "Tazavesh: Streets of Wonder", mapID = 2441, abbreviatedName = "STRTS"},
+	[392] = {name = "Tazavesh: So'leah's Gambit", mapID = 2441, abbreviatedName = "GMBT"},
+	[399] = {name = "Ruby Life Pools", mapID = 2521},
+	[400] = {name = "The Nokhud Offensive", mapID = 2516},
+	[401] = {name = "The Azure Vault", mapID = 2515},
+	[402] = {name = "Algeth'ar Academy", mapID = 2526},
+	[403] = {name = "Uldaman: Legacy of Tyr", mapID = 2451},
+	[404] = {name = "Neltharus", mapID = 2519},
+	[405] = {name = "Brackenhide Hollow", mapID = 2520},
+	[406] = {name = "Halls of Infusion", mapID = 2527},
+	[438] = {name = "The Vortex Pinnacle", mapID = 657},
+	[456] = {name = "Throne of the Tides", mapID = 643},
+	[463] = {name = "Dawn of the Infinite: Galakrond's Fall", mapID = 2579, abbreviatedName = "FALL"},
+	[464] = {name = "Dawn of the Infinite: Murozond's Rise", mapID = 2579, abbreviatedName = "RISE"},
+	[499] = {name = "Priory of the Sacred Flame", mapID = 2649},
+	[500] = {name = "The Rookery", mapID = 2648},
+	[501] = {name = "The Stonevault", mapID = 2652},
+	[502] = {name = "City of Threads", mapID = 2669},
+	[503] = {name = "Ara-Kara, City of Echoes", mapID = 2660},
+	[504] = {name = "Darkflame Cleft", mapID = 2651},
+	[505] = {name = "The Dawnbreaker", mapID = 2662},
+	[506] = {name = "Cinderbrew Meadery", mapID = 2661},
+	[507] = {name = "Grim Batol", mapID = 670},
+	[525] = {name = "Operation: Floodgate", mapID = 2773},
+	[541] = {name = "The Stonecore", mapID = 725},
+	[542] = {name = "Eco-Dome Al'dani", mapID = 2830},
+	[556] = {name = "Pit of Saron", mapID = 658},
+	[557] = {name = "Windrunner Spire", mapID = 2805},
+	[558] = {name = "Magisters' Terrace", mapID = 2811},
+	[559] = {name = "Nexus-Point Xenas", mapID = 2915},
+	[560] = {name = "Maisara Caverns", mapID = 2874},
+	[583] = {name = "Seat of the Triumvirate", mapID = 1753},
+}
+
 miog.LFG_ID_INFO = {
 	[1453] = { abbreviatedName = "TWMOP", icon = "interface/lfgframe/lfgicon-pandaria.blp", fileName = "pandaria"}, --RANDOM PANDARIA DUNGEON
 	[1971] = {abbreviatedName = "RWD", icon = "interface/lfgframe/lfgicon-draenor.blp", fileName = "draenor"}, --RANDOM WARLORDS DUNGEON
@@ -1530,258 +1515,6 @@ miog.GROUP_ACTIVITY = {  -- https://wago.tools/db2/GroupFinderActivityGrp
 }
 
 miog.ACTIVITY_INFO = {}
-
-
-function miog:retrieveSpecificObject(type, value, preferredObject)
-	if(type == "map") then
-		if(miog.MAP_INFO[value]) then
-			return miog.MAP_INFO[value][preferredObject]
-
-		end
-
-	elseif(type == "activity") then
-		if(miog.ACTIVITY_INFO[value]) then
-			return miog.ACTIVITY_INFO[value][preferredObject]
-
-		end
-
-	elseif(type == "activityGroup") then
-		if(miog.GROUP_ACTIVITY[value]) then
-			return miog.GROUP_ACTIVITY[value][preferredObject]
-
-		end
-
-	end
-end
-
-miog.SEASONAL_CHALLENGE_MODES = {
-	[12] = {399, 400, 401, 402, 403, 404, 405, 406},
-	[13] = {353, 375, 376, 501, 502, 503, 505, 507},
-}
-
-miog.LFG_DUNGEONS_INFO = {
-
-}
-
-for k, v in pairs(miog.RAW["LFGDungeons"]) do
-	miog.LFG_DUNGEONS_INFO[v[1]] = {
-		name = v[2],
-		description = v[3],
-		typeID = v[4],
-		subtypeID = v[5],
-		expansionLevel = v[10],
-		mapID = v[11],
-		difficultyID = v[12]
-	}
-	
-end
-
-miog.BATTLEMASTER_INFO = {
-
-}
-
-miog.ENCOUNTER_INFO = {
-	
-}
-
-for k, v in pairs(miog.RAW["BattlemasterList"]) do
-	miog.BATTLEMASTER_INFO[v[1]] = {
-		name = v[2],
-		icon = v[16],
-		possibleBGs = {
-			[1] = v[18] ~= -1 and v[18] or nil,
-			[2] = v[19] ~= -1 and v[19] or nil,
-			[3] = v[20] ~= -1 and v[20] or nil,
-			[4] = v[21] ~= -1 and v[21] or nil,
-			[5] = v[22] ~= -1 and v[22] or nil,
-			[6] = v[23] ~= -1 and v[23] or nil,
-			[7] = v[24] ~= -1 and v[24] or nil,
-			[8] = v[25] ~= -1 and v[25] or nil,
-			[9] = v[26] ~= -1 and v[26] or nil,
-			[10] = v[27] ~= -1 and v[27] or nil,
-			[11] = v[28] ~= -1 and v[28] or nil,
-			[12] = v[29] ~= -1 and v[29] or nil,
-			[13] = v[30] ~= -1 and v[30] or nil,
-			[14] = v[31] ~= -1 and v[31] or nil,
-			[15] = v[32] ~= -1 and v[32] or nil,
-			[16] = v[33] ~= -1 and v[33] or nil,
-		}
-	}
-end
-
-local function checkForMapAchievements(mapID)
-	local mapInfo = miog.MAP_INFO[mapID]
-	local achievementCategory = mapInfo.achievementCategory
-
-	if(mapInfo.achievementIDs) then
-		for k, v in ipairs(mapInfo.achievementIDs) do
-			local numCriteria = GetAchievementNumCriteria(v);
-
-			for i = 1, numCriteria do
-				local criteriaString, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfo(v, i, true)
-
-			end
-		end
-	else
-		if achievementCategory and not mapInfo.achievementTable then
-			local achievementTable = {}
-			local bosses = mapInfo.bosses
-
-			local numAchievements = GetCategoryNumAchievements(achievementCategory)
-
-			for i = 1, numAchievements do
-				local id, name = GetAchievementInfo(achievementCategory, i)
-
-
-				--[[if miog.fzy.has_match(mapInfo.name, name) then
-					achievementTable[#achievementTable + 1] = id
-
-					for _, boss in ipairs(bosses) do
-						if string.find(name, boss.name, 1, true) then
-							boss.achievements[#boss.achievements + 1] = id
-						end
-					end
-				end]]
-			end
-
-			mapInfo.achievementTable = achievementTable
-		end
-	end
-end
-
---miog.checkForMapAchievements = checkForMapAchievements
-
-local function checkJournalInstanceIDForNewData(journalInstanceID)
-	EJ_SelectInstance(journalInstanceID)
-    local _, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID);
-
-	miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
-	miog.MAP_INFO[mapID].bosses = miog.MAP_INFO[mapID].bosses or {}
-
-	local counter = 1
-
-	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID = EJ_GetEncounterInfoByIndex(counter, journalInstanceID);
-
-	while(bossName) do
-		local id, name2, _, displayInfo, _, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always gets first creature (boss)
-		
-		miog.MAP_INFO[mapID].bosses[counter] = {
-			name = bossName,
-			altName = name2,
-			journalEncounterID = journalEncounterID,
-			journalInstanceID = journalInstanceID,
-			dungeonEncounterID = dungeonEncounterID,
-			mapID = mapID,
-			orderIndex = id,
-			achievements = {},
-			id = id,
-			creatureDisplayInfoID = displayInfo,
-			--icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[counter].icon or iconImage
-		}
-
-		miog.ENCOUNTER_INFO[journalEncounterID] = {index = counter, creatureDisplayInfoID = displayInfo}
-
-		counter = counter + 1
-		bossName, _, journalEncounterID, _ = EJ_GetEncounterInfoByIndex(counter, journalInstanceID);
-	end
-
-	return miog.MAP_INFO[mapID]
-end
-
-miog.checkJournalInstanceIDForNewData = checkJournalInstanceIDForNewData
-
-local function checkSingleMapIDForNewData(mapID, selectInstance)
-	if(mapID and mapID > 0 and miog.MAP_INFO[mapID]) then
-		local bossIndex = 1
-		local journalInstanceID = miog.MAP_INFO[mapID].journalInstanceID
-
-		local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID)
-
-		if(not bossName) then
-			if(selectInstance) then
-				journalInstanceID = journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID)
-				EJ_SelectInstance(journalInstanceID)
-				miog.MAP_INFO[mapID].isRaid = EJ_InstanceIsRaid()
-
-			end
-
-			bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
-		end
-
-		if(miog.MAP_INFO[mapID].numOfBosses == 0) then
-			while bossName do
-				local id, name2, _, displayInfo, iconImage, _ = EJ_GetCreatureInfo(1, journalEncounterID) --always get first creature (boss)
-				
-				miog.MAP_INFO[mapID].bosses[bossIndex] = {
-					name = bossName,
-					altName = name2,
-					journalEncounterID = journalEncounterID,
-					journalInstanceID = journalInstanceID,
-					dungeonEncounterID = dungeonEncounterID,
-					mapID = mapID,
-					orderIndex = id,
-					achievements = {},
-					id = id,
-					creatureDisplayInfoID = displayInfo,
-					icon = miog.MAP_INFO[mapID].bossIcons and miog.MAP_INFO[mapID].bossIcons[bossIndex].icon or iconImage
-				}
-
-				miog.ENCOUNTER_INFO[journalEncounterID] = {index = bossIndex, creatureDisplayInfoID = displayInfo, bossInfo = miog.MAP_INFO[mapID].bosses[bossIndex]}
-
-				bossIndex = bossIndex + 1;
-				bossName, _, journalEncounterID, _, _, journalInstanceID, dungeonEncounterID, _ = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
-			end
-
-			miog.MAP_INFO[mapID].numOfBosses = bossIndex - 1
-		end
-	end
-end
-
-local function checkForNewEncounterInfo(journalEncounterID)
-	local _, _, _, _, _, journalInstanceID = EJ_GetEncounterInfo(journalEncounterID)
-	local _, _, _, _, _, _, _, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID)
-
-	checkSingleMapIDForNewData(mapID, true)
-
-	return miog.ENCOUNTER_INFO[journalEncounterID]
-end
-
-local function getEncounterInfo(journalEncounterID)
-	if(journalEncounterID) then
-		return miog.ENCOUNTER_INFO[journalEncounterID] or checkForNewEncounterInfo(journalEncounterID)
-
-	end
-end
-
-miog.getEncounterInfo = getEncounterInfo
-
-local function requestMapInfo(mapID, selectInstance)
-	if(mapID) then
-		checkSingleMapIDForNewData(mapID, selectInstance)
-
-		return miog.MAP_INFO[mapID]
-	end
-end
-
-local function getMapInfo(mapID, selectInstance)
-	return not selectInstance and miog.MAP_INFO[mapID] or requestMapInfo(mapID, selectInstance)
-end
-
-miog.getMapInfo = getMapInfo
-
-local function getJournalInstanceInfo(journalInstanceID)
-	if(journalInstanceID) then
-    	local instanceName, description, bgImage, _, loreImage, buttonImage, dungeonAreaMapID, _, _, mapID = EJ_GetInstanceInfo(journalInstanceID);
-		
-		return miog.MAP_INFO[mapID] or getMapInfo(mapID, true)
-	end
-end
-
-miog.getJournalInstanceInfo = getJournalInstanceInfo
-
-miog.CHALLENGE_MODE_INFO = {}
-
-miog.checkSingleMapIDForNewData = checkSingleMapIDForNewData
 
 miog.PVP_BRACKET_INFO = {
 	{id = 7, alias = PVP_RATED_SOLO_SHUFFLE, shortName = "Solo", fileName = "tolvirarena"}, --Solo Arena
@@ -2711,268 +2444,6 @@ miog.BACKUP_SEASONAL_IDS = {
 	}
 }
 
-
-local function addMapDataToGroup(mapID, groupID)
-	local mapInfo = miog.MAP_INFO[mapID]
-
-	if(mapInfo) then
-		miog.GROUP_ACTIVITY[groupID].icon = mapInfo.icon
-		miog.GROUP_ACTIVITY[groupID].bosses = mapInfo.bosses
-		miog.GROUP_ACTIVITY[groupID].journalInstanceID = mapInfo.journalInstanceID
-
-		miog.GROUP_ACTIVITY[groupID].mapName = mapInfo.name
-		miog.GROUP_ACTIVITY[groupID].expansionLevel = mapInfo.expansionLevel
-
-		miog.GROUP_ACTIVITY[groupID].vertical = mapInfo.vertical
-		miog.GROUP_ACTIVITY[groupID].horizontal = mapInfo.horizontal
-	end
-end
-
-local function addMapDataToActivity(mapID, activityID)
-	local mapInfo = miog.MAP_INFO[mapID]
-
-	if(mapInfo) then
-		miog.ACTIVITY_INFO[activityID].icon = mapInfo.icon
-		miog.ACTIVITY_INFO[activityID].bosses = mapInfo.bosses
-		miog.ACTIVITY_INFO[activityID].journalInstanceID = mapInfo.journalInstanceID
-
-		miog.ACTIVITY_INFO[activityID].mapName = mapInfo.name
-		miog.ACTIVITY_INFO[activityID].expansionLevel = mapInfo.expansionLevel
-
-		miog.ACTIVITY_INFO[activityID].vertical = mapInfo.vertical
-		miog.ACTIVITY_INFO[activityID].horizontal = mapInfo.horizontal
-	end
-end
-
-local function addGroupDataToMap(groupID, mapID)
-	local groupInfo = miog.GROUP_ACTIVITY[groupID]
-
-	if(groupInfo and miog.MAP_INFO[mapID]) then
-		miog.MAP_INFO[mapID].groupName = groupInfo.groupName
-		--miog.MAP_INFO[mapID].abbreviatedName = groupInfo.abbreviatedName
-		miog.MAP_INFO[mapID].groupFinderActivityGroupID = groupID
-
-	end
-end
-
-local function addActivityInfo(activityID)
-	local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-
-	if(activityInfo) then
-		local groupActivityInfo = miog.GROUP_ACTIVITY_ID_INFO[activityInfo.groupFinderActivityGroupID]
-
-		if(groupActivityInfo) then
-			activityInfo.abbreviatedName = groupActivityInfo.abbreviatedName
-			miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].abbreviatedName = groupActivityInfo.abbreviatedName
-			miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].groupID = activityInfo.groupFinderActivityGroupID
-			miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].activityID = activityID
-
-		else
-			activityInfo.abbreviatedName = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].abbreviatedName
-
-		end
-
-		if(activityInfo.groupFinderActivityGroupID and activityInfo.groupFinderActivityGroupID > 0) then
-			miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].abbreviatedName = activityInfo.abbreviatedName
-			miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID = activityInfo.mapID
-			activityInfo.groupName = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].groupName
-		end
-
-		activityInfo.journalInstanceID = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].journalInstanceID
-
-		miog.ACTIVITY_INFO[activityID] = activityInfo
-		
-		if(activityInfo.mapID ~= 0) then
-			addMapDataToActivity(activityInfo.mapID, activityID)
-
-		end
-	end
-
-	return miog.ACTIVITY_INFO[activityID]
-end
-
-local function getBackgroundImageForIdentifier(mapID, groupID, activityID)
-	local bg
-
-	if(groupID and miog.GROUP_ACTIVITY[groupID]) then
-		bg = miog.GROUP_ACTIVITY[groupID].horizontal
-	end
-
-	if(not bg and activityID and miog.ACTIVITY_INFO[activityID]) then
-		bg = miog.ACTIVITY_INFO[activityID].horizontal
-
-	end
-
-	if(not bg and mapID and miog.MAP_INFO[mapID]) then
-		bg = miog.MAP_INFO[mapID].horizontal
-
-	end
-
-	return bg
-end
-
-miog.getBackgroundImageForIdentifier = getBackgroundImageForIdentifier
-
-local function addGroupInfo(groupID, categoryID)
-	miog.GROUP_ACTIVITY[groupID] = {activityIDs = {}}
-
-	local groupName = C_LFGList.GetActivityGroupInfo(groupID)
-	miog.GROUP_ACTIVITY[groupID].groupName = groupName
-	
-	local groupActivityInfo = miog.GROUP_ACTIVITY_ID_INFO[groupID]
-
-	if(groupActivityInfo) then
-		miog.GROUP_ACTIVITY[groupID].abbreviatedName = groupActivityInfo.abbreviatedName
-
-		if(miog.isMIOGHQLoaded()) then
-			miog.GROUP_ACTIVITY[groupID].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
-		end
-	end
-
-	local activities = C_LFGList.GetAvailableActivities(categoryID, groupID)
-
-	for k, v in ipairs(activities) do
-		tinsert(miog.GROUP_ACTIVITY[groupID].activityIDs, v)
-
-		if(not miog.ACTIVITY_INFO[v]) then
-			addActivityInfo(v)
-
-		end
-
-		if(groupActivityInfo) then
-			if(miog.isMIOGHQLoaded()) then
-				miog.ACTIVITY_INFO[v].horizontal = MythicIO.GetBackgroundImage(groupActivityInfo.fileName)
-				miog.ACTIVITY_INFO[v].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
-			end
-		end
-	end
-
-	if(miog.GROUP_ACTIVITY[groupID].mapID) then
-		addMapDataToGroup(miog.GROUP_ACTIVITY[groupID].mapID, groupID)
-		addGroupDataToMap(groupID, miog.GROUP_ACTIVITY[groupID].mapID)
-
-	end
-
-	miog.GROUP_ACTIVITY[groupID].highestDifficultyActivityID = miog.GROUP_ACTIVITY[groupID].activityIDs[#miog.GROUP_ACTIVITY[groupID].activityIDs]
-
-	return miog.GROUP_ACTIVITY[groupID]
-end
-
-local function addActivityAndGroupInfo(activityID, groupID, categoryID)
-	if(activityID and not miog.ACTIVITY_INFO[activityID]) then
-		local activityInfo = C_LFGList.GetActivityInfoTable(activityID)
-
-		if(activityInfo) then
-			local groupActivityInfo = miog.GROUP_ACTIVITY_ID_INFO[activityInfo.groupFinderActivityGroupID]
-
-			if(groupActivityInfo) then
-				activityInfo.abbreviatedName = groupActivityInfo.abbreviatedName
-				miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].groupID = activityInfo.groupFinderActivityGroupID
-				miog.CHALLENGE_MODE_INFO[groupActivityInfo.challengeModeID].abbreviatedName = groupActivityInfo.abbreviatedName
-				
-			else
-				activityInfo.abbreviatedName = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].abbreviatedName
-
-			end
-
-			if(activityInfo.groupFinderActivityGroupID and activityInfo.groupFinderActivityGroupID > 0) then
-				if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
-					addGroupInfo(activityInfo.groupFinderActivityGroupID)
-				end
-
-				miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].abbreviatedName = activityInfo.abbreviatedName
-				miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].mapID = activityInfo.mapID
-				activityInfo.groupName = miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID].groupName
-
-			end
-
-			activityInfo.journalInstanceID = miog.MAP_INFO[activityInfo.mapID] and miog.MAP_INFO[activityInfo.mapID].journalInstanceID
-
-			miog.ACTIVITY_INFO[activityID] = activityInfo
-			
-			if(activityInfo.mapID ~= 0) then
-				addMapDataToActivity(activityInfo.mapID, activityID)
-
-			end
-		end
-	end
-
-	if(groupID and not miog.GROUP_ACTIVITY[groupID]) then
-		miog.GROUP_ACTIVITY[groupID] = {activityIDs = {}}
-
-		local groupActivityInfo = miog.GROUP_ACTIVITY_ID_INFO[groupID]
-
-		local activities = C_LFGList.GetAvailableActivities(categoryID, groupID)
-
-		for k, v in ipairs(activities) do
-			tinsert(miog.GROUP_ACTIVITY[groupID].activityIDs, v)
-
-			if(not miog.ACTIVITY_INFO[v]) then
-				addActivityInfo(v)
-
-			end
-
-			if(groupActivityInfo) then
-				if(miog.isMIOGHQLoaded()) then
-					miog.ACTIVITY_INFO[v].vertical = MythicIO.GetBackgroundImage(groupActivityInfo.fileName, true)
-				end
-			end
-		end
-
-		if(miog.GROUP_ACTIVITY[groupID].mapID) then
-			addMapDataToGroup(miog.GROUP_ACTIVITY[groupID].mapID, groupID)
-
-		end
-
-		miog.GROUP_ACTIVITY[groupID].highestDifficultyActivityID = miog.GROUP_ACTIVITY[groupID].activityIDs[#miog.GROUP_ACTIVITY[groupID].activityIDs]
-
-	end
-end
-
-local function requestActivityInfo(activityID)
-	if(not miog.ACTIVITY_INFO[activityID]) then
-		addActivityAndGroupInfo(activityID)
-		
-	else
-		local activityInfo = miog.ACTIVITY_INFO[activityID]
-
-		if(not miog.GROUP_ACTIVITY[activityInfo.groupFinderActivityGroupID]) then
-			addActivityAndGroupInfo(activityID, activityInfo.groupFinderActivityGroupID)
-
-		end
-	end
-
-	return miog.ACTIVITY_INFO[activityID]
-end
-
-miog.requestActivityInfo = requestActivityInfo
-
-local function requestGroupInfo(groupID)
-	return miog.GROUP_ACTIVITY[groupID] or addGroupInfo(groupID)
-
-end
-
-miog.requestGroupInfo = requestGroupInfo
-
-local function loadGroupData()
-	for categoryIndex, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
-		for groupIndex, groupID in pairs(C_LFGList.GetAvailableActivityGroups(categoryID)) do
-			addGroupInfo(groupID, categoryID)
-		end
-	end
-end
-
-local function recheckJournalInstanceIDs()
-	for k, v in pairs(miog.MAP_INFO) do
-		if(type(k) == "number") then
-			miog.MAP_INFO[k].journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(k)
-
-		end
-	end
-end
-
-miog.recheckJournalInstanceIDs = recheckJournalInstanceIDs
-
 miog.TELEPORT_SPELLS_TO_MAP_DATA = {
 	[445424] = {mapID = 670},
 	[410080] = {mapID = 657},
@@ -3073,19 +2544,6 @@ local function loadRawData()
 
 		end
 	end
-
-	for k, v in pairs(miog.RAW["MapChallengeMode"]) do
-		if(miog.MAP_INFO[v[3]]) then
-			miog.MAP_INFO[v[3]].challengeModeID = v[2]
-
-		end
-
-		miog.CHALLENGE_MODE_INFO[v[2]] = {
-			name = v[1],
-			mapID = v[3],
-			expansionLevel = v[5],
-		}
-	end
 end
 
 miog.loadRawData = loadRawData
@@ -3105,25 +2563,6 @@ miog.TELEPORT_FLYOUT_IDS = { --https://wago.tools/db2/SpellFlyout
 
 	[10] = {id = 232, expansion = 10, type="dungeon"},
 	[11] = {id = 242, expansion = 10, type="raid"},
-}
-
-miog.WEIGHTS_TABLE = {
-	[1] = 10000,
-	[2] = 100,
-	[3] = 1,
-}
-
-miog.ITEM_LEVEL_JUMPS = {
-	3, 3, 3, 4
-}
-
-miog.BASE_ITEM_TRACK_INFO = {
-	[1] = {length = 8},
-	[2] = {length = 8},
-	[3] = {length = 8},
-	[4] = {length = 8},
-	[5] = {length = 6},
-	[6] = {length = 4},
 }
 
 local fullStep = 13
@@ -3499,8 +2938,6 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 
 			usedItemlevels[ilvlData.level] = true
 
-			--- integrate some reference method
-
 			if(not seasonalData.logicList[ilvlData.level]) then
 				seasonalData.logicList[ilvlData.level] = {}
 				seasonalData.tooltipList[ilvlData.level] = {}
@@ -3545,654 +2982,6 @@ for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do
 
 	end)
 end
-
-miog.NEW_GEARING_DATA = {
-	[14] = {
-		baseItemlevel = 597,
-		maxItemlevel = 684, --was 678
-
-		tracks = {
-			[1] = {name = "Explorer", length = 8},
-			[2] = {name = "Adventurer", length = 8},
-			[3] = {name = "Veteran", length = 8},
-			[4] = {name = "Champion", length = 8},
-			[5] = {name = "Hero", length = 8}, --was 6
-			[6] = {name = "Myth", length = 8}, --was 6
-
-		},
-
-		allItemlevels = {},
-		usedItemlevels = {},
-
-		dungeon = {
-			info = {
-				[1] = {jumps = -1, name="Normal", ignoreForVault=true},
-				[2] = {jumps = 7, name="Heroic/TW"},
-				[3] = {jumps = 12, vaultOffset = 3, name="Mythic"},
-				[4] = {jumps = 13, vaultOffset = 3, name="+2"},
-				[5] = {jumps = 13, vaultOffset = 3, name="+3"},
-				[6] = {jumps = 14, vaultOffset = 3, name="+4"},
-				[7] = {jumps = 15, vaultOffset = 2, name="+5"},
-				[8] = {jumps = 16, vaultOffset = 2, name="+6"},
-				[9] = {jumps = 16, vaultOffset = 3, name="+7"},
-				[10] = {jumps = 17, vaultOffset = 2, name="+8"},
-				[11] = {jumps = 17, vaultOffset = 2, name="+9"},
-				[12] = {jumps = 18, vaultOffset = 2, name="+10"},
-			},
-			usedItemlevels = {
-
-			},
-			vault = {
-				usedItemlevels = {
-	
-				},
-				offset = 4,
-
-			},
-		},
-		
-		raid = {
-			info = {
-				[1] = {jumps = 8, name="LFR"},
-				[2] = {jumps = 12, name="Normal"},
-				[3] = {jumps = 16, name="Heroic"},
-				[4] = {jumps = 20, name="Mythic"},
-			},
-			usedItemlevels = {
-
-			},
-			veryRare = {
-				info = {
-					[1] = {jumps = 13, name="Rare LFR"},
-					[2] = {jumps = 17, name="Rare Normal"},
-					[3] = {jumps = 21, name="Rare Heroic"},
-					[4] = {jumps = 25, name="Rare Mythic"},
-				},
-				usedItemlevels = {
-	
-				},
-			}
-		},
-
-		delves = {
-			info = {
-				[1] = {jumps = 4, vaultOffset = 4, name="T1"},
-				[2] = {jumps = 5, vaultOffset = 3, name="T2"},
-				[3] = {jumps = 6, vaultOffset = 3, name="T3"},
-				[4] = {jumps = 7, vaultOffset = 5, name="T4"},
-				[5] = {jumps = 8, vaultOffset = 6, name="T5"},
-				[6] = {jumps = 9, vaultOffset = 6, name="T6"},
-				[7] = {jumps = 12, vaultOffset = 4, name="T7+"},
-			},
-			usedItemlevels = {
-
-			},
-			bountiful = {
-				info = {
-					[1] = {jumps = 9, name="T4B"},
-					[2] = {jumps = 11, name="T5B"},
-					[3] = {jumps = 13, name="T6B"},
-					[4] = {jumps = 15, name="T7B"},
-					[5] = {jumps = 16, name="T8B+"},
-				},
-				usedItemlevels = {
-	
-				},
-			},
-			vault = {
-				usedItemlevels = {
-	
-				},
-				offset = 4,
-
-			},
-		},
-
-		other = {
-			info = {
-				--{jumps = 6, name="EnchWeather1"},
-				--{jumps = 7, name="EnchWeather2"},
-				--{jumps = 8, name="EnchWeather3"},
-				--{jumps = 9, name="EnchWeather4"},
-				{jumps = 10, name="EnchWeather5"},
-				--{jumps = 11, name="Spark1"},
-				--{jumps = 12, name="Spark2"},
-				--{jumps = 13, name="Spark3"},
-				--{jumps = 14, name="Spark4"},
-				{jumps = 15, name="Spark5"},
-				--{jumps = 15, name="Runed1"},
-				--{jumps = 16, name="Runed2"},
-				--{jumps = 17, name="Runed3"},
-				--{jumps = 18, name="Runed4"},
-				{jumps = 19, name="Runed5"},
-				--{jumps = 20, name="Gilded1"},
-				--{jumps = 21, name="Gilded2"},
-				--{jumps = 22, name="Gilded3"},
-				--{jumps = 23, name="Gilded4"},
-				{jumps = 24, name="Gilded5"},
-			},
-			usedItemlevels = {
-
-			},
-		},
-	},
-	[15] = {
-		baseItemlevel = 642,
-		baseJumpIndex = 4,
-		maxItemlevel = 723,
-
-		tracks = {
-			[1] = {name = "Explorer", length = 8},
-			[2] = {name = "Adventurer", length = 8},
-			[3] = {name = "Veteran", length = 8},
-			[4] = {name = "Champion", length = 8},
-			[5] = {name = "Hero", length = 6},
-			[6] = {name = "Myth", length = 6},
-
-		},
-
-		allItemlevels = {},
-		usedItemlevels = {},
-
-		dungeon = {
-			info = {
-				[1] = {jumps = -1, name="Normal", ignoreForVault=true},
-				[2] = {jumps = 7, name="Heroic/TW"},
-				[3] = {jumps = 12, vaultOffset = 3, name="Mythic"},
-				[4] = {jumps = 13, vaultOffset = 3, name="+2"},
-				[5] = {jumps = 13, vaultOffset = 3, name="+3"},
-				[6] = {jumps = 14, vaultOffset = 3, name="+4"},
-				[7] = {jumps = 15, vaultOffset = 2, name="+5"},
-				[8] = {jumps = 16, vaultOffset = 2, name="+6"},
-				[9] = {jumps = 16, vaultOffset = 3, name="+7"},
-				[10] = {jumps = 17, vaultOffset = 2, name="+8"},
-				[11] = {jumps = 17, vaultOffset = 2, name="+9"},
-				[12] = {jumps = 18, vaultOffset = 2, name="+10"},
-			},
-			usedItemlevels = {
-
-			},
-			vault = {
-				usedItemlevels = {
-	
-				},
-				offset = 4,
-
-			},
-		},
-		
-		raid = {
-			info = {
-				[1] = {jumps = 8, name="LFR"},
-				[2] = {jumps = 12, name="Normal"},
-				[3] = {jumps = 16, name="Heroic"},
-				[4] = {jumps = 20, name="Mythic"},
-			},
-			usedItemlevels = {
-
-			},
-			veryRare = {
-				info = {
-					[1] = {jumps = 13, name="Rare LFR"},
-					[2] = {jumps = 17, name="Rare Normal"},
-					[3] = {jumps = 21, name="Rare Heroic"},
-					[4] = {jumps = 25, name="Rare Mythic"},
-				},
-				usedItemlevels = {
-	
-				},
-			}
-		},
-
-		delves = {
-			info = {
-				[1] = {jumps = 4, vaultOffset = 4, name="T1"},
-				[2] = {jumps = 5, vaultOffset = 3, name="T2"},
-				[3] = {jumps = 6, vaultOffset = 3, name="T3"},
-				[4] = {jumps = 7, vaultOffset = 5, name="T4"},
-				[5] = {jumps = 8, vaultOffset = 6, name="T5"},
-				[6] = {jumps = 9, vaultOffset = 6, name="T6"},
-				[7] = {jumps = 12, vaultOffset = 4, name="T7+"},
-			},
-			usedItemlevels = {
-
-			},
-			bountiful = {
-				info = {
-					[1] = {jumps = 9, name="T4B"},
-					[2] = {jumps = 11, name="T5B"},
-					[3] = {jumps = 13, name="T6B"},
-					[4] = {jumps = 15, name="T7B"},
-					[5] = {jumps = 16, name="T8B+"},
-				},
-				usedItemlevels = {
-	
-				},
-			},
-			vault = {
-				usedItemlevels = {
-	
-				},
-				offset = 4,
-
-			},
-		},
-
-		other = {
-			info = {
-				--{jumps = 6, name="EnchWeather1"},
-				--{jumps = 7, name="EnchWeather2"},
-				--{jumps = 8, name="EnchWeather3"},
-				--{jumps = 9, name="EnchWeather4"},
-				{jumps = 10, name="EnchWeather5"},
-				--{jumps = 11, name="Spark1"},
-				--{jumps = 12, name="Spark2"},
-				--{jumps = 13, name="Spark3"},
-				--{jumps = 14, name="Spark4"},
-				{jumps = 15, name="Spark5"},
-				--{jumps = 15, name="Runed1"},
-				--{jumps = 16, name="Runed2"},
-				--{jumps = 17, name="Runed3"},
-				--{jumps = 18, name="Runed4"},
-				{jumps = 19, name="Runed5"},
-				--{jumps = 20, name="Gilded1"},
-				--{jumps = 21, name="Gilded2"},
-				--{jumps = 22, name="Gilded3"},
-				--{jumps = 23, name="Gilded4"},
-				{jumps = 24, name="Gilded5"},
-			},
-			usedItemlevels = {
-
-			},
-		},
-	},
-	[16] = {
-		baseItemlevel = 207,
-		baseJumpIndex = 1,
-		maxItemlevel = 289,
-
-		tracks = {
-			[1] = {name = "Unranked", length = 4},
-			[2] = {name = "Adventurer", length = 6}, --220
-			[3] = {name = "Veteran", length = 6},
-			[4] = {name = "Champion", length = 6},
-			[5] = {name = "Hero", length = 6},
-			[6] = {name = "Myth", length = 6},
-
-		},
-
-		allItemlevels = {},
-		usedItemlevels = {},
-
-		dungeon = {
-			info = {
-				[1] = {jumps = 2, name="Normal", ignoreForVault=true},
-				[2] = {jumps = 5, name="Heroic"},
-				[3] = {jumps = 7, name="Heroic Season"},
-				[4] = {jumps = 10, vaultOffset = 3, name="Mythic"},
-				[5] = {jumps = 12, vaultOffset = 3, name="Mythic Season"},
-				[6] = {jumps = 13, vaultOffset = 3, name="+2"},
-				[7] = {jumps = 13, vaultOffset = 3, name="+3"},
-				[8] = {jumps = 14, vaultOffset = 3, name="+4"},
-				[9] = {jumps = 15, vaultOffset = 2, name="+5"},
-				[10] = {jumps = 16, vaultOffset = 2, name="+6"},
-				[11] = {jumps = 16, vaultOffset = 3, name="+7"},
-				[12] = {jumps = 17, vaultOffset = 2, name="+8"},
-				[13] = {jumps = 17, vaultOffset = 2, name="+9"},
-				[14] = {jumps = 18, vaultOffset = 2, name="+10"},
-			},
-			usedItemlevels = {
-
-			},
-			vault = {
-				usedItemlevels = {
-	
-				},
-				offset = 4,
-
-			},
-		},
-		
-		raid = {
-			info = {
-				[1] = {jumps = 8, name="LFR"},
-				[2] = {jumps = 12, name="Normal"},
-				[3] = {jumps = 16, name="Heroic"},
-				[4] = {jumps = 20, name="Mythic"},
-			},
-			usedItemlevels = {
-
-			},
-			--[[veryRare = {
-				info = {
-					[1] = {jumps = 13, name="Rare LFR"},
-					[2] = {jumps = 17, name="Rare Normal"},
-					[3] = {jumps = 21, name="Rare Heroic"},
-					[4] = {jumps = 25, name="Rare Mythic"},
-				},
-				usedItemlevels = {
-	
-				},
-			}]]
-		},
-
-		delves = {
-			info = {
-				[1] = {jumps = 4, vaultOffset = 4, name="T1"},
-				[2] = {jumps = 5, vaultOffset = 4, name="T2"},
-				[3] = {jumps = 6, vaultOffset = 4, name="T3"},
-				[4] = {jumps = 7, vaultOffset = 4, name="T4"},
-				[5] = {jumps = 8, vaultOffset = 4, name="T5"},
-				[6] = {jumps = 9, vaultOffset = 5, name="T6"},
-				[7] = {jumps = 12, vaultOffset = 3, name="T7"},
-				[8] = {jumps = 13, vaultOffset = 3, name="T8+"},
-			},
-			usedItemlevels = {
-
-			},
-			bountiful = {
-				info = {
-					[1] = {jumps = 9, name="T4B"},
-					[2] = {jumps = 11, name="T5B"},
-					[3] = {jumps = 12, name="T6B"},
-					[4] = {jumps = 13, name="T7B"},
-					[5] = {jumps = 16, name="T8B+"},
-				},
-				usedItemlevels = {
-	
-				},
-			},
-			vault = {
-				usedItemlevels = {
-	
-				},
-				offset = 4,
-
-			},
-		},
-
-		other = {
-			info = {
-				--{jumps = 6, name="EnchWeather1"},
-				--{jumps = 7, name="EnchWeather2"},
-				--{jumps = 8, name="EnchWeather3"},
-				--{jumps = 9, name="EnchWeather4"},
-				{jumps = 10, name="EnchWeather5"},
-				--{jumps = 11, name="Spark1"},
-				--{jumps = 12, name="Spark2"},
-				--{jumps = 13, name="Spark3"},
-				--{jumps = 14, name="Spark4"},
-				{jumps = 15, name="Spark5"},
-				--{jumps = 15, name="Runed1"},
-				--{jumps = 16, name="Runed2"},
-				--{jumps = 17, name="Runed3"},
-				--{jumps = 18, name="Runed4"},
-				{jumps = 19, name="Runed5"},
-				--{jumps = 20, name="Gilded1"},
-				--{jumps = 21, name="Gilded2"},
-				--{jumps = 22, name="Gilded3"},
-				--{jumps = 23, name="Gilded4"},
-				{jumps = 24, name="Gilded5"},
-			},
-			usedItemlevels = {
-
-			},
-		},
-	}
-}
-
-local function getAdjustedItemLevel(seasonID, jumps)
-    local jumpsCompleted = 1
-    local newItemLevel = miog.NEW_GEARING_DATA[seasonID].baseItemlevel
-	local start = jumps < 0 and -1 or 1
-	local step = start
-
-    for i = start, jumps, step do
-        newItemLevel = newItemLevel + (miog.ITEM_LEVEL_JUMPS[jumps < 0 and #miog.ITEM_LEVEL_JUMPS - (i + 1)  or jumpsCompleted] * start)
-
-        jumpsCompleted = jumpsCompleted + 1
-
-        if(jumpsCompleted == 5) then
-            jumpsCompleted = 1
-        end
-    end
-
-    return newItemLevel
-end
-
-miog.getAdjustedItemLevel = getAdjustedItemLevel
-
-local function getJumpsForItemLevel(seasonID, itemLevel, startIndex)
-	local totalJumps = 0
-	startIndex = startIndex or 1
-	local jumpsCompleted = startIndex or 1
-
-	local tempItemLevel = miog.GEARING_CHART[seasonID].baseItemLevel
-
-    while(itemLevel > tempItemLevel) do
-        tempItemLevel = tempItemLevel + miog.ITEM_LEVEL_JUMPS[jumpsCompleted]
-
-        jumpsCompleted = jumpsCompleted + 1
-		totalJumps = totalJumps + 1
-
-		if(tempItemLevel == itemLevel) then
-			return totalJumps
-
-		end
-
-        if(jumpsCompleted == 5) then
-            jumpsCompleted = 1
-        end
-    end
-
-    return nil
-end
-
-for k, v in pairs(miog.NEW_GEARING_DATA) do
-	for x, y in ipairs(v.tracks) do
-		y.data = {}
-
-		for i = 1, y.length, 1 do
-			local jumps = (i - 1) + (x - 1) * 4
-
-			y.data[i] = getAdjustedItemLevel(k, jumps)
-		end
-
-		y.baseItemLevel = y.data[1]
-		y.maxItemLevel = y.data[y.length]
-
-		if(x == #v.tracks) then
-			v.maxUpgradeItemLevel = y.maxItemLevel
-
-		end
-	end
-
-	for x, y in ipairs(v.dungeon.info) do
-		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
-
-		v.dungeon.usedItemlevels[currentItemlevel] = v.dungeon.usedItemlevels[currentItemlevel] or {}
-		tinsert(v.dungeon.usedItemlevels[currentItemlevel], y.name)
-
-		v.usedItemlevels[currentItemlevel] = true
-
-		if(not y.ignoreForVault) then
-			local vaultLevel = getAdjustedItemLevel(k, y.jumps + (y.vaultOffset or v.dungeon.vault.offset))
-			v.dungeon.vault.usedItemlevels[vaultLevel] = v.dungeon.vault.usedItemlevels[vaultLevel] or {}
-			tinsert(v.dungeon.vault.usedItemlevels[vaultLevel], y.name)
-			v.usedItemlevels[vaultLevel] = true
-
-		end
-
-		if(y.jumps < 0) then
-			tinsert(v.allItemlevels, currentItemlevel)
-		end
-	end
-
-	for x, y in ipairs(v.raid.info) do
-		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
-
-		v.raid.usedItemlevels[currentItemlevel] = v.raid.usedItemlevels[currentItemlevel] or {}
-		tinsert(v.raid.usedItemlevels[currentItemlevel], y.name)
-
-		v.usedItemlevels[currentItemlevel] = true
-
-	end
-
-	if(v.raid.veryRare) then
-		for x, y in pairs(v.raid.veryRare.info) do
-			local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
-
-			v.raid.usedItemlevels[currentItemlevel] = v.raid.usedItemlevels[currentItemlevel] or {}
-			tinsert(v.raid.usedItemlevels[currentItemlevel], y.name)
-
-			v.usedItemlevels[currentItemlevel] = true
-			
-		end
-	end
-
-	for x, y in ipairs(v.delves.info) do
-		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
-
-		v.delves.usedItemlevels[currentItemlevel] = v.delves.usedItemlevels[currentItemlevel] or {}
-		tinsert(v.delves.usedItemlevels[currentItemlevel], y.name)
-
-		v.usedItemlevels[currentItemlevel] = true
-
-		if(not y.ignoreForVault) then
-			local vaultLevel = getAdjustedItemLevel(k, y.jumps + (y.vaultOffset or v.delves.vault.offset))
-			v.delves.vault.usedItemlevels[vaultLevel] = v.delves.vault.usedItemlevels[vaultLevel] or {}
-			tinsert(v.delves.vault.usedItemlevels[vaultLevel], y.name)
-			v.usedItemlevels[vaultLevel] = true
-
-		end
-	end
-
-	if(v.delves.bountiful) then
-		for x, y in pairs(v.delves.bountiful.info) do
-			local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
-
-			v.delves.usedItemlevels[currentItemlevel] = v.delves.usedItemlevels[currentItemlevel] or {}
-			tinsert(v.delves.usedItemlevels[currentItemlevel], y.name)
-
-			v.usedItemlevels[currentItemlevel] = true
-			
-		end
-	end
-
-	for x, y in ipairs(v.other.info) do
-		local currentItemlevel = getAdjustedItemLevel(k, y.jumps)
-
-		v.other.usedItemlevels[currentItemlevel] = v.other.usedItemlevels[currentItemlevel] or {}
-		tinsert(v.other.usedItemlevels[currentItemlevel], y.name)
-
-		v.usedItemlevels[currentItemlevel] = true
-	end
-
-	-- calc all itemlevels
-    local currentIlvl = v.baseItemlevel
-    local offset = 0
-
-    while(currentIlvl < v.maxItemlevel) do
-        if(offset == 0) then
-			tinsert(v.allItemlevels, currentIlvl)
-            
-        else
-            currentIlvl = currentIlvl + miog.ITEM_LEVEL_JUMPS[offset]
-
-        end
-    
-		tinsert(v.allItemlevels, currentIlvl)
-    
-        if(offset == 4) then
-            offset = 1
-    
-        else
-            offset = offset + 1
-    
-        end
-    end
-end
-
---[[for k, v in pairs(miog.GEARING_CHART) do
-	for x, y in ipairs(v.trackInfo) do
-		y.data = {}
-
-		for i = 1, y.length, 1 do
-			local jumps = (i - 1) + (x - 1) * 4
-
-			y.data[i] = miog.getAdjustedItemLevel(k, jumps)
-		end
-
-		y.baseItemLevel = y.data[1]
-
-		y.maxItemLevel = y.data[y.length]
-
-		if(x == #v.trackInfo) then
-			v.maxUpgradeItemLevel = y.maxItemLevel
-		end
-	end
-	
-	for a, b in ipairs(v.dungeon.info) do
-		v.dungeon.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-
-		if(not b.ignoreForVault) then
-			v.dungeon.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.dungeon.vaultJumpsOffset))
-			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.dungeon.vaultJumpsOffset))] = true
-
-		end
-	end
-
-	for a, b in ipairs(v.raid.info) do
-		v.raid.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-		
-	end
-
-	if(v.raid.veryRare) then
-		for a, b in pairs(v.raid.veryRare.info) do
-			v.raid.veryRare.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
-			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-			
-		end
-	end
-
-	if(v.delves) then
-		for a, b in ipairs(v.delves.info) do
-			v.delves.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
-			v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-
-			if(not b.ignoreForVault) then
-				v.delves.vaultLevels[a] = miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.delves.vaultJumpsOffset))
-				v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps + (b.vaultOffset or v.delves.vaultJumpsOffset))] = true
-
-			end
-		end
-	end
-
-	for a, b in ipairs(v.other.info) do
-		v.other.itemLevels[a] = miog.getAdjustedItemLevel(k, b.jumps)
-		v.itemLevelInfo[miog.getAdjustedItemLevel(k, b.jumps)] = true
-	end
-
-	if(v.awakenedInfo) then
-		table.insert(v.trackInfo, {
-			name = "Awakened",
-			length = v.awakenedInfo.maxLength,
-			data = {},
-		})
-
-		local awakenedTrackTable = v.trackInfo[#v.trackInfo]
-
-		for i = 1, awakenedTrackTable.length, 1 do
-			awakenedTrackTable.data[i] = miog.getAdjustedItemLevel(k, v.raid.info[2].jumps + (i - 1))
-
-		end
-
-		awakenedTrackTable.baseItemLevel = awakenedTrackTable.data[1]
-		awakenedTrackTable.maxItemLevel = awakenedTrackTable.data[awakenedTrackTable.length]
-	end
-end]]--
 
 miog.CLASSFILE_TO_ID = {
 	["WARRIOR"] = 1,
@@ -4266,20 +3055,6 @@ miog.OFFICIAL_CLASSES = {}
 
 for i = 1, 13, 1 do
 	miog.OFFICIAL_CLASSES[i] = miog.CLASSES[i]
-end
-
-miog.ENUM_TABLE = {}
-
-do
-	for k, v in pairs(Enum) do
-		miog.ENUM_TABLE[k] = {}
-
-		for x, y in pairs(v) do
-			miog.ENUM_TABLE[k][y] = x
-
-		end
-
-	end
 end
 
 miog.SPECIALIZATIONS = {
@@ -4458,7 +3233,7 @@ miog.ACTIVITY_BACKGROUNDS = {
 	[10] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/letsNotTalkAboutIt_1024.png",
 	[111] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisIsTheDayYouWillAlwaysRememberAsTheDayYouAlmostCaughtCaptainJackSparrow_1024.png", --ISLAND EXPEDITIONS
 	[113] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/thisDidntHappen_1024.png", --TORGHAST
-	[121] = miog.C.STANDARD_FILE_PATH .. "/backgrounds/delves.png", --DELVES
+	[121] = "interface/journeys/journeysframebackground.blp", --DELVES
 }
 
 miog.EXPANSIONS = {

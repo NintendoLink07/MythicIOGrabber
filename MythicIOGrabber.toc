@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources, 
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9.8
+## Version: 3.9.8a
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -14,7 +14,6 @@
 ## X-Website: https://github.com/NintendoLink07/MythicIOGrabber
 
 Libs\libs.xml
-RawBlizzardData.lua
 
 MythicIOGrabber.lua
 PVEFrame2.lua
@@ -25,17 +24,13 @@ UI.lua
 ActivityChecker.lua
 QueueManagement.lua
 
-ApplicationViewer.lua
 SearchPanel.lua
 EntryCreation.lua
-Calendar.lua
 SharedFunctions.lua
 FilterManager.lua
 GroupOrganizer.lua
 
 GearingTable.lua
-## AdventureJournal.lua
-GroupManager.lua
 RaidPlanner.lua
 UpgradeFinder.lua
 Teleports.lua
@@ -43,7 +38,6 @@ Teleports.lua
 NewSettings.lua
 CharacterSettings.lua
 StatisticsRecorder.lua
-## ReQueue.lua
 
 FuzzyAlgorithm.lua
 

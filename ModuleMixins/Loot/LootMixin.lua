@@ -160,55 +160,56 @@ function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterDa
     for i = 1, numLoot do
         local itemInfo = GetLoot(i)
 
-        if not isMissingData and itemInfo and itemInfo.name then
-            if(self:CheckItemFiltering(itemInfo)) then
-                local encounterID = itemInfo.encounterID
+        if(not isMissingData) then
+            if(itemInfo and itemInfo.name) then
+                if(self:CheckItemFiltering(itemInfo)) then
+                    local encounterID = itemInfo.encounterID
 
-                if(noEncounterSelected or selectedEncounter == encounterID) then
-                    itemInfo.itemlevel = GetItemLevel(itemInfo.link)
-                    
-                    itemInfo.template = "MIOG_LootItemTemplate"
-
-                    if(multiQueue) then
-                        if(not instanceNodes[journalInstanceID]) then
-                            local journalInfo = miog:GetJournalInstanceInfo(journalInstanceID)
-                            journalInfo.template = "MIOG_LootInstanceTemplate"
-
-                            dataProvider:SetSortComparator(SortInstanceEntries)
-
-                            instanceNode = dataProvider:Insert(journalInfo)
-                            instanceNode:SetSortComparator(SortBossEntries)
-                            instanceNode:SetCollapsed(true, true)
-                            instanceNodes[journalInstanceID] = instanceNode
-
-                            parentNode = instanceNode
-
-                        else
-                            parentNode = instanceNodes[journalInstanceID]
-
-                        end
-                    end
-
-                    if(not bossNodes[encounterID]) then
-                        local bossInfo = encounterData and encounterData[encounterID] or miog:GetEncounterData(encounterID)
-
-                        bossInfo.template = "MIOG_LootBossTemplate"
-
-                        bossNode = parentNode:Insert(bossInfo)
-                        bossNode:SetSortComparator(SortItemEntries)
-                        bossNode:SetCollapsed(true, true)
-
-                        bossNodes[encounterID] = bossNode
+                    if(noEncounterSelected or selectedEncounter == encounterID) then
+                        itemInfo.itemlevel = GetItemLevel(itemInfo.link)
                         
-                        numBossesShown = numBossesShown + 1
+                        itemInfo.template = "MIOG_LootItemTemplate"
+
+                        if(multiQueue) then
+                            if(not instanceNodes[journalInstanceID]) then
+                                local journalInfo = miog:GetJournalInstanceInfo(journalInstanceID)
+                                journalInfo.template = "MIOG_LootInstanceTemplate"
+
+                                dataProvider:SetSortComparator(SortInstanceEntries)
+
+                                instanceNode = dataProvider:Insert(journalInfo)
+                                instanceNode:SetSortComparator(SortBossEntries)
+                                instanceNode:SetCollapsed(true, true)
+                                instanceNodes[journalInstanceID] = instanceNode
+
+                                parentNode = instanceNode
+
+                            else
+                                parentNode = instanceNodes[journalInstanceID]
+
+                            end
+                        end
+
+                        if(not bossNodes[encounterID]) then
+                            local bossInfo = encounterData and encounterData[encounterID] or miog:GetEncounterData(encounterID)
+
+                            bossInfo.template = "MIOG_LootBossTemplate"
+
+                            bossNode = parentNode:Insert(bossInfo)
+                            bossNode:SetSortComparator(SortItemEntries)
+                            bossNode:SetCollapsed(true, true)
+
+                            bossNodes[encounterID] = bossNode
+                            
+                            numBossesShown = numBossesShown + 1
+                        end
+
+                        bossNodes[encounterID]:Insert(itemInfo)
                     end
-
-                    bossNodes[encounterID]:Insert(itemInfo)
                 end
+            else
+                isMissingData = true
             end
-        else
-            isMissingData = true
-
         end
     end
 
@@ -243,30 +244,30 @@ function LootMixin:RequestLoot(origin)
     dataProvider:Flush()
     dataProvider:SetAllCollapsed(true);
 
-    bossDropdownList = {}
-    numBossesShown = 0
-
-    multiQueue = #lootQueue > 1
-    showOnlyItems = self.OnlyItemsButton:GetChecked()
-
-    local isMissingData = false
-    searchText = self.SearchBox:GetText()
-    currentlySearching = searchText ~= ""
-
-    if(showOnlyItems) then
-        if(currentlySearching) then
-            dataProvider:SetSortComparator(SortItemEntriesWithSearch)
-
-        else
-            dataProvider:SetSortComparator(SortItemEntries)
-
-        end
-    end
-
-    local difficultiesAdded = {}
-    local hasNoDifficulty = selectedDifficulty == nil
-
     if(#lootQueue > 0) then
+        bossDropdownList = {}
+        numBossesShown = 0
+
+        multiQueue = #lootQueue > 1
+        showOnlyItems = self.OnlyItemsButton:GetChecked()
+
+        
+        searchText = self.SearchBox:GetText()
+        currentlySearching = searchText ~= ""
+
+        if(showOnlyItems) then
+            if(currentlySearching) then
+                dataProvider:SetSortComparator(SortItemEntriesWithSearch)
+
+            else
+                dataProvider:SetSortComparator(SortItemEntries)
+
+            end
+        end
+
+        local difficultiesAdded = {}
+        local hasNoDifficulty = selectedDifficulty == nil
+
         local hasAtleastOneValidInstance = false
 
         if(selectedDifficulty) then
@@ -285,9 +286,9 @@ function LootMixin:RequestLoot(origin)
             end
         end
 
+        local isMissingData = false
+
         for k, id in ipairs(lootQueue) do
-            local showEverything = not showOnlyItems
-            isMissingData = false
             
             if(id) then
                 EJ_SelectInstance(id)
@@ -325,77 +326,83 @@ function LootMixin:RequestLoot(origin)
                         end
                     end
 
-                    
-
                     local numLoot = EJ_GetNumLoot()
 
                     if(numLoot > 0) then
-                        if(showEverything) then
-                            isMissingData = self:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, id)
+                        local missingInstanceData
+
+                        if(showOnlyItems) then
+                            missingInstanceData = self:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
                             
                         else
-                            isMissingData = self:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
+                            missingInstanceData = self:ShowEverythingFromCurrentJournalInstance(numLoot, encounterData, id)
+
+                        end
+
+                        if(missingInstanceData) then
+                            isMissingData = true
 
                         end
                     end
                 end
             end
-        end
+            
 
-        local orderedDifficultyTable = {}
+            local orderedDifficultyTable = {}
 
-        for k, v in pairs(difficultiesAdded) do
-            tinsert(orderedDifficultyTable, k)
+            for x, y in pairs(difficultiesAdded) do
+                tinsert(orderedDifficultyTable, x)
 
-        end
+            end
 
-        table.sort(orderedDifficultyTable, function(k1, k2)
-            return miog.BETTER_DIFFICULTY_ORDER[k1] < miog.BETTER_DIFFICULTY_ORDER[k2]
-        
-        end)
+            table.sort(orderedDifficultyTable, function(k1, k2)
+                return miog.BETTER_DIFFICULTY_ORDER[k1] < miog.BETTER_DIFFICULTY_ORDER[k2]
+            
+            end)
 
-        self.DifficultyDropdown:SetupMenu(function(dropdown, rootDescription)
-            if(selectedJournalInstance or specialSelection or selectedEncounter) then
-                rootDescription:CreateButton(CLEAR_ALL, function()
-                    selectedDifficulty = nil
-
-                    self:UpdateAfterCompletion()
-
-                end)
-
-                rootDescription:CreateSpacer()
-
-                for index, difficultyID in ipairs(orderedDifficultyTable) do
-                    local difficultyButton = rootDescription:CreateRadio(miog.DIFFICULTY_ID_INFO[difficultyID].name, function(id) return id == selectedDifficulty end, function(id)
-                        EJ_SetDifficulty(id)
-                        selectedDifficulty = id
+            self.DifficultyDropdown:SetupMenu(function(dropdown, rootDescription)
+                if(selectedJournalInstance or specialSelection or selectedEncounter) then
+                    rootDescription:CreateButton(CLEAR_ALL, function()
+                        selectedDifficulty = nil
 
                         self:UpdateAfterCompletion()
 
-                    end, difficultyID)
+                    end)
+
+                    rootDescription:CreateSpacer()
+
+                    for index, difficultyID in ipairs(orderedDifficultyTable) do
+                        local difficultyButton = rootDescription:CreateRadio(miog.DIFFICULTY_ID_INFO[difficultyID].name, function(id) return id == selectedDifficulty end, function(id)
+                            EJ_SetDifficulty(id)
+                            selectedDifficulty = id
+
+                            self:UpdateAfterCompletion()
+
+                        end, difficultyID)
+                    end
                 end
-            end
-        end)
+            end)
 
-        if(not isMissingData) then
-            local hasMultipleInstances = dataProvider.node:GetSize(true) > 1
-            local hasMultipleBosses = numBossesShown > 1
+            if(not isMissingData) then
+                local hasMultipleInstances = dataProvider.node:GetSize(true) > 1
+                local hasMultipleBosses = numBossesShown > 1
 
-            if(multiQueue) then
-                if(hasMultipleInstances) then
-                    dataProvider.node:SetCollapsed(hasMultipleInstances, hasMultipleBosses, true)
-                    
+                if(multiQueue) then
+                    if(hasMultipleInstances) then
+                        dataProvider.node:SetCollapsed(hasMultipleInstances, hasMultipleBosses, true)
+                        
+                    end
+
+                else
+                    dataProvider:SetAllCollapsed(hasMultipleBosses)
+
                 end
 
-            else
-                dataProvider:SetAllCollapsed(hasMultipleBosses)
+                dataProvider:Invalidate()
+                
+                self.ScrollBox:SetDataProvider(dataProvider)
 
             end
-
-            dataProvider:Invalidate()
-            
-            self.ScrollBox:SetDataProvider(dataProvider)
-
         end
     end
 end

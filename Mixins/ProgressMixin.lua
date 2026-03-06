@@ -42,7 +42,6 @@ end
 function ProgressMixin:SetupInitialCharacterData(setupTable)
 	self:ConnectSetting(setupTable)
 	self:RequestAccountCharacters()
-
 end
 
 function ProgressMixin:RequestAccountCharacters()
@@ -310,7 +309,7 @@ function ProgressActivityMixin:OnLoad()
 	view:SetPadding(1, 1, 1, 1, 8)
 	view:SetElementExtent(36)
 
-	--self.ScrollBox:Init(view)
+	self.ScrollBox:Init(view)
 
 	self.tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
 	self.tableBuilder:SetHeaderContainer(self.HeaderContainer)
@@ -493,11 +492,6 @@ function ProgressOverviewMixin:RefreshActivities()
 end
 
 function ProgressOverviewMixin:OnLoad()
-	hooksecurefunc("RequestRaidInfo", function()
-		self:RefreshLockouts()
-
-	end)
-
 	local view = CreateScrollBoxListLinearView()
 	view:SetHorizontal(true)
 
@@ -740,12 +734,24 @@ function ProgressOverviewMixin:OnLoad()
  
 	self.ScrollBox:Init(view)
 	--ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view)
+
+	self:SetScript("OnEvent", function(selfFrame, event, ...)
+		if(event == "PLAYER_ENTERING_WORLD") then
+			RequestRaidInfo()
+
+		else
+			selfFrame:RefreshLockouts()
+
+		end
+	
+	end)
+
+	self:RegisterEvent("UPDATE_INSTANCE_INFO")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function ProgressOverviewMixin:OnShow()
 	self:GetParent().Menu.VisibilityDropdown:Hide()
-
-    RequestRaidInfo()
 
 	if(initialRefreshDone) then
 		self:RefreshActivities()
@@ -839,53 +845,22 @@ function ProgressDungeonMixin:UpdateSingleCharacterMythicPlusProgress(guid)
 end
 
 function ProgressDungeonMixin:GetAbbreviatedName(challengeModeMapID)
-	local groupID = miog.retrieveGroupIDFromChallengeModeMap(challengeModeMapID)
-	local abbreviatedName
-
-	local groupInfo = miog.GROUP_ACTIVITY[groupID]
-
-	if(groupInfo) then
-		abbreviatedName = groupInfo.abbreviatedName
-
-	end
-
-	if(not abbreviatedName) then
-		local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeModeMapID)
-
-		local mapInfo = miog.MAP_INFO[mapID]
-
-		if(mapInfo) then
-			abbreviatedName = mapInfo.abbreviatedName
-
-		end
-	end
-
+	local abbreviatedName = miog.retrieveAbbreviatedNameFromChallengeModeMap(challengeModeMapID)
+	
 	return abbreviatedName
 end
 
 function ProgressDungeonMixin:GetBackgroundImage(challengeModeMapID)
-	local groupID = miog.retrieveGroupIDFromChallengeModeMap(challengeModeMapID)
-	local bg
+	local info = miog.CHALLENGE_MODE_INFO[challengeModeMapID]
 
-	local groupInfo = miog:GetGroupInfo(groupID)
-
-	if(groupInfo) then
-		bg = groupInfo.vertical
-
-	end
-
-	if(not bg) then
-		local mapID = miog.retrieveMapIDFromChallengeModeMap(challengeModeMapID)
-
-		local mapInfo = miog:GetMapInfo(mapID)
+	if(info) then
+		local mapInfo = miog:GetMapInfo(info.mapID)
 
 		if(mapInfo) then
-			bg = mapInfo.vertical
+			return mapInfo.vertical
 
 		end
 	end
-
-	return bg
 end
 
 function ProgressDungeonMixin:SortActivities()

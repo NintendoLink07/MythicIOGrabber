@@ -279,27 +279,6 @@ miog.formatInt = function(number) -- https://stackoverflow.com/questions/1098978
 	return minus .. int:reverse():gsub("^,", "") .. fraction
 end
 
-miog.deepCopyTable = function(orig, copies)
-	copies = copies or {}
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        if copies[orig] then
-            copy = copies[orig]
-        else
-            copy = {}
-            copies[orig] = copy
-            for orig_key, orig_value in next, orig, nil do
-                copy[miog.deepCopyTable(orig_key, copies)] = miog.deepCopyTable(orig_value, copies)
-            end
-            setmetatable(copy, miog.deepCopyTable(getmetatable(orig), copies))
-        end
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
-end
-
 --[[miog.secondsToClock = function(stringSeconds)
 		startTime = GetTimePreciseSec()
 
@@ -346,41 +325,6 @@ miog.secondsToClock = function(seconds)
 	return result
 end
 
-miog.retrieveMapIDFromGFID = function(groupFinderID)
-	for k, v in pairs(miog.MAP_INFO) do
-		if(v.gfID == groupFinderID) then
-			return k
-		end
-	end
-end
-
-miog.retrieveMapIDFromChallengeModeMap = function(challengeID)
-	local info = miog.CHALLENGE_MODE_INFO[challengeID]
-	
-	if(info) then
-		return info.mapID
-
-	end
-end
-
-miog.retrieveMapInfoFromChallengeModeMap = function(challengeID)
-	local info = miog.CHALLENGE_MODE_INFO[challengeID]
-	
-	if(info.mapID) then
-		return miog:GetMapInfo(info.mapID)
-
-	end
-end
-
-miog.retrieveGroupIDFromChallengeModeMap = function(challengeID)
-	local info = miog.CHALLENGE_MODE_INFO[challengeID]
-
-	if(info) then
-		return info.groupID
-
-	end
-end
-
 function miog:table_merge(...)
     local tables_to_merge = { ... }
     assert(#tables_to_merge > 1, "There should be at least two tables to merge them")
@@ -413,120 +357,16 @@ end
 miog.retrieveAbbreviatedNameFromChallengeModeMap = function(challengeID)
 	local info = miog.CHALLENGE_MODE_INFO[challengeID]
 
-	local abbreviatedName
+	if(info) then
+		if(not info.abbreviatedName) then
+			local mapInfo = miog:GetMapInfo(info.mapID)
+			return mapInfo.abbreviatedName
 
-	local groupInfo = miog.GROUP_ACTIVITY[info.groupID]
+		else
+			return info.abbreviatedName
 
-	if(groupInfo) then
-		abbreviatedName = groupInfo.abbreviatedName
-
-	else
-		abbreviatedName = miog.MAP_INFO[info.mapID].abbreviatedName
-		
-	end
-
-	return abbreviatedName
-end
-
-miog.retrieveGroupInfoFromChallengeModeMap = function(challengeID)
-	local info = miog.CHALLENGE_MODE_INFO[challengeID]
-
-	if(info.groupID) then
-		return miog.GROUP_ACTIVITY[info.groupID]
-
-	end
-end
-
-miog.findBattlegroundBackgroundByName = function(mapName)
-	for bgID, bgEntry in pairs(miog.BATTLEMASTER_INFO) do
-		if(mapName == bgEntry.name) then
-			return bgEntry.icon ~= 0 and bgEntry.icon or 525915
 		end
 	end
-
-	return 525915
-end
-
-miog.findBattlegroundIconByName = function(mapName)
-	for bgID, bgEntry in pairs(miog.BATTLEMASTER_INFO) do
-		if(mapName == bgEntry.name) then
-			return bgEntry.icon ~= 0 and bgEntry.icon or 525915
-		end
-	end
-
-	return 525915
-end
-
-miog.findBattlegroundMapIDsByName = function(mapName)
-	for bgID, bgEntry in pairs(miog.BATTLEMASTER_INFO) do
-		if(mapName == bgEntry.name) then
-			return bgEntry.possibleBGs
-		end
-	end
-
-	return nil
-end
-
-miog.findBattlegroundIconByID = function(mapID)
-	for bgID, bgEntry in pairs(miog.RAW["BattlemasterList"]) do
-		if(bgEntry[1] == mapID) then
-			return bgEntry[16] ~= 0 and bgEntry[16] or 525915
-		end
-	end
-
-	return 525915
-end
-
-miog.findBattlegroundMapIDsByID = function(battlemasterID)
-	return miog.BATTLEMASTER_INFO[battlemasterID].possibleBGs
-end
-
-miog.findBrawlIconByName = function(mapName)
-	for brawlID, brawlEntry in pairs(miog.RAW["PvpBrawl"]) do
-		if(brawlEntry[2] == mapName) then
-			return miog.findBattlegroundIconByID(brawlEntry[4])
-		end
-	end
-
-	return nil
-end
-
-miog.findBrawlIconByID = function(mapID)
-	for brawlID, brawlEntry in pairs(miog.RAW["PvpBrawl"]) do
-		if(brawlEntry[1] == mapID) then
-			return miog.findBattlegroundIconByID(brawlEntry[4])
-		end
-	end
-
-	return nil
-end
-
-miog.findBrawlMapIDsByName = function(mapName)
-	for brawlID, brawlEntry in pairs(miog.RAW["PvpBrawl"]) do
-		if(brawlEntry[2] == mapName) then
-			return miog.findBattlegroundMapIDsByID(brawlEntry[4])
-		end
-	end
-
-	return nil
-end
-
-
-miog.checkIfCanInvite = function()
-	if(C_PartyInfo.CanInvite()) then
-		--miog.ApplicationViewer.Delist:Show()
-		--miog.ApplicationViewer.Edit:Show()
-
-		return true
-
-	else
-		--miog.ApplicationViewer.Delist:Hide()
-		--miog.ApplicationViewer.Edit:Hide()
-
-		return false
-
-	end
-
 end
 
 miog.createCustomColorForRating = function(score)
@@ -582,14 +422,6 @@ miog.shuffleNumberTable = function(table)
 	for i = 1, #table - 1 do
 		local j = math.random(i, #table)
 		table[i], table[j] = table[j], table[i]
-	end
-end
-
-miog.handleCoroutineReturn = function(coroutineReturn)
-	if(coroutineReturn[1] == false) then
-		print("ERROR: " .. coroutineReturn[2])
-		print("If you see this, please report the whole error to me on either GitHub or CurseForge. Thank you!")
-
 	end
 end
 

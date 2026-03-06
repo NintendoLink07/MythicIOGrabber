@@ -305,43 +305,7 @@ function QueueManagerMixin:OnLoad()
 					timeInQueue = GetBattlefieldTimeWaited(data.index) / 1000
 					timeToMatch = GetBattlefieldEstimatedWaitTime(data.index) / 1000
 
-					local mapIDTable = miog.findBattlegroundMapIDsByName(mapName) or miog.findBrawlMapIDsByName(mapName)
-
-					if(isHQ) then
-						if(mapName == "Random Epic Battleground") then
-							backgroundImage = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/epicbgs.png"
-
-						elseif(mapName == "Random Battleground") then
-							backgroundImage = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/normalbgs.png"
-
-						end
-						
-					end
-
-					if(not backgroundImage) then
-						local numOfEntries = mapIDTable and #mapIDTable or 0
-						
-						if(numOfEntries > 0) then
-							if(numOfEntries == 1) then
-								backgroundImage = miog.MAP_INFO[mapIDTable[1]].horizontal
-								
-							elseif(numOfEntries > 1) then
-								local counter = 0
-								local randomNumber = random(1, numOfEntries)
-
-								for k, v in pairs(mapIDTable) do
-									counter = counter + 1
-
-									if(counter == randomNumber) then
-										backgroundImage = miog.MAP_INFO[v] and miog.MAP_INFO[v].horizontal
-										break
-									end
-								end
-							end
-						end
-					end
-
-					backgroundImage = backgroundImage or miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png"
+					backgroundImage = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png"
 				end
 
 			elseif(data.type == "world") then

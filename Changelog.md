@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+## [3.9.8a] - 2026-03-06
+
+### Fixed
+
+- [GroupCreator] All categories now have a baseline background.
+
+- [Loot] An issue with checking for missing data has been resolved.
+
+- [Progress] Subcategories should now be viewable again.
+
+- [Progress] Lockouts won't be reset when logging in and out without opening the [Progress] tab.
+
+- Small performance / load time improvements.
+
+
+
+
 ## [3.9.8] - 2026-03-06
 
 ### Added
@@ -4766,7 +4784,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.8..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.8a..HEAD
+[3.9.8a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.8a
 [3.9.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.8
 [3.9.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.7
 [3.9.6b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.6b

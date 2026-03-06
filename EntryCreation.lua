@@ -517,9 +517,8 @@ local function updateEntryCreation()
 			entryCreation.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
 
 		end
-
 	else
-		entryCreation.Background:SetTexture(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/cave.png")
+		entryCreation.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[LFGListFrame.EntryCreation.selectedCategory])
 
 	end
 end
@@ -1114,6 +1113,8 @@ miog.createEntryCreation = function()
 			self.StartGroup:SetText("Start Group")
 
 		end
+
+		entryCreation.Background:SetTexture(miog.ACTIVITY_BACKGROUNDS[LFGListFrame.CategorySelection.selectedCategory])
 	end)
 
 	local activityFinder = LFGListFrame.EntryCreation.ActivityFinder

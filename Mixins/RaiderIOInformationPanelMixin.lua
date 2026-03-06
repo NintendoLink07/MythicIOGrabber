@@ -40,23 +40,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
                 currentDungeon.dungeonName = name
 
                 if(currentDungeon.Name) then
-                    local abbrName
-                    local groupID = miog.retrieveGroupIDFromChallengeModeMap(mapChallengeModeID)
-
-                    if(miog.GROUP_ACTIVITY_ID_INFO[groupID]) then
-                        local groupInfo = miog:GetGroupInfo(groupID)
-
-                        if(groupInfo) then
-                            abbrName = groupInfo.abbreviatedName
-
-                        end
-
-                    else
-                        abbrName = info.abbreviatedName
-
-                    end
-
-                    currentDungeon.Name:SetText(abbrName)
+                    currentDungeon.Name:SetText(miog.retrieveAbbreviatedNameFromChallengeModeMap(mapChallengeModeID))
                     
                 end
 

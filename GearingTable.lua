@@ -69,7 +69,7 @@ local function retrieveSeasonID()
     miog.F.SEASON_ID = 16 or C_MythicPlus.GetCurrentSeason()
 
     if(miog.F.SEASON_ID < 1) then
-        for k in pairs(miog.NEW_GEARING_DATA) do
+        for k in pairs(miog.ITEM_LEVEL_DATA) do
             if(k > miog.F.SEASON_ID) then
                 miog.F.SEASON_ID = k
 
