@@ -63,6 +63,10 @@ ModuleMixins\ReQueueMixin.lua
 ModuleMixins\QueueManager\QueueManagerMixin.lua
 ModuleMixins\QueueManager\QueueManagerFrameMixin.lua
 
+ModuleMixins\Ports\PortsLogoMixin.lua
+ModuleMixins\Ports\PortsButtonMixin.lua
+ModuleMixins\Ports\PortsMixin.lua
+
 
 Mixins\SortingMixin.lua
 Mixins\MultiStateButtonMixin.lua
@@ -104,6 +108,12 @@ Mixins\AnchorSystemMixin.lua
 ##
 ### XML
 ##
+
+XML\Ports\MIOG_Ports.xml
+XML\Ports\MIOG_PortsLogoTemplate.xml
+XML\Ports\MIOG_PortsButtonTemplate.xml
+
+
 
 XML\Loot\MIOG_Loot.xml
 XML\Loot\MIOG_LootLineTemplate.xml

@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [3.9.9] - 2026-03-07
+
+### Added
+
+- A Midnight icon has been added.
+
+
+
+
+
 ## [3.9.8a] - 2026-03-06
 
 ### Fixed

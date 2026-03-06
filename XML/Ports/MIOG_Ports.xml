@@ -1,0 +1,77 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_Ports" mixin="PortsMixin" virtual="true">
+        <Frames>
+            <Frame parentKey="ActiveSeason" inherits="StaticGridLayoutFrame">
+                <Size y="70" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP"/>
+                </Anchors>
+
+                <Frames>
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="1" type="number"/>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                        </KeyValues>
+                    </Button>
+
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="2" type="number"/>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                        </KeyValues>
+                    </Button>
+
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="3" type="number"/>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                        </KeyValues>
+                    </Button>
+
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="4" type="number"/>
+                            <KeyValue key="gridRow" value="1" type="number"/>
+                        </KeyValues>
+                    </Button>
+
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="1" type="number"/>
+                            <KeyValue key="gridRow" value="2" type="number"/>
+                        </KeyValues>
+                    </Button>
+
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="2" type="number"/>
+                            <KeyValue key="gridRow" value="2" type="number"/>
+                        </KeyValues>
+                    </Button>
+
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="3" type="number"/>
+                            <KeyValue key="gridRow" value="2" type="number"/>
+                        </KeyValues>
+                    </Button>
+
+                    <Button inherits="MIOG_PortsButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="gridColumn" value="4" type="number"/>
+                            <KeyValue key="gridRow" value="2" type="number"/>
+                        </KeyValues>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+
+        <Scripts>
+            <OnLoad method="OnLoad" />
+            <OnShow method="OnShow" />
+        </Scripts>
+    </Frame>
+</Ui>

@@ -683,6 +683,14 @@
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
+
+                    <Frame parentKey="Ports" inherits="MIOG_Ports">
+                        <Size x="400" y="400" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="50"/>
+                        </Anchors>
+                    </Frame>
                 </Frames>
 
                 <Layers>

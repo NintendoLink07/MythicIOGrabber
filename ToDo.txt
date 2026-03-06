@@ -12,9 +12,11 @@ WIP
 - Drops
     - M+ itemlevels
 
+- Ports
+    - Overhaul, use grid system, integrate seasonal tp's
+
 Needs overhaul
 - Progress // submenus only
-- Ports
 
 No idea
 - Upgrades
