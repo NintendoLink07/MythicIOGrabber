@@ -1,11 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name="MIOG_PortsButtonTemplate" inherits="SecureActionButtonTemplate" mixin="PortsButtonMixin" virtual="true">
-        <Size x="32" y="32" />
-
+    <Button name="MIOG_PortsSubgroupTemplate" mixin="PortsSubgroupMixin" inherits="StaticGridLayoutFrame" virtual="true">
         <Scripts>
             <OnLoad method="OnLoad" />
-            <OnLeave function="GameTooltip_Hide" />
         </Scripts>
     </Button>
 </Ui>

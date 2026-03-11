@@ -7,13 +7,22 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.9.9] - 2026-03-07
+## [3.9.9] - 2026-03-11
 
 ### Added
 
 - A Midnight icon has been added.
 
+- [Teleports] Midnight teleports have been added. 
 
+### Fixed
+
+- Multiple errors retrieving activities inbetween seasons have been resolved.
+
+### Known issues
+
+- [FilterPanel] When logging into the game for the first time in a session there are no short names available for activities.
+This will be fixed in v3.9.10.
 
 
 
@@ -4795,7 +4804,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.8a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.9..HEAD
+[3.9.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.9
 [3.9.8a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.8a
 [3.9.8]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.8
 [3.9.7]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.7

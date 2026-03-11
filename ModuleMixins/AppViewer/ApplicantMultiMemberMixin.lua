@@ -71,5 +71,7 @@ function ApplicantMultiMemberMixin:SetData(data)
 
             end
         end]]
+
+        self:SetInviteDeclineVisible(numMembers > 1)
     end
 end

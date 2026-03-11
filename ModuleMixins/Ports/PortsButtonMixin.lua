@@ -17,5 +17,12 @@ function PortsButtonMixin:SetData(data)
         self:SetNormalTexture(spellInfo.iconID)
         self:GetNormalTexture():SetDesaturated(not data.isKnown)
 
+        self:SetScript("OnEnter", function(selfButton)
+            GameTooltip:SetOwner(selfButton, "ANCHOR_RIGHT")
+            GameTooltip_AddHighlightLine(GameTooltip, spellInfo.name)
+            GameTooltip:AddLine(C_Spell.GetSpellDescription(data.spellID)
+)
+            GameTooltip:Show()
+        end)
     end)
 end

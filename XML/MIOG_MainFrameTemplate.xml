@@ -578,19 +578,19 @@
                                 </KeyValues>
 
                                 <Frames>
-                                    <Frame parentKey="VaultProgress3" inherits="MIOG_VaultProgressWorldTemplate">
+                                    <Frame parentKey="VaultProgress3" inherits="MIOG_VaultProgressWorldTemplate" hidden="true">
                                         <KeyValues>
                                             <KeyValue key="layoutIndex" value="1" type="number" />
                                         </KeyValues>
                                     </Frame>
 
-                                    <Frame parentKey="VaultProgress2" inherits="MIOG_VaultProgressDungeonTemplate">
+                                    <Frame parentKey="VaultProgress2" inherits="MIOG_VaultProgressDungeonTemplate" hidden="true">
                                         <KeyValues>
                                             <KeyValue key="layoutIndex" value="2" type="number" />
                                         </KeyValues>
                                     </Frame>
 
-                                    <Frame parentKey="VaultProgress1" inherits="MIOG_VaultProgressRaidTemplate">
+                                    <Frame parentKey="VaultProgress1" inherits="MIOG_VaultProgressRaidTemplate" hidden="true">
                                         <KeyValues>
                                             <KeyValue key="layoutIndex" value="3" type="number" />
                                         </KeyValues>
@@ -679,18 +679,12 @@
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupOrganizer" hidden="true" setAllPoints="true" />
                     <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabTemplate" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
+                    <!--<Frame parentKey="Ports" inherits="MIOG_Ports" hidden="true" setAllPoints="true" />!-->
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
 
-                    <Frame parentKey="Ports" inherits="MIOG_Ports">
-                        <Size x="400" y="400" />
-
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="50"/>
-                        </Anchors>
-                    </Frame>
                 </Frames>
 
                 <Layers>

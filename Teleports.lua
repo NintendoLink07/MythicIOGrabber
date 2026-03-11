@@ -40,55 +40,57 @@ local function refreshTeleports()
 	iconColumn:SetFixedConstraints(32, 6)
 
 	for _, info in ipairs(miog.TELEPORT_FLYOUT_IDS) do
-		local tableIndex = info.expansion - 2
-		local existingDataTable = dataTable[tableIndex]
+		if(info.expansion) then
+			local tableIndex = info.expansion - 2
+			local existingDataTable = dataTable[tableIndex]
 
-		if(not existingDataTable) then
-			dataTable[tableIndex] = {}
+			if(not existingDataTable) then
+				dataTable[tableIndex] = {}
 
-			tinsert(dataTable[tableIndex], {type = "icon", icon = miog.EXPANSIONS[info.expansion].icon})
+				tinsert(dataTable[tableIndex], {type = "icon", icon = miog.EXPANSIONS[info.expansion].icon})
 
-			existingDataTable = dataTable[tableIndex]
-		end
-
-		local name, description, numSlots, isKnown = GetFlyoutInfo(info.id)
-
-		local currentTable = {}
-
-		for k = 1, numSlots, 1 do
-       		local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(info.id, k)
-
-			tinsert(currentTable, {
-				type = info.type,
-				initialIndex = k,
-				abbreviatedName = retrieveAbbreviatedName(flyoutSpellID),
-				flyoutSpellID = flyoutSpellID,
-				isKnown = spellKnown}
-			)
-		end
-
-		table.sort(currentTable, sortTeleports)
-
-		if(info.type == "raid") then
-			tinsert(existingDataTable, {type = "fill"})
-			
-		end
-
-		for _, v in ipairs(currentTable) do
-			v.index = #existingDataTable
-
-			local column = columns[v.index]
-			
-			if(not column) then
-				column = teleports.tableBuilder:AddColumn()
-				column:ConstructCells("Button", "MIOG_TeleportButtonTemplate")
-				column:SetFixedConstraints(32, 7)
-
-				columns[v.index] = column
+				existingDataTable = dataTable[tableIndex]
 			end
 
-			tinsert(existingDataTable, v)
+			local name, description, numSlots, isKnown = GetFlyoutInfo(info.id)
 
+			local currentTable = {}
+
+			for k = 1, numSlots, 1 do
+				local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(info.id, k)
+
+				tinsert(currentTable, {
+					type = info.type,
+					initialIndex = k,
+					abbreviatedName = retrieveAbbreviatedName(flyoutSpellID),
+					flyoutSpellID = flyoutSpellID,
+					isKnown = spellKnown}
+				)
+			end
+
+			table.sort(currentTable, sortTeleports)
+
+			if(info.type == "raid") then
+				tinsert(existingDataTable, {type = "fill"})
+				
+			end
+
+			for _, v in ipairs(currentTable) do
+				v.index = #existingDataTable
+
+				local column = columns[v.index]
+				
+				if(not column) then
+					column = teleports.tableBuilder:AddColumn()
+					column:ConstructCells("Button", "MIOG_TeleportButtonTemplate")
+					column:SetFixedConstraints(32, 7)
+
+					columns[v.index] = column
+				end
+
+				tinsert(existingDataTable, v)
+
+			end
 		end
     end
 

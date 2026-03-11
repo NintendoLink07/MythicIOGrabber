@@ -626,7 +626,6 @@ local array3 = {
 local array4 = {
     "MatchmakingQueueFrameTemplate",
     "SettingsFrameTemplate",
-    "QuestLogBorderFrameTemplate",
     "DialogBorderNoCenterTemplate",
     "DialogBorderTemplate",
     "DialogBorderDarkTemplate",
@@ -636,7 +635,7 @@ local array4 = {
 }
 
 local lastFrame, lastPool
-local currentArray = array4
+local currentArray = array3
 
 local function createNewFrame()
     if(lastPool) then

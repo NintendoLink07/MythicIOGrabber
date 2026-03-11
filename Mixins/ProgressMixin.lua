@@ -586,7 +586,7 @@ function ProgressOverviewMixin:OnLoad()
 			end
 		end
 
-		if(data.greatVault and data.greatVault.activities) then
+		if(data.greatVault and data.greatVault.activities and #data.greatVault.activities > 0) then
 
 				--[[
 				

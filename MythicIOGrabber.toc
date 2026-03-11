@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources, 
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9.8a
+## Version: 3.9.9
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -41,7 +41,7 @@ StatisticsRecorder.lua
 
 FuzzyAlgorithm.lua
 
-## FrameTester.lua
+###FrameTester.lua
 
 ##
 ### MIXINS
@@ -65,7 +65,9 @@ ModuleMixins\QueueManager\QueueManagerFrameMixin.lua
 
 ModuleMixins\Ports\PortsLogoMixin.lua
 ModuleMixins\Ports\PortsButtonMixin.lua
+ModuleMixins\Ports\PortsGroupMixin.lua
 ModuleMixins\Ports\PortsMixin.lua
+
 
 
 Mixins\SortingMixin.lua
@@ -109,11 +111,10 @@ Mixins\AnchorSystemMixin.lua
 ### XML
 ##
 
-XML\Ports\MIOG_Ports.xml
 XML\Ports\MIOG_PortsLogoTemplate.xml
 XML\Ports\MIOG_PortsButtonTemplate.xml
-
-
+XML\Ports\MIOG_PortsGroupTemplate.xml
+XML\Ports\MIOG_Ports.xml
 
 XML\Loot\MIOG_Loot.xml
 XML\Loot\MIOG_LootLineTemplate.xml

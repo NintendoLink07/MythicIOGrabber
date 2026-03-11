@@ -4,7 +4,8 @@ Good
 Okay
 - Group
 - Raid sheet
-- Gearing // enable&disable columns
+- Gearing
+    - enable&disable columns
 - SearchPanel
     - Short names
 
@@ -16,10 +17,10 @@ WIP
     - Overhaul, use grid system, integrate seasonal tp's
 
 Needs overhaul
-- Progress // submenus only
+- Progress
+    - submenus only
 
 No idea
 - Upgrades
 - FilterManager
 - Entry creation
-    - Difficulty dropdown logic

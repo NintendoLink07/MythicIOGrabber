@@ -224,85 +224,88 @@ local function createPVEFrameReplacement()
 			for k, v in ipairs(activityIndices) do
 				local activities = C_WeeklyRewards.GetActivities(v)
 
-				local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
-				currentFrame:SetInfo(activities)
+				if(activities and #activities > 0) then
 
-				local farthestActivity = currentFrame:GetFarthestActivity(true)
+					local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
+					currentFrame:SetInfo(activities)
 
-				local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
+					local farthestActivity = currentFrame:GetFarthestActivity(true)
 
-				local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
-				local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
-				dimColor[4] = 0.1
+					local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
+
+					local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
+					local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
+					dimColor[4] = 0.1
+						
+
+					currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft() or 0, currentFrame.ThresholdBar:GetRight() or 100)
+					currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
+
+					local ilvls = currentFrame:GetAllItemlevels()
+
+					currentFrame.ThresholdBar:SetValue(0)
+					local currentValue = currentFrame["Progress1"]:GetLeft() - 4
 					
+					local all = farthestActivity.progress >= farthestActivity.threshold
+					
+					for i = 1, farthestActivity.threshold, 1 do
+						local progressFrameString = "Progress" .. i
+						local singleFrame = currentFrame[progressFrameString]
+						singleFrame:SetParent(currentFrame.ThresholdBar)
+						singleFrame.progressFrameIndex = i
 
-				currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft() or 0, currentFrame.ThresholdBar:GetRight() or 100)
-				currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
+						local isCompleted = farthestActivity.progress >= i
+						local activityIndex = activities[1].threshold == i and 1 or activities[2].threshold == i and 2 or activities[3].threshold == i and 3
+						local activityCompleted = isCompleted and activityIndex
 
-				local ilvls = currentFrame:GetAllItemlevels()
+						local checkmark = singleFrame.Checkmark
+						local text = singleFrame.Text
 
-				currentFrame.ThresholdBar:SetValue(0)
-				local currentValue = currentFrame["Progress1"]:GetLeft() - 4
-				
-				local all = farthestActivity.progress >= farthestActivity.threshold
-				
-				for i = 1, farthestActivity.threshold, 1 do
-					local progressFrameString = "Progress" .. i
-					local singleFrame = currentFrame[progressFrameString]
-					singleFrame:SetParent(currentFrame.ThresholdBar)
-					singleFrame.progressFrameIndex = i
+						if(activityCompleted) then
+							local ilvl = tremove(ilvls, 1)
+							text:SetText(ilvl and WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)) or "")
+							text:SetParent(currentFrame.ThresholdBar)
+							text:Show()
 
-					local isCompleted = farthestActivity.progress >= i
-					local activityIndex = activities[1].threshold == i and 1 or activities[2].threshold == i and 2 or activities[3].threshold == i and 3
-					local activityCompleted = isCompleted and activityIndex
+							checkmark:SetParent(currentFrame.ThresholdBar)
+							checkmark:Show()
 
-					local checkmark = singleFrame.Checkmark
-					local text = singleFrame.Text
+						else
+							text:Hide()
+							checkmark:Hide()
 
-					if(activityCompleted) then
-						local ilvl = tremove(ilvls, 1)
-						text:SetText(ilvl and WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)) or "")
-						text:SetParent(currentFrame.ThresholdBar)
-						text:Show()
+						end
 
-						checkmark:SetParent(currentFrame.ThresholdBar)
-						checkmark:Show()
+						singleFrame.Ring:SetShown(activityIndex)
+						singleFrame.Diamond:SetShown(not activityIndex)
+						singleFrame.Glow:SetShown(not activityIndex and isCompleted)
 
-					else
-						text:Hide()
-						checkmark:Hide()
+						if(isCompleted) then
+							currentValue = currentValue + singleFrame:GetWidth() + 4
+							currentFrame.ThresholdBar:SetValue(currentValue)
+							singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(false)
 
+						else
+							singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(true)
+
+						end
 					end
 
-					singleFrame.Ring:SetShown(activityIndex)
-					singleFrame.Diamond:SetShown(not activityIndex)
-					singleFrame.Glow:SetShown(not activityIndex and isCompleted)
+					if(all) then
+						currentFrame.ThresholdBar.BarFillGlow:Show()
+						currentFrame.ThresholdBar.BarBackgroundGlow:Show()
+						currentFrame.ThresholdBar.BarBorderGlow:Show()
+						currentFrame.ThresholdBar.Checkmark:Show()
+						currentFrame.ThresholdBar.End:Hide()
 
-					if(isCompleted) then
-						currentValue = currentValue + singleFrame:GetWidth() + 4
-						currentFrame.ThresholdBar:SetValue(currentValue)
-						singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(false)
-
-					else
-						singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(true)
-
+					elseif(activities[1].progress > 0) then
+						currentFrame.ThresholdBar.End:ClearAllPoints()
+						currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 1)
+						currentFrame.ThresholdBar.End:Show()
 					end
+
+					currentFrame:Show()
 				end
-
-				if(all) then
-					currentFrame.ThresholdBar.BarFillGlow:Show()
-					currentFrame.ThresholdBar.BarBackgroundGlow:Show()
-					currentFrame.ThresholdBar.BarBorderGlow:Show()
-					currentFrame.ThresholdBar.Checkmark:Show()
-					currentFrame.ThresholdBar.End:Hide()
-
-				elseif(activities[1].progress > 0) then
-					currentFrame.ThresholdBar.End:ClearAllPoints()
-					currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 1)
-					currentFrame.ThresholdBar.End:Show()
-				end
-
-				currentFrame:Show()
 			end
 		else
 			for k, v in ipairs(activityIndices) do

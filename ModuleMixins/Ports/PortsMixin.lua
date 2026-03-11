@@ -3,21 +3,20 @@ local addonName, miog = ...
 PortsMixin = {}
 
 function PortsMixin:OnLoad()
-    local name, description, numSlots, isKnown = GetFlyoutInfo(96)
+    for _, v in ipairs(miog.TELEPORT_FLYOUT_IDS) do
+        local targetFrame
 
-    local children = self.ActiveSeason:GetLayoutChildren()
+        if(v.seasonID == C_MythicPlus.GetCurrentSeason()) then
+            targetFrame = self.ActiveSeason
 
-    for k = 1, numSlots, 1 do
-        local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(96, k)
+        elseif(not v.seasonID) then
+            targetFrame = self["Groups" .. v.expansion]
 
-        if(children[k]) then
-            children[k]:SetData({spellID = flyoutSpellID, isKnown = spellKnown})
+        end
+
+        if(targetFrame) then
+            targetFrame:Setup(v.id, v.expansion)
 
         end
     end
-end
-
-function PortsMixin:OnShow()
-
-
 end

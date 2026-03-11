@@ -2,76 +2,102 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_Ports" mixin="PortsMixin" virtual="true">
         <Frames>
-            <Frame parentKey="ActiveSeason" inherits="StaticGridLayoutFrame">
-                <Size y="70" />
+            <Frame parentKey="ActiveSeason" inherits="MIOG_PortsGroupTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP"/>
                 </Anchors>
 
-                <Frames>
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="1" type="number"/>
-                            <KeyValue key="gridRow" value="1" type="number"/>
-                        </KeyValues>
-                    </Button>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="GameFontHighlightMedium" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="ARENA_THIS_SEASON" >
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="TOP"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
 
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="2" type="number"/>
-                            <KeyValue key="gridRow" value="1" type="number"/>
-                        </KeyValues>
-                    </Button>
-
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="3" type="number"/>
-                            <KeyValue key="gridRow" value="1" type="number"/>
-                        </KeyValues>
-                    </Button>
-
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="4" type="number"/>
-                            <KeyValue key="gridRow" value="1" type="number"/>
-                        </KeyValues>
-                    </Button>
-
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="1" type="number"/>
-                            <KeyValue key="gridRow" value="2" type="number"/>
-                        </KeyValues>
-                    </Button>
-
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="2" type="number"/>
-                            <KeyValue key="gridRow" value="2" type="number"/>
-                        </KeyValues>
-                    </Button>
-
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="3" type="number"/>
-                            <KeyValue key="gridRow" value="2" type="number"/>
-                        </KeyValues>
-                    </Button>
-
-                    <Button inherits="MIOG_PortsButtonTemplate">
-                        <KeyValues>
-                            <KeyValue key="gridColumn" value="4" type="number"/>
-                            <KeyValue key="gridRow" value="2" type="number"/>
-                        </KeyValues>
-                    </Button>
-                </Frames>
+                    <Layer level="BORDER">
+				        <Texture parentKey="Border" atlas="questlog-frame" setAllPoints="true"/>
+                    </Layer>
+                </Layers>
             </Frame>
-        </Frames>
+
+            <Frame parentKey="Groups3" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ActiveSeason" relativePoint="BOTTOMLEFT" y="-6"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups4" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups3" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups5" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups4" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups6" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups5" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups7" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ActiveSeason" relativePoint="TOPRIGHT" x="2"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups8" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups7" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            <Frame parentKey="Groups9" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups8" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups10" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups9" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups11" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups10" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Groups12" inherits="MIOG_PortsGroupTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups11" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame inherits="TooltipBorderBackdropTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups3"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Groups6" y="-4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame inherits="TooltipBorderBackdropTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups7"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Groups11" y="-4"/>
+                </Anchors>
+            </Frame>
+        </Frames> 
 
         <Scripts>
             <OnLoad method="OnLoad" />
-            <OnShow method="OnShow" />
         </Scripts>
     </Frame>
 </Ui>
