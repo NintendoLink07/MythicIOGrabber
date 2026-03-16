@@ -47,28 +47,6 @@ FuzzyAlgorithm.lua
 ### MIXINS
 ##
 
-ModuleMixins\Loot\LootMixin.lua
-ModuleMixins\Loot\LootLineMixin.lua
-ModuleMixins\Loot\LootInstanceMixin.lua
-ModuleMixins\Loot\LootItemMixin.lua
-ModuleMixins\Loot\LootBossMixin.lua
-ModuleMixins\Loot\LootSearchBarMixin.lua
-
-ModuleMixins\AppViewer\AppViewer.lua
-ModuleMixins\AppViewer\ApplicantMixin.lua
-ModuleMixins\AppViewer\ApplicantSingleMemberMixin.lua
-ModuleMixins\AppViewer\ApplicantMultiMemberMixin.lua
-
-ModuleMixins\ReQueueMixin.lua
-ModuleMixins\QueueManager\QueueManagerMixin.lua
-ModuleMixins\QueueManager\QueueManagerFrameMixin.lua
-
-ModuleMixins\Ports\PortsLogoMixin.lua
-ModuleMixins\Ports\PortsButtonMixin.lua
-ModuleMixins\Ports\PortsGroupMixin.lua
-ModuleMixins\Ports\PortsMixin.lua
-
-
 
 Mixins\SortingMixin.lua
 Mixins\MultiStateButtonMixin.lua
@@ -104,6 +82,30 @@ Mixins\TextCellMixin.lua
 Mixins\TextureCellMixin.lua
 
 Mixins\AnchorSystemMixin.lua
+
+
+
+ModuleMixins\Loot\LootMixin.lua
+ModuleMixins\Loot\LootLineMixin.lua
+ModuleMixins\Loot\LootInstanceMixin.lua
+ModuleMixins\Loot\LootItemMixin.lua
+ModuleMixins\Loot\LootBossMixin.lua
+ModuleMixins\Loot\LootSearchBarMixin.lua
+
+ModuleMixins\AppViewer\AppViewer.lua
+ModuleMixins\AppViewer\ApplicantMixin.lua
+ModuleMixins\AppViewer\ApplicantSingleMemberMixin.lua
+ModuleMixins\AppViewer\ApplicantMultiMemberMixin.lua
+
+ModuleMixins\ReQueueMixin.lua
+ModuleMixins\QueueManager\QueueManagerMixin.lua
+ModuleMixins\QueueManager\QueueManagerFrameMixin.lua
+
+ModuleMixins\Ports\PortsLogoMixin.lua
+ModuleMixins\Ports\PortsButtonMixin.lua
+ModuleMixins\Ports\PortsGroupMixin.lua
+ModuleMixins\Ports\PortsMixin.lua
+
 
 
 

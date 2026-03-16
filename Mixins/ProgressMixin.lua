@@ -380,6 +380,7 @@ function ProgressOverviewMixin:RefreshLockouts()
 						isRaid = isRaid,
 						icon = buttonImage1,
 						mapID = instanceId,
+						journalInstanceID = journalInstanceID,
 						index = index,
 						numEncounters = numEncounters,
 						cleared = numEncounters == encounterProgress,

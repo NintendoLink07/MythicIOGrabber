@@ -90,5 +90,5 @@ function ApplicantSingleMemberMixin:SetData(data)
 
     self:SetItemLevel(itemLevel)
 
-    self:SetInviteDeclineVisible(data.numMembers == 1)
+    self:SetInviteDeclineVisible(false)
 end

@@ -3,98 +3,215 @@
     <Frame name="MIOG_Ports" mixin="PortsMixin" virtual="true">
         <Frames>
             <Frame parentKey="ActiveSeason" inherits="MIOG_PortsGroupTemplate">
+                <Size y="120" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOP"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Left" inherits="TooltipBorderBackdropTemplate, VerticalLayoutFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ActiveSeason" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOM"/>
                 </Anchors>
 
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="GameFontHighlightMedium" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="ARENA_THIS_SEASON" >
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="TOP"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
+                <KeyValues>
+                    <KeyValue key="topPadding" value="10" type="number"/>
+                    <KeyValue key="bottomPadding" value="10" type="number"/>
+                    <KeyValue key="leftPadding" value="10" type="number"/>
+                    <KeyValue key="rightPadding" value="10" type="number"/>
+                    <KeyValue key="spacing" value="6" type="number"/>
+                </KeyValues>
 
-                    <Layer level="BORDER">
-				        <Texture parentKey="Border" atlas="questlog-frame" setAllPoints="true"/>
+                <Frames>
+                    <Frame parentKey="Groups3" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups4" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups5" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups6" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="7" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                            <Size y="2" />
+
+                            <KeyValues>
+                                <KeyValue key="layoutIndex" value="2" type="number" />
+                                <KeyValue key="expand" value="true" type="boolean" />
+			                    <KeyValue key="align" value="center" type="string"/>
+                            </KeyValues>
+                        </Texture>
+
+                        <Texture atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                            <Size y="2" />
+
+                            <KeyValues>
+                                <KeyValue key="layoutIndex" value="4" type="number" />
+                                <KeyValue key="expand" value="true" type="boolean" />
+			                    <KeyValue key="align" value="center" type="string"/>
+                            </KeyValues>
+                        </Texture>
+
+                        <Texture atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                            <Size y="2" />
+
+                            <KeyValues>
+                                <KeyValue key="layoutIndex" value="6" type="number" />
+                                <KeyValue key="expand" value="true" type="boolean" />
+			                    <KeyValue key="align" value="center" type="string"/>
+                            </KeyValues>
+                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>
 
-            <Frame parentKey="Groups3" inherits="MIOG_PortsGroupTemplate">
+            <Frame parentKey="Right" inherits="TooltipBorderBackdropTemplate, VerticalLayoutFrame">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ActiveSeason" relativePoint="BOTTOMLEFT" y="-6"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOP"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups4" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups3" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups5" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups4" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups6" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups5" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups7" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ActiveSeason" relativePoint="TOPRIGHT" x="2"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups8" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups7" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
-            <Frame parentKey="Groups9" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups8" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups10" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups9" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups11" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups10" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
-            
-            <Frame parentKey="Groups12" inherits="MIOG_PortsGroupTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups11" relativePoint="BOTTOMLEFT"/>
-                </Anchors>
-            </Frame>
 
-            <Frame inherits="TooltipBorderBackdropTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups3"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Groups6" y="-4"/>
-                </Anchors>
-            </Frame>
+                <KeyValues>
+                    <KeyValue key="topPadding" value="10" type="number"/>
+                    <KeyValue key="bottomPadding" value="10" type="number"/>
+                    <KeyValue key="leftPadding" value="10" type="number"/>
+                    <KeyValue key="rightPadding" value="10" type="number"/>
+                    <KeyValue key="spacing" value="6" type="number"/>
+                </KeyValues>
 
-            <Frame inherits="TooltipBorderBackdropTemplate">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Groups7"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Groups11" y="-4"/>
-                </Anchors>
+                <Frames>
+                    <Frame parentKey="Groups7" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups8" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups9" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups10" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="7" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups11" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="9" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Groups12" inherits="MIOG_PortsGroupTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="11" type="number" />
+                            <KeyValue key="expand" value="true" type="boolean" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                            <Size y="2" />
+
+                            <KeyValues>
+                                <KeyValue key="layoutIndex" value="2" type="number" />
+                                <KeyValue key="expand" value="true" type="boolean" />
+			                    <KeyValue key="align" value="center" type="string"/>
+                            </KeyValues>
+                        </Texture>
+
+                        <Texture atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                            <Size y="2" />
+
+                            <KeyValues>
+                                <KeyValue key="layoutIndex" value="4" type="number" />
+                                <KeyValue key="expand" value="true" type="boolean" />
+			                    <KeyValue key="align" value="center" type="string"/>
+                            </KeyValues>
+                        </Texture>
+
+                        <Texture atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                            <Size y="2" />
+
+                            <KeyValues>
+                                <KeyValue key="layoutIndex" value="6" type="number" />
+                                <KeyValue key="expand" value="true" type="boolean" />
+			                    <KeyValue key="align" value="center" type="string"/>
+                            </KeyValues>
+                        </Texture>
+
+                        <Texture atlas="UI-LFG-DividerLine" useAtlasSize="false">
+                            <Size y="2" />
+
+                            <KeyValues>
+                                <KeyValue key="layoutIndex" value="8" type="number" />
+                                <KeyValue key="expand" value="true" type="boolean" />
+			                    <KeyValue key="align" value="center" type="string"/>
+                            </KeyValues>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Frame>
         </Frames> 
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="GameFontHighlightLarge" justifyH="CENTER" justifyV="MIDDLE" outline="THICK" text="ARENA_THIS_SEASON">
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.ActiveSeason" relativePoint="TOP" y="-6"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="BORDER">
+                <Texture parentKey="Border" atlas="questlog-frame" setAllPoints="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.ActiveSeason"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ActiveSeason"/>
+                    </Anchors>
+
+                </Texture>
+            </Layer>
+        </Layers>
 
         <Scripts>
             <OnLoad method="OnLoad" />

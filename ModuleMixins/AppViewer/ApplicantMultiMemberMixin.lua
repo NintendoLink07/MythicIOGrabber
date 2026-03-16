@@ -15,7 +15,6 @@ function ApplicantMultiMemberMixin:SetData(data)
 
     if(applicantData) then
         local numMembers = applicantData.numMembers
-
         self.Players:SetText("(" .. numMembers .. ") ")
 
         for i = 1, numMembers do
@@ -50,7 +49,7 @@ function ApplicantMultiMemberMixin:SetData(data)
         --self.Secondary:SetText(coloredSecondary)
         --self:SetItemLevel(data.itemLevel)
     
-    --[[else
+        --[[else
         local numMembers = data.numMembers
 
         self.Players:SetText("(" .. numMembers .. ") ")
@@ -72,6 +71,6 @@ function ApplicantMultiMemberMixin:SetData(data)
             end
         end]]
 
-        self:SetInviteDeclineVisible(numMembers > 1)
+        self:SetInviteDeclineVisible(true, numMembers)
     end
 end

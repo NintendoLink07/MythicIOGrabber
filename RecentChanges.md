@@ -4,7 +4,7 @@
 
 - A Midnight icon has been added.
 
-- [Teleports] Midnight teleports have been added. 
+- [Teleports] Midnight teleports have been added.
 
 ### Fixed
 

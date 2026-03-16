@@ -753,6 +753,50 @@ local function sortActivityGroup(k1, k2)
 	end
 end
 
+local function refreshActivityFilterColor()
+	local lockouts = miog:GetMainSetting("progressData", "characters", UnitGUID("player"), "lockouts")
+	local _, categoryID = getCurrentPanelAndCategoryID()
+
+	local isPvE = categoryID == 2 or categoryID == 3
+
+	local done = {}
+
+	for k, v in ipairs(lockouts) do
+		done[v.journalInstanceID] = true
+
+	end
+
+	local difficultySetting = retrieveSetting("difficulty")
+
+	local isMythicDifficulty = isPvE and (difficultySetting.id == 23 or difficultySetting.id == 16)
+
+	local filterManager = miog.FilterManager
+
+	if(isMythicDifficulty) then
+		for k, v in pairs(filterManager.ActivityGrid) do
+			if(type(v) == "table") then
+				local info = miog:GetGroupInfo(v.filterID)
+				
+				if(info and done[info.journalInstanceID]) then
+					v.Text:SetTextColor(1, 0, 0, 1)
+						
+				else
+					v.Text:SetTextColor(1, 1, 1, 1)
+
+				end
+			end
+		end
+
+	else
+		for k, v in pairs(filterManager.ActivityGrid) do
+			if(type(v) == "table") then
+				v.Text:SetTextColor(1, 1, 1, 1)
+
+			end
+		end
+	end
+end
+
 local function refreshFilters()
 	local filterManager = miog.FilterManager
 	local panel, categoryID = getCurrentPanelAndCategoryID()
@@ -824,8 +868,8 @@ local function refreshFilters()
 		refreshInputFilters()
 		refreshSpinnerFilters()
 
-		local difficultySetting = retrieveSetting("difficulty", "enabled")
-		filterManager.Difficulty.CheckButton:SetChecked(difficultySetting == nil and false or difficultySetting)
+		local difficultySetting = retrieveSetting("difficulty")
+		filterManager.Difficulty.CheckButton:SetChecked(difficultySetting.enabled == nil and false or difficultySetting.enabled)
 
 		local activitiesSetting = retrieveSetting("activities", "enabled")
 		filterManager.Activities.CheckButton:SetChecked(activitiesSetting == nil and false or activitiesSetting)
@@ -861,6 +905,7 @@ local function refreshFilters()
 
 			end
 		end
+
 
 		for rowCounter = 1, 4, 1 do
 			for activityCounter = 1, 4, 1 do
@@ -980,6 +1025,8 @@ local function refreshFilters()
 			
 			filterManager.ActivityBosses:MarkDirty()
 		end
+
+		refreshActivityFilterColor()
 	else
 		refreshInputFilters("Rating")
 
@@ -1139,6 +1186,7 @@ local function loadFilterManager()
 						selectedDifficultyIndex = difficultyIndex
 						changeSetting(difficultyIndex, "difficulty", "id")
 						setStatus("change")
+						refreshActivityFilterColor()
 					end, y)
 				end
 			end
@@ -1148,6 +1196,7 @@ local function loadFilterManager()
 	filterManager.Difficulty.CheckButton:SetScript("OnClick", function(self)
 		changeSetting(self:GetChecked(), "difficulty", "enabled")
 		setStatus("change")
+		refreshActivityFilterColor()
 	end)
 
 	-- Determine highest width spinner

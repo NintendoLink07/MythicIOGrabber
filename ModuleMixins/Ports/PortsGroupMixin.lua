@@ -1,39 +1,26 @@
 local addonName, miog = ...
 
 local maxNumberOfFramesInARow = 7
+local seasonButtonSize = 40
+
 local expansions = {}
 
 PortsGroupMixin = {}
 
 function PortsGroupMixin:OnLoad()
     self.groups = {}
-    self.framePool = CreateFramePool("Button", self.Subgroup, "MIOG_PortsButtonTemplate", function(_, frame) frame:Hide() frame.gridRow = nil frame.gridColumn = nil end)
+    self.framePool = CreateFramePool("Button", self.Subgroup, "MIOG_PortsButtonTemplate", function(_, frame) frame.gridRow = nil frame.gridColumn = nil end)
 
-    self.Subgroup.childXPadding = 4
-    self.Subgroup.childYPadding = 2
+    local grid = self.Subgroup
 
-    self.Subgroup.topPadding = 0
-    self.Subgroup.leftPadding = 0
-    self.Subgroup.rightPadding = 0
-    self.Subgroup.bottomPadding = 0
+    grid.childXPadding = 8
+    grid.childYPadding = 4
 
-end
-
-function PortsGroupMixin:CalculateLayout(numFramesAdded)
-    local numOfRegisteredElements = #self.groups
-
-    local actualNumOfElements = numOfRegisteredElements + numFramesAdded
-
-    self.rows = actualNumOfElements > 7 and 2 or 1
-    
-    local hasRest = actualNumOfElements % self.rows == 0
-
-    if(hasRest) then
-        self.numLastRowElements = actualNumOfElements % self.rows
-        self.columns = ceil(actualNumOfElements / self.rows)
-        
-    else
-        self.columns = ceil(actualNumOfElements / self.rows)
+    if(self:GetParentKey() == "ActiveSeason") then
+        grid:ClearAllPoints()
+        grid:SetPoint("BOTTOM", 0, 12)
+        grid:SetWidth(4 * seasonButtonSize + 3 * grid.childXPadding)
+        grid:SetHeight(2 * seasonButtonSize + grid.childYPadding)
 
     end
 end
@@ -41,73 +28,52 @@ end
 function PortsGroupMixin:Setup(id, expansion)
     local name, description, numSlots, isKnown = GetFlyoutInfo(id)
 
-    self:CalculateLayout(numSlots)
-    
-    local frameW, frameH = 0, 0
+    if(expansion) then
+        local expInfo = miog.EXPANSIONS[expansion]
 
-    local index = 0
-
-    for i = 1, self.rows, 1 do
-        local numOfCurrentElements = self.numLastRowElements and k == self.columns and self.numLastRowElements or self.columns
-
-        for k = 1, numOfCurrentElements, 1 do
-            index = index + 1
-
-            local frame = self.groups[index]
-
-            if(not frame) then
-                frame = self.framePool:Acquire()
-                frame.gridColumnSize = 1
-                frame.gridRowSize = 1
-
-                tinsert(self.groups, frame)
-            end
-
-            if(i == 1 and k == 1) then
-                frameW, frameH = frame:GetSize()
-                
-            end
-
-            frame.gridRow = i
-            frame.gridColumn = k
-            frame:Show()
-        end
+        self.Icon:SetTexture(expInfo.icon)
     end
 
-    local subgroup = self.Subgroup
-	
-    -- actually necessary with a StaticGridLayoutFrame lol, need to rewrite Blizzard's implementation next
-	self:SetSize(frameW * maxNumberOfFramesInARow + subgroup.childXPadding * (maxNumberOfFramesInARow - 1) + subgroup.leftPadding + subgroup.rightPadding + 20, frameH * self.rows + subgroup.childYPadding * (self.rows - 1) + subgroup.topPadding + subgroup.bottomPadding + 16)
+    local frameW, frameH
 
-    local start
+    for i = 1, numSlots, 1 do
+        local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(id, i)
+        
+        local frame = self.framePool:Acquire()
+        frame:SetData({spellID = flyoutSpellID, isKnown = spellKnown})
+        frameW, frameH = frame:GetSize()
+        
+        tinsert(self.groups, frame)
+    end
 
-    if(expansion) then
-        start = expansions[expansion] and expansions[expansion] + 1 or 1
-        expansions[expansion] = numSlots
+    local totalNumOfSlots = #self.groups
+    local firstRow, numOfRows
+    
+    if(totalNumOfSlots > maxNumberOfFramesInARow) then
+        firstRow, secondRow = floor(totalNumOfSlots / 2), ceil(totalNumOfSlots / 2)
+        numOfRows = 2
 
     else
-        start = 1
+        firstRow = maxNumberOfFramesInARow
+        numOfRows = 1
 
-        self.Name:ClearAllPoints()
-        self.Name:SetPoint("CENTER", self, "TOP", 0, -7)
+    end
 
-        self.Subgroup:ClearAllPoints()
-        self.Subgroup:SetPoint("CENTER")
-        self.Subgroup:SetWidth(4 * frameW)
-        self.Subgroup:SetHeight(2 * frameH)
+    for k, v in ipairs(self.groups) do
+        v.gridRow = k <= firstRow and 1 or 2
+        v.gridColumn = k <= firstRow and k or k - firstRow
+
     end
 
     if(expansion) then
+        local subgroup = self.Subgroup
 
-    end
+        self:SetHeight(frameH * numOfRows + subgroup.childYPadding * (numOfRows - 1))
 
-    for k = 1, numSlots, 1 do
-        local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(id, k)
+    else
+        for k, v in pairs(self.groups) do
+            v:SetSize(seasonButtonSize, seasonButtonSize)
 
-        if(self.groups[start]) then
-            self.groups[start]:SetData({spellID = flyoutSpellID, isKnown = spellKnown})
-
-            start = start + 1
         end
     end
 end

@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.10] - 2026-03-14
+
+### Changed
+
+- [Ports] The teleport panel is undergoing a redesign (not finished):
+    - The current season teleports have their own category at the top of the frame.
+    - All expansion teleports have a new ordering.
+
+- [FilterPanel] When "Mythic" difficulty is selected: activity names are colored red when there is an active lockout for the activity.
+
+### Fixed
+
+- [AppViewer] An error checking if you're allowed to invite has been resolved.
+
+- [FilterPanel] & [Ports] Activities will now correctly have their abbreviated name when logging in for the first time in a session.
+
+
+
+
 
 ## [3.9.9] - 2026-03-11
 

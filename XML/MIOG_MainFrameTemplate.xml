@@ -678,8 +678,8 @@
                     
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupOrganizer" hidden="true" setAllPoints="true" />
                     <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabTemplate" hidden="true" setAllPoints="true" />
-                    <Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />
-                    <!--<Frame parentKey="Ports" inherits="MIOG_Ports" hidden="true" setAllPoints="true" />!-->
+                    <!--<Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />!-->
+                    <Frame parentKey="Ports" inherits="MIOG_Ports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true" setAllPoints="true" />
@@ -737,7 +737,7 @@
 
                 <Scripts>
                     <OnLoad>
-                        self.frameName = "Teleports"
+                        self.frameName = "Ports"
                     </OnLoad>
                 </Scripts>
             </Button>

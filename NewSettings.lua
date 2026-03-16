@@ -141,8 +141,15 @@ function miog:SetMainSetting(key, value)
 
 end
 
-function miog:GetMainSetting(key)
-    return MIOG_NewSettings[key]
+function miog:GetMainSetting(...)
+    local setting = MIOG_NewSettings
+
+    for k, v in ipairs({...}) do
+        setting = setting[v]
+
+    end
+
+    return setting
 
 end
 

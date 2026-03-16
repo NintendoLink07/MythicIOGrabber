@@ -66,9 +66,7 @@ function ApplicantMixin:DisableLFGInteractions()
 end
 
 function ApplicantMixin:RefreshInviteDeclineVisiblity()
-	local showLFGInteractions = LFGListUtil_IsEntryEmpowered()
-
-    if(showLFGInteractions) then
+    if(LFGListUtil_IsEntryEmpowered()) then
         self:EnableLFGInteractions()
         
     else
@@ -77,8 +75,8 @@ function ApplicantMixin:RefreshInviteDeclineVisiblity()
     end
 end
 
-function ApplicantMixin:SetInviteDeclineVisible(bool)
-    if(bool) then
+function ApplicantMixin:SetInviteDeclineVisible(isMulti, numMembers)
+    if((not isMulti or numMembers > 1) and LFGListUtil_IsEntryEmpowered) then
         self:EnableLFGInteractions()
 
     else
