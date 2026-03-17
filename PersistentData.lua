@@ -2546,7 +2546,7 @@ miog.TELEPORT_FLYOUT_IDS = { --https://wago.tools/db2/SpellFlyout
 	[10] = {id = 232, expansion = 10, type="dungeon"},
 	[11] = {id = 242, expansion = 10, type="raid"},
 
-	[12] = {id = 244, seasonID = --[[16]] 15, type="dungeon"},
+	[12] = {id = 244, seasonID = 16, type="dungeon"},
 	[13] = {id = 246, expansion = 11, type="dungeon"},
 }
 

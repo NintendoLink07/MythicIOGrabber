@@ -20,8 +20,14 @@ function PortsMixin:OnLoad()
     for _, v in ipairs(miog.TELEPORT_FLYOUT_IDS) do
         local targetFrame
 
-        if(v.seasonID == C_MythicPlus.GetCurrentSeason()) then
-            targetFrame = self.ActiveSeason
+        if(v.seasonID) then
+            if(v.seasonID == C_MythicPlus.GetCurrentSeason()) then
+                targetFrame = self.Topleft.ActiveSeason
+
+            else
+                self.Topleft.Name:SetText("No active season")
+
+            end
 
         elseif(not v.seasonID) then
             targetFrame = self[frameTable[v.expansion]]["Groups" .. v.expansion]

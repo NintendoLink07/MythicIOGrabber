@@ -6,7 +6,7 @@
                 <Texture parentKey="Icon">
                     <Size x="18" y="18" />
                     <Anchors>
-                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPLEFT" x="-3" y="6"/>
+                        <Anchor point="CENTER" relativeKey="$parent" relativePoint="TOPLEFT" x="-2" y="7"/>
                     </Anchors>
                 </Texture>
             </Layer>

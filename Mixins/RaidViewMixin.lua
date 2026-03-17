@@ -350,7 +350,7 @@ end
 function RaidViewButtonMixin:UpdateOnlineStatus()
     local isOnline = self.data.online
 
-    self:SetOnlineStatus(isOnline)
+    --self:SetOnlineStatus(isOnline)
 end
 
 function RaidViewButtonMixin:SetLayoutIndex(layoutIndex)

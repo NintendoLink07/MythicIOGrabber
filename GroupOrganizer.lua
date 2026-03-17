@@ -306,16 +306,14 @@ local function orderedAnalyze()
 end
 
 local function findFrames(fullName)
-    if(groupPlayerList[fullName]) then
-        local listViewFrame = groupManager.ListView.ScrollBox:FindFrameByPredicate(function(localFrame, data)
-            return data.fullName == fullName
+    local listViewFrame = groupManager.ListView.ScrollBox:FindFrameByPredicate(function(localFrame, data)
+        return data.fullName == fullName
 
-        end)
+    end)
 
-        local raidViewFrame = groupManager.RaidView:FindMemberFrame(fullName)
+    local raidViewFrame = groupManager.RaidView:FindMemberFrame(fullName)
 
-        return listViewFrame, raidViewFrame
-    end
+    return listViewFrame, raidViewFrame
 end
 
 local function getKeystoneAbbreviatedName(challengeModeMapID)
@@ -1296,7 +1294,7 @@ local function groupManagerEvents(_, event, ...)
 
         if(unitID) then
             local fullName = miog.createFullNameValuesFrom("unitID", ...)
-            updateSpecificFrameData(fullName, "online", unitID)
+            --updateSpecificFrameData(fullName, "online", unitID)
         end
 	end
 end

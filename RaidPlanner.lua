@@ -361,24 +361,26 @@ local function setupFramePools()
         if(guildClubId) then
             local clubMembers = C_Club.GetClubMembers(guildClubId)
 
-            local orderedGuildList = {}
-            
-            for k, v in ipairs(clubMembers) do
-                orderedGuildList[k] = C_Club.GetMemberInfo(guildClubId, v)
-            end
+            if(type(clubMembers) == "table") then
+                local orderedGuildList = {}
+                
+                for k, v in ipairs(clubMembers) do
+                    orderedGuildList[k] = C_Club.GetMemberInfo(guildClubId, v)
+                end
 
-            table.sort(orderedGuildList, orderClubMembers)
+                table.sort(orderedGuildList, orderClubMembers)
 
-            for k, v in ipairs(orderedGuildList) do
-                local elementFrame = createElementFrame(v.classID)
-                elementFrame:SetMemberInfo(v)
-                elementFrame.saveID = v.name
-                elementFrame.originalIndex = k
-                elementFrame.layoutIndex = k
+                for k, v in ipairs(orderedGuildList) do
+                    local elementFrame = createElementFrame(v.classID)
+                    elementFrame:SetMemberInfo(v)
+                    elementFrame.saveID = v.name
+                    elementFrame.originalIndex = k
+                    elementFrame.layoutIndex = k
 
-                elementFrame.align = "left"
+                    elementFrame.align = "left"
 
-                elementFrame.Name:SetText(miog.createSplitName(v.name))
+                    elementFrame.Name:SetText(miog.createSplitName(v.name))
+                end
             end
         end
     else

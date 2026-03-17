@@ -47,7 +47,7 @@ end
 function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     local isOdd = data.index % 2 == 1
 
-    local theme = miog.C.CURRENT_THEME
+    local theme = miog.COLOR_THEMES.standard
 
     if(isOdd) then
         self.BackgroundColor:SetColorTexture(theme[2].r, theme[2].g, theme[2].b, 0.1)
@@ -58,7 +58,8 @@ function GroupOrganizerStandardMixin:Populate(data, columnIndex)
     end
 
     if(self.key == "online") then
-        self:SetOnlineStatus(data.online, data.unitID)
+        --self:SetOnlineStatus(data.online, data.unitID)
+        self.Icon:SetTexture(nil)
 
 	elseif(self.key == "name") then
         self.Text:SetText(data.name)

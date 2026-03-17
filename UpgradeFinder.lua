@@ -153,12 +153,12 @@ end
 miog.setItemLinkToSpecificItemLevel = setItemLinkToSpecificItemLevel
 
 local function retrieveHighestMPlusDropLevel()
-    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.dungeon.highestItemLevel
+    return miog.ITEM_LEVEL_DATA[C_MythicPlus.GetCurrentSeason()] and miog.ITEM_LEVEL_DATA[C_MythicPlus.GetCurrentSeason()].data.dungeon.highestItemLevel or 0
 
 end
 
 local function retrieveHighestCraftingLevel()
-    return miog.ITEM_LEVEL_DATA[miog.F.SEASON_ID].data.other.highestItemLevel
+    return miog.ITEM_LEVEL_DATA[C_MythicPlus.GetCurrentSeason()] and miog.ITEM_LEVEL_DATA[C_MythicPlus.GetCurrentSeason()].data.other.highestItemLevel or 0
 
 end
 
@@ -449,6 +449,71 @@ local function requestAllLootForMapID(info)
 
 end
 
+local function retrieveJournalInstanceIDs()
+    local expDungeonGroups = C_LFGList.GetAvailableActivityGroups(2, Enum.LFGListFilter.CurrentExpansion)
+    local dungeonsGroups = {} or C_LFGList.GetAvailableActivityGroups(2, Enum.LFGListFilter.CurrentSeason)
+    local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
+    local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
+
+    local journalList = {}
+    local expDone = {}
+
+    for _, v in ipairs(dungeonsGroups) do
+        local groupInfo = miog:GetGroupInfo(v)
+        local isActive = true
+
+        tinsert(journalList, {journalInstanceID = groupInfo.journalInstanceID, isActive = isActive})
+
+        expDone[v] = true
+    end
+
+    for _, v in ipairs(expDungeonGroups) do
+        if(not expDone[v]) then
+            local groupInfo = miog:GetGroupInfo(v)
+            local isActive = true
+
+            tinsert(journalList, {journalInstanceID = groupInfo.journalInstanceID, isActive = isActive})
+        end
+    end
+
+    for _, v in ipairs(raidGroups) do
+        local groupInfo = miog:GetGroupInfo(v)
+        local isActive = true
+
+       tinsert(journalList, {journalInstanceID = groupInfo.journalInstanceID, isActive = isActive})
+    end
+
+    for _, v in ipairs(worldBossActivity) do
+        local activityInfo = miog:GetActivityInfo(v)
+        local isActive = true
+
+       tinsert(journalList, {journalInstanceID = activityInfo.journalInstanceID, isActive = isActive})
+    end
+
+    local instanceList = {}
+
+    for k, v in ipairs(journalList) do
+        if(v.journalInstanceID and v.journalInstanceID > 0 and C_EncounterJournal.InstanceHasLoot(v.journalInstanceID)) then
+
+            EJ_SelectInstance(v.journalInstanceID)
+
+            local isRaid = EJ_InstanceIsRaid()
+            EJ_SetDifficulty(isRaid and (not v.isActive and 14 or 16) or (not v.isActive and 23 or 8))
+
+            local numLoot = EJ_GetNumLoot()
+
+            for i = 1, numLoot, 1 do
+                C_EncounterJournal.GetLootInfoByIndex(i)
+
+            end
+
+            tinsert(instanceList, {journalInstanceID = v.journalInstanceID, isActive = v.isActive})
+        end
+    end
+
+    return instanceList
+end
+
 local function findAllRelevantMapIDs()
     local instanceList = {}
 
@@ -612,9 +677,6 @@ local function findApplicablePVEItems(dataProvider, instanceList, item, filterID
     end
 
     for _, v in ipairs(instanceList) do
-        EncounterJournal.instanceID = v.journalInstanceID;
-        EncounterJournal.encounterID = nil;
-
         EJ_SelectInstance(v.journalInstanceID)
 
         local isRaid = EJ_InstanceIsRaid()
@@ -781,7 +843,8 @@ end
 local function findItems(filterID, item)
     C_EncounterJournal.SetSlotFilter(filterID)
 
-    local instanceList = findAllRelevantMapIDs()
+    local instanceList = retrieveJournalInstanceIDs()
+    --local instanceList = findAllRelevantMapIDs()
 
     local dataProvider = CreateDataProvider()
     dataProvider:SetSortComparator(sortItems)
@@ -789,7 +852,7 @@ local function findItems(filterID, item)
     local itemlevel = item:GetCurrentItemLevel() or 0
 
     findApplicablePVEItems(dataProvider, instanceList, item, filterID)
-    findApplicableCraftingItems(dataProvider, filterID, itemlevel)
+    --findApplicableCraftingItems(dataProvider, filterID, itemlevel)
 
     miog.UpgradeFinder.ScrollBox:SetDataProvider(dataProvider)
 
@@ -867,7 +930,7 @@ miog.loadUpgradeFinder = function()
     
     ScrollUtil.InitScrollBoxListWithScrollBar(upgradeFinder.ScrollBox, miog.pveFrame2.ScrollBarArea.UpgradesScrollBar, view)
     
-    ProfessionsCustomerOrders_LoadUI();
+    --ProfessionsCustomerOrders_LoadUI();
     --ShowUIPanel(ProfessionsCustomerOrdersFrame);
     --HideUIPanel(ProfessionsCustomerOrdersFrame);
 

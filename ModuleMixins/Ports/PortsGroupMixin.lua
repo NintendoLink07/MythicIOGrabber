@@ -65,16 +65,21 @@ function PortsGroupMixin:Setup(id, expansion)
 
     end
 
-    if(expansion) then
-        local subgroup = self.Subgroup
+    local subgroup = self.Subgroup
 
-        self:SetHeight(frameH * numOfRows + subgroup.childYPadding * (numOfRows - 1))
+    if(self:GetParentKey() == "ActiveSeason") then
 
-    else
+        self:SetHeight(seasonButtonSize * numOfRows + subgroup.childYPadding * (numOfRows - 1))
+
         for k, v in pairs(self.groups) do
             v:SetSize(seasonButtonSize, seasonButtonSize)
 
         end
+
+
+    else
+        self:SetHeight(frameH * numOfRows + subgroup.childYPadding * (numOfRows - 1))
+        
     end
 end
 

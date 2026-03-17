@@ -15,8 +15,9 @@
                     <Color r="0.1" g="0.1" b="0.1" a="0.6" />
                     
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.Text" x="-4"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Text" x="4"/>
+                        <Anchor point="TOP" relativeKey="$parent.Text"/>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent"/>
                     </Anchors>
                 </Texture>
             </Layer>
